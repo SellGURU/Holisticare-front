@@ -12,13 +12,13 @@ const ToggleCustomBranding: React.FC<ToggleProps> = ({
   return (
     <>
       <div
-        className={` bg-backgroundColor-Main h-7 w-full md:w-[496px]  px-2 flex justify-between items-center rounded-[24px] gap-1`}
+        className={` bg-backgroundColor-Main h-7 w-full md:w-[496px] text-nowrap px-1 md:px-2 flex justify-between items-center rounded-[24px] gap-1`}
       >
         <div
           onClick={() => {
             setActive(value[0]);
           }}
-          className={` cursor-pointer ${active == value[0] ? 'bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[10px] md:text-[12px]`}
+          className={` cursor-pointer ${active == value[0] ? 'bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[8px] sm:text-[10px] md:text-[12px]`}
         >
           {value[0]}
         </div>
@@ -27,7 +27,7 @@ const ToggleCustomBranding: React.FC<ToggleProps> = ({
           onClick={() => {
             setActive(value[1]);
           }}
-          className={` cursor-pointer ${active == value[1] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[10px] md:text-[12px]`}
+          className={` cursor-pointer ${active == value[1] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[8px] sm:text-[10px] md:text-[12px]`}
         >
           {value[1]}
         </div>
@@ -38,7 +38,7 @@ const ToggleCustomBranding: React.FC<ToggleProps> = ({
               onClick={() => {
                 setActive(value[2]);
               }}
-              className={` cursor-pointer ${active == value[2] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[10px] md:text-[12px]`}
+              className={` cursor-pointer ${active == value[2] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[8px] sm:text-[10px] md:text-[12px]`}
             >
               {value[2]}
             </div>

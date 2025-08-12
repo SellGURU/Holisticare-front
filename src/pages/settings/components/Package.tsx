@@ -61,7 +61,10 @@ const PackagePage = () => {
   const [showDowngrade, setshowDowngrade] = useState(false);
   return (
     <>
-      <div className="w-full px-4 py-3">
+      <div
+        style={{ height: window.innerHeight - 60 + 'px' }}
+        className="w-full overflow-auto px-2 md:px-4 py-3"
+      >
         <div className="w-full flex justify-between items-center mb-4">
           <div className="text-base font-medium text-Text-Primary">
             Packages
@@ -72,7 +75,7 @@ const PackagePage = () => {
             placeHolder="Search in Packages ..."
           ></SearchBox> */}
         </div>
-        <div className="bg-backgroundColor-Card p-4 w-full h-[240px] rounded-[16px]">
+        <div className="bg-backgroundColor-Card p-4 w-full h-fit md:h-[240px] rounded-[16px]">
           <div className=" flex justify-between items-center">
             <div className="text-Text-Primary text-sm font-medium">
               Subscription
@@ -82,8 +85,8 @@ const PackagePage = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 w-full mt-8">
-            <div className="border-r border-Boarder pr-[53px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 w-full mt-8 gap-6">
+            <div className=" border-r-0 md:border-r border-Boarder md:pr-[53px]">
               <div className="text-[12px] text-Text-Primary">Current Plan</div>
               <div className="text-[12px] text-justify min-h-[36px] text-Text-Secondary mt-2">
                 {context.PackageManager.curentPackage.getDescription()}
@@ -111,18 +114,18 @@ const PackagePage = () => {
               </div>
             </div>
 
-            <div className=" pl-[53px]">
+            <div className=" md:pl-[53px]">
               <div className="text-[12px] text-Text-Primary">
                 Manage Subscription{' '}
               </div>
-              <div className="text-[12px] text-Text-Secondary text-justify mt-7">
+              <div className="text-[12px] text-Text-Secondary text-justify mt-3 md:mt-7">
                 Time to upgrade! Your free plan will expire in 3 days. To access
                 more features, please upgrade through Stripe.
               </div>
-              <div className="w-full mt-7 flex items-center">
+              <div className="w-full mt-7 flex flex-col-reverse gap-4 md:flex-row items-center">
                 {context.PackageManager.curentPackage.type != 'Free' && (
                   <>
-                    <div className="text-Text-Secondary w-[50%] text-center  text-[12px] font-medium">
+                    <div className="text-Text-Secondary w-full md:w-[50%] text-center  text-[12px] font-medium">
                       <div
                         onClick={() => setshowCancel(true)}
                         className="cursor-pointer"
@@ -153,15 +156,15 @@ const PackagePage = () => {
           <TableNoPaginate isPackage classData={packages} />
         </div>
         <MainModal isOpen={showCancel} onClose={() => setshowCancel(false)}>
-          <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[212px]">
+          <div className="rounded-2xl p-4 md:p-6 pb-6 md:pb-8 bg-white shadow-800 w-[90vw] md:w-[500px] h-[212px]">
             {isCancelConfirm ? (
               <>
-                <div className="w-full flex flex-col items-center pt-3">
+                <div className="w-full flex flex-col items-center md:pt-3">
                   <img src="/icons/done.svg" alt="" />
-                  <div className="text-Text-Primary text-xs font-medium mt-3">
+                  <div className="text-Text-Primary text-xs text-center font-medium mt-3">
                     Your subscription has been canceled successfully.
                   </div>
-                  <div className="text-Text-Secondary text-xs mt-2 mb-4">
+                  <div className="text-Text-Secondary text-center text-xs mt-2 mb-4">
                     You will retain access to free features until September
                     27th, 2024.{' '}
                   </div>
@@ -213,7 +216,7 @@ const PackagePage = () => {
             setShowManagePackage(false);
           }}
         >
-          <div className="bg-white w-[664px] h-[512px] rounded-[16px] p-6">
+          <div className="bg-white w-[90vw] md:w-[664px] h-[512px] rounded-[16px] p-4 md:p-6">
             <div className="flex justify-between items-center">
               <div className="text-Text-Primary text-sm font-medium">
                 Manage Your Subscription
@@ -238,14 +241,14 @@ const PackagePage = () => {
               ></Toggle>
             </div>
 
-            <div className="grid grid-cols-3 mt-4">
+            <div className=" w-[105%] md:w-auto grid grid-cols-1 md:grid-cols-3 pr-1 md:pr-0 mt-4 h-[80%] md:h-auto overflow-auto md:overflow-hidden gap-4">
               {packagesData.map((el) => {
                 return (
                   <>
-                    <div className=" w-[200px] relative rounded-[16px] p-4 h-[384px] overflow-hidden bg-backgroundColor-Card border border-Gray-50">
+                    <div className=" w-full md:w-[200px] relative rounded-[16px] p-4 h-[384px] overflow-hidden bg-backgroundColor-Card border border-Gray-50">
                       <img
                         src="./images/Vector.svg"
-                        className="absolute scale-110 top-[-4px] left-[0px]"
+                        className="absolute hidden md:block scale-110 top-[-4px] left-[0px]"
                         alt=""
                       />
                       <div className="relative z-10">
@@ -319,13 +322,13 @@ const PackagePage = () => {
           </div>
         </MainModal>
         <MainModal isOpen={showUpgrade} onClose={() => setshowUpgrade(false)}>
-          <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[448px] h-[216px]">
+          <div className="rounded-2xl p-4 md:p-6 pb-6 md:pb-8 bg-white shadow-800 w-[90vw] md:w-[448px] h-[216px]">
             <div className="w-full flex flex-col items-center pt-3">
               <img src="/icons/done.svg" alt="" />
-              <div className="text-Text-Primary text-xs font-medium mt-3">
+              <div className="text-Text-Primary text-center text-xs font-medium mt-3">
                 You upgraded your subscription successfully.{' '}
               </div>
-              <div className="text-Text-Secondary text-xs mt-2 mb-4">
+              <div className="text-Text-Secondary text-xs text-center mt-2 mb-4">
                 After a short processing period, you will be able to access all
                 features.
               </div>
@@ -345,13 +348,13 @@ const PackagePage = () => {
           onClose={() => setshowDowngrade(false)}
         >
           {' '}
-          <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[448px] h-[216px]">
-            <div className="w-full flex flex-col items-center pt-3">
+          <div className="rounded-2xl p-4 md:p-6 pb-6 md:pb-8 bg-white shadow-800 w-[90vw] md:w-[448px] h-[216px]">
+            <div className="w-full flex flex-col items-center md:pt-3">
               <img src="/icons/done.svg" alt="" />
-              <div className="text-Text-Primary text-xs font-medium mt-3">
+              <div className="text-Text-Primary text-xs text-center font-medium mt-3">
                 You downgraded your subscription successfully.{' '}
               </div>
-              <div className="text-Text-Secondary text-xs mt-2 mb-4 text-center">
+              <div className="text-Text-Secondary text-center text-xs mt-2 mb-4 ">
                 After a short processing period, you will be able to use limited
                 version of features.
               </div>

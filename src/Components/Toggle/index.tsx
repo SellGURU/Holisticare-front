@@ -17,7 +17,7 @@ const Toggle: React.FC<ToggleProps> = ({
   return (
     <>
       <div
-        className={` bg-backgroundColor-Main h-7 w-[315px] ${isClientList && 'h-8 w-[324px]'} ${isMessages && 'h-8 w-[282px]'} ${isNotif && 'h-8 w-[368px]'}  px-2 flex justify-between items-center rounded-[24px] gap-1`}
+        className={` bg-backgroundColor-Main h-7 w-[280px] md:w-[315px] ${isClientList && 'h-8 w-[324px]'} ${isMessages && 'h-8 w-[282px]'} ${isNotif && 'h-8 w-[368px]'}  px-2 flex justify-between items-center rounded-[24px] gap-1`}
       >
         <div
           onClick={() => {

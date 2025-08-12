@@ -156,7 +156,7 @@ const AddModal: FC<AddModalProps> = ({
   };
 
   return (
-    <div className="w-[644px] p-4 max-w-[644px] relative bg-white min-h-[500px] h-[60%] rounded-[16px]">
+    <div className=" w-[90vw] md:w-[644px] p-2 md:p-4 max-w-[644px] relative bg-white min-h-[500px] h-[60%] rounded-[16px]">
       {errorDetails && (
         <div className="absolute top-2 right-2 z-10 flex max-w-[493px] items-start rounded-2xl bg-[#F9DEDC] pb-3 pt-2 px-4">
           <img
@@ -175,7 +175,7 @@ const AddModal: FC<AddModalProps> = ({
           />
         </div>
       )}
-      <div className="">
+      <div className="mb-4">
         <div className=" text-Text-Primary TextStyle-Headline-5">
           Add Biomarker
         </div>
@@ -190,7 +190,7 @@ const AddModal: FC<AddModalProps> = ({
         <div className="mb-4">
           <label
             htmlFor="benchmarkArea"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-xs font-medium text-gray-700"
           >
             Benchmark Area
           </label>
@@ -215,7 +215,7 @@ const AddModal: FC<AddModalProps> = ({
         <div className="mb-4">
           <label
             htmlFor="biomarkerName"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-xs font-medium text-gray-700"
           >
             Biomarker Name
           </label>
@@ -240,7 +240,7 @@ const AddModal: FC<AddModalProps> = ({
         <div className="mb-4">
           <label
             htmlFor="definition"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-xs font-medium text-gray-700"
           >
             Definition
           </label>
@@ -262,7 +262,7 @@ const AddModal: FC<AddModalProps> = ({
         <div className="mb-4">
           <label
             htmlFor="unit"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-xs font-medium text-gray-700"
           >
             Unit
           </label>
@@ -283,13 +283,13 @@ const AddModal: FC<AddModalProps> = ({
         </div>
 
         {/* Thresholds Section */}
-        <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">
+        <h3 className="text-xs font-medium text-gray-900 mb-4 border-b pb-2">
           Thresholds
         </h3>
 
         {/* Male Thresholds */}
-        <div className="mb-6 border p-4 rounded-md bg-gray-50">
-          <h4 className="text-md font-semibold text-gray-800 mb-3">
+        <div className="mb-6 border p-2 md:p-4 rounded-md bg-gray-50">
+          <h4 className="text-xs font-semibold text-gray-800 mb-3">
             Male Thresholds
           </h4>
           {maleAgeRangeFields.map((field, ageRangeIndex) => (
@@ -300,14 +300,14 @@ const AddModal: FC<AddModalProps> = ({
               <button
                 type="button"
                 onClick={() => removeMaleAgeRange(ageRangeIndex)}
-                className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm"
+                className="absolute top-3 right-3 md:top-4 md:right-4 text-red-500 hover:text-red-700 text-[10px] md:text-xs"
               >
                 Remove Age Group
               </button>
-              <div className="mb-3">
+              <div className="mb-3 mt-4 md:mt-0">
                 <label
                   htmlFor={`maleAgeRange-${ageRangeIndex}`}
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-[10px] md:text-xs font-medium text-gray-700"
                 >
                   Age Range (e.g., 18-100)
                 </label>
@@ -329,7 +329,7 @@ const AddModal: FC<AddModalProps> = ({
                 />
               </div>
 
-              <h5 className="text-sm font-medium text-gray-700 mb-2">
+              <h5 className="text-xs font-medium text-gray-700 mb-2">
                 Ranges for this Age Group:
               </h5>
               <ThresholdRangesEditor
@@ -350,7 +350,7 @@ const AddModal: FC<AddModalProps> = ({
                 ],
               })
             }
-            className="mt-2 text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-3 py-1 rounded-md text-sm"
+            className="mt-2 text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-3 py-1 rounded-md text-xs"
           >
             Add Male Age Group
           </button>
@@ -358,7 +358,7 @@ const AddModal: FC<AddModalProps> = ({
 
         {/* Female Thresholds */}
         <div className="mb-6 border p-4 rounded-md bg-gray-50">
-          <h4 className="text-md font-semibold text-gray-800 mb-3">
+          <h4 className="text-xs font-semibold text-gray-800 mb-3">
             Female Thresholds
           </h4>
           {femaleAgeRangeFields.map((field, ageRangeIndex) => (
@@ -369,14 +369,14 @@ const AddModal: FC<AddModalProps> = ({
               <button
                 type="button"
                 onClick={() => removeFemaleAgeRange(ageRangeIndex)}
-                className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm"
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-[10px] md:text-xs"
               >
                 Remove Age Group
               </button>
-              <div className="mb-3">
+              <div className="mb-3 mt-4 md:mt-0">
                 <label
                   htmlFor={`femaleAgeRange-${ageRangeIndex}`}
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-xs font-medium text-gray-700"
                 >
                   Age Range (e.g., 18-100)
                 </label>
@@ -398,7 +398,7 @@ const AddModal: FC<AddModalProps> = ({
                 />
               </div>
 
-              <h5 className="text-sm font-medium text-gray-700 mb-2">
+              <h5 className="text-xs font-medium text-gray-700 mb-2">
                 Ranges for this Age Group:
               </h5>
               <ThresholdRangesEditor
@@ -419,7 +419,7 @@ const AddModal: FC<AddModalProps> = ({
                 ],
               })
             }
-            className="mt-2 text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-3 py-1 rounded-md text-sm"
+            className="mt-2 text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-3 py-1 rounded-md text-xs"
           >
             Add Female Age Group
           </button>

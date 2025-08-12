@@ -55,7 +55,7 @@ const InformationStep: FC<InformationStepProps> = ({
   const [MuscleOptions, setMuscleOptions] = useState([]);
   const [TermsOptions, setTermsOptions] = useState([]);
   const [TypesOptions, setTypeOptions] = useState([]);
-
+  const [locationBoxs, setLocationBoxs] = useState([]);
   // Formik validation schema
   const validationSchema = Yup.object({
     title: Yup.string().required('This field is required.'),
@@ -103,6 +103,7 @@ const InformationStep: FC<InformationStepProps> = ({
       setLevelOptions(res.data.Level);
       setTermsOptions(res.data.Terms);
       setTypeOptions(res.data.Type);
+      setLocationBoxs(res.data.Location);
     });
   }, []);
 
@@ -271,17 +272,16 @@ const InformationStep: FC<InformationStepProps> = ({
           </div>
           <div className="flex flex-col text-xs gap-3 mt-2">
             Activity Location
-            <div className="flex gap-6">
-              <Checkbox
-                checked={addData.location.includes('Home')}
-                onChange={() => handleCheckboxChange('Home')}
-                label="Home"
-              />
-              <Checkbox
-                checked={addData.location.includes('Gym')}
-                onChange={() => handleCheckboxChange('Gym')}
-                label="Gym"
-              />
+            <div className="flex flex-wrap gap-6">
+              {locationBoxs.map((el) => {
+                return (
+                  <Checkbox
+                    checked={addData.location.includes(el)}
+                    onChange={() => handleCheckboxChange(el)}
+                    label={el}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>

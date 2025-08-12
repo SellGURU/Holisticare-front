@@ -85,17 +85,19 @@ const biomarkerItem = ({
   return (
     <>
       <div className="w-full relative py-2 px-3  bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 min-h-[60px]">
-        <div className="flex gap-6 w-full min-h-[60px] justify-start items-start">
-          <div className="w-[200px]">
-            <div className="text-[12px] font-medium text-Text-Primary flex items-center gap-[2px]">
+        <div className="flex flex-col md:flex-row gap-6 w-full min-h-[60px] justify-start items-start">
+          <div className="md:w-[200px]">
+            <div className=" text-[10px] md:text-[12px] font-medium text-Text-Primary   ">
               {data.Biomarker}
-              <span className="text-[10px] text-[#888888]">({data.unit})</span>
+              <span className=" text-[8px] md:text-[10px] text-[#888888] ml-[2px]">
+                ({data.unit})
+              </span>
             </div>
-            <div className="text-[10px] text-nowrap mt-1 text-Text-Quadruple">
+            <div className=" text-[8px] md:text-[10px] text-nowrap mt-1 text-Text-Quadruple">
               {data.Category}
             </div>
           </div>
-          <div className="w-[80%] mt-8  ">
+          <div className=" w-full md:w-[80%] mt-4 md:mt-8  ">
             {/* <StatusBarChartV2
               isCustom
               mapingData={data.label_mapping_chart}

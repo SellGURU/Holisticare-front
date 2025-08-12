@@ -76,7 +76,7 @@ const TextField: React.FC<TextFieldProps> = ({
   return (
     <div className={`flex flex-col ${className}`}>
       {label && (
-        <label className="text-Text-Primary text-[12px] font-medium">
+        <label className="text-Text-Primary text-[10px] md:text-[12px] font-medium">
           {label} {titleRequired && <span className="text-Red">*</span>}
         </label>
       )}
@@ -84,7 +84,7 @@ const TextField: React.FC<TextFieldProps> = ({
         <input
           ref={inputRef} // <--- Pass the ref here
           type={getInternalInputType()} // Use the internal type resolver
-          className={`w-full ${newStyle ? 'h-[28px]' : 'h-[32px]'} ${largeHeight && '!h-[100px] placeholder:text-start text-start flex items-start j align-top pt-0'} ${newStyle && 'bg-[#FDFDFD] '} rounded-[16px] mt-1 border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 text-Text-Primary outline-none ${
+          className={`w-full ${newStyle ? 'h-[28px]' : 'h-[32px]'} ${largeHeight && '!h-[100px] placeholder:text-start text-start flex items-start j align-top pt-0'} ${newStyle && 'bg-[#FDFDFD] '} rounded-[16px] mt-1 border placeholder:text-[10px] md:placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[10px] md:text-[12px] px-3 text-Text-Primary outline-none ${
             inValid
               ? 'border-Red'
               : newStyle

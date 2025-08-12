@@ -8,8 +8,8 @@ const NewForms = () => {
   const [search, setSearch] = useState('');
   return (
     <>
-      <div className="fixed w-full z-30 bg-bg-color px-6 pt-8 pb-2 md:pr-[200px]">
-        <div className="w-full flex justify-between items-center">
+      <div className="fixed w-full z-30 bg-bg-color px-2 md:px-6 pt-8 pb-2 md:pr-[200px]">
+        <div className="w-full flex justify-between items-center pr-2 md:pr-0">
           <div className="text-Text-Primary font-medium opacity-[87%] text-nowrap">
             Custom Form
           </div>
@@ -27,7 +27,7 @@ const NewForms = () => {
           />
         </div>
       </div>
-      <div className="px-6 pt-8 mt-[75px] ">
+      <div className="md:px-6 px-2 pt-8 mt-[75px] ">
         <div className="w-full flex mb-16 justify-center items-center flex-col">
           {active === 'Check-in' ? (
             <>

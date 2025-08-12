@@ -1008,6 +1008,9 @@ class Application extends Api {
       member_id: memberId,
     });
   };
+  static saveActionEdit = (data: any) => {
+    return this.post('/drift_analysis/edit_action_plan', data);
+  };
 }
 
 export default Application;
