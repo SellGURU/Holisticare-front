@@ -22,6 +22,7 @@ import {
   ValueValidation,
 } from '../../../utils/library-unification';
 import { TextField } from '../../UnitComponents';
+import SelectBoxField from '../../UnitComponents/SelectBoxField';
 import TextAreaField from '../../UnitComponents/TextAreaField';
 import ThreeTextField from '../../UnitComponents/ThreeTextField';
 import TwoTextField from '../../UnitComponents/TwoTextField';
@@ -113,7 +114,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [notes, setNotes] = useState<string[]>(
     defalts ? defalts['Client Notes'] : [],
   );
-  const [showSelect, setShowSelect] = useState(false);
+  // const [showSelect, setShowSelect] = useState(false);
   // const [practitionerComment, setPractitionerComment] = useState('');
   // const [description, setDescription] = useState('');
   // const [practitionerComments, setPractitionerComments] = useState<string[]>(
@@ -262,17 +263,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     onReset();
     setStep(0);
   };
-  const selectRef = useRef(null);
+  // const selectRef = useRef(null);
   const modalRef = useRef(null);
-  const selectButRef = useRef(null);
+  // const selectButRef = useRef(null);
 
-  useModalAutoClose({
-    refrence: selectRef,
-    buttonRefrence: selectButRef,
-    close: () => {
-      setShowSelect(false);
-    },
-  });
+  // useModalAutoClose({
+  //   refrence: selectRef,
+  //   buttonRefrence: selectButRef,
+  //   close: () => {
+  //     setShowSelect(false);
+  //   },
+  // });
 
   useModalAutoClose({
     refrence: modalRef,
@@ -760,66 +761,21 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
           {step == 0 && (
             <div className={`grid `}>
               <div className="">
-                <div
-                  className={`w-full relative overflow-visible mt-2 mb-4 ${defalts?.Category ? 'opacity-50' : 'opacity-100'}`}
-                >
-                  <label className="text-xs font-medium text-Text-Primary">
-                    Category
-                  </label>
-                  <div
-                    ref={selectButRef}
-                    onClick={() => {
-                      if (!defalts?.Category) {
-                        setShowSelect(!showSelect);
-                      }
-                    }}
-                    className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${!selectedGroup && showValidation ? 'border-red-500' : 'border-Gray-50'}`}
-                  >
-                    {selectedGroup ? (
-                      <div className="text-xs text-Text-Primary">
-                        {selectedGroup}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-gray-400">
-                        Select Category
-                      </div>
-                    )}
-                    <div>
-                      <img
-                        className={`${showSelect && 'rotate-180'}`}
-                        src="/icons/arow-down-drop.svg"
-                        alt=""
-                      />
-                    </div>
-                  </div>
-                  {!selectedGroup && showValidation && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      This field is required.
-                    </span>
-                  )}
-                  {showSelect && (
-                    <div
-                      ref={selectRef}
-                      className="w-full z-20 shadow-200  py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]"
-                    >
-                      {groups.map((groupObj, index) => {
-                        const groupName = Object.keys(groupObj)[0];
-                        return (
-                          <div
-                            key={index}
-                            onClick={() => {
-                              setSelectedGroup(groupName);
-                              setShowSelect(false);
-                            }}
-                            className="text-[12px] text-Text-Primary my-1 cursor-pointer"
-                          >
-                            {groupName}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+                <SelectBoxField
+                  label="Category"
+                  options={groups.map((group) => Object.keys(group)[0])}
+                  value={selectedGroup || ''}
+                  onChange={(value) => setSelectedGroup(value)}
+                  isValid={!selectedGroup && showValidation}
+                  placeholder="Select Category"
+                  disabled={defalts?.Category}
+                  validationText={
+                    !selectedGroup && showValidation
+                      ? 'This field is required.'
+                      : ''
+                  }
+                  margin={`${defalts?.Category ? 'opacity-50' : 'opacity-100'} mb-4 mt-2`}
+                />
                 <TextField
                   label="Title"
                   placeholder="Write the action's title..."
