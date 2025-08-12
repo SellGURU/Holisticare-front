@@ -49,7 +49,9 @@ const FileBoxUploading: React.FC<FileBoxProps> = ({ el, onDelete }) => {
               <img className="object-contain" src="/images/Pdf.png" alt="" />
               <div>
                 <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                <TooltipTextAuto maxWidth='400px'>{el.file_name || el.file.name}</TooltipTextAuto>
+                  <TooltipTextAuto maxWidth="400px">
+                    {el.file_name || el.file.name}
+                  </TooltipTextAuto>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className=" text-[10px] md:text-[12px] text-Text-Secondary">
@@ -78,12 +80,10 @@ const FileBoxUploading: React.FC<FileBoxProps> = ({ el, onDelete }) => {
         ) : (
           <>
             <div className="flex justify-between items-center w-full">
-              <div
-                className="text-[10px]  text-Text-Primary select-none  "
-             
-              >
-                <TooltipTextAuto maxWidth='400px'>{el.file_name || el.file.name}</TooltipTextAuto>
-                
+              <div className="text-[10px]  text-Text-Primary select-none  ">
+                <TooltipTextAuto maxWidth="400px">
+                  {el.file_name || el.file.name}
+                </TooltipTextAuto>
               </div>
 
               {/* <div className="w-[70px] text-center">

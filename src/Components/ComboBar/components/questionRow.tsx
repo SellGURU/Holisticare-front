@@ -69,7 +69,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   const navigate = useNavigate();
   return (
     <>
-      <div className=" bg-white border relative border-Gray-50 mb-1 px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
+      <div className=" bg-white border relative border-Gray-50  px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
         {showModal && (
           <>
             <div
