@@ -54,29 +54,46 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     return `linear-gradient(to right, ${currentColor} 80%, ${nextColor} 100%)`;
   };
 
-  const getRangeString = (el: {
-    low: number | null;
-    high: number | null;
-  }): string => {
-    let str = '';
-    if (el.low == null) {
-      str += ' <  ';
-    } else if (el.high == null) {
-      str += ' >  ';
+  const getRangeString = (el: { low: string | number | null; high: string | number | null }): string => {
+    const normalize = (val: string | number | null): string | null => {
+      if (val == null || val === '') return null;
+      return String(val).trim();
+    };
+  
+    const isNumeric = (val: string | number | null): boolean => {
+      if (val == null || val === '') return false;
+      return !isNaN(Number(val));
+    };
+  
+    const formatNumber = (val: string | number): string => {
+      const num = Number(val);
+      return Number.isNaN(num) ? String(val) : String(num); // removes .000
+    };
+  
+    const low = normalize(el.low);
+    const high = normalize(el.high);
+  
+    // Equality check
+    if (low && high) {
+      if (isNumeric(low) && isNumeric(high)) {
+        if (Number(low) === Number(high)) {
+          return formatNumber(low);
+        }
+      } else if (low.toLowerCase() === high.toLowerCase()) {
+        return low;
+      }
     }
-    if (el.low != null) {
-      str += el.low;
-    }
-    if (el.high != null && el.low != null) {
-      str += ' - ' + el.high;
-    } else if (el.high != null) {
-      str += el.high;
-    }
-    // if (el.high == null) {
-    //   str += ' < ';
-    // }
-    return str;
+  
+    // Open-ended ranges
+    if (!low && high) return `< ${high}`;
+    if (!high && low) return `> ${low}`;
+  
+    // Normal range
+    if (low && high) return `${low} - ${high}`;
+  
+    return '';
   };
+  
   const sortByRange = (data: any) => {
     // console.log(data);
     return data.sort((a: any, b: any) => {
