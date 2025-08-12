@@ -40,11 +40,11 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
           <button
             type="button"
             onClick={() => remove(k)}
-            className="absolute top-1 right-1 text-red-400 hover:text-red-600 text-xs"
+            className="absolute top-3 right-3 text-red-400 hover:text-red-600 text-[10px] md:text-xs"
           >
             Remove Range
           </button>
-          <div className="grid grid-cols-2 gap-2 mb-2">
+          <div className="grid grid-cols-2 gap-2 mb-2 mt-7 md:mt-0">
             <div>
               <label
                 htmlFor={`label-${gender}-${nestIndex}-${k}`}
@@ -196,7 +196,7 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
             color: '',
           } as ApiThresholdRange)
         }
-        className="mt-2 text-blue-500 hover:text-blue-700 border border-blue-500 px-2 py-1 rounded-md text-xs"
+        className="mt-2 text-blue-500 hover:text-blue-700 border border-blue-500 px-2 py-1 rounded-md text-[10px] md:text-xs"
       >
         Add Threshold Range
       </button>
