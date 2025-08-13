@@ -85,7 +85,6 @@ export const menus = [
       //   icon: 'sidemenu-menu-icon-Lifestyle',
       //   active: true,
       // },
-
     ],
   },
 
