@@ -50,12 +50,12 @@ export const menus = [
         icon: 'sidemenu-menu-icon-Biomarker',
         active: true,
       },
-      // {
-      //   name: 'Custom Form',
-      //   url: '/forms',
-      //   icon: 'sidemenu-menu-icon-Form',
-      //   active: true,
-      // },
+      {
+        name: 'Custom Form',
+        url: '/forms',
+        icon: 'sidemenu-menu-icon-Form',
+        active: true,
+      },
     ],
   },
   {
@@ -85,6 +85,13 @@ export const menus = [
       //   icon: 'sidemenu-menu-icon-Lifestyle',
       //   active: true,
       // },
+
+    ],
+  },
+
+  {
+    category: 'MANAGE',
+    items: [
       {
         name: 'Setting',
         icon: 'sidemenu-menu-icon-setting',
@@ -93,24 +100,6 @@ export const menus = [
       },
     ],
   },
-
-  // {
-  //   category: 'MANAGE',
-  //   items: [
-  //     {
-  //       name: 'Package',
-  //       url: '/packages',
-  //       icon: 'sidemenu-menu-icon-Package',
-  //       active: true,
-  //     },
-  //     {
-  //       name: 'Staff',
-  //       url: '/staff',
-  //       icon: 'sidemenu-menu-icon-Staff',
-  //       active: true,
-  //     },
-  //   ],
-  // },
   // {
   //   name: 'Knowledge Graph',
   //   icon: 'sidemenu-menu-icon-trend-up',
