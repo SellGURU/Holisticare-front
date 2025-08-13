@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react';
-import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
 // import Checkbox from '../../checkbox';
 // import RangeCard from './RangeCard';
 import MainModal from '../../MainModal';
 // import CustomSelect from '../../CustomSelect';
+import Application from '../../../api/app';
 import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
 import {
-  DoseFormatInfoText,
   DoseInfoText,
   DoseValidationEnglish,
   DoseValidationMetric,
@@ -17,10 +16,10 @@ import {
   MacrosFormatInfoText,
   MacrosInfoText,
   MacrosValidationNumber,
-  ValueFormatInfoText,
   ValueInfoText,
   ValueValidation,
 } from '../../../utils/library-unification';
+import ValidationForms from '../../../utils/ValidationForms';
 import { TextField } from '../../UnitComponents';
 import SelectBoxField from '../../UnitComponents/SelectBoxField';
 import TextAreaField from '../../UnitComponents/TextAreaField';
@@ -52,9 +51,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [title, setTitle] = useState(defalts?.Title);
-  const [dose, setDose] = useState(defalts?.Dose);
+  const [selectedGroup, setSelectedGroup] = useState(defalts?.Category || '');
+  const [title, setTitle] = useState(defalts?.Title || '');
+  const [dose, setDose] = useState(defalts?.Dose || '');
   const [value, setValue] = useState(defalts?.Value || '');
   const [unit, setUnit] = useState(defalts?.Unit || '');
   const [totalMacros, setTotalMacros] = useState({
@@ -106,7 +105,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       [key]: value,
     }));
   };
-  const [instructions, setInstructions] = useState(defalts?.Instruction);
+  const [instructions, setInstructions] = useState(defalts?.Instruction || '');
   const [selectedTimes] = useState<string[]>(defalts ? defalts.Times : []);
   const [selectedLocations, setSelectedLocations] = useState<string[]>(
     defalts ? defalts?.Activity_Location : [],
@@ -172,9 +171,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       }
       setSelectedGroup(defalts.Category || null);
       setTitle(defalts.Title || '');
-      setDose(defalts.Dose || null);
-      setValue(defalts.Value || null);
-      setUnit(defalts.Unit || null);
+      setDose(defalts.Dose || '');
+      setValue(defalts.Value || '');
+      setUnit(defalts.Unit || '');
       setTotalMacros({
         Fats: defalts?.['Total Macros']?.Fats || '',
         Protein: defalts?.['Total Macros']?.Protein || '',
@@ -335,9 +334,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setSelectedDaysMonth([]);
     setSelectedGroup(null);
     setTotalMacros({
-      Fats: null,
-      Protein: null,
-      Carbs: null,
+      Fats: '',
+      Protein: '',
+      Carbs: '',
     });
     setInstructions('');
     // setSelectedTimes([]);
@@ -349,7 +348,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     // setPractitionerComment('');
     setNewNote('');
     setTitle('');
-    setDose(null);
+    setDose('');
     setValue('');
     setUnit('');
     setAddData({
@@ -766,12 +765,22 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   options={groups.map((group) => Object.keys(group)[0])}
                   value={selectedGroup || ''}
                   onChange={(value) => setSelectedGroup(value)}
-                  isValid={!selectedGroup && showValidation}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField(
+                          'Category',
+                          selectedGroup || '',
+                        )
+                      : true
+                  }
                   placeholder="Select Category"
                   disabled={defalts?.Category}
                   validationText={
-                    !selectedGroup && showValidation
-                      ? 'This field is required.'
+                    showValidation
+                      ? ValidationForms.ValidationText(
+                          'Category',
+                          selectedGroup || '',
+                        )
                       : ''
                   }
                   margin={`${defalts?.Category ? 'opacity-50' : 'opacity-100'} mb-4 mt-2`}
@@ -781,9 +790,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   placeholder="Write the action's title..."
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  isValid={!title && showValidation}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField('Title', title)
+                      : true
+                  }
                   validationText={
-                    !title && showValidation ? 'This field is required.' : ''
+                    showValidation
+                      ? ValidationForms.ValidationText('Title', title)
+                      : ''
                   }
                   margin="mb-4"
                 />
@@ -792,10 +807,20 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   placeholder="Write the action's instruction..."
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
-                  isValid={!instructions && showValidation}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField(
+                          'Instruction',
+                          instructions,
+                        )
+                      : true
+                  }
                   validationText={
-                    !instructions && showValidation
-                      ? 'This field is required.'
+                    showValidation
+                      ? ValidationForms.ValidationText(
+                          'Instruction',
+                          instructions,
+                        )
                       : ''
                   }
                   margin="mb-4"
@@ -824,14 +849,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         }));
                       }
                     }}
-                    isValid={(!dose || errors.doseFormat) && showValidation}
+                    isValid={
+                      showValidation
+                        ? ValidationForms.IsvalidField('Dose', dose)
+                        : true
+                    }
                     InfoText={DoseInfoText}
                     validationText={
-                      !dose && showValidation
-                        ? 'This field is required.'
-                        : errors.doseFormat
-                          ? DoseFormatInfoText
-                          : ''
+                      showValidation
+                        ? ValidationForms.ValidationText('Dose', dose)
+                        : ''
                     }
                     margin="mb-4"
                   />
@@ -863,16 +890,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       }
                     }}
                     isValid={
-                      (!value || value.length > LengthValidation) &&
                       showValidation
+                        ? ValidationForms.IsvalidField('Value', value)
+                        : true
                     }
                     InfoText={ValueInfoText}
                     validationText={
-                      !value && showValidation
-                        ? 'This field is required.'
-                        : value.length > LengthValidation
-                          ? ValueFormatInfoText
-                          : ''
+                      showValidation
+                        ? ValidationForms.ValidationText('Value', value)
+                        : ''
                     }
                     margin="mb-4"
                   />
@@ -911,33 +937,57 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       }
                     }}
                     oneIsValid={
-                      (!totalMacros.Carbs && showValidation) ||
-                      totalMacros.Carbs.length > LengthValidation
+                      showValidation
+                        ? ValidationForms.IsvalidField(
+                            'Macros',
+                            totalMacros.Carbs,
+                          )
+                        : true
                     }
                     twoIsValid={
-                      (!totalMacros.Protein && showValidation) ||
-                      totalMacros.Protein.length > LengthValidation
+                      showValidation
+                        ? ValidationForms.IsvalidField(
+                            'Macros',
+                            totalMacros.Protein,
+                          )
+                        : true
                     }
                     threeIsValid={
-                      (!totalMacros.Fats && showValidation) ||
-                      totalMacros.Fats.length > LengthValidation
+                      showValidation
+                        ? ValidationForms.IsvalidField(
+                            'Macros',
+                            totalMacros.Fats,
+                          )
+                        : true
                     }
                     validationText={
-                      (!totalMacros.Carbs && showValidation) ||
-                      (!totalMacros.Protein && showValidation) ||
-                      (!totalMacros.Fats && showValidation)
-                        ? 'These fields are required.'
-                        : totalMacros.Carbs.length > LengthValidation ||
-                            totalMacros.Protein.length > LengthValidation ||
-                            totalMacros.Fats.length > LengthValidation
-                          ? `${
-                              totalMacros.Carbs.length > LengthValidation
-                                ? 'Carbs'
-                                : totalMacros.Protein.length > LengthValidation
-                                  ? 'Protein'
-                                  : 'Fats'
-                            } ${MacrosFormatInfoText}`
-                          : ''
+                      showValidation
+                        ? ValidationForms.ValidationText(
+                            'Macros',
+                            totalMacros.Carbs,
+                          ) ||
+                          ValidationForms.ValidationText(
+                            'Macros',
+                            totalMacros.Protein,
+                          ) ||
+                          ValidationForms.ValidationText(
+                            'Macros',
+                            totalMacros.Fats,
+                          )
+                          ? 'These fields are required.'
+                          : totalMacros.Carbs.length > LengthValidation ||
+                              totalMacros.Protein.length > LengthValidation ||
+                              totalMacros.Fats.length > LengthValidation
+                            ? `${
+                                totalMacros.Carbs.length > LengthValidation
+                                  ? 'Carbs'
+                                  : totalMacros.Protein.length >
+                                      LengthValidation
+                                    ? 'Protein'
+                                    : 'Fats'
+                              } ${MacrosFormatInfoText}`
+                            : ''
+                        : ''
                     }
                     oneLabel="Carbs"
                     twoLabel="Proteins"
