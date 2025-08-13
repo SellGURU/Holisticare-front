@@ -20,6 +20,7 @@ import TextAreaField from '../../UnitComponents/TextAreaField';
 import ThreeTextField from '../../UnitComponents/ThreeTextField';
 import TwoTextField from '../../UnitComponents/TwoTextField';
 import RangeCardLibraryThreePages from './RangeCard';
+import ValidationForms from '../../../utils/ValidationForms';
 
 interface AddModalLibraryTreePagesProps {
   addShowModal: boolean;
@@ -317,8 +318,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 setErrors((prev) => ({ ...prev, instruction: true }));
               }
             }}
-            isValid={errors.instruction}
-            validationText={errors.instruction ? 'This field is required.' : ''}
+            isValid={ValidationForms.IsvalidField("Instructions", addData.instruction)}
+            validationText={ValidationForms.ValidationText("Instructions", addData.instruction)}
           />
 
           {/* Supplement Specific Field */}
