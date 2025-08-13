@@ -318,8 +318,14 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 setErrors((prev) => ({ ...prev, instruction: true }));
               }
             }}
-            isValid={ValidationForms.IsvalidField("Instructions", addData.instruction)}
-            validationText={ValidationForms.ValidationText("Instructions", addData.instruction)}
+            isValid={ValidationForms.IsvalidField(
+              'Instructions',
+              addData.instruction,
+            )}
+            validationText={ValidationForms.ValidationText(
+              'Instructions',
+              addData.instruction,
+            )}
           />
 
           {/* Supplement Specific Field */}
