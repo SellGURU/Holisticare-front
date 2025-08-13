@@ -119,11 +119,11 @@ export const ClientInfo = () => {
                 <img src="/icons/frame.svg" alt="" />
                 Coach
               </div>
-             <div>
-              <TooltipTextAuto maxWidth='150px'>{data['expert']}</TooltipTextAuto>
-             </div>
-            
-               
+              <div>
+                <TooltipTextAuto maxWidth="150px">
+                  {data['expert']}
+                </TooltipTextAuto>
+              </div>
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1">
@@ -131,44 +131,47 @@ export const ClientInfo = () => {
                 Location{' '}
               </div>
               <div>
-              <TooltipTextAuto maxWidth='150px'>{data['Location']}</TooltipTextAuto>
-             </div>
-             
+                <TooltipTextAuto maxWidth="150px">
+                  {data['Location']}
+                </TooltipTextAuto>
+              </div>
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1">
                 <img src="/icons/sms.svg" alt="" />
                 Email{' '}
               </div>
-            
-              <TooltipTextAuto maxWidth='150px'>{data['email']}</TooltipTextAuto>
 
+              <TooltipTextAuto maxWidth="150px">
+                {data['email']}
+              </TooltipTextAuto>
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1">
                 <img src="/icons/call.svg" alt="" />
                 Phone
               </div>
-              <TooltipTextAuto maxWidth='150px'>{data['phone number']}</TooltipTextAuto>
-
+              <TooltipTextAuto maxWidth="150px">
+                {data['phone number']}
+              </TooltipTextAuto>
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1">
                 <img src="/icons/pill.svg" alt="" />
                 Medication
               </div>
-              <TooltipTextAuto maxWidth='150px'>{data['medication']}</TooltipTextAuto>
-
-             
+              <TooltipTextAuto maxWidth="150px">
+                {data['medication']}
+              </TooltipTextAuto>
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1 text-nowrap">
                 <img src="/icons/healtcare.svg" alt="" />
                 Medical Condition
               </div>
-              <TooltipTextAuto maxWidth='150px'>{data['conditions']}</TooltipTextAuto>
-
-            
+              <TooltipTextAuto maxWidth="150px">
+                {data['conditions']}
+              </TooltipTextAuto>
             </div>
           </div>
           <div className="flex flex-col mt-5">
