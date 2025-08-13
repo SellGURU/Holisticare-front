@@ -17,7 +17,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
   options,
   value,
   onChange,
-  isValid,
+  isValid = true,
   validationText,
   margin,
   disabled,
@@ -32,7 +32,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
       <div
         onClick={() => !disabled && setShowSelect(!showSelect)}
         className={`w-full cursor-pointer h-[28px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border mt-1 ${
-          isValid ? 'border-Red' : 'border-Gray-50'
+          !isValid ? 'border-Red' : 'border-Gray-50'
         }`}
       >
         {value ? (

@@ -18,7 +18,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
   placeholder,
   value,
   onChange,
-  isValid,
+  isValid = true,
   validationText,
   margin,
   onKeyDown,
@@ -41,7 +41,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         value={value}
         onChange={onChange}
         className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border ${
-          isValid ? 'border-Red' : 'border-Gray-50'
+          !isValid ? 'border-Red' : 'border-Gray-50'
         } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold resize-none`}
         onKeyDown={onKeyDown}
       />

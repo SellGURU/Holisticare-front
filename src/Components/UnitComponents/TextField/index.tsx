@@ -18,7 +18,7 @@ const TextField: FC<TextFieldProps> = ({
   placeholder,
   onChange,
   value,
-  isValid,
+  isValid = true,
   validationText,
   InfoText,
   margin,
@@ -42,7 +42,7 @@ const TextField: FC<TextFieldProps> = ({
           value={value}
           onChange={onChange}
           className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-            isValid ? 'border-Red' : 'border-Gray-50'
+            !isValid ? 'border-Red' : 'border-Gray-50'
           } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
           disabled={disabled}
         />

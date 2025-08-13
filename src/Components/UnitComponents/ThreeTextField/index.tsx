@@ -84,7 +84,7 @@ const ThreeTextField: FC<ThreeTextFieldProps> = ({
                 onChange={oneOnChange}
                 onPaste={onPaste}
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                  oneIsValid ? 'border-Red' : 'border-Gray-50'
+                  !oneIsValid ? 'border-Red' : 'border-Gray-50'
                 } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
               />
             </div>
@@ -106,7 +106,7 @@ const ThreeTextField: FC<ThreeTextFieldProps> = ({
                 onChange={twoOnChange}
                 onPaste={onPaste}
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                  twoIsValid ? 'border-Red' : 'border-Gray-50'
+                  !twoIsValid ? 'border-Red' : 'border-Gray-50'
                 } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
               />
             </div>
@@ -130,7 +130,7 @@ const ThreeTextField: FC<ThreeTextFieldProps> = ({
                 onChange={threeOnChange}
                 onPaste={onPaste}
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                  threeIsValid ? 'border-Red' : 'border-Gray-50'
+                  !threeIsValid ? 'border-Red' : 'border-Gray-50'
                 } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
               />
             </div>
