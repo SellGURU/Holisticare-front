@@ -286,6 +286,7 @@ const FileHistoryNew = () => {
           });
         }
       })
+      .catch(()=>{})
       .finally(() => {
         setLoadingDelete(false);
       });
