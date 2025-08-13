@@ -55,13 +55,13 @@ const RecentCheckIns: React.FC = () => {
             <div className="w-full h-full">
               {/* Header */}
               <div className="sticky top-0 z-10 bg-[#E9F0F2] text-left text-[10px] rounded-t-2xl text-Text-Primary border-Gray-50 flex">
-                <div className="py-2 pl-2 w-[100px] 2xl:w-[150px] rounded-tl-2xl">
+                <div className="py-2 pl-2 w-[100px] md:w-[150px] rounded-tl-2xl">
                   Client Name
                 </div>
-                <div className="py-2 w-[75px] 2xl:w-[100px] text-center">
+                <div className="py-2 w-[125px] md:w-[100px] text-center">
                   Enroll Date
                 </div>
-                <div className="py-2 px-3 w-[30px] xl:w-[50px] 2xl:w-[95px] text-center rounded-tr-2xl">
+                <div className="py-2 px-3 w-[50px]  md:w-[120px] text-center rounded-tr-2xl">
                   Progress
                 </div>
               </div>
@@ -89,11 +89,11 @@ const RecentCheckIns: React.FC = () => {
                       </TooltipTextAuto>
                     </div>
 
-                    <div className="py-2 w-[75px]  2xl:w-[100px]  text-center text-Text-Secondary text-[10px]">
+                    <div className="py-2 w-[125px]  md:w-[70px] xl:w-[90px] 2xl:w-[100px]  text-center text-Text-Secondary text-[10px]">
                       {formatDate(client['Enroll Date'])}
                     </div>
 
-                    <div className="py-2 w-[30px] xl:w-[50px] 2xl:w-[95px] flex justify-end 2xl:justify-center">
+                    <div className="py-2 w-[60px]  xl:w-[55px] 2xl:w-[75px] flex justify-center xl:justify-end">
                       <CircularProgressBar
                         percentage={client.Progress || 0}
                         startColor="#E742EB"

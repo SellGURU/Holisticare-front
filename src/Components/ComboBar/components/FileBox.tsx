@@ -132,7 +132,7 @@ const FileBox: React.FC<FileBoxProps> = ({
                         className="cursor-pointer w-5 h-5"
                       />
                     )}
-                   
+
                     <img
                       onClick={() => {
                         if (!isDeleted) {
