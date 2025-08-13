@@ -305,7 +305,7 @@ const TaskManager = () => {
             </div>
           </div>
         ) : (
-          <ul className="grid grid-cols-2 pr-1 gap-3 overflow-auto task-manager-content">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 pr-1 gap-3 overflow-auto task-manager-content">
             {tasks.map((task) => (
               <li
                 key={task.task_id}
@@ -317,7 +317,7 @@ const TaskManager = () => {
                   </div>
                 ) : (
                   <>
-                    <div className="w-full flex items-center justify-between">
+                    <div className="w-full flex flex-wrap items-center justify-between">
                       <label
                         className="flex items-center mb-2 cursor-pointer gap-2 "
                         htmlFor={task.title}

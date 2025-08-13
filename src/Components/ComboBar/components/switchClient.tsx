@@ -104,7 +104,7 @@ export const SwitchClient: FC<SwitchClientProps> = ({
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className="flex flex-col gap-[10px] justify-center w-full">
+        <div className="flex flex-col gap-2 justify-center w-full">
           <SearchBox
             isHaveBorder
             onSearch={(search) => setSearchQuery(search)}
