@@ -189,6 +189,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     ).then((res) => {
       setReferenceData(res.data);
+      if (res.data.biomarkers.length == 0) {
+        publish('DetailedAnalysisStatus', { isempty: true });
+      } else {
+        publish('DetailedAnalysisStatus', { isempty: false });
+      }
+      if (
+        res.data.biomarkers.filter((el: any) => el.outofref == true).length > 0
+      ) {
+        publish('NeedsFocusBiomarkerStatus', { isempty: false });
+      } else {
+        publish('NeedsFocusBiomarkerStatus', { isempty: true });
+      }
       // setReferenceData(referencedataMoch);
     });
     Application.getClientSummaryCategoriesShare(
@@ -209,6 +221,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     ).then((res) => {
       setConcerningResult(res.data.table);
+      if (res.data.table.length == 0) {
+        publish('ConcerningResultStatus', { isempty: true });
+      } else {
+        publish('ConcerningResultStatus', { isempty: false });
+      }
       // setConcerningResult(conceringResultData);
     });
     Application.getOverviewtplanShare(
@@ -218,6 +235,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     ).then((res) => {
       setTreatmentPlanData(res.data.details);
+      if (res.data.details.length == 0) {
+        publish('HolisticPlanStatus', { isempty: true });
+      } else {
+        publish('HolisticPlanStatus', { isempty: false });
+      }
     });
     Application.getCaldenderdataShare(
       {
@@ -227,6 +249,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     ).then((res) => {
       // Please don't touch.
       setCalenderData(res.data);
+      if (res.data.length == 0) {
+        publish('ActionPlanStatus', { isempty: true });
+      } else {
+        publish('ActionPlanStatus', { isempty: false });
+      }
     });
   };
   const navigate = useNavigate();

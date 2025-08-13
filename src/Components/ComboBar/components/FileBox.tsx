@@ -120,16 +120,19 @@ const FileBox: React.FC<FileBoxProps> = ({
                   </>
                 ) : (
                   <>
-                    <img
-                      onClick={() => {
-                        if (!isDeleted) {
-                          setIsSureRemoveId(el.file_id);
-                        }
-                      }}
-                      src="/icons/delete-green.svg"
-                      alt=""
-                      className="cursor-pointer w-5 h-5"
-                    />
+                    {isUploded && (
+                      <img
+                        onClick={() => {
+                          if (!isDeleted) {
+                            setIsSureRemoveId(el.file_id);
+                          }
+                        }}
+                        src="/icons/delete-green.svg"
+                        alt=""
+                        className="cursor-pointer w-5 h-5"
+                      />
+                    )}
+
                     <img
                       onClick={() => {
                         if (!isDeleted) {
