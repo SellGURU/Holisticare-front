@@ -8,12 +8,11 @@ import SelectBoxField from '../../../Components/UnitComponents/SelectBoxField';
 import TextAreaField from '../../../Components/UnitComponents/TextAreaField';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import {
-  DoseFormatInfoText,
   DoseInfoText,
   DoseValidationEnglish,
-  DoseValidationMetric,
 } from '../../../utils/library-unification';
 import SvgIcon from '../../../utils/svgIcon';
+import ValidationForms from '../../../utils/ValidationForms';
 // import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
@@ -59,10 +58,6 @@ const EditModal: FC<EditModalProps> = ({
     defalts ? defalts['Practitioner Comments'] : [],
   );
   const [showValidation, setShowValidation] = useState(false);
-  const [errors, setErrors] = useState({
-    dose: false,
-    doseFormat: false,
-  });
   const clearFields = () => {
     formik.resetForm();
     setNewNote('');
@@ -291,15 +286,6 @@ const EditModal: FC<EditModalProps> = ({
     });
   };
 
-  const handleInstructionValidationText = () => {
-    if (newInstruction.length > 400) {
-      return 'You can enter up to 400 characters.';
-    }
-    if (newInstruction.length === 0 && client_versions.length == 0) {
-      return 'This field is required.';
-    }
-    return '';
-  };
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -330,10 +316,20 @@ const EditModal: FC<EditModalProps> = ({
                   formik.setFieldValue('Dose', '');
                 }
               }}
-              isValid={showValidation && Boolean(formik.errors.Category)}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField(
+                      'Category',
+                      formik.values.Category,
+                    )
+                  : true
+              }
               validationText={
-                showValidation && formik.errors.Category
-                  ? String(formik.errors.Category)
+                showValidation
+                  ? ValidationForms.ValidationText(
+                      'Category',
+                      formik.values.Category,
+                    )
                   : ''
               }
               placeholder="Select Group"
@@ -345,10 +341,20 @@ const EditModal: FC<EditModalProps> = ({
               onChange={(e) => {
                 formik.setFieldValue('Recommendation', e.target.value);
               }}
-              isValid={showValidation && Boolean(formik.errors.Recommendation)}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField(
+                      'Title',
+                      formik.values.Recommendation,
+                    )
+                  : true
+              }
               validationText={
-                showValidation && formik.errors.Recommendation
-                  ? String(formik.errors.Recommendation)
+                showValidation
+                  ? ValidationForms.ValidationText(
+                      'Title',
+                      formik.values.Recommendation,
+                    )
                   : ''
               }
               margin="mb-4"
@@ -360,32 +366,19 @@ const EditModal: FC<EditModalProps> = ({
                 const value = e.target.value;
                 const englishOnly = DoseValidationEnglish(value);
                 formik.setFieldValue('Dose', englishOnly);
-
-                const doseRegex = DoseValidationMetric(englishOnly);
-
-                if (englishOnly) {
-                  setErrors({
-                    dose: false,
-                    doseFormat: Boolean(!doseRegex),
-                  });
-                } else {
-                  setErrors({
-                    dose: true,
-                    doseFormat: false,
-                  });
-                }
-                formik.setFieldValue('Dose', englishOnly);
               }}
               disabled={!selectedGroupDose}
               placeholder="Write Dose"
               margin={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
-              isValid={(errors.dose || errors.doseFormat) && selectedGroupDose}
+              isValid={
+                showValidation && selectedGroupDose
+                  ? ValidationForms.IsvalidField('Dose', formik.values.Dose)
+                  : true
+              }
               validationText={
-                errors.dose && selectedGroupDose
-                  ? 'This field is required.'
-                  : errors.doseFormat
-                    ? DoseFormatInfoText
-                    : ''
+                showValidation && selectedGroupDose
+                  ? ValidationForms.ValidationText('Dose', formik.values.Dose)
+                  : ''
               }
               InfoText={DoseInfoText}
             />
@@ -400,15 +393,16 @@ const EditModal: FC<EditModalProps> = ({
               }}
               onKeyDown={handleInstructionKeyDown}
               isValid={
-                showValidation &&
-                (newInstruction.length > 400 ||
-                  (newInstruction.length === 0 && client_versions.length == 0))
+                showValidation
+                  ? ValidationForms.IsvalidField('Instruction', newInstruction)
+                  : true
               }
               validationText={
-                showValidation &&
-                (newInstruction.length > 400 ||
-                  (newInstruction.length === 0 && client_versions.length == 0))
-                  ? handleInstructionValidationText()
+                showValidation
+                  ? ValidationForms.ValidationText(
+                      'Instruction',
+                      newInstruction,
+                    )
                   : ''
               }
               InfoText="After writing each instruction, press the Enter key to save it and be able to add another instruction."
@@ -464,10 +458,14 @@ const EditModal: FC<EditModalProps> = ({
                 setNewNote(e.target.value);
               }}
               onKeyDown={handleNoteKeyDown}
-              isValid={showValidation && newNote.length > 400}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField('Note', newNote)
+                  : true
+              }
               validationText={
-                showValidation && newNote.length > 400
-                  ? 'You can enter up to 400 characters.'
+                showValidation
+                  ? ValidationForms.ValidationText('Note', newNote)
                   : ''
               }
               InfoText="After writing each note, press the Enter key to save it and be able to add another note."
