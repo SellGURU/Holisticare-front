@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
 import {
-  DoseFormatInfoText,
   DoseInfoText,
   DoseValidationEnglish,
   DoseValidationMetric,
@@ -9,10 +8,10 @@ import {
   MacrosFormatInfoText,
   MacrosInfoText,
   MacrosValidationNumber,
-  ValueFormatInfoText,
   ValueInfoText,
   ValueValidation,
 } from '../../../utils/library-unification';
+import ValidationForms from '../../../utils/ValidationForms';
 import MainModal from '../../MainModal';
 import SpinnerLoader from '../../SpinnerLoader';
 import { TextField } from '../../UnitComponents';
@@ -20,7 +19,6 @@ import TextAreaField from '../../UnitComponents/TextAreaField';
 import ThreeTextField from '../../UnitComponents/ThreeTextField';
 import TwoTextField from '../../UnitComponents/TwoTextField';
 import RangeCardLibraryThreePages from './RangeCard';
-import ValidationForms from '../../../utils/ValidationForms';
 
 interface AddModalLibraryTreePagesProps {
   addShowModal: boolean;
@@ -52,6 +50,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     instruction: '',
     clinical_guidance: '',
   });
+  const [showValidation, setShowValidation] = useState(false);
   const updateAddData = (key: keyof typeof addData, value: any) => {
     setAddData((prevTheme) => ({
       ...prevTheme,
@@ -236,7 +235,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         (typeof error === 'object' && Object.values(error).some(Boolean)),
     );
   };
-  const [showValidation, setShowValidation] = useState(false);
   useEffect(() => {
     if (clearData) {
       clear();
@@ -272,8 +270,16 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 setErrors((prev) => ({ ...prev, title: true }));
               }
             }}
-            isValid={errors.title}
-            validationText={errors.title ? 'This field is required.' : ''}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField('Title', addData.title)
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText('Title', addData.title)
+                : ''
+            }
           />
 
           {/* Description Field */}
@@ -312,20 +318,23 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
             value={addData.instruction}
             onChange={(e) => {
               updateAddData('instruction', e.target.value);
-              if (e.target.value) {
-                setErrors((prev) => ({ ...prev, instruction: false }));
-              } else {
-                setErrors((prev) => ({ ...prev, instruction: true }));
-              }
             }}
-            isValid={ValidationForms.IsvalidField(
-              'Instructions',
-              addData.instruction,
-            )}
-            validationText={ValidationForms.ValidationText(
-              'Instructions',
-              addData.instruction,
-            )}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField(
+                    'Instruction',
+                    addData.instruction,
+                  )
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText(
+                    'Instruction',
+                    addData.instruction,
+                  )
+                : ''
+            }
           />
 
           {/* Supplement Specific Field */}
@@ -338,30 +347,16 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 const value = e.target.value;
                 const englishOnly = DoseValidationEnglish(value);
                 setDose(englishOnly);
-
-                const doseRegex = DoseValidationMetric(englishOnly);
-
-                if (englishOnly) {
-                  setErrors((prev) => ({
-                    ...prev,
-                    dose: false,
-                    doseFormat: Boolean(!doseRegex),
-                  }));
-                } else {
-                  setErrors((prev) => ({
-                    ...prev,
-                    dose: true,
-                    doseFormat: false,
-                  }));
-                }
               }}
-              isValid={errors.dose || errors.doseFormat}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField('Dose', dose)
+                  : true
+              }
               validationText={
-                errors.dose
-                  ? 'This field is required.'
-                  : errors.doseFormat
-                    ? DoseFormatInfoText
-                    : ''
+                showValidation
+                  ? ValidationForms.ValidationText('Dose', dose)
+                  : ''
               }
               InfoText={DoseInfoText}
             />
@@ -375,13 +370,15 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               twoPlaceholder="Enter unit"
               oneValue={value}
               twoValue={Unit}
-              isValid={errors.value || value.length > LengthValidation}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField('Value', value)
+                  : true
+              }
               validationText={
-                errors.value
-                  ? 'This field is required.'
-                  : value.length > LengthValidation
-                    ? ValueFormatInfoText
-                    : ''
+                showValidation
+                  ? ValidationForms.ValidationText('Value', value)
+                  : ''
               }
               InfoText={ValueInfoText}
               oneOnChange={(e) => {
@@ -454,32 +451,44 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 }
               }}
               oneIsValid={
-                errors.macros.Carbs ||
-                totalMacros.Carbs.length > LengthValidation
+                showValidation
+                  ? ValidationForms.IsvalidField('Macros', totalMacros.Carbs)
+                  : true
               }
               twoIsValid={
-                errors.macros.Protein ||
-                totalMacros.Protein.length > LengthValidation
+                showValidation
+                  ? ValidationForms.IsvalidField('Macros', totalMacros.Protein)
+                  : true
               }
               threeIsValid={
-                errors.macros.Fats || totalMacros.Fats.length > LengthValidation
+                showValidation
+                  ? ValidationForms.IsvalidField('Macros', totalMacros.Fats)
+                  : true
               }
               validationText={
-                errors.macros.Carbs ||
-                errors.macros.Protein ||
-                errors.macros.Fats
-                  ? 'These fields are required.'
-                  : totalMacros.Carbs.length > LengthValidation ||
-                      totalMacros.Protein.length > LengthValidation ||
-                      totalMacros.Fats.length > LengthValidation
-                    ? `${
-                        totalMacros.Carbs.length > LengthValidation
-                          ? 'Carbs'
-                          : totalMacros.Protein.length > LengthValidation
-                            ? 'Protein'
-                            : 'Fats'
-                      } ${MacrosFormatInfoText}`
-                    : ''
+                showValidation
+                  ? ValidationForms.ValidationText(
+                      'Macros',
+                      totalMacros.Carbs,
+                    ) ||
+                    ValidationForms.ValidationText(
+                      'Macros',
+                      totalMacros.Protein,
+                    ) ||
+                    ValidationForms.ValidationText('Macros', totalMacros.Fats)
+                    ? 'These fields are required.'
+                    : totalMacros.Carbs.length > LengthValidation ||
+                        totalMacros.Protein.length > LengthValidation ||
+                        totalMacros.Fats.length > LengthValidation
+                      ? `${
+                          totalMacros.Carbs.length > LengthValidation
+                            ? 'Carbs'
+                            : totalMacros.Protein.length > LengthValidation
+                              ? 'Protein'
+                              : 'Fats'
+                        } ${MacrosFormatInfoText}`
+                      : ''
+                  : ''
               }
               oneLabel="Carbs"
               twoLabel="Proteins"
