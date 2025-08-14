@@ -200,11 +200,11 @@ const addHolisticPlanTreatmentplanData = (TreatMentPlanData: Array<any>) => {
 };
 
 const addConcerningResultRowTable = (el: any) => {
-  checkPageCanRender(65);
+  checkPageCanRender(el.Result.length > 21 ? 77 : 65);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'ConcerningResultRowTable',
-    height: 65,
+    height: el.Result.length > 21 ? 77 : 65,
     content: el,
   });
 };
