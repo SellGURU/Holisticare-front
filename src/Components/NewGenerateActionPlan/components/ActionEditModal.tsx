@@ -16,15 +16,15 @@ import {
   MacrosFormatInfoText,
   MacrosInfoText,
   MacrosValidationNumber,
-  ValueInfoText,
-  ValueValidation,
+  // ValueInfoText,
+  // ValueValidation,
 } from '../../../utils/library-unification';
 import ValidationForms from '../../../utils/ValidationForms';
 import { TextField } from '../../UnitComponents';
 import SelectBoxField from '../../UnitComponents/SelectBoxField';
 import TextAreaField from '../../UnitComponents/TextAreaField';
 import ThreeTextField from '../../UnitComponents/ThreeTextField';
-import TwoTextField from '../../UnitComponents/TwoTextField';
+// import TwoTextField from '../../UnitComponents/TwoTextField';
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -864,44 +864,45 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   />
                 )}
                 {selectedGroup === 'Lifestyle' && (
-                  <TwoTextField
-                    label="Value"
-                    onePlaceholder="Enter value amount"
-                    twoPlaceholder="Enter unit"
-                    oneValue={value}
-                    twoValue={unit}
-                    oneOnChange={(e) => {
-                      const value = e.target.value;
-                      if (ValueValidation(value)) {
-                        setValue(value === '' ? '' : value);
-                      }
-                    }}
-                    twoOnChange={(e) => {
-                      const onlyLetters = e.target.value.replace(
-                        /[^a-zA-Z]/g,
-                        '',
-                      );
-                      setUnit(onlyLetters);
-                    }}
-                    onPaste={(e) => {
-                      const pastedData = e.clipboardData.getData('text');
-                      if (!ValueValidation(pastedData)) {
-                        e.preventDefault();
-                      }
-                    }}
-                    isValid={
-                      showValidation
-                        ? ValidationForms.IsvalidField('Value', value)
-                        : true
-                    }
-                    InfoText={ValueInfoText}
-                    validationText={
-                      showValidation
-                        ? ValidationForms.ValidationText('Value', value)
-                        : ''
-                    }
-                    margin="mb-4"
-                  />
+                  <></>
+                  // <TwoTextField
+                  //   label="Value"
+                  //   // onePlaceholder="Enter value amount"
+                  //   twoPlaceholder="Enter unit"
+                  //   oneValue={value}
+                  //   twoValue={unit}
+                  //   oneOnChange={(e) => {
+                  //     const value = e.target.value;
+                  //     if (ValueValidation(value)) {
+                  //       setValue(value === '' ? '' : value);
+                  //     }
+                  //   }}
+                  //   twoOnChange={(e) => {
+                  //     const onlyLetters = e.target.value.replace(
+                  //       /[^a-zA-Z]/g,
+                  //       '',
+                  //     );
+                  //     setUnit(onlyLetters);
+                  //   }}
+                  //   onPaste={(e) => {
+                  //     const pastedData = e.clipboardData.getData('text');
+                  //     if (!ValueValidation(pastedData)) {
+                  //       e.preventDefault();
+                  //     }
+                  //   }}
+                  //   isValid={
+                  //     showValidation
+                  //       ? ValidationForms.IsvalidField('Value', value)
+                  //       : true
+                  //   }
+                  //   InfoText={ValueInfoText}
+                  //   validationText={
+                  //     showValidation
+                  //       ? ValidationForms.ValidationText('Value', value)
+                  //       : ''
+                  //   }
+                  //   margin="mb-4"
+                  // />
                 )}
                 {selectedGroup === 'Diet' && (
                   <ThreeTextField

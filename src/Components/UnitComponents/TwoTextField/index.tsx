@@ -1,29 +1,33 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from 'react';
 import { Tooltip } from 'react-tooltip';
 
-interface TwoTextFieldProps {
+interface InputBoxProps {
+  placeholder: string;
+  value: string;
+  mode: 'numeric' | 'text';
+  pattern: string;
+  label?: string;
+  unit?: string;
+}
+
+interface MultiTextFieldProps {
   label: string;
-  onePlaceholder: string;
-  twoPlaceholder: string;
-  oneValue: string;
-  twoValue: string;
+  inputs: Array<InputBoxProps>;
   isValid: boolean;
   validationText: string;
-  oneOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  twoOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  // oneOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  // twoOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
   InfoText?: string;
   margin?: string;
+  onchanges: (e:any) => void;
 }
 
-const TwoTextField: FC<TwoTextFieldProps> = ({
+const MultiTextField: FC<MultiTextFieldProps> = ({
   label,
-  onePlaceholder,
-  twoPlaceholder,
-  oneOnChange,
-  twoOnChange,
-  oneValue,
-  twoValue,
+  inputs,
+  onchanges,
   isValid = true,
   validationText,
   onPaste,
@@ -43,28 +47,53 @@ const TwoTextField: FC<TwoTextFieldProps> = ({
             />
           )}
         </div>
-        <div className="flex w-full gap-3">
-          <input
-            placeholder={onePlaceholder}
-            value={oneValue}
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            onChange={oneOnChange}
-            onPaste={onPaste}
-            className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-              !isValid ? 'border-Red' : 'border-Gray-50'
-            } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
-          />
+        <div className="flex w-full justify-between gap-3">
+          {inputs.map((el,index) => {
+            return (
+              <div className='w-full'>
+                {el.label && (
+                  <div className="flex items-center gap-1">
+                    <div className="text-[10px] font-medium text-Text-Primary">
+                      {el.label}
+                    </div>
+                    <div className="text-[10px] text-Text-Quadruple">{el.unit}</div>
+                  </div>
+                )}
+                <input
+                  placeholder={el.placeholder}
+                  value={el.value}
+                  type="text"
+                  inputMode={el.mode}
+                  // pattern="[0-9]*"
+                  pattern={el.pattern}
+                  onChange={(e) => {
+                    onchanges(
+                      inputs.map((input,inde) => {
+                        if (inde  == index) {
+                          return { ...input, value: e.target.value };
+                        }
+                        return input;
+                      })
+                    )
+                  }}
+                  onPaste={onPaste}
+                  className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
+                    !isValid ? 'border-Red' : 'border-Gray-50'
+                  } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
+                />
+              </div>
+            );
+          })}
 
-          <input
+
+          {/* <input
             placeholder={twoPlaceholder}
             value={twoValue}
             type="text"
             onChange={twoOnChange}
             className={`w-full h-[28px] rounded-[16px] py-1 px-3 border  border-Gray-50
                    bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
-          />
+          /> */}
         </div>
         {validationText && (
           <div className="text-Red text-[10px]">{validationText}</div>
@@ -86,4 +115,4 @@ const TwoTextField: FC<TwoTextFieldProps> = ({
   );
 };
 
-export default TwoTextField;
+export default MultiTextField;

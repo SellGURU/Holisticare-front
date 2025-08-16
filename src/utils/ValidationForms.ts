@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   DoseFormatInfoText,
   DoseValidationMetric,
   LengthValidation,
+  MacrosFormatInfoText,
   ValueFormatInfoText,
 } from './library-unification';
 
@@ -13,9 +15,10 @@ type ValidationField =
   | 'Title'
   | 'Category'
   | 'Note'
-  | '';
+  | 'Score'
+  |'';
 class ValidationForms {
-  public static IsvalidField(name: ValidationField, value: string) {
+  public static IsvalidField(name: ValidationField, value: any) {
     switch (name) {
       case 'Instruction':
         return this.validationInstructions(value);
@@ -31,11 +34,13 @@ class ValidationForms {
         return this.validationCategory(value);
       case 'Note':
         return this.validationNote(value);
+      case 'Score':
+        return this.validateScore(value);        
       default:
         return false;
     }
   }
-  public static ValidationText(name: ValidationField, value: string) {
+  public static ValidationText(name: ValidationField, value: any) {
     switch (name) {
       case 'Instruction':
         return this.validationInstructionsText(value);
@@ -49,8 +54,10 @@ class ValidationForms {
         return this.validationTitleText(value);
       case 'Category':
         return this.validationCategoryText(value);
-      case 'Note':
-        return this.validationNoteText(value);
+        case 'Note':
+          return this.validationNoteText(value);
+        case 'Score':
+          return this.validationScoreText(value);          
       default:
         return '';
     }
@@ -112,17 +119,19 @@ class ValidationForms {
     }
     return '';
   }
-  private static validationMacros(value: string) {
-    if (value.length == 0) {
+  private static validationMacros(value: any) {
+    if (value.Carbs.length == 0 || value.Protein.length == 0 || value.Fats.length == 0) {
       return false;
-    } else if (value.length > LengthValidation) {
+    } else if (value.Carbs.length > LengthValidation || value.Protein.length > LengthValidation || value.Fats.length > LengthValidation) {
       return false;
     }
     return true;
   }
-  private static validationMacrosText(value: string) {
-    if (value.length == 0) {
+  private static validationMacrosText(value: any) {
+    if (value.Carbs.length == 0 || value.Protein.length == 0 || value.Fats.length == 0) {
       return 'These fields are required.';
+    } else if (value.Carbs.length > LengthValidation || value.Protein.length > LengthValidation || value.Fats.length > LengthValidation) {
+      return MacrosFormatInfoText;
     }
     return '';
   }
@@ -161,6 +170,18 @@ class ValidationForms {
       return 'You can enter up to 400 characters.';
     }
     return '';
+  }
+  private static validationScoreText(value: string) {
+    if (value.length == 0 || Number(value) == 0) {
+      return 'This field is required.';
+    }
+    return '';
+  }  
+  private static validateScore(value: string) {
+    if (value.length == 0 || Number(value) == 0) {
+      return false;
+    }
+    return true;
   }
 }
 

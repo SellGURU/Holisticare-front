@@ -14,11 +14,8 @@ import {
 import ValidationForms from '../../../utils/ValidationForms';
 import MainModal from '../../MainModal';
 import SpinnerLoader from '../../SpinnerLoader';
-import { TextField } from '../../UnitComponents';
-import TextAreaField from '../../UnitComponents/TextAreaField';
-import ThreeTextField from '../../UnitComponents/ThreeTextField';
-import TwoTextField from '../../UnitComponents/TwoTextField';
-import RangeCardLibraryThreePages from './RangeCard';
+import { TextField, TextAreaField, ThreeTextField, MultiTextField } from '../../UnitComponents';
+// import RangeCardLibraryThreePages from './RangeCard';
 
 interface AddModalLibraryTreePagesProps {
   addShowModal: boolean;
@@ -185,7 +182,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     });
   };
 
-  const [errors, setErrors] = useState({
+  const [, setErrors] = useState({
     title: false,
     // description: false,
     instruction: false,
@@ -364,12 +361,19 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 
           {/* Lifestyle Specific Field */}
           {pageType === 'Lifestyle' && (
-            <TwoTextField
+            <MultiTextField
               label="Value"
-              onePlaceholder="Enter value amount"
-              twoPlaceholder="Enter unit"
-              oneValue={value}
-              twoValue={Unit}
+              inputs={[
+                {mode:'numeric',pattern:'[0-9]*',placeholder:'Enter value amount',value:value},
+                {mode:'text',pattern:'[a-zA-Z]*',placeholder:'Enter unit',value:Unit},
+              ]}
+              onchanges={(e) => {
+                console.log(e);
+              }}
+              // onePlaceholder="Enter value amount"
+              // twoPlaceholder="Enter unit"
+              // oneValue={value}
+              // twoValue={Unit}
               isValid={
                 showValidation
                   ? ValidationForms.IsvalidField('Value', value)
@@ -381,26 +385,26 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   : ''
               }
               InfoText={ValueInfoText}
-              oneOnChange={(e) => {
-                const value = e.target.value;
-                if (ValueValidation(value)) {
-                  setValue(value === '' ? '' : value);
-                  setErrors((prev) => ({
-                    ...prev,
-                    value: value === '' ? true : false,
-                  }));
-                }
-              }}
+              // oneOnChange={(e) => {
+              //   const value = e.target.value;
+              //   if (ValueValidation(value)) {
+              //     setValue(value === '' ? '' : value);
+              //     setErrors((prev) => ({
+              //       ...prev,
+              //       value: value === '' ? true : false,
+              //     }));
+              //   }
+              // }}
               onPaste={(e) => {
                 const pastedData = e.clipboardData.getData('text');
                 if (!ValueValidation(pastedData)) {
                   e.preventDefault();
                 }
               }}
-              twoOnChange={(e) => {
-                const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, '');
-                setUnit(onlyLetters);
-              }}
+              // twoOnChange={(e) => {
+              //   const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, '');
+              //   setUnit(onlyLetters);
+              // }}
             />
           )}
 
@@ -503,13 +507,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
             <div className="text-xs font-medium text-Text-Primary">
               Priority Weight
             </div>
-            <RangeCardLibraryThreePages
+            {/* <RangeCardLibraryThreePages
               value={addData.score}
               changeValue={updateAddData}
               showValidation={showValidation}
               error={errors.score}
               required={true}
-            />
+            /> */}
           </div>
           {/* Clinical Guidance Field */}
           <TextAreaField
