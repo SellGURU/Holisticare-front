@@ -14,7 +14,12 @@ import {
 import ValidationForms from '../../../utils/ValidationForms';
 import MainModal from '../../MainModal';
 import SpinnerLoader from '../../SpinnerLoader';
-import { TextField, TextAreaField, ThreeTextField, MultiTextField } from '../../UnitComponents';
+import {
+  TextField,
+  TextAreaField,
+  ThreeTextField,
+  MultiTextField,
+} from '../../UnitComponents';
 // import RangeCardLibraryThreePages from './RangeCard';
 
 interface AddModalLibraryTreePagesProps {
@@ -364,8 +369,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
             <MultiTextField
               label="Value"
               inputs={[
-                {mode:'numeric',pattern:'[0-9]*',placeholder:'Enter value amount',value:value},
-                {mode:'text',pattern:'[a-zA-Z]*',placeholder:'Enter unit',value:Unit},
+                {
+                  mode: 'numeric',
+                  pattern: '[0-9]*',
+                  placeholder: 'Enter value amount',
+                  value: value,
+                },
+                {
+                  mode: 'text',
+                  pattern: '[a-zA-Z]*',
+                  placeholder: 'Enter unit',
+                  value: Unit,
+                },
               ]}
               onchanges={(e) => {
                 console.log(e);

@@ -4,4 +4,10 @@ import TextAreaField from './TextAreaField';
 import ThreeTextField from './ThreeTextField';
 import MultiTextField from './TwoTextField';
 
-export { TextField, SelectBoxField, TextAreaField, ThreeTextField, MultiTextField };
+export {
+  TextField,
+  SelectBoxField,
+  TextAreaField,
+  ThreeTextField,
+  MultiTextField,
+};

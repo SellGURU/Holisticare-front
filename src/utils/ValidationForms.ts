@@ -16,7 +16,7 @@ type ValidationField =
   | 'Category'
   | 'Note'
   | 'Score'
-  |'';
+  | '';
 class ValidationForms {
   public static IsvalidField(name: ValidationField, value: any) {
     switch (name) {
@@ -35,7 +35,7 @@ class ValidationForms {
       case 'Note':
         return this.validationNote(value);
       case 'Score':
-        return this.validateScore(value);        
+        return this.validateScore(value);
       default:
         return false;
     }
@@ -54,10 +54,10 @@ class ValidationForms {
         return this.validationTitleText(value);
       case 'Category':
         return this.validationCategoryText(value);
-        case 'Note':
-          return this.validationNoteText(value);
-        case 'Score':
-          return this.validationScoreText(value);          
+      case 'Note':
+        return this.validationNoteText(value);
+      case 'Score':
+        return this.validationScoreText(value);
       default:
         return '';
     }
@@ -120,17 +120,33 @@ class ValidationForms {
     return '';
   }
   private static validationMacros(value: any) {
-    if (value.Carbs.length == 0 || value.Protein.length == 0 || value.Fats.length == 0) {
+    if (
+      value.Carbs.length == 0 ||
+      value.Protein.length == 0 ||
+      value.Fats.length == 0
+    ) {
       return false;
-    } else if (value.Carbs.length > LengthValidation || value.Protein.length > LengthValidation || value.Fats.length > LengthValidation) {
+    } else if (
+      value.Carbs.length > LengthValidation ||
+      value.Protein.length > LengthValidation ||
+      value.Fats.length > LengthValidation
+    ) {
       return false;
     }
     return true;
   }
   private static validationMacrosText(value: any) {
-    if (value.Carbs.length == 0 || value.Protein.length == 0 || value.Fats.length == 0) {
+    if (
+      value.Carbs.length == 0 ||
+      value.Protein.length == 0 ||
+      value.Fats.length == 0
+    ) {
       return 'These fields are required.';
-    } else if (value.Carbs.length > LengthValidation || value.Protein.length > LengthValidation || value.Fats.length > LengthValidation) {
+    } else if (
+      value.Carbs.length > LengthValidation ||
+      value.Protein.length > LengthValidation ||
+      value.Fats.length > LengthValidation
+    ) {
       return MacrosFormatInfoText;
     }
     return '';
@@ -176,7 +192,7 @@ class ValidationForms {
       return 'This field is required.';
     }
     return '';
-  }  
+  }
   private static validateScore(value: string) {
     if (value.length == 0 || Number(value) == 0) {
       return false;

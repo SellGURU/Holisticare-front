@@ -12,7 +12,7 @@ const RangeCardLibraryThreePages: React.FC<RangeCardProps> = ({
   // changeValue,
   // showValidation = false,
   onChange,
-  isValid ,
+  isValid,
   validationText,
 }) => {
   // const [val, setVal] = useState(value);
@@ -56,12 +56,9 @@ const RangeCardLibraryThreePages: React.FC<RangeCardProps> = ({
               {index}
             </div>
           ))}
-
         </div>
       </div>
-      { !isValid && (
-        <div className="text-Red text-[10px]">{validationText}</div>
-      )}
+      {!isValid && <div className="text-Red text-[10px]">{validationText}</div>}
     </div>
   );
 };

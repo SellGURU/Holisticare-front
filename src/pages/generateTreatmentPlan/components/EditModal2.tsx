@@ -1,8 +1,5 @@
 const EditModal2 = () => {
-  return (
-    <>
-    </>
-  )
+  return <></>;
 };
 
 export default EditModal2;

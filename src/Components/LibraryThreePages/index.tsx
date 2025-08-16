@@ -272,17 +272,18 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
           )}
         </>
       )}
-      <AddModalLibraryTreePages 
-      onSubmit={onSave} 
-      loadingCall={loadingCall} 
-      pageType={pageType} 
-      mode={selectedRow ? 'edit' : 'add'} 
-      isOpen={addShowModal} 
-      editData={selectedRow}
-      onClose={() => {
-        handleCloseModal()
-        setSelectedRow(null)
-        }} />
+      <AddModalLibraryTreePages
+        onSubmit={onSave}
+        loadingCall={loadingCall}
+        pageType={pageType}
+        mode={selectedRow ? 'edit' : 'add'}
+        isOpen={addShowModal}
+        editData={selectedRow}
+        onClose={() => {
+          handleCloseModal();
+          setSelectedRow(null);
+        }}
+      />
       {/* <AddModalLibraryTreePages
         addShowModal={addShowModal}
         handleCloseModal={handleCloseModal}

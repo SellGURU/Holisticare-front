@@ -21,7 +21,7 @@ interface MultiTextFieldProps {
   onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
   InfoText?: string;
   margin?: string;
-  onchanges: (e:any) => void;
+  onchanges: (e: any) => void;
 }
 
 const MultiTextField: FC<MultiTextFieldProps> = ({
@@ -48,15 +48,17 @@ const MultiTextField: FC<MultiTextFieldProps> = ({
           )}
         </div>
         <div className="flex w-full justify-between gap-3">
-          {inputs.map((el,index) => {
+          {inputs.map((el, index) => {
             return (
-              <div className='w-full'>
+              <div className="w-full">
                 {el.label && (
                   <div className="flex items-center gap-1">
                     <div className="text-[10px] font-medium text-Text-Primary">
                       {el.label}
                     </div>
-                    <div className="text-[10px] text-Text-Quadruple">{el.unit}</div>
+                    <div className="text-[10px] text-Text-Quadruple">
+                      {el.unit}
+                    </div>
                   </div>
                 )}
                 <input
@@ -68,13 +70,13 @@ const MultiTextField: FC<MultiTextFieldProps> = ({
                   pattern={el.pattern}
                   onChange={(e) => {
                     onchanges(
-                      inputs.map((input,inde) => {
-                        if (inde  == index) {
+                      inputs.map((input, inde) => {
+                        if (inde == index) {
                           return { ...input, value: e.target.value };
                         }
                         return input;
-                      })
-                    )
+                      }),
+                    );
                   }}
                   onPaste={onPaste}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
@@ -84,7 +86,6 @@ const MultiTextField: FC<MultiTextFieldProps> = ({
               </div>
             );
           })}
-
 
           {/* <input
             placeholder={twoPlaceholder}
