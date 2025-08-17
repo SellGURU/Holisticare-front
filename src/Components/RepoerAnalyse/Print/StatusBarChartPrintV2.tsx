@@ -194,7 +194,18 @@ const StatusBarChartPrintV2 = ({
                 style={{
                   color: '#005f73 ',
                   fontSize: '8px',
-                  top: '-32px',
+                  top: '-35px',
+                  left: '-4px',
+                }}
+                className={`absolute w-full px-1  flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]`}
+              >
+                {el.label}
+              </div>
+              <div
+                style={{
+                  color: '#005f73 ',
+                  fontSize: '8px',
+                  top: '-20px',
                   left: '-4px',
                 }}
                 className="absolute w-full px-1 text-Primary-DeepTeal flex flex-col items-center justify-center left-[-4px] top-[-35px] opacity-90 text-[10px] break-words text-ellipsis"
@@ -209,15 +220,11 @@ const StatusBarChartPrintV2 = ({
                     textAlign: 'center',
                   }}
                 >
-                  {el.label}
-                  {el.label !== '' && el.label.length > 40 && (
-                    <>{getRangeString(el)}</>
-                  )}
-                </span>
-                {el.label !== '' && el.label.length <= 40 && (
+                  {el.label != '' && <>(</>}
                   <>{getRangeString(el)}</>
-                )}
-                {/* </TooltipText> */}
+
+                  {el.label != '' && <>)</>}
+                </span>
               </div>
 
               {(() => {
