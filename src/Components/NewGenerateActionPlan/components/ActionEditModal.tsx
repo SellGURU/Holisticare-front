@@ -1,30 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react';
-import useModalAutoClose from '../../../hooks/UseModalAutoClose';
-import SvgIcon from '../../../utils/svgIcon';
-// import Checkbox from '../../checkbox';
-// import RangeCard from './RangeCard';
-import MainModal from '../../MainModal';
-// import CustomSelect from '../../CustomSelect';
 import Application from '../../../api/app';
+import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
 import {
   DoseInfoText,
   DoseValidationEnglish,
-  DoseValidationMetric,
-  LengthValidation,
-  MacrosFormatInfoText,
-  MacrosInfoText,
   MacrosValidationNumber,
-  // ValueInfoText,
-  // ValueValidation,
+  NotesInfoText,
+  ValueInfoText,
+  ValueValidation,
 } from '../../../utils/library-unification';
+import SvgIcon from '../../../utils/svgIcon';
 import ValidationForms from '../../../utils/ValidationForms';
-import { TextField } from '../../UnitComponents';
+import MainModal from '../../MainModal';
+import { MultiTextField, TextField } from '../../UnitComponents';
 import SelectBoxField from '../../UnitComponents/SelectBoxField';
 import TextAreaField from '../../UnitComponents/TextAreaField';
-import ThreeTextField from '../../UnitComponents/ThreeTextField';
-// import TwoTextField from '../../UnitComponents/TwoTextField';
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -62,27 +54,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     Carbs: defalts?.['Total Macros']?.Carbs || '',
   });
   const [showValidation, setShowValidation] = useState(false);
-  const [errors, setErrors] = useState({
-    title: '',
-    instruction: '',
-    dose: false,
-    value: '',
-    macros: '',
-    category: '',
-    frequency: '',
-    clientNotes: '',
-    doseFormat: false,
-  });
-  // const [touchedFields, setTouchedFields] = useState({
-  //   title: false,
-  //   instruction: false,
-  //   dose: false,
-  //   value: false,
-  //   macros: false,
-  //   category: false,
-  //   frequency: false,
-  //   clientNotes: false,
-  // });
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -97,7 +68,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [groups, setGroups] = useState<any[]>([]);
 
   const [newNote, setNewNote] = useState('');
-  const [noteError, setNoteError] = useState('');
 
   const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
     setTotalMacros((prevTheme) => ({
@@ -284,32 +254,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    if (value.length <= 400) {
-      setNewNote(value);
-      setNoteError('');
-      setErrors((prev) => ({
-        ...prev,
-        clientNotes: '',
-      }));
-    } else {
-      setNewNote(value.slice(0, 400));
-      setNoteError('You can enter up to 400 characters');
-      setErrors((prev) => ({
-        ...prev,
-        clientNotes: 'You can enter up to 400 characters',
-      }));
-    }
-  };
-
   const handleNoteKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (newNote.trim() && !noteError) {
+      if (newNote.trim() && newNote.slice(0, 400)) {
         setNotes([...notes, newNote]);
         setNewNote('');
-        setNoteError('');
       }
     }
   };
@@ -362,17 +312,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setSectionList([]);
     setShowValidation(false);
     setShowExerciseValidation(false);
-    setErrors({
-      title: '',
-      instruction: '',
-      dose: false,
-      value: '',
-      macros: '',
-      category: '',
-      frequency: '',
-      clientNotes: '',
-      doseFormat: false,
-    });
   };
 
   const handleApplyClick = () => {
@@ -385,10 +324,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
     // Category specific validations
     if (selectedGroup === 'Supplement' && !dose) {
-      setErrors((prev) => ({
-        ...prev,
-        dose: true,
-      }));
       return;
     }
     if (selectedGroup === 'Lifestyle' && !value) {
@@ -693,11 +628,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       newErrors.frequency = 'Please select at least one day of the month.';
     }
 
-    if (noteError) {
+    if (newNote.length > 400) {
       newErrors.clientNotes = 'You can enter up to 400 characters';
     }
 
-    setErrors(newErrors);
     return !Object.values(newErrors).some((error) => error !== '');
   };
 
@@ -834,169 +768,127 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       const value = e.target.value;
                       const englishOnly = DoseValidationEnglish(value);
                       setDose(englishOnly);
-                      const doseRegex = DoseValidationMetric(englishOnly);
-                      if (englishOnly) {
-                        setErrors((prev) => ({
-                          ...prev,
-                          dose: false,
-                          doseFormat: Boolean(!doseRegex),
-                        }));
-                      } else {
-                        setErrors((prev) => ({
-                          ...prev,
-                          dose: true,
-                          doseFormat: false,
-                        }));
-                      }
                     }}
                     isValid={
                       showValidation
                         ? ValidationForms.IsvalidField('Dose', dose)
                         : true
                     }
-                    InfoText={DoseInfoText}
                     validationText={
                       showValidation
                         ? ValidationForms.ValidationText('Dose', dose)
                         : ''
                     }
+                    InfoText={DoseInfoText}
                     margin="mb-4"
                   />
                 )}
                 {selectedGroup === 'Lifestyle' && (
-                  <></>
-                  // <TwoTextField
-                  //   label="Value"
-                  //   // onePlaceholder="Enter value amount"
-                  //   twoPlaceholder="Enter unit"
-                  //   oneValue={value}
-                  //   twoValue={unit}
-                  //   oneOnChange={(e) => {
-                  //     const value = e.target.value;
-                  //     if (ValueValidation(value)) {
-                  //       setValue(value === '' ? '' : value);
-                  //     }
-                  //   }}
-                  //   twoOnChange={(e) => {
-                  //     const onlyLetters = e.target.value.replace(
-                  //       /[^a-zA-Z]/g,
-                  //       '',
-                  //     );
-                  //     setUnit(onlyLetters);
-                  //   }}
-                  //   onPaste={(e) => {
-                  //     const pastedData = e.clipboardData.getData('text');
-                  //     if (!ValueValidation(pastedData)) {
-                  //       e.preventDefault();
-                  //     }
-                  //   }}
-                  //   isValid={
-                  //     showValidation
-                  //       ? ValidationForms.IsvalidField('Value', value)
-                  //       : true
-                  //   }
-                  //   InfoText={ValueInfoText}
-                  //   validationText={
-                  //     showValidation
-                  //       ? ValidationForms.ValidationText('Value', value)
-                  //       : ''
-                  //   }
-                  //   margin="mb-4"
-                  // />
-                )}
-                {selectedGroup === 'Diet' && (
-                  <ThreeTextField
-                    label="Macros Goal"
-                    onePlaceholder="Carb amount"
-                    twoPlaceholder="Protein amount"
-                    threePlaceholder="Fat amount"
-                    oneValue={totalMacros.Carbs}
-                    twoValue={totalMacros.Protein}
-                    threeValue={totalMacros.Fats}
-                    oneOnChange={(e) => {
-                      const value = e.target.value;
-                      if (MacrosValidationNumber(value)) {
-                        updateTotalMacros('Carbs', value === '' ? '' : value);
+                  <MultiTextField
+                    label="Value"
+                    inputs={[
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Enter value amount',
+                        value: value,
+                      },
+                      {
+                        mode: 'text',
+                        pattern: '*',
+                        placeholder: 'Enter unit',
+                        value: unit,
+                      },
+                    ]}
+                    onchanges={(vales: Array<any>) => {
+                      if (ValueValidation(vales[0].value)) {
+                        setValue(vales[0].value);
                       }
+                      const onlyLetters = vales[1].value.replace(
+                        /[^a-zA-Z]/g,
+                        '',
+                      );
+                      setUnit(onlyLetters);
                     }}
                     onPaste={(e) => {
                       const pastedData = e.clipboardData.getData('text');
-                      if (!MacrosValidationNumber(pastedData)) {
+                      if (!ValueValidation(pastedData)) {
                         e.preventDefault();
                       }
                     }}
-                    twoOnChange={(e) => {
-                      const value = e.target.value;
-                      if (MacrosValidationNumber(value)) {
-                        updateTotalMacros('Protein', value === '' ? '' : value);
-                      }
-                    }}
-                    threeOnChange={(e) => {
-                      const value = e.target.value;
-                      if (MacrosValidationNumber(value)) {
-                        updateTotalMacros('Fats', value === '' ? '' : value);
-                      }
-                    }}
-                    oneIsValid={
+                    InfoText={ValueInfoText}
+                    isValid={
                       showValidation
-                        ? ValidationForms.IsvalidField(
-                            'Macros',
-                            totalMacros.Carbs,
-                          )
-                        : true
-                    }
-                    twoIsValid={
-                      showValidation
-                        ? ValidationForms.IsvalidField(
-                            'Macros',
-                            totalMacros.Protein,
-                          )
-                        : true
-                    }
-                    threeIsValid={
-                      showValidation
-                        ? ValidationForms.IsvalidField(
-                            'Macros',
-                            totalMacros.Fats,
-                          )
+                        ? ValidationForms.IsvalidField('Value', value)
                         : true
                     }
                     validationText={
                       showValidation
-                        ? ValidationForms.ValidationText(
-                            'Macros',
-                            totalMacros.Carbs,
-                          ) ||
-                          ValidationForms.ValidationText(
-                            'Macros',
-                            totalMacros.Protein,
-                          ) ||
-                          ValidationForms.ValidationText(
-                            'Macros',
-                            totalMacros.Fats,
-                          )
-                          ? 'These fields are required.'
-                          : totalMacros.Carbs.length > LengthValidation ||
-                              totalMacros.Protein.length > LengthValidation ||
-                              totalMacros.Fats.length > LengthValidation
-                            ? `${
-                                totalMacros.Carbs.length > LengthValidation
-                                  ? 'Carbs'
-                                  : totalMacros.Protein.length >
-                                      LengthValidation
-                                    ? 'Protein'
-                                    : 'Fats'
-                              } ${MacrosFormatInfoText}`
-                            : ''
+                        ? ValidationForms.ValidationText('Value', value)
                         : ''
                     }
-                    oneLabel="Carbs"
-                    twoLabel="Proteins"
-                    threeLabel="Fats"
-                    oneUnit="(gr)"
-                    twoUnit="(gr)"
-                    threeUnit="(gr)"
-                    InfoText={MacrosInfoText}
+                    margin="mb-4"
+                  />
+                )}
+                {selectedGroup === 'Diet' && (
+                  <MultiTextField
+                    label="Macros Goal"
+                    inputs={[
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Carb amount',
+                        value: totalMacros.Carbs,
+                        label: 'Carbs',
+                        unit: '(gr)',
+                      },
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Protein amount',
+                        value: totalMacros.Protein,
+                        label: 'Proteins',
+                        unit: '(gr)',
+                      },
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Fat amount',
+                        value: totalMacros.Fats,
+                        label: 'Fats',
+                        unit: '(gr)',
+                      },
+                    ]}
+                    onchanges={(vales: Array<any>) => {
+                      updateTotalMacros(
+                        'Fats',
+                        MacrosValidationNumber(vales[2].value)
+                          ? vales[2].value
+                          : totalMacros.Fats,
+                      );
+                      updateTotalMacros(
+                        'Protein',
+                        MacrosValidationNumber(vales[1].value)
+                          ? vales[1].value
+                          : totalMacros.Protein,
+                      );
+                      updateTotalMacros(
+                        'Carbs',
+                        MacrosValidationNumber(vales[0].value)
+                          ? vales[0].value
+                          : totalMacros.Carbs,
+                      );
+                    }}
+                    isValid={
+                      showValidation
+                        ? ValidationForms.IsvalidField('Macros', totalMacros)
+                        : true
+                    }
+                    validationText={
+                      showValidation
+                        ? ValidationForms.ValidationText('Macros', totalMacros)
+                        : ''
+                    }
                     margin="mb-4"
                   />
                 )}
@@ -1363,29 +1255,27 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 ) : (
                   ''
                 )}
-                <div className="mb-4">
-                  <label className="block text-xs font-medium">
-                    Client Note
-                  </label>
-                  <div className="relative">
-                    <textarea
-                      value={newNote}
-                      onChange={handleNoteChange}
-                      onKeyDown={handleNoteKeyDown}
-                      className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${noteError ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
-                      rows={4}
-                      placeholder="Enter your observations, concerns, or feedback here..."
-                    />
-                    {/* <div className="absolute bottom-2 right-3 text-[10px] text-Text-Quadruple">
-                      {newNote.length}/400
-                    </div> */}
-                  </div>
-                  {(noteError || (showValidation && errors.clientNotes)) && (
-                    <span className="text-[10px] mt-1 ml-2 text-red-500">
-                      {errors.clientNotes}
-                    </span>
-                  )}
-                </div>
+                <TextAreaField
+                  label="Client Notes"
+                  placeholder="Write notes ..."
+                  value={newNote}
+                  onChange={(e) => {
+                    setNewNote(e.target.value);
+                  }}
+                  onKeyDown={handleNoteKeyDown}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField('Note', newNote)
+                      : true
+                  }
+                  validationText={
+                    showValidation
+                      ? ValidationForms.ValidationText('Note', newNote)
+                      : ''
+                  }
+                  InfoText={NotesInfoText}
+                  margin="mb-4"
+                />
                 <div
                   className={`${
                     notes.length > 0 ? 'mb-4' : ''
