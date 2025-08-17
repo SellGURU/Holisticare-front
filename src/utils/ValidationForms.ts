@@ -16,8 +16,14 @@ type ValidationField =
   | 'Category'
   | 'Note'
   | 'Score'
+  | 'YouTube Link'
   | '';
 class ValidationForms {
+  private static isValidYouTubeUrl = (url: string) => {
+    const youtubeRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|shorts\/|embed\/|v\/)?([a-zA-Z0-9_-]{11})(?:[?&].*)?$/;
+    return youtubeRegex.test(url);
+  };
   public static IsvalidField(name: ValidationField, value: any) {
     switch (name) {
       case 'Instruction':
@@ -36,6 +42,8 @@ class ValidationForms {
         return this.validationNote(value);
       case 'Score':
         return this.validateScore(value);
+      case 'YouTube Link':
+        return this.validateYouTubeLink(value);
       default:
         return false;
     }
@@ -58,6 +66,8 @@ class ValidationForms {
         return this.validationNoteText(value);
       case 'Score':
         return this.validationScoreText(value);
+      case 'YouTube Link':
+        return this.validationYouTubeLinkText(value);
       default:
         return '';
     }
@@ -195,6 +205,22 @@ class ValidationForms {
   }
   private static validateScore(value: string) {
     if (value.length == 0 || Number(value) == 0) {
+      return false;
+    }
+    return true;
+  }
+  private static validationYouTubeLinkText(value: string) {
+    if (value.length == 0) {
+      return 'At least one of these fields is required.';
+    } else if (!this.isValidYouTubeUrl(value)) {
+      return 'Please enter a valid YouTube link.';
+    }
+    return '';
+  }
+  private static validateYouTubeLink(value: string) {
+    if (value.length == 0) {
+      return false;
+    } else if (!this.isValidYouTubeUrl(value)) {
       return false;
     }
     return true;
