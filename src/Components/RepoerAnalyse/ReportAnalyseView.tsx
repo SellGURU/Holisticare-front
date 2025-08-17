@@ -19,7 +19,7 @@ import { TreatmentPlan } from '../TreatmentPlan';
 import Point from './Point';
 import resolvePosition, { clearUsedPositions } from './resolvePosition';
 import resolveStatusArray from './resolveStatusArray';
-import UploadTest from './UploadTest';
+// import UploadTest from './UploadTest';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
 import { decodeAccessUser } from '../../help';
@@ -30,6 +30,7 @@ import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
+import { UploadTestV2 } from './UploadTestV2';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -93,37 +94,37 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   };
 
-  const fetchPatentDataWithState = () => {
-    if (isShare) {
-      Application.getPatientsInfoShare(
-        {
-          member_id: memberID,
-        },
-        uniqKey,
-      ).then((res) => {
-        setUserInfoData(res.data);
-        setIsHaveReport(true);
-        setShowUploadTest(false);
-        setTimeout(() => {
-          fetchShareData();
-          // }
-        }, 2000);
-      });
-    } else {
-      Application.getPatientsInfo({
-        member_id: resolvedMemberID,
-      }).then((res) => {
-        setUserInfoData(res.data);
-        setIsHaveReport(res.data.show_report);
-        setShowUploadTest(!res.data.first_time_view);
-        setTimeout(() => {
-          if (res.data.show_report == true) {
-            fetchData();
-          }
-        }, 2000);
-      });
-    }
-  };
+  // const fetchPatentDataWithState = () => {
+  //   if (isShare) {
+  //     Application.getPatientsInfoShare(
+  //       {
+  //         member_id: memberID,
+  //       },
+  //       uniqKey,
+  //     ).then((res) => {
+  //       setUserInfoData(res.data);
+  //       setIsHaveReport(true);
+  //       setShowUploadTest(false);
+  //       setTimeout(() => {
+  //         fetchShareData();
+  //         // }
+  //       }, 2000);
+  //     });
+  //   } else {
+  //     Application.getPatientsInfo({
+  //       member_id: resolvedMemberID,
+  //     }).then((res) => {
+  //       setUserInfoData(res.data);
+  //       setIsHaveReport(res.data.show_report);
+  //       setShowUploadTest(!res.data.first_time_view);
+  //       setTimeout(() => {
+  //         if (res.data.show_report == true) {
+  //           fetchData();
+  //         }
+  //       }, 2000);
+  //     });
+  //   }
+  // };
   const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
@@ -967,24 +968,25 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                   </>
                 ) : (
-                  <UploadTest
-                    isShare={isShare}
-                    showReport={isHaveReport}
-                    onGenderate={() => {
-                      setISGenerateLoading(true);
-                      Application.first_view_report(resolvedMemberID).then(
-                        (res) => {
-                          console.log(res);
-                        },
-                      );
-                      setTimeout(() => {
-                        fetchPatentDataWithState();
-                        // publish('QuestionaryTrackingCall', {});
-                        // fetchData();
-                      }, 5000);
-                    }}
-                    memberId={resolvedMemberID}
-                  ></UploadTest>
+                  <UploadTestV2></UploadTestV2>
+                  // <UploadTest
+                  //   isShare={isShare}
+                  //   showReport={isHaveReport}
+                  //   onGenderate={() => {
+                  //     setISGenerateLoading(true);
+                  //     Application.first_view_report(resolvedMemberID).then(
+                  //       (res) => {
+                  //         console.log(res);
+                  //       },
+                  //     );
+                  //     setTimeout(() => {
+                  //       fetchPatentDataWithState();
+                  //       // publish('QuestionaryTrackingCall', {});
+                  //       // fetchData();
+                  //     }, 5000);
+                  //   }}
+                  //   memberId={resolvedMemberID}
+                  // ></UploadTest>
                 )}
               </>
             )}
