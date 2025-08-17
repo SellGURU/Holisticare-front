@@ -60,7 +60,7 @@ const DashBoard = () => {
             <TaskManager />
           </div>
           {/* <div className='bg-red-400 h-[400px] w-full'></div> */}
-          <div  className="grid w-full    col-span-full xl:col-span-1 gap-4 md:mt-4 xl:mt-0">
+          <div className="grid w-full    col-span-full xl:col-span-1 gap-4 md:mt-4 xl:mt-0">
             <div className="w-full max-w-full overflow-hidden">
               <Clients></Clients>
             </div>

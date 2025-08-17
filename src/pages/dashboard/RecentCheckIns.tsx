@@ -87,7 +87,7 @@ const RecentCheckIns = () => {
   const selectButRef = useRef(null);
   const [showSelect, setShowSelect] = useState(false);
   const [currentCheckIn, setCurrentCheckIn] = useState<CheckIn | null>(null);
-  const [selectedOption, setSelectedOption] = useState('Week');
+  const [selectedOption, setSelectedOption] = useState('Month');
   const options = ['Day', 'Week', 'Month'];
   const [Questions, setQuestions] = useState<any[]>([]);
   const [CompareQuestions, setCompareQuestions] = useState<any[]>([]);
@@ -192,7 +192,7 @@ const RecentCheckIns = () => {
           resetModalStates();
         }}
       >
-        <div className="bg-white relative w-[800px]  h-[552px] rounded-2xl p-6 pb-8 shadow-800 text-Text-Primary">
+        <div className="bg-white relative w-[90vw] md:w-[800px] h-[80vh]  md:h-[552px] rounded-2xl p-3 md:p-6 pb-8 shadow-800 text-Text-Primary">
           <div className="w-full flex items-center gap-2 border-b border-Gray-50 pb-2 text-sm font-medium">
             <div className="size-6 rounded-full border border-Primary-DeepTeal p-[2px]">
               <img
@@ -215,9 +215,9 @@ const RecentCheckIns = () => {
               Compare
             </div>
           </div>
-          <div className="flex w-full gap-5 mt-5 h-[392px] overflow-auto">
+          <div className="flex flex-col md:flex-row w-full gap-5 pr-2 md:pr-0 md:mt-5 h-[80%] md:h-[392px] overflow-x-hidden overflow-auto">
             <div
-              className={`${showComparisonSelect ? 'w-[50%] mt-[64px]' : 'w-full'} `}
+              className={`${showComparisonSelect ? ' w-full   md:w-[50%] md:mt-[64px]' : 'w-full'} `}
             >
               {/* <Checkin isPreview upData={Questions}></Checkin> */}
               <SurveyResponsesView questions={Questions} />
@@ -236,7 +236,7 @@ const RecentCheckIns = () => {
               /> */}
             </div>
             <div
-              className={`flex  flex-col w-[436px] gap-4 pr-1  ${!showComparisonSelect && 'hidden'}`}
+              className={`flex  flex-col w-full md:w-[436px] gap-4 pr-1  ${!showComparisonSelect && 'hidden'}`}
             >
               {showComparisonSelect && (
                 <div className="flex flex-col relative min-w-[222px] text-xs font-medium">
