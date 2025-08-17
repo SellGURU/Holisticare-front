@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import Checkbox from '../../../../Components/checkbox';
 import CustomSelect from '../../../../Components/CustomSelect';
-import RangeCardLibraryActivity from './RangeCard';
 import Application from '../../../../api/app';
 import { TextField } from '../../../../Components/UnitComponents';
 import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
-// import TextField from '../../../../Components/TextField';
+import ValidationForms from '../../../../utils/ValidationForms';
+import RangeCardLibraryThreePages from '../../../../Components/LibraryThreePages/components/RangeCard';
 
 interface InformationStepProps {
   addData: {
@@ -58,44 +56,6 @@ const InformationStep: FC<InformationStepProps> = ({
   const [TermsOptions, setTermsOptions] = useState([]);
   const [TypesOptions, setTypeOptions] = useState([]);
   const [locationBoxs, setLocationBoxs] = useState([]);
-  // Formik validation schema
-  const validationSchema = Yup.object({
-    title: Yup.string().required('This field is required.'),
-    // description: Yup.string().required('This field is required.'),
-    instruction: Yup.string().required('This field is required.'),
-    score: Yup.number()
-      .min(1, 'This field is required.')
-      .required('This field is required.'),
-  });
-
-  // Update the Formik initialization
-  const formik = useFormik({
-    initialValues: {
-      title: addData.title,
-      // description: addData.description,
-      instruction: addData.instruction,
-      score: addData.score,
-      clinical_guidance: addData.clinical_guidance,
-    },
-    validationSchema,
-    validateOnMount: true,
-    enableReinitialize: true,
-    onSubmit: () => {}, // Handled by parent
-  });
-
-  // useEffect(() => {
-  //   onValidationChange(formik.isValid);
-  // }, [formik.isValid, onValidationChange]);
-  // Update parent component when form values change
-  useEffect(() => {
-    updateAddData('title', formik.values.title);
-    updateAddData('instruction', formik.values.instruction);
-    updateAddData('clinical_guidance', formik.values.clinical_guidance);
-  }, [
-    formik.values.title,
-    formik.values.instruction,
-    formik.values.clinical_guidance,
-  ]);
 
   useEffect(() => {
     Application.getExerciseFilters({}).then((res) => {
@@ -126,14 +86,19 @@ const InformationStep: FC<InformationStepProps> = ({
             label="Title"
             placeholder="Write the activity's title..."
             margin="!w-[360px]"
-            value={formik.values.title}
+            value={addData.title}
             onChange={(e) => {
-              formik.setFieldValue('title', e.target.value);
               updateAddData('title', e.target.value);
             }}
-            isValid={showValidation && Boolean(formik.errors.title)}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField('Title', addData.title)
+                : true
+            }
             validationText={
-              showValidation && formik.errors.title ? formik.errors.title : ''
+              showValidation
+                ? ValidationForms.ValidationText('Title', addData.title)
+                : ''
             }
           />
 
@@ -165,15 +130,24 @@ const InformationStep: FC<InformationStepProps> = ({
           <TextAreaField
             label="Instruction"
             placeholder="Write the activity's Instruction..."
-            value={formik.values.instruction}
+            value={addData.instruction}
             onChange={(e) => {
-              formik.setFieldValue('instruction', e.target.value);
               updateAddData('instruction', e.target.value);
             }}
-            isValid={showValidation && Boolean(formik.errors.instruction)}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField(
+                    'Instruction',
+                    addData.instruction,
+                  )
+                : true
+            }
             validationText={
-              showValidation && Boolean(formik.errors.instruction)
-                ? formik.errors.instruction
+              showValidation
+                ? ValidationForms.ValidationText(
+                    'Instruction',
+                    addData.instruction,
+                  )
                 : ''
             }
             margin="mt-0"
@@ -182,24 +156,29 @@ const InformationStep: FC<InformationStepProps> = ({
             <div className="text-xs font-medium text-Text-Primary">
               Priority Weight
             </div>
-            <RangeCardLibraryActivity
-              value={formik.values.score}
-              changeValue={(key, value) => {
-                formik.setFieldValue('score', value);
-                updateAddData(key, value);
+            <RangeCardLibraryThreePages
+              value={addData.score}
+              onChange={(value) => {
+                updateAddData('score', value);
               }}
-              showValidation={showValidation}
-              error={Boolean(formik.errors.score)}
-              required={true}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField('Score', addData.score)
+                  : true
+              }
+              validationText={
+                showValidation
+                  ? ValidationForms.ValidationText('Score', addData.score)
+                  : ''
+              }
             />
           </div>
           {/* Clinical Guidance Field */}
           <TextAreaField
             label="Clinical Guidance"
             placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
-            value={formik.values.clinical_guidance}
+            value={addData.clinical_guidance}
             onChange={(e) => {
-              formik.setFieldValue('clinical_guidance', e.target.value);
               updateAddData('clinical_guidance', e.target.value);
             }}
             margin="mt-0"
