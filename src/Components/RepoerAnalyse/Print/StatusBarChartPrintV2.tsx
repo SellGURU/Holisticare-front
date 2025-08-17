@@ -190,11 +190,22 @@ const StatusBarChartPrintV2 = ({
                   index == data.length - 1 ? '8px' : 'unset',
               }}
             >
+               <div
+                  style={{
+                    color: '#005f73 ',
+                    fontSize: '8px',
+                    top: '-35px',
+                    left: '-4px',
+                  }}
+                className={`absolute w-full px-1  flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]`}
+              >
+               {el.label}
+              </div>
               <div
                 style={{
                   color: '#005f73 ',
                   fontSize: '8px',
-                  top: '-32px',
+                  top: '-20px',
                   left: '-4px',
                 }}
                 className="absolute w-full px-1 text-Primary-DeepTeal flex flex-col items-center justify-center left-[-4px] top-[-35px] opacity-90 text-[10px] break-words text-ellipsis"
