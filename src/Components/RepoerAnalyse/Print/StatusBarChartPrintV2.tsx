@@ -209,15 +209,11 @@ const StatusBarChartPrintV2 = ({
                     textAlign: 'center',
                   }}
                 >
-                  {el.label}
-                  {el.label !== '' && el.label.length > 40 && (
-                    <>{getRangeString(el)}</>
-                  )}
-                </span>
-                {el.label !== '' && el.label.length <= 40 && (
+                  {el.label != '' && <>(</>}
                   <>{getRangeString(el)}</>
-                )}
-                {/* </TooltipText> */}
+
+                  {el.label != '' && <>)</>}
+                </span>
               </div>
 
               {(() => {
