@@ -94,37 +94,40 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   };
 
-  // const fetchPatentDataWithState = () => {
-  //   if (isShare) {
-  //     Application.getPatientsInfoShare(
-  //       {
-  //         member_id: memberID,
-  //       },
-  //       uniqKey,
-  //     ).then((res) => {
-  //       setUserInfoData(res.data);
-  //       setIsHaveReport(true);
-  //       setShowUploadTest(false);
-  //       setTimeout(() => {
-  //         fetchShareData();
-  //         // }
-  //       }, 2000);
-  //     });
-  //   } else {
-  //     Application.getPatientsInfo({
-  //       member_id: resolvedMemberID,
-  //     }).then((res) => {
-  //       setUserInfoData(res.data);
-  //       setIsHaveReport(res.data.show_report);
-  //       setShowUploadTest(!res.data.first_time_view);
-  //       setTimeout(() => {
-  //         if (res.data.show_report == true) {
-  //           fetchData();
-  //         }
-  //       }, 2000);
-  //     });
-  //   }
-  // };
+  const fetchPatentDataWithState = () => {
+    if (isShare) {
+      Application.getPatientsInfoShare(
+        {
+          member_id: memberID,
+        },
+        uniqKey,
+      ).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(true);
+        setShowUploadTest(false);
+        setTimeout(() => {
+          fetchShareData();
+          // }
+        }, 2000);
+      });
+    } else {
+      Application.getPatientsInfo({
+        member_id: resolvedMemberID,
+      }).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(res.data.show_report);
+        setShowUploadTest(!res.data.first_time_view);
+        setTimeout(() => {
+          if (res.data.show_report == true) {
+            fetchData();
+          }
+        }, 2000);
+      });
+    }
+  };
+
+  
+  
   const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
@@ -532,7 +535,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       );
     });
   }, [resolvedMemberID, ClientSummaryBoxs]); // Only re-render when memberID changes
-
+  console.log(isHaveReport);
+  console.log(showUploadTest);
   return (
     <>
       {loading ? (
@@ -968,7 +972,24 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                   </>
                 ) : (
-                  <UploadTestV2></UploadTestV2>
+                  <UploadTestV2
+                    isShare={isShare}
+                    showReport={isHaveReport}
+                    onGenderate={() => {
+                      setISGenerateLoading(true);
+                      Application.first_view_report(resolvedMemberID).then(
+                        (res) => {
+                          console.log(res);
+                        },
+                      );
+                      setTimeout(() => {
+                        fetchPatentDataWithState();
+                        // publish('QuestionaryTrackingCall', {});
+                        // fetchData();
+                      }, 5000);
+                    }}
+                    memberId={resolvedMemberID}
+                  ></UploadTestV2>
                   // <UploadTest
                   //   isShare={isShare}
                   //   showReport={isHaveReport}
