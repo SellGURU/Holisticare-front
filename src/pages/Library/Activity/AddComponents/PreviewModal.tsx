@@ -19,6 +19,12 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   onEdit,
   isActivty,
 }) => {
+  const [data, setData] = useState({
+    title: '',
+    score: 0,
+    instruction: '',
+    Parent_Title: '',
+  });
   const getYouTubeEmbedUrl = (url: string) => {
     const standardOrShortsRegExp =
       /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\S+)?/;
@@ -86,6 +92,12 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
     if (isActivty && isOpen) {
       Application.getActivity(exercise.Act_Id).then((res) => {
         setSections(res.data.Sections);
+        setData({
+          title: res.data.Title,
+          score: res.data.Base_Score,
+          instruction: res.data.Instruction,
+          Parent_Title: res.data.Parent_Title,
+        });
       });
     }
   }, [isOpen, exercise]);
@@ -119,15 +131,27 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
       }}
     >
       <div
-        className={`bg-white rounded-2xl p-4 ${exercise.Instruction.length > 500 || exercise.Description.length > 500 ? 'w-[800px]' : 'w-[500px]'} shadow-800 relative`}
+        className={`bg-white rounded-2xl p-4 ${data.instruction.length > 500 ? 'w-[800px]' : 'w-[500px]'} shadow-800 relative`}
       >
         <div
           className="w-full flex justify-between items-center border-b border-Gray-50 pb-2"
-          title={exercise.Title.length > 30 ? exercise.Title : undefined}
+          title={
+            isActivty
+              ? data.title.length > 30
+                ? data.title
+                : undefined
+              : exercise.Title.length > 30
+                ? exercise.Title
+                : undefined
+          }
         >
-          {exercise.Title.length > 30
-            ? `${exercise.Title.substring(0, 30)}...`
-            : exercise.Title}
+          {isActivty
+            ? data.title.length > 30
+              ? `${data.title.substring(0, 30)}...`
+              : data.title
+            : exercise.Title.length > 30
+              ? `${exercise.Title.substring(0, 30)}...`
+              : exercise.Title}
           <img
             onClick={onEdit}
             className="size-6 cursor-pointer"
@@ -142,11 +166,18 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               {exercise.Description}
             </div>
           </div> */}
-
+          {data.Parent_Title && (
+            <div className="flex w-full items-start gap-3">
+              <div className="text-xs font-medium">Associated Intervention</div>
+              <div className="text-xs text-[#888888] text-justify">
+                {data.Parent_Title}
+              </div>
+            </div>
+          )}
           <div className="flex w-full items-start gap-3">
             <div className="text-xs font-medium">Instruction</div>
             <div className="text-xs text-[#888888] text-justify">
-              {exercise.Instruction}
+              {isActivty ? data.instruction : exercise.Instruction}
             </div>
           </div>
           <div className="flex w-full items-start gap-3">
@@ -226,7 +257,9 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                                                 alt="Video"
                                               />
                                               <div className="text-xs text-[#383838] font-medium">
-                                                {exercise.Title}
+                                                {isActivty
+                                                  ? data.title
+                                                  : exercise.Title}
                                               </div>
                                             </div>
                                             <div className="pt-1 border-t mt-2 border-Gray-50 w-full flex justify-between text-Text-Primary">
@@ -344,7 +377,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
             <div className="text-xs font-medium">Priority Weight</div>
             <div className="bg-[#FFD8E4] w-[47px] select-none rounded-xl py-1 px-2 h-[18px] flex justify-center items-center text-[10px]">
               <div className="flex">
-                {exercise.Base_Score}{' '}
+                {isActivty ? data.score : exercise.Base_Score}{' '}
                 <span className="text-Text-Triarty">/10</span>
               </div>
             </div>
