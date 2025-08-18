@@ -1,4 +1,5 @@
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useRef, useState, useEffect } from 'react';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
@@ -6,7 +7,8 @@ import Toggle from '../../Toggle';
 import Application from '../../../api/app';
 import { uploadToAzure } from '../../../help';
 import { publish, subscribe } from '../../../utils/event';
-import FileBoxUploadingV2 from '../UploadTest/FileBoxUploadingV2';
+import FileUploaderSection from './FileUploaderSection';
+import BiomarkersSection from './BiomarkersSection';
 
 interface FileUpload {
   file: File;
@@ -109,7 +111,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                 ? {
                     ...f,
                     status: 'completed',
-                    // errorMessage: 'File already exists.',
                   }
                 : f
             )
@@ -185,12 +186,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         }
       }
     }
-    fileInputRef.current.value = '';
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
     <>
-      {step == 0 ? (
+      {step === 0 ? (
         <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
           <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
           <div
@@ -199,7 +202,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           >
             <div className="flex flex-col gap-6 w-full">
               <div className="flex items-center flex-col gap-4">
-                <div className="text-base font-medium text-Text-Primary ">
+                <div className="text-base font-medium text-Text-Primary">
                   Provide Data to Generate Health Plan
                 </div>
                 <div className="text-xs text-Text-Primary text-center">
@@ -262,8 +265,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   disabled={
                     showReport || questionaryLength
                       ? false
-                      : uploadedFiles.filter((el) => el.status == 'completed')
-                          .length == 0
+                      : uploadedFiles.filter((el) => el.status === 'completed')
+                          .length === 0
                   }
                   onClick={() => {
                     onGenderate();
@@ -309,96 +312,18 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                 value={['Upload File', 'Add Biomarker']}
               ></Toggle>
             </div>
-            {activeMenu == 'Upload File' ? (
+            {activeMenu === 'Upload File' ? (
               <div className="w-full flex flex-col mt-8 gap-2">
-                <div className="flex w-full justify-between rounded-2xl border p-4 bg-white shadow-200 border-Gray-50 gap-2">
-                  <div className="text-sm w-[50%] font-medium text-Text-Primary">
-                    File Uploader
-                    <div
-                      onClick={() => {
-                        if (!isShare) {
-                          document.getElementById('uploadFile')?.click();
-                        }
-                      }}
-                      className="mt-1 rounded-2xl h-[130px] w-full
-                        py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center "
-                    >
-                      <div className="w-full flex justify-center">
-                        <img src="/icons/upload-test.svg" alt="" />
-                      </div>
-                      <div className="text-[12px] text-Text-Primary text-center mt-3">
-                        Drag and drop your test file here or click to upload.
-                      </div>
-                      <div className="text-[#888888] font-medium text-[12px] text-center">
-                        {`Accepted formats: .pdf, .docx.`}
-                      </div>
-                      {errorMessage && (
-                        <div className="text-red-500 text-[12px] text-center mt-1 w-[220px] xs:w-[300px] md:w-[500px]">
-                          {errorMessage}
-                        </div>
-                      )}
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        accept=".pdf, .docx"
-                        // multiple
-                        onChange={handleFileChange}
-                        id="uploadFile"
-                        className="w-full absolute invisible h-full left-0 top-0"
-                      />
-                    </div>
-                  </div>
-                  <div className="text-sm w-[50%] font-medium text-Text-Primary">
-                    Uploaded Files
-                    <div
-                      className="mt-1 rounded-2xl h-[130px]
-                        bg-white flex flex-col overflow-y-auto"
-                    >
-                      {uploadedFiles.length === 0 ? (
-                        <div className="w-full flex flex-col items-center justify-center h-full">
-                          <img src="/icons/EmptyState-upload.svg" alt="" />
-                          <div className="text-xs font-medium text-Text-Primary -mt-8">
-                            No file uploaded yet.
-                          </div>
-                        </div>
-                      ) : (
-                        <div className=" grid grid-cols-1 mt-[2px]  gap-2 overflow-y-auto">
-                          {uploadedFiles.map((fileUpload, index) => (
-                            <div key={index}>
-                              <FileBoxUploadingV2
-                             
-                                onDelete={() => {
-                                  setUploadedFiles((prev) =>
-                                    prev.filter((f) => f.file !== fileUpload.file)
-                                  );
-                                  handleDeleteFile(fileUpload);
-                                }}
-                                el={{
-                                  ...fileUpload,
-                                  uploadedSize: fileUpload.uploadedSize || 0,
-                                  totalSize: fileUpload?.file?.size,
-                                  progress: fileUpload.progress || 0.5,
-                                  formattedSize: `${formatFileSize(
-                                    fileUpload.uploadedSize || 0
-                                  )} / ${formatFileSize(
-                                    fileUpload?.file?.size || 1
-                                  )}`,
-                                }}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full min-h-[290px] rounded-2xl border border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary">
-                  List of Biomarkers
-                  <div className=" flex items-center pt-8 justify-center flex-col text-xs font-medium text-Text-Primary">
-                    <img src="/icons/EmptyState-biomarkers.svg" alt="" />
-                    <div className="-mt-5">No data provided yet.</div>
-                  </div>
-                </div>
+                <FileUploaderSection
+                  isShare={isShare}
+                  errorMessage={errorMessage}
+                  handleFileChange={handleFileChange}
+                  uploadedFiles={uploadedFiles}
+                  handleDeleteFile={handleDeleteFile}
+                  formatFileSize={formatFileSize}
+                  fileInputRef={fileInputRef}
+                />
+                <BiomarkersSection />
               </div>
             ) : (
               <div></div>
