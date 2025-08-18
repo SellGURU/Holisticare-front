@@ -83,7 +83,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
                       totalSize: fileUpload?.file?.size,
                       progress: fileUpload.progress || 0.5,
                       formattedSize: `${formatFileSize(
-                        fileUpload.uploadedSize || 0
+                        fileUpload.uploadedSize || 0,
                       )} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
                     }}
                   />

@@ -72,7 +72,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       },
       (progressEvent: any) => {
         const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
+          (progressEvent.loaded * 100) / progressEvent.total,
         );
         // Calculate progress from 50-100%
         const backendProgress = 50 + percentCompleted / 2;
@@ -84,10 +84,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   progress: backendProgress,
                   uploadedSize: progressEvent.loaded,
                 }
-              : f
-          )
+              : f,
+          ),
         );
-      }
+      },
     )
       .then((res) => {
         setUploadedFiles((prev) =>
@@ -99,8 +99,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   azureUrl,
                   warning: res.status == 206,
                 }
-              : f
-          )
+              : f,
+          ),
         );
       })
       .catch((err) => {
@@ -112,8 +112,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                     ...f,
                     status: 'completed',
                   }
-                : f
-            )
+                : f,
+            ),
           );
         } else {
           setUploadedFiles((prev) =>
@@ -127,8 +127,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       err?.detail ||
                       'Failed to upload file. Please try again.',
                   }
-                : f
-            )
+                : f,
+            ),
           );
         }
       });
@@ -151,7 +151,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           // Step 1: Upload to Azure
           const azureUrl = await uploadToAzure(fileUpload.file, (progress) => {
             const uploadedBytes = Math.floor(
-              (progress / 100) * fileUpload.file.size
+              (progress / 100) * fileUpload.file.size,
             );
             setUploadedFiles((prev) =>
               prev.map((f) =>
@@ -161,8 +161,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       progress: progress / 2,
                       uploadedSize: uploadedBytes,
                     }
-                  : f
-              )
+                  : f,
+              ),
             );
           });
 
@@ -180,8 +180,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       error?.message ||
                       'Failed to upload file. Please try again.',
                   }
-                : f
-            )
+                : f,
+            ),
           );
         }
       }

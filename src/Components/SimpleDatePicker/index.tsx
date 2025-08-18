@@ -84,7 +84,7 @@ export default function SimpleDatePicker({
       </button>
 
       {open && (
-        <div className="absolute w-full  top-full mt-2 right-0 z-50 ">
+        <div className="absolute w-full  top-full mt-2 right-0 z-[999] ">
           <Calendar
             calendarClassName="!w-[220px]"
             value={selectedDay}

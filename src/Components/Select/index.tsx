@@ -11,6 +11,7 @@ type SelectProps = {
   isStaff?: boolean;
   placeholder?: string;
   validation?: boolean;
+  isSmall?:boolean
 };
 
 const Select: React.FC<SelectProps> = ({
@@ -24,6 +25,7 @@ const Select: React.FC<SelectProps> = ({
   isSetting,
   placeholder = 'Select an option',
   validation,
+  isSmall
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || ''); // Internal state for selected value
@@ -68,7 +70,7 @@ const Select: React.FC<SelectProps> = ({
   return (
     <div
       ref={selectWrapperRef}
-      className={`relative inline-block   ${isLarge ? 'w-full' : 'w-[142px]'} text-nowrap cursor-pointer font-normal`}
+      className={`relative inline-block ${isSmall && 'w-[101px]'}  ${isLarge ? 'w-full' : 'w-[142px]'} text-nowrap cursor-pointer font-normal`}
       key={key} // If `key` is meant for this outer div
     >
       {/* Displayed Select Box */}

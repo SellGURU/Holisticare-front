@@ -114,7 +114,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
                   <>
                     <div className="w-full flex justify-between">
                       <div>
-                      <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
+                        <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
                           {el.progress < 50 ? ' ' : ''}{' '}
                           {Math.round(
                             el.progress > 10 ? el.progress - 2 : el.progress,
@@ -125,9 +125,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
                           {el.formattedSize}
                         </div> */}
                       </div>
-                      <div>
-                        
-                      </div>
+                      <div></div>
                     </div>
                     <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
                       <div
