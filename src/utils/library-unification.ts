@@ -35,3 +35,7 @@ export const LengthValidation = 5;
 export const InstructionInfoText = `After writing each instruction, press the Enter key to save it and be able to add another instruction.`;
 
 export const NotesInfoText = `After writing each note, press the Enter key to save it and be able to add another note.`;
+
+export const AssociatedInterventionInfoTextDiet = `Link to an intervention (e.g., Mediterranean Diet)`;
+
+export const AssociatedInterventionInfoTextActivity = `Link to an intervention (e.g., Functional Training)`;
