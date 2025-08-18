@@ -68,6 +68,12 @@ const EditModal: FC<EditModalProps> = ({
     PractitionerComments:
       defalts?.['Practitioner Comments'] || practitionerComments,
   });
+  const updateFormData = (key: keyof typeof formData, value: any) => {
+    setFormData((prevTheme) => ({
+      ...prevTheme,
+      [key]: value,
+    }));
+  };
   const clearFields = () => {
     setFormData({
       Category: '',
@@ -188,7 +194,7 @@ const EditModal: FC<EditModalProps> = ({
       e.preventDefault();
       if (formData.Instruction.trim()) {
         setclient_versions([...client_versions, formData.Instruction]);
-        setFormData({ ...formData, Instruction: '' });
+        updateFormData('Instruction', '');
       }
     }
   };
@@ -301,10 +307,8 @@ const EditModal: FC<EditModalProps> = ({
             options={groups.map((group) => Object.keys(group)[0])}
             value={formData.Category}
             onChange={(value) => {
-              setFormData({ ...formData, Category: value });
-              if (value !== 'Supplement') {
-                setFormData({ ...formData, Dose: '' });
-              }
+              updateFormData('Category', value);
+              updateFormData('Dose', '');
             }}
             isValid={
               showValidation
@@ -323,7 +327,7 @@ const EditModal: FC<EditModalProps> = ({
             placeholder="Write recommendation's title…"
             value={formData.Recommendation}
             onChange={(e) => {
-              setFormData({ ...formData, Recommendation: e.target.value });
+              updateFormData('Recommendation', e.target.value);
             }}
             isValid={
               showValidation
@@ -346,7 +350,7 @@ const EditModal: FC<EditModalProps> = ({
             onChange={(e) => {
               const value = e.target.value;
               const englishOnly = DoseValidationEnglish(value);
-              setFormData({ ...formData, Dose: englishOnly });
+              updateFormData('Dose', englishOnly);
             }}
             disabled={!selectedGroupDose}
             placeholder="Write Dose"
@@ -370,7 +374,7 @@ const EditModal: FC<EditModalProps> = ({
             placeholder="Write the action's instruction..."
             value={formData.Instruction}
             onChange={(e) => {
-              setFormData({ ...formData, Instruction: e.target.value });
+              updateFormData('Instruction', e.target.value);
             }}
             onKeyDown={handleInstructionKeyDown}
             isValid={
