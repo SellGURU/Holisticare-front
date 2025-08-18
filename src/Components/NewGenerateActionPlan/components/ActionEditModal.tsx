@@ -375,7 +375,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Category: selectedGroup,
         Title: title,
         Instruction: instructions,
-        Value: value,
+        Value: Number(value),
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType === 'weekly'
@@ -578,13 +578,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     const newErrors = {
       title: '',
       instruction: '',
-      dose: false,
+      dose: '',
       value: '',
       macros: '',
       category: '',
       frequency: '',
       clientNotes: '',
-      doseFormat: false,
     };
 
     if (!title) {
@@ -596,7 +595,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
 
     if (selectedGroup === 'Supplement') {
-      newErrors.dose = !dose;
+      newErrors.dose = dose ? '' : 'This field is required.';
     }
 
     if (selectedGroup === 'Lifestyle' && !value) {
