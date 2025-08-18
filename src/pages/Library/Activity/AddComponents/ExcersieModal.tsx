@@ -45,16 +45,20 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     score: exercise.Base_Score || 0,
     clinical_guidance: exercise.Ai_note || '',
   });
-  const [type, setType] = useState(exercise.Exercise_Filters?.Type || '');
-  const [terms, setTerms] = useState(exercise.Exercise_Filters?.Terms || []);
-  const [condition, setCondition] = useState(
-    exercise.Exercise_Filters?.Conditions || [],
-  );
-  const [muscle, setMuscle] = useState(exercise.Exercise_Filters?.Muscle || []);
-  const [equipment, setEquipment] = useState(
-    exercise.Exercise_Filters?.Equipment || [],
-  );
-  const [level, setLevel] = useState(exercise.Exercise_Filters?.Level || '');
+  const [filters, setFilters] = useState({
+    type: exercise.Exercise_Filters?.Type || '',
+    terms: exercise.Exercise_Filters?.Terms || [],
+    condition: exercise.Exercise_Filters?.Conditions || [],
+    muscle: exercise.Exercise_Filters?.Muscle || [],
+    equipment: exercise.Exercise_Filters?.Equipment || [],
+    level: exercise.Exercise_Filters?.Level || '',
+  });
+  const updateFilters = (key: keyof typeof filters, value: any) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
   const [location, setLocation] = useState<string[]>(
     exercise.Exercise_Location || [],
   );
@@ -105,7 +109,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     const hasFile = fileList.length > 0;
     const isYouTubeLinkValid = isValidYouTubeUrl(youTubeLink);
 
-    if (hasFile && isYouTubeLinkValid) {
+    if (!hasFile && !isYouTubeLinkValid) {
       return;
     }
 
@@ -139,19 +143,18 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     }
 
     const exerciseFilters = {
-      Conditions: [condition],
-      Equipment: [equipment],
-      Type: [type],
-      Terms: [terms],
-      Muscle: [muscle],
-      Level: [level],
+      Conditions: filters.condition,
+      Equipment: filters.equipment,
+      Type: filters.type ? [filters.type] : [],
+      Terms: filters.terms,
+      Muscle: filters.muscle,
+      Level: filters.level ? [filters.level] : [],
     };
 
     const exerciseData = {
       Title: formData.title,
       // Description: formData.description,
       Instruction: formData.instruction,
-      type,
       Exercise_Filters: exerciseFilters,
       'Added on': new Date(),
       Exercise_Location: location || [],
@@ -259,12 +262,20 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       score: exercise.Base_Score || 0,
       clinical_guidance: exercise.Ai_note || '',
     });
-    setType(exercise.Exercise_Filters?.Type || '');
-    setTerms(exercise.Exercise_Filters?.Terms || []);
-    setCondition(exercise.Exercise_Filters?.Conditions || []);
-    setMuscle(exercise.Exercise_Filters?.Muscle || []);
-    setEquipment(exercise.Exercise_Filters?.Equipment || []);
-    setLevel(exercise.Exercise_Filters?.Level || '');
+    setFilters({
+      type:
+        exercise.Exercise_Filters?.Type.length > 0
+          ? exercise.Exercise_Filters?.Type[0]
+          : '',
+      terms: exercise.Exercise_Filters?.Terms || [],
+      condition: exercise.Exercise_Filters?.Conditions || [],
+      muscle: exercise.Exercise_Filters?.Muscle || [],
+      equipment: exercise.Exercise_Filters?.Equipment || [],
+      level:
+        exercise.Exercise_Filters?.Level.length > 0
+          ? exercise.Exercise_Filters?.Level[0]
+          : '',
+    });
     setLocation(exercise.Exercise_Location || []);
     setFileList(exercise.Files || []);
     setScore(exercise.Base_Score || 0);
@@ -427,42 +438,52 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               <CustomSelect
                 placeHolder="Type"
                 options={TypesOptions}
-                selectedOption={type}
-                onOptionSelect={(option: string) => setType(option)}
+                selectedOption={filters.type}
+                onOptionSelect={(option: string) =>
+                  updateFilters('type', option)
+                }
               />
               <CustomSelect
                 placeHolder="Terms"
                 options={TermsOptions}
                 isMulti
-                selectedOption={terms}
-                onOptionSelect={(option: any) => setTerms(option)}
+                selectedOption={filters.terms}
+                onOptionSelect={(option: any) => updateFilters('terms', option)}
               />
               <CustomSelect
                 placeHolder="Condition"
                 options={ConditionsOptions}
                 isMulti
-                selectedOption={condition}
-                onOptionSelect={(option: any) => setCondition(option)}
+                selectedOption={filters.condition}
+                onOptionSelect={(option: any) =>
+                  updateFilters('condition', option)
+                }
               />
               <CustomSelect
                 placeHolder="Muscle"
                 options={MuscleOptions}
-                selectedOption={muscle}
+                selectedOption={filters.muscle}
                 isMulti
-                onOptionSelect={(option: string) => setMuscle(option)}
+                onOptionSelect={(option: string) =>
+                  updateFilters('muscle', option)
+                }
               />
               <CustomSelect
                 placeHolder="Equipment"
                 isMulti
                 options={EquipmentOptions}
-                selectedOption={equipment}
-                onOptionSelect={(option: string) => setEquipment(option)}
+                selectedOption={filters.equipment}
+                onOptionSelect={(option: string) =>
+                  updateFilters('equipment', option)
+                }
               />
               <CustomSelect
                 placeHolder="Level"
                 options={LevelOptions}
-                selectedOption={level}
-                onOptionSelect={(option: string) => setLevel(option)}
+                selectedOption={filters.level}
+                onOptionSelect={(option: string) =>
+                  updateFilters('level', option)
+                }
               />
             </div>
             <div className="flex flex-col text-xs gap-3 mt-2">
