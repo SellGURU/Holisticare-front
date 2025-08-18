@@ -17,6 +17,7 @@ type ValidationField =
   | 'Note'
   | 'Score'
   | 'YouTube Link'
+  | 'Parent_Title'
   | '';
 class ValidationForms {
   private static isValidYouTubeUrl = (url: string) => {
@@ -44,6 +45,8 @@ class ValidationForms {
         return this.validateScore(value);
       case 'YouTube Link':
         return this.validateYouTubeLink(value);
+      case 'Parent_Title':
+        return this.validateParentTitle(value);
       default:
         return false;
     }
@@ -68,6 +71,8 @@ class ValidationForms {
         return this.validationScoreText(value);
       case 'YouTube Link':
         return this.validationYouTubeLinkText(value);
+      case 'Parent_Title':
+        return this.validationParentTitleText(value);
       default:
         return '';
     }
@@ -224,6 +229,18 @@ class ValidationForms {
       return false;
     }
     return true;
+  }
+  private static validateParentTitle(value: string) {
+    if (value.length == 0) {
+      return false;
+    }
+    return true;
+  }
+  private static validationParentTitleText(value: string) {
+    if (value.length == 0) {
+      return 'This field is required.';
+    }
+    return '';
   }
 }
 

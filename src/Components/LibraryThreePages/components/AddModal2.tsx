@@ -1,16 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import MainModal from '../../MainModal';
-import { MultiTextField, TextAreaField, TextField } from '../../UnitComponents';
-import ValidationForms from '../../../utils/ValidationForms';
-import SpinnerLoader from '../../SpinnerLoader';
+import Application from '../../../api/app';
 import {
+  AssociatedInterventionInfoTextDiet,
   DoseInfoText,
   DoseValidationEnglish,
   MacrosValidationNumber,
   ValueInfoText,
   ValueValidation,
 } from '../../../utils/library-unification';
+import ValidationForms from '../../../utils/ValidationForms';
+import MainModal from '../../MainModal';
+import SpinnerLoader from '../../SpinnerLoader';
+import {
+  MultiTextField,
+  SelectBoxField,
+  TextAreaField,
+  TextField,
+} from '../../UnitComponents';
 import RangeCardLibraryThreePages from './RangeCard';
 
 interface AddModalLibraryTreePagesProps {
@@ -53,6 +60,7 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
       Carbs: '',
     },
     clinical_guidance: '',
+    Parent_Title: '',
   });
   const onClear = () => {
     setShowValidation(false);
@@ -69,6 +77,7 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
       },
       unit: '',
       dose: '',
+      Parent_Title: '',
     });
   };
   const [showValidation, setShowValidation] = useState(false);
@@ -78,6 +87,17 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
       [key]: value,
     }));
   };
+
+  const [dietLibrary, setDietLibrary] = useState<
+    { title: string; uid: string }[]
+  >([]);
+  useEffect(() => {
+    if (pageType === 'Diet') {
+      Application.getDietLibrary().then((res) => {
+        setDietLibrary(res.data);
+      });
+    }
+  }, [pageType]);
 
   const validateSupplementForm = () => {
     if (
@@ -106,7 +126,8 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
       ValidationForms.IsvalidField('Title', formData.title) &&
       ValidationForms.IsvalidField('Instruction', formData.instruction) &&
       ValidationForms.IsvalidField('Macros', formData.macros) &&
-      ValidationForms.IsvalidField('Score', formData.score)
+      ValidationForms.IsvalidField('Score', formData.score) &&
+      ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title)
     ) {
       return true;
     }
@@ -138,6 +159,7 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
         Protein: editData?.['Total Macros']?.Protein || '',
         Carbs: editData?.['Total Macros']?.Carbs || '',
       },
+      Parent_Title: editData?.Parent_Title || '',
     });
   }, [editData]);
 
@@ -177,6 +199,10 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
           Carbs: Number(formData.macros.Carbs),
         },
         Ai_note: formData.clinical_guidance,
+        Parent_Id:
+          dietLibrary.find(
+            (value: any) => value.title === formData.Parent_Title,
+          )?.uid || '',
       };
       onSubmit(data);
     }
@@ -191,13 +217,12 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
           onClose();
         }}
       >
-        <div className="flex flex-col justify-between bg-white w-[320px] xs:w-[350px] sm:w-[500px] rounded-[16px] p-6 max-h-[90vh] overflow-y-auto">
-          <div className="w-full h-full">
+        <div className="flex flex-col justify-between bg-white w-[320px] xs:w-[350px] sm:w-[500px] rounded-[16px] p-6 max-h-[85vh] overflow-y-auto">
+          <div className="w-full h-full border-b border-Boarder pb-3 mb-3">
             <div className="flex justify-start items-center font-medium text-sm text-Text-Primary">
               {mode === 'add' ? 'Add' : 'Edit'} {pageType}
             </div>
           </div>
-          <div className="w-full h-[1px] bg-Boarder my-3"></div>
           <TextField
             label="Title"
             placeholder={placeHolderTitle()}
@@ -215,7 +240,39 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
                 ? ValidationForms.ValidationText('Title', formData.title)
                 : ''
             }
+            margin="mt-0"
           />
+
+          {pageType === 'Diet' && (
+            <SelectBoxField
+              label="Associated Intervention"
+              options={dietLibrary.map((value: any) => value.title)}
+              value={formData.Parent_Title}
+              onChange={(value) => {
+                updateAddData('Parent_Title', value);
+              }}
+              disabled={mode === 'edit'}
+              showDisabled={mode === 'edit'}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField(
+                      'Parent_Title',
+                      formData.Parent_Title,
+                    )
+                  : true
+              }
+              validationText={
+                showValidation
+                  ? ValidationForms.ValidationText(
+                      'Parent_Title',
+                      formData.Parent_Title,
+                    )
+                  : ''
+              }
+              placeholder={AssociatedInterventionInfoTextDiet}
+              margin="mb-0"
+            />
+          )}
 
           <TextAreaField
             label="Instruction"
