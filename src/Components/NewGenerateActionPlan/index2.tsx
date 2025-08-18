@@ -20,21 +20,16 @@ import CircularProgressBar from './components/CircularProgressBar';
 const GenerateActionPlan = () => {
   const [plans, setPlans] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
-  const [isLoadingPlans, setIsLoadingPlans] = useState(false);
+  const [isLoadingPlans, setIsLoadingPlans] = useState(true);
   const [isWeighted, setIsWeighted] = useState(false);
   const [actions, setActions] = useState<any>({
     checkIn: [],
     category: [],
   });
   useEffect(() => {
-    setIsLoadingPlans(true);
-    Application.getActionPlanMethodsNew()
-      .then((res) => {
-        setPlans(res.data);
-      })
-      .finally(() => {
-        setIsLoadingPlans(false);
-      });
+    Application.getActionPlanMethodsNew().then((res) => {
+      setPlans(res.data);
+    });
   }, []);
   const [categories, setCategories] = useState<any>({
     checkIn: [],
@@ -57,7 +52,6 @@ const GenerateActionPlan = () => {
       });
   };
   const savePlan = () => {
-    setIsLoadingPlans(true);
     Application.getActionPlanTaskDirectoryNew({
       member_id: id,
       // percents: newPlans,
