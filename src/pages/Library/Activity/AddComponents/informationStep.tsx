@@ -187,7 +187,7 @@ const InformationStep: FC<InformationStepProps> = ({
         <div className="bg-[#E9EDF5] h-[362px] w-px"></div>
         <div className="flex flex-col gap-4">
           <div className="text-xs font-medium">Filters</div>
-          <div className="grid grid-cols-2 gap-y-2 gap-x-">
+          <div className="grid grid-cols-2 gap-y-2 gap-x-4">
             <CustomSelect
               placeHolder="Type"
               options={TypesOptions}
