@@ -23,6 +23,14 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   const [isExerciseStepValid, setIsExerciseStepValid] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
   const [showExerciseValidation, setShowExerciseValidation] = useState(false);
+  const [activityLibrary, setActivityLibrary] = useState<
+    { title: string; uid: string }[]
+  >([]);
+  useEffect(() => {
+    Application.getActivityLibrary().then((res) => {
+      setActivityLibrary(res.data);
+    });
+  }, []);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {
@@ -75,6 +83,10 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           },
           Activity_Location: addData.location,
           Act_Id: editid,
+          Parent_Id:
+            activityLibrary.find(
+              (value: any) => value.title === addData.Parent_Title,
+            )?.uid || '',
         })
           .then(() => {
             onSave();
@@ -105,6 +117,10 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
             Terms: addData.terms,
           },
           Activity_Location: addData.location,
+          Parent_Id:
+            activityLibrary.find(
+              (value: any) => value.title === addData.Parent_Title,
+            )?.uid || '',
         })
           .then(() => {
             onSave();
@@ -149,6 +165,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
               : '',
           location: res.data.Activity_Location,
           clinical_guidance: res.data.Ai_note,
+          Parent_Title: res.data.Parent_Title,
         });
         setSectionList(
           res.data.Sections.map((item: any) => {
@@ -184,6 +201,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     level: '',
     location: [],
     clinical_guidance: '',
+    Parent_Title: '',
   });
   const updateAddData = (key: keyof typeof addData, value: any) => {
     setAddData((prevTheme) => ({
@@ -237,6 +255,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
               showValidation={showValidation}
               addData={addData}
               updateAddData={updateAddData}
+              activityLibrary={activityLibrary}
+              mode={editid ? 'edit' : 'add'}
             />
           ) : (
             <ExersiceStep

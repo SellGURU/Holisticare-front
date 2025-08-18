@@ -328,6 +328,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                   ? ValidationForms.ValidationText('Title', formData.title)
                   : ''
               }
+              margin="mt-0"
             />
             {/* <div className="flex flex-col gap-1">
               <div className="text-xs font-medium text-Text-Primary">
