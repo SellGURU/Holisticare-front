@@ -98,7 +98,16 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 
                 </div>
               </div> */}
-
+              {selectedRow?.Parent_Title && (
+                <div className="flex gap-8">
+                  <div className="font-medium text-Text-Primary text-xs">
+                    Associated Intervention
+                  </div>
+                  <div className="text-xs text-Text-Secondary text-justify leading-5">
+                    {selectedRow?.Parent_Title}
+                  </div>
+                </div>
+              )}
               <div className="flex gap-8">
                 <div className="font-medium text-Text-Primary text-xs">
                   Instruction
