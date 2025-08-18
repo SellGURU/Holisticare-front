@@ -9,6 +9,7 @@ interface SelectBoxFieldProps {
   validationText?: string;
   margin?: string;
   disabled?: boolean;
+  showDisabled?: boolean;
   placeholder: string;
 }
 
@@ -22,18 +23,23 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
   margin,
   disabled,
   placeholder,
+  showDisabled,
 }) => {
   const [showSelect, setShowSelect] = useState(false);
   return (
     <div
-      className={`w-full relative overflow-visible mt-1 ${margin ? margin : 'mb-4'}`}
+      className={`w-full relative overflow-visible ${margin ? margin : 'mt-1 mb-4'}`}
     >
-      <label className="text-xs font-medium text-Text-Primary">{label}</label>
+      <label
+        className={`text-xs font-medium text-Text-Primary ${showDisabled ? 'opacity-50' : 'opacity-100'}`}
+      >
+        {label}
+      </label>
       <div
         onClick={() => !disabled && setShowSelect(!showSelect)}
         className={`w-full cursor-pointer h-[28px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border mt-1 ${
           !isValid ? 'border-Red' : 'border-Gray-50'
-        }`}
+        } ${showDisabled ? 'opacity-50' : 'opacity-100'}`}
       >
         {value ? (
           <div className="text-[12px] text-Text-Primary">{value}</div>
@@ -52,7 +58,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
         <div className="text-Red text-[10px] mt-1">{validationText}</div>
       )}
       {showSelect && (
-        <div className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]">
+        <div className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px] max-h-[250px] overflow-y-auto">
           {options.map((option, index) => {
             return (
               <div
