@@ -68,8 +68,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           Activity_Filters: {
             Conditions: addData.condition,
             Equipment: addData.equipment,
-            Type: [addData.type],
-            Level: [addData.level],
+            Type: addData.type ? [addData.type] : [],
+            Level: addData.level ? [addData.level] : [],
             Muscle: addData.muscle,
             Terms: addData.terms,
           },
@@ -99,8 +99,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           Activity_Filters: {
             Conditions: addData.condition,
             Equipment: addData.equipment,
-            Type: [addData.type],
-            Level: [addData.level],
+            Type: addData.type ? [addData.type] : [],
+            Level: addData.level ? [addData.level] : [],
             Muscle: addData.muscle,
             Terms: addData.terms,
           },
@@ -135,12 +135,18 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           // description: res.data.Description,
           score: res.data.Base_Score,
           instruction: res.data.Instruction,
-          type: res.data.Activity_Filters.Type,
+          type:
+            res.data.Activity_Filters.Type.length > 0
+              ? res.data.Activity_Filters.Type[0]
+              : '',
           terms: res.data.Activity_Filters.Terms,
           condition: res.data.Activity_Filters.Conditions,
           muscle: res.data.Activity_Filters.Muscle,
           equipment: res.data.Activity_Filters.Equipment,
-          level: res.data.Activity_Filters.Level,
+          level:
+            res.data.Activity_Filters.Level.length > 0
+              ? res.data.Activity_Filters.Level[0]
+              : '',
           location: res.data.Activity_Location,
           clinical_guidance: res.data.Ai_note,
         });
