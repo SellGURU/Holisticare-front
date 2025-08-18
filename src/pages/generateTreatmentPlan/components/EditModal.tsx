@@ -266,7 +266,10 @@ const EditModal: FC<EditModalProps> = ({
     ) {
       return;
     }
-    if (formData.Category === 'Supplement' && !formData.Dose) {
+    if (
+      formData.Category === 'Supplement' &&
+      !ValidationForms.IsvalidField('Dose', formData.Dose)
+    ) {
       return;
     }
 

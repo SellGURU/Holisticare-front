@@ -323,17 +323,21 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
 
     // Category specific validations
-    if (selectedGroup === 'Supplement' && !dose) {
+    if (
+      selectedGroup === 'Supplement' &&
+      !ValidationForms.IsvalidField('Dose', dose)
+    ) {
       return;
     }
-    if (selectedGroup === 'Lifestyle' && !value) {
+    if (
+      selectedGroup === 'Lifestyle' &&
+      !ValidationForms.IsvalidField('Value', value)
+    ) {
       return;
     }
     if (
       selectedGroup === 'Diet' &&
-      (totalMacros.Carbs === '' ||
-        totalMacros.Protein === '' ||
-        totalMacros.Fats === '')
+      !ValidationForms.IsvalidField('Macros', totalMacros)
     ) {
       return;
     }
@@ -514,10 +518,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (frequencyType === 'monthly' && selectedDaysMonth.length === 0) {
       return true;
     }
-    if (selectedGroup === 'Supplement' && !dose) {
+    if (
+      selectedGroup === 'Supplement' &&
+      !ValidationForms.IsvalidField('Dose', dose)
+    ) {
       return true;
     }
-    if (selectedGroup === 'Lifestyle' && !value) {
+    if (
+      selectedGroup === 'Lifestyle' &&
+      !ValidationForms.IsvalidField('Value', value)
+    ) {
       return true;
     }
     // if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
@@ -525,7 +535,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     // }
     if (
       selectedGroup === 'Diet' &&
-      (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
+      !ValidationForms.IsvalidField('Macros', totalMacros)
     ) {
       return true;
     }
