@@ -1,12 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
+import Application from '../../../../api/app';
 import Checkbox from '../../../../Components/checkbox';
 import CustomSelect from '../../../../Components/CustomSelect';
-import Application from '../../../../api/app';
-import { TextField } from '../../../../Components/UnitComponents';
-import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
-import ValidationForms from '../../../../utils/ValidationForms';
 import RangeCardLibraryThreePages from '../../../../Components/LibraryThreePages/components/RangeCard';
+import {
+  SelectBoxField,
+  TextField,
+} from '../../../../Components/UnitComponents';
+import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
+import { AssociatedInterventionInfoTextActivity } from '../../../../utils/library-unification';
+import ValidationForms from '../../../../utils/ValidationForms';
 
 interface InformationStepProps {
   addData: {
@@ -22,7 +26,10 @@ interface InformationStepProps {
     level: string;
     location: Array<string>;
     clinical_guidance: string;
+    Parent_Title: string;
   };
+  mode: 'add' | 'edit';
+  activityLibrary: { title: string; uid: string }[];
   updateAddData: (
     key:
       | 'type'
@@ -36,7 +43,8 @@ interface InformationStepProps {
       | 'equipment'
       | 'level'
       | 'location'
-      | 'clinical_guidance',
+      | 'clinical_guidance'
+      | 'Parent_Title',
     value: any,
   ) => void;
   showValidation: boolean; // Add this prop
@@ -47,6 +55,8 @@ const InformationStep: FC<InformationStepProps> = ({
   addData,
   updateAddData,
   showValidation,
+  activityLibrary,
+  mode,
   // onValidationChange,
 }) => {
   const [ConditionsOptions, setConditionsOptions] = useState([]);
@@ -100,6 +110,35 @@ const InformationStep: FC<InformationStepProps> = ({
                 ? ValidationForms.ValidationText('Title', addData.title)
                 : ''
             }
+          />
+
+          <SelectBoxField
+            label="Associated Intervention"
+            options={activityLibrary.map((value: any) => value.title)}
+            value={addData.Parent_Title}
+            onChange={(value) => {
+              updateAddData('Parent_Title', value);
+            }}
+            disabled={mode === 'edit'}
+            showDisabled={mode === 'edit'}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField(
+                    'Parent_Title',
+                    addData.Parent_Title,
+                  )
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText(
+                    'Parent_Title',
+                    addData.Parent_Title,
+                  )
+                : ''
+            }
+            placeholder={AssociatedInterventionInfoTextActivity}
+            margin="mb-0"
           />
 
           {/* <div className="flex flex-col w-full gap-2">
@@ -184,7 +223,7 @@ const InformationStep: FC<InformationStepProps> = ({
             margin="mt-0"
           />
         </div>
-        <div className="bg-[#E9EDF5] h-[362px] w-px"></div>
+        <div className="bg-[#E9EDF5] h-[492px] w-px"></div>
         <div className="flex flex-col gap-4">
           <div className="text-xs font-medium">Filters</div>
           <div className="grid grid-cols-2 gap-y-2 gap-x-4">
