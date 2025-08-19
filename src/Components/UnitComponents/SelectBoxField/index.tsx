@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 interface SelectBoxFieldProps {
   label: string;
@@ -26,8 +26,25 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
   showDisabled,
 }) => {
   const [showSelect, setShowSelect] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setShowSelect(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   return (
     <div
+      ref={wrapperRef}
       className={`w-full relative overflow-visible ${margin ? margin : 'mt-1 mb-4'}`}
     >
       <label
@@ -44,7 +61,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
         {value ? (
           <div className="text-[12px] text-Text-Primary">{value}</div>
         ) : (
-          <div className="text-[12px] text-gray-400">{placeholder}</div>
+          <div className="text-[12px] text-Text-Fivefold">{placeholder}</div>
         )}
         <div>
           <img
