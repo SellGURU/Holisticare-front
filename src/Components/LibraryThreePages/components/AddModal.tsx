@@ -389,11 +389,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               // twoPlaceholder="Enter unit"
               // oneValue={value}
               // twoValue={Unit}
-              isValid={
-                showValidation
-                  ? ValidationForms.IsvalidField('Value', value)
-                  : true
-              }
               validationText={
                 showValidation
                   ? ValidationForms.ValidationText('Value', value)

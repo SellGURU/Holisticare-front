@@ -332,6 +332,9 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
                   pattern: '[0-9]*',
                   placeholder: 'Enter value amount',
                   value: formData.value,
+                  isValid: showValidation
+                    ? ValidationForms.IsvalidField('Value', formData.value)
+                    : true,
                 },
                 {
                   mode: 'text',
@@ -348,11 +351,6 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
                 updateAddData('unit', onlyLetters);
               }}
               InfoText={ValueInfoText}
-              isValid={
-                showValidation
-                  ? ValidationForms.IsvalidField('Value', formData.value)
-                  : true
-              }
               validationText={
                 showValidation
                   ? ValidationForms.ValidationText('Value', formData.value)
@@ -372,6 +370,12 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
                   value: formData.macros.Carbs,
                   label: 'Carbs',
                   unit: '(gr)',
+                  isValid: showValidation
+                    ? ValidationForms.IsvalidField(
+                        'MacrosSeparately',
+                        formData.macros.Carbs,
+                      )
+                    : true,
                 },
                 {
                   mode: 'numeric',
@@ -380,6 +384,12 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
                   value: formData.macros.Protein,
                   label: 'Proteins',
                   unit: '(gr)',
+                  isValid: showValidation
+                    ? ValidationForms.IsvalidField(
+                        'MacrosSeparately',
+                        formData.macros.Protein,
+                      )
+                    : true,
                 },
                 {
                   mode: 'numeric',
@@ -388,6 +398,12 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
                   value: formData.macros.Fats,
                   label: 'Fats',
                   unit: '(gr)',
+                  isValid: showValidation
+                    ? ValidationForms.IsvalidField(
+                        'MacrosSeparately',
+                        formData.macros.Fats,
+                      )
+                    : true,
                 },
               ]}
               onchanges={(vales: Array<any>) => {
@@ -403,11 +419,6 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
                     : formData.macros.Carbs,
                 });
               }}
-              isValid={
-                showValidation
-                  ? ValidationForms.IsvalidField('Macros', formData.macros)
-                  : true
-              }
               validationText={
                 showValidation
                   ? ValidationForms.ValidationText('Macros', formData.macros)
