@@ -11,7 +11,7 @@ type SelectProps = {
   isStaff?: boolean;
   placeholder?: string;
   validation?: boolean;
-  isSmall?:boolean
+  isSmall?: boolean;
 };
 
 const Select: React.FC<SelectProps> = ({
@@ -25,7 +25,7 @@ const Select: React.FC<SelectProps> = ({
   isSetting,
   placeholder = 'Select an option',
   validation,
-  isSmall
+  isSmall,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || ''); // Internal state for selected value
