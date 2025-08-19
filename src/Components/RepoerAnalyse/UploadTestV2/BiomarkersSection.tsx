@@ -51,7 +51,6 @@ const BiomarkersSection: React.FC = () => {
       systemUnit: 'ug/dL',
       status: 'default',
     },
-
   ];
 
   const [biomarkers, setBiomarkers] = useState(mockBiomarkers);
@@ -107,7 +106,7 @@ const BiomarkersSection: React.FC = () => {
                 date={dateOfTest}
                 setDate={setDateOfTest}
                 placeholder="Select Date"
-                ClassName="ml-2 border border-Gray-50 rounded-md px-2 py-1 text-Text-Primary"
+                ClassName="ml-2 border border-Gray-50 1rounded-2xl px-2 py-1 text-Text-Primary"
               />
             </div>
           </div>

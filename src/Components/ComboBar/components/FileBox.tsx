@@ -53,7 +53,7 @@ const FileBox: React.FC<FileBoxProps> = ({
     setIsUploded(el.status == 'completed' ? true : false);
   }, [el.status]);
   console.log(el);
-  
+
   const [isSureRemoveId, setIsSureRemoveId] = useState<number | null>(null);
   return (
     <>

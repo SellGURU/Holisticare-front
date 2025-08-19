@@ -14,7 +14,7 @@ interface DatePickerProps {
   textStyle?: boolean;
   onManualOpen?: () => void;
   validation?: boolean;
-  full ?: boolean,
+  full?: boolean;
 }
 
 export default function SimpleDatePicker({
@@ -29,8 +29,7 @@ export default function SimpleDatePicker({
   textStyle,
   validation,
   onManualOpen,
-  full
-
+  full,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
