@@ -270,7 +270,7 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
                   : ''
               }
               placeholder={AssociatedInterventionInfoTextDiet}
-              margin="mb-0"
+              margin="mb-0 mt-2"
             />
           )}
 
