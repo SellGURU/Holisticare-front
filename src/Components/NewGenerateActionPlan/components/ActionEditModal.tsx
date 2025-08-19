@@ -801,6 +801,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         pattern: '[0-9]*',
                         placeholder: 'Enter value amount',
                         value: value,
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField('Value', value)
+                          : true,
                       },
                       {
                         mode: 'text',
@@ -826,11 +829,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       }
                     }}
                     InfoText={ValueInfoText}
-                    isValid={
-                      showValidation
-                        ? ValidationForms.IsvalidField('Value', value)
-                        : true
-                    }
                     validationText={
                       showValidation
                         ? ValidationForms.ValidationText('Value', value)
@@ -850,6 +848,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         value: totalMacros.Carbs,
                         label: 'Carbs',
                         unit: '(gr)',
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField(
+                              'MacrosSeparately',
+                              totalMacros.Carbs,
+                            )
+                          : true,
                       },
                       {
                         mode: 'numeric',
@@ -858,6 +862,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         value: totalMacros.Protein,
                         label: 'Proteins',
                         unit: '(gr)',
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField(
+                              'MacrosSeparately',
+                              totalMacros.Protein,
+                            )
+                          : true,
                       },
                       {
                         mode: 'numeric',
@@ -866,6 +876,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         value: totalMacros.Fats,
                         label: 'Fats',
                         unit: '(gr)',
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField(
+                              'MacrosSeparately',
+                              totalMacros.Fats,
+                            )
+                          : true,
                       },
                     ]}
                     onchanges={(vales: Array<any>) => {
@@ -888,11 +904,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           : totalMacros.Carbs,
                       );
                     }}
-                    isValid={
-                      showValidation
-                        ? ValidationForms.IsvalidField('Macros', totalMacros)
-                        : true
-                    }
                     validationText={
                       showValidation
                         ? ValidationForms.ValidationText('Macros', totalMacros)
