@@ -9,15 +9,13 @@ interface InputBoxProps {
   pattern: string;
   label?: string;
   unit?: string;
+  isValid?: boolean;
 }
 
 interface MultiTextFieldProps {
   label: string;
   inputs: Array<InputBoxProps>;
-  isValid: boolean;
   validationText: string;
-  // oneOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  // twoOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
   InfoText?: string;
   margin?: string;
@@ -28,7 +26,6 @@ const MultiTextField: FC<MultiTextFieldProps> = ({
   label,
   inputs,
   onchanges,
-  isValid = true,
   validationText,
   onPaste,
   InfoText,
@@ -50,7 +47,7 @@ const MultiTextField: FC<MultiTextFieldProps> = ({
         <div className="flex w-full justify-between gap-3">
           {inputs.map((el, index) => {
             return (
-              <div className="w-full">
+              <div className="w-full" key={index}>
                 {el.label && (
                   <div className="flex items-center gap-1">
                     <div className="text-[10px] font-medium text-Text-Primary">
@@ -66,7 +63,6 @@ const MultiTextField: FC<MultiTextFieldProps> = ({
                   value={el.value}
                   type="text"
                   inputMode={el.mode}
-                  // pattern="[0-9]*"
                   pattern={el.pattern}
                   onChange={(e) => {
                     onchanges(
@@ -80,21 +76,12 @@ const MultiTextField: FC<MultiTextFieldProps> = ({
                   }}
                   onPaste={onPaste}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                    !isValid ? 'border-Red' : 'border-Gray-50'
+                    !el.isValid ? 'border-Red' : 'border-Gray-50'
                   } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
                 />
               </div>
             );
           })}
-
-          {/* <input
-            placeholder={twoPlaceholder}
-            value={twoValue}
-            type="text"
-            onChange={twoOnChange}
-            className={`w-full h-[28px] rounded-[16px] py-1 px-3 border  border-Gray-50
-                   bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
-          /> */}
         </div>
         {validationText && (
           <div className="text-Red text-[10px]">{validationText}</div>

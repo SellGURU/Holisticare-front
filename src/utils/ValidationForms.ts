@@ -12,6 +12,7 @@ type ValidationField =
   | 'Dose'
   | 'Value'
   | 'Macros'
+  | 'MacrosSeparately'
   | 'Title'
   | 'Category'
   | 'Note'
@@ -35,6 +36,8 @@ class ValidationForms {
         return this.validationValue(value);
       case 'Macros':
         return this.validationMacros(value);
+      case 'MacrosSeparately':
+        return this.validationMacrosSeparately(value);
       case 'Title':
         return this.validationTitle(value);
       case 'Category':
@@ -150,6 +153,14 @@ class ValidationForms {
     }
     return true;
   }
+  private static validationMacrosSeparately(value: any) {
+    if (value.length == 0) {
+      return false;
+    } else if (value.length > LengthValidation) {
+      return false;
+    }
+    return true;
+  }
   private static validationMacrosText(value: any) {
     if (
       value.Carbs.length == 0 ||
@@ -162,7 +173,13 @@ class ValidationForms {
       value.Protein.length > LengthValidation ||
       value.Fats.length > LengthValidation
     ) {
-      return MacrosFormatInfoText;
+      const NameValue =
+        value.Carbs.length > LengthValidation
+          ? 'Carbs'
+          : value.Protein.length > LengthValidation
+            ? 'Protein'
+            : 'Fats';
+      return `${NameValue} ${MacrosFormatInfoText}`;
     }
     return '';
   }
