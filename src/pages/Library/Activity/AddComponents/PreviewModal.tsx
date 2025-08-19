@@ -131,7 +131,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
       }}
     >
       <div
-        className={`bg-white rounded-2xl p-4 ${data.instruction.length > 500 ? 'w-[800px]' : 'w-[500px]'} shadow-800 relative`}
+        className={`bg-white rounded-2xl p-4 ${data.instruction.length > 500 ? 'w-[800px]' : isActivty ? 'w-[600px]' : 'w-[500px]'} shadow-800 relative`}
       >
         <div
           className="w-full flex justify-between items-center border-b border-Gray-50 pb-2"
@@ -174,13 +174,17 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               </div>
             </div>
           )}
-          <div className="flex w-full items-start gap-3">
+          <div
+            className={`flex w-full items-start ${isActivty ? 'gap-[87px]' : 'gap-3'}`}
+          >
             <div className="text-xs font-medium">Instruction</div>
             <div className="text-xs text-[#888888] text-justify">
               {isActivty ? data.instruction : exercise.Instruction}
             </div>
           </div>
-          <div className="flex w-full items-start gap-3">
+          <div
+            className={`flex w-full items-start ${isActivty ? 'gap-24' : 'gap-3'}`}
+          >
             <div className="text-xs font-medium">
               {' '}
               {isActivty ? 'Sections' : 'File'}
@@ -373,7 +377,9 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               </div>
             )}
           </div>
-          <div className="flex w-full items-start gap-3 mt-3 ">
+          <div
+            className={`flex w-full items-start ${isActivty ? 'gap-[60px]' : 'gap-3'} mt-3 mb-7`}
+          >
             <div className="text-xs font-medium">Priority Weight</div>
             <div className="bg-[#FFD8E4] w-[47px] select-none rounded-xl py-1 px-2 h-[18px] flex justify-center items-center text-[10px]">
               <div className="flex">
