@@ -26,7 +26,7 @@ export const DataSyncing = () => {
 
   return (
     <div className=" w-full">
-      <div className="px-2">
+      <div className="">
         <div className="w-full text-[10px] xs:text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
           <div>Data</div>
           <div>Last Sync</div>
@@ -37,10 +37,10 @@ export const DataSyncing = () => {
           {data?.length > 0 ? (
             <>
               <div className="flex justify-center w-full items-start overflow-auto h-[440px]">
-                <div className="w-full mt-2">
+                <div className="w-full mt-[2px] flex flex-col gap-[2px]">
                   {data?.map((el: any) => {
                     return (
-                      <div className=" bg-white border border-Gray-50 mb-1 pl-2 xs:pl-3 md:pl-5 pr-1 md:pr-2 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center text-Text-Primary text-[10px]">
+                      <div className=" bg-white border border-Gray-50  pl-2 xs:pl-3 md:pl-5 pr-1 md:pr-2 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center text-Text-Primary text-[10px]">
                         <div className="text-[10px] w-[50px]  text-Text-Primary">
                           {el.Data}
                         </div>
