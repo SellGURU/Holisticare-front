@@ -297,7 +297,10 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
       /> */}
       <PreviewModalLibraryTreePages
         previewShowModal={previewShowModal}
-        handlePreviewCloseModal={handlePreviewCloseModal}
+        handlePreviewCloseModal={() => {
+          handlePreviewCloseModal();
+          setSelectedRow(null);
+        }}
         pageType={pageType}
         selectedRow={selectedRow}
         handleOpenModal={handleOpenModal}

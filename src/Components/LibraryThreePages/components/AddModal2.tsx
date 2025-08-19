@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Application from '../../../api/app';
 import {
   AssociatedInterventionInfoTextDiet,
@@ -30,7 +30,7 @@ interface AddModalLibraryTreePagesProps {
   loadingCall: boolean;
 }
 
-const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
+const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   isOpen,
   editData,
   onSubmit,
