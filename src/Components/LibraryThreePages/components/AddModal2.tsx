@@ -341,7 +341,7 @@ const AddModalLibraryTreePages: React.FC<AddModalLibraryTreePagesProps> = ({
                   pattern: '*',
                   placeholder: 'Enter unit',
                   value: formData.unit,
-                  isValid:true,
+                  isValid: true,
                 },
               ]}
               onchanges={(vales: Array<any>) => {
