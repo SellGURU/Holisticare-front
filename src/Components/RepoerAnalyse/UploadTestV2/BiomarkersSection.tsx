@@ -51,60 +51,7 @@ const BiomarkersSection: React.FC = () => {
       systemUnit: 'ug/dL',
       status: 'default',
     },
-    {
-      extractedName: 'Total iron-binding capacity',
-      systemName: 'Total iron-binding capacity',
-      extractedValue: '60.0',
-      extractedUnit: 'ug/dL',
-      systemValue: '33.0',
-      systemUnit: 'ug/dL',
-      status: 'default',
-    },
-    {
-      extractedName: 'Total iron-binding capacity',
-      systemName: 'Total iron-binding capacity',
-      extractedValue: '60.0',
-      extractedUnit: 'ug/dL',
-      systemValue: '33.0',
-      systemUnit: 'ug/dL',
-      status: 'default',
-    },
-    {
-      extractedName: 'Total iron-binding capacity',
-      systemName: 'Total iron-binding capacity',
-      extractedValue: '60.0',
-      extractedUnit: 'ug/dL',
-      systemValue: '33.0',
-      systemUnit: 'ug/dL',
-      status: 'default',
-    },
-    {
-      extractedName: 'Total iron-binding capacity',
-      systemName: 'Total iron-binding capacity',
-      extractedValue: '60.0',
-      extractedUnit: 'ug/dL',
-      systemValue: '33.0',
-      systemUnit: 'ug/dL',
-      status: 'default',
-    },
-    {
-      extractedName: 'Total iron-binding capacity',
-      systemName: 'Total iron-binding capacity',
-      extractedValue: '60.0',
-      extractedUnit: 'ug/dL',
-      systemValue: '33.0',
-      systemUnit: 'ug/dL',
-      status: 'default',
-    },
-    {
-      extractedName: 'Total iron-binding capacity',
-      systemName: 'Total iron-binding capacity',
-      extractedValue: '60.0',
-      extractedUnit: 'ug/dL',
-      systemValue: '33.0',
-      systemUnit: 'ug/dL',
-      status: 'default',
-    },
+
   ];
 
   const [biomarkers, setBiomarkers] = useState(mockBiomarkers);
@@ -139,7 +86,7 @@ const BiomarkersSection: React.FC = () => {
   };
 
   return (
-    <div  className="w-full rounded-2xl  border border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary">
+    <div className="w-full rounded-2xl  border border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary">
       {biomarkers.length === 0 ? (
         <div className="flex items-center pt-8 justify-center flex-col text-xs font-medium text-Text-Primary">
           <img src="/icons/EmptyState-biomarkers.svg" alt="" />
@@ -188,7 +135,10 @@ const BiomarkersSection: React.FC = () => {
               </div>
 
               {/* Table Rows */}
-              <div style={{height:window.innerHeight - 550 + 'px'}} className="w-full  pr-1">
+              <div
+                style={{ height: window.innerHeight - 550 + 'px' }}
+                className="w-full  pr-1"
+              >
                 {biomarkers.map((biomarker, index) => (
                   <div
                     key={index}

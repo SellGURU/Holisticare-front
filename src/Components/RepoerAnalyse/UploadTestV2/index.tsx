@@ -9,6 +9,7 @@ import { uploadToAzure } from '../../../help';
 import { publish, subscribe } from '../../../utils/event';
 import FileUploaderSection from './FileUploaderSection';
 import BiomarkersSection from './BiomarkersSection';
+import { AddBiomarker } from './AddBiomarker';
 
 interface FileUpload {
   file: File;
@@ -326,7 +327,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                 <BiomarkersSection />
               </div>
             ) : (
-              <div></div>
+              <AddBiomarker></AddBiomarker>
             )}
           </div>
         </div>

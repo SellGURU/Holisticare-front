@@ -24,13 +24,15 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
 }) => {
   return (
     <div className="flex w-full justify-between rounded-2xl border p-4 bg-white shadow-200 border-Gray-50 gap-2">
-      <div className={`text-sm w-[50%] font-medium text-Text-Primary ${uploadedFiles.length == 1 && 'opacity-50'}`}>
+      <div
+        className={`text-sm w-[50%] font-medium text-Text-Primary ${uploadedFiles.length == 1 && 'opacity-50'}`}
+      >
         File Uploader
         <div
           onClick={() => {
             if (!isShare) {
-              if(uploadedFiles.length == 0)
-              document.getElementById('uploadFile')?.click();
+              if (uploadedFiles.length == 0)
+                document.getElementById('uploadFile')?.click();
             }
           }}
           className="mt-1 rounded-2xl h-[130px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center "
