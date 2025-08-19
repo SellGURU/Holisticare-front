@@ -120,7 +120,7 @@ const FileBox: React.FC<FileBoxProps> = ({
                   </>
                 ) : (
                   <>
-                    {isUploded && (
+              {(!el.status || el.status === "completed") && (
                       <img
                         onClick={() => {
                           if (!isDeleted) {
