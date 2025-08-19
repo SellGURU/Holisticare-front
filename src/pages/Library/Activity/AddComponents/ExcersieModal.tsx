@@ -45,7 +45,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     score: exercise.Base_Score || 0,
     clinical_guidance: exercise.Ai_note || '',
   });
-  
+
   const [filters, setFilters] = useState({
     type: exercise.Exercise_Filters?.Type || '',
     terms: exercise.Exercise_Filters?.Terms || [],
@@ -95,7 +95,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         score: exercise.Base_Score || 0,
         clinical_guidance: exercise.Ai_note || '',
       });
-      
     }
   }, [isOpen]);
   useEffect(() => {
