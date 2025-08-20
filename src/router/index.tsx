@@ -120,7 +120,7 @@ const router = createBrowserRouter([
           {
             path: 'playground',
             element: <Playground></Playground>,
-          },          
+          },
         ],
       },
       {
@@ -160,7 +160,6 @@ const router = createBrowserRouter([
         path: 'addClient',
         element: <AddClient></AddClient>,
       },
-
     ],
   },
   {

@@ -1020,7 +1020,7 @@ class Application extends Api {
   static getPlaygroundList = () => {
     return this.post('/test_api/tests', {});
   };
-  static setPlaygroundList = (data:any) => {
+  static setPlaygroundList = (data: any) => {
     return this.post('/test_api', data);
   };
   static getInputPlayGround = () => {
@@ -1028,7 +1028,7 @@ class Application extends Api {
   };
   static getInputPlayGroundVariables = () => {
     return this.post('/test_api/agents', {});
-  };  
+  };
 }
 
 export default Application;

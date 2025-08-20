@@ -38,7 +38,7 @@ export const menus = [
         url: '/playground',
         icon: 'sidemenu-menu-icon-lamp',
         active: true,
-      },      
+      },
     ],
   },
   {

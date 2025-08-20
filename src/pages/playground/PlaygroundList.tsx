@@ -8,10 +8,10 @@ import { Tooltip } from 'react-tooltip';
 
 type Message = {
   agent: string;
-  date_created: string;   // ISO Date
+  date_created: string; // ISO Date
   patient_email: string;
   age: number;
-  gender: "male" | "female" | string;
+  gender: 'male' | 'female' | string;
   conditions: string[] | null;
   medication: string[] | null;
   filled_form: any[]; // اگر فرم ساختار خاصی دارد میشه تایپ دقیق‌تری گذاشت
@@ -22,34 +22,34 @@ type Message = {
 
 interface MessageListProps {
   search: string;
-  onSelectMessage: (data:any) => void;
+  onSelectMessage: (data: any) => void;
   messages: Message[]; // Receive messages from parent
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Receive setter for initial load
 }
 
 const MessageList: React.FC<MessageListProps> = ({
-//   search,
+  //   search,
   onSelectMessage,
   messages,
   setMessages,
 }) => {
   const navigate = useNavigate();
-//   const [filter, setFilter] = useState<string>('All');
+  //   const [filter, setFilter] = useState<string>('All');
   const [expandedMessage, setExpandedMessage] = useState<string | null>(null);
   const [messagesSearched, setMessagesSearched] = useState<Message[]>(messages);
   useEffect(() => {
     setMessagesSearched(messages);
   }, [messages]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-//   const [searchParams] = useSearchParams();
-//   const id = searchParams.get('id');
+  //   const [searchParams] = useSearchParams();
+  //   const id = searchParams.get('id');
 
-//   useEffect(() => {
-//     if (id != undefined) {
-//       setExpandedMessage(parseInt(id));
-//       onSelectMessage(id);
-//     }
-//   }, [id, onSelectMessage]);
+  //   useEffect(() => {
+  //     if (id != undefined) {
+  //       setExpandedMessage(parseInt(id));
+  //       onSelectMessage(id);
+  //     }
+  //   }, [id, onSelectMessage]);
 
   const messagesUsersList = () => {
     Application.messagesUsersList()
@@ -65,27 +65,27 @@ const MessageList: React.FC<MessageListProps> = ({
     setIsLoading(true);
     messagesUsersList();
   }, []);
-//   const applyFilters = () => {
-//     let filtered = [...messages];
+  //   const applyFilters = () => {
+  //     let filtered = [...messages];
 
-//     if (search) {
-//       filtered = filtered.filter((message) =>
-//         message.name.toLowerCase().includes(search.toLowerCase()),
-//       );
-//     }
+  //     if (search) {
+  //       filtered = filtered.filter((message) =>
+  //         message.name.toLowerCase().includes(search.toLowerCase()),
+  //       );
+  //     }
 
-//     // if (filter === 'Read') {
-//     //   filtered = filtered.filter((message) => message.unread === false);
-//     // } else if (filter === 'Unread') {
-//     //   filtered = filtered.filter((message) => message.unread === true);
-//     // }
+  //     // if (filter === 'Read') {
+  //     //   filtered = filtered.filter((message) => message.unread === false);
+  //     // } else if (filter === 'Unread') {
+  //     //   filtered = filtered.filter((message) => message.unread === true);
+  //     // }
 
-//     setMessagesSearched(filtered);
-//   };
+  //     setMessagesSearched(filtered);
+  //   };
 
-//   useEffect(() => {
-//     applyFilters();
-//   }, [search, filter, messages]);
+  //   useEffect(() => {
+  //     applyFilters();
+  //   }, [search, filter, messages]);
 
   const colors = ['#CC85FF', '#90CAFA', '#FABA90', '#90FAB2'];
 
@@ -96,14 +96,14 @@ const MessageList: React.FC<MessageListProps> = ({
     }
     return colors[Math.abs(hash) % colors.length];
   };
-//   const handleClickMessage = (
-//     id: string,
-//     username: string,
-//     status: boolean,
-//   ) => {
-//     navigate(`?id=${id}&username=${username}&status=${status}`);
-//     onSelectMessage(id);
-//   };
+  //   const handleClickMessage = (
+  //     id: string,
+  //     username: string,
+  //     status: boolean,
+  //   ) => {
+  //     navigate(`?id=${id}&username=${username}&status=${status}`);
+  //     onSelectMessage(id);
+  //   };
   const handleClickAgainMessage = () => {
     navigate(``);
     onSelectMessage(null);
@@ -162,11 +162,11 @@ const MessageList: React.FC<MessageListProps> = ({
                     if (expandedMessage === message.date_created) {
                       handleClickAgainMessage();
                     } else {
-                    //   handleClickMessage(
-                    //     message.member_id.toString(),
-                    //     message.name,
-                    //     message.online_status,
-                    //   );
+                      //   handleClickMessage(
+                      //     message.member_id.toString(),
+                      //     message.name,
+                      //     message.online_status,
+                      //   );
                     }
                   }}
                   className={`py-2 cursor-pointer border-y border-Boarder

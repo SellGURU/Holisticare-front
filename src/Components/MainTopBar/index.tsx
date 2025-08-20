@@ -89,7 +89,10 @@ const MainTopBar = () => {
         }),
       );
       if (res.data.brand_elements.knowledge_playground == true) {
-        publish("knowledge_playground-Show", res.data.brand_elements.knowledge_playground);
+        publish(
+          'knowledge_playground-Show',
+          res.data.brand_elements.knowledge_playground,
+        );
       }
     });
   };
