@@ -89,7 +89,9 @@ const Select: React.FC<SelectProps> = ({
         <span
           className={`${selectedValue ? 'text-Text-Primary' : 'text-[#B0B0B0] font-light'} `}
         >
-           <TooltipTextAuto maxWidth='130px'>{selectedValue || placeholder}</TooltipTextAuto> 
+          <TooltipTextAuto maxWidth="130px">
+            {selectedValue || placeholder}
+          </TooltipTextAuto>
         </span>
         {isSetting ? (
           <img

@@ -6,7 +6,11 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // Define the props for the AddBiomarker component, now using 'biomarker' instead of 'name'
 interface AddBiomarkerProps {
   biomarkers: { biomarker: string; value: string; unit: string }[];
-  onAddBiomarker: (biomarker: { biomarker: string; value: string; unit: string }) => void;
+  onAddBiomarker: (biomarker: {
+    biomarker: string;
+    value: string;
+    unit: string;
+  }) => void;
   onTrashClick: (index: number) => void;
   onConfirm: (index: number) => void;
   onCancel: () => void;
@@ -30,7 +34,6 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   const [value, setValue] = useState('');
   const [unit, setUnit] = useState('');
 
-
   const handleAdd = () => {
     if (!biomarkerName || !value || !unit) return; // prevent empty adds
     onAddBiomarker({ biomarker: biomarkerName, value, unit });
@@ -38,7 +41,6 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
     setValue('');
     setUnit('');
   };
-
 
   return (
     <div

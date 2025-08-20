@@ -14,7 +14,7 @@ import Circleloader from '../../CircleLoader';
 
 interface FileUpload {
   file: File;
-  file_id:string
+  file_id: string;
   progress: number;
   status: 'uploading' | 'completed' | 'error';
   azureUrl?: string;
@@ -34,7 +34,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   memberId,
   onGenderate,
   isShare,
-  
 }) => {
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
@@ -43,44 +42,47 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [errorMessage] = useState<string>('');
   const [, setQuestionaryLength] = useState(false);
 
-const [extractedBiomarkers, setExtractedBiomarkers] = useState<any[]>([])
-const [fileType, setfileType] = useState('')
-const [polling, setPolling] = useState(true); // ✅ control polling
-const [deleteLoading, setdeleteLoading] = useState(false)
-console.log(extractedBiomarkers);
+  const [extractedBiomarkers, setExtractedBiomarkers] = useState<any[]>([]);
+  const [fileType, setfileType] = useState('');
+  const [polling, setPolling] = useState(true); // ✅ control polling
+  const [deleteLoading, setdeleteLoading] = useState(false);
+  console.log(extractedBiomarkers);
 
-useEffect(() => {
-  if (!uploadedFile?.file_id) return;
+  useEffect(() => {
+    if (!uploadedFile?.file_id) return;
 
-  let intervalId: NodeJS.Timeout;
+    let intervalId: NodeJS.Timeout;
 
-  const fetchData = async () => {
-    try {
-      const res = await Application.checkLabStepOne({
-        file_id: uploadedFile.file_id,
-      });
+    const fetchData = async () => {
+      try {
+        const res = await Application.checkLabStepOne({
+          file_id: uploadedFile.file_id,
+        });
 
-      setfileType(res.data.lab_type);
-      setExtractedBiomarkers(res.data.extracted_biomarkers);
+        setfileType(res.data.lab_type);
+        setExtractedBiomarkers(res.data.extracted_biomarkers);
 
-      // ✅ stop polling if biomarkers found
-      if (res.data.extracted_biomarkers && res.data.extracted_biomarkers.length > 0) {
-        setPolling(false);
+        // ✅ stop polling if biomarkers found
+        if (
+          res.data.extracted_biomarkers &&
+          res.data.extracted_biomarkers.length > 0
+        ) {
+          setPolling(false);
+        }
+      } catch (err) {
+        console.error('Error checking lab step one:', err);
       }
-    } catch (err) {
-      console.error('Error checking lab step one:', err);
+    };
+
+    if (polling) {
+      fetchData(); // run immediately first
+      intervalId = setInterval(fetchData, 15000); // then every 15s
     }
-  };
 
-  if (polling) {
-    fetchData(); // run immediately first
-    intervalId = setInterval(fetchData, 15000); // then every 15s
-  }
-
-  return () => {
-    if (intervalId) clearInterval(intervalId); // cleanup
-  };
-}, [uploadedFile?.file_id, polling]); 
+    return () => {
+      if (intervalId) clearInterval(intervalId); // cleanup
+    };
+  }, [uploadedFile?.file_id, polling]);
   useEffect(() => {
     subscribe('questionaryLength', (value: any) => {
       setQuestionaryLength(value.detail.questionaryLength);
@@ -93,11 +95,14 @@ useEffect(() => {
   };
 
   const handleDeleteFile = () => {
-    setdeleteLoading(true)
-    Application.deleteLapReport({ file_id: uploadedFile?.file_id , member_id: memberId}) // adjust if backend expects id
+    setdeleteLoading(true);
+    Application.deleteLapReport({
+      file_id: uploadedFile?.file_id,
+      member_id: memberId,
+    }) // adjust if backend expects id
       .then(() => {
         setUploadedFile(null);
-        setdeleteLoading(false)
+        setdeleteLoading(false);
       })
       .catch((err) => {
         console.error('Error deleting the file:', err);
@@ -121,7 +126,11 @@ useEffect(() => {
 
         setUploadedFile((prev) =>
           prev
-            ? { ...prev, progress: backendProgress, uploadedSize: progressEvent.loaded }
+            ? {
+                ...prev,
+                progress: backendProgress,
+                uploadedSize: progressEvent.loaded,
+              }
             : prev,
         );
       },
@@ -129,7 +138,13 @@ useEffect(() => {
       .then((res) => {
         setUploadedFile((prev) =>
           prev
-            ? { ...prev, status: 'completed', file_id: res.data.file_id, azureUrl, warning: res.status == 206 }
+            ? {
+                ...prev,
+                status: 'completed',
+                file_id: res.data.file_id,
+                azureUrl,
+                warning: res.status == 206,
+              }
             : prev,
         );
       })
@@ -174,7 +189,9 @@ useEffect(() => {
         const azureUrl = await uploadToAzure(file, (progress) => {
           const uploadedBytes = Math.floor((progress / 100) * file.size);
           setUploadedFile((prev) =>
-            prev ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes } : prev,
+            prev
+              ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes }
+              : prev,
           );
         });
 
@@ -200,83 +217,91 @@ useEffect(() => {
     }
   };
   const [addedBiomarkers, setAddedBiomarkers] = useState<
-  { biomarker: string; value: string; unit: string }[]
->([]);
+    { biomarker: string; value: string; unit: string }[]
+  >([]);
 
-// State and handlers for adding/deleting biomarkers
-const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+  // State and handlers for adding/deleting biomarkers
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
-const handleAddBiomarker = (newBiomarker: { biomarker: string; value: string; unit: string }) => {
+  const handleAddBiomarker = (newBiomarker: {
+    biomarker: string;
+    value: string;
+    unit: string;
+  }) => {
     setAddedBiomarkers([...addedBiomarkers, newBiomarker]);
-};
+  };
 
-const handleTrashClick = (index: number) => {
+  const handleTrashClick = (index: number) => {
     setDeleteIndex(index);
-};
+  };
 
-const handleConfirm = (index: number) => {
+  const handleConfirm = (index: number) => {
     setAddedBiomarkers(addedBiomarkers.filter((_, i) => i !== index));
     setDeleteIndex(null); // reset after delete
-};
+  };
 
-const handleCancel = () => {
+  const handleCancel = () => {
     setDeleteIndex(null);
-};
+  };
 
-const [modifiedDateOfTest, setModifiedDateOfTest] = useState<Date | null>(new Date());
-const handleModifiedDateOfTestChange = (date: Date | null) => {
-  setModifiedDateOfTest(date);
-};
+  const [modifiedDateOfTest, setModifiedDateOfTest] = useState<Date | null>(
+    new Date(),
+  );
+  const handleModifiedDateOfTestChange = (date: Date | null) => {
+    setModifiedDateOfTest(date);
+  };
 
-// Date for the manually added biomarkers
-const [addedDateOfTest, setAddedDateOfTest] = useState<Date | null>(new Date());
-const handleAddedDateOfTestChange = (date: Date | null) => {
-  setAddedDateOfTest(date);
-};
+  // Date for the manually added biomarkers
+  const [addedDateOfTest, setAddedDateOfTest] = useState<Date | null>(
+    new Date(),
+  );
+  const handleAddedDateOfTestChange = (date: Date | null) => {
+    setAddedDateOfTest(date);
+  };
 
+  const handleSaveLabReport = () => {
+    const modifiedTimestamp = modifiedDateOfTest
+      ? modifiedDateOfTest.getTime().toString()
+      : null;
+    const addedTimestamp = addedDateOfTest
+      ? addedDateOfTest.getTime().toString()
+      : null;
 
-const handleSaveLabReport = () => {
-  const modifiedTimestamp = modifiedDateOfTest ? modifiedDateOfTest.getTime().toString() : null;
-  const addedTimestamp = addedDateOfTest ? addedDateOfTest.getTime().toString() : null;
-
-  // Map over all extractedBiomarkers to create the required API structure
-  const mappedExtractedBiomarkers = extractedBiomarkers.map(b => ({
+    // Map over all extractedBiomarkers to create the required API structure
+    const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
       value: b.original_value,
       unit: b.original_unit,
-    
-  }));
-    setdeleteLoading(true)
-  Application.SaveLabReport({
+    }));
+    setdeleteLoading(true);
+    Application.SaveLabReport({
       member_id: memberId,
       modified_biomarkers: {
-          biomarkers_list: mappedExtractedBiomarkers, // Send the full, mapped list
-          date_of_test: modifiedTimestamp,
-          lab_type: fileType,
-          file_id: uploadedFile?.file_id
+        biomarkers_list: mappedExtractedBiomarkers, // Send the full, mapped list
+        date_of_test: modifiedTimestamp,
+        lab_type: fileType,
+        file_id: uploadedFile?.file_id,
       },
       added_biomarkers: {
-          biomarkers_list: addedBiomarkers,
-          date_of_test: addedTimestamp,
-          lab_type: fileType,
-          file_id: uploadedFile?.file_id
-      }
-  }).then(() => {
-    setdeleteLoading(false)
-      setstep(0)
-  });
-};
+        biomarkers_list: addedBiomarkers,
+        date_of_test: addedTimestamp,
+        lab_type: fileType,
+        file_id: uploadedFile?.file_id,
+      },
+    }).then(() => {
+      setdeleteLoading(false);
+      setstep(0);
+    });
+  };
 
   return (
     <>
-    {
-      deleteLoading && (
+      {deleteLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
         </div>
-      )
-    }
+      )}
       {step === 0 ? (
         <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
           <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
@@ -346,9 +371,7 @@ const handleSaveLabReport = () => {
                     width: '250px',
                     borderRadius: '20px',
                   }}
-                  disabled={
-                    uploadedFile== null
-                  }
+                  disabled={uploadedFile == null}
                   onClick={() => {
                     onGenderate();
                   }}
@@ -378,8 +401,8 @@ const handleSaveLabReport = () => {
                 Lab Data & Biomarkers
               </div>
               <ButtonPrimary
-              disabled={uploadedFile == null}
-            onClick={handleSaveLabReport}
+                disabled={uploadedFile == null}
+                onClick={handleSaveLabReport}
                 style={{
                   width: '167px',
                 }}
@@ -406,17 +429,25 @@ const handleSaveLabReport = () => {
                   formatFileSize={formatFileSize}
                   fileInputRef={fileInputRef}
                 />
-                <BiomarkersSection dateOfTest={modifiedDateOfTest}
-              setDateOfTest={handleModifiedDateOfTestChange} uploadedFile={uploadedFile} biomarkers={extractedBiomarkers} onChange={(updated) => setExtractedBiomarkers(updated)} />
+                <BiomarkersSection
+                  dateOfTest={modifiedDateOfTest}
+                  setDateOfTest={handleModifiedDateOfTestChange}
+                  uploadedFile={uploadedFile}
+                  biomarkers={extractedBiomarkers}
+                  onChange={(updated) => setExtractedBiomarkers(updated)}
+                />
               </div>
             ) : (
-              <AddBiomarker  biomarkers={addedBiomarkers}
-              onAddBiomarker={handleAddBiomarker}
-              onTrashClick={handleTrashClick}
-              onConfirm={handleConfirm}
-              onCancel={handleCancel}
-              deleteIndex={deleteIndex} dateOfTest={addedDateOfTest}
-              setDateOfTest={handleAddedDateOfTestChange}></AddBiomarker>
+              <AddBiomarker
+                biomarkers={addedBiomarkers}
+                onAddBiomarker={handleAddBiomarker}
+                onTrashClick={handleTrashClick}
+                onConfirm={handleConfirm}
+                onCancel={handleCancel}
+                deleteIndex={deleteIndex}
+                dateOfTest={addedDateOfTest}
+                setDateOfTest={handleAddedDateOfTestChange}
+              ></AddBiomarker>
             )}
           </div>
         </div>

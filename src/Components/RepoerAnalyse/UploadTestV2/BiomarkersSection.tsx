@@ -18,10 +18,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   onChange,
   uploadedFile,
   dateOfTest,
-  setDateOfTest
+  setDateOfTest,
 }) => {
-
-
   const handleValueChange = (index: number, newValue: string) => {
     const updated = biomarkers.map((b, i) =>
       i === index ? { ...b, original_value: newValue } : b,
@@ -64,12 +62,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   return (
     <div className="w-full rounded-2xl border border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary">
-      {uploadedFile?.status !== "completed" ? (
+      {uploadedFile?.status !== 'completed' ? (
         <div className="flex items-center pt-8 justify-center flex-col text-xs font-medium text-Text-Primary">
-        <img src="/icons/EmptyState-biomarkers.svg" alt="" />
-        <div className="-mt-5">No data provided yet.</div>
-      </div>
-      ) : biomarkers.length === 0 && uploadedFile?.status == "completed" ? (
+          <img src="/icons/EmptyState-biomarkers.svg" alt="" />
+          <div className="-mt-5">No data provided yet.</div>
+        </div>
+      ) : biomarkers.length === 0 && uploadedFile?.status == 'completed' ? (
         <div className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary">
           <Circleloader></Circleloader>
           <div>Processing… We’ll show the detected biomarkers shortly.</div>
@@ -127,22 +125,23 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     className={`grid grid-cols-7 gap-4 py-1 px-4 border-b border-Gray-50 items-center text-xs text-Text-Primary ${
                       index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
                     }`}
-                  > <div className="col-span-1 w-[169px]   text-left text-[#888888]">
-                  <TooltipTextAuto maxWidth='169px'>{b.original_biomarker_name}</TooltipTextAuto>
-              
-                </div>
+                  >
+                    {' '}
+                    <div className="col-span-1 w-[169px]   text-left text-[#888888]">
+                      <TooltipTextAuto maxWidth="169px">
+                        {b.original_biomarker_name}
+                      </TooltipTextAuto>
+                    </div>
                     {/* biomarker (editable via select) */}
                     <div className="col-span-1 w-[210px] pl-[40px]">
                       <Select
-                      isLarge
+                        isLarge
                         isSetting
                         value={b.biomarker}
                         options={b.possible_values?.names || []}
                         onChange={(val: string) => handleNameChange(index, val)}
                       />
                     </div>
-                   
-
                     {/* value (editable via input) */}
                     <div className="col-span-1 w-[270px] text-center">
                       <input
@@ -154,7 +153,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         }
                       />
                     </div>
-
                     {/* unit (editable via select) */}
                     <div className="col-span-1 w-[211px] text-end">
                       <Select
@@ -165,16 +163,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         onChange={(val: string) => handleUnitChange(index, val)}
                       />
                     </div>
-
                     {/* read-only original fields */}
-
                     <div className="col-span-1 w-[245px] text-center text-[#888888]">
                       {b.value}
                     </div>
                     <div className="col-span-1 w-[259px] text-center text-[#888888]">
                       {b.unit}
                     </div>
-
                     {/* delete logic */}
                     <div className="col-span-1 flex items-center justify-end gap-2">
                       {b.status === 'confirm' ? (
