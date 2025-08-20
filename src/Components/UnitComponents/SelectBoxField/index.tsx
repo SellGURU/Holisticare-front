@@ -49,11 +49,14 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
     >
       <label
         className={`text-xs font-medium text-Text-Primary ${showDisabled ? 'opacity-50' : 'opacity-100'}`}
+        htmlFor="select-box-field"
+        onClick={() => setShowSelect(false)}
       >
         {label}
       </label>
       <div
         onClick={() => !disabled && setShowSelect(!showSelect)}
+        id="select-box-field"
         className={`w-full h-[28px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border mt-1 ${
           !isValid ? 'border-Red' : 'border-Gray-50'
         } ${showDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer'}`}
