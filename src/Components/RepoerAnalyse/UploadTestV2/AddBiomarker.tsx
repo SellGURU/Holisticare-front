@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 
 import TextField from '../../TextField';
 import SimpleDatePicker from '../../SimpleDatePicker';
@@ -46,30 +46,29 @@ export const AddBiomarker = () => {
       style={{ height: window.innerHeight - 235 + 'px' }}
       className="w-full rounded-2xl border p-4 border-Gray-50 shadow-200 mt-4 "
     >
-        <div className='w-full flex items-center justify-between'>
+      <div className="w-full flex items-center justify-between">
         <div className="text-sm font-medium text-Text-Primary">
-        List of Biomarkers
-      </div>
-     
-      <div className="flex items-center text-xs text-Text-Quadruple">
-              Date of Test
-              <SimpleDatePicker
-                date={dateOfTest}
-                setDate={setDateOfTest}
-                placeholder="Select Date"
-                ClassName="ml-2 border border-Gray-50 !rounded-2xl px-2 py-1 text-Text-Primary"
-              />
-            </div>
-    
+          List of Biomarkers
         </div>
-    
+
+        <div className="flex items-center text-xs text-Text-Quadruple">
+          Date of Test
+          <SimpleDatePicker
+            date={dateOfTest}
+            setDate={setDateOfTest}
+            placeholder="Select Date"
+            ClassName="ml-2 border border-Gray-50 !rounded-2xl px-2 py-1 text-Text-Primary"
+          />
+        </div>
+      </div>
+
       <div className="w-full flex justify-between gap-4 mt-6">
         {/* Left side: Add biomarker form */}
         <div className="rounded-2xl w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px]">
           <div className="text-xs text-Text-Primary">
             Add a biomarker by filling in its details (Name, Value, Unit) and
-            clicking Add Biomarker. You’ll see it added right away in the
-            list on the right.
+            clicking Add Biomarker. You’ll see it added right away in the list
+            on the right.
           </div>
 
           {/* Biomarker Name */}

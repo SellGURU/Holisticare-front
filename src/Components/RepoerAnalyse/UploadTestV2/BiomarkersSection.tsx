@@ -1,95 +1,76 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React from 'react';
 import Select from '../../Select';
 import SimpleDatePicker from '../../SimpleDatePicker';
+import Circleloader from '../../CircleLoader';
+import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 
-const BiomarkersSection: React.FC = () => {
-  // Mock data for the table
-  const mockBiomarkers = [
-    {
-      extractedName: 'HemoglobinA1c',
-      systemName: 'HbA1c',
-      extractedValue: '33.0',
-      extractedUnit: '%',
-      systemValue: '33.0',
-      systemUnit: '%',
-      status: 'default',
-    },
-    {
-      extractedName: 'Cholesterol',
-      systemName: 'Cholesterol',
-      extractedValue: '5.5',
-      extractedUnit: 'ng/ml',
-      systemValue: '33.0',
-      systemUnit: 'ng/ml',
-      status: 'default',
-    },
-    {
-      extractedName: 'Ferritin',
-      systemName: 'Ferritin',
-      extractedValue: '232.0',
-      extractedUnit: 'ng/ml',
-      systemValue: '33.0',
-      systemUnit: 'ng/ml',
-      status: 'default', // Changed this to 'default' to match the desired behavior
-    },
-    {
-      extractedName: 'LDL Cholesterol',
-      systemName: 'LDL Cholesterol',
-      extractedValue: '5.5',
-      extractedUnit: 'ng/ml',
-      systemValue: '33.0',
-      systemUnit: 'ng/ml',
-      status: 'default',
-    },
-    {
-      extractedName: 'Total iron-binding capacity',
-      systemName: 'Total iron-binding capacity',
-      extractedValue: '60.0',
-      extractedUnit: 'ug/dL',
-      systemValue: '33.0',
-      systemUnit: 'ug/dL',
-      status: 'default',
-    },
-  ];
+interface BiomarkersSectionProps {
+  biomarkers: any[];
+  onChange: (updated: any[]) => void; // callback to update parent state
+  uploadedFile: any;
+}
 
-  const [biomarkers, setBiomarkers] = useState(mockBiomarkers);
-  const [dateOfTest, setDateOfTest] = useState<Date | null>(
+const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
+  biomarkers,
+  onChange,
+  uploadedFile,
+}) => {
+  const [dateOfTest, setDateOfTest] = React.useState<Date | null>(
     new Date('2024-04-05'),
   );
 
-  const handleTrashClick = (indexToUpdate: number) => {
-    setBiomarkers(
-      biomarkers.map((biomarker, index) => {
-        if (index === indexToUpdate) {
-          return { ...biomarker, status: 'confirm' };
-        }
-        return biomarker;
-      }),
+  const handleValueChange = (index: number, newValue: string) => {
+    const updated = biomarkers.map((b, i) =>
+      i === index ? { ...b, original_value: newValue } : b,
     );
+    onChange(updated);
+  };
+
+  const handleNameChange = (index: number, newName: string) => {
+    const updated = biomarkers.map((b, i) =>
+      i === index ? { ...b, biomarker: newName } : b,
+    );
+    onChange(updated);
+  };
+
+  const handleUnitChange = (index: number, newUnit: string) => {
+    const updated = biomarkers.map((b, i) =>
+      i === index ? { ...b, original_unit: newUnit } : b,
+    );
+    onChange(updated);
+  };
+
+  const handleTrashClick = (indexToUpdate: number) => {
+    const updated = biomarkers.map((b, i) =>
+      i === indexToUpdate ? { ...b, status: 'confirm' } : b,
+    );
+    onChange(updated);
   };
 
   const handleConfirm = (indexToDelete: number) => {
-    setBiomarkers(biomarkers.filter((_, index) => index !== indexToDelete));
+    const updated = biomarkers.filter((_, i) => i !== indexToDelete);
+    onChange(updated);
   };
 
   const handleCancel = (indexToUpdate: number) => {
-    setBiomarkers(
-      biomarkers.map((biomarker, index) => {
-        if (index === indexToUpdate) {
-          return { ...biomarker, status: 'default' };
-        }
-        return biomarker;
-      }),
+    const updated = biomarkers.map((b, i) =>
+      i === indexToUpdate ? { ...b, status: 'default' } : b,
     );
+    onChange(updated);
   };
 
   return (
-    <div className="w-full rounded-2xl  border border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary">
-      {biomarkers.length === 0 ? (
+    <div className="w-full rounded-2xl border border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary">
+      {uploadedFile?.status !== "completed" ? (
         <div className="flex items-center pt-8 justify-center flex-col text-xs font-medium text-Text-Primary">
-          <img src="/icons/EmptyState-biomarkers.svg" alt="" />
-          <div className="-mt-5">No data provided yet.</div>
+        <img src="/icons/EmptyState-biomarkers.svg" alt="" />
+        <div className="-mt-5">No data provided yet.</div>
+      </div>
+      ) : biomarkers.length === 0 && uploadedFile?.status == "completed" ? (
+        <div className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary">
+          <Circleloader></Circleloader>
+          <div>Processing… We’ll show the detected biomarkers shortly.</div>
         </div>
       ) : (
         <div className="w-full">
@@ -115,19 +96,19 @@ const BiomarkersSection: React.FC = () => {
               {/* Table Header */}
               <div className="grid grid-cols-7 sticky top-0 z-10 gap-4 py-1 px-4 font-medium text-Text-Primary text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50">
                 <div className="col-span-1 w-[169px] ">Extracted Biomarker</div>
-                <div className="col-span-1 w-[180px] text-center">
+                <div className="col-span-1 w-[150px] pl-20 text-nowrap text-center">
                   System Biomarker
                 </div>
-                <div className="col-span-1 w-[180px] text-center">
+                <div className="col-span-1 w-[270px] text-center">
                   Extracted Value
                 </div>
-                <div className="col-span-1 w-[141px] text-end">
+                <div className="col-span-1 w-[181px] text-end">
                   Extracted Unit
                 </div>
-                <div className="col-span-1 w-[175px] text-center">
+                <div className="col-span-1 w-[245px] text-center">
                   System Value
                 </div>
-                <div className="col-span-1 w-[189px] text-center">
+                <div className="col-span-1 w-[259px] text-center">
                   System Unit
                 </div>
                 <div className="col-span-1   text-end">Action</div>
@@ -136,48 +117,65 @@ const BiomarkersSection: React.FC = () => {
               {/* Table Rows */}
               <div
                 style={{ height: window.innerHeight - 550 + 'px' }}
-                className="w-full  pr-1"
+                className="w-full pr-1"
               >
-                {biomarkers.map((biomarker, index) => (
+                {biomarkers.map((b, index) => (
                   <div
                     key={index}
-                    className={`grid grid-cols-7 gap-4 py-1 px-4 border-b border-Gray-50 items-center text-xs text-Text-Primary ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'}`}
-                  >
-                    <div className="col-span-1 w-[169px]">
-                      {biomarker.extractedName}
-                    </div>
-                    <div className="col-span-1 w-[180px] text-center">
+                    className={`grid grid-cols-7 gap-4 py-1 px-4 border-b border-Gray-50 items-center text-xs text-Text-Primary ${
+                      index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
+                    }`}
+                  > <div className="col-span-1 w-[169px]   text-left text-[#888888]">
+                  <TooltipTextAuto maxWidth='169px'>{b.original_biomarker_name}</TooltipTextAuto>
+              
+                </div>
+                    {/* biomarker (editable via select) */}
+                    <div className="col-span-1 w-[210px] pl-[40px]">
                       <Select
+                      isLarge
                         isSetting
-                        value={biomarker.systemName}
-                        onChange={() => {}}
-                      ></Select>
-                    </div>
-                    <div className="col-span-1 w-[180px] text-center">
-                      <input
-                        type="number"
-                        value={biomarker.extractedValue}
-                        className=" text-center border border-Gray-50 w-[95px] outline-none rounded-md text-[12px] text-Text-Primary px-2 py-1"
-                        onChange={() => {}} // Add handler for input change
+                        value={b.biomarker}
+                        options={b.possible_values?.names || []}
+                        onChange={(val: string) => handleNameChange(index, val)}
                       />
                     </div>
-                    <div className="col-span-1 w-[171px] flex justify-end">
+                   
+
+                    {/* value (editable via input) */}
+                    <div className="col-span-1 w-[270px] text-center">
+                      <input
+                        type="text"
+                        value={b.original_value}
+                        className="text-center border border-Gray-50 w-[95px] outline-none rounded-md text-[12px] text-Text-Primary px-2 py-1"
+                        onChange={(e) =>
+                          handleValueChange(index, e.target.value)
+                        }
+                      />
+                    </div>
+
+                    {/* unit (editable via select) */}
+                    <div className="col-span-1 w-[211px] text-end">
                       <Select
                         isSmall
                         isSetting
-                        value={biomarker.extractedUnit}
-                        onChange={() => {}}
-                      ></Select>
-                    </div>
-                    <div className="col-span-1 w-[175px] text-center text-[#888888] text-xs">
-                      {biomarker.systemValue}
-                    </div>
-                    <div className="col-span-1 text-[#888888] text-xs w-[189px] text-center">
-                      {biomarker.systemUnit}
+                        value={b.original_unit}
+                        options={b.possible_values?.units || []}
+                        onChange={(val: string) => handleUnitChange(index, val)}
+                      />
                     </div>
 
-                    <div className="col-span-1  flex items-center justify-end gap-2">
-                      {biomarker.status === 'confirm' ? (
+                    {/* read-only original fields */}
+
+                    <div className="col-span-1 w-[245px] text-center text-[#888888]">
+                      {b.value}
+                    </div>
+                    <div className="col-span-1 w-[259px] text-center text-[#888888]">
+                      {b.unit}
+                    </div>
+
+                    {/* delete logic */}
+                    <div className="col-span-1 flex items-center justify-end gap-2">
+                      {b.status === 'confirm' ? (
                         <div className="flex items-center justify-end w-full gap-1">
                           <div className="text-Text-Quadruple text-[10px]">
                             Sure?

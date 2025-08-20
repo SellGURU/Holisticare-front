@@ -10,9 +10,11 @@ import { publish, subscribe } from '../../../utils/event';
 import FileUploaderSection from './FileUploaderSection';
 import BiomarkersSection from './BiomarkersSection';
 import { AddBiomarker } from './AddBiomarker';
+import Circleloader from '../../CircleLoader';
 
 interface FileUpload {
   file: File;
+  file_id:string
   progress: number;
   status: 'uploading' | 'completed' | 'error';
   azureUrl?: string;
@@ -37,10 +39,48 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
   const [activeMenu, setactiveMenu] = useState('Upload File');
-  const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
+  const [uploadedFile, setUploadedFile] = useState<FileUpload | null>(null); // ✅ single file
   const [errorMessage] = useState<string>('');
   const [questionaryLength, setQuestionaryLength] = useState(false);
 
+const [extractedBiomarkers, setExtractedBiomarkers] = useState<any[]>([])
+const [fileType, setfileType] = useState('')
+const [polling, setPolling] = useState(true); // ✅ control polling
+const [deleteLoading, setdeleteLoading] = useState(false)
+console.log(extractedBiomarkers);
+
+useEffect(() => {
+  if (!uploadedFile?.file_id) return;
+
+  let intervalId: NodeJS.Timeout;
+
+  const fetchData = async () => {
+    try {
+      const res = await Application.checkLabStepOne({
+        file_id: uploadedFile.file_id,
+      });
+
+      setfileType(res.data.lab_type);
+      setExtractedBiomarkers(res.data.extracted_biomarkers);
+
+      // ✅ stop polling if biomarkers found
+      if (res.data.extracted_biomarkers && res.data.extracted_biomarkers.length > 0) {
+        setPolling(false);
+      }
+    } catch (err) {
+      console.error('Error checking lab step one:', err);
+    }
+  };
+
+  if (polling) {
+    fetchData(); // run immediately first
+    intervalId = setInterval(fetchData, 15000); // then every 15s
+  }
+
+  return () => {
+    if (intervalId) clearInterval(intervalId); // cleanup
+  };
+}, [uploadedFile?.file_id, polling]); 
   useEffect(() => {
     subscribe('questionaryLength', (value: any) => {
       setQuestionaryLength(value.detail.questionaryLength);
@@ -52,10 +92,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     return `${kb.toFixed(1)} KB`;
   };
 
-  const handleDeleteFile = (fileToDelete: any) => {
-    Application.deleteLapReport({ file_id: fileToDelete.id })
+  const handleDeleteFile = () => {
+    setdeleteLoading(true)
+    Application.deleteLapReport({ file_id: uploadedFile?.file_id , member_id: memberId}) // adjust if backend expects id
       .then(() => {
-        // You might want to update the state here as well if you have a list of successfully uploaded files
+        setUploadedFile(null);
+        setdeleteLoading(false)
       })
       .catch((err) => {
         console.error('Error deleting the file:', err);
@@ -75,61 +117,39 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         const percentCompleted = Math.round(
           (progressEvent.loaded * 100) / progressEvent.total,
         );
-        // Calculate progress from 50-100%
         const backendProgress = 50 + percentCompleted / 2;
-        setUploadedFiles((prev) =>
-          prev.map((f) =>
-            f.file === file
-              ? {
-                  ...f,
-                  progress: backendProgress,
-                  uploadedSize: progressEvent.loaded,
-                }
-              : f,
-          ),
+
+        setUploadedFile((prev) =>
+          prev
+            ? { ...prev, progress: backendProgress, uploadedSize: progressEvent.loaded }
+            : prev,
         );
       },
     )
       .then((res) => {
-        setUploadedFiles((prev) =>
-          prev.map((f) =>
-            f.file === file
-              ? {
-                  ...f,
-                  status: 'completed',
-                  azureUrl,
-                  warning: res.status == 206,
-                }
-              : f,
-          ),
+        setUploadedFile((prev) =>
+          prev
+            ? { ...prev, status: 'completed', file_id: res.data.file_id, azureUrl, warning: res.status == 206 }
+            : prev,
         );
       })
       .catch((err) => {
         if (err == 'Network Error') {
-          setUploadedFiles((prev) =>
-            prev.map((f) =>
-              f.file === file
-                ? {
-                    ...f,
-                    status: 'completed',
-                  }
-                : f,
-            ),
+          setUploadedFile((prev) =>
+            prev ? { ...prev, status: 'completed' } : prev,
           );
         } else {
-          setUploadedFiles((prev) =>
-            prev.map((f) =>
-              f.file === file
-                ? {
-                    ...f,
-                    status: 'error',
-                    errorMessage:
-                      err?.response?.data?.message ||
-                      err?.detail ||
-                      'Failed to upload file. Please try again.',
-                  }
-                : f,
-            ),
+          setUploadedFile((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  status: 'error',
+                  errorMessage:
+                    err?.response?.data?.message ||
+                    err?.detail ||
+                    'Failed to upload file. Please try again.',
+                }
+              : prev,
           );
         }
       });
@@ -137,54 +157,42 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
-      const newFiles = Array.from(files).map((file) => ({
+    if (files && files[0]) {
+      const file = files[0];
+      const newFile: FileUpload = {
+        file_id: '',
         file,
         progress: 0.5,
-        status: 'uploading' as const,
+        status: 'uploading',
         uploadedSize: 0,
-      }));
-      setUploadedFiles((prev) => [...newFiles, ...prev]);
+      };
 
-      // Process each file
-      for (const fileUpload of newFiles) {
-        try {
-          // Step 1: Upload to Azure
-          const azureUrl = await uploadToAzure(fileUpload.file, (progress) => {
-            const uploadedBytes = Math.floor(
-              (progress / 100) * fileUpload.file.size,
-            );
-            setUploadedFiles((prev) =>
-              prev.map((f) =>
-                f.file === fileUpload.file
-                  ? {
-                      ...f,
-                      progress: progress / 2,
-                      uploadedSize: uploadedBytes,
-                    }
-                  : f,
-              ),
-            );
-          });
+      setUploadedFile(newFile);
 
-          // Step 2: Send to backend
-          await sendToBackend(fileUpload.file, azureUrl);
-        } catch (error: any) {
-          setUploadedFiles((prev) =>
-            prev.map((f) =>
-              f.file === fileUpload.file
-                ? {
-                    ...f,
-                    status: 'error',
-                    errorMessage:
-                      error?.response?.data?.message ||
-                      error?.message ||
-                      'Failed to upload file. Please try again.',
-                  }
-                : f,
-            ),
+      try {
+        // Step 1: Upload to Azure
+        const azureUrl = await uploadToAzure(file, (progress) => {
+          const uploadedBytes = Math.floor((progress / 100) * file.size);
+          setUploadedFile((prev) =>
+            prev ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes } : prev,
           );
-        }
+        });
+
+        // Step 2: Send to backend
+        await sendToBackend(file, azureUrl);
+      } catch (error: any) {
+        setUploadedFile((prev) =>
+          prev
+            ? {
+                ...prev,
+                status: 'error',
+                errorMessage:
+                  error?.response?.data?.message ||
+                  error?.message ||
+                  'Failed to upload file. Please try again.',
+              }
+            : prev,
+        );
       }
     }
     if (fileInputRef.current) {
@@ -194,6 +202,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   return (
     <>
+    {
+      deleteLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>
+      )
+    }
       {step === 0 ? (
         <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
           <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
@@ -264,10 +279,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                     borderRadius: '20px',
                   }}
                   disabled={
-                    showReport || questionaryLength
-                      ? false
-                      : uploadedFiles.filter((el) => el.status === 'completed')
-                          .length === 0
+                    showReport || questionaryLength ? false : uploadedFile?.status !== 'completed'
                   }
                   onClick={() => {
                     onGenderate();
@@ -319,12 +331,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   isShare={isShare}
                   errorMessage={errorMessage}
                   handleFileChange={handleFileChange}
-                  uploadedFiles={uploadedFiles}
+                  uploadedFile={uploadedFile}
                   handleDeleteFile={handleDeleteFile}
                   formatFileSize={formatFileSize}
                   fileInputRef={fileInputRef}
                 />
-                <BiomarkersSection />
+                <BiomarkersSection uploadedFile={uploadedFile} biomarkers={extractedBiomarkers} onChange={(updated) => setExtractedBiomarkers(updated)} />
               </div>
             ) : (
               <AddBiomarker></AddBiomarker>

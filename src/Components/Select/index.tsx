@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 
 type SelectProps = {
   onChange: (value: string) => void;
@@ -88,7 +89,7 @@ const Select: React.FC<SelectProps> = ({
         <span
           className={`${selectedValue ? 'text-Text-Primary' : 'text-[#B0B0B0] font-light'} `}
         >
-          {selectedValue || placeholder}
+           <TooltipTextAuto maxWidth='130px'>{selectedValue || placeholder}</TooltipTextAuto> 
         </span>
         {isSetting ? (
           <img
@@ -118,7 +119,7 @@ const Select: React.FC<SelectProps> = ({
           {options?.map((option) => (
             <li
               key={option}
-              className={`py-2 px-4 cursor-pointer text-[12px] text-[#888888] hover:bg-gray-200 ${
+              className={` ${options.length > 1 && 'border-y border-Gray-50'} py-1 px-4 cursor-pointer text-wrap text-[8px] text-[#888888] hover:bg-gray-200 text-start ${
                 selectedValue === option ? '' : ''
               }`}
               onClick={() => handleOptionClick(option)}

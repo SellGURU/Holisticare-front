@@ -1011,6 +1011,9 @@ class Application extends Api {
   static saveActionEdit = (data: any) => {
     return this.post('/drift_analysis/edit_action_plan', data);
   };
+  static checkLabStepOne = (data: any) => {
+    return this.post('/patients/check_lab_report_step_one', data);
+  };
 }
 
 export default Application;
