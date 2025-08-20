@@ -40,7 +40,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
   return (
     <>
       <div
-        className=" bg-white border border-Gray-50 mb-1 py-1 px-4 h-[46px] w-full rounded-[12px]  text-Text-Primary text-[10px]"
+        className=" bg-white border border-Gray-50 mb-1 py-1 px-4 h-[66px] w-full rounded-[12px]  text-Text-Primary text-[10px]"
         style={{ borderColor: el.status == 'error' ? '#ff0005' : '#e9edf5 ' }}
       >
         {isuploaded ? (
@@ -140,7 +140,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
             {el.status === 'error' && (
               <div className="flex items-center gap-2 mt-2">
                 {/* <img src="/icons/error.svg" alt="Error" className="w-4 h-4" /> */}
-                <div className="text-red-500 text-[10px]">
+                <div className="text-Red text-[10px]">
                   {el.errorMessage ||
                     'Failed to upload file. Please try again.'}
                 </div>

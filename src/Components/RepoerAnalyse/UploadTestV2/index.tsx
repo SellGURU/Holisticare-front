@@ -34,14 +34,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   memberId,
   onGenderate,
   isShare,
-  showReport,
+  
 }) => {
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
   const [activeMenu, setactiveMenu] = useState('Upload File');
   const [uploadedFile, setUploadedFile] = useState<FileUpload | null>(null); // ✅ single file
   const [errorMessage] = useState<string>('');
-  const [questionaryLength, setQuestionaryLength] = useState(false);
+  const [, setQuestionaryLength] = useState(false);
 
 const [extractedBiomarkers, setExtractedBiomarkers] = useState<any[]>([])
 const [fileType, setfileType] = useState('')
@@ -199,6 +199,74 @@ useEffect(() => {
       fileInputRef.current.value = '';
     }
   };
+  const [addedBiomarkers, setAddedBiomarkers] = useState<
+  { biomarker: string; value: string; unit: string }[]
+>([]);
+
+// State and handlers for adding/deleting biomarkers
+const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+
+const handleAddBiomarker = (newBiomarker: { biomarker: string; value: string; unit: string }) => {
+    setAddedBiomarkers([...addedBiomarkers, newBiomarker]);
+};
+
+const handleTrashClick = (index: number) => {
+    setDeleteIndex(index);
+};
+
+const handleConfirm = (index: number) => {
+    setAddedBiomarkers(addedBiomarkers.filter((_, i) => i !== index));
+    setDeleteIndex(null); // reset after delete
+};
+
+const handleCancel = () => {
+    setDeleteIndex(null);
+};
+
+const [modifiedDateOfTest, setModifiedDateOfTest] = useState<Date | null>(new Date());
+const handleModifiedDateOfTestChange = (date: Date | null) => {
+  setModifiedDateOfTest(date);
+};
+
+// Date for the manually added biomarkers
+const [addedDateOfTest, setAddedDateOfTest] = useState<Date | null>(new Date());
+const handleAddedDateOfTestChange = (date: Date | null) => {
+  setAddedDateOfTest(date);
+};
+
+
+const handleSaveLabReport = () => {
+  const modifiedTimestamp = modifiedDateOfTest ? modifiedDateOfTest.getTime().toString() : null;
+  const addedTimestamp = addedDateOfTest ? addedDateOfTest.getTime().toString() : null;
+
+  // Map over all extractedBiomarkers to create the required API structure
+  const mappedExtractedBiomarkers = extractedBiomarkers.map(b => ({
+      biomarker_id: b.biomarker_id,
+      biomarker: b.biomarker,
+      value: b.original_value,
+      unit: b.original_unit,
+    
+  }));
+    setdeleteLoading(true)
+  Application.SaveLabReport({
+      member_id: memberId,
+      modified_biomarkers: {
+          biomarkers_list: mappedExtractedBiomarkers, // Send the full, mapped list
+          date_of_test: modifiedTimestamp,
+          lab_type: fileType,
+          file_id: uploadedFile?.file_id
+      },
+      added_biomarkers: {
+          biomarkers_list: addedBiomarkers,
+          date_of_test: addedTimestamp,
+          lab_type: fileType,
+          file_id: uploadedFile?.file_id
+      }
+  }).then(() => {
+    setdeleteLoading(false)
+      setstep(0)
+  });
+};
 
   return (
     <>
@@ -279,7 +347,7 @@ useEffect(() => {
                     borderRadius: '20px',
                   }}
                   disabled={
-                    showReport || questionaryLength ? false : uploadedFile?.status !== 'completed'
+                    uploadedFile== null
                   }
                   onClick={() => {
                     onGenderate();
@@ -310,6 +378,8 @@ useEffect(() => {
                 Lab Data & Biomarkers
               </div>
               <ButtonPrimary
+              disabled={uploadedFile == null}
+            onClick={handleSaveLabReport}
                 style={{
                   width: '167px',
                 }}
@@ -336,10 +406,17 @@ useEffect(() => {
                   formatFileSize={formatFileSize}
                   fileInputRef={fileInputRef}
                 />
-                <BiomarkersSection uploadedFile={uploadedFile} biomarkers={extractedBiomarkers} onChange={(updated) => setExtractedBiomarkers(updated)} />
+                <BiomarkersSection dateOfTest={modifiedDateOfTest}
+              setDateOfTest={handleModifiedDateOfTestChange} uploadedFile={uploadedFile} biomarkers={extractedBiomarkers} onChange={(updated) => setExtractedBiomarkers(updated)} />
               </div>
             ) : (
-              <AddBiomarker></AddBiomarker>
+              <AddBiomarker  biomarkers={addedBiomarkers}
+              onAddBiomarker={handleAddBiomarker}
+              onTrashClick={handleTrashClick}
+              onConfirm={handleConfirm}
+              onCancel={handleCancel}
+              deleteIndex={deleteIndex} dateOfTest={addedDateOfTest}
+              setDateOfTest={handleAddedDateOfTestChange}></AddBiomarker>
             )}
           </div>
         </div>

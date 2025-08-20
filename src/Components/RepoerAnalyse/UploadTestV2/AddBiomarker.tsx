@@ -1,45 +1,44 @@
 import { useState } from 'react';
-
 import TextField from '../../TextField';
 import SimpleDatePicker from '../../SimpleDatePicker';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 
-export const AddBiomarker = () => {
-  const [biomarkers, setBiomarkers] = useState<
-    { name: string; value: string; unit: string }[]
-  >([]);
+// Define the props for the AddBiomarker component, now using 'biomarker' instead of 'name'
+interface AddBiomarkerProps {
+  biomarkers: { biomarker: string; value: string; unit: string }[];
+  onAddBiomarker: (biomarker: { biomarker: string; value: string; unit: string }) => void;
+  onTrashClick: (index: number) => void;
+  onConfirm: (index: number) => void;
+  onCancel: () => void;
+  deleteIndex: number | null;
+  dateOfTest: Date | null;
+  setDateOfTest: (date: Date | null) => void;
+}
 
-  // Local form states
-  const [name, setName] = useState('');
+export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
+  biomarkers,
+  onAddBiomarker,
+  onTrashClick,
+  onConfirm,
+  onCancel,
+  deleteIndex,
+  dateOfTest,
+  setDateOfTest,
+}) => {
+  // Local form states, now using 'biomarkerName' to avoid conflict
+  const [biomarkerName, setBiomarkerName] = useState('');
   const [value, setValue] = useState('');
   const [unit, setUnit] = useState('');
 
-  const handleAddBiomarker = () => {
-    if (!name || !value || !unit) return; // prevent empty adds
-    const newBiomarker = { name, value, unit };
-    setBiomarkers([...biomarkers, newBiomarker]);
-    setName('');
+
+  const handleAdd = () => {
+    if (!biomarkerName || !value || !unit) return; // prevent empty adds
+    onAddBiomarker({ biomarker: biomarkerName, value, unit });
+    setBiomarkerName('');
     setValue('');
     setUnit('');
   };
 
-  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-
-  const handleTrashClick = (index: number) => {
-    setDeleteIndex(index);
-  };
-
-  const handleConfirm = (index: number) => {
-    setBiomarkers(biomarkers.filter((_, i) => i !== index));
-    setDeleteIndex(null); // reset after delete
-  };
-
-  const handleCancel = () => {
-    setDeleteIndex(null);
-  };
-  const [dateOfTest, setDateOfTest] = useState<Date | null>(
-    new Date('2024-04-05'),
-  );
 
   return (
     <div
@@ -77,8 +76,8 @@ export const AddBiomarker = () => {
             <TextField
               newStyle
               type="text"
-              value={name}
-              onChange={(e: any) => setName(e.target.value)}
+              value={biomarkerName}
+              onChange={(e: any) => setBiomarkerName(e.target.value)}
             />
           </div>
 
@@ -106,7 +105,7 @@ export const AddBiomarker = () => {
 
           {/* Add button */}
           <div
-            onClick={handleAddBiomarker}
+            onClick={handleAdd}
             className="rounded-[20px] w-full py-2 px-[32px] flex justify-center items-center bg-backgroundColor-Card text-Primary-DeepTeal shadow-Btn text-xs h-[32px] gap-1 font-medium cursor-pointer mt-2 border border-Primary-DeepTeal"
           >
             <img src="/icons/add-square-new.svg" alt="" /> Add to List
@@ -145,7 +144,7 @@ export const AddBiomarker = () => {
                   {/* Biomarker Name */}
                   <div>
                     <TooltipTextAuto maxWidth="250px">
-                      {biomarker.name}
+                      {biomarker.biomarker}
                     </TooltipTextAuto>
                   </div>
 
@@ -170,13 +169,13 @@ export const AddBiomarker = () => {
                           src="/icons/tick-circle-green.svg"
                           alt="Confirm"
                           className="w-[16px] h-[16px] cursor-pointer"
-                          onClick={() => handleConfirm(index)}
+                          onClick={() => onConfirm(index)}
                         />
                         <img
                           src="/icons/close-circle-red.svg"
                           alt="Cancel"
                           className="w-[16px] h-[16px] cursor-pointer"
-                          onClick={() => handleCancel()}
+                          onClick={() => onCancel()}
                         />
                       </div>
                     ) : (
@@ -185,7 +184,7 @@ export const AddBiomarker = () => {
                           src="/icons/trash-blue.svg"
                           alt="Delete"
                           className="cursor-pointer w-4 h-4"
-                          onClick={() => handleTrashClick(index)}
+                          onClick={() => onTrashClick(index)}
                         />
                       </div>
                     )}

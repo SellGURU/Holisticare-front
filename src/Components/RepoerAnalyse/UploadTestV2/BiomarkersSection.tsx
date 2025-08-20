@@ -9,16 +9,18 @@ interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
   uploadedFile: any;
+  dateOfTest: Date | null;
+  setDateOfTest: (date: Date | null) => void;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   biomarkers,
   onChange,
   uploadedFile,
+  dateOfTest,
+  setDateOfTest
 }) => {
-  const [dateOfTest, setDateOfTest] = React.useState<Date | null>(
-    new Date('2024-04-05'),
-  );
+
 
   const handleValueChange = (index: number, newValue: string) => {
     const updated = biomarkers.map((b, i) =>
