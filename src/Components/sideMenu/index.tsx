@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { version } from '../../../package.json';
 
 import { menus } from './menu';
+import { subscribe } from '../../utils/event';
 interface sideMenuProps {
   onClose: () => void;
 }
@@ -18,6 +19,11 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
         .find((item) => item.url === location.pathname) || menus[0].items[0]
     );
   });
+  const [showPlayground, setShowPlayground] = useState(false);
+  subscribe("knowledge_playground-Show", () => {
+    // alert("show playground");
+    setShowPlayground(true);
+  });
   useEffect(() => {
     const currentActiveItem =
       menus
@@ -27,7 +33,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     if (currentActiveItem.name !== activeMenu.name) {
       setActiveMenu(currentActiveItem);
     }
-  }, [location.pathname, activeMenu]);
+  }, [location.pathname, activeMenu, showPlayground]);
   const changeMenu = (menu: any) => {
     setActiveMenu(menu);
     navigate(menu.url);
@@ -61,7 +67,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
         </div>
         <div className="w-full">
           <div
-            className="h-fit md:h-full overflow-y-auto"
+            className="h-fit md:h-full overflow-y-auto hidden-scrollbar"
             style={{ height: `${height}px` }}
           >
             {menus.map((menuCategory) => (
@@ -72,7 +78,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                 {menuCategory.items.map((menu) => (
                   <>
                     {menu.name === 'Knowledge Graph' ? (
-                      <div className=" mt-2  w-full flex pl-5  items-center">
+                      <div className=" my-2  w-full flex pl-5  items-center">
                         {' '}
                         <div
                           onClick={() => {
@@ -119,6 +125,10 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                         </div>
                       </div>
                     ) : (
+                      <>
+                      {menu.name === 'Playground' && !showPlayground?
+                      <></>
+                    :
                       <div className="" key={menu.name}>
                         <div
                           onClick={() => {
@@ -150,6 +160,8 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                           </div>
                         </div>
                       </div>
+                     }
+                      </>
                     )}
                   </>
                 ))}

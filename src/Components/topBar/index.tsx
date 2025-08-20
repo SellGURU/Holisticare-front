@@ -200,6 +200,11 @@ export const TopBar: FC<TopBarProps> = ({
           selectedImage: res.data.brand_elements.logo,
         }),
       );
+      // alert(res.data.brand_elements.knowledge_playground);
+      if (res.data.brand_elements.knowledge_playground == true) {
+        publish("knowledge_playground-Show", res.data.brand_elements.knowledge_playground);
+      }
+      // localStorage.setItem("knowledge_playground", JSON.stringify(res.data.knowledge_playground))
     });
   };
 
