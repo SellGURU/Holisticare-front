@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
 import { Exercise, Tasks } from '../tasks.interface';
 
@@ -12,7 +11,7 @@ const BoxActivity: FC<Tasks> = ({ activities }) => {
   });
   const [selectData, setSelectData] = useState<Exercise | null>(null);
   const [videoData, setVideoData] = useState<
-    { file_id: string; base64: string; url?: string }[]
+    { file_id: string; base64: string; url?: string; type?: string }[]
   >([]);
   const getYouTubeEmbedUrl = (url: string) => {
     const standardOrShortsRegExp =
@@ -30,28 +29,36 @@ const BoxActivity: FC<Tasks> = ({ activities }) => {
     const fetchVideos = async () => {
       if (selectData && selectData.Files.length > 0) {
         const videoFiles = selectData.Files.filter(
-          (file) => file.Type === 'Video' || file.Type === 'link',
+          (file) =>
+            file.Type === 'Video' ||
+            file.Type === 'link' ||
+            file.Type?.split('/')[0] === 'image',
         );
 
         const videoPromises = videoFiles.map((file) => {
-          if (file.Type === 'Video') {
+          if (file.Type === 'Video' || file.Type === 'link') {
             return Promise.resolve({
               file_id: file.Content.file_id,
               url: file.Content.url,
               base64: '',
             });
-          } else if (file.Type === 'link') {
+          } else if (file.Type?.split('/')[0] === 'image') {
             return Promise.resolve({
               file_id: file.Content.file_id,
-              url: file.Content.url,
-              base64: '',
+              base64: file.Content.url,
+              type: file.Type,
             });
           }
         });
 
         const videos = await Promise.all(videoPromises);
         setVideoData(
-          videos as { file_id: string; base64: string; url?: string }[],
+          videos as {
+            file_id: string;
+            base64: string;
+            url?: string;
+            type?: string;
+          }[],
         );
       }
     };
@@ -60,6 +67,26 @@ const BoxActivity: FC<Tasks> = ({ activities }) => {
       fetchVideos();
     }
   }, [selectIndexTitle.index, selectData]);
+  const [indexImage, setIndexImage] = useState(0);
+  const VISIBLE_COUNT = 2;
+
+  const lastIndex = Math.max(videoData.length - VISIBLE_COUNT, 0);
+
+  const nextSlide = () => {
+    if (indexImage >= lastIndex) {
+      setIndexImage(0);
+    } else {
+      setIndexImage((prev) => prev + 1);
+    }
+  };
+
+  const prevSlide = () => {
+    if (indexImage <= 0) {
+      setIndexImage(lastIndex);
+    } else {
+      setIndexImage((prev) => prev - 1);
+    }
+  };
   return (
     <div className="w-full p-3 rounded-xl border border-Gray-15 bg-backgroundColor-Secondary flex flex-col gap-5">
       {activities.Sections.map((activity, index) => {
@@ -69,8 +96,7 @@ const BoxActivity: FC<Tasks> = ({ activities }) => {
               {activity.Section}
             </div>
             <div className="flex flex-col gap-1">
-              {activity.Exercises.map((superset, index) => {
-                console.log(superset);
+              {activity.Exercises.map((exercise, index) => {
                 return (
                   <>
                     <div
@@ -87,7 +113,7 @@ const BoxActivity: FC<Tasks> = ({ activities }) => {
                             index: index + 1,
                             title: activity.Section,
                           });
-                          setSelectData(superset);
+                          setSelectData(exercise);
                         }
                       }}
                       className="flex items-center justify-between border border-Gray-50 rounded-2xl px-3 py-2 bg-white cursor-pointer"
@@ -95,80 +121,120 @@ const BoxActivity: FC<Tasks> = ({ activities }) => {
                     >
                       <div className="flex items-center gap-2">
                         <img
-                          src={superset?.Files[0]?.Content.url}
+                          src={exercise?.Files[0]?.Content.url}
                           alt=""
                           className="w-[32px] h-[32px] rounded-xl object-cover"
                         />
                         <div className="text-Text-Primary text-xs font-medium">
-                          {superset.Title}
+                          {exercise.Title}
                         </div>
                       </div>
-                      {superset.Status ? (
+                      {/* {superset.Status ? (
                         <img src="/icons/done-enable.svg" alt="" />
                       ) : (
                         <img src="/icons/done-disable.svg" alt="" />
-                      )}
+                      )} */}
                     </div>
                     {selectIndexTitle.index === index + 1 &&
                     selectIndexTitle.title === activity.Section ? (
-                      <>
-                        {videoData.map((video) =>
-                          video.url ? (
-                            <iframe
-                              key={video.file_id}
-                              className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
-                              src={getYouTubeEmbedUrl(video.url)}
-                              title="YouTube video player"
-                              frameBorder="0"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            />
-                          ) : (
-                            <video
-                              key={video.file_id}
-                              className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
-                              controls
-                              src={video.base64}
+                      videoData?.[0]?.type?.split('/')[0] === 'image' ? (
+                        <div className="w-full flex justify-center items-center gap-4 mt-3 mb-3">
+                          <button
+                            onClick={prevSlide}
+                            disabled={indexImage === 0}
+                          >
+                            <img src="/icons/chevron-left.svg" alt="prev" />
+                          </button>
+
+                          <div className="flex w-full overflow-hidden justify-start items-center">
+                            <div
+                              className="flex transition-transform duration-300 ease-in-out gap-2"
+                              style={{
+                                transform: `translateX(-${indexImage * (120 + 8)}px)`,
+                              }}
                             >
-                              Your browser does not support the video tag.
-                            </video>
-                          ),
-                        )}
-                        <div className="flex items-center gap-14 ml-7 mt-3">
-                          <div className="flex flex-col items-center justify-center gap-1">
-                            <div className="text-Text-Quadruple text-xs">
-                              Sets
-                            </div>
-                            <div className="text-Text-Primary text-sm font-medium">
-                              01
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-center justify-center gap-1">
-                            <div className="text-Text-Quadruple text-xs">
-                              Weight
-                            </div>
-                            <div className="text-Text-Primary text-sm font-medium">
-                              50
+                              {videoData.map((src, i) => (
+                                <div
+                                  key={i}
+                                  className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
+                                >
+                                  <img
+                                    src={src.base64}
+                                    alt={`Slide ${i}`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              ))}
                             </div>
                           </div>
-                          <div className="flex flex-col items-center justify-center gap-1">
-                            <div className="text-Text-Quadruple text-xs">
-                              Rep
-                            </div>
-                            <div className="text-Text-Primary text-sm font-medium">
-                              10,10,10
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-center justify-center gap-1">
-                            <div className="text-Text-Quadruple text-xs">
-                              Rest
-                            </div>
-                            <div className="text-Text-Primary text-sm font-medium">
-                              90s
-                            </div>
-                          </div>
+
+                          <button
+                            onClick={nextSlide}
+                            disabled={indexImage >= lastIndex}
+                          >
+                            <img src="/icons/chevron-right.svg" alt="next" />
+                          </button>
                         </div>
-                      </>
+                      ) : (
+                        <>
+                          {videoData.map((video) =>
+                            video.url ? (
+                              <iframe
+                                key={video.file_id}
+                                className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
+                                src={getYouTubeEmbedUrl(video.url)}
+                                title="YouTube video player"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              />
+                            ) : (
+                              <video
+                                key={video.file_id}
+                                className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
+                                controls
+                                src={video.base64}
+                              >
+                                Your browser does not support the video tag.
+                              </video>
+                            ),
+                          )}
+                          <div className="flex items-center gap-14 ml-7 mt-3">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <div className="text-Text-Quadruple text-xs">
+                                Sets
+                              </div>
+                              <div className="text-Text-Primary text-sm font-medium">
+                                {activity.Sets}
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <div className="text-Text-Quadruple text-xs">
+                                Weight
+                              </div>
+                              <div className="text-Text-Primary text-sm font-medium">
+                                {exercise.Weight}
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <div className="text-Text-Quadruple text-xs">
+                                Rep
+                              </div>
+                              <div className="text-Text-Primary text-sm font-medium">
+                                {exercise.Reps}
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <div className="text-Text-Quadruple text-xs">
+                                Rest
+                              </div>
+                              <div className="text-Text-Primary text-sm font-medium">
+                                {exercise.Rest}
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )
                     ) : (
                       ''
                     )}

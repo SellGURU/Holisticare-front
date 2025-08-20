@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import Mobile from '../../api/mobile';
 import BoxTexts from './components/BoxTexts';
 import BoxTitleText from './components/BoxTitleText';
-import BoxValue from './components/BoxValue';
+// import BoxValue from './components/BoxValue';
 import Frequency from './components/Frequency';
 import RenderNutrient from './components/RenderNutrient';
 import Times from './components/Times';
@@ -30,13 +30,27 @@ const Tasks = () => {
       .catch(() => {});
   }, []);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const scrollInterval = useRef<NodeJS.Timeout | null>(null);
 
-  const scrollUp = () => {
-    scrollRef.current?.scrollBy({ top: -100, behavior: 'smooth' });
+  const startScroll = (direction: 'up' | 'down') => {
+    if (scrollInterval.current) return;
+
+    const step = direction === 'up' ? -50 : 50;
+    scrollInterval.current = setInterval(() => {
+      scrollRef.current?.scrollBy({ top: step, behavior: 'smooth' });
+    }, 100);
   };
 
-  const scrollDown = () => {
-    scrollRef.current?.scrollBy({ top: 100, behavior: 'smooth' });
+  const stopScroll = () => {
+    if (scrollInterval.current) {
+      clearInterval(scrollInterval.current);
+      scrollInterval.current = null;
+    }
+  };
+
+  const scrollOnce = (direction: 'up' | 'down') => {
+    const step = direction === 'up' ? -100 : 100;
+    scrollRef.current?.scrollBy({ top: step, behavior: 'smooth' });
   };
 
   return (
@@ -53,13 +67,30 @@ const Tasks = () => {
           </>
         ) : (
           <div className="flex flex-col w-full h-full gap-2">
-            <BoxTitleText title="Description" text={data?.Description || ''} />
-            <BoxTitleText title="Instruction" text={data?.Instruction || ''} />
-            <Frequency
-              type={data?.Frequency_Type || 'daily'}
-              data={data?.Frequency_Dates || []}
-            />
-            <Times times={data?.Times || []} />
+            {data?.Description && (
+              <BoxTitleText
+                title="Description"
+                text={data?.Description || ''}
+              />
+            )}
+            {data?.Category === 'Activity' ? (
+              <BoxTitleText
+                title="Instruction"
+                text={data?.Sections[0]?.Exercises[0]?.Instruction || ''}
+              />
+            ) : (
+              <BoxTitleText
+                title="Instruction"
+                text={data?.Instruction || ''}
+              />
+            )}
+            {data?.Category !== 'Activity' && (
+              <Frequency
+                type={data?.Frequency_Type || 'daily'}
+                data={data?.Frequency_Dates || []}
+              />
+            )}
+            {data?.Times?.length > 0 && <Times times={data?.Times || []} />}
             {data?.Category === 'Diet' && (
               <div className="w-full p-3 rounded-xl border border-Gray-15 bg-backgroundColor-Secondary flex flex-col gap-2">
                 <div className="text-xs font-medium text-Text-Primary">
@@ -87,18 +118,17 @@ const Tasks = () => {
             {data?.Category === 'Supplement' && (
               <BoxTitleText title="Dose" text={data?.Dose || ''} />
             )}
-            {data?.Category === 'Lifestyle' && (
+            {/* {data?.Category === 'Lifestyle' && (
               <BoxValue
                 title="Value"
                 value={data?.Value || 0}
                 setVal={() => {}}
               />
-            )}
-            {data?.Category === 'Activity' &&
-            data?.Activity_Location?.length > 0 ? (
-              <BoxTexts texts={data?.Activity_Location || []} />
-            ) : (
-              ''
+            )} */}
+            {data?.Category === 'Activity' && (
+              <BoxTexts
+                texts={data?.Sections[0]?.Exercises[0]?.Exercise_Location || []}
+              />
             )}
             {data?.Category === 'Activity' && <BoxActivity activities={data} />}
           </div>
@@ -106,7 +136,12 @@ const Tasks = () => {
       </div>
       <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
         <button
-          onClick={scrollUp}
+          onClick={() => scrollOnce('up')}
+          onMouseDown={() => startScroll('up')}
+          onMouseUp={stopScroll}
+          onMouseLeave={stopScroll}
+          onTouchStart={() => startScroll('up')}
+          onTouchEnd={stopScroll}
           className="bg-white border border-gray-300 shadow-md rounded-full p-2 hover:bg-gray-100 transition"
         >
           <img
@@ -118,7 +153,12 @@ const Tasks = () => {
       </div>
       <div className="fixed bottom-4 right-4 flex flex-col gap-2 z-50">
         <button
-          onClick={scrollDown}
+          onClick={() => scrollOnce('down')}
+          onMouseDown={() => startScroll('down')}
+          onMouseUp={stopScroll}
+          onMouseLeave={stopScroll}
+          onTouchStart={() => startScroll('down')}
+          onTouchEnd={stopScroll}
           className="bg-white border border-gray-300 shadow-md rounded-full p-2 hover:bg-gray-100 transition"
         >
           <img
