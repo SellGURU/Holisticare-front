@@ -100,7 +100,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
               </div> */}
               {selectedRow?.Parent_Title && (
                 <div
-                  className={`flex ${selectedRow?.Category === 'Diet' ? 'gap-3' : 'gap-8'}`}
+                  className={`flex items-center ${selectedRow?.Category === 'Diet' ? 'gap-3' : 'gap-8'}`}
                 >
                   <div className="font-medium text-Text-Primary text-xs">
                     Associated Intervention
