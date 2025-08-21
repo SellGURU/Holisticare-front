@@ -8,6 +8,8 @@ type Reference = {
 };
 
 type HealthMessage = {
+  patient_email: string;
+  agent:string;
   response_text: string;
   references: Reference[];
   looking_forwards: string[];
@@ -73,6 +75,12 @@ const PlayGproundShow: React.FC<Props> = ({ data }) => {
         <Tooltip
           text={
             <div className="space-y-3">
+              <div>
+                <h4 className="font-semibold">patient_email:</h4>
+                <ul className="list-disc list-inside">
+                  <li>{data.patient_email}</li>
+                </ul>
+              </div>              
               <div>
                 <h4 className="font-semibold">Biomarker Insights:</h4>
                 <ul className="list-disc list-inside">
