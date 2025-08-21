@@ -34,11 +34,11 @@ type HealthMessage = {
 const Tooltip: React.FC<{
   text: React.ReactNode;
   children: React.ReactNode;
-}> = ({ text, children }) => {
+}> = ({ children }) => {
   return (
     <div className="relative group inline-block">
       {children}
-      <div
+      {/* <div
         className="
           absolute left-[-350px] text-justify overflow-hidden bg-white text-Text-Secondary transform -translate-x-1/2 mt-2
           opacity-0 group-hover:opacity-100 
@@ -49,7 +49,7 @@ const Tooltip: React.FC<{
         "
       >
         {text}
-      </div>
+      </div> */}
     </div>
   );
 };
@@ -66,18 +66,7 @@ const PlayGproundShow: React.FC<Props> = ({ data }) => {
     <>
       <div className="flex gap-6 absolute right-10 bg-white top-14">
         {/* References */}
-        <Tooltip
-          text={
-            <ul className="list-disc list-inside text-Text-Secondary bg-white space-y-1">
-              {data.references.map((ref, i) => (
-                <li key={i}>
-                  <span className="font-semibold">{ref.filename}:</span>{' '}
-                  {ref.text}
-                </li>
-              ))}
-            </ul>
-          }
-        >
+        <Tooltip text={<></>}>
           <button
             onClick={() => setIsOpenMoreInfoReferences(true)}
             className="flex items-center text-[14px] gap-1  text-Text-Secondary hover:text-Text-Primary"
@@ -85,37 +74,7 @@ const PlayGproundShow: React.FC<Props> = ({ data }) => {
             <Info size={14} /> References
           </button>
         </Tooltip>
-        <Tooltip
-          text={
-            <div className="space-y-3">
-              {Object.entries(data).map(([key, value]) => {
-                // اگر null یا undefined باشه
-                if (value == null) return null;
-                if (key === 'references') return null;
-                // اگر آرایه یا رشته باشه و خالی باشه
-                if (
-                  (Array.isArray(value) || typeof value === 'string') &&
-                  value.length === 0
-                ) {
-                  return null;
-                }
-
-                return (
-                  <div key={key}>
-                    <h4 className="font-semibold">{key}:</h4>
-                    <ul className="list-disc list-inside">
-                      {Array.isArray(value) ? (
-                        value.map((v, i) => <li key={i}>{String(v)}</li>)
-                      ) : (
-                        <li>{String(value)}</li>
-                      )}
-                    </ul>
-                  </div>
-                );
-              })}
-            </div>
-          }
-        >
+        <Tooltip text={<></>}>
           <button
             onClick={() => setIsOpenMoreInfo(true)}
             className="flex items-center text-[14px] gap-1  text-Text-Secondary hover:text-Text-Primary"
@@ -145,7 +104,7 @@ const PlayGproundShow: React.FC<Props> = ({ data }) => {
         }}
       >
         <>
-          <div className=" w-[800px] h-[500px] overflow-y-scroll bg-white rounded-lg p-4">
+          <div className=" w-[800px] h-[500px] text-Text-Primary text-[14px] overflow-y-scroll bg-white rounded-lg p-4">
             <div className="space-y-3">
               {Object.entries(data).map(([key, value]) => {
                 // اگر null یا undefined باشه
@@ -184,7 +143,16 @@ const PlayGproundShow: React.FC<Props> = ({ data }) => {
           setIsOpenMoreInfoReferences(false);
         }}
       >
-        <div className=" w-[800px] h-[500px] overflow-y-scroll bg-white rounded-lg p-4"></div>
+        <div className=" w-[800px] h-[500px] overflow-y-scroll bg-white rounded-lg p-4">
+          <ul className="list-disc list-inside text-Text-Primary text-[14px] text-justify bg-white space-y-1">
+            {data.references.map((ref, i) => (
+              <li key={i}>
+                <span className="font-semibold">{ref.filename}:</span>{' '}
+                {ref.text}
+              </li>
+            ))}
+          </ul>
+        </div>
       </MainModal>
     </>
   );

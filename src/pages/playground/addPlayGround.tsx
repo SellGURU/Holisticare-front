@@ -67,8 +67,9 @@ const AddPlayGround: FC<AddPlayGroundProps> = ({
         onSubmited();
         onClose();
       })
-      .catch(() => {
-        toast.error('invalid form');
+      .catch((e: any) => {
+        // console.log(e);
+        toast.error(e.detail);
         setLoadingCall(false);
       });
   };
