@@ -1026,6 +1026,9 @@ class Application extends Api {
   static checkDeleteLabReport = (data: any) => {
     return this.post(`/patients/check_delete_lab_report`, data);
   };
+  static checkStepTwoUpload = (data: any) => {
+    return this.post('/patients/check_lab_report_step_two', data);
+  };
 }
 
 export default Application;
