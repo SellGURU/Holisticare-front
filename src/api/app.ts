@@ -1028,6 +1028,7 @@ class Application extends Api {
   };
   static checkStepTwoUpload = (data: any) => {
     return this.post('/patients/check_lab_report_step_two', data);
+  };
   static getDietLibrary = () => {
     return this.post('/diet_library/get_parent_id', {});
   };
