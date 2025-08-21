@@ -26,7 +26,7 @@ interface FileUpload {
 
 interface UploadTestProps {
   memberId: any;
-  onGenderate: (file_id:string | undefined) => void;
+  onGenderate: (file_id: string | undefined) => void;
   isShare?: boolean;
   showReport: boolean;
 }
@@ -296,7 +296,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setisSaveClicked(true);
     setstep(0);
   };
-console.log(showReport);
+  console.log(showReport);
 
   return (
     <>
@@ -332,16 +332,16 @@ console.log(showReport);
                   {isSaveClicked &&
                     extractedBiomarkers.length + addedBiomarkers.length > 0 && (
                       <div className="w-[144px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
-                      <img
-                        className="size-4"
-                        src="/icons/tick-circle-upload.svg"
-                        alt=""
-                      />
-                      {extractedBiomarkers.length + addedBiomarkers.length}{' '}
-                      Biomarker added!
-                    </div>
+                        <img
+                          className="size-4"
+                          src="/icons/tick-circle-upload.svg"
+                          alt=""
+                        />
+                        {extractedBiomarkers.length + addedBiomarkers.length}{' '}
+                        Biomarker added!
+                      </div>
                     )}
-                 
+
                   <div className="text-[#000000] text-xs font-medium mt-3">
                     Upload Lab Report or Add Biomarkers
                   </div>
@@ -388,7 +388,7 @@ console.log(showReport);
                     borderRadius: '20px',
                   }}
                   disabled={
-                    uploadedFile== null ||
+                    uploadedFile == null ||
                     !isSaveClicked ||
                     extractedBiomarkers.length + addedBiomarkers.length == 0
                   }
