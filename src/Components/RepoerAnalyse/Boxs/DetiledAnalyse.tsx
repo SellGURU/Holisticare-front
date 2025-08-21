@@ -178,7 +178,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
               Description
             </div>
-            <div className="  text-Text-Secondary TextStyle-Body-2 mt-2 text-justify">
+            <div className="  text-Text-Primary opacity-90 TextStyle-Body-2 mt-2 text-justify">
               {data.description}
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
@@ -217,7 +217,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                           ) : null}
                           {value?.status && (
                             <>
-                              {value?.status[0] == 'Needs Focus' && (
+                              {(value?.status[0] == 'CriticalRange' || value?.status[0] == 'DiseaseRange') && (
                                 <div
                                   className="w-3 h-3 rounded-full "
                                   style={{
