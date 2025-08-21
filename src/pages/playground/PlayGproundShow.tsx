@@ -9,6 +9,7 @@ type Reference = {
 
 type HealthMessage = {
   patient_email: string;
+  gender: string;
   agent: string;
   response_text: string;
   references: Reference[];
@@ -31,11 +32,11 @@ const Tooltip: React.FC<{
       {children}
       <div
         className="
-          absolute left-[-300px] text-justify bg-white text-Text-Secondary transform -translate-x-1/2 mt-2
+          absolute left-[-350px] text-justify overflow-hidden bg-white text-Text-Secondary transform -translate-x-1/2 mt-2
           opacity-0 group-hover:opacity-100 
           pointer-events-none
           transition-opacity duration-200
-          w-[800px] max-h-[520px]   text-xs 
+          w-[900px] max-h-[520px]   text-xs 
           rounded-lg shadow-lg p-3 z-50
         "
       >
@@ -81,6 +82,18 @@ const PlayGproundShow: React.FC<Props> = ({ data }) => {
                   <li>{data.patient_email}</li>
                 </ul>
               </div>
+              <div>
+                <h4 className="font-semibold">agent:</h4>
+                <ul className="list-disc list-inside">
+                  <li>{data.agent}</li>
+                </ul>
+              </div>     
+              <div>
+                <h4 className="font-semibold">age:</h4>
+                <ul className="list-disc list-inside">
+                  <li>{data.gender }</li>
+                </ul>
+              </div>                           
               <div>
                 <h4 className="font-semibold">Biomarker Insights:</h4>
                 <ul className="list-disc list-inside">
