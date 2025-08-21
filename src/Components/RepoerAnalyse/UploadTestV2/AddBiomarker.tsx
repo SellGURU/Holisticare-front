@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TextField from '../../TextField';
 import SimpleDatePicker from '../../SimpleDatePicker';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
+import Select from '../../Select';
+import Application from '../../../api/app';
+import Circleloader from '../../CircleLoader';
 
 // Define the props for the AddBiomarker component, now using 'biomarker' instead of 'name'
 interface AddBiomarkerProps {
@@ -33,7 +36,8 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   const [biomarkerName, setBiomarkerName] = useState('');
   const [value, setValue] = useState('');
   const [unit, setUnit] = useState('');
-
+  const [unitsList, setUnitsList] = useState([]);
+  const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState([]);
   const handleAdd = () => {
     if (!biomarkerName || !value || !unit) return; // prevent empty adds
     onAddBiomarker({ biomarker: biomarkerName, value, unit });
@@ -41,12 +45,35 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
     setValue('');
     setUnit('');
   };
-
+  const [loading, setloading] = useState(false);
+  useEffect(() => {
+    setloading(true);
+    Application.getBiomarkerName({}).then((res) => {
+      setAvalibaleBiomarkers(res.data.biomarkers_list);
+      setloading(false);
+    }).catch(()=>{});
+  }, []);
+  useEffect(() => {
+    if (biomarkerName) {
+      setloading(true);
+      Application.getBiomarkerUnit({
+        biomarker_name: biomarkerName,
+      }).then((res) => {
+        setUnitsList(res.data.units);
+        setloading(false);
+      }).catch(()=>{});
+    }
+  }, [biomarkerName]);
   return (
     <div
       style={{ height: window.innerHeight - 235 + 'px' }}
       className="w-full rounded-2xl border p-4 border-Gray-50 shadow-200 mt-4 "
     >
+      {loading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <div className="w-full flex items-center justify-between">
         <div className="text-sm font-medium text-Text-Primary">
           List of Biomarkers
@@ -75,12 +102,19 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           {/* Biomarker Name */}
           <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
             Biomarker Name
-            <TextField
+            <Select
+            isSetting
+            isLarge
+              options={avalibaleBiomarkers}
+              value={biomarkerName}
+              onChange={(value: string) => setBiomarkerName(value)}
+            ></Select>
+            {/* <TextField
               newStyle
               type="text"
               value={biomarkerName}
               onChange={(e: any) => setBiomarkerName(e.target.value)}
-            />
+            /> */}
           </div>
 
           {/* Value */}
@@ -97,12 +131,19 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           {/* Unit */}
           <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
             Unit
-            <TextField
+            <Select
+                isSetting
+                isLarge
+              options={unitsList}
+              value={unit}
+              onChange={(value: string) => setUnit(value)}
+            ></Select>
+            {/* <TextField
               newStyle
               type="text"
               value={unit}
               onChange={(e: any) => setUnit(e.target.value)}
-            />
+            /> */}
           </div>
 
           {/* Add button */}

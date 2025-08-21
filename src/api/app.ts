@@ -1017,6 +1017,12 @@ class Application extends Api {
   static SaveLabReport = (data: any) => {
     return this.post('/patients/process_lab_report', data);
   };
+  static getBiomarkerName = (data: any) => {
+    return this.post('/clinic/get_biomarkers_list', data);
+  };
+  static getBiomarkerUnit = (data: any) => {
+    return this.post('/clinic/get_biomarker_unit', data);
+  };
 }
 
 export default Application;

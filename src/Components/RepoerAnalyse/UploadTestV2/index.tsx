@@ -21,6 +21,7 @@ interface FileUpload {
   uploadedSize?: number;
   errorMessage?: string;
   warning?: boolean;
+  showReport?:boolean
 }
 
 interface UploadTestProps {
@@ -34,6 +35,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   memberId,
   onGenderate,
   isShare,
+  showReport
 }) => {
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
@@ -46,6 +48,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [fileType, setfileType] = useState('');
   const [polling, setPolling] = useState(true); // ✅ control polling
   const [deleteLoading, setdeleteLoading] = useState(false);
+  const [isSaveClicked, setisSaveClicked] = useState(false)
   console.log(extractedBiomarkers);
 
   useEffect(() => {
@@ -274,7 +277,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       value: b.original_value,
       unit: b.original_unit,
     }));
-    setdeleteLoading(true);
+
     Application.SaveLabReport({
       member_id: memberId,
       modified_biomarkers: {
@@ -289,10 +292,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         lab_type: fileType,
         file_id: uploadedFile?.file_id,
       },
-    }).then(() => {
-      setdeleteLoading(false);
-      setstep(0);
-    });
+    }).catch(()=>{})
+    setisSaveClicked(true)
+    setstep(0);
+
   };
 
   return (
@@ -326,6 +329,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   }}
                   className="w-[477px] cursor-pointer h-[269px] rounded-2xl border p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
                 >
+                  {
+                    isSaveClicked && extractedBiomarkers.length + addedBiomarkers.length > 0
+                  }
+                  <div className='w-[144px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1'>
+                  <img className='size-4' src="/icons/tick-circle-upload.svg" alt="" />
+                  {extractedBiomarkers.length + addedBiomarkers.length} Biomarker added!
+                  </div>
                   <div className="text-[#000000] text-xs font-medium mt-3">
                     Upload Lab Report or Add Biomarkers
                   </div>
@@ -371,7 +381,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                     width: '250px',
                     borderRadius: '20px',
                   }}
-                  disabled={uploadedFile == null}
+                  disabled={!showReport || extractedBiomarkers.length + addedBiomarkers.length == 0}
                   onClick={() => {
                     onGenderate();
                   }}
@@ -421,6 +431,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             {activeMenu === 'Upload File' ? (
               <div className="w-full flex flex-col mt-8 gap-2">
                 <FileUploaderSection
+                
                   isShare={isShare}
                   errorMessage={errorMessage}
                   handleFileChange={handleFileChange}
