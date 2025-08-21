@@ -48,20 +48,24 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   const [loading, setloading] = useState(false);
   useEffect(() => {
     setloading(true);
-    Application.getBiomarkerName({}).then((res) => {
-      setAvalibaleBiomarkers(res.data.biomarkers_list);
-      setloading(false);
-    }).catch(()=>{});
+    Application.getBiomarkerName({})
+      .then((res) => {
+        setAvalibaleBiomarkers(res.data.biomarkers_list);
+        setloading(false);
+      })
+      .catch(() => {});
   }, []);
   useEffect(() => {
     if (biomarkerName) {
       setloading(true);
       Application.getBiomarkerUnit({
         biomarker_name: biomarkerName,
-      }).then((res) => {
-        setUnitsList(res.data.units);
-        setloading(false);
-      }).catch(()=>{});
+      })
+        .then((res) => {
+          setUnitsList(res.data.units);
+          setloading(false);
+        })
+        .catch(() => {});
     }
   }, [biomarkerName]);
   return (
@@ -103,8 +107,8 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
             Biomarker Name
             <Select
-            isSetting
-            isLarge
+              isSetting
+              isLarge
               options={avalibaleBiomarkers}
               value={biomarkerName}
               onChange={(value: string) => setBiomarkerName(value)}
@@ -132,8 +136,8 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
             Unit
             <Select
-                isSetting
-                isLarge
+              isSetting
+              isLarge
               options={unitsList}
               value={unit}
               onChange={(value: string) => setUnit(value)}

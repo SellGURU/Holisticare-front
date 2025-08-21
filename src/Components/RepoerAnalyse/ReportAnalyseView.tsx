@@ -31,6 +31,7 @@ import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
 import { UploadTestV2 } from './UploadTestV2';
+import { ButtonSecondary } from '../Button/ButtosSecondary';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -535,6 +536,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [resolvedMemberID, ClientSummaryBoxs]); // Only re-render when memberID changes
   console.log(isHaveReport);
   console.log(showUploadTest);
+  const [showProgressModal, setshowProgressModal] = useState(true);
+  const [IsinProgress, setIsinProgress] = useState(false);
   return (
     <>
       {loading ? (
@@ -553,6 +556,42 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             }}
             className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
           >
+            {
+              showProgressModal && (
+                <div className="fixed bg-white w-[320px] h-[212px] rounded-2xl border-2 border-r-0 border-Gray-50 shadow-200 p-4 z-[99] top-[48px] right-24 ">
+                <div className="flex items-center justify-between text-xs font-medium text-Primary-DeepTeal">
+                  {IsinProgress
+                    ? 'Processing in Progress'
+                    : 'Processing Completed'}{' '}
+                  <img
+                    onClick={() => setshowProgressModal(false)}
+                    src="/icons/close.svg"
+                    alt=""
+                    className="cursor-pointer"
+                  />
+                </div>
+                <div className='mt-4 w-full flex items-center gap-1 p-3 rounded-[12px] border border-Gray-50 text-[10px] text-Primary-DeepTeal'>
+                  {
+                    IsinProgress ? <img src="/icons/more-circle.svg" alt="" /> : <img src="/icons/tick-circle-upload.svg" alt="" />
+                  }
+                  {
+                    IsinProgress ?"Your file currently being processed..." : "Your file has been successfully processed."
+                  }
+                </div>
+                <div className='mt-4 text-[10px] text-Text-Quadruple'>{
+                  IsinProgress ? "If you'd like, you may continue working while the system analyzes the data.": "Please click “Sync Data” to apply the extracted data to your health plan."}</div>
+                  {
+                    !IsinProgress && (
+                      <div className='w-full flex justify-end mt-4'>
+                        <ButtonSecondary>Sync Data</ButtonSecondary>
+                      </div>
+                    )
+                  }
+              </div>
+              )
+            }
+       
+
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
               <div className="flex flex-col xl:flex-row gap-6 xl:gap-14 ">

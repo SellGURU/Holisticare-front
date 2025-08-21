@@ -11,8 +11,6 @@ interface FileUploaderSectionProps {
   handleDeleteFile: (file: any) => void;
   formatFileSize: (bytes: number) => string;
   fileInputRef: any;
-
-
 }
 
 const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
@@ -23,7 +21,6 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   handleDeleteFile,
   formatFileSize,
   fileInputRef,
-
 }) => {
   return (
     <div className="flex w-full justify-between rounded-2xl border p-4 bg-white shadow-200 border-Gray-50 gap-2">
@@ -40,7 +37,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
               document.getElementById('uploadFile')?.click();
             }
           }}
-          className={`mt-1 rounded-2xl h-[130px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${ uploadedFile ? 'cursor-auto' : ' cursor-pointer'}`}
+          className={`mt-1 rounded-2xl h-[130px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${uploadedFile ? 'cursor-auto' : ' cursor-pointer'}`}
         >
           <div className="w-full flex justify-center">
             <img src="/icons/upload-test.svg" alt="" />
