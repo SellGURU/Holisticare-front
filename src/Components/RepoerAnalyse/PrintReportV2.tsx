@@ -136,7 +136,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         caldenderData,
       }),
     );
-  }, [printOptins]);
+  }, [printOptins, helthPlan]);
   console.log(printOptins);
   console.log(pageJson);
 
