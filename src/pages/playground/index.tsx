@@ -8,6 +8,7 @@ import PlayGproundShow from './PlayGproundShow';
 // import { ButtonPrimary } from "../../Components/Button/ButtonPrimary";
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddPlayGround from './addPlayGround';
+import { useNavigate } from 'react-router-dom';
 
 const Playground = () => {
   //   const [search, setSearch] = useState('');
@@ -18,8 +19,17 @@ const Playground = () => {
       setAllTests(res.data);
     });
   };
+  const navigate = useNavigate();
+  const checkAcccessPlayGround = () => {
+    Application.getShowBrandInfo().then((res) => {
+      if (res.data.brand_elements.knowledge_playground == false) {
+        navigate('/');
+      }
+    });
+  };
   useEffect(() => {
     getPlaygroundList();
+    checkAcccessPlayGround();
   }, []);
   const [isOpen, setIsOpen] = useState(false);
   return (
