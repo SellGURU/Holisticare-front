@@ -5,6 +5,7 @@ import Application from '../../api/app'; // مسیر درستشو بزن
 import { SelectBoxField, TextField } from '../../Components/UnitComponents';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import { toast } from 'react-toastify';
+import Circleloader from '../../Components/CircleLoader';
 // import Select from "../../Components/Select";
 
 type AddPlayGroundProps = {
@@ -80,7 +81,9 @@ const AddPlayGround: FC<AddPlayGroundProps> = ({
         <h2 className="text-[14px] font-medium text-Text-Primary">New Query</h2>
 
         {loading ? (
-          <p className="text-gray-500">Loading...</p>
+          <p className="text-gray-500 w-full flex justify-center items-center h-[300px]">
+            <Circleloader></Circleloader>
+          </p>
         ) : (
           <form
             onSubmit={handleSubmit}
