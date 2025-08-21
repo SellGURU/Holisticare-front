@@ -6,18 +6,25 @@ import { useNavigate } from 'react-router-dom';
 // import Toggle from '../../Components/Toggle';
 import { Tooltip } from 'react-tooltip';
 
+type Reference = {
+  text: string;
+  filename: string;
+};
+
 type Message = {
-  agent: string;
+  Agent: string;
   date_created: string; // ISO Date
-  patient_email: string;
-  age: number;
-  gender: 'male' | 'female' | string;
-  conditions: string[] | null;
-  medication: string[] | null;
-  filled_form: any[]; // اگر فرم ساختار خاصی دارد میشه تایپ دقیق‌تری گذاشت
-  looking_forwards: string[];
-  biomarker_insight: string[];
-  client_insight: string[];
+  Email: string;
+  Age: number;
+  Gender: 'male' | 'female' | string;
+  Conditions: string[] | null;
+  Medications: string[] | null;
+  'Filled Questionnaires': any[]; // اگر فرم ساختار خاصی دارد میشه تایپ دقیق‌تری گذاشت
+  'Looking Forwards': string[];
+  'Biomarker Insights': string[];
+  'Client Insights': string[];
+  response_text: string;
+  references: Array<Reference>;
 };
 
 interface MessageListProps {
@@ -91,7 +98,7 @@ const MessageList: React.FC<MessageListProps> = ({
 
   const getColorForUsername = (username: string): string => {
     let hash = 0;
-    for (let i = 0; i < username.length; i++) {
+    for (let i = 0; i < username?.length; i++) {
       hash = username.charCodeAt(i) + ((hash << 5) - hash);
     }
     return colors[Math.abs(hash) % colors.length];
@@ -180,42 +187,42 @@ const MessageList: React.FC<MessageListProps> = ({
                     <div
                       style={{
                         backgroundColor: hexToRGBA(
-                          getColorForUsername(message.patient_email),
+                          getColorForUsername(message.Email),
                           0.2,
                         ),
                         color: hexToRGBA(
-                          getColorForUsername(message.patient_email),
+                          getColorForUsername(message.Email),
                           0.87,
                         ),
                       }}
                       className="min-w-10 h-10   rounded-full  flex items-center justify-center mr-3 capitalize"
                     >
-                      {message.patient_email.charAt(0)}
+                      {message.Email?.charAt(0)}
                     </div>
                     <div className="w-full flex flex-col justify-center">
                       <div className="flex items-center justify-between flex-wrap">
                         <div>
                           <div
-                            data-tooltip-id={message.patient_email}
+                            data-tooltip-id={message.Email}
                             className="text-[10px] font-medium text-Text-Primary"
                           >
-                            {message.patient_email.length > 25
-                              ? message.patient_email.substring(0, 25) + '...'
-                              : message.patient_email}
-                            {message.patient_email.length > 25 && (
+                            {message.Email.length > 25
+                              ? message.Email.substring(0, 25) + '...'
+                              : message.Email}
+                            {message.Email.length > 25 && (
                               <Tooltip
                                 place="top"
-                                id={message.patient_email}
+                                id={message.Email}
                                 className="!bg-white !w-fit !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !z-[99] !border-Gray-50 !p-2"
                               >
-                                {message.patient_email}
+                                {message.Email}
                               </Tooltip>
                             )}
                           </div>
                         </div>
-                        {expandedMessage !== message.patient_email && (
+                        {expandedMessage !== message.Email && (
                           <div
-                            className={`text-[8px] text-Text-Secondary mt-1 ${message.agent === 'No messages found' && 'invisible'}`}
+                            className={`text-[8px] text-Text-Secondary mt-1 ${message.Agent === 'No messages found' && 'invisible'}`}
                           >
                             {message.date_created.substring(0, 10)}
                           </div>
@@ -226,7 +233,7 @@ const MessageList: React.FC<MessageListProps> = ({
                           expandedMessage === message.date_created ? '' : ''
                         } `}
                       >
-                        {message.agent}
+                        {message.Agent}
                       </div>
                     </div>
                   </div>

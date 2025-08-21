@@ -76,9 +76,7 @@ const AddPlayGround: FC<AddPlayGroundProps> = ({
   return (
     <MainModal isOpen={isOpen} onClose={onClose}>
       <div className="w-[450px] relative min-h-[450px] bg-white rounded-2xl p-6 flex flex-col">
-        <h2 className="text-[14px] font-medium text-Text-Primary">
-          Add Playground
-        </h2>
+        <h2 className="text-[14px] font-medium text-Text-Primary">New Query</h2>
 
         {loading ? (
           <p className="text-gray-500">Loading...</p>
