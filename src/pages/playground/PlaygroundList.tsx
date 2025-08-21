@@ -30,8 +30,8 @@ type Message = {
 interface MessageListProps {
   search: string;
   onSelectMessage: (data: any) => void;
-  messages: Message[]; // Receive messages from parent
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Receive setter for initial load
+  messages: Array<any>; // Receive messages from parent
+  setMessages: React.Dispatch<React.SetStateAction<any[]>>; // Receive setter for initial load
 }
 
 const MessageList: React.FC<MessageListProps> = ({

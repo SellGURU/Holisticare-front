@@ -47,7 +47,7 @@ const Playground = () => {
             }}
           >
             {/* <img className="mr-1" src="/icons/user-add2.svg" alt="" /> */}
-            Add Test
+            Add Query
           </ButtonSecondary>
         </div>
         {/* <SearchBox
