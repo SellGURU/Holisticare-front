@@ -9,7 +9,7 @@ type Reference = {
 
 type HealthMessage = {
   patient_email: string;
-  agent:string;
+  agent: string;
   response_text: string;
   references: Reference[];
   looking_forwards: string[];
@@ -80,7 +80,7 @@ const PlayGproundShow: React.FC<Props> = ({ data }) => {
                 <ul className="list-disc list-inside">
                   <li>{data.patient_email}</li>
                 </ul>
-              </div>              
+              </div>
               <div>
                 <h4 className="font-semibold">Biomarker Insights:</h4>
                 <ul className="list-disc list-inside">
