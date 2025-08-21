@@ -94,37 +94,37 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   };
 
-  // const fetchPatentDataWithState = () => {
-  //   if (isShare) {
-  //     Application.getPatientsInfoShare(
-  //       {
-  //         member_id: memberID,
-  //       },
-  //       uniqKey,
-  //     ).then((res) => {
-  //       setUserInfoData(res.data);
-  //       setIsHaveReport(true);
-  //       setShowUploadTest(false);
-  //       setTimeout(() => {
-  //         fetchShareData();
-  //         // }
-  //       }, 2000);
-  //     });
-  //   } else {
-  //     Application.getPatientsInfo({
-  //       member_id: resolvedMemberID,
-  //     }).then((res) => {
-  //       setUserInfoData(res.data);
-  //       setIsHaveReport(res.data.show_report);
-  //       setShowUploadTest(!res.data.first_time_view);
-  //       setTimeout(() => {
-  //         if (res.data.show_report == true) {
-  //           fetchData();
-  //         }
-  //       }, 2000);
-  //     });
-  //   }
-  // };
+  const fetchPatentDataWithState = () => {
+    if (isShare) {
+      Application.getPatientsInfoShare(
+        {
+          member_id: memberID,
+        },
+        uniqKey,
+      ).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(true);
+        setShowUploadTest(false);
+        setTimeout(() => {
+          fetchShareData();
+          // }
+        }, 2000);
+      });
+    } else {
+      Application.getPatientsInfo({
+        member_id: resolvedMemberID,
+      }).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(res.data.show_report);
+        setShowUploadTest(!res.data.first_time_view);
+        setTimeout(() => {
+          if (res.data.show_report == true) {
+            fetchData();
+          }
+        }, 2000);
+      });
+    }
+  };
 
   const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
@@ -1000,8 +1000,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           console.log(res);
                         },
                       );
-                      publish("openProgressModal",{})
-                      checkStepTwo(file_id)
+                      if(file_id){
+                        publish("openProgressModal",{})
+                        checkStepTwo(file_id)
+                      }else {
+                        setTimeout(() => {
+                          fetchPatentDataWithState();
+                          publish('QuestionaryTrackingCall', {});
+                          fetchData();
+                        }, 5000);                        
+                      }
                     
                       // setTimeout(() => {
                       //   fetchPatentDataWithState();

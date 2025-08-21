@@ -297,7 +297,18 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setstep(0);
   };
 console.log(showReport);
-
+  const resolveActiveButtonReportAnalyse = () => {
+    if(showReport){
+      return true;
+    }
+    if(uploadedFile!= null ){
+      return true;
+    }
+    if(extractedBiomarkers.length + addedBiomarkers.length >0 && isSaveClicked){
+      return true;
+    }
+    return false;
+  }
   return (
     <>
       {deleteLoading && (
@@ -387,11 +398,7 @@ console.log(showReport);
                     width: '250px',
                     borderRadius: '20px',
                   }}
-                  disabled={
-                    uploadedFile== null ||
-                    !isSaveClicked ||
-                    extractedBiomarkers.length + addedBiomarkers.length == 0
-                  }
+                  disabled={!resolveActiveButtonReportAnalyse() }
                   onClick={() => {
                     onGenderate(uploadedFile?.file_id);
                   }}
