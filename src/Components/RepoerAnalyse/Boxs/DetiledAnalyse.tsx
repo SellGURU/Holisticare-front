@@ -217,7 +217,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                           ) : null}
                           {value?.status && (
                             <>
-                              {(value?.status[0] == 'CriticalRange' || value?.status[0] == 'DiseaseRange') && (
+                              {(value?.status[0] == 'CriticalRange' ||
+                                value?.status[0] == 'DiseaseRange') && (
                                 <div
                                   className="w-3 h-3 rounded-full "
                                   style={{
