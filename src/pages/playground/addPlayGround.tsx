@@ -18,7 +18,7 @@ type FieldSchema = {
   field_name: string;
   type: 'string' | 'list';
   label?: string;
-  options?: string[]; 
+  options?: string[];
   placeholder?: string;
 };
 
@@ -95,8 +95,8 @@ const AddPlayGround: FC<AddPlayGroundProps> = ({
               <div key={field.field_name} className="space-y-1">
                 {field.type === 'string' && (
                   <TextField
-                    label={field.label??field.field_name}
-                    placeholder={field.placeholder??field.field_name}
+                    label={field.label ?? field.field_name}
+                    placeholder={field.placeholder ?? field.field_name}
                     value={formValues[field.field_name] || ''}
                     isValid={true}
                     validationText={''}
@@ -115,11 +115,11 @@ const AddPlayGround: FC<AddPlayGroundProps> = ({
                 {/* type list با options → select */}
                 {field.type === 'list' && (
                   <SelectBoxField
-                    label={field.label??field.field_name}
+                    label={field.label ?? field.field_name}
                     options={field.options ? field.options : variables}
                     value={formValues[field.field_name] || ''}
                     onChange={(e) => handleChange(field.field_name, e)}
-                    placeholder={field.placeholder??field.field_name}
+                    placeholder={field.placeholder ?? field.field_name}
                   ></SelectBoxField>
                 )}
               </div>
