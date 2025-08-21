@@ -87,13 +87,13 @@ const PlayGproundShow: React.FC<Props> = ({ data }) => {
                 <ul className="list-disc list-inside">
                   <li>{data.agent}</li>
                 </ul>
-              </div>     
+              </div>
               <div>
                 <h4 className="font-semibold">age:</h4>
                 <ul className="list-disc list-inside">
-                  <li>{data.gender }</li>
+                  <li>{data.gender}</li>
                 </ul>
-              </div>                           
+              </div>
               <div>
                 <h4 className="font-semibold">Biomarker Insights:</h4>
                 <ul className="list-disc list-inside">
