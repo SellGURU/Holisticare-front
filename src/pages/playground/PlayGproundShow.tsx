@@ -104,7 +104,7 @@ const PlayGproundShow: React.FC<Props> = ({ data }) => {
         }}
       >
         <>
-          <div className=" w-[800px] h-[500px] text-Text-Primary text-[14px] overflow-y-scroll bg-white rounded-lg p-4">
+          <div className=" w-[800px] h-[500px] text-justify text-Text-Primary text-[14px] overflow-y-scroll bg-white rounded-lg p-4">
             <div className="space-y-3">
               {Object.entries(data).map(([key, value]) => {
                 // اگر null یا undefined باشه
@@ -143,7 +143,7 @@ const PlayGproundShow: React.FC<Props> = ({ data }) => {
           setIsOpenMoreInfoReferences(false);
         }}
       >
-        <div className=" w-[800px] h-[500px] overflow-y-scroll bg-white rounded-lg p-4">
+        <div className=" w-[800px] h-[500px] text-justify overflow-y-scroll bg-white rounded-lg p-4">
           <ul className="list-disc list-inside text-Text-Primary text-[14px] text-justify bg-white space-y-1">
             {data.references.map((ref, i) => (
               <li key={i}>
