@@ -288,13 +288,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         lab_type: 'more_info',
         file_id: uploadedFile?.file_id,
       },
-    })
-
+    });
   };
   const onSave = () => {
     setisSaveClicked(true);
     setstep(0);
-  }
+  };
   console.log(showReport);
   const resolveActiveButtonReportAnalyse = () => {
     if (showReport) {
@@ -402,21 +401,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   }}
                   disabled={!resolveActiveButtonReportAnalyse()}
                   onClick={() => {
-                    if(uploadedFile != null || addedBiomarkers.length != 0){
-                      handleSaveLabReport().then((res) => {
-                        if(res.data.modified_biomarkers_file_id !=null){
-                          onGenderate(res.data.modified_biomarkers_file_id);
-                        }else if(res.data.added_biomarkers_file_id !=null){
-                          onGenderate(res.data.added_biomarkers_file_id);
-                        }else{
-                          onGenderate(undefined);
-                        }
-                        console.log(res);
-                      }).catch((err) => {
-                        console.log(err);
-                      });
+                    if (uploadedFile != null || addedBiomarkers.length != 0) {
+                      handleSaveLabReport()
+                        .then((res) => {
+                          if (res.data.modified_biomarkers_file_id != null) {
+                            onGenderate(res.data.modified_biomarkers_file_id);
+                          } else if (
+                            res.data.added_biomarkers_file_id != null
+                          ) {
+                            onGenderate(res.data.added_biomarkers_file_id);
+                          } else {
+                            onGenderate(undefined);
+                          }
+                          console.log(res);
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        });
                       onGenderate(uploadedFile?.file_id);
-                    }else{
+                    } else {
                       onGenderate(undefined);
                     }
                   }}
@@ -498,7 +501,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         // </div>
         <UploadPModal
           OnBack={() => setstep(0)}
-          uploadedFile={uploadedFile }
+          uploadedFile={uploadedFile}
           onSave={onSave}
           isShare={isShare || false}
           errorMessage={errorMessage}
@@ -516,7 +519,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           handleConfirm={handleConfirm}
           handleCancel={handleCancel}
           deleteIndex={deleteIndex}
-          addedDateOfTest={addedDateOfTest }
+          addedDateOfTest={addedDateOfTest}
           handleAddedDateOfTestChange={handleAddedDateOfTestChange}
         />
       )}

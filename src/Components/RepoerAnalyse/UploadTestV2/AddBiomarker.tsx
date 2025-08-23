@@ -114,8 +114,8 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               options={avalibaleBiomarkers}
               value={biomarkerName}
               onChange={(value: string) => {
-                setUnit('')
-                setBiomarkerName(value)
+                setUnit('');
+                setBiomarkerName(value);
               }}
             ></Select>
             {/* <TextField

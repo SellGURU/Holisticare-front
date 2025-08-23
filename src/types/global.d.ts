@@ -44,5 +44,5 @@ declare global {
     errorMessage?: string;
     warning?: boolean;
     showReport?: boolean;
-}  
+  };
 }
