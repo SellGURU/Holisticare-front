@@ -34,4 +34,15 @@ declare global {
     created_on: string;
     created_by: string;
   };
+  type FileUpload = {
+    file: File;
+    file_id: string;
+    progress: number;
+    status: 'uploading' | 'completed' | 'error';
+    azureUrl?: string;
+    uploadedSize?: number;
+    errorMessage?: string;
+    warning?: boolean;
+    showReport?: boolean;
+}  
 }

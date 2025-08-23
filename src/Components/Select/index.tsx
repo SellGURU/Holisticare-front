@@ -121,7 +121,7 @@ const Select: React.FC<SelectProps> = ({
           {options?.map((option) => (
             <li
               key={option}
-              className={` ${options.length > 1 && 'border-y border-Gray-50'} py-1 px-4 cursor-pointer text-wrap text-[8px] text-[#888888] hover:bg-gray-200 text-start ${
+              className={` ${options.length > 1 && 'border-y border-Gray-50'} py-1 px-4 cursor-pointer text-wrap text-[10px] text-Text-Primary hover:bg-gray-200 text-start ${
                 selectedValue === option ? '' : ''
               }`}
               onClick={() => handleOptionClick(option)}
