@@ -12,7 +12,12 @@ import RefrenceBox from './Boxs/RefrenceBox';
 import Legends from './Legends';
 import SummaryBox from './SummaryBox';
 
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import Application from '../../api/app';
 import { ActionPlan } from '../Action-plan';
 import { TreatmentPlan } from '../TreatmentPlan';
@@ -511,7 +516,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
+  const [, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    subscribe('uploadTestShow', (data: any) => {
+      setSearchParams({ ['section']: 'Client Summary' });
+      document.getElementById('Client Summary')?.scrollIntoView({
+        behavior: 'instant',
+      });
+      setTimeout(() => {
+        publish('uploadTestShow-stepTwo', {});
+      }, 500);
+      setShowUploadTest(data.detail.isShow);
+    });
+  }, []);
   const [isHolisticPlanEmpty, setIsHolisticPlanEmpty] = useState(true);
 
   const memoizedPoints = useMemo(() => {
@@ -990,7 +1007,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     isShare={isShare}
                     showReport={isHaveReport}
                     onGenderate={(file_id: string | undefined) => {
-                      // setISGenerateLoading(true);
+                      setISGenerateLoading(true);
                       Application.first_view_report(resolvedMemberID).then(
                         (res) => {
                           console.log(res);
@@ -999,11 +1016,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       if (file_id) {
                         publish('openProgressModal', {});
                         checkStepTwo(file_id);
+                        setISGenerateLoading(false);
                       } else {
                         setTimeout(() => {
                           fetchPatentDataWithState();
                           publish('QuestionaryTrackingCall', {});
                           fetchData();
+                          setISGenerateLoading(false);
                         }, 5000);
                       }
 

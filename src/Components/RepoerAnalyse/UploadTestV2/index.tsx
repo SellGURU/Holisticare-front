@@ -45,8 +45,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [polling, setPolling] = useState(true); // ✅ control polling
   const [deleteLoading, setdeleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
-  console.log(extractedBiomarkers);
-
+  // console.log(extractedBiomarkers);
+  useEffect(() => {
+    subscribe('uploadTestShow-stepTwo', () => {
+      setstep(1);
+    });
+  }, []);
   useEffect(() => {
     if (!uploadedFile?.file_id) return;
 
@@ -432,73 +436,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           </div>
         </div>
       ) : (
-        // <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary pr-[95px]">
-        //   <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
-        //   <div
-        //     style={{ height: window.innerHeight - 80 + 'px' }}
-        //     className="bg-white p-6 rounded-md w-full h-fit z-10"
-        //   >
-        //     <div className="w-full flex items-center justify-between">
-        //       <div className="flex gap-2 items-center text-xs text-Text-Primary font-medium">
-        //         <div
-        //           onClick={() => setstep(0)}
-        //           className="cursor-pointer size-8 rounded-md p-1 bg-white border border-Gray-50 shadow-100 flex items-center justify-center"
-        //         >
-        //           <img src="/icons/arrow-back.svg" alt="" />
-        //         </div>
-        //         Lab Data & Biomarkers
-        //       </div>
-        //       <ButtonPrimary
-        //         disabled={uploadedFile == null}
-        //         onClick={handleSaveLabReport}
-        //         style={{
-        //           width: '167px',
-        //         }}
-        //       >
-        //         <img src="/icons/tick-square.svg" alt="" />
-        //         Save Changes
-        //       </ButtonPrimary>
-        //     </div>
-        //     <div className="flex w-full justify-center mt-6">
-        //       <Toggle
-        //         active={activeMenu}
-        //         setActive={setactiveMenu}
-        //         value={['Upload File', 'Add Biomarker']}
-        //       ></Toggle>
-        //     </div>
-        //     {activeMenu === 'Upload File' ? (
-        //       <div className="w-full flex flex-col mt-8 gap-2">
-        //         <FileUploaderSection
-        //           isShare={isShare}
-        //           errorMessage={errorMessage}
-        //           handleFileChange={handleFileChange}
-        //           uploadedFile={uploadedFile}
-        //           handleDeleteFile={handleDeleteFile}
-        //           formatFileSize={formatFileSize}
-        //           fileInputRef={fileInputRef}
-        //         />
-        //         <BiomarkersSection
-        //           dateOfTest={modifiedDateOfTest}
-        //           setDateOfTest={handleModifiedDateOfTestChange}
-        //           uploadedFile={uploadedFile}
-        //           biomarkers={extractedBiomarkers}
-        //           onChange={(updated) => setExtractedBiomarkers(updated)}
-        //         />
-        //       </div>
-        //     ) : (
-        //       <AddBiomarker
-        //         biomarkers={addedBiomarkers}
-        //         onAddBiomarker={handleAddBiomarker}
-        //         onTrashClick={handleTrashClick}
-        //         onConfirm={handleConfirm}
-        //         onCancel={handleCancel}
-        //         deleteIndex={deleteIndex}
-        //         dateOfTest={addedDateOfTest}
-        //         setDateOfTest={handleAddedDateOfTestChange}
-        //       ></AddBiomarker>
-        //     )}
-        //   </div>
-        // </div>
         <UploadPModal
           OnBack={() => setstep(0)}
           uploadedFile={uploadedFile}
