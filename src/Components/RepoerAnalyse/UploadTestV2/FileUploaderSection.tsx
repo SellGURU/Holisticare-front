@@ -11,7 +11,7 @@ interface FileUploaderSectionProps {
   handleDeleteFile: (file: any) => void;
   formatFileSize: (bytes: number) => string;
   fileInputRef: any;
-  onClose: ()=>void
+  onClose: () => void;
 }
 
 const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
@@ -80,7 +80,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
           ) : (
             <div className="grid grid-cols-1 mt-[2px] gap-2 ">
               <FileBoxUploadingV2
-              onClose={onClose}
+                onClose={onClose}
                 onDelete={() => handleDeleteFile(uploadedFile)}
                 el={{
                   ...uploadedFile,

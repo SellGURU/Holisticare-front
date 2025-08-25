@@ -101,7 +101,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
               {el.status == 'error' ? (
                 <>
                   <div className="flex gap-1 items-center justify-between w-full h-[43px]">
-                    <div className='flex items-center gap-1'>
+                    <div className="flex items-center gap-1">
                       <img src="/icons/danger-red.svg" alt="" />
                       <div className="font-semibold text-Text-Primary text-xs">
                         {el.file.name}
@@ -110,16 +110,15 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
                         {(el.file.size / (1024 * 1024)).toFixed(1)} MB
                       </div>
                     </div>
-                     <div className="flex w-auto justify-center ">
-                    <img
-                      onClick={onClose}
-                      src="/icons/close-red.svg"
-                      alt="Error"
-                      className="w-4 h-4 cursor-pointer"
-                    />
+                    <div className="flex w-auto justify-center ">
+                      <img
+                        onClick={onClose}
+                        src="/icons/close-red.svg"
+                        alt="Error"
+                        className="w-4 h-4 cursor-pointer"
+                      />
+                    </div>
                   </div>
-                  </div>
-                 
                 </>
               ) : (
                 <>
