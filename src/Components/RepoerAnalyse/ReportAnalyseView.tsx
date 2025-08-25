@@ -559,7 +559,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     if (!fileID) return;
 
     Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
-      if (res.data.step_two) {
+      if (res.data.step_two == true) {
         // The condition is met, so we stop here.
         publish('StepTwoSuccess', {});
       } else {
@@ -1007,6 +1007,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 ) : (
                   <UploadTestV2
                     questionnaires={questionnaires}
+                    onDiscard={() => {
+                      setShowUploadTest(false);
+                    }}
                     isShare={isShare}
                     showReport={isHaveReport}
                     onGenderate={(file_id: string | undefined) => {

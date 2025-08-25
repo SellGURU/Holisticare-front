@@ -9,7 +9,7 @@ export const UploadFileProgressModal = () => {
   subscribe('openProgressModal', () => {
     setTimeout(() => {
       setshowProgressModal(true);
-    }, 5000);
+    }, 2000);
     // setIsUploading(value.detail.isUploading);
   });
 
