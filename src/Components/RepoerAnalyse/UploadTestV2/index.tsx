@@ -422,9 +422,9 @@ console.log(showReport);
                     borderRadius: '20px',
                   }}
                   disabled={
-                    uploadedFile== null ||
-                    !isSaveClicked ||
-                    extractedBiomarkers.length + addedBiomarkers.length == 0
+                    uploadedFile== null &&
+                    !isSaveClicked &&
+                    extractedBiomarkers.length + addedBiomarkers.length == 0 && questionnaires.length ==0
                   }
                   onClick={() => {
                     onGenderate(uploadedFile?.file_id);
