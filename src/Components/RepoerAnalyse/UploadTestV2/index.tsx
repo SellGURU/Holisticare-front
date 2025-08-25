@@ -325,189 +325,211 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       )}
       {step === 0 ? (
         <>
-        {isUploadFromComboBar ?
-        <>
-          <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
-            <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
-            <div
-              style={{ height: window.innerHeight - 60 + 'px' }}
-              className="z-10 relative px-2 flex flex-col items-center justify-center"
-            >
-              <div className='text-base font-medium text-Text-Primary'>Biomarker Input Complete!</div>
-              {
-                extractedBiomarkers.length + addedBiomarkers.length > 0 && (
-                  <div className="w-[144px] mt-2 py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
-                    <img
-                      className="size-4"
-                      src="/icons/tick-circle-upload.svg"
-                      alt=""
-                    />
+          {isUploadFromComboBar ? (
+            <>
+              <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
+                <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
+                <div
+                  style={{ height: window.innerHeight - 60 + 'px' }}
+                  className="z-10 relative px-2 flex flex-col items-center justify-center"
+                >
+                  <div className="text-base font-medium text-Text-Primary">
+                    Biomarker Input Complete!
+                  </div>
+                  {extractedBiomarkers.length + addedBiomarkers.length > 0 && (
+                    <div className="w-[144px] mt-2 py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
+                      <img
+                        className="size-4"
+                        src="/icons/tick-circle-upload.svg"
+                        alt=""
+                      />
                       {extractedBiomarkers.length + addedBiomarkers.length}{' '}
                       Biomarker added!
                     </div>
-                  )
-              }
-              <div className="text-xs text-Text-Primary w-[570px] text-center mt-2">
-                You’ve completed entering your biomarkers. To save your changes and update your health plan with the new data, click ‘Save Changes’ or ‘Discard Changes’ to cancel.
-              </div>
-              <div className="w-full gap-2 flex justify-center mt-4">
-                <ButtonSecondary onClick={() => {
-                  onGenderate("discard");
-                }} style={{borderRadius:'20px'}} outline >
-                  Discard Changes
-                </ButtonSecondary>
-                <ButtonSecondary
-                  style={{
-                    // width: '150px',
-                    borderRadius: '20px',
-                  }}
-                  disabled={!resolveActiveButtonReportAnalyse()}
-                  onClick={() => {
-                    if (uploadedFile != null || addedBiomarkers.length != 0) {
-                      handleSaveLabReport()
-                        .then((res) => {
-                          if (res.data.modified_biomarkers_file_id != null) {
-                            onGenderate(res.data.modified_biomarkers_file_id);
-                          } else if (
-                            res.data.added_biomarkers_file_id != null
-                          ) {
-                            onGenderate(res.data.added_biomarkers_file_id);
-                          } else {
-                            onGenderate(undefined);
-                          }
-                          console.log(res);
-                        })
-                        .catch((err) => {
-                          console.log(err);
-                        });
-                      onGenderate(uploadedFile?.file_id);
-                    } else {
-                      onGenderate(undefined);
-                    }
-                  }}
-                >
-                  <img src="/icons/tick-square.svg" alt="" />
-                  Save Changes
-                </ButtonSecondary>
-              </div>              
-            </div>
-          </div>        
-        </>
-        :
-          <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
-            <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
-            <div
-              style={{ height: window.innerHeight - 60 + 'px' }}
-              className="z-10 relative px-2 flex flex-col items-center justify-center"
-            >
-              <div className="flex flex-col gap-6 w-full">
-                <div className="flex items-center flex-col gap-4">
-                  <div className="text-base font-medium text-Text-Primary">
-                    Provide Data to Generate Health Plan
+                  )}
+                  <div className="text-xs text-Text-Primary w-[570px] text-center mt-2">
+                    You’ve completed entering your biomarkers. To save your
+                    changes and update your health plan with the new data, click
+                    ‘Save Changes’ or ‘Discard Changes’ to cancel.
                   </div>
-                  <div className="text-xs text-Text-Primary text-center">
-                    Choose one or both methods below to provide a personalized
-                    plan.
+                  <div className="w-full gap-2 flex justify-center mt-4">
+                    <ButtonSecondary
+                      onClick={() => {
+                        onGenderate('discard');
+                      }}
+                      style={{ borderRadius: '20px' }}
+                      outline
+                    >
+                      Discard Changes
+                    </ButtonSecondary>
+                    <ButtonSecondary
+                      style={{
+                        // width: '150px',
+                        borderRadius: '20px',
+                      }}
+                      disabled={!resolveActiveButtonReportAnalyse()}
+                      onClick={() => {
+                        if (
+                          uploadedFile != null ||
+                          addedBiomarkers.length != 0
+                        ) {
+                          handleSaveLabReport()
+                            .then((res) => {
+                              if (
+                                res.data.modified_biomarkers_file_id != null
+                              ) {
+                                onGenderate(
+                                  res.data.modified_biomarkers_file_id,
+                                );
+                              } else if (
+                                res.data.added_biomarkers_file_id != null
+                              ) {
+                                onGenderate(res.data.added_biomarkers_file_id);
+                              } else {
+                                onGenderate(undefined);
+                              }
+                              console.log(res);
+                            })
+                            .catch((err) => {
+                              console.log(err);
+                            });
+                          onGenderate(uploadedFile?.file_id);
+                        } else {
+                          onGenderate(undefined);
+                        }
+                      }}
+                    >
+                      <img src="/icons/tick-square.svg" alt="" />
+                      Save Changes
+                    </ButtonSecondary>
                   </div>
                 </div>
-                <div className="flex w-full items-center gap-6">
-                  <div
-                    onClick={() => {
-                      setstep(1);
-                    }}
-                    className="w-[477px] cursor-pointer h-[269px] rounded-2xl border p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
-                  >
-                    {isSaveClicked &&
-                      extractedBiomarkers.length + addedBiomarkers.length > 0 && (
-                        <div className="w-[144px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
-                          <img
-                            className="size-4"
-                            src="/icons/tick-circle-upload.svg"
-                            alt=""
-                          />
-                          {extractedBiomarkers.length + addedBiomarkers.length}{' '}
-                          Biomarker added!
-                        </div>
-                      )}
+              </div>
+            </>
+          ) : (
+            <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
+              <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
+              <div
+                style={{ height: window.innerHeight - 60 + 'px' }}
+                className="z-10 relative px-2 flex flex-col items-center justify-center"
+              >
+                <div className="flex flex-col gap-6 w-full">
+                  <div className="flex items-center flex-col gap-4">
+                    <div className="text-base font-medium text-Text-Primary">
+                      Provide Data to Generate Health Plan
+                    </div>
+                    <div className="text-xs text-Text-Primary text-center">
+                      Choose one or both methods below to provide a personalized
+                      plan.
+                    </div>
+                  </div>
+                  <div className="flex w-full items-center gap-6">
+                    <div
+                      onClick={() => {
+                        setstep(1);
+                      }}
+                      className="w-[477px] cursor-pointer h-[269px] rounded-2xl border p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
+                    >
+                      {isSaveClicked &&
+                        extractedBiomarkers.length + addedBiomarkers.length >
+                          0 && (
+                          <div className="w-[144px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
+                            <img
+                              className="size-4"
+                              src="/icons/tick-circle-upload.svg"
+                              alt=""
+                            />
+                            {extractedBiomarkers.length +
+                              addedBiomarkers.length}{' '}
+                            Biomarker added!
+                          </div>
+                        )}
 
-                    <div className="text-[#000000] text-xs font-medium mt-3">
-                      Upload Lab Report or Add Biomarkers
+                      <div className="text-[#000000] text-xs font-medium mt-3">
+                        Upload Lab Report or Add Biomarkers
+                      </div>
+                      <img
+                        className="mt-3"
+                        src="/icons/document-upload-new.svg"
+                        alt=""
+                      />
+                      <div className="text-xs mt-3">
+                        Upload your client's lab test file and edit or add
+                        biomarkers manually.
+                      </div>
+                      <div className="text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
+                        Enter or Upload Biomarkers
+                      </div>
                     </div>
-                    <img
-                      className="mt-3"
-                      src="/icons/document-upload-new.svg"
-                      alt=""
-                    />
-                    <div className="text-xs mt-3">
-                      Upload your client's lab test file and edit or add
-                      biomarkers manually.
-                    </div>
-                    <div className="text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
-                      Enter or Upload Biomarkers
+                    <div
+                      onClick={() => {
+                        publish('QuestionaryTrackingCall', {});
+                      }}
+                      className="w-[477px] cursor-pointer h-[269px] rounded-2xl border p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
+                    >
+                      <div className="text-[#000000] text-xs font-medium mt-3">
+                        Fill Health Questionnaire
+                      </div>
+                      <img
+                        className="mt-5"
+                        src="/icons/task-square-new.svg"
+                        alt=""
+                      />
+                      <div className="text-xs mt-3">
+                        Provide data (lifestyle, medical history, ...) for a
+                        more accurate plan.
+                      </div>
+                      <div className="text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
+                        Fill Questionnaire
+                      </div>
                     </div>
                   </div>
-                  <div
-                    onClick={() => {
-                      publish('QuestionaryTrackingCall', {});
-                    }}
-                    className="w-[477px] cursor-pointer h-[269px] rounded-2xl border p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
-                  >
-                    <div className="text-[#000000] text-xs font-medium mt-3">
-                      Fill Health Questionnaire
-                    </div>
-                    <img
-                      className="mt-5"
-                      src="/icons/task-square-new.svg"
-                      alt=""
-                    />
-                    <div className="text-xs mt-3">
-                      Provide data (lifestyle, medical history, ...) for a more
-                      accurate plan.
-                    </div>
-                    <div className="text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
-                      Fill Questionnaire
-                    </div>
+                  <div className="w-full flex justify-center mt-4">
+                    <ButtonSecondary
+                      style={{
+                        width: '250px',
+                        borderRadius: '20px',
+                      }}
+                      disabled={!resolveActiveButtonReportAnalyse()}
+                      onClick={() => {
+                        if (
+                          uploadedFile != null ||
+                          addedBiomarkers.length != 0
+                        ) {
+                          handleSaveLabReport()
+                            .then((res) => {
+                              if (
+                                res.data.modified_biomarkers_file_id != null
+                              ) {
+                                onGenderate(
+                                  res.data.modified_biomarkers_file_id,
+                                );
+                              } else if (
+                                res.data.added_biomarkers_file_id != null
+                              ) {
+                                onGenderate(res.data.added_biomarkers_file_id);
+                              } else {
+                                onGenderate(undefined);
+                              }
+                              console.log(res);
+                            })
+                            .catch((err) => {
+                              console.log(err);
+                            });
+                          onGenderate(uploadedFile?.file_id);
+                        } else {
+                          onGenderate(undefined);
+                        }
+                      }}
+                    >
+                      <img src="/icons/tick-square.svg" alt="" />
+                      Develop Health Plan
+                    </ButtonSecondary>
                   </div>
-                </div>
-                <div className="w-full flex justify-center mt-4">
-                  <ButtonSecondary
-                    style={{
-                      width: '250px',
-                      borderRadius: '20px',
-                    }}
-                    disabled={!resolveActiveButtonReportAnalyse()}
-                    onClick={() => {
-                      if (uploadedFile != null || addedBiomarkers.length != 0) {
-                        handleSaveLabReport()
-                          .then((res) => {
-                            if (res.data.modified_biomarkers_file_id != null) {
-                              onGenderate(res.data.modified_biomarkers_file_id);
-                            } else if (
-                              res.data.added_biomarkers_file_id != null
-                            ) {
-                              onGenderate(res.data.added_biomarkers_file_id);
-                            } else {
-                              onGenderate(undefined);
-                            }
-                            console.log(res);
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                          });
-                        onGenderate(uploadedFile?.file_id);
-                      } else {
-                        onGenderate(undefined);
-                      }
-                    }}
-                  >
-                    <img src="/icons/tick-square.svg" alt="" />
-                    Develop Health Plan
-                  </ButtonSecondary>
                 </div>
               </div>
             </div>
-          </div>
-        }
+          )}
         </>
       ) : (
         <UploadPModal

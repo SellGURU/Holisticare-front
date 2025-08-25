@@ -1007,7 +1007,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     isShare={isShare}
                     showReport={isHaveReport}
                     onGenderate={(file_id: string | undefined) => {
-                      if(file_id == "discard") {
+                      if (file_id == 'discard') {
                         setShowUploadTest(false);
                         return;
                       }
