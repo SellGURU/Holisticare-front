@@ -29,6 +29,7 @@ interface UploadTestProps {
   onGenderate: (file_id:string | undefined) => void;
   isShare?: boolean;
   showReport: boolean;
+  questionnaires: any[],
 }
 
 export const UploadTestV2: React.FC<UploadTestProps> = ({
@@ -36,6 +37,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   onGenderate,
   isShare,
   showReport,
+  questionnaires
 }) => {
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
@@ -177,6 +179,28 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const files = e.target.files;
     if (files && files[0]) {
       const file = files[0];
+      const fileName = file.name;
+      const fileExtension = fileName.split('.').pop()?.toLowerCase();
+      
+      const supportedFormats = ['pdf', 'docx'];
+
+      if (!fileExtension || !supportedFormats.includes(fileExtension)) {
+        // Validation failed: set error state without calling API
+        const newFile: FileUpload = {
+          file_id: '',
+          file,
+          progress: 0,
+          status: 'error',
+          errorMessage: 'File has an unsupported format.',
+        };
+        setUploadedFile(newFile);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return; // Stop execution here
+      }
+
+      // Validation passed: proceed with upload
       const newFile: FileUpload = {
         file_id: '',
         file,
@@ -192,9 +216,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         const azureUrl = await uploadToAzure(file, (progress) => {
           const uploadedBytes = Math.floor((progress / 100) * file.size);
           setUploadedFile((prev) =>
-            prev
-              ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes }
-              : prev,
+            prev ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes } : prev,
           );
         });
 
@@ -363,7 +385,19 @@ console.log(showReport);
                     publish('QuestionaryTrackingCall', {});
                   }}
                   className="w-[477px] cursor-pointer h-[269px] rounded-2xl border p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
-                >
+                >     {
+                 questionnaires.length > 0 && (
+                    <div className="w-[167px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
+                    <img
+                      className="size-4"
+                      src="/icons/tick-circle-upload.svg"
+                      alt=""
+                    />
+                  
+                    <span className=''>  {questionnaires.length}</span>
+                    Questionnaire filled out!
+                  </div>
+                  )}
                   <div className="text-[#000000] text-xs font-medium mt-3">
                     Fill Health Questionnaire
                   </div>
@@ -448,6 +482,7 @@ console.log(showReport);
                   handleDeleteFile={handleDeleteFile}
                   formatFileSize={formatFileSize}
                   fileInputRef={fileInputRef}
+          
                 />
                 <BiomarkersSection
                   dateOfTest={modifiedDateOfTest}

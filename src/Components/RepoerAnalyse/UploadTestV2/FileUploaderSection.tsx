@@ -11,6 +11,7 @@ interface FileUploaderSectionProps {
   handleDeleteFile: (file: any) => void;
   formatFileSize: (bytes: number) => string;
   fileInputRef: any;
+
 }
 
 const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
@@ -21,6 +22,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   handleDeleteFile,
   formatFileSize,
   fileInputRef,
+
 }) => {
   return (
     <div className="flex w-full justify-between rounded-2xl border p-4 bg-white shadow-200 border-Gray-50 gap-2">
@@ -56,7 +58,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
           <input
             type="file"
             ref={fileInputRef}
-            accept=".pdf, .docx"
+            // accept=".pdf, .docx"
             onChange={handleFileChange}
             id="uploadFile"
             className="w-full absolute invisible h-full left-0 top-0"
