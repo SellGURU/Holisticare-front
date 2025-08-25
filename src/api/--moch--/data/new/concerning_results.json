@@ -1,16 +1,1 @@
-[
-  {
-    "subcategory": "Diabetes & Glucose",
-    "biomarkers": [
-      {
-        "name": "Fasting Plasma Glucose",
-        "Result": "85",
-        "Units": "mg/dL",
-        "Lab Ref Range": "-∞-500.0",
-        "Baseline": "85",
-        "Optimal Range": "-∞-100",
-        "Changes": "0%"
-      }
-    ]
-  }
-]
+[]

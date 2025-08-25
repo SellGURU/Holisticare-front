@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import TextField from '../../TextField';
 import SimpleDatePicker from '../../SimpleDatePicker';
@@ -109,9 +110,13 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             <Select
               isSetting
               isLarge
+              isStaff
               options={avalibaleBiomarkers}
               value={biomarkerName}
-              onChange={(value: string) => setBiomarkerName(value)}
+              onChange={(value: string) => {
+                setUnit('');
+                setBiomarkerName(value);
+              }}
             ></Select>
             {/* <TextField
               newStyle
@@ -140,6 +145,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               isLarge
               options={unitsList}
               value={unit}
+              isStaff
               onChange={(value: string) => setUnit(value)}
             ></Select>
             {/* <TextField

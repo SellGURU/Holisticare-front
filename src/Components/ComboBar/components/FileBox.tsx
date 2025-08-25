@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../../api/app';
@@ -46,13 +46,12 @@ const FileBox: React.FC<FileBoxProps> = ({
 
     return `${day} ${month} ${year}`;
   };
-  const [isUploded, setIsUploded] = useState(
-    el.status == 'completed' ? true : false,
-  );
-  useEffect(() => {
-    setIsUploded(el.status == 'completed' ? true : false);
-  }, [el.status]);
-  console.log(el);
+  // const [isUploded, setIsUploded] = useState(
+  //   el.status == 'completed' ? true : false,
+  // );
+  // useEffect(() => {
+  //   setIsUploded(el.status == 'completed' ? true : false);
+  // }, [el.status]);
 
   const [isSureRemoveId, setIsSureRemoveId] = useState<number | null>(null);
   return (
@@ -122,39 +121,51 @@ const FileBox: React.FC<FileBoxProps> = ({
                   </>
                 ) : (
                   <>
-                    {isUploded && (
-                      <img
-                        onClick={() => {
-                          if (!isDeleted) {
-                            setIsSureRemoveId(el.file_id);
-                          }
-                        }}
-                        src="/icons/delete-green.svg"
-                        alt=""
-                        className="cursor-pointer w-5 h-5"
-                      />
-                    )}
-
+                    {/* {isUploded && ( */}
                     <img
                       onClick={() => {
                         if (!isDeleted) {
-                          if (el.file_id) {
-                            Application.downloadFille({
-                              file_id: el.file_id,
-                              member_id: id,
-                            })
-                              .then((res) => {
-                                try {
-                                  const blobUrl = res.data;
+                          setIsSureRemoveId(el.file_id);
+                        }
+                      }}
+                      src="/icons/delete-green.svg"
+                      alt=""
+                      className="cursor-pointer w-5 h-5"
+                    />
+                    {/* )} */}
+                    {el.file_name !== 'Manual Entry' && (
+                      <img
+                        onClick={() => {
+                          if (!isDeleted) {
+                            if (el.file_id) {
+                              Application.downloadFille({
+                                file_id: el.file_id,
+                                member_id: id,
+                              })
+                                .then((res) => {
+                                  try {
+                                    const blobUrl = res.data;
 
-                                  // Create a direct download link for the blob URL
-                                  const link = document.createElement('a');
-                                  link.href = blobUrl;
-                                  link.download = el.file_name;
-                                  document.body.appendChild(link);
-                                  link.click();
-                                  document.body.removeChild(link);
-                                } catch (error: any) {
+                                    // Create a direct download link for the blob URL
+                                    const link = document.createElement('a');
+                                    link.href = blobUrl;
+                                    link.download = el.file_name;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                  } catch (error: any) {
+                                    console.error(
+                                      'Error downloading file:',
+                                      error,
+                                    );
+                                    console.error('Error details:', {
+                                      errorName: error?.name,
+                                      errorMessage: error?.message,
+                                      errorStack: error?.stack,
+                                    });
+                                  }
+                                })
+                                .catch((error: any) => {
                                   console.error(
                                     'Error downloading file:',
                                     error,
@@ -164,37 +175,29 @@ const FileBox: React.FC<FileBoxProps> = ({
                                     errorMessage: error?.message,
                                     errorStack: error?.stack,
                                   });
-                                }
-                              })
-                              .catch((error: any) => {
-                                console.error('Error downloading file:', error);
-                                console.error('Error details:', {
-                                  errorName: error?.name,
-                                  errorMessage: error?.message,
-                                  errorStack: error?.stack,
                                 });
-                              });
-                          } else {
-                            // For direct file object, create a blob URL
-                            const blobUrl = URL.createObjectURL(el.file);
+                            } else {
+                              // For direct file object, create a blob URL
+                              const blobUrl = URL.createObjectURL(el.file);
 
-                            // Create a direct download link for the blob URL
-                            const link = document.createElement('a');
-                            link.href = blobUrl;
-                            link.download = el.file_name || el.file.name;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
+                              // Create a direct download link for the blob URL
+                              const link = document.createElement('a');
+                              link.href = blobUrl;
+                              link.download = el.file_name || el.file.name;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
 
-                            // Clean up the blob URL
-                            URL.revokeObjectURL(blobUrl);
+                              // Clean up the blob URL
+                              URL.revokeObjectURL(blobUrl);
+                            }
                           }
-                        }
-                      }}
-                      className="cursor-pointer"
-                      src="/icons/import.svg"
-                      alt=""
-                    />
+                        }}
+                        className="cursor-pointer"
+                        src="/icons/import.svg"
+                        alt=""
+                      />
+                    )}
                   </>
                 )}
               </div>
@@ -276,7 +279,7 @@ const FileBox: React.FC<FileBoxProps> = ({
         ) : (
           ''
         )}
-        {isUploded && (
+        {/* {isUploded && (
           <div>
             <div className="flex items-center justify-start gap-1 mt-4">
               <img
@@ -310,7 +313,7 @@ const FileBox: React.FC<FileBoxProps> = ({
               </ButtonSecondary>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </>
   );
