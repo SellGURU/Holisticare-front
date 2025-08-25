@@ -340,6 +340,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     ) {
       return true;
     }
+    if (questionnaires.length > 0) {
+      return true;
+    }
     return false;
   };
   return (
@@ -356,14 +359,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
                 <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
                 <div
-                  style={{ height: window.innerHeight - 60 + 'px' }}
-                  className="z-10 relative px-2 flex flex-col items-center justify-center"
+                  // style={{ height: window.innerHeight - 60 + 'px' }}
+                  className="z-10 relative px-2 h-[65vh] flex flex-col items-center justify-center"
                 >
                   <div className="text-base font-medium text-Text-Primary">
                     Biomarker Input Complete!
                   </div>
                   {extractedBiomarkers.length + addedBiomarkers.length > 0 && (
-                    <div className="w-[144px] mt-2 py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
+                    <div className="w-[144px] mt-4  py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
                       <img
                         className="size-4"
                         src="/icons/tick-circle-upload.svg"
@@ -373,12 +376,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       Biomarker added!
                     </div>
                   )}
-                  <div className="text-xs text-Text-Primary w-[570px] text-center mt-2">
+                  <div className="text-xs mt-4 text-Text-Primary w-[570px] text-center ">
                     You’ve completed entering your biomarkers. To save your
                     changes and update your health plan with the new data, click
                     ‘Save Changes’ or ‘Discard Changes’ to cancel.
                   </div>
-                  <div className="w-full gap-2 flex justify-center mt-4">
+                  <div className="w-full gap-2 flex justify-center mt-[46px] ">
                     <ButtonSecondary
                       onClick={() => {
                         onGenderate('discard');
@@ -386,6 +389,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       style={{ borderRadius: '20px' }}
                       outline
                     >
+                      <img src="/icons/close-square-green.svg" alt="" />
                       Discard Changes
                     </ButtonSecondary>
                     <ButtonSecondary
@@ -596,6 +600,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           deleteIndex={deleteIndex}
           addedDateOfTest={addedDateOfTest}
           handleAddedDateOfTestChange={handleAddedDateOfTestChange}
+          onClose={() => {
+            setUploadedFile(null);
+          }}
         />
       )}
     </>

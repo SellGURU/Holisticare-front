@@ -28,6 +28,7 @@ interface UploadPModalProps {
   deleteIndex: number | null;
   addedDateOfTest: Date | null;
   handleAddedDateOfTestChange: (date: Date | null) => void;
+  onClose: () => void;
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -52,6 +53,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   deleteIndex,
   addedDateOfTest,
   handleAddedDateOfTestChange,
+  onClose,
 }) => {
   const [activeMenu, setactiveMenu] = useState('Upload File');
   return (
@@ -79,8 +81,12 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 width: '167px',
               }}
             >
-              <img src="/icons/tick-square.svg" alt="" />
-              Save Changes
+              <img
+                className="size-4"
+                src="/icons/arrow-right-white.svg"
+                alt=""
+              />
+              Continue{' '}
             </ButtonPrimary>
           </div>
           <div className="flex w-full justify-center mt-6">
@@ -100,6 +106,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 handleDeleteFile={handleDeleteFile}
                 formatFileSize={formatFileSize}
                 fileInputRef={fileInputRef}
+                onClose={onClose}
               />
               <BiomarkersSection
                 dateOfTest={modifiedDateOfTest}
