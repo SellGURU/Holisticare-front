@@ -557,8 +557,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   console.log(showUploadTest);
   const checkStepTwo = (fileID: string | undefined) => {
     if (!fileID) return;
-    setShowUploadTest(false);
-    setIsHaveReport(true);
+
     Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
       if (res.data.step_two == true) {
         // The condition is met, so we stop here.
@@ -1023,6 +1022,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       );
                       if (file_id) {
                         publish('openProgressModal', {});
+                        setShowUploadTest(false);
+                        setIsHaveReport(true);
                         checkStepTwo(file_id);
                         setISGenerateLoading(false);
                       } else {
