@@ -5,9 +5,14 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 interface FileBoxProps {
   el: any;
   onDelete?: () => void;
+  onClose: () => void;
 }
 
-const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
+const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
+  el,
+  onDelete,
+  onClose,
+}) => {
   //   const formatDate = (dateString: string) => {
   //     const date = new Date(dateString);
   //     const months = [
@@ -95,23 +100,26 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
             </div> */}
               {el.status == 'error' ? (
                 <>
-                  <div className="flex gap-1 items-center w-full h-[43px]">
-                    <img src="/icons/danger-red.svg" alt="" />
-                    <div className="font-semibold text-Text-Primary text-xs">
-                      {el.file.name}
+                  <div className="flex gap-1 items-center justify-between w-full h-[43px]">
+                    <div className='flex items-center gap-1'>
+                      <img src="/icons/danger-red.svg" alt="" />
+                      <div className="font-semibold text-Text-Primary text-xs">
+                        {el.file.name}
+                      </div>
+                      <div className="text-[#888888] text-xs">
+                        {(el.file.size / (1024 * 1024)).toFixed(1)} MB
+                      </div>
                     </div>
-                    <div className="text-[#888888] text-xs">
-                      {(el.file.size / (1024 * 1024)).toFixed(1)} MB
-                    </div>
-                  </div>
-                  {/* <div className="flex w-auto justify-center gap-1">
+                     <div className="flex w-auto justify-center ">
                     <img
-                      onClick={onDelete}
+                      onClick={onClose}
                       src="/icons/close-red.svg"
                       alt="Error"
-                      className="w-6 h-6 cursor-pointer"
+                      className="w-4 h-4 cursor-pointer"
                     />
-                  </div> */}
+                  </div>
+                  </div>
+                 
                 </>
               ) : (
                 <>

@@ -338,6 +338,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     ) {
       return true;
     }
+    if (questionnaires.length > 0) {
+      return true;
+    }
     return false;
   };
   return (
@@ -589,6 +592,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           deleteIndex={deleteIndex}
           addedDateOfTest={addedDateOfTest}
           handleAddedDateOfTestChange={handleAddedDateOfTestChange}
+          onClose={()=>{
+            setUploadedFile(null)
+          }}
         />
       )}
     </>
