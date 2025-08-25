@@ -55,6 +55,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
+  const [questionnaires, setQuestionnaires] = useState([]);
   // const history = useHistory();
   const location = useLocation();
   // useEffect(() => {
@@ -77,6 +78,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setUserInfoData(res.data);
         setIsHaveReport(true);
         setShowUploadTest(false);
+
         setTimeout(() => {
           // if (res.data.show_report == true) {
           fetchShareData();
@@ -90,6 +92,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
         setShowUploadTest(!res.data.first_time_view);
+        setQuestionnaires(res.data.questionnaires);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchData();
@@ -554,10 +557,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   console.log(showUploadTest);
   const checkStepTwo = (fileID: string | undefined) => {
     if (!fileID) return;
-    setShowUploadTest(false);
-    setIsHaveReport(true);
+
     Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
-      if (res.data.Step_two) {
+      if (res.data.step_two) {
         // The condition is met, so we stop here.
         publish('StepTwoSuccess', {});
       } else {
@@ -1004,9 +1006,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </>
                 ) : (
                   <UploadTestV2
+                    questionnaires={questionnaires}
                     isShare={isShare}
                     showReport={isHaveReport}
                     onGenderate={(file_id: string | undefined) => {
+                      if (file_id == 'discard') {
+                        setShowUploadTest(false);
+                        return;
+                      }
                       setISGenerateLoading(true);
                       Application.first_view_report(resolvedMemberID).then(
                         (res) => {
@@ -1015,6 +1022,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       );
                       if (file_id) {
                         publish('openProgressModal', {});
+                        setShowUploadTest(false);
+                        setIsHaveReport(true);
                         checkStepTwo(file_id);
                         setISGenerateLoading(false);
                       } else {
