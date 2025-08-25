@@ -1007,6 +1007,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     isShare={isShare}
                     showReport={isHaveReport}
                     onGenderate={(file_id: string | undefined) => {
+                      if(file_id == "discard") {
+                        setShowUploadTest(false);
+                        return;
+                      }
                       setISGenerateLoading(true);
                       Application.first_view_report(resolvedMemberID).then(
                         (res) => {
