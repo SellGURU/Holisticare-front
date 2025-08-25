@@ -38,7 +38,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
     setIsUploded(el.status == 'completed' ? true : false);
   }, [el.status]);
   console.log(el);
-  
+
   return (
     <>
       <div
@@ -95,14 +95,15 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
             </div> */}
               {el.status == 'error' ? (
                 <>
-                <div className='flex gap-1 items-center w-full h-[43px]'>
-                  <img src="/icons/danger-red.svg" alt="" />
-                  <div className='font-semibold text-Text-Primary text-xs'>
-                    {el.file.name}
-                   
+                  <div className="flex gap-1 items-center w-full h-[43px]">
+                    <img src="/icons/danger-red.svg" alt="" />
+                    <div className="font-semibold text-Text-Primary text-xs">
+                      {el.file.name}
+                    </div>
+                    <div className="text-[#888888] text-xs">
+                      {(el.file.size / (1024 * 1024)).toFixed(1)} MB
+                    </div>
                   </div>
-                  <div className='text-[#888888] text-xs'>{(el.file.size / (1024 * 1024)).toFixed(1)} MB</div>
-                </div>
                   {/* <div className="flex w-auto justify-center gap-1">
                     <img
                       onClick={onDelete}
@@ -147,19 +148,17 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
                 )}
               </>
             )}
-           
           </>
         )}
       </div>
       {el.status === 'error' && (
-              <div className="flex items-center gap-2 -mt-2 pl-5">
-                {/* <img src="/icons/error.svg" alt="Error" className="w-4 h-4" /> */}
-                <div className="text-Red text-[10px]">
-                  {el.errorMessage ||
-                    'Failed to upload file. Please try again.'}
-                </div>
-              </div>
-            )}
+        <div className="flex items-center gap-2 -mt-2 pl-5">
+          {/* <img src="/icons/error.svg" alt="Error" className="w-4 h-4" /> */}
+          <div className="text-Red text-[10px]">
+            {el.errorMessage || 'Failed to upload file. Please try again.'}
+          </div>
+        </div>
+      )}
     </>
   );
 };

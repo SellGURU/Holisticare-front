@@ -1,20 +1,21 @@
-import { useState } from 'react'
-import { ButtonSecondary } from '../Button/ButtosSecondary'
+import { useState } from 'react';
+import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { subscribe } from '../../utils/event';
 import { publish } from '../../utils/event';
 
-
 export const UploadFileProgressModal = () => {
-    const [showProgressModal, setshowProgressModal] = useState(false);
-    const [IsinProgress, setIsinProgress] = useState(true);
-    subscribe('openProgressModal', () => {
+  const [showProgressModal, setshowProgressModal] = useState(false);
+  const [IsinProgress, setIsinProgress] = useState(true);
+  subscribe('openProgressModal', () => {
+    setTimeout(() => {
       setshowProgressModal(true)
-      // setIsUploading(value.detail.isUploading);
-    });
- 
-    subscribe('StepTwoSuccess', () => {
-     setIsinProgress(false)
-    });
+    }, 5000)
+    // setIsUploading(value.detail.isUploading);
+  });
+
+  subscribe('StepTwoSuccess', () => {
+    setIsinProgress(false);
+  });
 
   return (
     <>
@@ -60,7 +61,7 @@ export const UploadFileProgressModal = () => {
           <div className="w-full flex justify-end mt-4">
             <ButtonSecondary
               onClick={() => {
-                publish('syncReport', {})
+                publish('syncReport', {});
               }}
             >
               Sync Data
@@ -69,6 +70,6 @@ export const UploadFileProgressModal = () => {
         )}
       </div>
     </>
-  )
-}
-export default UploadFileProgressModal
+  );
+};
+export default UploadFileProgressModal;

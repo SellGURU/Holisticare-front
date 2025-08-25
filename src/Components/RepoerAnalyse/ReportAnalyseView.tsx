@@ -50,7 +50,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
-  const [questionnaires, setQuestionnaires] = useState([])
+  const [questionnaires, setQuestionnaires] = useState([]);
   // const history = useHistory();
   const location = useLocation();
   // useEffect(() => {
@@ -73,7 +73,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setUserInfoData(res.data);
         setIsHaveReport(true);
         setShowUploadTest(false);
-      
+
         setTimeout(() => {
           // if (res.data.show_report == true) {
           fetchShareData();
@@ -87,7 +87,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
         setShowUploadTest(!res.data.first_time_view);
-        setQuestionnaires(res.data.questionnaires)
+        setQuestionnaires(res.data.questionnaires);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchData();
@@ -539,16 +539,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   console.log(isHaveReport);
   console.log(showUploadTest);
   const checkStepTwo = (fileID: string | undefined) => {
-    if (!fileID) return; 
+    if (!fileID) return;
     setShowUploadTest(false);
     setIsHaveReport(true);
     Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
       if (res.data.Step_two) {
         // The condition is met, so we stop here.
-        publish("StepTwoSuccess", {});
-   
+        publish('StepTwoSuccess', {});
       } else {
-
         setTimeout(() => {
           checkStepTwo(fileID);
         }, 15000); // 15 seconds delay
@@ -574,8 +572,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             }}
             className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
           >
-        
-
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
               <div className="flex flex-col xl:flex-row gap-6 xl:gap-14 ">
@@ -994,19 +990,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </>
                 ) : (
                   <UploadTestV2
-                  questionnaires={questionnaires}
+                    questionnaires={questionnaires}
                     isShare={isShare}
                     showReport={isHaveReport}
-                    onGenderate={(file_id:string|undefined) => {
+                    onGenderate={(file_id: string | undefined) => {
                       // setISGenerateLoading(true);
                       Application.first_view_report(resolvedMemberID).then(
                         (res) => {
                           console.log(res);
                         },
                       );
-                      publish("openProgressModal",{})
-                      checkStepTwo(file_id)
-                    
+                      publish('openProgressModal', {});
+                      checkStepTwo(file_id);
+
                       // setTimeout(() => {
                       //   fetchPatentDataWithState();
                       //   publish('QuestionaryTrackingCall', {});
