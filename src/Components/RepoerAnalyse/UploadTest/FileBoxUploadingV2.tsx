@@ -37,11 +37,13 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
   useEffect(() => {
     setIsUploded(el.status == 'completed' ? true : false);
   }, [el.status]);
+  console.log(el);
+
   return (
     <>
       <div
-        className=" bg-white border border-Gray-50 mb-1 py-1 px-4 h-[66px] w-full rounded-[12px]  text-Text-Primary text-[10px]"
-        style={{ borderColor: el.status == 'error' ? '#ff0005' : '#e9edf5 ' }}
+        className=" bg-white border border-Gray-50 mb-1 py-1 px-4 h-[52px] w-full rounded-[12px]  text-Text-Primary text-[10px]"
+        style={{ borderColor: el.status == 'error' ? '#FC5474' : '#e9edf5 ' }}
       >
         {isuploaded ? (
           <div className="flex justify-between items-center">
@@ -93,14 +95,23 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
             </div> */}
               {el.status == 'error' ? (
                 <>
-                  <div className="flex w-auto justify-center gap-1">
+                  <div className="flex gap-1 items-center w-full h-[43px]">
+                    <img src="/icons/danger-red.svg" alt="" />
+                    <div className="font-semibold text-Text-Primary text-xs">
+                      {el.file.name}
+                    </div>
+                    <div className="text-[#888888] text-xs">
+                      {(el.file.size / (1024 * 1024)).toFixed(1)} MB
+                    </div>
+                  </div>
+                  {/* <div className="flex w-auto justify-center gap-1">
                     <img
                       onClick={onDelete}
                       src="/icons/close-red.svg"
                       alt="Error"
                       className="w-6 h-6 cursor-pointer"
                     />
-                  </div>
+                  </div> */}
                 </>
               ) : (
                 <>
@@ -137,18 +148,17 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({ el, onDelete }) => {
                 )}
               </>
             )}
-            {el.status === 'error' && (
-              <div className="flex items-center gap-2 mt-2">
-                {/* <img src="/icons/error.svg" alt="Error" className="w-4 h-4" /> */}
-                <div className="text-Red text-[10px]">
-                  {el.errorMessage ||
-                    'Failed to upload file. Please try again.'}
-                </div>
-              </div>
-            )}
           </>
         )}
       </div>
+      {el.status === 'error' && (
+        <div className="flex items-center gap-2 -mt-2 pl-5">
+          {/* <img src="/icons/error.svg" alt="Error" className="w-4 h-4" /> */}
+          <div className="text-Red text-[10px]">
+            {el.errorMessage || 'Failed to upload file. Please try again.'}
+          </div>
+        </div>
+      )}
     </>
   );
 };

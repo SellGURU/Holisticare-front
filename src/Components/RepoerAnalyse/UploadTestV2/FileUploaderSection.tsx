@@ -56,7 +56,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
           <input
             type="file"
             ref={fileInputRef}
-            accept=".pdf, .docx"
+            // accept=".pdf, .docx"
             onChange={handleFileChange}
             id="uploadFile"
             className="w-full absolute invisible h-full left-0 top-0"
