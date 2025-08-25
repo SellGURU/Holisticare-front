@@ -8,8 +8,8 @@ export const UploadFileProgressModal = () => {
   const [IsinProgress, setIsinProgress] = useState(true);
   subscribe('openProgressModal', () => {
     setTimeout(() => {
-      setshowProgressModal(true)
-    }, 5000)
+      setshowProgressModal(true);
+    }, 5000);
     // setIsUploading(value.detail.isUploading);
   });
 
