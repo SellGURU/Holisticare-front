@@ -25,6 +25,7 @@ interface UploadTestProps {
   onGenderate: (file_id: string | undefined) => void;
   isShare?: boolean;
   showReport: boolean;
+  onDiscard: () => void;
   questionnaires: any[];
 }
 
@@ -33,6 +34,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   onGenderate,
   isShare,
   showReport,
+  onDiscard,
   questionnaires,
 }) => {
   const fileInputRef = useRef<any>(null);
@@ -568,7 +570,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         </>
       ) : (
         <UploadPModal
-          OnBack={() => setstep(0)}
+          OnBack={() => {
+            if (isUploadFromComboBar) {
+              onDiscard();
+            }
+            setstep(0);
+          }}
           uploadedFile={uploadedFile}
           onSave={onSave}
           isShare={isShare || false}
