@@ -121,19 +121,6 @@ const FileBox: React.FC<FileBoxProps> = ({
                   </>
                 ) : (
                   <>
-                    {(!el.status || el.status === 'completed') && (
-                      <img
-                        onClick={() => {
-                          if (!isDeleted) {
-                            setIsSureRemoveId(el.file_id);
-                          }
-                        }}
-                        src="/icons/delete-green.svg"
-                        alt=""
-                        className="cursor-pointer w-5 h-5"
-                      />
-                    )}
-
                     <img
                       onClick={() => {
                         if (!isDeleted) {
@@ -144,7 +131,6 @@ const FileBox: React.FC<FileBoxProps> = ({
                       alt=""
                       className="cursor-pointer w-5 h-5"
                     />
-                    {/* )} */}
                     {el.file_name !== 'Manual Entry' && (
                       <img
                         onClick={() => {
