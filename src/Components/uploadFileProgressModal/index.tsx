@@ -47,7 +47,7 @@ export const UploadFileProgressModal = () => {
             <img src="/icons/tick-circle-upload.svg" alt="" />
           )}
           {IsinProgress
-            ? 'Your file currently being processed...'
+            ? 'Your file is currently being processed...'
             : 'Your file has been successfully processed.'}
         </div>
 
@@ -61,6 +61,7 @@ export const UploadFileProgressModal = () => {
           <div className="w-full flex justify-end mt-4">
             <ButtonSecondary
               onClick={() => {
+                setshowProgressModal(false)
                 publish('syncReport', {});
               }}
             >

@@ -95,13 +95,11 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         </div>
       </div>
 
-      <div className="w-full flex justify-between gap-4 mt-6">
+      <div style={{height:window.innerHeight - 330 + "px"}} className="w-full flex justify-between gap-4 mt-6">
         {/* Left side: Add biomarker form */}
-        <div className="rounded-2xl w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px]">
-          <div className="text-xs text-Text-Primary">
-            Add a biomarker by filling in its details (Name, Value, Unit) and
-            clicking Add Biomarker. You’ll see it added right away in the list
-            on the right.
+        <div  className="rounded-2xl  w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px]">
+          <div className="text-xs text-Text-Primary text-justify">
+          Add a biomarker by filling in its details (Name, Value, Unit) and clicking Add Biomarker. You’ll see it added right away in the client’s list on the right. You can also select the test date from the top of the grid.
           </div>
 
           {/* Biomarker Name */}
@@ -111,6 +109,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               isSetting
               isLarge
               isStaff
+              placeholder='-'
               options={avalibaleBiomarkers}
               value={biomarkerName}
               onChange={(value: string) => {
@@ -130,8 +129,9 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
             Value
             <TextField
+            placeholder='-'
               newStyle
-              type="text"
+              type="number"
               value={value}
               onChange={(e: any) => setValue(e.target.value)}
             />
@@ -146,6 +146,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               options={unitsList}
               value={unit}
               isStaff
+              placeholder='-'
               onChange={(value: string) => setUnit(value)}
             ></Select>
             {/* <TextField
@@ -173,7 +174,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             {/* Table Header */}
             <div
               className="grid sticky top-0 z-10 py-2 px-4 font-medium text-Text-Primary text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-              style={{ gridTemplateColumns: '1fr 100px 100px 60px' }}
+              style={{ gridTemplateColumns: '1fr 200px 200px 60px' }}
             >
               <div className="text-left">Biomarker Name</div>
               <div className="text-center">Value</div>
@@ -192,7 +193,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                   className={`grid py-2 px-4 border-b border-Gray-50 items-center text-xs text-Text-Primary ${
                     index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
                   }`}
-                  style={{ gridTemplateColumns: '1fr 100px 100px 60px' }}
+                  style={{ gridTemplateColumns: '1fr 200px 200px 60px' }}
                 >
                   {/* Biomarker Name */}
                   <div>

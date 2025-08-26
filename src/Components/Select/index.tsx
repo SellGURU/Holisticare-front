@@ -87,7 +87,7 @@ const Select: React.FC<SelectProps> = ({
         tabIndex={0} // Make it focusable
       >
         <span
-          className={`${selectedValue ? 'text-Text-Primary' : 'text-[#B0B0B0] font-light'} `}
+          className={`text-Text-Primary `}
         >
           <TooltipTextAuto maxWidth="130px">
             {selectedValue || placeholder}
