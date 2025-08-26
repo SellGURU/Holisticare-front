@@ -270,40 +270,11 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
       setUploadedFiles(res.data);
     });
   });
-  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-  const [isDeleted, setIsDeleted] = useState<string[]>([]);
-  const handleDelete = (fileId: string, memberId: string) => {
-    setLoadingDelete(true);
-    publish('fileIsDeleting', { isDeleting: false });
-    Application.deleteFileHistory({
-      file_id: fileId,
-      member_id: memberId,
-    }).catch((err) => {
-      console.error(err);
-    });
-    const checkDelete = async () => {
-      try {
-        const res = await Application.checkDeleteLabReport({
-          file_id: fileId,
-          member_id: memberId,
-        });
 
-        if (res.status === 200 && res.data) {
-          setLoadingDelete(false);
-          setIsDeleted((prev) => [...prev, fileId]);
-          publish('fileIsDeleting', {
-            isDeleting: true,
-          });
-        } else {
-          setTimeout(checkDelete, 1000);
-        }
-      } catch (err) {
-        console.error('err', err);
-        setTimeout(checkDelete, 1000);
-      }
-    };
-    checkDelete();
+  const handleFileDeleteSuccess = () => {
+    getFileList(id || '');
   };
+
   return (
     <>
       {isLoading && (
@@ -360,11 +331,9 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
                     progress: fileUpload.progress || 0.5,
                     formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
                   }}
-                  onDeleteHistory={(file_id: string) => {
-                    handleDelete(file_id, id || '');
-                  }}
-                  isLoading={loadingDelete}
-                  isDeleted={isDeleted.includes(fileUpload.file_id)}
+                  onDeleteSuccess={() => handleFileDeleteSuccess()}
+
+
                 />
               </div>
             ))}

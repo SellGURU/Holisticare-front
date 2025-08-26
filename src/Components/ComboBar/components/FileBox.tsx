@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
@@ -6,23 +8,54 @@ import { publish } from '../../../utils/event';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface FileBoxProps {
   el: any;
   onDelete: () => void;
-  onDeleteHistory: (file_id: string) => void;
-  isLoading: boolean;
-  isDeleted: boolean;
+
+  onDeleteSuccess: () => void;
 }
 
 const FileBox: React.FC<FileBoxProps> = ({
   el,
+
+
   onDelete,
-  onDeleteHistory,
-  isLoading,
-  isDeleted,
+  onDeleteSuccess, 
 }) => {
   const { id } = useParams<{ id: string }>();
+
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+const [isDeleted, setisDeleted] = useState(false)
+  const handleDelete = (fileId: string, memberId: string) => {
+    setLoadingDelete(true);
+    publish('fileIsDeleting', { isDeleting: false });
+
+    Application.deleteFileHistory({ file_id: fileId, member_id: memberId })
+      .catch((err) => {
+        console.error(err);
+
+      });
+
+    const checkDelete = async () => {
+      try {
+        const res = await Application.checkDeleteLabReport({ file_id: fileId, member_id: memberId });
+        if (res.status === 200 && res.data) {
+          setLoadingDelete(false);
+          setisDeleted(true)
+          onDeleteSuccess();
+          publish('fileIsDeleting', { isDeleting: true });
+        } else {
+          setTimeout(checkDelete, 1000);
+        }
+      } catch (err) {
+        console.error('err', err);
+     
+        setTimeout(checkDelete, 1000);
+      }
+    };
+    checkDelete();
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const months = [
@@ -97,14 +130,14 @@ const FileBox: React.FC<FileBoxProps> = ({
               >
                 {isSureRemoveId == el.file_id && !isDeleted ? (
                   <>
-                    {!isLoading ? (
+                    {!loadingDelete ? (
                       <div className="flex items-center justify-start gap-2">
                         <div className="text-Text-Quadruple text-xs">Sure?</div>
                         <img
                           src="/icons/tick-circle-green.svg"
                           alt=""
                           className="w-[20px] h-[20px] cursor-pointer"
-                          onClick={() => onDeleteHistory(el.file_id)}
+                          onClick={() => handleDelete(el.file_id, id || '')}
                         />
                         <img
                           src="/icons/close-circle-red.svg"

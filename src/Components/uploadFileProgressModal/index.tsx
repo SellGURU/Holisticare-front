@@ -14,6 +14,7 @@ export const UploadFileProgressModal = () => {
   });
 
   subscribe('StepTwoSuccess', () => {
+    setshowProgressModal(true)
     setIsinProgress(false);
   });
 
