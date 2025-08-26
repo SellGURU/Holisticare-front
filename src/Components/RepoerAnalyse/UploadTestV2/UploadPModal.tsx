@@ -97,7 +97,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             ></Toggle>
           </div>
           {activeMenu === 'Upload File' ? (
-            <div className="w-full flex flex-col mt-8 gap-2">
+            <div className="w-full h-full flex flex-col mt-8 gap-2">
               <FileUploaderSection
                 isShare={isShare}
                 errorMessage={errorMessage}

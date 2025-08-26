@@ -86,9 +86,7 @@ const Select: React.FC<SelectProps> = ({
         aria-expanded={isOpen}
         tabIndex={0} // Make it focusable
       >
-        <span
-          className={`text-Text-Primary `}
-        >
+        <span className={`text-Text-Primary `}>
           <TooltipTextAuto maxWidth="130px">
             {selectedValue || placeholder}
           </TooltipTextAuto>
