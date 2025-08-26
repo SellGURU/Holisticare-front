@@ -1011,6 +1011,12 @@ class Application extends Api {
   static saveActionEdit = (data: any) => {
     return this.post('/drift_analysis/edit_action_plan', data);
   };
+  static getDietLibrary = () => {
+    return this.post('/diet_library/get_parent_id', {});
+  };
+  static getActivityLibrary = () => {
+    return this.post('/activity_library/get_parent_id', {});
+  };
 }
 
 export default Application;
