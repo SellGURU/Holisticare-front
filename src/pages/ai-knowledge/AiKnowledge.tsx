@@ -7,7 +7,6 @@ import {
 } from '@react-sigma/core';
 import '@react-sigma/core/lib/react-sigma.min.css';
 import Graph from 'graphology';
-import forceAtlas2 from 'graphology-layout-forceatlas2';
 import { FC, useEffect, useRef, useState } from 'react';
 // import  graphDataMock from '../../api/--moch--/data/graph.json';
 import chroma from 'chroma-js';
@@ -44,23 +43,17 @@ const LoadGraph: FC<LoadGraphProps> = ({
 
     const graph = new Graph();
 
-    // Initialize nodes with more centered positions
-    const centerX = 0.5;
-    const centerY = 0.5;
-    const radius = 0.3; // Smaller initial radius to start nodes closer to center
-
     const graphaDataNodesFilters = graphData.nodes.filter(
       (item: any) => item.status === true,
     );
 
-    // Always add all nodes to the graph with better initial positions
-    graphaDataNodesFilters.forEach((node: any, index: number) => {
+    // Add nodes to the graph using their existing x, y coordinates
+    graphaDataNodesFilters.forEach((node: any) => {
       const randomColor = chroma.random().hex();
-      // Calculate initial position in a spiral pattern
-      const angle = index * 2.4; // Golden angle in radians
-      const r = radius * Math.sqrt(index / graphaDataNodesFilters.length);
-      const x = centerX + r * Math.cos(angle);
-      const y = centerY + r * Math.sin(angle);
+
+      // Use existing x, y coordinates from the data, or fallback to center if not available
+      const x = node.x !== undefined ? node.x : 0.5;
+      const y = node.y !== undefined ? node.y : 0.5;
 
       graph.addNode(node.id, {
         label: node.label,
@@ -98,39 +91,7 @@ const LoadGraph: FC<LoadGraphProps> = ({
       });
     });
 
-    // Apply optimized force layout settings
-    forceAtlas2.assign(graph, {
-      iterations: 100, // Reduced iterations as we have better initial positions
-      settings: {
-        gravity: 1, // Increased gravity to pull nodes toward center
-        scalingRatio: 2, // Reduced scaling ratio for tighter packing
-        strongGravityMode: true, // Enable strong gravity mode to prevent empty center
-        slowDown: 2, // Faster cooling for quicker convergence
-        edgeWeightInfluence: 2, // Increased edge influence for better clustering
-        barnesHutOptimize: true,
-        barnesHutTheta: 0.5, // More precise force calculation
-        linLogMode: false,
-        adjustSizes: true,
-        outboundAttractionDistribution: true, // Enable outbound attraction for better distribution
-      },
-    });
-
-    // Run a second pass of force layout with different settings to refine positions
-    forceAtlas2.assign(graph, {
-      iterations: 50,
-      settings: {
-        gravity: 0.5,
-        scalingRatio: 1,
-        strongGravityMode: true,
-        slowDown: 5,
-        edgeWeightInfluence: 1,
-        barnesHutOptimize: true,
-        barnesHutTheta: 0.5,
-        linLogMode: false,
-        adjustSizes: true,
-        outboundAttractionDistribution: false,
-      },
-    });
+    // No force layout needed - using existing x, y coordinates from data
 
     // If not initial load, hide nodes that don't match the active filters
     if (!isInitialLoad && activeFilters.length > 0) {
