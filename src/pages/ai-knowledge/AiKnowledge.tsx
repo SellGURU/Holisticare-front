@@ -8,7 +8,14 @@ import {
 import '@react-sigma/core/lib/react-sigma.min.css';
 import Graph from 'graphology';
 import forceAtlas2 from 'graphology-layout-forceatlas2';
-import React, { FC, useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import React, {
+  FC,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 // import  graphDataMock from '../../api/--moch--/data/graph.json';
 import chroma from 'chroma-js';
 // import { ApplicationMock } from "@/api";
@@ -34,7 +41,10 @@ interface ErrorBoundaryProps {
   children: React.ReactNode;
 }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -53,7 +63,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       return (
         <div className="flex flex-col items-center justify-center h-full text-red-500">
           <h2>Something went wrong.</h2>
-          <button 
+          <button
             onClick={() => this.setState({ hasError: false })}
             className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
           >
@@ -75,7 +85,11 @@ interface LoadGraphProps {
   activeFilters: string[];
   graphData: any;
   isInitialLoad: boolean;
-  onLoadProgress?: (progress: number, loadedCount: number, totalCount: number) => void;
+  onLoadProgress?: (
+    progress: number,
+    loadedCount: number,
+    totalCount: number,
+  ) => void;
 }
 
 const LoadGraph: FC<LoadGraphProps> = ({
@@ -91,107 +105,110 @@ const LoadGraph: FC<LoadGraphProps> = ({
   // Memoize filtered nodes to prevent unnecessary recalculations
   const filteredNodes = useMemo(() => {
     if (!graphData?.nodes) return [];
-    
+
     return graphData.nodes
       .slice(0, 2000) // Only load first 1000 nodes
       .filter((item: any) => item.status === true);
   }, [graphData]);
 
   // Load all nodes at once (only first 1000)
-  const loadNodes = useCallback(async (nodes: any[]) => {
-    if (isLoadingChunk) return;
-    
-    setIsLoadingChunk(true);
-    const graph = new Graph();
+  const loadNodes = useCallback(
+    async (nodes: any[]) => {
+      if (isLoadingChunk) return;
 
-    const centerX = 0.5;
-    const centerY = 0.5;
-    const radius = 0.3;
+      setIsLoadingChunk(true);
+      const graph = new Graph();
 
-    // Load all nodes at once
-    for (let i = 0; i < nodes.length; i++) {
-      const node = nodes[i];
+      const centerX = 0.5;
+      const centerY = 0.5;
+      const radius = 0.3;
 
-      const randomColor = chroma.random().hex();
-      const angle = i * 2.4;
-      const r = radius * Math.sqrt(i / nodes.length);
-      const x = centerX + r * Math.cos(angle);
-      const y = centerY + r * Math.sin(angle);
+      // Load all nodes at once
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
 
-      graph.addNode(node.id, {
-        label: node.label,
-        size: node.size,
-        color: randomColor,
-        x: x,
-        y: y,
-        originalSize: node.size,
-        category1: node.category1,
-        category2: node.category2,
-      });
+        const randomColor = chroma.random().hex();
+        const angle = i * 2.4;
+        const r = radius * Math.sqrt(i / nodes.length);
+        const x = centerX + r * Math.cos(angle);
+        const y = centerY + r * Math.sin(angle);
 
-      setLoadedNodes(prev => new Set([...prev, node.id]));
-
-      // Report progress
-      if (onLoadProgress) {
-        const progress = ((i + 1) / nodes.length) * 100;
-        onLoadProgress(progress, i + 1, nodes.length);
-      }
-
-      // Yield control to prevent blocking
-      if (i % 100 === 0) {
-        await new Promise(resolve => setTimeout(resolve, 0));
-      }
-    }
-
-    // Load edges for all nodes
-    if (graphData?.edges) {
-      const nodeIds = new Set(nodes.map((n: any) => n.id));
-      const inactiveNodeIds = new Set(
-        graphData.nodes
-          .filter((node: any) => node.status === false)
-          .map((node: any) => node.id)
-      );
-
-      const filteredEdges = graphData.edges.filter((link: any) => {
-        return (
-          nodeIds.has(link.source) &&
-          nodeIds.has(link.target) &&
-          !inactiveNodeIds.has(link.source) &&
-          !inactiveNodeIds.has(link.target)
-        );
-      });
-
-      filteredEdges.forEach((edge: any, index: number) => {
-        graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
-          weight: edge.weight,
-          color: '#d6d6d6',
-          width: 1,
+        graph.addNode(node.id, {
+          label: node.label,
+          size: node.size,
+          color: randomColor,
+          x: x,
+          y: y,
+          originalSize: node.size,
+          category1: node.category1,
+          category2: node.category2,
         });
-      });
-    }
 
-    // Apply force layout
-    if (graph.order > 10) {
-      forceAtlas2.assign(graph, {
-        iterations: 50,
-        settings: {
-          gravity: 1,
-          scalingRatio: 2,
-          strongGravityMode: true,
-          slowDown: 2,
-          edgeWeightInfluence: 2,
-          barnesHutOptimize: true,
-          barnesHutTheta: 0.5,
-          linLogMode: false,
-          adjustSizes: true,
-          outboundAttractionDistribution: true,
-        },
-      });
-    }
+        setLoadedNodes((prev) => new Set([...prev, node.id]));
 
-    loadGraph(graph);
-    setIsLoadingChunk(false);
-  }, [loadGraph, graphData, onLoadProgress, isLoadingChunk]);
+        // Report progress
+        if (onLoadProgress) {
+          const progress = ((i + 1) / nodes.length) * 100;
+          onLoadProgress(progress, i + 1, nodes.length);
+        }
+
+        // Yield control to prevent blocking
+        if (i % 100 === 0) {
+          await new Promise((resolve) => setTimeout(resolve, 0));
+        }
+      }
+
+      // Load edges for all nodes
+      if (graphData?.edges) {
+        const nodeIds = new Set(nodes.map((n: any) => n.id));
+        const inactiveNodeIds = new Set(
+          graphData.nodes
+            .filter((node: any) => node.status === false)
+            .map((node: any) => node.id),
+        );
+
+        const filteredEdges = graphData.edges.filter((link: any) => {
+          return (
+            nodeIds.has(link.source) &&
+            nodeIds.has(link.target) &&
+            !inactiveNodeIds.has(link.source) &&
+            !inactiveNodeIds.has(link.target)
+          );
+        });
+
+        filteredEdges.forEach((edge: any, index: number) => {
+          graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
+            weight: edge.weight,
+            color: '#d6d6d6',
+            width: 1,
+          });
+        });
+      }
+
+      // Apply force layout
+      if (graph.order > 10) {
+        forceAtlas2.assign(graph, {
+          iterations: 50,
+          settings: {
+            gravity: 1,
+            scalingRatio: 2,
+            strongGravityMode: true,
+            slowDown: 2,
+            edgeWeightInfluence: 2,
+            barnesHutOptimize: true,
+            barnesHutTheta: 0.5,
+            linLogMode: false,
+            adjustSizes: true,
+            outboundAttractionDistribution: true,
+          },
+        });
+      }
+
+      loadGraph(graph);
+      setIsLoadingChunk(false);
+    },
+    [loadGraph, graphData, onLoadProgress, isLoadingChunk],
+  );
 
   // Start loading nodes when graph data is available
   useEffect(() => {
@@ -228,9 +245,9 @@ const LoadGraph: FC<LoadGraphProps> = ({
         graph.setNodeAttribute(
           nodeId,
           'size',
-          shouldBeVisible 
+          shouldBeVisible
             ? (graph.getNodeAttribute(nodeId, 'originalSize') || 10) * 1.2
-            : graph.getNodeAttribute(nodeId, 'originalSize') || 10
+            : graph.getNodeAttribute(nodeId, 'originalSize') || 10,
         );
       });
 
@@ -238,7 +255,8 @@ const LoadGraph: FC<LoadGraphProps> = ({
       graph.forEachEdge((edgeId: string) => {
         const source = graph.source(edgeId);
         const target = graph.target(edgeId);
-        const shouldBeVisible = visibleNodes.has(source) && visibleNodes.has(target);
+        const shouldBeVisible =
+          visibleNodes.has(source) && visibleNodes.has(target);
         graph.setEdgeAttribute(edgeId, 'hidden', !shouldBeVisible);
       });
 
@@ -250,11 +268,11 @@ const LoadGraph: FC<LoadGraphProps> = ({
 };
 
 // Virtual Scrolling Component for Table
-const VirtualScrollTable = ({ 
-  items, 
+const VirtualScrollTable = ({
+  items,
   itemHeight = VIRTUAL_SCROLL_ITEM_HEIGHT,
   visibleItems = VIRTUAL_SCROLL_VISIBLE_ITEMS,
-  renderItem 
+  renderItem,
 }: {
   items: any[];
   itemHeight?: number;
@@ -274,7 +292,7 @@ const VirtualScrollTable = ({
   }, []);
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="overflow-y-auto"
       style={{ height: visibleItems * itemHeight }}
@@ -282,7 +300,9 @@ const VirtualScrollTable = ({
     >
       <div style={{ height: totalHeight, position: 'relative' }}>
         <div style={{ transform: `translateY(${startIndex * itemHeight}px)` }}>
-          {visibleItemsData.map((item, index) => renderItem(item, startIndex + index))}
+          {visibleItemsData.map((item, index) =>
+            renderItem(item, startIndex + index),
+          )}
         </div>
       </div>
     </div>
@@ -1678,9 +1698,15 @@ const AiKnowledge = () => {
                 <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
                   <div className="min-w-full bg-white">
                     <div className="bg-[#E5E5E5] flex text-xs font-medium text-Text-Primary">
-                      <div className="w-[140px] text-left pl-2 py-2">Node Type</div>
-                      <div className="w-[90px] py-2 text-center">Date of Update</div>
-                      <div className="w-[60px] text-right py-2 pr-3">Action</div>
+                      <div className="w-[140px] text-left pl-2 py-2">
+                        Node Type
+                      </div>
+                      <div className="w-[90px] py-2 text-center">
+                        Date of Update
+                      </div>
+                      <div className="w-[60px] text-right py-2 pr-3">
+                        Action
+                      </div>
                     </div>
                     {getCurrentPageData().length < 1 ? (
                       <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
@@ -1701,12 +1727,18 @@ const AiKnowledge = () => {
                             key={doc.id}
                             className={`flex items-center ${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50 h-[40px]`}
                           >
-                            <div className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}>
+                            <div
+                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}
+                            >
                               {doc.category2}
                             </div>
-                            <div className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}>
+                            <div
+                              className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}
+                            >
                               {doc.upload_date
-                                ? new Date(doc.upload_date).toLocaleDateString('en-GB')
+                                ? new Date(doc.upload_date).toLocaleDateString(
+                                    'en-GB',
+                                  )
                                 : 'No Date'}
                             </div>
                             <div className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
@@ -1734,13 +1766,20 @@ const AiKnowledge = () => {
                                   <button
                                     onClick={() => {
                                       if (isLoadingCallApi) return;
-                                      handleDownloadFileUserUpload(doc.category2);
+                                      handleDownloadFileUserUpload(
+                                        doc.category2,
+                                      );
                                     }}
                                   >
                                     <img src="/icons/import-blue.svg" alt="" />
                                   </button>
-                                  <button onClick={() => setConfirmDeleteId(doc.id)}>
-                                    <img src="/icons/trash-blue.svg" alt="Delete" />
+                                  <button
+                                    onClick={() => setConfirmDeleteId(doc.id)}
+                                  >
+                                    <img
+                                      src="/icons/trash-blue.svg"
+                                      alt="Delete"
+                                    />
                                   </button>
                                 </>
                               )}
@@ -1767,9 +1806,15 @@ const AiKnowledge = () => {
                 <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
                   <div className="min-w-full bg-white">
                     <div className="bg-[#E5E5E5] flex text-xs font-medium text-Text-Primary">
-                      <div className="w-[140px] text-left pl-2 py-2">Node Type</div>
-                      <div className="w-[90px] py-2 text-center">Date of Update</div>
-                      <div className="w-[40px] py-2 pr-2 text-center">Action</div>
+                      <div className="w-[140px] text-left pl-2 py-2">
+                        Node Type
+                      </div>
+                      <div className="w-[90px] py-2 text-center">
+                        Date of Update
+                      </div>
+                      <div className="w-[40px] py-2 pr-2 text-center">
+                        Action
+                      </div>
                     </div>
                     {getCurrentPageData().length < 1 ? (
                       <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
@@ -1790,12 +1835,18 @@ const AiKnowledge = () => {
                             key={doc.id}
                             className={`flex items-center ${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border-b border-Gray-50 h-[40px]`}
                           >
-                            <div className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}>
+                            <div
+                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}
+                            >
                               {doc.category2}
                             </div>
-                            <div className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}>
+                            <div
+                              className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}
+                            >
                               {doc.upload_date
-                                ? new Date(doc.upload_date).toLocaleDateString('en-GB')
+                                ? new Date(doc.upload_date).toLocaleDateString(
+                                    'en-GB',
+                                  )
                                 : 'No Date'}
                             </div>
                             <div className="py-2 pr-2 w-[80px] text-center flex items-center justify-center gap-2">
