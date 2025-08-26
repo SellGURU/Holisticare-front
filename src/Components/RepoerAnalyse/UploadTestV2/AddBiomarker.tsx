@@ -180,7 +180,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             {/* Table Header */}
             <div
               className="grid sticky top-0 z-10 py-2 px-4 font-medium text-Text-Primary text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-              style={{ gridTemplateColumns: '1fr 200px 200px 60px' }}
+              style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
             >
               <div className="text-left">Biomarker Name</div>
               <div className="text-center">Value</div>
@@ -199,7 +199,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                   className={`grid py-2 px-4 border-b border-Gray-50 items-center text-xs text-Text-Primary ${
                     index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
                   }`}
-                  style={{ gridTemplateColumns: '1fr 200px 200px 60px' }}
+                  style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
                 >
                   {/* Biomarker Name */}
                   <div>
