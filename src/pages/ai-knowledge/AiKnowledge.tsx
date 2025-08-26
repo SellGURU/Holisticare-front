@@ -49,9 +49,9 @@ const LoadGraph: FC<LoadGraphProps> = ({
     const centerY = 0.5;
     const radius = 0.3; // Smaller initial radius to start nodes closer to center
 
-    const graphaDataNodesFilters = graphData.nodes.slice(0, 5000).filter(
-      (item: any) => item.status === true,
-    );
+    const graphaDataNodesFilters = graphData.nodes
+      .slice(0, 5000)
+      .filter((item: any) => item.status === true);
 
     // Always add all nodes to the graph with better initial positions
     graphaDataNodesFilters.forEach((node: any, index: number) => {
@@ -612,19 +612,21 @@ const AiKnowledge = () => {
   const handleDownloadFileSystemDocs = (filename: string) => {
     Application.downloadSystemDocumentKnowledge({
       filename: filename,
-    }).then((res:any) => {
-      const blobUrl = res.data.link;
+    })
+      .then((res: any) => {
+        const blobUrl = res.data.link;
 
-      // Create a direct download link for the blob URL
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = 'file';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }).catch((e:any) => {
-      console.log(e);
-    });
+        // Create a direct download link for the blob URL
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'file';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch((e: any) => {
+        console.log(e);
+      });
   };
 
   const handleAddFile = async () => {
@@ -651,20 +653,22 @@ const AiKnowledge = () => {
           filename: fileTitle || selectedFiles[index].name,
           fast_mode: true,
         })),
-      }).then((res) => {
-        setDocumentsData(res.data.results);
-        setOptions(
-          res.data.results.map((item: any) => ({
-            label: item.filename,
-            value: item.file_id,
-          })),
-        );
-        setSelected(
-          res.data.results.length ? res.data.results[0].file_id : null,
-        );
-      }).catch(() => {
-        setLoadingButton(false);
-      });
+      })
+        .then((res) => {
+          setDocumentsData(res.data.results);
+          setOptions(
+            res.data.results.map((item: any) => ({
+              label: item.filename,
+              value: item.file_id,
+            })),
+          );
+          setSelected(
+            res.data.results.length ? res.data.results[0].file_id : null,
+          );
+        })
+        .catch(() => {
+          setLoadingButton(false);
+        });
 
       setSelectedFiles([]);
       setUploadProgress({});
