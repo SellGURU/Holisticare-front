@@ -127,7 +127,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     }`}
                   >
                     {' '}
-                    <div className="col-span-1 w-[169px]   text-left text-[#888888]">
+                    <div className="col-span-1 w-[169px]   text-left text-Text-Primary">
                       <TooltipTextAuto maxWidth="169px">
                         {b.original_biomarker_name}
                       </TooltipTextAuto>
