@@ -7,7 +7,15 @@ import {
 } from '@react-sigma/core';
 import '@react-sigma/core/lib/react-sigma.min.css';
 import Graph from 'graphology';
-import { FC, useEffect, useRef, useState } from 'react';
+import forceAtlas2 from 'graphology-layout-forceatlas2';
+import React, {
+  FC,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 // import  graphDataMock from '../../api/--moch--/data/graph.json';
 import chroma from 'chroma-js';
 // import { ApplicationMock } from "@/api";
@@ -23,81 +31,204 @@ import Toggle from '../../Components/Toggle/index.tsx';
 import { uploadToAzure } from '../../help.ts';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
 
+// Error Boundary Component
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: any;
+}
+
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: any): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error('AI Knowledge Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full text-red-500">
+          <h2>Something went wrong.</h2>
+          <button
+            onClick={() => this.setState({ hasError: false })}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Lazy loading constants
+const VIRTUAL_SCROLL_ITEM_HEIGHT = 40; // Height of each table row
+const VIRTUAL_SCROLL_VISIBLE_ITEMS = 20; // Number of visible items
+
 interface LoadGraphProps {
   activeFilters: string[];
-  graphData: any; // Use the appropriate type based on your data structure
+  graphData: any;
   isInitialLoad: boolean;
+  onLoadProgress?: (
+    progress: number,
+    loadedCount: number,
+    totalCount: number,
+  ) => void;
 }
-type menuItem = {
-  name: string;
-};
+
 const LoadGraph: FC<LoadGraphProps> = ({
   activeFilters,
   graphData,
   isInitialLoad,
+  onLoadProgress,
 }) => {
   const loadGraph = useLoadGraph();
+  const [loadedNodes, setLoadedNodes] = useState<Set<string>>(new Set());
+  const [isLoadingChunk, setIsLoadingChunk] = useState(false);
 
+  // Memoize filtered nodes to prevent unnecessary recalculations
+  const filteredNodes = useMemo(() => {
+    if (!graphData?.nodes) return [];
+
+    return graphData.nodes
+      .slice(0, 2000) // Only load first 1000 nodes
+      .filter((item: any) => item.status === true);
+  }, [graphData]);
+
+  // Load all nodes at once (only first 1000)
+  const loadNodes = useCallback(
+    async (nodes: any[]) => {
+      if (isLoadingChunk) return;
+
+      setIsLoadingChunk(true);
+      const graph = new Graph();
+
+      const centerX = 0.5;
+      const centerY = 0.5;
+      const radius = 0.3;
+
+      // Load all nodes at once
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+
+        const randomColor = chroma.random().hex();
+        const angle = i * 2.4;
+        const r = radius * Math.sqrt(i / nodes.length);
+        const x = centerX + r * Math.cos(angle);
+        const y = centerY + r * Math.sin(angle);
+
+        graph.addNode(node.id, {
+          label: node.label,
+          size: node.size,
+          color: randomColor,
+          x: x,
+          y: y,
+          originalSize: node.size,
+          category1: node.category1,
+          category2: node.category2,
+        });
+
+        setLoadedNodes((prev) => new Set([...prev, node.id]));
+
+        // Report progress
+        if (onLoadProgress) {
+          const progress = ((i + 1) / nodes.length) * 100;
+          onLoadProgress(progress, i + 1, nodes.length);
+        }
+
+        // Yield control to prevent blocking
+        if (i % 100 === 0) {
+          await new Promise((resolve) => setTimeout(resolve, 0));
+        }
+      }
+
+      // Load edges for all nodes
+      if (graphData?.edges) {
+        const nodeIds = new Set(nodes.map((n: any) => n.id));
+        const inactiveNodeIds = new Set(
+          graphData.nodes
+            .filter((node: any) => node.status === false)
+            .map((node: any) => node.id),
+        );
+
+        const filteredEdges = graphData.edges.filter((link: any) => {
+          return (
+            nodeIds.has(link.source) &&
+            nodeIds.has(link.target) &&
+            !inactiveNodeIds.has(link.source) &&
+            !inactiveNodeIds.has(link.target)
+          );
+        });
+
+        filteredEdges.forEach((edge: any, index: number) => {
+          graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
+            weight: edge.weight,
+            color: '#d6d6d6',
+            width: 1,
+          });
+        });
+      }
+
+      // Apply force layout
+      if (graph.order > 10) {
+        forceAtlas2.assign(graph, {
+          iterations: 50,
+          settings: {
+            gravity: 1,
+            scalingRatio: 2,
+            strongGravityMode: true,
+            slowDown: 2,
+            edgeWeightInfluence: 2,
+            barnesHutOptimize: true,
+            barnesHutTheta: 0.5,
+            linLogMode: false,
+            adjustSizes: true,
+            outboundAttractionDistribution: true,
+          },
+        });
+      }
+
+      loadGraph(graph);
+      setIsLoadingChunk(false);
+    },
+    [loadGraph, graphData, onLoadProgress, isLoadingChunk],
+  );
+
+  // Start loading nodes when graph data is available
   useEffect(() => {
-    if (!graphData) return; // Ensure graphData is available
+    if (filteredNodes.length > 0 && loadedNodes.size === 0 && !isLoadingChunk) {
+      // Load all nodes at once
+      loadNodes(filteredNodes);
+    }
+  }, [filteredNodes, loadedNodes.size, isLoadingChunk, loadNodes]);
 
-    const graph = new Graph();
+  // Handle filter changes
+  useEffect(() => {
+    if (!isInitialLoad && activeFilters.length > 0 && graphData) {
+      // @ts-expect-error - Accessing the custom property we added to the window object
+      const sigmaInstance = window.sigmaInstance;
+      if (!sigmaInstance) return;
 
-    const graphaDataNodesFilters = graphData.nodes.filter(
-      (item: any) => item.status === true,
-    );
-
-    // Add nodes to the graph using their existing x, y coordinates
-    graphaDataNodesFilters.forEach((node: any) => {
-      const randomColor = chroma.random().hex();
-
-      // Use existing x, y coordinates from the data, or fallback to center if not available
-      const x = node.x !== undefined ? node.x : 0.5;
-      const y = node.y !== undefined ? node.y : 0.5;
-
-      graph.addNode(node.id, {
-        label: node.label,
-        size: node.size,
-        color: randomColor,
-        x: x,
-        y: y,
-        originalSize: node.size,
-        category1: node.category1,
-        category2: node.category2,
-      });
-    });
-
-    const inactiveNodeIds = graphData.nodes
-      .filter((node: any) => node.status === false)
-      .map((node: any) => node.id);
-
-    const filteredEdges = graphData.edges.filter((link: any) => {
-      const sourceExists = graph.hasNode(link.source);
-      const targetExists = graph.hasNode(link.target);
-      return (
-        sourceExists &&
-        targetExists &&
-        !inactiveNodeIds.includes(link.source) &&
-        !inactiveNodeIds.includes(link.target)
-      );
-    });
-
-    // Always add all edges to the graph with full opacity
-    filteredEdges.forEach((edge: any, index: number) => {
-      graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
-        weight: edge.weight,
-        color: '#d6d6d6',
-        width: 1,
-      });
-    });
-
-    // No force layout needed - using existing x, y coordinates from data
-
-    // If not initial load, hide nodes that don't match the active filters
-    if (!isInitialLoad && activeFilters.length > 0) {
+      const graph = sigmaInstance.getGraph();
       const visibleNodes = new Set<string>();
 
-      graphaDataNodesFilters.forEach((node: any) => {
+      filteredNodes.forEach((node: any) => {
         if (
           activeFilters.includes(node.category1) ||
           activeFilters.includes(node.category2)
@@ -106,29 +237,82 @@ const LoadGraph: FC<LoadGraphProps> = ({
         }
       });
 
-      // Hide nodes that don't match the filters
+      // Hide/show nodes based on filters
       graph.forEachNode((nodeId: string) => {
-        if (!visibleNodes.has(nodeId)) {
-          graph.setNodeAttribute(nodeId, 'hidden', true);
-        }
+        const shouldBeVisible = visibleNodes.has(nodeId);
+        graph.setNodeAttribute(nodeId, 'hidden', !shouldBeVisible);
+        graph.setNodeAttribute(nodeId, 'highlighted', shouldBeVisible);
+        graph.setNodeAttribute(
+          nodeId,
+          'size',
+          shouldBeVisible
+            ? (graph.getNodeAttribute(nodeId, 'originalSize') || 10) * 1.2
+            : graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+        );
       });
 
-      // Hide edges connected to hidden nodes
+      // Hide/show edges
       graph.forEachEdge((edgeId: string) => {
         const source = graph.source(edgeId);
         const target = graph.target(edgeId);
-
-        if (!visibleNodes.has(source) || !visibleNodes.has(target)) {
-          graph.setEdgeAttribute(edgeId, 'hidden', true);
-        }
+        const shouldBeVisible =
+          visibleNodes.has(source) && visibleNodes.has(target);
+        graph.setEdgeAttribute(edgeId, 'hidden', !shouldBeVisible);
       });
-    }
 
-    loadGraph(graph);
-  }, [activeFilters, graphData, isInitialLoad, loadGraph]);
+      sigmaInstance.refresh();
+    }
+  }, [activeFilters, isInitialLoad, filteredNodes, graphData]);
 
   return null;
 };
+
+// Virtual Scrolling Component for Table
+const VirtualScrollTable = ({
+  items,
+  itemHeight = VIRTUAL_SCROLL_ITEM_HEIGHT,
+  visibleItems = VIRTUAL_SCROLL_VISIBLE_ITEMS,
+  renderItem,
+}: {
+  items: any[];
+  itemHeight?: number;
+  visibleItems?: number;
+  renderItem: (item: any, index: number) => React.ReactNode;
+}) => {
+  const [scrollTop, setScrollTop] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const totalHeight = items.length * itemHeight;
+  const startIndex = Math.floor(scrollTop / itemHeight);
+  const endIndex = Math.min(startIndex + visibleItems, items.length);
+  const visibleItemsData = items.slice(startIndex, endIndex);
+
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    setScrollTop(e.currentTarget.scrollTop);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="overflow-y-auto"
+      style={{ height: visibleItems * itemHeight }}
+      onScroll={handleScroll}
+    >
+      <div style={{ height: totalHeight, position: 'relative' }}>
+        <div style={{ transform: `translateY(${startIndex * itemHeight}px)` }}>
+          {visibleItemsData.map((item, index) =>
+            renderItem(item, startIndex + index),
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+type menuItem = {
+  name: string;
+};
+
 const GraphEvents = ({
   setisLoading,
 }: {
@@ -183,6 +367,9 @@ const GraphEvents = ({
 };
 const AiKnowledge = () => {
   const [isLoading, setisLoading] = useState(true);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [loadedNodesCount, setLoadedNodesCount] = useState(0);
+  const [totalNodesCount, setTotalNodesCount] = useState(0);
 
   // const [isContractsOpen, setIsContractsOpen] = useState(true);
   // const [isAgreementsOpen, setIsAgreementsOpen] = useState(true);
@@ -312,7 +499,7 @@ const AiKnowledge = () => {
   useEffect(() => {
     setTimeout(() => {
       setSigmaSetting({
-        allowInvalidContainer: false,
+        allowInvalidContainer: true,
         renderLabels: true,
         labelColor: { color: '#000' },
         defaultDrawNodeHover: (context: any, data: any) => {
@@ -559,7 +746,7 @@ const AiKnowledge = () => {
     Application.deleteUserUploadDocument({
       filename: fileName,
     }).then(() => {
-      fetchGraphData();
+      // fetchGraphData();
       setConfirmDeleteId(null);
       setIsLoadingCallApi(false);
     });
@@ -568,12 +755,40 @@ const AiKnowledge = () => {
   const handleDownloadFileUserUpload = (filename: string) => {
     Application.downloadUserUploadDocumentKnowledge({
       filename: filename,
-    });
+    })
+      .then((res: any) => {
+        const blobUrl = res.data.link;
+
+        // Create a direct download link for the blob URL
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'file';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch(() => {
+        console.log('error');
+      });
   };
   const handleDownloadFileSystemDocs = (filename: string) => {
     Application.downloadSystemDocumentKnowledge({
       filename: filename,
-    });
+    })
+      .then((res: any) => {
+        const blobUrl = res.data.link;
+
+        // Create a direct download link for the blob URL
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'file';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch((e: any) => {
+        console.log(e);
+      });
   };
 
   const handleAddFile = async () => {
@@ -600,18 +815,22 @@ const AiKnowledge = () => {
           filename: fileTitle || selectedFiles[index].name,
           fast_mode: true,
         })),
-      }).then((res) => {
-        setDocumentsData(res.data.results);
-        setOptions(
-          res.data.results.map((item: any) => ({
-            label: item.filename,
-            value: item.file_id,
-          })),
-        );
-        setSelected(
-          res.data.results.length ? res.data.results[0].file_id : null,
-        );
-      });
+      })
+        .then((res) => {
+          setDocumentsData(res.data.results);
+          setOptions(
+            res.data.results.map((item: any) => ({
+              label: item.filename,
+              value: item.file_id,
+            })),
+          );
+          setSelected(
+            res.data.results.length ? res.data.results[0].file_id : null,
+          );
+        })
+        .catch(() => {
+          setLoadingButton(false);
+        });
 
       setSelectedFiles([]);
       setUploadProgress({});
@@ -649,6 +868,7 @@ const AiKnowledge = () => {
   const closeModal = () => {
     setAddFilleModal(false);
     setSelectedFiles([]);
+    setLoadingButton(false);
     setUploadProgress({});
     setUploadComplete({});
     setStepAddDocument(1);
@@ -667,83 +887,83 @@ const AiKnowledge = () => {
     setCurrentPage(page);
   };
 
-  const toggleDisable = async (
-    filename: string,
-    tab: string,
-    disabled: boolean,
-  ) => {
-    if (tab === 'System Docs') {
-      if (disabled) {
-        setIsLoadingCallApi(true);
-        await Application.hideSystemDocumentKnowledge({
-          filename: filename,
-        })
-          .then(() => {
-            fetchGraphData();
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            setIsLoadingCallApi(false);
-          });
-      } else {
-        setIsLoadingCallApi(true);
-        await Application.unhideSystemDocumentKnowledge({
-          filename: filename,
-        })
-          .then(() => {
-            fetchGraphData();
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            setIsLoadingCallApi(false);
-          });
-      }
-      // setSystemDocs((prevDocs) =>
-      //   prevDocs.map((doc) =>
-      //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
-      //   ),
-      // );
-    } else if (tab === 'User Uploads') {
-      if (disabled) {
-        setIsLoadingCallApi(true);
-        await Application.hideUserUploadDocumentKnowledge({
-          filename: filename,
-        })
-          .then(() => {
-            fetchGraphData();
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            setIsLoadingCallApi(false);
-          });
-      } else {
-        setIsLoadingCallApi(true);
-        await Application.unhideUserUploadDocumentKnowledge({
-          filename: filename,
-        })
-          .then(() => {
-            fetchGraphData();
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            setIsLoadingCallApi(false);
-          });
-      }
-      // setUserUploads((prevDocs) =>
-      //   prevDocs.map((doc) =>
-      //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
-      //   ),
-      // );
-    }
-  };
+  // const toggleDisable = async (
+  //   filename: string,
+  //   tab: string,
+  //   disabled: boolean,
+  // ) => {
+  //   if (tab === 'System Docs') {
+  //     if (disabled) {
+  //       setIsLoadingCallApi(true);
+  //       await Application.hideSystemDocumentKnowledge({
+  //         filename: filename,
+  //       })
+  //         .then(() => {
+  //           fetchGraphData();
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         })
+  //         .finally(() => {
+  //           setIsLoadingCallApi(false);
+  //         });
+  //     } else {
+  //       setIsLoadingCallApi(true);
+  //       await Application.unhideSystemDocumentKnowledge({
+  //         filename: filename,
+  //       })
+  //         .then(() => {
+  //           fetchGraphData();
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         })
+  //         .finally(() => {
+  //           setIsLoadingCallApi(false);
+  //         });
+  //     }
+  //     // setSystemDocs((prevDocs) =>
+  //     //   prevDocs.map((doc) =>
+  //     //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
+  //     //   ),
+  //     // );
+  //   } else if (tab === 'User Uploads') {
+  //     if (disabled) {
+  //       setIsLoadingCallApi(true);
+  //       await Application.hideUserUploadDocumentKnowledge({
+  //         filename: filename,
+  //       })
+  //         .then(() => {
+  //           fetchGraphData();
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         })
+  //         .finally(() => {
+  //           setIsLoadingCallApi(false);
+  //         });
+  //     } else {
+  //       setIsLoadingCallApi(true);
+  //       await Application.unhideUserUploadDocumentKnowledge({
+  //         filename: filename,
+  //       })
+  //         .then(() => {
+  //           fetchGraphData();
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         })
+  //         .finally(() => {
+  //           setIsLoadingCallApi(false);
+  //         });
+  //     }
+  //     // setUserUploads((prevDocs) =>
+  //     //   prevDocs.map((doc) =>
+  //     //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
+  //     //   ),
+  //     // );
+  //   }
+  // };
 
   // const deleteDocument = (id: number) => {
   //   setUserUploads((prevDocs) => prevDocs.filter((doc) => doc.id !== id));
@@ -972,7 +1192,7 @@ const AiKnowledge = () => {
   }, [activaTab]);
 
   return (
-    <>
+    <ErrorBoundary>
       {isLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
@@ -1037,7 +1257,9 @@ const AiKnowledge = () => {
                           <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
                             <div
                               className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
-                              style={{ width: uploadProgress[file.name] + '%' }}
+                              style={{
+                                width: uploadProgress[file.name] + '%',
+                              }}
                             ></div>
                           </div>
                         </div>
@@ -1309,10 +1531,31 @@ const AiKnowledge = () => {
               width: window.innerWidth,
             }}
           >
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+                <div className="text-center">
+                  <Circleloader></Circleloader>
+                  {loadProgress > 0 && (
+                    <div className="mt-2 text-sm text-gray-600">
+                      Loading graph data... {Math.round(loadProgress)}%
+                      <br />
+                      <span className="text-xs text-gray-500">
+                        Loaded {loadedNodesCount} of {totalNodesCount} nodes
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
             <LoadGraph
               graphData={graphData}
               activeFilters={activeFilters}
               isInitialLoad={isInitialLoad}
+              onLoadProgress={(progress, loadedCount, totalCount) => {
+                setLoadProgress(progress);
+                setLoadedNodesCount(loadedCount);
+                setTotalNodesCount(totalCount);
+              }}
             />
             <GraphEvents setisLoading={setisLoading} />
           </SigmaContainer>
@@ -1475,128 +1718,99 @@ const AiKnowledge = () => {
                   Add New Document
                 </button>
                 <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
-                  <table className="min-w-full bg-white ">
-                    <thead>
-                      <tr className="bg-[#E5E5E5]">
-                        <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
-                          Node Type
-                        </th>
-                        <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
-                          Date of Update
-                        </th>
-                        <th className="w-[60px] text-right py-2 pr-3 text-xs font-medium text-Text-Primary">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {getCurrentPageData().length < 1 ? (
-                        <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
-                          <img
-                            className="w-[200px] h-[161px]"
-                            src="/icons/search-status.svg"
-                            alt=""
-                          />
-                          No results found.
-                        </div>
-                      ) : (
-                        getCurrentPageData().map((doc, index) => {
-                          return (
-                            <tr
-                              key={index}
-                              className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
+                  <div className="min-w-full bg-white">
+                    <div className="bg-[#E5E5E5] flex text-xs font-medium text-Text-Primary">
+                      <div className="w-[140px] text-left pl-2 py-2">
+                        Node Type
+                      </div>
+                      <div className="w-[90px] py-2 text-center">
+                        Date of Update
+                      </div>
+                      <div className="w-[60px] text-right py-2 pr-3">
+                        Action
+                      </div>
+                    </div>
+                    {getCurrentPageData().length < 1 ? (
+                      <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
+                        <img
+                          className="w-[200px] h-[161px]"
+                          src="/icons/search-status.svg"
+                          alt=""
+                        />
+                        No results found.
+                      </div>
+                    ) : (
+                      <VirtualScrollTable
+                        items={getCurrentPageData()}
+                        itemHeight={40}
+                        visibleItems={10}
+                        renderItem={(doc, index) => (
+                          <div
+                            key={doc.id}
+                            className={`flex items-center ${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50 h-[40px]`}
+                          >
+                            <div
+                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}
                             >
-                              <td
-                                className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}
-                              >
-                                {doc.category2}
-                              </td>
-                              <td
-                                className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}
-                              >
-                                {doc.upload_date
-                                  ? new Date(
-                                      doc.upload_date,
-                                    ).toLocaleDateString('en-GB')
-                                  : 'No Date'}
-                              </td>
-                              <td className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
-                                {confirmDeleteId === doc.id ? (
-                                  <div className="flex items-center gap-1 text-[10px] text-Text-Primary ">
-                                    Sure?
+                              {doc.category2}
+                            </div>
+                            <div
+                              className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}
+                            >
+                              {doc.upload_date
+                                ? new Date(doc.upload_date).toLocaleDateString(
+                                    'en-GB',
+                                  )
+                                : 'No Date'}
+                            </div>
+                            <div className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
+                              {confirmDeleteId === doc.id ? (
+                                <div className="flex items-center gap-1 text-[10px] text-Text-Primary">
+                                  Sure?
+                                  <img
+                                    className="cursor-pointer size-4"
+                                    onClick={() => {
+                                      if (isLoadingCallApi) return;
+                                      handleDeleteFileUserUpload(doc.category2);
+                                    }}
+                                    src="/icons/confirm-tick-circle.svg"
+                                    alt="Confirm"
+                                  />
+                                  <img
+                                    className="cursor-pointer size-4"
+                                    onClick={() => setConfirmDeleteId(null)}
+                                    src="/icons/cansel-close-circle.svg"
+                                    alt="Cancel"
+                                  />
+                                </div>
+                              ) : (
+                                <>
+                                  <button
+                                    onClick={() => {
+                                      if (isLoadingCallApi) return;
+                                      handleDownloadFileUserUpload(
+                                        doc.category2,
+                                      );
+                                    }}
+                                  >
+                                    <img src="/icons/import-blue.svg" alt="" />
+                                  </button>
+                                  <button
+                                    onClick={() => setConfirmDeleteId(doc.id)}
+                                  >
                                     <img
-                                      className="cursor-pointer size-4"
-                                      onClick={() => {
-                                        if (isLoadingCallApi) return;
-                                        handleDeleteFileUserUpload(
-                                          doc.category2,
-                                        );
-                                      }}
-                                      src="/icons/confirm-tick-circle.svg"
-                                      alt="Confirm"
+                                      src="/icons/trash-blue.svg"
+                                      alt="Delete"
                                     />
-                                    <img
-                                      className="cursor-pointer size-4 "
-                                      onClick={() => setConfirmDeleteId(null)}
-                                      src="/icons/cansel-close-circle.svg"
-                                      alt="Cancel"
-                                    />
-                                  </div>
-                                ) : (
-                                  <>
-                                    <button
-                                      onClick={() => {
-                                        if (isLoadingCallApi) return;
-                                        handleDownloadFileUserUpload(
-                                          doc.category2,
-                                        );
-                                      }}
-                                    >
-                                      <img
-                                        src="/icons/import-blue.svg"
-                                        alt=""
-                                      />
-                                    </button>
-                                    <button
-                                      onClick={() => {
-                                        if (isLoadingCallApi) return;
-                                        // handleButtonClick(doc.category2);
-                                        toggleDisable(
-                                          doc.category2,
-                                          'User Uploads',
-                                          doc.status,
-                                        );
-                                      }}
-                                    >
-                                      {!doc.status ? (
-                                        <img
-                                          src="/icons/eye-slash-blue.svg"
-                                          alt="Disabled"
-                                        />
-                                      ) : (
-                                        <img
-                                          src="/icons/eye-blue.svg"
-                                          alt="Enabled"
-                                        />
-                                      )}
-                                    </button>
-                                    <button
-                                      onClick={() => setConfirmDeleteId(doc.id)}
-                                    >
-                                      <img
-                                        src="/icons/trash-blue.svg"
-                                        alt="Delete"
-                                      />
-                                    </button>
-                                  </>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })
-                      )}
-                    </tbody>
-                  </table>
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      />
+                    )}
+                  </div>
                   {getCurrentPageData().length > 0 && (
                     <div className="flex justify-center py-2 absolute bottom-0 w-full">
                       <Pagination
@@ -1612,42 +1826,43 @@ const AiKnowledge = () => {
             ) : (
               <>
                 <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
-                  <table className="min-w-full bg-white ">
-                    <thead>
-                      <tr className="bg-[#E5E5E5]">
-                        <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
-                          Node Type
-                        </th>
-                        <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
-                          Date of Update
-                        </th>
-                        <th className="w-[40px] py-2 pr-2 text-xs font-medium text-Text-Primary">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {getCurrentPageData().length < 1 ? (
-                        <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
-                          <img
-                            className="w-[200px] h-[161px]"
-                            src="/icons/search-status.svg"
-                            alt=""
-                          />
-                          No results found.
-                        </div>
-                      ) : (
-                        getCurrentPageData().map((doc, index) => (
-                          <tr
+                  <div className="min-w-full bg-white">
+                    <div className="bg-[#E5E5E5] flex text-xs font-medium text-Text-Primary">
+                      <div className="w-[140px] text-left pl-2 py-2">
+                        Node Type
+                      </div>
+                      <div className="w-[90px] py-2 text-center">
+                        Date of Update
+                      </div>
+                      <div className="w-[40px] py-2 pr-2 text-center">
+                        Action
+                      </div>
+                    </div>
+                    {getCurrentPageData().length < 1 ? (
+                      <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
+                        <img
+                          className="w-[200px] h-[161px]"
+                          src="/icons/search-status.svg"
+                          alt=""
+                        />
+                        No results found.
+                      </div>
+                    ) : (
+                      <VirtualScrollTable
+                        items={getCurrentPageData()}
+                        itemHeight={40}
+                        visibleItems={10}
+                        renderItem={(doc, index) => (
+                          <div
                             key={doc.id}
-                            className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border-b border-Gray-50`}
+                            className={`flex items-center ${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border-b border-Gray-50 h-[40px]`}
                           >
-                            <td
+                            <div
                               className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}
                             >
                               {doc.category2}
-                            </td>
-                            <td
+                            </div>
+                            <div
                               className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}
                             >
                               {doc.upload_date
@@ -1655,8 +1870,8 @@ const AiKnowledge = () => {
                                     'en-GB',
                                   )
                                 : 'No Date'}
-                            </td>
-                            <td className="py-2 pr-2 w-[80px] text-center flex items-center justify-center gap-2">
+                            </div>
+                            <div className="py-2 pr-2 w-[80px] text-center flex items-center justify-center gap-2">
                               <button
                                 onClick={() => {
                                   if (isLoadingCallApi) return;
@@ -1665,29 +1880,12 @@ const AiKnowledge = () => {
                               >
                                 <img src="/icons/import-blue.svg" alt="" />
                               </button>
-                              <button
-                                onClick={() => {
-                                  if (isLoadingCallApi) return;
-                                  // handleButtonClick(doc.category2);
-                                  toggleDisable(
-                                    doc.category2,
-                                    'System Docs',
-                                    doc.status,
-                                  );
-                                }}
-                              >
-                                {doc.status ? (
-                                  <img src="/icons/eye-blue.svg" alt="" />
-                                ) : (
-                                  <img src="/icons/eye-slash-blue.svg" alt="" />
-                                )}
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+                            </div>
+                          </div>
+                        )}
+                      />
+                    )}
+                  </div>
                   {getCurrentPageData().length > 0 && (
                     <div className="py-2 flex justify-center absolute bottom-0 w-full">
                       <Pagination
@@ -1706,7 +1904,7 @@ const AiKnowledge = () => {
           </div>
         )}
       </div>
-    </>
+    </ErrorBoundary>
   );
 };
 
