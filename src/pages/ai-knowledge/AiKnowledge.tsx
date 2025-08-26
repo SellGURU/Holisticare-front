@@ -7,6 +7,7 @@ import {
 } from '@react-sigma/core';
 import '@react-sigma/core/lib/react-sigma.min.css';
 import Graph from 'graphology';
+import forceAtlas2 from 'graphology-layout-forceatlas2';
 import { FC, useEffect, useRef, useState } from 'react';
 // import  graphDataMock from '../../api/--moch--/data/graph.json';
 import chroma from 'chroma-js';
@@ -43,17 +44,23 @@ const LoadGraph: FC<LoadGraphProps> = ({
 
     const graph = new Graph();
 
-    const graphaDataNodesFilters = graphData.nodes.filter(
+    // Initialize nodes with more centered positions
+    const centerX = 0.5;
+    const centerY = 0.5;
+    const radius = 0.3; // Smaller initial radius to start nodes closer to center
+
+    const graphaDataNodesFilters = graphData.nodes.slice(0, 5000).filter(
       (item: any) => item.status === true,
     );
 
-    // Add nodes to the graph using their existing x, y coordinates
-    graphaDataNodesFilters.forEach((node: any) => {
+    // Always add all nodes to the graph with better initial positions
+    graphaDataNodesFilters.forEach((node: any, index: number) => {
       const randomColor = chroma.random().hex();
-
-      // Use existing x, y coordinates from the data, or fallback to center if not available
-      const x = node.x !== undefined ? node.x : 0.5;
-      const y = node.y !== undefined ? node.y : 0.5;
+      // Calculate initial position in a spiral pattern
+      const angle = index * 2.4; // Golden angle in radians
+      const r = radius * Math.sqrt(index / graphaDataNodesFilters.length);
+      const x = centerX + r * Math.cos(angle);
+      const y = centerY + r * Math.sin(angle);
 
       graph.addNode(node.id, {
         label: node.label,
@@ -91,7 +98,39 @@ const LoadGraph: FC<LoadGraphProps> = ({
       });
     });
 
-    // No force layout needed - using existing x, y coordinates from data
+    // Apply optimized force layout settings
+    forceAtlas2.assign(graph, {
+      iterations: 100, // Reduced iterations as we have better initial positions
+      settings: {
+        gravity: 1, // Increased gravity to pull nodes toward center
+        scalingRatio: 2, // Reduced scaling ratio for tighter packing
+        strongGravityMode: true, // Enable strong gravity mode to prevent empty center
+        slowDown: 2, // Faster cooling for quicker convergence
+        edgeWeightInfluence: 2, // Increased edge influence for better clustering
+        barnesHutOptimize: true,
+        barnesHutTheta: 0.5, // More precise force calculation
+        linLogMode: false,
+        adjustSizes: true,
+        outboundAttractionDistribution: true, // Enable outbound attraction for better distribution
+      },
+    });
+
+    // Run a second pass of force layout with different settings to refine positions
+    forceAtlas2.assign(graph, {
+      iterations: 50,
+      settings: {
+        gravity: 0.5,
+        scalingRatio: 1,
+        strongGravityMode: true,
+        slowDown: 5,
+        edgeWeightInfluence: 1,
+        barnesHutOptimize: true,
+        barnesHutTheta: 0.5,
+        linLogMode: false,
+        adjustSizes: true,
+        outboundAttractionDistribution: false,
+      },
+    });
 
     // If not initial load, hide nodes that don't match the active filters
     if (!isInitialLoad && activeFilters.length > 0) {
@@ -559,7 +598,7 @@ const AiKnowledge = () => {
     Application.deleteUserUploadDocument({
       filename: fileName,
     }).then(() => {
-      fetchGraphData();
+      // fetchGraphData();
       setConfirmDeleteId(null);
       setIsLoadingCallApi(false);
     });
@@ -573,6 +612,18 @@ const AiKnowledge = () => {
   const handleDownloadFileSystemDocs = (filename: string) => {
     Application.downloadSystemDocumentKnowledge({
       filename: filename,
+    }).then((res:any) => {
+      const blobUrl = res.data.link;
+
+      // Create a direct download link for the blob URL
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = 'file';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }).catch((e:any) => {
+      console.log(e);
     });
   };
 
@@ -611,6 +662,8 @@ const AiKnowledge = () => {
         setSelected(
           res.data.results.length ? res.data.results[0].file_id : null,
         );
+      }).catch(() => {
+        setLoadingButton(false);
       });
 
       setSelectedFiles([]);
@@ -649,6 +702,7 @@ const AiKnowledge = () => {
   const closeModal = () => {
     setAddFilleModal(false);
     setSelectedFiles([]);
+    setLoadingButton(false);
     setUploadProgress({});
     setUploadComplete({});
     setStepAddDocument(1);
@@ -666,83 +720,83 @@ const AiKnowledge = () => {
     setCurrentPage(page);
   };
 
-  const toggleDisable = async (
-    filename: string,
-    tab: string,
-    disabled: boolean,
-  ) => {
-    if (tab === 'System Docs') {
-      if (disabled) {
-        setIsLoadingCallApi(true);
-        await Application.hideSystemDocumentKnowledge({
-          filename: filename,
-        })
-          .then(() => {
-            fetchGraphData();
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            setIsLoadingCallApi(false);
-          });
-      } else {
-        setIsLoadingCallApi(true);
-        await Application.unhideSystemDocumentKnowledge({
-          filename: filename,
-        })
-          .then(() => {
-            fetchGraphData();
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            setIsLoadingCallApi(false);
-          });
-      }
-      // setSystemDocs((prevDocs) =>
-      //   prevDocs.map((doc) =>
-      //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
-      //   ),
-      // );
-    } else if (tab === 'User Uploads') {
-      if (disabled) {
-        setIsLoadingCallApi(true);
-        await Application.hideUserUploadDocumentKnowledge({
-          filename: filename,
-        })
-          .then(() => {
-            fetchGraphData();
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            setIsLoadingCallApi(false);
-          });
-      } else {
-        setIsLoadingCallApi(true);
-        await Application.unhideUserUploadDocumentKnowledge({
-          filename: filename,
-        })
-          .then(() => {
-            fetchGraphData();
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            setIsLoadingCallApi(false);
-          });
-      }
-      // setUserUploads((prevDocs) =>
-      //   prevDocs.map((doc) =>
-      //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
-      //   ),
-      // );
-    }
-  };
+  // const toggleDisable = async (
+  //   filename: string,
+  //   tab: string,
+  //   disabled: boolean,
+  // ) => {
+  //   if (tab === 'System Docs') {
+  //     if (disabled) {
+  //       setIsLoadingCallApi(true);
+  //       await Application.hideSystemDocumentKnowledge({
+  //         filename: filename,
+  //       })
+  //         .then(() => {
+  //           fetchGraphData();
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         })
+  //         .finally(() => {
+  //           setIsLoadingCallApi(false);
+  //         });
+  //     } else {
+  //       setIsLoadingCallApi(true);
+  //       await Application.unhideSystemDocumentKnowledge({
+  //         filename: filename,
+  //       })
+  //         .then(() => {
+  //           fetchGraphData();
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         })
+  //         .finally(() => {
+  //           setIsLoadingCallApi(false);
+  //         });
+  //     }
+  //     // setSystemDocs((prevDocs) =>
+  //     //   prevDocs.map((doc) =>
+  //     //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
+  //     //   ),
+  //     // );
+  //   } else if (tab === 'User Uploads') {
+  //     if (disabled) {
+  //       setIsLoadingCallApi(true);
+  //       await Application.hideUserUploadDocumentKnowledge({
+  //         filename: filename,
+  //       })
+  //         .then(() => {
+  //           fetchGraphData();
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         })
+  //         .finally(() => {
+  //           setIsLoadingCallApi(false);
+  //         });
+  //     } else {
+  //       setIsLoadingCallApi(true);
+  //       await Application.unhideUserUploadDocumentKnowledge({
+  //         filename: filename,
+  //       })
+  //         .then(() => {
+  //           fetchGraphData();
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         })
+  //         .finally(() => {
+  //           setIsLoadingCallApi(false);
+  //         });
+  //     }
+  //     // setUserUploads((prevDocs) =>
+  //     //   prevDocs.map((doc) =>
+  //     //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
+  //     //   ),
+  //     // );
+  //   }
+  // };
 
   // const deleteDocument = (id: number) => {
   //   setUserUploads((prevDocs) => prevDocs.filter((doc) => doc.id !== id));
@@ -1552,7 +1606,7 @@ const AiKnowledge = () => {
                                         alt=""
                                       />
                                     </button>
-                                    <button
+                                    {/* <button
                                       onClick={() => {
                                         if (isLoadingCallApi) return;
                                         // handleButtonClick(doc.category2);
@@ -1574,7 +1628,7 @@ const AiKnowledge = () => {
                                           alt="Enabled"
                                         />
                                       )}
-                                    </button>
+                                    </button> */}
                                     <button
                                       onClick={() => setConfirmDeleteId(doc.id)}
                                     >
@@ -1660,8 +1714,9 @@ const AiKnowledge = () => {
                               >
                                 <img src="/icons/import-blue.svg" alt="" />
                               </button>
-                              <button
+                              {/* <button
                                 onClick={() => {
+                                  console.log(doc);
                                   if (isLoadingCallApi) return;
                                   // handleButtonClick(doc.category2);
                                   toggleDisable(
@@ -1676,7 +1731,7 @@ const AiKnowledge = () => {
                                 ) : (
                                   <img src="/icons/eye-slash-blue.svg" alt="" />
                                 )}
-                              </button>
+                              </button> */}
                             </td>
                           </tr>
                         ))
