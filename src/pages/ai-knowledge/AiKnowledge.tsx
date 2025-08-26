@@ -50,7 +50,7 @@ const LoadGraph: FC<LoadGraphProps> = ({
     // Add nodes to the graph using their existing x, y coordinates
     graphaDataNodesFilters.forEach((node: any) => {
       const randomColor = chroma.random().hex();
-      
+
       // Use existing x, y coordinates from the data, or fallback to center if not available
       const x = node.x !== undefined ? node.x : 0.5;
       const y = node.y !== undefined ? node.y : 0.5;
