@@ -332,8 +332,6 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
                     formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
                   }}
                   onDeleteSuccess={() => handleFileDeleteSuccess()}
-
-
                 />
               </div>
             ))}

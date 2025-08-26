@@ -18,30 +18,33 @@ interface FileBoxProps {
 const FileBox: React.FC<FileBoxProps> = ({
   el,
 
-
   onDelete,
-  onDeleteSuccess, 
+  onDeleteSuccess,
 }) => {
   const { id } = useParams<{ id: string }>();
 
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-const [isDeleted, setisDeleted] = useState(false)
+  const [isDeleted, setisDeleted] = useState(false);
   const handleDelete = (fileId: string, memberId: string) => {
     setLoadingDelete(true);
     publish('fileIsDeleting', { isDeleting: false });
 
-    Application.deleteFileHistory({ file_id: fileId, member_id: memberId })
-      .catch((err) => {
-        console.error(err);
-
-      });
+    Application.deleteFileHistory({
+      file_id: fileId,
+      member_id: memberId,
+    }).catch((err) => {
+      console.error(err);
+    });
 
     const checkDelete = async () => {
       try {
-        const res = await Application.checkDeleteLabReport({ file_id: fileId, member_id: memberId });
+        const res = await Application.checkDeleteLabReport({
+          file_id: fileId,
+          member_id: memberId,
+        });
         if (res.status === 200 && res.data) {
           setLoadingDelete(false);
-          setisDeleted(true)
+          setisDeleted(true);
           onDeleteSuccess();
           publish('fileIsDeleting', { isDeleting: true });
         } else {
@@ -49,7 +52,7 @@ const [isDeleted, setisDeleted] = useState(false)
         }
       } catch (err) {
         console.error('err', err);
-     
+
         setTimeout(checkDelete, 1000);
       }
     };
