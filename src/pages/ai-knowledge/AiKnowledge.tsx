@@ -653,6 +653,7 @@ const AiKnowledge = () => {
     setUploadComplete({});
     setStepAddDocument(1);
     setFileTitle('');
+    setLoadingButton(false);
   };
 
   const formatFileSize = (size: number): string => {
@@ -972,6 +973,11 @@ const AiKnowledge = () => {
 
   return (
     <>
+      {isLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <MainModal isOpen={AddFilleModal} onClose={closeModal}>
         <div
           className={`${stepAddDocument === 1 ? 'w-[500px]' : 'w-[932px]'} bg-white min-h-[316px] rounded-2xl shadow-800 p-4 text-xs text-Text-Primary`}
@@ -1303,7 +1309,6 @@ const AiKnowledge = () => {
               width: window.innerWidth,
             }}
           >
-            {isLoading && <Circleloader></Circleloader>}
             <LoadGraph
               graphData={graphData}
               activeFilters={activeFilters}
