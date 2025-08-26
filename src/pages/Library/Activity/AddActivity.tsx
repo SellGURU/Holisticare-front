@@ -23,6 +23,14 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   const [isExerciseStepValid, setIsExerciseStepValid] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
   const [showExerciseValidation, setShowExerciseValidation] = useState(false);
+  const [activityLibrary, setActivityLibrary] = useState<
+    { title: string; uid: string }[]
+  >([]);
+  useEffect(() => {
+    Application.getActivityLibrary().then((res) => {
+      setActivityLibrary(res.data);
+    });
+  }, []);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {
@@ -68,13 +76,17 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           Activity_Filters: {
             Conditions: addData.condition,
             Equipment: addData.equipment,
-            Type: [addData.type],
-            Level: [addData.level],
+            Type: addData.type ? [addData.type] : [],
+            Level: addData.level ? [addData.level] : [],
             Muscle: addData.muscle,
             Terms: addData.terms,
           },
           Activity_Location: addData.location,
           Act_Id: editid,
+          Parent_Id:
+            activityLibrary.find(
+              (value: any) => value.title === addData.Parent_Title,
+            )?.uid || '',
         })
           .then(() => {
             onSave();
@@ -99,12 +111,16 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           Activity_Filters: {
             Conditions: addData.condition,
             Equipment: addData.equipment,
-            Type: [addData.type],
-            Level: [addData.level],
+            Type: addData.type ? [addData.type] : [],
+            Level: addData.level ? [addData.level] : [],
             Muscle: addData.muscle,
             Terms: addData.terms,
           },
           Activity_Location: addData.location,
+          Parent_Id:
+            activityLibrary.find(
+              (value: any) => value.title === addData.Parent_Title,
+            )?.uid || '',
         })
           .then(() => {
             onSave();
@@ -135,14 +151,21 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           // description: res.data.Description,
           score: res.data.Base_Score,
           instruction: res.data.Instruction,
-          type: res.data.Activity_Filters.Type,
+          type:
+            res.data.Activity_Filters.Type.length > 0
+              ? res.data.Activity_Filters.Type[0]
+              : '',
           terms: res.data.Activity_Filters.Terms,
           condition: res.data.Activity_Filters.Conditions,
           muscle: res.data.Activity_Filters.Muscle,
           equipment: res.data.Activity_Filters.Equipment,
-          level: res.data.Activity_Filters.Level,
+          level:
+            res.data.Activity_Filters.Level.length > 0
+              ? res.data.Activity_Filters.Level[0]
+              : '',
           location: res.data.Activity_Location,
           clinical_guidance: res.data.Ai_note,
+          Parent_Title: res.data.Parent_Title,
         });
         setSectionList(
           res.data.Sections.map((item: any) => {
@@ -178,6 +201,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     level: '',
     location: [],
     clinical_guidance: '',
+    Parent_Title: '',
   });
   const updateAddData = (key: keyof typeof addData, value: any) => {
     setAddData((prevTheme) => ({
@@ -190,9 +214,10 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     setIsFormValid(
       addData.title.trim() !== '' &&
         addData.instruction.trim() !== '' &&
-        addData.score > 0,
+        addData.score > 0 &&
+        addData.Parent_Title.trim() !== '',
     );
-  }, [addData.title, addData.instruction, addData.score]);
+  }, [addData.title, addData.instruction, addData.score, addData.Parent_Title]);
 
   // Check if exercise step is valid whenever sectionList changes
   useEffect(() => {
@@ -231,6 +256,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
               showValidation={showValidation}
               addData={addData}
               updateAddData={updateAddData}
+              activityLibrary={activityLibrary}
+              mode={editid ? 'edit' : 'add'}
             />
           ) : (
             <ExersiceStep
