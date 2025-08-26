@@ -83,9 +83,12 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
         </td>
         <td className="py-3 w-[100px] text-center  text-[10px] ">
           <div className="flex justify-center items-center gap-1">
-            {exercise.Sections.slice(0, 2).map((el: any) => {
+            {exercise.Sections.slice(0, 2).map((el: any, index: number) => {
               return (
-                <div className="bg-[#E9F0F2] px-2 py-[0px] text-[10px] text-[#005F73] rounded-[16px]">
+                <div
+                  key={index}
+                  className="bg-[#E9F0F2] px-2 py-[0px] text-[10px] text-[#005F73] rounded-[16px]"
+                >
                   {el}
                 </div>
               );

@@ -1,12 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import Application from '../../../../api/app';
 import Checkbox from '../../../../Components/checkbox';
 import CustomSelect from '../../../../Components/CustomSelect';
-import TextField from '../../../../Components/TextField';
-import RangeCardLibraryActivity from './RangeCard';
-import Application from '../../../../api/app';
+import RangeCardLibraryThreePages from '../../../../Components/LibraryThreePages/components/RangeCard';
+import {
+  SelectBoxField,
+  TextField,
+} from '../../../../Components/UnitComponents';
+import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
+import { AssociatedInterventionInfoTextActivity } from '../../../../utils/library-unification';
+import ValidationForms from '../../../../utils/ValidationForms';
 
 interface InformationStepProps {
   addData: {
@@ -22,7 +26,10 @@ interface InformationStepProps {
     level: string;
     location: Array<string>;
     clinical_guidance: string;
+    Parent_Title: string;
   };
+  mode: 'add' | 'edit';
+  activityLibrary: { title: string; uid: string }[];
   updateAddData: (
     key:
       | 'type'
@@ -36,7 +43,8 @@ interface InformationStepProps {
       | 'equipment'
       | 'level'
       | 'location'
-      | 'clinical_guidance',
+      | 'clinical_guidance'
+      | 'Parent_Title',
     value: any,
   ) => void;
   showValidation: boolean; // Add this prop
@@ -47,6 +55,8 @@ const InformationStep: FC<InformationStepProps> = ({
   addData,
   updateAddData,
   showValidation,
+  activityLibrary,
+  mode,
   // onValidationChange,
 }) => {
   const [ConditionsOptions, setConditionsOptions] = useState([]);
@@ -56,44 +66,6 @@ const InformationStep: FC<InformationStepProps> = ({
   const [TermsOptions, setTermsOptions] = useState([]);
   const [TypesOptions, setTypeOptions] = useState([]);
   const [locationBoxs, setLocationBoxs] = useState([]);
-  // Formik validation schema
-  const validationSchema = Yup.object({
-    title: Yup.string().required('This field is required.'),
-    // description: Yup.string().required('This field is required.'),
-    instruction: Yup.string().required('This field is required.'),
-    score: Yup.number()
-      .min(1, 'This field is required.')
-      .required('This field is required.'),
-  });
-
-  // Update the Formik initialization
-  const formik = useFormik({
-    initialValues: {
-      title: addData.title,
-      // description: addData.description,
-      instruction: addData.instruction,
-      score: addData.score,
-      clinical_guidance: addData.clinical_guidance,
-    },
-    validationSchema,
-    validateOnMount: true,
-    enableReinitialize: true,
-    onSubmit: () => {}, // Handled by parent
-  });
-
-  // useEffect(() => {
-  //   onValidationChange(formik.isValid);
-  // }, [formik.isValid, onValidationChange]);
-  // Update parent component when form values change
-  useEffect(() => {
-    updateAddData('title', formik.values.title);
-    updateAddData('instruction', formik.values.instruction);
-    updateAddData('clinical_guidance', formik.values.clinical_guidance);
-  }, [
-    formik.values.title,
-    formik.values.instruction,
-    formik.values.clinical_guidance,
-  ]);
 
   useEffect(() => {
     Application.getExerciseFilters({}).then((res) => {
@@ -120,22 +92,54 @@ const InformationStep: FC<InformationStepProps> = ({
     <>
       <div className="w-full flex gap-4 mt-6 relative">
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <div className="text-xs font-medium text-Text-Primary">Title</div>
-            <TextField
-              type="text"
-              newStyle
-              placeholder="Write the activity's title..."
-              value={formik.values.title}
-              onChange={(e) => formik.setFieldValue('title', e.target.value)}
-              onBlur={formik.handleBlur}
-              className="w-[360px]"
-              errorMessage={
-                showValidation ? 'This field is required.' : undefined
-              }
-              inValid={showValidation && Boolean(formik.errors.title)}
-            />
-          </div>
+          <TextField
+            label="Title"
+            placeholder="Write the activity's title..."
+            margin="!w-[360px]"
+            value={addData.title}
+            onChange={(e) => {
+              updateAddData('title', e.target.value);
+            }}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField('Title', addData.title)
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText('Title', addData.title)
+                : ''
+            }
+          />
+
+          <SelectBoxField
+            label="Associated Intervention"
+            options={activityLibrary.map((value: any) => value.title)}
+            value={addData.Parent_Title}
+            onChange={(value) => {
+              updateAddData('Parent_Title', value);
+            }}
+            disabled={mode === 'edit'}
+            showDisabled={mode === 'edit'}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField(
+                    'Parent_Title',
+                    addData.Parent_Title,
+                  )
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText(
+                    'Parent_Title',
+                    addData.Parent_Title,
+                  )
+                : ''
+            }
+            placeholder={AssociatedInterventionInfoTextActivity}
+            margin="mb-0"
+          />
 
           {/* <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
@@ -162,68 +166,67 @@ const InformationStep: FC<InformationStepProps> = ({
             )}
           </div> */}
 
-          <div className="flex flex-col w-full gap-2">
-            <div className="text-xs font-medium text-Text-Primary">
-              Instruction
-            </div>
-            <textarea
-              placeholder="Write the activity's Instruction..."
-              value={formik.values.instruction}
-              onChange={(e) => {
-                formik.setFieldValue('instruction', e.target.value);
-                updateAddData('instruction', e.target.value);
-              }}
-              name="instruction"
-              className={`w-full h-[62px] rounded-[16px] py-1 px-3 border ${
-                showValidation && formik.errors.instruction
-                  ? 'border-Red'
-                  : 'border-Gray-50'
-              } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
-            />
-            {showValidation && formik.errors.instruction && (
-              <div className="text-Red text-[10px]">
-                {formik.errors.instruction}
-              </div>
-            )}
-          </div>
+          <TextAreaField
+            label="Instruction"
+            placeholder="Write the activity's Instruction..."
+            value={addData.instruction}
+            onChange={(e) => {
+              updateAddData('instruction', e.target.value);
+            }}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField(
+                    'Instruction',
+                    addData.instruction,
+                  )
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText(
+                    'Instruction',
+                    addData.instruction,
+                  )
+                : ''
+            }
+            margin="mt-0"
+          />
           <div className="flex flex-col w-full">
             <div className="text-xs font-medium text-Text-Primary">
               Priority Weight
             </div>
-            <RangeCardLibraryActivity
-              value={formik.values.score}
-              changeValue={(key, value) => {
-                formik.setFieldValue('score', value);
-                updateAddData(key, value);
+            <RangeCardLibraryThreePages
+              value={addData.score}
+              onChange={(value) => {
+                updateAddData('score', value);
               }}
-              showValidation={showValidation}
-              error={Boolean(formik.errors.score)}
-              required={true}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField('Score', addData.score)
+                  : true
+              }
+              validationText={
+                showValidation
+                  ? ValidationForms.ValidationText('Score', addData.score)
+                  : ''
+              }
             />
-            {/* {formik.touched.score && formik.errors.score && (
-              <div className="text-Red text-xs mt-1">{formik.errors.score}</div>
-            )} */}
           </div>
           {/* Clinical Guidance Field */}
-          <div className="flex flex-col w-full gap-2">
-            <div className="text-xs font-medium text-Text-Primary">
-              Clinical Guidance
-            </div>
-            <textarea
-              placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
-              value={formik.values.clinical_guidance}
-              onChange={(e) => {
-                formik.setFieldValue('clinical_guidance', e.target.value);
-                updateAddData('clinical_guidance', e.target.value);
-              }}
-              className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
-            />
-          </div>
+          <TextAreaField
+            label="Clinical Guidance"
+            placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
+            value={addData.clinical_guidance}
+            onChange={(e) => {
+              updateAddData('clinical_guidance', e.target.value);
+            }}
+            margin="mt-0"
+          />
         </div>
-        <div className="bg-[#E9EDF5] h-[362px] w-px"></div>
+        <div className="bg-[#E9EDF5] h-[492px] w-px"></div>
         <div className="flex flex-col gap-4">
           <div className="text-xs font-medium">Filters</div>
-          <div className="grid grid-cols-2 gap-y-2 gap-x-">
+          <div className="grid grid-cols-2 gap-y-2 gap-x-4">
             <CustomSelect
               placeHolder="Type"
               options={TypesOptions}
