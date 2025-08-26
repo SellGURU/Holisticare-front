@@ -95,11 +95,17 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         </div>
       </div>
 
-      <div style={{height:window.innerHeight - 330 + "px"}} className="w-full flex justify-between gap-4 mt-6">
+      <div
+        style={{ height: window.innerHeight - 330 + 'px' }}
+        className="w-full flex justify-between gap-4 mt-6"
+      >
         {/* Left side: Add biomarker form */}
-        <div  className="rounded-2xl  w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px]">
+        <div className="rounded-2xl  w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px]">
           <div className="text-xs text-Text-Primary text-justify">
-          Add a biomarker by filling in its details (Name, Value, Unit) and clicking Add Biomarker. You’ll see it added right away in the client’s list on the right. You can also select the test date from the top of the grid.
+            Add a biomarker by filling in its details (Name, Value, Unit) and
+            clicking Add Biomarker. You’ll see it added right away in the
+            client’s list on the right. You can also select the test date from
+            the top of the grid.
           </div>
 
           {/* Biomarker Name */}
@@ -109,7 +115,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               isSetting
               isLarge
               isStaff
-              placeholder='-'
+              placeholder="-"
               options={avalibaleBiomarkers}
               value={biomarkerName}
               onChange={(value: string) => {
@@ -129,7 +135,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
             Value
             <TextField
-            placeholder='-'
+              placeholder="-"
               newStyle
               type="number"
               value={value}
@@ -146,7 +152,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               options={unitsList}
               value={unit}
               isStaff
-              placeholder='-'
+              placeholder="-"
               onChange={(value: string) => setUnit(value)}
             ></Select>
             {/* <TextField

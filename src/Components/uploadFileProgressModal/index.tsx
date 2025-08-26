@@ -61,7 +61,7 @@ export const UploadFileProgressModal = () => {
           <div className="w-full flex justify-end mt-4">
             <ButtonSecondary
               onClick={() => {
-                setshowProgressModal(false)
+                setshowProgressModal(false);
                 publish('syncReport', {});
               }}
             >
