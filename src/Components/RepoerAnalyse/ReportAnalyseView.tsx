@@ -1007,6 +1007,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 ) : (
                   <UploadTestV2
                     questionnaires={questionnaires}
+                    onDiscard={() => {
+                      setShowUploadTest(false);
+                    }}
                     isShare={isShare}
                     showReport={isHaveReport}
                     onGenderate={(file_id: string | undefined) => {
