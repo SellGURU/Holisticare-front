@@ -755,6 +755,18 @@ const AiKnowledge = () => {
   const handleDownloadFileUserUpload = (filename: string) => {
     Application.downloadUserUploadDocumentKnowledge({
       filename: filename,
+    }).then((res: any) => {
+        const blobUrl = res.data.link;
+
+        // Create a direct download link for the blob URL
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'file';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }).catch(() => {
+      console.log('error');
     });
   };
   const handleDownloadFileSystemDocs = (filename: string) => {
