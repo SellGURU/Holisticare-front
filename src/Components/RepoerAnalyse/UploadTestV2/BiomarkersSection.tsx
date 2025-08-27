@@ -11,10 +11,12 @@ interface BiomarkersSectionProps {
   uploadedFile: any;
   dateOfTest: Date | null;
   setDateOfTest: (date: Date | null) => void;
+  fileType: string;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   biomarkers,
+  fileType,
   onChange,
   uploadedFile,
   dateOfTest,
@@ -59,7 +61,46 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     );
     onChange(updated);
   };
+  const dnaOptions = [
+    'Moderately Compromised Outcome',
+    'Enhanced Outcome',
+    'Compromised Outcome',
+    'Moderately Enhanced Outcome',
+  ];
 
+  const gutOptions = ['Good for GUT', 'Bad for GUT'];
+  const renderValueField = (b: any, index: number) => {
+    if (fileType.toLowerCase() === 'dna') {
+      return (
+        <Select
+          isSmall
+          isSetting
+          value={b.original_value}
+          options={dnaOptions}
+          onChange={(val: string) => handleValueChange(index, val)}
+        />
+      );
+    } else if (fileType.toLowerCase() === 'gut') {
+      return (
+        <Select
+          isSmall
+          isSetting
+          value={b.original_value}
+          options={gutOptions}
+          onChange={(val: string) => handleValueChange(index, val)}
+        />
+      );
+    } else {
+      return (
+        <input
+          type="text"
+          value={b.original_value}
+          className="text-center border border-Gray-50 w-[95px] outline-none rounded-md text-[12px] text-Text-Primary px-2 py-1"
+          onChange={(e) => handleValueChange(index, e.target.value)}
+        />
+      );
+    }
+  };
   return (
     <div
       style={{ height: window.innerHeight - 440 + 'px' }}
@@ -153,14 +194,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     </div>
                     {/* value (editable via input) */}
                     <div className="col-span-1 w-[270px] text-center">
-                      <input
-                        type="text"
-                        value={b.original_value}
-                        className="text-center border border-Gray-50 w-[95px] outline-none rounded-md text-[12px] text-Text-Primary px-2 py-1"
-                        onChange={(e) =>
-                          handleValueChange(index, e.target.value)
-                        }
-                      />
+                      {renderValueField(b, index)}
                     </div>
                     {/* unit (editable via select) */}
                     <div className="col-span-1 w-[211px] text-end">
