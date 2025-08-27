@@ -30,6 +30,7 @@ import SpinnerLoader from '../../Components/SpinnerLoader/index.tsx';
 import Toggle from '../../Components/Toggle/index.tsx';
 import { uploadToAzure } from '../../help.ts';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
+import { toast } from 'react-toastify';
 
 // Error Boundary Component
 interface ErrorBoundaryState {
@@ -827,15 +828,15 @@ const AiKnowledge = () => {
           setSelected(
             res.data.results.length ? res.data.results[0].file_id : null,
           );
+          setStepAddDocument(2);
+          setSelectedFiles([]);
+          setUploadProgress({});
+          setUploadComplete({});
         })
-        .catch(() => {
+        .catch((err) => {
           setLoadingButton(false);
+          toast.error(err.detail);
         });
-
-      setSelectedFiles([]);
-      setUploadProgress({});
-      setUploadComplete({});
-      setStepAddDocument(2);
     } catch (error) {
       console.error('Upload failed:', error);
     } finally {
@@ -1190,6 +1191,20 @@ const AiKnowledge = () => {
       setIsSystemDocsSearchActive(false);
     }
   }, [activaTab]);
+  const handleDelete = (fileId: string, entity: string) => {
+    setDocumentsData((prev) =>
+      prev.map((doc) =>
+        doc.file_id === fileId
+          ? {
+              ...doc,
+              modal_data: doc.modal_data.filter(
+                (item: any) => item.entity !== entity,
+              ),
+            }
+          : doc,
+      ),
+    );
+  };
 
   return (
     <ErrorBoundary>
@@ -1475,7 +1490,16 @@ const AiKnowledge = () => {
                           </td>
                           <td className="text-center">
                             <div className="flex items-center justify-center w-full">
-                              <img src="/icons/trash-blue.svg" alt="" />
+                              <img
+                                onClick={() => {
+                                  if (selected) {
+                                    handleDelete(selected, item.entity);
+                                  }
+                                }}
+                                src="/icons/trash-blue.svg"
+                                className="cursor-pointer"
+                                alt=""
+                              />
                             </div>
                           </td>
                         </tr>
