@@ -731,8 +731,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {ResolveConceringData().length > 0 ? (
                     <>
                       <div className=" hidden xl:block">
-                        <div className="w-full bg-gray-100 rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center font-medium">
-                          <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">
+                        <div className="w-full bg-white rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center font-medium">
+                          <div className="TextStyle-Headline-6 text-Text-Primary w-[1100px] pl-6 text-left ">
                             Name
                           </div>
                           <div className="TextStyle-Headline-6 text-Text-Primary w-[120px] text-center">

@@ -87,6 +87,7 @@ export const ClientInfo = () => {
       </div>
     );
   }
+  const hasGoals = clientGoals && Object.values(clientGoals).some(value => value !== null);
 
   return (
     <>
@@ -178,7 +179,7 @@ export const ClientInfo = () => {
             <div className="text-xs font-medium text-Text-Quadruple">
               Client Goals
             </div>
-            {clientGoals && Object.keys(clientGoals).length > 0 ? (
+            {hasGoals ? (
               <div className="flex flex-col mt-2">
                 {Object.entries(clientGoals).map(
                   ([key, value], index: number) => (

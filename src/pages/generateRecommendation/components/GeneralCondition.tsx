@@ -388,7 +388,7 @@ const Card: React.FC<CardProps> = ({
           {content?.map((item, index) => (
             <>
               {isEditing ? (
-                <div className="border border-Gray-50 rounded-xl py-3 pl-3 pr-2 w-full mb-2 flex items-center">
+                <div className="border border-Gray-50 rounded-xl py-3 px-2 w-full mb-2 flex items-center">
                   <textarea
                     ref={(el) => (textareaRefs.current[index] = el)}
                     value={item}
@@ -399,7 +399,7 @@ const Card: React.FC<CardProps> = ({
                     className="w-[85%] px-4 text-justify resize-none text-sm outline-none overflow-hidden border-r border-Gray-50"
                   />
                   {currentIndex === index ? (
-                    <div className="flex flex-col justify-end items-center gap-2 ml-3">
+                    <div className="flex flex-col w-[15%] justify-end items-center gap-2 m">
                       <span className="text-xs  text-[#909090] ">Sure?</span>
                       <img
                         className="size-5 cursor-pointer"
@@ -418,12 +418,15 @@ const Card: React.FC<CardProps> = ({
                       />
                     </div>
                   ) : (
-                    <img
-                      className="size-6 cursor-pointer ml-3"
+                    <div className='flex justify-center w-[15%]'>
+ <img
+                      className="size-6 cursor-pointer ml-"
                       src="/icons/trash-red.svg"
                       alt="Delete"
                       onClick={() => setCurrentIndex(index)}
                     />
+                    </div>
+                   
                   )}
                 </div>
               ) : (

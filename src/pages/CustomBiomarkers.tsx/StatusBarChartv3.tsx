@@ -1,4 +1,4 @@
-import TooltipText from '../../Components/TooltipText';
+import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface StatusBarChartv3Props {
@@ -186,15 +186,15 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
               <div
                 className={`absolute w-full px-1 ${isCustom ? 'text-[#888888]' : 'text-Primary-DeepTeal'}  flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]`}
               >
-                <TooltipText tooltipValue={el.label}>{el.label}</TooltipText>
+                <TooltipTextAuto>{el.label}</TooltipTextAuto>
               </div>
               <div
                 className={`absolute w-full px-1 ${isCustom ? 'text-[#B0B0B0]' : 'text-Primary-DeepTeal'}  flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]`}
               >
                 {el.label != '' && <>(</>}
-                <TooltipText tooltipValue={getRangeString(el)}>
+                <TooltipTextAuto>
                   <>{getRangeString(el)}</>
-                </TooltipText>
+                </TooltipTextAuto>
                 {el.label != '' && <>)</>}
               </div>
               {(() => {

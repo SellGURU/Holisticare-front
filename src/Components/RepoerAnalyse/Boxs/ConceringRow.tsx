@@ -8,7 +8,6 @@ interface ConceringRowProps {
 
 const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
   const [isOpen, setIsOpen] = useState(true);
-  // console.log(data);
 
   return (
     <>
@@ -33,7 +32,7 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
             return (
               <div className=" px-6 w-full bg-white">
                 <div className="w-full py-4  flex justify-end items-center">
-                  <div className=" TextStyle-Body-3 text-Text-Primary pl-5   w-[800px]">
+                  <div className=" TextStyle-Body-3 text-Text-Primary pl-  w-[1100px]">
                     <TooltipTextAuto maxWidth="200px">
                       {el.name ? el.name : '-'}
                     </TooltipTextAuto>
