@@ -580,6 +580,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             }
             setstep(0);
           }}
+          fileType={fileType}
           uploadedFile={uploadedFile}
           onSave={onSave}
           isShare={isShare || false}

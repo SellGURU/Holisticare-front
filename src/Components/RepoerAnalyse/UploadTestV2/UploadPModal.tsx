@@ -29,9 +29,11 @@ interface UploadPModalProps {
   addedDateOfTest: Date | null;
   handleAddedDateOfTestChange: (date: Date | null) => void;
   onClose: () => void;
+  fileType:string
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
+  fileType,
   OnBack,
   uploadedFile,
   onSave,
@@ -109,6 +111,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 onClose={onClose}
               />
               <BiomarkersSection
+              fileType={fileType}
                 dateOfTest={modifiedDateOfTest}
                 setDateOfTest={handleModifiedDateOfTestChange}
                 uploadedFile={uploadedFile}
