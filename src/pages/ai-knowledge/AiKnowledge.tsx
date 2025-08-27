@@ -30,6 +30,7 @@ import SpinnerLoader from '../../Components/SpinnerLoader/index.tsx';
 import Toggle from '../../Components/Toggle/index.tsx';
 import { uploadToAzure } from '../../help.ts';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
+import { toast } from 'react-toastify';
 
 // Error Boundary Component
 interface ErrorBoundaryState {
@@ -827,15 +828,15 @@ const AiKnowledge = () => {
           setSelected(
             res.data.results.length ? res.data.results[0].file_id : null,
           );
+          setStepAddDocument(2);
+          setSelectedFiles([]);
+          setUploadProgress({});
+          setUploadComplete({});
         })
-        .catch(() => {
+        .catch((err) => {
           setLoadingButton(false);
+          toast.error(err.detail);
         });
-
-      setSelectedFiles([]);
-      setUploadProgress({});
-      setUploadComplete({});
-      setStepAddDocument(2);
     } catch (error) {
       console.error('Upload failed:', error);
     } finally {
@@ -873,6 +874,7 @@ const AiKnowledge = () => {
     setUploadComplete({});
     setStepAddDocument(1);
     setFileTitle('');
+    setLoadingButton(false);
   };
 
   const formatFileSize = (size: number): string => {
@@ -1189,6 +1191,20 @@ const AiKnowledge = () => {
       setIsSystemDocsSearchActive(false);
     }
   }, [activaTab]);
+  const handleDelete = (fileId: string, entity: string) => {
+    setDocumentsData((prev) =>
+      prev.map((doc) =>
+        doc.file_id === fileId
+          ? {
+              ...doc,
+              modal_data: doc.modal_data.filter(
+                (item: any) => item.entity !== entity,
+              ),
+            }
+          : doc,
+      ),
+    );
+  };
 
   return (
     <ErrorBoundary>
@@ -1251,7 +1267,9 @@ const AiKnowledge = () => {
                           <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
                             <div
                               className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
-                              style={{ width: uploadProgress[file.name] + '%' }}
+                              style={{
+                                width: uploadProgress[file.name] + '%',
+                              }}
                             ></div>
                           </div>
                         </div>
@@ -1472,7 +1490,16 @@ const AiKnowledge = () => {
                           </td>
                           <td className="text-center">
                             <div className="flex items-center justify-center w-full">
-                              <img src="/icons/trash-blue.svg" alt="" />
+                              <img
+                                onClick={() => {
+                                  if (selected) {
+                                    handleDelete(selected, item.entity);
+                                  }
+                                }}
+                                src="/icons/trash-blue.svg"
+                                className="cursor-pointer"
+                                alt=""
+                              />
                             </div>
                           </td>
                         </tr>
@@ -1525,13 +1552,13 @@ const AiKnowledge = () => {
           >
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
-                <div className="text-center">
+                <div className="flex items-center justify-center flex-col">
                   <Circleloader></Circleloader>
                   {loadProgress > 0 && (
-                    <div className="mt-2 text-sm text-gray-600">
+                    <div className="mt-2 text-sm text-Text-Primary">
                       Loading graph data... {Math.round(loadProgress)}%
                       <br />
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-Text-Quadruple">
                         Loaded {loadedNodesCount} of {totalNodesCount} nodes
                       </span>
                     </div>
