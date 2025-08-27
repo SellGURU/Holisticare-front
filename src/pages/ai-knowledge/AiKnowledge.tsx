@@ -1193,11 +1193,6 @@ const AiKnowledge = () => {
 
   return (
     <ErrorBoundary>
-      {isLoading && (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-          <Circleloader></Circleloader>
-        </div>
-      )}
       <MainModal isOpen={AddFilleModal} onClose={closeModal}>
         <div
           className={`${stepAddDocument === 1 ? 'w-[500px]' : 'w-[932px]'} bg-white min-h-[316px] rounded-2xl shadow-800 p-4 text-xs text-Text-Primary`}
@@ -1533,13 +1528,13 @@ const AiKnowledge = () => {
           >
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
-                <div className="text-center">
+                <div className="flex items-center justify-center flex-col">
                   <Circleloader></Circleloader>
                   {loadProgress > 0 && (
-                    <div className="mt-2 text-sm text-gray-600">
+                    <div className="mt-2 text-sm text-Text-Primary">
                       Loading graph data... {Math.round(loadProgress)}%
                       <br />
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-Text-Quadruple">
                         Loaded {loadedNodesCount} of {totalNodesCount} nodes
                       </span>
                     </div>
