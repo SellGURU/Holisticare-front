@@ -77,7 +77,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               Lab Data & Biomarkers
             </div>
             <ButtonPrimary
-              disabled={uploadedFile == null && addedBiomarkers.length == 0}
+              disabled={extractedBiomarkers.length == 0 && addedBiomarkers.length == 0}
               onClick={onSave}
               style={{
                 width: '167px',
