@@ -909,8 +909,10 @@ const AiKnowledge = () => {
       } else {
         if (activaTab === 'User Uploads') {
           const filteredDocs = graphData?.nodes
-            ?.filter((node: any) =>
-              node.type === 'user_docs' && node.category2.toLowerCase().includes(searchTerm),
+            ?.filter(
+              (node: any) =>
+                node.type === 'user_docs' &&
+                node.category2.toLowerCase().includes(searchTerm),
             )
             ?.map((node: any) => node.category2 as string);
           const filteredUserDocs = [...new Set(filteredDocs || [])] as string[];
@@ -919,11 +921,15 @@ const AiKnowledge = () => {
           setCurrentPageUserUploads(1);
         } else if (activaTab === 'System Docs' && graphData) {
           const filteredDocs = graphData.nodes
-            ?.filter((node: any) =>
-              node.type === 'system_docs' && node.category2.toLowerCase().includes(searchTerm),
+            ?.filter(
+              (node: any) =>
+                node.type === 'system_docs' &&
+                node.category2.toLowerCase().includes(searchTerm),
             )
             ?.map((node: any) => node.category2 as string);
-          const uniqueFilteredDocs = [...new Set(filteredDocs || [])] as string[];
+          const uniqueFilteredDocs = [
+            ...new Set(filteredDocs || []),
+          ] as string[];
           setFilteredSystemDocs(uniqueFilteredDocs);
           setIsSystemDocsSearchActive(true);
           setCurrentPageSystemDocs(1);
