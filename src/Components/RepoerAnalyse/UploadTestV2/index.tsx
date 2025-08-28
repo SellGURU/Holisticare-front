@@ -57,14 +57,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       setIsUploadFromComboBar(true);
     });
   }, []);
-  const [biomarkerLoading, setbiomarkerLoading] = useState(false)
+  const [biomarkerLoading, setbiomarkerLoading] = useState(false);
   useEffect(() => {
     if (!uploadedFile?.file_id) return;
 
     let intervalId: NodeJS.Timeout;
 
     const fetchData = async () => {
-      setbiomarkerLoading(true)
+      setbiomarkerLoading(true);
       try {
         const res = await Application.checkLabStepOne({
           file_id: uploadedFile.file_id,
@@ -79,7 +79,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           res.data.extracted_biomarkers.length > 0
         ) {
           setPolling(false);
-          setbiomarkerLoading(false)
+          setbiomarkerLoading(false);
         }
       } catch (err) {
         console.error('Error checking lab step one:', err);
