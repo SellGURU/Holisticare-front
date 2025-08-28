@@ -94,6 +94,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       );
     } else {
       return (
+       
         <input
           type="number"
           value={b.original_value}
@@ -136,7 +137,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="flex items-center text-xs text-Text-Quadruple">
               Date of Test
               <SimpleDatePicker
-              isUploadFile
+                isUploadFile
                 date={dateOfTest}
                 setDate={setDateOfTest}
                 placeholder="Select Date"
@@ -152,13 +153,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 <div className="col-span-1 w-[150px] pl-20 text-nowrap text-center">
                   System Biomarker
                 </div>
-                <div className="col-span-1 w-[270px] text-center">
+                <div className="col-span-1 w-[320px] text-center">
                   Extracted Value
                 </div>
-                <div className="col-span-1 w-[181px] text-end">
+                <div className="col-span-1 w-[215px] text-end">
                   Extracted Unit
                 </div>
-                <div className="col-span-1 w-[245px] text-center">
+                <div className="col-span-1 w-[295px] text-center">
                   System Value
                 </div>
                 <div className="col-span-1 w-[259px] text-center">
@@ -181,7 +182,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   >
                     {' '}
                     <div className="col-span-1 w-[169px]   text-left text-Text-Primary">
-                      <TooltipTextAuto maxWidth="169px">
+                      <TooltipTextAuto maxWidth="159px">
                         {b.original_biomarker_name}
                       </TooltipTextAuto>
                     </div>
@@ -196,11 +197,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       />
                     </div>
                     {/* value (editable via input) */}
-                    <div className="col-span-1 w-[270px] text-center">
+                    <div className="col-span-1 w-[320px] text-center">
                       {renderValueField(b, index)}
                     </div>
                     {/* unit (editable via select) */}
-                    <div className="col-span-1 w-[211px] text-end">
+                    <div className="col-span-1 w-[246px] text-end">
                       <Select
                         isSmall
                         isSetting
@@ -210,7 +211,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       />
                     </div>
                     {/* read-only original fields */}
-                    <div className="col-span-1 w-[245px] text-center text-[#888888]">
+                    <div className="col-span-1 w-[295px] text-center text-[#888888]">
                       {b.value}
                     </div>
                     <div className="col-span-1 w-[259px] text-center text-[#888888]">
