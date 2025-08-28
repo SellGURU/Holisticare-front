@@ -24,7 +24,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   setDateOfTest,
   loading,
 }) => {
-  const handleValueChange = (index: number, newValue: string) => {
+  const handleValueChange = (index: number, newValue: number | string) => {
     const updated = biomarkers.map((b, i) =>
       i === index ? { ...b, original_value: newValue } : b,
     );
@@ -95,7 +95,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     } else {
       return (
         <input
-          type="text"
+          type="number"
           value={b.original_value}
           className="text-center border border-Gray-50 w-[95px] outline-none rounded-md text-[12px] text-Text-Primary px-2 py-1"
           onChange={(e) => handleValueChange(index, e.target.value)}
