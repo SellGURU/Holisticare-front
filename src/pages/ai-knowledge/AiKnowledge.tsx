@@ -105,7 +105,7 @@ const LoadGraph: FC<LoadGraphProps> = ({
     if (!graphData?.nodes) return [];
 
     return graphData.nodes
-      .slice(0, 2000) // Only load first 1000 nodes
+      .slice(0, 10000) // Only load first 1000 nodes
       .filter((item: any) => item.status === true);
   }, [graphData]);
 
