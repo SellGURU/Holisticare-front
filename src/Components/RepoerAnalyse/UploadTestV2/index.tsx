@@ -108,7 +108,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const handleDeleteFile = () => {
     setdeleteLoading(true);
-    setUploadedFile(null); 
+    setUploadedFile(null);
     setExtractedBiomarkers([]);
     setfileType('more_info');
     setPolling(true);

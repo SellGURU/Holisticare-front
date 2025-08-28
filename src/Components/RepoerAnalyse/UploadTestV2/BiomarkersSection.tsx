@@ -136,6 +136,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="flex items-center text-xs text-Text-Quadruple">
               Date of Test
               <SimpleDatePicker
+              isUploadFile
                 date={dateOfTest}
                 setDate={setDateOfTest}
                 placeholder="Select Date"
