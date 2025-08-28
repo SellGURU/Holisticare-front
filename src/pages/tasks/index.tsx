@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from 'react';
-import Circleloader from '../../Components/CircleLoader';
-import BoxActivity from './components/BoxActivity';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Mobile from '../../api/mobile';
+import Circleloader from '../../Components/CircleLoader';
+import BoxActivity from './components/BoxActivity';
 import BoxTexts from './components/BoxTexts';
 import BoxTitleText from './components/BoxTitleText';
 // import BoxValue from './components/BoxValue';
@@ -29,35 +29,35 @@ const Tasks = () => {
       })
       .catch(() => {});
   }, []);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const scrollInterval = useRef<NodeJS.Timeout | null>(null);
+  // const scrollRef = useRef<HTMLDivElement | null>(null);
+  // const scrollInterval = useRef<NodeJS.Timeout | null>(null);
 
-  const startScroll = (direction: 'up' | 'down') => {
-    if (scrollInterval.current) return;
+  // const startScroll = (direction: 'up' | 'down') => {
+  //   if (scrollInterval.current) return;
 
-    const step = direction === 'up' ? -50 : 50;
-    scrollInterval.current = setInterval(() => {
-      scrollRef.current?.scrollBy({ top: step, behavior: 'smooth' });
-    }, 100);
-  };
+  //   const step = direction === 'up' ? -50 : 50;
+  //   scrollInterval.current = setInterval(() => {
+  //     scrollRef.current?.scrollBy({ top: step, behavior: 'smooth' });
+  //   }, 100);
+  // };
 
-  const stopScroll = () => {
-    if (scrollInterval.current) {
-      clearInterval(scrollInterval.current);
-      scrollInterval.current = null;
-    }
-  };
+  // const stopScroll = () => {
+  //   if (scrollInterval.current) {
+  //     clearInterval(scrollInterval.current);
+  //     scrollInterval.current = null;
+  //   }
+  // };
 
-  const scrollOnce = (direction: 'up' | 'down') => {
-    const step = direction === 'up' ? -100 : 100;
-    scrollRef.current?.scrollBy({ top: step, behavior: 'smooth' });
-  };
+  // const scrollOnce = (direction: 'up' | 'down') => {
+  //   const step = direction === 'up' ? -100 : 100;
+  //   scrollRef.current?.scrollBy({ top: step, behavior: 'smooth' });
+  // };
 
   return (
     <>
       <div
         className="w-full py-3 px-4 h-[100vh] overflow-y-scroll"
-        ref={scrollRef}
+        // ref={scrollRef}
       >
         {isLoading ? (
           <>
@@ -134,7 +134,7 @@ const Tasks = () => {
           </div>
         )}
       </div>
-      <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
+      {/* <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
         <button
           onClick={() => scrollOnce('up')}
           onMouseDown={() => startScroll('up')}
@@ -167,7 +167,7 @@ const Tasks = () => {
             className="w-4 h-4"
           />
         </button>
-      </div>
+      </div> */}
     </>
   );
 };
