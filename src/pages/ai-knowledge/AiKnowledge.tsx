@@ -905,27 +905,29 @@ const AiKnowledge = () => {
         setIsSystemDocsSearchActive(false);
         setIsUserUploadsSearchActive(false);
         setCurrentPageUserUploads(1);
+        setCurrentPageSystemDocs(1);
       } else {
         if (activaTab === 'User Uploads') {
-          const filteredDocs = graphData.nodes
-            .filter((node: any) =>
-              node.category2.toLowerCase().includes(searchTerm),
+          const filteredDocs = graphData?.nodes
+            ?.filter((node: any) =>
+              node.type === 'user_docs' && node.category2.toLowerCase().includes(searchTerm),
             )
-            .map((node: any) => node.category2 as string);
-          const filteredUserDocs = [...new Set(filteredDocs)] as string[];
+            ?.map((node: any) => node.category2 as string);
+          const filteredUserDocs = [...new Set(filteredDocs || [])] as string[];
           setFilteredUserUploads(filteredUserDocs);
           setIsUserUploadsSearchActive(true);
+          setCurrentPageUserUploads(1);
         } else if (activaTab === 'System Docs' && graphData) {
           const filteredDocs = graphData.nodes
-            .filter((node: any) =>
-              node.category2.toLowerCase().includes(searchTerm),
+            ?.filter((node: any) =>
+              node.type === 'system_docs' && node.category2.toLowerCase().includes(searchTerm),
             )
-            .map((node: any) => node.category2 as string);
-          const uniqueFilteredDocs = [...new Set(filteredDocs)] as string[];
+            ?.map((node: any) => node.category2 as string);
+          const uniqueFilteredDocs = [...new Set(filteredDocs || [])] as string[];
           setFilteredSystemDocs(uniqueFilteredDocs);
           setIsSystemDocsSearchActive(true);
+          setCurrentPageSystemDocs(1);
         }
-        setCurrentPageUserUploads(1);
       }
       return;
     }
@@ -1027,6 +1029,35 @@ const AiKnowledge = () => {
     setCurrentPageSystemDocs(1);
   }, [activaTab]);
 
+  // Reset search when switching tabs
+  useEffect(() => {
+    setSearch('');
+    setFilteredUserUploads([]);
+    setFilteredSystemDocs([]);
+    setIsSystemDocsSearchActive(false);
+    setIsUserUploadsSearchActive(false);
+  }, [activaTab]);
+
+  // Reset search when search type changes
+  useEffect(() => {
+    setSearch('');
+    setFilteredUserUploads([]);
+    setFilteredSystemDocs([]);
+    setIsSystemDocsSearchActive(false);
+    setIsUserUploadsSearchActive(false);
+  }, [searchType]);
+
+  // Reset search when modal opens/closes
+  useEffect(() => {
+    if (!showDoc) {
+      setSearch('');
+      setFilteredUserUploads([]);
+      setFilteredSystemDocs([]);
+      setIsSystemDocsSearchActive(false);
+      setIsUserUploadsSearchActive(false);
+    }
+  }, [showDoc]);
+
   return (
     <ErrorBoundary>
       <AddNewDocument
@@ -1115,8 +1146,36 @@ const AiKnowledge = () => {
                 isHaveBorder
                 ClassName="rounded-[12px]"
                 placeHolder="Search documents or knowledge graph nodes..."
-                onSearch={handleSearch}
+                onSearch={(e) => {
+                  handleSearch(e);
+                  setSearch(e);
+                }}
+                value={search}
               />
+
+              <div className="flex items-center gap-4 mt-2 text-[10px] text-Text-Primary">
+                <span>Search by:</span>
+                {['Docs', 'Nodes'].map((type) => (
+                  <label
+                    key={type}
+                    className="flex items-center gap-1 cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="searchTypeMobile"
+                      checked={searchType === type}
+                      onChange={() => setSearchType(type as 'Docs' | 'Nodes')}
+                      className={`w-3 h-3 rounded-full border cursor-default
+            ${
+              searchType === type
+                ? 'border-Primary-DeepTeal bg-Primary-DeepTeal'
+                : 'border-Text-Primary bg-white'
+            }`}
+                    />
+                    {type}
+                  </label>
+                ))}
+              </div>
 
               <ActivityMenu
                 activeMenu={activeMenu}

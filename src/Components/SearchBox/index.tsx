@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { InputHTMLAttributes, useState } from 'react';
+import React, { InputHTMLAttributes, useState, useEffect } from 'react';
 import SvgIcon from '../../utils/svgIcon';
 
 interface SearchBoxProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -16,9 +16,15 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   ClassName,
   isHaveBorder,
   isGrayIcon,
+  value,
   ...props
 }) => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(value || '');
+
+  // Update internal state when external value changes
+  useEffect(() => {
+    setInputValue(value || '');
+  }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -27,6 +33,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
     setInputValue(trimmedValue);
     onSearch(trimmedValue);
   };
+
   return (
     <div
       className={`relative flex justify-start items-center   md:min-w-[300px] h-8 rounded-2xl bg-backgroundColor-Secondary  py-[10px] px-4 ${isHaveBorder ? 'border border-Gray-50' : 'shadow-200'}   ${ClassName}`}
