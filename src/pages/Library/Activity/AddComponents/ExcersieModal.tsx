@@ -158,6 +158,19 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       Level: filters.level ? [filters.level] : [],
     };
 
+    const cleanedFiles: Omit<FileData, 'base64Data'>[] = filesData.map(
+      (file) => {
+        const copy = { ...file };
+        delete copy.base64Data;
+        if (copy.Type !== 'link') {
+          copy.Content = {
+            ...copy.Content,
+            url: '',
+          };
+        }
+        return copy;
+      },
+    );
     const exerciseData = {
       Title: formData.title,
       // Description: formData.description,
@@ -166,7 +179,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       'Added on': new Date(),
       Exercise_Location: location || [],
       Exercise_Id: exercise.Exercise_Id,
-      Files: filesData,
+      Files: cleanedFiles,
       Base_Score: formData.score,
       Ai_note: formData.clinical_guidance,
     };
@@ -287,6 +300,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setFileList(exercise.Files || []);
     setScore(exercise.Base_Score || 0);
     setYouTubeLink('');
+    setFileUploaded(false);
   };
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showValidation, setShowValidation] = useState(false);
