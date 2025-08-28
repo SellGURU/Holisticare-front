@@ -15,7 +15,7 @@ interface DatePickerProps {
   onManualOpen?: () => void;
   validation?: boolean;
   full?: boolean;
-  isUploadFile?:boolean
+  isUploadFile?: boolean;
 }
 
 export default function SimpleDatePicker({
@@ -31,7 +31,7 @@ export default function SimpleDatePicker({
   validation,
   onManualOpen,
   full,
-  isUploadFile
+  isUploadFile,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -88,7 +88,9 @@ export default function SimpleDatePicker({
       </button>
 
       {open && (
-        <div className={`absolute w-full  top-full mt-2 ${isUploadFile ? "right-[70px]" : "right-0"}  z-[999] `}>
+        <div
+          className={`absolute w-full  top-full mt-2 ${isUploadFile ? 'right-[70px]' : 'right-0'}  z-[999] `}
+        >
           <Calendar
             calendarClassName="!w-[220px]"
             value={selectedDay}
