@@ -12,6 +12,7 @@ interface BiomarkersSectionProps {
   dateOfTest: Date | null;
   setDateOfTest: (date: Date | null) => void;
   fileType: string;
+  loading:boolean
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -21,6 +22,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   uploadedFile,
   dateOfTest,
   setDateOfTest,
+  loading
 }) => {
   const handleValueChange = (index: number, newValue: string) => {
     const updated = biomarkers.map((b, i) =>
@@ -106,7 +108,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       style={{ height: window.innerHeight - 440 + 'px' }}
       className="w-full  rounded-2xl border border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary"
     >
-      {uploadedFile?.status !== 'completed' ? (
+      {
+         loading ? (
+          <div
+            style={{ height: window.innerHeight - 520 + 'px' }}
+            className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
+          >
+            <Circleloader></Circleloader>
+            <div>Processing… We’ll show the detected biomarkers shortly.</div>
+          </div>
+        ):
+      uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <div
           style={{ height: window.innerHeight - 520 + 'px' }}
           className="flex items-center justify-center flex-col text-xs font-medium text-Text-Primary"
@@ -114,15 +126,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           <img src="/icons/EmptyState-biomarkers.svg" alt="" />
           <div className="-mt-5">No data provided yet.</div>
         </div>
-      ) : biomarkers.length === 0 && uploadedFile?.status == 'completed' ? (
-        <div
-          style={{ height: window.innerHeight - 520 + 'px' }}
-          className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
-        >
-          <Circleloader></Circleloader>
-          <div>Processing… We’ll show the detected biomarkers shortly.</div>
-        </div>
-      ) : (
+      )  : (
         <div className="w-full">
           <div className="flex justify-between items-center mb-4">
             <div className="text-sm font-medium">

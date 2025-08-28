@@ -29,7 +29,8 @@ interface UploadPModalProps {
   addedDateOfTest: Date | null;
   handleAddedDateOfTestChange: (date: Date | null) => void;
   onClose: () => void;
-  fileType:string
+  fileType: string;
+  loading:boolean
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -56,6 +57,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   addedDateOfTest,
   handleAddedDateOfTestChange,
   onClose,
+  loading
 }) => {
   const [activeMenu, setactiveMenu] = useState('Upload File');
   return (
@@ -77,7 +79,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               Lab Data & Biomarkers
             </div>
             <ButtonPrimary
-              disabled={extractedBiomarkers.length == 0 && addedBiomarkers.length == 0}
+              disabled={
+                extractedBiomarkers.length == 0 && addedBiomarkers.length == 0
+              }
               onClick={onSave}
               style={{
                 width: '167px',
@@ -111,7 +115,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 onClose={onClose}
               />
               <BiomarkersSection
-              fileType={fileType}
+              loading={loading}
+                fileType={fileType}
                 dateOfTest={modifiedDateOfTest}
                 setDateOfTest={handleModifiedDateOfTestChange}
                 uploadedFile={uploadedFile}
