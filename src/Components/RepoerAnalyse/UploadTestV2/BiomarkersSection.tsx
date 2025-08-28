@@ -12,6 +12,7 @@ interface BiomarkersSectionProps {
   dateOfTest: Date | null;
   setDateOfTest: (date: Date | null) => void;
   fileType: string;
+  loading: boolean;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -21,8 +22,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   uploadedFile,
   dateOfTest,
   setDateOfTest,
+  loading,
 }) => {
-  const handleValueChange = (index: number, newValue: string) => {
+  const handleValueChange = (index: number, newValue: number | string) => {
     const updated = biomarkers.map((b, i) =>
       i === index ? { ...b, original_value: newValue } : b,
     );
@@ -93,7 +95,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     } else {
       return (
         <input
-          type="text"
+          type="number"
           value={b.original_value}
           className="text-center border border-Gray-50 w-[95px] outline-none rounded-md text-[12px] text-Text-Primary px-2 py-1"
           onChange={(e) => handleValueChange(index, e.target.value)}
@@ -106,21 +108,21 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       style={{ height: window.innerHeight - 440 + 'px' }}
       className="w-full  rounded-2xl border border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary"
     >
-      {uploadedFile?.status !== 'completed' ? (
-        <div
-          style={{ height: window.innerHeight - 520 + 'px' }}
-          className="flex items-center justify-center flex-col text-xs font-medium text-Text-Primary"
-        >
-          <img src="/icons/EmptyState-biomarkers.svg" alt="" />
-          <div className="-mt-5">No data provided yet.</div>
-        </div>
-      ) : biomarkers.length === 0 && uploadedFile?.status == 'completed' ? (
+      {loading ? (
         <div
           style={{ height: window.innerHeight - 520 + 'px' }}
           className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
         >
           <Circleloader></Circleloader>
           <div>Processing… We’ll show the detected biomarkers shortly.</div>
+        </div>
+      ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
+        <div
+          style={{ height: window.innerHeight - 520 + 'px' }}
+          className="flex items-center justify-center flex-col text-xs font-medium text-Text-Primary"
+        >
+          <img src="/icons/EmptyState-biomarkers.svg" alt="" />
+          <div className="-mt-5">No data provided yet.</div>
         </div>
       ) : (
         <div className="w-full">
@@ -134,6 +136,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="flex items-center text-xs text-Text-Quadruple">
               Date of Test
               <SimpleDatePicker
+              isUploadFile
                 date={dateOfTest}
                 setDate={setDateOfTest}
                 placeholder="Select Date"

@@ -57,12 +57,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       setIsUploadFromComboBar(true);
     });
   }, []);
+  const [biomarkerLoading, setbiomarkerLoading] = useState(false);
   useEffect(() => {
     if (!uploadedFile?.file_id) return;
 
     let intervalId: NodeJS.Timeout;
 
     const fetchData = async () => {
+      setbiomarkerLoading(true);
       try {
         const res = await Application.checkLabStepOne({
           file_id: uploadedFile.file_id,
@@ -77,6 +79,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           res.data.extracted_biomarkers.length > 0
         ) {
           setPolling(false);
+          setbiomarkerLoading(false);
         }
       } catch (err) {
         console.error('Error checking lab step one:', err);
@@ -85,13 +88,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
     if (polling) {
       fetchData(); // run immediately first
-      intervalId = setInterval(fetchData, 15000); // then every 15s
+      intervalId = setInterval(fetchData, 5000); // then every 15s
     }
 
     return () => {
       if (intervalId) clearInterval(intervalId); // cleanup
     };
-  }, [uploadedFile?.file_id, polling]);
+  }, [uploadedFile, polling]);
   useEffect(() => {
     subscribe('questionaryLength', (value: any) => {
       setQuestionaryLength(value.detail.questionaryLength);
@@ -105,6 +108,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const handleDeleteFile = () => {
     setdeleteLoading(true);
+    setUploadedFile(null);
+    setExtractedBiomarkers([]);
+    setfileType('more_info');
+    setPolling(true);
     Application.deleteLapReport({
       file_id: uploadedFile?.file_id,
       member_id: memberId,
@@ -580,6 +587,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             }
             setstep(0);
           }}
+          loading={biomarkerLoading}
           fileType={fileType}
           uploadedFile={uploadedFile}
           onSave={onSave}
