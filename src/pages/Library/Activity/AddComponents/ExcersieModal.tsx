@@ -129,6 +129,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               url: file.Content.url,
             },
             Type: 'link',
+            Title: file.Title,
           });
         }
       });
