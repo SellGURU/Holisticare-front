@@ -43,13 +43,16 @@ const BoxActivity: FC<Tasks> = ({ activities, encoded_mi }) => {
       setIsLoading(true);
       const videoFiles = selectData?.Files?.filter(
         (file: any) =>
-          file.Type === 'Video' ||
+          file.Type?.split('/')[0] === 'video' ||
           file.Type === 'link' ||
           file.Type?.split('/')[0] === 'image',
       );
 
       const videoPromises = videoFiles?.map((file: any) => {
-        if (file.Type === 'Video' || file.Type?.split('/')[0] === 'image') {
+        if (
+          file.Type?.split('/')[0] === 'video' ||
+          file.Type?.split('/')[0] === 'image'
+        ) {
           return Mobile.getExerciseFile({
             file_id: file.Content.file_id,
             encoded_mi: encoded_mi,
@@ -179,8 +182,9 @@ const BoxActivity: FC<Tasks> = ({ activities, encoded_mi }) => {
                       <div className="flex items-center gap-2">
                         <img
                           src={
-                            videoData[0]?.Content?.url ||
-                            '/images/activity/activity-demo.png'
+                            videoData?.[0]?.Type?.split('/')[0] === 'image'
+                              ? videoData[0]?.Content?.url
+                              : '/images/activity/activity-demo.png'
                           }
                           alt=""
                           className="w-[32px] h-[32px] rounded-xl object-cover"
