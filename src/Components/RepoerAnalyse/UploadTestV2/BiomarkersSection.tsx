@@ -94,7 +94,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       );
     } else {
       return (
-       
         <input
           type="number"
           value={b.original_value}
