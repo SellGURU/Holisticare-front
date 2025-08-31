@@ -246,31 +246,33 @@ const BoxActivity: FC<Tasks> = ({ activities, encoded_mi }) => {
                             <img src="/icons/chevron-right.svg" alt="next" />
                           </button>
                         </div>
+                      ) : videoData?.[0]?.Type?.split('/')[0] === 'video' ? (
+                        videoData.map((video) => {
+                          return (
+                            <video
+                              key={video.Content.file_id}
+                              className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
+                              controls
+                              src={video.Content.url}
+                            >
+                              Your browser does not support the video tag.
+                            </video>
+                          );
+                        })
                       ) : (
-                        <>
-                          {videoData.map((video) =>
-                            video.Content.url ? (
-                              <iframe
-                                key={video.Content.file_id}
-                                className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
-                                src={getYouTubeEmbedUrl(video.Content.url)}
-                                title="YouTube video player"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                              />
-                            ) : (
-                              <video
-                                key={video.Content.file_id}
-                                className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
-                                controls
-                                src={video.Content.url}
-                              >
-                                Your browser does not support the video tag.
-                              </video>
-                            ),
-                          )}
-                        </>
+                        videoData.map((video) => {
+                          return (
+                            <iframe
+                              key={video.Content.file_id}
+                              className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
+                              src={getYouTubeEmbedUrl(video.Content.url || '')}
+                              title="YouTube video player"
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          );
+                        })
                       )
                     ) : (
                       ''
