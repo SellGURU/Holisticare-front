@@ -105,13 +105,16 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       setFileList([]);
       const videoFiles = exercise.Files.filter(
         (file: any) =>
-          file.Type === 'Video' ||
+          file.Type?.split('/')[0] === 'video' ||
           file.Type === 'link' ||
           file.Type?.split('/')[0] === 'image',
       );
 
       const videoPromises = videoFiles.map((file: any) => {
-        if (file.Type === 'Video' || file.Type?.split('/')[0] === 'image') {
+        if (
+          file.Type?.split('/')[0] === 'video' ||
+          file.Type?.split('/')[0] === 'image'
+        ) {
           return Application.showExerciseFille({
             file_id: file.Content.file_id,
           }).then((res) => ({
@@ -170,6 +173,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     if (
       formData.title.trim() === '' ||
       formData.instruction.trim() === '' ||
+      formData.instruction.trim().length > 400 ||
       formData.score === 0
     ) {
       return;
@@ -233,7 +237,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
     onSubmit(exerciseData);
   };
-  const [fileUploaded, setFileUploaded] = useState(false);
 
   const handleFileUpload = async (event: any) => {
     const files = event.target.files;
@@ -272,7 +275,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         });
 
         const { file_id } = response.data;
-        setFileUploaded(true);
         setFileList((prevList) => [
           ...prevList,
           {
@@ -285,6 +287,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           },
         ]);
         setUploadProgress(100);
+        setYouTubeLink('');
       } catch (error) {
         console.error('Error uploading file:', error);
         setUploadProgress(0);
@@ -297,7 +300,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
   const handleCancelUpload = () => {
     setUploadProgress(0);
-    setFileUploaded(false);
   };
   const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -310,7 +312,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
   const removeFile = (Title: string) => {
     setFileList((prevList) => prevList.filter((file) => file.Title !== Title));
-    setFileUploaded(false);
   };
   const handleYouTubeLinkChange = (link: string) => {
     setYouTubeLink(link);
@@ -347,7 +348,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setFileList(exercise.Files || []);
     setScore(exercise.Base_Score || 0);
     setYouTubeLink('');
-    setFileUploaded(false);
   };
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showValidation, setShowValidation] = useState(false);
@@ -588,7 +588,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           <div className="bg-[#E9EDF5] h-[365px] w-px"></div>
           <div className="w-[25%] flex flex-col gap-4">
             <TextField
-              disabled={fileUploaded}
+              disabled={fileList.length > 0}
               value={youTubeLink}
               label="YouTube link"
               placeholder="Enter YouTube link ..."
