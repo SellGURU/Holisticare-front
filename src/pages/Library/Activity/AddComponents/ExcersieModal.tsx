@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { MainModal } from '../../../../Components';
+import Circleloader from '../../../../Components/CircleLoader';
 import CustomSelect from '../../../../Components/CustomSelect';
+import RangeCardLibraryThreePages from '../../../../Components/LibraryThreePages/components/RangeCard';
+import SpinnerLoader from '../../../../Components/SpinnerLoader';
+import { TextField } from '../../../../Components/UnitComponents';
+import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
 import Checkbox from '../../../../Components/checkbox';
 import Application from '../../../../api/app';
-import SpinnerLoader from '../../../../Components/SpinnerLoader';
-import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
 import ValidationForms from '../../../../utils/ValidationForms';
-import { TextField } from '../../../../Components/UnitComponents';
-import RangeCardLibraryThreePages from '../../../../Components/LibraryThreePages/components/RangeCard';
 interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -73,6 +74,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   const [MuscleOptions, setMuscleOptions] = useState([]);
   const [TermsOptions, setTermsOptions] = useState([]);
   const [TypesOptions, setTypeOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const isValidYouTubeUrl = (url: string) => {
     const youtubeRegex =
       /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|shorts\/|embed\/|v\/)?([a-zA-Z0-9_-]{11})(?:[?&].*)?$/;
@@ -97,6 +99,50 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       });
     }
   }, [isOpen]);
+  useEffect(() => {
+    const fetchVideos = async () => {
+      setIsLoading(true);
+      setFileList([]);
+      const videoFiles = exercise.Files.filter(
+        (file: any) =>
+          file.Type === 'Video' ||
+          file.Type === 'link' ||
+          file.Type?.split('/')[0] === 'image',
+      );
+
+      const videoPromises = videoFiles.map((file: any) => {
+        if (file.Type === 'Video' || file.Type?.split('/')[0] === 'image') {
+          return Application.showExerciseFille({
+            file_id: file.Content.file_id,
+          }).then((res) => ({
+            Title: res.data.file_name,
+            Type: res.data.file_type,
+            Content: {
+              file_id: file.Content.file_id,
+              url: res.data.base_64_data,
+            },
+          }));
+        } else if (file.Type === 'link') {
+          return Promise.resolve({
+            Content: {
+              file_id: file.Content.file_id,
+              url: file.Content.url,
+            },
+            Type: 'link',
+          });
+        }
+      });
+
+      const videos = await Promise.all(videoPromises);
+      console.log('videos', videos);
+      setFileList(videos);
+      setIsLoading(false);
+    };
+
+    if (isOpen && exercise.Files && exercise.Files.length > 0) {
+      fetchVideos();
+    }
+  }, [isOpen, exercise.Files]);
   useEffect(() => {
     const existingLink = fileList.find((file) => file.Type === 'link');
     if (existingLink) {
@@ -326,6 +372,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         handleClearData(false);
       }}
     >
+      {isLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <div className="w-[1107px] h-[503px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative">
         <div className="w-full border-b border-Gray-50 pb-2 text-sm font-medium">
           {isEdit ? 'Edit Exercise' : 'Add Exercise'}
