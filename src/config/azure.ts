@@ -2,7 +2,7 @@ import AzureBlobService from '../services/azureBlobService';
 
 // Azure Blob Storage configuration
 const AZURE_STORAGE_CONNECTION_STRING =
-'DefaultEndpointsProtocol=https;AccountName=newcodieblob1;AccountKey=cfuwrSaEl3CaY6r5q3lqJRHtxoAHmpzYSljAiQTBvZlsgh7mf5UIqrBLVgEjSv+XVJBWGCcgWABv+AStCq1d7w==;EndpointSuffix=core.windows.net';
+  'DefaultEndpointsProtocol=https;AccountName=newcodieblob1;AccountKey=cfuwrSaEl3CaY6r5q3lqJRHtxoAHmpzYSljAiQTBvZlsgh7mf5UIqrBLVgEjSv+XVJBWGCcgWABv+AStCq1d7w==;EndpointSuffix=core.windows.net';
 const AZURE_STORAGE_CONTAINER_NAME = 'ocrtest';
 // const AZURE_KEY = "some-real-key"; // ← This kind of thing
 // Function to initialize Azure Blob Service

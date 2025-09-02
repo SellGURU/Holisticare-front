@@ -97,7 +97,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         <input
           type="number"
           value={b.original_value}
-          className="text-center border border-Gray-50 w-[95px] outline-none rounded-md text-[12px] text-Text-Primary px-2 py-1"
+          className="text-center border border-Gray-50 w-[70px] md:w-[95px] outline-none rounded-md text-[8px] md:text-[12px] text-Text-Primary px-2 md:py-1"
           onChange={(e) => handleValueChange(index, e.target.value)}
         />
       );
@@ -127,13 +127,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       ) : (
         <div className="w-full">
           <div className="flex justify-between items-center mb-4">
-            <div className="text-sm font-medium">
+            <div className=" text-[10px] md:text-sm font-medium">
               List of Biomarkers{' '}
               <span className="text-[#B0B0B0] text-xs font-medium">
                 ({biomarkers.length})
               </span>
             </div>
-            <div className="flex items-center text-xs text-Text-Quadruple">
+            <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
               Date of Test
               <SimpleDatePicker
                 isUploadFile
@@ -144,24 +144,24 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               />
             </div>
           </div>
-          <div className="overflow-x-auto h-full">
-            <div className="w-full min-w-[700px] h-full text-xs">
+          <div className=" w-full overflow-auto  h-full">
+            <div className="w-full  min-w-[700px]   h-full text-xs">
               {/* Table Header */}
-              <div className="grid grid-cols-7 sticky top-0 z-10 gap-4 py-1 px-4 font-medium text-Text-Primary text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50">
-                <div className="col-span-1 w-[169px] ">Extracted Biomarker</div>
-                <div className="col-span-1 w-[150px] pl-20 text-nowrap text-center">
+              <div className="grid grid-cols-7 w-full sticky top-0 z-10 gap-4 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50">
+                <div className="col-span-1 md:w-[169px] ">Extracted Biomarker</div>
+                <div className="col-span-1 ml-6 md:ml-0 md:w-[150px] md:pl-20 text-nowrap text-center">
                   System Biomarker
                 </div>
-                <div className="col-span-1 w-[320px] text-center">
+                <div className="col-span-1 w-[170px] md:w-[320px] text-center">
                   Extracted Value
                 </div>
-                <div className="col-span-1 w-[215px] text-end">
+                <div className="col-span-1 w-[120px] md:w-[215px] text-end">
                   Extracted Unit
                 </div>
-                <div className="col-span-1 w-[295px] text-center">
+                <div className="col-span-1 w-[220px] md:w-[295px] text-center">
                   System Value
                 </div>
-                <div className="col-span-1 w-[259px] text-center">
+                <div className="col-span- w-[200px] md:w-[259px] text-center">
                   System Unit
                 </div>
                 <div className="col-span-1   text-end">Action</div>
@@ -175,18 +175,18 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 {biomarkers.map((b, index) => (
                   <div
                     key={index}
-                    className={`grid grid-cols-7 gap-4 py-1 px-4 border-b border-Gray-50 items-center text-xs text-Text-Primary ${
+                    className={`grid grid-cols-7 gap-4 py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary ${
                       index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
                     }`}
                   >
                     {' '}
-                    <div className="col-span-1 w-[169px]   text-left text-Text-Primary">
+                    <div className="col-span-1 md:w-[169px]   text-left text-Text-Primary">
                       <TooltipTextAuto maxWidth="159px">
                         {b.original_biomarker_name}
                       </TooltipTextAuto>
                     </div>
                     {/* biomarker (editable via select) */}
-                    <div className="col-span-1 w-[210px] pl-[40px]">
+                    <div className="col-span-1 w-[140px] md:w-[210px] md:pl-[40px]">
                       <Select
                         isLarge
                         isSetting
@@ -196,13 +196,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       />
                     </div>
                     {/* value (editable via input) */}
-                    <div className="col-span-1 w-[320px] text-center">
+                    <div className="col-span-1 w-[170px] md:w-[320px] text-center">
                       {renderValueField(b, index)}
                     </div>
                     {/* unit (editable via select) */}
-                    <div className="col-span-1 w-[246px] text-end">
+                    <div className="col-span-1 w-[120px] ml-10 md:ml-28  text-end">
                       <Select
-                        isSmall
+                   
+                        isLarge
                         isSetting
                         value={b.original_unit}
                         options={b.possible_values?.units || []}
@@ -210,10 +211,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       />
                     </div>
                     {/* read-only original fields */}
-                    <div className="col-span-1 w-[295px] text-center text-[#888888]">
+                    <div className="col-span-1 w-[220px] md:w-[295px] text-center text-[#888888]">
                       {b.value}
                     </div>
-                    <div className="col-span-1 w-[259px] text-center text-[#888888]">
+                    <div className="col-span-1 w-[200px] md:w-[259px] text-center text-[#888888]">
                       {b.unit}
                     </div>
                     {/* delete logic */}
@@ -237,7 +238,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           />
                         </div>
                       ) : (
-                        <div className="w-[47px] pl-5">
+                        <div className="w-[47px] pl-8 md:pl-5">
                           <img
                             src="/icons/trash-blue.svg"
                             alt="Delete"

@@ -106,10 +106,9 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
                       <div className="font-semibold text-Text-Primary  md:text-xs text-[10px]">
                         {el.file.name}
                         <span className="text-[#888888]  ml-2">
-                        {(el.file.size / (1024 * 1024)).toFixed(1)} MB
-                      </span>
+                          {(el.file.size / (1024 * 1024)).toFixed(1)} MB
+                        </span>
                       </div>
-                     
                     </div>
                     <div className="flex w-auto justify-center ">
                       <img

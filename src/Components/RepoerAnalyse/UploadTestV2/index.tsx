@@ -490,7 +490,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         src="/icons/document-upload-new.svg"
                         alt=""
                       />
-                      <div style={{textAlignLast: 'center'}} className="text-[10px] md:text-xs mt-3 text-justify">
+                      <div
+                        style={{ textAlignLast: 'center' }}
+                        className="text-[10px] md:text-xs mt-3 text-justify"
+                      >
                         Upload your client's lab test file and edit or add
                         biomarkers manually.
                       </div>
@@ -523,7 +526,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         src="/icons/task-square-new.svg"
                         alt=""
                       />
-                      <div style={{textAlignLast: 'center'}} className="text-[10px] md:text-xs mt-3 text-justify">
+                      <div
+                        style={{ textAlignLast: 'center' }}
+                        className="text-[10px] md:text-xs mt-3 text-justify"
+                      >
                         Provide data (lifestyle, medical history, ...) for a
                         more accurate plan.
                       </div>
