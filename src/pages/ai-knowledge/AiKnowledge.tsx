@@ -665,14 +665,13 @@ const AiKnowledge = () => {
     setisLoading(true);
     Application.deleteUserUploadDocument({
       filename: fileName,
-    }).then(() => {
-      fetchGraphData();
-      setConfirmDeleteId(null);
-      setIsLoadingCallApi(false);
-      
-    }).finally(() => {
-  
-    });
+    })
+      .then(() => {
+        fetchGraphData();
+        setConfirmDeleteId(null);
+        setIsLoadingCallApi(false);
+      })
+      .finally(() => {});
   };
 
   const handleDownloadFileUserUpload = (filename: string) => {
