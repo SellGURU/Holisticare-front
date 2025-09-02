@@ -11,6 +11,11 @@ interface getTasksProps {
   encoded_mi: string;
 }
 
+interface getExerciseFileProps {
+  file_id: string;
+  encoded_mi: string;
+}
+
 class Mobile extends ApiMobile {
   static getQuestionaryEmpty = (data: getQuestionaryEmptyData) => {
     return this.post('/tasks/show_empty_questionary', data);
@@ -26,6 +31,9 @@ class Mobile extends ApiMobile {
   };
   static getTasks = (data: getTasksProps) => {
     return this.post('/task_details', data);
+  };
+  static getExerciseFile = (data: getExerciseFileProps) => {
+    return this.post('/show_exercise_file', data);
   };
 }
 

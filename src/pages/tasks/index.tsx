@@ -130,7 +130,9 @@ const Tasks = () => {
                 texts={data?.Sections[0]?.Exercises[0]?.Exercise_Location || []}
               />
             )}
-            {data?.Category === 'Activity' && <BoxActivity activities={data} />}
+            {data?.Category === 'Activity' && (
+              <BoxActivity activities={data} encoded_mi={encode as string} />
+            )}
           </div>
         )}
       </div>
