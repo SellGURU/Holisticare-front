@@ -399,6 +399,7 @@ const AiKnowledge = () => {
       await Application.getgraphData().then((res) => {
         if (res.data.nodes) {
           setGraphData(res.data);
+          setisLoading(false);
           setActiveFilters([
             ...new Set(res.data?.nodes.map((e: any) => e.category2)),
           ] as Array<string>);
@@ -661,12 +662,16 @@ const AiKnowledge = () => {
 
   const handleDeleteFileUserUpload = (fileName: string) => {
     setIsLoadingCallApi(true);
+    setisLoading(true);
     Application.deleteUserUploadDocument({
       filename: fileName,
     }).then(() => {
       fetchGraphData();
       setConfirmDeleteId(null);
       setIsLoadingCallApi(false);
+      
+    }).finally(() => {
+  
     });
   };
 
@@ -1317,9 +1322,7 @@ const AiKnowledge = () => {
                       <div className="w-[90px] py-2 text-center">
                         Date of Update
                       </div>
-                      <div className="w-[65px] text-right py-2 ">
-                        Action
-                      </div>
+                      <div className="w-[65px] text-right py-2 ">Action</div>
                     </div>
                     {getCurrentPageData().length < 1 ? (
                       <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
@@ -1363,8 +1366,6 @@ const AiKnowledge = () => {
                                     onClick={() => {
                                       if (isLoadingCallApi) return;
                                       handleDeleteFileUserUpload(doc.category2);
-                                
-                                      
                                     }}
                                     src="/icons/confirm-tick-circle.svg"
                                     alt="Confirm"
@@ -1429,9 +1430,7 @@ const AiKnowledge = () => {
                       <div className="w-[90px] py-2 text-center">
                         Date of Update
                       </div>
-                      <div className="w-[60px] py-2  text-center">
-                        Action
-                      </div>
+                      <div className="w-[60px] py-2  text-center">Action</div>
                     </div>
                     {getCurrentPageData().length < 1 ? (
                       <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
@@ -1471,7 +1470,7 @@ const AiKnowledge = () => {
                                 onClick={() => {
                                   if (isLoadingCallApi) return;
                                   console.log(doc.category2);
-                                  
+
                                   handleDownloadFileSystemDocs(doc.category2);
                                 }}
                               >
