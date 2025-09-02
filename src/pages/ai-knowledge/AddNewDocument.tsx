@@ -94,6 +94,8 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
           : doc,
       ),
     );
+
+ 
   };
   const [loadingCancelUpload, setLoadingCancelUpload] = useState(false);
   const handleCancelUpload = (fileName: string) => {
@@ -112,6 +114,7 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
         return newComplete;
       });
       setLoadingCancelUpload(false);
+      setLoadingButton(false);
     }, 2000);
   };
   const [loadingRename, setLoadingRename] = useState(false);
@@ -387,6 +390,7 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
                                   <img
                                     onClick={() => {
                                       setCurrentIndexDeleteSelect(index);
+                                    
                                     }}
                                     className="cursor-pointer w-6 h-6"
                                     src="/icons/trash-blue.svg"
