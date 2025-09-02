@@ -25,10 +25,10 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   fileInputRef,
 }) => {
   return (
-    <div className="flex w-full justify-between rounded-2xl border p-4 bg-white shadow-200 border-Gray-50 gap-2">
+    <div className="flex flex-col md:flex-row w-full justify-between rounded-2xl border p-4 bg-white shadow-200 border-Gray-50 gap-2">
       {/* Left side - Upload area */}
       <div
-        className={`text-sm w-[50%] font-medium text-Text-Primary ${
+        className={`text-sm w-full md:w-[50%] font-medium text-Text-Primary ${
           uploadedFile ? 'opacity-50 ' : ''
         }`}
       >
@@ -67,7 +67,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
       </div>
 
       {/* Right side - Uploaded file display */}
-      <div className="text-sm w-[50%] font-medium text-Text-Primary">
+      <div className="text-sm w-full md:w-[50%] font-medium text-Text-Primary">
         Uploaded File
         <div className="mt-1 rounded-2xl h-[130px] bg-white flex flex-col overflow-y-auto">
           {!uploadedFile ? (
