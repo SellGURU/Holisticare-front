@@ -291,8 +291,9 @@ const VirtualScrollTable = ({
 
   return (
     <div
+ 
       ref={containerRef}
-      className="overflow-y-auto"
+      className="overflow-y-auto pb-[45px] "
       style={{ height: visibleItems * itemHeight }}
       onScroll={handleScroll}
     >
@@ -1262,7 +1263,7 @@ const AiKnowledge = () => {
             </div>
           </div>
         ) : (
-          <div className=" hidden fixed right-5 top-[8%] w-[315px] h-[80vh] text-primary-text  md:flex flex-col ">
+          <div style={{height:window.innerHeight - 70 + 'px'}} className=" hidden fixed right-5 top-[8%] w-[315px]  text-primary-text  md:flex flex-col ">
             <SearchBox
               isGrayIcon
               placeHolder="Search documents or knowledge graph nodes..."
@@ -1313,7 +1314,7 @@ const AiKnowledge = () => {
                   <img className={'w-5 h-5'} src={'/icons/add-blue.svg'} />
                   Add New Document
                 </button>
-                <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
+                <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 relative w-[315px]">
                   <div className="min-w-full bg-white">
                     <div className="bg-[#E5E5E5] flex text-xs font-medium text-Text-Primary">
                       <div className="w-[140px] text-left pl-2 py-2">
@@ -1325,7 +1326,7 @@ const AiKnowledge = () => {
                       <div className="w-[65px] text-right py-2 ">Action</div>
                     </div>
                     {getCurrentPageData().length < 1 ? (
-                      <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
+                      <div className="flex flex-col items-center justify-center h-full   w-[315px] text-xs text-Text-Primary">
                         <img
                           className="w-[200px] h-[161px]"
                           src="/icons/search-status.svg"
@@ -1406,7 +1407,7 @@ const AiKnowledge = () => {
                     )}
                   </div>
                   {getCurrentPageData().length > 0 && (
-                    <div className="flex justify-center py-2 absolute bottom-0 w-full">
+                    <div className="flex justify-center py-2 absolute bottom-0 w-full bg-white">
                       <Pagination
                         currentPage={currentPageUserUploads}
                         totalPages={Math.ceil(
@@ -1421,7 +1422,7 @@ const AiKnowledge = () => {
               </>
             ) : (
               <>
-                <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
+                <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 relative w-[315px]">
                   <div className="min-w-full bg-white">
                     <div className="bg-[#E5E5E5] flex text-xs font-medium text-Text-Primary">
                       <div className="w-[140px] text-left pl-2 py-2">
@@ -1433,7 +1434,7 @@ const AiKnowledge = () => {
                       <div className="w-[60px] py-2  text-center">Action</div>
                     </div>
                     {getCurrentPageData().length < 1 ? (
-                      <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
+                      <div className="flex flex-col items-center justify-center h-full w-[315px] text-xs text-Text-Primary">
                         <img
                           className="w-[200px] h-[161px]"
                           src="/icons/search-status.svg"
@@ -1483,7 +1484,7 @@ const AiKnowledge = () => {
                     )}
                   </div>
                   {getCurrentPageData().length > 0 && (
-                    <div className="py-2 flex justify-center absolute bottom-0 w-full">
+                    <div className="py-2 flex justify-center absolute bottom-0 bg-white w-full">
                       <Pagination
                         currentPage={currentPageSystemDocs}
                         totalPages={Math.ceil(
