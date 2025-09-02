@@ -664,7 +664,7 @@ const AiKnowledge = () => {
     Application.deleteUserUploadDocument({
       filename: fileName,
     }).then(() => {
-      // fetchGraphData();
+      fetchGraphData();
       setConfirmDeleteId(null);
       setIsLoadingCallApi(false);
     });
@@ -1317,7 +1317,7 @@ const AiKnowledge = () => {
                       <div className="w-[90px] py-2 text-center">
                         Date of Update
                       </div>
-                      <div className="w-[60px] text-right py-2 pr-3">
+                      <div className="w-[65px] text-right py-2 ">
                         Action
                       </div>
                     </div>
@@ -1363,6 +1363,8 @@ const AiKnowledge = () => {
                                     onClick={() => {
                                       if (isLoadingCallApi) return;
                                       handleDeleteFileUserUpload(doc.category2);
+                                
+                                      
                                     }}
                                     src="/icons/confirm-tick-circle.svg"
                                     alt="Confirm"
@@ -1427,7 +1429,7 @@ const AiKnowledge = () => {
                       <div className="w-[90px] py-2 text-center">
                         Date of Update
                       </div>
-                      <div className="w-[40px] py-2 pr-2 text-center">
+                      <div className="w-[60px] py-2  text-center">
                         Action
                       </div>
                     </div>
@@ -1468,6 +1470,8 @@ const AiKnowledge = () => {
                               <button
                                 onClick={() => {
                                   if (isLoadingCallApi) return;
+                                  console.log(doc.category2);
+                                  
                                   handleDownloadFileSystemDocs(doc.category2);
                                 }}
                               >
