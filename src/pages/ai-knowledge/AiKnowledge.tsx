@@ -291,7 +291,6 @@ const VirtualScrollTable = ({
 
   return (
     <div
- 
       ref={containerRef}
       className="overflow-y-auto pb-[45px] "
       style={{ height: visibleItems * itemHeight }}
@@ -1262,7 +1261,10 @@ const AiKnowledge = () => {
             </div>
           </div>
         ) : (
-          <div style={{height:window.innerHeight - 70 + 'px'}} className=" hidden fixed right-5 top-[8%] w-[315px]  text-primary-text  md:flex flex-col ">
+          <div
+            style={{ height: window.innerHeight - 70 + 'px' }}
+            className=" hidden fixed right-5 top-[8%] w-[315px]  text-primary-text  md:flex flex-col "
+          >
             <SearchBox
               isGrayIcon
               placeHolder="Search documents or knowledge graph nodes..."
