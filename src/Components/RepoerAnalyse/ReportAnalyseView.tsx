@@ -1023,13 +1023,22 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           console.log(res);
                         },
                       );
-                      if (file_id) {
+                      console.log(file_id);
+                      if (file_id == "test") {
+                        publish('openProgressModal', {});
+                        setShowUploadTest(false);
+                        setIsHaveReport(true);
+                      
+                        setISGenerateLoading(false);
+                      }
+                      if (file_id && file_id !== "test") {
                         publish('openProgressModal', {});
                         setShowUploadTest(false);
                         setIsHaveReport(true);
                         checkStepTwo(file_id);
                         setISGenerateLoading(false);
-                      } else {
+                      }
+                   else {
                         setTimeout(() => {
                           fetchPatentDataWithState();
                           publish('QuestionaryTrackingCall', {});

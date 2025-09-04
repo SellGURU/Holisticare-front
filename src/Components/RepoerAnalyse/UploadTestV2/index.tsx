@@ -413,15 +413,15 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           handleSaveLabReport()
                             .then((res) => {
                               if (
-                                res.data.modified_biomarkers_file_id != null
+                                res.data.modified_biomarkers_file_id != null &&  res.data.modified_biomarkers_file_id != ""
                               ) {
                                 onGenderate(
                                   res.data.modified_biomarkers_file_id,
                                 );
                               } else if (
-                                res.data.added_biomarkers_file_id != null
+                                res.data.added_biomarkers_file_id != null &&    res.data.added_biomarkers_file_id != ""
                               ) {
-                                onGenderate(res.data.added_biomarkers_file_id);
+                                onGenderate(res.data.added_biomarkers_file_id );
                               } else {
                                 onGenderate(undefined);
                               }
@@ -430,7 +430,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                             .catch((err) => {
                               console.log(err);
                             });
-                          onGenderate(uploadedFile?.file_id);
+                          onGenderate(uploadedFile?.file_id || "test") ;
                         } else {
                           onGenderate(undefined);
                         }
@@ -553,13 +553,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           handleSaveLabReport()
                             .then((res) => {
                               if (
-                                res.data.modified_biomarkers_file_id != null
+                                res.data.modified_biomarkers_file_id != null && res.data.modified_biomarkers_file_id != ""
                               ) {
                                 onGenderate(
                                   res.data.modified_biomarkers_file_id,
                                 );
                               } else if (
-                                res.data.added_biomarkers_file_id != null
+                                res.data.added_biomarkers_file_id != null &&   res.data.added_biomarkers_file_id != null
                               ) {
                                 onGenderate(res.data.added_biomarkers_file_id);
                               } else {
@@ -570,7 +570,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                             .catch((err) => {
                               console.log(err);
                             });
-                          onGenderate(uploadedFile?.file_id);
+                          onGenderate(uploadedFile?.file_id || "");
                         } else {
                           onGenderate(undefined);
                         }
