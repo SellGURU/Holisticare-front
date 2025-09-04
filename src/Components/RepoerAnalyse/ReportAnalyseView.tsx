@@ -1029,7 +1029,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         setShowUploadTest(false);
                         setIsHaveReport(true);
                         setISGenerateLoading(false);
-                        if(file_id !== "customBiomarker"){
+                        if (file_id !== 'customBiomarker') {
                           checkStepTwo(file_id);
                         }
                       }
@@ -1040,7 +1040,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       //   checkStepTwo(file_id);
                       //   setISGenerateLoading(false);
                       // }
-                   else {
+                      else {
                         setTimeout(() => {
                           fetchPatentDataWithState();
                           publish('QuestionaryTrackingCall', {});
