@@ -343,18 +343,20 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
                       >
                         {videoData
                           .filter((file) => file.Type !== 'link')
-                          .map((src, i) => (
-                            <div
-                              key={i}
-                              className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
-                            >
-                              <img
-                                src={src.Content.url}
-                                alt={`Slide ${i}`}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ))}
+                          .map((src, i) => {
+                            return (
+                              <div
+                                key={i}
+                                className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
+                              >
+                                <img
+                                  src={src.Content.url}
+                                  alt={`Slide ${i}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
 

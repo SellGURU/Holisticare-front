@@ -563,12 +563,13 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             <div className="flex flex-col text-xs gap-3 mt-2">
               Exercise Location
               <div className="flex flex-wrap gap-6">
-                {locationBoxs.map((el) => {
+                {locationBoxs.map((el, index) => {
                   return (
                     <Checkbox
                       checked={location.includes(el)}
                       onChange={() => handleCheckboxChange(el)}
                       label={el}
+                      key={index}
                     />
                   );
                 })}
