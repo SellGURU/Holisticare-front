@@ -859,42 +859,56 @@ const AiKnowledge = () => {
   let totalPageSystemDocs = 0;
   let totalPageUserDocs = 0;
   const getCurrentPageData = (): TableItem[] => {
+    const seenDocuments = new Set<string>();
+    let filteredDocs: TableItem[] = [];
+  
     if (activaTab === 'System Docs') {
-      const filtered = isSystemDocsSearchActive
+      const rawFiltered = isSystemDocsSearchActive
         ? graphData?.nodes.filter(
             (e: any) =>
               e.type === 'system_docs' &&
               filteredSystemDocs.includes(e.category2),
           )
         : graphData?.nodes.filter((e: any) => e.type === 'system_docs');
-
-      if (filtered) {
-        totalPageSystemDocs = filtered.length || 0;
+  
+      if (rawFiltered) {
+        filteredDocs = rawFiltered.filter((doc: any) => {
+          if (!seenDocuments.has(doc.category2)) {
+            seenDocuments.add(doc.category2);
+            return true;
+          }
+          return false;
+        });
+        totalPageSystemDocs = filteredDocs.length || 0;
       }
-
-      const startIndex = (currentPageSystemDocs - 1) * itemsPerPageSystemDocs;
-      const endIndex = startIndex + itemsPerPageSystemDocs;
-
-      return filtered?.slice(startIndex, endIndex) || [];
     } else {
-      // const filtered = graphData?.nodes.filter(
-      //   (e: any) => e.type === 'user_docs',
-      // );
-      const filtered = isUserUploadsSearchActive
+      const rawFiltered = isUserUploadsSearchActive
         ? graphData?.nodes.filter(
             (e: any) =>
               e.type === 'user_docs' &&
               filteredUserUploads.includes(e.category2),
           )
         : graphData?.nodes.filter((e: any) => e.type === 'user_docs');
-      if (filtered) {
-        totalPageUserDocs = filtered.length || 0;
+  
+      if (rawFiltered) {
+        filteredDocs = rawFiltered.filter((doc: any) => {
+          if (!seenDocuments.has(doc.category2)) {
+            seenDocuments.add(doc.category2);
+            return true;
+          }
+          return false;
+        });
+        totalPageUserDocs = filteredDocs.length || 0;
       }
-      const startIndex = (currentPageUserUploads - 1) * itemsPerPageUserUploads;
-      const endIndex = startIndex + itemsPerPageUserUploads;
-
-      return filtered?.slice(startIndex, endIndex) || [];
     }
+  
+    const itemsPerPage = activaTab === 'System Docs' ? itemsPerPageSystemDocs : itemsPerPageUserUploads;
+    const currentPage = activaTab === 'System Docs' ? currentPageSystemDocs : currentPageUserUploads;
+  
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+  
+    return filteredDocs.slice(startIndex, endIndex);
   };
 
   const [searchType, setSearchType] = useState<'Docs' | 'Nodes'>('Docs');
