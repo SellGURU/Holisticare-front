@@ -148,7 +148,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="w-full  min-w-[700px]   h-full text-xs">
               {/* Table Header */}
               <div className="grid grid-cols-7 w-full sticky top-0 z-10 gap-4 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50">
-                <div className="col-span-1 md:w-[169px] ">Extracted Biomarker</div>
+                <div className="col-span-1 md:w-[169px] ">
+                  Extracted Biomarker
+                </div>
                 <div className="col-span-1 ml-6 md:ml-0 md:w-[150px] md:pl-20 text-nowrap text-center">
                   System Biomarker
                 </div>
@@ -202,7 +204,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     {/* unit (editable via select) */}
                     <div className="col-span-1 w-[120px] ml-10 md:ml-28  text-end">
                       <Select
-                   
                         isLarge
                         isSetting
                         value={b.original_unit}
