@@ -465,7 +465,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       onClick={() => {
                         setstep(1);
                       }}
-                      className="w-[477px] cursor-pointer h-[269px] rounded-2xl border p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
+                      className="w-full md:w-[477px] cursor-pointer h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
                     >
                       {isSaveClicked &&
                         extractedBiomarkers.length + addedBiomarkers.length >
@@ -482,7 +482,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           </div>
                         )}
 
-                      <div className="text-[#000000] text-xs font-medium mt-3">
+                      <div className="text-[#000000] text-[10px] md:text-xs font-medium mt-3">
                         Upload Lab Report or Add Biomarkers
                       </div>
                       <img
@@ -490,11 +490,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         src="/icons/document-upload-new.svg"
                         alt=""
                       />
-                      <div className="text-xs mt-3">
+                      <div
+                        style={{ textAlignLast: 'center' }}
+                        className="text-[10px] md:text-xs mt-3 text-justify"
+                      >
                         Upload your client's lab test file and edit or add
                         biomarkers manually.
                       </div>
-                      <div className="text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
+                      <div className="text-[10px] md:text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
                         Enter or Upload Biomarkers
                       </div>
                     </div>
@@ -502,7 +505,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       onClick={() => {
                         publish('QuestionaryTrackingCall', {});
                       }}
-                      className="w-[477px] cursor-pointer h-[269px] rounded-2xl border p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
+                      className=" w-full md:w-[477px] cursor-pointer h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
                     >
                       {questionnaires.length > 0 && (
                         <div className="w-[167px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
@@ -515,7 +518,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           Questionnaire filled out!
                         </div>
                       )}
-                      <div className="text-[#000000] text-xs font-medium mt-3">
+                      <div className="text-[#000000] text-[10px] md:text-xs font-medium mt-3">
                         Fill Health Questionnaire
                       </div>
                       <img
@@ -523,11 +526,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         src="/icons/task-square-new.svg"
                         alt=""
                       />
-                      <div className="text-xs mt-3">
+                      <div
+                        style={{ textAlignLast: 'center' }}
+                        className="text-[10px] md:text-xs mt-3 text-justify"
+                      >
                         Provide data (lifestyle, medical history, ...) for a
                         more accurate plan.
                       </div>
-                      <div className="text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
+                      <div className=" text-[10px] md:text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
                         Fill Questionnaire
                       </div>
                     </div>

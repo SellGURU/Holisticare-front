@@ -103,11 +103,11 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
                   <div className="flex gap-1 items-center justify-between w-full h-[43px]">
                     <div className="flex items-center gap-1">
                       <img src="/icons/danger-red.svg" alt="" />
-                      <div className="font-semibold text-Text-Primary text-xs">
+                      <div className="font-semibold text-Text-Primary  md:text-xs text-[10px]">
                         {el.file.name}
-                      </div>
-                      <div className="text-[#888888] text-xs">
-                        {(el.file.size / (1024 * 1024)).toFixed(1)} MB
+                        <span className="text-[#888888]  ml-2">
+                          {(el.file.size / (1024 * 1024)).toFixed(1)} MB
+                        </span>
                       </div>
                     </div>
                     <div className="flex w-auto justify-center ">

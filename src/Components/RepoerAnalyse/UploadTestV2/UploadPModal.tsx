@@ -62,11 +62,14 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   const [activeMenu, setactiveMenu] = useState('Upload File');
   return (
     <>
-      <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary pr-[95px]">
+      <div
+        style={{ height: window.innerHeight - 40 + 'px' }}
+        className="w-full rounded-[16px md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary md:pr-[95px]"
+      >
         <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
         <div
           style={{ height: window.innerHeight - 80 + 'px' }}
-          className="bg-white p-6 rounded-md w-full h-fit z-10"
+          className="bg-white p-3 md:p-6 rounded-md w-full overflowy-y-auto h-fit z-10"
         >
           <div className="w-full flex items-center justify-between">
             <div className="flex gap-2 items-center text-xs text-Text-Primary font-medium">
@@ -83,9 +86,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 extractedBiomarkers.length == 0 && addedBiomarkers.length == 0
               }
               onClick={onSave}
-              style={{
-                width: '167px',
-              }}
+              ClassName=" w-[127px] md:w-[167px]"
             >
               <img
                 className="size-4"

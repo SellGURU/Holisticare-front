@@ -80,7 +80,7 @@ const Select: React.FC<SelectProps> = ({
           isSetting
             ? 'bg-[#FDFDFD] rounded-2xl border border-Gray-50 py-1 px-3 '
             : 'bg-backgroundColor-Secondary border-none py-[10px] px-3 shadow-100 rounded-[8px]'
-        } cursor-pointer w-full ${isOpen && 'rounded-b-none'} pr-8 leading-tight focus:outline-none text-[10px] ${displayedValueColorClass}`}
+        } cursor-pointer w-full ${isOpen && 'rounded-b-none'} pr-8 leading-tight focus:outline-none text-[8px] md:text-[10px] ${displayedValueColorClass}`}
         onClick={handleSelectClick}
         aria-haspopup="listbox"
         aria-expanded={isOpen}

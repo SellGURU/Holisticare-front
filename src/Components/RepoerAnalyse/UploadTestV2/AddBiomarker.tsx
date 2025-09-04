@@ -72,7 +72,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   return (
     <div
       style={{ height: window.innerHeight - 235 + 'px' }}
-      className="w-full rounded-2xl border p-4 border-Gray-50 shadow-200 mt-4 "
+      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200 mt-4 "
     >
       {loading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
@@ -80,11 +80,11 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         </div>
       )}
       <div className="w-full flex items-center justify-between">
-        <div className="text-sm font-medium text-Text-Primary">
+        <div className="md:text-sm text-[12px] font-medium text-Text-Primary">
           List of Biomarkers
         </div>
 
-        <div className="flex items-center text-xs text-Text-Quadruple">
+        <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple">
           Date of Test
           <SimpleDatePicker
             isUploadFile
@@ -98,10 +98,10 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
       <div
         style={{ height: window.innerHeight - 330 + 'px' }}
-        className="w-full flex justify-between gap-4 mt-6"
+        className="w-full  flex flex-col md:flex-row md:justify-between gap-4 mt-6"
       >
         {/* Left side: Add biomarker form */}
-        <div className="rounded-2xl  w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px]">
+        <div className="rounded-2xl  w-full md:w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px]">
           <div className="text-xs text-Text-Primary text-justify">
             Add a biomarker by filling in its details (Name, Value, Unit) and
             clicking Add Biomarker. You’ll see it added right away in the
@@ -175,12 +175,12 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
         {/* Right side: Table */}
         <div
-          className={`overflow-x-auto w-full  border-Gray-50   ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
+          className={`w-full border-Gray-50 mt-6 overflow-x-auto  hidden-scrollbar   ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
         >
-          <div className="w-full border border-Gray-50  rounded-[20px] h-full text-xs">
+          <div className="w-full border border-Gray-50 min-w-[700px]    rounded-[20px] h-full text-xs">
             {/* Table Header */}
             <div
-              className="grid sticky top-0 z-10 py-2 px-4 font-medium text-Text-Primary text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+              className="grid sticky top-0 w-full z-10 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
               style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
             >
               <div className="text-left">Biomarker Name</div>
@@ -191,13 +191,13 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
             {/* Table Rows */}
             <div
-              style={{ height: window.innerHeight - 550 + 'px' }}
-              className="w-full "
+              // style={{ height: window.innerHeight - 550 + 'px' }}
+              className="w-full md:h-[calc(100vh-550px)]  "
             >
               {biomarkers.map((biomarker, index) => (
                 <div
                   key={index}
-                  className={`grid py-2 px-4 border-b border-Gray-50 items-center text-xs text-Text-Primary ${
+                  className={`grid py-2 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary ${
                     index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
                   }`}
                   style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
