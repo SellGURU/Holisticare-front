@@ -5,6 +5,7 @@ import Application from '../../api/app';
 import { toast } from 'react-toastify';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import { uploadToAzure } from '../../help';
+import TextField from '../../Components/TextField';
 
 interface AddNewDocumentProps {
   AddFileModal: boolean;
@@ -317,19 +318,27 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
                               src="/icons/PDF_file_icon.svg 1.svg"
                               alt="PDF Icon"
                             />
-                            <div className="flex flex-col">
+                            <div className="flex flex-col gap-1">
                               {currentIndexEditSelect === index ? (
-                                <input
-                                  type="text"
-                                  value={fileTitles[file.name] || file.name}
-                                  onChange={(e) => {
-                                    setFileTitles((prev) => ({
-                                      ...prev,
-                                      [file.name]: e.target.value,
-                                    }));
-                                  }}
-                                  className="text-xs"
-                                />
+                                <TextField  newStyle  type="text"
+                                value={fileTitles[file.name] || file.name}
+                                onChange={(e) => {
+                                  setFileTitles((prev) => ({
+                                    ...prev,
+                                    [file.name]: e.target.value,
+                                  }));
+                                }} />
+                                // <input
+                                //   type="text"
+                                //   value={fileTitles[file.name] || file.name}
+                                //   onChange={(e) => {
+                                //     setFileTitles((prev) => ({
+                                //       ...prev,
+                                //       [file.name]: e.target.value,
+                                //     }));
+                                //   }}
+                                //   className="text-xs"
+                                // />
                               ) : (
                                 <span className="text-xs">
                                   {fileTitles[file.name] || file.name}
@@ -370,22 +379,18 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
                               </>
                             ) : (
                               <>
-                                {loadingRename ? (
+                                {loadingRename || loadingCancelUpload  ? (
                                   <SpinnerLoader color="#005F73" />
                                 ) : (
-                                  <img
-                                    onClick={() => {
-                                      setCurrentIndexEditSelect(index);
-                                    }}
-                                    className="cursor-pointer w-6 h-6"
-                                    src="/icons/edit-blue.svg"
-                                    alt="Edit Icon"
-                                  />
-                                )}
-                                {loadingCancelUpload ? (
-                                  <SpinnerLoader color="#005F73" />
-                                ) : (
-                                  <img
+                                  <><img
+                                  onClick={() => {
+                                    setCurrentIndexEditSelect(index);
+                                  }}
+                                  className="cursor-pointer w-6 h-6"
+                                  src="/icons/edit-blue.svg"
+                                  alt="Edit Icon"
+                                />
+                                <img
                                     onClick={() => {
                                       setCurrentIndexDeleteSelect(index);
                                     }}
@@ -393,7 +398,10 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
                                     src="/icons/trash-blue.svg"
                                     alt="Delete Icon"
                                   />
+                                </>
+                                  
                                 )}
+                               
                               </>
                             )}
                           </div>
