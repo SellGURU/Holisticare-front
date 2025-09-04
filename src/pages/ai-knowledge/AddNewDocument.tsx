@@ -320,14 +320,18 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
                             />
                             <div className="flex flex-col gap-1">
                               {currentIndexEditSelect === index ? (
-                                <TextField  newStyle  type="text"
-                                value={fileTitles[file.name] || file.name}
-                                onChange={(e) => {
-                                  setFileTitles((prev) => ({
-                                    ...prev,
-                                    [file.name]: e.target.value,
-                                  }));
-                                }} />
+                                <TextField
+                                  newStyle
+                                  type="text"
+                                  value={fileTitles[file.name] || file.name}
+                                  onChange={(e) => {
+                                    setFileTitles((prev) => ({
+                                      ...prev,
+                                      [file.name]: e.target.value,
+                                    }));
+                                  }}
+                                />
+                              ) : (
                                 // <input
                                 //   type="text"
                                 //   value={fileTitles[file.name] || file.name}
@@ -339,7 +343,6 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
                                 //   }}
                                 //   className="text-xs"
                                 // />
-                              ) : (
                                 <span className="text-xs">
                                   {fileTitles[file.name] || file.name}
                                 </span>
@@ -379,29 +382,28 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
                               </>
                             ) : (
                               <>
-                                {loadingRename || loadingCancelUpload  ? (
+                                {loadingRename || loadingCancelUpload ? (
                                   <SpinnerLoader color="#005F73" />
                                 ) : (
-                                  <><img
-                                  onClick={() => {
-                                    setCurrentIndexEditSelect(index);
-                                  }}
-                                  className="cursor-pointer w-6 h-6"
-                                  src="/icons/edit-blue.svg"
-                                  alt="Edit Icon"
-                                />
-                                <img
-                                    onClick={() => {
-                                      setCurrentIndexDeleteSelect(index);
-                                    }}
-                                    className="cursor-pointer w-6 h-6"
-                                    src="/icons/trash-blue.svg"
-                                    alt="Delete Icon"
-                                  />
-                                </>
-                                  
+                                  <>
+                                    <img
+                                      onClick={() => {
+                                        setCurrentIndexEditSelect(index);
+                                      }}
+                                      className="cursor-pointer w-6 h-6"
+                                      src="/icons/edit-blue.svg"
+                                      alt="Edit Icon"
+                                    />
+                                    <img
+                                      onClick={() => {
+                                        setCurrentIndexDeleteSelect(index);
+                                      }}
+                                      className="cursor-pointer w-6 h-6"
+                                      src="/icons/trash-blue.svg"
+                                      alt="Delete Icon"
+                                    />
+                                  </>
                                 )}
-                               
                               </>
                             )}
                           </div>
