@@ -72,6 +72,57 @@ const TextField: React.FC<TextFieldProps> = ({
       onChange(event);
     }
   };
+  const handleNumberInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = event.target.value;
+
+    // Keep only digits and one dot
+    const sanitized = rawValue
+      .replace(/[^0-9.]/g, '') // allow digits + dot
+      .replace(/(\..*)\./g, '$1'); // prevent multiple dots
+
+    // Only trigger change if sanitized value is different
+    if (sanitized !== rawValue) {
+      const newEvent = {
+        ...event,
+        target: {
+          ...event.target,
+          value: sanitized,
+        },
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      onChange?.(newEvent);
+    } else {
+      onChange?.(event);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (type === 'number') {
+      // Allow digits, backspace, delete, tab, arrows
+      if (
+        /[0-9]/.test(event.key) ||
+        event.key === 'Backspace' ||
+        event.key === 'Delete' ||
+        event.key === 'Tab' ||
+        event.key === 'ArrowLeft' ||
+        event.key === 'ArrowRight'
+      ) {
+        return;
+      }
+
+      // Allow ONE dot for decimals
+      if (event.key === '.') {
+        const value = (event.target as HTMLInputElement).value;
+        if (value.includes('.')) {
+          event.preventDefault(); // Block second dot
+        }
+        return;
+      }
+
+      // Block everything else (+, -, e, letters, etc.)
+      event.preventDefault();
+    }
+  };
 
   return (
     <div className={`flex flex-col ${className}`}>
@@ -82,6 +133,7 @@ const TextField: React.FC<TextFieldProps> = ({
       )}
       <div className="relative">
         <input
+          onKeyDown={handleKeyDown}
           ref={inputRef} // <--- Pass the ref here
           type={getInternalInputType()} // Use the internal type resolver
           className={`w-full ${newStyle ? 'h-[28px]' : 'h-[32px]'} ${largeHeight && '!h-[100px] placeholder:text-start text-start flex items-start j align-top pt-0'} ${newStyle && 'bg-[#FDFDFD] '} rounded-[16px] mt-1 border placeholder:text-[10px] md:placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[10px] md:text-[12px] px-3 text-Text-Primary outline-none ${
@@ -94,7 +146,7 @@ const TextField: React.FC<TextFieldProps> = ({
             ${type === 'password' ? 'pr-8' : ''}
             ${!newStyle && 'shadow-300'}`}
           {...props} // <--- Pass all other props (like 'step', 'value', 'name', 'onBlur', 'id')
-          onChange={handleChange} // Use your custom handleChange
+          onChange={type === 'number' ? handleNumberInput : handleChange}
         />
         {type === 'password' && (
           <div

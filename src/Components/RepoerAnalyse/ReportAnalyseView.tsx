@@ -1024,13 +1024,24 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           console.log(res);
                         },
                       );
+                      console.log(file_id);
                       if (file_id) {
                         publish('openProgressModal', {});
                         setShowUploadTest(false);
                         setIsHaveReport(true);
-                        checkStepTwo(file_id);
                         setISGenerateLoading(false);
-                      } else {
+                        if (file_id !== 'customBiomarker') {
+                          checkStepTwo(file_id);
+                        }
+                      }
+                      // if (file_id && file_id !== "customBiomarker") {
+                      //   publish('openProgressModal', {});
+                      //   setShowUploadTest(false);
+                      //   setIsHaveReport(true);
+                      //   checkStepTwo(file_id);
+                      //   setISGenerateLoading(false);
+                      // }
+                      else {
                         setTimeout(() => {
                           fetchPatentDataWithState();
                           publish('QuestionaryTrackingCall', {});
