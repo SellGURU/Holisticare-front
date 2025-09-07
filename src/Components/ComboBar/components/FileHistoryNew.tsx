@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
 import { uploadToAzure } from '../../../help';
@@ -23,7 +23,9 @@ const formatFileSize = (bytes: number): string => {
   return `${kb.toFixed(1)} KB`;
 };
 
-const FileHistoryNew = () => {
+const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
+  handleCloseSlideOutPanel,
+}) => {
   const fileInputRef = useRef<any>(null);
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const { id } = useParams<{ id: string }>();
@@ -268,29 +270,11 @@ const FileHistoryNew = () => {
       setUploadedFiles(res.data);
     });
   });
-  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-  const [isDeleted, setIsDeleted] = useState<string[]>([]);
-  const handleDelete = (fileId: string, memberId: string) => {
-    setLoadingDelete(true);
-    publish('fileIsDeleting', { isDeleting: false });
-    Application.deleteFileHistory({
-      file_id: fileId,
-      member_id: memberId,
-    })
-      .then((res) => {
-        if (res.data) {
-          setLoadingDelete(false);
-          setIsDeleted((prev) => [...prev, fileId]);
-          publish('fileIsDeleting', {
-            isDeleting: true,
-          });
-        }
-      })
-      .catch(() => {})
-      .finally(() => {
-        setLoadingDelete(false);
-      });
+
+  const handleFileDeleteSuccess = () => {
+    getFileList(id || '');
   };
+
   return (
     <>
       {isLoading && (
@@ -301,12 +285,16 @@ const FileHistoryNew = () => {
       <div className="w-full">
         <div
           onClick={() => {
-            fileInputRef.current?.click();
+            // fileInputRef.current?.click();
+            publish('uploadTestShow', {
+              isShow: true,
+            });
+            handleCloseSlideOutPanel();
           }}
-          className="mb-3 text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal"
+          className="mb-3 text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal"
         >
-          <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
-          Add File
+          <img className="w-5 h-5" src="/icons/add-blue.svg" alt="" />
+          Add File or Biomarker
         </div>
         <input
           type="file"
@@ -343,11 +331,7 @@ const FileHistoryNew = () => {
                     progress: fileUpload.progress || 0.5,
                     formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
                   }}
-                  onDeleteHistory={(file_id: string) => {
-                    handleDelete(file_id, id || '');
-                  }}
-                  isLoading={loadingDelete}
-                  isDeleted={isDeleted.includes(fileUpload.file_id)}
+                  onDeleteSuccess={() => handleFileDeleteSuccess()}
                 />
               </div>
             ))}

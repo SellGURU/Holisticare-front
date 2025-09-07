@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 
 type SelectProps = {
   onChange: (value: string) => void;
@@ -11,6 +12,7 @@ type SelectProps = {
   isStaff?: boolean;
   placeholder?: string;
   validation?: boolean;
+  isSmall?: boolean;
 };
 
 const Select: React.FC<SelectProps> = ({
@@ -24,6 +26,7 @@ const Select: React.FC<SelectProps> = ({
   isSetting,
   placeholder = 'Select an option',
   validation,
+  isSmall,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || ''); // Internal state for selected value
@@ -68,7 +71,7 @@ const Select: React.FC<SelectProps> = ({
   return (
     <div
       ref={selectWrapperRef}
-      className={`relative inline-block   ${isLarge ? 'w-full' : 'w-[142px]'} text-nowrap cursor-pointer font-normal`}
+      className={`relative inline-block ${isSmall && 'w-[101px]'}  ${isLarge ? 'w-full' : 'w-[142px]'} text-nowrap cursor-pointer font-normal`}
       key={key} // If `key` is meant for this outer div
     >
       {/* Displayed Select Box */}
@@ -77,16 +80,16 @@ const Select: React.FC<SelectProps> = ({
           isSetting
             ? 'bg-[#FDFDFD] rounded-2xl border border-Gray-50 py-1 px-3 '
             : 'bg-backgroundColor-Secondary border-none py-[10px] px-3 shadow-100 rounded-[8px]'
-        } cursor-pointer w-full ${isOpen && 'rounded-b-none'} pr-8 leading-tight focus:outline-none text-[10px] ${displayedValueColorClass}`}
+        } cursor-pointer w-full ${isOpen && 'rounded-b-none'} pr-8 leading-tight focus:outline-none text-[8px] md:text-[10px] ${displayedValueColorClass}`}
         onClick={handleSelectClick}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         tabIndex={0} // Make it focusable
       >
-        <span
-          className={`${selectedValue ? 'text-Text-Primary' : 'text-[#B0B0B0] font-light'} `}
-        >
-          {selectedValue || placeholder}
+        <span className={`text-Text-Primary `}>
+          <TooltipTextAuto maxWidth={isSmall ? '100px' : '130px'}>
+            {selectedValue || placeholder}
+          </TooltipTextAuto>
         </span>
         {isSetting ? (
           <img
@@ -116,7 +119,7 @@ const Select: React.FC<SelectProps> = ({
           {options?.map((option) => (
             <li
               key={option}
-              className={`py-2 px-4 cursor-pointer text-[12px] text-[#888888] hover:bg-gray-200 ${
+              className={` ${options.length > 1 && 'border-y border-Gray-50'} py-1 px-4 cursor-pointer text-wrap text-[10px] text-Text-Primary hover:bg-gray-200 text-start ${
                 selectedValue === option ? '' : ''
               }`}
               onClick={() => handleOptionClick(option)}
