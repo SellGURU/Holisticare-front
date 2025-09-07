@@ -25,10 +25,10 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   fileInputRef,
 }) => {
   return (
-    <div className="flex flex-col md:flex-row w-full justify-between rounded-2xl border p-4 bg-white shadow-200 border-Gray-50 gap-2">
+    <div className="flex flex-col  w-full justify-between rounded-2xl border p-4 bg-white shadow-200 border-Gray-50 gap-8 ">
       {/* Left side - Upload area */}
       <div
-        className={`text-sm w-full md:w-[50%] font-medium text-Text-Primary ${
+        className={`text-sm w-full  font-medium text-Text-Primary ${
           uploadedFile ? 'opacity-50 ' : ''
         }`}
       >
@@ -39,7 +39,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
               document.getElementById('uploadFile')?.click();
             }
           }}
-          className={`mt-1 rounded-2xl h-[130px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${uploadedFile ? 'cursor-auto' : ' cursor-pointer'}`}
+          className={`mt-1 rounded-2xl h-[160px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${uploadedFile ? 'cursor-auto' : ' cursor-pointer'}`}
         >
           <div className="w-full flex justify-center">
             <img src="/icons/upload-test.svg" alt="" />
@@ -67,7 +67,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
       </div>
 
       {/* Right side - Uploaded file display */}
-      <div className="text-sm w-full md:w-[50%] font-medium text-Text-Primary">
+      <div className="text-sm w-full   font-medium text-Text-Primary">
         Uploaded File
         <div className="mt-1 rounded-2xl h-[130px] bg-white flex flex-col overflow-y-auto">
           {!uploadedFile ? (
