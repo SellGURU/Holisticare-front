@@ -84,8 +84,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             </div>
             <ButtonPrimary
               disabled={
-                extractedBiomarkers.length == 0 &&
-                addedBiomarkers.length == 0 &&
+                (extractedBiomarkers.length == 0 &&
+                addedBiomarkers.length == 0 ) ||
                 loading
               }
               onClick={onSave}
