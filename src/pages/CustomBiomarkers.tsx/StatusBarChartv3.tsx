@@ -164,7 +164,7 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
       status[0] == el.status &&
       values &&
       (el.low === null || Number(values[0]) >= Number(el.low)) &&
-      (el.high === null || Number(values[0]) <= Number(el.high))
+      (el.high === null || Number(values[0]) < Number(el.high))
     ) {
       return 'inRange';
     }
