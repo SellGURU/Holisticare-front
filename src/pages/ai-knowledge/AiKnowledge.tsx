@@ -291,7 +291,6 @@ const VirtualScrollTable = ({
 
   return (
     <div
- 
       ref={containerRef}
       className="overflow-y-auto pb-[45px] "
       style={{ height: visibleItems * itemHeight }}
@@ -369,7 +368,7 @@ const AiKnowledge = () => {
   const [loadProgress, setLoadProgress] = useState(0);
   const [loadedNodesCount, setLoadedNodesCount] = useState(0);
   const [totalNodesCount, setTotalNodesCount] = useState(0);
-console.log( isLoading, loadProgress);
+  console.log(isLoading, loadProgress);
 
   // const [isContractsOpen, setIsContractsOpen] = useState(true);
   // const [isAgreementsOpen, setIsAgreementsOpen] = useState(true);
@@ -667,15 +666,14 @@ console.log( isLoading, loadProgress);
     setisLoading(true);
     Application.deleteUserUploadDocument({
       filename: fileName,
-    }).then(() => {
-      fetchGraphData();
-      setConfirmDeleteId(null);
-      setisLoading(false);
-      setIsLoadingCallApi(false);
-      
-    }).finally(() => {
-  
-    });
+    })
+      .then(() => {
+        fetchGraphData();
+        setConfirmDeleteId(null);
+        setisLoading(false);
+        setIsLoadingCallApi(false);
+      })
+      .finally(() => {});
   };
 
   const handleDownloadFileUserUpload = (filename: string) => {
@@ -863,7 +861,7 @@ console.log( isLoading, loadProgress);
   const getCurrentPageData = (): TableItem[] => {
     const seenDocuments = new Set<string>();
     let filteredDocs: TableItem[] = [];
-  
+
     if (activaTab === 'System Docs') {
       const rawFiltered = isSystemDocsSearchActive
         ? graphData?.nodes.filter(
@@ -872,7 +870,7 @@ console.log( isLoading, loadProgress);
               filteredSystemDocs.includes(e.category2),
           )
         : graphData?.nodes.filter((e: any) => e.type === 'system_docs');
-  
+
       if (rawFiltered) {
         filteredDocs = rawFiltered.filter((doc: any) => {
           if (!seenDocuments.has(doc.category2)) {
@@ -891,7 +889,7 @@ console.log( isLoading, loadProgress);
               filteredUserUploads.includes(e.category2),
           )
         : graphData?.nodes.filter((e: any) => e.type === 'user_docs');
-  
+
       if (rawFiltered) {
         filteredDocs = rawFiltered.filter((doc: any) => {
           if (!seenDocuments.has(doc.category2)) {
@@ -903,16 +901,21 @@ console.log( isLoading, loadProgress);
         totalPageUserDocs = filteredDocs.length || 0;
       }
     }
-  
-    const itemsPerPage = activaTab === 'System Docs' ? itemsPerPageSystemDocs : itemsPerPageUserUploads;
-    const currentPage = activaTab === 'System Docs' ? currentPageSystemDocs : currentPageUserUploads;
-  
+
+    const itemsPerPage =
+      activaTab === 'System Docs'
+        ? itemsPerPageSystemDocs
+        : itemsPerPageUserUploads;
+    const currentPage =
+      activaTab === 'System Docs'
+        ? currentPageSystemDocs
+        : currentPageUserUploads;
+
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-  
+
     return filteredDocs.slice(startIndex, endIndex) || [];
   };
-
 
   const [searchType, setSearchType] = useState<'Docs' | 'Nodes'>('Docs');
 
@@ -1121,7 +1124,7 @@ console.log( isLoading, loadProgress);
               <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
                 <div className="flex items-center justify-center flex-col">
                   <Circleloader></Circleloader>
-                
+
                   {loadProgress > 0 && (
                     <div className="mt-2 text-sm text-Text-Primary">
                       Loading graph data... {Math.round(loadProgress)}%
@@ -1281,7 +1284,10 @@ console.log( isLoading, loadProgress);
             </div>
           </div>
         ) : (
-          <div style={{height:window.innerHeight - 70 + 'px'}} className=" hidden fixed right-5 top-[8%] w-[315px]  text-primary-text  md:flex flex-col ">
+          <div
+            style={{ height: window.innerHeight - 70 + 'px' }}
+            className=" hidden fixed right-5 top-[8%] w-[315px]  text-primary-text  md:flex flex-col "
+          >
             <SearchBox
               isGrayIcon
               placeHolder="Search documents or knowledge graph nodes..."

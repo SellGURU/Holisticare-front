@@ -95,8 +95,6 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
           : doc,
       ),
     );
-
- 
   };
   const [loadingCancelUpload, setLoadingCancelUpload] = useState(false);
   const handleCancelUpload = (fileName: string) => {
@@ -117,7 +115,7 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-  
+
       setLoadingCancelUpload(false);
       setLoadingButton(false);
     }, 2000);
@@ -230,7 +228,7 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
     setLoadingButton(false);
   };
   // Inside your AddNewDocument component
-const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   return (
     <MainModal isOpen={AddFileModal} onClose={closeModal}>
       <div
@@ -329,14 +327,18 @@ const fileInputRef = useRef<HTMLInputElement>(null);
                             />
                             <div className="flex flex-col gap-1">
                               {currentIndexEditSelect === index ? (
-                                <TextField  newStyle  type="text"
-                                value={fileTitles[file.name] || file.name}
-                                onChange={(e) => {
-                                  setFileTitles((prev) => ({
-                                    ...prev,
-                                    [file.name]: e.target.value,
-                                  }));
-                                }} />
+                                <TextField
+                                  newStyle
+                                  type="text"
+                                  value={fileTitles[file.name] || file.name}
+                                  onChange={(e) => {
+                                    setFileTitles((prev) => ({
+                                      ...prev,
+                                      [file.name]: e.target.value,
+                                    }));
+                                  }}
+                                />
+                              ) : (
                                 // <input
                                 //   type="text"
                                 //   value={fileTitles[file.name] || file.name}
@@ -348,7 +350,6 @@ const fileInputRef = useRef<HTMLInputElement>(null);
                                 //   }}
                                 //   className="text-xs"
                                 // />
-                              ) : (
                                 <span className="text-xs">
                                   {fileTitles[file.name] || file.name}
                                 </span>
@@ -388,30 +389,28 @@ const fileInputRef = useRef<HTMLInputElement>(null);
                               </>
                             ) : (
                               <>
-                                {loadingRename || loadingCancelUpload  ? (
+                                {loadingRename || loadingCancelUpload ? (
                                   <SpinnerLoader color="#005F73" />
                                 ) : (
-                                  <><img
-                                  onClick={() => {
-                                    setCurrentIndexEditSelect(index);
-                                  }}
-                                  className="cursor-pointer w-6 h-6"
-                                  src="/icons/edit-blue.svg"
-                                  alt="Edit Icon"
-                                />
-                                <img
-                                    onClick={() => {
-                                      setCurrentIndexDeleteSelect(index);
-                                    
-                                    }}
-                                    className="cursor-pointer w-6 h-6"
-                                    src="/icons/trash-blue.svg"
-                                    alt="Delete Icon"
-                                  />
-                                </>
-                                  
+                                  <>
+                                    <img
+                                      onClick={() => {
+                                        setCurrentIndexEditSelect(index);
+                                      }}
+                                      className="cursor-pointer w-6 h-6"
+                                      src="/icons/edit-blue.svg"
+                                      alt="Edit Icon"
+                                    />
+                                    <img
+                                      onClick={() => {
+                                        setCurrentIndexDeleteSelect(index);
+                                      }}
+                                      className="cursor-pointer w-6 h-6"
+                                      src="/icons/trash-blue.svg"
+                                      alt="Delete Icon"
+                                    />
+                                  </>
                                 )}
-                               
                               </>
                             )}
                           </div>
