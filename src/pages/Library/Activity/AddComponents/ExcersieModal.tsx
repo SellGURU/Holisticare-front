@@ -615,7 +615,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             >
               <input
                 type="file"
-                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/svg+xml,image/jpeg,image/jpg"
+                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/jpeg,image/jpg"
                 style={{ display: 'none' }}
                 id="video-upload"
                 onChange={handleFileUpload}
@@ -625,7 +625,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 Supported Formats:{' '}
                 <span className="text-Text-Secondary">
                   {' '}
-                  PNG, SVG, JPG, JPEG
+                  PNG, JPG, JPEG
                 </span>{' '}
                 Maximum Size: <span className="text-Text-Secondary">4.5MB</span>
               </div>
