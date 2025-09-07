@@ -106,7 +106,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   return (
     <div
       style={{ height: window.innerHeight - 440 + 'px' }}
-      className="w-full  rounded-2xl border hidden border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary"
+      className="w-full  rounded-2xl border  border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary"
     >
       {loading ? (
         <div
@@ -119,13 +119,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <div
           style={{ height: window.innerHeight - 520 + 'px' }}
-          className="flex items-center justify-center flex-col text-xs font-medium text-Text-Primary"
+          className="flex items-center hidden justify-center flex-col text-xs font-medium text-Text-Primary"
         >
           <img src="/icons/EmptyState-biomarkers.svg" alt="" />
           <div className="-mt-5">No data provided yet.</div>
         </div>
       ) : (
-        <div className="w-full">
+        <div className="w-full hidden">
           <div className="flex justify-between items-center mb-4">
             <div className=" text-[10px] md:text-sm font-medium">
               List of Biomarkers{' '}
