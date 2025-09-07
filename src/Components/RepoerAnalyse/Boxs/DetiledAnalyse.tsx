@@ -29,9 +29,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   const [isCheced, setIsCheced] = useState(false);
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
-  const [activeBox, setActiveBOx] = useState<any>(
-    refrences[0]?.name ? refrences[0]?.name : '',
-  );
+  const [activeBox, setActiveBOx] = useState<number>(0);
   useEffect(() => {
     setIsCheced(false);
   }, [activeBox]);
@@ -55,13 +53,15 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   });
   useEffect(() => {
     if (refrences != null) {
-      setActiveBOx(refrences[0]?.name ? refrences[0]?.name : '');
+      setActiveBOx(0);
       setActive(refrences[0]);
     }
   }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
   const [showGeneInsights, setShowGeneInsights] = useState(false);
   // const resolveColor = (key: string) => {
+  console.log(activeBox);
+  
   //   if (key == 'Needs Focus') {
   //     return '#FC5474';
   //   }
@@ -183,16 +183,16 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
-                {refrences?.map((value: any) => {
+                {refrences?.map((value: any,index:number) => {
                   return (
                     <>
                       <div
                         onClick={() => {
-                          setActiveBOx(value.name);
+                          setActiveBOx(index);
                           setActive(value);
                         }}
                         className={`w-full h-10 mb-2 cursor-pointer text-sm ${
-                          activeBox == value.name
+                          activeBox == index
                             ? 'border-Primary-EmeraldGreen '
                             : 'border-Gray-50'
                         }  border items-center bg-white  rounded-[6px] flex justify-between px-4`}
