@@ -670,6 +670,7 @@ console.log( isLoading, loadProgress);
     }).then(() => {
       fetchGraphData();
       setConfirmDeleteId(null);
+      setisLoading(false);
       setIsLoadingCallApi(false);
       
     }).finally(() => {
