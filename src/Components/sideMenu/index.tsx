@@ -128,7 +128,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                           }}
                           className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
                             activeMenu.name === menu.name
-                              ? ' bg-[#E9F0F2] border-r-2 border-Primary-DeepTeal'
+                              ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
                               : 'bg-white'
                           } ${!menu.active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} text-[8px] h-sm:text-[10px] `}
                         >
@@ -136,14 +136,14 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                             className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
                               activeMenu.name === menu.name
                                 ? 'text-Primary-DeepTeal'
-                                : 'text-[#888888]'
+                                : 'text-Text-Primary'
                             }`}
                           />
                           <div
                             className={`${
                               activeMenu.name === menu.name
                                 ? 'text-Primary-DeepTeal'
-                                : 'text-[#888888] block '
+                                : 'text-Text-Primary block '
                             }`}
                           >
                             {menu.name}
