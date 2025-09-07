@@ -5,6 +5,7 @@ import Toggle from '../../Toggle';
 import FileUploaderSection from './FileUploaderSection';
 import BiomarkersSection from './BiomarkersSection';
 import { AddBiomarker } from './AddBiomarker';
+import SpinnerLoader from '../../SpinnerLoader';
 
 interface UploadPModalProps {
   OnBack: () => void;
@@ -83,17 +84,30 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             </div>
             <ButtonPrimary
               disabled={
-                extractedBiomarkers.length == 0 && addedBiomarkers.length == 0
+                extractedBiomarkers.length == 0 && addedBiomarkers.length == 0 && loading
               }
               onClick={onSave}
               ClassName=" w-[127px] md:w-[167px]"
             >
-              <img
+              {
+                loading ? (
+                  <>
+                  {' '}
+                  <SpinnerLoader></SpinnerLoader>
+                  Continue
+                </>
+                ): (
+                  <>
+                  <img
                 className="size-4"
                 src="/icons/arrow-right-white.svg"
                 alt=""
               />
               Continue{' '}
+                  </>
+                )
+              }
+              
             </ButtonPrimary>
           </div>
           <div className="flex w-full justify-center mt-6">
