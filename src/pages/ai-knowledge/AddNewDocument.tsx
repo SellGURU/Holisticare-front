@@ -112,6 +112,10 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
         delete newComplete[fileName];
         return newComplete;
       });
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+
       setLoadingCancelUpload(false);
       setLoadingButton(false);
     }, 2000);
@@ -223,6 +227,8 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
     setFileTitle('');
     setLoadingButton(false);
   };
+  // Inside your AddNewDocument component
+  const fileInputRef = useRef<HTMLInputElement>(null);
   return (
     <MainModal isOpen={AddFileModal} onClose={closeModal}>
       <div
@@ -240,6 +246,7 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
             </div>
             <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-2 p-6 cursor-pointer">
               <input
+                ref={fileInputRef}
                 multiple
                 type="file"
                 accept=".pdf,.docx"

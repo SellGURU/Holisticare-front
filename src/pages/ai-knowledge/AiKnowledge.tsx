@@ -368,6 +368,7 @@ const AiKnowledge = () => {
   const [loadProgress, setLoadProgress] = useState(0);
   const [loadedNodesCount, setLoadedNodesCount] = useState(0);
   const [totalNodesCount, setTotalNodesCount] = useState(0);
+  console.log(isLoading, loadProgress);
 
   // const [isContractsOpen, setIsContractsOpen] = useState(true);
   // const [isAgreementsOpen, setIsAgreementsOpen] = useState(true);
@@ -399,7 +400,7 @@ const AiKnowledge = () => {
       await Application.getgraphData().then((res) => {
         if (res.data.nodes) {
           setGraphData(res.data);
-          setisLoading(false);
+          // setisLoading(false);
           setActiveFilters([
             ...new Set(res.data?.nodes.map((e: any) => e.category2)),
           ] as Array<string>);
@@ -669,6 +670,7 @@ const AiKnowledge = () => {
       .then(() => {
         fetchGraphData();
         setConfirmDeleteId(null);
+        setisLoading(false);
         setIsLoadingCallApi(false);
       })
       .finally(() => {});
@@ -857,8 +859,11 @@ const AiKnowledge = () => {
   let totalPageSystemDocs = 0;
   let totalPageUserDocs = 0;
   const getCurrentPageData = (): TableItem[] => {
+    const seenDocuments = new Set<string>();
+    let filteredDocs: TableItem[] = [];
+
     if (activaTab === 'System Docs') {
-      const filtered = isSystemDocsSearchActive
+      const rawFiltered = isSystemDocsSearchActive
         ? graphData?.nodes.filter(
             (e: any) =>
               e.type === 'system_docs' &&
@@ -866,33 +871,50 @@ const AiKnowledge = () => {
           )
         : graphData?.nodes.filter((e: any) => e.type === 'system_docs');
 
-      if (filtered) {
-        totalPageSystemDocs = filtered.length || 0;
+      if (rawFiltered) {
+        filteredDocs = rawFiltered.filter((doc: any) => {
+          if (!seenDocuments.has(doc.category2)) {
+            seenDocuments.add(doc.category2);
+            return true;
+          }
+          return false;
+        });
+        totalPageSystemDocs = filteredDocs.length || 0;
       }
-
-      const startIndex = (currentPageSystemDocs - 1) * itemsPerPageSystemDocs;
-      const endIndex = startIndex + itemsPerPageSystemDocs;
-
-      return filtered?.slice(startIndex, endIndex) || [];
     } else {
-      // const filtered = graphData?.nodes.filter(
-      //   (e: any) => e.type === 'user_docs',
-      // );
-      const filtered = isUserUploadsSearchActive
+      const rawFiltered = isUserUploadsSearchActive
         ? graphData?.nodes.filter(
             (e: any) =>
               e.type === 'user_docs' &&
               filteredUserUploads.includes(e.category2),
           )
         : graphData?.nodes.filter((e: any) => e.type === 'user_docs');
-      if (filtered) {
-        totalPageUserDocs = filtered.length || 0;
-      }
-      const startIndex = (currentPageUserUploads - 1) * itemsPerPageUserUploads;
-      const endIndex = startIndex + itemsPerPageUserUploads;
 
-      return filtered?.slice(startIndex, endIndex) || [];
+      if (rawFiltered) {
+        filteredDocs = rawFiltered.filter((doc: any) => {
+          if (!seenDocuments.has(doc.category2)) {
+            seenDocuments.add(doc.category2);
+            return true;
+          }
+          return false;
+        });
+        totalPageUserDocs = filteredDocs.length || 0;
+      }
     }
+
+    const itemsPerPage =
+      activaTab === 'System Docs'
+        ? itemsPerPageSystemDocs
+        : itemsPerPageUserUploads;
+    const currentPage =
+      activaTab === 'System Docs'
+        ? currentPageSystemDocs
+        : currentPageUserUploads;
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    return filteredDocs.slice(startIndex, endIndex) || [];
   };
 
   const [searchType, setSearchType] = useState<'Docs' | 'Nodes'>('Docs');
@@ -1102,6 +1124,7 @@ const AiKnowledge = () => {
               <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
                 <div className="flex items-center justify-center flex-col">
                   <Circleloader></Circleloader>
+
                   {loadProgress > 0 && (
                     <div className="mt-2 text-sm text-Text-Primary">
                       Loading graph data... {Math.round(loadProgress)}%
