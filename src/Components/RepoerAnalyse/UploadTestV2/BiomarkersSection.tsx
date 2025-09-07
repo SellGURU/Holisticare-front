@@ -104,19 +104,22 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     }
   };
   React.useEffect(() => {
-    const updated = biomarkers.map(b => {
-      if ((!b.original_unit || b.original_unit === '') && b.possible_values?.units?.length > 0) {
+    const updated = biomarkers.map((b) => {
+      if (
+        (!b.original_unit || b.original_unit === '') &&
+        b.possible_values?.units?.length > 0
+      ) {
         return { ...b, original_unit: b.possible_values.units[0] };
       }
       return b;
     });
-  
+
     // only update if something actually changed
     if (JSON.stringify(updated) !== JSON.stringify(biomarkers)) {
       onChange(updated);
     }
   }, [biomarkers, onChange]);
-  
+
   return (
     <div
       style={{ height: window.innerHeight - 440 + 'px' }}
@@ -124,15 +127,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     >
       {loading ? (
         <></>
-        // <div
-        //   style={{ height: window.innerHeight - 520 + 'px' }}
-        //   className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
-        // >
-        //   <Circleloader></Circleloader>
-        //   <div>Processing… We’ll show the detected biomarkers shortly.</div>
-        // </div>
-      ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
+      ) : // <div
+      //   style={{ height: window.innerHeight - 520 + 'px' }}
+      //   className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
+      // >
+      //   <Circleloader></Circleloader>
+      //   <div>Processing… We’ll show the detected biomarkers shortly.</div>
+      // </div>
+      uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <></>
+      ) : (
         // <div
         //   style={{ height: window.innerHeight - 520 + 'px' }}
         //   className="flex items-center hidden justify-center flex-col text-xs font-medium text-Text-Primary"
@@ -140,7 +144,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         //   <img src="/icons/EmptyState-biomarkers.svg" alt="" />
         //   <div className="-mt-5">No data provided yet.</div>
         // </div>
-      ) : (
         <div className="">
           <div className="flex justify-between items-center mb-4">
             <div className=" text-[10px] md:text-sm font-medium">
@@ -222,7 +225,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       <Select
                         isLarge
                         isSetting
-                        value={b.original_unit || b.possible_values?.units[0]  }
+                        value={b.original_unit || b.possible_values?.units[0]}
                         options={b.possible_values?.units || []}
                         onChange={(val: string) => handleUnitChange(index, val)}
                       />
