@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Application from '../../../../api/app';
 import { MainModal } from '../../../../Components';
 import Circleloader from '../../../../Components/CircleLoader';
@@ -12,7 +12,18 @@ interface ViewExerciseModalProps {
   isActivty?: boolean;
 }
 
-const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
+interface FileData {
+  Title: string;
+  Type: string;
+  base64Data?: string;
+  // Optional until received from the API
+  Content: {
+    url?: string;
+    file_id?: string;
+  };
+}
+
+const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
   isOpen,
   onClose,
   exercise,
@@ -42,38 +53,40 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   //   return url.includes('/shorts/');
   // };
 
-  const [videoData, setVideoData] = useState<
-    { file_id: string; base64: string; url?: string; type?: string }[]
-  >([]);
+  const [videoData, setVideoData] = useState<FileData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchVideos = async () => {
       setIsLoading(true);
       const videoFiles = exercise.Files.filter(
         (file: any) =>
-          file.Type === 'Video' ||
+          file.Type?.split('/')[0] === 'video' ||
           file.Type === 'link' ||
           file.Type?.split('/')[0] === 'image',
       );
 
       const videoPromises = videoFiles.map((file: any) => {
-        if (file.Type === 'Video') {
+        if (
+          file.Type?.split('/')[0] === 'video' ||
+          file.Type?.split('/')[0] === 'image'
+        ) {
           return Application.showExerciseFille({
             file_id: file.Content.file_id,
           }).then((res) => ({
-            file_id: file.Content.file_id,
-            base64: res.data.base_64_data,
+            Title: res.data.file_name,
+            Type: res.data.file_type,
+            Content: {
+              file_id: file.Content.file_id,
+              url: res.data.base_64_data,
+            },
           }));
         } else if (file.Type === 'link') {
           return Promise.resolve({
-            file_id: file.Content.file_id,
-            url: file.Content.url, // Use the URL directly for link type
-          });
-        } else if (file.Type?.split('/')[0] === 'image') {
-          return Promise.resolve({
-            file_id: file.Content.file_id,
-            base64: file.Content.url,
-            type: file.Type,
+            Content: {
+              file_id: file.Content.file_id,
+              url: file.Content.url,
+            },
+            Type: 'link',
           });
         }
       });
@@ -309,13 +322,13 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               </div>
             ) : (
               <div
-                className={`${videoData?.[0]?.type?.split('/')[0] === 'image' ? '' : 'h-[200px]'} overflow-auto flex flex-col gap-1 ml-[38px]`}
+                className={`${videoData?.[0]?.Type?.split('/')[0] === 'image' ? '' : 'h-[200px]'} overflow-auto flex flex-col gap-1 ml-[38px]`}
               >
                 {isLoading ? (
                   <div className="w-[370px] h-[200px] flex justify-center items-center">
                     <Circleloader />
                   </div>
-                ) : videoData?.[0]?.type?.split('/')[0] === 'image' ? (
+                ) : videoData?.[0]?.Type?.split('/')[0] === 'image' ? (
                   <div className="w-full flex justify-center items-center gap-4">
                     <button onClick={prevSlide} disabled={indexImage === 0}>
                       <img src="/icons/chevron-left.svg" alt="prev" />
@@ -328,18 +341,22 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                           transform: `translateX(-${indexImage * (120 + 8)}px)`,
                         }}
                       >
-                        {videoData.map((src, i) => (
-                          <div
-                            key={i}
-                            className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
-                          >
-                            <img
-                              src={src.base64}
-                              alt={`Slide ${i}`}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        ))}
+                        {videoData
+                          .filter((file) => file.Type !== 'link')
+                          .map((src, i) => {
+                            return (
+                              <div
+                                key={i}
+                                className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
+                              >
+                                <img
+                                  src={src.Content.url}
+                                  alt={`Slide ${i}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
 
@@ -350,29 +367,33 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                       <img src="/icons/chevron-right.svg" alt="next" />
                     </button>
                   </div>
+                ) : videoData?.[0]?.Type?.split('/')[0] === 'video' ? (
+                  videoData.map((video) => {
+                    return (
+                      <video
+                        key={video.Content.file_id}
+                        className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
+                        controls
+                        src={video.Content.url}
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                    );
+                  })
                 ) : (
-                  videoData.map((video) =>
-                    video.url ? (
+                  videoData.map((video) => {
+                    return (
                       <iframe
-                        key={video.file_id}
+                        key={video.Content.file_id}
                         className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
-                        src={getYouTubeEmbedUrl(video.url)}
+                        src={getYouTubeEmbedUrl(video.Content.url || '')}
                         title="YouTube video player"
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       />
-                    ) : (
-                      <video
-                        key={video.file_id}
-                        className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
-                        controls
-                        src={video.base64}
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    ),
-                  )
+                    );
+                  })
                 )}
               </div>
             )}

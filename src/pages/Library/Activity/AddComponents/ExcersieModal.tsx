@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { MainModal } from '../../../../Components';
+import Circleloader from '../../../../Components/CircleLoader';
 import CustomSelect from '../../../../Components/CustomSelect';
+import RangeCardLibraryThreePages from '../../../../Components/LibraryThreePages/components/RangeCard';
+import SpinnerLoader from '../../../../Components/SpinnerLoader';
+import { TextField } from '../../../../Components/UnitComponents';
+import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
 import Checkbox from '../../../../Components/checkbox';
 import Application from '../../../../api/app';
-import SpinnerLoader from '../../../../Components/SpinnerLoader';
-import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
 import ValidationForms from '../../../../utils/ValidationForms';
-import { TextField } from '../../../../Components/UnitComponents';
-import RangeCardLibraryThreePages from '../../../../Components/LibraryThreePages/components/RangeCard';
 interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -73,6 +74,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   const [MuscleOptions, setMuscleOptions] = useState([]);
   const [TermsOptions, setTermsOptions] = useState([]);
   const [TypesOptions, setTypeOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const isValidYouTubeUrl = (url: string) => {
     const youtubeRegex =
       /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|shorts\/|embed\/|v\/)?([a-zA-Z0-9_-]{11})(?:[?&].*)?$/;
@@ -97,6 +99,54 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       });
     }
   }, [isOpen]);
+  useEffect(() => {
+    const fetchVideos = async () => {
+      setIsLoading(true);
+      setFileList([]);
+      const videoFiles = exercise.Files.filter(
+        (file: any) =>
+          file.Type?.split('/')[0] === 'video' ||
+          file.Type === 'link' ||
+          file.Type?.split('/')[0] === 'image',
+      );
+
+      const videoPromises = videoFiles.map((file: any) => {
+        if (
+          file.Type?.split('/')[0] === 'video' ||
+          file.Type?.split('/')[0] === 'image'
+        ) {
+          return Application.showExerciseFille({
+            file_id: file.Content.file_id,
+          }).then((res) => ({
+            Title: res.data.file_name,
+            Type: res.data.file_type,
+            Content: {
+              file_id: file.Content.file_id,
+              url: res.data.base_64_data,
+            },
+          }));
+        } else if (file.Type === 'link') {
+          return Promise.resolve({
+            Content: {
+              file_id: file.Content.file_id,
+              url: file.Content.url,
+            },
+            Type: 'link',
+            Title: file.Title,
+          });
+        }
+      });
+
+      const videos = await Promise.all(videoPromises);
+      console.log('videos', videos);
+      setFileList(videos);
+      setIsLoading(false);
+    };
+
+    if (isOpen && exercise.Files && exercise.Files.length > 0) {
+      fetchVideos();
+    }
+  }, [isOpen, exercise.Files]);
   useEffect(() => {
     const existingLink = fileList.find((file) => file.Type === 'link');
     if (existingLink) {
@@ -123,6 +173,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     if (
       formData.title.trim() === '' ||
       formData.instruction.trim() === '' ||
+      formData.instruction.trim().length > 400 ||
       formData.score === 0
     ) {
       return;
@@ -158,6 +209,19 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       Level: filters.level ? [filters.level] : [],
     };
 
+    const cleanedFiles: Omit<FileData, 'base64Data'>[] = filesData.map(
+      (file) => {
+        const copy = { ...file };
+        delete copy.base64Data;
+        if (copy.Type !== 'link') {
+          copy.Content = {
+            ...copy.Content,
+            url: '',
+          };
+        }
+        return copy;
+      },
+    );
     const exerciseData = {
       Title: formData.title,
       // Description: formData.description,
@@ -166,14 +230,13 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       'Added on': new Date(),
       Exercise_Location: location || [],
       Exercise_Id: exercise.Exercise_Id,
-      Files: filesData,
+      Files: cleanedFiles,
       Base_Score: formData.score,
       Ai_note: formData.clinical_guidance,
     };
 
     onSubmit(exerciseData);
   };
-  const [fileUploaded, setFileUploaded] = useState(false);
 
   const handleFileUpload = async (event: any) => {
     const files = event.target.files;
@@ -212,7 +275,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         });
 
         const { file_id } = response.data;
-        setFileUploaded(true);
         setFileList((prevList) => [
           ...prevList,
           {
@@ -225,6 +287,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           },
         ]);
         setUploadProgress(100);
+        setYouTubeLink('');
       } catch (error) {
         console.error('Error uploading file:', error);
         setUploadProgress(0);
@@ -237,7 +300,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
   const handleCancelUpload = () => {
     setUploadProgress(0);
-    setFileUploaded(false);
   };
   const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -250,7 +312,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
   const removeFile = (Title: string) => {
     setFileList((prevList) => prevList.filter((file) => file.Title !== Title));
-    setFileUploaded(false);
   };
   const handleYouTubeLinkChange = (link: string) => {
     setYouTubeLink(link);
@@ -312,6 +373,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         handleClearData(false);
       }}
     >
+      {isLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <div className="w-[1107px] h-[503px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative">
         <div className="w-full border-b border-Gray-50 pb-2 text-sm font-medium">
           {isEdit ? 'Edit Exercise' : 'Add Exercise'}
@@ -497,12 +563,13 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             <div className="flex flex-col text-xs gap-3 mt-2">
               Exercise Location
               <div className="flex flex-wrap gap-6">
-                {locationBoxs.map((el) => {
+                {locationBoxs.map((el, index) => {
                   return (
                     <Checkbox
                       checked={location.includes(el)}
                       onChange={() => handleCheckboxChange(el)}
                       label={el}
+                      key={index}
                     />
                   );
                 })}
@@ -522,7 +589,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           <div className="bg-[#E9EDF5] h-[365px] w-px"></div>
           <div className="w-[25%] flex flex-col gap-4">
             <TextField
-              disabled={fileUploaded}
+              disabled={fileList.length > 0}
               value={youTubeLink}
               label="YouTube link"
               placeholder="Enter YouTube link ..."
@@ -548,7 +615,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             >
               <input
                 type="file"
-                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/svg+xml,image/jpeg,image/jpg"
+                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/jpeg,image/jpg"
                 style={{ display: 'none' }}
                 id="video-upload"
                 onChange={handleFileUpload}
@@ -556,10 +623,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-[10px] text-[#B0B0B0] text-center">
                 Supported Formats:{' '}
-                <span className="text-Text-Secondary">
-                  {' '}
-                  PNG, SVG, JPG, JPEG
-                </span>{' '}
+                <span className="text-Text-Secondary"> PNG, JPG, JPEG</span>{' '}
                 Maximum Size: <span className="text-Text-Secondary">4.5MB</span>
               </div>
               <div className="text-Primary-DeepTeal underline text-xs font-medium">

@@ -94,19 +94,12 @@ const ExerciseItem = ({
           <div className="flex items-center">
             <div className="relative">
               <img
-                src={
-                  Array.isArray(exercise?.Exercise?.Files) &&
-                  exercise.Exercise.Files.length > 0 &&
-                  exercise.Exercise.Files[0]?.Type?.startsWith('image')
-                    ? exercise.Exercise.Files[0]?.Content?.url
-                    : '/images/activity/activity-demo.png'
-                }
+                src="/images/activity/activity-demo.png"
                 alt=""
                 className="w-8 h-8 bg-cover rounded-lg mr-1"
               />
               {Array.isArray(exercise?.Exercise?.Files) &&
-                exercise.Exercise.Files.length > 0 &&
-                !exercise.Exercise.Files[0]?.Type?.startsWith('image') && (
+                exercise.Exercise.Files.length > 0 && (
                   <img
                     src="/icons/video-octagon.svg"
                     alt=""
