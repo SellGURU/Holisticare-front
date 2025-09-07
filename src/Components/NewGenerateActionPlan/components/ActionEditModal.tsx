@@ -810,6 +810,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         pattern: '*',
                         placeholder: 'Enter unit',
                         value: unit,
+                        isValid: true,
                       },
                     ]}
                     onchanges={(vales: Array<any>) => {
