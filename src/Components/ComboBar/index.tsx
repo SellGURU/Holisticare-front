@@ -185,7 +185,11 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'Data Syncing':
         return <DataSyncing></DataSyncing>;
       case 'File History':
-        return <FileHistoryNew></FileHistoryNew>;
+        return (
+          <FileHistoryNew
+            handleCloseSlideOutPanel={handleCloseSlideOutPanel}
+          ></FileHistoryNew>
+        );
       case 'Questionnaire Tracking':
         return (
           <Questionary
