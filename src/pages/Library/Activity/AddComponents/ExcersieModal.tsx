@@ -623,10 +623,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-[10px] text-[#B0B0B0] text-center">
                 Supported Formats:{' '}
-                <span className="text-Text-Secondary">
-                  {' '}
-                  PNG, JPG, JPEG
-                </span>{' '}
+                <span className="text-Text-Secondary"> PNG, JPG, JPEG</span>{' '}
                 Maximum Size: <span className="text-Text-Secondary">4.5MB</span>
               </div>
               <div className="text-Primary-DeepTeal underline text-xs font-medium">
