@@ -106,7 +106,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   return (
     <div
       style={{ height: window.innerHeight - 440 + 'px' }}
-      className="w-full  rounded-2xl border border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary"
+      className="w-full  rounded-2xl border hidden border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary"
     >
       {loading ? (
         <div
