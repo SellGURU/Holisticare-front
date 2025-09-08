@@ -16,7 +16,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
   handlePreviewCloseModal,
   pageType,
   selectedRow,
-  // handleOpenModal,
+  handleOpenModal,
 }) => {
   const renderNutrient = (
     label: string,
@@ -77,7 +77,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
               <div className="flex justify-start items-center font-medium text-sm text-Text-Primary">
                 {selectedRow?.Title}
               </div>
-              {/* <img
+              <img
                 onClick={() => {
                   handlePreviewCloseModal();
                   handleOpenModal();
@@ -85,7 +85,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 src="/icons/edit-blue.svg"
                 alt=""
                 className="cursor-pointer w-6 h-6"
-              /> */}
+              />
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
             <div className="flex flex-col w-full gap-4 mt-6">

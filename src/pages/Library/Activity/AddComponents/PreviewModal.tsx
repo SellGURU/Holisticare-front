@@ -27,7 +27,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
   isOpen,
   onClose,
   exercise,
-  // onEdit,
+  onEdit,
   isActivty,
 }) => {
   const [data, setData] = useState({
@@ -165,12 +165,12 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
             : exercise.Title.length > 30
               ? `${exercise.Title.substring(0, 30)}...`
               : exercise.Title}
-          {/* <img
+          <img
             onClick={onEdit}
             className="size-6 cursor-pointer"
             src="/icons/edit-blue.svg"
             alt=""
-          /> */}
+          />
         </div>
         <div className="flex flex-col gap-4 mt-7">
           {/* <div className="flex w-full items-start gap-3">
