@@ -1330,9 +1330,10 @@ const AiKnowledge = () => {
             {activaTab == 'User Uploads' ? (
               <>
                 <button
+                  disabled
                   onClick={() => setAddFilleModal(true)}
                   className={
-                    'mt-3 border-dashed flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal '
+                    'mt-3 border-dashed opacity-50 flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal '
                   }
                 >
                   <img className={'w-5 h-5'} src={'/icons/add-blue.svg'} />
@@ -1415,6 +1416,7 @@ const AiKnowledge = () => {
                                     <img src="/icons/import-blue.svg" alt="" />
                                   </button>
                                   <button
+                                    className='hidden'
                                     onClick={() => setConfirmDeleteId(doc.id)}
                                   >
                                     <img
