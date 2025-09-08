@@ -1416,7 +1416,7 @@ const AiKnowledge = () => {
                                     <img src="/icons/import-blue.svg" alt="" />
                                   </button>
                                   <button
-                                    className='hidden'
+                                    className="hidden"
                                     onClick={() => setConfirmDeleteId(doc.id)}
                                   >
                                     <img
