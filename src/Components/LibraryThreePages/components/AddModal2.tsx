@@ -217,12 +217,15 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           onClose();
         }}
       >
-        <div className="flex flex-col justify-between bg-white w-[320px] xs:w-[350px] sm:w-[500px] rounded-[16px] p-6 max-h-[85vh] overflow-y-auto">
-          <div className="w-full h-full border-b border-Boarder pb-3 mb-3">
-            <div className="flex justify-start items-center font-medium text-sm text-Text-Primary">
-              {mode === 'add' ? 'Add' : 'Edit'} {pageType}
+        <div className="flex relative flex-col justify-between bg-white w-[320px] xs:w-[350px] sm:w-[500px] rounded-[16px] p-6 max-h-[85vh] ">
+          <div className="w-full  h-full border-b border-Boarder pb-3 mb-3">
+            <div className="flex  justify-start items-center font-medium text-sm text-Text-Primary">
+              {mode === 'add' ? 'Add' : 'Edit'} {pageType} 
             </div>
           </div>
+          <div className='overflow-y-auto h-[70%] pr-2'>
+
+        
           <TextField
             label="Title"
             placeholder={placeHolderTitle()}
@@ -459,6 +462,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
             }}
           />
 
+        
+          </div>
           <div className="w-full flex justify-end items-center p-2 mt-5">
             <div
               className="text-Disable text-sm font-medium mr-4 cursor-pointer"
