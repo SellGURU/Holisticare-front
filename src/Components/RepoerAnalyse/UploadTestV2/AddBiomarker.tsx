@@ -53,7 +53,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
     Application.getBiomarkerName({})
       .then((res) => {
         const sorted = [...res.data.biomarkers_list].sort((a: any, b: any) =>
-          a.localeCompare(b)
+          a.localeCompare(b),
         );
         setAvalibaleBiomarkers(sorted);
         setloading(false);
@@ -67,7 +67,9 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         biomarker_name: biomarkerName,
       })
         .then((res) => {
-          const cleanedUnits = (res.data.units || []).filter((u: string) => u.trim() !== "");
+          const cleanedUnits = (res.data.units || []).filter(
+            (u: string) => u.trim() !== '',
+          );
           setUnitsList(cleanedUnits);
           setloading(false);
         })
