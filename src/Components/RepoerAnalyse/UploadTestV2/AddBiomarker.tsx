@@ -40,7 +40,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   const [unitsList, setUnitsList] = useState([]);
   const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState([]);
   const handleAdd = () => {
-    if (!biomarkerName || !value || !unit) return; // prevent empty adds
+    if (!biomarkerName || !value ) return; // prevent empty adds
     onAddBiomarker({ biomarker: biomarkerName, value, unit });
     setBiomarkerName('');
     setValue('');
