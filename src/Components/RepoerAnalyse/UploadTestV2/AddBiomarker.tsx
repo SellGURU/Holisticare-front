@@ -38,9 +38,10 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   const [value, setValue] = useState('');
   const [unit, setUnit] = useState('');
   const [unitsList, setUnitsList] = useState([]);
-  const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState([]);
+  const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState<any[]>([]);
   const handleAdd = () => {
-    if (!biomarkerName || !value ) return; // prevent empty adds
+    if (!biomarkerName || !value) return; // only biomarker + value are required
+    if (unitsList.length > 0 && !unit) return; // if units exist, user must select one
     onAddBiomarker({ biomarker: biomarkerName, value, unit });
     setBiomarkerName('');
     setValue('');
@@ -51,7 +52,10 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
     setloading(true);
     Application.getBiomarkerName({})
       .then((res) => {
-        setAvalibaleBiomarkers(res.data.biomarkers_list);
+        const sorted = [...res.data.biomarkers_list].sort((a: any, b: any) =>
+          a.localeCompare(b)
+        );
+        setAvalibaleBiomarkers(sorted);
         setloading(false);
       })
       .catch(() => {});
@@ -63,7 +67,8 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         biomarker_name: biomarkerName,
       })
         .then((res) => {
-          setUnitsList(res.data.units);
+          const cleanedUnits = (res.data.units || []).filter((u: string) => u.trim() !== "");
+          setUnitsList(cleanedUnits);
           setloading(false);
         })
         .catch(() => {});
