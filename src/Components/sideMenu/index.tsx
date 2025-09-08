@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { version } from '../../../package.json';
 
 import { menus } from './menu';
+import { subscribe } from '../../utils/event';
 interface sideMenuProps {
   onClose: () => void;
 }
@@ -18,6 +19,11 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
         .find((item) => item.url === location.pathname) || menus[0].items[0]
     );
   });
+  const [showPlayground, setShowPlayground] = useState(false);
+  subscribe('knowledge_playground-Show', () => {
+    // alert("show playground");
+    setShowPlayground(true);
+  });
   useEffect(() => {
     const currentActiveItem =
       menus
@@ -27,7 +33,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     if (currentActiveItem.name !== activeMenu.name) {
       setActiveMenu(currentActiveItem);
     }
-  }, [location.pathname, activeMenu]);
+  }, [location.pathname, activeMenu, showPlayground]);
   const changeMenu = (menu: any) => {
     setActiveMenu(menu);
     navigate(menu.url);
@@ -61,7 +67,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
         </div>
         <div className="w-full">
           <div
-            className="h-fit md:h-full overflow-y-auto"
+            className="h-fit md:h-full overflow-y-auto hidden-scrollbar"
             style={{ height: `${height}px` }}
           >
             {menus.map((menuCategory) => (
@@ -72,7 +78,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                 {menuCategory.items.map((menu) => (
                   <>
                     {menu.name === 'Knowledge Graph' ? (
-                      <div className=" mt-2  w-full flex pl-5  items-center">
+                      <div className=" my-2  w-full flex pl-5  items-center">
                         {' '}
                         <div
                           onClick={() => {
@@ -119,37 +125,43 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                         </div>
                       </div>
                     ) : (
-                      <div className="" key={menu.name}>
-                        <div
-                          onClick={() => {
-                            if (menu.active) {
-                              changeMenu(menu);
-                            }
-                          }}
-                          className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
-                            activeMenu.name === menu.name
-                              ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
-                              : 'bg-white'
-                          } ${!menu.active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} text-[8px] h-sm:text-[10px] `}
-                        >
-                          <div
-                            className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
-                              activeMenu.name === menu.name
-                                ? 'text-Primary-DeepTeal'
-                                : 'text-Text-Primary'
-                            }`}
-                          />
-                          <div
-                            className={`${
-                              activeMenu.name === menu.name
-                                ? 'text-Primary-DeepTeal'
-                                : 'text-Text-Primary block '
-                            }`}
-                          >
-                            {menu.name}
+                      <>
+                        {menu.name === 'Playground' && !showPlayground ? (
+                          <></>
+                        ) : (
+                          <div className="" key={menu.name}>
+                            <div
+                              onClick={() => {
+                                if (menu.active) {
+                                  changeMenu(menu);
+                                }
+                              }}
+                              className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
+                                activeMenu.name === menu.name
+                                  ? ' bg-[#E9F0F2] border-r-2 border-Primary-DeepTeal'
+                                  : 'bg-white'
+                              } ${!menu.active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} text-[8px] h-sm:text-[10px] `}
+                            >
+                              <div
+                                className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
+                                  activeMenu.name === menu.name
+                                    ? 'text-Primary-DeepTeal'
+                                    : 'text-[#888888]'
+                                }`}
+                              />
+                              <div
+                                className={`${
+                                  activeMenu.name === menu.name
+                                    ? 'text-Primary-DeepTeal'
+                                    : 'text-[#888888] block '
+                                }`}
+                              >
+                                {menu.name}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
+                        )}
+                      </>
                     )}
                   </>
                 ))}
