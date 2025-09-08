@@ -1017,6 +1017,24 @@ class Application extends Api {
   static getActivityLibrary = () => {
     return this.post('/activity_library/get_parent_id', {});
   };
+  static checkLabStepOne = (data: any) => {
+    return this.post('/patients/check_lab_report_step_one', data);
+  };
+  static SaveLabReport = (data: any) => {
+    return this.post('/patients/process_lab_report', data);
+  };
+  static getBiomarkerName = (data: any) => {
+    return this.post('/clinic/get_biomarkers_list', data);
+  };
+  static getBiomarkerUnit = (data: any) => {
+    return this.post('/clinic/get_biomarker_unit', data);
+  };
+  static checkDeleteLabReport = (data: any) => {
+    return this.post(`/patients/check_delete_lab_report`, data);
+  };
+  static checkStepTwoUpload = (data: any) => {
+    return this.post('/patients/check_lab_report_step_two', data);
+  };
 }
 
 export default Application;

@@ -12,14 +12,19 @@ import RefrenceBox from './Boxs/RefrenceBox';
 import Legends from './Legends';
 import SummaryBox from './SummaryBox';
 
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import Application from '../../api/app';
 import { ActionPlan } from '../Action-plan';
 import { TreatmentPlan } from '../TreatmentPlan';
 import Point from './Point';
 import resolvePosition, { clearUsedPositions } from './resolvePosition';
 import resolveStatusArray from './resolveStatusArray';
-import UploadTest from './UploadTest';
+// import UploadTest from './UploadTest';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
 import { decodeAccessUser } from '../../help';
@@ -30,6 +35,7 @@ import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
+import { UploadTestV2 } from './UploadTestV2';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -49,6 +55,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
+  const [questionnaires, setQuestionnaires] = useState([]);
   // const history = useHistory();
   const location = useLocation();
   // useEffect(() => {
@@ -71,6 +78,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setUserInfoData(res.data);
         setIsHaveReport(true);
         setShowUploadTest(false);
+
         setTimeout(() => {
           // if (res.data.show_report == true) {
           fetchShareData();
@@ -84,6 +92,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
         setShowUploadTest(!res.data.first_time_view);
+        setQuestionnaires(res.data.questionnaires);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchData();
@@ -124,6 +133,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
     }
   };
+
   const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
@@ -509,7 +519,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
+  const [, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    subscribe('uploadTestShow', (data: any) => {
+      setSearchParams({ ['section']: 'Client Summary' });
+      document.getElementById('Client Summary')?.scrollIntoView({
+        behavior: 'instant',
+      });
+      setTimeout(() => {
+        publish('uploadTestShow-stepTwo', {});
+      }, 500);
+      setShowUploadTest(data.detail.isShow);
+    });
+  }, []);
   const [isHolisticPlanEmpty, setIsHolisticPlanEmpty] = useState(true);
 
   const memoizedPoints = useMemo(() => {
@@ -531,6 +553,22 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       );
     });
   }, [resolvedMemberID, ClientSummaryBoxs]); // Only re-render when memberID changes
+  console.log(isHaveReport);
+  console.log(showUploadTest);
+  const checkStepTwo = (fileID: string | undefined) => {
+    if (!fileID) return;
+
+    Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
+      if (res.data.step_two == true) {
+        // The condition is met, so we stop here.
+        publish('StepTwoSuccess', {});
+      } else {
+        setTimeout(() => {
+          checkStepTwo(fileID);
+        }, 15000); // 15 seconds delay
+      }
+    });
+  };
 
   return (
     <>
@@ -967,24 +1005,76 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                   </>
                 ) : (
-                  <UploadTest
+                  <UploadTestV2
+                    questionnaires={questionnaires}
+                    onDiscard={() => {
+                      setShowUploadTest(false);
+                    }}
                     isShare={isShare}
                     showReport={isHaveReport}
-                    onGenderate={() => {
+                    onGenderate={(file_id: string | undefined) => {
+                      if (file_id == 'discard') {
+                        setShowUploadTest(false);
+                        return;
+                      }
                       setISGenerateLoading(true);
                       Application.first_view_report(resolvedMemberID).then(
                         (res) => {
                           console.log(res);
                         },
                       );
-                      setTimeout(() => {
-                        fetchPatentDataWithState();
-                        // publish('QuestionaryTrackingCall', {});
-                        // fetchData();
-                      }, 5000);
+                      console.log(file_id);
+                      if (file_id) {
+                        publish('openProgressModal', {});
+                        setShowUploadTest(false);
+                        setIsHaveReport(true);
+                        setISGenerateLoading(false);
+                        if (file_id !== 'customBiomarker') {
+                          checkStepTwo(file_id);
+                        }
+                      }
+                      // if (file_id && file_id !== "customBiomarker") {
+                      //   publish('openProgressModal', {});
+                      //   setShowUploadTest(false);
+                      //   setIsHaveReport(true);
+                      //   checkStepTwo(file_id);
+                      //   setISGenerateLoading(false);
+                      // }
+                      else {
+                        setTimeout(() => {
+                          fetchPatentDataWithState();
+                          publish('QuestionaryTrackingCall', {});
+                          fetchData();
+                          setISGenerateLoading(false);
+                        }, 5000);
+                      }
+
+                      // setTimeout(() => {
+                      //   fetchPatentDataWithState();
+                      //   publish('QuestionaryTrackingCall', {});
+                      //   fetchData();
+                      // }, 5000);
                     }}
                     memberId={resolvedMemberID}
-                  ></UploadTest>
+                  ></UploadTestV2>
+                  // <UploadTest
+                  //   isShare={isShare}
+                  //   showReport={isHaveReport}
+                  //   onGenderate={() => {
+                  //     setISGenerateLoading(true);
+                  //     Application.first_view_report(resolvedMemberID).then(
+                  //       (res) => {
+                  //         console.log(res);
+                  //       },
+                  //     );
+                  //     setTimeout(() => {
+                  //       fetchPatentDataWithState();
+                  //       // publish('QuestionaryTrackingCall', {});
+                  //       // fetchData();
+                  //     }, 5000);
+                  //   }}
+                  //   memberId={resolvedMemberID}
+                  // ></UploadTest>
                 )}
               </>
             )}

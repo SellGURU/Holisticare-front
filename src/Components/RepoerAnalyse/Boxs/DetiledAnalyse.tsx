@@ -23,7 +23,7 @@ interface DetiledAnalyseProps {
 const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   data,
   refrences,
-  index,
+  // index,
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isCheced, setIsCheced] = useState(false);
