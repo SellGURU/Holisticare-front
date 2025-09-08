@@ -148,7 +148,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               {(value.Category == 'Diet' ||
                 value.Category == 'Activity' ||
                 value.Category == 'Lifestyle' ||
-                value.Category == 'Supplement') && (
+                value.Category == 'Supplement') && value?.label &&(
                 <>
                   <div
                     className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
