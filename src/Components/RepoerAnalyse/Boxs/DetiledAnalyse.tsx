@@ -61,7 +61,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   const [showGeneInsights, setShowGeneInsights] = useState(false);
   // const resolveColor = (key: string) => {
   console.log(activeBox);
-  
+
   //   if (key == 'Needs Focus') {
   //     return '#FC5474';
   //   }
@@ -183,7 +183,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
-                {refrences?.map((value: any,index:number) => {
+                {refrences?.map((value: any, index: number) => {
                   return (
                     <>
                       <div

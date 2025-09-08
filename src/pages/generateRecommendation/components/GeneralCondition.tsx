@@ -315,21 +315,20 @@ const Card: React.FC<CardProps> = ({
         {!addNew && (
           <>
             {isEditing ? (
-              <div className='flex items-center gap-2 s'>
+              <div className="flex items-center gap-2 s">
                 <img
                   className="cursor-pointer size-6"
                   src="/icons/cancel-edit.svg" // <-- pick your cancel icon
                   alt="Cancel Edit"
                   onClick={onEdit} // toggles edit mode off
                 />
-                 <img
-                className="cursor-pointer size-6"
-                src="/icons/tick-square-background-green.svg"
-                alt=""
-                onClick={onSave}
-              />
+                <img
+                  className="cursor-pointer size-6"
+                  src="/icons/tick-square-background-green.svg"
+                  alt=""
+                  onClick={onSave}
+                />
               </div>
-             
             ) : (
               <div
                 onClick={onEdit}
