@@ -27,12 +27,18 @@ export const menus = [
         icon: 'sidemenu-menu-icon-messages',
         active: true,
       },
-      // {
-      //   name: 'Knowledge Graph',
-      //   url: '/aiKnowledge',
-      //   icon: 'sidemenu-menu-icon-trend-up',
-      //   active: true,
-      // },
+      {
+        name: 'Knowledge Graph',
+        url: '/aiKnowledge',
+        icon: 'sidemenu-menu-icon-trend-up',
+        active: true,
+      },
+      {
+        name: 'Playground',
+        url: '/playground',
+        icon: 'sidemenu-menu-icon-lamp',
+        active: true,
+      },
     ],
   },
   {
