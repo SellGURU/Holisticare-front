@@ -277,7 +277,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 
             <TextAreaField
               label="Instruction"
-              placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}'`}
+              placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}`}
               value={formData.instruction}
               onChange={(e) => {
                 updateAddData('instruction', e.target.value);
