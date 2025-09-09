@@ -563,12 +563,13 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             <div className="flex flex-col text-xs gap-3 mt-2">
               Exercise Location
               <div className="flex flex-wrap gap-6">
-                {locationBoxs.map((el) => {
+                {locationBoxs.map((el, index) => {
                   return (
                     <Checkbox
                       checked={location.includes(el)}
                       onChange={() => handleCheckboxChange(el)}
                       label={el}
+                      key={index}
                     />
                   );
                 })}
@@ -614,7 +615,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             >
               <input
                 type="file"
-                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/svg+xml,image/jpeg,image/jpg"
+                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/jpeg,image/jpg"
                 style={{ display: 'none' }}
                 id="video-upload"
                 onChange={handleFileUpload}
@@ -622,10 +623,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-[10px] text-[#B0B0B0] text-center">
                 Supported Formats:{' '}
-                <span className="text-Text-Secondary">
-                  {' '}
-                  PNG, SVG, JPG, JPEG
-                </span>{' '}
+                <span className="text-Text-Secondary"> PNG, JPG, JPEG</span>{' '}
                 Maximum Size: <span className="text-Text-Secondary">4.5MB</span>
               </div>
               <div className="text-Primary-DeepTeal underline text-xs font-medium">

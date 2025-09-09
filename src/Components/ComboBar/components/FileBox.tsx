@@ -19,7 +19,7 @@ const FileBox: React.FC<FileBoxProps> = ({
   el,
 
   onDelete,
-  onDeleteSuccess,
+  // onDeleteSuccess,
 }) => {
   const { id } = useParams<{ id: string }>();
 
@@ -45,7 +45,7 @@ const FileBox: React.FC<FileBoxProps> = ({
         if (res.status === 200 && res.data) {
           setLoadingDelete(false);
           setisDeleted(true);
-          onDeleteSuccess();
+          // onDeleteSuccess();
           publish('fileIsDeleting', { isDeleting: true });
         } else {
           setTimeout(checkDelete, 1000);
@@ -157,6 +157,7 @@ const FileBox: React.FC<FileBoxProps> = ({
                   </>
                 ) : (
                   <>
+                    {/* {isUploded && ( */}
                     <img
                       onClick={() => {
                         if (!isDeleted) {

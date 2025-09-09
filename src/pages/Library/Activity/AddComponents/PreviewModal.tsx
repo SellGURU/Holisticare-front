@@ -134,6 +134,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
       setIndexImage((prev) => prev - 1);
     }
   };
+  console.log(videoData);
 
   return (
     <MainModal
@@ -191,7 +192,9 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
             className={`flex w-full items-start ${isActivty ? 'gap-[87px]' : 'gap-3'}`}
           >
             <div className="text-xs font-medium">Instruction</div>
-            <div className="text-xs text-[#888888] text-justify">
+            <div
+              className={`text-xs text-[#888888] text-justify ${isActivty ? '' : 'ml-5'}`}
+            >
               {isActivty ? data.instruction : exercise.Instruction}
             </div>
           </div>
@@ -203,7 +206,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
               {isActivty ? 'Sections' : 'File'}
             </div>
             {isActivty ? (
-              <div className="bg-[#E9F0F2] w-full p-1 pr-2 rounded-2xl border border-Gray-50">
+              <div className="bg-[#E9F0F2]  w-full p-1 pr-2 rounded-2xl border border-Gray-50">
                 <div
                   className="max-h-[330px] w-full overflow-y-auto flex flex-col gap-1 p-2"
                   style={{
@@ -322,7 +325,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
               </div>
             ) : (
               <div
-                className={`${videoData?.[0]?.Type?.split('/')[0] === 'image' ? '' : 'h-[200px]'} overflow-auto flex flex-col gap-1 ml-[38px]`}
+                className={`${videoData?.[0]?.Type?.split('/')[0] === 'image' ? '' : 'h-[200px]'} overflow-auto  flex flex-col gap-1 ml-[60px]`}
               >
                 {isLoading ? (
                   <div className="w-[370px] h-[200px] flex justify-center items-center">
@@ -330,11 +333,13 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
                   </div>
                 ) : videoData?.[0]?.Type?.split('/')[0] === 'image' ? (
                   <div className="w-full flex justify-center items-center gap-4">
-                    <button onClick={prevSlide} disabled={indexImage === 0}>
-                      <img src="/icons/chevron-left.svg" alt="prev" />
-                    </button>
+                    {videoData.length > 1 && (
+                      <button onClick={prevSlide} disabled={indexImage === 0}>
+                        <img src="/icons/chevron-left.svg" alt="prev" />
+                      </button>
+                    )}
 
-                    <div className="flex w-full overflow-hidden justify-start items-center">
+                    <div className="flex w-full overflow-hidden justify-start items-center ">
                       <div
                         className="flex transition-transform duration-300 ease-in-out gap-2"
                         style={{
@@ -343,34 +348,38 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
                       >
                         {videoData
                           .filter((file) => file.Type !== 'link')
-                          .map((src, i) => (
-                            <div
-                              key={i}
-                              className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
-                            >
-                              <img
-                                src={src.Content.url}
-                                alt={`Slide ${i}`}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ))}
+                          .map((src, i) => {
+                            return (
+                              <div
+                                key={i}
+                                className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
+                              >
+                                <img
+                                  src={src.Content.url}
+                                  alt={`Slide ${i}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
 
-                    <button
-                      onClick={nextSlide}
-                      disabled={indexImage >= lastIndex}
-                    >
-                      <img src="/icons/chevron-right.svg" alt="next" />
-                    </button>
+                    {videoData.length > 1 && (
+                      <button
+                        onClick={nextSlide}
+                        disabled={indexImage >= lastIndex}
+                      >
+                        <img src="/icons/chevron-right.svg" alt="next" />
+                      </button>
+                    )}
                   </div>
                 ) : videoData?.[0]?.Type?.split('/')[0] === 'video' ? (
                   videoData.map((video) => {
                     return (
                       <video
                         key={video.Content.file_id}
-                        className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
+                        className="rounded-xl h-[200px] w-[30px] border border-Gray-50 object-contain"
                         controls
                         src={video.Content.url}
                       >

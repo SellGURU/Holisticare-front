@@ -58,10 +58,10 @@ const RecentCheckIns: React.FC = () => {
                 <div className="py-2 pl-2 w-[100px] md:w-[150px] rounded-tl-2xl">
                   Client Name
                 </div>
-                <div className="py-2 w-[125px] md:w-[100px] text-center">
+                <div className="py-2 w-[125px]  md:w-[70px] text-nowrap xl:pr-6 2xl:pr-0 xl:w-[90px] 2xl:w-[100px] text-center">
                   Enroll Date
                 </div>
-                <div className="py-2 px-3 w-[50px]  md:w-[120px] text-center rounded-tr-2xl">
+                <div className="py-2  w-[50px]  md:w-[120px] text-center rounded-tr-2xl">
                   Progress
                 </div>
               </div>
@@ -89,11 +89,11 @@ const RecentCheckIns: React.FC = () => {
                       </TooltipTextAuto>
                     </div>
 
-                    <div className="py-2 w-[125px]  md:w-[70px] xl:w-[90px] 2xl:w-[100px]  text-center text-Text-Secondary text-[10px]">
+                    <div className="py-2 w-[125px] pl-3  md:w-[70px] xl:w-[90px] 2xl:w-[100px]  text-center text-Text-Secondary text-[10px]">
                       {formatDate(client['Enroll Date'])}
                     </div>
 
-                    <div className="py-2 w-[60px]  xl:w-[55px] 2xl:w-[75px] flex justify-center xl:justify-end">
+                    <div className="py-2 w-[60px]  xl:w-[105px] 2xl:w-[120px] pl-6 2xl:pl-4 flex justify-center ">
                       <CircularProgressBar
                         percentage={client.Progress || 0}
                         startColor="#E742EB"
