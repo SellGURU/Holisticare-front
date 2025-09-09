@@ -28,6 +28,6 @@ createRoot(document.getElementById('root')!).render(
     <UploaderTooltipContainer />
     <DeletedTooltipContainer />
     <UploadFileProgressModal />
-    <DeleteFileProgressModal/>
+    <DeleteFileProgressModal />
   </>,
 );

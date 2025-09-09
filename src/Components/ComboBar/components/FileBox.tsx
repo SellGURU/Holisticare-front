@@ -35,14 +35,15 @@ const FileBox: React.FC<FileBoxProps> = ({
       file_id: fileId,
       member_id: memberId,
     })
-    .then(()=>{
-      setLoadingDelete(false);
-      setisDeleted(true)
-   
-      onDeleteSuccess();
-    }).catch((err) => {
-      console.error(err);
-    });
+      .then(() => {
+        setLoadingDelete(false);
+        setisDeleted(true);
+
+        onDeleteSuccess();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
 
     const checkDelete = async () => {
       try {
@@ -51,8 +52,6 @@ const FileBox: React.FC<FileBoxProps> = ({
           member_id: memberId,
         });
         if (res.status === 200 && res.data) {
-       
-        
           publish('DeleteSuccess', {});
           // publish('fileIsDeleting', { isDeleting: true });
         } else {

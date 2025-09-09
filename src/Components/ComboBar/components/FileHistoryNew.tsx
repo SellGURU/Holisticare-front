@@ -324,8 +324,7 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
                     //   prev.filter((f) => f.file !== fileUpload.file),
                     // );
                     handleCloseSlideOutPanel();
-                  }
-                }
+                  }}
                   el={{
                     ...fileUpload,
                     uploadedSize: fileUpload.uploadedSize || 0,

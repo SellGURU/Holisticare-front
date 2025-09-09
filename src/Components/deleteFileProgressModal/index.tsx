@@ -10,7 +10,7 @@ export const DeleteFileProgressModal = () => {
   subscribe('openDeleteProgressModal', () => {
     setTimeout(() => {
       setshowProgressModal(true);
-      setIsinProgress(true)
+      setIsinProgress(true);
     }, 2000);
   });
 
@@ -52,9 +52,7 @@ export const DeleteFileProgressModal = () => {
           ) : (
             <img src="/icons/tick-circle-upload.svg" alt="" />
           )}
-          {IsinProgress
-            ? 'Your file is being removed.'
-            : 'Deleting Completed.'}
+          {IsinProgress ? 'Your file is being removed.' : 'Deleting Completed.'}
         </div>
 
         <div className="mt-4 text-[10px] text-Text-Quadruple transition-opacity duration-500">
@@ -71,7 +69,7 @@ export const DeleteFileProgressModal = () => {
                 publish('syncReport', {});
               }}
             >
-             Unsync Data
+              Unsync Data
             </ButtonSecondary>
           </div>
         )}

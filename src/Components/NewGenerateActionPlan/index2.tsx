@@ -84,7 +84,7 @@ const GenerateActionPlan = () => {
   const [isLoadingCalendarView, setIsLoadingCalendarView] = useState(false);
   const navigate = useNavigate();
   const [duration, setDuration] = useState(1);
-  const [planObjective, setPlanObjective] = useState('');
+  const [planObjective, setPlanObjective] = useState('Personalized Action Plan');
   const saveChanges = () => {
     setCheckSave(true);
     const prepareDataForBackend = (data: any) => {
