@@ -3,18 +3,18 @@ import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { subscribe } from '../../utils/event';
 import { publish } from '../../utils/event';
 
-export const UploadFileProgressModal = () => {
+export const DeleteFileProgressModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [IsinProgress, setIsinProgress] = useState(true);
 
-  subscribe('openProgressModal', () => {
+  subscribe('openDeleteProgressModal', () => {
     setTimeout(() => {
       setshowProgressModal(true);
       setIsinProgress(true)
     }, 2000);
   });
 
-  subscribe('StepTwoSuccess', () => {
+  subscribe('DeleteSuccess', () => {
     setshowProgressModal(true);
     setIsinProgress(false);
   });
@@ -37,7 +37,7 @@ export const UploadFileProgressModal = () => {
         `}
       >
         <div className="flex items-center justify-between text-xs font-medium text-Primary-DeepTeal">
-          {IsinProgress ? 'Processing in Progress' : 'Processing Completed'}
+          {IsinProgress ? 'Deletion in Progress' : 'File History'}
           <img
             onClick={() => setshowProgressModal(false)}
             src="/icons/close.svg"
@@ -53,14 +53,14 @@ export const UploadFileProgressModal = () => {
             <img src="/icons/tick-circle-upload.svg" alt="" />
           )}
           {IsinProgress
-            ? 'Your file is currently being processed...'
-            : 'Your file has been successfully processed.'}
+            ? 'Your file is being removed.'
+            : 'Deleting Completed.'}
         </div>
 
         <div className="mt-4 text-[10px] text-Text-Quadruple transition-opacity duration-500">
           {IsinProgress
-            ? "If you'd like, you may continue working while the system analyzes the data."
-            : 'Please click “Sync Data” to apply the extracted data to your health plan.'}
+            ? "If you'd like, you may continue working while the system removes the file."
+            : 'If you would like to remove its related data from the report, please click the “Unsync Data” button.'}
         </div>
 
         {!IsinProgress && (
@@ -71,7 +71,7 @@ export const UploadFileProgressModal = () => {
                 publish('syncReport', {});
               }}
             >
-              Sync Data
+             Unsync Data
             </ButtonSecondary>
           </div>
         )}
@@ -79,4 +79,4 @@ export const UploadFileProgressModal = () => {
     </>
   );
 };
-export default UploadFileProgressModal;
+export default DeleteFileProgressModal;

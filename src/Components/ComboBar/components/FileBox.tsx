@@ -19,19 +19,27 @@ const FileBox: React.FC<FileBoxProps> = ({
   el,
 
   onDelete,
-  // onDeleteSuccess,
+  onDeleteSuccess,
 }) => {
   const { id } = useParams<{ id: string }>();
 
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [isDeleted, setisDeleted] = useState(false);
   const handleDelete = (fileId: string, memberId: string) => {
-    setLoadingDelete(true);
-    publish('fileIsDeleting', { isDeleting: false });
+    // setLoadingDelete(true);
+    // publish('fileIsDeleting', { isDeleting: false });
+    onDelete();
+    publish('openDeleteProgressModal', {});
 
     Application.deleteFileHistory({
       file_id: fileId,
       member_id: memberId,
+    })
+    .then(()=>{
+      setLoadingDelete(false);
+      setisDeleted(true)
+   
+      onDeleteSuccess();
     }).catch((err) => {
       console.error(err);
     });
@@ -43,10 +51,10 @@ const FileBox: React.FC<FileBoxProps> = ({
           member_id: memberId,
         });
         if (res.status === 200 && res.data) {
-          setLoadingDelete(false);
-          setisDeleted(true);
-          // onDeleteSuccess();
-          publish('fileIsDeleting', { isDeleting: true });
+       
+        
+          publish('DeleteSuccess', {});
+          // publish('fileIsDeleting', { isDeleting: true });
         } else {
           setTimeout(checkDelete, 1000);
         }
