@@ -182,8 +182,13 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                     : 'border-gray-50'
                 } flex justify-start gap-1 `}
               >
-                {index + 1}. {item == "Holistic Plan" ? <img  src='/icons/crown.svg'/> :item == "Action Plan" ?  <img  src='/icons/verify.svg'/> : undefined}
-                 <span>{item}</span>
+                {index + 1}.{' '}
+                {item == 'Holistic Plan' ? (
+                  <img src="/icons/crown.svg" />
+                ) : item == 'Action Plan' ? (
+                  <img src="/icons/verify.svg" />
+                ) : undefined}
+                <span>{item}</span>
               </div>
             ))}
           {ActiveLayer === 'layer' && (

@@ -15,24 +15,24 @@ export const menus = [
         icon: 'sidemenu-menu-icon-clientList',
         active: true,
       },
-      // {
-      //   name: 'Drift Analysis',
-      //   url: '/drift-analysis',
-      //   icon: 'sidemenu-menu-icon-drift-analysis',
-      //   active: true,
-      // },
+      {
+        name: 'Drift Analysis',
+        url: '/drift-analysis',
+        icon: 'sidemenu-menu-icon-drift-analysis',
+        active: true,
+      },
       {
         name: 'Messages',
         url: '/messages',
         icon: 'sidemenu-menu-icon-messages',
         active: true,
       },
-      // {
-      //   name: 'Knowledge Graph',
-      //   url: '/aiKnowledge',
-      //   icon: 'sidemenu-menu-icon-trend-up',
-      //   active: true,
-      // },
+      {
+        name: 'Knowledge Graph',
+        url: '/aiKnowledge',
+        icon: 'sidemenu-menu-icon-trend-up',
+        active: true,
+      },
       {
         name: 'Playground',
         url: '/playground',
@@ -93,29 +93,29 @@ export const menus = [
       },
     ],
   },
-  // {
-  //   category: 'MANAGE',
-  //   items: [
-  //     {
-  //       name: 'Package',
-  //       url: '/packages',
-  //       icon: 'sidemenu-menu-icon-Package',
-  //       active: true,
-  //     },
-  //     {
-  //       name: 'Staff',
-  //       url: '/staff',
-  //       icon: 'sidemenu-menu-icon-Staff',
-  //       active: true,
-  //     },
-  //     {
-  //       name: 'Setting',
-  //       icon: 'sidemenu-menu-icon-setting',
-  //       url: '/setting',
-  //       active: true,
-  //     },
-  //   ],
-  // },
+  {
+    category: 'MANAGE',
+    items: [
+      {
+        name: 'Package',
+        url: '/packages',
+        icon: 'sidemenu-menu-icon-Package',
+        active: true,
+      },
+      {
+        name: 'Staff',
+        url: '/staff',
+        icon: 'sidemenu-menu-icon-Staff',
+        active: true,
+      },
+      {
+        name: 'Setting',
+        icon: 'sidemenu-menu-icon-setting',
+        url: '/setting',
+        active: true,
+      },
+    ],
+  },
   // {
   //   name: 'Knowledge Graph',
   //   icon: 'sidemenu-menu-icon-trend-up',
