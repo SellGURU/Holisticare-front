@@ -79,7 +79,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
               </div>
               <img
                 onClick={() => {
-                  handlePreviewCloseModal();
+                  // handlePreviewCloseModal();
                   handleOpenModal();
                 }}
                 src="/icons/edit-blue.svg"

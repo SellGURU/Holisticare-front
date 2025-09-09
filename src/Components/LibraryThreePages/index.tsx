@@ -29,10 +29,12 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
     setAddShowModal(false);
   };
   const handleOpenModal = () => {
+    setPreviewShowModal(false)
     setAddShowModal(true);
   };
   const [previewShowModal, setPreviewShowModal] = useState(false);
   const handlePreviewCloseModal = () => {
+    setSelectedRow(null)
     setPreviewShowModal(false);
   };
   const handlePreviewOpenModal = () => {
