@@ -116,7 +116,9 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 <div className="font-medium text-Text-Primary text-xs">
                   Instruction
                 </div>
-                <div className={`text-xs text-Text-Secondary text-justify leading-5 ${selectedRow?.Category === 'Diet' ? '' : 'ml-9'} `}>
+                <div
+                  className={`text-xs text-Text-Secondary text-justify leading-5 ${selectedRow?.Category === 'Diet' ? '' : 'ml-9'} `}
+                >
                   {selectedRow?.Instruction}
                 </div>
               </div>
@@ -205,7 +207,9 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 <div className="font-medium text-Text-Primary text-xs">
                   Priority Weight
                 </div>
-                <div className={`px-3 py-[2px] ${selectedRow.Category === 'Diet' ? '' : 'ml-4'}  rounded-xl bg-[#FFD8E4] flex items-center justify-center`}>
+                <div
+                  className={`px-3 py-[2px] ${selectedRow.Category === 'Diet' ? '' : 'ml-4'}  rounded-xl bg-[#FFD8E4] flex items-center justify-center`}
+                >
                   <div className="text-[10px] text-Text-Primary">
                     {selectedRow?.Base_Score}
                   </div>

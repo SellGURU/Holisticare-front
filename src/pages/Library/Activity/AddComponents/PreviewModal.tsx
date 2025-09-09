@@ -134,7 +134,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
       setIndexImage((prev) => prev - 1);
     }
   };
-console.log(videoData);
+  console.log(videoData);
 
   return (
     <MainModal
@@ -192,7 +192,9 @@ console.log(videoData);
             className={`flex w-full items-start ${isActivty ? 'gap-[87px]' : 'gap-3'}`}
           >
             <div className="text-xs font-medium">Instruction</div>
-            <div className={`text-xs text-[#888888] text-justify ${isActivty ? "" : "ml-5"}`}>
+            <div
+              className={`text-xs text-[#888888] text-justify ${isActivty ? '' : 'ml-5'}`}
+            >
               {isActivty ? data.instruction : exercise.Instruction}
             </div>
           </div>
@@ -269,7 +271,6 @@ console.log(videoData);
                                             className="py-2 px-3 rounded-2xl relative z-10 w-full bg-white my-2"
                                           >
                                             <div className="flex items-center gap-2">
-                                            
                                               <img
                                                 src="/icons/video-preview.svg"
                                                 className="size-8 rounded-md"
@@ -332,17 +333,12 @@ console.log(videoData);
                   </div>
                 ) : videoData?.[0]?.Type?.split('/')[0] === 'image' ? (
                   <div className="w-full flex justify-center items-center gap-4">
-                    {
-                        
-                          videoData.length > 1 && (
-                            <button onClick={prevSlide} disabled={indexImage === 0}>
-                            <img src="/icons/chevron-left.svg" alt="prev" />
-                          </button>
-      
-                          )
-                        
-                    }
-                  
+                    {videoData.length > 1 && (
+                      <button onClick={prevSlide} disabled={indexImage === 0}>
+                        <img src="/icons/chevron-left.svg" alt="prev" />
+                      </button>
+                    )}
+
                     <div className="flex w-full overflow-hidden justify-start items-center ">
                       <div
                         className="flex transition-transform duration-300 ease-in-out gap-2"
@@ -369,17 +365,14 @@ console.log(videoData);
                       </div>
                     </div>
 
-                          {
-                            videoData.length > 1 && (
-<button
-                      onClick={nextSlide}
-                      disabled={indexImage >= lastIndex}
-                    >
-                      <img src="/icons/chevron-right.svg" alt="next" />
-                    </button>
-                            )
-                          }
-                    
+                    {videoData.length > 1 && (
+                      <button
+                        onClick={nextSlide}
+                        disabled={indexImage >= lastIndex}
+                      >
+                        <img src="/icons/chevron-right.svg" alt="next" />
+                      </button>
+                    )}
                   </div>
                 ) : videoData?.[0]?.Type?.split('/')[0] === 'video' ? (
                   videoData.map((video) => {
