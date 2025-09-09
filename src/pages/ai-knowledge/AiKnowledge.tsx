@@ -1348,7 +1348,7 @@ const AiKnowledge = () => {
                       <div className="w-[90px] py-2 text-center">
                         Date of Update
                       </div>
-                      <div className="w-[65px] text-right py-2 ">Action</div>
+                      {/* <div className="w-[65px] text-right py-2 ">Action</div> */}
                     </div>
                     {getCurrentPageData().length < 1 ? (
                       <div className="flex flex-col items-center justify-center h-full   w-[315px] text-xs text-Text-Primary">
@@ -1406,6 +1406,7 @@ const AiKnowledge = () => {
                               ) : (
                                 <>
                                   <button
+                                    className="hidden"
                                     onClick={() => {
                                       if (isLoadingCallApi) return;
                                       handleDownloadFileUserUpload(
@@ -1457,7 +1458,7 @@ const AiKnowledge = () => {
                       <div className="w-[90px] py-2 text-center">
                         Date of Update
                       </div>
-                      <div className="w-[60px] py-2  text-center">Action</div>
+                      {/* <div className="w-[60px] py-2  text-center">Action</div> */}
                     </div>
                     {getCurrentPageData().length < 1 ? (
                       <div className="flex flex-col items-center justify-center h-full w-[315px] text-xs text-Text-Primary">
@@ -1494,6 +1495,7 @@ const AiKnowledge = () => {
                             </div>
                             <div className="py-2 pr-2 w-[80px] text-center flex items-center justify-center gap-2">
                               <button
+                                className="hidden"
                                 onClick={() => {
                                   if (isLoadingCallApi) return;
                                   console.log(doc.category2);
