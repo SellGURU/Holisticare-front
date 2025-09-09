@@ -208,7 +208,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                   Priority Weight
                 </div>
                 <div
-                  className={`px-3 py-[2px] ${selectedRow.Category === 'Diet' ? '' : 'ml-4'}  rounded-xl bg-[#FFD8E4] flex items-center justify-center`}
+                  className={`px-3 py-[2px] ${selectedRow?.Category === 'Diet' ? '' : 'ml-4'}  rounded-xl bg-[#FFD8E4] flex items-center justify-center`}
                 >
                   <div className="text-[10px] text-Text-Primary">
                     {selectedRow?.Base_Score}
