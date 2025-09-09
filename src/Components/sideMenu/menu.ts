@@ -33,6 +33,12 @@ export const menus = [
         icon: 'sidemenu-menu-icon-trend-up',
         active: true,
       },
+      {
+        name: 'Playground',
+        url: '/playground',
+        icon: 'sidemenu-menu-icon-lamp',
+        active: true,
+      },
     ],
   },
   {

@@ -1035,6 +1035,18 @@ class Application extends Api {
   static checkStepTwoUpload = (data: any) => {
     return this.post('/patients/check_lab_report_step_two', data);
   };
+  static getPlaygroundList = () => {
+    return this.post('/test_api/tests', {});
+  };
+  static setPlaygroundList = (data: any) => {
+    return this.post('/test_api', data);
+  };
+  static getInputPlayGround = () => {
+    return this.post('/test_api/inputs', {});
+  };
+  static getInputPlayGroundVariables = () => {
+    return this.post('/test_api/agents', {});
+  };
 }
 
 export default Application;

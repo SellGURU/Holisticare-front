@@ -161,6 +161,18 @@ input[type='number'] {
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
 }
+
+.sidemenu-menu-icon-lamp {
+  mask-image: url(/icons/side-menu/lamp.svg);
+  -webkit-mask-image: url(/icons/side-menu/lamp.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
 .sidemenu-menu-icon-drift-analysis {
   mask-image: url(/icons/status-up.svg);
   -webkit-mask-image: url(/icons/status-up.svg);

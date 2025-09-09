@@ -88,6 +88,12 @@ const MainTopBar = () => {
           selectedImage: res.data.brand_elements.logo,
         }),
       );
+      if (res.data.brand_elements.knowledge_playground == true) {
+        publish(
+          'knowledge_playground-Show',
+          res.data.brand_elements.knowledge_playground,
+        );
+      }
     });
   };
 
