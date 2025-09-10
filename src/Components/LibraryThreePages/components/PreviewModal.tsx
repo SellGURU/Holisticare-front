@@ -16,7 +16,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
   handlePreviewCloseModal,
   pageType,
   selectedRow,
-  // handleOpenModal,
+  handleOpenModal,
 }) => {
   const renderNutrient = (
     label: string,
@@ -77,15 +77,15 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
               <div className="flex justify-start items-center font-medium text-sm text-Text-Primary">
                 {selectedRow?.Title}
               </div>
-              {/* <img
+              <img
                 onClick={() => {
-                  handlePreviewCloseModal();
+                  // handlePreviewCloseModal();
                   handleOpenModal();
                 }}
                 src="/icons/edit-blue.svg"
                 alt=""
                 className="cursor-pointer w-6 h-6"
-              /> */}
+              />
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
             <div className="flex flex-col w-full gap-4 mt-6">
@@ -116,7 +116,9 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 <div className="font-medium text-Text-Primary text-xs">
                   Instruction
                 </div>
-                <div className="text-xs text-Text-Secondary text-justify leading-5">
+                <div
+                  className={`text-xs text-Text-Secondary text-justify leading-5 ${selectedRow?.Category === 'Diet' ? '' : 'ml-9'} `}
+                >
                   {selectedRow?.Instruction}
                 </div>
               </div>
@@ -125,7 +127,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                   <div className="font-medium text-Text-Primary text-xs">
                     {pageType === 'Supplement' ? 'Dose' : 'Value'}
                   </div>
-                  <div className="text-xs text-Text-Quadruple leading-5">
+                  <div className="text-xs ml-9 text-Text-Quadruple leading-5">
                     {pageType === 'Supplement'
                       ? selectedRow?.Dose
                       : selectedRow?.Value}
@@ -205,7 +207,9 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 <div className="font-medium text-Text-Primary text-xs">
                   Priority Weight
                 </div>
-                <div className="px-3 py-[2px] rounded-xl bg-[#FFD8E4] flex items-center justify-center">
+                <div
+                  className={`px-3 py-[2px] ${selectedRow?.Category === 'Diet' ? '' : 'ml-4'}  rounded-xl bg-[#FFD8E4] flex items-center justify-center`}
+                >
                   <div className="text-[10px] text-Text-Primary">
                     {selectedRow?.Base_Score}
                   </div>

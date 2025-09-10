@@ -320,9 +320,10 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
               <div key={index}>
                 <FileBox
                   onDelete={() => {
-                    setUploadedFiles((prev) =>
-                      prev.filter((f) => f.file !== fileUpload.file),
-                    );
+                    // setUploadedFiles((prev) =>
+                    //   prev.filter((f) => f.file !== fileUpload.file),
+                    // );
+                    handleCloseSlideOutPanel();
                   }}
                   el={{
                     ...fileUpload,
