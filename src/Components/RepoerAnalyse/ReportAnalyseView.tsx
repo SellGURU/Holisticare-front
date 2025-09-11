@@ -169,7 +169,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setConcerningResult(res.data.table);
         if (res.data.table.length == 0) {
           publish('ConcerningResultStatus', { isempty: true });
-        } 
+        }
         // else {
         //   publish('ConcerningResultStatus', { isempty: false });
         // }
