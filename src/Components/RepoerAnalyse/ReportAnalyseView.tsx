@@ -856,19 +856,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                               (val: any) => val.subcategory == el.subcategory,
                             )}
                             data={el}
-                            index={index}
+                            key={index}
                           ></DetiledAnalyse>
                         );
                       })}
                     </div>
                     <div className="mt-6 block xl:hidden">
-                      {resolveCategories().map((el: any) => {
+                      {resolveCategories().map((el: any, index: number) => {
                         return (
                           <DetiledAcordin
                             refrences={resolveBioMarkers().filter(
                               (val: any) => val.subcategory == el.subcategory,
                             )}
                             data={el}
+                            key={index}
                           ></DetiledAcordin>
                         );
                       })}
