@@ -101,10 +101,10 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
               <div className="mt-2" key={menuCategory.category}>
                 <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">
                   <>
-                    {(menuCategory.category !== 'MANAGE' ||(
-                      !dontPermisionsToRender('Staff') &&
-                      !dontPermisionsToRender('Setting') &&
-                      !dontPermisionsToRender('Package'))) && (
+                    {(menuCategory.category !== 'MANAGE' ||
+                      (!dontPermisionsToRender('Staff') &&
+                        !dontPermisionsToRender('Setting') &&
+                        !dontPermisionsToRender('Package'))) && (
                       <>{menuCategory.category}</>
                     )}
                   </>
