@@ -173,7 +173,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         // else {
         //   publish('ConcerningResultStatus', { isempty: false });
         // }
-        setConcerningResult(conceringResultData);
+        // setConcerningResult(conceringResultData);
       })
       .catch(() => {
         // setConcerningResult([]);
