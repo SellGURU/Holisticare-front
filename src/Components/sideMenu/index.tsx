@@ -20,9 +20,15 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     );
   });
   const [showPlayground, setShowPlayground] = useState(false);
+  const [permissions, setPermissions] = useState<any>({});
   subscribe('knowledge_playground-Show', () => {
     // alert("show playground");
     setShowPlayground(true);
+  });
+  subscribe('permissions-show', (data) => {
+    console.log(data);
+    setPermissions(data.detail);
+    // setShowPlayground(true);
   });
   useEffect(() => {
     const currentActiveItem =
@@ -52,7 +58,28 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
+  const dontPermisionsToRender = (name: string) => {
+    // console.log(permissions);
+    if (name === 'Playground' && !showPlayground) {
+      return true;
+    }
+    if (name == 'Knowledge Graph' && permissions.ai_knowledge == false) {
+      return true;
+    }
+    if (name == 'Package' && permissions.packages == false) {
+      return true;
+    }
+    if (name == 'Staff' && permissions.staff == false) {
+      return true;
+    }
+    if (name == 'Setting' && permissions.setting == false) {
+      return true;
+    }
+    if (name == 'Drift Analysis' && permissions.drift_analysis == false) {
+      return true;
+    }
+    return false;
+  };
   return (
     <div className="w-[180px] xs:w-[250px] md:w-[170px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 pt-4 drop-shadow">
       <div className="w-full  relative">
@@ -73,11 +100,15 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
             {menus.map((menuCategory) => (
               <div className="mt-2" key={menuCategory.category}>
                 <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">
-                  {menuCategory.category}
+                  <>
+                    {/* {dontPermisionsToRender('staff') &&} */}
+                    {menuCategory.category}
+                  </>
                 </div>
                 {menuCategory.items.map((menu) => (
                   <>
-                    {menu.name === 'Knowledge Graph' ? (
+                    {menu.name === 'Knowledge Graph' &&
+                    !dontPermisionsToRender(menu.name) ? (
                       <div className=" my-2  w-full flex pl-5  items-center">
                         {' '}
                         <div
@@ -126,7 +157,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                       </div>
                     ) : (
                       <>
-                        {menu.name === 'Playground' && !showPlayground ? (
+                        {dontPermisionsToRender(menu.name) ? (
                           <></>
                         ) : (
                           <div className="" key={menu.name}>
