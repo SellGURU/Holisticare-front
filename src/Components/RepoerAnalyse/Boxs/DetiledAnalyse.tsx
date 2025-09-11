@@ -17,7 +17,6 @@ import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChart
 interface DetiledAnalyseProps {
   data: any;
   refrences: any;
-  index: number;
 }
 
 const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
@@ -199,7 +198,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                       >
                         <div className="flex justify-start items-center gap-2">
                           <div
-                            data-tooltip-id={`tooltip-detiledanalyse-${index}`}
+                            data-tooltip-id={`tooltip-detiledAnalyse-${index}`}
                             className=" text-[12px]"
                           >
                             {value.name.length > 40
@@ -208,13 +207,15 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                           </div>
                           {value.name.length > 40 ? (
                             <Tooltip
-                              id={`tooltip-detiledanalyse-${index}`}
+                              id={`tooltip-detiledAnalyse-${index}`}
                               place="bottom-end"
                               className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                             >
                               {value.name}
                             </Tooltip>
-                          ) : null}
+                          ) : (
+                            ''
+                          )}
                           {value?.status && (
                             <>
                               {(value?.status[0] == 'CriticalRange' ||

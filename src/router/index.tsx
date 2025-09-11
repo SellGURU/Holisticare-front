@@ -191,7 +191,7 @@ const router = createBrowserRouter([
     element: <FormView mode="questionary"></FormView>,
   },
   {
-    path: '/tasks',
+    path: '/tasks/:encode/:id',
     element: <Tasks></Tasks>,
   },
   {
