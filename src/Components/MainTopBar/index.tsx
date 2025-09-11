@@ -94,6 +94,9 @@ const MainTopBar = () => {
           res.data.brand_elements.knowledge_playground,
         );
       }
+      if (res.data.brand_elements.permission) {
+        publish('permissions-show', res.data.brand_elements.permission);
+      }
     });
   };
 
