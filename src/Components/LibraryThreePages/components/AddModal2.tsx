@@ -126,8 +126,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       ValidationForms.IsvalidField('Title', formData.title) &&
       ValidationForms.IsvalidField('Instruction', formData.instruction) &&
       ValidationForms.IsvalidField('Macros', formData.macros) &&
-      ValidationForms.IsvalidField('Score', formData.score) &&
-      ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title)
+      ValidationForms.IsvalidField('Score', formData.score) 
+      // ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title)
     ) {
       return true;
     }
@@ -254,22 +254,22 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 }}
                 disabled={mode === 'edit'}
                 showDisabled={mode === 'edit'}
-                isValid={
-                  showValidation
-                    ? ValidationForms.IsvalidField(
-                        'Parent_Title',
-                        formData.Parent_Title,
-                      )
-                    : true
-                }
-                validationText={
-                  showValidation
-                    ? ValidationForms.ValidationText(
-                        'Parent_Title',
-                        formData.Parent_Title,
-                      )
-                    : ''
-                }
+                // isValid={
+                //   showValidation
+                //     ? ValidationForms.IsvalidField(
+                //         'Parent_Title',
+                //         formData.Parent_Title,
+                //       )
+                //     : true
+                // }
+                // validationText={
+                //   showValidation
+                //     ? ValidationForms.ValidationText(
+                //         'Parent_Title',
+                //         formData.Parent_Title,
+                //       )
+                //     : ''
+                // }
                 placeholder={AssociatedInterventionInfoTextDiet}
                 margin="mb-0 mt-2"
               />
