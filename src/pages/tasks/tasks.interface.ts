@@ -17,6 +17,7 @@ export interface Tasks {
     };
     Activity_Location: string[];
   };
+  encoded_mi: string;
 }
 
 export interface TasksSections {

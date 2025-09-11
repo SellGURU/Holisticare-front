@@ -175,7 +175,6 @@ const FileBox: React.FC<FileBoxProps> = ({
                       alt=""
                       className="cursor-pointer w-5 h-5"
                     />
-                    {/* )} */}
                     {el.file_name !== 'Manual Entry' && (
                       <img
                         onClick={() => {
