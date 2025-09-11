@@ -7,7 +7,7 @@ class AzureBlobService {
   private static containerName: string = '';
   private static accountName: string = '';
   private static sasToken: string =
-    'sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-08-30T13:26:55Z&st=2025-06-11T05:26:55Z&spr=https,http&sig=MlZR7n6e3UC9o7u8wuvLKAqyvGIu2qBJlB5DAbnG43c%3D';
+    'sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-12-28T15:14:08Z&st=2025-09-02T06:59:08Z&spr=https&sig=WeZRlYr6GzJ%2B5cLhR%2BFiGkuwQDyJ%2BLFfEAov9VcB1M8%3D';
   //   private static accountKey: string = '';
 
   static initialize(connectionString: string, containerName: string) {

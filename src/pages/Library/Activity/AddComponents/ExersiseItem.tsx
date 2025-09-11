@@ -94,19 +94,12 @@ const ExerciseItem = ({
           <div className="flex items-center">
             <div className="relative">
               <img
-                src={
-                  Array.isArray(exercise?.Exercise?.Files) &&
-                  exercise.Exercise.Files.length > 0 &&
-                  exercise.Exercise.Files[0]?.Type?.startsWith('image')
-                    ? exercise.Exercise.Files[0]?.Content?.url
-                    : '/images/activity/activity-demo.png'
-                }
+                src="/images/activity/activity-demo.png"
                 alt=""
                 className="w-8 h-8 bg-cover rounded-lg mr-1"
               />
               {Array.isArray(exercise?.Exercise?.Files) &&
-                exercise.Exercise.Files.length > 0 &&
-                !exercise.Exercise.Files[0]?.Type?.startsWith('image') && (
+                exercise.Exercise.Files.length > 0 && (
                   <img
                     src="/icons/video-octagon.svg"
                     alt=""
@@ -127,7 +120,7 @@ const ExerciseItem = ({
           {showMenu && (
             <div
               ref={menuRef}
-              className="absolute w-[188px] px-4 py-2 bg-white shadow-200 rounded-[16px] right-3 top-10"
+              className="absolute w-[188px] px-4 py-2 z-[5] bg-white shadow-200 rounded-[16px] right-3 top-10"
             >
               {index > 0 && !isSuperSet && (
                 <div
@@ -193,7 +186,7 @@ const ExerciseItem = ({
             {exercise.Exercise.Instruction}
           </div>
         </div>
-        <div className="min-h-[25px] mt-2 flex flex-wrap gap-2">
+        {/* <div className="min-h-[25px] mt-2 flex flex-wrap gap-2">
           {exercise?.Exercise?.Exercise_Filters && (
             <>
               {Object?.entries(exercise?.Exercise?.Exercise_Filters).map(
@@ -208,7 +201,7 @@ const ExerciseItem = ({
               )}
             </>
           )}
-        </div>
+        </div> */}
         <div className="w-full h-[1px] bg-Gray-50 my-2"></div>
         <div className="flex justify-between items-center">
           <div

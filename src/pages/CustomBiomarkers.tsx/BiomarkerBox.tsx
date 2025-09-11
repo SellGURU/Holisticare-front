@@ -37,7 +37,7 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   // }, [biomarkers]);
   return (
     <>
-      <div className="w-full relative mb-4 py-4 px-6 bg-white border border-Gray-50 shadow-100 rounded-[16px]">
+      <div className="w-full relative mb-4 py-4 px-2 md:px-6 bg-white border border-Gray-50 shadow-100 rounded-[16px]">
         <div className="flex justify-between items-center">
           <div className="flex items-center justify-center ">
             <div

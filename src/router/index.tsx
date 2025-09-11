@@ -37,6 +37,7 @@ import Diet from '../pages/diet/index.tsx';
 import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
+import Playground from '../pages/playground/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -116,6 +117,10 @@ const router = createBrowserRouter([
             path: '/diet',
             element: <Diet></Diet>,
           },
+          {
+            path: 'playground',
+            element: <Playground></Playground>,
+          },
         ],
       },
       {
@@ -186,7 +191,7 @@ const router = createBrowserRouter([
     element: <FormView mode="questionary"></FormView>,
   },
   {
-    path: '/tasks',
+    path: '/tasks/:encode/:id',
     element: <Tasks></Tasks>,
   },
   {

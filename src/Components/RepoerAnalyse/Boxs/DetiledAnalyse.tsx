@@ -17,21 +17,18 @@ import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChart
 interface DetiledAnalyseProps {
   data: any;
   refrences: any;
-  index: number;
 }
 
 const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   data,
   refrences,
-  index,
+  // index,
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isCheced, setIsCheced] = useState(false);
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
-  const [activeBox, setActiveBOx] = useState<any>(
-    refrences[0]?.name ? refrences[0]?.name : '',
-  );
+  const [activeBox, setActiveBOx] = useState<number>(0);
   useEffect(() => {
     setIsCheced(false);
   }, [activeBox]);
@@ -55,13 +52,15 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   });
   useEffect(() => {
     if (refrences != null) {
-      setActiveBOx(refrences[0]?.name ? refrences[0]?.name : '');
+      setActiveBOx(0);
       setActive(refrences[0]);
     }
   }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
   const [showGeneInsights, setShowGeneInsights] = useState(false);
   // const resolveColor = (key: string) => {
+  console.log(activeBox);
+
   //   if (key == 'Needs Focus') {
   //     return '#FC5474';
   //   }
@@ -178,28 +177,28 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
               Description
             </div>
-            <div className="  text-Text-Secondary TextStyle-Body-2 mt-2 text-justify">
+            <div className="  text-Text-Primary opacity-90 TextStyle-Body-2 mt-2 text-justify">
               {data.description}
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
-                {refrences?.map((value: any) => {
+                {refrences?.map((value: any, index: number) => {
                   return (
                     <>
                       <div
                         onClick={() => {
-                          setActiveBOx(value.name);
+                          setActiveBOx(index);
                           setActive(value);
                         }}
                         className={`w-full h-10 mb-2 cursor-pointer text-sm ${
-                          activeBox == value.name
+                          activeBox == index
                             ? 'border-Primary-EmeraldGreen '
                             : 'border-Gray-50'
                         }  border items-center bg-white  rounded-[6px] flex justify-between px-4`}
                       >
                         <div className="flex justify-start items-center gap-2">
                           <div
-                            data-tooltip-id={`tooltip-detiledanalyse-${index}`}
+                            data-tooltip-id={`tooltip-detiledAnalyse-${index}`}
                             className=" text-[12px]"
                           >
                             {value.name.length > 40
@@ -208,16 +207,19 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                           </div>
                           {value.name.length > 40 ? (
                             <Tooltip
-                              id={`tooltip-detiledanalyse-${index}`}
+                              id={`tooltip-detiledAnalyse-${index}`}
                               place="bottom-end"
                               className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                             >
                               {value.name}
                             </Tooltip>
-                          ) : null}
+                          ) : (
+                            ''
+                          )}
                           {value?.status && (
                             <>
-                              {value?.status[0] == 'Needs Focus' && (
+                              {(value?.status[0] == 'CriticalRange' ||
+                                value?.status[0] == 'DiseaseRange') && (
                                 <div
                                   className="w-3 h-3 rounded-full "
                                   style={{

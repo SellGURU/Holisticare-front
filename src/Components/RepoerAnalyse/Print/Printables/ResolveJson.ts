@@ -200,11 +200,11 @@ const addHolisticPlanTreatmentplanData = (TreatMentPlanData: Array<any>) => {
 };
 
 const addConcerningResultRowTable = (el: any) => {
-  checkPageCanRender(65);
+  checkPageCanRender(el.Result.length > 21 ? 77 : 65);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'ConcerningResultRowTable',
-    height: 65,
+    height: el.Result.length > 21 ? 77 : 65,
     content: el,
   });
 };
@@ -396,8 +396,8 @@ const AddActionPLanRowCategory = (category: string, item: Array<any>) => {
   });
 };
 const AddActionPlan = (actionPlanData: any, caldenderData: any) => {
-  console.log(actionPlanData);
-  console.log(caldenderData);
+  // console.log(actionPlanData);
+  // console.log(caldenderData);
 
   if (Array.isArray(caldenderData)) {
     const grouped = caldenderData?.reduce((acc: any, item: any) => {

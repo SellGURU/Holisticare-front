@@ -179,6 +179,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
                     <ExerciseRow
                       exercise={exercise}
                       index={index}
+                      key={index}
                       onDelete={() =>
                         handleDeleteExercise(exercise.Exercise_Id)
                       }

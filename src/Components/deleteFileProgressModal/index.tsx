@@ -1,0 +1,80 @@
+import { useState } from 'react';
+import { ButtonSecondary } from '../Button/ButtosSecondary';
+import { subscribe } from '../../utils/event';
+import { publish } from '../../utils/event';
+
+export const DeleteFileProgressModal = () => {
+  const [showProgressModal, setshowProgressModal] = useState(false);
+  const [IsinProgress, setIsinProgress] = useState(true);
+
+  subscribe('openDeleteProgressModal', () => {
+    setTimeout(() => {
+      setshowProgressModal(true);
+      setIsinProgress(true);
+    }, 2000);
+  });
+
+  subscribe('DeleteSuccess', () => {
+    setshowProgressModal(true);
+    setIsinProgress(false);
+  });
+
+  return (
+    <>
+      <div
+        style={{ zIndex: 1000 }}
+        className={`
+          fixed top-[48px] right-6
+          w-[320px] h-[212px]
+          rounded-2xl border-2 border-r-0 border-Gray-50 
+          shadow-200 p-4 bg-white
+          transition-all duration-[1000] ease-[cubic-bezier(0.4,0,0.2,1)]
+          ${
+            showProgressModal
+              ? 'opacity-100 translate-x-0 scale-100 shadow-xl'
+              : 'opacity-0 translate-x-[120%] scale-95 pointer-events-none shadow-none'
+          }
+        `}
+      >
+        <div className="flex items-center justify-between text-xs font-medium text-Primary-DeepTeal">
+          {IsinProgress ? 'Deletion in Progress' : 'File History'}
+          <img
+            onClick={() => setshowProgressModal(false)}
+            src="/icons/close.svg"
+            alt="close"
+            className="cursor-pointer transition-transform hover:rotate-90 duration-300"
+          />
+        </div>
+
+        <div className="mt-4 w-full flex items-center gap-1 p-3 rounded-[12px] border border-Gray-50 text-[10px] text-Primary-DeepTeal transition-colors">
+          {IsinProgress ? (
+            <img src="/icons/more-circle.svg" alt="" />
+          ) : (
+            <img src="/icons/tick-circle-upload.svg" alt="" />
+          )}
+          {IsinProgress ? 'Your file is being removed.' : 'Deleting Completed.'}
+        </div>
+
+        <div className="mt-4 text-[10px] text-Text-Quadruple transition-opacity duration-500">
+          {IsinProgress
+            ? "If you'd like, you may continue working while the system removes the file."
+            : 'If you would like to remove its related data from the report, please click the “Unsync Data” button.'}
+        </div>
+
+        {!IsinProgress && (
+          <div className="w-full flex justify-end mt-4">
+            <ButtonSecondary
+              onClick={() => {
+                setshowProgressModal(false);
+                publish('syncReport', {});
+              }}
+            >
+              Unsync Data
+            </ButtonSecondary>
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
+export default DeleteFileProgressModal;

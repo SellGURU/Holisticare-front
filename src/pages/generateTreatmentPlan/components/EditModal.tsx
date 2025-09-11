@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useFormik } from 'formik';
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { Tooltip } from 'react-tooltip';
-import * as Yup from 'yup';
 import Application from '../../../api/app';
+import { TextField } from '../../../Components/UnitComponents';
+import SelectBoxField from '../../../Components/UnitComponents/SelectBoxField';
+import TextAreaField from '../../../Components/UnitComponents/TextAreaField';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import {
+  DoseInfoText,
+  DoseValidationEnglish,
+  InstructionInfoText,
+  NotesInfoText,
+} from '../../../utils/library-unification';
 import SvgIcon from '../../../utils/svgIcon';
+import ValidationForms from '../../../utils/ValidationForms';
 // import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
@@ -27,15 +34,7 @@ const EditModal: FC<EditModalProps> = ({
   const [selectedGroupDose, setSelectedGroupDose] = useState(false);
 
   const [groups, setGroups] = useState<any[]>([]);
-  // const [selectedGroup] = useState<string | null>(defalts?.Category || null);
   const [newNote, setNewNote] = useState('');
-  const [newInstruction, setNewInstruction] = useState('');
-  // const [recommendation] = useState(defalts?.Recommendation);
-  // const [dose] = useState(defalts?.Dose);
-  // const [instructions] = useState(defalts?.Instruction);
-  // const [selectedTimes, setSelectedTimes] = useState<string[]>(
-  //   defalts ? defalts.Times : [],
-  // );
   const [notes, setNotes] = useState<string[]>(
     defalts ? defalts['Client Notes'] : [],
   );
@@ -44,88 +43,96 @@ const EditModal: FC<EditModalProps> = ({
       ? defalts['client_version']
       : [],
   );
-  const [showSelect, setShowSelect] = useState(false);
-  // const [group, setGroup] = useState(defalts?.Category);
-  // const [practitionerComment, setPractitionerComment] = useState('');
 
   const [practitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
   const [showValidation, setShowValidation] = useState(false);
-  const clearFields = () => {
-    formik.resetForm();
-    setNewNote('');
-    setNotes([]);
-    setSelectedGroupDose(false);
-    // setSelectedTimes([]);
-    setShowValidation(false);
-    // setGroups([]);
-  };
 
-  const selectRef = useRef(null);
   const modalRef = useRef(null);
-  const selectButRef = useRef(null);
-  const validationSchema = Yup.object({
-    Category: Yup.string().required('This field is required.'),
-    Recommendation: Yup.string().required('This field is required.'),
-    // Instruction: Yup.string().required('This field is required.'),
-    Dose: Yup.string().when('Category', {
-      is: 'Supplement',
-      then: (schema) =>
-        schema
-          .required('This field is required.')
-          .matches(
-            /^[0-9]+\s*[a-zA-Z]+$/,
-            'Dose must follow the described format.',
-          ),
-    }),
-  });
 
   interface FormValues {
     Category: string;
     Recommendation: string;
     Dose: string;
     Instruction: string;
-    // Times: string[];
     Notes: string[];
     PractitionerComments: string[];
   }
-  const formik = useFormik<FormValues>({
-    initialValues: {
-      Category: defalts?.Category || '',
-      Recommendation: defalts?.Recommendation || '',
-      Dose: defalts?.Dose || '',
-      Instruction: defalts?.['Instruction'],
-      // Times: defalts?.Times || [],
-      Notes: defalts?.['Client Notes'] || notes,
-      PractitionerComments:
-        defalts?.['Practitioner Comments'] || practitionerComments,
-    },
-    validationSchema,
-    validateOnMount: true,
-    onSubmit: (values) => {
-      onSubmit({
-        Category: values.Category,
-        Recommendation: values.Recommendation,
-        'Based on': defalts ? defalts['Based on'] : '',
-        'Practitioner Comments': practitionerComments,
-        Instruction: defalts?.Instruction
-          ? defalts?.Instruction
-          : client_versions.toString(),
-        client_version:
-          newInstruction.trim() !== ''
-            ? [...client_versions, newInstruction]
-            : client_versions,
-        Score: '0',
-        'System Score': '0',
-        // Times: selectedTimes,
-        Dose: values.Dose,
-        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-      });
-      onClose();
-      clearFields();
-    },
+  const [formData, setFormData] = useState<FormValues>({
+    Category: defalts?.Category || '',
+    Recommendation: defalts?.Recommendation || '',
+    Dose: defalts?.Dose || '',
+    Instruction: '',
+    Notes: defalts?.['Client Notes'] || notes,
+    PractitionerComments:
+      defalts?.['Practitioner Comments'] || practitionerComments,
   });
+  const updateFormData = (key: keyof typeof formData, value: any) => {
+    setFormData((prevTheme) => ({
+      ...prevTheme,
+      [key]: value,
+    }));
+  };
+  const clearFields = () => {
+    setFormData({
+      Category: '',
+      Recommendation: '',
+      Dose: '',
+      Instruction: '',
+      Notes: [],
+      PractitionerComments: [],
+    });
+    setNewNote('');
+    setNotes([]);
+    setSelectedGroupDose(false);
+    setclient_versions([]);
+    setShowValidation(false);
+  };
+  const handleSubmit = () => {
+    onSubmit({
+      Category: formData.Category,
+      Recommendation: formData.Recommendation,
+      'Based on': defalts ? defalts['Based on'] : '',
+      'Practitioner Comments': practitionerComments,
+      Instruction: defalts?.Instruction
+        ? defalts?.Instruction
+        : [...client_versions, formData.Instruction].join(', '),
+      client_version:
+        formData.Instruction.trim() !== ''
+          ? [...client_versions, formData.Instruction]
+          : client_versions,
+      Score: '0',
+      'System Score': '0',
+      Dose: formData.Dose,
+      label: defalts?.label,
+      key_benefits: defalts?.key_benefits || [],
+      foods_to_eat: defalts?.foods_to_eat || [],
+      foods_to_avoid: defalts?.foods_to_avoid || [],
+      Times: defalts?.Times || [],
+      exercises_to_avoid: defalts?.exercises_to_avoid || [],
+      exercises_to_do: defalts?.exercises_to_do || [],
+      Intervnetion_content: defalts?.Intervnetion_content || '',
+      'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+    });
+    onClose();
+    clearFields();
+  };
+  // const formik = useFormik<FormValues>({
+  //   initialValues: {
+  //     Category: defalts?.Category || '',
+  //     Recommendation: defalts?.Recommendation || '',
+  //     Dose: defalts?.Dose || '',
+  //     Instruction: defalts?.['Instruction'],
+  //     // Times: defalts?.Times || [],
+  //     Notes: defalts?.['Client Notes'] || notes,
+  //     PractitionerComments:
+  //       defalts?.['Practitioner Comments'] || practitionerComments,
+  //   },
+  //   validationSchema,
+  //   validateOnMount: true,
+  //   onSubmit: (values) => ,
+  // });
   useEffect(() => {
     Application.HolisticPlanCategories({}).then((res) => {
       setGroups(res.data);
@@ -143,7 +150,7 @@ const EditModal: FC<EditModalProps> = ({
   }, []);
 
   useEffect(() => {
-    const category = formik.values.Category;
+    const category = formData.Category;
     if (category && groups.length > 0) {
       const selectedGroupData = groups.find(
         (g: any) => Object.keys(g)[0] === category,
@@ -152,14 +159,14 @@ const EditModal: FC<EditModalProps> = ({
         setSelectedGroupDose(selectedGroupData[category].Dose);
       }
     }
-  }, [formik.values.Category, groups]);
-  useModalAutoClose({
-    refrence: selectRef,
-    buttonRefrence: selectButRef,
-    close: () => {
-      setShowSelect(false);
-    },
-  });
+  }, [formData.Category, groups]);
+  // useModalAutoClose({
+  //   refrence: selectRef,
+  //   buttonRefrence: selectButRef,
+  //   close: () => {
+  //     setShowSelect(false);
+  //   },
+  // });
 
   useModalAutoClose({
     refrence: modalRef,
@@ -185,9 +192,9 @@ const EditModal: FC<EditModalProps> = ({
   const handleInstructionKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (newInstruction.trim()) {
-        setclient_versions([...client_versions, newInstruction]);
-        setNewInstruction('');
+      if (formData.Instruction.trim()) {
+        setclient_versions([...client_versions, formData.Instruction]);
+        updateFormData('Instruction', '');
       }
     }
   };
@@ -252,17 +259,31 @@ const EditModal: FC<EditModalProps> = ({
   const handleSaveClick = () => {
     setShowValidation(true);
 
+    if (
+      !formData.Category ||
+      !formData.Recommendation ||
+      (formData.Instruction.length === 0 && client_versions.length === 0)
+    ) {
+      return;
+    }
+    if (
+      formData.Category === 'Supplement' &&
+      !ValidationForms.IsvalidField('Dose', formData.Dose)
+    ) {
+      return;
+    }
+
     // Validate notes length
     if (newNote.length > 400) {
       return;
     }
-
-    formik.validateForm().then((errors) => {
-      if (Object.keys(errors).length > 0) {
-        return;
-      }
-      formik.handleSubmit();
-    });
+    if (
+      formData.Instruction.length > 400 ||
+      (formData.Instruction.length === 0 && client_versions.length == 0)
+    ) {
+      return;
+    }
+    handleSubmit();
   };
 
   return (
@@ -283,216 +304,124 @@ const EditModal: FC<EditModalProps> = ({
             scrollbarColor: '#E5E5E5 transparent',
           }}
         >
-          <form onSubmit={formik.handleSubmit}>
-            {/* Category Field */}
-            <div className="w-full relative overflow-visible mt-1 mb-4">
-              <label className="text-xs font-medium text-Text-Primary">
-                Category
-              </label>
-              <div
-                onClick={() => setShowSelect(!showSelect)}
-                className={`w-full cursor-pointer h-[28px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border mt-1 ${
-                  showValidation && formik.errors.Category
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                }`}
-              >
-                {formik.values.Category ? (
-                  <div className="text-[12px] text-Text-Primary">
-                    {formik.values.Category}
-                  </div>
-                ) : (
-                  <div className="text-[12px] text-gray-400">Select Group</div>
-                )}
-                <div>
-                  <img
-                    className={`${showSelect && 'rotate-180'}`}
-                    src="/icons/arow-down-drop.svg"
-                    alt=""
+          {/* Category Field */}
+          <SelectBoxField
+            label="Category"
+            options={groups.map((group) => Object.keys(group)[0])}
+            value={formData.Category}
+            onChange={(value) => {
+              updateFormData('Category', value);
+              updateFormData('Dose', '');
+            }}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField('Category', formData.Category)
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText('Category', formData.Category)
+                : ''
+            }
+            placeholder="Select Group"
+          />
+          <TextField
+            label="Title"
+            placeholder="Write recommendation's title…"
+            value={formData.Recommendation}
+            onChange={(e) => {
+              updateFormData('Recommendation', e.target.value);
+            }}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField('Title', formData.Recommendation)
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText(
+                    'Title',
+                    formData.Recommendation,
+                  )
+                : ''
+            }
+            margin="mb-4"
+          />
+          <TextField
+            label="Dose"
+            value={formData.Dose}
+            onChange={(e) => {
+              const value = e.target.value;
+              const englishOnly = DoseValidationEnglish(value);
+              updateFormData('Dose', englishOnly);
+            }}
+            disabled={!selectedGroupDose}
+            placeholder="Write Dose"
+            margin={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
+            isValid={
+              showValidation && selectedGroupDose
+                ? ValidationForms.IsvalidField('Dose', formData.Dose)
+                : true
+            }
+            validationText={
+              showValidation && selectedGroupDose
+                ? ValidationForms.ValidationText('Dose', formData.Dose)
+                : ''
+            }
+            InfoText={DoseInfoText}
+          />
+
+          {/* Instructions Field */}
+          <TextAreaField
+            label="Instructions"
+            placeholder="Write the action's instruction..."
+            value={formData.Instruction}
+            onChange={(e) => {
+              updateFormData('Instruction', e.target.value);
+            }}
+            onKeyDown={handleInstructionKeyDown}
+            isValid={
+              showValidation && client_versions.length === 0
+                ? ValidationForms.IsvalidField(
+                    'Instruction',
+                    formData.Instruction,
+                  )
+                : true
+            }
+            validationText={
+              showValidation && client_versions.length === 0
+                ? ValidationForms.ValidationText(
+                    'Instruction',
+                    formData.Instruction,
+                  )
+                : ''
+            }
+            InfoText={InstructionInfoText}
+            margin={`${client_versions.length > 0 ? 'mb-4' : 'mb-0'}`}
+          />
+          <div className="mb-4 flex flex-col gap-2">
+            {client_versions.map((note, index) => (
+              <div key={index} className="w-full flex gap-1 items-start">
+                <div className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
+                  <span>{note}</span>
+                </div>
+                <div
+                  onClick={() => handleDeleteInstruction(index)}
+                  className="cursor-pointer"
+                >
+                  <SvgIcon
+                    src="/icons/delete.svg"
+                    color="#FC5474"
+                    width="24px"
+                    height="24px"
                   />
                 </div>
               </div>
-              {showValidation && formik.errors.Category && (
-                <div className="text-Red text-[10px] mt-1">
-                  {formik.errors.Category}
-                </div>
-              )}
-              {showSelect && (
-                <div className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]">
-                  {groups.map((groupObj, index) => {
-                    const groupName = Object.keys(groupObj)[0];
-                    return (
-                      <div
-                        key={index}
-                        onClick={() => {
-                          formik.setFieldValue('Category', groupName);
-                          if (groupName !== 'Supplement') {
-                            formik.setFieldValue('Dose', '');
-                          }
-                          setShowSelect(false);
-                        }}
-                        className="text-[12px] text-Text-Primary my-1 cursor-pointer"
-                      >
-                        {groupName}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            ))}
+          </div>
 
-            <div className="mb-4">
-              <label className="block text-xs font-medium">Title</label>
-              <input
-                name="Recommendation"
-                value={formik.values.Recommendation}
-                onChange={formik.handleChange}
-                placeholder="Write recommendation's title…"
-                type="text"
-                className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation && formik.errors.Recommendation
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } rounded-2xl outline-none`}
-              />
-              {showValidation && formik.errors.Recommendation && (
-                <div className="text-Red text-[10px] mt-1">
-                  {formik.errors.Recommendation}
-                </div>
-              )}
-            </div>
-            <div
-              className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
-            >
-              <label className="text-xs font-medium flex items-start gap-[2px]">
-                Dose{' '}
-                {/* {selectedGroupDose && <span className="text-Red">*</span>} */}
-                <img
-                  className="cursor-pointer"
-                  data-tooltip-id={'more-info'}
-                  src="/icons/info-circle.svg"
-                  alt=""
-                />
-              </label>
-              <input
-                name="Dose"
-                value={formik.values.Dose}
-                onChange={(e) => {
-                  // Only allow English characters and numbers
-                  const value = e.target.value.replace(/[^0-9a-zA-Z\s]/g, '');
-                  formik.setFieldValue('Dose', value);
-                }}
-                placeholder="Write Dose"
-                type="text"
-                disabled={!selectedGroupDose}
-                className={`mt-1 ${!selectedGroupDose && 'cursor-not-allowed'} text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation && formik.errors.Dose && selectedGroupDose
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } rounded-2xl outline-none`}
-              />
-              {showValidation && formik.errors.Dose && selectedGroupDose && (
-                <div className="text-Red text-[10px] mt-1">
-                  {formik.errors.Dose}
-                </div>
-              )}
-              {selectedGroupDose && (
-                <Tooltip
-                  id="more-info"
-                  place="right"
-                  className="!bg-white !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                >
-                  Dose must include a number followed by a unit (e.g., '50 mg')
-                </Tooltip>
-              )}
-            </div>
-
-            {/* Instructions Field */}
-            {/* <div className="mb-4">
-              <label className="flex w-full gap-1 items-center text-xs font-medium">
-                Instructions
-              </label>
-              <input
-                name="Instruction"
-                value={formik.values.Instruction}
-                onChange={formik.handleChange}
-                placeholder="Write the action's instruction..."
-                type="text"
-                className={`mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${showValidation && formik.errors.Instruction ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
-              />
-              {showValidation && formik.errors.Instruction && (
-                <div className="text-Red text-[10px] mt-1">
-                  {formik.errors.Instruction}
-                </div>
-              )}
-            </div> */}
-            <div className="mb-4">
-              <label className="text-xs font-medium flex items-start gap-[2px]">
-                Instructions{' '}
-                <img
-                  className="cursor-pointer w-2 h-2"
-                  data-tooltip-id={'more-info-Instructions'}
-                  src="/icons/info-circle-blue.svg"
-                  alt=""
-                />
-              </label>
-              <textarea
-                name="Instruction"
-                value={newInstruction}
-                onChange={(e) => {
-                  setNewInstruction(e.target.value);
-                }}
-                placeholder="Write the action's instruction..."
-                onKeyDown={handleInstructionKeyDown}
-                className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation && newNote.length > 400
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } rounded-2xl outline-none`}
-                rows={4}
-              />
-              <div className="flex justify-between items-center mt-1">
-                <Tooltip
-                  id="more-info-Instructions"
-                  place="right"
-                  className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                >
-                  After writing each instruction, press the Enter key to save it
-                  and be able to add another instruction.
-                </Tooltip>
-                {/* <span className="text-[10px] text-Text-Quadruple">
-                  {newNote.length}/400 characters
-                </span> */}
-              </div>
-              {showValidation && formik.errors.Instruction && (
-                <div className="text-Red text-[10px] mt-1">
-                  {formik.errors.Instruction}
-                </div>
-              )}
-            </div>
-            <div className="mb-4 flex flex-col gap-2">
-              {client_versions.map((note, index) => (
-                <div key={index} className="w-full flex gap-1 items-start">
-                  <div className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
-                    <span>{note}</span>
-                  </div>
-                  <div
-                    onClick={() => handleDeleteInstruction(index)}
-                    className="cursor-pointer"
-                  >
-                    <SvgIcon
-                      src="/icons/delete.svg"
-                      color="#FC5474"
-                      width="24px"
-                      height="24px"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Times Selection */}
-            {/* <div className="mb-4">
+          {/* Times Selection */}
+          {/* <div className="mb-4">
               <label className="text-xs font-medium">Times</label>
               <div className="flex w-full mt-2 gap-6">
                 {times.map((item, index) => {
@@ -511,75 +440,53 @@ const EditModal: FC<EditModalProps> = ({
               </div>
             </div> */}
 
-            {/* Client Notes */}
-            <div className="mb-4">
-              <label className="text-xs font-medium flex items-start gap-[2px]">
-                Client Notes{' '}
-                <img
-                  className="cursor-pointer w-2 h-2"
-                  data-tooltip-id={'more-info-notes'}
-                  src="/icons/info-circle-blue.svg"
-                  alt=""
-                />
-              </label>
-              <textarea
-                value={newNote}
-                onChange={(e) => {
-                  setNewNote(e.target.value);
-                }}
-                onKeyDown={handleNoteKeyDown}
-                className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation && newNote.length > 400
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } rounded-2xl outline-none`}
-                rows={4}
-                placeholder="Write notes ..."
-              />
-              <div className="flex justify-between items-center mt-1">
-                <Tooltip
-                  id="more-info-notes"
-                  place="right"
-                  className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+          {/* Client Notes */}
+          <TextAreaField
+            label="Client Notes"
+            placeholder="Write notes ..."
+            value={newNote}
+            onChange={(e) => {
+              setNewNote(e.target.value);
+            }}
+            onKeyDown={handleNoteKeyDown}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField('Note', newNote)
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText('Note', newNote)
+                : ''
+            }
+            InfoText={NotesInfoText}
+            margin="mb-4"
+          />
+
+          {/* Notes List */}
+          <div className="mb-4 flex flex-col gap-2">
+            {notes.map((note, index) => (
+              <div key={index} className="w-full flex gap-1 items-start">
+                <div className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
+                  <span>{note}</span>
+                </div>
+                <div
+                  onClick={() => handleDeleteNote(index)}
+                  className="cursor-pointer"
                 >
-                  After writing each note, press the Enter key to save it and be
-                  able to add another note.
-                </Tooltip>
-                {/* <span className="text-[10px] text-Text-Quadruple">
-                  {newNote.length}/400 characters
-                </span> */}
+                  <SvgIcon
+                    src="/icons/delete.svg"
+                    color="#FC5474"
+                    width="24px"
+                    height="24px"
+                  />
+                </div>
               </div>
-              {showValidation && newNote.length > 400 && (
-                <div className="text-Red text-[10px] mt-1">
-                  You can enter up to 400 characters.
-                </div>
-              )}
-            </div>
+            ))}
+          </div>
 
-            {/* Notes List */}
-            <div className="mb-4 flex flex-col gap-2">
-              {notes.map((note, index) => (
-                <div key={index} className="w-full flex gap-1 items-start">
-                  <div className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
-                    <span>{note}</span>
-                  </div>
-                  <div
-                    onClick={() => handleDeleteNote(index)}
-                    className="cursor-pointer"
-                  >
-                    <SvgIcon
-                      src="/icons/delete.svg"
-                      color="#FC5474"
-                      width="24px"
-                      height="24px"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Practitioner Comments */}
-            {/* <div className="mb-4">
+          {/* Practitioner Comments */}
+          {/* <div className="mb-4">
               <label className="block text-xs font-medium">
                 Practitioner Comments
               </label>
@@ -593,8 +500,8 @@ const EditModal: FC<EditModalProps> = ({
               />
             </div> */}
 
-            {/* Comments List */}
-            {/* <div className="mb-4 flex flex-col gap-2">
+          {/* Comments List */}
+          {/* <div className="mb-4 flex flex-col gap-2">
               {practitionerComments?.map((comment, index) => (
                 <div key={index} className="w-full flex gap-1 items-start">
                   <div className="w-full flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
@@ -614,7 +521,6 @@ const EditModal: FC<EditModalProps> = ({
                 </div>
               ))}
             </div> */}
-          </form>
         </div>
 
         {/* Action Buttons */}

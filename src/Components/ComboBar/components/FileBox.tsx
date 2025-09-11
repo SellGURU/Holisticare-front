@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../../api/app';
@@ -6,23 +8,64 @@ import { publish } from '../../../utils/event';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface FileBoxProps {
   el: any;
   onDelete: () => void;
-  onDeleteHistory: (file_id: string) => void;
-  isLoading: boolean;
-  isDeleted: boolean;
+
+  onDeleteSuccess: () => void;
 }
 
 const FileBox: React.FC<FileBoxProps> = ({
   el,
+
   onDelete,
-  onDeleteHistory,
-  isLoading,
-  isDeleted,
+  onDeleteSuccess,
 }) => {
   const { id } = useParams<{ id: string }>();
+
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [isDeleted, setisDeleted] = useState(false);
+  const handleDelete = (fileId: string, memberId: string) => {
+    // setLoadingDelete(true);
+    // publish('fileIsDeleting', { isDeleting: false });
+    onDelete();
+    publish('openDeleteProgressModal', {});
+
+    Application.deleteFileHistory({
+      file_id: fileId,
+      member_id: memberId,
+    })
+      .then(() => {
+        setLoadingDelete(false);
+        setisDeleted(true);
+
+        onDeleteSuccess();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    const checkDelete = async () => {
+      try {
+        const res = await Application.checkDeleteLabReport({
+          file_id: fileId,
+          member_id: memberId,
+        });
+        if (res.status === 200 && res.data) {
+          publish('DeleteSuccess', {});
+          // publish('fileIsDeleting', { isDeleting: true });
+        } else {
+          setTimeout(checkDelete, 1000);
+        }
+      } catch (err) {
+        console.error('err', err);
+
+        setTimeout(checkDelete, 1000);
+      }
+    };
+    checkDelete();
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const months = [
@@ -46,12 +89,13 @@ const FileBox: React.FC<FileBoxProps> = ({
 
     return `${day} ${month} ${year}`;
   };
-  const [isUploded, setIsUploded] = useState(
-    el.status == 'completed' ? true : false,
-  );
-  useEffect(() => {
-    setIsUploded(el.status == 'completed' ? true : false);
-  }, [el.status]);
+  // const [isUploded, setIsUploded] = useState(
+  //   el.status == 'completed' ? true : false,
+  // );
+  // useEffect(() => {
+  //   setIsUploded(el.status == 'completed' ? true : false);
+  // }, [el.status]);
+
   const [isSureRemoveId, setIsSureRemoveId] = useState<number | null>(null);
   return (
     <>
@@ -96,14 +140,14 @@ const FileBox: React.FC<FileBoxProps> = ({
               >
                 {isSureRemoveId == el.file_id && !isDeleted ? (
                   <>
-                    {!isLoading ? (
+                    {!loadingDelete ? (
                       <div className="flex items-center justify-start gap-2">
                         <div className="text-Text-Quadruple text-xs">Sure?</div>
                         <img
                           src="/icons/tick-circle-green.svg"
                           alt=""
                           className="w-[20px] h-[20px] cursor-pointer"
-                          onClick={() => onDeleteHistory(el.file_id)}
+                          onClick={() => handleDelete(el.file_id, id || '')}
                         />
                         <img
                           src="/icons/close-circle-red.svg"
@@ -120,6 +164,7 @@ const FileBox: React.FC<FileBoxProps> = ({
                   </>
                 ) : (
                   <>
+                    {/* {isUploded && ( */}
                     <img
                       onClick={() => {
                         if (!isDeleted) {
@@ -130,26 +175,39 @@ const FileBox: React.FC<FileBoxProps> = ({
                       alt=""
                       className="cursor-pointer w-5 h-5"
                     />
-                    <img
-                      onClick={() => {
-                        if (!isDeleted) {
-                          if (el.file_id) {
-                            Application.downloadFille({
-                              file_id: el.file_id,
-                              member_id: id,
-                            })
-                              .then((res) => {
-                                try {
-                                  const blobUrl = res.data;
+                    {el.file_name !== 'Manual Entry' && (
+                      <img
+                        onClick={() => {
+                          if (!isDeleted) {
+                            if (el.file_id) {
+                              Application.downloadFille({
+                                file_id: el.file_id,
+                                member_id: id,
+                              })
+                                .then((res) => {
+                                  try {
+                                    const blobUrl = res.data;
 
-                                  // Create a direct download link for the blob URL
-                                  const link = document.createElement('a');
-                                  link.href = blobUrl;
-                                  link.download = el.file_name;
-                                  document.body.appendChild(link);
-                                  link.click();
-                                  document.body.removeChild(link);
-                                } catch (error: any) {
+                                    // Create a direct download link for the blob URL
+                                    const link = document.createElement('a');
+                                    link.href = blobUrl;
+                                    link.download = el.file_name;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                  } catch (error: any) {
+                                    console.error(
+                                      'Error downloading file:',
+                                      error,
+                                    );
+                                    console.error('Error details:', {
+                                      errorName: error?.name,
+                                      errorMessage: error?.message,
+                                      errorStack: error?.stack,
+                                    });
+                                  }
+                                })
+                                .catch((error: any) => {
                                   console.error(
                                     'Error downloading file:',
                                     error,
@@ -159,37 +217,29 @@ const FileBox: React.FC<FileBoxProps> = ({
                                     errorMessage: error?.message,
                                     errorStack: error?.stack,
                                   });
-                                }
-                              })
-                              .catch((error: any) => {
-                                console.error('Error downloading file:', error);
-                                console.error('Error details:', {
-                                  errorName: error?.name,
-                                  errorMessage: error?.message,
-                                  errorStack: error?.stack,
                                 });
-                              });
-                          } else {
-                            // For direct file object, create a blob URL
-                            const blobUrl = URL.createObjectURL(el.file);
+                            } else {
+                              // For direct file object, create a blob URL
+                              const blobUrl = URL.createObjectURL(el.file);
 
-                            // Create a direct download link for the blob URL
-                            const link = document.createElement('a');
-                            link.href = blobUrl;
-                            link.download = el.file_name || el.file.name;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
+                              // Create a direct download link for the blob URL
+                              const link = document.createElement('a');
+                              link.href = blobUrl;
+                              link.download = el.file_name || el.file.name;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
 
-                            // Clean up the blob URL
-                            URL.revokeObjectURL(blobUrl);
+                              // Clean up the blob URL
+                              URL.revokeObjectURL(blobUrl);
+                            }
                           }
-                        }
-                      }}
-                      className="cursor-pointer"
-                      src="/icons/import.svg"
-                      alt=""
-                    />
+                        }}
+                        className="cursor-pointer"
+                        src="/icons/import.svg"
+                        alt=""
+                      />
+                    )}
                   </>
                 )}
               </div>
@@ -271,7 +321,7 @@ const FileBox: React.FC<FileBoxProps> = ({
         ) : (
           ''
         )}
-        {isUploded && (
+        {/* {isUploded && (
           <div>
             <div className="flex items-center justify-start gap-1 mt-4">
               <img
@@ -305,7 +355,7 @@ const FileBox: React.FC<FileBoxProps> = ({
               </ButtonSecondary>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </>
   );

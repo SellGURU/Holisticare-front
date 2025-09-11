@@ -1008,6 +1008,51 @@ class Application extends Api {
       member_id: memberId,
     });
   };
+  static saveActionEdit = (data: any) => {
+    return this.post('/drift_analysis/edit_action_plan', data);
+  };
+  static getDietLibrary = () => {
+    return this.post('/diet_library/get_parent_id', {});
+  };
+  static getActivityLibrary = () => {
+    return this.post('/activity_library/get_parent_id', {});
+  };
+  static checkLabStepOne = (data: any) => {
+    return this.post('/patients/check_lab_report_step_one', data);
+  };
+  static SaveLabReport = (data: any) => {
+    return this.post('/patients/process_lab_report', data);
+  };
+  static getBiomarkerName = (data: any) => {
+    return this.post('/clinic/get_biomarkers_list', data);
+  };
+  static getBiomarkerUnit = (data: any) => {
+    return this.post('/clinic/get_biomarker_unit', data);
+  };
+  static checkDeleteLabReport = (data: any) => {
+    return this.post(`/patients/check_delete_lab_report`, data);
+  };
+  static checkStepTwoUpload = (data: any) => {
+    return this.post('/patients/check_lab_report_step_two', data);
+  };
+  // static getDietLibrary = () => {
+  //   return this.post('/diet_library/get_parent_id', {});
+  // };
+  // static getActivityLibrary = () => {
+  //   return this.post('/activity_library/get_parent_id', {});
+  // };
+  static getPlaygroundList = () => {
+    return this.post('/test_api/tests', {});
+  };
+  static setPlaygroundList = (data: any) => {
+    return this.post('/test_api', data);
+  };
+  static getInputPlayGround = () => {
+    return this.post('/test_api/inputs', {});
+  };
+  static getInputPlayGroundVariables = () => {
+    return this.post('/test_api/agents', {});
+  };
 }
 
 export default Application;

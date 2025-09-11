@@ -2,13 +2,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
-import SvgIcon from '../../../utils/svgIcon';
-// import Checkbox from '../../checkbox';
-// import RangeCard from './RangeCard';
-import MainModal from '../../MainModal';
-// import CustomSelect from '../../CustomSelect';
 import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
-import { Tooltip } from 'react-tooltip';
+import {
+  DoseInfoText,
+  DoseValidationEnglish,
+  MacrosValidationNumber,
+  NotesInfoText,
+  ValueInfoText,
+  ValueValidation,
+} from '../../../utils/library-unification';
+import SvgIcon from '../../../utils/svgIcon';
+import ValidationForms from '../../../utils/ValidationForms';
+import MainModal from '../../MainModal';
+import { MultiTextField, TextField } from '../../UnitComponents';
+import SelectBoxField from '../../UnitComponents/SelectBoxField';
+import TextAreaField from '../../UnitComponents/TextAreaField';
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -35,9 +43,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [title, setTitle] = useState(defalts?.Title);
-  const [dose, setDose] = useState(defalts?.Dose);
+  const [selectedGroup, setSelectedGroup] = useState(defalts?.Category || '');
+  const [title, setTitle] = useState(defalts?.Title || '');
+  const [dose, setDose] = useState(defalts?.Dose || '');
   const [value, setValue] = useState(defalts?.Value || '');
   const [unit, setUnit] = useState(defalts?.Unit || '');
   const [totalMacros, setTotalMacros] = useState({
@@ -46,26 +54,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     Carbs: defalts?.['Total Macros']?.Carbs || '',
   });
   const [showValidation, setShowValidation] = useState(false);
-  const [errors, setErrors] = useState({
-    title: '',
-    instruction: '',
-    dose: '',
-    value: '',
-    macros: '',
-    category: '',
-    frequency: '',
-    clientNotes: '',
-  });
-  const [touchedFields, setTouchedFields] = useState({
-    title: false,
-    instruction: false,
-    dose: false,
-    value: false,
-    macros: false,
-    category: false,
-    frequency: false,
-    clientNotes: false,
-  });
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -80,15 +68,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [groups, setGroups] = useState<any[]>([]);
 
   const [newNote, setNewNote] = useState('');
-  const [noteError, setNoteError] = useState('');
 
   const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
     setTotalMacros((prevTheme) => ({
       ...prevTheme,
-      [key]: value === '' ? '' : Number(value),
+      [key]: value,
     }));
   };
-  const [instructions, setInstructions] = useState(defalts?.Instruction);
+  const [instructions, setInstructions] = useState(defalts?.Instruction || '');
   const [selectedTimes] = useState<string[]>(defalts ? defalts.Times : []);
   const [selectedLocations, setSelectedLocations] = useState<string[]>(
     defalts ? defalts?.Activity_Location : [],
@@ -96,7 +83,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [notes, setNotes] = useState<string[]>(
     defalts ? defalts['Client Notes'] : [],
   );
-  const [showSelect, setShowSelect] = useState(false);
+  // const [showSelect, setShowSelect] = useState(false);
   // const [practitionerComment, setPractitionerComment] = useState('');
   // const [description, setDescription] = useState('');
   // const [practitionerComments, setPractitionerComments] = useState<string[]>(
@@ -154,13 +141,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       }
       setSelectedGroup(defalts.Category || null);
       setTitle(defalts.Title || '');
-      setDose(defalts.Dose || null);
-      setValue(defalts.Value || null);
-      setUnit(defalts.Unit || null);
+      setDose(defalts.Dose || '');
+      setValue(defalts.Value || '');
+      setUnit(defalts.Unit || '');
       setTotalMacros({
-        Fats: defalts?.['Total Macros']?.Fats || 0,
-        Protein: defalts?.['Total Macros']?.Protein || 0,
-        Carbs: defalts?.['Total Macros']?.Carbs || 0,
+        Fats: defalts?.['Total Macros']?.Fats || '',
+        Protein: defalts?.['Total Macros']?.Protein || '',
+        Carbs: defalts?.['Total Macros']?.Carbs || '',
       });
       setInstructions(defalts.Instruction || '');
       // setSelectedTimes(defalts.Times || []);
@@ -245,17 +232,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     onReset();
     setStep(0);
   };
-  const selectRef = useRef(null);
+  // const selectRef = useRef(null);
   const modalRef = useRef(null);
-  const selectButRef = useRef(null);
+  // const selectButRef = useRef(null);
 
-  useModalAutoClose({
-    refrence: selectRef,
-    buttonRefrence: selectButRef,
-    close: () => {
-      setShowSelect(false);
-    },
-  });
+  // useModalAutoClose({
+  //   refrence: selectRef,
+  //   buttonRefrence: selectButRef,
+  //   close: () => {
+  //     setShowSelect(false);
+  //   },
+  // });
 
   useModalAutoClose({
     refrence: modalRef,
@@ -267,32 +254,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    if (value.length <= 400) {
-      setNewNote(value);
-      setNoteError('');
-      setErrors((prev) => ({
-        ...prev,
-        clientNotes: '',
-      }));
-    } else {
-      setNewNote(value.slice(0, 400));
-      setNoteError('You can enter up to 400 characters');
-      setErrors((prev) => ({
-        ...prev,
-        clientNotes: 'You can enter up to 400 characters',
-      }));
-    }
-  };
-
   const handleNoteKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (newNote.trim() && !noteError) {
+      if (newNote.trim() && newNote.slice(0, 400)) {
         setNotes([...notes, newNote]);
         setNewNote('');
-        setNoteError('');
       }
     }
   };
@@ -317,9 +284,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setSelectedDaysMonth([]);
     setSelectedGroup(null);
     setTotalMacros({
-      Fats: null,
-      Protein: null,
-      Carbs: null,
+      Fats: '',
+      Protein: '',
+      Carbs: '',
     });
     setInstructions('');
     // setSelectedTimes([]);
@@ -331,7 +298,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     // setPractitionerComment('');
     setNewNote('');
     setTitle('');
-    setDose(null);
+    setDose('');
     setValue('');
     setUnit('');
     setAddData({
@@ -356,17 +323,21 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
 
     // Category specific validations
-    if (selectedGroup === 'Supplement' && !dose) {
+    if (
+      selectedGroup === 'Supplement' &&
+      !ValidationForms.IsvalidField('Dose', dose)
+    ) {
       return;
     }
-    if (selectedGroup === 'Lifestyle' && !value) {
+    if (
+      selectedGroup === 'Lifestyle' &&
+      !ValidationForms.IsvalidField('Value', value)
+    ) {
       return;
     }
     if (
       selectedGroup === 'Diet' &&
-      (totalMacros.Carbs === '' ||
-        totalMacros.Protein === '' ||
-        totalMacros.Fats === '')
+      !ValidationForms.IsvalidField('Macros', totalMacros)
     ) {
       return;
     }
@@ -408,7 +379,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Category: selectedGroup,
         Title: title,
         Instruction: instructions,
-        Value: value,
+        Value: Number(value),
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType === 'weekly'
@@ -421,11 +392,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Unit: unit,
       });
     } else if (selectedGroup === 'Diet') {
+      const numberMacros = {
+        Fats: Number(totalMacros.Fats),
+        Protein: Number(totalMacros.Protein),
+        Carbs: Number(totalMacros.Carbs),
+      };
       onSubmit({
         Category: selectedGroup,
         Title: title,
         Instruction: instructions,
-        'Total Macros': totalMacros,
+        'Total Macros': numberMacros,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType === 'weekly'
@@ -542,10 +518,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (frequencyType === 'monthly' && selectedDaysMonth.length === 0) {
       return true;
     }
-    if (selectedGroup === 'Supplement' && !dose) {
+    if (
+      selectedGroup === 'Supplement' &&
+      !ValidationForms.IsvalidField('Dose', dose)
+    ) {
       return true;
     }
-    if (selectedGroup === 'Lifestyle' && !value) {
+    if (
+      selectedGroup === 'Lifestyle' &&
+      !ValidationForms.IsvalidField('Value', value)
+    ) {
       return true;
     }
     // if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
@@ -553,7 +535,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     // }
     if (
       selectedGroup === 'Diet' &&
-      (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
+      !ValidationForms.IsvalidField('Macros', totalMacros)
     ) {
       return true;
     }
@@ -574,41 +556,33 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     return false;
   };
 
-  const validateDose = (value: string) => {
-    if (!value) {
-      return 'This field is required.';
-    }
-    const doseRegex = /^\d+\s*[a-zA-Z]+$/;
-    if (!doseRegex.test(value)) {
-      return 'Dose must follow the described format.';
-    }
-    return '';
-  };
+  // const validateDose = (value: string) => {
+  //   if (!value) {
+  //     return 'This field is required.';
+  //   }
+  //   const doseRegex = /^\d+\s*[a-zA-Z]+$/;
+  //   if (!doseRegex.test(value)) {
+  //     return 'Dose must follow the described format.';
+  //   }
+  //   return '';
+  // };
 
-  const handleDoseBlur = () => {
-    setTouchedFields((prev) => ({ ...prev, dose: true }));
-    const error = validateDose(dose);
-    setErrors((prev) => ({ ...prev, dose: error }));
-  };
+  // const handleDoseBlur = () => {
+  //   setTouchedFields((prev) => ({ ...prev, dose: true }));
+  //   const error = validateDose(dose);
+  //   setErrors((prev) => ({ ...prev, dose: error }));
+  // };
 
-  const handleDoseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow English characters, numbers, and spaces
-    const englishOnly = value.replace(/[^a-zA-Z0-9\s]/g, '');
-    setDose(englishOnly);
-    if (touchedFields.dose) {
-      const error = validateDose(englishOnly);
-      setErrors((prev) => ({ ...prev, dose: error }));
-    }
-  };
-
-  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow positive integers
-    if (/^\d*$/.test(value)) {
-      setValue(value === '' ? '' : Number(value));
-    }
-  };
+  // const handleDoseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   // Only allow English characters, numbers, and spaces
+  //   const englishOnly = value.replace(/[^a-zA-Z0-9\s]/g, '');
+  //   setDose(englishOnly);
+  //   if (touchedFields.dose) {
+  //     const error = validateDose(englishOnly);
+  //     setErrors((prev) => ({ ...prev, dose: error }));
+  //   }
+  // };
 
   const validateForm = () => {
     const newErrors = {
@@ -631,7 +605,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
 
     if (selectedGroup === 'Supplement') {
-      newErrors.dose = validateDose(dose);
+      newErrors.dose = dose ? '' : 'This field is required.';
     }
 
     if (selectedGroup === 'Lifestyle' && !value) {
@@ -663,11 +637,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       newErrors.frequency = 'Please select at least one day of the month.';
     }
 
-    if (noteError) {
+    if (newNote.length > 400) {
       newErrors.clientNotes = 'You can enter up to 400 characters';
     }
 
-    setErrors(newErrors);
     return !Object.values(newErrors).some((error) => error !== '');
   };
 
@@ -706,7 +679,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       saveActivity();
     }
   };
-
   return (
     <MainModal
       onClose={() => {
@@ -718,7 +690,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       isOpen={isOpen}
     >
       <div
-        className={`bg-white p-2 pb-6 rounded-2xl shadow-800 relative pt-10 ${selectedGroup == 'Activity' ? 'w-[920px]' : 'w-[530px]'}  text-Text-Primary`}
+        className={`bg-white p-2 pb-6 rounded-2xl shadow-800 relative pt-10 ${selectedGroup == 'Activity' && step == 1 ? 'w-[920px]' : 'w-[530px]'}  text-Text-Primary`}
       >
         <div className="overflow-auto max-h-[620px] p-4 pt-0">
           <h2
@@ -729,402 +701,217 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             </div>
           </h2>
           {step == 0 && (
-            <div
-              className={`grid ${selectedGroup == 'Activity' && 'grid-cols-2 gap-4'}`}
-            >
+            <div className={`grid `}>
               <div className="">
-                <div
-                  className={`w-full relative overflow-visible mt-2 mb-4 ${defalts?.Category ? 'opacity-50' : 'opacity-100'}`}
-                >
-                  <label className="text-xs font-medium text-Text-Primary">
-                    Category
-                  </label>
-                  <div
-                    ref={selectButRef}
-                    onClick={() => {
-                      if (!defalts?.Category) {
-                        setShowSelect(!showSelect);
-                      }
-                    }}
-                    className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${!selectedGroup && showValidation ? 'border-red-500' : 'border-Gray-50'}`}
-                  >
-                    {selectedGroup ? (
-                      <div className="text-xs text-Text-Primary">
-                        {selectedGroup}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-gray-400">
-                        Select Category
-                      </div>
-                    )}
-                    <div>
-                      <img
-                        className={`${showSelect && 'rotate-180'}`}
-                        src="/icons/arow-down-drop.svg"
-                        alt=""
-                      />
-                    </div>
-                  </div>
-                  {!selectedGroup && showValidation && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      This field is required.
-                    </span>
-                  )}
-                  {showSelect && (
-                    <div
-                      ref={selectRef}
-                      className="w-full z-20 shadow-200  py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]"
-                    >
-                      {groups.map((groupObj, index) => {
-                        const groupName = Object.keys(groupObj)[0];
-                        return (
-                          <div
-                            key={index}
-                            onClick={() => {
-                              setSelectedGroup(groupName);
-                              setShowSelect(false);
-                            }}
-                            className="text-[12px] text-Text-Primary my-1 cursor-pointer"
-                          >
-                            {groupName}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-                <div className="mb-4">
-                  <label className="block text-xs font-medium">Title</label>
-                  <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Write the action's title..."
-                    type="text"
-                    className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-[6px] px-3 border ${!title && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
-                  />
-                  {!title && showValidation && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      This field is required.
-                    </span>
-                  )}
-                </div>
-                {/* <div className={`mb-4`}>
-                  <label className="block text-xs font-medium">
-                    Description
-                  </label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    onKeyDown={handleNoteKeyDown}
-                    className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${!description && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
-                    rows={6}
-                    placeholder="Write the action's description..."
-                  />
-                  {!description && showValidation && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      This field is required.
-                    </span>
-                  )}
-                </div> */}
-                {/*  */}
-                <div className="mb-4">
-                  <label className="flex w-full justify-start gap-1 items-center text-xs font-medium">
-                    Instruction
-                  </label>
-                  <textarea
-                    value={instructions}
-                    onChange={(e) => setInstructions(e.target.value)}
-                    placeholder="Write the action's instruction..."
-                    className={`mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${!instructions && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
-                    rows={6}
-                  />
-                  {!instructions && showValidation && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      This field is required.
-                    </span>
-                  )}
-                </div>
+                <SelectBoxField
+                  label="Category"
+                  options={groups.map((group) => Object.keys(group)[0])}
+                  value={selectedGroup || ''}
+                  onChange={(value) => setSelectedGroup(value)}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField(
+                          'Category',
+                          selectedGroup || '',
+                        )
+                      : true
+                  }
+                  placeholder="Select Category"
+                  disabled={defalts?.Category}
+                  validationText={
+                    showValidation
+                      ? ValidationForms.ValidationText(
+                          'Category',
+                          selectedGroup || '',
+                        )
+                      : ''
+                  }
+                  margin={`${defalts?.Category ? 'opacity-50' : 'opacity-100'} mb-4 mt-2`}
+                />
+                <TextField
+                  label="Title"
+                  placeholder="Write the action's title..."
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField('Title', title)
+                      : true
+                  }
+                  validationText={
+                    showValidation
+                      ? ValidationForms.ValidationText('Title', title)
+                      : ''
+                  }
+                  margin="mb-4"
+                />
+                <TextAreaField
+                  label="Instruction"
+                  placeholder="Write the action's instruction..."
+                  value={instructions}
+                  onChange={(e) => setInstructions(e.target.value)}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField(
+                          'Instruction',
+                          instructions,
+                        )
+                      : true
+                  }
+                  validationText={
+                    showValidation
+                      ? ValidationForms.ValidationText(
+                          'Instruction',
+                          instructions,
+                        )
+                      : ''
+                  }
+                  margin="mb-4"
+                />
                 {selectedGroup === 'Supplement' && (
-                  <div className="flex flex-col mb-4 w-full gap-2">
-                    <div className="text-xs flex font-medium text-Text-Primary">
-                      Dose
-                      <div data-tooltip-id="dose-tooltip">
-                        <img
-                          src="/icons/info-circle.svg"
-                          alt=""
-                          className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
-                        />
-                      </div>
-                      <Tooltip
-                        id="dose-tooltip"
-                        place="right-end"
-                        className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
-                      >
-                        <div className="flex items-center gap-1">
-                          Dose must include a number followed by a unit (e.g.,
-                          '50 mg')
-                        </div>
-                      </Tooltip>
-                    </div>
-                    <input
-                      placeholder="Write the supplement's dose..."
-                      value={dose}
-                      onChange={handleDoseChange}
-                      onBlur={handleDoseBlur}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${showValidation && touchedFields.dose && errors.dose ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                    />
-                    {showValidation && touchedFields.dose && errors.dose && (
-                      <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
-                        {errors.dose}
-                      </span>
-                    )}
-                  </div>
+                  <TextField
+                    label="Dose"
+                    placeholder="Enter dose amount"
+                    value={dose}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const englishOnly = DoseValidationEnglish(value);
+                      setDose(englishOnly);
+                    }}
+                    isValid={
+                      showValidation
+                        ? ValidationForms.IsvalidField('Dose', dose)
+                        : true
+                    }
+                    validationText={
+                      showValidation
+                        ? ValidationForms.ValidationText('Dose', dose)
+                        : ''
+                    }
+                    InfoText={DoseInfoText}
+                    margin="mb-4"
+                  />
                 )}
                 {selectedGroup === 'Lifestyle' && (
-                  <div className="flex flex-col mb-4 w-full gap-2">
-                    <div className="text-xs flex items-center  font-medium text-Text-Primary">
-                      Value
-                      <div data-tooltip-id="value-tooltip">
-                        <img
-                          src="/icons/info-circle.svg"
-                          alt=""
-                          className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
-                        />
-                      </div>
-                      <Tooltip
-                        id="value-tooltip"
-                        place="right-end"
-                        className="!bg-white !shadow-100 !text-Text-Quadruple !w-[284px] !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
-                      >
-                        <div className="flex items-center gap-1">
-                          Provide the numerical value, and if needed, enter the
-                          unit manually (e.g., 8 + Hours)
-                        </div>
-                      </Tooltip>
-                    </div>
-                    <div className="flex justify-between">
-                      <div className="w-[48%]">
-                        <input
-                          placeholder="Enter Value..."
-                          value={value}
-                          type="text"
-                          onChange={handleValueChange}
-                          onKeyDown={(e) => {
-                            // Allow navigation keys
-                            if (
-                              e.key === 'ArrowUp' ||
-                              e.key === 'ArrowDown' ||
-                              e.key === 'ArrowLeft' ||
-                              e.key === 'ArrowRight' ||
-                              e.key === 'Tab' ||
-                              e.key === 'Enter'
-                            ) {
-                              return;
-                            }
-                            // Allow numbers, backspace, delete
-                            if (
-                              !/[\d\b]/.test(e.key) &&
-                              e.key !== 'Backspace' &&
-                              e.key !== 'Delete' &&
-                              e.key !== 'Tab'
-                            ) {
-                              e.preventDefault();
-                            }
-                          }}
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                        />
-                        {!value && showValidation && (
-                          <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
-                            This field is required.
-                          </span>
-                        )}
-                      </div>
-                      <input
-                        placeholder="Enter Unit..."
-                        value={unit}
-                        type="text"
-                        onChange={(e) => {
-                          const onlyLetters = e.target.value.replace(
-                            /[^a-zA-Z]/g,
-                            '',
-                          );
-                          setUnit(onlyLetters);
-                        }}
-                        className={`w-[48%] h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                      />
-                    </div>
-                  </div>
+                  <MultiTextField
+                    label="Value"
+                    inputs={[
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Enter value amount',
+                        value: value,
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField('Value', value)
+                          : true,
+                      },
+                      {
+                        mode: 'text',
+                        pattern: '*',
+                        placeholder: 'Enter unit',
+                        value: unit,
+                        isValid: true,
+                      },
+                    ]}
+                    onchanges={(vales: Array<any>) => {
+                      if (ValueValidation(vales[0].value)) {
+                        setValue(vales[0].value);
+                      }
+                      const onlyLetters = vales[1].value.replace(
+                        /[^a-zA-Z]/g,
+                        '',
+                      );
+                      setUnit(onlyLetters);
+                    }}
+                    onPaste={(e) => {
+                      const pastedData = e.clipboardData.getData('text');
+                      if (!ValueValidation(pastedData)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    InfoText={ValueInfoText}
+                    validationText={
+                      showValidation
+                        ? ValidationForms.ValidationText('Value', value)
+                        : ''
+                    }
+                    margin="mb-4"
+                  />
                 )}
                 {selectedGroup === 'Diet' && (
-                  <div className="flex flex-col w-full mb-4">
-                    <div className="font-medium flex text-Text-Primary text-xs">
-                      Macros Goal
-                      <div data-tooltip-id="Macros-tooltip">
-                        <img
-                          src="/icons/info-circle.svg"
-                          alt=""
-                          className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
-                        />
-                      </div>
-                      <Tooltip
-                        id="Macros-tooltip"
-                        place="right-end"
-                        className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
-                      >
-                        <div className="flex items-center gap-1">
-                          Macros Goal must contain just Whole Numbers.
-                        </div>
-                      </Tooltip>
-                    </div>
-                    <div className="flex items-center justify-between mt-3 gap-4">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1">
-                          <div className="text-[10px] font-medium text-Text-Primary">
-                            Carbs
-                          </div>
-                          <div className="text-[10px] text-Text-Quadruple">
-                            (gr)
-                          </div>
-                        </div>
-                        <input
-                          type="number"
-                          placeholder="Carbohydrates"
-                          value={totalMacros.Carbs}
-                          onChange={(e) =>
-                            updateTotalMacros(
-                              'Carbs',
-                              e.target.value === ''
-                                ? ''
-                                : Number(e.target.value),
+                  <MultiTextField
+                    label="Macros Goal"
+                    inputs={[
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Carb amount',
+                        value: totalMacros.Carbs,
+                        label: 'Carbs',
+                        unit: '(gr)',
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField(
+                              'MacrosSeparately',
+                              totalMacros.Carbs,
                             )
-                          }
-                          onKeyDown={(e) => {
-                            // Allow navigation keys
-                            if (
-                              e.key === 'ArrowUp' ||
-                              e.key === 'ArrowDown' ||
-                              e.key === 'ArrowLeft' ||
-                              e.key === 'ArrowRight' ||
-                              e.key === 'Tab' ||
-                              e.key === 'Enter'
-                            ) {
-                              return;
-                            }
-                            // Allow numbers, backspace, delete
-                            if (
-                              !/[\d\b]/.test(e.key) &&
-                              e.key !== 'Backspace' &&
-                              e.key !== 'Delete' &&
-                              e.key !== 'Tab'
-                            ) {
-                              e.preventDefault();
-                            }
-                          }}
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Carbs && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1">
-                          <div className="text-[10px] font-medium text-Text-Primary">
-                            Proteins
-                          </div>
-                          <div className="text-[10px] text-Text-Quadruple">
-                            (gr)
-                          </div>
-                        </div>
-                        <input
-                          type="number"
-                          placeholder="Proteins"
-                          value={totalMacros.Protein}
-                          onChange={(e) =>
-                            updateTotalMacros(
-                              'Protein',
-                              e.target.value === ''
-                                ? ''
-                                : Number(e.target.value),
+                          : true,
+                      },
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Protein amount',
+                        value: totalMacros.Protein,
+                        label: 'Proteins',
+                        unit: '(gr)',
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField(
+                              'MacrosSeparately',
+                              totalMacros.Protein,
                             )
-                          }
-                          onKeyDown={(e) => {
-                            // Allow navigation keys
-                            if (
-                              e.key === 'ArrowUp' ||
-                              e.key === 'ArrowDown' ||
-                              e.key === 'ArrowLeft' ||
-                              e.key === 'ArrowRight' ||
-                              e.key === 'Tab' ||
-                              e.key === 'Enter'
-                            ) {
-                              return;
-                            }
-                            // Allow numbers, backspace, delete
-                            if (
-                              !/[\d\b]/.test(e.key) &&
-                              e.key !== 'Backspace' &&
-                              e.key !== 'Delete' &&
-                              e.key !== 'Tab'
-                            ) {
-                              e.preventDefault();
-                            }
-                          }}
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Protein && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1">
-                          <div className="text-[10px] font-medium text-Text-Primary">
-                            Fats
-                          </div>
-                          <div className="text-[10px] text-Text-Quadruple">
-                            (gr)
-                          </div>
-                        </div>
-                        <input
-                          type="number"
-                          placeholder="Fats"
-                          value={totalMacros.Fats}
-                          onChange={(e) =>
-                            updateTotalMacros(
-                              'Fats',
-                              e.target.value === ''
-                                ? ''
-                                : Number(e.target.value),
+                          : true,
+                      },
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Fat amount',
+                        value: totalMacros.Fats,
+                        label: 'Fats',
+                        unit: '(gr)',
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField(
+                              'MacrosSeparately',
+                              totalMacros.Fats,
                             )
-                          }
-                          onKeyDown={(e) => {
-                            // Allow navigation keys
-                            if (
-                              e.key === 'ArrowUp' ||
-                              e.key === 'ArrowDown' ||
-                              e.key === 'ArrowLeft' ||
-                              e.key === 'ArrowRight' ||
-                              e.key === 'Tab' ||
-                              e.key === 'Enter'
-                            ) {
-                              return;
-                            }
-                            // Allow numbers, backspace, delete
-                            if (
-                              !/[\d\b]/.test(e.key) &&
-                              e.key !== 'Backspace' &&
-                              e.key !== 'Delete' &&
-                              e.key !== 'Tab'
-                            ) {
-                              e.preventDefault();
-                            }
-                          }}
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Fats && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                        />
-                      </div>
-                    </div>
-                    {(!totalMacros.Carbs ||
-                      !totalMacros.Protein ||
-                      !totalMacros.Fats) &&
-                      showValidation && (
-                        <span className="text-[10px] mt-1 ml-2 text-red-500">
-                          These fields are required.
-                        </span>
-                      )}
-                  </div>
+                          : true,
+                      },
+                    ]}
+                    onchanges={(vales: Array<any>) => {
+                      updateTotalMacros(
+                        'Fats',
+                        MacrosValidationNumber(vales[2].value)
+                          ? vales[2].value
+                          : totalMacros.Fats,
+                      );
+                      updateTotalMacros(
+                        'Protein',
+                        MacrosValidationNumber(vales[1].value)
+                          ? vales[1].value
+                          : totalMacros.Protein,
+                      );
+                      updateTotalMacros(
+                        'Carbs',
+                        MacrosValidationNumber(vales[0].value)
+                          ? vales[0].value
+                          : totalMacros.Carbs,
+                      );
+                    }}
+                    validationText={
+                      showValidation
+                        ? ValidationForms.ValidationText('Macros', totalMacros)
+                        : ''
+                    }
+                    margin="mb-4"
+                  />
                 )}
                 {/* {selectedGroup === 'Activity' && (
                   <>
@@ -1489,29 +1276,27 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 ) : (
                   ''
                 )}
-                <div className="mb-4">
-                  <label className="block text-xs font-medium">
-                    Client Note
-                  </label>
-                  <div className="relative">
-                    <textarea
-                      value={newNote}
-                      onChange={handleNoteChange}
-                      onKeyDown={handleNoteKeyDown}
-                      className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${noteError ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
-                      rows={4}
-                      placeholder="Enter your observations, concerns, or feedback here..."
-                    />
-                    {/* <div className="absolute bottom-2 right-3 text-[10px] text-Text-Quadruple">
-                      {newNote.length}/400
-                    </div> */}
-                  </div>
-                  {(noteError || (showValidation && errors.clientNotes)) && (
-                    <span className="text-[10px] mt-1 ml-2 text-red-500">
-                      {errors.clientNotes}
-                    </span>
-                  )}
-                </div>
+                <TextAreaField
+                  label="Client Notes"
+                  placeholder="Write notes ..."
+                  value={newNote}
+                  onChange={(e) => {
+                    setNewNote(e.target.value);
+                  }}
+                  onKeyDown={handleNoteKeyDown}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField('Note', newNote)
+                      : true
+                  }
+                  validationText={
+                    showValidation
+                      ? ValidationForms.ValidationText('Note', newNote)
+                      : ''
+                  }
+                  InfoText={NotesInfoText}
+                  margin="mb-4"
+                />
                 <div
                   className={`${
                     notes.length > 0 ? 'mb-4' : ''

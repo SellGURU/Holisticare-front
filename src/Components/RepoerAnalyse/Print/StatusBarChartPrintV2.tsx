@@ -34,28 +34,48 @@ const StatusBarChartPrintV2 = ({
     return '#FBAD37';
   };
   const getRangeString = (el: {
-    low: number | null;
-    high: number | null;
+    low: string | number | null;
+    high: string | number | null;
   }): string => {
-    let str = '';
-    if (el.low == null) {
-      str += ' <  ';
-    } else if (el.high == null) {
-      str += ' >  ';
+    const normalize = (val: string | number | null): string | null => {
+      if (val == null || val === '') return null;
+      return String(val).trim();
+    };
+
+    const isNumeric = (val: string | number | null): boolean => {
+      if (val == null || val === '') return false;
+      return !isNaN(Number(val));
+    };
+
+    const formatNumber = (val: string | number): string => {
+      const num = Number(val);
+      return Number.isNaN(num) ? String(val) : String(num); // removes .000
+    };
+
+    const low = normalize(el.low);
+    const high = normalize(el.high);
+
+    // Equality check
+    if (low && high) {
+      if (isNumeric(low) && isNumeric(high)) {
+        if (Number(low) === Number(high)) {
+          return formatNumber(low);
+        }
+      } else if (low.toLowerCase() === high.toLowerCase()) {
+        return low;
+      }
     }
-    if (el.low != null) {
-      str += el.low;
-    }
-    if (el.high != null && el.low != null) {
-      str += ' - ' + el.high;
-    } else if (el.high != null) {
-      str += el.high;
-    }
-    // if (el.high == null) {
-    //   str += ' < ';
-    // }
-    return str;
+
+    // Open-ended ranges
+    if (!low && high) return `< ${high}`;
+    if (!high && low) return `> ${low}`;
+
+    // Normal range
+    if (low && high) return `${low} - ${high}`;
+
+    return '';
   };
+
   const sortByRange = (data: any) => {
     // console.log(data);
     return data.sort((a: any, b: any) => {
@@ -139,7 +159,7 @@ const StatusBarChartPrintV2 = ({
       status[0] == el.status &&
       values &&
       (el.low === null || Number(values[0]) >= Number(el.low)) &&
-      (el.high === null || Number(values[0]) <= Number(el.high))
+      (el.high === null || Number(values[0]) < Number(el.high))
     ) {
       return 'inRange';
     }
@@ -174,7 +194,18 @@ const StatusBarChartPrintV2 = ({
                 style={{
                   color: '#005f73 ',
                   fontSize: '8px',
-                  top: '-32px',
+                  top: '-35px',
+                  left: '-4px',
+                }}
+                className={`absolute w-full px-1  flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]`}
+              >
+                {el.label}
+              </div>
+              <div
+                style={{
+                  color: '#005f73 ',
+                  fontSize: '8px',
+                  top: '-20px',
                   left: '-4px',
                 }}
                 className="absolute w-full px-1 text-Primary-DeepTeal flex flex-col items-center justify-center left-[-4px] top-[-35px] opacity-90 text-[10px] break-words text-ellipsis"
@@ -189,15 +220,11 @@ const StatusBarChartPrintV2 = ({
                     textAlign: 'center',
                   }}
                 >
-                  {el.label}
-                  {el.label !== '' && el.label.length > 40 && (
-                    <>{getRangeString(el)}</>
-                  )}
-                </span>
-                {el.label !== '' && el.label.length <= 40 && (
+                  {el.label != '' && <>(</>}
                   <>{getRangeString(el)}</>
-                )}
-                {/* </TooltipText> */}
+
+                  {el.label != '' && <>)</>}
+                </span>
               </div>
 
               {(() => {

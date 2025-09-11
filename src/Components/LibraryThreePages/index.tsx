@@ -2,7 +2,7 @@
 import { FC, useEffect, useState } from 'react';
 import HeaderLibraryTreePages from './components/Header';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
-import AddModalLibraryTreePages from './components/AddModal';
+import AddModalLibraryTreePages from './components/AddModal2';
 import Application from '../../api/app';
 import TableNoPaginateForLibraryThreePages from './components/TableNoPaginate';
 import PreviewModalLibraryTreePages from './components/PreviewModal';
@@ -17,10 +17,10 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const [loadingCall, setLoadingCall] = useState(false);
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [clearData, setClearData] = useState(false);
-  const handleClearData = (value: boolean) => {
-    setClearData(value);
-  };
+  // const [clearData, setClearData] = useState(false);
+  // const handleClearData = (value: boolean) => {
+  //   setClearData(value);
+  // };
   const handleChangeSearch = (value: any) => {
     setSearchQuery(value);
   };
@@ -29,10 +29,12 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
     setAddShowModal(false);
   };
   const handleOpenModal = () => {
+    setPreviewShowModal(false);
     setAddShowModal(true);
   };
   const [previewShowModal, setPreviewShowModal] = useState(false);
   const handlePreviewCloseModal = () => {
+    setSelectedRow(null);
     setPreviewShowModal(false);
   };
   const handlePreviewOpenModal = () => {
@@ -83,7 +85,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             setLoadingCall(false);
             setAddShowModal(false);
             setSelectedRow(null);
-            setClearData(true);
+            // setClearData(true);
           })
           .catch((err) => {
             console.error(err);
@@ -99,7 +101,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             setLoadingCall(false);
             setAddShowModal(false);
             setSelectedRow(null);
-            setClearData(true);
+            // setClearData(true);
           })
           .catch((err) => {
             console.error(err);
@@ -115,7 +117,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             setLoadingCall(false);
             setAddShowModal(false);
             setSelectedRow(null);
-            setClearData(true);
+            // setClearData(true);
           })
           .catch((err) => {
             console.error(err);
@@ -132,7 +134,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             setLoadingCall(false);
             setAddShowModal(false);
             setSelectedRow(null);
-            setClearData(true);
+            // setClearData(true);
           })
           .catch((err) => {
             console.error(err);
@@ -145,7 +147,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             setLoadingCall(false);
             setAddShowModal(false);
             setSelectedRow(null);
-            setClearData(true);
+            // setClearData(true);
           })
           .catch((err) => {
             console.error(err);
@@ -158,7 +160,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             setLoadingCall(false);
             setAddShowModal(false);
             setSelectedRow(null);
-            setClearData(true);
+            // setClearData(true);
           })
           .catch((err) => {
             console.error(err);
@@ -273,6 +275,18 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         </>
       )}
       <AddModalLibraryTreePages
+        onSubmit={onSave}
+        loadingCall={loadingCall}
+        pageType={pageType}
+        mode={selectedRow ? 'edit' : 'add'}
+        isOpen={addShowModal}
+        editData={selectedRow}
+        onClose={() => {
+          handleCloseModal();
+          setSelectedRow(null);
+        }}
+      />
+      {/* <AddModalLibraryTreePages
         addShowModal={addShowModal}
         handleCloseModal={handleCloseModal}
         pageType={pageType}
@@ -282,10 +296,13 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         loadingCall={loadingCall}
         clearData={clearData}
         handleClearData={handleClearData}
-      />
+      /> */}
       <PreviewModalLibraryTreePages
         previewShowModal={previewShowModal}
-        handlePreviewCloseModal={handlePreviewCloseModal}
+        handlePreviewCloseModal={() => {
+          handlePreviewCloseModal();
+          // setSelectedRow(null);
+        }}
         pageType={pageType}
         selectedRow={selectedRow}
         handleOpenModal={handleOpenModal}

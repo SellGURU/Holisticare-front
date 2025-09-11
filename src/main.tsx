@@ -12,6 +12,8 @@ import UploaderTooltipContainer from './Components/UploaderTooltip/index.tsx';
 import { initGlobalErrorHandler } from './globalErrorHandler.ts';
 import './index.css';
 import AppContextProvider from './store/app.tsx';
+import UploadFileProgressModal from './Components/uploadFileProgressModal/index.tsx';
+import DeleteFileProgressModal from './Components/deleteFileProgressModal/index.tsx';
 
 initGlobalErrorHandler();
 
@@ -25,5 +27,7 @@ createRoot(document.getElementById('root')!).render(
     <ToastContainer />
     <UploaderTooltipContainer />
     <DeletedTooltipContainer />
+    <UploadFileProgressModal />
+    <DeleteFileProgressModal />
   </>,
 );

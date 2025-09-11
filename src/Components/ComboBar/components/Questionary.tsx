@@ -784,7 +784,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
               <div className="flex justify-center w-full items-start  ">
                 <div
                   style={{ overflowWrap: 'break-word' }}
-                  className="w-full mt-2 h-[70vh] overflow-auto"
+                  className="w-full flex flex-col gap-[2px] mt-[2px] h-[70vh] overflow-auto"
                 >
                   {data?.map((el: any, index: number) => {
                     return (

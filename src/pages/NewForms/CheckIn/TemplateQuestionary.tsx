@@ -34,11 +34,13 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
         return '/images/forms/fitness-test.png';
       case 'German Clinic Dubai Functional Medicine & EMS Client Questionnaire':
         return '/images/forms/ems.png';
+      case 'Functional Medicine & EMS Client Questionnaire':
+        return '/images/forms/ems.png';
     }
   };
   return (
     <>
-      <div className="flex flex-col justify-between bg-white w-[93vw] md:w-[864px] rounded-[20px] p-4">
+      <div className="flex flex-col justify-between bg-white w-[90vw] md:w-[864px] rounded-[20px] p-4 ">
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
             <div className="text-Text-Primary font-medium">
@@ -51,12 +53,12 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
               <Circleloader></Circleloader>
             </div>
           ) : (
-            <div className="flex items-center justify-between mt-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 mt-6 max-h-[450px] overflow-auto pr-2 md:pr-0">
               {templates.map((el: any) => {
                 return (
                   <>
                     <div
-                      className="flex flex-col items-center h-[352px] w-[193px] cursor-pointer"
+                      className="flex flex-col items-center h-[352px] w-full md:w-[193px] cursor-pointer"
                       onClick={() => {
                         onselect(el);
                       }}
@@ -83,7 +85,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                 );
               })}
               <div
-                className="flex flex-col items-center h-[352px] w-[193px] cursor-pointer"
+                className="flex flex-col items-center h-[352px] w-full md:w-[193px] cursor-pointer"
                 onClick={() => {
                   onselect(null);
                 }}

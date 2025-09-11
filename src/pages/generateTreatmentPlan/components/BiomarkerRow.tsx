@@ -147,19 +147,20 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               {(value.Category == 'Diet' ||
                 value.Category == 'Activity' ||
                 value.Category == 'Lifestyle' ||
-                value.Category == 'Supplement') && (
-                <>
-                  <div
-                    className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
-                    style={{ backgroundColor: bgColor }}
-                  >
+                value.Category == 'Supplement') &&
+                value?.label && (
+                  <>
                     <div
-                      className={`size-[8px] select-none rounded-full`}
-                      style={{ backgroundColor: color }}
-                    ></div>
-                    {value?.label || '-'}
-                  </div>
-                  {/* {!editAble && (
+                      className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                      style={{ backgroundColor: bgColor }}
+                    >
+                      <div
+                        className={`size-[8px] select-none rounded-full`}
+                        style={{ backgroundColor: color }}
+                      ></div>
+                      {value?.label || '-'}
+                    </div>
+                    {/* {!editAble && (
                     <>
                       <div
                         data-tooltip-id="system-score"
@@ -209,29 +210,29 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                       </div>
                     </>
                   )} */}
-                  {value['Practitioner Comments'][0]?.length > 0 && (
-                    <div
-                      data-tooltip-id={`${value.title}-${index}`}
-                      className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
-                    >
-                      Analysis Info
-                      <Tooltip
-                        id={`${value.title}-${index}`}
-                        place="top"
-                        className="!bg-white !w-[270px] !text-justify !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
-                        style={{
-                          zIndex: 9999,
-                          pointerEvents: 'none',
-                        }}
+                    {value['Practitioner Comments'][0]?.length > 0 && (
+                      <div
+                        data-tooltip-id={`${value.title}-${index}`}
+                        className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
                       >
-                        <div className="text-Text-Primary text-[10px]">
-                          {value['Practitioner Comments'][0]}
-                        </div>
-                      </Tooltip>
-                    </div>
-                  )}
-                </>
-              )}
+                        Analysis Info
+                        <Tooltip
+                          id={`${value.title}-${index}`}
+                          place="top"
+                          className="!bg-white !w-[270px] !text-justify !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
+                          style={{
+                            zIndex: 9999,
+                            pointerEvents: 'none',
+                          }}
+                        >
+                          <div className="text-Text-Primary text-[10px]">
+                            {value['Practitioner Comments'][0]}
+                          </div>
+                        </Tooltip>
+                      </div>
+                    )}
+                  </>
+                )}
               {Conflicts?.length > 0 && (
                 <div
                   onClick={() => setShowConflict(true)}

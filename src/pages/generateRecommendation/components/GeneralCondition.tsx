@@ -253,7 +253,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           onAddNew={(value) => handleAddNew('clientInsights', value)}
         />
         <Card
-          title="Looking Forwards"
+          title="Looking Forward"
           content={
             editMode.lookingForwards
               ? tempData.lookingForwards
@@ -303,7 +303,7 @@ const Card: React.FC<CardProps> = ({
   return (
     <div className="bg-white p-4 md:p-6 pt-4 border rounded-2xl border-Gray-50 shadow-100 md:min-w-[444px] w-full md:w-[33%] text-Text-Primary">
       <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
-        {title == 'Looking Forwards' ? (
+        {title == 'Looking Forward' ? (
           <div className="flex items-center gap-2 text-Primary-DeepTeal">
             <img src="/icons/lamp-on.svg" alt="" />
             {title}
@@ -315,12 +315,20 @@ const Card: React.FC<CardProps> = ({
         {!addNew && (
           <>
             {isEditing ? (
-              <img
-                className="cursor-pointer size-6"
-                src="/icons/tick-square-background-green.svg"
-                alt=""
-                onClick={onSave}
-              />
+              <div className="flex items-center gap-2 s">
+                <img
+                  className="cursor-pointer size-6"
+                  src="/icons/cancel-edit.svg" // <-- pick your cancel icon
+                  alt="Cancel Edit"
+                  onClick={onEdit} // toggles edit mode off
+                />
+                <img
+                  className="cursor-pointer size-6"
+                  src="/icons/tick-square-background-green.svg"
+                  alt=""
+                  onClick={onSave}
+                />
+              </div>
             ) : (
               <div
                 onClick={onEdit}

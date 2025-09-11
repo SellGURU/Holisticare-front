@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Application from '../../../../api/app';
 import { MainModal } from '../../../../Components';
 import Circleloader from '../../../../Components/CircleLoader';
@@ -12,13 +12,30 @@ interface ViewExerciseModalProps {
   isActivty?: boolean;
 }
 
-const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
+interface FileData {
+  Title: string;
+  Type: string;
+  base64Data?: string;
+  // Optional until received from the API
+  Content: {
+    url?: string;
+    file_id?: string;
+  };
+}
+
+const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
   isOpen,
   onClose,
   exercise,
   onEdit,
   isActivty,
 }) => {
+  const [data, setData] = useState({
+    title: '',
+    score: 0,
+    instruction: '',
+    Parent_Title: '',
+  });
   const getYouTubeEmbedUrl = (url: string) => {
     const standardOrShortsRegExp =
       /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\S+)?/;
@@ -36,38 +53,40 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   //   return url.includes('/shorts/');
   // };
 
-  const [videoData, setVideoData] = useState<
-    { file_id: string; base64: string; url?: string; type?: string }[]
-  >([]);
+  const [videoData, setVideoData] = useState<FileData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchVideos = async () => {
       setIsLoading(true);
       const videoFiles = exercise.Files.filter(
         (file: any) =>
-          file.Type === 'Video' ||
+          file.Type?.split('/')[0] === 'video' ||
           file.Type === 'link' ||
           file.Type?.split('/')[0] === 'image',
       );
 
       const videoPromises = videoFiles.map((file: any) => {
-        if (file.Type === 'Video') {
+        if (
+          file.Type?.split('/')[0] === 'video' ||
+          file.Type?.split('/')[0] === 'image'
+        ) {
           return Application.showExerciseFille({
             file_id: file.Content.file_id,
           }).then((res) => ({
-            file_id: file.Content.file_id,
-            base64: res.data.base_64_data,
+            Title: res.data.file_name,
+            Type: res.data.file_type,
+            Content: {
+              file_id: file.Content.file_id,
+              url: res.data.base_64_data,
+            },
           }));
         } else if (file.Type === 'link') {
           return Promise.resolve({
-            file_id: file.Content.file_id,
-            url: file.Content.url, // Use the URL directly for link type
-          });
-        } else if (file.Type?.split('/')[0] === 'image') {
-          return Promise.resolve({
-            file_id: file.Content.file_id,
-            base64: file.Content.url,
-            type: file.Type,
+            Content: {
+              file_id: file.Content.file_id,
+              url: file.Content.url,
+            },
+            Type: 'link',
           });
         }
       });
@@ -86,6 +105,12 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
     if (isActivty && isOpen) {
       Application.getActivity(exercise.Act_Id).then((res) => {
         setSections(res.data.Sections);
+        setData({
+          title: res.data.Title,
+          score: res.data.Base_Score,
+          instruction: res.data.Instruction,
+          Parent_Title: res.data.Parent_Title,
+        });
       });
     }
   }, [isOpen, exercise]);
@@ -109,6 +134,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
       setIndexImage((prev) => prev - 1);
     }
   };
+  console.log(videoData);
 
   return (
     <MainModal
@@ -119,15 +145,27 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
       }}
     >
       <div
-        className={`bg-white rounded-2xl p-4 ${exercise.Instruction.length > 500 || exercise.Description.length > 500 ? 'w-[800px]' : 'w-[500px]'} shadow-800 relative`}
+        className={`bg-white rounded-2xl p-4 ${data.instruction.length > 500 ? 'w-[800px]' : isActivty ? 'w-[600px]' : 'w-[500px]'} shadow-800 relative`}
       >
         <div
           className="w-full flex justify-between items-center border-b border-Gray-50 pb-2"
-          title={exercise.Title.length > 30 ? exercise.Title : undefined}
+          title={
+            isActivty
+              ? data.title.length > 30
+                ? data.title
+                : undefined
+              : exercise.Title.length > 30
+                ? exercise.Title
+                : undefined
+          }
         >
-          {exercise.Title.length > 30
-            ? `${exercise.Title.substring(0, 30)}...`
-            : exercise.Title}
+          {isActivty
+            ? data.title.length > 30
+              ? `${data.title.substring(0, 30)}...`
+              : data.title
+            : exercise.Title.length > 30
+              ? `${exercise.Title.substring(0, 30)}...`
+              : exercise.Title}
           <img
             onClick={onEdit}
             className="size-6 cursor-pointer"
@@ -142,20 +180,33 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               {exercise.Description}
             </div>
           </div> */}
-
-          <div className="flex w-full items-start gap-3">
+          {data.Parent_Title && (
+            <div className="flex w-full items-start gap-3">
+              <div className="text-xs font-medium">Associated Intervention</div>
+              <div className="text-xs text-[#888888] text-justify">
+                {data.Parent_Title}
+              </div>
+            </div>
+          )}
+          <div
+            className={`flex w-full items-start ${isActivty ? 'gap-[87px]' : 'gap-3'}`}
+          >
             <div className="text-xs font-medium">Instruction</div>
-            <div className="text-xs text-[#888888] text-justify">
-              {exercise.Instruction}
+            <div
+              className={`text-xs text-[#888888] text-justify ${isActivty ? '' : 'ml-5'}`}
+            >
+              {isActivty ? data.instruction : exercise.Instruction}
             </div>
           </div>
-          <div className="flex w-full items-start gap-3">
+          <div
+            className={`flex w-full items-start ${isActivty ? 'gap-24' : 'gap-3'}`}
+          >
             <div className="text-xs font-medium">
               {' '}
               {isActivty ? 'Sections' : 'File'}
             </div>
             {isActivty ? (
-              <div className="bg-[#E9F0F2] w-full p-1 pr-2 rounded-2xl border border-Gray-50">
+              <div className="bg-[#E9F0F2]  w-full p-1 pr-2 rounded-2xl border border-Gray-50">
                 <div
                   className="max-h-[330px] w-full overflow-y-auto flex flex-col gap-1 p-2"
                   style={{
@@ -226,7 +277,9 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                                                 alt="Video"
                                               />
                                               <div className="text-xs text-[#383838] font-medium">
-                                                {exercise.Title}
+                                                {isActivty
+                                                  ? data.title
+                                                  : exercise.Title}
                                               </div>
                                             </div>
                                             <div className="pt-1 border-t mt-2 border-Gray-50 w-full flex justify-between text-Text-Primary">
@@ -272,79 +325,93 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               </div>
             ) : (
               <div
-                className={`${videoData?.[0]?.type?.split('/')[0] === 'image' ? '' : 'h-[200px]'} overflow-auto flex flex-col gap-1 ml-[38px]`}
+                className={`${videoData?.[0]?.Type?.split('/')[0] === 'image' ? '' : 'h-[200px]'} overflow-auto  flex flex-col gap-1 ml-[60px]`}
               >
                 {isLoading ? (
                   <div className="w-[370px] h-[200px] flex justify-center items-center">
                     <Circleloader />
                   </div>
-                ) : videoData?.[0]?.type?.split('/')[0] === 'image' ? (
+                ) : videoData?.[0]?.Type?.split('/')[0] === 'image' ? (
                   <div className="w-full flex justify-center items-center gap-4">
-                    <button onClick={prevSlide} disabled={indexImage === 0}>
-                      <img src="/icons/chevron-left.svg" alt="prev" />
-                    </button>
+                    {videoData.length > 1 && (
+                      <button onClick={prevSlide} disabled={indexImage === 0}>
+                        <img src="/icons/chevron-left.svg" alt="prev" />
+                      </button>
+                    )}
 
-                    <div className="flex w-full overflow-hidden justify-start items-center">
+                    <div className="flex w-full overflow-hidden justify-start items-center ">
                       <div
                         className="flex transition-transform duration-300 ease-in-out gap-2"
                         style={{
                           transform: `translateX(-${indexImage * (120 + 8)}px)`,
                         }}
                       >
-                        {videoData.map((src, i) => (
-                          <div
-                            key={i}
-                            className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
-                          >
-                            <img
-                              src={src.base64}
-                              alt={`Slide ${i}`}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        ))}
+                        {videoData
+                          .filter((file) => file.Type !== 'link')
+                          .map((src, i) => {
+                            return (
+                              <div
+                                key={i}
+                                className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
+                              >
+                                <img
+                                  src={src.Content.url}
+                                  alt={`Slide ${i}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
 
-                    <button
-                      onClick={nextSlide}
-                      disabled={indexImage >= lastIndex}
-                    >
-                      <img src="/icons/chevron-right.svg" alt="next" />
-                    </button>
+                    {videoData.length > 1 && (
+                      <button
+                        onClick={nextSlide}
+                        disabled={indexImage >= lastIndex}
+                      >
+                        <img src="/icons/chevron-right.svg" alt="next" />
+                      </button>
+                    )}
                   </div>
+                ) : videoData?.[0]?.Type?.split('/')[0] === 'video' ? (
+                  videoData.map((video) => {
+                    return (
+                      <video
+                        key={video.Content.file_id}
+                        className="rounded-xl h-[200px] w-[30px] border border-Gray-50 object-contain"
+                        controls
+                        src={video.Content.url}
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                    );
+                  })
                 ) : (
-                  videoData.map((video) =>
-                    video.url ? (
+                  videoData.map((video) => {
+                    return (
                       <iframe
-                        key={video.file_id}
+                        key={video.Content.file_id}
                         className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
-                        src={getYouTubeEmbedUrl(video.url)}
+                        src={getYouTubeEmbedUrl(video.Content.url || '')}
                         title="YouTube video player"
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       />
-                    ) : (
-                      <video
-                        key={video.file_id}
-                        className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
-                        controls
-                        src={video.base64}
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    ),
-                  )
+                    );
+                  })
                 )}
               </div>
             )}
           </div>
-          <div className="flex w-full items-start gap-3 mt-3 ">
+          <div
+            className={`flex w-full items-start ${isActivty ? 'gap-[60px]' : 'gap-3'} mt-3 mb-7`}
+          >
             <div className="text-xs font-medium">Priority Weight</div>
             <div className="bg-[#FFD8E4] w-[47px] select-none rounded-xl py-1 px-2 h-[18px] flex justify-center items-center text-[10px]">
               <div className="flex">
-                {exercise.Base_Score}{' '}
+                {isActivty ? data.score : exercise.Base_Score}{' '}
                 <span className="text-Text-Triarty">/10</span>
               </div>
             </div>
