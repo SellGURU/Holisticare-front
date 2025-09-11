@@ -23,7 +23,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     },
     {
       name: 'Concerning Result',
-      checked: true,
+      checked: false,
     },
     {
       name: 'Detailed Analysis',
