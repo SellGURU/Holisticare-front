@@ -169,10 +169,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setConcerningResult(res.data.table);
         if (res.data.table.length == 0) {
           publish('ConcerningResultStatus', { isempty: true });
-        } else {
-          publish('ConcerningResultStatus', { isempty: false });
         }
-        // setConcerningResult(conceringResultData);
+        // else {
+        //   publish('ConcerningResultStatus', { isempty: false });
+        // }
+        setConcerningResult(conceringResultData);
       })
       .catch(() => {
         // setConcerningResult([]);
@@ -233,9 +234,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setConcerningResult(res.data.table);
       if (res.data.table.length == 0) {
         publish('ConcerningResultStatus', { isempty: true });
-      } else {
-        publish('ConcerningResultStatus', { isempty: false });
       }
+      //  else {
+      //   publish('ConcerningResultStatus', { isempty: false });
+      // }
       // setConcerningResult(conceringResultData);
     });
     Application.getOverviewtplanShare(
