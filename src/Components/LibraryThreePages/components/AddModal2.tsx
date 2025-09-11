@@ -126,7 +126,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       ValidationForms.IsvalidField('Title', formData.title) &&
       ValidationForms.IsvalidField('Instruction', formData.instruction) &&
       ValidationForms.IsvalidField('Macros', formData.macros) &&
-      ValidationForms.IsvalidField('Score', formData.score) 
+      ValidationForms.IsvalidField('Score', formData.score)
       // ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title)
     ) {
       return true;
