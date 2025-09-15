@@ -41,6 +41,8 @@ interface ExersiceStepProps {
   showValidation?: boolean;
   setShowValidation?: (val: any) => void;
   onValidationChange?: (isValid: boolean) => void;
+  handleChangeSetOrder?: (value: any) => void;
+  orderList?: { name: string; enabled: boolean; order: number }[];
 }
 const ExersiceStep: React.FC<ExersiceStepProps> = ({
   onChange,
@@ -48,6 +50,8 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   onValidationChange,
   showValidation,
   setShowValidation,
+  handleChangeSetOrder,
+  orderList,
 }) => {
   const [exercises, setExercises] = useState<ExerciseGroup[]>(sectionList);
   const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
@@ -419,7 +423,12 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   return (
     <>
       <div className="w-full mt-6">
-        <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+        <TabNavigation
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          orderList={orderList}
+          handleChangeSetOrder={handleChangeSetOrder}
+        />
         <div className="flex w-full items-center justify-between">
           <div>
             <div

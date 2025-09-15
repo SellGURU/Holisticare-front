@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import { useState } from 'react';
 
 import { useState } from 'react';
@@ -6,25 +7,36 @@ import SectionOrderModal from './SectionOrder';
 interface TabNavigationProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  orderList?: { name: string; enabled: boolean; order: number }[];
+  handleChangeSetOrder?: (value: any) => void;
 }
 
-const TabNavigation = ({ activeTab, setActiveTab }: TabNavigationProps) => {
+const TabNavigation = ({
+  activeTab,
+  setActiveTab,
+  orderList,
+  handleChangeSetOrder,
+}: TabNavigationProps) => {
   // const [activeTab, setActiveTab] = useState('Warm-Up');
 
-  const [tabs, setTabs] = useState([
-    { name: 'Warm-Up', visible: true },
-    { name: 'Main work out', visible: true },
-    { name: 'Cool Down', visible: true },
-    { name: 'Recovery', visible: true },
-    { name: 'Finisher', visible: true },
-  ]);
+  const [tabs, setTabs] = useState(
+    orderList || [
+      { name: 'Warm-Up', enabled: true, order: 1 },
+      { name: 'Main work out', enabled: true, order: 2 },
+      { name: 'Cool Down', enabled: true, order: 3 },
+      { name: 'Recovery', enabled: true, order: 4 },
+      { name: 'Finisher', enabled: true, order: 5 },
+    ],
+  );
+  // "name": "Warm-Up", "enabled": True, "order": 1
   const [showSectionOrder, setShowSectionOrder] = useState(false);
   return (
     <>
       <div className="flex items-center justify-between border-b border-Gray-50 mb-4">
         <div className="flex gap-2 flex-grow-[1]">
           {tabs
-            .filter((tab) => tab.visible)
+            .filter((tab) => tab.enabled)
+            .sort((a, b) => a.order - b.order)
             .map((tab) => (
               <div
                 key={tab.name}
@@ -52,8 +64,10 @@ const TabNavigation = ({ activeTab, setActiveTab }: TabNavigationProps) => {
       <SectionOrderModal
         isOpen={showSectionOrder}
         onClose={() => setShowSectionOrder(false)}
+        orderList={tabs}
         onConfirm={(values) => {
           setTabs(values);
+          handleChangeSetOrder?.(values);
           setActiveTab(values[0].name);
           setShowSectionOrder(false);
         }}
