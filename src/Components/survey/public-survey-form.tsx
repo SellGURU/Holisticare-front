@@ -199,7 +199,7 @@ export function PublicSurveyForm({
   onSubmitClient,
 }: PublicSurveyFormProps) {
   console.log(survey);
-  
+
   const navigate = useNavigate();
   const { 'member-id': memberId, 'q-id': qId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
@@ -224,11 +224,10 @@ export function PublicSurveyForm({
   const [tempSide, setTempSide] = useState<IndividualFileData | null>(null);
   const [isMultiUploadMode, setIsMultiUploadMode] = useState(false);
 
-
   const currentQuestion =
-  currentStep > 0 && currentStep <= visibleQuestions.length
-    ? visibleQuestions[currentStep - 1]
-    : null;
+    currentStep > 0 && currentStep <= visibleQuestions.length
+      ? visibleQuestions[currentStep - 1]
+      : null;
   // Reset temp files and upload mode when question changes (for File Uploader)
   useEffect(() => {
     if (currentQuestion && currentQuestion.type === 'File Uploader') {
@@ -283,7 +282,7 @@ export function PublicSurveyForm({
 
     console.log('Final processed questions:', questions);
     setSortedQuestions(Array.isArray(questions) ? questions : []);
-    const visible = questions.filter(q => !q.hide);
+    const visible = questions.filter((q) => !q.hide);
     setVisibleQuestions(visible);
     // --- NEW: Initialize responses for all questions ---
     const initialResponses: Record<
@@ -337,7 +336,7 @@ export function PublicSurveyForm({
   }, [survey]);
 
   const getQuestionText = (question: ApiQuestion): string | null => {
-    if(question.hide== true) return null 
+    if (question.hide == true) return null;
     if (typeof question.text === 'string' && question.text)
       return question.text;
     if (typeof question.question === 'string' && question.question)
@@ -400,47 +399,51 @@ export function PublicSurveyForm({
   };
 
   const handleNext = () => {
-    if (visibleQuestions.length === 0) { // Changed to visibleQuestions
+    if (visibleQuestions.length === 0) {
+      // Changed to visibleQuestions
       console.error('No questions available');
       setError('No questions available');
       return;
     }
-  
+
     // Get the current question and its index in the VISIBLE array
     const currentVisibleQuestion = visibleQuestions[currentStep - 1];
     // const currentVisibleIndex = currentStep - 1;
-  
+
     // Find the original index for validation
     const originalQuestionIndex = sortedQuestions.findIndex(
-      (q) => q.id === currentVisibleQuestion?.id
+      (q) => q.id === currentVisibleQuestion?.id,
     );
-  
+
     if (currentVisibleQuestion?.type === 'File Uploader' && isMultiUploadMode) {
       handleMultiFileUploadSave();
     }
-  
+
     // Use the original index for validation
     if (!validateQuestion(originalQuestionIndex)) {
       return;
     }
-  
+
     setError(null);
-  
-    if (currentStep < visibleQuestions.length) { // Changed to visibleQuestions
+
+    if (currentStep < visibleQuestions.length) {
+      // Changed to visibleQuestions
       setCurrentStep(currentStep + 1);
     } else {
       // This loop needs to validate all visible questions, not all sorted questions.
       let allValid = true;
       for (let i = 0; i < visibleQuestions.length; i++) {
         const questionToCheck = visibleQuestions[i];
-        const originalIndex = sortedQuestions.findIndex(q => q.id === questionToCheck.id);
+        const originalIndex = sortedQuestions.findIndex(
+          (q) => q.id === questionToCheck.id,
+        );
         if (!validateQuestion(originalIndex)) {
           allValid = false;
           setCurrentStep(i + 1); // Go back to the first invalid visible question
           break;
         }
       }
-  
+
       if (allValid) {
         handleSubmit();
       } else {
@@ -546,16 +549,16 @@ export function PublicSurveyForm({
     (value: string | string[] | MultiFileResponse | null) => {
       // Find the original index of the current question in the full list.
       const fullQuestionIndex = sortedQuestions.findIndex(
-        (q) => q.id === currentQuestion?.id
+        (q) => q.id === currentQuestion?.id,
       );
-  
+
       // If a match is found, update the responses state at that index.
       if (fullQuestionIndex !== -1) {
         setResponses((prevResponses) => ({
           ...prevResponses,
           [fullQuestionIndex]: value,
         }));
-  
+
         // Also clear the validation error for that specific index.
         setValidationErrors((prev) => {
           const newErrors = { ...prev };
@@ -563,10 +566,10 @@ export function PublicSurveyForm({
           return newErrors;
         });
       }
-  
+
       setError(null);
     },
-    [currentQuestion, sortedQuestions] // Dependencies are crucial for `useCallback`
+    [currentQuestion, sortedQuestions], // Dependencies are crucial for `useCallback`
   );
 
   const calculateProgress = () => {
