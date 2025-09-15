@@ -71,7 +71,7 @@ interface EmojiSelectorProps {
   currentResponse: string | undefined; // The selected emoji name from parent
   onChange: (value: string) => void; // Callback to update parent state
   questionIndex: number; // Added to interface
-  currentQuestionText: string; // Added to interface
+  currentQuestionText: string | null; // Added to interface
 }
 
 const emojeysData = [
@@ -198,6 +198,8 @@ export function PublicSurveyForm({
   isClient = false,
   onSubmitClient,
 }: PublicSurveyFormProps) {
+  console.log(survey);
+  
   const navigate = useNavigate();
   const { 'member-id': memberId, 'q-id': qId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
@@ -206,6 +208,8 @@ export function PublicSurveyForm({
   >({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [visibleQuestions, setVisibleQuestions] = useState<ApiQuestion[]>([]);
+
   const [sortedQuestions, setSortedQuestions] = useState<ApiQuestion[]>([]);
   const [loading] = useState(false);
   const [validationErrors, setValidationErrors] = useState<
@@ -220,11 +224,11 @@ export function PublicSurveyForm({
   const [tempSide, setTempSide] = useState<IndividualFileData | null>(null);
   const [isMultiUploadMode, setIsMultiUploadMode] = useState(false);
 
-  const currentQuestion =
-    currentStep > 0 && currentStep <= sortedQuestions.length
-      ? sortedQuestions[currentStep - 1]
-      : null;
 
+  const currentQuestion =
+  currentStep > 0 && currentStep <= visibleQuestions.length
+    ? visibleQuestions[currentStep - 1]
+    : null;
   // Reset temp files and upload mode when question changes (for File Uploader)
   useEffect(() => {
     if (currentQuestion && currentQuestion.type === 'File Uploader') {
@@ -279,7 +283,8 @@ export function PublicSurveyForm({
 
     console.log('Final processed questions:', questions);
     setSortedQuestions(Array.isArray(questions) ? questions : []);
-
+    const visible = questions.filter(q => !q.hide);
+    setVisibleQuestions(visible);
     // --- NEW: Initialize responses for all questions ---
     const initialResponses: Record<
       number,
@@ -331,7 +336,8 @@ export function PublicSurveyForm({
     // --- END NEW INITIALIZATION ---
   }, [survey]);
 
-  const getQuestionText = (question: ApiQuestion): string => {
+  const getQuestionText = (question: ApiQuestion): string | null => {
+    if(question.hide== true) return null 
     if (typeof question.text === 'string' && question.text)
       return question.text;
     if (typeof question.question === 'string' && question.question)
@@ -394,40 +400,47 @@ export function PublicSurveyForm({
   };
 
   const handleNext = () => {
-    if (sortedQuestions.length === 0) {
+    if (visibleQuestions.length === 0) { // Changed to visibleQuestions
       console.error('No questions available');
       setError('No questions available');
       return;
     }
-
-    const questionIndex = currentStep - 1;
-
-    if (currentQuestion?.type === 'File Uploader' && isMultiUploadMode) {
-      // Ensure file uploads are saved before moving on
+  
+    // Get the current question and its index in the VISIBLE array
+    const currentVisibleQuestion = visibleQuestions[currentStep - 1];
+    // const currentVisibleIndex = currentStep - 1;
+  
+    // Find the original index for validation
+    const originalQuestionIndex = sortedQuestions.findIndex(
+      (q) => q.id === currentVisibleQuestion?.id
+    );
+  
+    if (currentVisibleQuestion?.type === 'File Uploader' && isMultiUploadMode) {
       handleMultiFileUploadSave();
     }
-
-    // Always validate the current question before moving.
-    // This is especially important for required questions.
-    if (!validateQuestion(questionIndex)) {
+  
+    // Use the original index for validation
+    if (!validateQuestion(originalQuestionIndex)) {
       return;
     }
-
+  
     setError(null);
-
-    if (currentStep < sortedQuestions.length) {
+  
+    if (currentStep < visibleQuestions.length) { // Changed to visibleQuestions
       setCurrentStep(currentStep + 1);
     } else {
-      // If it's the last question, validate all questions before submitting
+      // This loop needs to validate all visible questions, not all sorted questions.
       let allValid = true;
-      for (let i = 0; i < sortedQuestions.length; i++) {
-        if (!validateQuestion(i)) {
+      for (let i = 0; i < visibleQuestions.length; i++) {
+        const questionToCheck = visibleQuestions[i];
+        const originalIndex = sortedQuestions.findIndex(q => q.id === questionToCheck.id);
+        if (!validateQuestion(originalIndex)) {
           allValid = false;
-          setCurrentStep(i + 1); // Go back to the first invalid question
+          setCurrentStep(i + 1); // Go back to the first invalid visible question
           break;
         }
       }
-
+  
       if (allValid) {
         handleSubmit();
       } else {
@@ -449,6 +462,12 @@ export function PublicSurveyForm({
     try {
       // --- MODIFIED: Ensure response is explicitly an empty string for null/undefined values ---
       const respond = sortedQuestions.map((q, idx) => {
+        if (q.hide) {
+          return {
+            ...q,
+            response: '', // always empty for hidden
+          };
+        }
         let responseValue = responses[idx];
 
         // Convert null/undefined to empty string for relevant types
@@ -525,26 +544,35 @@ export function PublicSurveyForm({
 
   const handleResponseChange = useCallback(
     (value: string | string[] | MultiFileResponse | null) => {
-      setResponses((prevResponses) => ({
-        ...prevResponses,
-        [currentStep - 1]: value,
-      }));
-
-      setValidationErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[currentStep - 1];
-        return newErrors;
-      });
-
+      // Find the original index of the current question in the full list.
+      const fullQuestionIndex = sortedQuestions.findIndex(
+        (q) => q.id === currentQuestion?.id
+      );
+  
+      // If a match is found, update the responses state at that index.
+      if (fullQuestionIndex !== -1) {
+        setResponses((prevResponses) => ({
+          ...prevResponses,
+          [fullQuestionIndex]: value,
+        }));
+  
+        // Also clear the validation error for that specific index.
+        setValidationErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[fullQuestionIndex];
+          return newErrors;
+        });
+      }
+  
       setError(null);
     },
-    [currentStep],
+    [currentQuestion, sortedQuestions] // Dependencies are crucial for `useCallback`
   );
 
   const calculateProgress = () => {
-    if (currentStep === 0 || sortedQuestions.length === 0) return 0;
-    if (currentStep > sortedQuestions.length) return 100;
-    return Math.round((currentStep / sortedQuestions.length) * 100);
+    if (currentStep === 0 || visibleQuestions.length === 0) return 0;
+    if (currentStep > visibleQuestions.length) return 100;
+    return Math.round((currentStep / visibleQuestions.length) * 100);
   };
 
   const getGradientColor = () => {
@@ -700,6 +728,7 @@ export function PublicSurveyForm({
   };
 
   const renderQuestion = (question: ApiQuestion, questionIndex: number) => {
+    if (question.hide) return null;
     const questionType = question.type || 'paragraph';
     const questionOptions = getQuestionOptions(question);
     const response = responses[questionIndex];
@@ -1152,8 +1181,8 @@ export function PublicSurveyForm({
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-gray-600 mb-6">
-              This survey contains {sortedQuestions.length} questions and will
-              take approximately {Math.ceil(sortedQuestions.length * 0.5)}{' '}
+              This survey contains {visibleQuestions.length} questions and will
+              take approximately {Math.ceil(visibleQuestions.length * 0.5)}{' '}
               minutes to complete.
             </p>
             <p className="text-gray-600 mb-6">
@@ -1183,7 +1212,7 @@ export function PublicSurveyForm({
             <div
               className={`inline-block px-3 py-1 rounded-full text-sm font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
             >
-              Question {currentStep} of {sortedQuestions.length}
+              Question {currentStep} of {visibleQuestions.length}
             </div>
             <CardTitle className="text-base 2xl:text-2xl font-bold">
               {getQuestionText(currentQuestion)}
