@@ -245,31 +245,23 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
             </div>
           </div>
           <div className="flex flex-col gap-1 ml-4 mt-3">
-            {value?.Dose?.length > 0 && (
-              <>
-                <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
-                  <img
-                    src="/icons/ruler-new.svg"
-                    alt=""
-                    className="ml-[-2px]"
-                  />
-                  Dose
-                </div>
-                <div className="text-Text-Quadruple text-xs leading-5 mb-1">
-                  {value?.Dose}
-                </div>
-              </>
-            )}
             <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
+              <img src="/icons/book.svg" alt="" className="ml-[-2px]" />
+              Scientific Basis
+            </div>
+            <div className="text-Text-Quadruple text-xs leading-5">
+              {value?.['Based on']}
+            </div>
+            <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
               <img src="/icons/lamp-on-new.svg" alt="" className="ml-[-2px]" />
-              Why It Matters
+              Guidelines
             </div>
             <div className="text-Text-Quadruple text-xs leading-5">
               {value?.Intervnetion_content}
             </div>
             <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
               <img src="/icons/medal-star.svg" alt="" className="ml-[-2px]" />
-              Key Benefits
+              Expected Benefits
             </div>
             <div className="flex flex-col ml-1">
               {value?.key_benefits?.map((el: any) => {
@@ -280,6 +272,21 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                 );
               })}
             </div>
+            {value?.Dose?.length > 0 && (
+              <>
+                <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
+                  <img
+                    src="/icons/ruler-new.svg"
+                    alt=""
+                    className="ml-[-2px]"
+                  />
+                  Recommended Dosage
+                </div>
+                <div className="text-Text-Quadruple text-xs leading-5 mb-1">
+                  {value?.Dose}
+                </div>
+              </>
+            )}
             {value?.exercises_to_do?.length > 0 && (
               <>
                 <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
@@ -343,7 +350,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               <>
                 <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
                   <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
-                  Foods to Avoid
+                  Foods to Limit
                 </div>
                 <div className="flex flex-col ml-1">
                   {value?.foods_to_avoid?.map((el: any) => {

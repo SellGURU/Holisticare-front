@@ -40,27 +40,23 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
           </div>
         </div>
         <div className="flex flex-col gap-1 ml-3">
-          {data?.Dose?.length > 0 && (
-            <>
-              <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
-                <img src="/icons/ruler-new.svg" alt="" className="ml-[-2px]" />
-                Dose
-              </div>
-              <div className="text-Text-Quadruple text-xs leading-5">
-                {data?.Dose}
-              </div>
-            </>
-          )}
           <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
+            <img src="/icons/book.svg" alt="" className="ml-[-2px]" />
+            Scientific Basis
+          </div>
+          <div className="text-Text-Quadruple text-xs leading-5">
+            {data?.Based}
+          </div>
+          <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
             <img src="/icons/lamp-on-new.svg" alt="" className="ml-[-2px]" />
-            Why It Matters
+            Guidelines
           </div>
           <div className="text-Text-Quadruple text-xs leading-5">
             {data?.Intervnetion_content}
           </div>
           <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
             <img src="/icons/medal-star.svg" alt="" className="ml-[-2px]" />
-            Key Benefits
+            Expected Benefits
           </div>
           <div className="flex flex-col ml-1">
             {data?.key_benefits?.map((el: any) => {
@@ -71,6 +67,17 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
               );
             })}
           </div>
+          {data?.Dose?.length > 0 && (
+            <>
+              <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
+                <img src="/icons/ruler-new.svg" alt="" className="ml-[-2px]" />
+                Recommended Dosage
+              </div>
+              <div className="text-Text-Quadruple text-xs leading-5">
+                {data?.Dose}
+              </div>
+            </>
+          )}
           {data?.exercises_to_do?.length > 0 && (
             <>
               <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
@@ -134,7 +141,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
             <>
               <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
                 <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
-                Foods to Avoid
+                Foods to Limit
               </div>
               <div className="flex flex-col ml-1">
                 {data?.foods_to_avoid?.map((el: any) => {
