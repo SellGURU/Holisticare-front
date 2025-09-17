@@ -215,7 +215,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
 
   const sortedData = (() => {
     const data = [...filteredData];
-  
+
     const getNum = (v: unknown): number => {
       if (typeof v === 'number') return v;
       if (typeof v === 'string') {
@@ -224,21 +224,26 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
       }
       return 0;
     };
-  
+
     const getDate = (v: unknown): number => {
       const d = new Date(v as string);
       return d.getTime() || 0;
     };
-  
 
     const getAddedDate = (item: any) =>
       getDate(
-        item['Added on'] ?? item['Added On'] ?? item.AddedOn ?? item.CreatedAt ?? item.Created,
+        item['Added on'] ??
+          item['Added On'] ??
+          item.AddedOn ??
+          item.CreatedAt ??
+          item.Created,
       );
-    
+
     const getPriorityValue = (item: any) =>
-      getNum(item.Base_Score ?? item.PriorityWeight ?? item.Priority ?? item.Weight);
-  
+      getNum(
+        item.Base_Score ?? item.PriorityWeight ?? item.Priority ?? item.Weight,
+      );
+
     switch (sortId) {
       case 'title_asc':
         data.sort((a, b) => (a.Title || '').localeCompare(b.Title || ''));
@@ -271,7 +276,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
       default:
         break;
     }
-  
+
     return data;
   })();
 

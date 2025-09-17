@@ -57,43 +57,45 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
                 <img src="/icons/sort.svg" alt="" />
                 Sort by:
               </div>
-            <div className='relative'>
-              <button
-                type="button"
-                onClick={() => setIsSortOpen((v) => !v)}
-                className={`h-8  rounded-[20px] border w-fit min-w-[183px]  border-[#E2F1F8] px-[12px] py-[10px] bg-white text-xs text-Text-Primary text-nowrap flex items-center justify-between gap-2 shadow-100 ${isSortOpen ? "rounded-b-none" : ''}`}
-              >
-                {currentSortLabel}
-                <SvgIcon
-                  color="#005F73"
-                  width="16px"
-                  height="16px"
-                  src="/icons/arrow-down.svg"
-                />
-              </button>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsSortOpen((v) => !v)}
+                  className={`h-8  rounded-[20px] border w-fit min-w-[183px]  border-[#E2F1F8] px-[12px] py-[10px] bg-white text-xs text-Text-Primary text-nowrap flex items-center justify-between gap-2 shadow-100 ${isSortOpen ? 'rounded-b-none' : ''}`}
+                >
+                  {currentSortLabel}
+                  <SvgIcon
+                    color="#005F73"
+                    width="16px"
+                    height="16px"
+                    src="/icons/arrow-down.svg"
+                  />
+                </button>
 
-              {isSortOpen && (
-                <div className={`absolute w-full top-8 z-20  right-0  bg-white rounded-[20px] px-2 py-3   shadow-md  ${isSortOpen ? "rounded-t-none" :""}` }>
-                  <div className="flex flex-col gap-4">
-                    {sortOptions.map((opt) => (
-                      <button
-                        key={opt.id}
-                        type="button"
-                        onClick={() => {
-                          onChangeSort(opt.id);
-                          setIsSortOpen(false);
-                        }}
+                {isSortOpen && (
+                  <div
+                    className={`absolute w-full top-8 z-20  right-0  bg-white rounded-[20px] px-2 py-3   shadow-md  ${isSortOpen ? 'rounded-t-none' : ''}`}
+                  >
+                    <div className="flex flex-col gap-4">
+                      {sortOptions.map((opt) => (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => {
+                            onChangeSort(opt.id);
+                            setIsSortOpen(false);
+                          }}
                           className="w-full text-left text-[#888888] text-[10px]   flex items-center gap-2"
-                      >
-                        <span
-                          className={`inline-block w-4 h-4 rounded-full  border-Primary-DeepTeal ${currentSortLabel === opt.label ? 'border-[3.5px]' : 'border-[.5px]'}`}
-                        ></span>
-                        <span>{opt.label}</span>
-                      </button>
-                    ))}
+                        >
+                          <span
+                            className={`inline-block w-4 h-4 rounded-full  border-Primary-DeepTeal ${currentSortLabel === opt.label ? 'border-[3.5px]' : 'border-[.5px]'}`}
+                          ></span>
+                          <span>{opt.label}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
               </div>
             </div>
             <ButtonSecondary

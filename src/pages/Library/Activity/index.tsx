@@ -71,10 +71,7 @@ const Activity = () => {
 
   // Filter + sort data
   const filteredAndSortedData = useMemo(() => {
-    const base =
-      active === 'Exercise'
-        ? ExcercisesList
-        : dataList;
+    const base = active === 'Exercise' ? ExcercisesList : dataList;
 
     // filter first
     const result = base.filter((item) =>
@@ -99,66 +96,37 @@ const Activity = () => {
           (a, b) => getNum(b.Dose ?? b.Dosage) - getNum(a.Dose ?? a.Dosage),
         );
         break;
-        case 'priority_asc':
-          result.sort(
-            (a, b) =>
-              getNum(
-                a.Base_Score ??
-                a.PriorityWeight ??
-                a.Priority ??
-                a.Weight
-              ) -
-              getNum(
-                b.Base_Score ??
-                b.PriorityWeight ??
-                b.Priority ??
-                b.Weight
-              ),
-          );
-          break;
-        
-        case 'priority_desc':
-          result.sort(
-            (a, b) =>
-              getNum(
-                b.Base_Score ??
-                b.PriorityWeight ??
-                b.Priority ??
-                b.Weight
-              ) -
-              getNum(
-                a.Base_Score ??
-                a.PriorityWeight ??
-                a.Priority ??
-                a.Weight
-              ),
-          );
-          break;
-        case 'added_desc':
-          result.sort(
-            (a, b) =>
-              getDate(
-                a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created
-              ) <
-              getDate(
-                b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created
-              )
-                ? 1
-                : -1,
-          );
-          break;
-        
-        case 'added_asc':
-          result.sort(
-            (a, b) =>
-              getDate(
-                a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created
-              ) -
-              getDate(
-                b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created
-              ),
-          );
-          break;
+      case 'priority_asc':
+        result.sort(
+          (a, b) =>
+            getNum(a.Base_Score ?? a.PriorityWeight ?? a.Priority ?? a.Weight) -
+            getNum(b.Base_Score ?? b.PriorityWeight ?? b.Priority ?? b.Weight),
+        );
+        break;
+
+      case 'priority_desc':
+        result.sort(
+          (a, b) =>
+            getNum(b.Base_Score ?? b.PriorityWeight ?? b.Priority ?? b.Weight) -
+            getNum(a.Base_Score ?? a.PriorityWeight ?? a.Priority ?? a.Weight),
+        );
+        break;
+      case 'added_desc':
+        result.sort((a, b) =>
+          getDate(a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created) <
+          getDate(b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created)
+            ? 1
+            : -1,
+        );
+        break;
+
+      case 'added_asc':
+        result.sort(
+          (a, b) =>
+            getDate(a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created) -
+            getDate(b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created),
+        );
+        break;
     }
 
     return result;
