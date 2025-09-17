@@ -215,6 +215,7 @@ export function PublicSurveyForm({
   const [validationErrors, setValidationErrors] = useState<
     Record<number, string>
   >({});
+  const [visibleToOriginalIndex, setVisibleToOriginalIndex] = useState<number[]>([]);
 
   // States for 'File Uploader' specific logic
   const [tempFrontal, setTempFrontal] = useState<IndividualFileData | null>(
@@ -284,6 +285,23 @@ export function PublicSurveyForm({
     setSortedQuestions(Array.isArray(questions) ? questions : []);
     const visible = questions.filter((q) => !q.hide);
     setVisibleQuestions(visible);
+    // Build mapping from visible index to original index
+    const mapping: number[] = visible.map((vq) => {
+      let idx = questions.findIndex((q) => q === vq);
+      if (idx !== -1) return idx;
+      // Fallback: match by text + type + options signature
+      const text = getQuestionText(vq) || 'Question';
+      const type = (vq.type || '').toLowerCase();
+      const opts = Array.isArray(vq.options) ? JSON.stringify(vq.options) : '';
+      idx = questions.findIndex((q) => {
+        const qText = getQuestionText(q) || 'Question';
+        const qType = (q.type || '').toLowerCase();
+        const qOpts = Array.isArray(q.options) ? JSON.stringify(q.options) : '';
+        return qText === text && qType === type && qOpts === opts;
+      });
+      return idx;
+    });
+    setVisibleToOriginalIndex(mapping);
     // --- NEW: Initialize responses for all questions ---
     const initialResponses: Record<
       number,
@@ -353,6 +371,26 @@ export function PublicSurveyForm({
     return [];
   };
 
+  // Map a visible question index (step-1) to its index in the full sortedQuestions array
+  const getOriginalIndexForVisibleIndex = useCallback(
+    (visibleIndex: number): number => {
+      const visibleQuestion = visibleQuestions[visibleIndex];
+      if (!visibleQuestion) return -1;
+      // Use precomputed mapping if available and valid
+      const mapped = visibleToOriginalIndex[visibleIndex];
+      if (typeof mapped === 'number' && mapped >= 0 && mapped < sortedQuestions.length) {
+        return mapped;
+      }
+      // Try by id first
+      let idx = sortedQuestions.findIndex((q) => q.id === visibleQuestion.id);
+      if (idx !== -1) return idx;
+      // Fallback: use object reference (visibleQuestions items are filtered from sortedQuestions)
+      idx = sortedQuestions.findIndex((q) => q === visibleQuestion);
+      return idx;
+    },
+    [sortedQuestions, visibleQuestions, visibleToOriginalIndex],
+  );
+
   const handleStart = () => {
     setCurrentStep(1);
   };
@@ -411,8 +449,8 @@ export function PublicSurveyForm({
     // const currentVisibleIndex = currentStep - 1;
 
     // Find the original index for validation
-    const originalQuestionIndex = sortedQuestions.findIndex(
-      (q) => q.id === currentVisibleQuestion?.id,
+    const originalQuestionIndex = getOriginalIndexForVisibleIndex(
+      currentStep - 1,
     );
 
     if (currentVisibleQuestion?.type === 'File Uploader' && isMultiUploadMode) {
@@ -433,10 +471,7 @@ export function PublicSurveyForm({
       // This loop needs to validate all visible questions, not all sorted questions.
       let allValid = true;
       for (let i = 0; i < visibleQuestions.length; i++) {
-        const questionToCheck = visibleQuestions[i];
-        const originalIndex = sortedQuestions.findIndex(
-          (q) => q.id === questionToCheck.id,
-        );
+        const originalIndex = getOriginalIndexForVisibleIndex(i);
         if (!validateQuestion(originalIndex)) {
           allValid = false;
           setCurrentStep(i + 1); // Go back to the first invalid visible question
@@ -547,19 +582,16 @@ export function PublicSurveyForm({
 
   const handleResponseChange = useCallback(
     (value: string | string[] | MultiFileResponse | null) => {
-      // Find the original index of the current question in the full list.
-      const fullQuestionIndex = sortedQuestions.findIndex(
-        (q) => q.id === currentQuestion?.id,
-      );
+      // Map the current visible question to the original index without relying on id
+      const visibleIndex = Math.max(0, currentStep - 1);
+      const fullQuestionIndex = getOriginalIndexForVisibleIndex(visibleIndex);
 
-      // If a match is found, update the responses state at that index.
       if (fullQuestionIndex !== -1) {
         setResponses((prevResponses) => ({
           ...prevResponses,
           [fullQuestionIndex]: value,
         }));
 
-        // Also clear the validation error for that specific index.
         setValidationErrors((prev) => {
           const newErrors = { ...prev };
           delete newErrors[fullQuestionIndex];
@@ -569,7 +601,7 @@ export function PublicSurveyForm({
 
       setError(null);
     },
-    [currentQuestion, sortedQuestions], // Dependencies are crucial for `useCallback`
+    [currentStep, getOriginalIndexForVisibleIndex],
   );
 
   const calculateProgress = () => {
@@ -1230,12 +1262,15 @@ export function PublicSurveyForm({
             )}
           </CardHeader>
           <CardContent className="space-y-6 h-[60%]  pb-20 overflow-auto">
-            {renderQuestion(currentQuestion, currentStep - 1)}
+            {renderQuestion(
+              currentQuestion,
+              getOriginalIndexForVisibleIndex(currentStep - 1),
+            )}
 
-            {validationErrors[currentStep - 1] && (
+            {validationErrors[getOriginalIndexForVisibleIndex(currentStep - 1)] && (
               <div className="flex items-center space-x-2 text-red-500 text-sm mt-2">
                 <AlertCircle className="h-4 w-4" />
-                <span>{validationErrors[currentStep - 1]}</span>
+                <span>{validationErrors[getOriginalIndexForVisibleIndex(currentStep - 1)]}</span>
               </div>
             )}
 
@@ -1263,7 +1298,7 @@ export function PublicSurveyForm({
               data-testid="survey-next-button"
               className={`bg-gradient-to-r ${gradientClass} -end hover:brightness-105 transition-all text-white`}
             >
-              {currentStep === sortedQuestions.length
+              {currentStep === visibleQuestions.length
                 ? submitting
                   ? 'Submitting...'
                   : 'Submit'
