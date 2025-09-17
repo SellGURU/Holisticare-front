@@ -152,7 +152,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
                 <thead className="w-full">
                   <tr className="text-left text-xs bg-[#F4F4F4] text-Text-Primary border-Gray-50 w-full ">
                     <th className="py-3 pl-4 w-[160px] rounded-tl-2xl text-nowrap">
-                      Title
+                    Subject
                     </th>
                     <th className="py-3 w-[300px] text-center text-nowrap">
                       Instruction
