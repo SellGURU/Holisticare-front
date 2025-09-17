@@ -162,7 +162,7 @@ const MessageList: React.FC<MessageListProps> = ({
                       );
                     }
                   }}
-                  className={`py-2 cursor-pointer border-y border-Boarder
+                  className={`py-2 relative cursor-pointer border-y border-Boarder
               ${index === 0 && '!border-y-0'}
               ${isSelected ? 'bg-backgroundColor-Card shadow-100 rounded-2xl p-2' : ''}
               ${isBeforeSelected && '!border-b-0'}
@@ -222,7 +222,16 @@ const MessageList: React.FC<MessageListProps> = ({
                         {message.message}
                       </div>
                     </div>
+                   
                   </div>
+                  {
+                    message.unread_count > 0 && (
+                      <div className='absolute bottom-[10px] right-0 rounded-full flex items-center justify-center bg-Primary-DeepTeal size-[14px] text-white text-[8px]'>
+                      {message.unread_count}
+                    </div>
+                    )
+                  }
+                 
                 </li>
               );
             })}
