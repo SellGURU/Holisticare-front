@@ -16,7 +16,10 @@ const Messages = () => {
     setMessages((prev) => {
       let changed = false;
       const updated = prev.map((m) => {
-        if (String(m.member_id) === String(selectedMessage) && m.unread_count > 0) {
+        if (
+          String(m.member_id) === String(selectedMessage) &&
+          m.unread_count > 0
+        ) {
           changed = true;
           return { ...m, unread_count: 0 };
         }
