@@ -118,6 +118,27 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setMessages([]);
     }
   }, [id, usernameParams]);
+  useEffect(() => {
+    if (username && memberId) {
+      const intervalId = setInterval(() => {
+        Application.has_unread_message({
+          member_id: memberId,
+        })
+          .then((res) => {
+            if (res?.data?.has_unread === true) {
+              if (aiMode === true) {
+                aiMessagesList(parseInt(memberId));
+              } else {
+                userMessagesList(parseInt(memberId));
+              }
+            }
+          })
+          .catch(() => {});
+      }, 15000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [username, memberId, aiMode]);
   const [, setSelectedBenchMarks] = useState<Array<string>>([]);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
