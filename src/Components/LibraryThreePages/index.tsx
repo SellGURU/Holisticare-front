@@ -17,6 +17,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const [loadingCall, setLoadingCall] = useState(false);
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortId, setSortId] = useState<string>('title_asc');
   // const [clearData, setClearData] = useState(false);
   // const handleClearData = (value: boolean) => {
   //   setClearData(value);
@@ -211,6 +212,85 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const filteredData = tableData.filter((item) =>
     item.Title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const sortedData = (() => {
+    const data = [...filteredData];
+
+    const getNum = (v: unknown): number => {
+      if (typeof v === 'number') return v;
+      if (typeof v === 'string') {
+        const n = Number(v.replace(/[^0-9.-]/g, ''));
+        return Number.isFinite(n) ? n : 0;
+      }
+      return 0;
+    };
+
+    const getDate = (v: unknown): number => {
+      const d = new Date(v as string);
+      return d.getTime() || 0;
+    };
+
+    const getAddedDate = (item: any) =>
+      getDate(
+        item['Added on'] ??
+          item['Added On'] ??
+          item.AddedOn ??
+          item.CreatedAt ??
+          item.Created,
+      );
+
+    const getPriorityValue = (item: any) =>
+      getNum(
+        item.Base_Score ?? item.PriorityWeight ?? item.Priority ?? item.Weight,
+      );
+
+    switch (sortId) {
+      case 'title_asc':
+        data.sort((a, b) => (a.Title || '').localeCompare(b.Title || ''));
+        break;
+      case 'title_desc':
+        data.sort((a, b) => (b.Title || '').localeCompare(a.Title || ''));
+        break;
+      case 'dose_asc':
+        data.sort(
+          (a, b) => getNum(a.Dose ?? a.Dosage) - getNum(b.Dose ?? b.Dosage),
+        );
+        break;
+      case 'dose_desc':
+        data.sort(
+          (a, b) => getNum(b.Dose ?? b.Dosage) - getNum(a.Dose ?? a.Dosage),
+        );
+        break;
+      case 'priority_asc':
+        data.sort((a, b) => getPriorityValue(a) - getPriorityValue(b));
+        break;
+      case 'priority_desc':
+        data.sort((a, b) => getPriorityValue(b) - getPriorityValue(a));
+        break;
+      case 'added_desc':
+        data.sort((a, b) => getAddedDate(b) - getAddedDate(a));
+        break;
+      case 'added_asc':
+        data.sort((a, b) => getAddedDate(a) - getAddedDate(b));
+        break;
+      default:
+        break;
+    }
+
+    return data;
+  })();
+
+  const sortLabelMap: Record<string, string> = {
+    title_asc: 'Title (A → Z)',
+    title_desc: 'Title (Z → A)',
+    dose_asc: 'Dose (Low → High)',
+    dose_desc: 'Dose (High → Low)',
+    priority_asc: 'Priority Weight (Low → High)',
+    priority_desc: 'Priority Weight (High → Low)',
+    added_desc: 'Added on (Newest first)',
+    added_asc: 'Added on (Oldest first)',
+  };
+  const currentSortLabel = sortLabelMap[sortId] ?? sortLabelMap['title_asc'];
   return (
     <>
       {loading && (
@@ -223,6 +303,8 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         tableDataLength={tableData.length}
         handleChangeSearch={handleChangeSearch}
         handleOpenModal={handleOpenModal}
+        currentSortLabel={currentSortLabel}
+        onChangeSort={(id: string) => setSortId(id ?? 'title_asc')}
       />
       {!tableData.length ? (
         <div
@@ -252,10 +334,10 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         </div>
       ) : (
         <>
-          {filteredData.length ? (
+          {sortedData.length ? (
             <TableNoPaginateForLibraryThreePages
               pageType={pageType}
-              tableData={filteredData}
+              tableData={sortedData}
               onDelete={(id) => onDelete(id)}
               onEdit={(row) => {
                 setSelectedRow(row);
