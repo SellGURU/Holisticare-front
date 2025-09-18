@@ -95,7 +95,7 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     if (low && high) return `${low} - ${high}`;
 
     return '';
-  };
+  }; 
 
   const sortByRange = (data: any) => {
     // console.log(data);
@@ -163,8 +163,8 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     if (
       status[0] == el.status &&
       values &&
-      (el.low === null || Number(values[0]) >= Number(el.low)) &&
-      (el.high === null || Number(values[0]) < Number(el.high))
+      (el.low === null || Number(values[0]) > Number(el.low)) &&
+      (el.high === null || Number(values[0]) <= Number(el.high))
     ) {
       return 'inRange';
     }
