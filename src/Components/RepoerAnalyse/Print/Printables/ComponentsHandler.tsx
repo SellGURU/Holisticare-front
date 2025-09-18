@@ -11,7 +11,16 @@ import DetailedAnalyseCategory from './DetailedAnalyseCategory';
 import DetailedAnalyseDescription from './DetailedAnalyseDescription';
 import HeaderText from './HeaderText';
 import HolisticPlanCategory from './HolisticPlanCategory';
+import HolisticPlanExercisesAvoid from './HolisticPlanExercisesAvoid';
+import HolisticPlanExpectedBenefits from './HolisticPlanExpectedBenefits';
+import HolisticPlanFoodsLimit from './HolisticPlanFoodsLimit';
+import HolisticPlanGuidelines from './HolisticPlanGuidelines';
 import HolisticPlanHeader from './HolisticPlanHeadBox';
+import HolisticPlanRecommendedDosage from './HolisticPlanRecommendedDosage';
+import HolisticPlanRecommendedExercises from './HolisticPlanRecommendedExercises';
+import HolisticPlanRecommendedFoods from './HolisticPlanRecommendedFoods';
+import HolisticPlanScientificBasis from './HolisticPlanScientificBasis';
+import HolisticPlanTitle from './HolisticPlanTitle';
 import InformationBox from './informationBox';
 import Legend from './Legend';
 import UserInfo from './UserInfo';
@@ -99,6 +108,67 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
       {component.type == 'TreatmentplanItem' && (
         <>
           <TreatmentPlanPrint data={component.content}></TreatmentPlanPrint>
+        </>
+      )}
+      {component.type == 'ScientificBasis' && (
+        <>
+          <HolisticPlanScientificBasis
+            value={component.content}
+          ></HolisticPlanScientificBasis>
+        </>
+      )}
+      {component.type == 'Guidelines' && (
+        <>
+          <HolisticPlanGuidelines
+            value={component.content}
+          ></HolisticPlanGuidelines>
+        </>
+      )}
+      {component.type == 'ExpectedBenefits' && (
+        <>
+          <HolisticPlanExpectedBenefits
+            value={component.content}
+          ></HolisticPlanExpectedBenefits>
+        </>
+      )}
+      {component.type == 'Title' && (
+        <>
+          <HolisticPlanTitle value={component.content}></HolisticPlanTitle>
+        </>
+      )}
+      {component.type == 'RecommendedDosage' && (
+        <>
+          <HolisticPlanRecommendedDosage
+            value={component.content}
+          ></HolisticPlanRecommendedDosage>
+        </>
+      )}
+      {component.type == 'RecommendedExercises' && (
+        <>
+          <HolisticPlanRecommendedExercises
+            value={component.content}
+          ></HolisticPlanRecommendedExercises>
+        </>
+      )}
+      {component.type == 'ExercisesAvoid' && (
+        <>
+          <HolisticPlanExercisesAvoid
+            value={component.content}
+          ></HolisticPlanExercisesAvoid>
+        </>
+      )}
+      {component.type == 'RecommendedFoods' && (
+        <>
+          <HolisticPlanRecommendedFoods
+            value={component.content}
+          ></HolisticPlanRecommendedFoods>
+        </>
+      )}
+      {component.type == 'FoodsLimit' && (
+        <>
+          <HolisticPlanFoodsLimit
+            value={component.content}
+          ></HolisticPlanFoodsLimit>
         </>
       )}
       {component.type == 'AddActionPlanHeaderOverflow' && (
