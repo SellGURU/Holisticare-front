@@ -11,6 +11,7 @@ interface TextAreaFieldProps {
   margin?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   InfoText?: string;
+  height?: string;
 }
 
 const TextAreaField: FC<TextAreaFieldProps> = ({
@@ -23,6 +24,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
   margin,
   onKeyDown,
   InfoText,
+  height,
 }) => {
   return (
     <div className={`flex flex-col w-full gap-2 ${margin ? margin : 'mt-4'}`}>
@@ -40,7 +42,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border ${
+        className={`w-full ${height ? height : 'h-[98px]'} text-justify rounded-[16px] py-1 px-3 border ${
           !isValid ? 'border-Red' : 'border-Gray-50'
         } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold resize-none`}
         onKeyDown={onKeyDown}
