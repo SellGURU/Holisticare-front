@@ -250,14 +250,14 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               Scientific Basis
             </div>
             <div className="text-Text-Quadruple text-xs leading-5">
-              {value?.['Based on']}
+              {value?.['Based on'] || '-'}
             </div>
             <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
               <img src="/icons/lamp-on-new.svg" alt="" className="ml-[-2px]" />
               Guidelines
             </div>
             <div className="text-Text-Quadruple text-xs leading-5">
-              {value?.Intervnetion_content}
+              {value?.Intervnetion_content || '-'}
             </div>
             <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
               <img src="/icons/medal-star.svg" alt="" className="ml-[-2px]" />

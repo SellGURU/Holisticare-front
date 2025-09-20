@@ -45,14 +45,14 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
             Scientific Basis
           </div>
           <div className="text-Text-Quadruple text-xs leading-5">
-            {data?.Based}
+            {data?.Based || '-'}
           </div>
           <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
             <img src="/icons/lamp-on-new.svg" alt="" className="ml-[-2px]" />
             Guidelines
           </div>
           <div className="text-Text-Quadruple text-xs leading-5">
-            {data?.Intervnetion_content}
+            {data?.Intervnetion_content || '-'}
           </div>
           <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
             <img src="/icons/medal-star.svg" alt="" className="ml-[-2px]" />
