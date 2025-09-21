@@ -95,7 +95,7 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     if (low && high) return `${low} - ${high}`;
 
     return '';
-  }; 
+  };
 
   const sortByRange = (data: any) => {
     // console.log(data);
