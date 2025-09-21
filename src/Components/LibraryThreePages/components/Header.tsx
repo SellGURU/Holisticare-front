@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import SearchBox from '../../SearchBox';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import SvgIcon from '../../../utils/svgIcon';
+import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 
 interface HeaderLibraryTreePagesProps {
   pageType: string;
@@ -33,6 +34,13 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
     { id: 'added_desc', label: 'Added on (Newest first)' },
     { id: 'added_asc', label: 'Added on (Oldest first)' },
   ];
+  const btnRef = useRef(null)
+  const modalRef = useRef(null)
+useModalAutoClose({
+  buttonRefrence: btnRef,
+  refrence: modalRef,
+  close:()=>{setIsSortOpen(false)}
+})
 
   return (
     <>
@@ -57,23 +65,27 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
                 <img src="/icons/sort.svg" alt="" />
                 Sort by:
               </div>
-              <div className="relative">
+              <div ref={btnRef} className="relative">
                 <button
                   type="button"
                   onClick={() => setIsSortOpen((v) => !v)}
                   className={`h-8  rounded-[20px] border w-fit min-w-[183px]  border-[#E2F1F8] px-[12px] py-[10px] bg-white text-xs text-Text-Primary text-nowrap flex items-center justify-between gap-2 shadow-100 ${isSortOpen ? 'rounded-b-none' : ''}`}
                 >
                   {currentSortLabel}
+                  <div className={` transition-transform ${isSortOpen ? "rotate-180" : ""}`}>
                   <SvgIcon
                     color="#005F73"
                     width="16px"
                     height="16px"
                     src="/icons/arrow-down.svg"
                   />
+                  </div>
+                
                 </button>
 
                 {isSortOpen && (
                   <div
+                  ref={modalRef}
                     className={`absolute w-full top-8 z-20  right-0  bg-white rounded-[20px] px-2 py-3   shadow-md  ${isSortOpen ? 'rounded-t-none' : ''}`}
                   >
                     <div className="flex flex-col gap-4">
