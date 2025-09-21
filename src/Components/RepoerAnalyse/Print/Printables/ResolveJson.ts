@@ -16,7 +16,7 @@ const resolveHightText = (text: string, isSmal?: boolean) => {
   if (isSmal) {
     return Math.ceil(text?.length / 134) * 18 + 8;
   }
-  return Math.ceil(text?.length / 112) * 30;
+  return Math.ceil(text?.length / 105) * 34;
 };
 
 const addHeader = (title: string, moreInfo: string, id: string) => {
@@ -347,11 +347,11 @@ const addBiomarkerDetailAnalyse = (el: any, isEnd: boolean) => {
 };
 
 const addMoreInfoDetailAnalyse = (text: string, isEnd: boolean) => {
-  checkPageCanRender(resolveHightText(text, true) + 10);
+  checkPageCanRender(resolveHightText(text) + 10);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'addMoreInfoDetailAnalyse',
-    height: resolveHightText(text, true) + 10,
+    height: resolveHightText(text) + 10,
     isEnd: isEnd,
     content: text,
   });
