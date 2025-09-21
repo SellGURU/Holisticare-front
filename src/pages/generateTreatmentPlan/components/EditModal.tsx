@@ -768,7 +768,7 @@ const EditModal: FC<EditModalProps> = ({
                   showValidation && formData.exercises_to_do.length === 0
                     ? ValidationForms.IsvalidField(
                         'ExercisesToDo',
-                        foodsToEatValue,
+                        exercisesToDoValue,
                       )
                     : true
                 }
@@ -776,7 +776,7 @@ const EditModal: FC<EditModalProps> = ({
                   showValidation && formData.exercises_to_do.length === 0
                     ? ValidationForms.ValidationText(
                         'ExercisesToDo',
-                        foodsToEatValue,
+                        exercisesToDoValue,
                       )
                     : ''
                 }
@@ -818,7 +818,7 @@ const EditModal: FC<EditModalProps> = ({
                   showValidation && formData.exercises_to_avoid.length === 0
                     ? ValidationForms.IsvalidField(
                         'ExercisesToAvoid',
-                        foodsToAvoidValue,
+                        exercisesToAvoidValue,
                       )
                     : true
                 }
@@ -826,7 +826,7 @@ const EditModal: FC<EditModalProps> = ({
                   showValidation && formData.exercises_to_avoid.length === 0
                     ? ValidationForms.ValidationText(
                         'ExercisesToAvoid',
-                        foodsToAvoidValue,
+                        exercisesToAvoidValue,
                       )
                     : ''
                 }
