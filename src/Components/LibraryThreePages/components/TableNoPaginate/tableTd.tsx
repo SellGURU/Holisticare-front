@@ -12,8 +12,8 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
         pageType === 'Supplement'
           ? row.original?.Sup_Id
           : pageType === 'Lifestyle'
-          ? row.original?.Life_Id
-          : row.original?.Diet_Id;
+            ? row.original?.Life_Id
+            : row.original?.Diet_Id;
 
       const tooltipId = `tooltip-title-${uniqueKey}`;
 
@@ -49,8 +49,8 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
         pageType === 'Supplement'
           ? row.original?.Sup_Id
           : pageType === 'Lifestyle'
-          ? row.original?.Life_Id
-          : row.original?.Diet_Id;
+            ? row.original?.Life_Id
+            : row.original?.Diet_Id;
 
       const tooltipId = `tooltip-instruction-${uniqueKey}`;
 
@@ -87,22 +87,22 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
       pageType === 'Supplement'
         ? 'Dose'
         : pageType === 'Lifestyle'
-        ? 'Value'
-        : 'Macros Goal',
+          ? 'Value'
+          : 'Macros Goal',
     header:
       pageType === 'Supplement'
         ? 'Dose'
         : pageType === 'Lifestyle'
-        ? 'Value'
-        : 'Macros Goal',
+          ? 'Value'
+          : 'Macros Goal',
     enableSorting: false,
     cell: ({ row }) => {
       const uniqueKey =
         pageType === 'Supplement'
           ? row.original?.Sup_Id
           : pageType === 'Lifestyle'
-          ? row.original?.Life_Id
-          : row.original?.Diet_Id;
+            ? row.original?.Life_Id
+            : row.original?.Diet_Id;
 
       const tooltipId = `tooltip-dose-${uniqueKey}`;
 
@@ -166,8 +166,8 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
         pageType === 'Supplement'
           ? row.original?.Sup_Id
           : pageType === 'Lifestyle'
-          ? row.original?.Life_Id
-          : row.original?.Diet_Id;
+            ? row.original?.Life_Id
+            : row.original?.Diet_Id;
 
       const tooltipId = `tooltip-clinical-${uniqueKey}`;
 
@@ -217,9 +217,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
         )}/${year}`;
       }
 
-      return (
-        <div className="text-xs text-Text-Quadruple">{formattedDate}</div>
-      );
+      return <div className="text-xs text-Text-Quadruple">{formattedDate}</div>;
     },
   },
 ];
