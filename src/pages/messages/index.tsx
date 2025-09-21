@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   MessageList,
   MessagesChatBox,
@@ -10,6 +10,24 @@ const Messages = () => {
   const [search, setSearch] = useState('');
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
+  // Clear unread badge when a chat is opened
+  useEffect(() => {
+    if (!selectedMessage) return;
+    setMessages((prev) => {
+      let changed = false;
+      const updated = prev.map((m) => {
+        if (
+          String(m.member_id) === String(selectedMessage) &&
+          m.unread_count > 0
+        ) {
+          changed = true;
+          return { ...m, unread_count: 0 };
+        }
+        return m;
+      });
+      return changed ? updated : prev;
+    });
+  }, [selectedMessage]);
   const handleMessageSent = (memberId: number) => {
     setMessages((prevMessages) => {
       const updatedMessages = [...prevMessages];
