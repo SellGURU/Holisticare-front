@@ -413,6 +413,12 @@ const EditModal: FC<EditModalProps> = ({
       return;
     }
     if (
+      formData.key_benefits.length === 0 &&
+      !ValidationForms.IsvalidField('KeyBenefits', keyBenefitValue)
+    ) {
+      return;
+    }
+    if (
       formData.Category === 'Supplement' &&
       !ValidationForms.IsvalidField('Dose', formData.Dose)
     ) {
