@@ -8,11 +8,20 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     header: 'Subject',
     enableSorting: false,
     cell: ({ row }) => {
+      const uniqueKey =
+        pageType === 'Supplement'
+          ? row.original?.Sup_Id
+          : pageType === 'Lifestyle'
+          ? row.original?.Life_Id
+          : row.original?.Diet_Id;
+
+      const tooltipId = `tooltip-title-${uniqueKey}`;
+
       return (
         <>
           <div
             className="flex justify-start text-xs text-Text-Primary cursor-default"
-            data-tooltip-id={`tooltip-${row.original?.Title?.substring(0, 15)}-t`}
+            data-tooltip-id={tooltipId}
           >
             {row.original?.Title?.length > 15
               ? row.original?.Title?.substring(0, 15) + '...'
@@ -20,7 +29,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           </div>
           {row.original?.Title?.length > 15 && (
             <Tooltip
-              id={`tooltip-${row.original?.Title?.substring(0, 15)}-t`}
+              id={tooltipId}
               place="top"
               className="!bg-white !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
@@ -36,10 +45,19 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     header: 'Instruction',
     enableSorting: false,
     cell: ({ row }) => {
+      const uniqueKey =
+        pageType === 'Supplement'
+          ? row.original?.Sup_Id
+          : pageType === 'Lifestyle'
+          ? row.original?.Life_Id
+          : row.original?.Diet_Id;
+
+      const tooltipId = `tooltip-instruction-${uniqueKey}`;
+
       return (
         <>
           <div
-            data-tooltip-id={`tooltip-${pageType === 'Supplement' ? row.original?.Sup_Id : pageType === 'Lifestyle' ? row.original?.Life_Id : row.original?.Diet_Id}`}
+            data-tooltip-id={tooltipId}
             className="overflow-hidden select-none text-xs text-Text-Quadruple cursor-default"
             style={{
               textWrap: 'nowrap',
@@ -53,7 +71,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           </div>
           {row.original?.Instruction?.length > 47 && (
             <Tooltip
-              id={`tooltip-${pageType === 'Supplement' ? row.original?.Sup_Id : pageType === 'Lifestyle' ? row.original?.Life_Id : row.original?.Diet_Id}`}
+              id={tooltipId}
               place="top"
               className="!bg-white !bg-opacity-100 !opacity-100 !max-w-[300px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
@@ -69,21 +87,30 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
       pageType === 'Supplement'
         ? 'Dose'
         : pageType === 'Lifestyle'
-          ? 'Value'
-          : 'Macros Goal',
+        ? 'Value'
+        : 'Macros Goal',
     header:
       pageType === 'Supplement'
         ? 'Dose'
         : pageType === 'Lifestyle'
-          ? 'Value'
-          : 'Macros Goal',
+        ? 'Value'
+        : 'Macros Goal',
     enableSorting: false,
     cell: ({ row }) => {
+      const uniqueKey =
+        pageType === 'Supplement'
+          ? row.original?.Sup_Id
+          : pageType === 'Lifestyle'
+          ? row.original?.Life_Id
+          : row.original?.Diet_Id;
+
+      const tooltipId = `tooltip-dose-${uniqueKey}`;
+
       return (
         <>
           <div className="text-xs text-Text-Quadruple cursor-default">
             {pageType === 'Supplement' ? (
-              <div data-tooltip-id={`tooltip-${row.original?.Dose}`}>
+              <div data-tooltip-id={tooltipId}>
                 {row.original?.Dose?.length > 12
                   ? row.original?.Dose?.substring(0, 12) + '...'
                   : row.original?.Dose || '-'}
@@ -102,7 +129,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           </div>
           {row.original?.Dose?.length > 12 && (
             <Tooltip
-              id={`tooltip-${row.original?.Dose}`}
+              id={tooltipId}
               place="top"
               className="!bg-white !max-w-[250px] !bg-opacity-100 !opacity-100 !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
@@ -135,10 +162,19 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     header: 'Clinical Guidance',
     enableSorting: false,
     cell: ({ row }) => {
+      const uniqueKey =
+        pageType === 'Supplement'
+          ? row.original?.Sup_Id
+          : pageType === 'Lifestyle'
+          ? row.original?.Life_Id
+          : row.original?.Diet_Id;
+
+      const tooltipId = `tooltip-clinical-${uniqueKey}`;
+
       return (
         <>
           <div
-            data-tooltip-id={`tooltip-${row.original?.Ai_note?.substring(0, 25)}-c`}
+            data-tooltip-id={tooltipId}
             className="overflow-hidden select-none text-xs text-Text-Quadruple cursor-default"
             style={{
               textWrap: 'nowrap',
@@ -154,7 +190,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           </div>
           {row.original?.Ai_note?.length > 25 && (
             <Tooltip
-              id={`tooltip-${row.original?.Ai_note?.substring(0, 25)}-c`}
+              id={tooltipId}
               place="top"
               className="!bg-white !bg-opacity-100 !opacity-100 !max-w-[300px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
@@ -170,15 +206,20 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     header: 'Added on',
     enableSorting: false,
     cell: ({ row }) => {
-      const dateStr = row.original?.['Added on'].substring(0, 10) || '-';
+      const dateStr = row.original?.['Added on']?.substring(0, 10) || '-';
       let formattedDate = '-';
 
       if (dateStr !== '-') {
         const [year, month, day] = dateStr.split('-');
-        formattedDate = `${month.padStart(2, '0')}/${day.padStart(2, '0')}/${year}`;
+        formattedDate = `${month.padStart(2, '0')}/${day.padStart(
+          2,
+          '0',
+        )}/${year}`;
       }
 
-      return <div className="text-xs text-Text-Quadruple">{formattedDate}</div>;
+      return (
+        <div className="text-xs text-Text-Quadruple">{formattedDate}</div>
+      );
     },
   },
 ];

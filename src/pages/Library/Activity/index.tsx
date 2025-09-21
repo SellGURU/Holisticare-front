@@ -144,13 +144,15 @@ const Activity = () => {
     added_asc: 'Added on (Oldest first)',
   };
   const currentSortLabel = sortLabelMap[sortId] ?? sortLabelMap['title_asc'];
-  const btnRef = useRef(null)
-  const modalRef = useRef(null)
-useModalAutoClose({
-  buttonRefrence: btnRef,
-  refrence: modalRef,
-  close:()=>{setIsSortOpen(false)}
-})
+  const btnRef = useRef(null);
+  const modalRef = useRef(null);
+  useModalAutoClose({
+    buttonRefrence: btnRef,
+    refrence: modalRef,
+    close: () => {
+      setIsSortOpen(false);
+    },
+  });
   return (
     <>
       {loading && (
@@ -199,19 +201,21 @@ useModalAutoClose({
                     }`}
                   >
                     {currentSortLabel}
-                    <div className={` transition-transform ${isSortOpen ? "rotate-180" : ""}`}>
-                  <SvgIcon
-                    color="#005F73"
-                    width="16px"
-                    height="16px"
-                    src="/icons/arrow-down.svg"
-                  />
-                  </div>
+                    <div
+                      className={` transition-transform ${isSortOpen ? 'rotate-180' : ''}`}
+                    >
+                      <SvgIcon
+                        color="#005F73"
+                        width="16px"
+                        height="16px"
+                        src="/icons/arrow-down.svg"
+                      />
+                    </div>
                   </button>
 
                   {isSortOpen && (
                     <div
-                    ref={modalRef}
+                      ref={modalRef}
                       className={`absolute w-full top-8 z-20 right-0 bg-white rounded-[20px] px-2 py-3 shadow-md ${
                         isSortOpen ? 'rounded-t-none' : ''
                       }`}
