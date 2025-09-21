@@ -30,7 +30,7 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
         } else {
           res = await FormsApi.showCheckIn(id);
         }
-        setData(res.data);
+        setData(res.data.questions((el: any) => el.hide != true));
       } catch (error) {
         console.error('Error fetching data:', error);
         setData(null); // Ensure data is null on error
