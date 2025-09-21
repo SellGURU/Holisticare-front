@@ -10,6 +10,7 @@ interface Question {
   required: boolean;
   options?: string[];
   response?: string | string[];
+  hide?: boolean;
 }
 
 interface SurveyAPIResponse {
@@ -37,7 +38,10 @@ export default function SurveyResponsesPage() {
       q_unique_id: qId,
     })
       .then((res: { data: SurveyAPIResponse }) => {
-        setQuestions(res.data.questions || []);
+        const visibleQuestions = (res.data.questions || []).filter(
+          (q) => !q.hide,
+        );
+        setQuestions(visibleQuestions);
         setFilledBy(res.data.filled_by);
         setLoading(false);
       })
