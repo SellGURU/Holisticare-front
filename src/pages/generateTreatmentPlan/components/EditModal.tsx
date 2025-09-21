@@ -434,14 +434,20 @@ const EditModal: FC<EditModalProps> = ({
     }
     if (
       formData.Category === 'Activity' &&
-      !ValidationForms.IsvalidField('ExercisesToDo', formData.exercises_to_do) &&
+      !ValidationForms.IsvalidField(
+        'ExercisesToDo',
+        formData.exercises_to_do,
+      ) &&
       !ValidationForms.IsvalidField('ExercisesToDo', exercisesToDoValue)
     ) {
       return;
     }
     if (
       formData.Category === 'Activity' &&
-      !ValidationForms.IsvalidField('ExercisesToAvoid', formData.exercises_to_avoid) &&
+      !ValidationForms.IsvalidField(
+        'ExercisesToAvoid',
+        formData.exercises_to_avoid,
+      ) &&
       !ValidationForms.IsvalidField('ExercisesToAvoid', exercisesToAvoidValue)
     ) {
       return;
