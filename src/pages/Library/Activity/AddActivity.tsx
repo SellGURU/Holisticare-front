@@ -68,6 +68,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         setLoadingCall(true);
         Application.editActivity({
           Title: addData.title,
+          set_order: addData.Set_Order,
           // Description: addData.description,
           Base_Score: addData.score,
           Instruction: addData.instruction,
@@ -103,6 +104,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         setLoadingCall(true);
         Application.addActivity({
           Title: addData.title,
+          set_order: addData.Set_Order,
           // Description: addData.description,
           Base_Score: addData.score,
           Instruction: addData.instruction,
@@ -166,6 +168,16 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           location: res.data.Activity_Location,
           clinical_guidance: res.data.Ai_note,
           Parent_Title: res.data.Parent_Title,
+          Set_Order:
+            res.data.Set_Order !== null
+              ? res.data.Set_Order
+              : [
+                  { name: 'Warm-Up', enabled: true, order: 1 },
+                  { name: 'Main work out', enabled: true, order: 2 },
+                  { name: 'Cool Down', enabled: true, order: 3 },
+                  { name: 'Recovery', enabled: true, order: 4 },
+                  { name: 'Finisher', enabled: true, order: 5 },
+                ],
         });
         setSectionList(
           res.data.Sections.map((item: any) => {
@@ -202,7 +214,20 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     location: [],
     clinical_guidance: '',
     Parent_Title: '',
+    Set_Order: [
+      { name: 'Warm-Up', enabled: true, order: 1 },
+      { name: 'Main work out', enabled: true, order: 2 },
+      { name: 'Cool Down', enabled: true, order: 3 },
+      { name: 'Recovery', enabled: true, order: 4 },
+      { name: 'Finisher', enabled: true, order: 5 },
+    ],
   });
+  const handleChangeSetOrder = (value: any) => {
+    setAddData((prevTheme) => ({
+      ...prevTheme,
+      Set_Order: value,
+    }));
+  };
   const updateAddData = (key: keyof typeof addData, value: any) => {
     setAddData((prevTheme) => ({
       ...prevTheme,
@@ -265,6 +290,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
               setShowValidation={(val: any) => {
                 setShowExerciseValidation(val);
               }}
+              orderList={addData.Set_Order}
+              handleChangeSetOrder={handleChangeSetOrder}
               sectionList={sectionList}
               onChange={(values: any) => {
                 setSectionList(values);
