@@ -215,7 +215,9 @@ export function PublicSurveyForm({
   const [validationErrors, setValidationErrors] = useState<
     Record<number, string>
   >({});
-  const [visibleToOriginalIndex, setVisibleToOriginalIndex] = useState<number[]>([]);
+  const [visibleToOriginalIndex, setVisibleToOriginalIndex] = useState<
+    number[]
+  >([]);
 
   // States for 'File Uploader' specific logic
   const [tempFrontal, setTempFrontal] = useState<IndividualFileData | null>(
@@ -378,7 +380,11 @@ export function PublicSurveyForm({
       if (!visibleQuestion) return -1;
       // Use precomputed mapping if available and valid
       const mapped = visibleToOriginalIndex[visibleIndex];
-      if (typeof mapped === 'number' && mapped >= 0 && mapped < sortedQuestions.length) {
+      if (
+        typeof mapped === 'number' &&
+        mapped >= 0 &&
+        mapped < sortedQuestions.length
+      ) {
         return mapped;
       }
       // Try by id first
@@ -1267,10 +1273,18 @@ export function PublicSurveyForm({
               getOriginalIndexForVisibleIndex(currentStep - 1),
             )}
 
-            {validationErrors[getOriginalIndexForVisibleIndex(currentStep - 1)] && (
+            {validationErrors[
+              getOriginalIndexForVisibleIndex(currentStep - 1)
+            ] && (
               <div className="flex items-center space-x-2 text-red-500 text-sm mt-2">
                 <AlertCircle className="h-4 w-4" />
-                <span>{validationErrors[getOriginalIndexForVisibleIndex(currentStep - 1)]}</span>
+                <span>
+                  {
+                    validationErrors[
+                      getOriginalIndexForVisibleIndex(currentStep - 1)
+                    ]
+                  }
+                </span>
               </div>
             )}
 
