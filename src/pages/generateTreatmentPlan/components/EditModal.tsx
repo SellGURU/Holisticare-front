@@ -116,6 +116,11 @@ const EditModal: FC<EditModalProps> = ({
     setSelectedGroupDose(false);
     setclient_versions([]);
     setShowValidation(false);
+    setFoodsToEatValue('');
+    setFoodsToAvoidValue('');
+    setExercisesToDoValue('');
+    setExercisesToAvoidValue('');
+    setKeyBenefitValue('');
   };
   const handleSubmit = () => {
     onSubmit({
@@ -399,9 +404,11 @@ const EditModal: FC<EditModalProps> = ({
 
     if (
       !formData.Category ||
-      !formData.Recommendation
+      !formData.Recommendation ||
       // ||
       // (formData.Instruction.length === 0 && client_versions.length === 0)
+      !formData.Intervnetion_content ||
+      !formData['Based on']
     ) {
       return;
     }
@@ -411,7 +418,34 @@ const EditModal: FC<EditModalProps> = ({
     ) {
       return;
     }
-
+    if (
+      formData.Category === 'Diet' &&
+      !ValidationForms.IsvalidField('FoodsToEat', formData.foods_to_eat) &&
+      !ValidationForms.IsvalidField('FoodsToEat', foodsToEatValue)
+    ) {
+      return;
+    }
+    if (
+      formData.Category === 'Diet' &&
+      !ValidationForms.IsvalidField('FoodsToAvoid', formData.foods_to_avoid) &&
+      !ValidationForms.IsvalidField('FoodsToAvoid', foodsToAvoidValue)
+    ) {
+      return;
+    }
+    if (
+      formData.Category === 'Activity' &&
+      !ValidationForms.IsvalidField('ExercisesToDo', formData.exercises_to_do) &&
+      !ValidationForms.IsvalidField('ExercisesToDo', exercisesToDoValue)
+    ) {
+      return;
+    }
+    if (
+      formData.Category === 'Activity' &&
+      !ValidationForms.IsvalidField('ExercisesToAvoid', formData.exercises_to_avoid) &&
+      !ValidationForms.IsvalidField('ExercisesToAvoid', exercisesToAvoidValue)
+    ) {
+      return;
+    }
     // Validate notes length
     if (newNote.length > 400) {
       return;
