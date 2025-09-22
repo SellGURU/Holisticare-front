@@ -10,8 +10,10 @@ import {
   DoseValidationEnglish,
   ExercisesToAvoidInfoText,
   ExercisesToDoInfoText,
+  FoodsToAvoidInfoText,
   KeyBenefitsInfoText,
   NotesInfoText,
+  RecommendedFoodsInfoText,
 } from '../../../utils/library-unification';
 import SvgIcon from '../../../utils/svgIcon';
 import ValidationForms from '../../../utils/ValidationForms';
@@ -512,7 +514,7 @@ const EditModal: FC<EditModalProps> = ({
           />
           <TextField
             label="Title"
-            placeholder="Write recommendation's title…"
+            placeholder="Enter recommendation title (e.g., Vitamin D3)"
             value={formData.Recommendation}
             onChange={(e) => {
               updateFormData('Recommendation', e.target.value);
@@ -554,29 +556,31 @@ const EditModal: FC<EditModalProps> = ({
             }
             margin="mb-4"
           />
-          <TextField
-            label="Recommended Dosage"
-            value={formData.Dose}
-            onChange={(e) => {
-              const value = e.target.value;
-              const englishOnly = DoseValidationEnglish(value);
-              updateFormData('Dose', englishOnly);
-            }}
-            disabled={!selectedGroupDose}
-            placeholder="Enter dose amount"
-            margin={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
-            isValid={
-              showValidation && selectedGroupDose
-                ? ValidationForms.IsvalidField('Dose', formData.Dose)
-                : true
-            }
-            validationText={
-              showValidation && selectedGroupDose
-                ? ValidationForms.ValidationText('Dose', formData.Dose)
-                : ''
-            }
-            InfoText={DoseInfoText}
-          />
+          {selectedGroupDose && (
+            <TextField
+              label="Recommended Dosage"
+              value={formData.Dose}
+              onChange={(e) => {
+                const value = e.target.value;
+                const englishOnly = DoseValidationEnglish(value);
+                updateFormData('Dose', englishOnly);
+              }}
+              disabled={!selectedGroupDose}
+              placeholder="Enter dose amount"
+              margin={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
+              isValid={
+                showValidation && selectedGroupDose
+                  ? ValidationForms.IsvalidField('Dose', formData.Dose)
+                  : true
+              }
+              validationText={
+                showValidation && selectedGroupDose
+                  ? ValidationForms.ValidationText('Dose', formData.Dose)
+                  : ''
+              }
+              InfoText={DoseInfoText}
+            />
+          )}
           <TextAreaField
             label="Guidelines"
             placeholder="Enter a detailed, client-facing explanation of the intervention (e.g., Focuses on fresh fruits, vegetables, whole grains, nuts, and healthy fats.)"
@@ -675,11 +679,10 @@ const EditModal: FC<EditModalProps> = ({
                       )
                     : ''
                 }
-                // InfoText={FoodsToEatInfoText}
+                InfoText={RecommendedFoodsInfoText}
                 margin={`${formData.foods_to_eat.length > 0 ? 'mb-4' : 'mb-0'}`}
               />
 
-              {/* Notes List */}
               <div className="mb-4 flex flex-col gap-2">
                 {formData.foods_to_eat.map((foodsToEat, index) => (
                   <div key={index} className="w-full flex gap-1 items-start">
@@ -725,11 +728,10 @@ const EditModal: FC<EditModalProps> = ({
                       )
                     : ''
                 }
-                // InfoText={FoodsToEatInfoText}
+                InfoText={FoodsToAvoidInfoText}
                 margin={`${formData.foods_to_avoid.length > 0 ? 'mb-4' : 'mb-0'}`}
               />
 
-              {/* Notes List */}
               <div className="mb-4 flex flex-col gap-2">
                 {formData.foods_to_avoid.map((foodsToAvoid, index) => (
                   <div key={index} className="w-full flex gap-1 items-start">
