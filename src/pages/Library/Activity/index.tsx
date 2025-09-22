@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import Toggle from '../../../Components/Toggle';
 import SearchBox from '../../../Components/SearchBox';
 import ActivityHandler from './ActivityHandler';
@@ -8,6 +8,7 @@ import Application from '../../../api/app';
 import Circleloader from '../../../Components/CircleLoader';
 import Exercise from './Exercise';
 import SvgIcon from '../../../utils/svgIcon';
+import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 
 const Activity = () => {
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
@@ -143,7 +144,15 @@ const Activity = () => {
     added_asc: 'Added on (Oldest first)',
   };
   const currentSortLabel = sortLabelMap[sortId] ?? sortLabelMap['title_asc'];
-
+  const btnRef = useRef(null);
+  const modalRef = useRef(null);
+  useModalAutoClose({
+    buttonRefrence: btnRef,
+    refrence: modalRef,
+    close: () => {
+      setIsSortOpen(false);
+    },
+  });
   return (
     <>
       {loading && (
@@ -183,7 +192,7 @@ const Activity = () => {
                   <img src="/icons/sort.svg" alt="" />
                   Sort by:
                 </div>
-                <div className="relative">
+                <div ref={btnRef} className="relative">
                   <button
                     type="button"
                     onClick={() => setIsSortOpen((v) => !v)}
@@ -192,16 +201,21 @@ const Activity = () => {
                     }`}
                   >
                     {currentSortLabel}
-                    <SvgIcon
-                      color="#005F73"
-                      width="16px"
-                      height="16px"
-                      src="/icons/arrow-down.svg"
-                    />
+                    <div
+                      className={` transition-transform ${isSortOpen ? 'rotate-180' : ''}`}
+                    >
+                      <SvgIcon
+                        color="#005F73"
+                        width="16px"
+                        height="16px"
+                        src="/icons/arrow-down.svg"
+                      />
+                    </div>
                   </button>
 
                   {isSortOpen && (
                     <div
+                      ref={modalRef}
                       className={`absolute w-full top-8 z-20 right-0 bg-white rounded-[20px] px-2 py-3 shadow-md ${
                         isSortOpen ? 'rounded-t-none' : ''
                       }`}
