@@ -18,25 +18,27 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
         <div className="text-sm text-Text-Primary flex items-center gap-2">
           <TooltipTextAuto maxWidth="300px">{data?.title}</TooltipTextAuto>
           <div className="flex justify-start">
-            <div
-              data-tooltip-id={`score-calc-${index}`}
-              className="text-Primary-DeepTeal select-none  ml-1 cursor-pointer text-[10px]"
-            >
-              Analysis Info{' '}
-              <Tooltip
-                id={`score-calc-${index}`}
-                place="top"
-                className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
-                style={{
-                  zIndex: 9999,
-                  pointerEvents: 'none',
-                }}
+            {data?.['Practitioner Comments']?.[0] && (
+              <div
+                data-tooltip-id={`score-calc-${index}`}
+                className="text-Primary-DeepTeal select-none  ml-1 cursor-pointer text-[10px]"
               >
-                <div className="text-Text-Secondary">
-                  {data?.['Practitioner Comments']?.[0]}
-                </div>
-              </Tooltip>
-            </div>
+                Analysis Info{' '}
+                <Tooltip
+                  id={`score-calc-${index}`}
+                  place="top"
+                  className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
+                  style={{
+                    zIndex: 9999,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <div className="text-Text-Secondary">
+                    {data?.['Practitioner Comments']?.[0]}
+                  </div>
+                </Tooltip>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-1 ml-3">
