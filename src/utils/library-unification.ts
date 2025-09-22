@@ -39,3 +39,13 @@ export const NotesInfoText = `After writing each note, press the Enter key to sa
 export const AssociatedInterventionInfoTextDiet = `Link to an intervention (e.g., Mediterranean Diet)`;
 
 export const AssociatedInterventionInfoTextActivity = `Link to an intervention (e.g., Functional Training)`;
+
+export const KeyBenefitsInfoText = `After writing each benefit, press the Enter key to save it and be able to add another benefit.`;
+
+export const ExercisesToDoInfoText = `After writing each recommended exercise, press the Enter key to save it and be able to add another one.`;
+
+export const ExercisesToAvoidInfoText = `After writing each exercise to avoid, press the Enter key to save it and be able to add another one.`;
+
+export const RecommendedFoodsInfoText = `After writing each recommended food, press the Enter key to save it and be able to add another one.`;
+
+export const FoodsToAvoidInfoText = `After writing each food to limit, press the Enter key to save it and be able to add another one.`;
