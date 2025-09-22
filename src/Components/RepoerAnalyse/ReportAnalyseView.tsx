@@ -532,7 +532,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
       setTimeout(() => {
         publish('uploadTestShow-stepTwo', {});
-      }, 500);
+      }, 4);
       setShowUploadTest(data.detail.isShow);
     });
   }, []);
@@ -559,11 +559,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [resolvedMemberID, ClientSummaryBoxs]); // Only re-render when memberID changes
   console.log(isHaveReport);
   console.log(showUploadTest);
+  const [checkedSteptwo, setCheckedStepTwo] = useState(false);
+  useEffect(() => {
+    if (checkedSteptwo) {
+      setTimeout(() => {
+        setShowUploadTest(false);
+      }, 3000);
+    }
+  }, [checkedSteptwo]);
   const checkStepTwo = (fileID: string | undefined) => {
     if (!fileID) return;
 
     Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
-      if (res.data.step_two == true) {
+      if (res.data.step_two == true && checkedSteptwo == false) {
+        setCheckedStepTwo(true);
         // The condition is met, so we stop here.
         publish('StepTwoSuccess', {});
       } else {
