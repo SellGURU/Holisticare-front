@@ -425,7 +425,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     )}
                   </div>
                 </div> */}
-                {value.Category === 'Activity' && (
+                {value.Category === 'Activity' && value.Sections.length > 0 && (
                   <div
                     className={`w-full h-full bg-[#E9F0F2] rounded-[16px]  mt-2 ${expandedItems[index] ? '' : 'hidden'}`}
                   >
