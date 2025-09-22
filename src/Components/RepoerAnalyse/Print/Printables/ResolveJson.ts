@@ -14,9 +14,9 @@ const checkPageCanRender = (sizeReqired: number) => {
 
 const resolveHightText = (text: string, isSmal?: boolean) => {
   if (isSmal) {
-    return Math.ceil(text?.length / 134) * 18 + 8;
+    return Math.ceil(text?.length / 124) * 23;
   }
-  return Math.ceil(text?.length / 105) * 34;
+  return Math.ceil(text?.length / 115) * 34;
 };
 
 const addHeader = (title: string, moreInfo: string, id: string) => {
@@ -325,11 +325,11 @@ const addDetailedAnalyseCategory = (el: any) => {
 };
 
 const addDescriptionDetailedAnalyse = (description: string) => {
-  checkPageCanRender(resolveHightText(description, true) + 32);
+  checkPageCanRender(resolveHightText(description,true) + 32);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'addDescriptionDetailedAnalyse',
-    height: resolveHightText(description, true) + 32,
+    height: resolveHightText(description,true) + 32,
     content: description,
   });
 };
@@ -347,11 +347,11 @@ const addBiomarkerDetailAnalyse = (el: any, isEnd: boolean) => {
 };
 
 const addMoreInfoDetailAnalyse = (text: string, isEnd: boolean) => {
-  checkPageCanRender(resolveHightText(text) + 10);
+  checkPageCanRender(resolveHightText(text) + 45);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'addMoreInfoDetailAnalyse',
-    height: resolveHightText(text) + 10,
+    height: resolveHightText(text) + 45,
     isEnd: isEnd,
     content: text,
   });
