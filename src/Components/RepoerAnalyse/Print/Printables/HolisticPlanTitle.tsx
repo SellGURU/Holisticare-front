@@ -11,7 +11,7 @@ const HolisticPlanTitle: React.FC<HolisticPlanTitleProps> = ({ value }) => {
           fontWeight: 500,
           backgroundColor: '#FDFDFD',
         }}
-        className="pl-1 pt-3"
+        className="pl-2 pt-3"
       >
         {value}
       </div>

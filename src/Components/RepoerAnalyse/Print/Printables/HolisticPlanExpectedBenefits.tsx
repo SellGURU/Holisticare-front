@@ -7,7 +7,7 @@ const HolisticPlanExpectedBenefits: React.FC<
   return (
     <>
       <div
-        className="flex items-center gap-1 pt-1.5 pl-3"
+        className="flex items-center gap-1 pt-1.5 pl-5"
         style={{
           color: '#005f73',
           fontSize: '0.75rem',
@@ -19,8 +19,8 @@ const HolisticPlanExpectedBenefits: React.FC<
         Expected Benefits
       </div>
       <div
-        className="flex flex-col pt-1.5 pl-4"
-        style={{ backgroundColor: '#FDFDFD' }}
+        className="flex flex-col pt-1.5"
+        style={{ backgroundColor: '#FDFDFD', paddingLeft: '28px' }}
       >
         {value?.map((el: string) => {
           return (
