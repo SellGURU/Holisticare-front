@@ -534,7 +534,7 @@ const NewGenerateHolisticPlan = () => {
                                     setActiveEl(resol);
                                     setisToggle(!isToggle);
                                   }}
-                                  className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name && isToggle ? 'border-Primary-EmeraldGreen text-light-secandary-text' : 'border-Gray-50 border bg-white'} border items-center rounded-[6px] flex justify-between px-2 md:px-4`}
+                                  className={`w-full h-10 mb-2 cursor-pointer ${(activeEl?.name == resol.name && window.innerWidth < 768 && isToggle) || (window.innerWidth > 768 && activeEl?.name == resol.name) ? 'border-Primary-EmeraldGreen text-light-secandary-text' : 'border-Gray-50 border bg-white'} border items-center rounded-[6px] flex justify-between px-2 md:px-4`}
                                 >
                                   <div className="flex items-center gap-1">
                                     <div className="text-[10px] md:text-[12px] text-Text-Primary">

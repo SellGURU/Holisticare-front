@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const myjson: Array<any> = [];
 const checkPageCanRender = (sizeReqired: number) => {
@@ -15,9 +14,9 @@ const checkPageCanRender = (sizeReqired: number) => {
 
 const resolveHightText = (text: string, isSmal?: boolean) => {
   if (isSmal) {
-    return Math.ceil(text?.length / 134) * 18 + 8;
+    return Math.ceil(text?.length / 124) * 23;
   }
-  return Math.ceil(text?.length / 112) * 30;
+  return Math.ceil(text?.length / 115) * 34;
 };
 
 const addHeader = (title: string, moreInfo: string, id: string) => {
@@ -164,32 +163,138 @@ const AddTreatmentplanCategory = (category: any) => {
     content: category,
   });
 };
-const resolveHigthNotes = (notes: Array<string>) => {
-  let size = 4;
-  // console.log(notes);
-  notes?.map((el) => {
-    size = size + resolveHightText(el, true);
+// const resolveHigthNotes = (value: Array<string>) => {
+//   let size = 4;
+//   // console.log(notes);
+//   value?.map((el) => {
+//     size = size + resolveHightText(el, true);
+//   });
+//   return size;
+// };
+// const addHolisticPlanItem = (item: any) => {
+//   console.log('item => ', item);
+//   checkPageCanRender(
+//     80 +
+//       resolveHightText(item.Based) +
+//       resolveHightText(item.Intervnetion_content),
+//   );
+//   const lastPage = myjson[myjson.length - 1];
+//   lastPage.renderBoxs.push({
+//     type: 'TreatmentplanItem',
+//     height:
+//       80 +
+//       resolveHightText(item.Based) +
+//       resolveHightText(item.Intervnetion_content),
+//     content: item,
+//   });
+//   addBox(8);
+// };
+
+const resolveHigthValue = (value: Array<string>) => {
+  let size = 0;
+  value?.map((el) => {
+    size = size + resolveHightText(el);
   });
   return size;
 };
-const addHolisticPlanItem = (item: any) => {
-  checkPageCanRender(
-    80 + resolveHigthNotes(item.Notes) + resolveHigthNotes(item.Client_Notes),
-  );
+const addHolisticPlanScientificBasis = (item: string) => {
+  checkPageCanRender(resolveHightText(item));
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
-    type: 'TreatmentplanItem',
-    height:
-      80 + resolveHigthNotes(item.Notes) + resolveHigthNotes(item.Client_Notes),
+    type: 'ScientificBasis',
+    height: resolveHightText(item),
     content: item,
   });
-  addBox(8);
 };
 
+const addHolisticPlanGuidelines = (item: string) => {
+  checkPageCanRender(resolveHightText(item));
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'Guidelines',
+    height: resolveHightText(item),
+    content: item,
+  });
+};
+
+const addHolisticPlanExpectedBenefits = (item: Array<string>) => {
+  checkPageCanRender(resolveHigthValue(item));
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'ExpectedBenefits',
+    height: resolveHigthValue(item),
+    content: item,
+  });
+};
+
+const addHolisticPlanTitle = (item: string) => {
+  checkPageCanRender(resolveHightText(item));
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'Title',
+    height: resolveHightText(item),
+    content: item,
+  });
+};
+const addHolisticPlanRecommendedDosage = (item: string) => {
+  checkPageCanRender(resolveHightText(item));
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'RecommendedDosage',
+    height: resolveHightText(item),
+    content: item,
+  });
+};
+const addHolisticPlanRecommendedExercises = (item: string[]) => {
+  checkPageCanRender(resolveHigthValue(item));
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'RecommendedExercises',
+    height: resolveHigthValue(item),
+    content: item,
+  });
+};
+const addHolisticPlanExercisesAvoid = (item: string[]) => {
+  checkPageCanRender(resolveHigthValue(item));
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'ExercisesAvoid',
+    height: resolveHigthValue(item),
+    content: item,
+  });
+};
+
+const addHolisticPlanRecommendedFoods = (item: string[]) => {
+  checkPageCanRender(resolveHigthValue(item));
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'RecommendedFoods',
+    height: resolveHigthValue(item),
+    content: item,
+  });
+};
+const addHolisticPlanFoodsLimit = (item: string[]) => {
+  checkPageCanRender(resolveHigthValue(item));
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'FoodsLimit',
+    height: resolveHigthValue(item),
+    content: item,
+  });
+};
 const addHolisticPlanBox = (category: any) => {
   category?.data.map((el: any) => {
     AddTreatmentplanCategory(category);
-    return addHolisticPlanItem(el);
+    addHolisticPlanTitle(el.title);
+    addHolisticPlanScientificBasis(el.Based);
+    addHolisticPlanGuidelines(el.Intervnetion_content);
+    addHolisticPlanExpectedBenefits(el.key_benefits);
+    addHolisticPlanRecommendedDosage(el.Dose);
+    addHolisticPlanRecommendedExercises(el.exercises_to_do);
+    addHolisticPlanExercisesAvoid(el.exercises_to_avoid);
+    addHolisticPlanRecommendedFoods(el.foods_to_eat);
+    addHolisticPlanFoodsLimit(el.foods_to_avoid);
+    addBox(12);
   });
 };
 
@@ -242,11 +347,11 @@ const addBiomarkerDetailAnalyse = (el: any, isEnd: boolean) => {
 };
 
 const addMoreInfoDetailAnalyse = (text: string, isEnd: boolean) => {
-  checkPageCanRender(resolveHightText(text, true) + 10);
+  checkPageCanRender(resolveHightText(text) + 45);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'addMoreInfoDetailAnalyse',
-    height: resolveHightText(text, true) + 10,
+    height: resolveHightText(text) + 45,
     isEnd: isEnd,
     content: text,
   });

@@ -246,7 +246,13 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             </div>
           </div>
           {TreatMentPlanData.length > 0 && (
-            <div className="w-full flex flex-wrap gap-6 bg-white min-h-[540px] p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4">
+            <div
+              className={`w-full flex flex-wrap gap-6 bg-white min-h-[540px] p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4 ${
+                TreatMentPlanData?.filter(
+                  (value: any) => value.category == aciveTreatmentPlan,
+                )[0]?.data.length < 1 && 'justify-center'
+              }`}
+            >
               {TreatMentPlanData?.filter(
                 (value: any) => value.category == aciveTreatmentPlan,
               )[0]?.data?.map((el: any, index: number) => {
@@ -561,7 +567,13 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 </div>
               </div>
               {TreatMentPlanData.length > 0 && (
-                <div className="w-full flex flex-wrap gap-6 bg-white min-h-[540px] p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4">
+                <div
+                  className={`w-full flex flex-col gap-6 bg-white min-h-[540px] p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4 ${
+                    TreatMentPlanData?.filter(
+                      (value: any) => value.category == aciveTreatmentPlan,
+                    )[0]?.data.length < 1 && 'justify-center'
+                  }`}
+                >
                   {TreatMentPlanData?.filter(
                     (value: any) => value.category == aciveTreatmentPlan,
                   )[0]?.data?.map((el: any, index: number) => {
@@ -578,7 +590,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   {TreatMentPlanData?.filter(
                     (value: any) => value.category == aciveTreatmentPlan,
                   )[0]?.data.length < 1 && (
-                    <div className="w-full  flex justify-center items-center flex-col">
+                    <div className="w-full flex justify-center items-center flex-col">
                       <img src="/icons/no-recommendations.svg" alt="" />
                       <div className="text-Text-Primary text-sm font-medium mt-5">
                         No recommendations found.

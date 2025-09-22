@@ -19,6 +19,13 @@ type ValidationField =
   | 'Score'
   | 'YouTube Link'
   | 'Parent_Title'
+  | 'Based on'
+  | 'Intervnetion_content'
+  | 'KeyBenefits'
+  | 'FoodsToEat'
+  | 'FoodsToAvoid'
+  | 'ExercisesToDo'
+  | 'ExercisesToAvoid'
   | '';
 class ValidationForms {
   private static isValidYouTubeUrl = (url: string) => {
@@ -50,6 +57,20 @@ class ValidationForms {
         return this.validateYouTubeLink(value);
       case 'Parent_Title':
         return this.validateParentTitle(value);
+      case 'Based on':
+        return this.validateBasedOn(value);
+      case 'Intervnetion_content':
+        return this.validateIntervnetionContent(value);
+      case 'KeyBenefits':
+        return this.validateKeyBenefits(value);
+      case 'FoodsToEat':
+        return this.validateFoodsToEat(value);
+      case 'FoodsToAvoid':
+        return this.validateFoodsToAvoid(value);
+      case 'ExercisesToDo':
+        return this.validateExercisesToDo(value);
+      case 'ExercisesToAvoid':
+        return this.validateExercisesToAvoid(value);
       default:
         return false;
     }
@@ -76,6 +97,20 @@ class ValidationForms {
         return this.validationYouTubeLinkText(value);
       case 'Parent_Title':
         return this.validationParentTitleText(value);
+      case 'Based on':
+        return this.validationBasedOnText(value);
+      case 'Intervnetion_content':
+        return this.validationIntervnetionContentText(value);
+      case 'KeyBenefits':
+        return this.validationKeyBenefitsText(value);
+      case 'FoodsToEat':
+        return this.validationFoodsToEatText(value);
+      case 'FoodsToAvoid':
+        return this.validationFoodsToAvoidText(value);
+      case 'ExercisesToDo':
+        return this.validationExercisesToDoText(value);
+      case 'ExercisesToAvoid':
+        return this.validationExercisesToAvoidText(value);
       default:
         return '';
     }
@@ -254,6 +289,90 @@ class ValidationForms {
     return true;
   }
   private static validationParentTitleText(value: string) {
+    if (value.length == 0) {
+      return 'This field is required.';
+    }
+    return '';
+  }
+  private static validateBasedOn(value: string) {
+    if (value.length == 0) {
+      return false;
+    }
+    return true;
+  }
+  private static validationBasedOnText(value: string) {
+    if (value.length == 0) {
+      return 'This field is required.';
+    }
+    return '';
+  }
+  private static validateIntervnetionContent(value: string) {
+    if (value.length == 0) {
+      return false;
+    }
+    return true;
+  }
+  private static validationIntervnetionContentText(value: string) {
+    if (value.length == 0) {
+      return 'This field is required.';
+    }
+    return '';
+  }
+  private static validateKeyBenefits(value: string) {
+    if (value.length == 0) {
+      return false;
+    }
+    return true;
+  }
+  private static validationKeyBenefitsText(value: string) {
+    if (value.length == 0) {
+      return 'This field is required.';
+    }
+    return '';
+  }
+  private static validateFoodsToEat(value: string) {
+    if (value.length == 0) {
+      return false;
+    }
+    return true;
+  }
+  private static validationFoodsToEatText(value: string) {
+    if (value.length == 0) {
+      return 'This field is required.';
+    }
+    return '';
+  }
+  private static validateFoodsToAvoid(value: string) {
+    if (value.length == 0) {
+      return false;
+    }
+    return true;
+  }
+  private static validationFoodsToAvoidText(value: string) {
+    if (value.length == 0) {
+      return 'This field is required.';
+    }
+    return '';
+  }
+  private static validateExercisesToDo(value: string) {
+    if (value.length == 0) {
+      return false;
+    }
+    return true;
+  }
+  private static validationExercisesToDoText(value: string) {
+    if (value.length == 0) {
+      return 'This field is required.';
+    }
+    return '';
+  }
+  private static validateExercisesToAvoid(value: string) {
+    if (value.length == 0) {
+      return false;
+    }
+    return true;
+  }
+  private static validationExercisesToAvoidText(value: string) {
     if (value.length == 0) {
       return 'This field is required.';
     }
