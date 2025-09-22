@@ -325,11 +325,11 @@ const addDetailedAnalyseCategory = (el: any) => {
 };
 
 const addDescriptionDetailedAnalyse = (description: string) => {
-  checkPageCanRender(resolveHightText(description,true) + 32);
+  checkPageCanRender(resolveHightText(description, true) + 32);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'addDescriptionDetailedAnalyse',
-    height: resolveHightText(description,true) + 32,
+    height: resolveHightText(description, true) + 32,
     content: description,
   });
 };
