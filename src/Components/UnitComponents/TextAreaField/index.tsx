@@ -54,7 +54,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         <Tooltip
           id={`info-text-${label.toLowerCase().replace(/\s+/g, '-')}`}
           place="top-start"
-          className="!bg-white !max-w-[300px] !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+          className="!bg-white !max-w-[300px] !font-normal !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
         >
           {InfoText}
         </Tooltip>
