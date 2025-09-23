@@ -19,11 +19,11 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     },
     {
       name: 'Needs Focus Biomarker',
-      checked: true,
+      checked: false,
     },
     {
       name: 'Concerning Result',
-      checked: false,
+      checked: true,
     },
     {
       name: 'Detailed Analysis',
@@ -39,6 +39,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       disabled: false,
     },
   ]);
+  console.log(downloadSelect);
+
   subscribe('ActionPlanStatus', (data: any) => {
     setDownloadSelect((prev) =>
       prev.map((item) =>
@@ -70,8 +72,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   subscribe('DetailedAnalysisStatus', (data: any) => {
     setDownloadSelect((prev) =>
       prev.map((item) =>
-        item.name === 'Detailed Analysis' ||
-        item.name === 'Needs Focus Biomarker'
+        item.name === 'Detailed Analysis'
           ? {
               ...item,
               disabled: data.detail.isempty,
@@ -81,6 +82,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       ),
     );
   });
+
   subscribe('NeedsFocusBiomarkerStatus', (data: any) => {
     setDownloadSelect((prev) =>
       prev.map((item) =>
