@@ -184,7 +184,9 @@ const ExerciseItem = ({
             <span className="font-medium text-Text-Secondary">
               Instruction:
             </span>{' '}
-            <TooltipTextAuto tooltipPlace='top' maxWidth='450px'>{exercise.Exercise.Instruction}</TooltipTextAuto>
+            <TooltipTextAuto tooltipPlace="top" maxWidth="450px">
+              {exercise.Exercise.Instruction}
+            </TooltipTextAuto>
             {/* */}
           </div>
         </div>

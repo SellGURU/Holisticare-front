@@ -40,7 +40,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     },
   ]);
   console.log(downloadSelect);
-  
+
   subscribe('ActionPlanStatus', (data: any) => {
     setDownloadSelect((prev) =>
       prev.map((item) =>
@@ -82,7 +82,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       ),
     );
   });
-  
+
   subscribe('NeedsFocusBiomarkerStatus', (data: any) => {
     setDownloadSelect((prev) =>
       prev.map((item) =>
