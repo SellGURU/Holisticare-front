@@ -144,12 +144,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           publish('DetailedAnalysisStatus', { isempty: false });
         }
         if (
-          res.data.biomarkers.filter((el: any) => el.outofref == true).length >
+          res.data.biomarkers.filter((el: any) => el.outofref == true).length ==
           0
         ) {
-          publish('NeedsFocusBiomarkerStatus', { isempty: false });
-        } else {
           publish('NeedsFocusBiomarkerStatus', { isempty: true });
+        } else {
+          // publish('NeedsFocusBiomarkerStatus', { isempty: false });
         }
 
         clearUsedPositions();
@@ -169,10 +169,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setConcerningResult(res.data.table);
         if (res.data.table.length == 0) {
           publish('ConcerningResultStatus', { isempty: true });
+        } else {
+          publish('ConcerningResultStatus', { isempty: false });
         }
-        // else {
-        //   publish('ConcerningResultStatus', { isempty: false });
-        // }
         // setConcerningResult(conceringResultData);
       })
       .catch(() => {
@@ -206,12 +205,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         publish('DetailedAnalysisStatus', { isempty: false });
       }
       if (
-        res.data.biomarkers.filter((el: any) => el.outofref == true).length > 0
+        res.data.biomarkers.filter((el: any) => el.outofref == true).length == 0
       ) {
-        publish('NeedsFocusBiomarkerStatus', { isempty: false });
-      } else {
         publish('NeedsFocusBiomarkerStatus', { isempty: true });
       }
+      //  else {
+      //   publish('NeedsFocusBiomarkerStatus', { isempty: false });
+      // }
       // setReferenceData(referencedataMoch);
     });
     Application.getClientSummaryCategoriesShare(
@@ -234,10 +234,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setConcerningResult(res.data.table);
       if (res.data.table.length == 0) {
         publish('ConcerningResultStatus', { isempty: true });
+      } else {
+        publish('ConcerningResultStatus', { isempty: false });
       }
-      //  else {
-      //   publish('ConcerningResultStatus', { isempty: false });
-      // }
       // setConcerningResult(conceringResultData);
     });
     Application.getOverviewtplanShare(
