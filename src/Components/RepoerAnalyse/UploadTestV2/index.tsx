@@ -460,7 +460,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       Provide Data to Generate Health Plan
                     </div>
                     <div className="text-xs text-Text-Primary text-center">
-                      Choose one or both methods below to provide a personalized
+                      Choose one methods below to provide a personalized
                       plan.
                     </div>
                   </div>
