@@ -225,7 +225,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       // Description: description,
       // Base_Score: baseScore,
       Activity_Filters: addData,
-      Sections: rsolveSectionListforSendToApi(),
+      Sections: rsolveSectionListforSendToApi() || [],
       Task_Type: 'Action',
     });
     onClose();
