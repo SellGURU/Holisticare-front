@@ -513,8 +513,6 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                             )[0]
                             .suggestions.map(
                               (el: any, suggestionIndex: number) => {
-                                console.log(el);
-
                                 return (
                                   <div
                                     className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
