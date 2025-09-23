@@ -169,8 +169,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setConcerningResult(res.data.table);
         if (res.data.table.length == 0) {
           publish('ConcerningResultStatus', { isempty: true });
-        }
-        else {
+        } else {
           publish('ConcerningResultStatus', { isempty: false });
         }
         // setConcerningResult(conceringResultData);
@@ -209,7 +208,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         res.data.biomarkers.filter((el: any) => el.outofref == true).length == 0
       ) {
         publish('NeedsFocusBiomarkerStatus', { isempty: true });
-      
       }
       //  else {
       //   publish('NeedsFocusBiomarkerStatus', { isempty: false });
@@ -236,8 +234,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setConcerningResult(res.data.table);
       if (res.data.table.length == 0) {
         publish('ConcerningResultStatus', { isempty: true });
-      }
-       else {
+      } else {
         publish('ConcerningResultStatus', { isempty: false });
       }
       // setConcerningResult(conceringResultData);
