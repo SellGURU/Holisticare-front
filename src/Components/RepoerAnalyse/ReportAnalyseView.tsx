@@ -144,12 +144,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           publish('DetailedAnalysisStatus', { isempty: false });
         }
         if (
-          res.data.biomarkers.filter((el: any) => el.outofref == true).length >
+          res.data.biomarkers.filter((el: any) => el.outofref == true).length ==
           0
         ) {
-          publish('NeedsFocusBiomarkerStatus', { isempty: false });
-        } else {
           publish('NeedsFocusBiomarkerStatus', { isempty: true });
+        } else {
+          // publish('NeedsFocusBiomarkerStatus', { isempty: false });
         }
 
         clearUsedPositions();
@@ -169,10 +169,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setConcerningResult(res.data.table);
         if (res.data.table.length == 0) {
           publish('ConcerningResultStatus', { isempty: true });
+        } else {
+          publish('ConcerningResultStatus', { isempty: false });
         }
-        // else {
-        //   publish('ConcerningResultStatus', { isempty: false });
-        // }
         // setConcerningResult(conceringResultData);
       })
       .catch(() => {
@@ -206,12 +205,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         publish('DetailedAnalysisStatus', { isempty: false });
       }
       if (
-        res.data.biomarkers.filter((el: any) => el.outofref == true).length > 0
+        res.data.biomarkers.filter((el: any) => el.outofref == true).length == 0
       ) {
-        publish('NeedsFocusBiomarkerStatus', { isempty: false });
-      } else {
         publish('NeedsFocusBiomarkerStatus', { isempty: true });
       }
+      //  else {
+      //   publish('NeedsFocusBiomarkerStatus', { isempty: false });
+      // }
       // setReferenceData(referencedataMoch);
     });
     Application.getClientSummaryCategoriesShare(
@@ -234,10 +234,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setConcerningResult(res.data.table);
       if (res.data.table.length == 0) {
         publish('ConcerningResultStatus', { isempty: true });
+      } else {
+        publish('ConcerningResultStatus', { isempty: false });
       }
-      //  else {
-      //   publish('ConcerningResultStatus', { isempty: false });
-      // }
       // setConcerningResult(conceringResultData);
     });
     Application.getOverviewtplanShare(
@@ -530,7 +529,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
       setTimeout(() => {
         publish('uploadTestShow-stepTwo', {});
-      }, 500);
+      }, 4);
       setShowUploadTest(data.detail.isShow);
     });
   }, []);
@@ -557,11 +556,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [resolvedMemberID, ClientSummaryBoxs]); // Only re-render when memberID changes
   console.log(isHaveReport);
   console.log(showUploadTest);
+  const [checkedSteptwo, setCheckedStepTwo] = useState(false);
+  useEffect(() => {
+    if (checkedSteptwo) {
+      setTimeout(() => {
+        setShowUploadTest(false);
+      }, 3000);
+    }
+  }, [checkedSteptwo]);
   const checkStepTwo = (fileID: string | undefined) => {
     if (!fileID) return;
 
     Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
-      if (res.data.step_two == true) {
+      if (res.data.step_two == true && checkedSteptwo == false) {
+        setCheckedStepTwo(true);
         // The condition is met, so we stop here.
         publish('StepTwoSuccess', {});
       } else {

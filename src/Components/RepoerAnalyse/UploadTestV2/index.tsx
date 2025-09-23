@@ -460,16 +460,19 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       Provide Data to Generate Health Plan
                     </div>
                     <div className="text-xs text-Text-Primary text-center">
-                      Choose one or both methods below to provide a personalized
-                      plan.
+                      Choose one methods below to provide a personalized plan.
                     </div>
                   </div>
                   <div className="flex w-full items-center gap-6">
                     <div
                       onClick={() => {
-                        setstep(1);
+                        if (questionnaires.length > 0) {
+                          return;
+                        } else {
+                          setstep(1);
+                        }
                       }}
-                      className="w-full md:w-[477px] cursor-pointer h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
+                      className={` ${questionnaires.length > 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {isSaveClicked &&
                         extractedBiomarkers.length + addedBiomarkers.length >
@@ -507,9 +510,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                     </div>
                     <div
                       onClick={() => {
-                        publish('QuestionaryTrackingCall', {});
+                        if (
+                          extractedBiomarkers.length + addedBiomarkers.length >
+                          0
+                        ) {
+                          return;
+                        } else {
+                          publish('QuestionaryTrackingCall', {});
+                        }
                       }}
-                      className=" w-full md:w-[477px] cursor-pointer h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50"
+                      className={` ${extractedBiomarkers.length + addedBiomarkers.length > 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {questionnaires.length > 0 && (
                         <div className="w-[167px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">

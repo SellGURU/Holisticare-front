@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { FC, useState } from 'react';
-import BioMarkerRowSuggestions from '../../generateTreatmentPlan/components/BiomarkerRow';
+import BioMarkerRowOldSuggestions from '../../generateTreatmentPlan/components/BiomarkerRowOld';
 type CategoryState = {
   name: string;
   visible: boolean;
@@ -132,14 +132,14 @@ export const Overview: FC<OverviewProps> = ({
                   className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
                   key={`${el.title}-${suggestionIndex}`}
                 >
-                  <BioMarkerRowSuggestions
+                  <BioMarkerRowOldSuggestions
                     index={suggestionIndex}
                     // isOverview
                     value={el}
                     onEdit={() => {}}
                     onchange={() => {}}
                     onDelete={() => {}}
-                  ></BioMarkerRowSuggestions>
+                  ></BioMarkerRowOldSuggestions>
                 </div>
               </>
             );
