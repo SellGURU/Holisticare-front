@@ -136,7 +136,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }
   }, [value?.label]);
 
-  
   return (
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
@@ -289,21 +288,19 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <div
                     className={`flex items-center gap-1 ml-4 ${value.Category === 'Diet' && 'ml-5'}`}
                   >
-                    {
-                      value?.label && (
-<div
-                      className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
-                      style={{ backgroundColor: bgColor }}
-                    >
+                    {value?.label && (
                       <div
-                        className={`size-[8px] select-none rounded-full`}
-                        style={{ backgroundColor: color }}
-                      ></div>
-                      {value?.label}
-                    </div>
-                      )
-                    }
-                    
+                        className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                        style={{ backgroundColor: bgColor }}
+                      >
+                        <div
+                          className={`size-[8px] select-none rounded-full`}
+                          style={{ backgroundColor: color }}
+                        ></div>
+                        {value?.label}
+                      </div>
+                    )}
+
                     {/* <div
                       className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                       data-tooltip-id={`tooltip-system-score-bio-${index}`}
