@@ -18,7 +18,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       checked: true,
     },
     {
-      name: 'Needs Focus Biomarker',
+      name: 'Need Focus Biomarker',
       checked: false,
     },
     {
@@ -86,7 +86,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   subscribe('NeedsFocusBiomarkerStatus', (data: any) => {
     setDownloadSelect((prev) =>
       prev.map((item) =>
-        item.name === 'Needs Focus Biomarker'
+        item.name === 'Need Focus Biomarker'
           ? {
               ...item,
               disabled: data.detail.isempty,

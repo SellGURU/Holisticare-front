@@ -299,7 +299,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       checked: true,
     },
     {
-      name: 'Needs Focus Biomarker',
+      name: 'Need Focus Biomarker',
       checked: true,
     },
     {
@@ -717,16 +717,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               </div>
             )}
 
-            {accessManager.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+            {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
               .checked == true && (
               <>
                 <div className=" my-[200px] xl:min-h-[700px] text-light-primary-text dark:text-primary-text ">
                   <div>
                     <div
-                      id="Needs Focus Biomarker"
+                      id="Need Focus Biomarker"
                       className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 "
                     >
-                      Needs Focus Biomarkers
+                      Need Focus Biomarkers
                     </div>
                     <div className=" text-Text-Secondary text-[12px]">
                       {referenceData?.total_biomarker_note}

@@ -403,7 +403,7 @@ const AddNeedsFocusSection = (
   }
   addBox(16);
   addHeader(
-    'Needs Focus Biomarkers',
+    'Need Focus Biomarkers',
     referenceData.total_biomarker_note,
     'needs-focus-biomarkers',
   );
@@ -556,7 +556,7 @@ const resovleJson = ({
   if (isActiveSection('Client Summary') == true) {
     AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
   }
-  if (isActiveSection('Needs Focus Biomarker') == true) {
+  if (isActiveSection('Need Focus Biomarker') == true) {
     AddNeedsFocusSection(referenceData, resolveBioMarkers);
   }
   if (isActiveSection('Concerning Result') == true) {
