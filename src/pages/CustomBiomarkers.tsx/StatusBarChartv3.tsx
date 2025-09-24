@@ -1,4 +1,3 @@
-import { Tooltip } from 'react-tooltip';
 import TooltipText from '../../Components/TooltipText';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -186,21 +185,9 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
             >
               <div
                 className={`absolute w-full px-1 ${isCustom ? 'text-[#888888]' : 'text-Primary-DeepTeal'}  flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]`}
-                data-tooltip-id={`tooltip-label-${el.label}-${index}`}
               >
-                {el.label.length > 30
-                  ? el.label.substring(0, 30) + '...'
-                  : el.label || '-'}
+                <TooltipText tooltipValue={el.label}>{el.label}</TooltipText>
               </div>
-              {el.label.length > 30 && (
-                <Tooltip
-                  id={`tooltip-label-${el.label}-${index}`}
-                  place="top"
-                  className="!bg-white !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                >
-                  {el.label}
-                </Tooltip>
-              )}
               <div
                 className={`absolute w-full px-1 ${isCustom ? 'text-[#B0B0B0]' : 'text-Primary-DeepTeal'}  flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]`}
               >
