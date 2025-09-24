@@ -1,14 +1,7 @@
 import { FC, useState } from 'react';
 import SvgIcon from '../../../utils/svgIcon';
 import resolveAnalyseIcon from '../../../Components/RepoerAnalyse/resolveAnalyseIcon';
-import {
-  Send,
- 
-  Bot,
- 
-  ChevronDown,
-
-} from 'lucide-react';
+import { Send, Bot, ChevronDown,CheckCircle,Circle,ClipboardList} from 'lucide-react';
 
 interface TheAppOverviewProps {
   customTheme: {
@@ -256,8 +249,8 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
           </div>
         ) : selectedPage == 'Monitor' ? (
           <MonitorSection customTheme={customTheme}></MonitorSection>
-        ) : selectedPage == 'Setting' ? (
-          <SettingSection customTheme={customTheme} />
+        ) : selectedPage == 'Plan' ? (
+          <PlanSection customTheme={customTheme} />
         ) : selectedPage == 'Chat' ? (
           <ChatSection customTheme={customTheme}></ChatSection>
         ) : (
@@ -348,14 +341,14 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
           <div className="flex gap-4">
             <div
               onClick={() => {
-                setselectedPage('Progress');
+                setselectedPage('Plan');
               }}
               className="flex flex-col items-center text-gray-500"
             >
               <SvgIcon
                 src="/icons/document-text-mobile.svg"
                 color={
-                  selectedPage == 'Progress'
+                  selectedPage == 'Plan'
                     ? customTheme.secondaryColor
                     : '#888888'
                 }
@@ -364,7 +357,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
               />
 
               <div
-                className={`text-[5.87px] ${selectedPage == 'Progress' ? `text-[${customTheme.secondaryColor}]` : 'text-Text-Quadruple'} `}
+                className={`text-[5.87px] ${selectedPage == 'Plan' ? `text-[${customTheme.secondaryColor}]` : 'text-Text-Quadruple'} `}
               >
                 Plan
               </div>
@@ -652,64 +645,150 @@ const MonitorSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
     </div>
   );
 };
-const SettingSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
-  const Options = [
+const PlanSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
+
+  const todaysTasks = [
     {
-      title: 'Wearable Devices',
-      src: '/icons/watch-status.svg',
+      id: 1,
+      title: "Training/Exercise Feedback Check-In",
+      type: "Checkin",
+      details: "Questions: 7   Time: 14 Seconds",
+      completed: false,
     },
+ 
     {
-      title: 'Change Password',
-      src: '/icons/lock.svg',
-    },
-    {
-      title: 'Privacy Policy',
-      src: '/icons/security-safe.svg',
-    },
-    {
-      title: 'Terms of Service',
-      src: '/icons/shield-tick.svg',
+      id: 2,
+      title: "Multivitamin (Methylated)",
+      type: "Supplement",
+      details: "Take your daily dose of Multivitamins.",
+      completed: true,
     },
   ];
+  const hexToRgba = (hex: string, opacity: string) => {
+    const r = parseInt(hex.substring(1, 3), 16);
+    const g = parseInt(hex.substring(3, 5), 16);
+    const b = parseInt(hex.substring(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
   return (
-    <div className="w-[202.5px] ">
-      <div className="flex flex-col w-[188px] gap-2 mt-3">
-        {Options.map((option: any, index: number) => (
+    <div className="w-[182.5px] mt-3  text-[8px]">
+    {/* Title */}
+    <div className="text-center mb-2">
+      <h2
+        className="text-[10px] font-thin bg-clip-text text-transparent"
+        style={{
+          color: customTheme.primaryColor,
+        }}
+      >
+        Action Plans
+      </h2>
+      <p className="text-gray-600 ">
+        Complete daily tasks and track your calendar
+      </p>
+    </div>
+
+    {/* Tabs */}
+    <div defaultValue="today" className="w-full">
+      {/* <TabsList className="grid grid-cols-2 w-full mb-4">
+        <TabsTrigger value="today">Today's Tasks</TabsTrigger>
+        <TabsTrigger value="calendar">Calendar View</TabsTrigger>
+      </TabsList> */}
+
+      {/* Today’s Tasks */}
+      <div  className="space-y-1 overflow-hidden ">
+        {todaysTasks.map((task) => (
           <div
-            key={index}
-            className="flex w-full justify-between items-center bg-white rounded-2xl p-2 shadow-drop"
+            key={task.id}
+            className="rounded-2xl border shadow-sm backdrop-blur-sm"
+            // style={{
+            //   background: `linear-gradient(to bottom right, ${hexToRgba(
+            //     customTheme.primaryColor,
+            //     "0.05"
+            //   )}, ${hexToRgba(customTheme.secondaryColor, "0.08")})`,
+            //   borderColor: hexToRgba(customTheme.primaryColor, "0.15"),
+            // }}
           >
-            <div className="flex gap-1 items-center text-Text-Primary text-[6.87px]">
-              <SvgIcon
-                width="11.74px"
-                height="11.74px"
-                color={customTheme.secondaryColor}
-                src={option.src}
-              />
-              {option.title}
+            <div className="p-3">
+              <div className="flex items-start gap-3">
+                {/* Left icon */}
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{
+                
+                    background:   customTheme.primaryColor
+                      //  hexToRgba(customTheme.secondaryColor, "0.6"),
+                  }}
+                >
+                 <ClipboardList className='size-5'/>
+                </div>
+
+                {/* Task info */}
+                <div className="flex-1 min-w-0">
+                  <h4
+                    className={`font-medium ${
+                      task.completed
+                        ? "text-gray-500 line-through"
+                        : "text-gray-800 "
+                    }`}
+                  >
+                    {task.title}
+                  </h4>
+                  <div
+                    // variant="outline"
+                    className="text-[8px] mt-1"
+                    style={{
+                      borderColor: hexToRgba(customTheme.primaryColor, "0.3"),
+                      color: customTheme.primaryColor,
+                    }}
+                  >
+                    {task.type}
+                  </div>
+
+                  <p className="text-gray-600   mt-2">
+                    {task.details}
+                  </p>
+                  {/* {task.target && (
+                    <p className="text-gray-500  mt-1">
+                      Target: {task.target}
+                    </p>
+                  )} */}
+
+                  {/* Action button */}
+                  <button
+                   
+                    // variant={task.completed ? "default" : "outline"}
+                    className="mt-3 flex rounded-lg w-fit px-2 py-1  "
+                    style={
+                      task.completed
+                        ? {
+                            backgroundColor: customTheme.primaryColor,
+                            color: "#fff",
+                          }
+                        : {}
+                    }
+                  >
+                    {task.completed ? (
+                      <CheckCircle className="w-3 h-3 mr-2" />
+                    ) : (
+                      <Circle className="w-3 h-3 mr-2" />
+                    )}
+                    {task.completed
+                      ? "Completed"
+                      : task.type === "Lifestyle"
+                      ? "Save Value"
+                      : "Mark Complete"}
+                  </button>
+                </div>
+              </div>
             </div>
-            <SvgIcon
-              width="11.74px"
-              height="11.74px"
-              color={customTheme.secondaryColor}
-              src="/icons/arrow-right-new.svg"
-            />
           </div>
         ))}
       </div>
-      <div
-        style={{ color: customTheme.secondaryColor }}
-        className="w-[188px] mt-4 flex justify-center gap-1 items-center text-[6.87px] "
-      >
-        <SvgIcon
-          width="11.74px"
-          height="11.74px"
-          color={customTheme.secondaryColor}
-          src="/icons/logout2.svg"
-        />
-        Log Out
-      </div>
+
+     
+      
     </div>
+  </div>
   );
 };
 
@@ -888,12 +967,9 @@ const ChatSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   )}, ${hexToRgba(customTheme.secondaryColor, '0.6')})`;
 
   return (
-    <div
-      className="w-[187.5px] mt-2 text-[8px] rounded-xl"
- 
-    >
+    <div className="w-[187.5px] mt-2 text-[8px] rounded-xl">
       {/* Mode Toggle */}
-      <div      style={{ background: mainGradient }} className="mb-3">
+      <div style={{ background: mainGradient }} className="mb-3">
         <div
           className="h-14 w-full flex items-center justify-between px-2 rounded-lg border"
           style={{
