@@ -15,7 +15,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
 }) => {
   const menuItems = [
     'Client Summary',
-    'Needs Focus Biomarker',
+    'Need Focus Biomarker',
     'Concerning Result',
     'Detailed Analysis',
     'Holistic Plan',
@@ -33,7 +33,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       checked: true,
     },
     {
-      name: 'Needs Focus Biomarker',
+      name: 'Need Focus Biomarker',
       checked: true,
     },
     {
