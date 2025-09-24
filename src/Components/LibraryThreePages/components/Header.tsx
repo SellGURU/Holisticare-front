@@ -27,8 +27,8 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
   const sortOptions = [
     { id: 'title_asc', label: 'Title (A → Z)' },
     { id: 'title_desc', label: 'Title (Z → A)' },
-    { id: 'dose_asc', label: 'Dose (Low → High)' },
-    { id: 'dose_desc', label: 'Dose (High → Low)' },
+    // { id: 'dose_asc', label: 'Dose (Low → High)' },
+    // { id: 'dose_desc', label: 'Dose (High → Low)' },
     { id: 'priority_asc', label: 'Priority Weight (Low → High)' },
     { id: 'priority_desc', label: 'Priority Weight (High → Low)' },
     { id: 'added_desc', label: 'Added on (Newest first)' },

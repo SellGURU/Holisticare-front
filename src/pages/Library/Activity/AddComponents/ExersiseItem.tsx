@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../../utils/svgIcon';
+import TooltipTextAuto from '../../../../Components/TooltipText/TooltipTextAuto';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ExerciseItemProps {
@@ -179,11 +180,14 @@ const ExerciseItem = ({
           )}
         </div>
         <div>
-          <div className="text-xs max-w-[450px] text-nowrap overflow-hidden text-ellipsis text-Text-Primary mt-2">
+          <div className="text-xs max-w-[450px] flex text-nowrap overflow-hidden text-ellipsis text-Text-Primary mt-2">
             <span className="font-medium text-Text-Secondary">
               Instruction:
             </span>{' '}
-            {exercise.Exercise.Instruction}
+            <TooltipTextAuto tooltipPlace="top" maxWidth="450px">
+              {exercise.Exercise.Instruction}
+            </TooltipTextAuto>
+            {/* */}
           </div>
         </div>
         {/* <div className="min-h-[25px] mt-2 flex flex-wrap gap-2">
