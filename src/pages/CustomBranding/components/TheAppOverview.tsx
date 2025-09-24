@@ -1,7 +1,14 @@
 import { FC, useState } from 'react';
 import SvgIcon from '../../../utils/svgIcon';
 import resolveAnalyseIcon from '../../../Components/RepoerAnalyse/resolveAnalyseIcon';
-import { Send, Bot, ChevronDown,CheckCircle,Circle,ClipboardList} from 'lucide-react';
+import {
+  Send,
+  Bot,
+  ChevronDown,
+  CheckCircle,
+  Circle,
+  ClipboardList,
+} from 'lucide-react';
 
 interface TheAppOverviewProps {
   customTheme: {
@@ -646,21 +653,20 @@ const MonitorSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   );
 };
 const PlanSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
-
   const todaysTasks = [
     {
       id: 1,
-      title: "Training/Exercise Feedback Check-In",
-      type: "Checkin",
-      details: "Questions: 7   Time: 14 Seconds",
+      title: 'Training/Exercise Feedback Check-In',
+      type: 'Checkin',
+      details: 'Questions: 7   Time: 14 Seconds',
       completed: false,
     },
- 
+
     {
       id: 2,
-      title: "Multivitamin (Methylated)",
-      type: "Supplement",
-      details: "Take your daily dose of Multivitamins.",
+      title: 'Multivitamin (Methylated)',
+      type: 'Supplement',
+      details: 'Take your daily dose of Multivitamins.',
       completed: true,
     },
   ];
@@ -672,123 +678,116 @@ const PlanSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   };
   return (
     <div className="w-[182.5px] mt-3  text-[8px]">
-    {/* Title */}
-    <div className="text-center mb-2">
-      <h2
-        className="text-[10px] font-thin bg-clip-text text-transparent"
-        style={{
-          color: customTheme.primaryColor,
-        }}
-      >
-        Action Plans
-      </h2>
-      <p className="text-gray-600 ">
-        Complete daily tasks and track your calendar
-      </p>
-    </div>
+      {/* Title */}
+      <div className="text-center mb-2">
+        <h2
+          className="text-[10px] font-thin bg-clip-text text-transparent"
+          style={{
+            color: customTheme.primaryColor,
+          }}
+        >
+          Action Plans
+        </h2>
+        <p className="text-gray-600 ">
+          Complete daily tasks and track your calendar
+        </p>
+      </div>
 
-    {/* Tabs */}
-    <div defaultValue="today" className="w-full">
-      {/* <TabsList className="grid grid-cols-2 w-full mb-4">
+      {/* Tabs */}
+      <div defaultValue="today" className="w-full">
+        {/* <TabsList className="grid grid-cols-2 w-full mb-4">
         <TabsTrigger value="today">Today's Tasks</TabsTrigger>
         <TabsTrigger value="calendar">Calendar View</TabsTrigger>
       </TabsList> */}
 
-      {/* Today’s Tasks */}
-      <div  className="space-y-1 overflow-hidden ">
-        {todaysTasks.map((task) => (
-          <div
-            key={task.id}
-            className="rounded-2xl border shadow-sm backdrop-blur-sm"
-            // style={{
-            //   background: `linear-gradient(to bottom right, ${hexToRgba(
-            //     customTheme.primaryColor,
-            //     "0.05"
-            //   )}, ${hexToRgba(customTheme.secondaryColor, "0.08")})`,
-            //   borderColor: hexToRgba(customTheme.primaryColor, "0.15"),
-            // }}
-          >
-            <div className="p-3">
-              <div className="flex items-start gap-3">
-                {/* Left icon */}
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{
-                
-                    background:   customTheme.primaryColor
-                      //  hexToRgba(customTheme.secondaryColor, "0.6"),
-                  }}
-                >
-                 <ClipboardList className='size-5'/>
-                </div>
-
-                {/* Task info */}
-                <div className="flex-1 min-w-0">
-                  <h4
-                    className={`font-medium ${
-                      task.completed
-                        ? "text-gray-500 line-through"
-                        : "text-gray-800 "
-                    }`}
-                  >
-                    {task.title}
-                  </h4>
+        {/* Today’s Tasks */}
+        <div className="space-y-1 overflow-hidden ">
+          {todaysTasks.map((task) => (
+            <div
+              key={task.id}
+              className="rounded-2xl border shadow-sm backdrop-blur-sm"
+              // style={{
+              //   background: `linear-gradient(to bottom right, ${hexToRgba(
+              //     customTheme.primaryColor,
+              //     "0.05"
+              //   )}, ${hexToRgba(customTheme.secondaryColor, "0.08")})`,
+              //   borderColor: hexToRgba(customTheme.primaryColor, "0.15"),
+              // }}
+            >
+              <div className="p-3">
+                <div className="flex items-start gap-3">
+                  {/* Left icon */}
                   <div
-                    // variant="outline"
-                    className="text-[8px] mt-1"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{
-                      borderColor: hexToRgba(customTheme.primaryColor, "0.3"),
-                      color: customTheme.primaryColor,
+                      background: customTheme.primaryColor,
+                      //  hexToRgba(customTheme.secondaryColor, "0.6"),
                     }}
                   >
-                    {task.type}
+                    <ClipboardList className="size-5" />
                   </div>
 
-                  <p className="text-gray-600   mt-2">
-                    {task.details}
-                  </p>
-                  {/* {task.target && (
+                  {/* Task info */}
+                  <div className="flex-1 min-w-0">
+                    <h4
+                      className={`font-medium ${
+                        task.completed
+                          ? 'text-gray-500 line-through'
+                          : 'text-gray-800 '
+                      }`}
+                    >
+                      {task.title}
+                    </h4>
+                    <div
+                      // variant="outline"
+                      className="text-[8px] mt-1"
+                      style={{
+                        borderColor: hexToRgba(customTheme.primaryColor, '0.3'),
+                        color: customTheme.primaryColor,
+                      }}
+                    >
+                      {task.type}
+                    </div>
+
+                    <p className="text-gray-600   mt-2">{task.details}</p>
+                    {/* {task.target && (
                     <p className="text-gray-500  mt-1">
                       Target: {task.target}
                     </p>
                   )} */}
 
-                  {/* Action button */}
-                  <button
-                   
-                    // variant={task.completed ? "default" : "outline"}
-                    className="mt-3 flex rounded-lg w-fit px-2 py-1  "
-                    style={
-                      task.completed
-                        ? {
-                            backgroundColor: customTheme.primaryColor,
-                            color: "#fff",
-                          }
-                        : {}
-                    }
-                  >
-                    {task.completed ? (
-                      <CheckCircle className="w-3 h-3 mr-2" />
-                    ) : (
-                      <Circle className="w-3 h-3 mr-2" />
-                    )}
-                    {task.completed
-                      ? "Completed"
-                      : task.type === "Lifestyle"
-                      ? "Save Value"
-                      : "Mark Complete"}
-                  </button>
+                    {/* Action button */}
+                    <button
+                      // variant={task.completed ? "default" : "outline"}
+                      className="mt-3 flex rounded-lg w-fit px-2 py-1  "
+                      style={
+                        task.completed
+                          ? {
+                              backgroundColor: customTheme.primaryColor,
+                              color: '#fff',
+                            }
+                          : {}
+                      }
+                    >
+                      {task.completed ? (
+                        <CheckCircle className="w-3 h-3 mr-2" />
+                      ) : (
+                        <Circle className="w-3 h-3 mr-2" />
+                      )}
+                      {task.completed
+                        ? 'Completed'
+                        : task.type === 'Lifestyle'
+                          ? 'Save Value'
+                          : 'Mark Complete'}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-
-     
-      
     </div>
-  </div>
   );
 };
 
