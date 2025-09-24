@@ -614,8 +614,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     {ClientSummaryBoxs && (
                       <div className="text-Text-Secondary text-[12px]">
-                        Total of {ClientSummaryBoxs.total_subcategory}{' '}
-                        biomarkers in {ClientSummaryBoxs.total_category}{' '}
+                        Total of {ClientSummaryBoxs?.total_subcategory || 0}{' '}
+                        biomarkers in {ClientSummaryBoxs?.total_category || 0}{' '}
                         categories
                       </div>
                     )}
@@ -729,7 +729,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       Need Focus Biomarkers
                     </div>
                     <div className=" text-Text-Secondary text-[12px]">
-                      {referenceData?.total_biomarker_note}
+                      {referenceData?.total_biomarker_note || ''}
                     </div>
                   </div>
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
@@ -851,7 +851,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     Detailed Analysis
                   </div>
                   <div className="TextStyle-Body-2 text-Text-Secondary mt-2">
-                    {referenceData?.detailed_analysis_note}
+                    {referenceData?.detailed_analysis_note || ''}
                   </div>
                 </div>
                 {resolveCategories().length > 0 ? (

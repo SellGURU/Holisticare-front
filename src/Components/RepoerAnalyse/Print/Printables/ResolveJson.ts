@@ -382,7 +382,7 @@ const AddSummaryJson = (
   // addBox(60)
   addHeader(
     'Client Summary',
-    `Total of ${ClientSummaryBoxs.total_subcategory} Biomarkers in${' '}${ClientSummaryBoxs.total_category} Categories`,
+    `Total of ${ClientSummaryBoxs?.total_subcategory || 0} Biomarkers in${' '}${ClientSummaryBoxs?.total_category || 0} Categories`,
     'client-summary',
   );
   addUserInfo(usrInfoData);
@@ -404,7 +404,7 @@ const AddNeedsFocusSection = (
   addBox(16);
   addHeader(
     'Need Focus Biomarkers',
-    referenceData.total_biomarker_note,
+    referenceData?.total_biomarker_note || '',
     'needs-focus-biomarkers',
   );
   addBox(16);
@@ -440,7 +440,7 @@ const AddDetailedAnalyse = (
   }
   addHeader(
     'Detailed Analysis ',
-    referenceData.detailed_analysis_note,
+    referenceData?.detailed_analysis_note || '',
     'detailed-analysis',
   );
   addBox(16);
