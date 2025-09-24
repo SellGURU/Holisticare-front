@@ -20,26 +20,12 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const [isCheced, setIsCheced] = useState(false);
-  const [isChecedIndex, setIsChecedIndex] = useState(0);
-  // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-  // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
   const [activeBox, setActiveBOx] = useState<any>(
     refrences[0]?.name ? refrences[0]?.name : '',
   );
   useEffect(() => {
     setIsCheced(false);
   }, [activeBox]);
-  // const resolveStatusColor =() => {
-  //     if(data.status == 'Normal') {
-  //         return '#06C78D'
-  //     }
-  //     if(data.status == 'At risk') {
-  //         return '#FBAD37'
-  //     }
-  //     if(data.status == 'Need action') {
-  //         return '#FC5474'
-  //     }
-  // }
   const [active, setActive] = useState<any>(refrences[0]);
   subscribe('openDetiledCard', (ev) => {
     // console.log(ev)
@@ -67,12 +53,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
         id={data.subcategory}
         className="w-full mb-4 py-4 px-3 xs:px-6 bg-white border border-Gray-50 shadow-100 rounded-[6px] "
       >
-        <div
-          //   onClick={() => {
-          //     setIsOpen(!isOpen);
-          //   }}
-          className="flex cursor-pointer items-center justify-between"
-        >
+        <div className="flex cursor-pointer items-center justify-between">
           <div className="flex items-center ">
             <div
               className="md:w-10 md:h-10 w-8 h-8 items-center rounded-full flex justify-center"
@@ -237,13 +218,9 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                       </div>
                                       <Toggle
                                         setChecked={(value) => {
-                                          if (value) {
-                                            setIsChecedIndex(index + 1);
-                                          } else {
-                                            setIsChecedIndex(0);
-                                          }
+                                          setIsCheced(value);
                                         }}
-                                        checked={isChecedIndex == index + 1}
+                                        checked={isCheced}
                                       ></Toggle>
                                     </div>
                                   </div>
@@ -328,13 +305,9 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                       </div>
                                       <Toggle
                                         setChecked={(value) => {
-                                          if (value) {
-                                            setIsChecedIndex(index + 1);
-                                          } else {
-                                            setIsChecedIndex(0);
-                                          }
+                                          setIsCheced(value);
                                         }}
-                                        checked={isChecedIndex == index + 1}
+                                        checked={isCheced}
                                       ></Toggle>
                                     </div>
                                   </div>
