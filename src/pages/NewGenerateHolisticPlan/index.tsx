@@ -939,7 +939,7 @@ const NewGenerateHolisticPlan = () => {
             </>
 
             <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex px-[9px] items-center text-[#888888] font-medium text-[12px] select-none">
-              Needs Focus Biomarkers
+              Need Focus Biomarkers
             </div>
             {treatmentPlanData && (
               <div className="bg-backgroundColor-Card pb-0 pt-0 border text-[12px]  text-Text-Primary border-Gray-50">

@@ -299,7 +299,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       checked: true,
     },
     {
-      name: 'Needs Focus Biomarker',
+      name: 'Need Focus Biomarker',
       checked: true,
     },
     {
@@ -614,8 +614,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     {ClientSummaryBoxs && (
                       <div className="text-Text-Secondary text-[12px]">
-                        Total of {ClientSummaryBoxs.total_subcategory}{' '}
-                        biomarkers in {ClientSummaryBoxs.total_category}{' '}
+                        Total of {ClientSummaryBoxs?.total_subcategory || 0}{' '}
+                        biomarkers in {ClientSummaryBoxs?.total_category || 0}{' '}
                         categories
                       </div>
                     )}
@@ -717,19 +717,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               </div>
             )}
 
-            {accessManager.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+            {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
               .checked == true && (
               <>
                 <div className=" my-[200px] xl:min-h-[700px] text-light-primary-text dark:text-primary-text ">
                   <div>
                     <div
-                      id="Needs Focus Biomarker"
+                      id="Need Focus Biomarker"
                       className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 "
                     >
-                      Needs Focus Biomarkers
+                      Need Focus Biomarkers
                     </div>
                     <div className=" text-Text-Secondary text-[12px]">
-                      {referenceData?.total_biomarker_note}
+                      {referenceData?.total_biomarker_note || ''}
                     </div>
                   </div>
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
@@ -851,7 +851,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     Detailed Analysis
                   </div>
                   <div className="TextStyle-Body-2 text-Text-Secondary mt-2">
-                    {referenceData?.detailed_analysis_note}
+                    {referenceData?.detailed_analysis_note || ''}
                   </div>
                 </div>
                 {resolveCategories().length > 0 ? (

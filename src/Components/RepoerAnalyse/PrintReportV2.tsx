@@ -41,7 +41,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
       checked: true,
     },
     {
-      name: 'Needs Focus Biomarker',
+      name: 'Need Focus Biomarker',
       checked: true,
     },
     {

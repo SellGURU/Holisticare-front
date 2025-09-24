@@ -127,7 +127,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                         className="text-[10px]"
                                         style={{ color: '#B0B0B0' }}
                                       >
-                                        Questions: {item.Questions}
+                                        Questions: {item.questions}
                                       </div>
                                     ) : item.total_macros ? (
                                       <div className="flex items-center mt-3">
