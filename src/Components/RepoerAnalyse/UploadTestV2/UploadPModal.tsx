@@ -33,7 +33,7 @@ interface UploadPModalProps {
   fileType: string;
   loading: boolean;
   rowErrors?: any;
-  btnLoading:boolean
+  btnLoading: boolean;
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({

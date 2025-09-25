@@ -330,9 +330,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     });
   };
   const [rowErrors, setRowErrors] = React.useState<Record<number, string>>({});
-const [btnLoading, setBtnLoading] = useState(false)
+  const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
-    setBtnLoading(true)
+    setBtnLoading(true);
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
@@ -348,16 +348,14 @@ const [btnLoading, setBtnLoading] = useState(false)
           setisSaveClicked(true);
           setstep(0);
           setRowErrors([]);
-          
         } else if (res.status === 406 && res.data.detail) {
           const errors: Record<number, string> = {};
           res.data.detail.forEach((item: any) => {
             errors[item.index] = item.detail;
           });
           setRowErrors(errors);
-
         }
-        setBtnLoading(false)
+        setBtnLoading(false);
       })
       .catch(() => {});
   };
