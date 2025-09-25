@@ -188,27 +188,22 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     onChange(updated);
   };
-  // const [unitOptions, setUnitOptions] = React.useState<Record<number, string[]>>({});
+  const [unitOptions, setUnitOptions] = React.useState<
+    Record<number, string[]>
+  >({});
 
-  // const fetchUnits = async (index: number, biomarkerName: string) => {
-  //   try {
-  //     const res = await Application.getAllBiomarkerUnits({ biomarker_name: biomarkerName });
-  //     if (res && Array.isArray(res.data.units)) {
-  //       setUnitOptions((prev) => ({ ...prev, [index]: res.data.units }));
-  //     }
-  //   } catch (err) {
-  //     console.error("Failed to fetch units for", biomarkerName, err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   biomarkers.forEach((b, index) => {
-  //     if (b.biomarker && !unitOptions[index]) {
-  //       fetchUnits(index, b.biomarker);
-  //     }
-  //   });
-  // }, [biomarkers]);
-  console.log(rowErrors);
+  const fetchUnits = async (index: number, biomarkerName: string) => {
+    try {
+      const res = await Application.getAllBiomarkerUnits({
+        biomarker_name: biomarkerName,
+      });
+      if (res && Array.isArray(res.data.units)) {
+        setUnitOptions((prev) => ({ ...prev, [index]: res.data.units }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch units for', biomarkerName, err);
+    }
+  };
 
   return (
     <div
@@ -282,9 +277,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 className="w-full pr-1"
               >
                 {biomarkers.map((b, index) => {
-                     const errorForRow = rowErrors?.find(
-                      (err: { index: number; detail: string }) => err.index === index
-                    );
+                  const errorForRow = Array.isArray(rowErrors)
+                    ? rowErrors.find((err) => err.index === index)
+                    : undefined;
 
                   return (
                     <div
@@ -296,7 +291,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         <TooltipTextAuto maxWidth="159px">
                           {b.original_biomarker_name}
                         </TooltipTextAuto>
-                        {errorForRow  && (
+                        {errorForRow && (
                           <>
                             <img
                               data-tooltip-id={`tooltip-${index}`}
@@ -313,7 +308,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             </Tooltip>
                           </>
                         )}
-                       
                       </div>
                       {/* biomarker (editable via select) */}
                       <div className="col-span-1 w-[140px] md:w-[210px] md:pl-[40px]">
@@ -337,7 +331,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           isLarge
                           isSetting
                           value={b.original_unit || b.possible_values?.units[0]}
-                          options={b.possible_values?.units || []}
+                          options={unitOptions[index] || []}
+                          onMenuOpen={() => {
+                            if (!unitOptions[index]) {
+                              fetchUnits(index, b.biomarker);
+                            }
+                          }}
                           onChange={(val: string) =>
                             updateAndStandardize(index, { original_unit: val })
                           }
@@ -382,8 +381,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         )}
                       </div>
                     </div>
-                  )})
-                }
+                  );
+                })}
               </div>
             </div>
           </div>

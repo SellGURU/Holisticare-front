@@ -13,6 +13,7 @@ type SelectProps = {
   placeholder?: string;
   validation?: boolean;
   isSmall?: boolean;
+  onMenuOpen?:()=>void
 };
 
 const Select: React.FC<SelectProps> = ({
@@ -27,11 +28,16 @@ const Select: React.FC<SelectProps> = ({
   placeholder = 'Select an option',
   validation,
   isSmall,
+  onMenuOpen
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || ''); // Internal state for selected value
   const selectWrapperRef = useRef<HTMLDivElement>(null); // Ref for the entire custom select wrapper
-
+useEffect(()=>{
+  if(isOpen && onMenuOpen){
+    onMenuOpen()
+  }
+},[isOpen])
   // Update internal state when external value prop changes
   useEffect(() => {
     setSelectedValue(value || '');

@@ -32,7 +32,8 @@ interface UploadPModalProps {
   onClose: () => void;
   fileType: string;
   loading: boolean;
-  rowErrors?:any
+  rowErrors?: any;
+  btnLoading:boolean
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -60,7 +61,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   handleAddedDateOfTestChange,
   onClose,
   loading,
-  rowErrors
+  btnLoading,
+  rowErrors,
 }) => {
   const [activeMenu, setactiveMenu] = useState('Upload File');
 
@@ -89,12 +91,12 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               disabled={
                 (extractedBiomarkers.length == 0 &&
                   addedBiomarkers.length == 0) ||
-                loading
+                btnLoading
               }
               onClick={onSave}
               ClassName=" w-[127px] md:w-[167px]"
             >
-              {loading ? (
+              {btnLoading ? (
                 <>
                   {' '}
                   <SpinnerLoader></SpinnerLoader>
@@ -132,7 +134,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 onClose={onClose}
               />
               <BiomarkersSection
-              rowErrors={rowErrors}
+                rowErrors={rowErrors}
                 loading={loading}
                 fileType={fileType}
                 dateOfTest={modifiedDateOfTest}
