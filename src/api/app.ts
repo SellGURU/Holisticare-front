@@ -1053,11 +1053,14 @@ class Application extends Api {
   static getInputPlayGroundVariables = () => {
     return this.post('/test_api/agents', {});
   };
-  static standardizeBiomarkers = (data:any) => {
+  static standardizeBiomarkers = (data: any) => {
     return this.post('/patients/standardize_biomarkers', data);
   };
-  static getAllBiomarkerUnits = (data:any) => {
+  static getAllBiomarkerUnits = (data: any) => {
     return this.post('/clinic/get_biomarker_all_units', data);
+  };
+  static validateBiomarkers = (data: any) => {
+    return this.post('/patients/validate_biomarkers', data);
   };
 }
 

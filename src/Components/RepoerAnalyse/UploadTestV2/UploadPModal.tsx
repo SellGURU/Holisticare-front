@@ -32,6 +32,7 @@ interface UploadPModalProps {
   onClose: () => void;
   fileType: string;
   loading: boolean;
+  rowErrors?:any
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -59,8 +60,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   handleAddedDateOfTestChange,
   onClose,
   loading,
+  rowErrors
 }) => {
   const [activeMenu, setactiveMenu] = useState('Upload File');
+
   return (
     <>
       <div
@@ -129,6 +132,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 onClose={onClose}
               />
               <BiomarkersSection
+              rowErrors={rowErrors}
                 loading={loading}
                 fileType={fileType}
                 dateOfTest={modifiedDateOfTest}
