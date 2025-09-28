@@ -7,7 +7,7 @@ import {
   ChevronDown,
   CheckCircle,
   Circle,
-  ClipboardList,
+  ClipboardList,BookOpen, FileText, Headphones, Search, Video
 } from 'lucide-react';
 
 interface TheAppOverviewProps {
@@ -261,7 +261,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
         ) : selectedPage == 'Chat' ? (
           <ChatSection customTheme={customTheme}></ChatSection>
         ) : (
-          <ProgressSection customTheme={customTheme} />
+          <EducationalSection customTheme={customTheme} />
         )}
 
         <div className="w-full h-[36.68px] absolute bottom-0 left-0 bg-white rounded-t-[2.93px] rounded-b-[12.72px] flex items-center justify-between px-4">
@@ -371,14 +371,14 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
             </div>
             <div
               onClick={() => {
-                setselectedPage('Setting');
+                setselectedPage('Educational');
               }}
               className="flex flex-col items-center text-gray-500"
             >
               <SvgIcon
                 src="/icons/setting-2-mobile.svg"
                 color={
-                  selectedPage == 'Setting'
+                  selectedPage == 'Educational'
                     ? customTheme.secondaryColor
                     : '#888888'
                 }
@@ -387,7 +387,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
               />
 
               <div
-                className={`text-[5.87px] ${selectedPage === 'Setting' ? `text-[${customTheme.secondaryColor}]` : 'text-Text-Quadruple'} `}
+                className={`text-[5.87px] ${selectedPage === 'Educational' ? `text-[${customTheme.secondaryColor}]` : 'text-Text-Quadruple'} `}
               >
                 Educational
               </div>
@@ -791,152 +791,175 @@ const PlanSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   );
 };
 
-const ProgressSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
-  const Days = [
+
+
+
+interface EducationalProps {
+  title: string;
+  content: string;
+  referenceLink: string;
+  type?: "video" | "podcast" | "guide" | "article";
+}
+
+const EducationalSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Fake data (static UI only)
+  const educationalContent: EducationalProps[] = [
     {
-      num: 19,
-      day: 'Fri',
+      title: "Benefits of Mindfulness",
+      content:
+        "Learn how mindfulness can improve focus, reduce stress, and enhance well-being...",
+      referenceLink: "#",
+      type: "guide",
     },
     {
-      num: 20,
-      day: 'Sat',
+      title: "Nutrition Basics",
+      content:
+        "Understanding macronutrients and micronutrients is the foundation of a healthy diet...",
+      referenceLink: "#",
+      type: "article",
     },
     {
-      num: 21,
-      day: 'Sun',
-    },
-    {
-      num: 22,
-      day: 'Mon',
+      title: "Morning Yoga Routine",
+      content:
+        "Follow this 10-minute yoga sequence to energize your mornings and improve flexibility...",
+      referenceLink: "#",
+      type: "video",
     },
   ];
-  const [selectedDay, setselectedDay] = useState('Fri');
+
+  const getTypeIcon = (type?: string) => {
+    switch (type) {
+      case "video":
+        return Video;
+      case "podcast":
+        return Headphones;
+      case "guide":
+        return BookOpen;
+      default:
+        return FileText;
+    }
+  };
+
   const hexToRgba = (hex: string, opacity: string) => {
     const r = parseInt(hex.substring(1, 3), 16);
     const g = parseInt(hex.substring(3, 5), 16);
     const b = parseInt(hex.substring(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   };
-  const gradientWithOpacity = `linear-gradient(89.73deg, ${hexToRgba(customTheme.secondaryColor, '0.6')} -121.63%, ${hexToRgba(customTheme.primaryColor, '0.6')} 133.18%)`;
-  const progress = 25; // Example progress value
+
+  // const gradientWithOpacity = `linear-gradient(135deg, ${hexToRgba(
+  //   customTheme.primaryColor,
+  //   "0.15"
+  // )}, ${hexToRgba(customTheme.secondaryColor, "0.15")})`;
+
+  // Search filter
+  const filteredContent = educationalContent.filter(
+    (item) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div className="w-[202.5px] ">
-      <div className="mt-4 flex w-[188px] justify-between">
-        {Days.map((day, index) => (
-          <div
-            key={index}
-            onClick={() => setselectedDay(day.day)}
-            className={`bg-white rounded-2xl border gap-1 ${selectedDay === day.day ? `border-[${customTheme.secondaryColor}]` : ''} text-[${customTheme.secondaryColor}] flex flex-col items-center justify-center w-[40px] h-[55px]`}
-          >
-            <div className="text-[10px] font-medium">{day.num}</div>
-            <div className="text-[7px]">{day.day}</div>
-          </div>
-        ))}
-      </div>
-      <div
-        style={{ background: gradientWithOpacity }}
-        className="mt-3 rounded-2xl w-[188px] px-4 py-3 flex gap-2 items-center"
-      >
-        {/* Placeholder for the 25% circle, you'd likely use an SVG or a more complex component here */}
-        <div className="relative w-[28px] h-[28px]">
-          <svg className="w-full h-full" viewBox="0 0 36 36">
-            {/* Background circle (white track) */}
-            <circle
-              cx="18"
-              cy="18"
-              r="16"
-              fill="none"
-              stroke="#FFFFFF" // White track
-              strokeWidth="4"
-            ></circle>
-            {/* Progress circle (primaryColor fill) */}
-            <circle
-              cx="18"
-              cy="18"
-              r="16"
-              fill="none"
-              stroke={customTheme.secondaryColor}
-              strokeWidth="4"
-              strokeDasharray="100" // Total circumference (approx 2 * PI * 16 = 100.53)
-              strokeDashoffset={100 - (100 * progress) / 100} // For 25% progress, offset is 75
-              strokeLinecap="round" // Rounded ends for the progress arc
-              transform="rotate(-90 18 18)" // Start from the top
-            ></circle>
-          </svg>
-          <div
-            className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
-            style={{ color: '#383838', fontSize: '7px' }} // Dark gray for text
-          >
-            %{progress}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1 text-[6.87px] text-Text-Primary">
-          Your daily goals almost done! 🔥
-          <span className="text-[5.87px] text-Text-Secondary">
-            1 of 4 completed
-          </span>
-        </div>
+    <div
+      className="w-full max-w-md mx-auto rounded-2xl p-1 mt-2  text-[8px] shadow-sm"
+   
+    >
+      {/* Title */}
+      <div className="text-center mb-4">
+        <h2
+          className=" font-thin text-[12px] bg-clip-text text-transparent"
+          style={{
+            color: `${customTheme.primaryColor}`,
+          }}
+        >
+          Educational Content
+        </h2>
+        <p className="text-gray-600 ">
+          Browse health & wellness content
+        </p>
       </div>
 
-      {/* Tasks Section */}
-      <div className="mt-5 w-[188px]">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-[8px] font-medium text-Text-Primary">Tasks</h3>
-          <span className="text-[7px] ">2/6 Completed</span>
-        </div>
+      {/* Search */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search content..."
+          className="pl-9  bg-white  border-gray-200 outline-none h-4 "
+        />
+      </div>
 
-        {/* Check-In Section */}
-        <div className="mb-4">
-          <div className="flex items-center gap-1 mb-2">
-            <SvgIcon
-              width="11.74px"
-              height="11.74px"
-              color={customTheme.secondaryColor}
-              src="/icons/check-in.svg"
-            />
-            <span
-              className="text-[8px] font-medium"
-              style={{ color: customTheme.secondaryColor }}
-            >
-              Check-In
-            </span>
-          </div>
-          <div className="flex items-center justify-between bg-white rounded-lg p-2 shadow-sm mb-2">
-            <div className="flex items-center gap-1">
-              <div
-                style={{ borderColor: customTheme.primaryColor }}
-                className={`rounded-full border-2 border-[${customTheme.primaryColor}] flex items-center justify-center size-6 `}
-              >
-                <SvgIcon
-                  width="11.74px"
-                  height="11.74px"
-                  color={customTheme.primaryColor}
-                  src="/icons/check-in.svg"
-                />
-              </div>
-              <span className="text-[8px] font-medium text-Text-Primary">
-                Daily Check-in
-              </span>
-            </div>
+      {/* Content List */}
+      <div className="space-y-4 overflow-hidden h-[200px]">
+        {filteredContent.map((content, idx) => {
+          const TypeIcon = getTypeIcon(content.type);
+          return (
             <div
-              style={{ borderColor: customTheme.primaryColor }}
-              className="border rounded-md size-4 flex items-center justify-center"
+              key={idx}
+              className="rounded-2xl border shadow-sm backdrop-blur-sm cursor-pointer hover:shadow-md transition-all duration-300"
+              style={{
+                background: `linear-gradient(to bottom right, ${hexToRgba(
+                  customTheme.primaryColor,
+                  "0.1"
+                )}, ${hexToRgba(customTheme.secondaryColor, "0.1")})`,
+                // borderColor: hexToRgba(customTheme.primaryColor, "0.15"),
+              }}
             >
-              <SvgIcon
-                width="11px"
-                height="11px"
-                src="/icons/Tick Square.svg"
-                color={customTheme.primaryColor}
-              />
+              <div className="p-2">
+                <div className="flex items-start gap-3">
+                  <div
+                    className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
+                    style={{
+                      background: customTheme.primaryColor,
+                    }}
+                  >
+                    <TypeIcon className="w-3 h-3 text-white" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <h3 className=" font-medium text-[10px] text-gray-800  mb-1">
+                      {content.title}
+                    </h3>
+                    <p className=" text-gray-600 line-clamp-2 mb-3">
+                      {content.content}
+                    </p>
+
+                    <button
+                      // size="sm"
+                      className=" inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-6 px-2 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all duration-300"
+                      style={{
+                        background: customTheme.primaryColor,
+                        color: "#fff",
+                      }}
+                    >
+                      <BookOpen className="w-3 h-3 mr-1" />
+                      Read More
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
+          );
+        })}
+
+        {filteredContent.length === 0 && (
+          <div className="text-center py-8">
+            <BookOpen className="w-8 h-8 text-gray-400 mx-auto mb-3" />
+            <p className="text-sm text-gray-600 ">
+              No content found
+            </p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 };
+
+
+
 const ChatSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   console.log(customTheme);
 
@@ -960,10 +983,10 @@ const ChatSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
     '0.55',
   )}, ${hexToRgba(customTheme.secondaryColor, '0.85')})`;
 
-  const iconGradient = `linear-gradient(135deg, ${hexToRgba(
-    customTheme.primaryColor,
-    '0.6',
-  )}, ${hexToRgba(customTheme.secondaryColor, '0.6')})`;
+  // const iconGradient = `linear-gradient(135deg, ${hexToRgba(
+  //   customTheme.primaryColor,
+  //   '0.6',
+  // )}, ${hexToRgba(customTheme.secondaryColor, '0.6')})`;
 
   return (
     <div className="w-[187.5px] mt-2 text-[8px] rounded-xl">
@@ -982,7 +1005,7 @@ const ChatSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
           <div className="flex items-center gap-3">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center shadow-md"
-              style={{ background: iconGradient }}
+              style={{ background: customTheme.primaryColor }}
             >
               <Bot className="w-4 h-4 text-white" />
             </div>
@@ -1003,7 +1026,7 @@ const ChatSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
             <div className="flex items-center gap-1">
               <div
                 className="w-5 h-5 rounded-full flex items-center justify-center shadow-md"
-                style={{ background: iconGradient }}
+                style={{ background: customTheme.primaryColor }}
               >
                 <Bot className="w-3 h-3 text-white" />
               </div>
@@ -1048,14 +1071,16 @@ const ChatSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
                 <div
                   className="p-3 rounded-2xl shadow-md border"
                   style={{
-                    background: hexToRgba(customTheme.secondaryColor, '0.08'),
-                    borderColor: hexToRgba(customTheme.primaryColor, '0.1'),
+                    background: `linear-gradient(90deg, ${hexToRgba(
+                      customTheme.primaryColor,
+                      '0.4',
+                    )}, ${hexToRgba(customTheme.secondaryColor, '0.8')})`,
                   }}
                 >
-                  <p className=" text-gray-800 ">
+                  <p className=" text-white ">
                     Try including more vegetables and reducing sugar intake.
                   </p>
-                  <p className=" text-gray-500 text-right mt-1">10:31 AM</p>
+                  <p className=" text-white/70 text-right mt-1">10:31 AM</p>
                 </div>
               </div>
             </div>
