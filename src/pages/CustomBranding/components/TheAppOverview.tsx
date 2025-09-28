@@ -7,7 +7,12 @@ import {
   ChevronDown,
   CheckCircle,
   Circle,
-  ClipboardList,BookOpen, FileText, Headphones, Search, Video
+  ClipboardList,
+  BookOpen,
+  FileText,
+  Headphones,
+  Search,
+  Video,
 } from 'lucide-react';
 
 interface TheAppOverviewProps {
@@ -791,51 +796,48 @@ const PlanSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   );
 };
 
-
-
-
 interface EducationalProps {
   title: string;
   content: string;
   referenceLink: string;
-  type?: "video" | "podcast" | "guide" | "article";
+  type?: 'video' | 'podcast' | 'guide' | 'article';
 }
 
 const EducationalSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Fake data (static UI only)
   const educationalContent: EducationalProps[] = [
     {
-      title: "Benefits of Mindfulness",
+      title: 'Benefits of Mindfulness',
       content:
-        "Learn how mindfulness can improve focus, reduce stress, and enhance well-being...",
-      referenceLink: "#",
-      type: "guide",
+        'Learn how mindfulness can improve focus, reduce stress, and enhance well-being...',
+      referenceLink: '#',
+      type: 'guide',
     },
     {
-      title: "Nutrition Basics",
+      title: 'Nutrition Basics',
       content:
-        "Understanding macronutrients and micronutrients is the foundation of a healthy diet...",
-      referenceLink: "#",
-      type: "article",
+        'Understanding macronutrients and micronutrients is the foundation of a healthy diet...',
+      referenceLink: '#',
+      type: 'article',
     },
     {
-      title: "Morning Yoga Routine",
+      title: 'Morning Yoga Routine',
       content:
-        "Follow this 10-minute yoga sequence to energize your mornings and improve flexibility...",
-      referenceLink: "#",
-      type: "video",
+        'Follow this 10-minute yoga sequence to energize your mornings and improve flexibility...',
+      referenceLink: '#',
+      type: 'video',
     },
   ];
 
   const getTypeIcon = (type?: string) => {
     switch (type) {
-      case "video":
+      case 'video':
         return Video;
-      case "podcast":
+      case 'podcast':
         return Headphones;
-      case "guide":
+      case 'guide':
         return BookOpen;
       default:
         return FileText;
@@ -858,14 +860,11 @@ const EducationalSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   const filteredContent = educationalContent.filter(
     (item) =>
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.content.toLowerCase().includes(searchQuery.toLowerCase())
+      item.content.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
-    <div
-      className="w-full max-w-md mx-auto rounded-2xl p-1 mt-2  text-[8px] shadow-sm"
-   
-    >
+    <div className="w-full max-w-md mx-auto rounded-2xl p-1 mt-2  text-[8px] shadow-sm">
       {/* Title */}
       <div className="text-center mb-4">
         <h2
@@ -876,9 +875,7 @@ const EducationalSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
         >
           Educational Content
         </h2>
-        <p className="text-gray-600 ">
-          Browse health & wellness content
-        </p>
+        <p className="text-gray-600 ">Browse health & wellness content</p>
       </div>
 
       {/* Search */}
@@ -903,8 +900,8 @@ const EducationalSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
               style={{
                 background: `linear-gradient(to bottom right, ${hexToRgba(
                   customTheme.primaryColor,
-                  "0.1"
-                )}, ${hexToRgba(customTheme.secondaryColor, "0.1")})`,
+                  '0.1',
+                )}, ${hexToRgba(customTheme.secondaryColor, '0.1')})`,
                 // borderColor: hexToRgba(customTheme.primaryColor, "0.15"),
               }}
             >
@@ -932,7 +929,7 @@ const EducationalSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
                       className=" inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-6 px-2 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium transition-all duration-300"
                       style={{
                         background: customTheme.primaryColor,
-                        color: "#fff",
+                        color: '#fff',
                       }}
                     >
                       <BookOpen className="w-3 h-3 mr-1" />
@@ -948,17 +945,13 @@ const EducationalSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
         {filteredContent.length === 0 && (
           <div className="text-center py-8">
             <BookOpen className="w-8 h-8 text-gray-400 mx-auto mb-3" />
-            <p className="text-sm text-gray-600 ">
-              No content found
-            </p>
+            <p className="text-sm text-gray-600 ">No content found</p>
           </div>
         )}
       </div>
     </div>
   );
 };
-
-
 
 const ChatSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   console.log(customTheme);
