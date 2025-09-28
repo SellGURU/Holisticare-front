@@ -333,33 +333,43 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
     setBtnLoading(true);
+  
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
       value: b.original_value,
       unit: b.original_unit,
     }));
-    Application.validateBiomarkers({
-      biomarkers_list: mappedExtractedBiomarkers,
-      lab_type: fileType,
-    })
-      .then((res) => {
-        if (res.status == 200) {
-          setisSaveClicked(true);
-          setstep(0);
-          setRowErrors([]);
-        } else if (res.status === 406 && res.data.detail) {
-          const errors: Record<number, string> = {};
-          res.data.detail.forEach((item: any) => {
-            errors[item.index] = item.detail;
-          });
-          setRowErrors(errors);
-        }
-        setBtnLoading(false);
+  
+    if (mappedExtractedBiomarkers.length > 0) {
+      Application.validateBiomarkers({
+        biomarkers_list: mappedExtractedBiomarkers,
+        lab_type: fileType,
       })
-      .catch(() => {});
+        .then((res) => {
+          if (res.status === 200) {
+            setisSaveClicked(true);
+            setstep(0);
+            setRowErrors([]);
+          } else if (res.status === 406 && res.data.detail) {
+            const errors: Record<number, string> = {};
+            res.data.detail.forEach((item: any) => {
+              errors[item.index] = item.detail;
+            });
+            setRowErrors(errors);
+          }
+        })
+        .catch(() => { })
+        .finally(() => {
+          setBtnLoading(false);
+        });
+    } else {
+      setisSaveClicked(true);
+      setstep(0);
+      setRowErrors([]);
+      setBtnLoading(false);
+    }
   };
-  console.log(showReport);
   const resolveActiveButtonReportAnalyse = () => {
     if (showReport) {
       return true;
