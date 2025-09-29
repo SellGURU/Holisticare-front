@@ -15,7 +15,7 @@ interface BiomarkersSectionProps {
   fileType: string;
   loading: boolean;
   rowErrors?: any;
-  setrowErrors:any
+  setrowErrors: any;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -80,11 +80,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     // update biomarkers
     const updated = biomarkers.filter((_, i) => i !== indexToDelete);
     onChange(updated);
-  
+
     // update rowErrors
-    setrowErrors((prev:any) => {
+    setrowErrors((prev: any) => {
       if (!prev) return prev;
-  
+
       const newErrors: Record<number, string> = {};
       Object.keys(prev).forEach((key) => {
         const idx = Number(key);
@@ -97,7 +97,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       return newErrors;
     });
   };
-  
 
   const handleCancel = (indexToUpdate: number) => {
     const updated = biomarkers.map((b, i) =>
@@ -173,9 +172,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   }) => {
     try {
       const res = await Application.standardizeBiomarkers(payload);
-      // if res is already JSON, just return it
-      if (!res) throw new Error('Failed to standardize');
-      return res;
+      console.log(res);
+      
+   
+      return res.data;
     } catch (err) {
       console.error('standardizeBiomarkers error:', err);
       return null;
@@ -200,6 +200,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     };
 
     const standardized = await standardizeBiomarkers(payload);
+
     if (standardized) {
       updated = updated.map((b, i) =>
         i === index ? { ...b, ...standardized } : b,
@@ -224,7 +225,26 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       console.error('Failed to fetch units for', biomarkerName, err);
     }
   };
+  
+  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tableRef = useRef<(HTMLDivElement | null)>(null);
+React.useEffect(() => {
+  if (rowErrors && Object.keys(rowErrors).length > 0) {
+    const firstErrorIndex = Math.min(...Object.keys(rowErrors).map(Number));
+    const el = rowRefs.current[firstErrorIndex];
+    const container = tableRef.current;
 
+    if (el && container) {
+      const elTop = el.offsetTop;
+      container.scrollTo({
+        top: elTop - container.clientHeight / 2, // center it
+        behavior: "smooth",
+      });
+    }
+  }
+}, [rowErrors]);
+  console.log(biomarkers);
+  
   return (
     <div
       style={{ height: window.innerHeight - 440 + 'px' }}
@@ -266,7 +286,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               />
             </div>
           </div>
-          <div className=" w-full overflow-auto  h-full">
+          <div  ref={tableRef} className=" w-full overflow-auto  h-full">
             <div className="w-full  min-w-[700px]   h-full text-xs">
               {/* Table Header */}
               <div className="grid grid-cols-7 w-full sticky top-0 z-10 gap-4 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50">
@@ -301,6 +321,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
                   return (
                     <div
+                    ref={(el) => (rowRefs.current[index] = el)}
+
                       key={index}
                       className={` ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid grid-cols-7 gap-4 py-1 px-4 border-b border-Gray-50 items-center  text-[8px] md:text-xs text-Text-Primary `}
                     >

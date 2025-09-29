@@ -276,11 +276,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const handleConfirm = (indexToDelete: number) => {
     // 1. Update added biomarkers
     setAddedBiomarkers((prev) => prev.filter((_, i) => i !== indexToDelete));
-  
+
     // 2. Update added row errors (delete + shift)
     setAddedRowErrors((prev) => {
       if (!prev) return prev;
-  
+
       const newErrors: Record<number, string> = {};
       Object.keys(prev).forEach((key) => {
         const idx = Number(key);
@@ -292,11 +292,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       });
       return newErrors;
     });
-  
+
     // 3. Reset delete index
     setDeleteIndex(null);
   };
-  
+
   const handleCancel = () => {
     setDeleteIndex(null);
   };

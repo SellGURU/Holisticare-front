@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import Toggle from '../../Toggle';
 import FileUploaderSection from './FileUploaderSection';
@@ -35,7 +35,7 @@ interface UploadPModalProps {
   rowErrors?: any;
   AddedRowErrors?: any;
   btnLoading: boolean;
-  setrowErrors:any,
+  setrowErrors: any;
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -69,7 +69,22 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   setrowErrors,
 }) => {
   const [activeMenu, setactiveMenu] = useState('Upload File');
-
+  console.log(rowErrors);
+  console.log(AddedRowErrors);
+  
+  
+  useEffect(() => {
+    const rowErrorCount = rowErrors ? Object.keys(rowErrors).length : 0;
+    const addedErrorCount = AddedRowErrors ? Object.keys(AddedRowErrors).length : 0;
+  
+    if (rowErrorCount > 0 && addedErrorCount === 0) {
+      setactiveMenu("Upload File");
+    }
+    if (addedErrorCount > 0 && rowErrorCount === 0) {
+      setactiveMenu("Add Biomarker");
+    }
+  }, [rowErrors, AddedRowErrors]);
+  
   return (
     <>
       <div
