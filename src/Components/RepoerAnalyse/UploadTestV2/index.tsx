@@ -273,11 +273,30 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setDeleteIndex(index);
   };
 
-  const handleConfirm = (index: number) => {
-    setAddedBiomarkers(addedBiomarkers.filter((_, i) => i !== index));
-    setDeleteIndex(null); // reset after delete
+  const handleConfirm = (indexToDelete: number) => {
+    // 1. Update added biomarkers
+    setAddedBiomarkers((prev) => prev.filter((_, i) => i !== indexToDelete));
+  
+    // 2. Update added row errors (delete + shift)
+    setAddedRowErrors((prev) => {
+      if (!prev) return prev;
+  
+      const newErrors: Record<number, string> = {};
+      Object.keys(prev).forEach((key) => {
+        const idx = Number(key);
+        if (idx < indexToDelete) {
+          newErrors[idx] = prev[idx]; // keep errors before deleted row
+        } else if (idx > indexToDelete) {
+          newErrors[idx - 1] = prev[idx]; // shift errors after deleted row
+        }
+      });
+      return newErrors;
+    });
+  
+    // 3. Reset delete index
+    setDeleteIndex(null);
   };
-
+  
   const handleCancel = () => {
     setDeleteIndex(null);
   };
@@ -674,6 +693,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       ) : (
         <UploadPModal
           rowErrors={rowErrors}
+          setrowErrors={setRowErrors}
           AddedRowErrors={addedrowErrors}
           OnBack={() => {
             if (isUploadFromComboBar) {

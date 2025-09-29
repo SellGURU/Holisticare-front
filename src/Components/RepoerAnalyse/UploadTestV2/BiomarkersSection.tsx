@@ -15,6 +15,7 @@ interface BiomarkersSectionProps {
   fileType: string;
   loading: boolean;
   rowErrors?: any;
+  setrowErrors:any
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -26,6 +27,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   setDateOfTest,
   loading,
   rowErrors,
+  setrowErrors,
 }) => {
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -75,9 +77,27 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   };
 
   const handleConfirm = (indexToDelete: number) => {
+    // update biomarkers
     const updated = biomarkers.filter((_, i) => i !== indexToDelete);
     onChange(updated);
+  
+    // update rowErrors
+    setrowErrors((prev:any) => {
+      if (!prev) return prev;
+  
+      const newErrors: Record<number, string> = {};
+      Object.keys(prev).forEach((key) => {
+        const idx = Number(key);
+        if (idx < indexToDelete) {
+          newErrors[idx] = prev[idx]; // keep errors before deleted row
+        } else if (idx > indexToDelete) {
+          newErrors[idx - 1] = prev[idx]; // shift errors after deleted row
+        }
+      });
+      return newErrors;
+    });
   };
+  
 
   const handleCancel = (indexToUpdate: number) => {
     const updated = biomarkers.map((b, i) =>

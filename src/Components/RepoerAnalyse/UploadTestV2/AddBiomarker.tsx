@@ -23,6 +23,7 @@ interface AddBiomarkerProps {
   dateOfTest: Date | null;
   setDateOfTest: (date: Date | null) => void;
   rowErrors?: any;
+
 }
 
 export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
@@ -35,6 +36,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   deleteIndex,
   dateOfTest,
   setDateOfTest,
+  
 }) => {
   // Local form states, now using 'biomarkerName' to avoid conflict
   const [biomarkerName, setBiomarkerName] = useState('');
@@ -205,7 +207,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               className="w-full md:h-[calc(100vh-550px)]  "
             >
               {biomarkers.map((biomarker, index) => {
-                                 const errorForRow = rowErrors[index];
+                const errorForRow = rowErrors[index];
 
                 return (
                   <div
