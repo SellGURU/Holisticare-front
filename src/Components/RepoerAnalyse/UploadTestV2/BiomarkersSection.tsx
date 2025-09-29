@@ -277,7 +277,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 className="w-full pr-1"
               >
                 {biomarkers.map((b, index) => {
-                 const errorForRow = rowErrors[index];
+                  const errorForRow = rowErrors[index];
 
                   return (
                     <div

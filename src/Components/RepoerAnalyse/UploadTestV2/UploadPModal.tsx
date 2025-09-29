@@ -33,7 +33,7 @@ interface UploadPModalProps {
   fileType: string;
   loading: boolean;
   rowErrors?: any;
-  AddedRowErrors?:any;
+  AddedRowErrors?: any;
   btnLoading: boolean;
 }
 
@@ -64,7 +64,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   loading,
   btnLoading,
   rowErrors,
-  AddedRowErrors
+  AddedRowErrors,
 }) => {
   const [activeMenu, setactiveMenu] = useState('Upload File');
 

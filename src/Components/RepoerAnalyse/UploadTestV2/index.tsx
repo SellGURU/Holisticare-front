@@ -45,7 +45,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [, setQuestionaryLength] = useState(false);
 
   const [extractedBiomarkers, setExtractedBiomarkers] = useState<any[]>([]);
-  const [fileType, setfileType] = useState("more_info");
+  const [fileType, setfileType] = useState('more_info');
   const [polling, setPolling] = useState(true); // ✅ control polling
   const [deleteLoading, setdeleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
@@ -330,18 +330,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     });
   };
   const [rowErrors, setRowErrors] = React.useState<Record<number, string>>({});
-  const [addedrowErrors, setAddedRowErrors] = React.useState<Record<number, string>>({});
+  const [addedrowErrors, setAddedRowErrors] = React.useState<
+    Record<number, string>
+  >({});
   const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
     setBtnLoading(true);
-  
+
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
       value: b.original_value,
       unit: b.original_unit,
     }));
-  
+
     Application.validateBiomarkers({
       modified_biomarkers_list: mappedExtractedBiomarkers,
       added_biomarkers_list: addedBiomarkers,
@@ -356,12 +358,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       })
       .catch((err: any) => {
         console.log(err);
-        
-        const detail = err.detail
-  
+
+        const detail = err.detail;
+
         if (detail) {
           let parsedDetail: any = {};
-  
+
           if (typeof detail === 'string') {
             try {
               parsedDetail = JSON.parse(detail);
@@ -372,21 +374,21 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           } else {
             parsedDetail = detail; // already an object
           }
-  
+
           const modifiedErrors: Record<number, string> = {};
           const addedErrors: Record<number, string> = {};
-  
+
           parsedDetail.modified_biomarkers_list?.forEach((item: any) => {
             modifiedErrors[item.index] = item.detail;
           });
-  
+
           parsedDetail.added_biomarkers_list?.forEach((item: any) => {
             addedErrors[item.index] = item.detail;
           });
-  
+
           setRowErrors(modifiedErrors);
           setAddedRowErrors(addedErrors);
-  
+
           console.log('🔎 modifiedErrors:', modifiedErrors);
           console.log('🔎 addedErrors:', addedErrors);
         } else {
@@ -397,11 +399,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setBtnLoading(false);
       });
   };
-  
-  
-  
+
   console.log(rowErrors);
-  
+
   const resolveActiveButtonReportAnalyse = () => {
     if (showReport) {
       return true;
