@@ -277,9 +277,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 className="w-full pr-1"
               >
                 {biomarkers.map((b, index) => {
-                  const errorForRow = Array.isArray(rowErrors)
-                    ? rowErrors.find((err) => err.index === index)
-                    : undefined;
+                 const errorForRow = rowErrors[index];
 
                   return (
                     <div
@@ -304,7 +302,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               place="top"
                               className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                             >
-                              {errorForRow.detail}
+                              {errorForRow}
                             </Tooltip>
                           </>
                         )}

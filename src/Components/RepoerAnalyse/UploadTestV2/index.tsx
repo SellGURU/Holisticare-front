@@ -45,7 +45,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [, setQuestionaryLength] = useState(false);
 
   const [extractedBiomarkers, setExtractedBiomarkers] = useState<any[]>([]);
-  const [fileType, setfileType] = useState('more_info');
+  const [fileType, setfileType] = useState("more_info");
   const [polling, setPolling] = useState(true); // ✅ control polling
   const [deleteLoading, setdeleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
@@ -345,43 +345,62 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     Application.validateBiomarkers({
       modified_biomarkers_list: mappedExtractedBiomarkers,
       added_biomarkers_list: addedBiomarkers,
-      lab_type: fileType,
+      modified_lab_type: fileType,
     })
-      .then((res) => {
-        if (res.status === 200) {
-          // ✅ No errors
-          setisSaveClicked(true);
-          setstep(0);
-          setRowErrors({});
-          setAddedRowErrors({});
-        } else if (res.status === 406 && res.data) {
-          // ✅ Handle errors separately
+      .then(() => {
+        // 200 response
+        setisSaveClicked(true);
+        setstep(0);
+        setRowErrors({});
+        setAddedRowErrors({});
+      })
+      .catch((err: any) => {
+        console.log(err);
+        
+        const detail = err.detail
+  
+        if (detail) {
+          let parsedDetail: any = {};
+  
+          if (typeof detail === 'string') {
+            try {
+              parsedDetail = JSON.parse(detail);
+            } catch (e) {
+              console.error('Failed to parse error detail:', detail, e);
+              parsedDetail = {};
+            }
+          } else {
+            parsedDetail = detail; // already an object
+          }
+  
           const modifiedErrors: Record<number, string> = {};
           const addedErrors: Record<number, string> = {};
   
-          if (res.data.modified_biomarkers) {
-            res.data.modified_biomarkers.forEach((item: any) => {
-              modifiedErrors[item.index] = item.detail;
-            });
-          }
+          parsedDetail.modified_biomarkers_list?.forEach((item: any) => {
+            modifiedErrors[item.index] = item.detail;
+          });
   
-          if (res.data.added_biomarkers) {
-            res.data.added_biomarkers.forEach((item: any) => {
-              addedErrors[item.index] = item.detail;
-            });
-          }
+          parsedDetail.added_biomarkers_list?.forEach((item: any) => {
+            addedErrors[item.index] = item.detail;
+          });
   
           setRowErrors(modifiedErrors);
           setAddedRowErrors(addedErrors);
+  
+          console.log('🔎 modifiedErrors:', modifiedErrors);
+          console.log('🔎 addedErrors:', addedErrors);
+        } else {
+          console.error('API error:', err);
         }
-      })
-      .catch(() => {
-        // Network/server error
       })
       .finally(() => {
         setBtnLoading(false);
       });
   };
+  
+  
+  
+  console.log(rowErrors);
   
   const resolveActiveButtonReportAnalyse = () => {
     if (showReport) {
