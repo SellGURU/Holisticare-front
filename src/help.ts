@@ -37,7 +37,7 @@ const resolveAccesssUser = (access: Array<any>) => {
 const decodeAccessUser = (key: string) => {
   const data = [
     { name: 'Client Summary', checked: true },
-    { name: 'Needs Focus Biomarker', checked: true },
+    { name: 'Need Focus Biomarker', checked: true },
     { name: 'Concerning Result', checked: true },
     { name: 'Detailed Analysis', checked: true },
     { name: 'Holistic Plan', checked: true },
@@ -57,7 +57,7 @@ const decodeNameAndKey = (name: string) => {
   if (name == 'Client Summary') {
     return 'ZXCV';
   }
-  if (name == 'Needs Focus Biomarker') {
+  if (name == 'Need Focus Biomarker') {
     return 'MNBB';
   }
   if (name == 'Concerning Result') {

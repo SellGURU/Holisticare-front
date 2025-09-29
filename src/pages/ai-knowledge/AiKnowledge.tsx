@@ -271,11 +271,13 @@ const VirtualScrollTable = ({
   itemHeight = VIRTUAL_SCROLL_ITEM_HEIGHT,
   visibleItems = VIRTUAL_SCROLL_VISIBLE_ITEMS,
   renderItem,
+  activaTab,
 }: {
   items: any[];
   itemHeight?: number;
   visibleItems?: number;
   renderItem: (item: any, index: number) => React.ReactNode;
+  activaTab: string;
 }) => {
   const [scrollTop, setScrollTop] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -293,7 +295,12 @@ const VirtualScrollTable = ({
     <div
       ref={containerRef}
       className="overflow-y-auto pb-[45px] "
-      style={{ height: visibleItems * itemHeight }}
+      style={{
+        height:
+          activaTab === 'System Docs'
+            ? window.innerHeight - 250 + 'px'
+            : window.innerHeight - 290 + 'px',
+      }}
       onScroll={handleScroll}
     >
       <div style={{ height: totalHeight, position: 'relative' }}>
@@ -621,8 +628,8 @@ const AiKnowledge = () => {
   const [currentPageUserUploads, setCurrentPageUserUploads] =
     useState<number>(1);
   const [currentPageSystemDocs, setCurrentPageSystemDocs] = useState<number>(1);
-  const itemsPerPageUserUploads = 12;
-  const itemsPerPageSystemDocs = 12;
+  const itemsPerPageUserUploads = 20;
+  const itemsPerPageSystemDocs = 20;
   const [AddFilleModal, setAddFilleModal] = useState(false);
   const handleAddFilleModal = (value: boolean) => {
     setAddFilleModal(value);
@@ -1362,7 +1369,8 @@ const AiKnowledge = () => {
                       <VirtualScrollTable
                         items={getCurrentPageData()}
                         itemHeight={40}
-                        visibleItems={10}
+                        activaTab={activaTab}
+                        visibleItems={20}
                         renderItem={(doc, index) => (
                           <div
                             key={doc.id}
@@ -1470,7 +1478,8 @@ const AiKnowledge = () => {
                       <VirtualScrollTable
                         items={getCurrentPageData()}
                         itemHeight={40}
-                        visibleItems={10}
+                        activaTab={activaTab}
+                        visibleItems={20}
                         renderItem={(doc, index) => (
                           <div
                             key={doc.id}

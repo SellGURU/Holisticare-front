@@ -419,7 +419,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
       checked: true,
     },
     {
-      name: 'Needs Focus Biomarker',
+      name: 'Need Focus Biomarker',
       checked: true,
     },
     {
@@ -710,7 +710,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 </div>
               </>
             )}
-            {printOptins.filter((el) => el.name === 'Needs Focus Biomarker')[0]
+            {printOptins.filter((el) => el.name === 'Need Focus Biomarker')[0]
               .checked && (
               <>
                 <div className="flex justify-start gap-4 mt-6 items-center">
@@ -730,7 +730,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     className="text-xl cursor-pointer hover:underline"
                     style={{ color: '#383838', fontWeight: '500' }}
                   >
-                    Needs Focus Biomarkers
+                    Need Focus Biomarkers
                   </a>
                 </div>
               </>
@@ -1008,7 +1008,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </>
       )}
 
-      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+      {printOptins.filter((el) => el.name == 'Need Focus Biomarker')[0]
         .checked && (
         <div
           id="needs-focus-biomarkers"
@@ -1031,7 +1031,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               className="text-lg"
               style={{ color: '#383838', fontWeight: '600' }}
             >
-              Needs Focus Biomarkers
+              Need Focus Biomarkers
             </div>
             <div
               className="  text-xs"
@@ -1063,7 +1063,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </div>
       )}
 
-      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+      {printOptins.filter((el) => el.name == 'Need Focus Biomarker')[0]
         .checked &&
         resolveBioMarkers().filter((val) => val.outofref == true).length >
           6 && (

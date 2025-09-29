@@ -225,7 +225,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       // Description: description,
       // Base_Score: baseScore,
       Activity_Filters: addData,
-      Sections: rsolveSectionListforSendToApi(),
+      Sections: rsolveSectionListforSendToApi() || [],
       Task_Type: 'Action',
     });
     onClose();
@@ -659,7 +659,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     const isFormValid = validateForm();
 
     // Check if there are any exercises
-    const hasExercises = sectionList.length > 0;
+    // const hasExercises = sectionList.length > 0;
 
     // Check if there are any empty reps fields
     const emptySetSections = sectionList.filter(
@@ -672,7 +672,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     // Only proceed if form is valid, there are exercises, and no empty reps
     if (
       isFormValid &&
-      hasExercises &&
+      // hasExercises &&
       emptySetSections.length == 0 &&
       emptyRepsSections.length == 0
     ) {
