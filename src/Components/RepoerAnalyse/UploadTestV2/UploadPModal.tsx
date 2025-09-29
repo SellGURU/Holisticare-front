@@ -33,6 +33,7 @@ interface UploadPModalProps {
   fileType: string;
   loading: boolean;
   rowErrors?: any;
+  AddedRowErrors?:any;
   btnLoading: boolean;
 }
 
@@ -63,6 +64,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   loading,
   btnLoading,
   rowErrors,
+  AddedRowErrors
 }) => {
   const [activeMenu, setactiveMenu] = useState('Upload File');
 
@@ -147,6 +149,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
           ) : (
             <AddBiomarker
               biomarkers={addedBiomarkers}
+              rowErrors={AddedRowErrors}
               onAddBiomarker={handleAddBiomarker}
               onTrashClick={handleTrashClick}
               onConfirm={handleConfirm}

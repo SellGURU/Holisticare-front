@@ -1062,6 +1062,9 @@ class Application extends Api {
   static validateBiomarkers = (data: any) => {
     return this.post('/patients/validate_biomarkers', data);
   };
+  static validateAddedBiomarkers = (data: any) => {
+    return this.post('/patients/validate_added_biomarkers', data);
+  };
 }
 
 export default Application;

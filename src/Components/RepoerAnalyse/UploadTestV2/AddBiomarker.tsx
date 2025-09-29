@@ -6,6 +6,7 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Select from '../../Select';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
+import { Tooltip } from 'react-tooltip';
 
 // Define the props for the AddBiomarker component, now using 'biomarker' instead of 'name'
 interface AddBiomarkerProps {
@@ -21,10 +22,12 @@ interface AddBiomarkerProps {
   deleteIndex: number | null;
   dateOfTest: Date | null;
   setDateOfTest: (date: Date | null) => void;
+  rowErrors?: any;
 }
 
 export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   biomarkers,
+  rowErrors,
   onAddBiomarker,
   onTrashClick,
   onConfirm,
@@ -201,7 +204,11 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               // style={{ height: window.innerHeight - 550 + 'px' }}
               className="w-full md:h-[calc(100vh-550px)]  "
             >
-              {biomarkers.map((biomarker, index) => (
+              {biomarkers.map((biomarker, index) => {
+                   const errorForRow = Array.isArray(rowErrors)
+                   ? rowErrors.find((err) => err.index === index)
+                   : undefined;
+                return(
                 <div
                   key={index}
                   className={`grid py-2 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary ${
@@ -215,7 +222,23 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                       {biomarker.biomarker}
                     </TooltipTextAuto>
                   </div>
-
+                  {errorForRow && (
+                          <>
+                            <img
+                              data-tooltip-id={`tooltip-${index}`}
+                              src="/icons/info-circle-red.svg"
+                              alt="Error"
+                              className="w-4 h-4"
+                            />
+                            <Tooltip
+                              id={`tooltip-${index}`}
+                              place="top"
+                              className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                            >
+                              {errorForRow.detail}
+                            </Tooltip>
+                          </>
+                        )}
                   {/* Value */}
                   <div className="text-center text-[#888888]">
                     {biomarker.value}
@@ -258,7 +281,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                     )}
                   </div>
                 </div>
-              ))}
+              )})}
 
               {biomarkers.length === 0 && (
                 <div className="flex flex-col h-full pt-10 min-h-[100px] items-center justify-center gap-4">

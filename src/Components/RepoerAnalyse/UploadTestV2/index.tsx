@@ -330,6 +330,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     });
   };
   const [rowErrors, setRowErrors] = React.useState<Record<number, string>>({});
+  const [addedrowErrors, setAddedRowErrors] = React.useState<Record<number, string>>({});
   const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
     setBtnLoading(true);
@@ -341,35 +342,47 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       unit: b.original_unit,
     }));
   
-    if (mappedExtractedBiomarkers.length > 0) {
-      Application.validateBiomarkers({
-        biomarkers_list: mappedExtractedBiomarkers,
-        lab_type: fileType,
-      })
-        .then((res) => {
-          if (res.status === 200) {
-            setisSaveClicked(true);
-            setstep(0);
-            setRowErrors([]);
-          } else if (res.status === 406 && res.data.detail) {
-            const errors: Record<number, string> = {};
-            res.data.detail.forEach((item: any) => {
-              errors[item.index] = item.detail;
+    Application.validateBiomarkers({
+      modified_biomarkers_list: mappedExtractedBiomarkers,
+      added_biomarkers_list: addedBiomarkers,
+      lab_type: fileType,
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          // ✅ No errors
+          setisSaveClicked(true);
+          setstep(0);
+          setRowErrors({});
+          setAddedRowErrors({});
+        } else if (res.status === 406 && res.data) {
+          // ✅ Handle errors separately
+          const modifiedErrors: Record<number, string> = {};
+          const addedErrors: Record<number, string> = {};
+  
+          if (res.data.modified_biomarkers) {
+            res.data.modified_biomarkers.forEach((item: any) => {
+              modifiedErrors[item.index] = item.detail;
             });
-            setRowErrors(errors);
           }
-        })
-        .catch(() => { })
-        .finally(() => {
-          setBtnLoading(false);
-        });
-    } else {
-      setisSaveClicked(true);
-      setstep(0);
-      setRowErrors([]);
-      setBtnLoading(false);
-    }
+  
+          if (res.data.added_biomarkers) {
+            res.data.added_biomarkers.forEach((item: any) => {
+              addedErrors[item.index] = item.detail;
+            });
+          }
+  
+          setRowErrors(modifiedErrors);
+          setAddedRowErrors(addedErrors);
+        }
+      })
+      .catch(() => {
+        // Network/server error
+      })
+      .finally(() => {
+        setBtnLoading(false);
+      });
   };
+  
   const resolveActiveButtonReportAnalyse = () => {
     if (showReport) {
       return true;
@@ -642,6 +655,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       ) : (
         <UploadPModal
           rowErrors={rowErrors}
+          AddedRowErrors={addedrowErrors}
           OnBack={() => {
             if (isUploadFromComboBar) {
               onDiscard();
