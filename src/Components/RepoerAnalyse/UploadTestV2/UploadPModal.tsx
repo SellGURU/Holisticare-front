@@ -71,20 +71,21 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   const [activeMenu, setactiveMenu] = useState('Upload File');
   console.log(rowErrors);
   console.log(AddedRowErrors);
-  
-  
+
   useEffect(() => {
     const rowErrorCount = rowErrors ? Object.keys(rowErrors).length : 0;
-    const addedErrorCount = AddedRowErrors ? Object.keys(AddedRowErrors).length : 0;
-  
+    const addedErrorCount = AddedRowErrors
+      ? Object.keys(AddedRowErrors).length
+      : 0;
+
     if (rowErrorCount > 0 && addedErrorCount === 0) {
-      setactiveMenu("Upload File");
+      setactiveMenu('Upload File');
     }
     if (addedErrorCount > 0 && rowErrorCount === 0) {
-      setactiveMenu("Add Biomarker");
+      setactiveMenu('Add Biomarker');
     }
   }, [rowErrors, AddedRowErrors]);
-  
+
   return (
     <>
       <div

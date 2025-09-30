@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TextField from '../../TextField';
 import SimpleDatePicker from '../../SimpleDatePicker';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
@@ -79,6 +79,23 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         .catch(() => {});
     }
   }, [biomarkerName]);
+  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tableRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (rowErrors && Object.keys(rowErrors).length > 0) {
+      const firstErrorIndex = Math.min(...Object.keys(rowErrors).map(Number));
+      const el = rowRefs.current[firstErrorIndex];
+      const container = tableRef.current;
+
+      if (el && container) {
+        const elTop = el.offsetTop;
+        container.scrollTo({
+          top: elTop - container.clientHeight / 2, // center it
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [rowErrors]);
   return (
     <div
       style={{ height: window.innerHeight - 235 + 'px' }}
@@ -185,6 +202,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
         {/* Right side: Table */}
         <div
+        ref={tableRef}
           className={`w-full border-Gray-50 mt-6 overflow-x-auto  hidden-scrollbar   ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
         >
           <div className="w-full border border-Gray-50 min-w-[700px]    rounded-[20px] h-full text-xs">
@@ -209,6 +227,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
                 return (
                   <div
+                  ref={(el) => (rowRefs.current[index] = el)}
                     key={index}
                     className={`grid py-2 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary ${
                       index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
