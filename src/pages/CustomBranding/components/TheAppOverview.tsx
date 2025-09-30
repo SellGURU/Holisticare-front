@@ -1,5 +1,4 @@
 import { FC, useState } from 'react';
-import SvgIcon from '../../../utils/svgIcon';
 import resolveAnalyseIcon from '../../../Components/RepoerAnalyse/resolveAnalyseIcon';
 import {
   Send,
@@ -8,11 +7,15 @@ import {
   CheckCircle,
   Circle,
   ClipboardList,
-  BookOpen,
   FileText,
   Headphones,
   Search,
   Video,
+  Home,
+  TrendingUp,
+  MessageCircle,
+  BookOpen,
+  Target,
 } from 'lucide-react';
 
 interface TheAppOverviewProps {
@@ -83,7 +86,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
             />
           </div>
         </div> */}
-        {selectedPage == 'Overview' ? (
+        {selectedPage == 'Home' ? (
           <div className="w-full text-[8px] mt-2">
             {/* Top Stat Cards */}
             <div className="w-full flex gap-4 justify-between">
@@ -270,73 +273,164 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
         )}
 
         <div className="w-full h-[36.68px] absolute bottom-0 left-0 bg-white rounded-t-[2.93px] rounded-b-[12.72px] flex items-center justify-between px-4">
-          <div className="flex gap-4">
-            <div
+          <div className="flex gap-2">
+          <button
+          onClick={()=>setselectedPage("Home")}
+                  className={
+                    `flex flex-col items-center  rounded-2xl transition-all duration-300",
+                    ${selectedPage == "Home"
+                      ? "bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105"
+                      : "hover:bg-gray-100/50  hover:shadow-md"}`
+                  }
+                >
+                  <div
+                    className={`
+                      rounded-full p-1 transition-all duration-300
+                      ${selectedPage == "Home"
+                        ? `shadow-lg`
+                        : "bg-gray-200/50 "} `
+                    }
+                    style={{
+                      background: selectedPage == "Home"
+                        ? `linear-gradient(to right, ${
+                            customTheme?.primaryColor
+                          }, ${
+                           customTheme?.secondaryColor
+                            
+                          })`
+                        : "",
+                    }}
+                  >
+                    <Home
+                      className={`
+                        ${selectedPage == "Home"
+                          ? "text-white"
+                          : "text-gray-600 "}
+                       size-3` }
+                    />
+                  </div>
+                  <span
+                                   style={{color: selectedPage== "Home" ? customTheme.primaryColor : "#4b5563"}}
+
+                    className={`
+                      font-medium transition-colors text-[8px] 
+                    `}
+                  >
+                    Home
+                  </span>
+                </button>
+            {/* <div
+             style={{
+              background: selectedPage == "Home"
+                ? `linear-gradient(to right, ${
+                  customTheme ? customTheme?.primaryColor : `#3b82f6`
+                  }, ${
+                    customTheme
+                      ? customTheme?.secondaryColor
+                      : `#a855f7`
+                  })`
+                : "",
+            }}
               onClick={() => setselectedPage('Overview')}
               className="flex flex-col items-center text-gray-500"
             >
-              <SvgIcon
-                src="/icons/status-up-mobile.svg"
-                color={
-                  selectedPage == 'Overview'
-                    ? customTheme.secondaryColor
-                    : '#888888'
-                }
-                width="11.74px"
-                height="11.74px"
-              />
+               <Home className='size-3'/>
               <div
                 className={`text-[5.87px] ${selectedPage == 'Overview' ? `text-[${customTheme.secondaryColor}]` : 'text-Text-Quadruple'} `}
               >
                 Home
               </div>
-            </div>
-            <div
-              onClick={() => {
-                setselectedPage('Monitor');
-              }}
-              className="flex flex-col items-center text-gray-500"
-            >
-              <SvgIcon
-                src="/icons/glass-mobile.svg"
-                color={
-                  selectedPage == 'Monitor'
-                    ? customTheme.secondaryColor
-                    : '#888888'
-                }
-                width="11.74px"
-                height="11.74px"
-              />
-
-              <div
-                className={`text-[5.87px] ${selectedPage == 'Monitor' ? `text-[${customTheme.secondaryColor}]` : 'text-Text-Quadruple'} `}
-              >
-                Monitor
-              </div>
-            </div>
-            <div
-              onClick={() => {
-                setselectedPage('Chat');
-              }}
-              className="flex flex-col items-center text-gray-500"
-            >
-              <SvgIcon
-                src="/icons/glass-mobile.svg"
-                color={
-                  selectedPage == 'Chat'
-                    ? customTheme.secondaryColor
-                    : '#888888'
-                }
-                width="11.74px"
-                height="11.74px"
-              />
-
-              <div
-                className={`text-[5.87px] ${selectedPage == 'Chat' ? `text-[${customTheme.secondaryColor}]` : 'text-Text-Quadruple'} `}
-              >
-                Chat
-              </div>
-            </div>
+            </div> */}
+            <button
+          onClick={()=>setselectedPage("Monitor")}
+                  className={
+                    `flex flex-col items-center  rounded-2xl transition-all duration-300",
+                    ${selectedPage == "Monitor"
+                      ? "bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105"
+                      : "hover:bg-gray-100/50  hover:shadow-md"}`
+                  }
+                >
+                  <div
+                    className={`
+                      rounded-full p-1 transition-all duration-300
+                      ${selectedPage == "Monitor"
+                        ? `shadow-lg`
+                        : "bg-gray-200/50 "} `
+                    }
+                    style={{
+                      background: selectedPage == "Monitor"
+                        ? `linear-gradient(to right, ${
+                            customTheme?.primaryColor
+                          }, ${
+                           customTheme?.secondaryColor
+                            
+                          })`
+                        : "",
+                    }}
+                  >
+                    <TrendingUp
+                      className={`
+                        ${selectedPage == "Monitor"
+                          ? "text-white"
+                          : "text-gray-600 "}
+                       size-3` }
+                    />
+                  </div>
+                  <span
+                  style={{color: selectedPage== "Monitor" ? customTheme.primaryColor : "#4b5563"}}
+                    className={`
+                      
+                      font-medium transition-colors text-[8px] 
+                    `}
+                  >
+                    Monitor
+                  </span>
+                </button>
+                <button
+          onClick={()=>setselectedPage("Chat")}
+                  className={
+                    `flex flex-col items-center  ml-1  rounded-2xl transition-all duration-300",
+                    ${selectedPage == "Chat"
+                      ? "bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105"
+                      : "hover:bg-gray-100/50  hover:shadow-md"}`
+                  }
+                >
+                  <div
+                    className={`
+                      rounded-full p-1 transition-all duration-300
+                      ${selectedPage == "Chat"
+                        ? `shadow-lg`
+                        : "bg-gray-200/50 "} `
+                    }
+                    style={{
+                      background: selectedPage == "Chat"
+                        ? `linear-gradient(to right, ${
+                            customTheme?.primaryColor
+                          }, ${
+                           customTheme?.secondaryColor
+                            
+                          })`
+                        : "",
+                    }}
+                  >
+                    <MessageCircle
+                      className={`
+                        ${selectedPage == "Chat"
+                          ? "text-white"
+                          : "text-gray-600 "}
+                       size-3` }
+                    />
+                  </div>
+                  <span
+                  style={{color: selectedPage== "Chat" ? customTheme.primaryColor : "#4b5563"}}
+                    className={`
+                      
+                      font-medium transition-colors text-[8px] 
+                    `}
+                  >
+                    Chat
+                  </span>
+                </button>
           </div>
           {/* <div className="relative">
             <div
@@ -350,53 +444,98 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
               />
             </div>
           </div> */}
-          <div className="flex gap-4">
-            <div
-              onClick={() => {
-                setselectedPage('Plan');
-              }}
-              className="flex flex-col items-center text-gray-500"
-            >
-              <SvgIcon
-                src="/icons/document-text-mobile.svg"
-                color={
-                  selectedPage == 'Plan'
-                    ? customTheme.secondaryColor
-                    : '#888888'
-                }
-                width="11.74px"
-                height="11.74px"
-              />
-
-              <div
-                className={`text-[5.87px] ${selectedPage == 'Plan' ? `text-[${customTheme.secondaryColor}]` : 'text-Text-Quadruple'} `}
-              >
-                Plan
-              </div>
-            </div>
-            <div
-              onClick={() => {
-                setselectedPage('Educational');
-              }}
-              className="flex flex-col items-center text-gray-500"
-            >
-              <SvgIcon
-                src="/icons/setting-2-mobile.svg"
-                color={
-                  selectedPage == 'Educational'
-                    ? customTheme.secondaryColor
-                    : '#888888'
-                }
-                width="11.74px"
-                height="11.74px"
-              />
-
-              <div
-                className={`text-[5.87px] ${selectedPage === 'Educational' ? `text-[${customTheme.secondaryColor}]` : 'text-Text-Quadruple'} `}
-              >
-                Educational
-              </div>
-            </div>
+          <div className="flex gap-2 ml-4">
+          <button
+          onClick={()=>setselectedPage("Plan")}
+                  className={
+                    `flex flex-col items-center  rounded-2xl transition-all duration-300",
+                    ${selectedPage == "Plan"
+                      ? "bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105"
+                      : "hover:bg-gray-100/50  hover:shadow-md"}`
+                  }
+                >
+                  <div
+                    className={`
+                      rounded-full p-1 transition-all duration-300
+                      ${selectedPage == "Plan"
+                        ? `shadow-lg`
+                        : "bg-gray-200/50 "} `
+                    }
+                    style={{
+                      background: selectedPage == "Plan"
+                        ? `linear-gradient(to right, ${
+                            customTheme?.primaryColor
+                          }, ${
+                           customTheme?.secondaryColor
+                            
+                          })`
+                        : "",
+                    }}
+                  >
+                    <Target
+                      className={`
+                        ${selectedPage == "Plan"
+                          ? "text-white"
+                          : "text-gray-600 "}
+                       size-3` }
+                    />
+                  </div>
+                  <span
+                  style={{color: selectedPage== "Plan" ? customTheme.primaryColor : "#4b5563"}}
+                    className={`
+                      
+                      font-medium transition-colors text-[8px] 
+                    `}
+                  >
+                    Plan
+                  </span>
+                </button>
+          <button
+          onClick={()=>setselectedPage("Educational")}
+                  className={
+                    `flex flex-col items-center  rounded-2xl transition-all duration-300",
+                    ${selectedPage == "Educational"
+                      ? "bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105"
+                      : "hover:bg-gray-100/50  hover:shadow-md"}`
+                  }
+                >
+                  <div
+                    className={`
+                      rounded-full p-1 transition-all duration-300
+                      ${selectedPage == "Educational"
+                        ? `shadow-lg`
+                        : "bg-gray-200/50 "} `
+                    }
+                    style={{
+                      background: selectedPage == "Educational"
+                        ? `linear-gradient(to right, ${
+                            customTheme?.primaryColor
+                          }, ${
+                           customTheme?.secondaryColor
+                            
+                          })`
+                        : "",
+                    }}
+                  >
+                    <BookOpen
+                      className={`
+                        ${selectedPage == "Educational"
+                          ? "text-white"
+                          : "text-gray-600 "}
+                       size-3` }
+                    />
+                  </div>
+                  <span
+                  style={{color: selectedPage== "Educational" ? customTheme.primaryColor : "#4b5563"}}
+                    className={`
+                      
+                      font-medium transition-colors text-[8px] 
+                    `}
+                  >
+                    Educational
+                  </span>
+                </button>
+          
           </div>
         </div>
       </div>
