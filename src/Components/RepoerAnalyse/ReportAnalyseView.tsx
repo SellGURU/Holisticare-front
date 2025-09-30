@@ -556,8 +556,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       );
     });
   }, [resolvedMemberID, ClientSummaryBoxs]); // Only re-render when memberID changes
-  console.log(isHaveReport);
-  console.log(showUploadTest);
   const [checkedSteptwo, setCheckedStepTwo] = useState(false);
   useEffect(() => {
     if (checkedSteptwo) {

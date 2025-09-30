@@ -9,7 +9,7 @@ const HolisticPlanExercisesAvoid: React.FC<HolisticPlanExercisesAvoidProps> = ({
       {value?.length > 0 && (
         <>
           <div
-            className="flex items-center gap-1 pt-1.5 pl-3"
+            className="flex items-center gap-1 pt-1.5 pl-5"
             style={{
               color: '#005f73',
               fontSize: '0.75rem',
@@ -21,8 +21,8 @@ const HolisticPlanExercisesAvoid: React.FC<HolisticPlanExercisesAvoidProps> = ({
             Exercises to Avoid
           </div>
           <div
-            className="flex flex-col pt-1.5 pl-3"
-            style={{ backgroundColor: '#FDFDFD' }}
+            className="flex flex-col pt-1.5"
+            style={{ backgroundColor: '#FDFDFD', paddingLeft: '28px' }}
           >
             {value?.map((el: string) => {
               return (
