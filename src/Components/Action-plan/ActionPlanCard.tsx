@@ -49,7 +49,6 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   };
 
   const [showModal, setshowModal] = useState(false);
-  console.log(el);
 
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);

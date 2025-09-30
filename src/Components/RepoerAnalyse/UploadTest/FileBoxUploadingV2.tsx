@@ -42,7 +42,6 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
   useEffect(() => {
     setIsUploded(el.status == 'completed' ? true : false);
   }, [el.status]);
-  console.log(el);
 
   return (
     <>

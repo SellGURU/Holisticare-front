@@ -7,7 +7,7 @@ const HolisticPlanScientificBasis: React.FC<
   return (
     <>
       <div
-        className="flex items-center gap-1 pt-3 pl-3"
+        className="flex items-center gap-1 pt-3 pl-5"
         style={{
           color: '#005f73',
           fontSize: '0.75rem',
@@ -24,8 +24,9 @@ const HolisticPlanScientificBasis: React.FC<
           fontSize: '0.75rem',
           lineHeight: '1.25rem',
           backgroundColor: '#FDFDFD',
+          paddingLeft: '22px',
         }}
-        className="pt-1.5 pl-3"
+        className="pt-1.5"
       >
         {value}
       </div>
