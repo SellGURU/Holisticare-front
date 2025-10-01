@@ -29,8 +29,10 @@ import resolveStatusArray from './resolveStatusArray';
 // import { useConstructor } from "@/help"
 import { decodeAccessUser } from '../../help';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
+import { ButtonSecondary } from '../Button/ButtosSecondary';
 import Circleloader from '../CircleLoader';
 import InfoToltip from '../InfoToltip';
+import SpinnerLoader from '../SpinnerLoader';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
@@ -578,6 +580,47 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     });
   };
 
+  const [isHtmlReportExists, setIsHtmlReportExists] = useState(true);
+
+  useEffect(() => {
+    if (sessionStorage.getItem('isHtmlReportExists')) {
+      setIsHtmlReportExists(
+        sessionStorage.getItem('isHtmlReportExists') === 'true',
+      );
+      sessionStorage.removeItem('isHtmlReportExists');
+    }
+  }, []);
+
+  const [loadingHtmlReport, setLoadingHtmlReport] = useState(false);
+
+  const handleGetHtmlReport = () => {
+    if (!isHtmlReportExists) return;
+
+    setLoadingHtmlReport(true);
+
+    Application.getHtmlReport(resolvedMemberID?.toString() || '')
+      .then((res) => {
+        try {
+          const blobUrl = res.data;
+
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = 'HolisticPlanReport';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } catch (error: any) {
+          console.error('Error downloading file:', error);
+        }
+      })
+      .catch((err) => {
+        console.error('Error loading HTML report:', err);
+      })
+      .finally(() => {
+        setLoadingHtmlReport(false);
+      });
+  };
+
   return (
     <>
       {loading ? (
@@ -908,6 +951,32 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary"
                   >
                     Holistic Plan
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <ButtonSecondary
+                      ClassName="rounded-[20px] h-[24px] w-[168px]"
+                      onClick={handleGetHtmlReport}
+                    >
+                      {isHtmlReportExists || loadingHtmlReport ? (
+                        <>
+                          <img
+                            className="w-4 h-4"
+                            src="/icons/download.svg"
+                            alt=""
+                          />
+                          Download Report
+                        </>
+                      ) : (
+                        <>
+                          <SpinnerLoader></SpinnerLoader>
+                        </>
+                      )}
+                    </ButtonSecondary>
+                    {!isHtmlReportExists && (
+                      <div className="text-[10px] text-Primary-DeepTeal">
+                        Your report is currently being prepared.
+                      </div>
+                    )}
                   </div>
                   {/* <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip> */}
                   {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
