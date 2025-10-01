@@ -16,6 +16,7 @@ import {
   MessageCircle,
   BookOpen,
   Target,
+  Activity,
 } from 'lucide-react';
 
 interface TheAppOverviewProps {
@@ -38,7 +39,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
   };
   const gradientWithOpacity = `linear-gradient(89.73deg, ${hexToRgba(customTheme.secondaryColor, '0.6')} -121.63%, ${hexToRgba(customTheme.primaryColor, '0.6')} 133.18%)`;
 
-  const [selectedPage, setselectedPage] = useState('Overview');
+  const [selectedPage, setselectedPage] = useState('Home');
   return (
     <div className="w-full flex flex-col md:flex-row items-center justify-center gap-8">
       <div
@@ -91,7 +92,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
             {/* Top Stat Cards */}
             <div className="w-full flex gap-4 justify-between">
               <div
-                className="flex flex-col justify-between items-center p-2 w-[50%] h-[60px] rounded-lg group-hover:opacity-100 transition-opacity duration-500"
+                className="flex flex-col justify-between items-center p-2 gap-1 w-[50%] h-[60px] rounded-lg group-hover:opacity-100 transition-opacity duration-500"
                 style={{
                   background: `linear-gradient(to bottom right, ${hexToRgba(
                     customTheme.primaryColor,
@@ -99,18 +100,38 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
                   )}, ${hexToRgba(customTheme.secondaryColor, '0.1')})`,
                 }}
               >
-                <div>37</div> Phenotypic Age
+                <div className="relative flex justify-center mx-auto ">
+                  <div
+                    style={{ background: customTheme.primaryColor }}
+                    className="w-5 h-5 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-300"
+                  >
+                    <Activity className="w-3 h-3 text-white" />
+                  </div>
+                </div>
+                <div>37</div>
+
+                <div className="-mt-1">Phenotypic Age</div>
               </div>
               <div
-                className="flex flex-col justify-between items-center p-2 w-[50%] h-[60px] rounded-lg group-hover:opacity-100 transition-opacity duration-500"
+                className="flex flex-col justify-between items-center p-2 gap-1 w-[50%] h-[60px] rounded-lg group-hover:opacity-100 transition-opacity duration-500"
                 style={{
                   background: `linear-gradient(to bottom right, ${hexToRgba(
-                    customTheme.secondaryColor,
+                    customTheme.primaryColor,
                     '0.1',
-                  )}, ${hexToRgba(customTheme.primaryColor, '0.1')})`,
+                  )}, ${hexToRgba(customTheme.secondaryColor, '0.1')})`,
                 }}
               >
-                <div>37</div> Phenotypic Age
+                <div className="relative flex justify-center mx-auto ">
+                  <div
+                    style={{ background: customTheme.primaryColor }}
+                    className="w-5 h-5 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-300"
+                  >
+                    <span className="text-xs">🎂</span>
+                  </div>
+                </div>
+                <div>37</div>
+
+                <div className="-mt-1">Phenotypic Age</div>
               </div>
             </div>
 
@@ -189,7 +210,13 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
 
             {/* Assigned Questionnaires */}
             <div className="rounded-lg w-full h-fit p-2 mt-2 bg-gradient-to-br from-gray-50 via-white to-gray-50 border-0 shadow-xl backdrop-blur-lg">
-              Assigned Questionnaires
+              <div className="flex items-center gap-1">
+                <div style={{background:customTheme.secondaryColor}} className="w-5 h-5  rounded-full flex items-center justify-center">
+                  <BookOpen className="w-3 h-3 text-white" />
+                </div>
+                Assigned Questionnaires
+              </div>
+
               {/* Example Questionnaire */}
               <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white border border-gray-200/50 shadow-sm">
                 <div className="flex flex-col text-[7px] font-thin text-gray-900">
@@ -274,51 +301,54 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
 
         <div className="w-full h-[36.68px] absolute bottom-0 left-0 bg-white rounded-t-[2.93px] rounded-b-[12.72px] flex items-center justify-between px-4">
           <div className="flex gap-2">
-          <button
-          onClick={()=>setselectedPage("Home")}
-                  className={
-                    `flex flex-col items-center  rounded-2xl transition-all duration-300",
-                    ${selectedPage == "Home"
-                      ? "bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105"
-                      : "hover:bg-gray-100/50  hover:shadow-md"}`
-                  }
-                >
-                  <div
-                    className={`
+            <button
+              onClick={() => setselectedPage('Home')}
+              className={`flex flex-col items-center  rounded-2xl transition-all duration-300",
+                    ${
+                      selectedPage == 'Home'
+                        ? 'bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105'
+                        : 'hover:bg-gray-100/50  hover:shadow-md'
+                    }`}
+            >
+              <div
+                className={`
                       rounded-full p-1 transition-all duration-300
-                      ${selectedPage == "Home"
-                        ? `shadow-lg`
-                        : "bg-gray-200/50 "} `
-                    }
-                    style={{
-                      background: selectedPage == "Home"
-                        ? `linear-gradient(to right, ${
-                            customTheme?.primaryColor
-                          }, ${
-                           customTheme?.secondaryColor
-                            
-                          })`
-                        : "",
-                    }}
-                  >
-                    <Home
-                      className={`
-                        ${selectedPage == "Home"
-                          ? "text-white"
-                          : "text-gray-600 "}
-                       size-3` }
-                    />
-                  </div>
-                  <span
-                                   style={{color: selectedPage== "Home" ? customTheme.primaryColor : "#4b5563"}}
-
-                    className={`
+                      ${
+                        selectedPage == 'Home' ? `shadow-lg` : 'bg-gray-200/50 '
+                      } `}
+                style={{
+                  background:
+                    selectedPage == 'Home'
+                      ? `linear-gradient(to right, ${
+                          customTheme?.primaryColor
+                        }, ${customTheme?.secondaryColor})`
+                      : '',
+                }}
+              >
+                <Home
+                  className={`
+                        ${
+                          selectedPage == 'Home'
+                            ? 'text-white'
+                            : 'text-gray-600 '
+                        }
+                       size-3`}
+                />
+              </div>
+              <span
+                style={{
+                  color:
+                    selectedPage == 'Home'
+                      ? customTheme.primaryColor
+                      : '#4b5563',
+                }}
+                className={`
                       font-medium transition-colors text-[8px] 
                     `}
-                  >
-                    Home
-                  </span>
-                </button>
+              >
+                Home
+              </span>
+            </button>
             {/* <div
              style={{
               background: selectedPage == "Home"
@@ -342,95 +372,105 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
               </div>
             </div> */}
             <button
-          onClick={()=>setselectedPage("Monitor")}
-                  className={
-                    `flex flex-col items-center  rounded-2xl transition-all duration-300",
-                    ${selectedPage == "Monitor"
-                      ? "bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105"
-                      : "hover:bg-gray-100/50  hover:shadow-md"}`
-                  }
-                >
-                  <div
-                    className={`
+              onClick={() => setselectedPage('Monitor')}
+              className={`flex flex-col items-center  rounded-2xl transition-all duration-300",
+                    ${
+                      selectedPage == 'Monitor'
+                        ? 'bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105'
+                        : 'hover:bg-gray-100/50  hover:shadow-md'
+                    }`}
+            >
+              <div
+                className={`
                       rounded-full p-1 transition-all duration-300
-                      ${selectedPage == "Monitor"
-                        ? `shadow-lg`
-                        : "bg-gray-200/50 "} `
-                    }
-                    style={{
-                      background: selectedPage == "Monitor"
-                        ? `linear-gradient(to right, ${
-                            customTheme?.primaryColor
-                          }, ${
-                           customTheme?.secondaryColor
-                            
-                          })`
-                        : "",
-                    }}
-                  >
-                    <TrendingUp
-                      className={`
-                        ${selectedPage == "Monitor"
-                          ? "text-white"
-                          : "text-gray-600 "}
-                       size-3` }
-                    />
-                  </div>
-                  <span
-                  style={{color: selectedPage== "Monitor" ? customTheme.primaryColor : "#4b5563"}}
-                    className={`
+                      ${
+                        selectedPage == 'Monitor'
+                          ? `shadow-lg`
+                          : 'bg-gray-200/50 '
+                      } `}
+                style={{
+                  background:
+                    selectedPage == 'Monitor'
+                      ? `linear-gradient(to right, ${
+                          customTheme?.primaryColor
+                        }, ${customTheme?.secondaryColor})`
+                      : '',
+                }}
+              >
+                <TrendingUp
+                  className={`
+                        ${
+                          selectedPage == 'Monitor'
+                            ? 'text-white'
+                            : 'text-gray-600 '
+                        }
+                       size-3`}
+                />
+              </div>
+              <span
+                style={{
+                  color:
+                    selectedPage == 'Monitor'
+                      ? customTheme.primaryColor
+                      : '#4b5563',
+                }}
+                className={`
                       
                       font-medium transition-colors text-[8px] 
                     `}
-                  >
-                    Monitor
-                  </span>
-                </button>
-                <button
-          onClick={()=>setselectedPage("Chat")}
-                  className={
-                    `flex flex-col items-center  ml-1  rounded-2xl transition-all duration-300",
-                    ${selectedPage == "Chat"
-                      ? "bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105"
-                      : "hover:bg-gray-100/50  hover:shadow-md"}`
-                  }
-                >
-                  <div
-                    className={`
+              >
+                Monitor
+              </span>
+            </button>
+            <button
+              onClick={() => setselectedPage('Chat')}
+              className={`flex flex-col items-center  ml-1  rounded-2xl transition-all duration-300",
+                    ${
+                      selectedPage == 'Chat'
+                        ? 'bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105'
+                        : 'hover:bg-gray-100/50  hover:shadow-md'
+                    }`}
+            >
+              <div
+                className={`
                       rounded-full p-1 transition-all duration-300
-                      ${selectedPage == "Chat"
-                        ? `shadow-lg`
-                        : "bg-gray-200/50 "} `
-                    }
-                    style={{
-                      background: selectedPage == "Chat"
-                        ? `linear-gradient(to right, ${
-                            customTheme?.primaryColor
-                          }, ${
-                           customTheme?.secondaryColor
-                            
-                          })`
-                        : "",
-                    }}
-                  >
-                    <MessageCircle
-                      className={`
-                        ${selectedPage == "Chat"
-                          ? "text-white"
-                          : "text-gray-600 "}
-                       size-3` }
-                    />
-                  </div>
-                  <span
-                  style={{color: selectedPage== "Chat" ? customTheme.primaryColor : "#4b5563"}}
-                    className={`
+                      ${
+                        selectedPage == 'Chat' ? `shadow-lg` : 'bg-gray-200/50 '
+                      } `}
+                style={{
+                  background:
+                    selectedPage == 'Chat'
+                      ? `linear-gradient(to right, ${
+                          customTheme?.primaryColor
+                        }, ${customTheme?.secondaryColor})`
+                      : '',
+                }}
+              >
+                <MessageCircle
+                  className={`
+                        ${
+                          selectedPage == 'Chat'
+                            ? 'text-white'
+                            : 'text-gray-600 '
+                        }
+                       size-3`}
+                />
+              </div>
+              <span
+                style={{
+                  color:
+                    selectedPage == 'Chat'
+                      ? customTheme.primaryColor
+                      : '#4b5563',
+                }}
+                className={`
                       
                       font-medium transition-colors text-[8px] 
                     `}
-                  >
-                    Chat
-                  </span>
-                </button>
+              >
+                Chat
+              </span>
+            </button>
           </div>
           {/* <div className="relative">
             <div
@@ -445,97 +485,106 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
             </div>
           </div> */}
           <div className="flex gap-2 ml-4">
-          <button
-          onClick={()=>setselectedPage("Plan")}
-                  className={
-                    `flex flex-col items-center  rounded-2xl transition-all duration-300",
-                    ${selectedPage == "Plan"
-                      ? "bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105"
-                      : "hover:bg-gray-100/50  hover:shadow-md"}`
-                  }
-                >
-                  <div
-                    className={`
+            <button
+              onClick={() => setselectedPage('Plan')}
+              className={`flex flex-col items-center  rounded-2xl transition-all duration-300",
+                    ${
+                      selectedPage == 'Plan'
+                        ? 'bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105'
+                        : 'hover:bg-gray-100/50  hover:shadow-md'
+                    }`}
+            >
+              <div
+                className={`
                       rounded-full p-1 transition-all duration-300
-                      ${selectedPage == "Plan"
-                        ? `shadow-lg`
-                        : "bg-gray-200/50 "} `
-                    }
-                    style={{
-                      background: selectedPage == "Plan"
-                        ? `linear-gradient(to right, ${
-                            customTheme?.primaryColor
-                          }, ${
-                           customTheme?.secondaryColor
-                            
-                          })`
-                        : "",
-                    }}
-                  >
-                    <Target
-                      className={`
-                        ${selectedPage == "Plan"
-                          ? "text-white"
-                          : "text-gray-600 "}
-                       size-3` }
-                    />
-                  </div>
-                  <span
-                  style={{color: selectedPage== "Plan" ? customTheme.primaryColor : "#4b5563"}}
-                    className={`
+                      ${
+                        selectedPage == 'Plan' ? `shadow-lg` : 'bg-gray-200/50 '
+                      } `}
+                style={{
+                  background:
+                    selectedPage == 'Plan'
+                      ? `linear-gradient(to right, ${
+                          customTheme?.primaryColor
+                        }, ${customTheme?.secondaryColor})`
+                      : '',
+                }}
+              >
+                <Target
+                  className={`
+                        ${
+                          selectedPage == 'Plan'
+                            ? 'text-white'
+                            : 'text-gray-600 '
+                        }
+                       size-3`}
+                />
+              </div>
+              <span
+                style={{
+                  color:
+                    selectedPage == 'Plan'
+                      ? customTheme.primaryColor
+                      : '#4b5563',
+                }}
+                className={`
                       
                       font-medium transition-colors text-[8px] 
                     `}
-                  >
-                    Plan
-                  </span>
-                </button>
-          <button
-          onClick={()=>setselectedPage("Educational")}
-                  className={
-                    `flex flex-col items-center  rounded-2xl transition-all duration-300",
-                    ${selectedPage == "Educational"
-                      ? "bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105"
-                      : "hover:bg-gray-100/50  hover:shadow-md"}`
-                  }
-                >
-                  <div
-                    className={`
+              >
+                Plan
+              </span>
+            </button>
+            <button
+              onClick={() => setselectedPage('Educational')}
+              className={`flex flex-col items-center  rounded-2xl transition-all duration-300",
+                    ${
+                      selectedPage == 'Educational'
+                        ? 'bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm shadow-lg transform scale-105'
+                        : 'hover:bg-gray-100/50  hover:shadow-md'
+                    }`}
+            >
+              <div
+                className={`
                       rounded-full p-1 transition-all duration-300
-                      ${selectedPage == "Educational"
-                        ? `shadow-lg`
-                        : "bg-gray-200/50 "} `
-                    }
-                    style={{
-                      background: selectedPage == "Educational"
-                        ? `linear-gradient(to right, ${
-                            customTheme?.primaryColor
-                          }, ${
-                           customTheme?.secondaryColor
-                            
-                          })`
-                        : "",
-                    }}
-                  >
-                    <BookOpen
-                      className={`
-                        ${selectedPage == "Educational"
-                          ? "text-white"
-                          : "text-gray-600 "}
-                       size-3` }
-                    />
-                  </div>
-                  <span
-                  style={{color: selectedPage== "Educational" ? customTheme.primaryColor : "#4b5563"}}
-                    className={`
+                      ${
+                        selectedPage == 'Educational'
+                          ? `shadow-lg`
+                          : 'bg-gray-200/50 '
+                      } `}
+                style={{
+                  background:
+                    selectedPage == 'Educational'
+                      ? `linear-gradient(to right, ${
+                          customTheme?.primaryColor
+                        }, ${customTheme?.secondaryColor})`
+                      : '',
+                }}
+              >
+                <BookOpen
+                  className={`
+                        ${
+                          selectedPage == 'Educational'
+                            ? 'text-white'
+                            : 'text-gray-600 '
+                        }
+                       size-3`}
+                />
+              </div>
+              <span
+                style={{
+                  color:
+                    selectedPage == 'Educational'
+                      ? customTheme.primaryColor
+                      : '#4b5563',
+                }}
+                className={`
                       
                       font-medium transition-colors text-[8px] 
                     `}
-                  >
-                    Educational
-                  </span>
-                </button>
-          
+              >
+                Educational
+              </span>
+            </button>
           </div>
         </div>
       </div>
@@ -1183,36 +1232,26 @@ const ChatSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
             <div className="flex justify-end">
               <div className="max-w-[80%] order-2">
                 <div
-                  className="p-2 rounded-2xl shadow-md text-white ml-auto"
-                  style={{
-                    background: `linear-gradient(90deg, ${hexToRgba(
-                      customTheme.primaryColor,
-                      '0.4',
-                    )}, ${hexToRgba(customTheme.secondaryColor, '0.8')})`,
-                  }}
+                  className="p-2 rounded-2xl shadow-md text-Text-Primary ml-auto"
+                  style={{ background: mainGradient }}
                 >
                   <p>Hello, how can I improve my diet?</p>
-                  <p className=" text-white/70 text-right mt-1">10:30 AM</p>
+                  <p className=" text-Text-Primary text-right mt-1">10:30 AM</p>
                 </div>
               </div>
             </div>
 
             {/* AI message */}
-            <div className="flex justify-start">
+            <div className="flex justify-start text-Text-Primary">
               <div className="max-w-[80%] order-1">
                 <div
                   className="p-3 rounded-2xl shadow-md border"
-                  style={{
-                    background: `linear-gradient(90deg, ${hexToRgba(
-                      customTheme.primaryColor,
-                      '0.4',
-                    )}, ${hexToRgba(customTheme.secondaryColor, '0.8')})`,
-                  }}
+                  style={{ background: mainGradient }}
                 >
-                  <p className=" text-white ">
+                  <p className="  ">
                     Try including more vegetables and reducing sugar intake.
                   </p>
-                  <p className=" text-white/70 text-right mt-1">10:31 AM</p>
+                  <p className="  text-right mt-1">10:31 AM</p>
                 </div>
               </div>
             </div>
