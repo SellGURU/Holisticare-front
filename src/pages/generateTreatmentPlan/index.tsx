@@ -447,7 +447,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                         Biomarker List
                       </div>
                     </div>
-                    {treatmentPlanData['Needs Focus Biomarkers'].length > 0 && (
+                    {treatmentPlanData['Need Focus Biomarkers'].length > 0 && (
                       <TextBoxAi
                         isUpchange={isforceReload}
                         isNeedFocus
@@ -643,7 +643,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
           </>
 
           <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none">
-            Needs Focus Biomarkers
+            Need Focus Biomarkers
           </div>
           {treatmentPlanData && (
             <div className="bg-backgroundColor-Card  p-0 border text-[12px]  text-Text-Primary border-gray-50">

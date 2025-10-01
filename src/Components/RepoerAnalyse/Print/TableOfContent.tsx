@@ -75,7 +75,7 @@ const TableOfContent = ({ isActiveSection }: TableOfContentProps) => {
               </div>
             </>
           )}
-          {isActiveSection('Needs Focus Biomarker') && (
+          {isActiveSection('Need Focus Biomarker') && (
             <>
               <div className="flex justify-start gap-4 mt-6 items-center">
                 <img
@@ -94,7 +94,7 @@ const TableOfContent = ({ isActiveSection }: TableOfContentProps) => {
                   className="text-xl cursor-pointer hover:underline"
                   style={{ color: '#383838', fontWeight: '500' }}
                 >
-                  Needs Focus Biomarkers
+                  Need Focus Biomarkers
                 </a>
               </div>
             </>

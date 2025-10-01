@@ -80,7 +80,10 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
                   document.getElementById(data.subcategory)?.scrollIntoView({
                     behavior: 'smooth',
                   });
-                  publish('openDetiledCard', { id: data.subcategory });
+                  publish('openDetiledCard', {
+                    id: data.subcategory,
+                    data: data,
+                  });
                 }}
                 className="text-Primary-DeepTeal  flex justify-center items-center gap-1 text-[10px] md:text-[12px] cursor-pointer"
               >

@@ -8,11 +8,11 @@ import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
 // import UnitPopUp from '../../UnitPopup';
 // import { sortKeysWithValues } from './Help';
+import { Tooltip } from 'react-tooltip';
+import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
+import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
-import { Tooltip } from 'react-tooltip';
-import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
 
 interface DetiledAnalyseProps {
   data: any;
@@ -29,6 +29,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
   const [activeBox, setActiveBOx] = useState<number>(0);
+  const [selectGroup, setSelectGroup] = useState<any>(null);
   useEffect(() => {
     setIsCheced(false);
   }, [activeBox]);
@@ -45,21 +46,21 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   // }
   const [active, setActive] = useState<any>(refrences[0]);
   subscribe('openDetiledCard', (ev) => {
-    // console.log(ev)
-    if (ev.detail.id == data.name) {
+    if (ev.detail.id == data.subcategory) {
       setIsOpen(true);
+      setActive(ev.detail.data);
+      setSelectGroup(ev.detail.data.name);
     }
   });
-  useEffect(() => {
-    if (refrences != null) {
-      setActiveBOx(0);
-      setActive(refrences[0]);
-    }
-  }, [refrences]);
+  // useEffect(() => {
+  //   if (refrences != null) {
+  //     setActiveBOx(0);
+  //     setActive(refrences[0]);
+  //   }
+  // }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
   const [showGeneInsights, setShowGeneInsights] = useState(false);
   // const resolveColor = (key: string) => {
-  console.log(activeBox);
 
   //   if (key == 'Needs Focus') {
   //     return '#FC5474';
@@ -183,6 +184,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
                 {refrences?.map((value: any, index: number) => {
+                  if (selectGroup == value.name) {
+                    setActiveBOx(index);
+                    setSelectGroup(null);
+                  }
                   return (
                     <>
                       <div
@@ -219,7 +224,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                           {value?.status && (
                             <>
                               {(value?.status[0] == 'CriticalRange' ||
-                                value?.status[0] == 'DiseaseRange') && (
+                                value?.status[0] == 'DiseaseRange' ||
+                                value?.status[0] == 'BorderlineRange') && (
                                 <div
                                   className="w-3 h-3 rounded-full "
                                   style={{

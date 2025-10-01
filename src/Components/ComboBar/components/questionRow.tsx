@@ -65,7 +65,6 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   }, [isAssigned, countdown]);
 
   console.log(viewQuestienry);
-  console.log(el);
   const navigate = useNavigate();
   return (
     <>
