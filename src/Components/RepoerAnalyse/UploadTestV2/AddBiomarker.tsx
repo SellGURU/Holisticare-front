@@ -235,12 +235,11 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                     style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
                   >
                     {/* Biomarker Name */}
-                    <div>
+                    <div className='flex items-center  gap-1'>
                       <TooltipTextAuto maxWidth="250px">
                         {biomarker.biomarker}
                       </TooltipTextAuto>
-                    </div>
-                    {errorForRow && (
+                      {errorForRow && (
                       <>
                         <img
                           data-tooltip-id={`tooltip-${index}`}
@@ -257,6 +256,8 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                         </Tooltip>
                       </>
                     )}
+                    </div>
+               
                     {/* Value */}
                     <div className="text-center text-[#888888]">
                       {biomarker.value}

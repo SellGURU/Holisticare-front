@@ -119,31 +119,36 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
   };
   const resolvePercentLeft = (el: any) => {
     if (!values) return;
-    const value = values[0];
-    // اگر low مقدار null بود، یعنی بازه از منفی بی‌نهایت شروع می‌شود
-    if (el.low == null && el.high != null) {
-      // اگر مقدار کاربر کمتر از high باشد، درصد را نزدیک 0 قرار بده
-      if (value <= el.high) return 5;
-      // اگر بیشتر بود، درصد را نزدیک 100 قرار بده
+    const value = Number(values[0]);
+  
+    // ✅ اگر low مقدار null بود، صفر بزاریم
+    const low = el.low == null ? 0 : Number(el.low);
+    const high = el.high != null ? Number(el.high) : null;
+  
+    // فقط high داره (low رو صفر گذاشتیم)
+    if (high !== null && low === 0 && el.low == null) {
+      if (value <= high) return ((value - low) / (high - low)) * 100;
       return 95;
     }
-    // اگر high مقدار null بود، یعنی بازه تا مثبت بی‌نهایت ادامه دارد
-    if (el.high == null && el.low != null) {
-      // اگر مقدار کاربر بیشتر از low باشد، درصد را نزدیک 100 قرار بده
-      if (value >= el.low) return 90;
-      // اگر کمتر بود، درصد را نزدیک 0 قرار بده
+  
+    // فقط low داره
+    if (high === null && low !== null) {
+      if (value >= low) return 90;
       return 5;
     }
-    // اگر هر دو مقدار داشتند
-    if (el.low != null && el.high != null) {
-      const percent = ((value - el.low) / (el.high - el.low)) * 100 - 3;
+  
+    // هم low هم high داره
+    if (high !== null && low !== null) {
+      const percent = ((value - low) / (high - low)) * 100;
       if (percent <= 10) return 10;
       if (percent > 90) return 90;
       return percent;
     }
-    // اگر هر دو null بودند، مقدار وسط را برگردان
+  
+    // fallback
     return 50;
   };
+  
 
   // Helper function to determine marker mode
   const getStatusMarkerMode = (
@@ -209,7 +214,7 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
                     <div
                       className={`absolute  top-[2px]  z-[8]`}
                       style={{
-                        left: resolvePercentLeft(el) + '%' || '50%',
+                        left: resolvePercentLeft(el) + '%',
                       }}
                     >
                       <div className="w-1 h-1  rotate-45 bg-Primary-DeepTeal"></div>
