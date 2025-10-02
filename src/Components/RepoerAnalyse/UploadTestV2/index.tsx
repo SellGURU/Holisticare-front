@@ -37,6 +37,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   onDiscard,
   questionnaires,
 }) => {
+
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
   // const [activeMenu, setactiveMenu] = useState('Upload File');
@@ -49,6 +50,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [polling, setPolling] = useState(true); // ✅ control polling
   const [deleteLoading, setdeleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
+  console.log(uploadedFile);
   // console.log(extractedBiomarkers);
   const [isUploadFromComboBar, setIsUploadFromComboBar] = useState(false);
   useEffect(() => {
@@ -254,6 +256,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       fileInputRef.current.value = '';
     }
   };
+
+  
   const [addedBiomarkers, setAddedBiomarkers] = useState<
     { biomarker: string; value: string; unit: string }[]
   >([]);
@@ -367,6 +371,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       modified_biomarkers_list: mappedExtractedBiomarkers,
       added_biomarkers_list: addedBiomarkers,
       modified_lab_type: fileType,
+      modified_file_id:uploadedFile?.file_id
     })
       .then(() => {
         // 200 response
