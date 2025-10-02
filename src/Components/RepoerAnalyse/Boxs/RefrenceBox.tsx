@@ -12,6 +12,7 @@ import { Tooltip } from 'react-tooltip';
 import HistoricalChart from '../HistoricalChart';
 // import StatusBarChartV2 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartV2';
 import StatusBarChartv3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
+import { SourceTag } from '../../source-badge';
 interface RefrenceBoxProps {
   data: any;
   index: number;
@@ -27,7 +28,8 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
   // const dataPoints = [50, 75, 60, 90, 80, 100, 95];
 
   const isChartDataEmpty = false;
-
+  console.log(data);
+  
   return (
     <>
       <div
@@ -121,11 +123,12 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
         </div>
         <div className="mt-[20px] flex items-center justify-between">
           <div
-            className={`text-Text-Primary font-medium text-[10px] md:text-xs ${isCheced && 'invisible'}`}
+            className={`text-Text-Primary font-medium text-[10px] md:text-xs flex w-full justify-between items-center ${isCheced && 'invisible'}`}
           >
             Current Value
+            <SourceTag source={data.source} />
           </div>
-          <div className="flex justify-end items-center gap-2">
+          <div className=" hidden justify-end items-center gap-2">
             <div className="invisible">
               <Legends></Legends>
             </div>
