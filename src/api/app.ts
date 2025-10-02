@@ -1053,6 +1053,12 @@ class Application extends Api {
   static getInputPlayGroundVariables = () => {
     return this.post('/test_api/agents', {});
   };
+  static getHtmlReport = (member_id: string) => {
+    return this.post(`/get_html_report`, { member_id: member_id });
+  };
+  static checkHtmlReport = (member_id: string) => {
+    return this.post(`/check_html_report`, { member_id: member_id });
+  };
 }
 
 export default Application;
