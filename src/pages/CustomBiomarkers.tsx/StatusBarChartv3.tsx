@@ -120,23 +120,23 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
   const resolvePercentLeft = (el: any) => {
     if (!values) return;
     const value = Number(values[0]);
-  
+
     // ✅ اگر low مقدار null بود، صفر بزاریم
     const low = el.low == null ? 0 : Number(el.low);
     const high = el.high != null ? Number(el.high) : null;
-  
+
     // فقط high داره (low رو صفر گذاشتیم)
     if (high !== null && low === 0 && el.low == null) {
       if (value <= high) return ((value - low) / (high - low)) * 100;
       return 95;
     }
-  
+
     // فقط low داره
     if (high === null && low !== null) {
       if (value >= low) return 90;
       return 5;
     }
-  
+
     // هم low هم high داره
     if (high !== null && low !== null) {
       const percent = ((value - low) / (high - low)) * 100;
@@ -144,11 +144,10 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
       if (percent > 90) return 90;
       return percent;
     }
-  
+
     // fallback
     return 50;
   };
-  
 
   // Helper function to determine marker mode
   const getStatusMarkerMode = (

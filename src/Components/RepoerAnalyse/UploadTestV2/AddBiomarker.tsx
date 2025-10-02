@@ -165,7 +165,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             <TextField
               placeholder="-"
               newStyle
-              type="number"
+              type="text"
               value={value}
               onChange={(e: any) => setValue(e.target.value)}
             />
@@ -202,7 +202,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
         {/* Right side: Table */}
         <div
-        ref={tableRef}
+          ref={tableRef}
           className={`w-full border-Gray-50 mt-6 overflow-x-auto  hidden-scrollbar   ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
         >
           <div className="w-full border border-Gray-50 min-w-[700px]    rounded-[20px] h-full text-xs">
@@ -227,7 +227,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
                 return (
                   <div
-                  ref={(el) => (rowRefs.current[index] = el)}
+                    ref={(el) => (rowRefs.current[index] = el)}
                     key={index}
                     className={`grid py-2 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary ${
                       index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
@@ -235,29 +235,29 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                     style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
                   >
                     {/* Biomarker Name */}
-                    <div className='flex items-center  gap-1'>
+                    <div className="flex items-center  gap-1">
                       <TooltipTextAuto maxWidth="250px">
                         {biomarker.biomarker}
                       </TooltipTextAuto>
                       {errorForRow && (
-                      <>
-                        <img
-                          data-tooltip-id={`tooltip-${index}`}
-                          src="/icons/info-circle-red.svg"
-                          alt="Error"
-                          className="w-4 h-4"
-                        />
-                        <Tooltip
-                          id={`tooltip-${index}`}
-                          place="top"
-                          className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                        >
-                          {errorForRow}
-                        </Tooltip>
-                      </>
-                    )}
+                        <>
+                          <img
+                            data-tooltip-id={`tooltip-${index}`}
+                            src="/icons/info-circle-red.svg"
+                            alt="Error"
+                            className="w-4 h-4"
+                          />
+                          <Tooltip
+                            id={`tooltip-${index}`}
+                            place="top"
+                            className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                          >
+                            {errorForRow}
+                          </Tooltip>
+                        </>
+                      )}
                     </div>
-               
+
                     {/* Value */}
                     <div className="text-center text-[#888888]">
                       {biomarker.value}
