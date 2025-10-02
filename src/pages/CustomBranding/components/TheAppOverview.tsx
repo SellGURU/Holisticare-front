@@ -211,7 +211,10 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
             {/* Assigned Questionnaires */}
             <div className="rounded-lg w-full h-fit p-2 mt-2 bg-gradient-to-br from-gray-50 via-white to-gray-50 border-0 shadow-xl backdrop-blur-lg">
               <div className="flex items-center gap-1">
-                <div style={{background:customTheme.secondaryColor}} className="w-5 h-5  rounded-full flex items-center justify-center">
+                <div
+                  style={{ background: customTheme.secondaryColor }}
+                  className="w-5 h-5  rounded-full flex items-center justify-center"
+                >
                   <BookOpen className="w-3 h-3 text-white" />
                 </div>
                 Assigned Questionnaires

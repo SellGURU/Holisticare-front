@@ -1,29 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useNavigate, useParams } from 'react-router-dom';
-import { TopBar } from '../../Components/topBar';
-import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../api/app';
-import Toggle from '../../Components/Toggle';
-import SvgIcon from '../../utils/svgIcon';
-import BioMarkerRowSuggestions from '../generateTreatmentPlan/components/BiomarkerRow';
+import { ComboBar, MainModal } from '../../Components';
+import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
+import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
+import Circleloader from '../../Components/CircleLoader';
 import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import SpinnerLoader from '../../Components/SpinnerLoader';
-import TextBoxAi from '../generateTreatmentPlan/components/TextBoxAi';
+import Toggle from '../../Components/Toggle';
+import { TopBar } from '../../Components/topBar';
+import SvgIcon from '../../utils/svgIcon';
+import BioMarkerRowSuggestions from '../generateTreatmentPlan/components/BiomarkerRow';
 import EditModal from '../generateTreatmentPlan/components/EditModal';
-import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
-import { ComboBar, MainModal } from '../../Components';
-import Circleloader from '../../Components/CircleLoader';
+import TextBoxAi from '../generateTreatmentPlan/components/TextBoxAi';
 // import { resolveKeyStatus } from '../../help';
 // import UnitPopUp from '../../Components/UnitPopup';
 // import StatusBarChart from '../../Components/RepoerAnalyse/Boxs/StatusBarChart';
 // import StatusChart from '../../Components/RepoerAnalyse/StatusChart';
-import { AppContext } from '../../store/app';
 import HistoricalChart from '../../Components/RepoerAnalyse/HistoricalChart';
-import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
+import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
+import { AppContext } from '../../store/app';
 import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
@@ -40,6 +40,17 @@ const NewGenerateHolisticPlan = () => {
       ...treatmentPlanData,
       member_id: id,
     }).catch(() => {});
+
+    Application.checkHtmlReport(id?.toString() || '')
+      .then((res) => {
+        sessionStorage.setItem(
+          'isHtmlReportExists',
+          res.data.exists.toString(),
+        );
+      })
+      .catch(() => {
+        console.log('error');
+      });
 
     setisFinalLoading(true);
     setTimeout(() => {
