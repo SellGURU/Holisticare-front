@@ -580,7 +580,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     });
   };
 
-  const [isHtmlReportExists, setIsHtmlReportExists] = useState(true);
+  const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
+
+  useEffect(() => {
+    if (TreatMentPlanData?.length > 0) {
+      Application.checkHtmlReport(id?.toString() || '')
+        .then((res) => {
+          setIsHtmlReportExists(res.data.exists);
+        })
+        .catch(() => {});
+    }
+  }, [TreatMentPlanData]);
 
   useEffect(() => {
     if (sessionStorage.getItem('isHtmlReportExists')) {
@@ -964,7 +974,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   >
                     Holistic Plan
                   </div>
-                  {TreatMentPlanData?.length > 0 && (
+                  {TreatMentPlanData?.length > 0 && isHaveReport ? (
                     <div className="flex flex-col items-center gap-1">
                       <ButtonSecondary
                         ClassName="rounded-[20px] h-[24px] w-[168px]"
@@ -991,6 +1001,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         </div>
                       )}
                     </div>
+                  ) : (
+                    ''
                   )}
                   {/* <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip> */}
                   {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
