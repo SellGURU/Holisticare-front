@@ -952,32 +952,34 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   >
                     Holistic Plan
                   </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <ButtonSecondary
-                      ClassName="rounded-[20px] h-[24px] w-[168px]"
-                      onClick={handleGetHtmlReport}
-                    >
-                      {isHtmlReportExists || loadingHtmlReport ? (
-                        <>
-                          <img
-                            className="w-4 h-4"
-                            src="/icons/download.svg"
-                            alt=""
-                          />
-                          Download Report
-                        </>
-                      ) : (
-                        <>
-                          <SpinnerLoader></SpinnerLoader>
-                        </>
+                  {TreatMentPlanData?.length > 0 && (
+                    <div className="flex flex-col items-center gap-1">
+                      <ButtonSecondary
+                        ClassName="rounded-[20px] h-[24px] w-[168px]"
+                        onClick={handleGetHtmlReport}
+                      >
+                        {isHtmlReportExists || loadingHtmlReport ? (
+                          <>
+                            <img
+                              className="w-4 h-4"
+                              src="/icons/download.svg"
+                              alt=""
+                            />
+                            Download Report
+                          </>
+                        ) : (
+                          <>
+                            <SpinnerLoader></SpinnerLoader>
+                          </>
+                        )}
+                      </ButtonSecondary>
+                      {!isHtmlReportExists && (
+                        <div className="text-[10px] text-Primary-DeepTeal">
+                          Your report is currently being prepared.
+                        </div>
                       )}
-                    </ButtonSecondary>
-                    {!isHtmlReportExists && (
-                      <div className="text-[10px] text-Primary-DeepTeal">
-                        Your report is currently being prepared.
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   {/* <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip> */}
                   {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                 </div>
