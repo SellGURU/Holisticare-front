@@ -29,7 +29,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
 
   const isChartDataEmpty = false;
   console.log(data);
-  
+
   return (
     <>
       <div
@@ -149,6 +149,9 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
           <>
             <div className="mt-1 relative">
               <HistoricalChart
+              unit={data?.unit}
+              chartId={data.name}
+              sources={data?.historical_sources}
                 statusBar={data.chart_bounds}
                 dataPoints={[...data.values].reverse()}
                 dataStatus={[...data.status].reverse()}
