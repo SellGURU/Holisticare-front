@@ -588,8 +588,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         sessionStorage.getItem('isHtmlReportExists') === 'true',
       );
       sessionStorage.removeItem('isHtmlReportExists');
+    } else {
+      if (!isHtmlReportExists && TreatMentPlanData?.length > 0) {
+        const intervalId = setInterval(() => {
+          Application.checkHtmlReport(id?.toString() || '')
+            .then((res) => {
+              setIsHtmlReportExists(res.data.exists);
+            })
+            .catch(() => {});
+        }, 10000);
+
+        return () => clearInterval(intervalId);
+      }
     }
-  }, []);
+  }, [TreatMentPlanData, isHtmlReportExists]);
 
   const [loadingHtmlReport, setLoadingHtmlReport] = useState(false);
 
