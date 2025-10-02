@@ -32,18 +32,22 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       // Initial check
       Application.has_unread_message({
         member_id: id,
-      }).then((res) => {
-        setHasUnreadMessage(res.data.has_unread);
-        publish('hasUnreadMessage', {});
-      });
+      })
+        .then((res) => {
+          setHasUnreadMessage(res.data.has_unread);
+          publish('hasUnreadMessage', {});
+        })
+        .catch(() => {});
 
       // Set up interval to check every minute
       const intervalId = setInterval(() => {
         Application.has_unread_message({
           member_id: id,
-        }).then((res) => {
-          setHasUnreadMessage(res.data.has_unread);
-        });
+        })
+          .then((res) => {
+            setHasUnreadMessage(res.data.has_unread);
+          })
+          .catch(() => {});
       }, 60000); // 60000 ms = 1 minute
 
       // Cleanup interval on component unmount
