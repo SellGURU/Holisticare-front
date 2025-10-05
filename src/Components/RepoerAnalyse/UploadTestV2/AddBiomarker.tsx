@@ -96,6 +96,21 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
       }
     }
   }, [rowErrors]);
+  const TEXT_ONLY_BIOMARKERS = [
+    'Color',
+    'Appearance',
+    'Ketones',
+    'Blood (Hemoglobin)',
+    'Bilirubin, Urea',
+    'Nitrite',
+    'Crystals',
+    'Bacteria',
+    'Casts /h.p.f',
+    'Mucus',
+    'Yeast',
+  ];
+  const isTextOnly = TEXT_ONLY_BIOMARKERS.includes(biomarkerName);
+
   return (
     <div
       style={{ height: window.innerHeight - 235 + 'px' }}
@@ -165,9 +180,21 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             <TextField
               placeholder="-"
               newStyle
-              type="text"
+              type={isTextOnly ? 'text' : 'number'}
               value={value}
-              onChange={(e: any) => setValue(e.target.value)}
+              onChange={(e: any) => {
+                const val = e.target.value;
+
+                if (isTextOnly) {
+                  // Only allow letters, spaces, and basic punctuation (no digits)
+                  const textOnly = val.replace(/[0-9]/g, '');
+                  setValue(textOnly);
+                } else {
+                  // Only allow numbers (and optionally a decimal point)
+                  const numOnly = val.replace(/[^0-9.]/g, '');
+                  setValue(numOnly);
+                }
+              }}
             />
           </div>
 

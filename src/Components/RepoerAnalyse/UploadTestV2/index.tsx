@@ -381,7 +381,7 @@ const addedTimestamp = addedDateOfTest
       modified_biomarkers_list: mappedExtractedBiomarkers,
       added_biomarkers_list: addedBiomarkers,
       modified_lab_type: fileType,
-      modified_file_id:uploadedFile?.file_id
+      modified_file_id:uploadedFile?.file_id ?? ""
     })
       .then(() => {
         // 200 response
