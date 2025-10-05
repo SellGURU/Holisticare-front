@@ -321,12 +321,22 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const handleSaveLabReport = () => {
-    const modifiedTimestamp = modifiedDateOfTest
-      ? modifiedDateOfTest.getTime().toString()
-      : null;
-    const addedTimestamp = addedDateOfTest
-      ? addedDateOfTest.getTime().toString()
-      : null;
+const modifiedTimestamp = modifiedDateOfTest
+  ? Date.UTC(
+      modifiedDateOfTest.getFullYear(),
+      modifiedDateOfTest.getMonth(),
+      modifiedDateOfTest.getDate()
+    ).toString()
+  : null;
+const addedTimestamp = addedDateOfTest
+  ? Date.UTC(
+      addedDateOfTest.getFullYear(),
+      addedDateOfTest.getMonth(),
+      addedDateOfTest.getDate()
+    ).toString()
+  : null;
+
+  
 
     // Map over all extractedBiomarkers to create the required API structure
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
