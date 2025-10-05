@@ -13,7 +13,7 @@ export const SourceTag = ({ source, isSmall }: SourceTagProps) => {
               ? '#FFD8E4'
               : '#CADCFF',
       }}
-      className={` ${isSmall ? "w-4 h-4 rounded flex  items-center justify-center" : "h-4 p-2 py-[10px] rounded-full "}  flex items-center gap-[2px] text-[8px] text-Text-Primary  `}
+      className={` ${isSmall ? 'w-4 h-4 rounded flex  items-center justify-center' : 'h-4 p-2 py-[10px] rounded-full '}  flex items-center gap-[2px] text-[8px] text-Text-Primary  `}
     >
       <img
         src={

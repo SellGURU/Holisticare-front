@@ -11,8 +11,8 @@ interface HistoricalChartProps {
   labels: string[];
   dataStatus: Array<string>;
   sources: string[];
-  unit:string
-  chartId:string
+  unit: string;
+  chartId: string;
 }
 
 const HistoricalChart = ({
@@ -22,7 +22,7 @@ const HistoricalChart = ({
   labels,
   sources,
   unit,
-  chartId
+  chartId,
 }: HistoricalChartProps) => {
   const resolveColor = (key: string, color?: string) => {
     if (color && color != '') {
@@ -195,7 +195,6 @@ const HistoricalChart = ({
         </svg>
 
         {sortedStatusBars.map((el: any, inde: number) => {
-       
           return (
             <div
               key={`status-${inde}`}
@@ -214,7 +213,7 @@ const HistoricalChart = ({
                 style={{ borderColor: resolveColor(el.status, el.color) }}
               >
                 {dataPoints.map((point, index) => {
-                     const tooltipId = `point-${chartId}-${index}`;
+                  const tooltipId = `point-${chartId}-${index}`;
                   const markerMode = getStatusMarkerMode(
                     el,
                     dataStatus[index],

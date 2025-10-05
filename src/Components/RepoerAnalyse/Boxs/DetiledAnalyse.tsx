@@ -407,9 +407,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                         <div className="mt-0 relative">
                           {active && (
                             <HistoricalChart
-                            chartId={data.subcategory}
+                              chartId={data.subcategory}
                               statusBar={active?.chart_bounds}
-                              sources={active?.historical_sources} 
+                              sources={active?.historical_sources}
                               dataStatus={active.status}
                               dataPoints={[...active.values]}
                               labels={[...active.date]}

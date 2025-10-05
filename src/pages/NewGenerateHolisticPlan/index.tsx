@@ -701,9 +701,9 @@ const NewGenerateHolisticPlan = () => {
                                   </div>
                                   <div className="mt-0 relative">
                                     <HistoricalChart
-                                     unit={activeEl?.unit}
-                                     chartId={activeEl.name}
-                                     sources={activeEl?.historical_sources}
+                                      unit={activeEl?.unit}
+                                      chartId={activeEl.name}
+                                      sources={activeEl?.historical_sources}
                                       statusBar={activeEl.chart_bounds}
                                       dataPoints={[
                                         ...activeEl.values,

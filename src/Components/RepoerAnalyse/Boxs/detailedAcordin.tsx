@@ -323,9 +323,9 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                 <div className="w-full">
                                   {active && (
                                     <HistoricalChart
-                                    unit={active?.unit}
-                                    chartId={active.name}
-                                    sources={active?.historical_sources}
+                                      unit={active?.unit}
+                                      chartId={active.name}
+                                      sources={active?.historical_sources}
                                       statusBar={active?.chart_bounds}
                                       dataStatus={active.status}
                                       dataPoints={[...active.values]}
