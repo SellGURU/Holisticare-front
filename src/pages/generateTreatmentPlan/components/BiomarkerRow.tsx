@@ -52,7 +52,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   const [notes, setNotes] = useState<string[]>(value['Client Notes'] || []);
   // const [isExpanded, setIsExpanded] = useState(false);
   const [showEditNote, setShowEditNote] = useState(false);
-
+  const [showMore, setShowMore] = useState(false);
   useEffect(() => {
     onchange({
       ...value,
@@ -210,7 +210,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                       </div>
                     </>
                   )} */}
-                    {value['Practitioner Comments'][0]?.length > 0 && (
+                    {/* {value['Practitioner Comments'][0]?.length > 0 && (
                       <div
                         data-tooltip-id={`${value.title}-${index}`}
                         className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
@@ -230,7 +230,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                           </div>
                         </Tooltip>
                       </div>
-                    )}
+                    )} */}
                   </>
                 )}
               {Conflicts?.length > 0 && (
@@ -245,6 +245,24 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
             </div>
           </div>
           <div className="flex flex-col gap-1 ml-4 mt-3">
+            <div className="flex flex-col gap-1 mb-1.5">
+              <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
+                <img src="/icons/info-circle-blue.svg" alt="" />
+                Analysis Info
+              </div>
+              <div className="text-[#666666] leading-5 text-xs text-justify">
+                {value['Practitioner Comments'][0].substring(
+                  0,
+                  showMore ? value['Practitioner Comments'][0].length : 530,
+                )}{' '}
+                <span
+                  className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                  onClick={() => setShowMore(!showMore)}
+                >
+                  {showMore ? 'See less' : 'See more'}
+                </span>
+              </div>
+            </div>
             <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
               <img src="/icons/book.svg" alt="" className="ml-[-2px]" />
               Scientific Basis
