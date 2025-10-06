@@ -6,6 +6,7 @@ import { MainModal } from '../../../Components';
 import Circleloader from '../../../Components/CircleLoader';
 import { publish, subscribe } from '../../../utils/event';
 import { ActivityCard } from './ActivityCard';
+import { CoverageCard } from '../../../Components/coverageCard';
 
 type CategoryState = {
   name: string;
@@ -372,7 +373,8 @@ export const SetOrders: FC<SetOrdersProps> = ({
         </div>
       )}
       <div className="bg-white rounded-2xl shadow-100 p-4 md:p-6 border border-Gray-50">
-        <div className="flex w-full flex-wrap ss:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
+        <CoverageCard progress={66} />
+        <div className="flex mt-4 w-full flex-wrap ss:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
           <div className="flex w-[80%]   md:w-[50%] gap-8 md:gap-[80px]">
             {categories.map(
               ({ name, visible }) =>
