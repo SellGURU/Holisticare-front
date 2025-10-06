@@ -441,7 +441,8 @@ export function PublicSurveyForm({
 
     return true;
   };
-
+  const [isNeedConfirm, setIsNeedConfirm] = useState(survey?.show_consent || false);
+  const [showConfirmError, setShowConfirmError] = useState(false);
   const handleNext = () => {
     if (visibleQuestions.length === 0) {
       // Changed to visibleQuestions
@@ -486,7 +487,14 @@ export function PublicSurveyForm({
       }
 
       if (allValid) {
-        handleSubmit();
+        if (isNeedConfirm) {
+          // setIsNeedConfirm(false);
+          setCurrentStep(sortedQuestions.length + 1);
+          // alert('Please confirm your answers before submitting');
+        } else {
+          handleSubmit();
+        }
+        // handleSubmit();
       } else {
         setError('Please answer all required questions before submitting');
       }
@@ -502,6 +510,7 @@ export function PublicSurveyForm({
   };
 
   const handleSubmit = async () => {
+    setIsNeedConfirm(false);
     setSubmitting(true);
     try {
       // --- MODIFIED: Ensure response is explicitly an empty string for null/undefined values ---
@@ -1321,8 +1330,54 @@ export function PublicSurveyForm({
           </CardFooter>
         </Card>
       )}
+      {
+        (currentStep == sortedQuestions.length +1 && isNeedConfirm) && (
+          <>
+            <Card
+              style={{ height: window.innerHeight - 200 + 'px' }}
+              className="bg-white shadow-xl  border-0 flex flex-col relative"
+            >
+              <CardHeader>
 
-      {currentStep > sortedQuestions.length && (
+                <CardTitle className="text-base 2xl:text-2xl text-justify font-bold">
+                  I confirm that I have read and understood the Medical Disclaimer. I understand that The 100 Club is a lifestyle and longevity programme, not a substitute for my own GP or specialist medical care. I accept full responsibility for my health decisions while participating.
+
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6 h-[60%] relative  pb-20 overflow-auto">
+
+                {showConfirmError && (
+                  <div className="flex items-center space-x-2 text-red-500 text-sm absolute z-30 bottom-10 mt-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <span>To proceed and submit the form, you must confirm that you have read and accepted the Medical Disclaimer .</span>
+                  </div>
+                )}
+              </CardContent>
+              <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full bg-white">
+                <Button
+                  className={`${currentStep > 1 ? 'visible' : 'invisible'}`}
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowConfirmError(true)}
+                >
+                  No, I do not accept
+                </Button>
+
+                <Button
+                  type="button"
+                  onClick={handleSubmit}
+                  // disabled={submitting}
+                  data-testid="survey-next-button"
+                  className={`bg-gradient-to-r ${gradientClass} -end hover:brightness-105 transition-all text-white`}
+                >
+                  Yes, I confirm and accept
+                </Button>
+              </CardFooter>
+            </Card>          
+          </>
+        )
+      }
+      {(currentStep > sortedQuestions.length  && !isNeedConfirm) && (
         <Card className="bg-white shadow-xl border-0 text-center">
           <CardHeader>
             <div className="mx-auto mb-4 w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
