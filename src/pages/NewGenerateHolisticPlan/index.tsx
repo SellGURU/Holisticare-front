@@ -25,6 +25,7 @@ import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIco
 import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 import { AppContext } from '../../store/app';
 import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
+import { SourceTag } from '../../Components/source-badge';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
@@ -666,6 +667,7 @@ const NewGenerateHolisticPlan = () => {
                                 <div className="w-full p-3 md:p-4 bg-white border border-Gray-50 h-[150px] md:h-[179px] rounded-xl">
                                   <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                     Last Value
+                                    <SourceTag source={activeEl.source} />
                                   </div>
                                   <StatusBarChartV3
                                     values={activeEl.values}
@@ -699,6 +701,9 @@ const NewGenerateHolisticPlan = () => {
                                   </div>
                                   <div className="mt-0 relative">
                                     <HistoricalChart
+                                      unit={activeEl?.unit}
+                                      chartId={activeEl.name}
+                                      sources={activeEl?.historical_sources}
                                       statusBar={activeEl.chart_bounds}
                                       dataPoints={[
                                         ...activeEl.values,
