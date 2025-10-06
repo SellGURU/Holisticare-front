@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
-import ChoosingDaysWeek from './components/ChoosingDaysWeek';
-import ActionEditModal from './components/ActionEditModal';
-import MonthShows from './components/MonthShows';
 import SvgIcon from '../../utils/svgIcon';
-import ConflictsModal from './components/ConflictsModal';
+import ActionEditModal from './components/ActionEditModal';
 import BasedOnModal from './components/BasedOnModal';
+import ChoosingDaysWeek from './components/ChoosingDaysWeek';
+import ConflictsModal from './components/ConflictsModal';
 import FilePreviewModal from './components/FilePreviewModal';
+import MonthShows from './components/MonthShows';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -56,20 +56,20 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   useEffect(() => {
     setNewValue(value);
   }, [value]);
-  const [valueData, setValueData] = useState('');
-  useEffect(() => {
-    switch (value.Category) {
-      case 'Diet':
-        setValueData('Macros');
-        break;
-      case 'Supplement':
-        setValueData('Dose');
-        break;
-      case 'Activity':
-        setValueData('File');
-        break;
-    }
-  }, [value.Category]);
+  // const [valueData, setValueData] = useState('');
+  // useEffect(() => {
+  //   switch (value.Category) {
+  //     case 'Diet':
+  //       setValueData('Macros');
+  //       break;
+  //     case 'Supplement':
+  //       setValueData('Dose');
+  //       break;
+  //     case 'Activity':
+  //       setValueData('File');
+  //       break;
+  //   }
+  // }, [value.Category]);
   const [showConflicts, setShowConflicts] = useState(false);
   const resolvePillarIcon = () => {
     switch (value.Category) {
@@ -256,7 +256,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         onClick={() => setShowEditModal(true)}
                       />
                       <img
-                        src="/icons/trash-blue.svg"
+                        src="/icons/trash-red.svg"
                         alt=""
                         className="w-[24px] h-[24px] cursor-pointer mt-2"
                         onClick={() => setSureRemoveIndex(index)}
@@ -289,7 +289,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
                 <div className="flex flex-col gap-1 mb-1.5 ml-2 mt-3">
-                  <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
+                  <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal text-nowrap">
                     <img src="/icons/info-circle-blue.svg" alt="" />
                     Analysis Info
                   </div>
@@ -306,8 +306,102 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </span>
                   </div>
                 </div>
+                {value.Category === 'Supplement' && (
+                  <div className="flex flex-col gap-1 ml-2 mb-1.5">
+                    <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
+                      <img
+                        src="/icons/ruler-new.svg"
+                        alt=""
+                        className="ml-[-2px]"
+                      />
+                      Dosage
+                    </div>
+                    <div className="text-Text-Quadruple text-xs leading-5">
+                      {value?.Dose}
+                    </div>
+                  </div>
+                )}
+                {value.Category === 'Lifestyle' && (
+                  <div className="flex flex-col gap-1 ml-2 mb-1.5">
+                    <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
+                      <img
+                        src="/icons/ruler-new.svg"
+                        alt=""
+                        className="ml-[-2px]"
+                      />
+                      Value
+                    </div>
+                    <div className="text-Text-Quadruple text-xs leading-5">
+                      {value?.Value} {value?.Unit}
+                    </div>
+                  </div>
+                )}
+                {value.Category === 'Diet' && (
+                  <div className="flex flex-col gap-1 ml-2 mb-1.5">
+                    <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
+                      <img
+                        src="/icons/ruler-new.svg"
+                        alt=""
+                        className="ml-[-2px]"
+                      />
+                      Macros
+                    </div>
+                    <div className="flex justify-start items-center gap-4">
+                      <div className="text-Text-Quadruple text-xs leading-5">
+                        Carb: {value?.['Total Macros']?.Carbs} gr
+                      </div>
+                      <div className="text-Text-Quadruple text-xs leading-5">
+                        Protein: {value?.['Total Macros']?.Protein} gr
+                      </div>
+                      <div className="text-Text-Quadruple text-xs leading-5">
+                        Fat: {value?.['Total Macros']?.Fats} gr
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {value.Category === 'Activity' && (
+                  <div className="flex flex-col gap-1 ml-2 mb-1.5">
+                    <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
+                      <img
+                        src="/icons/directbox-default.svg"
+                        alt=""
+                        className="ml-[-2px]"
+                      />
+                      Files:
+                    </div>
+                    <div
+                      onClick={() => {
+                        if (hasAnyExerciseFiles(value.Sections)) {
+                          setShowFilePreviewModal(true);
+                        }
+                      }}
+                      className={`flex cursor-pointer text-xs ${
+                        !hasAnyExerciseFiles(value.Sections)
+                          ? 'text-Text-Primary'
+                          : 'text-[#4C88FF] underline'
+                      }`}
+                    >
+                      {hasAnyExerciseFiles(value.Sections)
+                        ? 'Youtube Link / Video / Image'
+                        : 'No Link / Video / Image'}
+                    </div>
+                  </div>
+                )}
+                <div className="flex flex-col gap-1 ml-2">
+                  <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
+                    <img
+                      src="/icons/note-blue.svg"
+                      alt=""
+                      className="ml-[-2px]"
+                    />
+                    Instruction
+                  </div>
+                  <div className="text-Text-Quadruple text-xs leading-5 text-wrap">
+                    {value?.Instruction}
+                  </div>
+                </div>
                 <div className="flex justify-start items-center ml-2">
-                  {value.Category === 'Diet' ||
+                  {/* {value.Category === 'Diet' ||
                   value.Category === 'Activity' ||
                   value.Category === 'Supplement' ? (
                     <>
@@ -355,8 +449,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </>
                   ) : (
                     ''
-                  )}
-                  {value.Category === 'Lifestyle' && (
+                  )} */}
+                  {/* {value.Category === 'Lifestyle' && (
                     <>
                       <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap">
                         • Value:
@@ -365,7 +459,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         {value.Value} {value.Unit}
                       </div>
                     </>
-                  )}
+                  )} */}
                   {/* <div
                     className={`text-Text-Secondary text-xs  flex justify-start items-center text-nowrap ml-4 ${value.Category === 'Diet' && 'ml-5'} mr-2`}
                   >
@@ -433,14 +527,14 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     )} */}
                   {/* </div> */}
                 </div>
-                <div className={`flex items-start mt-2 ml-2`}>
+                {/* <div className={`flex items-start mt-2 ml-2`}>
                   <div className="flex items-center text-Text-Quadruple text-xs text-nowrap">
                     • Instruction:
                   </div>
                   <div className="flex items-center text-Text-Primary text-xs ml-1 text-wrap">
                     {value.Instruction}
                   </div>
-                </div>
+                </div> */}
                 {/* <div
                   className={`flex items-start mt-2 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
@@ -595,7 +689,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               {/* </div> */}
             </div>
             {value['Client Notes'] && value['Client Notes'].length > 0 && (
-              <div className={`h-[1px] bg-Gray-50 w-full mt-4 mb-2`}></div>
+              <div className={`h-[1px] bg-Gray-50 w-full mt-3 mb-2`}></div>
             )}
             <div className={`flex flex-col w-full`}>
               {value['Client Notes'] &&
