@@ -7,7 +7,6 @@ import SvgIcon from '../../utils/svgIcon';
 import ConflictsModal from './components/ConflictsModal';
 import BasedOnModal from './components/BasedOnModal';
 import FilePreviewModal from './components/FilePreviewModal';
-import { Tooltip } from 'react-tooltip';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -40,15 +39,15 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     );
   };
 
-  const [expandedItems, setExpandedItems] = useState<{
-    [key: number]: boolean;
-  }>({});
-  const toggleExpand = (index: number) => {
-    setExpandedItems((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
-  };
+  // const [expandedItems, setExpandedItems] = useState<{
+  //   [key: number]: boolean;
+  // }>({});
+  // const toggleExpand = (index: number) => {
+  //   setExpandedItems((prev) => ({
+  //     ...prev,
+  //     [index]: !prev[index],
+  //   }));
+  // };
   const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
   const [showBasedOn, setShowBasedOn] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -135,6 +134,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         break;
     }
   }, [value?.label]);
+  const [showMore, setShowMore] = useState(false);
 
   return (
     <>
@@ -149,8 +149,36 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <img className="w-4" src={resolvePillarIcon()} alt="" />
                 </div>
                 {value.Title}
+                {value?.label && (
+                  <div
+                    className={`select-none rounded-full px-2 flex items-center gap-1 text-[8px] text-Text-Primary ml-3`}
+                    style={{ backgroundColor: bgColor }}
+                  >
+                    <div
+                      className={`size-[8px] select-none rounded-full`}
+                      style={{ backgroundColor: color }}
+                    ></div>
+                    {value?.label}
+                  </div>
+                )}
+                {value.flag && value.flag.conflicts.length > 0 && (
+                  <button
+                    className="flex items-center gap-1 cursor-pointer ml-7"
+                    onClick={() => {
+                      setShowConflicts(true);
+                    }}
+                  >
+                    <img src="/icons/alarm.svg" alt="" className="w-4 h-4" />
+                    <div className="text-xs text-[#FFAB2C] underline">
+                      Conflict
+                    </div>
+                    <div className="text-xs text-[#FFAB2C]">
+                      ({value.flag.conflicts.length})
+                    </div>
+                  </button>
+                )}
               </div>
-              <div className="flex items-center">
+              <div className="flex items-center relative pr-10">
                 {value.Frequency_Type === 'weekly' && (
                   <>
                     <div className="w-[76px] h-[24px] rounded-2xl bg-[#DEF7EC] flex items-center justify-center gap-1 text-Primary-DeepTeal text-[10px]">
@@ -205,7 +233,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 ) : (
                   ''
                 )}
-                <img
+                {/* <img
                   src="/icons/arrow-down-blue.svg"
                   alt=""
                   className="w-[24px] h-[24px] cursor-pointer transform transition-transform ml-3"
@@ -215,11 +243,69 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       ? 'rotate(180deg)'
                       : 'rotate(0deg)',
                   }}
-                />
+                /> */}
+                <div
+                  className={`flex flex-col items-center absolute right-0 -top-1`}
+                >
+                  {sureRemoveIndex !== index ? (
+                    <>
+                      <img
+                        src="/icons/edit.svg"
+                        alt=""
+                        className="w-[24px] h-[24px] cursor-pointer"
+                        onClick={() => setShowEditModal(true)}
+                      />
+                      <img
+                        src="/icons/trash-blue.svg"
+                        alt=""
+                        className="w-[24px] h-[24px] cursor-pointer mt-2"
+                        onClick={() => setSureRemoveIndex(index)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-Text-Quadruple text-xs">Sure?</div>
+                      <img
+                        src="/icons/tick-circle-green.svg"
+                        alt=""
+                        className="w-[20px] h-[20px] cursor-pointer mt-2"
+                        onClick={() => {
+                          onRemove();
+                          setSureRemoveIndex(null);
+                          // toggleExpand(index);
+                        }}
+                      />
+                      <img
+                        src="/icons/close-circle-red.svg"
+                        alt=""
+                        className="w-[20px] h-[20px] cursor-pointer mt-2"
+                        onClick={() => setSureRemoveIndex(null)}
+                      />
+                    </>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
+                <div className="flex flex-col gap-1 mb-1.5 ml-2 mt-3">
+                  <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
+                    <img src="/icons/info-circle-blue.svg" alt="" />
+                    Analysis Info
+                  </div>
+                  <div className="text-[#666666] leading-5 text-xs text-justify">
+                    {value['Practitioner Comments'][0].substring(
+                      0,
+                      showMore ? value['Practitioner Comments'][0].length : 460,
+                    )}{' '}
+                    <span
+                      className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                      onClick={() => setShowMore(!showMore)}
+                    >
+                      {showMore ? 'See less' : 'See more'}
+                    </span>
+                  </div>
+                </div>
                 <div className="flex justify-start items-center ml-2">
                   {value.Category === 'Diet' ||
                   value.Category === 'Activity' ||
@@ -285,23 +371,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   >
                     • Score:
                   </div> */}
-                  <div
+                  {/* <div
                     className={`flex items-center gap-1 ml-4 ${value.Category === 'Diet' && 'ml-5'}`}
-                  >
-                    {value?.label && (
-                      <div
-                        className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
-                        style={{ backgroundColor: bgColor }}
-                      >
-                        <div
-                          className={`size-[8px] select-none rounded-full`}
-                          style={{ backgroundColor: color }}
-                        ></div>
-                        {value?.label}
-                      </div>
-                    )}
-
-                    {/* <div
+                  > */}
+                  {/* <div
                       className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                       data-tooltip-id={`tooltip-system-score-bio-${index}`}
                     >
@@ -322,7 +395,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         Initial score from core health metrics.
                       </div>
                     </Tooltip> */}
-                    {/* <div
+                  {/* <div
                       className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                       data-tooltip-id={`tooltip-base-score-bio-${index}`}
                     >
@@ -343,7 +416,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         Score based on all data and AI insights.
                       </div>
                     </Tooltip> */}
-                    <div
+                  {/* <div
                       className="text-[8px] text-Primary-DeepTeal cursor-pointer"
                       data-tooltip-id={`tooltip-score-calculation-bio-${index}`}
                     >
@@ -357,28 +430,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       >
                         {value['Practitioner Comments'][0]}
                       </Tooltip>
-                    )}
-                  </div>
-                  {value.flag && value.flag.conflicts.length > 0 && (
-                    <button
-                      className="flex items-center gap-1 cursor-pointer ml-7"
-                      onClick={() => {
-                        setShowConflicts(true);
-                      }}
-                    >
-                      <img src="/icons/alarm.svg" alt="" className="w-3 h-3" />
-                      <div className="text-[10px] text-[#FFAB2C] underline">
-                        Conflict
-                      </div>
-                      <div className="text-[10px] text-[#FFAB2C]">
-                        ({value.flag.conflicts.length})
-                      </div>
-                    </button>
-                  )}
+                    )} */}
+                  {/* </div> */}
                 </div>
-                <div
-                  className={`flex items-start mt-2 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
-                >
+                <div className={`flex items-start mt-2 ml-2`}>
                   <div className="flex items-center text-Text-Quadruple text-xs text-nowrap">
                     • Instruction:
                   </div>
@@ -431,7 +486,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </div> */}
                 {value.Category === 'Activity' && value.Sections.length > 0 && (
                   <div
-                    className={`w-full h-full bg-[#E9F0F2] rounded-[16px]  mt-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                    className={`w-full h-full bg-[#E9F0F2] rounded-[16px] mt-2`}
                   >
                     {(() => {
                       // Create a map to track section numbers
@@ -531,62 +586,18 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 )}
               </div>
-              <div className="flex">
-                {/* <div
+              {/* <div className="flex"> */}
+              {/* <div
                   className={`text-Text-Quadruple text-xs text-nowrap capitalize ${expandedItems[index] ? 'mr-3.5 mt-1' : 'mr-9'}`}
                 >
                   {value?.Times?.join(' & ')}
                 </div> */}
-                <div
-                  className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
-                >
-                  {sureRemoveIndex !== index ? (
-                    <>
-                      <img
-                        src="/icons/edit.svg"
-                        alt=""
-                        className="w-[24px] h-[24px] cursor-pointer"
-                        onClick={() => setShowEditModal(true)}
-                      />
-                      <img
-                        src="/icons/trash-blue.svg"
-                        alt=""
-                        className="w-[24px] h-[24px] cursor-pointer mt-2"
-                        onClick={() => setSureRemoveIndex(index)}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <div className="text-Text-Quadruple text-xs">Sure?</div>
-                      <img
-                        src="/icons/tick-circle-green.svg"
-                        alt=""
-                        className="w-[20px] h-[20px] cursor-pointer mt-2"
-                        onClick={() => {
-                          onRemove();
-                          setSureRemoveIndex(null);
-                          toggleExpand(index);
-                        }}
-                      />
-                      <img
-                        src="/icons/close-circle-red.svg"
-                        alt=""
-                        className="w-[20px] h-[20px] cursor-pointer mt-2"
-                        onClick={() => setSureRemoveIndex(null)}
-                      />
-                    </>
-                  )}
-                </div>
-              </div>
+              {/* </div> */}
             </div>
             {value['Client Notes'] && value['Client Notes'].length > 0 && (
-              <div
-                className={`h-[1px] bg-Gray-50 w-full mt-4 mb-2 ${expandedItems[index] ? '' : 'hidden'}`}
-              ></div>
+              <div className={`h-[1px] bg-Gray-50 w-full mt-4 mb-2`}></div>
             )}
-            <div
-              className={`flex flex-col w-full ${expandedItems[index] ? '' : 'hidden'}`}
-            >
+            <div className={`flex flex-col w-full`}>
               {value['Client Notes'] &&
                 value['Client Notes'].map((note: string, index: number) => {
                   return (
