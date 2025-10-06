@@ -37,7 +37,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   onDiscard,
   questionnaires,
 }) => {
-
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
   // const [activeMenu, setactiveMenu] = useState('Upload File');
@@ -257,7 +256,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
   };
 
-  
   const [addedBiomarkers, setAddedBiomarkers] = useState<
     { biomarker: string; value: string; unit: string }[]
   >([]);
@@ -321,22 +319,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const handleSaveLabReport = () => {
-const modifiedTimestamp = modifiedDateOfTest
-  ? Date.UTC(
-      modifiedDateOfTest.getFullYear(),
-      modifiedDateOfTest.getMonth(),
-      modifiedDateOfTest.getDate()
-    ).toString()
-  : null;
-const addedTimestamp = addedDateOfTest
-  ? Date.UTC(
-      addedDateOfTest.getFullYear(),
-      addedDateOfTest.getMonth(),
-      addedDateOfTest.getDate()
-    ).toString()
-  : null;
-
-  
+    const modifiedTimestamp = modifiedDateOfTest
+      ? Date.UTC(
+          modifiedDateOfTest.getFullYear(),
+          modifiedDateOfTest.getMonth(),
+          modifiedDateOfTest.getDate(),
+        ).toString()
+      : null;
+    const addedTimestamp = addedDateOfTest
+      ? Date.UTC(
+          addedDateOfTest.getFullYear(),
+          addedDateOfTest.getMonth(),
+          addedDateOfTest.getDate(),
+        ).toString()
+      : null;
 
     // Map over all extractedBiomarkers to create the required API structure
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
@@ -381,7 +377,7 @@ const addedTimestamp = addedDateOfTest
       modified_biomarkers_list: mappedExtractedBiomarkers,
       added_biomarkers_list: addedBiomarkers,
       modified_lab_type: fileType,
-      modified_file_id:uploadedFile?.file_id ?? ""
+      modified_file_id: uploadedFile?.file_id ?? '',
     })
       .then(() => {
         // 200 response
