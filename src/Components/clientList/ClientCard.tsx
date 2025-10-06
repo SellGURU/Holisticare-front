@@ -79,6 +79,7 @@ const ClientCard: FC<ClientCardProps> = ({
       console.error('Error adding to high priorities:', error);
     }
   };
+ 
   const handleRemoveFromHighPriority = async () => {
     try {
       if (client.favorite && activeTab === 'High-Priority') {
@@ -832,18 +833,18 @@ const ClientCard: FC<ClientCardProps> = ({
                     </div>
                     <div
                       className="text-nowrap max-w-[110px] truncate cursor-default"
-                      data-tooltip-id={client['Check-in']}
+                      data-tooltip-id={client.member_id + "-" +client['Check-in']}
                     >
-                      {client['Check-in']}
+                      {client['Check-in']} 
                       {client['Check-in'].length > 15 && (
                         <Tooltip
                           place="top"
-                          id={client['Check-in']}
+                          id={client.member_id + "-" +client['Check-in']}
                           className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                         >
                           {client['Check-in']}
-                        </Tooltip>
-                      )}
+                        </Tooltip> )}
+                      
                     </div>
                   </div>
                   <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -853,13 +854,13 @@ const ClientCard: FC<ClientCardProps> = ({
                     </div>
                     <div
                       className="text-nowrap max-w-[100px] truncate cursor-default"
-                      data-tooltip-id={client.Questionary}
+                      data-tooltip-id={client.member_id + "-" + client.Questionary}
                     >
                       {client.Questionary}
                       {client.Questionary.length > 15 && (
                         <Tooltip
                           place="top"
-                          id={client.Questionary}
+                          id={client.member_id + "-" + client.Questionary}
                           className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                         >
                           {client.Questionary}
