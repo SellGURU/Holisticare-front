@@ -119,27 +119,30 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
   };
   const resolvePercentLeft = (el: any) => {
     if (!values) return;
-    const value = Number(values[0]);
+    const value = values[0];
+    // اگر low مقدار null بود، یعنی بازه از منفی بی‌نهایت شروع می‌شود
+    if (el.low == null && el.high != null) {
+      // اگر مقدار کاربر کمتر از high باشد، درصد را نزدیک 0 قرار بده
+      if (Number(value) < Number(el.high)) {
+        const percent = ((value - 0) / (el.high - 0)) * 100 - 3;
+        if (percent <= 10) return 10;
+        if (percent > 90) return 90;
+        return percent;
+      }
 
-    // ✅ اگر low مقدار null بود، صفر بزاریم
-    const low = el.low == null ? 0 : Number(el.low);
-    const high = el.high != null ? Number(el.high) : null;
-
-    // فقط high داره (low رو صفر گذاشتیم)
-    if (high !== null && low === 0 && el.low == null) {
-      if (value <= high) return ((value - low) / (high - low)) * 100;
+      // اگر بیشتر بود، درصد را نزدیک 100 قرار بده
       return 95;
     }
 
     // فقط low داره
-    if (high === null && low !== null) {
-      if (value >= low) return 90;
+    if (el.high === null && el.low !== null) {
+      if (value >= el.low) return 90;
       return 5;
     }
 
     // هم low هم high داره
-    if (high !== null && low !== null) {
-      const percent = ((value - low) / (high - low)) * 100;
+    if (el.high !== null && el.low !== null) {
+      const percent = ((value - el.low) / (el.high - el.low)) * 100;
       if (percent <= 10) return 10;
       if (percent > 90) return 90;
       return percent;
