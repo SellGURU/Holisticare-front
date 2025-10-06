@@ -161,12 +161,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
         <div className="w-full bg-bg-color h-[1px]"></div>
         <div
           className="w-full flex items-center bg-[#E6F0FA] px-6 py-2 rounded-lg gap-1 cursor-pointer"
-          onClick={() =>
-            window.open(
-              data?.Intervention_url?.['Learn More (Okinawan Diet)'],
-              '_blank',
-            )
-          }
+          onClick={() => window.open(data?.Intervention_url, '_blank')}
         >
           <div className="text-Primary-DeepTeal text-xs font-normal">
             Learn More (NHS)
