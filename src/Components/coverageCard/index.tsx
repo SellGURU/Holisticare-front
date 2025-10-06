@@ -3,9 +3,10 @@ import MainModal from '../MainModal';
 
 interface CoverageCardProps {
   progress: number; // from 0 to 100
+  details: Record<string, boolean>[];
 }
 
-export const CoverageCard: React.FC<CoverageCardProps> = ({ progress }) => {
+export const CoverageCard: React.FC<CoverageCardProps> = ({ progress ,details}) => {
   // Clamp value to 0–100
   const safeProgress = Math.min(100, Math.max(0, progress));
 
@@ -25,20 +26,44 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({ progress }) => {
 
     return 'To fully cover the plan, make sure you select interventions that address all key areas.';
   };
-  const [showDetail, setshowDetail] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
+
   return (
     <>
-      <MainModal
+  <MainModal
         isOpen={showDetail}
-        onClose={() => {
-          setshowDetail(false);
-        }}
+        onClose={() => setShowDetail(false)}
       >
-        <div className="bg-white h-[368px] overflow-auto w-[425px]  p-6 pb-8 rounded-2xl shadow-800">
+        <div className="bg-white h-fit max-h-[368px] overflow-auto w-[425px] p-6 pb-8 rounded-2xl shadow-800">
           <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
             Plan Coverage Details
           </div>
-          
+
+          <div className="mt-4 flex flex-col max-h-[208px] overflow-auto gap-3">
+            {details?.map((detail, index) => {
+              const [text, isChecked] = Object.entries(detail)[0];
+              return (
+                <div
+                  key={index}
+                  className={`flex select-none items-start gap-2 text-Text-Primary text-xs  ${
+                    isChecked && ' line-through'
+                  }`}
+                >
+                  <img
+                    src={
+                      isChecked
+                        ? '/icons/tick-square-green-new.svg'
+                        : '/icons/close-square-new.svg'
+                    }
+                    alt=""
+                   
+                  />
+                  {text}
+                </div>
+              );
+            })}
+          </div>
+          <div onClick={()=>setShowDetail(false)} className='w-full flex justify-end text-sm font-medium text-Disable cursor-pointer'>close</div>
         </div>
       </MainModal>
       <div className="flex w-full select-none h-[43px] items-center justify-between gap-2  bg-backgroundColor-Main px-2 py-1 rounded-lg">
@@ -72,7 +97,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({ progress }) => {
           <p>{getMessage()}</p>
         </div>
         <div
-          onClick={() => setshowDetail(true)}
+          onClick={() => setShowDetail(true)}
           className="text-xs text-Primary-DeepTeal cursor-pointer flex items-center gap-1"
         >
           View details{' '}
