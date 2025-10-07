@@ -103,10 +103,10 @@ export const Overview: FC<OverviewProps> = ({
             </div>
           </div>
         )}
-        <div className='w-full my-4'>
-    <CoverageCard progress={progress} details={details} />
+        <div className="w-full my-4">
+          <CoverageCard progress={progress} details={details} />
         </div>
-    
+
         {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
           return (
             <>
