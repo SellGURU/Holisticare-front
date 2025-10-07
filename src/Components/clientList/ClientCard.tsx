@@ -707,14 +707,14 @@ const ClientCard: FC<ClientCardProps> = ({
             className="pl-2 flex flex-col mt-4 cursor-default"
           >
             <div
-              data-tooltip-id={client.name}
+              data-tooltip-id={`${client.member_id}-${client.name}`}
               className="text-Text-Primary truncate max-w-[90px] sm:max-w-[100px] md:max-w-[150px] text-xs sm:text-[14px] font-medium text-nowrap mb-2 cursor-default"
             >
               {client.name}
               {client.name.length > 15 && (
                 <Tooltip
                   place="top"
-                  id={client.name}
+                  id={`${client.member_id}-${client.name}`}
                   className="!bg-white !w-[230px] !bg-opacity-100 !opacity-100 !z-[999] !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
                 >
                   {client.name}
@@ -832,13 +832,13 @@ const ClientCard: FC<ClientCardProps> = ({
                     </div>
                     <div
                       className="text-nowrap max-w-[110px] truncate cursor-default"
-                      data-tooltip-id={client['Check-in']}
+                      data-tooltip-id={`${client.member_id}-${client['Check-in']}`}
                     >
                       {client['Check-in']}
                       {client['Check-in'].length > 15 && (
                         <Tooltip
                           place="top"
-                          id={client['Check-in']}
+                          id={`${client.member_id}-${client['Check-in']}`}
                           className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                         >
                           {client['Check-in']}
@@ -853,13 +853,13 @@ const ClientCard: FC<ClientCardProps> = ({
                     </div>
                     <div
                       className="text-nowrap max-w-[100px] truncate cursor-default"
-                      data-tooltip-id={client.Questionary}
+                      data-tooltip-id={`${client.member_id}-${client.Questionary}`}
                     >
                       {client.Questionary}
                       {client.Questionary.length > 15 && (
                         <Tooltip
                           place="top"
-                          id={client.Questionary}
+                          id={`${client.member_id}-${client.Questionary}`}
                           className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                         >
                           {client.Questionary}
