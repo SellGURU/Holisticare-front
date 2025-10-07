@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
-import { Tooltip } from 'react-tooltip';
 import Checkbox from '../../../Components/checkbox';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
 import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
@@ -50,6 +49,8 @@ export const ActivityCard: FC<ActivityCardProps> = ({
     }
   }, [item?.label]);
   console.log(item.label);
+
+  const [showMore, setShowMore] = useState(false);
 
   return (
     <>
@@ -144,7 +145,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                   </div>
                 </Tooltip>
               </div> */}
-              <div
+              {/* <div
                 data-tooltip-id={index + 'score-calc'}
                 className="text-Primary-DeepTeal select-none mt-[2px] text-[8px]"
               >
@@ -162,7 +163,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                     {item['Practitioner Comments'][0]}
                   </div>
                 </Tooltip>
-              </div>
+              </div> */}
               {Conflicts?.length > 0 && (
                 <div
                   onClick={() => setShowConflict(true)}
@@ -174,6 +175,28 @@ export const ActivityCard: FC<ActivityCardProps> = ({
               )}
             </div>
           </div>
+          <div className="w-full bg-bg-color h-[1px] mt-1"></div>
+          {item['Practitioner Comments'][0]?.length > 0 && (
+            <div className="flex flex-col gap-1 pl-3 mt-2 mb-2">
+              <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
+                <img src="/icons/info-circle-blue.svg" alt="" />
+                Analysis Info
+              </div>
+              <div className="text-[#666666] leading-5 text-xs text-justify">
+                {item['Practitioner Comments'][0]?.substring(
+                  0,
+                  showMore ? item['Practitioner Comments'][0]?.length : 570,
+                )}{' '}
+                <span
+                  className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                  onClick={() => setShowMore(!showMore)}
+                >
+                  {showMore ? 'See less' : 'See more'}
+                </span>
+              </div>
+            </div>
+          )}
+          <div className="w-full bg-bg-color h-[1px] mt-1 mb-2"></div>
           <li className="mb-1.5 text-justify">
             <span className="text-Text-Secondary bullet-point">
               Key Benefits:

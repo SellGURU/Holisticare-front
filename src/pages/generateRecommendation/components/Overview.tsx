@@ -2,6 +2,7 @@
 
 import { FC, useState } from 'react';
 import BioMarkerRowOldSuggestions from '../../generateTreatmentPlan/components/BiomarkerRowOld';
+import { CoverageCard } from '../../../Components/coverageCard';
 type CategoryState = {
   name: string;
   visible: boolean;
@@ -12,12 +13,16 @@ interface OverviewProps {
   suggestionsChecked: Array<any>;
   visibleCategoriy: CategoryState[];
   Conflicts: Array<any>;
+  progress: number; // from 0 to 100
+  details: Record<string, boolean>[];
 }
 export const Overview: FC<OverviewProps> = ({
   visibleCategoriy,
   treatmentPlanData,
   suggestionsChecked,
   Conflicts,
+  progress,
+  details,
 }) => {
   const getAllCheckedCategories = () => {
     const checkedCategories: string[] = [];
@@ -98,6 +103,10 @@ export const Overview: FC<OverviewProps> = ({
             </div>
           </div>
         )}
+        <div className="w-full my-4">
+          <CoverageCard progress={progress} details={details} />
+        </div>
+
         {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
           return (
             <>
