@@ -6,7 +6,10 @@ interface CoverageCardProps {
   details: Record<string, boolean>[];
 }
 
-export const CoverageCard: React.FC<CoverageCardProps> = ({ progress ,details}) => {
+export const CoverageCard: React.FC<CoverageCardProps> = ({
+  progress,
+  details,
+}) => {
   // Clamp value to 0–100
   const safeProgress = Math.min(100, Math.max(0, progress));
 
@@ -30,10 +33,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({ progress ,details}) 
 
   return (
     <>
-  <MainModal
-        isOpen={showDetail}
-        onClose={() => setShowDetail(false)}
-      >
+      <MainModal isOpen={showDetail} onClose={() => setShowDetail(false)}>
         <div className="bg-white h-fit max-h-[368px] overflow-auto w-[425px] p-6 pb-8 rounded-2xl shadow-800">
           <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
             Plan Coverage Details
@@ -56,14 +56,18 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({ progress ,details}) 
                         : '/icons/close-square-new.svg'
                     }
                     alt=""
-                   
                   />
                   {text}
                 </div>
               );
             })}
           </div>
-          <div onClick={()=>setShowDetail(false)} className='w-full flex justify-end text-sm font-medium text-Disable cursor-pointer'>close</div>
+          <div
+            onClick={() => setShowDetail(false)}
+            className="w-full mt-4 flex justify-end text-sm font-medium text-Disable cursor-pointer"
+          >
+            close
+          </div>
         </div>
       </MainModal>
       <div className="flex w-full select-none h-[43px] items-center justify-between gap-2  bg-backgroundColor-Main px-2 py-1 rounded-lg">

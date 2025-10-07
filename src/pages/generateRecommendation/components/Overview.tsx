@@ -13,7 +13,7 @@ interface OverviewProps {
   suggestionsChecked: Array<any>;
   visibleCategoriy: CategoryState[];
   Conflicts: Array<any>;
-      progress: number; // from 0 to 100
+  progress: number; // from 0 to 100
   details: Record<string, boolean>[];
 }
 export const Overview: FC<OverviewProps> = ({
@@ -22,7 +22,7 @@ export const Overview: FC<OverviewProps> = ({
   suggestionsChecked,
   Conflicts,
   progress,
-  details
+  details,
 }) => {
   const getAllCheckedCategories = () => {
     const checkedCategories: string[] = [];
@@ -103,7 +103,10 @@ export const Overview: FC<OverviewProps> = ({
             </div>
           </div>
         )}
-        <CoverageCard progress={progress} details={details}/>
+        <div className='w-full my-4'>
+    <CoverageCard progress={progress} details={details} />
+        </div>
+    
         {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
           return (
             <>

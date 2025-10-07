@@ -251,9 +251,9 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                 Analysis Info
               </div>
               <div className="text-[#666666] leading-5 text-xs text-justify">
-                {value['Practitioner Comments'][0].substring(
+                {value['Practitioner Comments'][0]?.substring(
                   0,
-                  showMore ? value['Practitioner Comments'][0].length : 530,
+                  showMore ? value['Practitioner Comments'][0]?.length : 530,
                 )}{' '}
                 <span
                   className="text-Primary-DeepTeal cursor-pointer underline font-medium"

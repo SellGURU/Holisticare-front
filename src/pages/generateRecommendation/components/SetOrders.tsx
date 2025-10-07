@@ -26,7 +26,7 @@ interface SetOrdersProps {
   // resolvedSuggestions:(data:any) => void
   activeCategory: string;
   setActiveCategory: (value: string) => void;
-    progress: number; // from 0 to 100
+  progress: number; // from 0 to 100
   details: Record<string, boolean>[];
 }
 
@@ -43,7 +43,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
   setActiveCategory,
   setVisibleCategorieys,
   progress,
-  details
+  details,
 }) => {
   // const [activeCategory, setActiveCategory] = useState<string>(
   //   visibleCategoriy[visibleCategoriy.length - 1].name || 'Activity',
@@ -377,8 +377,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
         </div>
       )}
       <div className="bg-white rounded-2xl shadow-100 p-4 md:p-6 border border-Gray-50">
-        <CoverageCard progress={progress} details={details}
- />
+        <CoverageCard progress={progress} details={details} />
         <div className="flex mt-4 w-full flex-wrap ss:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
           <div className="flex w-[80%]   md:w-[50%] gap-8 md:gap-[80px]">
             {categories.map(

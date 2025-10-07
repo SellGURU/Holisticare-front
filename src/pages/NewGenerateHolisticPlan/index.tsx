@@ -25,6 +25,7 @@ import HistoricalChart from '../../Components/RepoerAnalyse/HistoricalChart';
 import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
 import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
+import { CoverageCard } from '../../Components/coverageCard';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
@@ -35,6 +36,35 @@ const NewGenerateHolisticPlan = () => {
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
   const [isFinalLoading, setisFinalLoading] = useState(false);
+    const [coverageProgess, setcoverageProgess] = useState(0);
+  const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
+  // Function to check if essential data fields are present and not empty
+  useEffect(() => {
+    if (!treatmentPlanData) return;
+
+    // ✅ Only include checked items
+    const selectedInterventions =
+      treatmentPlanData?.suggestion_tab||[];
+
+    Application.getCoverage({
+      member_id: id,
+      selected_interventions: selectedInterventions,
+    })
+      .then((res) => {
+        setcoverageProgess(res.data.progress_percentage);
+
+        // ✅ Convert object → array of single-key objects
+        const detailsObj = res.data['key areas to address'] || {};
+        const detailsArray = Object.entries(detailsObj).map(([key, value]) => ({
+          [key]: value,
+        }));
+
+        setcoverageDetails(detailsArray);
+      })
+      .catch((err) => {
+        console.error('getCoverage error:', err);
+      });
+  }, [treatmentPlanData, id]);
   const resolveNextStep = () => {
     Application.saveTreatmentPaln({
       ...treatmentPlanData,
@@ -293,7 +323,7 @@ const NewGenerateHolisticPlan = () => {
                       setActive={setActive}
                       value={['Recommendation', 'Client Metrics']}
                     ></Toggle>
-                  </div>
+                 
                   {/* <div
                     className={` ${showGenerateSection ? 'hidden' : 'flex'} ${treatmentPlanData ? 'visible' : 'invisible'}  justify-end gap-2`}
                   >
@@ -324,6 +354,10 @@ const NewGenerateHolisticPlan = () => {
                     </div>
                   </div> */}
                 </div>
+                 </div>
+                  <div className='w-full my-4'>
+                    <CoverageCard progress={coverageProgess } details={coverageDetails}/>
+                  </div>
                 {treatmentPlanData ? (
                   <div>
                     {active == 'Recommendation' && (
