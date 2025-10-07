@@ -57,8 +57,38 @@ export const GenerateRecommendation = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
-
+const [coverageProgess, setcoverageProgess] = useState(0)
+const [coverageDetails, setcoverageDetails] = useState<any[]>([])
   // Function to check if essential data fields are present and not empty
+useEffect(() => {
+  if (!treatmentPlanData) return;
+
+  // ✅ Only include checked items
+  const selectedInterventions =
+    treatmentPlanData?.suggestion_tab?.filter((item: any) => item.checked) || [];
+
+  Application.getCoverage({
+    member_id: id,
+    selected_interventions: selectedInterventions,
+  })
+    .then((res) => {
+      setcoverageProgess(res.data.progress_percentage);
+
+      // ✅ Convert object → array of single-key objects
+      const detailsObj = res.data["key areas to address"] || {};
+      const detailsArray = Object.entries(detailsObj).map(([key, value]) => ({
+        [key]: value,
+      }));
+
+      setcoverageDetails(detailsArray);
+    })
+    .catch((err) => {
+      console.error("getCoverage error:", err);
+    });
+}, [treatmentPlanData, id]);
+
+console.log(coverageDetails);
+
   const hasEssentialData = (data: any) => {
     return (
       data?.client_insight &&
@@ -407,6 +437,8 @@ export const GenerateRecommendation = () => {
             ></GeneralCondition>
           ) : currentStepIndex === 1 ? (
             <SetOrders
+            progress={coverageProgess}
+            details={coverageDetails}
               activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}
               visibleCategoriy={VisibleCategories}
@@ -441,6 +473,8 @@ export const GenerateRecommendation = () => {
             ></SetOrders>
           ) : (
             <Overview
+             progress={coverageProgess}
+            details={coverageDetails}
               visibleCategoriy={VisibleCategories}
               suggestionsChecked={checkedSuggestions}
               treatmentPlanData={treatmentPlanData}
