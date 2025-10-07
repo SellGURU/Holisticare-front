@@ -288,24 +288,28 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             </div>
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
-                <div className="flex flex-col gap-1 mb-1.5 ml-2 mt-3">
-                  <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal text-nowrap">
-                    <img src="/icons/info-circle-blue.svg" alt="" />
-                    Analysis Info
+                {value['Practitioner Comments']?.length > 0 && (
+                  <div className="flex flex-col gap-1 mb-1.5 ml-2 mt-3">
+                    <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal text-nowrap">
+                      <img src="/icons/info-circle-blue.svg" alt="" />
+                      Analysis Info
+                    </div>
+                    <div className="text-[#666666] leading-5 text-xs text-justify">
+                      {value['Practitioner Comments'][0]?.substring(
+                        0,
+                        showMore
+                          ? value['Practitioner Comments'][0]?.length
+                          : 460,
+                      )}{' '}
+                      <span
+                        className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                        onClick={() => setShowMore(!showMore)}
+                      >
+                        {showMore ? 'See less' : 'See more'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-[#666666] leading-5 text-xs text-justify">
-                    {value['Practitioner Comments'][0].substring(
-                      0,
-                      showMore ? value['Practitioner Comments'][0].length : 460,
-                    )}{' '}
-                    <span
-                      className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-                      onClick={() => setShowMore(!showMore)}
-                    >
-                      {showMore ? 'See less' : 'See more'}
-                    </span>
-                  </div>
-                </div>
+                )}
                 {value.Category === 'Supplement' && (
                   <div className="flex flex-col gap-1 ml-2 mb-1.5">
                     <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
