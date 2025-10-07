@@ -351,6 +351,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     if (resolvedMemberID == 123 || !isHaveReport) {
       setReferenceData(referencedataMoch);
       setClientSummaryBoxs(mydata);
+      setConcerningResultIsLoaded(true);
       setConcerningResult(conceringResultData);
       setTreatmentPlanData(treatmentPlanData);
       setCalenderData(calenderDataMoch);
