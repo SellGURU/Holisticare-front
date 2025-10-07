@@ -110,17 +110,15 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     'Compromised Outcome',
     'Moderately Enhanced Outcome',
   ];
-    const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState<any[]>([]);
-  
+  const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState<any[]>([]);
+
   useEffect(() => {
-  ;
     Application.getBiomarkerName({})
       .then((res) => {
         const sorted = [...res.data.biomarkers_list].sort((a: any, b: any) =>
           a.localeCompare(b),
         );
         setAvalibaleBiomarkers(sorted);
-       
       })
       .catch(() => {});
   }, []);
@@ -366,7 +364,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           isLarge
                           isSetting
                           value={b.biomarker}
-                          options={avalibaleBiomarkers|| []}
+                          options={avalibaleBiomarkers || []}
                           onChange={(val: string) =>
                             updateAndStandardize(index, { biomarker: val })
                           }
