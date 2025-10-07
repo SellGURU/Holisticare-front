@@ -363,14 +363,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   // const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
   const [ClientSummaryBoxs, setClientSummaryBoxs] = useState<any>(null);
   const [ConcerningResult, setConcerningResult] = useState<any[]>([]);
-  const [ConcerningResultIsLoaded, setConcerningResultIsLoaded] = useState(false);
+  const [ConcerningResultIsLoaded, setConcerningResultIsLoaded] =
+    useState(false);
   const [referenceData, setReferenceData] = useState<any>(null);
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([]);
 
   const [ActionPlanPrint, setActionPlanPrint] = useState(null);
   const [HelthPrint, setHelthPlanPrint] = useState(null);
   useEffect(() => {
-    if (ClientSummaryBoxs != null && referenceData != null && ConcerningResultIsLoaded) {
+    if (
+      ClientSummaryBoxs != null &&
+      referenceData != null &&
+      ConcerningResultIsLoaded
+    ) {
       setLoading(false);
     }
   }, [
