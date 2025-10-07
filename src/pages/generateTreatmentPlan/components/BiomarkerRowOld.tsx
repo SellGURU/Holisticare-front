@@ -269,26 +269,28 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                 {positive ? (
                   <>
                     <div className="w-full bg-bg-color h-[1px] mt-3"></div>
-                    <div className="flex flex-col gap-1 pl-3 mt-2 mb-2">
-                      <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
-                        <img src="/icons/info-circle-blue.svg" alt="" />
-                        Analysis Info
+                    {value['Practitioner Comments'][0]?.length > 0 && (
+                      <div className="flex flex-col gap-1 pl-3 mt-2 mb-2">
+                        <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
+                          <img src="/icons/info-circle-blue.svg" alt="" />
+                          Analysis Info
+                        </div>
+                        <div className="text-[#666666] leading-5 text-xs text-justify">
+                          {value['Practitioner Comments'][0]?.substring(
+                            0,
+                            showMore
+                              ? value['Practitioner Comments'][0]?.length
+                              : 560,
+                          )}{' '}
+                          <span
+                            className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                            onClick={() => setShowMore(!showMore)}
+                          >
+                            {showMore ? 'See less' : 'See more'}
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-[#666666] leading-5 text-xs text-justify">
-                        {value['Practitioner Comments'][0].substring(
-                          0,
-                          showMore
-                            ? value['Practitioner Comments'][0].length
-                            : 560,
-                        )}{' '}
-                        <span
-                          className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-                          onClick={() => setShowMore(!showMore)}
-                        >
-                          {showMore ? 'See less' : 'See more'}
-                        </span>
-                      </div>
-                    </div>
+                    )}
                     <div className="w-full bg-bg-color h-[1px] mt-1 mb-2"></div>
                     <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
                       <div className="text-Text-Primary text-justify">

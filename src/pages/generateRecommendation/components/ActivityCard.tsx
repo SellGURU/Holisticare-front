@@ -176,24 +176,26 @@ export const ActivityCard: FC<ActivityCardProps> = ({
             </div>
           </div>
           <div className="w-full bg-bg-color h-[1px] mt-1"></div>
-          <div className="flex flex-col gap-1 pl-3 mt-2 mb-2">
-            <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
-              <img src="/icons/info-circle-blue.svg" alt="" />
-              Analysis Info
+          {item['Practitioner Comments'][0]?.length > 0 && (
+            <div className="flex flex-col gap-1 pl-3 mt-2 mb-2">
+              <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
+                <img src="/icons/info-circle-blue.svg" alt="" />
+                Analysis Info
+              </div>
+              <div className="text-[#666666] leading-5 text-xs text-justify">
+                {item['Practitioner Comments'][0]?.substring(
+                  0,
+                  showMore ? item['Practitioner Comments'][0]?.length : 570,
+                )}{' '}
+                <span
+                  className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                  onClick={() => setShowMore(!showMore)}
+                >
+                  {showMore ? 'See less' : 'See more'}
+                </span>
+              </div>
             </div>
-            <div className="text-[#666666] leading-5 text-xs text-justify">
-              {item['Practitioner Comments'][0].substring(
-                0,
-                showMore ? item['Practitioner Comments'][0].length : 570,
-              )}{' '}
-              <span
-                className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-                onClick={() => setShowMore(!showMore)}
-              >
-                {showMore ? 'See less' : 'See more'}
-              </span>
-            </div>
-          </div>
+          )}
           <div className="w-full bg-bg-color h-[1px] mt-1 mb-2"></div>
           <li className="mb-1.5 text-justify">
             <span className="text-Text-Secondary bullet-point">
