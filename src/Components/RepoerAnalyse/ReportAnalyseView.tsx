@@ -169,6 +169,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     Application.getConceringResults({ member_id: resolvedMemberID })
       .then((res) => {
         setConcerningResult(res.data.table);
+        setConcerningResultIsLoaded(true);
         if (res.data.table.length == 0) {
           publish('ConcerningResultStatus', { isempty: true });
         } else {
@@ -234,6 +235,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     ).then((res) => {
       setConcerningResult(res.data.table);
+      setConcerningResultIsLoaded(true);
       if (res.data.table.length == 0) {
         publish('ConcerningResultStatus', { isempty: true });
       } else {
@@ -309,6 +311,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       checked: true,
     },
     {
+      name: 'Concerning Result',
+      checked: true,
+    },
+    {
       name: 'Holistic Plan',
       checked: true,
     },
@@ -343,6 +349,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     if (resolvedMemberID == 123 || !isHaveReport) {
       setReferenceData(referencedataMoch);
       setClientSummaryBoxs(mydata);
+      setConcerningResultIsLoaded(true);
       setConcerningResult(conceringResultData);
       setTreatmentPlanData(treatmentPlanData);
       setCalenderData(calenderDataMoch);
@@ -357,21 +364,29 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   // const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
   const [ClientSummaryBoxs, setClientSummaryBoxs] = useState<any>(null);
   const [ConcerningResult, setConcerningResult] = useState<any[]>([]);
+  const [ConcerningResultIsLoaded, setConcerningResultIsLoaded] =
+    useState(false);
   const [referenceData, setReferenceData] = useState<any>(null);
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([]);
 
   const [ActionPlanPrint, setActionPlanPrint] = useState(null);
   const [HelthPrint, setHelthPlanPrint] = useState(null);
   useEffect(() => {
-    if (ClientSummaryBoxs != null && referenceData != null) {
+    if (
+      ClientSummaryBoxs != null &&
+      referenceData != null &&
+      ConcerningResultIsLoaded
+    ) {
       setLoading(false);
     }
   }, [
     ClientSummaryBoxs,
     referenceData,
+    ConcerningResultIsLoaded,
     TreatMentPlanData,
     caldenderData,
     isHaveReport,
+    ConcerningResult,
   ]);
   const resolveBioMarkers = () => {
     // const refData: Array<any> = [];
@@ -780,7 +795,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               </div>
             )}
 
-            {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
+            {accessManager.filter((el) => el.name == 'Concerning Result')[0]
               .checked == true && (
               <>
                 <div className=" my-[200px] xl:min-h-[700px] text-light-primary-text dark:text-primary-text ">
