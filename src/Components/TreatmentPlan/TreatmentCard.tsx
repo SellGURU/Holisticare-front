@@ -158,7 +158,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
             </>
           )}
         </div>
-        {data?.Intervention_url && (
+        {data?.Intervention_url?.length > 0 && (
           <>
             <div className="w-full bg-bg-color h-[1px]"></div>
             <div
