@@ -1,12 +1,18 @@
 // import { useState } from 'react';
 // import { sortKeysWithValues } from './Boxs/Help';
 
+import { Tooltip } from 'react-tooltip';
+import { SourceTag } from '../source-badge';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface HistoricalChartProps {
   statusBar: any;
   dataPoints: number[];
   labels: string[];
   dataStatus: Array<string>;
+  sources: string[];
+  unit: string;
+  chartId: string;
 }
 
 const HistoricalChart = ({
@@ -14,6 +20,9 @@ const HistoricalChart = ({
   dataPoints,
   dataStatus,
   labels,
+  sources,
+  unit,
+  chartId,
 }: HistoricalChartProps) => {
   const resolveColor = (key: string, color?: string) => {
     if (color && color != '') {
@@ -204,6 +213,7 @@ const HistoricalChart = ({
                 style={{ borderColor: resolveColor(el.status, el.color) }}
               >
                 {dataPoints.map((point, index) => {
+                  const tooltipId = `point-${chartId}-${index}`;
                   const markerMode = getStatusMarkerMode(
                     el,
                     dataStatus[index],
@@ -216,6 +226,7 @@ const HistoricalChart = ({
                       className="w-[40px] ml-1 relative"
                     >
                       <div
+                        data-tooltip-id={tooltipId}
                         style={{
                           backgroundColor: resolveColor(el.status, el.color),
                           opacity:
@@ -229,9 +240,19 @@ const HistoricalChart = ({
                         }}
                         className="w-2 h-2 border border-gray-50 rounded-full relative"
                       >
-                        <div className="absolute -top-4 left-1/2 max-w-[40px] text-ellipsis overflow-hidden transform text-[8px] text-Text-Primary -translate-x-1/2 py-1 rounded whitespace-nowrap z-10">
+                        <Tooltip
+                          id={tooltipId}
+                          place="top"
+                          className="!bg-Red !w-fit !leading-5 !text-nowrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                        >
+                          <div className="flex items-center gap-2">
+                            <SourceTag source={sources?.[index]} isSmall />
+                            value: {point} {unit}
+                          </div>
+                        </Tooltip>
+                        {/* <div className="absolute -top-4 left-1/2 max-w-[40px] text-ellipsis overflow-hidden transform text-[8px] text-Text-Primary -translate-x-1/2 py-1 rounded whitespace-nowrap z-10">
                           {point}
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   );
