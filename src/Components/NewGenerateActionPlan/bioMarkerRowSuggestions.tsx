@@ -288,7 +288,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             </div>
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
-                {value['Practitioner Comments']?.length > 0 && (
+                {value['Practitioner Comments'][0]?.length > 0 && (
                   <div className="flex flex-col gap-1 mb-1.5 ml-2 mt-3">
                     <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal text-nowrap">
                       <img src="/icons/info-circle-blue.svg" alt="" />
