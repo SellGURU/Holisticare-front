@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Select from '../../Select';
 import SimpleDatePicker from '../../SimpleDatePicker';
 import Circleloader from '../../CircleLoader';
@@ -110,7 +110,20 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     'Compromised Outcome',
     'Moderately Enhanced Outcome',
   ];
-
+    const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState<any[]>([]);
+  
+  useEffect(() => {
+  ;
+    Application.getBiomarkerName({})
+      .then((res) => {
+        const sorted = [...res.data.biomarkers_list].sort((a: any, b: any) =>
+          a.localeCompare(b),
+        );
+        setAvalibaleBiomarkers(sorted);
+       
+      })
+      .catch(() => {});
+  }, []);
   const gutOptions = ['Good for GUT', 'Bad for GUT'];
   const renderValueField = (b: any, index: number) => {
     if (fileType.toLowerCase() === 'dna') {
@@ -348,12 +361,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         )}
                       </div>
                       {/* biomarker (editable via select) */}
-                      <div className="col-span-1 w-[140px] md:w-[210px] md:pl-[40px]">
+                      <div className="col-span-1 w-[140px] md:w-[250px] md:pl-[40px]">
                         <Select
                           isLarge
                           isSetting
                           value={b.biomarker}
-                          options={b.possible_values?.names || []}
+                          options={avalibaleBiomarkers|| []}
                           onChange={(val: string) =>
                             updateAndStandardize(index, { biomarker: val })
                           }
