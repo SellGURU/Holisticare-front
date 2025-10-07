@@ -1053,6 +1053,9 @@ class Application extends Api {
   static getInputPlayGroundVariables = () => {
     return this.post('/test_api/agents', {});
   };
+  static getCoverage = (data:any) => {
+    return this.post('/holistic_plan_coverage/calculate_progress', data);
+  };
 }
 
 export default Application;
