@@ -13,6 +13,7 @@ import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChart
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
+import { SourceTag } from '../../source-badge';
 
 interface DetiledAnalyseProps {
   data: any;
@@ -319,6 +320,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                             )}
                           </div>
                           <div className="flex items-center gap-4">
+                            <SourceTag source={active.source} />
                             {/* {active?.unit != '' && (
                               <div className="relative z-50 mr-0">
                                 <UnitPopUp unit={active?.unit}></UnitPopUp>
@@ -405,10 +407,13 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                         <div className="mt-0 relative">
                           {active && (
                             <HistoricalChart
+                              chartId={data.subcategory}
                               statusBar={active?.chart_bounds}
+                              sources={active?.historical_sources}
                               dataStatus={active.status}
                               dataPoints={[...active.values]}
                               labels={[...active.date]}
+                              unit={active?.unit}
                             ></HistoricalChart>
                             // <StatusChart
                             //   isStringValues={isChartDataEmpty}
