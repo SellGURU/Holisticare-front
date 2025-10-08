@@ -49,6 +49,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [polling, setPolling] = useState(true); // ✅ control polling
   const [deleteLoading, setdeleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
+  console.log(uploadedFile);
   // console.log(extractedBiomarkers);
   const [isUploadFromComboBar, setIsUploadFromComboBar] = useState(false);
   useEffect(() => {
@@ -254,6 +255,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       fileInputRef.current.value = '';
     }
   };
+
   const [addedBiomarkers, setAddedBiomarkers] = useState<
     { biomarker: string; value: string; unit: string }[]
   >([]);
@@ -273,9 +275,28 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setDeleteIndex(index);
   };
 
-  const handleConfirm = (index: number) => {
-    setAddedBiomarkers(addedBiomarkers.filter((_, i) => i !== index));
-    setDeleteIndex(null); // reset after delete
+  const handleConfirm = (indexToDelete: number) => {
+    // 1. Update added biomarkers
+    setAddedBiomarkers((prev) => prev.filter((_, i) => i !== indexToDelete));
+
+    // 2. Update added row errors (delete + shift)
+    setAddedRowErrors((prev) => {
+      if (!prev) return prev;
+
+      const newErrors: Record<number, string> = {};
+      Object.keys(prev).forEach((key) => {
+        const idx = Number(key);
+        if (idx < indexToDelete) {
+          newErrors[idx] = prev[idx]; // keep errors before deleted row
+        } else if (idx > indexToDelete) {
+          newErrors[idx - 1] = prev[idx]; // shift errors after deleted row
+        }
+      });
+      return newErrors;
+    });
+
+    // 3. Reset delete index
+    setDeleteIndex(null);
   };
 
   const handleCancel = () => {
@@ -299,10 +320,18 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const handleSaveLabReport = () => {
     const modifiedTimestamp = modifiedDateOfTest
-      ? modifiedDateOfTest.getTime().toString()
+      ? Date.UTC(
+          modifiedDateOfTest.getFullYear(),
+          modifiedDateOfTest.getMonth(),
+          modifiedDateOfTest.getDate(),
+        ).toString()
       : null;
     const addedTimestamp = addedDateOfTest
-      ? addedDateOfTest.getTime().toString()
+      ? Date.UTC(
+          addedDateOfTest.getFullYear(),
+          addedDateOfTest.getMonth(),
+          addedDateOfTest.getDate(),
+        ).toString()
       : null;
 
     // Map over all extractedBiomarkers to create the required API structure
@@ -329,11 +358,80 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       },
     });
   };
+  const [rowErrors, setRowErrors] = React.useState<Record<number, string>>({});
+  const [addedrowErrors, setAddedRowErrors] = React.useState<
+    Record<number, string>
+  >({});
+  const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
-    setisSaveClicked(true);
-    setstep(0);
+    setBtnLoading(true);
+
+    const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
+      biomarker_id: b.biomarker_id,
+      biomarker: b.biomarker,
+      value: b.original_value,
+      unit: b.original_unit,
+    }));
+
+    Application.validateBiomarkers({
+      modified_biomarkers_list: mappedExtractedBiomarkers,
+      added_biomarkers_list: addedBiomarkers,
+      modified_lab_type: fileType,
+      modified_file_id: uploadedFile?.file_id ?? '',
+    })
+      .then(() => {
+        // 200 response
+        setisSaveClicked(true);
+        setstep(0);
+        setRowErrors({});
+        setAddedRowErrors({});
+      })
+      .catch((err: any) => {
+        console.log(err);
+
+        const detail = err.detail;
+
+        if (detail) {
+          let parsedDetail: any = {};
+
+          if (typeof detail === 'string') {
+            try {
+              parsedDetail = JSON.parse(detail);
+            } catch (e) {
+              console.error('Failed to parse error detail:', detail, e);
+              parsedDetail = {};
+            }
+          } else {
+            parsedDetail = detail; // already an object
+          }
+
+          const modifiedErrors: Record<number, string> = {};
+          const addedErrors: Record<number, string> = {};
+
+          parsedDetail.modified_biomarkers_list?.forEach((item: any) => {
+            modifiedErrors[item.index] = item.detail;
+          });
+
+          parsedDetail.added_biomarkers_list?.forEach((item: any) => {
+            addedErrors[item.index] = item.detail;
+          });
+
+          setRowErrors(modifiedErrors);
+          setAddedRowErrors(addedErrors);
+
+          console.log('🔎 modifiedErrors:', modifiedErrors);
+          console.log('🔎 addedErrors:', addedErrors);
+        } else {
+          console.error('API error:', err);
+        }
+      })
+      .finally(() => {
+        setBtnLoading(false);
+      });
   };
-  console.log(showReport);
+
+  console.log(rowErrors);
+
   const resolveActiveButtonReportAnalyse = () => {
     if (showReport) {
       return true;
@@ -605,6 +703,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         </>
       ) : (
         <UploadPModal
+          rowErrors={rowErrors}
+          setrowErrors={setRowErrors}
+          AddedRowErrors={addedrowErrors}
           OnBack={() => {
             if (isUploadFromComboBar) {
               onDiscard();
@@ -612,6 +713,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             setstep(0);
           }}
           loading={biomarkerLoading}
+          btnLoading={btnLoading}
           fileType={fileType}
           uploadedFile={uploadedFile}
           onSave={onSave}

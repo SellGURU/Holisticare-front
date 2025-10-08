@@ -204,7 +204,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                       >
                         <div className="flex justify-start items-center gap-2">
                           <div
-                            data-tooltip-id={`tooltip-detiledAnalyse-${index}`}
+                            data-tooltip-id={`tooltip-detiledAnalyse-${index + '-' + value.name}`}
                             className=" text-[12px]"
                           >
                             {value.name.length > 40
@@ -213,7 +213,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                           </div>
                           {value.name.length > 40 ? (
                             <Tooltip
-                              id={`tooltip-detiledAnalyse-${index}`}
+                              id={`tooltip-detiledAnalyse-${index + '-' + value.name}`}
                               place="bottom-end"
                               className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                             >

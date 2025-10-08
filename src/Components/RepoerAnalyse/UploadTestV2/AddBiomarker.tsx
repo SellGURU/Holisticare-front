@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TextField from '../../TextField';
 import SimpleDatePicker from '../../SimpleDatePicker';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Select from '../../Select';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
+import { Tooltip } from 'react-tooltip';
 
 // Define the props for the AddBiomarker component, now using 'biomarker' instead of 'name'
 interface AddBiomarkerProps {
@@ -21,10 +22,12 @@ interface AddBiomarkerProps {
   deleteIndex: number | null;
   dateOfTest: Date | null;
   setDateOfTest: (date: Date | null) => void;
+  rowErrors?: any;
 }
 
 export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   biomarkers,
+  rowErrors,
   onAddBiomarker,
   onTrashClick,
   onConfirm,
@@ -76,6 +79,38 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         .catch(() => {});
     }
   }, [biomarkerName]);
+  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tableRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (rowErrors && Object.keys(rowErrors).length > 0) {
+      const firstErrorIndex = Math.min(...Object.keys(rowErrors).map(Number));
+      const el = rowRefs.current[firstErrorIndex];
+      const container = tableRef.current;
+
+      if (el && container) {
+        const elTop = el.offsetTop;
+        container.scrollTo({
+          top: elTop - container.clientHeight / 2, // center it
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [rowErrors]);
+  const TEXT_ONLY_BIOMARKERS = [
+    'Color',
+    'Appearance',
+    'Ketones',
+    'Blood (Hemoglobin)',
+    'Bilirubin, Urea',
+    'Nitrite',
+    'Crystals',
+    'Bacteria',
+    'Casts /h.p.f',
+    'Mucus',
+    'Yeast',
+  ];
+  const isTextOnly = TEXT_ONLY_BIOMARKERS.includes(biomarkerName);
+
   return (
     <div
       style={{ height: window.innerHeight - 235 + 'px' }}
@@ -145,9 +180,21 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             <TextField
               placeholder="-"
               newStyle
-              type="number"
+              type={isTextOnly ? 'text' : 'number'}
               value={value}
-              onChange={(e: any) => setValue(e.target.value)}
+              onChange={(e: any) => {
+                const val = e.target.value;
+
+                if (isTextOnly) {
+                  // Only allow letters, spaces, and basic punctuation (no digits)
+                  const textOnly = val.replace(/[0-9]/g, '');
+                  setValue(textOnly);
+                } else {
+                  // Only allow numbers (and optionally a decimal point)
+                  const numOnly = val.replace(/[^0-9.]/g, '');
+                  setValue(numOnly);
+                }
+              }}
             />
           </div>
 
@@ -182,6 +229,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
         {/* Right side: Table */}
         <div
+          ref={tableRef}
           className={`w-full border-Gray-50 mt-6 overflow-x-auto  hidden-scrollbar   ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
         >
           <div className="w-full border border-Gray-50 min-w-[700px]    rounded-[20px] h-full text-xs">
@@ -201,64 +249,86 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               // style={{ height: window.innerHeight - 550 + 'px' }}
               className="w-full md:h-[calc(100vh-550px)]  "
             >
-              {biomarkers.map((biomarker, index) => (
-                <div
-                  key={index}
-                  className={`grid py-2 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
-                  }`}
-                  style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
-                >
-                  {/* Biomarker Name */}
-                  <div>
-                    <TooltipTextAuto maxWidth="250px">
-                      {biomarker.biomarker}
-                    </TooltipTextAuto>
-                  </div>
+              {biomarkers.map((biomarker, index) => {
+                const errorForRow = rowErrors[index];
 
-                  {/* Value */}
-                  <div className="text-center text-[#888888]">
-                    {biomarker.value}
-                  </div>
+                return (
+                  <div
+                    ref={(el) => (rowRefs.current[index] = el)}
+                    key={index}
+                    className={`grid py-2 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary ${
+                      index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
+                    }`}
+                    style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
+                  >
+                    {/* Biomarker Name */}
+                    <div className="flex items-center  gap-1">
+                      <TooltipTextAuto maxWidth="250px">
+                        {biomarker.biomarker}
+                      </TooltipTextAuto>
+                      {errorForRow && (
+                        <>
+                          <img
+                            data-tooltip-id={`tooltip-${index}`}
+                            src="/icons/info-circle-red.svg"
+                            alt="Error"
+                            className="w-4 h-4"
+                          />
+                          <Tooltip
+                            id={`tooltip-${index}`}
+                            place="top"
+                            className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                          >
+                            {errorForRow}
+                          </Tooltip>
+                        </>
+                      )}
+                    </div>
 
-                  {/* Unit */}
-                  <div className="text-center text-[#888888]">
-                    {biomarker.unit}
-                  </div>
+                    {/* Value */}
+                    <div className="text-center text-[#888888]">
+                      {biomarker.value}
+                    </div>
 
-                  {/* Action */}
-                  <div className="flex justify-end">
-                    {deleteIndex === index ? (
-                      <div className="flex items-center justify-end w-full gap-1">
-                        <div className="text-Text-Quadruple text-[10px]">
-                          Sure?
+                    {/* Unit */}
+                    <div className="text-center text-[#888888]">
+                      {biomarker.unit}
+                    </div>
+
+                    {/* Action */}
+                    <div className="flex justify-end">
+                      {deleteIndex === index ? (
+                        <div className="flex items-center justify-end w-full gap-1">
+                          <div className="text-Text-Quadruple text-[10px]">
+                            Sure?
+                          </div>
+                          <img
+                            src="/icons/tick-circle-green.svg"
+                            alt="Confirm"
+                            className="w-[16px] h-[16px] cursor-pointer"
+                            onClick={() => onConfirm(index)}
+                          />
+                          <img
+                            src="/icons/close-circle-red.svg"
+                            alt="Cancel"
+                            className="w-[16px] h-[16px] cursor-pointer"
+                            onClick={() => onCancel()}
+                          />
                         </div>
-                        <img
-                          src="/icons/tick-circle-green.svg"
-                          alt="Confirm"
-                          className="w-[16px] h-[16px] cursor-pointer"
-                          onClick={() => onConfirm(index)}
-                        />
-                        <img
-                          src="/icons/close-circle-red.svg"
-                          alt="Cancel"
-                          className="w-[16px] h-[16px] cursor-pointer"
-                          onClick={() => onCancel()}
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-[47px] pl-5">
-                        <img
-                          src="/icons/trash-blue.svg"
-                          alt="Delete"
-                          className="cursor-pointer w-4 h-4"
-                          onClick={() => onTrashClick(index)}
-                        />
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-[47px] pl-5">
+                          <img
+                            src="/icons/trash-blue.svg"
+                            alt="Delete"
+                            className="cursor-pointer w-4 h-4"
+                            onClick={() => onTrashClick(index)}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {biomarkers.length === 0 && (
                 <div className="flex flex-col h-full pt-10 min-h-[100px] items-center justify-center gap-4">
