@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import Toggle from '../../Toggle';
 import FileUploaderSection from './FileUploaderSection';
@@ -32,6 +32,10 @@ interface UploadPModalProps {
   onClose: () => void;
   fileType: string;
   loading: boolean;
+  rowErrors?: any;
+  AddedRowErrors?: any;
+  btnLoading: boolean;
+  setrowErrors: any;
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -59,8 +63,29 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   handleAddedDateOfTestChange,
   onClose,
   loading,
+  btnLoading,
+  rowErrors,
+  AddedRowErrors,
+  setrowErrors,
 }) => {
   const [activeMenu, setactiveMenu] = useState('Upload File');
+  console.log(rowErrors);
+  console.log(AddedRowErrors);
+
+  useEffect(() => {
+    const rowErrorCount = rowErrors ? Object.keys(rowErrors).length : 0;
+    const addedErrorCount = AddedRowErrors
+      ? Object.keys(AddedRowErrors).length
+      : 0;
+
+    if (rowErrorCount > 0 && addedErrorCount === 0) {
+      setactiveMenu('Upload File');
+    }
+    if (addedErrorCount > 0 && rowErrorCount === 0) {
+      setactiveMenu('Add Biomarker');
+    }
+  }, [rowErrors, AddedRowErrors]);
+
   return (
     <>
       <div
@@ -86,12 +111,12 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               disabled={
                 (extractedBiomarkers.length == 0 &&
                   addedBiomarkers.length == 0) ||
-                loading
+                btnLoading
               }
               onClick={onSave}
               ClassName=" w-[127px] md:w-[167px]"
             >
-              {loading ? (
+              {btnLoading ? (
                 <>
                   {' '}
                   <SpinnerLoader></SpinnerLoader>
@@ -129,6 +154,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 onClose={onClose}
               />
               <BiomarkersSection
+                rowErrors={rowErrors}
+                setrowErrors={setrowErrors}
                 loading={loading}
                 fileType={fileType}
                 dateOfTest={modifiedDateOfTest}
@@ -141,6 +168,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
           ) : (
             <AddBiomarker
               biomarkers={addedBiomarkers}
+              rowErrors={AddedRowErrors}
               onAddBiomarker={handleAddBiomarker}
               onTrashClick={handleTrashClick}
               onConfirm={handleConfirm}
