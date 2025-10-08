@@ -31,7 +31,7 @@ export const PopUpChat = ({
 }) => {
   const [MessageData, setMessageData] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [conversationId, setConversationId] = useState<number>(1);
+  // const [conversationId, setConversationId] = useState<number>(1);
   const [conversationIdData, setConversationIdData] = useState<number>(0);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -49,7 +49,7 @@ export const PopUpChat = ({
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
       const lastConversationId =
-        MessageData.length > 0 ? conversationIdData : undefined;
+        MessageData.length > 0 ? conversationIdData : 1;
       const newMessage: SendMessage = {
         message_text: input,
         receiver_id: Number(memberId),
@@ -70,13 +70,13 @@ export const PopUpChat = ({
         const res = await Application.aiStudio_copilotChat({
           text: newMessage.message_text,
           member_id: memberId,
-          conversation_id: conversationId,
+          conversation_id: lastConversationId,
           search: false,
           benchmark_areas: [],
         });
 
         const data = await res.data;
-        setConversationId(data.current_conversation_id);
+        setConversationIdData(data.current_conversation_id);
         const aiMessage: Message = {
           response: data.answer,
           timestamp: Date.now(),
