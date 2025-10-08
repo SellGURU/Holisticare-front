@@ -187,12 +187,17 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                   0,
                   showMore ? item['Practitioner Comments'][0]?.length : 570,
                 )}{' '}
-                <span
-                  className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-                  onClick={() => setShowMore(!showMore)}
-                >
-                  {showMore ? 'See less' : 'See more'}
-                </span>
+                  {item['Practitioner Comments'][0]?.length > 570 && (
+        <>
+          {' '}
+          <span
+            className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+            onClick={() => setShowMore(!showMore)}
+          >
+            {showMore ? 'See less' : 'See more'}
+          </span>
+        </>
+      )}
               </div>
             </div>
           )}

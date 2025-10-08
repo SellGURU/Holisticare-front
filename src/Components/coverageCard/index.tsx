@@ -70,7 +70,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
           </div>
         </div>
       </MainModal>
-      <div className="flex w-full select-none h-[43px] items-center justify-between gap-2  bg-backgroundColor-Main px-2 py-1 rounded-lg">
+      <div className=" relative flex w-full select-none h-[43px] items-center justify-between gap-2  bg-backgroundColor-Main px-2 py-1 rounded-lg">
         {/* Progress row */}
         <div className="flex flex-col w-[352px] gap-1">
           <div className="flex items-start gap-1">
@@ -91,7 +91,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
         {/* Progress bar */}
 
         {/* Message row */}
-        <div className="flex items-center gap-1  text-xs text-Text-Primary ">
+        <div className=" absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-1  text-xs text-Text-Primary ">
           {safeProgress == 100 ? (
             <img src="/icons/copy-success.svg" />
           ) : (
