@@ -126,7 +126,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
   useEffect(() => {
     Application.getListChats({
       member_id: memberId,
-      chatting_with:"ai"
+      chatting_with: 'ai',
     }).then((res) => {
       const resolve = res.data.messages.flatMap((mes: any, index: number) => {
         const request: Message = {
