@@ -126,22 +126,24 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
   useEffect(() => {
     Application.getListChats({
       member_id: memberId,
+      chatting_with:"ai"
     }).then((res) => {
       const resolve = res.data.messages.flatMap((mes: any, index: number) => {
         const request: Message = {
           id: 1,
           sender: 'user',
-          text: mes.message_text,
-          time: mes.time,
+          text: mes.request,
+          time: mes.entrytime,
         };
         const response: Message = {
           id: index,
           sender: 'ai',
-          text: mes.message_text,
-          time: mes.time,
+          text: mes.response,
+          time: mes.entrytime,
         };
         return [request, response];
       });
+      setConversationId(res.data.conversation_id);
       setMessages(resolve);
       // console.log(resolve)
     });
