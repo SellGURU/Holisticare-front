@@ -78,7 +78,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 />
               </div>
               <label
-                className="block md:hidden"
+                className="block md:hidden font-medium"
                 onClick={() => handleCheckboxChange(activeCategory, index)}
               >
                 {' '}
@@ -86,7 +86,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                   {item.Recommendation}
                 </TooltipTextAuto>
               </label>
-              <div className="hidden md:block">
+              <div className="hidden md:block font-medium">
                 <TooltipTextAuto tooltipPlace="top" maxWidth="800px">
                   {item.Recommendation}
                 </TooltipTextAuto>
@@ -101,7 +101,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                   className={`size-[8px] select-none rounded-full`}
                   style={{ backgroundColor: color }}
                 ></div>
-                {item?.label || '-'}
+                {item?.label || '-'} 
               </div>
               {/* <div
                 data-tooltip-id="system-score"
