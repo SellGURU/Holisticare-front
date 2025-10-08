@@ -140,14 +140,16 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
       // اگر کمتر بود، درصد را نزدیک 0 قرار بده
       return 5;
     }
-    // اگر هر دو مقدار داشتند
-    if (el.low != null && el.high != null) {
-      const percent = ((value - el.low) / (el.high - el.low)) * 100 - 3;
+
+    // هم low هم high داره
+    if (el.high !== null && el.low !== null) {
+      const percent = ((value - el.low) / (el.high - el.low)) * 100;
       if (percent <= 10) return 10;
       if (percent > 90) return 90;
       return percent;
     }
-    // اگر هر دو null بودند، مقدار وسط را برگردان
+
+    // fallback
     return 50;
   };
 
@@ -215,7 +217,7 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
                     <div
                       className={`absolute  top-[2px]  z-[8]`}
                       style={{
-                        left: resolvePercentLeft(el) + '%' || '50%',
+                        left: resolvePercentLeft(el) + '%',
                       }}
                     >
                       <div className="w-1 h-1  rotate-45 bg-Primary-DeepTeal"></div>
