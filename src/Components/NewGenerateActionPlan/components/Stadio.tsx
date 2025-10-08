@@ -675,7 +675,7 @@ const Stadio: FC<StadioProps> = ({
                 className="w-full  overflow-auto "
                 style={{ height: window.innerHeight - 340 + 'px' }}
               >
-                <div className="mt-2 grid gap-2">
+                <div className="mt-2 grid gap-2 relative">
                   {filteredDataCategory.map((value: any, index: number) => {
                     return (
                       <div
