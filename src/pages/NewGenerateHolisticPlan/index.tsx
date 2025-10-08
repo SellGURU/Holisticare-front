@@ -310,7 +310,7 @@ const NewGenerateHolisticPlan = () => {
             </div>
           )}
         </div>
-        <div className="w-full flex justify-between px-4 pt-[40px] lg:pt-[30px]">
+        <div className="w-full flex justify-between px-4 pt-[40px] lg:pt-[30px] h-full">
           <div
             className={`w-full md:px-4 ${treatmentPlanData && 'pr-0 md:pr-12'}  py-6 relative h-full `}
           >
@@ -359,7 +359,7 @@ const NewGenerateHolisticPlan = () => {
             </div>
             <div className="h-full w-full md:pr-2 lg:pt-10">
               <div
-                className={`bg-white rounded-[16px] min-h-[500px] md:p-6 p-4 shadow-100 ${treatmentPlanData ? 'w-full' : 'w-[98.2%]'}`}
+                className={`bg-white rounded-[16px] min-h-[100%] md:p-6 p-4 shadow-100 ${treatmentPlanData ? 'w-full' : 'w-[98.2%]'}`}
               >
                 <div className="flex w-full">
                   {/* <div
@@ -431,63 +431,67 @@ const NewGenerateHolisticPlan = () => {
                   </div> */}
                   </div>
                 </div>
-                <div className="w-full my-4">
-                  <CoverageCard
-                    progress={coverageProgess}
-                    details={coverageDetails}
-                  />
-                </div>
-                <div className="flex flex-col-reverse md:flex-row justify-between items-center mt-3">
-                  <div className="flex justify-start items-center">
-                    <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
-                      <SvgIcon
-                        width="40px"
-                        height="40px"
-                        src="/icons/TreatmentPlan/cpu-setting.svg"
-                        color={'#005F73'}
-                      />
-                    </div>
-                    <div>
-                      <div className="ml-2">
-                        <div className="flex">
-                          <div className=" text-Text-Primary text-[10px] md:text-[14px] lg:text-[14px]">
-                            Holistic Plan
+                {active == 'Recommendation' && (
+                  <div className="w-full my-4">
+                    <CoverageCard
+                      progress={coverageProgess}
+                      details={coverageDetails}
+                    />
+                  </div>
+                )}
+                {active == 'Recommendation' && (
+                  <div className="flex flex-col-reverse md:flex-row justify-between items-center mt-3">
+                    <div className="flex justify-start items-center">
+                      <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
+                        <SvgIcon
+                          width="40px"
+                          height="40px"
+                          src="/icons/TreatmentPlan/cpu-setting.svg"
+                          color={'#005F73'}
+                        />
+                      </div>
+                      <div>
+                        <div className="ml-2">
+                          <div className="flex">
+                            <div className=" text-Text-Primary text-[10px] md:text-[14px] lg:text-[14px]">
+                              Holistic Plan
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <div className="text-Text-Secondary mr-4 text-justify text-[10px] md:text-[12px] lg:text-[12px]">
-                            The Holistic Plan is your personalized roadmap to
-                            optimal well-being. By combining knowledge-based
-                            insights with your unique health metrics, we craft
-                            tailored recommendations to help you reach and
-                            sustain your wellness goals with precision.
+                          <div className="flex justify-between items-center">
+                            <div className="text-Text-Secondary mr-4 text-justify text-[10px] md:text-[12px] lg:text-[12px]">
+                              The Holistic Plan is your personalized roadmap to
+                              optimal well-being. By combining knowledge-based
+                              insights with your unique health metrics, we craft
+                              tailored recommendations to help you reach and
+                              sustain your wellness goals with precision.
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex gap-1 items-center">
-                    {treatmentPlanData?.suggestion_tab?.length > 0 && (
-                      <ButtonSecondary
+                    <div className="flex gap-1 items-center">
+                      {treatmentPlanData?.suggestion_tab?.length > 0 && (
+                        <ButtonSecondary
+                          onClick={() => {
+                            navigate(`/report/Generate-Recommendation/${id}`);
+                          }}
+                          ClassName="w-full md:w-fit rounded-full"
+                        >
+                          <img src="/icons/tick-square.svg" alt="" /> Auto
+                          Generate
+                        </ButtonSecondary>
+                      )}
+                      <ButtonPrimary
                         onClick={() => {
-                          navigate(`/report/Generate-Recommendation/${id}`);
+                          setshowAddModal(true);
                         }}
-                        ClassName="w-full md:w-fit rounded-full"
                       >
-                        <img src="/icons/tick-square.svg" alt="" /> Auto
-                        Generate
-                      </ButtonSecondary>
-                    )}
-                    <ButtonPrimary
-                      onClick={() => {
-                        setshowAddModal(true);
-                      }}
-                    >
-                      {' '}
-                      <img src="/icons/add-square.svg" alt="" /> Add
-                    </ButtonPrimary>
+                        {' '}
+                        <img src="/icons/add-square.svg" alt="" /> Add
+                      </ButtonPrimary>
+                    </div>
                   </div>
-                </div>
+                )}
                 {treatmentPlanData ? (
                   <div>
                     {active == 'Recommendation' && (
