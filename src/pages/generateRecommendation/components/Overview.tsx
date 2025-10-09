@@ -56,7 +56,7 @@ export const Overview: FC<OverviewProps> = ({
                 <img src="/icons/check-circle.svg" alt="Check Circle" />{' '}
                 Conflict
               </div>
-              <div className="flex items-center gap-4 text-xs text-Text-Secondary font-medium">
+              <div className="flex items-center gap-4 text-xs text-Text-Quadruple font-medium">
                 {currentConflictIndex + 1}/{Conflicts.length}
                 <img
                   onClick={() => setShowConflict(false)}

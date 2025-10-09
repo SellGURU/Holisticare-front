@@ -301,17 +301,17 @@ export const SetOrders: FC<SetOrdersProps> = ({
             <img src="/icons/danger.svg" alt="" />
             Change Order
           </div>
-          <p className="text-xs text-Text-Secondary my-4">
-            Please complete all required fields before confirming your order.
+          <p className="text-xs text-Text-Quadruple my-4">
+            Please complete all required fields before <br /> confirming your order.
           </p>
           <ul className="border border-Gray-50 rounded-xl">
             {localCategories.map((category, index) => (
               <li
                 key={category.name}
-                className="flex items-center justify-between border-b border-Gray-50 p-3"
+                className="flex items-center min-h-[44px] justify-between border-b border-Gray-50 p-3"
               >
                 <div
-                  className={` ${!category.visible && 'opacity-50'} flex items-center gap-2 text-Primary-DeepTeal text-sm font-medium cursor-pointer`}
+                  className={` ${!category.visible && 'opacity-50'} flex items-center gap-2 text-Primary-DeepTeal text-xs font-normal cursor-pointer`}
                 >
                   <img
                     className="size-4"
@@ -326,7 +326,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                     }
                     alt=""
                   />
-                  {category.name}
+                  {category.name} 
                 </div>
                 <div className="flex items-center gap-3">
                   <img
@@ -384,7 +384,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
               ({ name, visible }) =>
                 visible && (
                   <div
-                    className={`flex items-center gap-2 text-Primary-DeepTeal text-[10px] md:text-xs font-medium cursor-pointer ${name !== activeCategory ? 'opacity-50' : ''}`}
+                    className={`flex items-center gap-2 text-Primary-DeepTeal text-[10px] md:text-sm font-medium cursor-pointer ${name !== activeCategory ? 'opacity-50' : ''}`}
                     key={name}
                     onClick={() => {
                       setActiveCategory(name);

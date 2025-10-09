@@ -185,12 +185,15 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
                 <img src="/icons/tick-square-blue.svg" alt="" />
               </div>
             ) : (
-              <img
+              <div className='cursor-pointer'>
+              <SvgIcon
                 src="/icons/close.svg"
-                alt=""
+              color='#383838'
+            
                 onClick={toggleSuggestions}
-                style={{ cursor: 'pointer' }}
+              
               />
+              </div>
             )}
           </div>
           <ul className="mt-4 px-6">
@@ -436,7 +439,7 @@ const Card: React.FC<CardProps> = ({
                 </div>
               ) : (
                 <li
-                  className={` ${item.length > 1 && 'list-disc'} text-xs text-justify mt-2`}
+                  className={` ${item.length > 1 && 'list-disc'} text-sm text-justify mt-2`}
                 >
                   {item}
                 </li>
