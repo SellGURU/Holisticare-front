@@ -302,7 +302,8 @@ export const SetOrders: FC<SetOrdersProps> = ({
             Change Order
           </div>
           <p className="text-xs text-Text-Quadruple my-4">
-            Please complete all required fields before <br /> confirming your order.
+            Please complete all required fields before <br /> confirming your
+            order.
           </p>
           <ul className="border border-Gray-50 rounded-xl">
             {localCategories.map((category, index) => (
@@ -326,7 +327,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                     }
                     alt=""
                   />
-                  {category.name} 
+                  {category.name}
                 </div>
                 <div className="flex items-center gap-3">
                   <img

@@ -101,7 +101,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                   className={`size-[8px] select-none rounded-full`}
                   style={{ backgroundColor: color }}
                 ></div>
-                {item?.label || '-'} 
+                {item?.label || '-'}
               </div>
               {/* <div
                 data-tooltip-id="system-score"
@@ -187,17 +187,17 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                   0,
                   showMore ? item['Practitioner Comments'][0]?.length : 570,
                 )}{' '}
-                  {item['Practitioner Comments'][0]?.length > 570 && (
-        <>
-          {' '}
-          <span
-            className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-            onClick={() => setShowMore(!showMore)}
-          >
-            {showMore ? 'See less' : 'See more'}
-          </span>
-        </>
-      )}
+                {item['Practitioner Comments'][0]?.length > 570 && (
+                  <>
+                    {' '}
+                    <span
+                      className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                      onClick={() => setShowMore(!showMore)}
+                    >
+                      {showMore ? 'See less' : 'See more'}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           )}

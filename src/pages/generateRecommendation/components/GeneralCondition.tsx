@@ -185,14 +185,12 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
                 <img src="/icons/tick-square-blue.svg" alt="" />
               </div>
             ) : (
-              <div className='cursor-pointer'>
-              <SvgIcon
-                src="/icons/close.svg"
-              color='#383838'
-            
-                onClick={toggleSuggestions}
-              
-              />
+              <div className="cursor-pointer">
+                <SvgIcon
+                  src="/icons/close.svg"
+                  color="#383838"
+                  onClick={toggleSuggestions}
+                />
               </div>
             )}
           </div>
