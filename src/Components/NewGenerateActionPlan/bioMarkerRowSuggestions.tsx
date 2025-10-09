@@ -299,14 +299,19 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         0,
                         showMore
                           ? value['Practitioner Comments'][0]?.length
-                          : 460,
-                      )}{' '}
-                      <span
-                        className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-                        onClick={() => setShowMore(!showMore)}
-                      >
-                        {showMore ? 'See less' : 'See more'}
-                      </span>
+                          : 430,
+                      )}
+                      {value['Practitioner Comments'][0]?.length > 430 &&
+                        !showMore &&
+                        '... '}
+                      {value['Practitioner Comments'][0]?.length > 430 && (
+                        <span
+                          className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                          onClick={() => setShowMore(!showMore)}
+                        >
+                          {showMore ? 'See less' : 'See more'}
+                        </span>
+                      )}
                     </div>
                   </div>
                 )}
@@ -320,7 +325,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       />
                       Dosage
                     </div>
-                    <div className="text-Text-Quadruple text-xs leading-5">
+                    <div className="text-[#666666] text-xs leading-5">
                       {value?.Dose}
                     </div>
                   </div>
@@ -335,7 +340,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       />
                       Value
                     </div>
-                    <div className="text-Text-Quadruple text-xs leading-5">
+                    <div className="text-[#666666] text-xs leading-5">
                       {value?.Value} {value?.Unit}
                     </div>
                   </div>
@@ -351,13 +356,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       Macros
                     </div>
                     <div className="flex justify-start items-center gap-4">
-                      <div className="text-Text-Quadruple text-xs leading-5">
+                      <div className="text-[#666666] text-xs leading-5">
                         Carb: {value?.['Total Macros']?.Carbs} gr
                       </div>
-                      <div className="text-Text-Quadruple text-xs leading-5">
+                      <div className="text-[#666666] text-xs leading-5">
                         Protein: {value?.['Total Macros']?.Protein} gr
                       </div>
-                      <div className="text-Text-Quadruple text-xs leading-5">
+                      <div className="text-[#666666] text-xs leading-5">
                         Fat: {value?.['Total Macros']?.Fats} gr
                       </div>
                     </div>
@@ -381,7 +386,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       }}
                       className={`flex cursor-pointer text-xs ${
                         !hasAnyExerciseFiles(value.Sections)
-                          ? 'text-Text-Primary'
+                          ? 'text-[#666666]'
                           : 'text-[#4C88FF] underline'
                       }`}
                     >
@@ -400,7 +405,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     />
                     Instruction
                   </div>
-                  <div className="text-Text-Quadruple text-xs leading-5 text-wrap">
+                  <div className="text-[#666666] text-xs leading-5 text-wrap">
                     {value?.Instruction}
                   </div>
                 </div>
@@ -663,10 +668,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                                                 Reps {val?.Reps}
                                               </div>
                                               <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
-                                                Weight {val?.Weight} g
+                                                Weight {val?.Weight}{' '}
+                                                {val?.Weight && 'g'}
                                               </div>
                                               <div className="w-[25%] flex items-center justify-center">
-                                                Rest {val?.Rest} s
+                                                Rest {val?.Rest}{' '}
+                                                {val?.Rest && 's'}
                                               </div>
                                             </div>
                                           </div>
@@ -701,8 +708,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   return (
                     <div className="text-Text-Primary text-[10px] flex items-center mb-2">
                       Note{' '}
-                      {value['Client Notes'].map.length > 1 && <>{index + 1}</>}
-                      :{' '}
+                      {value['Client Notes'].length > 1 && <>{index + 1}</>}:{' '}
                       <div className="text-Text-Quadruple text-[10px] ml-1">
                         {note}
                       </div>

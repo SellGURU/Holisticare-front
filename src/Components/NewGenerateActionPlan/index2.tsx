@@ -102,7 +102,9 @@ const GenerateActionPlan = () => {
       plan_objective: planObjective,
     })
       .then(() => {
-        navigate(-1);
+        // navigate(-1);
+        navigate('/report/' + id + '/a?section=Action Plan');
+        // alert('Tasks saved successfully!');
       })
       .finally(() => {
         setISLoadingSaveChanges(false);
