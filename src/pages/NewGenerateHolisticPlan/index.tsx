@@ -469,7 +469,7 @@ const NewGenerateHolisticPlan = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-1 items-center">
+                    <div className="flex gap-1 items-center text-nowrap">
                       {treatmentPlanData?.suggestion_tab?.length > 0 && (
                         <ButtonSecondary
                           onClick={() => {

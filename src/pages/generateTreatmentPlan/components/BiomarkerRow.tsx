@@ -121,7 +121,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
         setShowModal={setShowConflict}
         conflicts={Conflicts}
       ></ConflictsModal>
-      <div className="w-full flex flex-col md:flex-row justify-center items-start gap-2 md:gap-4">
+      <div className="w-full flex flex-col text-justify md:flex-row justify-center items-start gap-2 md:gap-4">
         <div className="w-[60px] mt-3">
           <div className="w-full flex justify-center">
             <div className="w-[32px] flex justify-center items-center h-[32px] bg-backgroundColor-Main border border-gray-50 rounded-[8px]">
@@ -251,7 +251,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                   <img src="/icons/info-circle-blue.svg" alt="" />
                   Analysis Info
                 </div>
-                <div className="text-[#666666] leading-5 text-xs text-justify">
+                <div className="text-[#666666] leading-5 text-xs text-justify mr-8">
                   {value['Practitioner Comments'][0]?.substring(
                     0,
                     showMore ? value['Practitioner Comments'][0]?.length : 530,
@@ -276,7 +276,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               <img src="/icons/lamp-on-new.svg" alt="" className="ml-[-2px]" />
               Guidelines
             </div>
-            <div className="text-Text-Quadruple text-xs leading-5">
+            <div className="text-Text-Quadruple text-xs leading-5 mr-8">
               {value?.Intervnetion_content || '-'}
             </div>
             <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
