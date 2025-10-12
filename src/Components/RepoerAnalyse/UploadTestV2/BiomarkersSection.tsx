@@ -299,25 +299,18 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           <div ref={tableRef} className=" w-full overflow-auto  h-full">
             <div className="w-full  min-w-[700px]   h-full text-xs">
               {/* Table Header */}
-              <div className="grid w-full sticky top-0 z-10 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50" style={{gridTemplateColumns: '169px 150px 1fr 180px 1fr 1fr 80px'}}>
-                <div className="text-left">
-                  Extracted Biomarker
-                </div>
-                <div className="text-center">
-                  System Biomarker
-                </div>
-                <div className="text-center">
-                  Extracted Value
-                </div>
-                <div className="text-end">
-                  Extracted Unit
-                </div>
-                <div className="text-center">
-                  System Value
-                </div>
-                <div className="text-center">
-                  System Unit
-                </div>
+              <div
+                className="grid w-full sticky top-0 z-10 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                style={{
+                  gridTemplateColumns: '169px 150px 1fr 180px 1fr 1fr 80px',
+                }}
+              >
+                <div className="text-left">Extracted Biomarker</div>
+                <div className="text-center">System Biomarker</div>
+                <div className="text-center">Extracted Value</div>
+                <div className="text-end">Extracted Unit</div>
+                <div className="text-center">System Value</div>
+                <div className="text-center">System Unit</div>
                 <div className="text-end">Action</div>
               </div>
 
@@ -334,7 +327,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       ref={(el) => (rowRefs.current[index] = el)}
                       key={index}
                       className={` ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
-                      style={{gridTemplateColumns: '169px 150px 1fr 180px 1fr 1fr 80px'}}
+                      style={{
+                        gridTemplateColumns:
+                          '169px 150px 1fr 180px 1fr 1fr 80px',
+                      }}
                     >
                       <div className="text-left text-Text-Primary flex gap-1">
                         <TooltipTextAuto maxWidth="159px">
@@ -380,7 +376,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           <Select
                             isLarge
                             isSetting
-                            value={b.original_unit || b.possible_values?.units[0]}
+                            value={
+                              b.original_unit || b.possible_values?.units[0]
+                            }
                             options={unitOptions[index] || []}
                             onMenuOpen={() => {
                               if (!unitOptions[index]) {
@@ -388,7 +386,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               }
                             }}
                             onChange={(val: string) =>
-                              updateAndStandardize(index, { original_unit: val })
+                              updateAndStandardize(index, {
+                                original_unit: val,
+                              })
                             }
                           />
                         </div>
@@ -397,9 +397,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       <div className="text-center text-[#888888]">
                         {b.value}
                       </div>
-                      <div className="text-center text-[#888888]">
-                        {b.unit}
-                      </div>
+                      <div className="text-center text-[#888888]">{b.unit}</div>
                       {/* delete logic */}
                       <div className="flex items-center justify-end gap-2">
                         {b.status === 'confirm' ? (
