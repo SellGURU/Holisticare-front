@@ -72,8 +72,8 @@ const GenerateActionPlan = () => {
         setIsWeighted(true);
         checkSelectedTaskConflict(res.data);
       })
-      .catch(() => {
-        // alert('Error');
+      .catch((res) => {
+        sessionStorage.setItem('actionPlanError', res.detail);
         navigate(-1);
       });
   };
