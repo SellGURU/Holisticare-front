@@ -218,9 +218,9 @@ const ForgetPassword = () => {
                   email: formik.values.email,
                 });
                 setIsCompleteCode(false);
-                setCodeValue('')
+                setCodeValue('');
                 codeFormik.resetForm();
-                setCodeError('')
+                setCodeError('');
               }}
               className="text-[12px] text-Primary-EmeraldGreen font-medium  mt-10 text-center cursor-pointer"
             >

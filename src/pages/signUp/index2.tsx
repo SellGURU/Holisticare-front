@@ -94,7 +94,7 @@ const SignUp = () => {
         </div>
         <div className="mt-6 grid gap-4">
           <TextField
-           autoComplete="off"
+            autoComplete="off"
             inValid={
               formik.errors?.userName != undefined &&
               (formik.touched?.userName as boolean)
@@ -187,19 +187,23 @@ const SignUp = () => {
             <span
               className="text-Primary-DeepTeal cursor-pointer hover:underline hover:opacity-90"
               onClick={() => {
-                window.open('https://holisticare.io/legal/providers-privacy-policy/');
+                window.open(
+                  'https://holisticare.io/legal/providers-privacy-policy/',
+                );
               }}
             >
               Privacy & Policy
             </span>{' '}
-            and  <br />
+            and <br />
             <span
               className="text-Primary-DeepTeal  cursor-pointer hover:underline hover:opacity-90"
               onClick={() => {
-                window.open('https://holisticare.io/legal/providers-terms-of-service/');
+                window.open(
+                  'https://holisticare.io/legal/providers-terms-of-service/',
+                );
               }}
             >
-               Terms & Conditions.
+              Terms & Conditions.
             </span>{' '}
           </div>
           <div className="flex items-center justify-center mt-4">
