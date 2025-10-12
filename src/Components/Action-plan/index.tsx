@@ -8,7 +8,6 @@ import Application from '../../api/app';
 import { publish } from '../../utils/event';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
-import Circleloader from '../CircleLoader';
 import ProgressCalenderView from './ProgressCalendarView';
 
 // type CardData = {
@@ -128,14 +127,6 @@ export const ActionPlan: FC<ActionPlanProps> = ({
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const [actionPlanError, setActionPlanError] = useState('');
-  useEffect(() => {
-    if (sessionStorage.getItem('actionPlanError')) {
-      setActionPlanError(sessionStorage.getItem('actionPlanError') || '');
-      sessionStorage.removeItem('actionPlanError');
-    }
   }, []);
 
   return (
@@ -299,47 +290,32 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                 </>
               ) : (
                 <>
-                  {actionPlanError.length > 0 ? (
-                    <>
-                      <div className="h-[440px] w-[242px]">
-                        <div className="absolute inset-0 flex flex-col justify-center items-center z-20 top-0 left-0">
-                          {' '}
-                          <Circleloader></Circleloader>
-                          <div className="text-Text-Primary TextStyle-Body-1 mt-3 mx-6 text-center lg:mx-0">
-                            We're generating your Action Plan. This may take a
-                            moment.
-                          </div>
-                        </div>
+                  <div className="h-[440px] flex justify-center items-center w-[242px]">
+                    <div>
+                      <img
+                        src="/icons/EmptyState.svg"
+                        alt=""
+                        className="w-[219px]"
+                      />
+                      <h5 className="text-sm font-medium text-Text-Primary text-center -mt-10">
+                        No Action Plan Generated Yet
+                      </h5>
+                      <div className="TextStyle-Body-2 text-Text-Primary text-center mt-2">
+                        Start creating your action plan
                       </div>
-                    </>
-                  ) : (
-                    <div className="h-[440px] flex justify-center items-center w-[242px]">
-                      <div>
-                        <img
-                          src="/icons/EmptyState.svg"
-                          alt=""
-                          className="w-[219px]"
-                        />
-                        <h5 className="text-sm font-medium text-Text-Primary text-center -mt-10">
-                          No Action Plan Generated Yet
-                        </h5>
-                        <div className="TextStyle-Body-2 text-Text-Primary text-center mt-2">
-                          Start creating your action plan
-                        </div>
-                        <div className="mt-6 flex w-full justify-center">
-                          <ButtonSecondary
-                            ClassName="py-[6px] px-6"
-                            onClick={() => {
-                              navigate('/report/Generate-Action-Plan/' + id);
-                            }}
-                          >
-                            <img src="/icons/tick.svg" alt="" />
-                            Generate New
-                          </ButtonSecondary>
-                        </div>
+                      <div className="mt-6 flex w-full justify-center">
+                        <ButtonSecondary
+                          ClassName="py-[6px] px-6"
+                          onClick={() => {
+                            navigate('/report/Generate-Action-Plan/' + id);
+                          }}
+                        >
+                          <img src="/icons/tick.svg" alt="" />
+                          Generate New
+                        </ButtonSecondary>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </>
               )}
             </>

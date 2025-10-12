@@ -51,6 +51,7 @@ const GenerateActionPlan = () => {
         setIsLoadingPlans(false);
       });
   };
+  const [actionPlanError, setActionPlanError] = useState(false);
   const savePlan = () => {
     Application.getActionPlanTaskDirectoryNew({
       member_id: id,
@@ -71,13 +72,14 @@ const GenerateActionPlan = () => {
 
         setIsWeighted(true);
         checkSelectedTaskConflict(res.data);
+        setActionPlanError(false);
       })
-      .catch((res) => {
-        sessionStorage.setItem(
-          'actionPlanError',
-          res.detail || res?.response?.data?.detail,
-        );
-        navigate(-1);
+      .catch(() => {
+        setActionPlanError(true);
+        setTimeout(() => {
+          savePlan();
+        }, 5000);
+        // navigate(-1);
       });
   };
   useEffect(() => {
@@ -221,8 +223,8 @@ const GenerateActionPlan = () => {
           </div>
         </div>
 
-        {isLoadingPlans && (
-          <LoaderBox text="We are generating your Action Plan. This may take a moment." />
+        {(isLoadingPlans || actionPlanError) && (
+          <LoaderBox text="We're generating your Action Plan. This may take a moment." />
         )}
         {isLoadingCalendarView && <LoaderBox />}
 
