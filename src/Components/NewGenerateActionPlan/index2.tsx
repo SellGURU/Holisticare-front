@@ -73,7 +73,10 @@ const GenerateActionPlan = () => {
         checkSelectedTaskConflict(res.data);
       })
       .catch((res) => {
-        sessionStorage.setItem('actionPlanError', res.detail);
+        sessionStorage.setItem(
+          'actionPlanError',
+          res.detail || res?.response?.data?.detail,
+        );
         navigate(-1);
       });
   };
