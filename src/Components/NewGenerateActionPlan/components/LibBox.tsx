@@ -80,15 +80,13 @@ const LibBox: FC<LibBoxProps> = ({
               className="select-none text-[12px] text-Text-Primary w-[200px] overflow-hidden cursor-text"
               style={{
                 textWrap: 'nowrap',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
               }}
             >
-              {data.Title.length > 43
-                ? data.Title.substring(0, 43) + '...'
+              {data.Title.length > 33
+                ? data.Title.substring(0, 33) + '...'
                 : data.Title}
             </div>
-            {data.Title.length > 43 && (
+            {data.Title.length > 33 && (
               <Tooltip
                 id={`tooltip-${data.Category}-${data.Title}`}
                 place="top"
