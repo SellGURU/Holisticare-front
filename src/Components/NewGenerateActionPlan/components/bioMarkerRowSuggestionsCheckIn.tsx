@@ -151,7 +151,7 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
                     onClick={() => setShowEditModal(true)}
                   />
                   <img
-                    src="/icons/trash-blue.svg"
+                    src="/icons/trash-red.svg"
                     alt=""
                     className="w-[24px] h-[24px] cursor-pointer mt-2"
                     onClick={() => setSureRemoveIndex(index)}

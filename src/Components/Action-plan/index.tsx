@@ -131,7 +131,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
 
   return (
     <>
-      <div className="flex flex-col gap-3 w-full">
+      <div className="flex flex-col gap-3 w-full relative">
         <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
           {isShare ? (
             <>
@@ -290,7 +290,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                 </>
               ) : (
                 <>
-                  <div className=" h-[440px] flex justify-center items-center w-[242px]">
+                  <div className="h-[440px] flex justify-center items-center w-[242px]">
                     <div>
                       <img
                         src="/icons/EmptyState.svg"
@@ -303,7 +303,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       <div className="TextStyle-Body-2 text-Text-Primary text-center mt-2">
                         Start creating your action plan
                       </div>
-                      <div className=" mt-6 flex w-full justify-center">
+                      <div className="mt-6 flex w-full justify-center">
                         <ButtonSecondary
                           ClassName="py-[6px] px-6"
                           onClick={() => {
