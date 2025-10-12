@@ -299,26 +299,19 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           <div ref={tableRef} className=" w-full overflow-auto  h-full">
             <div className="w-full  min-w-[700px]   h-full text-xs">
               {/* Table Header */}
-              <div className="grid grid-cols-7 w-full sticky top-0 z-10 gap-4 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50">
-                <div className="col-span-1 md:w-[169px] ">
-                  Extracted Biomarker
-                </div>
-                <div className="col-span-1 ml-6 md:ml-0 md:w-[150px] md:pl-20 text-nowrap text-center">
-                  System Biomarker
-                </div>
-                <div className="col-span-1 w-[170px] md:w-[320px] text-center">
-                  Extracted Value
-                </div>
-                <div className="col-span-1 w-[120px] md:w-[215px] text-end">
-                  Extracted Unit
-                </div>
-                <div className="col-span-1 w-[220px] md:w-[295px] text-center">
-                  System Value
-                </div>
-                <div className="col-span- w-[200px] md:w-[259px] text-center">
-                  System Unit
-                </div>
-                <div className="col-span-1   text-end">Action</div>
+              <div
+                className="grid w-full sticky top-0 z-10 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                style={{
+                  gridTemplateColumns: '169px 150px 1fr 180px 1fr 1fr 80px',
+                }}
+              >
+                <div className="text-left">Extracted Biomarker</div>
+                <div className="text-center">System Biomarker</div>
+                <div className="text-center">Extracted Value</div>
+                <div className="text-end">Extracted Unit</div>
+                <div className="text-center">System Value</div>
+                <div className="text-center">System Unit</div>
+                <div className="text-end">Action</div>
               </div>
 
               {/* Table Rows */}
@@ -333,10 +326,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     <div
                       ref={(el) => (rowRefs.current[index] = el)}
                       key={index}
-                      className={` ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid grid-cols-7 gap-4 py-1 px-4 border-b border-Gray-50 items-center  text-[8px] md:text-xs text-Text-Primary `}
+                      className={` ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
+                      style={{
+                        gridTemplateColumns:
+                          '169px 150px 1fr 180px 1fr 1fr 80px',
+                      }}
                     >
-                      {' '}
-                      <div className="col-span-1 md:w-[169px]   text-left text-Text-Primary flex gap-1">
+                      <div className="text-left text-Text-Primary flex gap-1">
                         <TooltipTextAuto maxWidth="159px">
                           {b.original_biomarker_name}
                         </TooltipTextAuto>
@@ -359,7 +355,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         )}
                       </div>
                       {/* biomarker (editable via select) */}
-                      <div className="col-span-1 w-[140px] md:w-[250px] md:pl-[40px]">
+                      <div className="text-center">
                         <Select
                           isLarge
                           isSetting
@@ -371,35 +367,39 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         />
                       </div>
                       {/* value (editable via input) */}
-                      <div className="col-span-1 w-[170px] md:w-[320px] text-center">
+                      <div className="text-center">
                         {renderValueField(b, index)}
                       </div>
                       {/* unit (editable via select) */}
-                      <div className="col-span-1 w-[120px] ml-10 md:ml-28  text-end">
-                        <Select
-                          isLarge
-                          isSetting
-                          value={b.original_unit || b.possible_values?.units[0]}
-                          options={unitOptions[index] || []}
-                          onMenuOpen={() => {
-                            if (!unitOptions[index]) {
-                              fetchUnits(index, b.biomarker);
+                      <div className="text-end flex justify-end">
+                        <div className="w-full max-w-[160px]">
+                          <Select
+                            isLarge
+                            isSetting
+                            value={
+                              b.original_unit || b.possible_values?.units[0]
                             }
-                          }}
-                          onChange={(val: string) =>
-                            updateAndStandardize(index, { original_unit: val })
-                          }
-                        />
+                            options={unitOptions[index] || []}
+                            onMenuOpen={() => {
+                              if (!unitOptions[index]) {
+                                fetchUnits(index, b.biomarker);
+                              }
+                            }}
+                            onChange={(val: string) =>
+                              updateAndStandardize(index, {
+                                original_unit: val,
+                              })
+                            }
+                          />
+                        </div>
                       </div>
                       {/* read-only original fields */}
-                      <div className="col-span-1 w-[220px] md:w-[295px] text-center text-[#888888]">
+                      <div className="text-center text-[#888888]">
                         {b.value}
                       </div>
-                      <div className="col-span-1 w-[200px] md:w-[259px] text-center text-[#888888]">
-                        {b.unit}
-                      </div>
+                      <div className="text-center text-[#888888]">{b.unit}</div>
                       {/* delete logic */}
-                      <div className="col-span-1 flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-2">
                         {b.status === 'confirm' ? (
                           <div className="flex items-center justify-end w-full gap-1">
                             <div className="text-Text-Quadruple text-[10px]">
