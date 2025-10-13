@@ -7,7 +7,6 @@ import BiomarkersSection from './BiomarkersSection';
 import { AddBiomarker } from './AddBiomarker';
 import SpinnerLoader from '../../SpinnerLoader';
 
-
 interface UploadPModalProps {
   OnBack: () => void;
   uploadedFile: FileUpload | null;

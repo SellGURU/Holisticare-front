@@ -7,6 +7,7 @@ import Select from '../../Select';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
 import { Tooltip } from 'react-tooltip';
+import SearchSelect from '../../searchableSelect';
 
 // Define the props for the AddBiomarker component, now using 'biomarker' instead of 'name'
 interface AddBiomarkerProps {
@@ -154,7 +155,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           {/* Biomarker Name */}
           <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
             Biomarker Name
-            <Select
+            <SearchSelect
               isSetting
               isLarge
               isStaff
@@ -165,7 +166,19 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                 setUnit('');
                 setBiomarkerName(value);
               }}
-            ></Select>
+            />
+            {/* <Select
+              isSetting
+              isLarge
+              isStaff
+              placeholder="-"
+              options={avalibaleBiomarkers}
+              value={biomarkerName}
+              onChange={(value: string) => {
+                setUnit('');
+                setBiomarkerName(value);
+              }}
+            ></Select> */}
             {/* <TextField
               newStyle
               type="text"
