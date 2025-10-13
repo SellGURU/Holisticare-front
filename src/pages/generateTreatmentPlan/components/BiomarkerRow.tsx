@@ -256,12 +256,17 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                     0,
                     showMore ? value['Practitioner Comments'][0]?.length : 530,
                   )}{' '}
-                  <span
+                  {
+                    value['Practitioner Comments'][0]?.length > 530 && (
+<span
                     className="text-Primary-DeepTeal cursor-pointer underline font-medium"
                     onClick={() => setShowMore(!showMore)}
                   >
                     {showMore ? 'See less' : 'See more'}
                   </span>
+                    )
+                  }
+                  
                 </div>
               </div>
             )}
