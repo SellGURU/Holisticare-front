@@ -13,12 +13,14 @@ interface BiomarkerItemNewProps {
   data: any;
   biomarkers: any[];
   changeBiomarkersValue: (values: any) => void;
+  searchTerm?: string;
 }
 
 const biomarkerItem = ({
   data,
   biomarkers,
   changeBiomarkersValue,
+  searchTerm = '',
 }: BiomarkerItemNewProps) => {
   const getMaleThresholdKeys = () => {
     if (data && data.thresholds && data.thresholds.male) {
@@ -64,6 +66,25 @@ const biomarkerItem = ({
     );
   };
 
+  const highlightText = (text: string, searchTerm: string) => {
+    if (!searchTerm.trim()) {
+      return text;
+    }
+    
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    const parts = text.split(regex);
+    
+    return parts.map((part, index) => 
+      regex.test(part) ? (
+        <mark key={index} className="bg-yellow-200 px-1 rounded">
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  };
+
   const onsave = (values: any) => {
     setLoading(true);
     BiomarkersApi.saveBiomarkersList({
@@ -88,7 +109,7 @@ const biomarkerItem = ({
         <div className="flex flex-col md:flex-row gap-6 w-full min-h-[60px] justify-start items-start">
           <div className="md:w-[200px]">
             <div className=" text-[10px] md:text-[12px] font-medium text-Text-Primary   ">
-              {data.Biomarker}
+              {highlightText(data.Biomarker, searchTerm)}
               <span className=" text-[8px] md:text-[10px] text-[#888888] ml-[2px]">
                 ({data.unit})
               </span>
