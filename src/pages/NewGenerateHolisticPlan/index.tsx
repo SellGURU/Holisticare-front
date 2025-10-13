@@ -846,16 +846,16 @@ const NewGenerateHolisticPlan = () => {
                         <div className="w-full h-full flex flex-col items-center justify-center">
                           <img
                             className="w-44"
-                            src="/icons/EmptyState.svg"
+                            src="/public/icons/Empty/biomarkerEmpty.svg"
                             alt=""
                           />
-                          <div className="text-base font-medium text-Text-Primary -mt-9">
-                            No Holistic Plan Generated Yet
+                          <div className="text-base mb-4 font-medium text-Text-Primary -mt-9">
+                            No Biomarkers Availale Yet!
                           </div>
-                          <div className="text-xs text-Text-Primary mt-2 mb-5">
-                            {/* Start creating your Holistic Plan */}
+                          {/* <div className="text-xs text-Text-Primary mt-2 mb-5">
+                        
                             Start creating your holistic plan
-                          </div>
+                          </div> */}
                           <ButtonSecondary
                             onClick={() => {
                               navigate(`/report/Generate-Recommendation/${id}`);
