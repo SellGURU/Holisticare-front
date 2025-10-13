@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Application from '../../api/app';
 import Auth from '../../api/auth';
-import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../hooks';
 const AuthWithGoogle = ({ mode }: { mode: 'login' | 'register' }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const appContext = useApp();
   const handleGoogleLogin = useGoogleLogin({
@@ -44,7 +47,8 @@ const AuthWithGoogle = ({ mode }: { mode: 'login' | 'register' }) => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setMessage(err.detail);
+        setIsOpen(true);
       });
   };
 
@@ -59,6 +63,24 @@ const AuthWithGoogle = ({ mode }: { mode: 'login' | 'register' }) => {
   };
   return (
     <>
+      {isOpen && (
+        <div className="flex absolute top-5 right-5 z-50 w-[317px] h-[60px] rounded-2xl border border-Red bg-white gap-2 pt-2 pb-3 px-4">
+          <img
+            src="/icons/info-circle-red-n.svg"
+            alt=""
+            className="w-4 h-4 mt-1"
+          />
+          <div className="text-Text-Primary text-[10px] text-wrap leading-5">
+            {message}
+          </div>
+          <img
+            src="/icons/close-black.svg"
+            alt=""
+            onClick={() => setIsOpen(false)}
+            className="w-4 h-4 mt-1 cursor-pointer"
+          />
+        </div>
+      )}
       <div
         onClick={() => {
           handleGoogleLogin();
