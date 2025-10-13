@@ -359,7 +359,7 @@ const NewGenerateHolisticPlan = () => {
             </div>
             <div className="h-full w-full md:pr-2 lg:pt-10">
               <div
-                className={`bg-white rounded-[16px] min-h-[100%] md:p-6 p-4 shadow-100 ${treatmentPlanData ? 'w-full' : 'w-[98.2%]'}`}
+                className={`bg-white rounded-[16px] min-h-[100%] md:p-6 p-4 shadow-100 w-full `}
               >
                 <div className="flex w-full">
                   {/* <div
@@ -850,7 +850,7 @@ const NewGenerateHolisticPlan = () => {
                             alt=""
                           />
                           <div className="text-base mb-4 font-medium text-Text-Primary -mt-9">
-                            No Biomarkers Availale Yet!
+                            No Biomarkers Available Yet!
                           </div>
                           {/* <div className="text-xs text-Text-Primary mt-2 mb-5">
                         
@@ -904,7 +904,7 @@ const NewGenerateHolisticPlan = () => {
             </div>
           </div>
           <div
-            className={`lg:pt-[30px] h-[600px] hidden md:block pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'hidden'}`}
+            className={`lg:pt-[30px] h-[600px] hidden md:block pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'md:hidden'}`}
           >
             <ComboBar isHolisticPlan></ComboBar>
           </div>
