@@ -235,10 +235,10 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       >
         <div
           className={
-            'absolute hidden md:block top-0 left-0 bg-Primary-DeepTeal h-[49px] rounded-xl w-full z-10'
+            'absolute hidden md:block top-0 left-0 bg-Primary-DeepTeal h-[49px] rounded-xl w-full z-5'
           }
         ></div>
-        <ul className={'flex items-center flex-col z-10 gap-3'}>
+        <ul className={'flex items-center flex-col z-[6] gap-3'}>
           <li
             key={'1'}
             className={

@@ -475,7 +475,7 @@ const AddClient = () => {
                           Drag and drop or click to upload.
                         </div>
                         <div className="text-Text-Secondary text-[10px] mt-2">
-                          Accepted formats: .png, .jpg. Up to 4 MB.
+                          Accepted formats: .png, .jpg. Up to 3 MB.
                         </div>
                       </div>
                     </div>
@@ -486,7 +486,7 @@ const AddClient = () => {
                         const file = e.target.files[0];
                         if (!file) return;
 
-                        const maxSizeInBytes = 4 * 1024 * 1024;
+                        const maxSizeInBytes = 3 * 1024 * 1024;
                         const allowedTypes = [
                           'image/jpeg',
                           'image/jpg',
@@ -494,14 +494,14 @@ const AddClient = () => {
                         ];
                         if (!allowedTypes.includes(file.type)) {
                           setPhotoError(
-                            'File exceeds 4 MB or has an unsupported format.',
+                            'File exceeds 3 MB or has an unsupported format.',
                           );
                           return;
                         }
 
                         if (file.size > maxSizeInBytes) {
                           setPhotoError(
-                            'File exceeds 4 MB or has an unsupported format.',
+                            'File exceeds 3 MB or has an unsupported format.',
                           );
                           return;
                         }
