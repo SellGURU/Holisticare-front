@@ -92,7 +92,7 @@ const SignUp = () => {
         <div className="text-xl font-medium text-Text-Primary text-center">
           Create Your Account
         </div>
-        <div className="mt-6 grid gap-4">
+        <form id="signup-form" className="mt-6 grid gap-4">
           <TextField
             autoComplete="off"
             inValid={
@@ -127,6 +127,7 @@ const SignUp = () => {
           ></TextField>
           <div className="mb-4 relative">
             <TextField
+              autoComplete="new-password"
               errorMessage={formik.errors?.password}
               inValid={
                 formik.errors?.password != undefined &&
@@ -225,7 +226,7 @@ const SignUp = () => {
               Log in
             </span>
           </div>
-        </div>
+        </form>
       </AuthLayout>
     </>
   );
