@@ -655,7 +655,7 @@ const NewGenerateHolisticPlan = () => {
                     <div className="w-full bg-[#FDFDFD] border border-Gray-50 rounded-[16px] p-2 md:p-4 mt-4">
                       <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px]">
                         <div className="w-full lg:w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
-                          {resoveSubctegoriesSubs().map((resol: any) => {
+                          {resoveSubctegoriesSubs()?.map((resol: any) => {
                             return (
                               <>
                                 <div
@@ -846,7 +846,7 @@ const NewGenerateHolisticPlan = () => {
                         <div className="w-full h-full flex flex-col items-center justify-center">
                           <img
                             className="w-44"
-                            src="/public/icons/Empty/biomarkerEmpty.svg"
+                            src="/icons/Empty/biomarkerEmpty.svg"
                             alt=""
                           />
                           <div className="text-base mb-4 font-medium text-Text-Primary -mt-9">
@@ -856,7 +856,7 @@ const NewGenerateHolisticPlan = () => {
                         
                             Start creating your holistic plan
                           </div> */}
-                          <ButtonSecondary
+                          {/* <ButtonSecondary
                             onClick={() => {
                               navigate(`/report/Generate-Recommendation/${id}`);
                             }}
@@ -865,7 +865,7 @@ const NewGenerateHolisticPlan = () => {
                           >
                             <img src="/icons/tick-square.svg" alt="" /> Auto
                             Generate
-                          </ButtonSecondary>
+                          </ButtonSecondary> */}
                         </div>
                       </div>
                     </>
