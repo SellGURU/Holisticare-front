@@ -92,8 +92,9 @@ const SignUp = () => {
         <div className="text-xl font-medium text-Text-Primary text-center">
           Create Your Account
         </div>
-        <div className="mt-6 grid gap-4">
+        <form id="signup-form" className="mt-6 grid gap-4">
           <TextField
+            autoComplete="off"
             inValid={
               formik.errors?.userName != undefined &&
               (formik.touched?.userName as boolean)
@@ -109,6 +110,7 @@ const SignUp = () => {
             type="text"
           ></TextField>
           <TextField
+            autoComplete="new-email"
             inValid={
               formik.errors?.email != undefined &&
               (formik.touched?.email as boolean)
@@ -125,6 +127,7 @@ const SignUp = () => {
           ></TextField>
           <div className="mb-4 relative">
             <TextField
+              autoComplete="new-password"
               errorMessage={formik.errors?.password}
               inValid={
                 formik.errors?.password != undefined &&
@@ -185,7 +188,20 @@ const SignUp = () => {
             <span
               className="text-Primary-DeepTeal cursor-pointer hover:underline hover:opacity-90"
               onClick={() => {
-                window.open('https://holisticare.io/terms-of-service/');
+                window.open(
+                  'https://holisticare.io/legal/providers-privacy-policy/',
+                );
+              }}
+            >
+              Privacy & Policy
+            </span>{' '}
+            and <br />
+            <span
+              className="text-Primary-DeepTeal  cursor-pointer hover:underline hover:opacity-90"
+              onClick={() => {
+                window.open(
+                  'https://holisticare.io/legal/providers-terms-of-service/',
+                );
               }}
             >
               Terms & Conditions.
@@ -210,7 +226,7 @@ const SignUp = () => {
               Log in
             </span>
           </div>
-        </div>
+        </form>
       </AuthLayout>
     </>
   );
