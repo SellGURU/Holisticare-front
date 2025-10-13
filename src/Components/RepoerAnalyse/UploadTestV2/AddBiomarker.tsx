@@ -174,7 +174,28 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             /> */}
           </div>
 
-          {/* Value */}
+      
+
+          {/* Unit */}
+          <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
+            Unit
+            <Select
+              isSetting
+              isLarge
+              options={unitsList}
+              value={unit}
+              isStaff
+              placeholder="-"
+              onChange={(value: string) => setUnit(value)}
+            ></Select>
+            {/* <TextField
+              newStyle
+              type="text"
+              value={unit}
+              onChange={(e: any) => setUnit(e.target.value)}
+            /> */}
+          </div>
+    {/* Value */}
           <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
             Value
             <TextField
@@ -197,27 +218,6 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               }}
             />
           </div>
-
-          {/* Unit */}
-          <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
-            Unit
-            <Select
-              isSetting
-              isLarge
-              options={unitsList}
-              value={unit}
-              isStaff
-              placeholder="-"
-              onChange={(value: string) => setUnit(value)}
-            ></Select>
-            {/* <TextField
-              newStyle
-              type="text"
-              value={unit}
-              onChange={(e: any) => setUnit(e.target.value)}
-            /> */}
-          </div>
-
           {/* Add button */}
           <div
             onClick={handleAdd}

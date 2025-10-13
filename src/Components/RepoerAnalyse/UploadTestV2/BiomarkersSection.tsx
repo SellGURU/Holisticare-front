@@ -257,12 +257,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   return (
     <div
-      style={{ height: window.innerHeight - 440 + 'px' }}
+      style={{ height: window.innerHeight - 400 + 'px' }}
       className="w-full   rounded-2xl border  border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary"
     >
       {loading ? (
         <div
-          style={{ height: window.innerHeight - 520 + 'px' }}
+          style={{ height: window.innerHeight - 480 + 'px' }}
           className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
         >
           <Circleloader></Circleloader>
@@ -270,14 +270,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         </div>
       ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <div
-          style={{ height: window.innerHeight - 520 + 'px' }}
+          style={{ height: window.innerHeight - 480 + 'px' }}
           className="flex items-center  justify-center flex-col text-xs font-medium text-Text-Primary"
         >
           <img src="/icons/EmptyState-biomarkers.svg" alt="" />
           <div className="-mt-5">No data provided yet.</div>
         </div>
       ) : (
-        <div className="">
+        <div className=" relative ">
           <div className="flex justify-between items-center mb-4">
             <div className=" text-[10px] md:text-sm font-medium">
               List of Biomarkers{' '}
@@ -288,6 +288,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
               Date of Test
               <SimpleDatePicker
+              textStyle
                 isUploadFile
                 date={dateOfTest}
                 setDate={setDateOfTest}
@@ -296,8 +297,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               />
             </div>
           </div>
-          <div ref={tableRef} className=" w-full overflow-auto  h-full">
-            <div className="w-full  min-w-[700px]   h-full text-xs">
+          
+          <div ref={tableRef} className=" relative  min-w-[700px]   w-full overflow-auto text-xs h-full">
+           
               {/* Table Header */}
               <div
                 className="grid w-full sticky top-0 z-10 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
@@ -308,7 +310,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 <div className="text-left">Extracted Biomarker</div>
                 <div className="text-center">System Biomarker</div>
                 <div className="text-center">Extracted Value</div>
-                <div className="text-end">Extracted Unit</div>
+                <div className="text-center">Extracted Unit</div>
                 <div className="text-center">System Value</div>
                 <div className="text-center">System Unit</div>
                 <div className="text-end">Action</div>
@@ -316,7 +318,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
               {/* Table Rows */}
               <div
-                style={{ height: window.innerHeight - 550 + 'px' }}
+                style={{ height: window.innerHeight - 500 + 'px' }}
                 className="w-full pr-1"
               >
                 {biomarkers.map((b, index) => {
@@ -433,7 +435,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   );
                 })}
               </div>
-            </div>
+           
           </div>
         </div>
       )}
