@@ -88,13 +88,13 @@ const CustomBiomarkers = () => {
     if (!searchValue.trim()) {
       return biomarkers.filter((item) => item['Benchmark areas'] === benchmark);
     }
-    
+
     const lowerSearch = searchValue.toLowerCase();
     return biomarkers.filter(
       (item) =>
         item['Benchmark areas'] === benchmark &&
         (item['Benchmark areas'].toLowerCase().includes(lowerSearch) ||
-         item['Biomarker'].toLowerCase().includes(lowerSearch))
+          item['Biomarker'].toLowerCase().includes(lowerSearch)),
     );
   };
   const onsave = (values: any) => {
@@ -156,7 +156,8 @@ const CustomBiomarkers = () => {
       ) : (
         <div className="w-full min-h-full px-2 md:px-6 py-[80px]">
           {resolveAllBenchmarks().map((benchmark) => {
-            const filteredBiomarkersForCategory = getFilteredBiomarkersForCategory(benchmark);
+            const filteredBiomarkersForCategory =
+              getFilteredBiomarkersForCategory(benchmark);
             return (
               <BioMarkerBox
                 biomarkers={filteredBiomarkersForCategory}
