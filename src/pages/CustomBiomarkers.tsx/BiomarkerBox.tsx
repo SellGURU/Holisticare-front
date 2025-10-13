@@ -9,6 +9,7 @@ interface BiomarkerBoxProps {
   onSave: (values: any) => void;
   changeBiomarkersValue: (values: any) => void;
   biomarkersData: any[];
+  searchTerm?: string;
 }
 const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   data,
@@ -16,8 +17,14 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   biomarkers,
   changeBiomarkersValue,
   biomarkersData,
+  searchTerm = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  // useEffect(() => {
+  //   if (searchTerm != '') {
+  //     setIsOpen(true);
+  //   }
+  // }, [searchTerm]);
   // console.log(biomarkers);
   // const [isChanged, setIsChanged] = useState(false);
   // const [showSuccess, setShowSuccess] = useState(false);
@@ -35,6 +42,11 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   //     });
   //   }
   // }, [biomarkers]);
+  // Don't render the category if there are no matching biomarkers
+  if (biomarkers.length === 0) {
+    return null;
+  }
+
   return (
     <>
       <div className="w-full relative mb-4 py-4 px-2 md:px-6 bg-white border border-Gray-50 shadow-100 rounded-[16px]">
@@ -114,6 +126,7 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
                     data={value}
                     biomarkers={biomarkersData}
                     changeBiomarkersValue={changeBiomarkersValue}
+                    searchTerm={searchTerm}
                   />
                 </>
               );
