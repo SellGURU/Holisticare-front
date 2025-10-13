@@ -127,7 +127,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         </div>
 
         <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple">
-          Date of Test
+          Date of Test:
           <SimpleDatePicker
             isUploadFile
             date={dateOfTest}
@@ -143,7 +143,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         className="w-full  flex flex-col md:flex-row md:justify-between gap-4 mt-6"
       >
         {/* Left side: Add biomarker form */}
-        <div className="rounded-2xl  w-full md:w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px]">
+        <div className="rounded-2xl  w-full md:w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px] overflow-auto p">
           <div className="text-xs text-Text-Primary text-justify">
             Add a biomarker by filling in its details (Name, Value, Unit) and
             clicking Add Biomarker. You’ll see it added right away in the
@@ -174,8 +174,6 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             /> */}
           </div>
 
-      
-
           {/* Unit */}
           <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
             Unit
@@ -195,7 +193,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               onChange={(e: any) => setUnit(e.target.value)}
             /> */}
           </div>
-    {/* Value */}
+          {/* Value */}
           <div className="flex flex-col text-xs font-medium text-Text-Primary gap-2 w-full">
             Value
             <TextField
