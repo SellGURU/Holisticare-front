@@ -37,13 +37,13 @@ const SearchSelect: React.FC<SelectProps> = ({
 
   // Filtered options based on search
   const filteredOptions = options.filter((opt) =>
-    opt.toLowerCase().includes(searchTerm.toLowerCase())
+    opt.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   useEffect(() => {
     if (isOpen && onMenuOpen) onMenuOpen();
   }, [isOpen]);
-console.log(filteredOptions);
+  console.log(filteredOptions);
 
   useEffect(() => {
     setSelectedValue(value || '');
@@ -128,50 +128,49 @@ console.log(filteredOptions);
       </div>
 
       {/* Dropdown menu */}
-  {isOpen && (
-  <div
-    className={`absolute z-10 w-full ${
-      isSetting
-        ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
-        : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
-    } overflow-y-auto overflow-x-hidden max-h-60`}
-  >
-    {/* Search input */}
-    <div className="sticky top-0 bg-inherit p-2 z-10">
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full border border-Gray-50 rounded-md px-2 py-1 text-[10px] text-Text-Primary focus:outline-none bg-white"
-      />
-    </div>
+      {isOpen && (
+        <div
+          className={`absolute z-10 w-full ${
+            isSetting
+              ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
+              : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
+          } overflow-y-auto overflow-x-hidden max-h-60`}
+        >
+          {/* Search input */}
+          <div className="sticky top-0 bg-inherit p-2 z-10">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full border border-Gray-50 rounded-md px-2 py-1 text-[10px] text-Text-Primary focus:outline-none bg-white"
+            />
+          </div>
 
-    {/* Filtered options */}
-    <ul role="listbox">
-      {filteredOptions.length > 0 ? (
-        filteredOptions.map((option) => (
-          <li
-            key={option}
-            className={`py-1 px-4 cursor-pointer text-[10px] text-Text-Primary hover:bg-gray-200 text-start`}
-            onClick={() => handleOptionClick(option)}
-            role="option"
-            aria-selected={selectedValue === option}
-          >
-            {isCapital
-              ? option.charAt(0).toUpperCase() + option.slice(1)
-              : option}
-          </li>
-        ))
-      ) : (
-        <li className="py-2 px-4 text-[10px] text-Text-Secondary">
-          No results found
-        </li>
+          {/* Filtered options */}
+          <ul role="listbox">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <li
+                  key={option}
+                  className={`py-1 px-4 cursor-pointer text-[10px] text-Text-Primary hover:bg-gray-200 text-start`}
+                  onClick={() => handleOptionClick(option)}
+                  role="option"
+                  aria-selected={selectedValue === option}
+                >
+                  {isCapital
+                    ? option.charAt(0).toUpperCase() + option.slice(1)
+                    : option}
+                </li>
+              ))
+            ) : (
+              <li className="py-2 px-4 text-[10px] text-Text-Secondary">
+                No results found
+              </li>
+            )}
+          </ul>
+        </div>
       )}
-    </ul>
-  </div>
-)}
-
     </div>
   );
 };

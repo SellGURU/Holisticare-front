@@ -85,7 +85,16 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
       setactiveMenu('Add Biomarker');
     }
   }, [rowErrors, AddedRowErrors]);
+  const [showReview, setshowReview] = useState(false);
+  useEffect(() => {
+    if(
+    rowErrors && Object.keys(rowErrors).length > 0 ||
+      AddedRowErrors && Object.keys(AddedRowErrors).length > 0
+    ){
+      setshowReview(true)
+    }
 
+  },[rowErrors,AddedRowErrors]);
   return (
     <>
       <div
@@ -140,11 +149,19 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               setActive={setactiveMenu}
               value={['Upload File', 'Add Biomarker']}
             ></Toggle>
-            {(rowErrors && Object.keys(rowErrors).length > 0) ||
-            (AddedRowErrors && Object.keys(AddedRowErrors).length > 0) ? (
-              <div className="bg-[#FFD8E4] absolute right-0 bottom-0 text-[10px] text-Text-Primary w-[328px] rounded-[20px] h-[36px] py-2 px-4 flex items-center gap-2">
-                <img src="/icons/info-circle-red-2.svg" alt="" />
+            {showReview  ? (
+              <div className="bg-[#FFD8E4] absolute right-0 bottom-0 text-[10px] text-Text-Primary w-[328px] rounded-[20px] h-[36px] py-2 px-4 flex justify-between items-center gap-2">
+                <div className='flex items-cente gap-1'>
+  <img src="/icons/info-circle-red-2.svg" alt="" />
                 Review required: some biomarkers contain errors.
+                </div>
+              
+                <img
+                onClick={()=>setshowReview(false)}
+                  className="cursor-pointer size-4"
+                  src="/icons/close-black.svg"
+                  alt=""
+                />
               </div>
             ) : null}
           </div>
