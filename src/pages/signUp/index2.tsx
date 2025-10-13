@@ -92,7 +92,7 @@ const SignUp = () => {
         <div className="text-xl font-medium text-Text-Primary text-center">
           Create Your Account
         </div>
-        <form id="signup-form" className="mt-6 grid gap-4">
+        <form id="signup-form" className="mt-6 grid gap-4" onSubmit={(e) => e.preventDefault()}>
           <TextField
             autoComplete="off"
             inValid={
