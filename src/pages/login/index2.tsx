@@ -86,7 +86,11 @@ const Login = () => {
         <div className="text-xl font-medium text-Text-Primary text-center">
           Welcome Back!
         </div>
-        <form id="login-form" className="mt-6 grid gap-4" onSubmit={(e) => e.preventDefault()}>
+        <form
+          id="login-form"
+          className="mt-6 grid gap-4"
+          onSubmit={(e) => e.preventDefault()}
+        >
           <TextField
             autoComplete="email"
             inValid={
