@@ -106,7 +106,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
               setShowDetail(true);
             }
           }}
-          className={`text-xs text-Primary-DeepTeal cursor-pointer flex items-center gap-1 ${details.length > 0 ? "cursor-pointer opacity-100" : 'cursor-not-allowed opacity-50'}`}
+          className={`text-xs text-Primary-DeepTeal cursor-pointer flex items-center gap-1 ${details.length > 0 ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-50'}`}
         >
           View details{' '}
           <img className="size-4" src="/icons/external-link.svg" alt="" />
