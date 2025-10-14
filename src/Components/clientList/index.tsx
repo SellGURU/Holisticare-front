@@ -322,6 +322,45 @@ const ClientList = () => {
     );
   };
   const filterButtonRef = useRef<HTMLDivElement>(null);
+  const [visibleCount, setVisibleCount] = useState(20); // How many clients are shown initially
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  // Observe the bottom sentinel for lazy loading
+// replace your current IntersectionObserver useEffect with this
+useEffect(() => {
+  if (!loadMoreRef.current) return;
+
+  let timeoutId: number | null = null;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+
+      if (entry.isIntersecting && visibleCount < filteredClientList.length) {
+        if (timeoutId) {
+          window.clearTimeout(timeoutId);
+        }
+        timeoutId = window.setTimeout(() => {
+          setVisibleCount((prev) => Math.min(prev + 20, filteredClientList.length));
+        }, 150); // small debounce to avoid too many state updates
+      }
+    },
+    {
+      root: null,           // <-- use the browser viewport (window) as the scroll container
+      rootMargin: '200px',  // <-- start loading when the sentinel is 200px from viewport
+      threshold: 0.1,       // <-- fire when ~10% of sentinel is visible
+    },
+  );
+
+  observer.observe(loadMoreRef.current);
+
+  return () => {
+    if (timeoutId) window.clearTimeout(timeoutId);
+    observer.disconnect();
+  };
+
+}, [visibleCount, filteredClientList.length]);
+
   return (
     <>
       {isLoading ? (
@@ -516,87 +555,97 @@ const ClientList = () => {
                     <div
                       className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center   gap-[16px] flex-wrap pb-[200px] ${showSearch && 'mt-10'}`}
                     >
-                      {filteredClientList.map((client: any, index: number) => {
-                        return (
-                          <ClientCard
-                            indexItem={index}
-                            activeTab={active}
-                            ondelete={(memberId: any) => {
-                              setFilteredClientList((pre) => {
-                                const nes = [...pre];
-                                return nes.filter(
-                                  (el) => el.member_id != memberId,
+                      {filteredClientList
+                        .slice(0, visibleCount)
+                        .map((client: any, index: number) => {
+                          return (
+                            <ClientCard
+                              indexItem={index}
+                              activeTab={active}
+                              ondelete={(memberId: any) => {
+                                setFilteredClientList((pre) => {
+                                  const nes = [...pre];
+                                  return nes.filter(
+                                    (el) => el.member_id != memberId,
+                                  );
+                                });
+                                setClientList((pre) => {
+                                  const nes = [...pre];
+                                  return nes.filter(
+                                    (el) => el.member_id != memberId,
+                                  );
+                                });
+                              }}
+                              onAssign={(memberId, coachUsername) => {
+                                setFilteredClientList((prevList) =>
+                                  prevList.map((client) =>
+                                    client.member_id === memberId
+                                      ? {
+                                          ...client,
+                                          assigned_to: [
+                                            coachUsername,
+                                            ...(client.assigned_to || []),
+                                          ],
+                                        }
+                                      : client,
+                                  ),
                                 );
-                              });
-                              setClientList((pre) => {
-                                const nes = [...pre];
-                                return nes.filter(
-                                  (el) => el.member_id != memberId,
-                                );
-                              });
-                            }}
-                            onAssign={(memberId, coachUsername) => {
-                              setFilteredClientList((prevList) =>
-                                prevList.map((client) =>
-                                  client.member_id === memberId
-                                    ? {
-                                        ...client,
-                                        assigned_to: [
-                                          coachUsername,
-                                          ...(client.assigned_to || []),
-                                        ],
-                                      }
-                                    : client,
-                                ),
-                              );
 
-                              setClientList((prevList) =>
-                                prevList.map((client) =>
-                                  client.member_id === memberId
-                                    ? {
-                                        ...client,
-                                        assigned_to: [
-                                          coachUsername,
-                                          ...(client.assigned_to || []),
-                                        ],
-                                      }
-                                    : client,
-                                ),
-                              );
-                            }}
-                            onarchive={(memberId: any) => {
-                              setFilteredClientList((pre) => {
-                                const nes = [...pre];
-                                return nes.map((el) => {
-                                  if (el.member_id != memberId) {
-                                    return el;
-                                  } else {
-                                    return {
-                                      ...el,
-                                      archived: !el.archived,
-                                    };
-                                  }
+                                setClientList((prevList) =>
+                                  prevList.map((client) =>
+                                    client.member_id === memberId
+                                      ? {
+                                          ...client,
+                                          assigned_to: [
+                                            coachUsername,
+                                            ...(client.assigned_to || []),
+                                          ],
+                                        }
+                                      : client,
+                                  ),
+                                );
+                              }}
+                              onarchive={(memberId: any) => {
+                                setFilteredClientList((pre) => {
+                                  const nes = [...pre];
+                                  return nes.map((el) => {
+                                    if (el.member_id != memberId) {
+                                      return el;
+                                    } else {
+                                      return {
+                                        ...el,
+                                        archived: !el.archived,
+                                      };
+                                    }
+                                  });
                                 });
-                              });
-                              setClientList((pre) => {
-                                const nes = [...pre];
-                                return nes.map((el) => {
-                                  if (el.member_id != memberId) {
-                                    return el;
-                                  } else {
-                                    return {
-                                      ...el,
-                                      archived: !el.archived,
-                                    };
-                                  }
+                                setClientList((pre) => {
+                                  const nes = [...pre];
+                                  return nes.map((el) => {
+                                    if (el.member_id != memberId) {
+                                      return el;
+                                    } else {
+                                      return {
+                                        ...el,
+                                        archived: !el.archived,
+                                      };
+                                    }
+                                  });
                                 });
-                              });
-                            }}
-                            onToggleHighPriority={toggleHighPriority}
-                            client={client}
-                          ></ClientCard>
-                        );
-                      })}
+                              }}
+                              onToggleHighPriority={toggleHighPriority}
+                              client={client}
+                            ></ClientCard>
+                          );
+                        })}
+                      {filteredClientList.length > visibleCount && (
+                        <div
+                          ref={loadMoreRef}
+                          className="w-full flex justify-center py-6 text-Text-Quadruple text-xs"
+                        >
+                          Loading more clients...
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <Table
