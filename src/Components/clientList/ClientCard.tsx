@@ -853,19 +853,27 @@ const ClientCard: FC<ClientCardProps> = ({
                     </div>
                     <div
                       className="text-nowrap max-w-[100px] truncate cursor-default"
-                      data-tooltip-id={`${client.member_id}-${client.Questionary}`}
+                      data-tooltip-id={`${client.member_id}-questionary`}
+                      data-tooltip-content={client.Questionary}
                     >
                       {client.Questionary}
-                      {client.Questionary.length > 15 && (
-                        <Tooltip
-                          place="top"
-                          id={`${client.member_id}-${client.Questionary}`}
-                          className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                        >
-                          {client.Questionary}
-                        </Tooltip>
-                      )}
                     </div>
+                    {client.Questionary.length > 15 && (
+                      <Tooltip
+                        place="top"
+                        id={`${client.member_id}-questionary`}
+                        className="bg-white z-50 w-fit bg-opacity-100 opacity-100 text-wrap text-[#888888] text-[8px] rounded-[6px] border border-Gray-50 p-2 max-w-xs"
+                        style={{
+                          backgroundColor: 'white',
+                          zIndex: 50,
+                          opacity: 1,
+                          wordWrap: 'break-word',
+                          maxWidth: '300px'
+                        }}
+                        delayShow={300}
+                        delayHide={100}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
