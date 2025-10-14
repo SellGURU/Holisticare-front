@@ -601,7 +601,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
 
   useEffect(() => {
-    if (TreatMentPlanData?.length > 0) {
+    if (TreatMentPlanData?.length > 0 && isHaveReport) {
       Application.checkHtmlReport(id?.toString() || '')
         .then((res) => {
           setIsHtmlReportExists(res.data.exists);
@@ -611,13 +611,22 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [TreatMentPlanData]);
 
   useEffect(() => {
-    if (sessionStorage.getItem('isHtmlReportExists')) {
+    if (
+      sessionStorage.getItem('isHtmlReportExists') &&
+      TreatMentPlanData?.length > 0 &&
+      isHaveReport &&
+      !isHtmlReportExists
+    ) {
       setIsHtmlReportExists(
         sessionStorage.getItem('isHtmlReportExists') === 'true',
       );
       sessionStorage.removeItem('isHtmlReportExists');
     } else {
-      if (!isHtmlReportExists && TreatMentPlanData?.length > 0) {
+      if (
+        isHaveReport &&
+        TreatMentPlanData?.length > 0 &&
+        !isHtmlReportExists
+      ) {
         const intervalId = setInterval(() => {
           Application.checkHtmlReport(id?.toString() || '')
             .then((res) => {
@@ -629,12 +638,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         return () => clearInterval(intervalId);
       }
     }
-  }, [TreatMentPlanData, isHtmlReportExists]);
+  }, [TreatMentPlanData, isHaveReport, isHtmlReportExists]);
 
   const [loadingHtmlReport, setLoadingHtmlReport] = useState(false);
 
   const handleGetHtmlReport = () => {
-    if (!isHtmlReportExists) return;
+    if (!isHaveReport) return;
 
     setLoadingHtmlReport(true);
 

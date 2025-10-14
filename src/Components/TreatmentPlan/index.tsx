@@ -304,8 +304,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   ClassName="w-full md:w-fit"
                   onClick={() => {
                     setTreatmentId('');
-                    navigate(`/report/Generate-Recommendation/${id}`);
-                    // navigate(`/report/Generate-Holistic-Plan/${id}`);
+                    // navigate(`/report/Generate-Recommendation/${id}`);
+                    navigate(`/report/Generate-Holistic-Plan/${id}`);
                   }}
                 >
                   <img src="/icons/tick-square.svg" alt="" /> Generate New
@@ -456,8 +456,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <div
                   onClick={() => {
                     setTreatmentId('');
-                    navigate(`/report/Generate-Recommendation/${id}`);
-                    // navigate(`/report/Generate-Holistic-Plan/${id}`);
+                    // navigate(`/report/Generate-Recommendation/${id}`);
+                    navigate(`/report/Generate-Holistic-Plan/${id}`);
                   }}
                   className={`  relative mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed cursor-pointer `}
                 >
