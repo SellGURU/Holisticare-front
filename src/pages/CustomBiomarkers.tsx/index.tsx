@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
@@ -84,6 +83,20 @@ const CustomBiomarkers = () => {
       ),
     ];
   };
+
+  const getFilteredBiomarkersForCategory = (benchmark: string) => {
+    if (!searchValue.trim()) {
+      return biomarkers.filter((item) => item['Benchmark areas'] === benchmark);
+    }
+
+    const lowerSearch = searchValue.toLowerCase();
+    return biomarkers.filter(
+      (item) =>
+        item['Benchmark areas'] === benchmark &&
+        (item['Benchmark areas'].toLowerCase().includes(lowerSearch) ||
+          item['Biomarker'].toLowerCase().includes(lowerSearch)),
+    );
+  };
   const onsave = (values: any) => {
     setLoading(true);
     BiomarkersApi.addBiomarkersList({
@@ -143,11 +156,11 @@ const CustomBiomarkers = () => {
       ) : (
         <div className="w-full min-h-full px-2 md:px-6 py-[80px]">
           {resolveAllBenchmarks().map((benchmark) => {
+            const filteredBiomarkersForCategory =
+              getFilteredBiomarkersForCategory(benchmark);
             return (
               <BioMarkerBox
-                biomarkers={biomarkers.filter(
-                  (item) => item['Benchmark areas'] == benchmark,
-                )}
+                biomarkers={filteredBiomarkersForCategory}
                 onSave={(values) => {
                   // setIsChanged(true);
                   setBiomarkers((pre) => {
@@ -168,6 +181,7 @@ const CustomBiomarkers = () => {
                 }
                 biomarkersData={biomarkers}
                 changeBiomarkersValue={changeBiomarkersValue}
+                searchTerm={searchValue}
               />
             );
           })}
