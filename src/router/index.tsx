@@ -38,6 +38,7 @@ import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
 import Playground from '../pages/playground/index.tsx';
+import HtmlViewer from '../pages/HtmlViewer/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -202,6 +203,10 @@ const router = createBrowserRouter([
     path: '/surveys-view/:member-id/:q-id',
     element: <SurveyResponsesPage></SurveyResponsesPage>,
   },
+  {
+    path: '/html-previewer/:id',
+    element: <HtmlViewer></HtmlViewer>,
+  }
 ]);
 
 export default router;
