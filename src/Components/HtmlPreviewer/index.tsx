@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   html: string;
@@ -8,7 +8,13 @@ type Props = {
   onChange?: (html: string) => void;
 };
 
-export default function HtmlEditor({ html, editable = false, sandbox = "allow-scripts allow-same-origin", className = "", onChange }: Props) {
+export default function HtmlEditor({
+  html,
+  editable = false,
+  sandbox = 'allow-scripts allow-same-origin',
+  className = '',
+  onChange,
+}: Props) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const loadedRef = useRef(false);
   const [originalHtml] = useState(html);
@@ -28,10 +34,10 @@ export default function HtmlEditor({ html, editable = false, sandbox = "allow-sc
       doc.close();
 
       if (editable && doc.body) {
-        doc.body.contentEditable = "true";
-        doc.designMode = "on";
+        doc.body.contentEditable = 'true';
+        doc.designMode = 'on';
 
-        doc.body.addEventListener("input", () => {
+        doc.body.addEventListener('input', () => {
           if (onChange) onChange(doc.documentElement.outerHTML);
         });
       }
@@ -39,11 +45,11 @@ export default function HtmlEditor({ html, editable = false, sandbox = "allow-sc
       loadedRef.current = true;
     };
 
-    if (iframe.contentDocument?.readyState === "complete") {
+    if (iframe.contentDocument?.readyState === 'complete') {
       handleLoad();
     } else {
-      iframe.addEventListener("load", handleLoad);
-      return () => iframe.removeEventListener("load", handleLoad);
+      iframe.addEventListener('load', handleLoad);
+      return () => iframe.removeEventListener('load', handleLoad);
     }
   }, [html, editable, onChange]);
 
@@ -58,8 +64,8 @@ export default function HtmlEditor({ html, editable = false, sandbox = "allow-sc
     doc.close();
 
     if (editable && doc.body) {
-      doc.body.contentEditable = "true";
-      doc.designMode = "on";
+      doc.body.contentEditable = 'true';
+      doc.designMode = 'on';
     }
   };
 

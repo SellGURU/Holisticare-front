@@ -637,7 +637,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   }, [TreatMentPlanData, isHaveReport, isHtmlReportExists]);
 
-  const [loadingHtmlReport, ] = useState(false);
+  const [loadingHtmlReport] = useState(false);
 
   const handleGetHtmlReport = () => {
     if (!isHaveReport) return;

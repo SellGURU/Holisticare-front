@@ -206,7 +206,7 @@ const router = createBrowserRouter([
   {
     path: '/html-previewer/:id',
     element: <HtmlViewer></HtmlViewer>,
-  }
+  },
 ]);
 
 export default router;
