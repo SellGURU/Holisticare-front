@@ -326,40 +326,41 @@ const ClientList = () => {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   // Observe the bottom sentinel for lazy loading
-// replace your current IntersectionObserver useEffect with this
-useEffect(() => {
-  if (!loadMoreRef.current) return;
+  // replace your current IntersectionObserver useEffect with this
+  useEffect(() => {
+    if (!loadMoreRef.current) return;
 
-  let timeoutId: number | null = null;
+    let timeoutId: number | null = null;
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const entry = entries[0];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
 
-      if (entry.isIntersecting && visibleCount < filteredClientList.length) {
-        if (timeoutId) {
-          window.clearTimeout(timeoutId);
+        if (entry.isIntersecting && visibleCount < filteredClientList.length) {
+          if (timeoutId) {
+            window.clearTimeout(timeoutId);
+          }
+          timeoutId = window.setTimeout(() => {
+            setVisibleCount((prev) =>
+              Math.min(prev + 20, filteredClientList.length),
+            );
+          }, 150); // small debounce to avoid too many state updates
         }
-        timeoutId = window.setTimeout(() => {
-          setVisibleCount((prev) => Math.min(prev + 20, filteredClientList.length));
-        }, 150); // small debounce to avoid too many state updates
-      }
-    },
-    {
-      root: null,           // <-- use the browser viewport (window) as the scroll container
-      rootMargin: '200px',  // <-- start loading when the sentinel is 200px from viewport
-      threshold: 0.1,       // <-- fire when ~10% of sentinel is visible
-    },
-  );
+      },
+      {
+        root: null, // <-- use the browser viewport (window) as the scroll container
+        rootMargin: '200px', // <-- start loading when the sentinel is 200px from viewport
+        threshold: 0.1, // <-- fire when ~10% of sentinel is visible
+      },
+    );
 
-  observer.observe(loadMoreRef.current);
+    observer.observe(loadMoreRef.current);
 
-  return () => {
-    if (timeoutId) window.clearTimeout(timeoutId);
-    observer.disconnect();
-  };
-
-}, [visibleCount, filteredClientList.length]);
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+      observer.disconnect();
+    };
+  }, [visibleCount, filteredClientList.length]);
 
   return (
     <>
