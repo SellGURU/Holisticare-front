@@ -13,7 +13,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
   console.log(isOther);
   // const { positive, negative } = splitInstructions(data.Notes);
   return (
-    <div className="w-full no-split print:w-full min-h-[234px] text-justify  print:h-auto flex flex-col p-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl relative text-Text-Primary ">
+    <div className="w-full no-split print:w-full min-h-[234px] text-justify  print:h-auto flex flex-col p-4 bg-white border border-Gray-50 rounded-2xl relative text-Text-Primary ">
       <div className="w-full flex flex-col  flex-wrap gap-3">
         <div className="text-sm text-Text-Primary flex items-center gap-2">
           <TooltipTextAuto maxWidth="300px">{data?.title}</TooltipTextAuto>
@@ -41,6 +41,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
             )}
           </div>
         </div>
+        <div className="w-full bg-bg-color h-[1px]"></div>
         <div className="flex flex-col gap-1 ml-3">
           <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
             <img src="/icons/book.svg" alt="" className="ml-[-2px]" />
@@ -157,6 +158,20 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
             </>
           )}
         </div>
+        {data?.Intervention_url?.length > 0 && (
+          <>
+            <div className="w-full bg-bg-color h-[1px]"></div>
+            <div
+              className="w-full flex items-center bg-[#E6F0FA] px-6 py-2 rounded-lg gap-1 cursor-pointer"
+              onClick={() => window.open(data?.Intervention_url, '_blank')}
+            >
+              <div className="text-Primary-DeepTeal text-xs font-normal">
+                Learn More (NHS)
+              </div>
+              <img src="/icons/external-link.svg" alt="" />
+            </div>
+          </>
+        )}
         {/* {!isOther && (
           <div className="flex gap-2 text-[8px]">
             <div
