@@ -257,12 +257,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   return (
     <div
-      style={{ height: window.innerHeight - 440 + 'px' }}
+      style={{ height: window.innerHeight - 400 + 'px' }}
       className="w-full   rounded-2xl border  border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary"
     >
       {loading ? (
         <div
-          style={{ height: window.innerHeight - 520 + 'px' }}
+          style={{ height: window.innerHeight - 480 + 'px' }}
           className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
         >
           <Circleloader></Circleloader>
@@ -270,14 +270,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         </div>
       ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <div
-          style={{ height: window.innerHeight - 520 + 'px' }}
+          style={{ height: window.innerHeight - 480 + 'px' }}
           className="flex items-center  justify-center flex-col text-xs font-medium text-Text-Primary"
         >
           <img src="/icons/EmptyState-biomarkers.svg" alt="" />
           <div className="-mt-5">No data provided yet.</div>
         </div>
       ) : (
-        <div className="">
+        <div className=" relative ">
           <div className="flex justify-between items-center mb-4">
             <div className=" text-[10px] md:text-sm font-medium">
               List of Biomarkers{' '}
@@ -286,8 +286,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               </span>
             </div>
             <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
-              Date of Test
+              Date of Test:
               <SimpleDatePicker
+                textStyle
                 isUploadFile
                 date={dateOfTest}
                 setDate={setDateOfTest}
@@ -296,143 +297,140 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               />
             </div>
           </div>
-          <div ref={tableRef} className=" w-full overflow-auto  h-full">
-            <div className="w-full  min-w-[700px]   h-full text-xs">
-              {/* Table Header */}
-              <div
-                className="grid w-full sticky top-0 z-10 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-                style={{
-                  gridTemplateColumns: '169px 150px 1fr 180px 1fr 1fr 80px',
-                }}
-              >
-                <div className="text-left">Extracted Biomarker</div>
-                <div className="text-center">System Biomarker</div>
-                <div className="text-center">Extracted Value</div>
-                <div className="text-end">Extracted Unit</div>
-                <div className="text-center">System Value</div>
-                <div className="text-center">System Unit</div>
-                <div className="text-end">Action</div>
-              </div>
 
-              {/* Table Rows */}
-              <div
-                style={{ height: window.innerHeight - 550 + 'px' }}
-                className="w-full pr-1"
-              >
-                {biomarkers.map((b, index) => {
-                  const errorForRow = rowErrors[index];
+          <div
+            ref={tableRef}
+            className=" relative  min-w-[700px]   w-full overflow-auto text-xs h-full"
+          >
+            {/* Table Header */}
+            <div
+              className="grid w-full sticky top-0 z-10 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+              style={{
+                gridTemplateColumns: '169px 150px 1fr 180px 1fr 1fr 80px',
+              }}
+            >
+              <div className="text-left">Extracted Biomarker</div>
+              <div className="text-center">System Biomarker</div>
+              <div className="text-center">Extracted Value</div>
+              <div className="text-center">Extracted Unit</div>
+              <div className="text-center">System Value</div>
+              <div className="text-center">System Unit</div>
+              <div className="text-end">Action</div>
+            </div>
 
-                  return (
-                    <div
-                      ref={(el) => (rowRefs.current[index] = el)}
-                      key={index}
-                      className={` ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
-                      style={{
-                        gridTemplateColumns:
-                          '169px 150px 1fr 180px 1fr 1fr 80px',
-                      }}
-                    >
-                      <div className="text-left text-Text-Primary flex gap-1">
-                        <TooltipTextAuto maxWidth="159px">
-                          {b.original_biomarker_name}
-                        </TooltipTextAuto>
-                        {errorForRow && (
-                          <>
-                            <img
-                              data-tooltip-id={`tooltip-${index}`}
-                              src="/icons/info-circle-red.svg"
-                              alt="Error"
-                              className="w-4 h-4"
-                            />
-                            <Tooltip
-                              id={`tooltip-${index}`}
-                              place="top"
-                              className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                            >
-                              {errorForRow}
-                            </Tooltip>
-                          </>
-                        )}
-                      </div>
-                      {/* biomarker (editable via select) */}
-                      <div className="text-center">
+            {/* Table Rows */}
+            <div
+              style={{ height: window.innerHeight - 500 + 'px' }}
+              className="w-full pr-1"
+            >
+              {biomarkers.map((b, index) => {
+                const errorForRow = rowErrors[index];
+
+                return (
+                  <div
+                    ref={(el) => (rowRefs.current[index] = el)}
+                    key={index}
+                    className={` ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
+                    style={{
+                      gridTemplateColumns: '169px 150px 1fr 180px 1fr 1fr 80px',
+                    }}
+                  >
+                    <div className="text-left text-Text-Primary flex gap-1">
+                      <TooltipTextAuto maxWidth="159px">
+                        {b.original_biomarker_name}
+                      </TooltipTextAuto>
+                      {errorForRow && (
+                        <>
+                          <img
+                            data-tooltip-id={`tooltip-${index}`}
+                            src="/icons/info-circle-red.svg"
+                            alt="Error"
+                            className="w-4 h-4"
+                          />
+                          <Tooltip
+                            id={`tooltip-${index}`}
+                            place="top"
+                            className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                          >
+                            {errorForRow}
+                          </Tooltip>
+                        </>
+                      )}
+                    </div>
+                    {/* biomarker (editable via select) */}
+                    <div className="text-center">
+                      <Select
+                        isLarge
+                        isSetting
+                        value={b.biomarker}
+                        options={avalibaleBiomarkers || []}
+                        onChange={(val: string) =>
+                          updateAndStandardize(index, { biomarker: val })
+                        }
+                      />
+                    </div>
+                    {/* value (editable via input) */}
+                    <div className="text-center">
+                      {renderValueField(b, index)}
+                    </div>
+                    {/* unit (editable via select) */}
+                    <div className="text-end flex justify-end">
+                      <div className="w-full max-w-[160px]">
                         <Select
                           isLarge
                           isSetting
-                          value={b.biomarker}
-                          options={avalibaleBiomarkers || []}
+                          value={b.original_unit || b.possible_values?.units[0]}
+                          options={unitOptions[index] || []}
+                          onMenuOpen={() => {
+                            if (!unitOptions[index]) {
+                              fetchUnits(index, b.biomarker);
+                            }
+                          }}
                           onChange={(val: string) =>
-                            updateAndStandardize(index, { biomarker: val })
+                            updateAndStandardize(index, {
+                              original_unit: val,
+                            })
                           }
                         />
                       </div>
-                      {/* value (editable via input) */}
-                      <div className="text-center">
-                        {renderValueField(b, index)}
-                      </div>
-                      {/* unit (editable via select) */}
-                      <div className="text-end flex justify-end">
-                        <div className="w-full max-w-[160px]">
-                          <Select
-                            isLarge
-                            isSetting
-                            value={
-                              b.original_unit || b.possible_values?.units[0]
-                            }
-                            options={unitOptions[index] || []}
-                            onMenuOpen={() => {
-                              if (!unitOptions[index]) {
-                                fetchUnits(index, b.biomarker);
-                              }
-                            }}
-                            onChange={(val: string) =>
-                              updateAndStandardize(index, {
-                                original_unit: val,
-                              })
-                            }
+                    </div>
+                    {/* read-only original fields */}
+                    <div className="text-center text-[#888888]">{b.value}</div>
+                    <div className="text-center text-[#888888]">{b.unit}</div>
+                    {/* delete logic */}
+                    <div className="flex items-center justify-end gap-2">
+                      {b.status === 'confirm' ? (
+                        <div className="flex items-center justify-end w-full gap-1">
+                          <div className="text-Text-Quadruple text-[10px]">
+                            Sure?
+                          </div>
+                          <img
+                            src="/icons/tick-circle-green.svg"
+                            alt="Confirm"
+                            className="w-[16px] h-[16px] cursor-pointer"
+                            onClick={() => handleConfirm(index)}
+                          />
+                          <img
+                            src="/icons/close-circle-red.svg"
+                            alt="Cancel"
+                            className="w-[16px] h-[16px] cursor-pointer"
+                            onClick={() => handleCancel(index)}
                           />
                         </div>
-                      </div>
-                      {/* read-only original fields */}
-                      <div className="text-center text-[#888888]">
-                        {b.value}
-                      </div>
-                      <div className="text-center text-[#888888]">{b.unit}</div>
-                      {/* delete logic */}
-                      <div className="flex items-center justify-end gap-2">
-                        {b.status === 'confirm' ? (
-                          <div className="flex items-center justify-end w-full gap-1">
-                            <div className="text-Text-Quadruple text-[10px]">
-                              Sure?
-                            </div>
-                            <img
-                              src="/icons/tick-circle-green.svg"
-                              alt="Confirm"
-                              className="w-[16px] h-[16px] cursor-pointer"
-                              onClick={() => handleConfirm(index)}
-                            />
-                            <img
-                              src="/icons/close-circle-red.svg"
-                              alt="Cancel"
-                              className="w-[16px] h-[16px] cursor-pointer"
-                              onClick={() => handleCancel(index)}
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-[47px] pl-8 md:pl-5">
-                            <img
-                              src="/icons/trash-blue.svg"
-                              alt="Delete"
-                              className="cursor-pointer w-4 h-4"
-                              onClick={() => handleTrashClick(index)}
-                            />
-                          </div>
-                        )}
-                      </div>
+                      ) : (
+                        <div className="w-[47px] pl-8 md:pl-5">
+                          <img
+                            src="/icons/trash-blue.svg"
+                            alt="Delete"
+                            className="cursor-pointer w-4 h-4"
+                            onClick={() => handleTrashClick(index)}
+                          />
+                        </div>
+                      )}
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
