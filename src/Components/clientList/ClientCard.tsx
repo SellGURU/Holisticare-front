@@ -868,7 +868,7 @@ const ClientCard: FC<ClientCardProps> = ({
                           zIndex: 50,
                           opacity: 1,
                           wordWrap: 'break-word',
-                          maxWidth: '300px'
+                          maxWidth: '300px',
                         }}
                         delayShow={300}
                         delayHide={100}
