@@ -127,8 +127,8 @@ const EditModal: FC<EditModalProps> = ({
   const handleSubmit = () => {
     onSubmit({
       Category: formData.Category,
-      Recommendation: formData.Recommendation,
-      'Based on': formData['Based on'],
+      Recommendation: formData.Recommendation || '',
+      'Based on': formData['Based on'] || '',
       Intervnetion_content: formData.Intervnetion_content,
       'Practitioner Comments': practitionerComments,
       Instruction: defalts?.Instruction
@@ -138,8 +138,8 @@ const EditModal: FC<EditModalProps> = ({
         formData.Instruction.trim() !== ''
           ? [...client_versions, formData.Instruction]
           : client_versions,
-      Score: '0',
-      'System Score': '0',
+      Score: 0,
+      'System Score': 0,
       Dose: formData.Dose,
       label: defalts?.label,
       key_benefits:

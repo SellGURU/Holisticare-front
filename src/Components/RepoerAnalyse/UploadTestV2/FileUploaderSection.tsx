@@ -39,7 +39,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
               document.getElementById('uploadFile')?.click();
             }
           }}
-          className={`mt-1 rounded-2xl h-[160px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${uploadedFile ? 'cursor-auto' : ' cursor-pointer'}`}
+          className={`mt-1 rounded-2xl h-[120px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${uploadedFile ? 'cursor-auto' : ' cursor-pointer'}`}
         >
           <div className="w-full flex justify-center">
             <img src="/icons/upload-test.svg" alt="" />
@@ -69,7 +69,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
       {/* Right side - Uploaded file display */}
       <div className="text-sm w-full   font-medium text-Text-Primary">
         Uploaded File
-        <div className="mt-1 rounded-2xl h-[130px] bg-white flex flex-col overflow-y-auto">
+        <div className="mt-1 rounded-2xl h-[100px] bg-white flex flex-col ">
           {!uploadedFile ? (
             <div className="w-full flex flex-col items-center justify-center h-full">
               <img src="/icons/EmptyState-upload.svg" alt="" />
