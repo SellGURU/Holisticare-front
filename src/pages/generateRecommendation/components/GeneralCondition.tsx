@@ -185,12 +185,13 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
                 <img src="/icons/tick-square-blue.svg" alt="" />
               </div>
             ) : (
-              <img
-                src="/icons/close.svg"
-                alt=""
-                onClick={toggleSuggestions}
-                style={{ cursor: 'pointer' }}
-              />
+              <div className="cursor-pointer">
+                <SvgIcon
+                  src="/icons/close.svg"
+                  color="#383838"
+                  onClick={toggleSuggestions}
+                />
+              </div>
             )}
           </div>
           <ul className="mt-4 px-6">
@@ -253,7 +254,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           onAddNew={(value) => handleAddNew('clientInsights', value)}
         />
         <Card
-          title="Looking Forward"
+          title="Key Areas to Address"
           content={
             editMode.lookingForwards
               ? tempData.lookingForwards
@@ -303,7 +304,7 @@ const Card: React.FC<CardProps> = ({
   return (
     <div className="bg-white p-4 md:p-6 pt-4 border rounded-2xl border-Gray-50 shadow-100 md:min-w-[444px] w-full md:w-[33%] text-Text-Primary">
       <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
-        {title == 'Looking Forward' ? (
+        {title == 'Key Areas to Address' ? (
           <div className="flex items-center gap-2 text-Primary-DeepTeal">
             <img src="/icons/lamp-on.svg" alt="" />
             {title}
@@ -436,7 +437,7 @@ const Card: React.FC<CardProps> = ({
                 </div>
               ) : (
                 <li
-                  className={` ${item.length > 1 && 'list-disc'} text-xs text-justify mt-2`}
+                  className={` ${item.length > 1 && 'list-disc'} text-sm text-justify mt-2`}
                 >
                   {item}
                 </li>
