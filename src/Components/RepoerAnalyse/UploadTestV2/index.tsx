@@ -72,7 +72,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         });
 
         setfileType(res.data.lab_type);
-        setExtractedBiomarkers(res.data.extracted_biomarkers);
+        const sorted = (res.data.extracted_biomarkers || [])
+          .slice()
+          .sort((a: any, b: any) => {
+            const nameA = (
+              a.original_biomarker_name ||
+              a.biomarker ||
+              ''
+            ).toString();
+            const nameB = (
+              b.original_biomarker_name ||
+              b.biomarker ||
+              ''
+            ).toString();
+            return nameA.localeCompare(nameB, undefined, {
+              sensitivity: 'base',
+            });
+          });
+
+        setExtractedBiomarkers(sorted);
 
         // ✅ stop polling if biomarkers found
         if (
@@ -119,6 +137,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }) // adjust if backend expects id
       .then(() => {
         setUploadedFile(null);
+        setRowErrors({});
+        setAddedRowErrors({});
         setdeleteLoading(false);
       })
       .catch((err) => {

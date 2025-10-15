@@ -93,7 +93,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
     ) {
       setshowReview(true);
     }
-  }, [rowErrors, AddedRowErrors]);
+    else{
+      setshowReview(false)
+    }
+  }, [rowErrors, AddedRowErrors,uploadedFile]);
   return (
     <>
       <div
