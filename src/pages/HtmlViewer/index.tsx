@@ -9,7 +9,7 @@ import htmlMoch from './moch';
 const HtmlViewer = () => {
   // const { id } = useParams<{ id: string }>();
   // const [html, setHtml] = useState<string>('');
-  const [loading, ] = useState<boolean>(false);
+  const [loading] = useState<boolean>(false);
 
   // useEffect(() => {
   //   setLoading(true);
