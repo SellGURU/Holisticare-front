@@ -27,18 +27,18 @@ const defaultStyles: ElementStyles = {
   textAlign: 'left',
 };
 
-export default function StyleModal({ 
-  isOpen, 
-  onClose, 
-  onApplyStyle, 
-  currentStyles = defaultStyles 
+export default function StyleModal({
+  isOpen,
+  onClose,
+  onApplyStyle,
+  currentStyles = defaultStyles,
 }: StyleModalProps) {
   const [styles, setStyles] = useState<ElementStyles>(currentStyles);
 
   const handleStyleChange = (property: keyof ElementStyles, value: string) => {
-    setStyles(prev => ({
+    setStyles((prev) => ({
       ...prev,
-      [property]: value
+      [property]: value,
     }));
   };
 
@@ -50,7 +50,7 @@ export default function StyleModal({
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-end z-50"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
@@ -58,7 +58,7 @@ export default function StyleModal({
         }
       }}
     >
-      <div 
+      <div
         className={`bg-white rounded-l-lg p-6 w-[500px] h-full max-h-screen overflow-y-auto transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
@@ -77,10 +77,17 @@ export default function StyleModal({
         <div className="space-y-4">
           {/* Font Weight */}
           <div>
-            <label className="block text-sm font-medium mb-2">Font Weight</label>
+            <label className="block text-sm font-medium mb-2">
+              Font Weight
+            </label>
             <select
               value={styles.fontWeight}
-              onChange={(e) => handleStyleChange('fontWeight', e.target.value as 'normal' | 'bold')}
+              onChange={(e) =>
+                handleStyleChange(
+                  'fontWeight',
+                  e.target.value as 'normal' | 'bold',
+                )
+              }
               className="w-full p-2 border rounded"
             >
               <option value="normal">Normal</option>
@@ -93,7 +100,12 @@ export default function StyleModal({
             <label className="block text-sm font-medium mb-2">Font Style</label>
             <select
               value={styles.fontStyle}
-              onChange={(e) => handleStyleChange('fontStyle', e.target.value as 'normal' | 'italic')}
+              onChange={(e) =>
+                handleStyleChange(
+                  'fontStyle',
+                  e.target.value as 'normal' | 'italic',
+                )
+              }
               className="w-full p-2 border rounded"
             >
               <option value="normal">Normal</option>
@@ -103,10 +115,17 @@ export default function StyleModal({
 
           {/* Text Decoration */}
           <div>
-            <label className="block text-sm font-medium mb-2">Text Decoration</label>
+            <label className="block text-sm font-medium mb-2">
+              Text Decoration
+            </label>
             <select
               value={styles.textDecoration}
-              onChange={(e) => handleStyleChange('textDecoration', e.target.value as 'none' | 'underline' | 'line-through')}
+              onChange={(e) =>
+                handleStyleChange(
+                  'textDecoration',
+                  e.target.value as 'none' | 'underline' | 'line-through',
+                )
+              }
               className="w-full p-2 border rounded"
             >
               <option value="none">None</option>
@@ -128,15 +147,25 @@ export default function StyleModal({
 
           {/* Background Color */}
           <div>
-            <label className="block text-sm font-medium mb-2">Background Color</label>
+            <label className="block text-sm font-medium mb-2">
+              Background Color
+            </label>
             <input
               type="color"
-              value={styles.backgroundColor === 'transparent' ? '#ffffff' : styles.backgroundColor}
-              onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
+              value={
+                styles.backgroundColor === 'transparent'
+                  ? '#ffffff'
+                  : styles.backgroundColor
+              }
+              onChange={(e) =>
+                handleStyleChange('backgroundColor', e.target.value)
+              }
               className="w-full h-10 border rounded"
             />
             <button
-              onClick={() => handleStyleChange('backgroundColor', 'transparent')}
+              onClick={() =>
+                handleStyleChange('backgroundColor', 'transparent')
+              }
               className="mt-1 text-sm text-blue-600 hover:text-blue-800"
             >
               Transparent
@@ -151,32 +180,38 @@ export default function StyleModal({
               min="8"
               max="72"
               value={parseInt(styles.fontSize)}
-              onChange={(e) => handleStyleChange('fontSize', `${e.target.value}px`)}
+              onChange={(e) =>
+                handleStyleChange('fontSize', `${e.target.value}px`)
+              }
               className="w-full"
             />
-            <div className="text-center text-sm text-gray-600">{styles.fontSize}</div>
+            <div className="text-center text-sm text-gray-600">
+              {styles.fontSize}
+            </div>
           </div>
 
           {/* Text Align */}
           <div>
             <label className="block text-sm font-medium mb-2">Text Align</label>
             <div className="flex gap-2">
-              {(['left', 'center', 'right', 'justify'] as const).map((align) => (
-                <button
-                  key={align}
-                  onClick={() => handleStyleChange('textAlign', align)}
-                  className={`px-3 py-1 rounded text-sm ${
-                    styles.textAlign === align 
-                      ? 'bg-blue-500 text-white' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  {align === 'left' && 'Left'}
-                  {align === 'center' && 'Center'}
-                  {align === 'right' && 'Right'}
-                  {align === 'justify' && 'Justify'}
-                </button>
-              ))}
+              {(['left', 'center', 'right', 'justify'] as const).map(
+                (align) => (
+                  <button
+                    key={align}
+                    onClick={() => handleStyleChange('textAlign', align)}
+                    className={`px-3 py-1 rounded text-sm ${
+                      styles.textAlign === align
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    {align === 'left' && 'Left'}
+                    {align === 'center' && 'Center'}
+                    {align === 'right' && 'Right'}
+                    {align === 'justify' && 'Justify'}
+                  </button>
+                ),
+              )}
             </div>
           </div>
         </div>

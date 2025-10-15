@@ -20,8 +20,12 @@ export default function HtmlEditor({
   const loadedRef = useRef(false);
   const [originalHtml] = useState(html);
   const [isStyleModalOpen, setIsStyleModalOpen] = useState(false);
-  const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
-  const [currentStyles, setCurrentStyles] = useState<ElementStyles | null>(null);
+  const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(
+    null,
+  );
+  const [currentStyles, setCurrentStyles] = useState<ElementStyles | null>(
+    null,
+  );
   const [, setIconsAdded] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -29,14 +33,28 @@ export default function HtmlEditor({
   const getElementStyles = (element: HTMLElement): ElementStyles => {
     const computedStyle = window.getComputedStyle(element);
     return {
-      fontWeight: computedStyle.fontWeight === 'bold' || parseInt(computedStyle.fontWeight) >= 700 ? 'bold' : 'normal',
+      fontWeight:
+        computedStyle.fontWeight === 'bold' ||
+        parseInt(computedStyle.fontWeight) >= 700
+          ? 'bold'
+          : 'normal',
       fontStyle: computedStyle.fontStyle === 'italic' ? 'italic' : 'normal',
-      textDecoration: computedStyle.textDecoration.includes('underline') ? 'underline' : 
-                     computedStyle.textDecoration.includes('line-through') ? 'line-through' : 'none',
+      textDecoration: computedStyle.textDecoration.includes('underline')
+        ? 'underline'
+        : computedStyle.textDecoration.includes('line-through')
+          ? 'line-through'
+          : 'none',
       color: computedStyle.color,
-      backgroundColor: computedStyle.backgroundColor === 'rgba(0, 0, 0, 0)' ? 'transparent' : computedStyle.backgroundColor,
+      backgroundColor:
+        computedStyle.backgroundColor === 'rgba(0, 0, 0, 0)'
+          ? 'transparent'
+          : computedStyle.backgroundColor,
       fontSize: computedStyle.fontSize,
-      textAlign: computedStyle.textAlign as 'left' | 'center' | 'right' | 'justify',
+      textAlign: computedStyle.textAlign as
+        | 'left'
+        | 'center'
+        | 'right'
+        | 'justify',
     };
   };
 
@@ -44,32 +62,34 @@ export default function HtmlEditor({
   const toggleEditMode = () => {
     const newEditMode = !isEditMode;
     setIsEditMode(newEditMode);
-    
+
     if (iframeRef.current) {
-      const doc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+      const doc =
+        iframeRef.current.contentDocument ||
+        iframeRef.current.contentWindow?.document;
       if (!doc) return;
 
       const editableElements = doc.querySelectorAll('.editable');
-      
+
       if (newEditMode) {
         // Enable edit mode
-        editableElements.forEach(element => {
+        editableElements.forEach((element) => {
           (element as HTMLElement).contentEditable = 'true';
         });
-        
+
         // Add edit icons
         setTimeout(() => {
           addEditIcons(doc);
         }, 100);
       } else {
         // Disable edit mode
-        editableElements.forEach(element => {
+        editableElements.forEach((element) => {
           (element as HTMLElement).contentEditable = 'false';
         });
-        
+
         // Remove all edit icons
         const existingIcons = doc.querySelectorAll('.edit-icon');
-        existingIcons.forEach(icon => icon.remove());
+        existingIcons.forEach((icon) => icon.remove());
       }
     }
   };
@@ -78,17 +98,17 @@ export default function HtmlEditor({
   const addEditIcons = useCallback((doc: Document) => {
     const editableElements = doc.querySelectorAll('.editable');
     console.log('Found editable elements:', editableElements.length); // Debug log
-    
+
     if (editableElements.length === 0) {
       console.log('No editable elements found, retrying...');
       return;
     }
-    
+
     let iconsAddedCount = 0;
-    
+
     editableElements.forEach((element) => {
       const htmlElement = element as HTMLElement;
-      
+
       // Remove existing edit icon if any
       const existingIcon = htmlElement.querySelector('.edit-icon');
       if (existingIcon) {
@@ -143,10 +163,10 @@ export default function HtmlEditor({
         editIcon.style.transform = 'scale(1)';
         editIcon.style.background = '#3b82f6';
       });
-      
+
       iconsAddedCount++;
     });
-    
+
     console.log('Icons added:', iconsAddedCount);
     setIconsAdded(true);
   }, []);
@@ -168,8 +188,10 @@ export default function HtmlEditor({
       if (editable && doc.body) {
         // Make only elements with 'editable' class editable
         const editableElements = doc.querySelectorAll('.editable');
-        editableElements.forEach(element => {
-          (element as HTMLElement).contentEditable = isEditMode ? 'true' : 'false';
+        editableElements.forEach((element) => {
+          (element as HTMLElement).contentEditable = isEditMode
+            ? 'true'
+            : 'false';
         });
 
         // Add edit icons to editable elements after DOM is fully loaded
@@ -186,9 +208,9 @@ export default function HtmlEditor({
             });
           }
         };
-        
+
         addIconsWhenReady();
-        
+
         // Fallback timeout to ensure icons are added
         setTimeout(() => {
           addEditIcons(doc);
@@ -214,14 +236,14 @@ export default function HtmlEditor({
   // Separate useEffect to add icons when HTML changes
   useEffect(() => {
     if (!editable || !iframeRef.current || !isEditMode) return;
-    
+
     const iframe = iframeRef.current;
     const doc = iframe.contentDocument || iframe.contentWindow?.document;
     if (!doc) return;
 
     // Reset icons added state
     setIconsAdded(false);
-    
+
     // Try to add icons with multiple strategies
     const tryAddIcons = () => {
       const editableElements = doc.querySelectorAll('.editable');
@@ -235,7 +257,7 @@ export default function HtmlEditor({
 
     // Initial attempt
     setTimeout(tryAddIcons, 100);
-    
+
     // Additional attempts
     setTimeout(tryAddIcons, 500);
     setTimeout(tryAddIcons, 1000);
@@ -244,7 +266,7 @@ export default function HtmlEditor({
   // Function to apply styles to selected element
   const applyStyles = (styles: ElementStyles) => {
     if (!selectedElement) return;
-    
+
     const iframe = iframeRef.current;
     if (!iframe) return;
     const doc = iframe.contentDocument || iframe.contentWindow?.document;
@@ -253,7 +275,7 @@ export default function HtmlEditor({
     // Find the element in the iframe document
     const editableElements = doc.querySelectorAll('.editable');
     let targetElement: HTMLElement | null = null;
-    
+
     editableElements.forEach((element) => {
       if (element === selectedElement) {
         targetElement = element as HTMLElement;
@@ -264,9 +286,13 @@ export default function HtmlEditor({
       // Apply styles
       (targetElement as HTMLElement).style.fontWeight = styles.fontWeight;
       (targetElement as HTMLElement).style.fontStyle = styles.fontStyle;
-      (targetElement as HTMLElement).style.textDecoration = styles.textDecoration;
+      (targetElement as HTMLElement).style.textDecoration =
+        styles.textDecoration;
       (targetElement as HTMLElement).style.color = styles.color;
-      (targetElement as HTMLElement).style.backgroundColor = styles.backgroundColor === 'transparent' ? 'transparent' : styles.backgroundColor;
+      (targetElement as HTMLElement).style.backgroundColor =
+        styles.backgroundColor === 'transparent'
+          ? 'transparent'
+          : styles.backgroundColor;
       (targetElement as HTMLElement).style.fontSize = styles.fontSize;
       (targetElement as HTMLElement).style.textAlign = styles.textAlign;
 
@@ -290,15 +316,15 @@ export default function HtmlEditor({
     if (editable && doc.body) {
       // Make only elements with 'editable' class editable
       const editableElements = doc.querySelectorAll('.editable');
-      editableElements.forEach(element => {
+      editableElements.forEach((element) => {
         (element as HTMLElement).contentEditable = 'true';
       });
-      
+
       // Reset icons added state and remove existing icons
       setIconsAdded(false);
       const existingIcons = doc.querySelectorAll('.edit-icon');
-      existingIcons.forEach(icon => icon.remove());
-      
+      existingIcons.forEach((icon) => icon.remove());
+
       // Add edit icons to editable elements after DOM is fully loaded
       const addIconsWhenReady = () => {
         if (doc.readyState === 'complete') {
@@ -313,9 +339,9 @@ export default function HtmlEditor({
           });
         }
       };
-      
+
       addIconsWhenReady();
-      
+
       // Multiple fallback attempts
       setTimeout(() => addEditIcons(doc), 500);
       setTimeout(() => addEditIcons(doc), 1000);
@@ -331,8 +357,8 @@ export default function HtmlEditor({
             <button
               onClick={toggleEditMode}
               className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                isEditMode 
-                  ? 'bg-green-500 text-white hover:bg-green-600' 
+                isEditMode
+                  ? 'bg-green-500 text-white hover:bg-green-600'
                   : 'bg-blue-500 text-white hover:bg-blue-600'
               }`}
             >
@@ -356,7 +382,7 @@ export default function HtmlEditor({
         />
         {/* <div className="editable">این div هم قابل ویرایش است</div> */}
       </div>
-      
+
       <StyleModal
         isOpen={isStyleModalOpen}
         onClose={() => setIsStyleModalOpen(false)}
