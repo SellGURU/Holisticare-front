@@ -588,7 +588,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
               )}
             </div>
             {username && !aiMode ? (
-              <div className="px-2 w-full flex justify-center h-[80px]">
+              <div className="px-2 w-full flex justify-center h-[100px]">
                 <InputMentions
                   // onUpload={handleUpload}
                   // handleDeleteImage={handleDeleteImage}
@@ -609,7 +609,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       </div>
 
       <MainModal isOpen={isImageModalOpen} onClose={handleCloseImageModal}>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center ">
           {selectedImage && (
             <img
               src={selectedImage}
