@@ -643,7 +643,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     if (!isHaveReport) return;
 
     // setLoadingHtmlReport(true);
-    navigate(`/html-viewer?id=${resolvedMemberID}`);
+    navigate(`/html-previewer/${resolvedMemberID}`);
     // Application.getHtmlReport(resolvedMemberID?.toString() || '')
     //   .then((res) => {
     //     try {
