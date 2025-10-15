@@ -28,34 +28,114 @@ export default function HtmlEditor({
   );
   const [, setIconsAdded] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedText, setSelectedText] = useState<string>('');
+  const [showTextFormatting, setShowTextFormatting] = useState(false);
 
-  // Function to get current styles from an element
-  const getElementStyles = (element: HTMLElement): ElementStyles => {
-    const computedStyle = window.getComputedStyle(element);
-    return {
-      fontWeight:
-        computedStyle.fontWeight === 'bold' ||
-        parseInt(computedStyle.fontWeight) >= 700
-          ? 'bold'
-          : 'normal',
-      fontStyle: computedStyle.fontStyle === 'italic' ? 'italic' : 'normal',
-      textDecoration: computedStyle.textDecoration.includes('underline')
-        ? 'underline'
-        : computedStyle.textDecoration.includes('line-through')
-          ? 'line-through'
-          : 'none',
-      color: computedStyle.color,
-      backgroundColor:
-        computedStyle.backgroundColor === 'rgba(0, 0, 0, 0)'
-          ? 'transparent'
-          : computedStyle.backgroundColor,
-      fontSize: computedStyle.fontSize,
-      textAlign: computedStyle.textAlign as
-        | 'left'
-        | 'center'
-        | 'right'
-        | 'justify',
+  // Helper function to detect Tailwind classes and get their values
+  const getTailwindStyleValue = (element: HTMLElement, property: string) => {
+    const classList = element.className;
+    
+    // Common Tailwind mappings
+    const tailwindMappings: { [key: string]: { [key: string]: string } } = {
+      fontWeight: {
+        'font-bold': 'bold',
+        'font-semibold': 'bold',
+        'font-medium': 'normal',
+        'font-normal': 'normal',
+        'font-light': 'normal',
+        'font-thin': 'normal'
+      },
+      fontStyle: {
+        'italic': 'italic',
+        'not-italic': 'normal'
+      },
+      textDecoration: {
+        'underline': 'underline',
+        'line-through': 'line-through',
+        'no-underline': 'none'
+      },
+      textAlign: {
+        'text-left': 'left',
+        'text-center': 'center',
+        'text-right': 'right',
+        'text-justify': 'justify'
+      }
     };
+
+    const mappings = tailwindMappings[property];
+    if (mappings) {
+      for (const [className, value] of Object.entries(mappings)) {
+        if (classList.includes(className)) {
+          return value;
+        }
+      }
+    }
+    
+    return null;
+  };
+
+  // Function to handle text selection in editable elements
+  const handleTextSelection = (doc: Document) => {
+    const selection = doc.getSelection();
+    console.log('Selection detected:', selection?.toString()); // Debug log
+    
+    if (selection && selection.toString().trim().length > 0) {
+      const selectedText = selection.toString().trim();
+      console.log('Selected text:', selectedText); // Debug log
+      setSelectedText(selectedText);
+      setShowTextFormatting(true);
+    } else {
+      setSelectedText('');
+      setShowTextFormatting(false);
+    }
+  };
+
+  // Function to apply formatting to selected text
+  const applyTextFormatting = (format: 'bold' | 'italic' | 'underline') => {
+    if (!iframeRef.current) return;
+    
+    const doc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+    if (!doc) return;
+
+    const selection = doc.getSelection();
+    if (!selection || selection.toString().trim().length === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const selectedText = selection.toString();
+    
+    // Create a new element with the formatting
+    let formattedElement: HTMLElement;
+    switch (format) {
+      case 'bold':
+        formattedElement = doc.createElement('strong');
+        break;
+      case 'italic':
+        formattedElement = doc.createElement('em');
+        break;
+      case 'underline':
+        formattedElement = doc.createElement('u');
+        break;
+      default:
+        return;
+    }
+    
+    formattedElement.textContent = selectedText;
+    
+    // Replace the selected text with the formatted element
+    range.deleteContents();
+    range.insertNode(formattedElement);
+    
+    // Clear selection
+    selection.removeAllRanges();
+    
+    // Hide formatting toolbar
+    setShowTextFormatting(false);
+    setSelectedText('');
+    
+    // Trigger onChange to update parent component
+    if (onChange) {
+      onChange(doc.documentElement.outerHTML);
+    }
   };
 
   // Function to toggle edit mode
@@ -119,6 +199,7 @@ export default function HtmlEditor({
       const editIcon = doc.createElement('div');
       editIcon.className = 'edit-icon';
       editIcon.innerHTML = '✏️';
+      editIcon.contentEditable = 'false';
       editIcon.style.cssText = `
         position: absolute;
         right: -12px;
@@ -137,6 +218,14 @@ export default function HtmlEditor({
         transition: all 0.2s ease;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         border: 2px solid white;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        pointer-events: auto;
+        -webkit-touch-callout: none;
+        -webkit-user-drag: none;
+        -khtml-user-select: none;
       `;
 
       // Make the editable element itself relatively positioned and inline-block
@@ -144,12 +233,87 @@ export default function HtmlEditor({
       htmlElement.style.display = 'inline-block';
       htmlElement.appendChild(editIcon);
 
+      // Add selection event listeners to the element itself
+      htmlElement.addEventListener('mouseup', () => {
+        if (isEditMode) {
+          setTimeout(() => {
+            handleTextSelection(doc);
+          }, 10);
+        }
+      });
+
+      htmlElement.addEventListener('keyup', () => {
+        if (isEditMode) {
+          setTimeout(() => {
+            handleTextSelection(doc);
+          }, 10);
+        }
+      });
+
       // Add click event to edit icon
       editIcon.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         setSelectedElement(htmlElement);
-        setCurrentStyles(getElementStyles(htmlElement));
+        
+        // Get current styles from the element in iframe
+        const computedStyle = doc.defaultView?.getComputedStyle(htmlElement);
+        if (computedStyle) {
+          // Parse font size to get numeric value
+          const fontSize = computedStyle.fontSize;
+          const fontSizeNum = parseFloat(fontSize);
+          
+          // Parse color to hex format
+          const colorToHex = (color: string) => {
+            if (color.startsWith('rgb')) {
+              const rgb = color.match(/\d+/g);
+              if (rgb && rgb.length >= 3) {
+                const r = parseInt(rgb[0]);
+                const g = parseInt(rgb[1]);
+                const b = parseInt(rgb[2]);
+                return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+              }
+            }
+            return color;
+          };
+
+          // Parse background color
+          const bgColor = computedStyle.backgroundColor;
+          const bgColorHex = bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent' 
+            ? 'transparent' 
+            : colorToHex(bgColor);
+
+          // Check for inline styles first, then fall back to computed styles
+          const inlineStyle = htmlElement.style;
+          const hasInlineStyles = inlineStyle.cssText.length > 0;
+
+          const currentStyles: ElementStyles = {
+            fontWeight: hasInlineStyles && inlineStyle.fontWeight 
+              ? (inlineStyle.fontWeight as 'bold' | 'normal')
+              : (getTailwindStyleValue(htmlElement, 'fontWeight') as 'bold' | 'normal') || (computedStyle.fontWeight === 'bold' || parseInt(computedStyle.fontWeight) >= 700 ? 'bold' : 'normal'),
+            fontStyle: hasInlineStyles && inlineStyle.fontStyle 
+              ? (inlineStyle.fontStyle as 'normal' | 'italic')
+              : (getTailwindStyleValue(htmlElement, 'fontStyle') as 'normal' | 'italic') || (computedStyle.fontStyle === 'italic' ? 'italic' : 'normal'),
+            textDecoration: hasInlineStyles && inlineStyle.textDecoration 
+              ? (inlineStyle.textDecoration as 'none' | 'underline' | 'line-through')
+              : (getTailwindStyleValue(htmlElement, 'textDecoration') as 'none' | 'underline' | 'line-through') || (computedStyle.textDecoration.includes('underline') ? 'underline' : 
+                 computedStyle.textDecoration.includes('line-through') ? 'line-through' : 'none'),
+            color: hasInlineStyles && inlineStyle.color 
+              ? inlineStyle.color 
+              : colorToHex(computedStyle.color),
+            backgroundColor: hasInlineStyles && inlineStyle.backgroundColor 
+              ? (inlineStyle.backgroundColor === 'transparent' ? 'transparent' : inlineStyle.backgroundColor)
+              : bgColorHex,
+            fontSize: hasInlineStyles && inlineStyle.fontSize 
+              ? inlineStyle.fontSize 
+              : `${fontSizeNum}px`,
+            textAlign: hasInlineStyles && inlineStyle.textAlign 
+              ? inlineStyle.textAlign as 'left' | 'center' | 'right' | 'justify'
+              : getTailwindStyleValue(htmlElement, 'textAlign') as 'left' | 'center' | 'right' | 'justify' || computedStyle.textAlign as 'left' | 'center' | 'right' | 'justify',
+          };
+          setCurrentStyles(currentStyles);
+        }
+        
         setIsStyleModalOpen(true);
       });
 
@@ -164,12 +328,28 @@ export default function HtmlEditor({
         editIcon.style.background = '#3b82f6';
       });
 
+      // Prevent text selection on the icon
+      editIcon.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      editIcon.addEventListener('selectstart', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      editIcon.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
       iconsAddedCount++;
     });
 
     console.log('Icons added:', iconsAddedCount);
     setIconsAdded(true);
-  }, []);
+  }, [isEditMode]);
 
   // درج HTML یک بار و فعال کردن ویرایشگر
   useEffect(() => {
@@ -219,6 +399,41 @@ export default function HtmlEditor({
         // Add event listener to the document for input events
         doc.addEventListener('input', () => {
           if (onChange) onChange(doc.documentElement.outerHTML);
+        });
+
+        // Add event listener for text selection
+        doc.addEventListener('mouseup', () => {
+          if (isEditMode) {
+            setTimeout(() => {
+              handleTextSelection(doc);
+            }, 10);
+          }
+        });
+
+        doc.addEventListener('keyup', () => {
+          if (isEditMode) {
+            setTimeout(() => {
+              handleTextSelection(doc);
+            }, 10);
+          }
+        });
+
+        // Also listen for selection change
+        doc.addEventListener('selectionchange', () => {
+          if (isEditMode) {
+            setTimeout(() => {
+              handleTextSelection(doc);
+            }, 10);
+          }
+        });
+
+        // Hide formatting toolbar when clicking outside
+        doc.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement;
+          if (!target.closest('.text-formatting-toolbar')) {
+            setShowTextFormatting(false);
+            setSelectedText('');
+          }
         });
       }
 
@@ -370,6 +585,15 @@ export default function HtmlEditor({
             >
               Reset
             </button>
+            {/* <button
+              onClick={() => {
+                setSelectedText('Test text');
+                setShowTextFormatting(true);
+              }}
+              className="px-2 py-1 rounded bg-yellow-500 text-white hover:bg-yellow-600 text-sm"
+            >
+              Test Toolbar
+            </button> */}
           </>
         )}
       </div>
@@ -389,6 +613,52 @@ export default function HtmlEditor({
         onApplyStyle={applyStyles}
         currentStyles={currentStyles || undefined}
       />
+
+      {/* Text Formatting Toolbar */}
+      {showTextFormatting && selectedText && (
+        <div className="text-formatting-toolbar fixed bg-white border rounded-lg shadow-lg p-2 flex gap-2 z-50" 
+             style={{ 
+               top: '10px', 
+               left: '50%', 
+               transform: 'translateX(-50%)',
+               border: '2px solid #3b82f6'
+             }}>
+          <span className="text-sm text-gray-600 px-2 py-1">
+            "{selectedText.substring(0, 20)}{selectedText.length > 20 ? '...' : ''}"
+          </span>
+          <button
+            onClick={() => applyTextFormatting('bold')}
+            className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm font-bold"
+            title="Bold"
+          >
+            B
+          </button>
+          <button
+            onClick={() => applyTextFormatting('italic')}
+            className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm italic"
+            title="Italic"
+          >
+            I
+          </button>
+          <button
+            onClick={() => applyTextFormatting('underline')}
+            className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm underline"
+            title="Underline"
+          >
+            U
+          </button>
+          <button
+            onClick={() => {
+              setShowTextFormatting(false);
+              setSelectedText('');
+            }}
+            className="px-3 py-1 bg-red-200 hover:bg-red-300 rounded text-sm"
+            title="Cancel"
+          >
+            ×
+          </button>
+        </div>
+      )}
     </div>
   );
 }

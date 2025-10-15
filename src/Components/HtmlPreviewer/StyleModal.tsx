@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface StyleModalProps {
   isOpen: boolean;
@@ -34,6 +34,14 @@ export default function StyleModal({
   currentStyles = defaultStyles,
 }: StyleModalProps) {
   const [styles, setStyles] = useState<ElementStyles>(currentStyles);
+  const [previewText, setPreviewText] = useState('Preview Text');
+
+  // Update styles when currentStyles prop changes
+  useEffect(() => {
+    if (currentStyles) {
+      setStyles(currentStyles);
+    }
+  }, [currentStyles]);
 
   const handleStyleChange = (property: keyof ElementStyles, value: string) => {
     setStyles((prev) => ({
@@ -50,7 +58,7 @@ export default function StyleModal({
   if (!isOpen) return null;
 
   return (
-    <div
+    <div 
       className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-end z-50"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
@@ -58,12 +66,71 @@ export default function StyleModal({
         }
       }}
     >
-      <div
-        className={`bg-white rounded-l-lg p-6 w-[500px] h-full max-h-screen overflow-y-auto transform transition-transform duration-300 ease-in-out ${
+      <div 
+        className={`bg-white rounded-l-lg w-[800px] h-full max-h-screen transform transition-transform duration-300 ease-in-out flex ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Preview Panel */}
+        <div className="w-1/2 bg-gray-50 border-r border-gray-200 p-4 flex flex-col">
+          <h4 className="text-lg font-semibold mb-4 text-gray-700">Preview</h4>
+          
+          {/* Preview Text Input */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2 text-gray-600">Preview Text</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={previewText}
+                onChange={(e) => setPreviewText(e.target.value)}
+                className="flex-1 p-2 border rounded text-sm"
+                placeholder="Enter preview text..."
+              />
+              <button
+                onClick={() => setPreviewText('Lorem ipsum dolor sit amet')}
+                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm"
+                title="Sample text"
+              >
+                Sample
+              </button>
+            </div>
+          </div>
+
+          {/* Live Preview */}
+          <div className="flex-1 border rounded bg-white p-4">
+            <div className="text-sm text-gray-500 mb-2">Live Preview:</div>
+            <div 
+              className="min-h-[200px] p-4 border rounded"
+              style={{
+                fontWeight: styles.fontWeight,
+                fontStyle: styles.fontStyle,
+                textDecoration: styles.textDecoration,
+                color: styles.color,
+                backgroundColor: styles.backgroundColor === 'transparent' ? 'transparent' : styles.backgroundColor,
+                fontSize: styles.fontSize,
+                textAlign: styles.textAlign,
+              }}
+            >
+              {previewText || 'Preview Text'}
+            </div>
+          </div>
+
+          {/* Style Summary */}
+          <div className="mt-4 p-3 bg-blue-50 rounded text-sm">
+            <div className="font-medium text-blue-800 mb-2">Current Styles:</div>
+            <div className="space-y-1 text-blue-700">
+              <div>Weight: {styles.fontWeight}</div>
+              <div>Style: {styles.fontStyle}</div>
+              <div>Decoration: {styles.textDecoration}</div>
+              <div>Size: {styles.fontSize}</div>
+              <div>Align: {styles.textAlign}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Style Controls Panel */}
+        <div className="w-1/2 p-6 overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Edit Style</h3>
           <button
@@ -224,11 +291,19 @@ export default function StyleModal({
             Apply
           </button>
           <button
+            onClick={() => setStyles(currentStyles || defaultStyles)}
+            className="px-3 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+            title="Reset to original"
+          >
+            Reset
+          </button>
+          <button
             onClick={onClose}
             className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"
           >
             Cancel
           </button>
+        </div>
         </div>
       </div>
     </div>
