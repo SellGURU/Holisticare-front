@@ -813,7 +813,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       id="Need Focus Biomarker"
                       className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 "
                     >
-                      Need Focus Biomarkers
+                      "Need Focus" Biomarkers
                     </div>
                     <div className=" text-Text-Secondary text-[12px]">
                       {referenceData?.total_biomarker_note || ''}
