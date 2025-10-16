@@ -30,6 +30,20 @@ const HtmlViewer = () => {
       });
   }, [id]);
 
+  const handleUpdateHtmlReport = (html: string) => {
+    setLoading(true);
+    Application.updateHtmlReport({ member_id: id, html_report: html })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error('Error updating HTML report:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -43,7 +57,11 @@ const HtmlViewer = () => {
 
   return (
     <>
-      <HtmlPreviewer html={html} editable={true}></HtmlPreviewer>
+      <HtmlPreviewer
+        html={html}
+        editable={true}
+        onSave={handleUpdateHtmlReport}
+      />
     </>
   );
 };

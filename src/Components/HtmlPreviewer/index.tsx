@@ -7,6 +7,7 @@ type Props = {
   sandbox?: string;
   className?: string;
   onChange?: (html: string) => void;
+  onSave: (html: string) => void;
 };
 
 export default function HtmlEditor({
@@ -15,6 +16,7 @@ export default function HtmlEditor({
   sandbox = 'allow-scripts allow-same-origin',
   className = '',
   onChange,
+  onSave,
 }: Props) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const loadedRef = useRef(false);
@@ -28,6 +30,7 @@ export default function HtmlEditor({
   );
   const [, setIconsAdded] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  console.log('isEditMode', isEditMode);
   const [selectedText, setSelectedText] = useState<string>('');
   const [showTextFormatting, setShowTextFormatting] = useState(false);
 
@@ -414,7 +417,7 @@ export default function HtmlEditor({
       doc.write(html);
       doc.close();
 
-      if (editable && doc.body) {
+      if (editable && doc.body && isEditMode) {
         // Make only elements with 'editable' class editable
         const editableElements = doc.querySelectorAll('.editable');
         editableElements.forEach((element) => {
@@ -568,6 +571,7 @@ export default function HtmlEditor({
   };
 
   const handleReset = () => {
+    setIsEditMode(false);
     const iframe = iframeRef.current;
     if (!iframe) return;
     const doc = iframe.contentDocument || iframe.contentWindow?.document;
@@ -622,7 +626,7 @@ export default function HtmlEditor({
               onClick={toggleEditMode}
               className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
                 isEditMode
-                  ? 'bg-green-500 text-white hover:bg-green-600'
+                  ? 'bg-purple-500 text-white hover:bg-purple-600'
                   : 'bg-blue-500 text-white hover:bg-blue-600'
               }`}
             >
@@ -634,6 +638,20 @@ export default function HtmlEditor({
             >
               Reset
             </button>
+            {isEditMode && (
+              <button
+                onClick={() => {
+                  setIsEditMode(false);
+                  onSave(
+                    iframeRef.current?.contentDocument?.documentElement
+                      .outerHTML || '',
+                  );
+                }}
+                className="px-2 py-1 rounded bg-green-500 text-white hover:bg-green-600 text-sm"
+              >
+                Save
+              </button>
+            )}
             {/* <button
               onClick={() => {
                 setSelectedText('Test text');
