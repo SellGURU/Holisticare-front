@@ -557,7 +557,9 @@ input:-webkit-autofill:active {
     var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
 }
 @keyframes dot-bounce {
-  0%, 80%, 100% {
+  0%,
+  80%,
+  100% {
     transform: scale(0);
     opacity: 0.4;
   }
