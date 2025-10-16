@@ -338,18 +338,24 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
                   />
                 )}
               </li>
-              <Tooltip
-                place="left"
-                className="!bg-white !w-fit  !text-wrap 
-                !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                style={{
-                  zIndex: 9999,
-                  pointerEvents: 'none',
-                }}
-                id={el.name}
-              >
-                {el.name}
-              </Tooltip>
+              {!(
+                isHolisticPlan &&
+                el.name !== "Expert's Note" &&
+                el.name !== 'Client Info'
+              ) && (
+                <Tooltip
+                  place="left"
+                  className="!bg-white !w-fit  !text-wrap 
+      !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  style={{
+                    zIndex: 9999,
+                    pointerEvents: 'none',
+                  }}
+                  id={el.name}
+                >
+                  {el.name}
+                </Tooltip>
+              )}
             </>
           ))}
         </ul>
