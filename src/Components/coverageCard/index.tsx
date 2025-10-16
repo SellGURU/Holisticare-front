@@ -45,7 +45,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
               return (
                 <div
                   key={index}
-                  className={`flex select-none items-start gap-2 text-Text-Primary text-xs  ${
+                  className={`flex select-none text-justify items-start gap-2 text-Text-Primary text-xs  ${
                     isChecked && ' line-through'
                   }`}
                 >
