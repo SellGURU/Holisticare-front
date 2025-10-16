@@ -816,7 +816,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       id="Need Focus Biomarker"
                       className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 "
                     >
-                      Need Focus Biomarkers
+                      "Need Focus" Biomarkers
                     </div>
                     <div className=" text-Text-Secondary text-[12px]">
                       {referenceData?.total_biomarker_note || ''}
@@ -1004,6 +1004,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {TreatMentPlanData?.length > 0 && isHaveReport ? (
                     <div className="flex flex-col items-center gap-1">
                       <ButtonSecondary
+                        disabled={loadingHtmlReport}
                         ClassName="rounded-[20px] h-[24px] w-[168px]"
                         onClick={handleGetHtmlReport}
                       >
