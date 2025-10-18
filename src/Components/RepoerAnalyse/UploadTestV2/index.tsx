@@ -584,13 +584,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   <div className="flex w-full items-center gap-6">
                     <div
                       onClick={() => {
-                        if (questionnaires.length > 0) {
-                          return;
-                        } else {
-                          setstep(1);
-                        }
+                        setstep(1);
                       }}
-                      className={` ${questionnaires.length > 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
+                      className={`cursor-pointer w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {isSaveClicked &&
                         extractedBiomarkers.length + addedBiomarkers.length >
