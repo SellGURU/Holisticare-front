@@ -6,6 +6,7 @@ import { ComboBar } from '../../Components';
 import { useState, useEffect, useRef } from 'react';
 import { subscribe, unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
+import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
@@ -64,6 +65,7 @@ const Report = () => {
   }, []);
   return (
     <div className="w-full h-full">
+      <FullScreenModal />
       <div className="  w-full sticky z-50 top-0 ">
         <TopBar
           showCombo={showCombo}
