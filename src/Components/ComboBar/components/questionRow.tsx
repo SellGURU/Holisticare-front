@@ -2,7 +2,8 @@ import { useRef, useState, useEffect } from 'react';
 import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
+import { publish } from '../../../utils/event';
 // import questionsDataMoch from './questions/data.json';
 // import SvgIcon from "../../../utils/svgIcon";
 
@@ -65,7 +66,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   }, [isAssigned, countdown]);
 
   console.log(viewQuestienry);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   return (
     <>
       <div className=" bg-white border relative border-Gray-50  px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
@@ -127,7 +128,10 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         //  onTryComplete();
                         // setshowModal(false);
 
-                        navigate(`/surveys/${id}/${el.unique_id}`);
+                        // navigate(`/surveys/${id}/${el.unique_id}`);
+                        publish('openFullscreenModal', {
+                          url: `/surveys/${id}/${el.unique_id}`,
+                        });
                         // window.open(`/surveys/${id}/${el.unique_id}`, '_blank');
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
