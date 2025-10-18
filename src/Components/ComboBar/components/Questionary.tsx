@@ -86,29 +86,29 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
     );
   };
   const getQuestionnaires = () => {
-      Application.getQuestionary_tracking({ member_id: id })
-        .then((res) => {
-          if (res.data) {
-            setData(res.data);
-            if (res.data.length > 0) {
-              if (res.data[0].status === 'completed') {
-                publish('questionaryLength', {
-                  questionaryLength: true,
-                });
-              }
+    Application.getQuestionary_tracking({ member_id: id })
+      .then((res) => {
+        if (res.data) {
+          setData(res.data);
+          if (res.data.length > 0) {
+            if (res.data[0].status === 'completed') {
+              publish('questionaryLength', {
+                questionaryLength: true,
+              });
             }
-          } else {
-            throw new Error('Unexpected data format');
           }
-        })
-        .catch((err) => {
-          console.error(err);
-          // setError("Failed to fetch client data");
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-  }
+        } else {
+          throw new Error('Unexpected data format');
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        // setError("Failed to fetch client data");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
   useEffect(() => {
     if (isOpen) {
       setIsLoading(true);

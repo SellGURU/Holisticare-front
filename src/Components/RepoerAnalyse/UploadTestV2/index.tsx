@@ -645,7 +645,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                             src="/icons/tick-circle-upload.svg"
                             alt=""
                           />
-                          <span className=""> {isLoadingQuestionnaires ? '...' : questionnaires.length}</span>
+                          <span className="">
+                            {' '}
+                            {isLoadingQuestionnaires
+                              ? '...'
+                              : questionnaires.length}
+                          </span>
                           Questionnaire filled out!
                         </div>
                       )}

@@ -104,17 +104,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   };
   const [isLoadingQuestionnaires, setIsLoadingQuestionnaires] = useState(false);
-  subscribe("reloadQuestionnaires",() => {
+  subscribe('reloadQuestionnaires', () => {
     setIsLoadingQuestionnaires(true);
     Application.getPatientsInfo({
       member_id: resolvedMemberID,
-    }).then((res) => {
-      setQuestionnaires(res.data.questionnaires);
-      setIsLoadingQuestionnaires(false);
-    }).finally(() => {
-      setIsLoadingQuestionnaires(false);
-    });
-  })
+    })
+      .then((res) => {
+        setQuestionnaires(res.data.questionnaires);
+        setIsLoadingQuestionnaires(false);
+      })
+      .finally(() => {
+        setIsLoadingQuestionnaires(false);
+      });
+  });
   const fetchPatentDataWithState = () => {
     if (isShare) {
       Application.getPatientsInfoShare(

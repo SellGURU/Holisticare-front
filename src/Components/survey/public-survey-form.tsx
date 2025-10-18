@@ -570,7 +570,7 @@ export function PublicSurveyForm({
         }).finally(() => {
           setTimeout(() => {
             // publish('closeFullscreenModal',{});
-            parent.postMessage({ type: "closeFullscreenModal", data: "" }, "*");            
+            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
             // navigate('/report/' + memberId + '/' + 'N');
           }, 2000);
         });
