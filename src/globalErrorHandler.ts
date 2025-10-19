@@ -23,7 +23,7 @@ export function initGlobalErrorHandler() {
           <img src="/icons/server-down.svg" alt="Error Illustration" class="w-40 h-40 mb-6 animate-bounce-slow" />
           <h1 class="text-2xl font-bold text-red-600 mb-2">Something went wrong</h1>
           <p class="text-sm text-gray-700 mb-4 max-w-md">
-            Sorry, the application encountered an unexpected error. Please refresh the page or try again later. 
+          Sorry for the pause! We're deploying a new version to enhance your experience. Back in a few minutes!
           </p>
           <button onclick="window.location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
             Refresh Page

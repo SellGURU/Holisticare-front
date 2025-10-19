@@ -543,16 +543,38 @@ input:-webkit-autofill:active {
 .react-tooltip {
   background-color: #ffffff !important;
   opacity: 1 !important;
+
   border: 1px solid #e9edf5 !important;
   border-radius: 6px !important;
   padding: 6px !important;
   font-size: 10px !important;
-  font-weight: 400 !important;
+  font-weight: 500 !important;
   line-height: 20px !important;
-  color: #888888 !important;
+  color: #383838 !important;
   --tw-shadow: 0px 2px 4px -2px #18274b1f, 0px 4px 4px -2px #18274b14 !important;
   --tw-shadow-colored: 0px 2px 4px -2px var(--tw-shadow-color),
     0px 4px 4px -2px var(--tw-shadow-color) !important;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
     var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+}
+@keyframes dot-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-dot1 {
+  animation: dot-bounce 1.4s infinite ease-in-out;
+}
+.animate-dot2 {
+  animation: dot-bounce 1.4s infinite ease-in-out 0.2s;
+}
+.animate-dot3 {
+  animation: dot-bounce 1.4s infinite ease-in-out 0.4s;
 }

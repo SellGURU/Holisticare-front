@@ -420,7 +420,7 @@ export const GenerateRecommendation = () => {
           </div>
         </div>
       </div>
-      <div className=" px-4 md:px-8">
+      <div className="  px-4 md:px-8">
         <div className=" mt-[220px] w-full mb-6 overflow-x-hidden">
           {currentStepIndex === 0 ? (
             <GeneralCondition

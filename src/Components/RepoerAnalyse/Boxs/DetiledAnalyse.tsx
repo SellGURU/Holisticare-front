@@ -156,7 +156,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                 </div>
                 <div className="TextStyle-Body-3 text-Text-Secondary ml-2">
                   {data?.out_of_ref}{' '}
-                  {data.out_of_ref > 1 ? 'Needs Focus' : 'Need Focus'}{' '}
+                  {data.out_of_ref > 1 ? '"Needs Focus"' : '"Need Focus"'}{' '}
                 </div>
               </div>
             </div>
