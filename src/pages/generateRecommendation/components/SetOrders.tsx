@@ -377,7 +377,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="bg-white rounded-2xl shadow-100 p-4 md:p-6 border border-Gray-50">
+      <div className="bg-white rounded-2xl h-[65vh] shadow-100 p-4 md:p-6 border border-Gray-50">
         <CoverageCard progress={progress} details={details} />
         <div className="flex mt-4 w-full flex-wrap ss:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
           <div className="flex w-[80%]   md:w-[50%] gap-8 md:gap-[80px]">
@@ -447,7 +447,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
             scrollBehavior: 'smooth',
           }}
           ref={activityContainer}
-          className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 md:pb-8 px-3 md:px-6 min-h-[400px] overflow-y-auto"
+          className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 md:pb-8 px-3 md:px-6 h-[80%] overflow-y-auto"
         >
           {data
             ?.filter((el: any) => el.Category == activeCategory)
