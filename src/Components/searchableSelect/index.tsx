@@ -34,16 +34,27 @@ const SearchSelect: React.FC<SelectProps> = ({
   const [selectedValue, setSelectedValue] = useState(value || '');
   const [searchTerm, setSearchTerm] = useState('');
   const selectWrapperRef = useRef<HTMLDivElement>(null);
+  const [filteredOptions, setFilteredOptions] = useState(options);
 
   // Filtered options based on search
-  const filteredOptions = options.filter((opt) =>
-    opt.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  useEffect(() => {
+    if (searchTerm !== '') {
+      const filtered = options
+        .filter((opt) => opt.toLowerCase().includes(searchTerm.toLowerCase()))
+        .filter((opt, index, arr) => arr.indexOf(opt) === index); // Remove duplicates
+      setFilteredOptions(filtered);
+    } else {
+      // Remove duplicates from original options as well
+      const uniqueOptions = options.filter(
+        (opt, index, arr) => arr.indexOf(opt) === index,
+      );
+      setFilteredOptions(uniqueOptions);
+    }
+  }, [searchTerm, options]);
 
   useEffect(() => {
     if (isOpen && onMenuOpen) onMenuOpen();
-  }, [isOpen]);
-  console.log(filteredOptions);
+  }, [isOpen, onMenuOpen]);
 
   useEffect(() => {
     setSelectedValue(value || '');
