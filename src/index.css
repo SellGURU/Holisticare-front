@@ -578,3 +578,29 @@ input:-webkit-autofill:active {
 .animate-dot3 {
   animation: dot-bounce 1.4s infinite ease-in-out 0.4s;
 }
+.Custom-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #005F73 #f4f4f4; /* thumb, track (for Firefox) */
+  scroll-behavior: smooth;
+}
+
+/* For Chrome, Edge, Safari */
+.Custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.Custom-scrollbar::-webkit-scrollbar-track {
+  background: #f4f4f4; /* Light gray background */
+  border-radius: 10px;
+}
+
+.Custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #9ed8cc, #6fc1b3); /* Soft teal gradient */
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.Custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6fc1b3, #56a79a); /* Slightly darker on hover */
+}

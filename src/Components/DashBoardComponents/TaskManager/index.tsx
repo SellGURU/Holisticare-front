@@ -305,7 +305,7 @@ const TaskManager = () => {
             </div>
           </div>
         ) : (
-          <ul className="grid grid-cols-1 sm:grid-cols-2 pr-1 gap-3 overflow-auto task-manager-content">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 pr-1 gap-3 Custom-scrollbar overflow-auto task-manager-content">
             {tasks.map((task) => (
               <li
                 key={task.task_id}

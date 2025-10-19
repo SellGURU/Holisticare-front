@@ -93,7 +93,7 @@ const Employes: React.FC = () => {
           </div>
         </div>
       ) : (
-        <ul className="space-y-3 employees-content overflow-auto pr-1">
+        <ul className="space-y-3 employees-content Custom-scrollbar overflow-auto pr-1">
           {Employees.map((employee, index) => (
             <EmployeeRow employee={employee} index={index}></EmployeeRow>
           ))}
