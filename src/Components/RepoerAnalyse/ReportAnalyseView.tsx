@@ -831,8 +831,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     >
                       "Need Focus" Biomarkers
                     </div>
-                    <div className=" text-Text-Secondary text-[12px]">
-                      {referenceData?.total_biomarker_note || ''}
+                    <div className="text-Text-Secondary text-[12px]">
+                      {referenceData?.total_biomarker_note || '' || ''}
                     </div>
                   </div>
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
