@@ -86,8 +86,13 @@ const Login = () => {
         <div className="text-xl font-medium text-Text-Primary text-center">
           Welcome Back!
         </div>
-        <div className="mt-6 grid gap-4">
+        <form
+          id="login-form"
+          className="mt-6 grid gap-4"
+          onSubmit={(e) => e.preventDefault()}
+        >
           <TextField
+            autoComplete="email"
             inValid={
               formik.errors?.email != undefined &&
               (formik.touched?.email as boolean)
@@ -104,6 +109,7 @@ const Login = () => {
           ></TextField>
           <div className="mb-4">
             <TextField
+              autoComplete="current-password"
               errorMessage={formik.errors?.password}
               inValid={
                 formik.errors?.password != undefined &&
@@ -164,7 +170,7 @@ const Login = () => {
               Sign up
             </span>
           </div>
-        </div>
+        </form>
       </AuthLayout>
     </>
   );

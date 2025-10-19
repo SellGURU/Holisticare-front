@@ -27,7 +27,8 @@ import {
 } from 'lucide-react';
 import { toast } from '../ui/use-toast';
 import Application from '../../api/app';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+// import { publish } from '../../utils/event';
 
 // Define flexible interfaces to handle different API response structures
 
@@ -200,7 +201,7 @@ export function PublicSurveyForm({
 }: PublicSurveyFormProps) {
   console.log(survey);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { 'member-id': memberId, 'q-id': qId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<
@@ -568,7 +569,9 @@ export function PublicSurveyForm({
           respond,
         }).finally(() => {
           setTimeout(() => {
-            navigate('/report/' + memberId + '/' + 'N');
+            // publish('closeFullscreenModal',{});
+            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
+            // navigate('/report/' + memberId + '/' + 'N');
           }, 2000);
         });
       }

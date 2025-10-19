@@ -7,6 +7,7 @@ import { uploadToAzure } from '../../../help';
 import { publish, subscribe } from '../../../utils/event';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
+// import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
 //   file: File;
@@ -27,6 +28,7 @@ interface UploadTestProps {
   showReport: boolean;
   onDiscard: () => void;
   questionnaires: any[];
+  isLoadingQuestionnaires: boolean;
 }
 
 export const UploadTestV2: React.FC<UploadTestProps> = ({
@@ -36,6 +38,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   showReport,
   onDiscard,
   questionnaires,
+  isLoadingQuestionnaires,
 }) => {
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
@@ -72,7 +75,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         });
 
         setfileType(res.data.lab_type);
-        setExtractedBiomarkers(res.data.extracted_biomarkers);
+        const sorted = (res.data.extracted_biomarkers || [])
+          .slice()
+          .sort((a: any, b: any) => {
+            const nameA = (
+              a.original_biomarker_name ||
+              a.biomarker ||
+              ''
+            ).toString();
+            const nameB = (
+              b.original_biomarker_name ||
+              b.biomarker ||
+              ''
+            ).toString();
+            return nameA.localeCompare(nameB, undefined, {
+              sensitivity: 'base',
+            });
+          });
+
+        setExtractedBiomarkers(sorted);
 
         // ✅ stop polling if biomarkers found
         if (
@@ -119,6 +140,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }) // adjust if backend expects id
       .then(() => {
         setUploadedFile(null);
+        setRowErrors({});
+        setAddedRowErrors({});
         setdeleteLoading(false);
       })
       .catch((err) => {
@@ -348,13 +371,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         biomarkers_list: mappedExtractedBiomarkers, // Send the full, mapped list
         date_of_test: modifiedTimestamp,
         lab_type: fileType,
-        file_id: uploadedFile?.file_id,
+        file_id: uploadedFile?.file_id || '',
       },
       added_biomarkers: {
         biomarkers_list: addedBiomarkers,
         date_of_test: addedTimestamp,
         lab_type: 'more_info',
-        file_id: uploadedFile?.file_id,
+        // file_id: uploadedFile?.file_id || '',
       },
     });
   };
@@ -564,13 +587,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   <div className="flex w-full items-center gap-6">
                     <div
                       onClick={() => {
-                        if (questionnaires.length > 0) {
-                          return;
-                        } else {
-                          setstep(1);
-                        }
+                        setstep(1);
                       }}
-                      className={` ${questionnaires.length > 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
+                      className={`cursor-pointer w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {isSaveClicked &&
                         extractedBiomarkers.length + addedBiomarkers.length >
@@ -608,16 +627,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                     </div>
                     <div
                       onClick={() => {
-                        if (
-                          extractedBiomarkers.length + addedBiomarkers.length >
-                          0
-                        ) {
-                          return;
-                        } else {
-                          publish('QuestionaryTrackingCall', {});
-                        }
+                        // if (
+                        //   extractedBiomarkers.length + addedBiomarkers.length >
+                        //   0
+                        // ) {
+                        //   return;
+                        // } else {
+                        publish('QuestionaryTrackingCall', {});
+                        // }
                       }}
-                      className={` ${extractedBiomarkers.length + addedBiomarkers.length > 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
+                      className={`cursor-pointer w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {questionnaires.length > 0 && (
                         <div className="w-[167px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
@@ -626,7 +645,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                             src="/icons/tick-circle-upload.svg"
                             alt=""
                           />
-                          <span className=""> {questionnaires.length}</span>
+                          <span className="">
+                            {' '}
+                            {isLoadingQuestionnaires
+                              ? '...'
+                              : questionnaires.length}
+                          </span>
                           Questionnaire filled out!
                         </div>
                       )}
