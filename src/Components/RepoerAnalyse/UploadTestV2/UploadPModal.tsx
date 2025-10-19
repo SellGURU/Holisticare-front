@@ -97,10 +97,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
     }
   }, [rowErrors, AddedRowErrors, uploadedFile]);
   useEffect(() => {
-    if(activeMenu !== 'Upload File'){
+    if (activeMenu !== 'Upload File') {
       setshowReview(false);
     }
-  },[activeMenu]);
+  }, [activeMenu]);
   return (
     <>
       <div

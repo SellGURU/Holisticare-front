@@ -35,7 +35,7 @@ const SearchSelect: React.FC<SelectProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const selectWrapperRef = useRef<HTMLDivElement>(null);
   const [filteredOptions, setFilteredOptions] = useState(options);
-  
+
   // Filtered options based on search
   useEffect(() => {
     if (searchTerm !== '') {
@@ -45,7 +45,9 @@ const SearchSelect: React.FC<SelectProps> = ({
       setFilteredOptions(filtered);
     } else {
       // Remove duplicates from original options as well
-      const uniqueOptions = options.filter((opt, index, arr) => arr.indexOf(opt) === index);
+      const uniqueOptions = options.filter(
+        (opt, index, arr) => arr.indexOf(opt) === index,
+      );
       setFilteredOptions(uniqueOptions);
     }
   }, [searchTerm, options]);
