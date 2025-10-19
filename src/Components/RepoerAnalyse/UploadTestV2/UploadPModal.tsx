@@ -96,6 +96,11 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
       setshowReview(false);
     }
   }, [rowErrors, AddedRowErrors, uploadedFile]);
+  useEffect(() => {
+    if(activeMenu !== 'Upload File'){
+      setshowReview(false);
+    }
+  },[activeMenu]);
   return (
     <>
       <div
