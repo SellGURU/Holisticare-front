@@ -30,7 +30,7 @@ const NumberBox: React.FC<numberBoxProps> = ({ mode, title, value, icon }) => {
   console.log(mode);
 
   return (
-    <Card >
+    <Card>
       <div
         className={
           'text-Text-Primary flex items-start justify-center flex-col  gap-2'
