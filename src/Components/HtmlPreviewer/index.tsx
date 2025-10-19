@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ButtonSecondary } from '../Button/ButtosSecondary';
 import StyleModal, { ElementStyles } from './StyleModal';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   html: string;
@@ -18,6 +20,7 @@ export default function HtmlEditor({
   onChange,
   onSave,
 }: Props) {
+  const navigate = useNavigate();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const loadedRef = useRef(false);
   const [originalHtml] = useState(html);
@@ -30,7 +33,6 @@ export default function HtmlEditor({
   );
   const [, setIconsAdded] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  console.log('isEditMode', isEditMode);
   const [selectedText, setSelectedText] = useState<string>('');
   const [showTextFormatting, setShowTextFormatting] = useState(false);
 
@@ -176,6 +178,11 @@ export default function HtmlEditor({
         const existingIcons = doc.querySelectorAll('.edit-icon');
         existingIcons.forEach((icon) => icon.remove());
       }
+    }
+    if (isEditMode) {
+      onSave(
+        iframeRef.current?.contentDocument?.documentElement.outerHTML || '',
+      );
     }
   };
 
@@ -581,7 +588,7 @@ export default function HtmlEditor({
     doc.write(originalHtml);
     doc.close();
 
-    if (editable && doc.body) {
+    if (editable && doc.body && isEditMode) {
       // Make only elements with 'editable' class editable
       const editableElements = doc.querySelectorAll('.editable');
       editableElements.forEach((element) => {
@@ -619,39 +626,31 @@ export default function HtmlEditor({
 
   return (
     <div className={`w-full h-full flex flex-col gap-2 ${className}`}>
-      <div className="flex gap-2 absolute top-0 left-0">
+      <div className="flex gap-2 absolute top-2 left-0 w-full justify-between items-center px-4">
         {editable && (
           <>
-            <button
-              onClick={toggleEditMode}
-              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                isEditMode
-                  ? 'bg-purple-500 text-white hover:bg-purple-600'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
-              }`}
+            <ButtonSecondary
+              onClick={() => navigate(-1)}
+              size="small"
+              ClassName="bg-gray-200 !text-Primary-DeepTeal hover:bg-gray-300"
             >
-              {isEditMode ? '✏️ Exit Edit' : '✏️ Edit Mode'}
-            </button>
-            <button
-              onClick={handleReset}
-              className="px-2 py-1 rounded bg-red-500 text-white hover:bg-red-600 text-sm"
-            >
-              Reset
-            </button>
-            {isEditMode && (
-              <button
-                onClick={() => {
-                  setIsEditMode(false);
-                  onSave(
-                    iframeRef.current?.contentDocument?.documentElement
-                      .outerHTML || '',
-                  );
-                }}
-                className="px-2 py-1 rounded bg-green-500 text-white hover:bg-green-600 text-sm"
+              <img className="w-4 h-4" src="/icons/arrow-back.svg" alt="back" />
+              Back
+            </ButtonSecondary>
+            <div className="flex gap-2">
+              <ButtonSecondary
+                onClick={toggleEditMode}
+                ClassName={`${isEditMode ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
               >
-                Save
-              </button>
-            )}
+                {isEditMode ? '✏️ Exit Edit' : '✏️ Edit Mode'}
+              </ButtonSecondary>
+              <ButtonSecondary
+                onClick={handleReset}
+                ClassName="bg-red-500 text-white hover:bg-red-600"
+              >
+                Reset
+              </ButtonSecondary>
+            </div>
             {/* <button
               onClick={() => {
                 setSelectedText('Test text');
@@ -664,7 +663,7 @@ export default function HtmlEditor({
           </>
         )}
       </div>
-      <div className="flex-1 border rounded overflow-hidden shadow">
+      <div className="flex-1 border rounded overflow-hidden shadow mt-12">
         <iframe
           ref={iframeRef}
           title="HTML Editor"
