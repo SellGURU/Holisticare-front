@@ -48,7 +48,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
       >
         {customTheme.selectedImage && (
           <img
-            className="w-[80px] h-[80px] rounded-[12.72px] object-cover"
+            className="w-[80px] h-[80px] rounded-[12.72px] object-scale-down"
             src={customTheme.selectedImage}
             alt=""
           />
