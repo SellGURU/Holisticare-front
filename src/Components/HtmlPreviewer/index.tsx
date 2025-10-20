@@ -179,10 +179,16 @@ export default function HtmlEditor({
         existingIcons.forEach((icon) => icon.remove());
       }
     }
+  };
+
+  const handleSave = async () => {
     if (isEditMode) {
-      onSave(
-        iframeRef.current?.contentDocument?.documentElement.outerHTML || '',
-      );
+      await toggleEditMode();
+      setTimeout(() => {
+        onSave(
+          iframeRef.current?.contentDocument?.documentElement.outerHTML || '',
+        );
+      }, 800);
     }
   };
 
@@ -640,7 +646,7 @@ export default function HtmlEditor({
             <div className="flex gap-2">
               <ButtonSecondary
                 onClick={toggleEditMode}
-                ClassName={`${isEditMode ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                ClassName={`${isEditMode ? 'bg-purple-500 text-white hover:bg-purple-600' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
               >
                 {isEditMode ? '✏️ Exit Edit' : '✏️ Edit Mode'}
               </ButtonSecondary>
@@ -648,8 +654,16 @@ export default function HtmlEditor({
                 onClick={handleReset}
                 ClassName="bg-red-500 text-white hover:bg-red-600"
               >
-                Reset
+                ❌ Reset
               </ButtonSecondary>
+              {isEditMode && (
+                <ButtonSecondary
+                  onClick={handleSave}
+                  ClassName="bg-green-500 text-white hover:bg-green-600"
+                >
+                  ✅ Save
+                </ButtonSecondary>
+              )}
             </div>
             {/* <button
               onClick={() => {
