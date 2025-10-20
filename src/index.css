@@ -627,7 +627,7 @@ input:-webkit-autofill:active {
   position: absolute;
   height: 100%;
   width: 30%;
-  background-color: #6CC24A; /* emerald green theme */
+  background-color: #6cc24a; /* emerald green theme */
   border-radius: 4px;
   animation: loadingBarAnim 1s linear infinite;
 }
@@ -645,4 +645,3 @@ input:-webkit-autofill:active {
     width: 30%;
   }
 }
-
