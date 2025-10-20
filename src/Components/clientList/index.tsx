@@ -86,6 +86,8 @@ const ClientList = () => {
       })
       .finally(() => {
         setIsLoading(false);
+      }).catch(() => {
+        setIsLoading(false);
       });
   };
   useEffect(() => {

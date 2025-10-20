@@ -97,6 +97,8 @@ const MainTopBar = () => {
       if (res.data.brand_elements.permission) {
         publish('permissions-show', res.data.brand_elements.permission);
       }
+    }).catch(() => {
+      
     });
   };
 
