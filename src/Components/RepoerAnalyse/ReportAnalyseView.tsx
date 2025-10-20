@@ -656,6 +656,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [loadingHtmlReport, setLoadingHtmlReport] = useState(false);
 
   const handleGetHtmlReport = () => {
+    // if(loadingHtmlReport) return;
     if (!isHaveReport) return;
 
     setLoadingHtmlReport(true);
@@ -1017,7 +1018,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {TreatMentPlanData?.length > 0 && isHaveReport ? (
                     <div className="flex flex-col items-center gap-1">
                       <ButtonSecondary
-                        disabled={loadingHtmlReport}
+                        disabled={!isHtmlReportExists}
                         ClassName="rounded-[20px] h-[24px] w-[168px]"
                         onClick={handleGetHtmlReport}
                       >
