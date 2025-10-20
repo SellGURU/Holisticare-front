@@ -1,10 +1,20 @@
 import { useEffect, useState } from 'react';
 
-export const BotMsg = ({ msg, time }: { msg: string; time: number }) => {
-  const [displayedText, setDisplayedText] = useState('');
-  const [isDone, setIsDone] = useState(false);
+export const BotMsg = ({
+  msg,
+  time,
+  isLatest = false,
+}: {
+  msg: string;
+  time: number;
+  isLatest?: boolean;
+}) => {
+  const [displayedText, setDisplayedText] = useState(isLatest ? '' : msg);
+  const [isDone, setIsDone] = useState(!isLatest);
 
   useEffect(() => {
+    if (!isLatest) return;
+
     let i = 0;
     const chars = msg.split('');
 
@@ -14,10 +24,8 @@ export const BotMsg = ({ msg, time }: { msg: string; time: number }) => {
         setDisplayedText((prev) => prev + char);
         i++;
 
-        // Base typing speed (ms)
+        // ChatGPT-like pauses
         let delay = 25;
-
-        // Slightly slower after punctuation (like ChatGPT)
         if (/[.,]/.test(char)) delay = 100;
         if (/[!?]/.test(char)) delay = 180;
         if (char === '\n') delay = 250;
@@ -30,7 +38,7 @@ export const BotMsg = ({ msg, time }: { msg: string; time: number }) => {
     };
 
     typeNext();
-  }, [msg]);
+  }, [msg, isLatest]);
 
   return (
     <div className="flex items-start justify-start gap-1">
@@ -57,7 +65,7 @@ export const BotMsg = ({ msg, time }: { msg: string; time: number }) => {
         <div className="w-[213px] h-fit p-2 text-Text-Primary TextStyle-Body-2 bg-backgroundColor-Main border border-Gray-50 leading-loose rounded-bl-[20px] rounded-br-[20px] rounded-tr-[20px]">
           <p>
             {displayedText}
-            {!isDone && (
+            {isLatest && !isDone && (
               <span className="inline-block w-[3px] h-[12px] bg-Text-Primary animate-pulse ml-[2px] rounded-sm"></span>
             )}
           </p>

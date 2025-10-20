@@ -125,6 +125,8 @@ export const PopUpChat = ({
             ) : (
               <>
                 {MessageData.map((MessageDatum, index) => {
+                    const isLatest = index === MessageData.length - 1 && !!MessageDatum.response;
+
                   return (
                     <Fragment key={index}>
                       {MessageDatum.request && (
@@ -143,6 +145,7 @@ export const PopUpChat = ({
                       )}
                       {MessageDatum.response && (
                         <BotMsg
+                        isLatest={isLatest}
                           time={MessageDatum.timestamp}
                           msg={MessageDatum.response}
                         />
