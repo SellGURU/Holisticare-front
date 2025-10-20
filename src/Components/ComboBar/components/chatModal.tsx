@@ -116,7 +116,13 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
           style={{ height: window.innerHeight - 120 + 'px' }}
         >
           {/* <h1 className={"TextStyle-Headline-6"}>Copilot</h1> */}
-          <div className={'w-full h-[90%] overflow-y-auto overscroll-y-auto'}>
+            {messageData.length == 0 ? (<div className="flex flex-col items-center justify-center w-full h-full text-base pt-8 text-Text-Primary font-medium gap-6">
+          <img src="/icons/empty-messages.svg" alt="" />
+          No messages found
+        </div>):(
+      <div className={'w-full h-[90%] overflow-y-auto overscroll-y-auto'}>
+            
+          
             {messageData.map((message) => {
               if (message.sender_type == 'user') {
                 return (
@@ -154,6 +160,8 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
 
             <div ref={messagesEndRef}></div>
           </div>
+        )}
+    
           <div className="w-full ">
             <InputChat
               onChange={(event) => setInput(event.target.value)}
