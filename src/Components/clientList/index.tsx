@@ -86,7 +86,8 @@ const ClientList = () => {
       })
       .finally(() => {
         setIsLoading(false);
-      }).catch(() => {
+      })
+      .catch(() => {
         setIsLoading(false);
       });
   };

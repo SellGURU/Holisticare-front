@@ -66,40 +66,40 @@ const MainTopBar = () => {
   );
 
   const getShowBrandInfo = () => {
-    Application.getShowBrandInfo().then((res) => {
-      if (
-        res.data.brand_elements.name === null ||
-        res.data.brand_elements.name === '' ||
-        res.data.brand_elements.logo === null
-      ) {
-        navigate('/register-profile');
-        return;
-      }
-      setCustomTheme({
-        headLine: res.data.brand_elements.headline,
-        name: res.data.brand_elements.name,
-        selectedImage: res.data.brand_elements.logo,
-      });
-      localStorage.setItem(
-        'brandInfoData',
-        JSON.stringify({
+    Application.getShowBrandInfo()
+      .then((res) => {
+        if (
+          res.data.brand_elements.name === null ||
+          res.data.brand_elements.name === '' ||
+          res.data.brand_elements.logo === null
+        ) {
+          navigate('/register-profile');
+          return;
+        }
+        setCustomTheme({
           headLine: res.data.brand_elements.headline,
           name: res.data.brand_elements.name,
           selectedImage: res.data.brand_elements.logo,
-        }),
-      );
-      if (res.data.brand_elements.knowledge_playground == true) {
-        publish(
-          'knowledge_playground-Show',
-          res.data.brand_elements.knowledge_playground,
+        });
+        localStorage.setItem(
+          'brandInfoData',
+          JSON.stringify({
+            headLine: res.data.brand_elements.headline,
+            name: res.data.brand_elements.name,
+            selectedImage: res.data.brand_elements.logo,
+          }),
         );
-      }
-      if (res.data.brand_elements.permission) {
-        publish('permissions-show', res.data.brand_elements.permission);
-      }
-    }).catch(() => {
-      
-    });
+        if (res.data.brand_elements.knowledge_playground == true) {
+          publish(
+            'knowledge_playground-Show',
+            res.data.brand_elements.knowledge_playground,
+          );
+        }
+        if (res.data.brand_elements.permission) {
+          publish('permissions-show', res.data.brand_elements.permission);
+        }
+      })
+      .catch(() => {});
   };
 
   useEffect(() => {

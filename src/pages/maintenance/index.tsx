@@ -3,16 +3,16 @@ import React, { useEffect } from 'react';
 import Auth from '../../api/auth';
 
 const MaintenancePage: React.FC = () => {
-//   const [checkingStatus, setCheckingStatus] = useState(false);
-//   const [lastCheck, setLastCheck] = useState<Date | null>(null);
+  //   const [checkingStatus, setCheckingStatus] = useState(false);
+  //   const [lastCheck, setLastCheck] = useState<Date | null>(null);
 
   const checkServerStatus = async () => {
     // setCheckingStatus(true);
     try {
       // Try to make a simple API call to check if server is back online
       // Using a lightweight endpoint that doesn't require authentication
-      const response =Auth.helth()
-      
+      const response = Auth.helth();
+
       if ((await response).data) {
         // Server is back online, redirect to app
         window.location.href = '/';
@@ -22,8 +22,8 @@ const MaintenancePage: React.FC = () => {
       // Server still down, continue showing maintenance page
       console.log('Server still under maintenance');
     } finally {
-    //   setCheckingStatus(false);
-    //   setLastCheck(new Date());
+      //   setCheckingStatus(false);
+      //   setLastCheck(new Date());
     }
   };
 
@@ -62,16 +62,17 @@ const MaintenancePage: React.FC = () => {
               System Maintenance
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              Sorry for the pause! We're deploying a new version to enhance your experience.
+              Sorry for the pause! We're deploying a new version to enhance your
+              experience.
             </p>
             <div className="mt-6">
               <div className="flex justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
               </div>
               <p className="mt-4 text-sm text-gray-500">
-                 Back in a few minutes!
+                Back in a few minutes!
               </p>
-              
+
               {/* Auto-check status */}
               {/* <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                 <p className="text-xs text-blue-600">
@@ -83,7 +84,7 @@ const MaintenancePage: React.FC = () => {
                   </p>
                 )}
               </div> */}
-              
+
               {/* Manual refresh button */}
               {/* <button
                 onClick={checkServerStatus}
