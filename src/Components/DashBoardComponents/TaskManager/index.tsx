@@ -70,7 +70,7 @@ const TaskManager = () => {
           setLoading(false);
         })
         .catch((error) => {
-          setLoading(false)
+          setLoading(false);
           console.error('Error checking task:', error);
           alert('Failed to check the task. Please try again.');
         });

@@ -372,41 +372,41 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         >
           <img src={'/icons/add.svg'} />
         </div>
-     <motion.div
-  data-tooltip-id="AI Copilot"
-  ref={buttonRef}
-  onClick={() => setToogleOpenChat(!toogleOpenChat)}
-  whileTap={{ scale: 0.9 }}
-  whileHover={{ scale: 1.1 }}
-  animate={{ rotate: toogleOpenChat ? 180 : 0 }}
-  transition={{
-    type: 'spring',
-    stiffness: 300,
-    damping: 20,
-    duration: 0.25,
-  }}
-  className="w-8 h-8 rounded-md bg-white flex items-center justify-center shadow-200 cursor-pointer"
->
-  {toogleOpenChat ? (
-    <motion.img
-      key="close-icon"
-      src="/icons/close.svg"
-      initial={{ opacity: 0, rotate: -90 }}
-      animate={{ opacity: 1, rotate: 0 }}
-      exit={{ opacity: 0, rotate: 90 }}
-      transition={{ duration: 0.2 }}
-    />
-  ) : (
-    <motion.img
-      key="open-icon"
-      src="/icons/sidbar-menu/message-question.svg"
-      initial={{ opacity: 0, rotate: 90 }}
-      animate={{ opacity: 1, rotate: 0 }}
-      exit={{ opacity: 0, rotate: -90 }}
-      transition={{ duration: 0.2 }}
-    />
-  )}
-</motion.div>
+        <motion.div
+          data-tooltip-id="AI Copilot"
+          ref={buttonRef}
+          onClick={() => setToogleOpenChat(!toogleOpenChat)}
+          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.1 }}
+          animate={{ rotate: toogleOpenChat ? 180 : 0 }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 20,
+            duration: 0.25,
+          }}
+          className="w-8 h-8 rounded-md bg-white flex items-center justify-center shadow-200 cursor-pointer"
+        >
+          {toogleOpenChat ? (
+            <motion.img
+              key="close-icon"
+              src="/icons/close.svg"
+              initial={{ opacity: 0, rotate: -90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: 90 }}
+              transition={{ duration: 0.2 }}
+            />
+          ) : (
+            <motion.img
+              key="open-icon"
+              src="/icons/sidbar-menu/message-question.svg"
+              initial={{ opacity: 0, rotate: 90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: -90 }}
+              transition={{ duration: 0.2 }}
+            />
+          )}
+        </motion.div>
         <Tooltip
           place="left"
           className="!bg-white !w-fit  !text-wrap 

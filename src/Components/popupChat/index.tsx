@@ -97,7 +97,7 @@ export const PopUpChat = ({
   return (
     <AnimatePresence>
       {isOpen && (
-           <motion.div
+        <motion.div
           initial={{ opacity: 0, x: 60 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 60 }}
@@ -115,7 +115,11 @@ export const PopUpChat = ({
           >
             {MessageData.length == 0 ? (
               <div className="flex flex-col items-center justify-center w-full h-full text-base  text-Text-Primary font-medium select-none">
-                <img className='size-[110px]' src="/icons/empty-messages.svg" alt="" />
+                <img
+                  className="size-[110px]"
+                  src="/icons/empty-messages.svg"
+                  alt=""
+                />
                 No messages found
               </div>
             ) : (
@@ -155,7 +159,7 @@ export const PopUpChat = ({
             onChange={(event) => setInput(event.target.value)}
             sendHandler={handleSend}
           />
-     </motion.div>
+        </motion.div>
       )}
     </AnimatePresence>
   );
