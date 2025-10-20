@@ -246,7 +246,9 @@ const HistoricalChart = ({
                           className="!bg-Red !w-fit !leading-5 !text-nowrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                         >
                           <div className="flex items-center gap-2">
-                            <SourceTag source={sources?.[index]} isSmall />
+                            {sources?.[index] && (
+                              <SourceTag source={sources?.[index]} isSmall />
+                            )}
                             value: {point} {unit}
                           </div>
                         </Tooltip>
