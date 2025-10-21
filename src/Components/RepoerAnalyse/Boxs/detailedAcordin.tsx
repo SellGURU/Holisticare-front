@@ -9,6 +9,7 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import HistoricalChart from '../HistoricalChart';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
+import { SourceTag } from '../../source-badge';
 // import UnitPopUp from '../../UnitPopup';
 
 interface DetiledAnalyseProps {
@@ -149,6 +150,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               </div>
               {refrences.length > 0 && (
                 <div className="flex-grow gap-2 relative flex items-center justify-center">
+                  
                   <div className="absolute hidden cursor-pointer top-4 right-4">
                     <div className="flex gap-2 justify-end items-center">
                       <div className="TextStyle-Headline-6  text-Text-Primary">
@@ -186,7 +188,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                               className=" w-full py-4 px-2 h-[159px]  rounded-[6px]"
                             >
                               <div className="w-full">
-                                <div className=" w-full flex justify-between items-center TextStyle-Headline-6 text-Text-Primary">
+                                <div className=" w-full flex justify-between items-center !text-[8px] md:TextStyle-Headline-6 text-Text-Primary">
                                   {/* {biomarker.name} */}
                                   <div
                                     onMouseEnter={() => {
@@ -195,7 +197,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                     onMouseLeave={() => {
                                       setShowMoreInfo(false);
                                     }}
-                                    className="flex relative justify-start items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+                                    className="flex relative justify-start items-center cursor-pointer md:TextStyle-Button  text-Primary-DeepTeal "
                                   >
                                     More Info
                                     <img
@@ -212,8 +214,11 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                     )}
                                   </div>
                                   <div className="  cursor-pointer  ">
-                                    <div className="flex gap-2 justify-end items-center">
-                                      <div className="TextStyle-Headline-6  text-Text-Primary">
+                                    <div className="flex gap-2  justify-end items-center">
+                                         {active.source && (
+                                                <SourceTag source={active.source} />
+                                              )}
+                                      <div className="  md:TextStyle-Headline-6 text-[8px]  md:text-Text-Primary">
                                         Historical Chart
                                       </div>
                                       <Toggle

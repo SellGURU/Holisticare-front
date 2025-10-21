@@ -48,7 +48,17 @@ export const DeleteFileProgressModal = () => {
 
         <div className="mt-4 w-full flex items-center gap-1 p-3 rounded-[12px] border border-Gray-50 text-[10px] text-Primary-DeepTeal transition-colors">
           {IsinProgress ? (
-            <img src="/icons/more-circle.svg" alt="" />
+           <div
+              style={{
+                background:
+                  'linear-gradient(to right, rgba(0,95,115,0.4), rgba(108,194,74,0.4))',
+              }}
+              className="flex size-5   rounded-full items-center justify-center gap-[3px]"
+            >
+              <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot1"></div>
+              <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot2"></div>
+              <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot3"></div>
+            </div>
           ) : (
             <img src="/icons/tick-circle-upload.svg" alt="" />
           )}

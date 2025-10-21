@@ -6,6 +6,7 @@ import Circleloader from '../../CircleLoader';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Application from '../../../api/app';
 import { Tooltip } from 'react-tooltip';
+import SearchSelect from '../../searchableSelect';
 interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
@@ -359,7 +360,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     </div>
                     {/* biomarker (editable via select) */}
                     <div className="text-center">
-                      <Select
+                          <SearchSelect
+                          isStaff
+                 isLarge
+                        isSetting
+                        value={b.biomarker}
+                        options={avalibaleBiomarkers || []}
+                        onChange={(val: string) =>
+                          updateAndStandardize(index, { biomarker: val })
+                        }
+            />
+                      {/* <Select
                         isLarge
                         isSetting
                         value={b.biomarker}
@@ -367,7 +378,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         onChange={(val: string) =>
                           updateAndStandardize(index, { biomarker: val })
                         }
-                      />
+                      /> */}
                     </div>
                     {/* value (editable via input) */}
                     <div className="text-center">
