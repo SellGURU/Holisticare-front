@@ -320,7 +320,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                             )}
                           </div>
                           <div className="flex items-center gap-4">
-                            {active.source && (
+                            {active?.source && (
                               <SourceTag source={active.source} />
                             )}
                             {/* {active?.unit != '' && (
