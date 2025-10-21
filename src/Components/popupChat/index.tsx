@@ -93,11 +93,11 @@ export const PopUpChat = ({
     scrollToBottom();
   }, [MessageData, isOpen]);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
-const isRecent = (timestamp: number) => {
-  const now = Date.now();
-  const diffInSeconds = (now - timestamp) / 1000;
-  return diffInSeconds <= 60; // within the last minute
-};
+  const isRecent = (timestamp: number) => {
+    const now = Date.now();
+    const diffInSeconds = (now - timestamp) / 1000;
+    return diffInSeconds <= 60; // within the last minute
+  };
 
   return (
     <AnimatePresence>
@@ -130,8 +130,6 @@ const isRecent = (timestamp: number) => {
             ) : (
               <>
                 {MessageData.map((MessageDatum, index) => {
-        
-
                   return (
                     <Fragment key={index}>
                       {MessageDatum.request && (
@@ -150,8 +148,7 @@ const isRecent = (timestamp: number) => {
                       )}
                       {MessageDatum.response && (
                         <BotMsg
-                              isTyping={isRecent(MessageDatum.timestamp)}
-
+                          isTyping={isRecent(MessageDatum.timestamp)}
                           time={MessageDatum.timestamp}
                           msg={MessageDatum.response}
                         />
