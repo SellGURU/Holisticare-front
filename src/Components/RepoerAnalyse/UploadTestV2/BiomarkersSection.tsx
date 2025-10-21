@@ -360,16 +360,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     </div>
                     {/* biomarker (editable via select) */}
                     <div className="text-center">
-                          <SearchSelect
-                          isStaff
-                 isLarge
+                      <SearchSelect
+                        isStaff
+                        isLarge
                         isSetting
                         value={b.biomarker}
                         options={avalibaleBiomarkers || []}
                         onChange={(val: string) =>
                           updateAndStandardize(index, { biomarker: val })
                         }
-            />
+                      />
                       {/* <Select
                         isLarge
                         isSetting

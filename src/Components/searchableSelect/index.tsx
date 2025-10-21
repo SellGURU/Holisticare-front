@@ -159,7 +159,7 @@ const SearchSelect: React.FC<SelectProps> = ({
           </div>
 
           {/* Filtered options */}
-          <ul  role="listbox">
+          <ul role="listbox">
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <li

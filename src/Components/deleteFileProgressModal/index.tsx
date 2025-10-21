@@ -48,7 +48,7 @@ export const DeleteFileProgressModal = () => {
 
         <div className="mt-4 w-full flex items-center gap-1 p-3 rounded-[12px] border border-Gray-50 text-[10px] text-Primary-DeepTeal transition-colors">
           {IsinProgress ? (
-           <div
+            <div
               style={{
                 background:
                   'linear-gradient(to right, rgba(0,95,115,0.4), rgba(108,194,74,0.4))',

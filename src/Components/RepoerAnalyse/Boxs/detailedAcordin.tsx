@@ -150,7 +150,6 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               </div>
               {refrences.length > 0 && (
                 <div className="flex-grow gap-2 relative flex items-center justify-center">
-                  
                   <div className="absolute hidden cursor-pointer top-4 right-4">
                     <div className="flex gap-2 justify-end items-center">
                       <div className="TextStyle-Headline-6  text-Text-Primary">
@@ -215,9 +214,9 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                   </div>
                                   <div className="  cursor-pointer  ">
                                     <div className="flex gap-2  justify-end items-center">
-                                         {active.source && (
-                                                <SourceTag source={active.source} />
-                                              )}
+                                      {active.source && (
+                                        <SourceTag source={active.source} />
+                                      )}
                                       <div className="  md:TextStyle-Headline-6 text-[8px]  md:text-Text-Primary">
                                         Historical Chart
                                       </div>
