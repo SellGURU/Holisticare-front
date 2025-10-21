@@ -4,7 +4,7 @@ import { UserMsg } from './userMsg.tsx';
 import { InputChat } from './inputChat.tsx';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import Application from '../../api/app.ts';
-
+import { motion, AnimatePresence } from 'framer-motion';
 type Message = {
   timestamp: number;
   entrytime: string;
@@ -93,54 +93,83 @@ export const PopUpChat = ({
     scrollToBottom();
   }, [MessageData, isOpen]);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
+const isRecent = (timestamp: number) => {
+  const now = Date.now();
+  const diffInSeconds = (now - timestamp) / 1000;
+  return diffInSeconds <= 60; // within the last minute
+};
 
   return (
-    <>
+    <AnimatePresence>
       {isOpen && (
-        <div
-          className={
-            'w-[315px] h-[438px] bg-white border border-Gray-50 z-50 p-4 pb-0 absolute bottom-0 right-16 rounded-2xl space-y-6'
-          }
+        <motion.div
+          initial={{ opacity: 0, x: 60 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 60 }}
+          transition={{
+            type: 'spring',
+            stiffness: 250,
+            damping: 25,
+            duration: 0.8,
+          }}
+          className="w-[315px] h-[438px] bg-white border border-Gray-50 z-50 p-4 pb-0 absolute bottom-0 right-16 rounded-2xl space-y-6 shadow-lg"
         >
           <h1 className={'TextStyle-Headline-6 text-Text-Primary'}>Copilot</h1>
           <div
             className={'w-[283px] h-[293px] overflow-y-auto overscroll-y-auto'}
           >
-            {MessageData.map((MessageDatum, index) => {
-              return (
-                <Fragment key={index}>
-                  {MessageDatum.request && (
-                    <UserMsg
-                      time={MessageDatum.timestamp}
-                      msg={MessageDatum.request}
-                      info={{
-                        picture: JSON.parse(
-                          localStorage.getItem('brandInfoData') as string,
-                        )?.selectedImage,
-                        name: JSON.parse(
-                          localStorage.getItem('brandInfoData') as string,
-                        )?.name,
-                      }}
-                    />
-                  )}
-                  {MessageDatum.response && (
-                    <BotMsg
-                      time={MessageDatum.timestamp}
-                      msg={MessageDatum.response}
-                    />
-                  )}
-                </Fragment>
-              );
-            })}
+            {MessageData.length == 0 ? (
+              <div className="flex flex-col items-center justify-center w-full h-full text-base  text-Text-Primary font-medium select-none">
+                <img
+                  className="size-[110px]"
+                  src="/icons/empty-messages.svg"
+                  alt=""
+                />
+                No messages found
+              </div>
+            ) : (
+              <>
+                {MessageData.map((MessageDatum, index) => {
+        
 
-            <div ref={messagesEndRef}></div>
+                  return (
+                    <Fragment key={index}>
+                      {MessageDatum.request && (
+                        <UserMsg
+                          time={MessageDatum.timestamp}
+                          msg={MessageDatum.request}
+                          info={{
+                            picture: JSON.parse(
+                              localStorage.getItem('brandInfoData') as string,
+                            )?.selectedImage,
+                            name: JSON.parse(
+                              localStorage.getItem('brandInfoData') as string,
+                            )?.name,
+                          }}
+                        />
+                      )}
+                      {MessageDatum.response && (
+                        <BotMsg
+                              isTyping={isRecent(MessageDatum.timestamp)}
+
+                          time={MessageDatum.timestamp}
+                          msg={MessageDatum.response}
+                        />
+                      )}
+                    </Fragment>
+                  );
+                })}
+
+                <div ref={messagesEndRef}></div>
+              </>
+            )}
           </div>
           <InputChat
             onChange={(event) => setInput(event.target.value)}
             sendHandler={handleSend}
           />
-        </div>
+        </motion.div>
       )}
-    </>
+    </AnimatePresence>
   );
 };
