@@ -126,7 +126,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
             className={`text-Text-Primary font-medium text-[10px] md:text-xs flex w-full justify-between items-center ${isCheced && 'invisible'}`}
           >
             Current Value
-            {data.source && <SourceTag source={data.source} />}
+            {data?.source && <SourceTag source={data.source} />}
           </div>
           <div className=" hidden justify-end items-center gap-2">
             <div className="invisible">
