@@ -3,17 +3,17 @@ import { useEffect, useState } from 'react';
 export const BotMsg = ({
   msg,
   time,
-  isLatest = false,
+  isTyping = false,
 }: {
   msg: string;
   time: number;
-  isLatest?: boolean;
+  isTyping?: boolean;
 }) => {
-  const [displayedText, setDisplayedText] = useState(isLatest ? '' : msg);
-  const [isDone, setIsDone] = useState(!isLatest);
+  const [displayedText, setDisplayedText] = useState(isTyping ? '' : msg);
+  const [isDone, setIsDone] = useState(!isTyping);
 
   useEffect(() => {
-    if (!isLatest) return;
+    if (!isTyping) return;
 
     let i = 0;
     const chars = msg.split('');
@@ -38,7 +38,7 @@ export const BotMsg = ({
     };
 
     typeNext();
-  }, [msg, isLatest]);
+  }, [msg, isTyping]);
 
   return (
     <div className="flex items-start justify-start gap-1">
@@ -65,7 +65,7 @@ export const BotMsg = ({
         <div className="w-[213px] h-fit p-2 text-Text-Primary TextStyle-Body-2 bg-backgroundColor-Main border border-Gray-50 leading-loose rounded-bl-[20px] rounded-br-[20px] rounded-tr-[20px]">
           <p>
             {displayedText}
-            {isLatest && !isDone && (
+            {isTyping && !isDone && (
               <span className="inline-block w-[3px] h-[12px] bg-Text-Primary animate-pulse ml-[2px] rounded-sm"></span>
             )}
           </p>
