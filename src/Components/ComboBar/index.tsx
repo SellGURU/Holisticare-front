@@ -36,7 +36,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         member_id: id,
       })
         .then((res) => {
-          if(res.data.has_unread == true){
+          if (res.data.has_unread == true) {
             setHasUnreadMessage(res.data.has_unread);
             publish('hasUnreadMessage', {});
           }
