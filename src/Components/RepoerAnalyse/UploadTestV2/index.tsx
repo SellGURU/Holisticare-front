@@ -708,9 +708,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                             .catch((err) => {
                               console.log(err);
                             });
-                          onGenderate(
-                            'customBiomarker',
-                          );
+                          onGenderate('customBiomarker');
                         } else {
                           onGenderate(undefined);
                         }
