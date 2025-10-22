@@ -115,7 +115,7 @@ const SearchSelect: React.FC<SelectProps> = ({
         aria-expanded={isOpen}
         tabIndex={0}
       >
-        <span className={`text-Text-Primary`}>
+        <span className={`text-Text-Primary text-wrap w-[90px] xl:w-auto`}>
           <TooltipTextAuto maxWidth={isSmall ? '100px' : '110px'}>
             {selectedValue || placeholder}
           </TooltipTextAuto>
@@ -145,7 +145,7 @@ const SearchSelect: React.FC<SelectProps> = ({
             isSetting
               ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
               : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
-          } overflow-y-auto overflow-x-hidden max-h-60`}
+          } overflow-auto n max-h-60`}
         >
           {/* Search input */}
           <div className="sticky top-0 bg-inherit p-2 z-10">
@@ -164,7 +164,7 @@ const SearchSelect: React.FC<SelectProps> = ({
               filteredOptions.map((option) => (
                 <li
                   key={option}
-                  className={`py-1 px-4 cursor-pointer text-[10px] text-Text-Primary hover:bg-gray-200 text-start`}
+                  className={`py-1 px-3 text-wrap w-full cursor-pointer text-[10px] text-Text-Primary hover:bg-gray-200 text-start`}
                   onClick={() => handleOptionClick(option)}
                   role="option"
                   aria-selected={selectedValue === option}
