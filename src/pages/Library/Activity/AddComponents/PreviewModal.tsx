@@ -193,7 +193,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
           >
             <div className="text-xs font-medium">Instruction</div>
             <div
-              className={`text-xs text-[#888888] text-justify ${isActivty ? '' : 'ml-5'}`}
+              className={`text-xs text-[#888888] text-justify text-wrap break-words max-w-[375px] ${isActivty ? '' : 'ml-5'}`}
             >
               {isActivty ? data.instruction : exercise.Instruction}
             </div>

@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState, useMemo, useRef } from 'react';
-import Toggle from '../../../Components/Toggle';
-import SearchBox from '../../../Components/SearchBox';
-import ActivityHandler from './ActivityHandler';
-import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Application from '../../../api/app';
+import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Circleloader from '../../../Components/CircleLoader';
-import Exercise from './Exercise';
-import SvgIcon from '../../../utils/svgIcon';
+import SearchBox from '../../../Components/SearchBox';
+import Toggle from '../../../Components/Toggle';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import SvgIcon from '../../../utils/svgIcon';
+import ActivityHandler from './ActivityHandler';
+import Exercise from './Exercise';
 
 const Activity = () => {
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
@@ -113,19 +113,19 @@ const Activity = () => {
         );
         break;
       case 'added_desc':
+        result.sort(
+          (a, b) =>
+            getDate(a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created) -
+            getDate(b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created),
+        );
+        break;
+
+      case 'added_asc':
         result.sort((a, b) =>
           getDate(a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created) <
           getDate(b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created)
             ? 1
             : -1,
-        );
-        break;
-
-      case 'added_asc':
-        result.sort(
-          (a, b) =>
-            getDate(a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created) -
-            getDate(b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created),
         );
         break;
     }
