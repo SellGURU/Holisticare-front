@@ -43,7 +43,7 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   //   }
   // }, [biomarkers]);
   // Don't render the category if there are no matching biomarkers
-    useEffect(() => {
+  useEffect(() => {
     if (searchTerm.trim() !== '' && biomarkers.length > 0) {
       setIsOpen(true);
     } else if (searchTerm.trim() === '') {
@@ -53,7 +53,6 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
 
   // Hide box completely if no matches
   if (biomarkers.length === 0) return null;
-
 
   return (
     <>

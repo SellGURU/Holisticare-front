@@ -110,7 +110,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
         <div className="w-full h-full opacity-85  rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
         <div
           style={{ height: window.innerHeight - 80 + 'px' }}
-          className="bg-white p-3 md:p-6 rounded-md w-full overflow-y-auto h-fit z-[99]"
+          className="bg-white p-3 md:p-6 rounded-md w-full  h-fit z-[99]"
         >
           <div className="w-full flex items-center justify-between">
             <div className="flex gap-2 items-center text-xs text-Text-Primary font-medium">
