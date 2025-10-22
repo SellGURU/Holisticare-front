@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
 import BiomarkerItem from './BiomarkerItemNew';
 // import BiomarkersApi from '../../api/Biomarkers';
@@ -43,9 +43,17 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   //   }
   // }, [biomarkers]);
   // Don't render the category if there are no matching biomarkers
-  if (biomarkers.length === 0) {
-    return null;
-  }
+    useEffect(() => {
+    if (searchTerm.trim() !== '' && biomarkers.length > 0) {
+      setIsOpen(true);
+    } else if (searchTerm.trim() === '') {
+      setIsOpen(false);
+    }
+  }, [searchTerm, biomarkers.length]);
+
+  // Hide box completely if no matches
+  if (biomarkers.length === 0) return null;
+
 
   return (
     <>
