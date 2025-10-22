@@ -388,7 +388,7 @@ const RecentCheckIns = () => {
       </MainModal>
       <div className="w-full bg-white rounded-2xl shadow-200 p-4 recent-checkins-container">
         <div
-          className={`${CheckIns.length < 1 ? 'overflow-hidden' : 'overflow-auto'} pr-2 recent-checkins-content`}
+          className={`${CheckIns.length < 1 ? 'overflow-hidden' : 'overflow-auto'} Custom-scrollbar  recent-checkins-content`}
         >
           <div className="flex  justify-between items-center mb-4">
             <h2 className="text-sm text-Text-Primary font-medium">
@@ -406,7 +406,7 @@ const RecentCheckIns = () => {
           {CheckIns.length < 1 ? (
             <div
               style={{ height: '-webkit-fill-available' }}
-              className=" w-full  mt-[-30px] flex flex-col items-center justify-center"
+              className=" w-full -mt-[90px] flex flex-col items-center justify-center"
             >
               <img src="/icons/EmptyState2.svg" alt="" />
               <div className="text-xs text-Text-Primary -mt-4 text-center">

@@ -18,6 +18,8 @@ import { Tooltip } from 'react-tooltip';
 import SvgIcon from '../../utils/svgIcon.tsx';
 import FileHistoryNew from './components/FileHistoryNew.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
+import { motion } from 'framer-motion';
+
 // import { Tooltip } from 'react-tooltip';
 interface ComboBarProps {
   isHolisticPlan?: boolean;
@@ -34,8 +36,10 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         member_id: id,
       })
         .then((res) => {
-          setHasUnreadMessage(res.data.has_unread);
-          publish('hasUnreadMessage', {});
+          if (res.data.has_unread == true) {
+            setHasUnreadMessage(res.data.has_unread);
+            publish('hasUnreadMessage', {});
+          }
         })
         .catch(() => {});
 
@@ -235,10 +239,10 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       >
         <div
           className={
-            'absolute hidden md:block top-0 left-0 bg-Primary-DeepTeal h-[49px] rounded-xl w-full z-10'
+            'absolute hidden md:block top-0 left-0 bg-Primary-DeepTeal h-[49px] rounded-xl w-full z-5'
           }
         ></div>
-        <ul className={'flex items-center flex-col z-10 gap-3'}>
+        <ul className={'flex items-center flex-col z-[6] gap-3'}>
           <li
             key={'1'}
             className={
@@ -338,18 +342,24 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
                   />
                 )}
               </li>
-              <Tooltip
-                place="left"
-                className="!bg-white !w-fit  !text-wrap 
-                !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                style={{
-                  zIndex: 9999,
-                  pointerEvents: 'none',
-                }}
-                id={el.name}
-              >
-                {el.name}
-              </Tooltip>
+              {!(
+                isHolisticPlan &&
+                el.name !== "Expert's Note" &&
+                el.name !== 'Client Info'
+              ) && (
+                <Tooltip
+                  place="left"
+                  className="!bg-white !w-fit  !text-wrap 
+      !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  style={{
+                    zIndex: 9999,
+                    pointerEvents: 'none',
+                  }}
+                  id={el.name}
+                >
+                  {el.name}
+                </Tooltip>
+              )}
             </>
           ))}
         </ul>
@@ -364,20 +374,41 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         >
           <img src={'/icons/add.svg'} />
         </div>
-        <div
+        <motion.div
           data-tooltip-id="AI Copilot"
           ref={buttonRef}
           onClick={() => setToogleOpenChat(!toogleOpenChat)}
-          className={
-            'w-8 shadow-200 cursor-pointer h-8 rounded-md bg-white flex items-center justify-center'
-          }
+          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.1 }}
+          animate={{ rotate: toogleOpenChat ? 180 : 0 }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 20,
+            duration: 0.25,
+          }}
+          className="w-8 h-8 rounded-md bg-white flex items-center justify-center shadow-200 cursor-pointer"
         >
           {toogleOpenChat ? (
-            <img src={'/icons/close.svg'} />
+            <motion.img
+              key="close-icon"
+              src="/icons/close.svg"
+              initial={{ opacity: 0, rotate: -90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: 90 }}
+              transition={{ duration: 0.2 }}
+            />
           ) : (
-            <img src={'/icons/sidbar-menu/message-question.svg'} />
+            <motion.img
+              key="open-icon"
+              src="/icons/sidbar-menu/message-question.svg"
+              initial={{ opacity: 0, rotate: 90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: -90 }}
+              transition={{ duration: 0.2 }}
+            />
           )}
-        </div>
+        </motion.div>
         <Tooltip
           place="left"
           className="!bg-white !w-fit  !text-wrap 

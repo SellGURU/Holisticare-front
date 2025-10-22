@@ -67,7 +67,7 @@ const RecentCheckIns: React.FC = () => {
               </div>
 
               {/* Rows */}
-              <div className="overflow-auto w-full h-[80%] ">
+              <div className="overflow-auto Custom-scrollbar w-full h-[80%] ">
                 {Clients.map((client, index) => (
                   <div
                     key={index}

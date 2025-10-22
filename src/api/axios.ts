@@ -37,6 +37,16 @@ axios.interceptors.response.use(
   },
   (error) => {
     // console.log(error);
+
+    // Handle 500 errors - redirect to maintenance page
+    if (
+      (error.response?.status === 500 || error.message == 'Network Error') &&
+      !window.location.href.includes('/maintenance')
+    ) {
+      window.location.href = '/maintenance';
+      return Promise.reject(error);
+    }
+
     if (
       (error.response?.status == 401 &&
         !window.location.href.includes('/login') &&
@@ -51,7 +61,11 @@ axios.interceptors.response.use(
     if (error.code == 'ERR_NETWORK') {
       return Promise.reject(error.message);
     }
-    if (error.response.data.detail && error.response.status != 406) {
+    if (
+      error.response.data.detail &&
+      error.response.status != 406 &&
+      !error.response.data.detail.toLowerCase().includes('google')
+    ) {
       if (
         error.response.data.detail &&
         error.response.data.detail.toLowerCase().includes('successfully')

@@ -334,7 +334,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
             ) : (
               ''
             )}
-            <div id="userChat" className="p-4 space-y-4 overflow-auto ">
+            <div id="userChat" className="p-4 h-full space-y-4 overflow-auto ">
               {!aiMode && (
                 <>
                   {messages.map((message, index: number) => (
@@ -588,7 +588,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
               )}
             </div>
             {username && !aiMode ? (
-              <div className="px-2 w-full flex justify-center h-[200px]">
+              <div className="px-2 w-full flex justify-center h-[100px]">
                 <InputMentions
                   // onUpload={handleUpload}
                   // handleDeleteImage={handleDeleteImage}
@@ -609,7 +609,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       </div>
 
       <MainModal isOpen={isImageModalOpen} onClose={handleCloseImageModal}>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center ">
           {selectedImage && (
             <img
               src={selectedImage}

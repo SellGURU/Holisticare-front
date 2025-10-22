@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -25,6 +24,7 @@ import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIco
 import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 import { AppContext } from '../../store/app';
 import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
+import { CoverageCard } from '../../Components/coverageCard';
 import { SourceTag } from '../../Components/source-badge';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
@@ -34,36 +34,91 @@ const NewGenerateHolisticPlan = () => {
   const [active, setActive] = useState<string>('Recommendation');
   const [clientGools, setClientGools] = useState<any>({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
+  console.log('treatmentPlanData => generate ', treatmentPlanData);
   const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
   const [isFinalLoading, setisFinalLoading] = useState(false);
-  const resolveNextStep = () => {
-    Application.saveTreatmentPaln({
-      ...treatmentPlanData,
+  const [coverageProgess, setcoverageProgess] = useState(0);
+  const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
+  // Function to check if essential data fields are present and not empty
+  useEffect(() => {
+    if (!treatmentPlanData) return;
+
+    // ✅ Only include checked items
+    const selectedInterventions = treatmentPlanData?.suggestion_tab || [];
+
+    Application.getCoverage({
       member_id: id,
-    }).catch(() => {});
-
-    Application.checkHtmlReport(id?.toString() || '')
+      selected_interventions: selectedInterventions,
+    })
       .then((res) => {
-        sessionStorage.setItem(
-          'isHtmlReportExists',
-          res.data.exists.toString(),
-        );
-      })
-      .catch(() => {
-        console.log('error');
-      });
+        setcoverageProgess(res.data.progress_percentage);
 
+        // ✅ Convert object → array of single-key objects
+        const detailsObj = res.data['key areas to address'] || {};
+        const detailsArray = Object.entries(detailsObj).map(([key, value]) => ({
+          [key]: value,
+        }));
+
+        setcoverageDetails(detailsArray);
+      })
+      .catch((err) => {
+        console.error('getCoverage error:', err);
+      });
+  }, [treatmentPlanData, id]);
+  const resolveNextStep = () => {
     setisFinalLoading(true);
-    setTimeout(() => {
-      setisFinalLoading(false);
-      navigate(`/report/${id}/a?section=Holistic Plan`);
-    }, 3000);
+    const continueSteps = () => {
+      Application.saveTreatmentPaln({
+        ...treatmentPlanData,
+        member_id: id,
+      })
+        .then(() => {
+          return Application.checkHtmlReport(id?.toString() || '');
+        })
+        .then((res) => {
+          sessionStorage.setItem(
+            'isHtmlReportExists',
+            res.data.exists.toString(),
+          );
+        })
+        .catch(() => {
+          console.log('error');
+        })
+        .finally(() => {
+          setTimeout(() => {
+            setisFinalLoading(false);
+            navigate(`/report/${id}/a?section=Holistic Plan`);
+          }, 3000);
+        });
+    };
+    if (!treatmentId) {
+      Application.saveHolisticPlan(treatmentPlanData)
+        .then((res) => {
+          setTratmentPlanData(res.data);
+          setClientGools({ ...res.data.client_goals });
+          setActiveEl(res.data.result_tab[0]);
+        })
+        .then(() => {
+          continueSteps();
+        })
+        .catch((err) => {
+          console.log('error in saveHolisticPlan:', err);
+          setisFinalLoading(false);
+        });
+    } else {
+      continueSteps();
+    }
   };
+
   const [activeEl, setActiveEl] = useState<any>();
   const updateNeedFocus = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old['need_focus_benchmarks_list'] = [value.toString()];
+      if (!old?.need_focus_benchmarks_list) {
+        old.need_focus_benchmarks_list = [];
+      } else {
+        old.need_focus_benchmarks_list = [value.toString()];
+      }
       return old;
     });
   };
@@ -120,6 +175,16 @@ const NewGenerateHolisticPlan = () => {
     return resultTabData;
   };
   const { treatmentId } = useContext(AppContext);
+  const hasEssentialData = (data: any) => {
+    return (
+      data?.client_insight &&
+      data.client_insight.length > 0 &&
+      data?.completion_suggestion &&
+      // data.completion_suggestion.length > 0 &&
+      data?.looking_forwards &&
+      data.looking_forwards.length > 0
+    );
+  };
 
   useEffect(() => {
     if (treatmentId !== null && treatmentId != '') {
@@ -133,6 +198,35 @@ const NewGenerateHolisticPlan = () => {
           setClientGools({ ...res.data.client_goals });
           setActiveEl(res.data.result_tab[0]);
         })
+        .finally(() => {
+          setisFirstLoading(false);
+        });
+    } else {
+      setisFirstLoading(true);
+      Application.generateTreatmentPlan({
+        member_id: id,
+      })
+        .then((res) => {
+          const data = res.data;
+
+          const essentialDataReady = hasEssentialData(data);
+
+          if (essentialDataReady) {
+            setTratmentPlanData({
+              ...data,
+              member_id: id,
+              suggestion_tab: [],
+              // result_tab: data.result_tab,
+              // treatment_id: data.treatment_id,
+              // need_focus_benchmarks_list: data.need_focus_benchmarks_list,
+              // medical_summary: data.medical_summary,
+              // client_goals: data.client_goals,
+            });
+          } else {
+            console.log('Missing essential data');
+          }
+        })
+        .catch(() => {})
         .finally(() => {
           setisFirstLoading(false);
         });
@@ -216,7 +310,7 @@ const NewGenerateHolisticPlan = () => {
             </div>
           )}
         </div>
-        <div className="w-full flex justify-between px-4 pt-[40px] lg:pt-[30px]">
+        <div className="w-full flex justify-between px-4 pt-[40px] lg:pt-[30px] h-full">
           <div
             className={`w-full md:px-4 ${treatmentPlanData && 'pr-0 md:pr-12'}  py-6 relative h-full `}
           >
@@ -236,37 +330,39 @@ const NewGenerateHolisticPlan = () => {
                   Generate Holistic Plan
                 </div>
               </div>
-              {treatmentPlanData && (
-                <div className="w-full md:flex gap-2 justify-center lg:justify-end items-center">
-                  <ButtonPrimary
-                    disabled={isLoading}
-                    onClick={() => {
-                      resolveNextStep();
-                    }}
-                    ClassName="hidden lg:flex"
-                  >
-                    {isLoading ? (
-                      <div className="w-full h-full min-h-[21px] flex justify-center items-center">
-                        <BeatLoader size={8} color={'white'}></BeatLoader>
-                      </div>
-                    ) : (
-                      <div className=" min-w-[100px] flex items-center justify-center gap-1">
-                        <img
-                          className="w-4"
-                          src="/icons/tick-square.svg"
-                          alt=""
-                        />
-                        Save Changes
-                      </div>
-                    )}
-                  </ButtonPrimary>
-                </div>
-              )}
+              {/* {treatmentPlanData && ( */}
+              <div className="w-full md:flex gap-2 justify-center lg:justify-end items-center">
+                <ButtonPrimary
+                  disabled={isLoading || !treatmentPlanData}
+                  onClick={() => {
+                    resolveNextStep();
+                  }}
+                  ClassName="hidden lg:flex"
+                >
+                  {isLoading ? (
+                    <div className="w-full h-full min-h-[21px] flex justify-center items-center">
+                      <BeatLoader size={8} color={'white'}></BeatLoader>
+                    </div>
+                  ) : (
+                    <div className=" min-w-[100px] flex items-center justify-center gap-1">
+                      <img
+                        className="w-4"
+                        src="/icons/tick-square.svg"
+                        alt=""
+                      />
+                      Save Changes
+                    </div>
+                  )}
+                </ButtonPrimary>
+              </div>
+              {/* )} */}
             </div>
             <div className="h-full w-full md:pr-2 lg:pt-10">
-              <div className=" w-full bg-white rounded-[16px] min-h-[500px] md:p-6 p-4 shadow-100">
+              <div
+                className={`bg-white rounded-[16px] min-h-[100%] md:p-6 p-4 shadow-100 w-full `}
+              >
                 <div className="flex w-full">
-                  <div
+                  {/* <div
                     className={`md:flex justify-end hidden md:invisible gap-2`}
                   >
                     <div
@@ -279,7 +375,6 @@ const NewGenerateHolisticPlan = () => {
                         src="/icons/analyse.svg"
                         color={'#005F73'}
                       />
-                      {/* <img src="/icons/analyse.svg" alt="" /> */}
                       Analysis
                     </div>
 
@@ -295,18 +390,17 @@ const NewGenerateHolisticPlan = () => {
                         src="/icons/chart.svg"
                         color={'#005F73'}
                       />
-                      {/* <img src="/icons/chart.svg" alt="" /> */}
                       Client Goals
                     </div>
-                  </div>
+                  </div> */}
                   <div className="w-full flex justify-center">
                     <Toggle
                       active={active}
                       setActive={setActive}
                       value={['Recommendation', 'Client Metrics']}
                     ></Toggle>
-                  </div>
-                  {/* <div
+
+                    {/* <div
                     className={` ${showGenerateSection ? 'hidden' : 'flex'} ${treatmentPlanData ? 'visible' : 'invisible'}  justify-end gap-2`}
                   >
                     <div
@@ -335,50 +429,73 @@ const NewGenerateHolisticPlan = () => {
                       Client Goals
                     </div>
                   </div> */}
+                  </div>
                 </div>
+                {active == 'Recommendation' && (
+                  <div className="w-full my-4">
+                    <CoverageCard
+                      progress={coverageProgess}
+                      details={coverageDetails}
+                    />
+                  </div>
+                )}
+                {active == 'Recommendation' && (
+                  <div className="flex flex-col-reverse md:flex-row justify-between items-center mt-3">
+                    <div className="flex justify-start items-center">
+                      <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
+                        <SvgIcon
+                          width="40px"
+                          height="40px"
+                          src="/icons/TreatmentPlan/cpu-setting.svg"
+                          color={'#005F73'}
+                        />
+                      </div>
+                      <div>
+                        <div className="ml-2">
+                          <div className="flex">
+                            <div className=" text-Text-Primary text-[10px] md:text-[14px] lg:text-[14px]">
+                              Holistic Plan
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <div className="text-Text-Secondary mr-4 text-justify text-[10px] md:text-[12px] lg:text-[12px]">
+                              The Holistic Plan is your personalized roadmap to
+                              optimal well-being. By combining knowledge-based
+                              insights with your unique health metrics, we craft
+                              tailored recommendations to help you reach and
+                              sustain your wellness goals with precision.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 items-center text-nowrap">
+                      {/* {treatmentPlanData?.suggestion_tab?.length == 0 && (
+                        <ButtonSecondary
+                          onClick={() => {
+                            navigate(`/report/Generate-Recommendation/${id}`);
+                          }}
+                          ClassName="w-full md:w-fit rounded-full"
+                        >
+                          <img src="/icons/tick-square.svg" alt="" /> Auto
+                          Generate
+                        </ButtonSecondary>
+                      )} */}
+                      <ButtonPrimary
+                        onClick={() => {
+                          setshowAddModal(true);
+                        }}
+                      >
+                        {' '}
+                        <img src="/icons/add-square.svg" alt="" /> Add
+                      </ButtonPrimary>
+                    </div>
+                  </div>
+                )}
                 {treatmentPlanData ? (
                   <div>
                     {active == 'Recommendation' && (
                       <>
-                        <div className="flex flex-col-reverse md:flex-row justify-between items-center mt-3">
-                          <div className="flex justify-start items-center">
-                            <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
-                              <SvgIcon
-                                width="40px"
-                                height="40px"
-                                src="/icons/TreatmentPlan/cpu-setting.svg"
-                                color={'#005F73'}
-                              />
-                            </div>
-                            <div>
-                              <div className="ml-2">
-                                <div className="flex">
-                                  <div className=" text-Text-Primary text-[10px] md:text-[14px] lg:text-[14px]">
-                                    Holistic Plan
-                                  </div>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                  <div className="text-Text-Secondary mr-4 text-justify text-[10px] md:text-[12px] lg:text-[12px]">
-                                    The Holistic Plan is your personalized
-                                    roadmap to optimal well-being. By combining
-                                    knowledge-based insights with your unique
-                                    health metrics, we craft tailored
-                                    recommendations to help you reach and
-                                    sustain your wellness goals with precision.
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <ButtonPrimary
-                            onClick={() => {
-                              setshowAddModal(true);
-                            }}
-                          >
-                            {' '}
-                            <img src="/icons/add-square.svg" alt="" /> Add
-                          </ButtonPrimary>
-                        </div>
                         <div>
                           {treatmentPlanData['suggestion_tab'].length > 0 ? (
                             <>
@@ -538,7 +655,7 @@ const NewGenerateHolisticPlan = () => {
                     <div className="w-full bg-[#FDFDFD] border border-Gray-50 rounded-[16px] p-2 md:p-4 mt-4">
                       <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px]">
                         <div className="w-full lg:w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
-                          {resoveSubctegoriesSubs().map((resol: any) => {
+                          {resoveSubctegoriesSubs()?.map((resol: any) => {
                             return (
                               <>
                                 <div
@@ -729,17 +846,17 @@ const NewGenerateHolisticPlan = () => {
                         <div className="w-full h-full flex flex-col items-center justify-center">
                           <img
                             className="w-44"
-                            src="/icons/EmptyState.svg"
+                            src="/icons/Empty/biomarkerEmpty.svg"
                             alt=""
                           />
-                          <div className="text-base font-medium text-Text-Primary -mt-9">
-                            No Holistic Plan Generated Yet
+                          <div className="text-base mb-4 font-medium text-Text-Primary -mt-9">
+                            No Biomarkers Available Yet!
                           </div>
-                          <div className="text-xs text-Text-Primary mt-2 mb-5">
-                            {/* Start creating your Holistic Plan */}
+                          {/* <div className="text-xs text-Text-Primary mt-2 mb-5">
+                        
                             Start creating your holistic plan
-                          </div>
-                          <ButtonSecondary
+                          </div> */}
+                          {/* <ButtonSecondary
                             onClick={() => {
                               navigate(`/report/Generate-Recommendation/${id}`);
                             }}
@@ -748,7 +865,7 @@ const NewGenerateHolisticPlan = () => {
                           >
                             <img src="/icons/tick-square.svg" alt="" /> Auto
                             Generate
-                          </ButtonSecondary>
+                          </ButtonSecondary> */}
                         </div>
                       </div>
                     </>
@@ -787,7 +904,7 @@ const NewGenerateHolisticPlan = () => {
             </div>
           </div>
           <div
-            className={`lg:pt-[30px] h-[600px] hidden md:block pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'hidden'}`}
+            className={`lg:pt-[30px] h-[600px] hidden md:block pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'md:hidden'}`}
           >
             <ComboBar isHolisticPlan></ComboBar>
           </div>
@@ -796,7 +913,11 @@ const NewGenerateHolisticPlan = () => {
           onSubmit={(addData) => {
             setTratmentPlanData((pre: any) => {
               const oldsData = { ...pre }; // Create a copy of the previous state
-              oldsData.suggestion_tab = [addData, ...oldsData.suggestion_tab]; // Add new data at the beginning
+              if (!oldsData?.suggestion_tab) {
+                oldsData.suggestion_tab = [addData];
+              } else {
+                oldsData.suggestion_tab = [addData, ...oldsData.suggestion_tab]; // Add new data at the beginning
+              }
               return oldsData;
             });
             console.log(addData);

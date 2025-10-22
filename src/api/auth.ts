@@ -33,6 +33,9 @@ class Auth extends Api {
       },
     });
   }
+  static helth() {
+    return this.get('/health');
+  }
   static signup(
     username?: string,
     email?: string,

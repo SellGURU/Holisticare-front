@@ -6,6 +6,7 @@ import Circleloader from '../../CircleLoader';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Application from '../../../api/app';
 import { Tooltip } from 'react-tooltip';
+import SearchSelect from '../../searchableSelect';
 interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
@@ -257,12 +258,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   return (
     <div
-      style={{ height: window.innerHeight - 440 + 'px' }}
+      style={{ height: window.innerHeight - 400 + 'px' }}
       className="w-full   rounded-2xl border  border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary"
     >
       {loading ? (
         <div
-          style={{ height: window.innerHeight - 520 + 'px' }}
+          style={{ height: window.innerHeight - 480 + 'px' }}
           className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
         >
           <Circleloader></Circleloader>
@@ -270,14 +271,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         </div>
       ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <div
-          style={{ height: window.innerHeight - 520 + 'px' }}
+          style={{ height: window.innerHeight - 480 + 'px' }}
           className="flex items-center  justify-center flex-col text-xs font-medium text-Text-Primary"
         >
           <img src="/icons/EmptyState-biomarkers.svg" alt="" />
           <div className="-mt-5">No data provided yet.</div>
         </div>
       ) : (
-        <div className="">
+        <div className=" relative ">
           <div className="flex justify-between items-center mb-4">
             <div className=" text-[10px] md:text-sm font-medium">
               List of Biomarkers{' '}
@@ -286,8 +287,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               </span>
             </div>
             <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
-              Date of Test
+              Date of Test:
               <SimpleDatePicker
+                textStyle
                 isUploadFile
                 date={dateOfTest}
                 setDate={setDateOfTest}
@@ -296,19 +298,24 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               />
             </div>
           </div>
-          <div ref={tableRef} className=" w-full overflow-auto  h-full">
-            <div className="w-full  min-w-[700px]   h-full text-xs">
+
+          <div
+            ref={tableRef}
+            className=" relative    w-full overflow-auto text-xs h-full"
+          >
+            <div className="min-w-[800px] ">
               {/* Table Header */}
               <div
                 className="grid w-full sticky top-0 z-10 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
                 style={{
-                  gridTemplateColumns: '169px 150px 1fr 180px 1fr 1fr 80px',
+                  gridTemplateColumns:
+                    'minmax(120px,1fr) minmax(140px,1fr) minmax(90px,1fr) minmax(150px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
                 }}
               >
                 <div className="text-left">Extracted Biomarker</div>
                 <div className="text-center">System Biomarker</div>
                 <div className="text-center">Extracted Value</div>
-                <div className="text-end">Extracted Unit</div>
+                <div className="text-center">Extracted Unit</div>
                 <div className="text-center">System Value</div>
                 <div className="text-center">System Unit</div>
                 <div className="text-end">Action</div>
@@ -316,7 +323,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
               {/* Table Rows */}
               <div
-                style={{ height: window.innerHeight - 550 + 'px' }}
+                style={{ height: window.innerHeight - 500 + 'px' }}
                 className="w-full pr-1"
               >
                 {biomarkers.map((b, index) => {
@@ -329,7 +336,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       className={` ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
                       style={{
                         gridTemplateColumns:
-                          '169px 150px 1fr 180px 1fr 1fr 80px',
+                          'minmax(120px,1fr) minmax(140px,1fr) minmax(90px,1fr) minmax(150px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
                       }}
                     >
                       <div className="text-left text-Text-Primary flex gap-1">
@@ -356,7 +363,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       </div>
                       {/* biomarker (editable via select) */}
                       <div className="text-center">
-                        <Select
+                        <SearchSelect
+                          isStaff
                           isLarge
                           isSetting
                           value={b.biomarker}
@@ -365,6 +373,15 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             updateAndStandardize(index, { biomarker: val })
                           }
                         />
+                        {/* <Select
+                        isLarge
+                        isSetting
+                        value={b.biomarker}
+                        options={avalibaleBiomarkers || []}
+                        onChange={(val: string) =>
+                          updateAndStandardize(index, { biomarker: val })
+                        }
+                      /> */}
                       </div>
                       {/* value (editable via input) */}
                       <div className="text-center">

@@ -127,7 +127,7 @@ const Actions: React.FC = () => {
               </div>
             </>
           ) : (
-            <ul className="mt-5 w-full overflow-y-scroll pr-1 xl:pr-2 actions-list">
+            <ul className="mt-5 w-full overflow-y-scroll Custom-scrollbar pr-1 xl:pr-2 actions-list">
               {filteredActions.map((action, index) => (
                 <li
                   key={index}

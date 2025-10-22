@@ -156,7 +156,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                 </div>
                 <div className="TextStyle-Body-3 text-Text-Secondary ml-2">
                   {data?.out_of_ref}{' '}
-                  {data.out_of_ref > 1 ? 'Needs Focus' : 'Need Focus'}{' '}
+                  {data.out_of_ref > 1 ? '"Needs Focus"' : '"Need Focus"'}{' '}
                 </div>
               </div>
             </div>
@@ -320,7 +320,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                             )}
                           </div>
                           <div className="flex items-center gap-4">
-                            <SourceTag source={active.source} />
+                            {active?.source && (
+                              <SourceTag source={active.source} />
+                            )}
                             {/* {active?.unit != '' && (
                               <div className="relative z-50 mr-0">
                                 <UnitPopUp unit={active?.unit}></UnitPopUp>

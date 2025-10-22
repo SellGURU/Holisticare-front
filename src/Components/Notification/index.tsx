@@ -207,6 +207,7 @@ export const Notification: React.FC<NotificationProps> = ({
       <div className="text-sm font-medium">Notification</div>
       <div className="w-full justify-center">
         <Toggle
+          widthFull
           isNotif
           active={activeMenu}
           setActive={setactiveMenu}

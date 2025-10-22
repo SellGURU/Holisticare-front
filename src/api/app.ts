@@ -1076,6 +1076,9 @@ class Application extends Api {
       Exercise_Id: exercise_Id,
     });
   };
+  static getCoverage = (data: any) => {
+    return this.post('/holistic_plan_coverage/calculate_progress', data);
+  };
 }
 
 export default Application;

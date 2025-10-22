@@ -6,6 +6,7 @@ import { MainModal } from '../../../Components';
 import Circleloader from '../../../Components/CircleLoader';
 import { publish, subscribe } from '../../../utils/event';
 import { ActivityCard } from './ActivityCard';
+import { CoverageCard } from '../../../Components/coverageCard';
 
 type CategoryState = {
   name: string;
@@ -25,6 +26,8 @@ interface SetOrdersProps {
   // resolvedSuggestions:(data:any) => void
   activeCategory: string;
   setActiveCategory: (value: string) => void;
+  progress: number; // from 0 to 100
+  details: Record<string, boolean>[];
 }
 
 export const SetOrders: FC<SetOrdersProps> = ({
@@ -39,6 +42,8 @@ export const SetOrders: FC<SetOrdersProps> = ({
   activeCategory,
   setActiveCategory,
   setVisibleCategorieys,
+  progress,
+  details,
 }) => {
   // const [activeCategory, setActiveCategory] = useState<string>(
   //   visibleCategoriy[visibleCategoriy.length - 1].name || 'Activity',
@@ -296,17 +301,18 @@ export const SetOrders: FC<SetOrdersProps> = ({
             <img src="/icons/danger.svg" alt="" />
             Change Order
           </div>
-          <p className="text-xs text-Text-Secondary my-4">
-            Please complete all required fields before confirming your order.
+          <p className="text-xs text-Text-Quadruple my-4">
+            Please complete all required fields before <br /> confirming your
+            order.
           </p>
           <ul className="border border-Gray-50 rounded-xl">
             {localCategories.map((category, index) => (
               <li
                 key={category.name}
-                className="flex items-center justify-between border-b border-Gray-50 p-3"
+                className="flex items-center min-h-[44px] justify-between border-b border-Gray-50 p-3"
               >
                 <div
-                  className={` ${!category.visible && 'opacity-50'} flex items-center gap-2 text-Primary-DeepTeal text-sm font-medium cursor-pointer`}
+                  className={` ${!category.visible && 'opacity-50'} flex items-center gap-2 text-Primary-DeepTeal text-xs font-normal cursor-pointer`}
                 >
                   <img
                     className="size-4"
@@ -371,14 +377,15 @@ export const SetOrders: FC<SetOrdersProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="bg-white rounded-2xl shadow-100 p-4 md:p-6 border border-Gray-50">
-        <div className="flex w-full flex-wrap ss:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
+      <div className="bg-white rounded-2xl h-[65vh] shadow-100 p-4 md:p-6 border border-Gray-50">
+        <CoverageCard progress={progress} details={details} />
+        <div className="flex mt-4 w-full flex-wrap ss:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
           <div className="flex w-[80%]   md:w-[50%] gap-8 md:gap-[80px]">
             {categories.map(
               ({ name, visible }) =>
                 visible && (
                   <div
-                    className={`flex items-center gap-2 text-Primary-DeepTeal text-[10px] md:text-xs font-medium cursor-pointer ${name !== activeCategory ? 'opacity-50' : ''}`}
+                    className={`flex items-center gap-2 text-Primary-DeepTeal text-[10px] md:text-sm font-medium cursor-pointer ${name !== activeCategory ? 'opacity-50' : ''}`}
                     key={name}
                     onClick={() => {
                       setActiveCategory(name);
@@ -440,7 +447,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
             scrollBehavior: 'smooth',
           }}
           ref={activityContainer}
-          className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 md:pb-8 px-3 md:px-6 min-h-[400px] overflow-y-auto"
+          className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 md:pb-8 px-3 md:px-6 h-[80%] overflow-y-auto"
         >
           {data
             ?.filter((el: any) => el.Category == activeCategory)
