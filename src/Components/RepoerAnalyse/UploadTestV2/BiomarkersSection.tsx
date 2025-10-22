@@ -6,6 +6,7 @@ import Circleloader from '../../CircleLoader';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Application from '../../../api/app';
 import { Tooltip } from 'react-tooltip';
+import SearchSelect from '../../searchableSelect';
 interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
@@ -300,14 +301,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
           <div
             ref={tableRef}
-            className=" relative  min-w-[700px]   w-full overflow-auto text-xs h-full"
+            className=" relative    w-full overflow-auto text-xs h-full"
           >
+              <div className="min-w-[800px] ">
             {/* Table Header */}
             <div
               className="grid w-full sticky top-0 z-10 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-              style={{
-                gridTemplateColumns: '169px 150px 1fr 180px 1fr 1fr 80px',
-              }}
+           style={{
+        gridTemplateColumns:
+          'minmax(120px,1fr) minmax(140px,1fr) minmax(90px,1fr) minmax(150px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
+      }}
             >
               <div className="text-left">Extracted Biomarker</div>
               <div className="text-center">System Biomarker</div>
@@ -331,9 +334,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     ref={(el) => (rowRefs.current[index] = el)}
                     key={index}
                     className={` ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
-                    style={{
-                      gridTemplateColumns: '169px 150px 1fr 180px 1fr 1fr 80px',
-                    }}
+                            style={{
+        gridTemplateColumns:
+          'minmax(120px,1fr) minmax(140px,1fr) minmax(90px,1fr) minmax(150px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
+      }}
                   >
                     <div className="text-left text-Text-Primary flex gap-1">
                       <TooltipTextAuto maxWidth="159px">
@@ -359,7 +363,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     </div>
                     {/* biomarker (editable via select) */}
                     <div className="text-center">
-                      <Select
+                      <SearchSelect
+                        isStaff
                         isLarge
                         isSetting
                         value={b.biomarker}
@@ -368,6 +373,15 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           updateAndStandardize(index, { biomarker: val })
                         }
                       />
+                      {/* <Select
+                        isLarge
+                        isSetting
+                        value={b.biomarker}
+                        options={avalibaleBiomarkers || []}
+                        onChange={(val: string) =>
+                          updateAndStandardize(index, { biomarker: val })
+                        }
+                      /> */}
                     </div>
                     {/* value (editable via input) */}
                     <div className="text-center">
@@ -431,6 +445,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   </div>
                 );
               })}
+              </div>
             </div>
           </div>
         </div>
