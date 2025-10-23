@@ -42,7 +42,22 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
   useEffect(() => {
     setIsUploded(el.status == 'completed' ? true : false);
   }, [el.status]);
+const getFileIcon = (fileName: string) => {
+  const ext = fileName.split('.').pop()?.toLowerCase();
 
+  switch (ext) {
+    case 'pdf':
+      return '/images/Pdf.png';
+    case 'doc':
+    case 'docx':
+      return '/icons/docx.png'; // <-- make sure you have this file in /public/images/
+    default:
+      return '/images/Pdf.png'; // fallback icon
+  }
+};
+
+const fileName = el.file_name || el.file.name;
+const fileIcon = getFileIcon(fileName);
   return (
     <>
       <div
@@ -52,7 +67,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
         {isuploaded ? (
           <div className="flex justify-between items-center">
             <div className="flex justify-start gap-2">
-              <img className="object-contain" src="/images/Pdf.png" alt="" />
+              <img className="object-contain w-[30px] h-[40px]" src={fileIcon} alt="" />
               <div>
                 <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
                   <TooltipTextAuto maxWidth="400px">
