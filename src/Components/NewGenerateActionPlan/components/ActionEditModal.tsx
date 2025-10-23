@@ -4,7 +4,7 @@ import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
 import {
-  // DoseInfoText,
+  DoseInfoText,
   DoseValidationEnglish,
   MacrosValidationNumber,
   NotesInfoText,
@@ -788,7 +788,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         ? ValidationForms.ValidationText('Dose', dose)
                         : ''
                     }
-                    // InfoText={DoseInfoText}
+                    InfoText={DoseInfoText}
                     margin="mb-4"
                   />
                 )}
