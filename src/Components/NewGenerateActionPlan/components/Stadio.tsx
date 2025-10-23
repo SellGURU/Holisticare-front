@@ -685,6 +685,7 @@ const Stadio: FC<StadioProps> = ({
                         onDragEnd={handleDragEnd}
                         className="cursor-move"
                       >
+                      
                         <LibBox
                           onAdd={() => addToActions(value)}
                           data={value}
