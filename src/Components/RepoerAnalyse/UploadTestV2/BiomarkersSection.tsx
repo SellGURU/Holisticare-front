@@ -259,7 +259,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   return (
     <div
       style={{ height: window.innerHeight - 400 + 'px' }}
-      className="w-full   rounded-2xl border  border-Gray-50 p-4 shadow-300 text-sm font-medium text-Text-Primary"
+      className="w-full   rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-sm font-medium text-Text-Primary"
     >
       {loading ? (
         <div
@@ -282,7 +282,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           <div className="flex justify-between items-center mb-4">
             <div className=" text-[10px] md:text-sm font-medium">
               List of Biomarkers{' '}
-              <span className="text-[#B0B0B0] text-xs font-medium">
+              <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
                 ({biomarkers.length})
               </span>
             </div>
@@ -294,7 +294,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 date={dateOfTest}
                 setDate={setDateOfTest}
                 placeholder="Select Date"
-                ClassName="ml-2 border border-Gray-50 1rounded-2xl px-2 py-1 text-Text-Primary"
+                ClassName="ml-2 border border-Gray-50  1rounded-2xl px-2 py-1 text-Text-Primary"
               />
             </div>
           </div>
