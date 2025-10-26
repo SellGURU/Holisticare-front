@@ -34,7 +34,7 @@ const ClientCard: FC<ClientCardProps> = ({
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
-  console.log(indexItem % 4);
+  const [refresh] = useState(false);
   useModalAutoClose({
     refrence: showModalRefrence,
     buttonRefrence: showModalButtonRefrence,
@@ -878,7 +878,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 </div>
               </div>
               <div className="w-full flex justify-between items-center py-1 mt-2">
-                <div
+                {/* <div
                   onClick={() =>
                     navigate(
                       `/drift-analysis?activeMemberId=${client.member_id}&showBack=true`,
@@ -893,6 +893,23 @@ const ClientCard: FC<ClientCardProps> = ({
                     color="#005F73"
                   />
                   Drift Analyzed
+                </div> */}
+                <div className="flex items-center justify-center gap-2 cursor-pointer">
+                  <img src="/icons/refresh-circle.svg" alt="" />
+                  {refresh ? (
+                    <div className="text-Primary-DeepTeal text-xs font-medium">
+                      Syncing...
+                    </div>
+                  ) : (
+                    <div className="flex flex-col">
+                      <div className="text-Primary-DeepTeal font-medium text-xs">
+                        Sync with Latest Data
+                      </div>
+                      <div className="text-Text-Quadruple text-[8px]">
+                        Last sync: Oct 22, 2025
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="hidden md:flex justify-end items-center">
                   <ButtonPrimary

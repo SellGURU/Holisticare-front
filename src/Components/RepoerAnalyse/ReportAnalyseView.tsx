@@ -29,7 +29,7 @@ import resolveStatusArray from './resolveStatusArray';
 // import { useConstructor } from "@/help"
 import { decodeAccessUser } from '../../help';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
-import { ButtonSecondary } from '../Button/ButtosSecondary';
+import { ButtonPrimary } from '../Button/ButtonPrimary';
 import Circleloader from '../CircleLoader';
 import InfoToltip from '../InfoToltip';
 import SpinnerLoader from '../SpinnerLoader';
@@ -1013,32 +1013,51 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     Holistic Plan
                   </div>
                   {TreatMentPlanData?.length > 0 && isHaveReport ? (
-                    <div className="flex flex-col items-center gap-1">
-                      <ButtonSecondary
-                        disabled={!isHtmlReportExists}
-                        ClassName="rounded-[20px] h-[24px] w-[168px]"
-                        onClick={handleGetHtmlReport}
-                      >
-                        {isHtmlReportExists || loadingHtmlReport ? (
-                          <>
-                            <img
-                              className="w-4 h-4"
-                              src="/icons/download.svg"
-                              alt=""
-                            />
-                            Download Report
-                          </>
-                        ) : (
-                          <>
-                            <SpinnerLoader></SpinnerLoader>
-                          </>
-                        )}
-                      </ButtonSecondary>
-                      {!isHtmlReportExists && (
-                        <div className="text-[10px] text-Primary-DeepTeal">
-                          Your report is currently being prepared.
+                    <div className="flex items-center gap-6">
+                      <div className="rounded-[20px] flex items-center justify-center w-[168px] h-[26px] bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen">
+                        <ButtonPrimary
+                          ClassName="
+      relative z-10 !w-[166px] !h-[24px] !rounded-[20px]
+      !bg-backgroundColor-Main !font-medium
+      !text-Primary-DeepTeal !text-xs !text-nowrap
+      !border-none flex items-center justify-center gap-2
+    "
+                        >
+                          <img src="/icons/document-upload.svg" alt="" />
+                          Share with Client
+                        </ButtonPrimary>
+                      </div>
+
+                      <div className="flex flex-col items-center gap-1">
+                        <div
+                          className="text-Primary-DeepTeal text-xs font-medium cursor-pointer flex items-center gap-1"
+                          onClick={() => {
+                            if (isHtmlReportExists) {
+                              handleGetHtmlReport();
+                            }
+                          }}
+                        >
+                          {isHtmlReportExists || loadingHtmlReport ? (
+                            <>
+                              <img
+                                className="w-5 h-5"
+                                src="/icons/monitor.svg"
+                                alt=""
+                              />
+                              View Holistic Plan
+                            </>
+                          ) : (
+                            <>
+                              <SpinnerLoader></SpinnerLoader>
+                            </>
+                          )}
                         </div>
-                      )}
+                        {!isHtmlReportExists && (
+                          <div className="text-[10px] text-Primary-DeepTeal">
+                            Your report is currently being prepared.
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     ''
