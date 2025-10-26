@@ -466,11 +466,11 @@ const addHolisticPlan = (holisticData: any, TreatMentPlanData: Array<any>) => {
 };
 
 const AddActionPlanHeaderOverflow = () => {
-  checkPageCanRender(60);
+  checkPageCanRender(80);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'AddActionPlanHeaderOverflow',
-    height: 60,
+    height: 80,
     content: null,
   });
 };
@@ -484,11 +484,11 @@ const AddActionPlanOverView = (grouped: any) => {
   }
 };
 const AddActionPLanRow = (category: string, item: any, index: number) => {
-  checkPageCanRender(90);
+  checkPageCanRender(80);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'ActionPlanRowOverFlow',
-    height: 90,
+    height: 80,
     content: item,
     index: index,
     key: category,
