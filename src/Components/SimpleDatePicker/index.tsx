@@ -71,7 +71,7 @@ export default function SimpleDatePicker({
           onManualOpen?.();
         }}
         className={` ${full && '!w-full'} ${isAddClient ? 'w-[90vw] lg:min-w-[200px] md:w-[200px] ' : 'sm:w-[133px]'}  ${isLarge ? 'sm:w-[222px] rounded-2xl' : ' rounded-md '}
-         px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-[90vw]' : ' xs:w-[145px]'}  flex items-center justify-between ${textStyle ? 'text-xs text-Text-Primary' : 'text-[10px] text-Text-Secondary'}  ${
+         px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-[90vw]' : ' xs:w-[145px]'}  flex items-center justify-between ${textStyle ? ' text-[10px] md:text-xs text-Text-Primary' : 'text-[10px] text-Text-Secondary'}  ${
            validation
              ? '!border-Red border'
              : inValid

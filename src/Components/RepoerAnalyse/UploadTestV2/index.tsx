@@ -217,7 +217,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       const fileName = file.name;
       const fileExtension = fileName.split('.').pop()?.toLowerCase();
 
-      const supportedFormats = ['pdf', 'docx'];
+      const supportedFormats = ['pdf', 'docx', 'doc'];
 
       if (!fileExtension || !supportedFormats.includes(fileExtension)) {
         // Validation failed: set error state without calling API
