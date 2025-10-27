@@ -166,7 +166,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
               onClick={() => window.open(data?.Intervention_url, '_blank')}
             >
               <div className="text-Primary-DeepTeal text-xs font-normal">
-                Learn More (NHS)
+                Learn More ({data?.Intervention_url.split('/')[data?.Intervention_url.split('/').length-2]})
               </div>
               <img src="/icons/external-link.svg" alt="" />
             </div>
