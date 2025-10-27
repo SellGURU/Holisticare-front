@@ -37,6 +37,7 @@ import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
+import { ShareModal } from './ShareModal';
 import { UploadTestV2 } from './UploadTestV2';
 interface ReportAnalyseViewprops {
   clientData?: any;
@@ -58,6 +59,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [isHaveReport, setIsHaveReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [questionnaires, setQuestionnaires] = useState([]);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isShareModalLoading, setIsShareModalLoading] = useState(false);
+  const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
+  const handleShare = () => {
+    setIsShareModalLoading(true);
+    Application.reportGeneratedNotification(resolvedMemberID?.toString() || '')
+      .then(() => {
+        setIsShareModalOpen(false);
+        setIsShareModalSuccess(true);
+      })
+      .catch(() => {})
+      .finally(() => {
+        setIsShareModalLoading(false);
+      });
+  };
   // const history = useHistory();
   const location = useLocation();
   // useEffect(() => {
@@ -1014,19 +1030,34 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                   {TreatMentPlanData?.length > 0 && isHaveReport ? (
                     <div className="flex items-center gap-6">
-                      <div className="rounded-[20px] flex items-center justify-center w-[168px] h-[26px] bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen">
-                        <ButtonPrimary
-                          ClassName="
+                      {isShareModalSuccess ? (
+                        <div className="flex flex-col items-center">
+                          <div className="text-Text-Quadruple text-xs font-medium flex items-center gap-1">
+                            <img src="/icons/tick-circle-gray.svg" alt="" />
+                            Shared with Client
+                          </div>
+                          <div className="text-Text-Fivefold text-[10px]">
+                            on Oct 22,2025
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="rounded-[20px] flex items-center justify-center w-[168px] h-[26px] bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen">
+                          <ButtonPrimary
+                            ClassName="
       relative z-10 !w-[166px] !h-[24px] !rounded-[20px]
       !bg-backgroundColor-Main !font-medium
       !text-Primary-DeepTeal !text-xs !text-nowrap
       !border-none flex items-center justify-center gap-2
     "
-                        >
-                          <img src="/icons/document-upload.svg" alt="" />
-                          Share with Client
-                        </ButtonPrimary>
-                      </div>
+                            onClick={() => {
+                              setIsShareModalOpen(true);
+                            }}
+                          >
+                            <img src="/icons/document-upload.svg" alt="" />
+                            Share with Client
+                          </ButtonPrimary>
+                        </div>
+                      )}
 
                       <div className="flex flex-col items-center gap-1">
                         <div
@@ -1070,6 +1101,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   setPrintActionPlan={(value) => {
                     setActionPlanPrint(value);
                   }}
+                  setIsShareModalSuccess={setIsShareModalSuccess}
                   treatmentPlanData={TreatMentPlanData}
                   setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
                 />
@@ -1244,6 +1276,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           </div>
         </>
       )}
+      <ShareModal
+        isOpen={isShareModalOpen}
+        isLoading={isShareModalLoading}
+        onClose={() => {
+          setIsShareModalOpen(false);
+          setIsShareModalLoading(false);
+        }}
+        onConfirm={handleShare}
+      />
     </>
   );
 };

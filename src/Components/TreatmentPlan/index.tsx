@@ -45,6 +45,7 @@ interface TreatmentPlanProps {
   setPrintActionPlan: (value: any) => void;
   isShare?: boolean;
   setIsHolisticPlanEmpty: (value: boolean) => void;
+  setIsShareModalSuccess: (value: boolean) => void;
 }
 
 export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
@@ -52,6 +53,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   setPrintActionPlan,
   isShare,
   setIsHolisticPlanEmpty,
+  setIsShareModalSuccess,
 }) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
@@ -115,6 +117,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         setPrintActionPlan(res.data);
         if (res.data.length > 0) {
           setActiveTreatmnet(res.data[res.data.length - 1].t_plan_id);
+          setIsShareModalSuccess(
+            res.data[res.data.length - 1].shared_report_with_client,
+          );
         }
         setTimeout(() => {
           const container: any = document.getElementById('scrollContainer');
