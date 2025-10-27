@@ -733,6 +733,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               onDiscard();
             }
             setstep(0);
+            setUploadedFile(null)
+              setPolling(true); 
+            setExtractedBiomarkers([])
+            setAddedBiomarkers([])
+            setRowErrors([])
           }}
           loading={biomarkerLoading}
           btnLoading={btnLoading}

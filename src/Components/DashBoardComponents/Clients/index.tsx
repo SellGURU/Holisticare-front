@@ -76,11 +76,22 @@ const RecentCheckIns: React.FC = () => {
                     }`}
                   >
                     <div className="py-2 pl-2 w-[100px] 2xl:w-[150px] flex items-center">
-                      <img
+                      {
+                        client.picture ? (
+                           <img
+                        src={client.picture}
+                        alt={client.name}
+                        className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
+                      />):(
+                          <img
                         src={`https://ui-avatars.com/api/?name=${client.name}`}
                         alt={client.name}
                         className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
                       />
+                      )
+
+                      }
+                    
                       <TooltipTextAuto
                         tooltipClassName="!bg-white !w-fit !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                         maxWidth="70px"
