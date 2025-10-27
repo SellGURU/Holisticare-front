@@ -34,7 +34,7 @@ const ClientCard: FC<ClientCardProps> = ({
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
-  const [refresh] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   useModalAutoClose({
     refrence: showModalRefrence,
     buttonRefrence: showModalButtonRefrence,
@@ -241,6 +241,14 @@ const ClientCard: FC<ClientCardProps> = ({
   //   });
   // };
 
+  const handleCheckRefreshProgress = () => {
+    setRefresh(true);
+    Application.checkRefreshProgress(client.member_id)
+      .then(() => {
+        setRefresh(false);
+      })
+      .catch(() => {});
+  };
   return (
     <>
       <MainModal
@@ -894,7 +902,10 @@ const ClientCard: FC<ClientCardProps> = ({
                   />
                   Drift Analyzed
                 </div> */}
-                <div className="flex items-center justify-center gap-2 cursor-pointer">
+                <div
+                  className="flex items-center justify-center gap-2 cursor-pointer"
+                  onClick={handleCheckRefreshProgress}
+                >
                   <img src="/icons/refresh-circle.svg" alt="" />
                   {refresh ? (
                     <div className="text-Primary-DeepTeal text-xs font-medium">
@@ -906,7 +917,7 @@ const ClientCard: FC<ClientCardProps> = ({
                         Sync with Latest Data
                       </div>
                       <div className="text-Text-Quadruple text-[8px]">
-                        Last sync: Oct 22, 2025
+                        Last sync: {client['Latest Sync']}
                       </div>
                     </div>
                   )}
