@@ -152,18 +152,18 @@ export const Notification: React.FC<NotificationProps> = ({
     }
   }, [notifications, activeMenu, onUnreadNotificationsChange]);
 
-  const handleNotificationClick = (clickedNotifId: string) => {
-    // Mark notification as read in the UI
-    setNotifications((prev) =>
-      prev.map((item) =>
-        item.notification_id === clickedNotifId
-          ? { ...item, read_status: true, read_at: new Date().getTime() } // Use getTime() for timestamp
-          : item,
-      ),
-    );
-    // Call the API to mark as read
-    NotificationApi.readNotification(clickedNotifId);
-  };
+  // const handleNotificationClick = (clickedNotifId: string) => {
+  //   // Mark notification as read in the UI
+  //   setNotifications((prev) =>
+  //     prev.map((item) =>
+  //       item.notification_id === clickedNotifId
+  //         ? { ...item, read_status: true, read_at: new Date().getTime() } // Use getTime() for timestamp
+  //         : item,
+  //     ),
+  //   );
+  //   // Call the API to mark as read
+  //   NotificationApi.readNotification(clickedNotifId);
+  // };
 
   const filteredNotifications = notifications.filter(
     (notif) =>
@@ -188,7 +188,7 @@ export const Notification: React.FC<NotificationProps> = ({
   }, [fetchNotifications]);
   const handleProceedClick = (notif: NotificationItem) => {
     // Mark as read when proceeding
-    handleNotificationClick(notif.notification_id);
+    // handleNotificationClick(notif.notification_id);
 
     if (
       notif.proceed_type?.type === 'redirect' &&
@@ -222,11 +222,11 @@ export const Notification: React.FC<NotificationProps> = ({
         ) : filteredNotifications.length > 0 ? (
           filteredNotifications.map((notif) => (
             <div
-              onClick={() => {
-                if (!notif.read_status) {
-                  handleNotificationClick(notif.notification_id);
-                }
-              }}
+              // onClick={() => {
+              //   if (!notif.read_status) {
+              //     handleNotificationClick(notif.notification_id);
+              //   }
+              // }}
               key={notif.notification_id}
               className="flex w-full justify-between bg-[#FCFCFC] py-2 px-3 items-center gap-3 cursor-pointer border border-Gray-25 rounded-2xl mt-[6px]"
             >
