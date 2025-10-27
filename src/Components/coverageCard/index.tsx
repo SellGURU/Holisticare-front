@@ -58,7 +58,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                     }
                     alt=""
                   /> */}
-                  <Checkbox checked={isChecked} onChange={() => {}}></Checkbox>               
+                  <Checkbox checked={isChecked} onChange={() => {}}></Checkbox>
                   {text}
                 </div>
               );

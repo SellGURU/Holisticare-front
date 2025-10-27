@@ -438,12 +438,15 @@ const Card: React.FC<CardProps> = ({
               ) : (
                 <li
                   className={` ${item.length > 1 && 'list-disc'} text-sm text-justify mt-2 ${
-                    title === 'Health Planning Factors' ? 'marker:text-gray-400' : ''
+                    title === 'Health Planning Factors'
+                      ? 'marker:text-gray-400'
+                      : ''
                   }`}
                 >
                   {title === 'Health Planning Factors' ? (
                     <>
-                      <span className="text-gray-500">Factor {index + 1}:</span> {item}
+                      <span className="text-gray-500">Factor {index + 1}:</span>{' '}
+                      {item}
                     </>
                   ) : (
                     item
