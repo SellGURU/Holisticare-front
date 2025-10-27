@@ -3,40 +3,42 @@ import { useState } from 'react';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { subscribe } from '../../utils/event';
 import { useEffect } from 'react';
-interface DownloadOption {
-  name: string;
-  checked: boolean;
-  disabled?: boolean;
-}
 interface DownloadModalProps {
   onclose: () => void;
   onconfirm: (data: Array<any>) => void;
-  mode: 'download' | 'share';
-  selections: DownloadOption[];
-  setSelections: React.Dispatch<React.SetStateAction<DownloadOption[]>>;
 }
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const DownloadModal: React.FC<DownloadModalProps> = ({
   onclose,
   onconfirm,
-  mode,
-  selections,
-  setSelections,
 }) => {
-  const baseOptions: DownloadOption[] = [
-    { name: 'Client Summary', checked: true },
-    { name: 'Need Focus Biomarker', checked: false },
-    { name: 'Concerning Result', checked: true },
-    { name: 'Detailed Analysis', checked: true },
-    { name: 'Holistic Plan', checked: true },
-    { name: 'Action Plan', checked: true, disabled: false },
-  ];
-
-  const downloadSelect = selections;
-  const setDownloadSelect = setSelections;
-  useEffect(() => {
-    if (!selections.length) setDownloadSelect(baseOptions);
-  }, [mode]);
+  const [downloadSelect, setDownloadSelect] = useState([
+    {
+      name: 'Client Summary',
+      checked: true,
+    },
+    {
+      name: 'Need Focus Biomarker',
+      checked: false,
+    },
+    {
+      name: 'Concerning Result',
+      checked: true,
+    },
+    {
+      name: 'Detailed Analysis',
+      checked: true,
+    },
+    {
+      name: 'Holistic Plan',
+      checked: true,
+    },
+    {
+      name: 'Action Plan',
+      checked: true,
+      disabled: false,
+    },
+  ]);
   console.log(downloadSelect);
 
   subscribe('ActionPlanStatus', (data: any) => {
