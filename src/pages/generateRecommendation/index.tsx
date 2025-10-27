@@ -106,37 +106,36 @@ export const GenerateRecommendation = () => {
     return data?.suggestion_tab && data.suggestion_tab.length > 0;
   };
 
-  const handlePlan = (data:any,retryForSuggestions:boolean) => {
-        if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، ادامه نده
+  const handlePlan = (data: any, retryForSuggestions: boolean) => {
+    if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، ادامه نده
 
-        // Check essential data fields (for initial load)
-        const essentialDataReady = hasEssentialData(data);
-        // Check suggestion_tab data (for Step 2 and Next button)
-        const suggestionsDataReady = hasSuggestionsData(data);
+    // Check essential data fields (for initial load)
+    const essentialDataReady = hasEssentialData(data);
+    // Check suggestion_tab data (for Step 2 and Next button)
+    const suggestionsDataReady = hasSuggestionsData(data);
 
-        if (essentialDataReady) {
-          setTratmentPlanData({
-             ...data,
-             client_insight:data.client_insight || [],
-             biomarker_insight:data.biomarker_insight || [],
-             looking_forwards:data.looking_forwards || [], 
-             member_id: id });
-          setSuggestionsDefualt(data.suggestion_tab);
-          // If we are specifically waiting for suggestion_tab for Step 2
-          if (retryForSuggestions && !suggestionsDataReady) {
-            console.log(
-              'Suggestion tab data missing, retrying in 15 seconds...',
-            );
-            timeoutRef.current = setTimeout(() => generatePaln(true), 15000);
-          } else {
-            setIsLoading(false); // Hide full page loader
-            setisButtonLoading(false); // Hide button loader
-          }
-        } else {
-          console.log('Missing essential data, retrying in 15 seconds...');
-          timeoutRef.current = setTimeout(() => generatePaln(), 15000);
-        }
-  }
+    if (essentialDataReady) {
+      setTratmentPlanData({
+        ...data,
+        client_insight: data.client_insight || [],
+        biomarker_insight: data.biomarker_insight || [],
+        looking_forwards: data.looking_forwards || [],
+        member_id: id,
+      });
+      setSuggestionsDefualt(data.suggestion_tab);
+      // If we are specifically waiting for suggestion_tab for Step 2
+      if (retryForSuggestions && !suggestionsDataReady) {
+        console.log('Suggestion tab data missing, retrying in 15 seconds...');
+        timeoutRef.current = setTimeout(() => generatePaln(true), 15000);
+      } else {
+        setIsLoading(false); // Hide full page loader
+        setisButtonLoading(false); // Hide button loader
+      }
+    } else {
+      console.log('Missing essential data, retrying in 15 seconds...');
+      timeoutRef.current = setTimeout(() => generatePaln(), 15000);
+    }
+  };
 
   const generatePaln = (retryForSuggestions = false) => {
     if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، اجرا نشود
@@ -151,7 +150,7 @@ export const GenerateRecommendation = () => {
       member_id: id,
     })
       .then((res) => {
-        handlePlan(res.data,retryForSuggestions)        
+        handlePlan(res.data, retryForSuggestions);
       })
       .catch(() => {
         if (!isMountedRef.current) return;
