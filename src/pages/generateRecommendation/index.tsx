@@ -93,7 +93,7 @@ export const GenerateRecommendation = () => {
   const hasEssentialData = (data: any) => {
     return (
       data?.client_insight &&
-      data.client_insight.length > 0 &&
+      data?.client_insight?.length > 0 &&
       data?.completion_suggestion
       // data.completion_suggestion.length > 0
       // data?.looking_forwards &&
