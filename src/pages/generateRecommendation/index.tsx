@@ -6,6 +6,7 @@ import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import { GeneralCondition } from './components/GeneralCondition';
 import { Overview } from './components/Overview';
 import { SetOrders } from './components/SetOrders';
+// import mocktemtment from './treatmentMoch.json'
 import Application from '../../api/app';
 import Circleloader from '../../Components/CircleLoader';
 import SvgIcon from '../../utils/svgIcon';
@@ -105,21 +106,8 @@ export const GenerateRecommendation = () => {
     return data?.suggestion_tab && data.suggestion_tab.length > 0;
   };
 
-  const generatePaln = (retryForSuggestions = false) => {
-    if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، اجرا نشود
-
-    // Only show full page loader if it's the initial load or a retry for essential data
-    if (!retryForSuggestions) {
-      setIsLoading(true);
-    }
-    setisButtonLoading(true); // Always show button loading when calling API
-
-    Application.generateTreatmentPlan({
-      member_id: id,
-    })
-      .then((res) => {
+  const handlePlan = (data:any,retryForSuggestions:boolean) => {
         if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، ادامه نده
-        const data = res.data;
 
         // Check essential data fields (for initial load)
         const essentialDataReady = hasEssentialData(data);
@@ -127,7 +115,12 @@ export const GenerateRecommendation = () => {
         const suggestionsDataReady = hasSuggestionsData(data);
 
         if (essentialDataReady) {
-          setTratmentPlanData({ ...data, member_id: id });
+          setTratmentPlanData({
+             ...data,
+             client_insight:data.client_insight || [],
+             biomarker_insight:data.biomarker_insight || [],
+             looking_forwards:data.looking_forwards || [], 
+             member_id: id });
           setSuggestionsDefualt(data.suggestion_tab);
           // If we are specifically waiting for suggestion_tab for Step 2
           if (retryForSuggestions && !suggestionsDataReady) {
@@ -143,6 +136,22 @@ export const GenerateRecommendation = () => {
           console.log('Missing essential data, retrying in 15 seconds...');
           timeoutRef.current = setTimeout(() => generatePaln(), 15000);
         }
+  }
+
+  const generatePaln = (retryForSuggestions = false) => {
+    if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، اجرا نشود
+
+    // Only show full page loader if it's the initial load or a retry for essential data
+    if (!retryForSuggestions) {
+      setIsLoading(true);
+    }
+    setisButtonLoading(true); // Always show button loading when calling API
+    // handlePlan(mocktemtment,retryForSuggestions)
+    Application.generateTreatmentPlan({
+      member_id: id,
+    })
+      .then((res) => {
+        handlePlan(res.data,retryForSuggestions)        
       })
       .catch(() => {
         if (!isMountedRef.current) return;
