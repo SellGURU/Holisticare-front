@@ -261,7 +261,17 @@ export const TopBar: FC<TopBarProps> = ({
   }, [window.location.pathname]);
 
   const shouldEnableActions = !isReportAvailable && !showReport;
+const defaultOptions = [
+  { name: 'Client Summary', checked: true },
+  { name: 'Need Focus Biomarker', checked: false },
+  { name: 'Concerning Result', checked: true },
+  { name: 'Detailed Analysis', checked: true },
+  { name: 'Holistic Plan', checked: true },
+  { name: 'Action Plan', checked: true, disabled: false },
+];
 
+const [downloadOptions, setDownloadOptions] = useState(defaultOptions);
+const [shareOptions, setShareOptions] = useState(defaultOptions);
   return (
     <div className="w-full flex items-center justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">
       {!isShare ? (
@@ -424,6 +434,9 @@ export const TopBar: FC<TopBarProps> = ({
         <>
           <DownloadModal
             // isOpen={openDownload || openShare}
+            mode={openDownload ? 'download' : 'share'}
+              selections={openDownload ? downloadOptions : shareOptions}
+  setSelections={openDownload ? setDownloadOptions : setShareOptions} 
             onconfirm={(settingsData) => {
               const locationAddress = window.location.pathname;
               const routeData = locationAddress.split('/');
