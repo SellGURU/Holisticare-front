@@ -411,7 +411,6 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                             <HistoricalChart
                               chartId={data.subcategory}
                               statusBar={active?.chart_bounds}
-                             
                               sources={active?.historical_sources}
                               dataStatus={active.status}
                               dataPoints={[...active.values]}

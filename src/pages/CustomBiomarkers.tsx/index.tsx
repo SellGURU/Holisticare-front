@@ -25,9 +25,10 @@ const CustomBiomarkers = () => {
   const [activeAdd, setActiveAdd] = useState(false);
   const [loading, setLoading] = useState(false);
   const openModalAdd = () => setActiveAdd(true);
-  const closeModalAdd = () => {setActiveAdd(false);
-    setErrorDetails('')
-  }
+  const closeModalAdd = () => {
+    setActiveAdd(false);
+    setErrorDetails('');
+  };
   const [errorDetails, setErrorDetails] = useState<string>('');
   const getBiomarkers = () => {
     setIsLoading(true);

@@ -31,9 +31,10 @@ const biomarkerItem = ({
   const [activeEdit, setActiveEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const openModalEdit = () => setActiveEdit(true);
-  const closeModalEdit = () => {setActiveEdit(false);
-    setErrorDetails('')
-  }
+  const closeModalEdit = () => {
+    setActiveEdit(false);
+    setErrorDetails('');
+  };
   const [activeBiomarker, setActiveBiomarker] = useState(
     data.thresholds.male[getMaleThresholdKeys()[0]],
   );

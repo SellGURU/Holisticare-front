@@ -76,33 +76,32 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     );
     onChange(updated);
   };
-const deletedIndexRef = useRef<number | null>(null);
+  const deletedIndexRef = useRef<number | null>(null);
 
-const handleConfirm = (indexToDelete: number) => {
-  // Remember which index was deleted
-  deletedIndexRef.current = indexToDelete;
+  const handleConfirm = (indexToDelete: number) => {
+    // Remember which index was deleted
+    deletedIndexRef.current = indexToDelete;
 
-  // update biomarkers
-  const updated = biomarkers.filter((_, i) => i !== indexToDelete);
-  onChange(updated);
+    // update biomarkers
+    const updated = biomarkers.filter((_, i) => i !== indexToDelete);
+    onChange(updated);
 
-  // update rowErrors
-  setrowErrors((prev: any) => {
-    if (!prev) return prev;
+    // update rowErrors
+    setrowErrors((prev: any) => {
+      if (!prev) return prev;
 
-    const newErrors: Record<number, string> = {};
-    Object.keys(prev).forEach((key) => {
-      const idx = Number(key);
-      if (idx < indexToDelete) {
-        newErrors[idx] = prev[idx]; // keep errors before deleted row
-      } else if (idx > indexToDelete) {
-        newErrors[idx - 1] = prev[idx]; // shift errors after deleted row
-      }
+      const newErrors: Record<number, string> = {};
+      Object.keys(prev).forEach((key) => {
+        const idx = Number(key);
+        if (idx < indexToDelete) {
+          newErrors[idx] = prev[idx]; // keep errors before deleted row
+        } else if (idx > indexToDelete) {
+          newErrors[idx - 1] = prev[idx]; // shift errors after deleted row
+        }
+      });
+      return newErrors;
     });
-    return newErrors;
-  });
-};
-
+  };
 
   const handleCancel = (indexToUpdate: number) => {
     const updated = biomarkers.map((b, i) =>
@@ -260,25 +259,25 @@ const handleConfirm = (indexToDelete: number) => {
     }
   }, [rowErrors]);
   useEffect(() => {
-  if (deletedIndexRef.current !== null) {
-    const index = deletedIndexRef.current;
-    deletedIndexRef.current = null; // reset
+    if (deletedIndexRef.current !== null) {
+      const index = deletedIndexRef.current;
+      deletedIndexRef.current = null; // reset
 
-    // Scroll to the same index or the closest one that still exists
-    const targetIndex =
-      index < biomarkers.length ? index : biomarkers.length - 1;
+      // Scroll to the same index or the closest one that still exists
+      const targetIndex =
+        index < biomarkers.length ? index : biomarkers.length - 1;
 
-    const el = rowRefs.current[targetIndex];
-    const container = tableRef.current;
+      const el = rowRefs.current[targetIndex];
+      const container = tableRef.current;
 
-    if (el && container) {
-      container.scrollTo({
-        top: el.offsetTop - container.clientHeight / 2, // scroll to center that row
-        behavior: 'smooth',
-      });
+      if (el && container) {
+        container.scrollTo({
+          top: el.offsetTop - container.clientHeight / 2, // scroll to center that row
+          behavior: 'smooth',
+        });
+      }
     }
-  }
-}, [biomarkers]);
+  }, [biomarkers]);
   console.log(biomarkers);
 
   return (
@@ -324,10 +323,7 @@ const handleConfirm = (indexToDelete: number) => {
             </div>
           </div>
 
-          <div
-         
-            className=" relative w-full  text-xs h-full"
-          >
+          <div className=" relative w-full  text-xs h-full">
             <div className="min-w-[800px] ">
               {/* Table Header */}
               <div
