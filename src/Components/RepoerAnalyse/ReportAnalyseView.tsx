@@ -1022,7 +1022,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   >
                     Holistic Plan
                   </div>
-                  {TreatMentPlanData?.length > 0 && isHaveReport ? (
+                  {TreatMentPlanData?.length > 0 && isHaveReport && !isShare ? (
                     <div className="flex items-center gap-6">
                       {isShareModalSuccess ? (
                         <div className="flex flex-col items-center">
@@ -1031,7 +1031,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                             Shared with Client
                           </div>
                           <div className="text-Text-Fivefold text-[10px]">
-                            on {dateShare || 'No date'}
+                            on{' '}
+                            {dateShare
+                              ? new Date(
+                                  dateShare as string,
+                                ).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                })
+                              : 'No date'}
                           </div>
                         </div>
                       ) : (
@@ -1078,7 +1087,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                             </>
                           ) : (
                             <>
-                              <SpinnerLoader></SpinnerLoader>
+                              <SpinnerLoader color="#005F73"></SpinnerLoader>
                             </>
                           )}
                         </div>
