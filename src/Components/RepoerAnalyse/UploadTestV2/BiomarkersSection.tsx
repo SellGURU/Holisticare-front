@@ -6,7 +6,7 @@ import Circleloader from '../../CircleLoader';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Application from '../../../api/app';
 import { Tooltip } from 'react-tooltip';
-import {Scaling } from 'lucide-react';
+import { Scaling } from 'lucide-react';
 import SearchSelect from '../../searchableSelect';
 interface BiomarkersSectionProps {
   biomarkers: any[];
@@ -288,8 +288,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   return (
     <div
       // style={{ height: window.innerHeight - 400 + 'px' }}
-      className={
-        `w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-sm font-medium text-Text-Primary`}
+      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-sm font-medium text-Text-Primary`}
     >
       {loading ? (
         <div
@@ -317,8 +316,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   ({biomarkers.length})
                 </span>
               </div>
-              <Scaling onClick={() => setIsScaling(!isScaling)} className="w-4 h-4 cursor-pointer text-Text-Secondary" />
-
+              <Scaling
+                onClick={() => setIsScaling(!isScaling)}
+                className="w-4 h-4 cursor-pointer text-Text-Secondary"
+              />
             </div>
             <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
               Date of Test:
@@ -357,7 +358,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 ref={tableRef}
                 className="overflow-y-auto  w-[100.5%]"
                 style={{
-                  maxHeight:isScaling ?window.innerHeight - 330 + 'px' :window.innerHeight - 500 + 'px',
+                  maxHeight: isScaling
+                    ? window.innerHeight - 330 + 'px'
+                    : window.innerHeight - 500 + 'px',
                 }}
               >
                 {biomarkers.map((b, index) => {

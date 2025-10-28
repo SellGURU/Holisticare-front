@@ -646,7 +646,7 @@ input:-webkit-autofill:active {
   }
 }
 
-.biomarkerTableShowAnimation{
+.biomarkerTableShowAnimation {
   animation: biomarkerTableShowAnimation 1s forwards;
 }
 .biomarkerTableHideAnimation {
@@ -658,6 +658,6 @@ input:-webkit-autofill:active {
     height: calc(100vh - 400px);
   }
   100% {
-    height:calc(100vh - 230px);
+    height: calc(100vh - 230px);
   }
 }
