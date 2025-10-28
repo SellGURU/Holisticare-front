@@ -206,7 +206,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/html-previewer/:id',
-    element: <HtmlViewer></HtmlViewer>
+    element: <HtmlViewer></HtmlViewer>,
   },
   {
     path: '/maintenance',
