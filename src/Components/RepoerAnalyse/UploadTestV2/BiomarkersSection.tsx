@@ -316,7 +316,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   ({biomarkers.length})
                 </span>
               </div>
-              <img onClick={() => setIsScaling(!isScaling)} className='w-4 h-4 cursor-pointer opacity-70' src={isScaling ? "/icons/biomarkers/import.svg" : "/icons/biomarkers/export.svg"} alt="" />
+              <img
+                onClick={() => setIsScaling(!isScaling)}
+                className="w-4 h-4 cursor-pointer opacity-70"
+                src={
+                  isScaling
+                    ? '/icons/biomarkers/import.svg'
+                    : '/icons/biomarkers/export.svg'
+                }
+                alt=""
+              />
               {/* <Scaling
                 onClick={() => setIsScaling(!isScaling)}
                 className="w-4 h-4 cursor-pointer text-Text-Secondary"
