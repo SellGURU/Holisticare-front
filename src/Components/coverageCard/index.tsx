@@ -59,9 +59,8 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                     alt=""
                   /> */}
                   <Checkbox checked={isChecked} onChange={() => {}}></Checkbox>
-                  <span className='text-Text-Secondary w-[60px]'>
-                   Factor {index + 1}: {' '}
-
+                  <span className="text-Text-Secondary w-[60px]">
+                    Factor {index + 1}:{' '}
                   </span>
                   {text}
                 </div>
