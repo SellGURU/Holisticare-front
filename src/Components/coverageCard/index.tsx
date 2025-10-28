@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MainModal from '../MainModal';
+import Checkbox from '../checkbox';
 
 interface CoverageCardProps {
   progress: number; // from 0 to 100
@@ -45,18 +46,22 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
               return (
                 <div
                   key={index}
-                  className={`flex select-none text-justify items-start gap-2 text-Text-Primary text-xs  ${
+                  className={`flex select-none text-justify items-start  text-Text-Primary text-xs  ${
                     isChecked && ' line-through'
                   }`}
                 >
-                  <img
+                  {/* <img
                     src={
                       isChecked
                         ? '/icons/tick-square-green-new.svg'
                         : '/icons/close-square-new.svg'
                     }
                     alt=""
-                  />
+                  /> */}
+                  <Checkbox checked={isChecked} onChange={() => {}}></Checkbox>
+                  <span className="text-Text-Secondary w-[60px]">
+                    Factor {index + 1}:{' '}
+                  </span>
                   {text}
                 </div>
               );

@@ -71,6 +71,7 @@ export const GenerateRecommendation = () => {
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
+      key_areas_to_address: treatmentPlanData?.looking_forwards || [],
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
