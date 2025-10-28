@@ -645,3 +645,19 @@ input:-webkit-autofill:active {
     width: 30%;
   }
 }
+
+.biomarkerTableShowAnimation{
+  animation: biomarkerTableShowAnimation 1s forwards;
+}
+.biomarkerTableHideAnimation {
+  animation: biomarkerTableShowAnimation 1s reverse forwards;
+}
+
+@keyframes biomarkerTableShowAnimation {
+  0% {
+    height: calc(100vh - 400px);
+  }
+  100% {
+    height:calc(100vh - 230px);
+  }
+}
