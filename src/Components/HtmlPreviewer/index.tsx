@@ -500,6 +500,13 @@ export default function HtmlEditor({
             setSelectedText('');
           }
         });
+      } else {
+        const editableElements = doc.querySelectorAll('.editable');
+        editableElements.forEach((element) => {
+          (element as HTMLElement).contentEditable = 'false';
+        });
+        const existingIcons = doc.querySelectorAll('.edit-icon');
+        existingIcons.forEach((icon) => icon.remove());
       }
 
       loadedRef.current = true;
