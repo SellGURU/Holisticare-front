@@ -49,6 +49,7 @@ const NewGenerateHolisticPlan = () => {
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
+      looking_forwards: treatmentPlanData?.looking_forwards,
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
