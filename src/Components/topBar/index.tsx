@@ -103,11 +103,11 @@ export const TopBar: FC<TopBarProps> = ({
     ) {
       return [
         {
-          name: 'Home',
+          name: 'Client List',
           url: '/',
         },
         {
-          name: 'Report',
+          name: 'Health Plan',
           url: '/report/' + routeData[3] + '/a',
         },
         {
@@ -119,11 +119,11 @@ export const TopBar: FC<TopBarProps> = ({
     if (locationAddress.includes('Generate-Action-Plan')) {
       return [
         {
-          name: 'Home',
+          name: 'Client List',
           url: '/',
         },
         {
-          name: 'Report',
+          name: 'Health Plan',
           url: '/report/' + routeData[3] + '/a',
         },
         {
@@ -135,11 +135,11 @@ export const TopBar: FC<TopBarProps> = ({
     if (locationAddress.includes('action-plan/edit')) {
       return [
         {
-          name: 'Home',
+          name: 'Client List',
           url: '/',
         },
         {
-          name: 'Report',
+          name: 'Health Plan',
           url: '/report/' + routeData[3] + '/a',
         },
         {
@@ -150,11 +150,11 @@ export const TopBar: FC<TopBarProps> = ({
     } else {
       return [
         {
-          name: 'Home',
+          name: 'Client List',
           url: '/',
         },
         {
-          name: 'Report',
+          name: 'Health Plan',
           url: '/report/' + routeData[2] + '/a',
         },
       ];

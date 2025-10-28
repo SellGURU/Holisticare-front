@@ -25,10 +25,10 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   fileInputRef,
 }) => {
   return (
-    <div className="flex  w-full justify-between rounded-2xl border p-4 bg-white shadow-200 border-Gray-50 gap-8 ">
+    <div className="flex flex-col md:flex-row  w-full justify-between rounded-2xl border p-2 md:p-4 bg-white shadow-200 border-Gray-50 gap-8 ">
       {/* Left side - Upload area */}
       <div
-        className={`text-sm w-full  font-medium text-Text-Primary ${
+        className={` text-xs md:text-sm w-full  font-medium text-Text-Primary ${
           uploadedFile ? 'opacity-50 ' : ''
         }`}
       >
@@ -44,14 +44,14 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
           <div className="w-full flex justify-center">
             <img src="/icons/upload-test.svg" alt="" />
           </div>
-          <div className="text-[12px] text-Text-Primary text-center mt-3">
+          <div className=" text-[10px] md:text-[12px] text-Text-Primary text-center mt-3">
             Drag and drop your test file here or click to upload.
           </div>
-          <div className="text-[#888888] font-medium text-[12px] text-center">
+          <div className="text-[#888888] font-medium text-[10px] md:text-[12px] text-center">
             {`Accepted formats: .pdf, .docx.`}
           </div>
           {errorMessage && (
-            <div className="text-red-500 text-[12px] text-center mt-1 w-[220px] xs:w-[300px] md:w-[500px]">
+            <div className="text-red-500 text-[10px] md:text-[12px] text-center mt-1 w-[220px] xs:w-[300px] md:w-[500px]">
               {errorMessage}
             </div>
           )}
@@ -67,9 +67,9 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
       </div>
 
       {/* Right side - Uploaded file display */}
-      <div className="text-sm w-full   font-medium text-Text-Primary">
+      <div className=" text-xs md:text-sm w-full   font-medium text-Text-Primary">
         Uploaded File
-        <div className="mt-1 rounded-2xl h-[100px] bg-white flex flex-col ">
+        <div className="mt-1 rounded-2xl md:h-[100px] bg-white flex flex-col ">
           {!uploadedFile ? (
             <div className="w-full flex flex-col items-center justify-center h-full">
               <img src="/icons/EmptyState-upload.svg" alt="" />

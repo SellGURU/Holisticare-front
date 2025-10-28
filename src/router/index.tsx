@@ -39,6 +39,7 @@ import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
 import Playground from '../pages/playground/index.tsx';
 import HtmlViewer from '../pages/HtmlViewer/index.tsx';
+import MaintenancePage from '../pages/maintenance/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -205,7 +206,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/html-previewer/:id',
-    element: <HtmlViewer></HtmlViewer>,
+    element: <HtmlViewer></HtmlViewer>
+  },
+  {
+    path: '/maintenance',
+    element: <MaintenancePage></MaintenancePage>,
   },
 ]);
 

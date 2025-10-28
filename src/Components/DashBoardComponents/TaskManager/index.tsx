@@ -10,7 +10,6 @@ import SimpleDatePicker from '../../SimpleDatePicker';
 import TextField from '../../TextField';
 import { Tooltip } from 'react-tooltip';
 import './TaskManager.css';
-import Circleloader from '../../CircleLoader';
 // Define the new Task type
 type Task = {
   task_id?: string;
@@ -71,6 +70,7 @@ const TaskManager = () => {
           setLoading(false);
         })
         .catch((error) => {
+          setLoading(false);
           console.error('Error checking task:', error);
           alert('Failed to check the task. Please try again.');
         });
@@ -305,15 +305,17 @@ const TaskManager = () => {
             </div>
           </div>
         ) : (
-          <ul className="grid grid-cols-1 sm:grid-cols-2 pr-1 gap-3 overflow-auto task-manager-content">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 pr-1 gap-3 Custom-scrollbar overflow-auto task-manager-content">
             {tasks.map((task) => (
               <li
                 key={task.task_id}
-                className="bg-white border border-Gray-50 shadow-100 p-2 rounded-2xl h-[65px] relative"
+                className={`bg-white border border-Gray-50 shadow-100 p-2 rounded-2xl h-[65px] relative  transition-all duration-300`}
               >
                 {loading && task.task_id === itemSelected ? (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Circleloader />
+                  <div className="w-full h-full flex items-center justify-center px-4">
+                    <div className="loading-bar-container">
+                      <div className="loading-bar"></div>
+                    </div>
                   </div>
                 ) : (
                   <>

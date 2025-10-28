@@ -6,6 +6,7 @@ import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import { GeneralCondition } from './components/GeneralCondition';
 import { Overview } from './components/Overview';
 import { SetOrders } from './components/SetOrders';
+// import mocktemtment from './treatmentMoch.json'
 import Application from '../../api/app';
 import Circleloader from '../../Components/CircleLoader';
 import SvgIcon from '../../utils/svgIcon';
@@ -92,8 +93,8 @@ export const GenerateRecommendation = () => {
 
   const hasEssentialData = (data: any) => {
     return (
-      data?.client_insight &&
-      data.client_insight.length > 0 &&
+      // data?.client_insight &&
+      // data?.client_insight?.length > 0 &&
       data?.completion_suggestion
       // data.completion_suggestion.length > 0
       // data?.looking_forwards &&
@@ -105,6 +106,37 @@ export const GenerateRecommendation = () => {
     return data?.suggestion_tab && data.suggestion_tab.length > 0;
   };
 
+  const handlePlan = (data: any, retryForSuggestions: boolean) => {
+    if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، ادامه نده
+
+    // Check essential data fields (for initial load)
+    const essentialDataReady = hasEssentialData(data);
+    // Check suggestion_tab data (for Step 2 and Next button)
+    const suggestionsDataReady = hasSuggestionsData(data);
+
+    if (essentialDataReady) {
+      setTratmentPlanData({
+        ...data,
+        client_insight: data.client_insight || [],
+        biomarker_insight: data.biomarker_insight || [],
+        looking_forwards: data.looking_forwards || [],
+        member_id: id,
+      });
+      setSuggestionsDefualt(data.suggestion_tab);
+      // If we are specifically waiting for suggestion_tab for Step 2
+      if (retryForSuggestions && !suggestionsDataReady) {
+        console.log('Suggestion tab data missing, retrying in 15 seconds...');
+        timeoutRef.current = setTimeout(() => generatePaln(true), 15000);
+      } else {
+        setIsLoading(false); // Hide full page loader
+        setisButtonLoading(false); // Hide button loader
+      }
+    } else {
+      console.log('Missing essential data, retrying in 15 seconds...');
+      timeoutRef.current = setTimeout(() => generatePaln(), 15000);
+    }
+  };
+
   const generatePaln = (retryForSuggestions = false) => {
     if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، اجرا نشود
 
@@ -113,36 +145,12 @@ export const GenerateRecommendation = () => {
       setIsLoading(true);
     }
     setisButtonLoading(true); // Always show button loading when calling API
-
+    // handlePlan(mocktemtment,retryForSuggestions)
     Application.generateTreatmentPlan({
       member_id: id,
     })
       .then((res) => {
-        if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، ادامه نده
-        const data = res.data;
-
-        // Check essential data fields (for initial load)
-        const essentialDataReady = hasEssentialData(data);
-        // Check suggestion_tab data (for Step 2 and Next button)
-        const suggestionsDataReady = hasSuggestionsData(data);
-
-        if (essentialDataReady) {
-          setTratmentPlanData({ ...data, member_id: id });
-          setSuggestionsDefualt(data.suggestion_tab);
-          // If we are specifically waiting for suggestion_tab for Step 2
-          if (retryForSuggestions && !suggestionsDataReady) {
-            console.log(
-              'Suggestion tab data missing, retrying in 15 seconds...',
-            );
-            timeoutRef.current = setTimeout(() => generatePaln(true), 15000);
-          } else {
-            setIsLoading(false); // Hide full page loader
-            setisButtonLoading(false); // Hide button loader
-          }
-        } else {
-          console.log('Missing essential data, retrying in 15 seconds...');
-          timeoutRef.current = setTimeout(() => generatePaln(), 15000);
-        }
+        handlePlan(res.data, retryForSuggestions);
       })
       .catch(() => {
         if (!isMountedRef.current) return;
@@ -420,7 +428,7 @@ export const GenerateRecommendation = () => {
           </div>
         </div>
       </div>
-      <div className=" px-4 md:px-8">
+      <div className="  px-4 md:px-8">
         <div className=" mt-[220px] w-full mb-6 overflow-x-hidden">
           {currentStepIndex === 0 ? (
             <GeneralCondition

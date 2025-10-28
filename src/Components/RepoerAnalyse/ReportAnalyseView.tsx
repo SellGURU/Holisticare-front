@@ -103,7 +103,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
     }
   };
-
+  const [isLoadingQuestionnaires, setIsLoadingQuestionnaires] = useState(false);
+  subscribe('reloadQuestionnaires', () => {
+    setIsLoadingQuestionnaires(true);
+    Application.getPatientsInfo({
+      member_id: resolvedMemberID,
+    })
+      .then((res) => {
+        setQuestionnaires(res.data.questionnaires);
+        setIsLoadingQuestionnaires(false);
+      })
+      .finally(() => {
+        setIsLoadingQuestionnaires(false);
+      });
+  });
   const fetchPatentDataWithState = () => {
     if (isShare) {
       Application.getPatientsInfoShare(
@@ -640,6 +653,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [loadingHtmlReport] = useState(false);
 
   const handleGetHtmlReport = () => {
+    // if(loadingHtmlReport) return;
     if (!isHaveReport) return;
 
     // setLoadingHtmlReport(true);
@@ -813,10 +827,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       id="Need Focus Biomarker"
                       className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 "
                     >
-                      Need Focus Biomarkers
+                      "Need Focus" Biomarkers
                     </div>
-                    <div className=" text-Text-Secondary text-[12px]">
-                      {referenceData?.total_biomarker_note || ''}
+                    <div className="text-Text-Secondary text-[12px]">
+                      {referenceData?.total_biomarker_note || '' || ''}
                     </div>
                   </div>
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
@@ -1001,6 +1015,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {TreatMentPlanData?.length > 0 && isHaveReport ? (
                     <div className="flex flex-col items-center gap-1">
                       <ButtonSecondary
+                        disabled={!isHtmlReportExists}
                         ClassName="rounded-[20px] h-[24px] w-[168px]"
                         onClick={handleGetHtmlReport}
                       >
@@ -1134,6 +1149,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </>
                 ) : (
                   <UploadTestV2
+                    isLoadingQuestionnaires={isLoadingQuestionnaires}
                     questionnaires={questionnaires}
                     onDiscard={() => {
                       setShowUploadTest(false);

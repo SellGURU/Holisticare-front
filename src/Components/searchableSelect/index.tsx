@@ -34,16 +34,27 @@ const SearchSelect: React.FC<SelectProps> = ({
   const [selectedValue, setSelectedValue] = useState(value || '');
   const [searchTerm, setSearchTerm] = useState('');
   const selectWrapperRef = useRef<HTMLDivElement>(null);
+  const [filteredOptions, setFilteredOptions] = useState(options);
 
   // Filtered options based on search
-  const filteredOptions = options.filter((opt) =>
-    opt.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  useEffect(() => {
+    if (searchTerm !== '') {
+      const filtered = options
+        .filter((opt) => opt.toLowerCase().includes(searchTerm.toLowerCase()))
+        .filter((opt, index, arr) => arr.indexOf(opt) === index); // Remove duplicates
+      setFilteredOptions(filtered);
+    } else {
+      // Remove duplicates from original options as well
+      const uniqueOptions = options.filter(
+        (opt, index, arr) => arr.indexOf(opt) === index,
+      );
+      setFilteredOptions(uniqueOptions);
+    }
+  }, [searchTerm, options]);
 
   useEffect(() => {
     if (isOpen && onMenuOpen) onMenuOpen();
-  }, [isOpen]);
-  console.log(filteredOptions);
+  }, [isOpen, onMenuOpen]);
 
   useEffect(() => {
     setSelectedValue(value || '');
@@ -104,8 +115,8 @@ const SearchSelect: React.FC<SelectProps> = ({
         aria-expanded={isOpen}
         tabIndex={0}
       >
-        <span className={`text-Text-Primary`}>
-          <TooltipTextAuto maxWidth={isSmall ? '100px' : '110px'}>
+        <span className={`text-Text-Primary text-wrap w-[90px] xl:w-auto`}>
+          <TooltipTextAuto maxWidth={isSmall ? '100px' : '190px'}>
             {selectedValue || placeholder}
           </TooltipTextAuto>
         </span>
@@ -134,7 +145,7 @@ const SearchSelect: React.FC<SelectProps> = ({
             isSetting
               ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
               : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
-          } overflow-y-auto overflow-x-hidden max-h-60`}
+          } overflow-auto n max-h-60`}
         >
           {/* Search input */}
           <div className="sticky top-0 bg-inherit p-2 z-10">
@@ -153,7 +164,7 @@ const SearchSelect: React.FC<SelectProps> = ({
               filteredOptions.map((option) => (
                 <li
                   key={option}
-                  className={`py-1 px-4 cursor-pointer text-[10px] text-Text-Primary hover:bg-gray-200 text-start`}
+                  className={`py-1 px-3 text-wrap w-full cursor-pointer text-[10px] text-Text-Primary hover:bg-gray-200 text-start`}
                   onClick={() => handleOptionClick(option)}
                   role="option"
                   aria-selected={selectedValue === option}
