@@ -45,6 +45,8 @@ interface TreatmentPlanProps {
   setPrintActionPlan: (value: any) => void;
   isShare?: boolean;
   setIsHolisticPlanEmpty: (value: boolean) => void;
+  setIsShareModalSuccess: (value: boolean) => void;
+  setDateShare: (value: string | null) => void;
 }
 
 export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
@@ -52,6 +54,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   setPrintActionPlan,
   isShare,
   setIsHolisticPlanEmpty,
+  setIsShareModalSuccess,
+  setDateShare,
 }) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
@@ -115,6 +119,12 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         setPrintActionPlan(res.data);
         if (res.data.length > 0) {
           setActiveTreatmnet(res.data[res.data.length - 1].t_plan_id);
+          setIsShareModalSuccess(
+            res.data[res.data.length - 1].shared_report_with_client,
+          );
+          setDateShare(
+            res.data[res.data.length - 1].shared_report_with_client_date,
+          );
         }
         setTimeout(() => {
           const container: any = document.getElementById('scrollContainer');
@@ -355,6 +365,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                     <div
                       onClick={() => {
                         setActiveTreatmnet(card.t_plan_id);
+                        setIsShareModalSuccess(card.shared_report_with_client);
+                        setDateShare(card.shared_report_with_client_date);
                       }}
                       className={`absolute cursor-pointer  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
                         activeTreatment == card.t_plan_id
