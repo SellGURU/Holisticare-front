@@ -1079,6 +1079,11 @@ class Application extends Api {
       member_id: member_id,
     });
   };
+  static refreshData = (member_id: string) => {
+    return this.post(`/patients/refresh_data`, {
+      member_id: member_id,
+    });
+  };
   static reportGeneratedNotification = (member_id: string) => {
     return this.post(`/report_generated_notification`, {
       member_id: member_id,
