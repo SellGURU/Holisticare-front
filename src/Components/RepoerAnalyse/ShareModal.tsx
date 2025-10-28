@@ -56,7 +56,7 @@ export const ShareModal: FC<ShareModalProps> = ({
           </div>
         </div>
       </div>
-      {/* <div className="w-full h-full min-h-screen fixed top-0 left-0 bg-black opacity-30 z-[100]"></div> */}
+      <div className="w-full h-full min-h-screen fixed top-0 left-0 bg-black opacity-30 z-[100]"></div>
     </>
   );
 };
