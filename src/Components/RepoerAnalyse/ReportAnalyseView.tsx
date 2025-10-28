@@ -62,6 +62,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isShareModalLoading, setIsShareModalLoading] = useState(false);
   const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
+  const [dateShare, setDateShare] = useState<string | null>(null);
   const handleShare = () => {
     setIsShareModalLoading(true);
     Application.reportGeneratedNotification(resolvedMemberID?.toString() || '')
@@ -1037,7 +1038,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                             Shared with Client
                           </div>
                           <div className="text-Text-Fivefold text-[10px]">
-                            on Oct 22,2025
+                            on {dateShare || 'No date'}
                           </div>
                         </div>
                       ) : (
@@ -1047,13 +1048,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       relative z-10 !w-[166px] !h-[24px] !rounded-[20px]
       !bg-backgroundColor-Main !font-medium
       !text-Primary-DeepTeal !text-xs !text-nowrap
-      !border-none flex items-center justify-center gap-2
+      !border-none flex items-center justify-center gap-1
     "
                             onClick={() => {
                               setIsShareModalOpen(true);
                             }}
                           >
-                            <img src="/icons/document-upload.svg" alt="" />
+                            <img
+                              src="/icons/document-upload.svg"
+                              alt=""
+                              className="w-4 h-4"
+                            />
                             Share with Client
                           </ButtonPrimary>
                         </div>
@@ -1104,6 +1109,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   setIsShareModalSuccess={setIsShareModalSuccess}
                   treatmentPlanData={TreatMentPlanData}
                   setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
+                  setDateShare={setDateShare}
                 />
               </div>
             )}
