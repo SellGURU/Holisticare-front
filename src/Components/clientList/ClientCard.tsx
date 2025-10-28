@@ -242,13 +242,30 @@ const ClientCard: FC<ClientCardProps> = ({
   // };
 
   const handleCheckRefreshProgress = () => {
-    setRefresh(true);
-    Application.checkRefreshProgress(client.member_id)
-      .then(() => {
-        setRefresh(false);
-      })
-      .catch(() => {});
+    return Application.checkRefreshProgress(client.member_id)
+      .then((res) => res.data)
+      .catch(() => null);
   };
+
+  const handleRefreshData = () => {
+    setRefresh(true);
+
+    Application.refreshData(client.member_id)
+      .then(() => {
+        const interval = setInterval(async () => {
+          const result = await handleCheckRefreshProgress();
+
+          if (result?.status) {
+            clearInterval(interval);
+            setRefresh(false);
+          }
+        }, 3000);
+      })
+      .catch(() => {
+        setRefresh(false);
+      });
+  };
+
   return (
     <>
       <MainModal
@@ -904,9 +921,13 @@ const ClientCard: FC<ClientCardProps> = ({
                 </div> */}
                 <div
                   className="flex items-center justify-center gap-2 cursor-pointer"
-                  onClick={handleCheckRefreshProgress}
+                  onClick={handleRefreshData}
                 >
-                  <img src="/icons/refresh-circle.svg" alt="" />
+                  <img
+                    src="/icons/refresh-circle.svg"
+                    alt=""
+                    className={refresh ? 'animate-spin-slow' : ''}
+                  />
                   {refresh ? (
                     <div className="text-Primary-DeepTeal text-xs font-medium">
                       Syncing...
