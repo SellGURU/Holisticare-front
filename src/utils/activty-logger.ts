@@ -8,30 +8,30 @@ export default class ActivityLogger {
   private events: any[] = [];
   private sessionStartTime: number;
   private intervalId: NodeJS.Timeout | null = null;
-  private resetIntervalMs = 5 * 60 * 1000; // 5 minutes
+  private resetIntervalMs = 2 * 60 * 1000;
 
-  private constructor(userId?: string) {
-    this.userId = userId || 'anonymous_user';
+  private constructor() {
+      this.userId = localStorage.getItem('email') || 'anonymous_user';
     this.sessionId = uuidv4();
     this.sessionStartTime = Date.now();
     this.init();
   }
 
-  public static getInstance(userId?: string): ActivityLogger {
+  public static getInstance(): ActivityLogger {
     if (!ActivityLogger.instance) {
-      ActivityLogger.instance = new ActivityLogger(userId);
+      ActivityLogger.instance = new ActivityLogger();
     }
     return ActivityLogger.instance;
   }
 
-  /** Initialize listener and schedule reset */
+  /** Initialize listeners + schedule resets */
   private init() {
     this.addEvent('session_start', { path: window.location.pathname });
     this.attachGlobalListeners();
     this.scheduleReset();
   }
 
-  /** Automatically reset log every 5 minutes */
+  /** Auto-save session every few minutes */
   private scheduleReset() {
     this.intervalId = setInterval(() => {
       this.saveSessionToStorage();
@@ -39,7 +39,7 @@ export default class ActivityLogger {
     }, this.resetIntervalMs);
   }
 
-  /** Attach event listeners */
+  /** Attach global event listeners */
   private attachGlobalListeners() {
     // Navigation
     window.addEventListener('popstate', () =>
@@ -56,31 +56,34 @@ export default class ActivityLogger {
       this.addEvent('click', {
         element: this.getElementSelector(target),
         text: target.innerText?.slice(0, 50),
+        route: window.location.pathname, // ✅ add route to click event
       });
     });
 
-    // Errors
+    // JS Errors
     window.addEventListener('error', (e) => {
       this.addEvent('error', {
         message: e.message,
         source: e.filename,
         lineno: e.lineno,
         colno: e.colno,
+        route: window.location.pathname, // ✅ route awareness
       });
     });
 
-    // Form submissions
+    // Form Submissions
     document.addEventListener('submit', (e) => {
       const target = e.target as HTMLFormElement;
       if (!target?.id) return;
       this.addEvent('form_submit', {
         formId: target.id,
         status: 'submitted',
+        route: window.location.pathname,
       });
     });
   }
 
-  /** Add a new activity event */
+  /** Log generic events */
   public addEvent(eventName: string, props: Record<string, any> = {}) {
     const event = {
       id: uuidv4(),
@@ -92,7 +95,23 @@ export default class ActivityLogger {
     this.saveToLocalStorage();
   }
 
-  /** Utility: build CSS selector for clicked element */
+  /** ✅ Dedicated method for logging API calls */
+  
+public logApiEvent(data: {
+  endpoint: string;
+  method: string;
+  status: number;
+  message: string;
+  durationMs: number;
+  route: string;
+  payload?: any;
+}) {
+  this.addEvent('api_error', {
+    ...data,
+  });
+}
+
+  /** Utility: Build CSS selector */
   private getElementSelector(el: HTMLElement): string {
     const id = el.id ? `#${el.id}` : '';
     const cls = el.className
@@ -101,13 +120,7 @@ export default class ActivityLogger {
     return `${el.tagName.toLowerCase()}${id}${cls}`;
   }
 
-  /** Save temporary snapshot in localStorage */
-  private saveToLocalStorage() {
-    const data = this.buildSessionData();
-    localStorage.setItem('activity_log', JSON.stringify(data));
-  }
-
-  /** Build full session JSON object */
+  /** Build a snapshot of current session */
   private buildSessionData() {
     const now = Date.now();
     return {
@@ -121,7 +134,15 @@ export default class ActivityLogger {
     };
   }
 
-  /** Capture userAgent info */
+  /** Save a live snapshot */
+  private saveToLocalStorage() {
+    localStorage.setItem(
+      'activity_log',
+      JSON.stringify(this.buildSessionData()),
+    );
+  }
+
+  /** Capture device + OS info */
   private getUserAgent() {
     const ua = navigator.userAgent;
     const { width, height } = window.screen;
@@ -138,7 +159,7 @@ export default class ActivityLogger {
     };
   }
 
-  /** Reset session every 5 minutes */
+  /** Reset current session (after autosave) */
   private resetSession() {
     this.events = [];
     this.sessionId = uuidv4();
@@ -146,13 +167,13 @@ export default class ActivityLogger {
     this.saveToLocalStorage();
   }
 
-  /** Save to persistent storage (before refresh or unload) */
+  /** Save persistent copy before unload */
   private saveSessionToStorage() {
     const data = this.buildSessionData();
     localStorage.setItem('activity_log', JSON.stringify(data));
   }
 
-  /** Clean up on destroy */
+  /** Cleanup */
   public destroy() {
     if (this.intervalId) clearInterval(this.intervalId);
     this.addEvent('session_end', { reason: 'manual_destroy' });

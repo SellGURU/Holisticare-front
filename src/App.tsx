@@ -6,12 +6,8 @@ import ActivityLogger from './utils/activty-logger';
 
 function App() {
   useEffect(() => {
-    // ✅ get the user email from localStorage (fallback if missing)
-    const userEmail = localStorage.getItem('email') || 'anonymous_user';
-
     // ✅ initialize logger with userEmail as the ID
-    const logger = ActivityLogger.getInstance(userEmail);
-
+    const logger = ActivityLogger.getInstance();
     return () => {
       logger.destroy(); // clean up before unmount/refresh
     };
