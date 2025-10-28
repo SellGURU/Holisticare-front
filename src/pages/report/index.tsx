@@ -7,9 +7,16 @@ import { useState, useEffect, useRef } from 'react';
 import { subscribe, unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
+import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  useEffect(() => {
+    subscribe('openShareModalHolisticPlan', () => {
+      setIsShareModalOpen(true);
+    });
+  }, []);
   subscribe('openSideOut', () => {
     setIsVisibleCombo(false);
   });
@@ -107,6 +114,14 @@ const Report = () => {
       >
         <ComboBar></ComboBar>
       </div>
+
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => {
+          setIsShareModalOpen(false);
+          // setIsShareModalLoading(false);
+        }}
+      />      
     </div>
   );
 };

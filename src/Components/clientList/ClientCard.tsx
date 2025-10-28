@@ -35,6 +35,7 @@ const ClientCard: FC<ClientCardProps> = ({
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
   const [refresh, setRefresh] = useState(false);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
   useModalAutoClose({
     refrence: showModalRefrence,
     buttonRefrence: showModalButtonRefrence,
@@ -124,6 +125,16 @@ const ClientCard: FC<ClientCardProps> = ({
 
     // Cleanup event listener on component unmount
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Cleanup interval on component unmount
+  useEffect(() => {
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+        refreshIntervalRef.current = null;
+      }
+    };
   }, []);
   const [showArchiveModal, setshowArchiveModal] = useState(false);
   const [showDeleteModal, setshowDeleteModal] = useState(false);
@@ -252,14 +263,17 @@ const ClientCard: FC<ClientCardProps> = ({
 
     Application.refreshData(client.member_id)
       .then(() => {
-        const interval = setInterval(async () => {
+        refreshIntervalRef.current = setInterval(async () => {
           const result = await handleCheckRefreshProgress();
 
           if (result?.status) {
-            clearInterval(interval);
+            if (refreshIntervalRef.current) {
+              clearInterval(refreshIntervalRef.current);
+              refreshIntervalRef.current = null;
+            }
             setRefresh(false);
           }
-        }, 3000);
+        }, 30000);
       })
       .catch(() => {
         setRefresh(false);

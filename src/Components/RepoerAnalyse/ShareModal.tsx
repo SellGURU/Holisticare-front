@@ -1,24 +1,38 @@
-import { FC, useRef } from 'react';
+import { FC, useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import SpinnerLoader from '../SpinnerLoader';
+import Application from '../../api/app';
+import { useParams } from 'react-router-dom';
+import { publish } from '../../utils/event';
 interface ShareModalProps {
   isOpen?: boolean;
   onClose: () => void;
-  onConfirm: () => void;
-  isLoading: boolean;
 }
 export const ShareModal: FC<ShareModalProps> = ({
   isOpen,
   onClose,
-  onConfirm,
-  isLoading,
 }) => {
   const modalRefrence = useRef(null);
+  const { id } = useParams<{ id: string; name: string }>();
+  const [isShareModalLoading, setIsShareModalLoading] = useState(false);
   useModalAutoClose({
     refrence: modalRefrence,
     close: onClose,
   });
   if (!isOpen) return null;
+  
+  const handleShare = () => {
+    setIsShareModalLoading(true);
+    Application.reportGeneratedNotification(id|| '')
+      .then(() => {
+        onClose()
+        publish('shareModalHolisticPlanSuccess', {});
+      })
+      .catch(() => {})
+      .finally(() => {
+        setIsShareModalLoading(false);
+      });
+  };
 
   return (
     <>
@@ -47,10 +61,10 @@ export const ShareModal: FC<ShareModalProps> = ({
                 Cancel
               </div>
               <div
-                onClick={onConfirm}
+                onClick={handleShare}
                 className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
               >
-                {isLoading ? <SpinnerLoader color="#005F73" /> : 'Share Now'}
+                {isShareModalLoading ? <SpinnerLoader color="#005F73" /> : 'Share Now'}
               </div>
             </div>
           </div>

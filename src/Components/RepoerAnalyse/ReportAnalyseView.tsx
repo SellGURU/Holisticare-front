@@ -37,7 +37,7 @@ import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
-import { ShareModal } from './ShareModal';
+// import { ShareModal } from './ShareModal';
 import { UploadTestV2 } from './UploadTestV2';
 interface ReportAnalyseViewprops {
   clientData?: any;
@@ -59,22 +59,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [isHaveReport, setIsHaveReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [questionnaires, setQuestionnaires] = useState([]);
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [isShareModalLoading, setIsShareModalLoading] = useState(false);
+  // const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
   const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
   const [dateShare, setDateShare] = useState<string | null>(null);
-  const handleShare = () => {
-    setIsShareModalLoading(true);
-    Application.reportGeneratedNotification(resolvedMemberID?.toString() || '')
-      .then(() => {
-        setIsShareModalOpen(false);
-        setIsShareModalSuccess(true);
-      })
-      .catch(() => {})
-      .finally(() => {
-        setIsShareModalLoading(false);
-      });
-  };
+  useEffect(() => {
+    subscribe('shareModalHolisticPlanSuccess', () => {
+      setIsShareModalSuccess(true);
+    });
+  }, []);
   // const history = useHistory();
   const location = useLocation();
   // useEffect(() => {
@@ -1051,7 +1044,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       !border-none flex items-center justify-center gap-1
     "
                             onClick={() => {
-                              setIsShareModalOpen(true);
+                              // setIsShareModalOpen(true);
+                              publish('openShareModalHolisticPlan', {});
                             }}
                           >
                             <img
@@ -1282,15 +1276,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           </div>
         </>
       )}
-      <ShareModal
-        isOpen={isShareModalOpen}
-        isLoading={isShareModalLoading}
-        onClose={() => {
-          setIsShareModalOpen(false);
-          setIsShareModalLoading(false);
-        }}
-        onConfirm={handleShare}
-      />
+
     </>
   );
 };
