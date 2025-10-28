@@ -1276,7 +1276,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           </div>
         </>
       )}
-
     </>
   );
 };

@@ -8,10 +8,7 @@ interface ShareModalProps {
   isOpen?: boolean;
   onClose: () => void;
 }
-export const ShareModal: FC<ShareModalProps> = ({
-  isOpen,
-  onClose,
-}) => {
+export const ShareModal: FC<ShareModalProps> = ({ isOpen, onClose }) => {
   const modalRefrence = useRef(null);
   const { id } = useParams<{ id: string; name: string }>();
   const [isShareModalLoading, setIsShareModalLoading] = useState(false);
@@ -20,12 +17,12 @@ export const ShareModal: FC<ShareModalProps> = ({
     close: onClose,
   });
   if (!isOpen) return null;
-  
+
   const handleShare = () => {
     setIsShareModalLoading(true);
-    Application.reportGeneratedNotification(id|| '')
+    Application.reportGeneratedNotification(id || '')
       .then(() => {
-        onClose()
+        onClose();
         publish('shareModalHolisticPlanSuccess', {});
       })
       .catch(() => {})
@@ -64,7 +61,11 @@ export const ShareModal: FC<ShareModalProps> = ({
                 onClick={handleShare}
                 className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
               >
-                {isShareModalLoading ? <SpinnerLoader color="#005F73" /> : 'Share Now'}
+                {isShareModalLoading ? (
+                  <SpinnerLoader color="#005F73" />
+                ) : (
+                  'Share Now'
+                )}
               </div>
             </div>
           </div>

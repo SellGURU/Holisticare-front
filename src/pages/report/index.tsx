@@ -121,7 +121,7 @@ const Report = () => {
           setIsShareModalOpen(false);
           // setIsShareModalLoading(false);
         }}
-      />      
+      />
     </div>
   );
 };
