@@ -71,7 +71,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   const [activeMenu, setactiveMenu] = useState('Upload File');
   console.log(rowErrors);
   console.log(AddedRowErrors);
-
+  const [isScaling, setIsScaling] = useState(false);
   useEffect(() => {
     const rowErrorCount = rowErrors ? Object.keys(rowErrors).length : 0;
     const addedErrorCount = AddedRowErrors
@@ -175,6 +175,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             <div className="w-full h-full flex flex-col mt-4 gap-2">
               <FileUploaderSection
                 isShare={isShare}
+                isScaling={isScaling}
                 errorMessage={errorMessage}
                 handleFileChange={handleFileChange}
                 uploadedFile={uploadedFile}
@@ -185,6 +186,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               />
               <BiomarkersSection
                 rowErrors={rowErrors}
+                isScaling={isScaling}
+                setIsScaling={setIsScaling}
                 setrowErrors={setrowErrors}
                 loading={loading}
                 fileType={fileType}
