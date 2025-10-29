@@ -11,7 +11,7 @@ export default class ActivityLogger {
   private resetIntervalMs = 2 * 60 * 1000;
 
   private constructor() {
-      this.userId = localStorage.getItem('email') || 'anonymous_user';
+    this.userId = localStorage.getItem('email') || 'anonymous_user';
     this.sessionId = uuidv4();
     this.sessionStartTime = Date.now();
     this.init();
@@ -96,20 +96,20 @@ export default class ActivityLogger {
   }
 
   /** ✅ Dedicated method for logging API calls */
-  
-public logApiEvent(data: {
-  endpoint: string;
-  method: string;
-  status: number;
-  message: string;
-  durationMs: number;
-  route: string;
-  payload?: any;
-}) {
-  this.addEvent('api_error', {
-    ...data,
-  });
-}
+
+  public logApiEvent(data: {
+    endpoint: string;
+    method: string;
+    status: number;
+    message: string;
+    durationMs: number;
+    route: string;
+    payload?: any;
+  }) {
+    this.addEvent('api_error', {
+      ...data,
+    });
+  }
 
   /** Utility: Build CSS selector */
   private getElementSelector(el: HTMLElement): string {

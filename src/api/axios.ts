@@ -65,7 +65,8 @@ axios.interceptors.response.use(
   },
   (error) => {
     const config = error.config || {};
-    const start = (config as any).metadata?.startTime?.getTime?.() || Date.now();
+    const start =
+      (config as any).metadata?.startTime?.getTime?.() || Date.now();
     const duration = new Date().getTime() - start;
 
     // ✅ Log only *failed* API calls

@@ -105,7 +105,7 @@ const Home = () => {
       <div className=" hidden md:block w-full sticky z-50 top-0 ">
         <MainTopBar></MainTopBar>
       </div> */}
-       <RouteTracker />
+      <RouteTracker />
       <MainTopBar></MainTopBar>
       <div
         ref={sideMenuRef}
