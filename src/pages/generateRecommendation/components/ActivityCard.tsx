@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import Checkbox from '../../../Components/checkbox';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
 import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
 import { splitInstructions } from '../../../help';
+import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 
 interface ActivityCardProps {
   item: any;
   index: number;
   activeCategory: string;
   handleCheckboxChange: (category: string, itemId: number) => void;
+  issuesData: Record<string, boolean>[];
 }
 
 export const ActivityCard: FC<ActivityCardProps> = ({
@@ -17,13 +19,26 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   index,
   activeCategory,
   handleCheckboxChange,
+  issuesData,
 }) => {
   const { positive, negative } = splitInstructions(item.Instruction);
   const [Conflicts] = useState<Array<any>>(item?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
   const [color, setColor] = useState<string>('');
   const [bgColor, setBgColor] = useState<string>('');
-
+  const [issues, setIssues] = useState<Array<any>>([
+    'Issue 1',
+    'Issue 2',
+    'Issue 3',
+  ]);
+  const [showAddIssue, setShowAddIssue] = useState(false);
+  const addIssueRef = useRef<HTMLDivElement>(null);
+  useModalAutoClose({
+    refrence: addIssueRef,
+    close: () => {
+      setShowAddIssue(false);
+    },
+  });
   useEffect(() => {
     switch (item?.label) {
       case 'Highly Recommended':
@@ -48,7 +63,6 @@ export const ActivityCard: FC<ActivityCardProps> = ({
         break;
     }
   }, [item?.label]);
-  console.log(item.label);
 
   const [showMore, setShowMore] = useState(false);
 
@@ -102,6 +116,70 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                   style={{ backgroundColor: color }}
                 ></div>
                 {item?.label || '-'}
+              </div>
+              <div className="flex items-center gap-1 relative">
+                {issues.map((issue, index) => (
+                  <div
+                    key={index}
+                    className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray"
+                  >
+                    {issue}{' '}
+                    <img
+                      src="/icons/close-circle.svg"
+                      alt=""
+                      className="w-3 h-3 cursor-pointer"
+                    />
+                  </div>
+                ))}
+                <div
+                  className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray cursor-pointer"
+                  onClick={() => setShowAddIssue(true)}
+                >
+                  Add Issue{' '}
+                  <img src="/icons/add-small.svg" alt="" className="w-3 h-3" />
+                </div>
+                {showAddIssue && (
+                  <div
+                    ref={addIssueRef}
+                    className="flex flex-col absolute top-6 right-0 w-[279px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 gap-1 shadow-200 z-10"
+                  >
+                    {issuesData?.map((issue, index) => {
+                      const [text, isChecked] = Object.entries(issue)[0];
+                      return (
+                        <div
+                          key={index}
+                          className={`flex select-none text-justify items-start  text-Text-Primary text-xs`}
+                        >
+                          <Checkbox
+                            checked={isChecked}
+                            onChange={() => {}}
+                          ></Checkbox>
+                          <span className="text-Text-Secondary text-nowrap mr-1">
+                            Issue {index + 1}:{' '}
+                          </span>
+                          {text}
+                        </div>
+                      );
+                    })}
+                    {issuesData?.length < 1 && (
+                      <div className="flex flex-col items-center justify-center mb-2">
+                        <img src="/icons/empty-state-issue.svg" alt="" />
+                        <div className="text-Text-Primary text-[10px] font-medium -mt-5">
+                          No issues found.
+                        </div>
+                      </div>
+                    )}
+                    <div className="w-full h-[1px] bg-Gray-50 mt-2 px-6 mb-2"></div>
+                    <div className="flex items-center justify-center text-Primary-DeepTeal cursor-pointer text-xs font-medium gap-1">
+                      <img
+                        src="/icons/add-small.svg"
+                        alt=""
+                        className="w-5 h-5"
+                      />
+                      Create new issue
+                    </div>
+                  </div>
+                )}
               </div>
               {/* <div
                 data-tooltip-id="system-score"

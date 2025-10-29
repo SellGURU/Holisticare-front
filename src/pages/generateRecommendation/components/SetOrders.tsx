@@ -459,6 +459,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                   index={index}
                   activeCategory={activeCategory}
                   handleCheckboxChange={handleCheckboxChange}
+                  issuesData={[]}
                 />
               );
             })}
