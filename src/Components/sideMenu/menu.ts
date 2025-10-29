@@ -3,119 +3,119 @@ export const menus = [
   {
     category: 'MAIN',
     items: [
+      // {
+      //   name: 'Dashboard',
+      //   url: '/dashboard',
+      //   icon: 'sidemenu-menu-icon-dashboard',
+      //   active: true,
+      // },
       {
-        name: 'Dashboard',
-        url: '/dashboard',
-        icon: 'sidemenu-menu-icon-dashboard',
-        active: true,
-      },
-      {
-        name: 'Client List',
+        name: 'Clinic List',
         url: '/',
         icon: 'sidemenu-menu-icon-clientList',
         active: true,
       },
-      {
-        name: 'Drift Analysis',
-        url: '/drift-analysis',
-        icon: 'sidemenu-menu-icon-drift-analysis',
-        active: true,
-      },
-      {
-        name: 'Messages',
-        url: '/messages',
-        icon: 'sidemenu-menu-icon-messages',
-        active: true,
-      },
-      {
-        name: 'Knowledge Graph',
-        url: '/aiKnowledge',
-        icon: 'sidemenu-menu-icon-trend-up',
-        active: true,
-      },
-      {
-        name: 'Playground',
-        url: '/playground',
-        icon: 'sidemenu-menu-icon-lamp',
-        active: true,
-      },
+      // {
+      //   name: 'Drift Analysis',
+      //   url: '/drift-analysis',
+      //   icon: 'sidemenu-menu-icon-drift-analysis',
+      //   active: true,
+      // },
+      // {
+      //   name: 'Messages',
+      //   url: '/messages',
+      //   icon: 'sidemenu-menu-icon-messages',
+      //   active: true,
+      // },
+      // {
+      //   name: 'Knowledge Graph',
+      //   url: '/aiKnowledge',
+      //   icon: 'sidemenu-menu-icon-trend-up',
+      //   active: true,
+      // },
+      // {
+      //   name: 'Playground',
+      //   url: '/playground',
+      //   icon: 'sidemenu-menu-icon-lamp',
+      //   active: true,
+      // },
     ],
   },
-  {
-    category: 'CUSTOMIZATION',
-    items: [
-      {
-        name: 'Custom Branding',
-        url: '/custom-branding',
-        icon: 'sidemenu-menu-icon-Branding',
-        active: true,
-      },
-      {
-        name: 'Custom Biomarker',
-        url: '/biomarkers',
-        icon: 'sidemenu-menu-icon-Biomarker',
-        active: true,
-      },
-      {
-        name: 'Custom Form',
-        url: '/forms',
-        icon: 'sidemenu-menu-icon-Form',
-        active: true,
-      },
-    ],
-  },
-  {
-    category: 'LIBRARY',
-    items: [
-      {
-        name: 'Diet',
-        url: '/diet',
-        icon: 'sidemenu-menu-icon-Diet',
-        active: true,
-      },
-      {
-        name: 'Activity',
-        url: '/activity',
-        icon: 'sidemenu-menu-icon-Activity',
-        active: true,
-      },
-      {
-        name: 'Supplement',
-        url: '/supplement',
-        icon: 'sidemenu-menu-icon-Supplement',
-        active: true,
-      },
-      {
-        name: 'Lifestyle',
-        url: '/lifestyle',
-        icon: 'sidemenu-menu-icon-Lifestyle',
-        active: true,
-      },
-    ],
-  },
-  {
-    category: 'MANAGE',
-    items: [
-      {
-        name: 'Package',
-        url: '/packages',
-        icon: 'sidemenu-menu-icon-Package',
-        active: true,
-      },
-      {
-        name: 'Staff',
-        url: '/staff',
-        icon: 'sidemenu-menu-icon-Staff',
-        active: true,
-      },
-      {
-        name: 'Setting',
-        icon: 'sidemenu-menu-icon-setting',
-        url: '/setting',
-        active: true,
-      },
-    ],
-  },
+  // {
+  //   category: 'CUSTOMIZATION',
+  //   items: [
+  //     {
+  //       name: 'Custom Branding',
+  //       url: '/custom-branding',
+  //       icon: 'sidemenu-menu-icon-Branding',
+  //       active: true,
+  //     },
+  //     {
+  //       name: 'Custom Biomarker',
+  //       url: '/biomarkers',
+  //       icon: 'sidemenu-menu-icon-Biomarker',
+  //       active: true,
+  //     },
+  //     {
+  //       name: 'Custom Form',
+  //       url: '/forms',
+  //       icon: 'sidemenu-menu-icon-Form',
+  //       active: true,
+  //     },
+  //   ],
+  // },
+  // {
+  //   category: 'LIBRARY',
+  //   items: [
+  //     {
+  //       name: 'Diet',
+  //       url: '/diet',
+  //       icon: 'sidemenu-menu-icon-Diet',
+  //       active: true,
+  //     },
+  //     {
+  //       name: 'Activity',
+  //       url: '/activity',
+  //       icon: 'sidemenu-menu-icon-Activity',
+  //       active: true,
+  //     },
+  //     {
+  //       name: 'Supplement',
+  //       url: '/supplement',
+  //       icon: 'sidemenu-menu-icon-Supplement',
+  //       active: true,
+  //     },
+  //     {
+  //       name: 'Lifestyle',
+  //       url: '/lifestyle',
+  //       icon: 'sidemenu-menu-icon-Lifestyle',
+  //       active: true,
+  //     },
+  //   ],
+  // },
+  // {
+  //   category: 'MANAGE',
+  //   items: [
+  //     {
+  //       name: 'Package',
+  //       url: '/packages',
+  //       icon: 'sidemenu-menu-icon-Package',
+  //       active: true,
+  //     },
+  //     {
+  //       name: 'Staff',
+  //       url: '/staff',
+  //       icon: 'sidemenu-menu-icon-Staff',
+  //       active: true,
+  //     },
+  //     {
+  //       name: 'Setting',
+  //       icon: 'sidemenu-menu-icon-setting',
+  //       url: '/setting',
+  //       active: true,
+  //     },
+  //   ],
+  // },
   // {
   //   name: 'Knowledge Graph',
   //   icon: 'sidemenu-menu-icon-trend-up',

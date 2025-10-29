@@ -380,17 +380,9 @@ const ClientList = () => {
             <>
               <div className="w-full  flex justify-between items-center">
                 <div className="text-Text-Primary font-medium opacity-[87%]">
-                  Client List
+                  Clinic List
                 </div>
-                <ButtonSecondary
-                  style={{ borderRadius: '20px' }}
-                  onClick={() => {
-                    navigate('/addClient');
-                  }}
-                >
-                  <img className="mr-1" src="/icons/user-add2.svg" alt="" />
-                  Add Client
-                </ButtonSecondary>
+
               </div>
               <div className="w-full invisible h-[1px] bg-white my-3"></div>
               <div className="w-full select-none flex flex-col ss:flex-row gap-2 justify-between mb-3">

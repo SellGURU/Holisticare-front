@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 import AuthLayout from '../../layout/AuthLayout';
 import YoupValidation from '../../validation';
-import AuthWithGoogle from '../../Components/AuthWithGoogle';
+// import AuthWithGoogle from '../../Components/AuthWithGoogle';
 
 const validationSchema = yup.object({
   email: YoupValidation('email'),
@@ -124,7 +124,7 @@ const Login = () => {
               label="Password"
               type="password"
             ></TextField>
-            <div className="w-full mt-2 flex justify-end items-center">
+            {/* <div className="w-full mt-2 flex justify-end items-center">
               <div
                 onClick={() => {
                   navigate('/forgetPassword');
@@ -133,7 +133,7 @@ const Login = () => {
               >
                 Forgot password?
               </div>
-            </div>
+            </div> */}
           </div>
           <ButtonSecondary
             ClassName="rounded-[20px]"
@@ -151,15 +151,15 @@ const Login = () => {
               'Log in'
             )}
           </ButtonSecondary>
-          <div className="flex items-center justify-center mt-4">
+          {/* <div className="flex items-center justify-center mt-4">
             <div className="flex-grow h-px bg-gradient-to-l from-Text-Triarty via-Text-Triarty to-transparent"></div>
             <span className="px-4 text-[14px] text-Text-Secondary">or</span>
             <div className="flex-grow h-px bg-gradient-to-r from-Text-Triarty via-Text-Triarty to-transparent"></div>
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <AuthWithGoogle mode="login"></AuthWithGoogle>
-          </div>
-          <div className="text-[12px] text-center text-Text-Secondary">
+          </div> */}
+          {/* <div className="text-[12px] text-center text-Text-Secondary">
             Don't have an account?{' '}
             <span
               onClick={() => {
@@ -169,7 +169,7 @@ const Login = () => {
             >
               Sign up
             </span>
-          </div>
+          </div> */}
         </form>
       </AuthLayout>
     </>
