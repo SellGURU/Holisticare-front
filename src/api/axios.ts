@@ -14,7 +14,7 @@ const checkHealthAndRedirect = async () => {
     // If health check fails, redirect to maintenance
     console.log('Health check failed, redirecting to maintenance');
   }
-  
+
   // Redirect to maintenance page
   window.location.href = '/maintenance';
 };
