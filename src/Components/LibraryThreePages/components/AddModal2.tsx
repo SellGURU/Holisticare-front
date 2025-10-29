@@ -476,6 +476,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 setShowValidation(true);
                 if (validateFields()) {
                   submit();
+                  onClear();
                 }
               }}
             >
