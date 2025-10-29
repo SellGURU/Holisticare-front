@@ -102,7 +102,6 @@ const MainTopBar = () => {
   //     .catch(() => {});
   // };
 
-
   // console.log(showNotification);
 
   // useEffect(() => {
@@ -125,9 +124,7 @@ const MainTopBar = () => {
   // }, []);
   return (
     <>
-      <div className="w-full  flex md:hidden justify-between items-center border-b border-white  py-2">
-
-      </div>
+      <div className="w-full  flex md:hidden justify-between items-center border-b border-white  py-2"></div>
       <div className="hidden md:block w-full sticky z-50 top-0 ">
         <div className="w-full flex items-center justify-end bg-white border-b  border-gray-50 pl-4 pr-6 h-10 py-2 shadow-100">
           <div className="relative">

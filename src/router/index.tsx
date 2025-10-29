@@ -26,9 +26,9 @@ const router = createBrowserRouter([
             element: <ClinicList></ClinicList>,
           },
           {
-            path:'/log/:id',
+            path: '/log/:id',
             element: <LogDetails></LogDetails>,
-          }
+          },
           // {
           //   path: '/dashboard',
           //   element: <DashBoard></DashBoard>,

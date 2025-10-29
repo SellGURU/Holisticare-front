@@ -382,7 +382,6 @@ const ClientList = () => {
                 <div className="text-Text-Primary font-medium opacity-[87%]">
                   Clinic List
                 </div>
-
               </div>
               <div className="w-full invisible h-[1px] bg-white my-3"></div>
               <div className="w-full select-none flex flex-col ss:flex-row gap-2 justify-between mb-3">
