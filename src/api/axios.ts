@@ -1,5 +1,23 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Auth from './auth';
+
+// Function to check health endpoint before redirecting to maintenance
+const checkHealthAndRedirect = async () => {
+  try {
+    const response = await Auth.helth();
+    // If health check returns 200, don't redirect to maintenance
+    if (response.status === 200) {
+      return;
+    }
+  } catch {
+    // If health check fails, redirect to maintenance
+    console.log('Health check failed, redirecting to maintenance');
+  }
+
+  // Redirect to maintenance page
+  window.location.href = '/maintenance';
+};
 
 axios.interceptors.response.use(
   (response) => {
@@ -43,7 +61,8 @@ axios.interceptors.response.use(
       (error.response?.status === 500 || error.message == 'Network Error') &&
       !window.location.href.includes('/maintenance')
     ) {
-      window.location.href = '/maintenance';
+      // Check health endpoint before redirecting to maintenance
+      checkHealthAndRedirect();
       return Promise.reject(error);
     }
 
