@@ -173,9 +173,7 @@ export default class ActivityLogger {
   private saveSessionToStorage() {
     const data = this.buildSessionData();
     console.log(data);
-    Log.saveLog(data).catch(() => {
-      
-    });
+    Log.saveLog(data).catch(() => {});
     localStorage.setItem('activity_log', JSON.stringify(data));
   }
 
