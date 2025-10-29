@@ -6,7 +6,7 @@ import Circleloader from '../../CircleLoader';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Application from '../../../api/app';
 import { Tooltip } from 'react-tooltip';
-import { Scaling } from 'lucide-react';
+// import { Scaling } from 'lucide-react';
 import SearchSelect from '../../searchableSelect';
 interface BiomarkersSectionProps {
   biomarkers: any[];
@@ -316,10 +316,20 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   ({biomarkers.length})
                 </span>
               </div>
-              <Scaling
+              <img
+                onClick={() => setIsScaling(!isScaling)}
+                className="w-4 h-4 cursor-pointer opacity-70"
+                src={
+                  isScaling
+                    ? '/icons/biomarkers/import.svg'
+                    : '/icons/biomarkers/export.svg'
+                }
+                alt=""
+              />
+              {/* <Scaling
                 onClick={() => setIsScaling(!isScaling)}
                 className="w-4 h-4 cursor-pointer text-Text-Secondary"
-              />
+              /> */}
             </div>
             <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
               Date of Test:
