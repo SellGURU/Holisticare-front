@@ -161,7 +161,7 @@ export default function HtmlEditor({
       if (newEditMode) {
         // Enable edit mode
         editableElements.forEach((element) => {
-          (element as HTMLElement).contentEditable = 'true';
+          (element as HTMLElement).setAttribute('contenteditable', 'true');
         });
 
         // Add edit icons
@@ -171,7 +171,7 @@ export default function HtmlEditor({
       } else {
         // Disable edit mode
         editableElements.forEach((element) => {
-          (element as HTMLElement).contentEditable = 'false';
+          (element as HTMLElement).removeAttribute('contenteditable');
         });
 
         // Remove all edit icons
@@ -434,9 +434,11 @@ export default function HtmlEditor({
         // Make only elements with 'editable' class editable
         const editableElements = doc.querySelectorAll('.editable');
         editableElements.forEach((element) => {
-          (element as HTMLElement).contentEditable = isEditMode
-            ? 'true'
-            : 'false';
+          if (isEditMode) {
+            (element as HTMLElement).setAttribute('contenteditable', 'true');
+          } else {
+            (element as HTMLElement).removeAttribute('contenteditable');
+          }
         });
 
         // Add edit icons to editable elements after DOM is fully loaded
@@ -503,7 +505,7 @@ export default function HtmlEditor({
       } else {
         const editableElements = doc.querySelectorAll('.editable');
         editableElements.forEach((element) => {
-          (element as HTMLElement).contentEditable = 'false';
+          (element as HTMLElement).removeAttribute('contenteditable');
         });
         const existingIcons = doc.querySelectorAll('.edit-icon');
         existingIcons.forEach((icon) => icon.remove());
