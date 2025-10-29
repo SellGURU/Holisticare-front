@@ -46,7 +46,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
               return (
                 <div
                   key={index}
-                  className={`flex select-none text-justify items-start  text-Text-Primary text-xs  ${
+                  className={`flex select-none text-justify items-start  text-Text-Primary text-xs ${
                     isChecked && ' line-through'
                   }`}
                 >
@@ -59,8 +59,8 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                     alt=""
                   /> */}
                   <Checkbox checked={isChecked} onChange={() => {}}></Checkbox>
-                  <span className="text-Text-Secondary w-[60px]">
-                    Factor {index + 1}:{' '}
+                  <span className="text-Text-Secondary text-nowrap mr-1">
+                    Issue {index + 1}:{' '}
                   </span>
                   {text}
                 </div>
