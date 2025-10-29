@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // utils/ActivityLogger.ts
 import { v4 as uuidv4 } from 'uuid';
+import Log from '../api/Log';
 
 export default class ActivityLogger {
   private static instance: ActivityLogger;
@@ -170,6 +172,10 @@ export default class ActivityLogger {
   /** Save persistent copy before unload */
   private saveSessionToStorage() {
     const data = this.buildSessionData();
+    console.log(data);
+    Log.saveLog(data).catch(() => {
+      
+    });
     localStorage.setItem('activity_log', JSON.stringify(data));
   }
 
