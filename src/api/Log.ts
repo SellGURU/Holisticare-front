@@ -4,7 +4,7 @@ import Api from './api';
 class Log extends Api {
   static saveLog(log: any) {
     return this.post('/marketing/session', {
-      session_data:log
+      session_data: log,
     });
   }
 }
