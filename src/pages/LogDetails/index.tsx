@@ -28,6 +28,23 @@ type SessionLog = {
   events: LogEvent[];
 };
 
+type ApiSession = {
+  data: SessionLog;
+  created_date: string;
+};
+
+type AnalyticsResponse = {
+  num_of_new_clients: number;
+  num_of_questionnaires_assigned: number;
+  num_of_questionnaires_filled: number;
+  num_of_files_uploaded: number;
+  num_of_holistic_plans_saved: number;
+  num_of_action_plans_saved: number;
+  num_of_library_entries_created: number;
+  num_of_library_entries_updated: number;
+  sessions: ApiSession[];
+};
+
 const toLocalDateOnly = (d: Date) =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate());
 const msToMin = (ms: number) => Math.round(ms / 60000);
@@ -38,13 +55,21 @@ const formatTimeRange = (startIso: string, endIso: string) => {
   return `${two(s.getHours())}:${two(s.getMinutes())} - ${two(e.getHours())}:${two(e.getMinutes())}`;
 };
 
+function hasData<T>(val: unknown): val is { data: T } {
+  return (
+    typeof val === 'object' &&
+    val !== null &&
+    Object.prototype.hasOwnProperty.call(val, 'data')
+  );
+}
+
 const LogDetails = () => {
   const { id: clinicId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [clinicIdInput, setClinicIdInput] = useState<string>(clinicId || '');
 
-  // Placeholder sample; replace with API fetch later
-  const [data] = useState<SessionLog[]>([]);
+  const [data, setData] = useState<SessionLog[]>([]);
+  const [kpis, setKpis] = useState<AnalyticsResponse | null>(null);
 
   const [fromDate, setFromDate] = useState<Date | null>(() => {
     const d = new Date();
@@ -55,6 +80,35 @@ const LogDetails = () => {
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
+
+  const sessionDurations = useMemo(() => {
+    const totalMs = data.reduce((acc, s) => acc + s.totalActiveTimeMs, 0);
+    const totalMin = msToMin(totalMs);
+    // Average per day across selected date range (inclusive)
+    const start = fromDate ? toLocalDateOnly(fromDate) : null;
+    const end = toDate ? toLocalDateOnly(toDate) : null;
+    let days = 1;
+    if (start && end) {
+      const diff = end.getTime() - start.getTime();
+      days = Math.max(1, Math.floor(diff / (24 * 60 * 60 * 1000)) + 1);
+    }
+    const avgMin = Math.round(totalMs / days / 60000);
+    return { totalMin, avgMin, days };
+  }, [data, fromDate, toDate]);
+
+  const totalEvents = useMemo(() => {
+    return data.reduce((acc, s) => acc + (s.events?.length || 0), 0);
+  }, [data]);
+
+  const activityScore = useMemo(() => {
+    const days = sessionDurations.days || 1;
+    const minutesPerDay = sessionDurations.totalMin / days;
+    const eventsPerDay = totalEvents / days;
+    const minutesScore = Math.min(1, minutesPerDay / 60); // 60 دقیقه در روز = 100%
+    const eventsScore = Math.min(1, eventsPerDay / 30);   // 30 ایونت در روز = 100%
+    const score = Math.round((minutesScore * 0.6 + eventsScore * 0.4) * 100);
+    return Math.max(0, Math.min(100, score));
+  }, [sessionDurations, totalEvents]);
 
   const filtered = useMemo(() => {
     const sorted = [...data].sort(
@@ -72,37 +126,7 @@ const LogDetails = () => {
     });
   }, [data, fromDate, toDate]);
 
-  const stats = useMemo(() => {
-    const sessionsCount = filtered.length;
-    const totalActive = filtered.reduce(
-      (acc, s) => acc + s.totalActiveTimeMs,
-      0,
-    );
-    const avgActiveMin = sessionsCount
-      ? Math.round(totalActive / sessionsCount / 60000)
-      : 0;
-    const uniqueUsers = new Set(filtered.map((s) => s.userId)).size;
-    const by = (key: keyof UserAgent) => {
-      const map = new Map<string, number>();
-      filtered.forEach((s) => {
-        const k = String(s.userAgent[key]);
-        map.set(k, (map.get(k) || 0) + 1);
-      });
-      return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
-    };
-    const topBrowser = by('browser')[0]?.[0];
-    const topOS = by('os')[0]?.[0];
-    const topDevice = by('deviceType')[0]?.[0];
-    return {
-      sessionsCount,
-      totalActiveMin: msToMin(totalActive),
-      avgActiveMin,
-      uniqueUsers,
-      topBrowser,
-      topOS,
-      topDevice,
-    };
-  }, [filtered]);
+  // stats removed; top KPIs now come directly from API in kpis
 
   const selectedSession = useMemo(
     () =>
@@ -110,81 +134,119 @@ const LogDetails = () => {
     [filtered, selectedSessionId],
   );
 
-  const getLog = () => {
+  useEffect(() => {
+    if (!clinicId) return;
     Admin.getLog(
-      clinicIdInput,
+      clinicId,
       fromDate?.toISOString() || '',
       toDate?.toISOString() || '',
     )
       .then((res) => {
-        console.log(res.data);
+        const payload: AnalyticsResponse = hasData<AnalyticsResponse>(res)
+          ? res.data
+          : (res as AnalyticsResponse);
+        setKpis(payload);
+        const sessions = Array.isArray(payload?.sessions)
+          ? payload.sessions.map((s: ApiSession) => s.data)
+          : [];
+        setData(sessions);
       })
       .catch((err) => {
         console.log(err);
       });
-  };
-
-  useEffect(() => {
-    getLog();
-  }, [fromDate, toDate]);
+  }, [clinicId, fromDate, toDate]);
 
   return (
     <div className="p-4 md:p-6">
-      <div className="mb-4 flex items-center gap-3">
-        <button
-          aria-label="Back"
-          className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-Gray-50 bg-white text-Text-Primary hover:bg-backgroundColor-Card"
-          onClick={() => navigate(-1)}
-        >
-          {/* Left arrow icon */}
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M15 18L9 12L15 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+      <div className="mb-4 flex justify-between items-center gap-3">
         <div className="flex items-center gap-2">
-          <label
-            htmlFor="clinicIdInput"
-            className="text-xs text-Text-Secondary"
-          >
-            Clinic ID
-          </label>
-          <input
-            id="clinicIdInput"
-            value={clinicIdInput}
-            onChange={(e) => setClinicIdInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && clinicIdInput.trim()) {
-                navigate(`/log/${clinicIdInput.trim()}`);
-              }
-            }}
-            placeholder="Enter clinic id"
-            className="text-xs md:text-sm border border-Gray-50 rounded-md px-2 py-1 outline-none focus:ring-1 focus:ring-Primary-DeepTeal bg-white text-Text-Primary min-w-[160px]"
-          />
           <button
-            className="text-xs bg-Primary-DeepTeal text-white px-3 py-1 rounded-md disabled:opacity-50"
-            disabled={!clinicIdInput.trim()}
-            onClick={() =>
-              clinicIdInput.trim() && navigate(`/log/${clinicIdInput.trim()}`)
-            }
+            aria-label="Back"
+            className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-Gray-50 bg-white text-Text-Primary hover:bg-backgroundColor-Card"
+            onClick={() => navigate(-1)}
           >
-            Go
+            {/* Left arrow icon */}
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 18L9 12L15 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="clinicIdInput"
+              className="text-xs text-Text-Secondary"
+            >
+              Clinic ID
+            </label>
+            <input
+              id="clinicIdInput"
+              value={clinicIdInput}
+              onChange={(e) => setClinicIdInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && clinicIdInput.trim()) {
+                  navigate(`/log/${clinicIdInput.trim()}`);
+                }
+              }}
+              placeholder="Enter clinic id"
+              className="text-xs md:text-sm border border-Gray-50 rounded-md px-2 py-1 outline-none focus:ring-1 focus:ring-Primary-DeepTeal bg-white text-Text-Primary min-w-[160px]"
+            />
+            <button
+              className="text-xs bg-Primary-DeepTeal text-white px-3 py-1 rounded-md disabled:opacity-50"
+              disabled={!clinicIdInput.trim()}
+              onClick={() =>
+                clinicIdInput.trim() && navigate(`/log/${clinicIdInput.trim()}`)
+              }
+            >
+              Go
+            </button>
+          </div>
+
+        </div>
+        <div className='flex justify-end items-center'>
+          <div className="text-Text-Primary text-xs md:text-sm min-w-[60px]">
+              From
+            </div>
+            <SimpleDatePicker
+              date={fromDate}
+              setDate={setFromDate}
+              placeholder="Select"
+            />
+            <div className="text-Text-Primary text-xs md:text-sm min-w-[60px]">
+              To
+            </div>
+            <SimpleDatePicker
+              date={toDate}
+              setDate={setToDate}
+              placeholder="Select"
+            />
+            <button
+              className="ml-auto md:ml-3 text-xs bg-Primary-DeepTeal text-white px-3 py-1 rounded-md"
+              onClick={() => {
+                setFromDate(null);
+                setToDate(null);
+              }}
+            >
+              Clear
+            </button>        
+
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row items-center gap-3 mb-6">
+      {/* Session-based metrics */}
+
+
+      {/* <div className="flex flex-col md:flex-row items-center gap-3 mb-6">
         <div className="text-Text-Primary text-xs md:text-sm min-w-[60px]">
           From
         </div>
@@ -210,49 +272,80 @@ const LogDetails = () => {
         >
           Clear
         </button>
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Sessions</div>
+          <div className="text-[10px] text-Text-Secondary">New Clients</div>
           <div className="text-base font-semibold text-Text-Primary">
-            {stats.sessionsCount}
+            {kpis?.num_of_new_clients ?? '-'}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">
-            Total Active (min)
-          </div>
+          <div className="text-[10px] text-Text-Secondary">Questionnaires Assigned</div>
           <div className="text-base font-semibold text-Text-Primary">
-            {stats.totalActiveMin}
+            {kpis?.num_of_questionnaires_assigned ?? '-'}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">
-            Avg Active (min)
-          </div>
+          <div className="text-[10px] text-Text-Secondary">Questionnaires Filled</div>
           <div className="text-base font-semibold text-Text-Primary">
-            {stats.avgActiveMin}
+            {kpis?.num_of_questionnaires_filled ?? '-'}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Users</div>
+          <div className="text-[10px] text-Text-Secondary">Files Uploaded</div>
           <div className="text-base font-semibold text-Text-Primary">
-            {stats.uniqueUsers}
+            {kpis?.num_of_files_uploaded ?? '-'}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Top Browser</div>
+          <div className="text-[10px] text-Text-Secondary">Holistic Plans Saved</div>
           <div className="text-base font-semibold text-Text-Primary">
-            {stats.topBrowser || '-'}
+            {kpis?.num_of_holistic_plans_saved ?? '-'}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Top Device</div>
+          <div className="text-[10px] text-Text-Secondary">Action Plans Saved</div>
           <div className="text-base font-semibold text-Text-Primary">
-            {stats.topDevice || '-'}
+            {kpis?.num_of_action_plans_saved ?? '-'}
           </div>
         </div>
+        <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
+          <div className="text-[10px] text-Text-Secondary">Library Entries Created</div>
+          <div className="text-base font-semibold text-Text-Primary">
+            {kpis?.num_of_library_entries_created ?? '-'}
+          </div>
+        </div>
+        <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
+          <div className="text-[10px] text-Text-Secondary">Library Entries Updated</div>
+          <div className="text-base font-semibold text-Text-Primary">
+            {kpis?.num_of_library_entries_updated ?? '-'}
+          </div>
+        </div>
+        <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
+          <div className="text-[10px] text-Text-Secondary">Total Active (min)</div>
+          <div className="text-base font-semibold text-Text-Primary">
+            {sessionDurations.totalMin}
+          </div>
+        </div>
+        <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
+          <div className="text-[10px] text-Text-Secondary">Avg Active (min)</div>
+          <div className="text-base font-semibold text-Text-Primary">
+            {sessionDurations.avgMin}
+          </div>
+        </div>
+        <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
+          <div className="text-[10px] text-Text-Secondary">Activity Score</div>
+          <div className="text-base font-semibold text-Text-Primary">
+            {activityScore}
+            <span className="ml-1 text-[10px] text-Text-Secondary">/100</span>
+          </div>
+          <div className={`text-[10px] mt-1 ${activityScore >= 60 ? 'text-green-600' : 'text-amber-600'}`}>
+            {activityScore >= 60 ? 'Active' : 'Needs Attention'}
+          </div>
+        </div>
+        
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -261,7 +354,7 @@ const LogDetails = () => {
           <div className="text-sm font-medium text-Text-Primary mb-3">
             Sessions
           </div>
-          <div className="max-h-[420px] overflow-auto pr-1">
+          <div className=" overflow-auto pr-1" style={{height:window.innerHeight - 500 + 'px'}}>
             <table className="w-full text-[10px] md:text-xs">
               <thead>
                 <tr className="text-Text-Secondary text-left">
@@ -275,7 +368,11 @@ const LogDetails = () => {
                 {filtered.map((s) => (
                   <tr
                     key={s.sessionId}
-                    className={`cursor-pointer hover:bg-backgroundColor-Card ${selectedSession?.sessionId === s.sessionId ? 'bg-backgroundColor-Card' : ''}`}
+                    className={`cursor-pointer transition-colors ${
+                      selectedSession?.sessionId === s.sessionId
+                        ? 'bg-Primary-DeepTeal/10 border-l-4 border-Primary-DeepTeal'
+                        : 'hover:bg-backgroundColor-Card'
+                    }`}
                     onClick={() => setSelectedSessionId(s.sessionId)}
                   >
                     <td className="py-2 pr-2 text-Text-Primary">{s.userId}</td>
@@ -290,7 +387,7 @@ const LogDetails = () => {
                     </td>
                   </tr>
                 ))}
-                {filtered.length === 0 && (
+                {data.length === 0 && (
                   <tr>
                     <td
                       colSpan={4}
@@ -319,7 +416,7 @@ const LogDetails = () => {
               )}
             </div>
           ) : null}
-          <div className="max-h-[420px] overflow-auto pr-2">
+          <div className=" overflow-auto pr-2" style={{height:window.innerHeight - 500 + 'px'}}>
             {selectedSession?.events.map((ev, idx) => (
               <div key={ev.id} className="relative pl-6 py-2">
                 <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-Gray-50"></div>
