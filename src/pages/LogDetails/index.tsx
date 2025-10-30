@@ -70,6 +70,7 @@ const LogDetails = () => {
 
   const [data, setData] = useState<SessionLog[]>([]);
   const [kpis, setKpis] = useState<AnalyticsResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [fromDate, setFromDate] = useState<Date | null>(() => {
     const d = new Date();
@@ -134,8 +135,9 @@ const LogDetails = () => {
     [filtered, selectedSessionId],
   );
 
-  useEffect(() => {
+  const fetchLogs = () => {
     if (!clinicId) return;
+    setLoading(true);
     Admin.getLog(
       clinicId,
       fromDate?.toISOString() || '',
@@ -153,7 +155,13 @@ const LogDetails = () => {
       })
       .catch((err) => {
         console.log(err);
-      });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clinicId, fromDate, toDate]);
 
   return (
@@ -229,6 +237,14 @@ const LogDetails = () => {
             setDate={setToDate}
             placeholder="Select"
           />
+          <button
+            aria-label="Reload"
+            className="ml-2 text-xs bg-Primary-DeepTeal text-white px-3 py-1 rounded-md disabled:opacity-50"
+            disabled={!clinicId || loading}
+            onClick={fetchLogs}
+          >
+            {loading ? 'Loading...' : 'Reload'}
+          </button>
           <button
             className="ml-auto md:ml-3 text-xs bg-Primary-DeepTeal text-white px-3 py-1 rounded-md"
             onClick={() => {
@@ -392,7 +408,12 @@ const LogDetails = () => {
                     }`}
                     onClick={() => setSelectedSessionId(s.sessionId)}
                   >
-                    <td className="py-2 pr-2 text-Text-Primary">{s.userId}</td>
+                    <td className="py-2 pr-2 text-Text-Primary">
+                      {s.events?.some((e) => e.eventName === 'api_error') && (
+                        <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-2 align-middle" />
+                      )}
+                      <span className="align-middle">{s.userId}</span>
+                    </td>
                     <td className="py-2 text-Text-Secondary">
                       {formatTimeRange(s.startedAt, s.endedAt)}
                     </td>
@@ -440,7 +461,11 @@ const LogDetails = () => {
             {selectedSession?.events.map((ev, idx) => (
               <div key={ev.id} className="relative pl-6 py-2">
                 <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-Gray-50"></div>
-                <div className="absolute left-[-5px] top-[14px] w-3 h-3 bg-Primary-DeepTeal rounded-full"></div>
+                <div
+                  className={`absolute left-[-5px] top-[14px] w-3 h-3 rounded-full ${
+                    ev.eventName === 'api_error' ? 'bg-red-500' : 'bg-Primary-DeepTeal'
+                  }`}
+                ></div>
                 <div className="flex items-center justify-between">
                   <div className="text-Text-Primary font-medium">
                     {idx + 1}. {ev.eventName}
@@ -453,7 +478,11 @@ const LogDetails = () => {
                   {Object.entries(ev.props || {}).map(([k, v]) => (
                     <div
                       key={k}
-                      className="bg-backgroundColor-Card rounded-md px-2 py-1"
+                      className={`${
+                        ev.eventName === 'api_error'
+                          ? 'bg-red-50 border border-red-200'
+                          : 'bg-backgroundColor-Card'
+                      } rounded-md px-2 py-1`}
                     >
                       <span className="text-[10px] text-Text-Primary">
                         {k}:
