@@ -105,7 +105,7 @@ const LogDetails = () => {
     const minutesPerDay = sessionDurations.totalMin / days;
     const eventsPerDay = totalEvents / days;
     const minutesScore = Math.min(1, minutesPerDay / 60); // 60 دقیقه در روز = 100%
-    const eventsScore = Math.min(1, eventsPerDay / 30);   // 30 ایونت در روز = 100%
+    const eventsScore = Math.min(1, eventsPerDay / 30); // 30 ایونت در روز = 100%
     const score = Math.round((minutesScore * 0.6 + eventsScore * 0.4) * 100);
     return Math.max(0, Math.min(100, score));
   }, [sessionDurations, totalEvents]);
@@ -211,40 +211,37 @@ const LogDetails = () => {
               Go
             </button>
           </div>
-
         </div>
-        <div className='flex justify-end items-center'>
+        <div className="flex justify-end items-center">
           <div className="text-Text-Primary text-xs md:text-sm min-w-[60px]">
-              From
-            </div>
-            <SimpleDatePicker
-              date={fromDate}
-              setDate={setFromDate}
-              placeholder="Select"
-            />
-            <div className="text-Text-Primary text-xs md:text-sm min-w-[60px]">
-              To
-            </div>
-            <SimpleDatePicker
-              date={toDate}
-              setDate={setToDate}
-              placeholder="Select"
-            />
-            <button
-              className="ml-auto md:ml-3 text-xs bg-Primary-DeepTeal text-white px-3 py-1 rounded-md"
-              onClick={() => {
-                setFromDate(null);
-                setToDate(null);
-              }}
-            >
-              Clear
-            </button>        
-
+            From
+          </div>
+          <SimpleDatePicker
+            date={fromDate}
+            setDate={setFromDate}
+            placeholder="Select"
+          />
+          <div className="text-Text-Primary text-xs md:text-sm min-w-[60px]">
+            To
+          </div>
+          <SimpleDatePicker
+            date={toDate}
+            setDate={setToDate}
+            placeholder="Select"
+          />
+          <button
+            className="ml-auto md:ml-3 text-xs bg-Primary-DeepTeal text-white px-3 py-1 rounded-md"
+            onClick={() => {
+              setFromDate(null);
+              setToDate(null);
+            }}
+          >
+            Clear
+          </button>
         </div>
       </div>
 
       {/* Session-based metrics */}
-
 
       {/* <div className="flex flex-col md:flex-row items-center gap-3 mb-6">
         <div className="text-Text-Primary text-xs md:text-sm min-w-[60px]">
@@ -282,13 +279,17 @@ const LogDetails = () => {
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Questionnaires Assigned</div>
+          <div className="text-[10px] text-Text-Secondary">
+            Questionnaires Assigned
+          </div>
           <div className="text-base font-semibold text-Text-Primary">
             {kpis?.num_of_questionnaires_assigned ?? '-'}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Questionnaires Filled</div>
+          <div className="text-[10px] text-Text-Secondary">
+            Questionnaires Filled
+          </div>
           <div className="text-base font-semibold text-Text-Primary">
             {kpis?.num_of_questionnaires_filled ?? '-'}
           </div>
@@ -300,37 +301,49 @@ const LogDetails = () => {
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Holistic Plans Saved</div>
+          <div className="text-[10px] text-Text-Secondary">
+            Holistic Plans Saved
+          </div>
           <div className="text-base font-semibold text-Text-Primary">
             {kpis?.num_of_holistic_plans_saved ?? '-'}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Action Plans Saved</div>
+          <div className="text-[10px] text-Text-Secondary">
+            Action Plans Saved
+          </div>
           <div className="text-base font-semibold text-Text-Primary">
             {kpis?.num_of_action_plans_saved ?? '-'}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Library Entries Created</div>
+          <div className="text-[10px] text-Text-Secondary">
+            Library Entries Created
+          </div>
           <div className="text-base font-semibold text-Text-Primary">
             {kpis?.num_of_library_entries_created ?? '-'}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Library Entries Updated</div>
+          <div className="text-[10px] text-Text-Secondary">
+            Library Entries Updated
+          </div>
           <div className="text-base font-semibold text-Text-Primary">
             {kpis?.num_of_library_entries_updated ?? '-'}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Total Active (min)</div>
+          <div className="text-[10px] text-Text-Secondary">
+            Total Active (min)
+          </div>
           <div className="text-base font-semibold text-Text-Primary">
             {sessionDurations.totalMin}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Avg Active (min)</div>
+          <div className="text-[10px] text-Text-Secondary">
+            Avg Active (min)
+          </div>
           <div className="text-base font-semibold text-Text-Primary">
             {sessionDurations.avgMin}
           </div>
@@ -341,11 +354,12 @@ const LogDetails = () => {
             {activityScore}
             <span className="ml-1 text-[10px] text-Text-Secondary">/100</span>
           </div>
-          <div className={`text-[10px] mt-1 ${activityScore >= 60 ? 'text-green-600' : 'text-amber-600'}`}>
+          <div
+            className={`text-[10px] mt-1 ${activityScore >= 60 ? 'text-green-600' : 'text-amber-600'}`}
+          >
             {activityScore >= 60 ? 'Active' : 'Needs Attention'}
           </div>
         </div>
-        
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -354,7 +368,10 @@ const LogDetails = () => {
           <div className="text-sm font-medium text-Text-Primary mb-3">
             Sessions
           </div>
-          <div className=" overflow-auto pr-1" style={{height:window.innerHeight - 500 + 'px'}}>
+          <div
+            className=" overflow-auto pr-1"
+            style={{ height: window.innerHeight - 500 + 'px' }}
+          >
             <table className="w-full text-[10px] md:text-xs">
               <thead>
                 <tr className="text-Text-Secondary text-left">
@@ -416,7 +433,10 @@ const LogDetails = () => {
               )}
             </div>
           ) : null}
-          <div className=" overflow-auto pr-2" style={{height:window.innerHeight - 500 + 'px'}}>
+          <div
+            className=" overflow-auto pr-2"
+            style={{ height: window.innerHeight - 500 + 'px' }}
+          >
             {selectedSession?.events.map((ev, idx) => (
               <div key={ev.id} className="relative pl-6 py-2">
                 <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-Gray-50"></div>
