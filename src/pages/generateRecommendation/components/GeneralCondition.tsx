@@ -255,11 +255,10 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
         />
         <Card
           title="Health Planning Issues"
-          content={
-            editMode.lookingForwards
-              ? tempData.lookingForwards
-              : data.lookingForwards
-          }
+          content={(editMode.lookingForwards
+            ? tempData.lookingForwards
+            : data.lookingForwards
+          )?.map((item) => item.split(':')[1]?.trim())}
           isEditing={editMode.lookingForwards}
           onEdit={() => handleEdit('lookingForwards')}
           onSave={() => handleSave('lookingForwards')}
