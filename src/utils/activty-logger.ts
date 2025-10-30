@@ -10,7 +10,7 @@ export default class ActivityLogger {
   private events: any[] = [];
   private sessionStartTime: number;
   private intervalId: NodeJS.Timeout | null = null;
-  private resetIntervalMs = 60 * 1000;
+  private resetIntervalMs = 2 *60 * 1000;
 
   private constructor() {
     this.userId = localStorage.getItem('email') || 'anonymous_user';
