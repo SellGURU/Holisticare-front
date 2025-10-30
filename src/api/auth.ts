@@ -27,7 +27,7 @@ class Auth extends Api {
       password: password,
     };
 
-    return this.post('/auth/token', data, {
+    return this.post('/auth/admin_token', data, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },

@@ -39,13 +39,13 @@ axios.interceptors.response.use(
     // console.log(error);
 
     // Handle 500 errors - redirect to maintenance page
-    if (
-      (error.response?.status === 500 || error.message == 'Network Error') &&
-      !window.location.href.includes('/maintenance')
-    ) {
-      window.location.href = '/maintenance';
-      return Promise.reject(error);
-    }
+    // if (
+    //   (error.response?.status === 500 || error.message == 'Network Error') &&
+    //   !window.location.href.includes('/maintenance')
+    // ) {
+    //   window.location.href = '/maintenance';
+    //   return Promise.reject(error);
+    // }
 
     if (
       (error.response?.status == 401 &&

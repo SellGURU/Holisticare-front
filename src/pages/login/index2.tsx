@@ -8,11 +8,11 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 import AuthLayout from '../../layout/AuthLayout';
-import YoupValidation from '../../validation';
+// import YoupValidation from '../../validation';
 // import AuthWithGoogle from '../../Components/AuthWithGoogle';
 
 const validationSchema = yup.object({
-  email: YoupValidation('email'),
+  email:yup.string().required('This field is required'),
   password: yup.string().required('This field is required'),
 });
 
@@ -51,7 +51,7 @@ const Login = () => {
           appContext.login(
             res.data.access_token,
             res.data.permission,
-            formik.values.email,
+            'admin',
           );
           navigate('/');
         })
@@ -92,7 +92,7 @@ const Login = () => {
           onSubmit={(e) => e.preventDefault()}
         >
           <TextField
-            autoComplete="email"
+            // autoComplete=""
             inValid={
               formik.errors?.email != undefined &&
               (formik.touched?.email as boolean)
@@ -103,9 +103,9 @@ const Login = () => {
               formik.handleBlur(e);
               formik.validateField('email');
             }}
-            placeholder="Enter your email address..."
-            label="Email Address"
-            type="email"
+            placeholder="Enter your username..."
+            label="Username "
+            type="text"
           ></TextField>
           <div className="mb-4">
             <TextField
