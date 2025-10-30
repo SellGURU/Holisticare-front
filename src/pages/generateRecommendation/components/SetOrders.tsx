@@ -28,6 +28,7 @@ interface SetOrdersProps {
   setActiveCategory: (value: string) => void;
   progress: number; // from 0 to 100
   details: Record<string, boolean>[];
+  setDetails: (value: Record<string, boolean>[]) => void;
 }
 
 export const SetOrders: FC<SetOrdersProps> = ({
@@ -44,6 +45,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
   setVisibleCategorieys,
   progress,
   details,
+  setDetails,
 }) => {
   // const [activeCategory, setActiveCategory] = useState<string>(
   //   visibleCategoriy[visibleCategoriy.length - 1].name || 'Activity',
@@ -290,6 +292,14 @@ export const SetOrders: FC<SetOrdersProps> = ({
       activityContainer.current.scrollTop = 0;
     }
   }, [activeCategory]);
+
+  const handleUpdateIssueList = (index: number, newIssueList: string[]) => {
+    setData(
+      data.map((item: any, i: number) =>
+        i === index ? { ...item, issue_list: newIssueList } : item,
+      ),
+    );
+  };
   return (
     <>
       <MainModal
@@ -459,7 +469,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
                   index={index}
                   activeCategory={activeCategory}
                   handleCheckboxChange={handleCheckboxChange}
-                  issuesData={[]}
+                  issuesData={details}
+                  setIssuesData={setDetails}
+                  handleUpdateIssueList={handleUpdateIssueList}
                 />
               );
             })}
