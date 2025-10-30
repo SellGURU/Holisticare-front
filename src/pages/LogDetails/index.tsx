@@ -463,7 +463,9 @@ const LogDetails = () => {
                 <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-Gray-50"></div>
                 <div
                   className={`absolute left-[-5px] top-[14px] w-3 h-3 rounded-full ${
-                    ev.eventName === 'api_error' ? 'bg-red-500' : 'bg-Primary-DeepTeal'
+                    ev.eventName === 'api_error'
+                      ? 'bg-red-500'
+                      : 'bg-Primary-DeepTeal'
                   }`}
                 ></div>
                 <div className="flex items-center justify-between">
