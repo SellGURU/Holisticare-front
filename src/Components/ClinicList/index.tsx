@@ -51,15 +51,23 @@ const ClinicList = () => {
             <table className="min-w-full text-left">
               <thead className="bg-gray-50 sticky top-0 z-10">
                 <tr>
-                  <th className="px-4 py-3 text-sm font-semibold text-gray-700">Logo</th>
-                  <th className="px-4 py-3 text-sm font-semibold text-gray-700">Email</th>
-                  <th className="px-4 py-3 text-sm font-semibold text-gray-700">Clinic name</th>
+                  <th className="px-4 py-3 text-sm font-semibold text-gray-700">
+                    Logo
+                  </th>
+                  <th className="px-4 py-3 text-sm font-semibold text-gray-700">
+                    Email
+                  </th>
+                  <th className="px-4 py-3 text-sm font-semibold text-gray-700">
+                    Clinic name
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {clinics?.length === 0 ? (
                   <tr>
-                    <td className="px-4 py-4 text-sm text-gray-500" colSpan={2}>No clinics found.</td>
+                    <td className="px-4 py-4 text-sm text-gray-500" colSpan={2}>
+                      No clinics found.
+                    </td>
                   </tr>
                 ) : (
                   clinics
@@ -71,28 +79,36 @@ const ClinicList = () => {
                       return email.includes(q) || name.includes(q);
                     })
                     .map((clinic, idx) => (
-                    <tr key={clinic.clinic_email + idx} className={idx % 2 === 1 ? 'bg-gray-50' : ''}>
-                      <td className="px-4 py-3">
-                        {clinic.clinic_logo ? (
-                          <img
-                            src={clinic.clinic_logo}
-                            alt={clinic.clinic_name ?? clinic.clinic_email}
-                            className="h-12 w-12 rounded-full object-cover border border-gray-200"
-                          />
-                        ) : (
-                          <div className="h-12 w-12 rounded-full bg-gray-200 border border-gray-200 flex items-center justify-center text-sm font-semibold text-gray-700">
-                            {getEmailInitials(clinic.clinic_email)}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-Primary-DeepTeal">
-                        <Link to={'/log/' + clinic.clinic_email} className="hover:underline">{clinic.clinic_email}</Link>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-Text-Primary">
-                        {clinic.clinic_name ?? '-'}
-                      </td>
-                    </tr>
-                  ))
+                      <tr
+                        key={clinic.clinic_email + idx}
+                        className={idx % 2 === 1 ? 'bg-gray-50' : ''}
+                      >
+                        <td className="px-4 py-3">
+                          {clinic.clinic_logo ? (
+                            <img
+                              src={clinic.clinic_logo}
+                              alt={clinic.clinic_name ?? clinic.clinic_email}
+                              className="h-12 w-12 rounded-full object-cover border border-gray-200"
+                            />
+                          ) : (
+                            <div className="h-12 w-12 rounded-full bg-gray-200 border border-gray-200 flex items-center justify-center text-sm font-semibold text-gray-700">
+                              {getEmailInitials(clinic.clinic_email)}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-Primary-DeepTeal">
+                          <Link
+                            to={'/log/' + clinic.clinic_email}
+                            className="hover:underline"
+                          >
+                            {clinic.clinic_email}
+                          </Link>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-Text-Primary">
+                          {clinic.clinic_name ?? '-'}
+                        </td>
+                      </tr>
+                    ))
                 )}
               </tbody>
             </table>

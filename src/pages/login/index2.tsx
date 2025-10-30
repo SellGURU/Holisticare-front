@@ -12,7 +12,7 @@ import AuthLayout from '../../layout/AuthLayout';
 // import AuthWithGoogle from '../../Components/AuthWithGoogle';
 
 const validationSchema = yup.object({
-  email:yup.string().required('This field is required'),
+  email: yup.string().required('This field is required'),
   password: yup.string().required('This field is required'),
 });
 
@@ -48,11 +48,7 @@ const Login = () => {
       setIsLoading(true);
       Auth.login(formik.values.email, formik.values.password)
         .then((res) => {
-          appContext.login(
-            res.data.access_token,
-            res.data.permission,
-            'admin',
-          );
+          appContext.login(res.data.access_token, res.data.permission, 'admin');
           navigate('/');
         })
         .catch((res) => {

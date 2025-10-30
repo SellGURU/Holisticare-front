@@ -1,4 +1,4 @@
-import Api from "./api";
+import Api from './api';
 
 class Admin extends Api {
   static getClinics() {
