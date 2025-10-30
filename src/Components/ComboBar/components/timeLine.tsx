@@ -95,7 +95,7 @@ const TimelineStep: React.FC<{
   index: number;
 }> = ({ title, explains, status, index }) => (
   <>
-    <div className=" w-full  relative mt-4    mb-14 text-xs">
+    <div className=" w-full  relative mt-4    my-14 text-xs">
       <div className={` relative  w-full`}>
         <div
           className="  w-6 h-6 rounded-full flex items-center justify-center z-20 "
@@ -110,7 +110,7 @@ const TimelineStep: React.FC<{
           } -z-[1]  `}
         >
           <div
-            className={` bg-Primary-DeepTeal text-nowrap max-w-[130px] rounded-lg px-1 text-white text-[10px]`}
+            className={` bg-Primary-DeepTeal text-nowrap text-center max-w-[130px] rounded-lg px-1 text-white text-[10px]`}
           >
             {title}
           </div>
@@ -135,10 +135,14 @@ const TimelineStep: React.FC<{
             {explains.map((explain, index) => (
               <div
                 key={index}
-                className=" flex items-start ml-2 text-[8px] text-Text-Secondary"
+                className={` flex items-start ${index % 2 == 0 ? "mr-2" : "ml-2"}   text-[8px] text-Text-Secondary`}
               >
                 {/* <div className="w-[3px] min-w-[3px] min-h-[3px] h-[3px] bg-Orange rounded-full"></div>{' '} */}
-                <div>{explain}</div>
+                <p className="max-w-[130px] text-justify overflow-x-hidden text-ellipsis">
+               {explain}
+            
+                </p>
+                  
               </div>
             ))}
           </div>
@@ -193,7 +197,7 @@ const TimeLine: React.FC = () => {
           {steps.map((section, index) => (
             <div key={index} className="flex flex-col items-center  relative ">
               <div
-                className={`px-2.5 py-1 text-[10px] rounded-full text-Text-Primary  ${
+                className={`px-2.5 py-1 text-[10px] mt-4 rounded-full text-Text-Primary  ${
                   section.status === 'On Going'
                     ? 'bg-[#8ECAE6]'
                     : section.status === 'Completed'
@@ -216,7 +220,7 @@ const TimeLine: React.FC = () => {
                   style={{
                     backgroundColor: resolveStatusColor(section.status),
                   }}
-                  className={`absolute block h-[100%] w-[3px]  right-3 
+                  className={`absolute block h-[105%] w-[3px]  right-3 
             ml-5  -z-[1]`}
                 ></div>
                 {section.steps.map((step: any, index: number) => (

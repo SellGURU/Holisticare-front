@@ -4,45 +4,64 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { subscribe } from '../../utils/event';
 import { useEffect } from 'react';
 interface DownloadModalProps {
+  mode: 'download' | 'share';
   onclose: () => void;
   onconfirm: (data: Array<any>) => void;
 }
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const DownloadModal: React.FC<DownloadModalProps> = ({
   onclose,
   onconfirm,
+  mode
 }) => {
-  const [downloadSelect, setDownloadSelect] = useState([
-    {
-      name: 'Client Summary',
-      checked: true,
-    },
-    {
-      name: 'Need Focus Biomarker',
-      checked: false,
-    },
-    {
-      name: 'Concerning Result',
-      checked: true,
-    },
-    {
-      name: 'Detailed Analysis',
-      checked: true,
-    },
-    {
-      name: 'Holistic Plan',
-      checked: true,
-    },
-    {
-      name: 'Action Plan',
-      checked: true,
-      disabled: false,
-    },
-  ]);
+  const initialOptions = [
+  { name: 'Client Summary', checked: true },
+  { name: 'Need Focus Biomarker', checked: false },
+  { name: 'Concerning Result', checked: true },
+  { name: 'Detailed Analysis', checked: true },
+  { name: 'Holistic Plan', checked: true },
+  { name: 'Action Plan', checked: true, disabled: false },
+];
+
+const [downloadSelect, setDownloadSelect] = useState(initialOptions);
+const [shareSelect, setShareSelect] = useState(initialOptions);
+
+const activeSelect = mode === 'download' ? downloadSelect : shareSelect;
+const setActiveSelect =
+  mode === 'download' ? setDownloadSelect : setShareSelect;
+
+  // const [downloadSelect, setDownloadSelect] = useState([
+  //   {
+  //     name: 'Client Summary',
+  //     checked: true,
+  //   },
+  //   {
+  //     name: 'Need Focus Biomarker',
+  //     checked: false,
+  //   },
+  //   {
+  //     name: 'Concerning Result',
+  //     checked: true,
+  //   },
+  //   {
+  //     name: 'Detailed Analysis',
+  //     checked: true,
+  //   },
+  //   {
+  //     name: 'Holistic Plan',
+  //     checked: true,
+  //   },
+  //   {
+  //     name: 'Action Plan',
+  //     checked: true,
+  //     disabled: false,
+  //   },
+  // ]);
   console.log(downloadSelect);
 
   subscribe('ActionPlanStatus', (data: any) => {
-    setDownloadSelect((prev) =>
+    setActiveSelect((prev) =>
       prev.map((item) =>
         item.name === 'Action Plan'
           ? {
@@ -56,7 +75,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   });
 
   subscribe('HolisticPlanStatus', (data: any) => {
-    setDownloadSelect((prev) =>
+    setActiveSelect((prev) =>
       prev.map((item) =>
         item.name === 'Holistic Plan'
           ? {
@@ -70,7 +89,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   });
 
   subscribe('DetailedAnalysisStatus', (data: any) => {
-    setDownloadSelect((prev) =>
+    setActiveSelect((prev) =>
       prev.map((item) =>
         item.name === 'Detailed Analysis'
           ? {
@@ -84,7 +103,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   });
 
   subscribe('NeedsFocusBiomarkerStatus', (data: any) => {
-    setDownloadSelect((prev) =>
+    setActiveSelect((prev) =>
       prev.map((item) =>
         item.name === 'Need Focus Biomarker'
           ? {
@@ -97,7 +116,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     );
   });
   subscribe('ConcerningResultStatus', (data: any) => {
-    setDownloadSelect((prev) =>
+    setActiveSelect((prev) =>
       prev.map((item) =>
         item.name === 'Concerning Result'
           ? {
@@ -110,7 +129,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     );
   });
   const removeAll = () => {
-    setDownloadSelect((pre) => {
+    setActiveSelect((pre) => {
       return pre.map((el) => {
         return {
           ...el,
@@ -121,7 +140,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   };
 
   const selectAll = () => {
-    setDownloadSelect((pre) => {
+    setActiveSelect((pre) => {
       return pre.map((el) => {
         return {
           ...el,
@@ -132,7 +151,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   };
 
   const select = (active: number) => {
-    setDownloadSelect((pre) => {
+    setActiveSelect((pre) => {
       return pre.map((el, index: number) => {
         if (index == active) {
           return {
@@ -147,7 +166,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   };
 
   // Check if all enabled items are unselected
-  const allUnselected = downloadSelect
+  const allUnselected = activeSelect
     .filter((el) => !el.disabled)
     .every((el) => !el.checked);
   const [showValidate, setShowValidate] = useState(false);
@@ -160,8 +179,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     <>
       <div className="flex justify-between items-center">
         <div className="text-[10px] text-Text-Secondary">
-          {downloadSelect.filter((el: any) => el.checked == true).length}/
-          {downloadSelect.filter((el) => !el.disabled).length} selected
+          {activeSelect.filter((el: any) => el.checked == true).length}/
+          {activeSelect.filter((el) => !el.disabled).length} selected
         </div>
         <div
           onClick={allUnselected ? selectAll : removeAll}
@@ -172,7 +191,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       </div>
 
       <div className="grid gap-2 mt-2">
-        {downloadSelect
+        {activeSelect
           .filter((el) => !el.disabled)
           .map((el, index: number) => {
             return (
@@ -240,15 +259,15 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
           <div className=" w-[60px] xs:w-[110px]">Cancel</div>
         </ButtonPrimary>
         <ButtonPrimary
-          onClick={() => {
-            if (allUnselected) {
-              setShowValidate(true);
-            } else {
-              onconfirm(downloadSelect);
-            }
-          }}
-          size="small"
-        >
+       onClick={() => {
+    if (allUnselected) {
+      setShowValidate(true);
+    } else {
+      onconfirm(activeSelect);
+    }
+  }}
+  size="small"
+>
           <div className=" w-[60px] xs:w-[110px]">Confirm</div>
         </ButtonPrimary>
       </div>

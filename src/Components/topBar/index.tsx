@@ -423,6 +423,8 @@ export const TopBar: FC<TopBarProps> = ({
       >
         <>
           <DownloadModal
+            mode={openDownload ? 'download' : 'share'}
+
             // isOpen={openDownload || openShare}
             onconfirm={(settingsData) => {
               const locationAddress = window.location.pathname;
