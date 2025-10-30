@@ -71,7 +71,10 @@ export const GenerateRecommendation = () => {
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
-      key_areas_to_address: treatmentPlanData?.looking_forwards || [],
+      key_areas_to_address:
+        coverageDetails.length > 0
+          ? coverageDetails
+          : treatmentPlanData?.looking_forwards || [],
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
@@ -89,12 +92,10 @@ export const GenerateRecommendation = () => {
       });
   }, [treatmentPlanData, id]);
 
-  console.log(coverageDetails);
-
   const hasEssentialData = (data: any) => {
     return (
-      data?.client_insight &&
-      data.client_insight.length > 0 &&
+      // data?.client_insight &&
+      // data.client_insight.length > 0 &&
       data?.completion_suggestion
       // data.completion_suggestion.length > 0
       // data?.looking_forwards &&
@@ -441,6 +442,7 @@ export const GenerateRecommendation = () => {
             <SetOrders
               progress={coverageProgess}
               details={coverageDetails}
+              setDetails={setcoverageDetails}
               activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}
               visibleCategoriy={VisibleCategories}
