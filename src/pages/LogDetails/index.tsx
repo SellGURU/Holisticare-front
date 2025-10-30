@@ -67,7 +67,8 @@ function mergeContiguousSessions(
   Object.values(byUser).forEach((userSessions) => {
     // Sort ascending by start time to merge forward
     const sorted = [...userSessions].sort(
-      (a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime(),
+      (a, b) =>
+        new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime(),
     );
 
     let current: SessionLog | null = null;
@@ -76,7 +77,8 @@ function mergeContiguousSessions(
       if (!current) return;
       // Ensure events are sorted
       current.events = [...(current.events || [])].sort(
-        (e1, e2) => new Date(e1.timestamp).getTime() - new Date(e2.timestamp).getTime(),
+        (e1, e2) =>
+          new Date(e1.timestamp).getTime() - new Date(e2.timestamp).getTime(),
       );
       mergedAll.push(current);
       current = null;
@@ -100,14 +102,16 @@ function mergeContiguousSessions(
           ...current,
           sessionId: `${current.sessionId}+${s.sessionId}`,
           startedAt:
-            new Date(current.startedAt).getTime() <= new Date(s.startedAt).getTime()
+            new Date(current.startedAt).getTime() <=
+            new Date(s.startedAt).getTime()
               ? current.startedAt
               : s.startedAt,
           endedAt:
             new Date(current.endedAt).getTime() >= new Date(s.endedAt).getTime()
               ? current.endedAt
               : s.endedAt,
-          totalActiveTimeMs: (current.totalActiveTimeMs || 0) + (s.totalActiveTimeMs || 0),
+          totalActiveTimeMs:
+            (current.totalActiveTimeMs || 0) + (s.totalActiveTimeMs || 0),
           events: [...(current.events || []), ...(s.events || [])],
         };
       } else {
@@ -491,8 +495,12 @@ const LogDetails = () => {
                     onClick={() => setSelectedSessionId(s.sessionId)}
                   >
                     <td className="py-2 pr-2 text-Text-Primary">
-                      {Date.now() - new Date(s.endedAt).getTime() <= 5 * 60 * 1000 && (
-                        <span title="online" className="relative inline-flex mr-2 align-middle">
+                      {Date.now() - new Date(s.endedAt).getTime() <=
+                        5 * 60 * 1000 && (
+                        <span
+                          title="online"
+                          className="relative inline-flex mr-2 align-middle"
+                        >
                           <span className="absolute inline-flex w-2 h-2 rounded-full bg-green-500 opacity-75 animate-ping"></span>
                           <span className="relative inline-block w-2 h-2 rounded-full bg-green-500"></span>
                         </span>
@@ -535,7 +543,8 @@ const LogDetails = () => {
           </div>
           {selectedSession ? (
             <div className="text-[10px] md:text-xs text-Text-Secondary mb-3 flex items-center gap-1">
-              {Date.now() - new Date(selectedSession.endedAt).getTime() <= 5 * 60 * 1000 && (
+              {Date.now() - new Date(selectedSession.endedAt).getTime() <=
+                5 * 60 * 1000 && (
                 <span title="online" className="relative inline-flex mr-1">
                   <span className="absolute inline-flex w-2 h-2 rounded-full bg-green-500 opacity-75 animate-ping"></span>
                   <span className="relative inline-block w-2 h-2 rounded-full bg-green-500"></span>
