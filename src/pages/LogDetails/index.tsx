@@ -45,6 +45,86 @@ type AnalyticsResponse = {
   sessions: ApiSession[];
 };
 
+// Merge contiguous sessions for the same user and device if the gap is small
+function mergeContiguousSessions(
+  sessions: SessionLog[],
+  options?: { gapThresholdMs?: number },
+): SessionLog[] {
+  const gapThresholdMs = options?.gapThresholdMs ?? 2 * 60 * 1000; // default: 2 minutes
+  if (!Array.isArray(sessions) || sessions.length === 0) return [];
+
+  // Group by user to avoid cross-user merges
+  const byUser: Record<string, SessionLog[]> = sessions.reduce(
+    (acc, s) => {
+      (acc[s.userId] ||= []).push(s);
+      return acc;
+    },
+    {} as Record<string, SessionLog[]>,
+  );
+
+  const mergedAll: SessionLog[] = [];
+
+  Object.values(byUser).forEach((userSessions) => {
+    // Sort ascending by start time to merge forward
+    const sorted = [...userSessions].sort(
+      (a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime(),
+    );
+
+    let current: SessionLog | null = null;
+
+    const pushCurrent = () => {
+      if (!current) return;
+      // Ensure events are sorted
+      current.events = [...(current.events || [])].sort(
+        (e1, e2) => new Date(e1.timestamp).getTime() - new Date(e2.timestamp).getTime(),
+      );
+      mergedAll.push(current);
+      current = null;
+    };
+
+    for (const s of sorted) {
+      if (!current) {
+        current = { ...s, events: [...(s.events || [])] };
+        continue;
+      }
+
+      const lastEnd = new Date(current.endedAt).getTime();
+      const nextStart = new Date(s.startedAt).getTime();
+      const sameDevice =
+        current.userAgent?.deviceType === s.userAgent?.deviceType &&
+        current.userAgent?.browser === s.userAgent?.browser;
+
+      // Merge if contiguous (overlap or small gap) and same device
+      if (sameDevice && nextStart - lastEnd <= gapThresholdMs) {
+        current = {
+          ...current,
+          sessionId: `${current.sessionId}+${s.sessionId}`,
+          startedAt:
+            new Date(current.startedAt).getTime() <= new Date(s.startedAt).getTime()
+              ? current.startedAt
+              : s.startedAt,
+          endedAt:
+            new Date(current.endedAt).getTime() >= new Date(s.endedAt).getTime()
+              ? current.endedAt
+              : s.endedAt,
+          totalActiveTimeMs: (current.totalActiveTimeMs || 0) + (s.totalActiveTimeMs || 0),
+          events: [...(current.events || []), ...(s.events || [])],
+        };
+      } else {
+        pushCurrent();
+        current = { ...s, events: [...(s.events || [])] };
+      }
+    }
+
+    pushCurrent();
+  });
+
+  // Sort final list descending by start time like original `filtered`
+  return mergedAll.sort(
+    (a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime(),
+  );
+}
+
 const toLocalDateOnly = (d: Date) =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate());
 const msToMin = (ms: number) => Math.round(ms / 60000);
@@ -127,12 +207,14 @@ const LogDetails = () => {
     });
   }, [data, fromDate, toDate]);
 
+  // Merge contiguous sessions for display and event listing
+  const merged = useMemo(() => mergeContiguousSessions(filtered), [filtered]);
+
   // stats removed; top KPIs now come directly from API in kpis
 
   const selectedSession = useMemo(
-    () =>
-      filtered.find((s) => s.sessionId === selectedSessionId) || filtered[0],
-    [filtered, selectedSessionId],
+    () => merged.find((s) => s.sessionId === selectedSessionId) || merged[0],
+    [merged, selectedSessionId],
   );
 
   const fetchLogs = () => {
@@ -398,7 +480,7 @@ const LogDetails = () => {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((s) => (
+                {merged.map((s) => (
                   <tr
                     key={s.sessionId}
                     className={`cursor-pointer transition-colors ${
@@ -409,6 +491,12 @@ const LogDetails = () => {
                     onClick={() => setSelectedSessionId(s.sessionId)}
                   >
                     <td className="py-2 pr-2 text-Text-Primary">
+                      {Date.now() - new Date(s.endedAt).getTime() <= 5 * 60 * 1000 && (
+                        <span title="online" className="relative inline-flex mr-2 align-middle">
+                          <span className="absolute inline-flex w-2 h-2 rounded-full bg-green-500 opacity-75 animate-ping"></span>
+                          <span className="relative inline-block w-2 h-2 rounded-full bg-green-500"></span>
+                        </span>
+                      )}
                       {s.events?.some((e) => e.eventName === 'api_error') && (
                         <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-2 align-middle" />
                       )}
@@ -425,7 +513,7 @@ const LogDetails = () => {
                     </td>
                   </tr>
                 ))}
-                {data.length === 0 && (
+                {merged.length === 0 && (
                   <tr>
                     <td
                       colSpan={4}
@@ -446,12 +534,20 @@ const LogDetails = () => {
             Session events
           </div>
           {selectedSession ? (
-            <div className="text-[10px] md:text-xs text-Text-Secondary mb-3">
-              {new Date(selectedSession.startedAt).toLocaleDateString()} —{' '}
-              {formatTimeRange(
-                selectedSession.startedAt,
-                selectedSession.endedAt,
+            <div className="text-[10px] md:text-xs text-Text-Secondary mb-3 flex items-center gap-1">
+              {Date.now() - new Date(selectedSession.endedAt).getTime() <= 5 * 60 * 1000 && (
+                <span title="online" className="relative inline-flex mr-1">
+                  <span className="absolute inline-flex w-2 h-2 rounded-full bg-green-500 opacity-75 animate-ping"></span>
+                  <span className="relative inline-block w-2 h-2 rounded-full bg-green-500"></span>
+                </span>
               )}
+              <span>
+                {new Date(selectedSession.startedAt).toLocaleDateString()} —{' '}
+                {formatTimeRange(
+                  selectedSession.startedAt,
+                  selectedSession.endedAt,
+                )}
+              </span>
             </div>
           ) : null}
           <div
