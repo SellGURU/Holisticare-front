@@ -56,19 +56,19 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
           setNewIssue('');
         }}
       >
-        <div className="bg-white max-h-[368px] w-[425px] p-6 pb-8 rounded-2xl shadow-800">
+        <div className="bg-white max-h-[408px] w-[465px] p-6 pb-8 rounded-2xl shadow-800">
           <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
             Plan Coverage Details
           </div>
 
-          <div className="mt-4 flex flex-col max-h-[180px] overflow-auto">
+          <div className="mt-4 flex flex-col max-h-[220px] overflow-auto">
             {details?.map((detail, index) => {
               const [text, isChecked] = Object.entries(detail)[0];
               const issueLabel = text.split(':')[0].trim();
               return (
                 <div
                   key={index}
-                  className={`flex select-none text-justify items-start  text-Text-Primary text-xs group relative py-1.5 w-[95%] ${
+                  className={`flex select-none text-justify items-start  text-Text-Primary break-all text-xs group relative py-1.5 pr-1 w-[95%] ${
                     isChecked && ' line-through'
                   }`}
                 >
@@ -86,7 +86,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                   </span>
                   {text?.split(':')[1]?.trim()}
                   {isDeleting === index + 1 ? (
-                    <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 -top-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-4 -top-1">
                       {/* <div className="text-Text-Quadruple text-xs">
                                 Sure?
                               </div> */}
@@ -123,7 +123,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                     <img
                       src="/icons/delete.svg"
                       alt=""
-                      className="absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity w-5 h-5 cursor-pointer"
+                      className="absolute -right-4 opacity-0 group-hover:opacity-100 transition-opacity w-5 h-5 cursor-pointer"
                       onClick={() => {
                         setIsDeleting(index + 1);
                       }}
