@@ -165,9 +165,7 @@ const LogDetails = () => {
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
-  const [expandedEvents, setExpandedEvents] = useState<Set<string>>(
-    new Set(),
-  );
+  const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
 
   const sessionDurations = useMemo(() => {
     const totalMs = data.reduce((acc, s) => acc + s.totalActiveTimeMs, 0);
@@ -257,7 +255,6 @@ const LogDetails = () => {
     <div className="p-4 md:p-6">
       <div className="mb-4 flex justify-between items-center gap-3">
         <div className="flex items-center gap-2">
-
           <div className="text-[14px] font-medium text-Text-Primary">
             {clinicId}
           </div>
@@ -272,19 +269,15 @@ const LogDetails = () => {
               setDate={setFromDate}
               placeholder="Select"
             />
-
           </div>
           <div className="flex items-center ml-4 justify-start">
-            <div className="text-Text-Primary text-xs md:text-sm mr-2">
-              To
-            </div>
+            <div className="text-Text-Primary text-xs md:text-sm mr-2">To</div>
             <SimpleDatePicker
               date={toDate}
               setDate={setToDate}
               placeholder="Select"
               maxDate={new Date()}
             />
-
           </div>
           <button
             aria-label="Reload"
@@ -294,7 +287,6 @@ const LogDetails = () => {
           >
             {loading ? 'Loading...' : ' Get Latest Info'}
           </button>
-
         </div>
       </div>
 
@@ -570,7 +562,9 @@ const LogDetails = () => {
                           <span className="text-[9px] md:text-[10px] text-Text-Primary">
                             {k}:
                           </span>{' '}
-                          <span className="text-[9px] md:text-[10px] break-all text-Text-Secondary">{String(v)}</span>
+                          <span className="text-[9px] md:text-[10px] break-all text-Text-Secondary">
+                            {String(v)}
+                          </span>
                         </div>
                       ))}
                     </div>

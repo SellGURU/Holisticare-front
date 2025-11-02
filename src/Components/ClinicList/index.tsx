@@ -23,9 +23,9 @@ const ClinicList = () => {
     // setIsLoading(false);
     Admin.getClinics().then((res) => {
       console.log(res.data);
-      if(res.data != 'Internal Server Error'){
+      if (res.data != 'Internal Server Error') {
         setClinics(res.data);
-      }else{
+      } else {
         localStorage.clear();
         setClinics([]);
       }
