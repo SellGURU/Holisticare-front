@@ -35,6 +35,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   isScaling,
   setIsScaling,
 }) => {
+  const [changedRows, setChangedRows] = useState<number[]>([]);
+  const [mappedRows, setMappedRows] = useState<number[]>([]);
+
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleValueChange = (index: number, newValue: string) => {
@@ -226,7 +229,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         i === index ? { ...b, ...standardized } : b,
       );
     }
-
+    setChangedRows((prev) => (prev.includes(index) ? prev : [...prev, index]));
     onChange(updated);
   };
   const [unitOptions, setUnitOptions] = React.useState<
@@ -284,6 +287,37 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     }
   }, [biomarkers]);
   console.log(biomarkers);
+  const handleMappingToggle = async (index: number) => {
+    const row = biomarkers[index];
+    const extracted = row.original_biomarker_name;
+    const system = row.biomarker;
+
+    if (!extracted || !system) {
+      console.warn('Missing biomarker names for mapping');
+      return;
+    }
+
+    try {
+      if (mappedRows.includes(index)) {
+        // 🔹 Already mapped → remove mapping
+        await Application.remove_mapping({
+          extracted_biomarker: extracted,
+          system_biomarker: system,
+        });
+        setMappedRows((prev) => prev.filter((i) => i !== index));
+      } else {
+        // 🔹 Not mapped → add mapping
+        await Application.add_mapping({
+          extracted_biomarker: extracted,
+          system_biomarker: system,
+        });
+        setMappedRows((prev) => [...prev, index]);
+      }
+    } catch (err) {
+      console.error('Mapping toggle failed:', err);
+    }
+  };
+  console.log(mappedRows);
 
   return (
     <div
@@ -483,7 +517,21 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             />
                           </div>
                         ) : (
-                          <div className="w-[47px] pl-8 md:pl-5">
+                          <div className="flex items-center justify-end w-[47px] pl-8 md:pl-5 gap-1">
+                            {(changedRows.includes(index) ||
+                              mappedRows.includes(index)) && (
+                              <img
+                               src={
+    mappedRows.includes(index)
+      ? '/icons/save-2-fill.svg'
+      : '/icons/save-2.svg'
+  }
+                                alt="Mapping toggle"
+                                className="cursor-pointer w-4 h-4"
+                                onClick={() => handleMappingToggle(index)}
+                              />
+                            )}
+
                             <img
                               src="/icons/trash-blue.svg"
                               alt="Delete"

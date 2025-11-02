@@ -1074,6 +1074,12 @@ class Application extends Api {
   static getCoverage = (data: any) => {
     return this.post('/holistic_plan_coverage/calculate_progress', data);
   };
+  static add_mapping = (data: any) => {
+    return this.post('/add_clinic_biomarker_mapping', data);
+  };
+  static remove_mapping = (data: any) => {
+    return this.post('/remove_clinic_biomarker_mapping', data);
+  };
 }
 
 export default Application;
