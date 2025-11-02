@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 // import RefrenceModal from './RefrenceData';
 import { Tooltip } from 'react-tooltip';
 import { MainModal } from '../../../Components';
@@ -8,6 +8,8 @@ import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
 import { splitInstructions } from '../../../help';
 import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
+import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import Checkbox from '../../../Components/checkbox';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -18,6 +20,13 @@ interface BioMarkerRowSuggestionsProps {
   // isOverview?: boolean;
 
   index?: number;
+  issuesData: Record<string, boolean>[];
+  handleUpdateIssueListByKey: (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+  ) => void;
+  setIssuesData: (value: any) => void;
 }
 
 const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
@@ -28,6 +37,9 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   editAble,
   // isOverview,
   index,
+  issuesData,
+  handleUpdateIssueListByKey,
+  setIssuesData,
 }) => {
   const resolveIcon = () => {
     switch (value.Category) {
@@ -113,6 +125,65 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
         break;
     }
   }, [value?.label]);
+  const [showAddIssue, setShowAddIssue] = useState(false);
+  const addIssueRef = useRef<HTMLDivElement>(null);
+  useModalAutoClose({
+    refrence: addIssueRef,
+    close: () => {
+      setShowAddIssue(false);
+    },
+  });
+  const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
+  console.log('selectedIssues => ', selectedIssues);
+  const [addIssue, setAddIssue] = useState(false);
+  const [newIssue, setNewIssue] = useState('');
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  useEffect(() => {
+    const result = value.issue_list
+      .filter((issue: string) =>
+        issuesData.some((obj) => Object.keys(obj)[0] === issue),
+      )
+      .map((matched: string) => matched.split(':')[0].trim());
+    setSelectedIssues(result);
+  }, [issuesData, value.issue_list]);
+  const handleRemoveIssueCard = (issue: string) => {
+    const newIssueList = selectedIssues.filter((r: string) => r !== issue);
+    handleUpdateIssueListByKey(
+      value.Category,
+      value.Recommendation,
+      newIssueList,
+    );
+    setSelectedIssues(newIssueList);
+  };
+
+  const handleAddIssue = (issue: string) => {
+    if (issue.trim() === '') return;
+    const name = 'Issue ' + (issuesData.length + 1) + ': ' + issue;
+    const newIssueList = [...selectedIssues, name];
+    handleUpdateIssueListByKey(
+      value.Category,
+      value.Recommendation,
+      newIssueList,
+    );
+    setIssuesData((prev: any) => [...prev, { [name]: true }]);
+    setSelectedIssues(newIssueList);
+    setNewIssue('');
+  };
+
+  const handleRemoveIssueFromList = (name: string) => {
+    setIssuesData((prev: any) => {
+      const exists = prev.some((item: any) =>
+        Object.prototype.hasOwnProperty.call(item, name),
+      );
+      if (exists) {
+        return prev.filter(
+          (item: any) => !Object.prototype.hasOwnProperty.call(item, name),
+        );
+      }
+    });
+
+    setIsDeleting(null);
+  };
 
   return (
     <>
@@ -159,6 +230,166 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                         style={{ backgroundColor: color }}
                       ></div>
                       {value?.label || '-'}
+                    </div>
+                    <div className="flex items-center gap-1 relative">
+                      {selectedIssues.map((issue: string, index: number) => (
+                        <div
+                          key={index}
+                          className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray"
+                        >
+                          {issue}{' '}
+                          <img
+                            src="/icons/close-circle.svg"
+                            alt=""
+                            className="w-3 h-3 cursor-pointer"
+                            onClick={() => handleRemoveIssueCard(issue)}
+                          />
+                        </div>
+                      ))}
+                      <div
+                        className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray cursor-pointer"
+                        onClick={() => setShowAddIssue(true)}
+                      >
+                        Add Issue{' '}
+                        <img
+                          src="/icons/add-small.svg"
+                          alt=""
+                          className="w-3 h-3"
+                        />
+                      </div>
+                      {showAddIssue && (
+                        <div
+                          ref={addIssueRef}
+                          className="flex flex-col absolute top-6 right-0 w-[303px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
+                          style={{
+                            scrollbarWidth: 'thin',
+                            scrollbarColor: '#E9EDF5 #FFFFFF',
+                          }}
+                        >
+                          {issuesData?.map((issue, index) => {
+                            const [text] = Object.entries(issue)[0];
+                            const issueLabel = text.split(':')[0].trim();
+                            const isInSelected =
+                              selectedIssues.includes(issueLabel);
+                            const handleToggle = () => {
+                              const newSelected = isInSelected
+                                ? value.issue_list.filter(
+                                    (r: string) => r !== text,
+                                  )
+                                : [...value.issue_list, issueLabel];
+
+                              handleUpdateIssueListByKey(
+                                value.Category,
+                                value.Recommendation,
+                                newSelected,
+                              );
+
+                              const newIssueList = isInSelected
+                                ? selectedIssues.filter(
+                                    (r: string) => r !== issueLabel,
+                                  )
+                                : [...selectedIssues, issueLabel];
+
+                              setSelectedIssues(newIssueList);
+                            };
+
+                            return (
+                              <div
+                                key={index}
+                                className="flex select-none text-justify items-start text-Text-Primary text-xs group relative pr-5 py-1"
+                              >
+                                <Checkbox
+                                  checked={isInSelected}
+                                  onChange={handleToggle}
+                                ></Checkbox>
+                                <span className="text-Text-Secondary text-nowrap mr-1">
+                                  {issueLabel}:{' '}
+                                </span>
+                                {text?.split(':')[1]?.trim()}
+                                {isDeleting === index + 1 ? (
+                                  <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {/* <div className="text-Text-Quadruple text-xs">
+                                Sure?
+                              </div> */}
+                                    <img
+                                      src="/icons/tick-circle-green.svg"
+                                      alt=""
+                                      className="w-[20px] h-[20px] cursor-pointer"
+                                      onClick={() => {
+                                        handleRemoveIssueFromList(text);
+                                        const newSelected =
+                                          selectedIssues.filter(
+                                            (r: string) => r !== issueLabel,
+                                          );
+                                        setSelectedIssues(newSelected);
+                                        handleUpdateIssueListByKey(
+                                          value.Category,
+                                          value.Recommendation,
+                                          newSelected,
+                                        );
+                                      }}
+                                    />
+                                    <img
+                                      src="/icons/close-circle-red.svg"
+                                      alt=""
+                                      className="w-[20px] h-[20px] cursor-pointer"
+                                      onClick={() => setIsDeleting(null)}
+                                    />
+                                  </div>
+                                ) : (
+                                  <img
+                                    src="/icons/delete.svg"
+                                    alt=""
+                                    className="absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity w-5 h-5 cursor-pointer"
+                                    onClick={() => {
+                                      setIsDeleting(index + 1);
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
+                          {issuesData?.length < 1 && (
+                            <div className="flex flex-col items-center justify-center mb-2">
+                              <img src="/icons/empty-state-issue.svg" alt="" />
+                              <div className="text-Text-Primary text-[10px] font-medium -mt-5">
+                                No issues found.
+                              </div>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-center text-Primary-DeepTeal text-xs font-medium gap-1 border-t border-Gray-50 rounded-md pt-3 mt-2">
+                            {addIssue ? (
+                              <>
+                                <input
+                                  type="text"
+                                  placeholder="Type new issue and press Enter..."
+                                  value={newIssue}
+                                  onChange={(e) => setNewIssue(e.target.value)}
+                                  className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border-Gray-50 border rounded-2xl  text-Text-Primary placeholder:text-Text-Fivefold text-[10px]"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      setAddIssue(false);
+                                      handleAddIssue(newIssue);
+                                    }
+                                  }}
+                                />
+                              </>
+                            ) : (
+                              <div
+                                className="flex items-center gap-1 cursor-pointer"
+                                onClick={() => setAddIssue(true)}
+                              >
+                                <img
+                                  src="/icons/add-small.svg"
+                                  alt=""
+                                  className="w-5 h-5"
+                                />
+                                Create new issue
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                     {/* {!editAble && (
                     <>
