@@ -34,7 +34,6 @@ const NewGenerateHolisticPlan = () => {
   const [active, setActive] = useState<string>('Recommendation');
   const [clientGools, setClientGools] = useState<any>({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
-  console.log('treatmentPlanData => generate ', treatmentPlanData);
   const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
   const [isFinalLoading, setisFinalLoading] = useState(false);
   const [coverageProgess, setcoverageProgess] = useState(0);
@@ -45,11 +44,16 @@ const NewGenerateHolisticPlan = () => {
 
     // ✅ Only include checked items
     const selectedInterventions = treatmentPlanData?.suggestion_tab || [];
+    const payload =
+      treatmentPlanData?.looking_forwards?.map((issue: string) => ({
+        [issue]: false,
+      })) || [];
 
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
-      looking_forwards: treatmentPlanData?.looking_forwards,
+      key_areas_to_address:
+        coverageDetails.length > 0 ? coverageDetails : payload,
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
@@ -250,6 +254,26 @@ const NewGenerateHolisticPlan = () => {
     }
   }, [isSaving]);
   const [isToggle, setisToggle] = useState(false);
+  const handleUpdateIssueListByKeys = (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+  ) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        suggestion_tab: pre.suggestion_tab.map((item: any) => {
+          if (
+            item.Category === category &&
+            item.Recommendation === recommendation
+          ) {
+            return { ...item, issue_list: newIssueList };
+          }
+          return item;
+        }),
+      };
+    });
+  };
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -513,6 +537,11 @@ const NewGenerateHolisticPlan = () => {
                                           editAble
                                           value={el}
                                           index={suggestionIndex}
+                                          issuesData={coverageDetails}
+                                          handleUpdateIssueListByKey={
+                                            handleUpdateIssueListByKeys
+                                          }
+                                          setIssuesData={setcoverageDetails}
                                           onEdit={(editData) => {
                                             setTratmentPlanData((pre: any) => {
                                               const oldsData: any = { ...pre };
