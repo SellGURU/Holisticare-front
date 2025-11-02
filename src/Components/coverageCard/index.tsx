@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import MainModal from '../MainModal';
 import Checkbox from '../checkbox';
@@ -5,15 +6,19 @@ import Checkbox from '../checkbox';
 interface CoverageCardProps {
   progress: number; // from 0 to 100
   details: Record<string, boolean>[];
+  setDetails: (details: any) => void;
 }
 
 export const CoverageCard: React.FC<CoverageCardProps> = ({
   progress,
   details,
+  setDetails,
 }) => {
   // Clamp value to 0–100
   const safeProgress = Math.min(100, Math.max(0, progress));
-
+  const [addIssue, setAddIssue] = useState(false);
+  const [newIssue, setNewIssue] = useState('');
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
   // Determine color based on progress
   const getBarColor = () => {
     if (safeProgress <= 50) return 'bg-[#FC5474]';
@@ -32,21 +37,38 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
   };
   const [showDetail, setShowDetail] = useState(false);
 
+  const handleAddIssue = (issue: string) => {
+    if (issue.trim() === '') return;
+    const name = 'Issue ' + (details.length + 1) + ': ' + issue;
+    const newIssueList = [...details, { [name]: false }];
+    setDetails(newIssueList);
+    setNewIssue('');
+    setAddIssue(false);
+  };
+
   return (
     <>
-      <MainModal isOpen={showDetail} onClose={() => setShowDetail(false)}>
-        <div className="bg-white h-fit max-h-[368px] overflow-auto w-[425px] p-6 pb-8 rounded-2xl shadow-800">
+      <MainModal
+        isOpen={showDetail}
+        onClose={() => {
+          setShowDetail(false);
+          setAddIssue(false);
+          setNewIssue('');
+        }}
+      >
+        <div className="bg-white max-h-[368px] w-[425px] p-6 pb-8 rounded-2xl shadow-800">
           <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
             Plan Coverage Details
           </div>
 
-          <div className="mt-4 flex flex-col max-h-[208px] overflow-auto gap-3">
+          <div className="mt-4 flex flex-col max-h-[180px] overflow-auto">
             {details?.map((detail, index) => {
               const [text, isChecked] = Object.entries(detail)[0];
+              const issueLabel = text.split(':')[0].trim();
               return (
                 <div
                   key={index}
-                  className={`flex select-none text-justify items-start  text-Text-Primary text-xs ${
+                  className={`flex select-none text-justify items-start  text-Text-Primary text-xs group relative py-1.5 w-[95%] ${
                     isChecked && ' line-through'
                   }`}
                 >
@@ -60,12 +82,83 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                   /> */}
                   <Checkbox checked={isChecked} onChange={() => {}}></Checkbox>
                   <span className="text-Text-Secondary text-nowrap mr-1">
-                    Issue {index + 1}:{' '}
+                    {issueLabel}:{' '}
                   </span>
-                  {text}
+                  {text?.split(':')[1]?.trim()}
+                  {isDeleting === index + 1 ? (
+                    <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 -top-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {/* <div className="text-Text-Quadruple text-xs">
+                                Sure?
+                              </div> */}
+                      <img
+                        src="/icons/tick-circle-green.svg"
+                        alt=""
+                        className="w-[20px] h-[20px] cursor-pointer"
+                        onClick={() => {
+                          setDetails((prev: any) => {
+                            const exists = prev.some((item: any) =>
+                              Object.prototype.hasOwnProperty.call(item, text),
+                            );
+                            if (exists) {
+                              return prev.filter(
+                                (item: any) =>
+                                  !Object.prototype.hasOwnProperty.call(
+                                    item,
+                                    text,
+                                  ),
+                              );
+                            }
+                          });
+                          setIsDeleting(null);
+                        }}
+                      />
+                      <img
+                        src="/icons/close-circle-red.svg"
+                        alt=""
+                        className="w-[20px] h-[20px] cursor-pointer"
+                        onClick={() => setIsDeleting(null)}
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src="/icons/delete.svg"
+                      alt=""
+                      className="absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity w-5 h-5 cursor-pointer"
+                      onClick={() => {
+                        setIsDeleting(index + 1);
+                      }}
+                    />
+                  )}
                 </div>
               );
             })}
+          </div>
+          <div className="flex items-center justify-center text-Primary-DeepTeal text-xs font-medium gap-1 border-t border-b border-Gray-50 rounded-md py-3 mt-3">
+            {addIssue ? (
+              <>
+                <input
+                  type="text"
+                  placeholder="Type new issue and press Enter..."
+                  value={newIssue}
+                  onChange={(e) => setNewIssue(e.target.value)}
+                  className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border-Gray-50 border rounded-2xl  text-Text-Primary placeholder:text-Text-Fivefold text-[10px]"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setAddIssue(false);
+                      handleAddIssue(newIssue);
+                    }
+                  }}
+                />
+              </>
+            ) : (
+              <div
+                className="flex items-center gap-1 cursor-pointer"
+                onClick={() => setAddIssue(true)}
+              >
+                <img src="/icons/add-small.svg" alt="" className="w-5 h-5" />
+                Create new issue
+              </div>
+            )}
           </div>
           <div
             onClick={() => setShowDetail(false)}
