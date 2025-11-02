@@ -573,8 +573,8 @@ const LogDetails = () => {
               );
             })}
             {!selectedSession && (
-              <div className="py-6 text-center text-Text-Secondary">
-                No session selected
+              <div className="py-6 text-[14px] text-center text-Text-Secondary">
+                No user journey details found
               </div>
             )}
           </div>
