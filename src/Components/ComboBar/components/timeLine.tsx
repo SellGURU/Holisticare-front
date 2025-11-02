@@ -135,14 +135,12 @@ const TimelineStep: React.FC<{
             {explains.map((explain, index) => (
               <div
                 key={index}
-                className={` flex items-start ${index % 2 == 0 ? "mr-2" : "ml-2"}   text-[8px] text-Text-Secondary`}
+                className={` flex items-start ${index % 2 == 0 ? 'mr-2' : 'ml-2'}   text-[8px] text-Text-Secondary`}
               >
                 {/* <div className="w-[3px] min-w-[3px] min-h-[3px] h-[3px] bg-Orange rounded-full"></div>{' '} */}
                 <p className="max-w-[130px] text-justify overflow-x-hidden text-ellipsis">
-               {explain}
-            
+                  {explain}
                 </p>
-                  
               </div>
             ))}
           </div>
@@ -176,13 +174,15 @@ const TimeLine: React.FC = () => {
     setIsLoading(true);
     Application.showTimeLine({
       member_id: id,
-    }).then((res) => {
-      setIsLoading(false);
-      setSteps(transformData(res.data.Events));
-    }).catch((err) => {
-      setIsLoading(false);
-      console.log(err);
-    });
+    })
+      .then((res) => {
+        setIsLoading(false);
+        setSteps(transformData(res.data.Events));
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.log(err);
+      });
   }, []);
   console.log(steps);
 

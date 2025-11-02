@@ -13,16 +13,16 @@ interface DownloadModalProps {
 const DownloadModal: React.FC<DownloadModalProps> = ({
   onclose,
   onconfirm,
-  mode
+  mode,
 }) => {
   const initialOptions = [
-  { name: 'Client Summary', checked: true },
-  { name: 'Need Focus Biomarker', checked: false },
-  { name: 'Concerning Result', checked: true },
-  { name: 'Detailed Analysis', checked: true },
-  { name: 'Holistic Plan', checked: true },
-  { name: 'Action Plan', checked: true, disabled: false },
-];
+    { name: 'Client Summary', checked: true },
+    { name: 'Need Focus Biomarker', checked: false },
+    { name: 'Concerning Result', checked: true },
+    { name: 'Detailed Analysis', checked: true },
+    { name: 'Holistic Plan', checked: true },
+    { name: 'Action Plan', checked: true, disabled: false },
+  ];
 
   const [downloadSelect, setDownloadSelect] = useState(initialOptions);
   const [shareSelect, setShareSelect] = useState(initialOptions);
@@ -33,7 +33,9 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
 
   useEffect(() => {
     // Helper function to update both states
-    const updateBothStates = (updater: (prev: typeof initialOptions) => typeof initialOptions) => {
+    const updateBothStates = (
+      updater: (prev: typeof initialOptions) => typeof initialOptions,
+    ) => {
       setDownloadSelect(updater);
       setShareSelect(updater);
     };
@@ -252,15 +254,15 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
           <div className=" w-[60px] xs:w-[110px]">Cancel</div>
         </ButtonPrimary>
         <ButtonPrimary
-       onClick={() => {
-    if (allUnselected) {
-      setShowValidate(true);
-    } else {
-      onconfirm(activeSelect);
-    }
-  }}
-  size="small"
->
+          onClick={() => {
+            if (allUnselected) {
+              setShowValidate(true);
+            } else {
+              onconfirm(activeSelect);
+            }
+          }}
+          size="small"
+        >
           <div className=" w-[60px] xs:w-[110px]">Confirm</div>
         </ButtonPrimary>
       </div>
