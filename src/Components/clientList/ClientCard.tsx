@@ -267,17 +267,19 @@ const ClientCard: FC<ClientCardProps> = ({
     }, 30000);
     return () => clearInterval(interval);
   }, []);
-  const formatLastRefresh = () => {
-    if (!lastRefreshTime) return '';
+  const formatLastRefresh = (date: string) => {
+    if(date == 'No Data') return 'No Data';
+    const lastTime = lastRefreshTime==null? new Date(date) : lastRefreshTime;
+    // if (!lastRefreshTime) return '';
     const now = new Date();
-    const diffMs = now.getTime() - lastRefreshTime.getTime();
+    const diffMs = now.getTime() - lastTime.getTime();
     const diffMinutes = diffMs / 60000;
 
     if (diffMinutes < 1) return 'Just now';
     if (diffMinutes < 5) return '1 min ago';
     if (diffMinutes < 10) return '5 min ago';
 
-    return lastRefreshTime.toLocaleDateString('en-US', {
+    return lastTime.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -980,9 +982,10 @@ const ClientCard: FC<ClientCardProps> = ({
                       </div>
                       <div className="text-Text-Quadruple text-[8px]">
                         Last sync:{' '}
-                        {lastRefreshTime
+                        {/* {lastRefreshTime
                           ? formatLastRefresh()
-                          : client['Latest Sync']}
+                          : client['Latest Sync']} */}
+                          {formatLastRefresh(client['Latest Sync'])}
                       </div>
                     </div>
                   )}
