@@ -300,7 +300,7 @@ export const TopBar: FC<TopBarProps> = ({
       {(hasReportInRoute || hasShareInRoute) && (
         <div className="flex xl:hidden items-center gap-2 xs:gap-4">
           <img
-            className="hidden xl:block"
+            className=" xl:block"
             onClick={() => {
               setOpenDownload(true);
             }}
