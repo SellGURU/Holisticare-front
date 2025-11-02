@@ -161,7 +161,11 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
             )}
           </div>
           <div
-            onClick={() => setShowDetail(false)}
+            onClick={() => {
+              setShowDetail(false);
+              setAddIssue(false);
+              setNewIssue('');
+            }}
             className="w-full mt-4 flex justify-end text-sm font-medium text-Disable cursor-pointer"
           >
             close
