@@ -179,6 +179,9 @@ const TimeLine: React.FC = () => {
     }).then((res) => {
       setIsLoading(false);
       setSteps(transformData(res.data.Events));
+    }).catch((err) => {
+      setIsLoading(false);
+      console.log(err);
     });
   }, []);
   console.log(steps);

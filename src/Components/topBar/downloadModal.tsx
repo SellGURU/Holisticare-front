@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
-import { subscribe } from '../../utils/event';
+import { subscribe, unsubscribe } from '../../utils/event';
 import { useEffect } from 'react';
 interface DownloadModalProps {
   mode: 'download' | 'share';
@@ -24,110 +24,103 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   { name: 'Action Plan', checked: true, disabled: false },
 ];
 
-const [downloadSelect, setDownloadSelect] = useState(initialOptions);
-const [shareSelect, setShareSelect] = useState(initialOptions);
+  const [downloadSelect, setDownloadSelect] = useState(initialOptions);
+  const [shareSelect, setShareSelect] = useState(initialOptions);
 
-const activeSelect = mode === 'download' ? downloadSelect : shareSelect;
-const setActiveSelect =
-  mode === 'download' ? setDownloadSelect : setShareSelect;
+  const activeSelect = mode === 'download' ? downloadSelect : shareSelect;
+  const setActiveSelect =
+    mode === 'download' ? setDownloadSelect : setShareSelect;
 
-  // const [downloadSelect, setDownloadSelect] = useState([
-  //   {
-  //     name: 'Client Summary',
-  //     checked: true,
-  //   },
-  //   {
-  //     name: 'Need Focus Biomarker',
-  //     checked: false,
-  //   },
-  //   {
-  //     name: 'Concerning Result',
-  //     checked: true,
-  //   },
-  //   {
-  //     name: 'Detailed Analysis',
-  //     checked: true,
-  //   },
-  //   {
-  //     name: 'Holistic Plan',
-  //     checked: true,
-  //   },
-  //   {
-  //     name: 'Action Plan',
-  //     checked: true,
-  //     disabled: false,
-  //   },
-  // ]);
-  console.log(downloadSelect);
+  useEffect(() => {
+    // Helper function to update both states
+    const updateBothStates = (updater: (prev: typeof initialOptions) => typeof initialOptions) => {
+      setDownloadSelect(updater);
+      setShareSelect(updater);
+    };
+    const handleActionPlanStatus = (data: any) => {
+      updateBothStates((prev) =>
+        prev.map((item) =>
+          item.name === 'Action Plan'
+            ? {
+                ...item,
+                disabled: data.detail.isempty,
+                checked: !data.detail.isempty,
+              }
+            : item,
+        ),
+      );
+    };
 
-  subscribe('ActionPlanStatus', (data: any) => {
-    setActiveSelect((prev) =>
-      prev.map((item) =>
-        item.name === 'Action Plan'
-          ? {
-              ...item,
-              disabled: data.detail.isempty,
-              checked: !data.detail.isempty,
-            }
-          : item,
-      ),
-    );
-  });
+    const handleHolisticPlanStatus = (data: any) => {
+      updateBothStates((prev) =>
+        prev.map((item) =>
+          item.name === 'Holistic Plan'
+            ? {
+                ...item,
+                disabled: data.detail.isempty,
+                checked: !data.detail.isempty,
+              }
+            : item,
+        ),
+      );
+    };
 
-  subscribe('HolisticPlanStatus', (data: any) => {
-    setActiveSelect((prev) =>
-      prev.map((item) =>
-        item.name === 'Holistic Plan'
-          ? {
-              ...item,
-              disabled: data.detail.isempty,
-              checked: !data.detail.isempty,
-            }
-          : item,
-      ),
-    );
-  });
+    const handleDetailedAnalysisStatus = (data: any) => {
+      updateBothStates((prev) =>
+        prev.map((item) =>
+          item.name === 'Detailed Analysis'
+            ? {
+                ...item,
+                disabled: data.detail.isempty,
+                checked: !data.detail.isempty,
+              }
+            : item,
+        ),
+      );
+    };
 
-  subscribe('DetailedAnalysisStatus', (data: any) => {
-    setActiveSelect((prev) =>
-      prev.map((item) =>
-        item.name === 'Detailed Analysis'
-          ? {
-              ...item,
-              disabled: data.detail.isempty,
-              checked: !data.detail.isempty,
-            }
-          : item,
-      ),
-    );
-  });
+    const handleNeedsFocusBiomarkerStatus = (data: any) => {
+      updateBothStates((prev) =>
+        prev.map((item) =>
+          item.name === 'Need Focus Biomarker'
+            ? {
+                ...item,
+                disabled: data.detail.isempty,
+                checked: !data.detail.isempty,
+              }
+            : item,
+        ),
+      );
+    };
 
-  subscribe('NeedsFocusBiomarkerStatus', (data: any) => {
-    setActiveSelect((prev) =>
-      prev.map((item) =>
-        item.name === 'Need Focus Biomarker'
-          ? {
-              ...item,
-              disabled: data.detail.isempty,
-              checked: !data.detail.isempty,
-            }
-          : item,
-      ),
-    );
-  });
-  subscribe('ConcerningResultStatus', (data: any) => {
-    setActiveSelect((prev) =>
-      prev.map((item) =>
-        item.name === 'Concerning Result'
-          ? {
-              ...item,
-              disabled: data.detail.isempty,
-              checked: !data.detail.isempty,
-            }
-          : item,
-      ),
-    );
-  });
+    const handleConcerningResultStatus = (data: any) => {
+      updateBothStates((prev) =>
+        prev.map((item) =>
+          item.name === 'Concerning Result'
+            ? {
+                ...item,
+                disabled: data.detail.isempty,
+                checked: !data.detail.isempty,
+              }
+            : item,
+        ),
+      );
+    };
+
+    subscribe('ActionPlanStatus', handleActionPlanStatus);
+    subscribe('HolisticPlanStatus', handleHolisticPlanStatus);
+    subscribe('DetailedAnalysisStatus', handleDetailedAnalysisStatus);
+    subscribe('NeedsFocusBiomarkerStatus', handleNeedsFocusBiomarkerStatus);
+    subscribe('ConcerningResultStatus', handleConcerningResultStatus);
+
+    return () => {
+      unsubscribe('ActionPlanStatus', handleActionPlanStatus);
+      unsubscribe('HolisticPlanStatus', handleHolisticPlanStatus);
+      unsubscribe('DetailedAnalysisStatus', handleDetailedAnalysisStatus);
+      unsubscribe('NeedsFocusBiomarkerStatus', handleNeedsFocusBiomarkerStatus);
+      unsubscribe('ConcerningResultStatus', handleConcerningResultStatus);
+    };
+  }, []);
   const removeAll = () => {
     setActiveSelect((pre) => {
       return pre.map((el) => {
