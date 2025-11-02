@@ -437,6 +437,7 @@ const NewGenerateHolisticPlan = () => {
                     <CoverageCard
                       progress={coverageProgess}
                       details={coverageDetails}
+                      setDetails={setcoverageDetails}
                     />
                   </div>
                 )}
