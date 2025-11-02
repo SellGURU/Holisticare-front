@@ -258,6 +258,34 @@ const ClientCard: FC<ClientCardProps> = ({
       .catch(() => null);
   };
 
+  const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
+  const [, forceUpdate] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      forceUpdate((x) => x + 1);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+  const formatLastRefresh = (date: string) => {
+    if (date == 'No Data') return 'No Data';
+    const lastTime = lastRefreshTime == null ? new Date(date) : lastRefreshTime;
+    // if (!lastRefreshTime) return '';
+    const now = new Date();
+    const diffMs = now.getTime() - lastTime.getTime();
+    const diffMinutes = diffMs / 60000;
+
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 5) return '1 min ago';
+    if (diffMinutes < 10) return '5 min ago';
+
+    return lastTime.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
   const handleRefreshData = () => {
     setRefresh(true);
 
@@ -272,6 +300,7 @@ const ClientCard: FC<ClientCardProps> = ({
               refreshIntervalRef.current = null;
             }
             setRefresh(false);
+            setLastRefreshTime(new Date());
           }
         }, 30000);
       })
@@ -952,7 +981,11 @@ const ClientCard: FC<ClientCardProps> = ({
                         Sync with Latest Data
                       </div>
                       <div className="text-Text-Quadruple text-[8px]">
-                        Last sync: {client['Latest Sync']}
+                        Last sync:{' '}
+                        {/* {lastRefreshTime
+                          ? formatLastRefresh()
+                          : client['Latest Sync']} */}
+                        {formatLastRefresh(client['Latest Sync'])}
                       </div>
                     </div>
                   )}

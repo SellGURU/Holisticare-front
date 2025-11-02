@@ -29,16 +29,17 @@ import resolveStatusArray from './resolveStatusArray';
 // import { useConstructor } from "@/help"
 import { decodeAccessUser } from '../../help';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
-import { ButtonPrimary } from '../Button/ButtonPrimary';
+// import { ButtonPrimary } from '../Button/ButtonPrimary';
 import Circleloader from '../CircleLoader';
 import InfoToltip from '../InfoToltip';
-import SpinnerLoader from '../SpinnerLoader';
+// import SpinnerLoader from '../SpinnerLoader';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
 // import { ShareModal } from './ShareModal';
 import { UploadTestV2 } from './UploadTestV2';
+import HolisticShare from './components/HolisticShare';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -1023,81 +1024,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     Holistic Plan
                   </div>
                   {TreatMentPlanData?.length > 0 && isHaveReport && !isShare ? (
-                    <div className="flex items-center gap-6">
-                      {isShareModalSuccess ? (
-                        <div className="flex flex-col items-center">
-                          <div className="text-Text-Quadruple text-xs font-medium flex items-center gap-1">
-                            <img src="/icons/tick-circle-gray.svg" alt="" />
-                            Shared with Client
-                          </div>
-                          <div className="text-Text-Fivefold text-[10px]">
-                            on{' '}
-                            {dateShare
-                              ? new Date(
-                                  dateShare as string,
-                                ).toLocaleDateString('en-US', {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  year: 'numeric',
-                                })
-                              : 'No date'}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="rounded-[20px] flex items-center justify-center w-[168px] h-[26px] bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen">
-                          <ButtonPrimary
-                            ClassName="
-      relative z-10 !w-[166px] !h-[24px] !rounded-[20px]
-      !bg-backgroundColor-Main !font-medium
-      !text-Primary-DeepTeal !text-xs !text-nowrap
-      !border-none flex items-center justify-center gap-1
-    "
-                            onClick={() => {
-                              // setIsShareModalOpen(true);
-                              publish('openShareModalHolisticPlan', {});
-                            }}
-                          >
-                            <img
-                              src="/icons/document-upload.svg"
-                              alt=""
-                              className="w-4 h-4"
-                            />
-                            Share with Client
-                          </ButtonPrimary>
-                        </div>
-                      )}
-
-                      <div className="flex flex-col items-center gap-1">
-                        <div
-                          className="text-Primary-DeepTeal text-xs font-medium cursor-pointer flex items-center gap-1"
-                          onClick={() => {
-                            if (isHtmlReportExists) {
-                              handleGetHtmlReport();
-                            }
-                          }}
-                        >
-                          {isHtmlReportExists || loadingHtmlReport ? (
-                            <>
-                              <img
-                                className="w-5 h-5"
-                                src="/icons/monitor.svg"
-                                alt=""
-                              />
-                              View Holistic Plan
-                            </>
-                          ) : (
-                            <>
-                              <SpinnerLoader color="#005F73"></SpinnerLoader>
-                            </>
-                          )}
-                        </div>
-                        {!isHtmlReportExists && (
-                          <div className="text-[10px] text-Primary-DeepTeal">
-                            Your report is currently being prepared.
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    <HolisticShare
+                      shareable={
+                        TreatMentPlanData[treatmentPlanData.length - 1]
+                          ?.shared_report_with_client === dateShare
+                      }
+                      isHtmlReportExists={isHtmlReportExists}
+                      isShareModalSuccess={isShareModalSuccess}
+                      dateShare={dateShare}
+                      handleGetHtmlReport={handleGetHtmlReport}
+                      loadingHtmlReport={loadingHtmlReport}
+                    />
                   ) : (
                     ''
                   )}
