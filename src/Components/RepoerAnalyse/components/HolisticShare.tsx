@@ -1,8 +1,8 @@
-import { publish } from "../../../utils/event";
-import { ButtonPrimary } from "../../Button/ButtonPrimary";
-import SpinnerLoader from "../../SpinnerLoader";
+import { publish } from '../../../utils/event';
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
+import SpinnerLoader from '../../SpinnerLoader';
 
-interface HolisticShareProps  {
+interface HolisticShareProps {
   isHtmlReportExists: boolean;
   isShareModalSuccess: boolean;
   dateShare: string | null;
@@ -11,7 +11,14 @@ interface HolisticShareProps  {
   shareable: boolean;
 }
 
-const HolisticShare:React.FC<HolisticShareProps> = ({ isHtmlReportExists,shareable, isShareModalSuccess, dateShare, handleGetHtmlReport, loadingHtmlReport }) => {
+const HolisticShare: React.FC<HolisticShareProps> = ({
+  isHtmlReportExists,
+  shareable,
+  isShareModalSuccess,
+  dateShare,
+  handleGetHtmlReport,
+  loadingHtmlReport,
+}) => {
   return (
     <>
       <div className="flex items-center gap-6">
@@ -26,19 +33,20 @@ const HolisticShare:React.FC<HolisticShareProps> = ({ isHtmlReportExists,shareab
                 <div className="text-Text-Fivefold text-[10px]">
                   on{' '}
                   {dateShare
-                    ? new Date(
-                        dateShare as string,
-                      ).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })
+                    ? new Date(dateShare as string).toLocaleDateString(
+                        'en-US',
+                        {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        },
+                      )
                     : 'just now'}
                 </div>
               </div>
-            ) : 
-            <>
-            { shareable &&
+            ) : (
+              <>
+                {shareable && (
                   <div className="rounded-[20px] flex items-center justify-center w-[168px] h-[26px] bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen">
                     <ButtonPrimary
                       ClassName="
@@ -60,11 +68,9 @@ const HolisticShare:React.FC<HolisticShareProps> = ({ isHtmlReportExists,shareab
                       Share with Client
                     </ButtonPrimary>
                   </div>
-            }
-                  
-                
-            </>
-            }
+                )}
+              </>
+            )}
           </>
         )}
 
@@ -79,11 +85,7 @@ const HolisticShare:React.FC<HolisticShareProps> = ({ isHtmlReportExists,shareab
           >
             {isHtmlReportExists || loadingHtmlReport ? (
               <>
-                <img
-                  className="w-5 h-5"
-                  src="/icons/monitor.svg"
-                  alt=""
-                />
+                <img className="w-5 h-5" src="/icons/monitor.svg" alt="" />
                 View Holistic Plan
               </>
             ) : (
@@ -98,7 +100,7 @@ const HolisticShare:React.FC<HolisticShareProps> = ({ isHtmlReportExists,shareab
             </div>
           )}
         </div>
-      </div>    
+      </div>
     </>
   );
 };
