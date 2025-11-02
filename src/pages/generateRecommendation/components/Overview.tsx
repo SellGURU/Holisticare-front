@@ -15,6 +15,9 @@ interface OverviewProps {
   Conflicts: Array<any>;
   progress: number; // from 0 to 100
   details: Record<string, boolean>[];
+  setDetails: (value: Record<string, boolean>[]) => void;
+  setData: (values: any) => void;
+  data: any;
 }
 export const Overview: FC<OverviewProps> = ({
   visibleCategoriy,
@@ -23,6 +26,9 @@ export const Overview: FC<OverviewProps> = ({
   Conflicts,
   progress,
   details,
+  setDetails,
+  setData,
+  data,
 }) => {
   const getAllCheckedCategories = () => {
     const checkedCategories: string[] = [];
@@ -44,6 +50,13 @@ export const Overview: FC<OverviewProps> = ({
   const handlePreviousConflict = () => {
     setCurrentConflictIndex(
       (prevIndex) => (prevIndex - 1 + Conflicts.length) % Conflicts.length,
+    );
+  };
+  const handleUpdateIssueList = (index: number, newIssueList: string[]) => {
+    setData(
+      data.map((item: any, i: number) =>
+        i === index ? { ...item, issue_list: newIssueList } : item,
+      ),
     );
   };
   return (
@@ -104,7 +117,11 @@ export const Overview: FC<OverviewProps> = ({
           </div>
         )}
         <div className="w-full my-4">
-          <CoverageCard progress={progress} details={details} />
+          <CoverageCard
+            progress={progress}
+            details={details}
+            setDetails={setDetails}
+          />
         </div>
 
         {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
@@ -148,6 +165,9 @@ export const Overview: FC<OverviewProps> = ({
                     onEdit={() => {}}
                     onchange={() => {}}
                     onDelete={() => {}}
+                    issuesData={details}
+                    setIssuesData={setDetails}
+                    handleUpdateIssueList={handleUpdateIssueList}
                   ></BioMarkerRowOldSuggestions>
                 </div>
               </>
