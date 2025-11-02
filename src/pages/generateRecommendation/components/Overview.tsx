@@ -52,13 +52,24 @@ export const Overview: FC<OverviewProps> = ({
       (prevIndex) => (prevIndex - 1 + Conflicts.length) % Conflicts.length,
     );
   };
-  const handleUpdateIssueList = (index: number, newIssueList: string[]) => {
+  const handleUpdateIssueListByKeys = (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+  ) => {
     setData(
-      data.map((item: any, i: number) =>
-        i === index ? { ...item, issue_list: newIssueList } : item,
-      ),
+      data.map((item: any) => {
+        if (
+          item.Category === category &&
+          item.Recommendation === recommendation
+        ) {
+          return { ...item, issue_list: newIssueList };
+        }
+        return item;
+      }),
     );
   };
+
   return (
     <>
       <div className=" w-full relative  p-4 rounded-2xl bg-white">
@@ -167,7 +178,7 @@ export const Overview: FC<OverviewProps> = ({
                     onDelete={() => {}}
                     issuesData={details}
                     setIssuesData={setDetails}
-                    handleUpdateIssueList={handleUpdateIssueList}
+                    handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
                   ></BioMarkerRowOldSuggestions>
                 </div>
               </>
