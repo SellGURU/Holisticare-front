@@ -13,7 +13,11 @@ interface ActivityCardProps {
   handleCheckboxChange: (category: string, itemId: number) => void;
   issuesData: Record<string, boolean>[];
   setIssuesData: (value: any) => void;
-  handleUpdateIssueList: (index: number, newIssueList: string[]) => void;
+  handleUpdateIssueListByKey: (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+  ) => void;
 }
 
 export const ActivityCard: FC<ActivityCardProps> = ({
@@ -23,7 +27,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   handleCheckboxChange,
   issuesData,
   setIssuesData,
-  handleUpdateIssueList,
+  handleUpdateIssueListByKey,
 }) => {
   const { positive, negative } = splitInstructions(item.Instruction);
   const [Conflicts] = useState<Array<any>>(item?.flag?.conflicts);
@@ -69,17 +73,21 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   const [newIssue, setNewIssue] = useState('');
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
   useEffect(() => {
-    const result = item.issue_list
-      .filter((issue: string) =>
-        issuesData.some((obj) => Object.keys(obj)[0] === issue),
-      )
-      .map((matched: string) => matched.split(':')[0].trim());
+    const result = item.issue_list.filter((issue: string) =>
+      issuesData.some((obj) => Object.keys(obj)[0] === issue),
+    );
+    // .map((matched: string) => matched.split(':')[0].trim());
     setSelectedIssues(result);
   }, []);
 
   const handleRemoveIssueCard = (issue: string) => {
     const newIssueList = selectedIssues.filter((r: string) => r !== issue);
-    handleUpdateIssueList(itemIndex, newIssueList);
+    console.log('newIssueList => ', newIssueList);
+    handleUpdateIssueListByKey(
+      activeCategory,
+      item.Recommendation,
+      newIssueList,
+    );
     setSelectedIssues(newIssueList);
   };
 
@@ -87,7 +95,11 @@ export const ActivityCard: FC<ActivityCardProps> = ({
     if (issue.trim() === '') return;
     const name = 'Issue ' + (issuesData.length + 1) + ': ' + issue;
     const newIssueList = [...selectedIssues, name];
-    handleUpdateIssueList(itemIndex, newIssueList);
+    handleUpdateIssueListByKey(
+      activeCategory,
+      item.Recommendation,
+      newIssueList,
+    );
     setIssuesData((prev: any) => [...prev, { [name]: true }]);
     setSelectedIssues(newIssueList);
     setNewIssue('');
@@ -167,7 +179,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                     key={index}
                     className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray"
                   >
-                    {issue}{' '}
+                    {issue.split(':')[0].trim()}{' '}
                     <img
                       src="/icons/close-circle.svg"
                       alt=""
@@ -195,17 +207,24 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                     {issuesData?.map((issue, index) => {
                       const [text] = Object.entries(issue)[0];
                       const issueLabel = text.split(':')[0].trim();
-                      const isInSelected = selectedIssues.includes(issueLabel);
+                      const isInSelected = selectedIssues.some(
+                        (r: string) => r.split(':')[0].trim() === issueLabel,
+                      );
                       const handleToggle = () => {
                         const newSelected = isInSelected
                           ? item.issue_list.filter((r: string) => r !== text)
                           : [...item.issue_list, issueLabel];
 
-                        handleUpdateIssueList(itemIndex, newSelected);
+                        handleUpdateIssueListByKey(
+                          activeCategory,
+                          item.Recommendation,
+                          newSelected,
+                        );
 
                         const newIssueList = isInSelected
                           ? selectedIssues.filter(
-                              (r: string) => r !== issueLabel,
+                              (r: string) =>
+                                r.split(':')[0].trim() !== issueLabel,
                             )
                           : [...selectedIssues, issueLabel];
 
@@ -237,10 +256,15 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                                 onClick={() => {
                                   handleRemoveIssueFromList(text);
                                   const newSelected = selectedIssues.filter(
-                                    (r: string) => r !== issueLabel,
+                                    (r: string) =>
+                                      r.split(':')[0].trim() !== issueLabel,
                                   );
                                   setSelectedIssues(newSelected);
-                                  handleUpdateIssueList(itemIndex, newSelected);
+                                  handleUpdateIssueListByKey(
+                                    activeCategory,
+                                    item.Recommendation,
+                                    newSelected,
+                                  );
                                 }}
                               />
                               <img
