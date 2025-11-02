@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, Fragment, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import Checkbox from '../../../Components/checkbox';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
 import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
@@ -78,7 +78,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
     setSelectedIssues(result);
   }, []);
 
-  const handleRemoveIssue = (issue: string) => {
+  const handleRemoveIssueCard = (issue: string) => {
     const newIssueList = selectedIssues.filter((r: string) => r !== issue);
     handleUpdateIssueList(itemIndex, newIssueList);
     setSelectedIssues(newIssueList);
@@ -92,6 +92,21 @@ export const ActivityCard: FC<ActivityCardProps> = ({
     setIssuesData((prev: any) => [...prev, { [name]: true }]);
     setSelectedIssues(newIssueList);
     setNewIssue('');
+  };
+
+  const handleRemoveIssueFromList = (name: string) => {
+    setIssuesData((prev: any) => {
+      const exists = prev.some((item: any) =>
+        Object.prototype.hasOwnProperty.call(item, name),
+      );
+      if (exists) {
+        return prev.filter(
+          (item: any) => !Object.prototype.hasOwnProperty.call(item, name),
+        );
+      }
+    });
+
+    setIsDeleting(null);
   };
 
   return (
@@ -158,7 +173,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                       src="/icons/close-circle.svg"
                       alt=""
                       className="w-3 h-3 cursor-pointer"
-                      onClick={() => handleRemoveIssue(issue)}
+                      onClick={() => handleRemoveIssueCard(issue)}
                     />
                   </div>
                 ))}
@@ -208,19 +223,26 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                             onChange={handleToggle}
                           ></Checkbox>
                           <span className="text-Text-Secondary text-nowrap mr-1">
-                            Issue {index + 1}:{' '}
+                            {issueLabel}:{' '}
                           </span>
                           {text?.split(':')[1]?.trim()}
-                          {isDeleting ? (
-                            <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-2 -top-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <div className="text-Text-Quadruple text-xs">
+                          {isDeleting === index + 1 ? (
+                            <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                              {/* <div className="text-Text-Quadruple text-xs">
                                 Sure?
-                              </div>
+                              </div> */}
                               <img
                                 src="/icons/tick-circle-green.svg"
                                 alt=""
                                 className="w-[20px] h-[20px] cursor-pointer"
-                                onClick={() => {}}
+                                onClick={() => {
+                                  handleRemoveIssueFromList(text);
+                                  const newSelected = selectedIssues.filter(
+                                    (r: string) => r !== issueLabel,
+                                  );
+                                  setSelectedIssues(newSelected);
+                                  handleUpdateIssueList(itemIndex, newSelected);
+                                }}
                               />
                               <img
                                 src="/icons/close-circle-red.svg"
@@ -235,7 +257,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                               alt=""
                               className="absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity w-5 h-5 cursor-pointer"
                               onClick={() => {
-                                setIsDeleting(index);
+                                setIsDeleting(index + 1);
                               }}
                             />
                           )}
@@ -255,10 +277,10 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                         <>
                           <input
                             type="text"
-                            placeholder="Enter new issue"
+                            placeholder="Type new issue and press Enter..."
                             value={newIssue}
                             onChange={(e) => setNewIssue(e.target.value)}
-                            className="w-full h-[28px] outline-none bg-backgroundColor-Card border-Gray-50 border rounded-2xl  text-Text-Primary placeholder:text-Text-Fivefold text-[10px]"
+                            className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border-Gray-50 border rounded-2xl  text-Text-Primary placeholder:text-Text-Fivefold text-[10px]"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                 setAddIssue(false);
