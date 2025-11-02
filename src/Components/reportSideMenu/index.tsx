@@ -9,6 +9,14 @@ interface ReportSideMenuProps {
   onClose: () => void;
   isShare?: boolean;
 }
+
+const formatStringWithQuotes = (str: string): string => {
+  if (str.includes('Need Focus')) {
+    return str.replace(/Need Focus/g, '"Need Focus"');
+  }
+  return str;
+};
+
 const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   onClose,
   isShare,
@@ -188,7 +196,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                 ) : item == 'Action Plan' ? (
                   <img src="/icons/verify.svg" />
                 ) : undefined}
-                <span>{item}</span>
+                <span>{formatStringWithQuotes(item)}</span>
               </div>
             ))}
           {ActiveLayer === 'layer' && (
