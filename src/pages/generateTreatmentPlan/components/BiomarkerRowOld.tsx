@@ -21,7 +21,11 @@ interface BioMarkerRowOldSuggestionsProps {
 
   index: number;
   issuesData: Record<string, boolean>[];
-  handleUpdateIssueList: (index: number, newIssueList: string[]) => void;
+  handleUpdateIssueListByKey: (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+  ) => void;
   setIssuesData: (value: any) => void;
 }
 
@@ -34,7 +38,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
   // isOverview,
   index: itemIndex,
   issuesData,
-  handleUpdateIssueList,
+  handleUpdateIssueListByKey,
   setIssuesData,
 }) => {
   const resolveIcon = () => {
@@ -144,7 +148,11 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
   }, []);
   const handleRemoveIssueCard = (issue: string) => {
     const newIssueList = selectedIssues.filter((r: string) => r !== issue);
-    handleUpdateIssueList(itemIndex, newIssueList);
+    handleUpdateIssueListByKey(
+      value.Category,
+      value.Recommendation,
+      newIssueList,
+    );
     setSelectedIssues(newIssueList);
   };
 
@@ -152,7 +160,11 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
     if (issue.trim() === '') return;
     const name = 'Issue ' + (issuesData.length + 1) + ': ' + issue;
     const newIssueList = [...selectedIssues, name];
-    handleUpdateIssueList(itemIndex, newIssueList);
+    handleUpdateIssueListByKey(
+      value.Category,
+      value.Recommendation,
+      newIssueList,
+    );
     setIssuesData((prev: any) => [...prev, { [name]: true }]);
     setSelectedIssues(newIssueList);
     setNewIssue('');
@@ -264,7 +276,11 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                                 )
                               : [...value.issue_list, issueLabel];
 
-                            handleUpdateIssueList(itemIndex, newSelected);
+                            handleUpdateIssueListByKey(
+                              value.Category,
+                              value.Recommendation,
+                              newSelected,
+                            );
 
                             const newIssueList = isInSelected
                               ? selectedIssues.filter(
@@ -303,8 +319,9 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                                         (r: string) => r !== issueLabel,
                                       );
                                       setSelectedIssues(newSelected);
-                                      handleUpdateIssueList(
-                                        itemIndex,
+                                      handleUpdateIssueListByKey(
+                                        value.Category,
+                                        value.Recommendation,
                                         newSelected,
                                       );
                                     }}
