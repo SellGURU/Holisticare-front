@@ -30,8 +30,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     'Action Plan',
   ];
 
-  
-
   const [activeMenu, setactiveMenu] = useState('Client Summary');
   const [ActiveLayer, setActiveLayer] = useState('menu');
   const [activeImg, setactiveImg] = useState(1);
