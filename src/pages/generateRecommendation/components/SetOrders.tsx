@@ -293,13 +293,24 @@ export const SetOrders: FC<SetOrdersProps> = ({
     }
   }, [activeCategory]);
 
-  const handleUpdateIssueList = (index: number, newIssueList: string[]) => {
+  const handleUpdateIssueListByKeys = (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+  ) => {
     setData(
-      data.map((item: any, i: number) =>
-        i === index ? { ...item, issue_list: newIssueList } : item,
-      ),
+      data.map((item: any) => {
+        if (
+          item.Category === category &&
+          item.Recommendation === recommendation
+        ) {
+          return { ...item, issue_list: newIssueList };
+        }
+        return item;
+      }),
     );
   };
+
   return (
     <>
       <MainModal
@@ -475,7 +486,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                   handleCheckboxChange={handleCheckboxChange}
                   issuesData={details}
                   setIssuesData={setDetails}
-                  handleUpdateIssueList={handleUpdateIssueList}
+                  handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
                 />
               );
             })}
