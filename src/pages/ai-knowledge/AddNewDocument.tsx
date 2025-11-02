@@ -319,13 +319,13 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
                       </div>
                     ) : (
                       <>
-                        <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50 mb-2">
+                        <div className="flex w-full items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50 mb-2">
                           <div className="flex items-center gap-4">
                             <img
                               src="/icons/PDF_file_icon.svg 1.svg"
                               alt="PDF Icon"
                             />
-                            <div className="flex flex-col gap-1">
+                            <div className="flex flex-col  gap-1">
                               {currentIndexEditSelect === index ? (
                                 <TextField
                                   newStyle
@@ -350,11 +350,11 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
                                 //   }}
                                 //   className="text-xs"
                                 // />
-                                <span className="text-xs">
+                                <span className="text-xs select-none overflow-hidden text-ellipsis text-justify max-w-[300px]">
                                   {fileTitles[file.name] || file.name}
                                 </span>
                               )}
-                              <span className="text-xs text-[#888888]">
+                              <span className="text-xs max-w-[300px] text-[#888888]">
                                 {formatFileSize(file.size)}
                               </span>
                             </div>
