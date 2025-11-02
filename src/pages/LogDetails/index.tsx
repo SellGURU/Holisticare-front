@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import SimpleDatePicker from '../../Components/SimpleDatePicker';
 import Admin from '../../api/Admin';
 
@@ -149,8 +149,8 @@ function hasData<T>(val: unknown): val is { data: T } {
 
 const LogDetails = () => {
   const { id: clinicId } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const [clinicIdInput, setClinicIdInput] = useState<string>(clinicId || '');
+  // const navigate = useNavigate();
+  // const [clinicIdInput, setClinicIdInput] = useState<string>(clinicId || '');
 
   const [data, setData] = useState<SessionLog[]>([]);
   const [kpis, setKpis] = useState<AnalyticsResponse | null>(null);
@@ -164,6 +164,9 @@ const LogDetails = () => {
   const [toDate, setToDate] = useState<Date | null>(() => new Date());
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
+  );
+  const [expandedEvents, setExpandedEvents] = useState<Set<string>>(
+    new Set(),
   );
 
   const sessionDurations = useMemo(() => {
@@ -254,92 +257,44 @@ const LogDetails = () => {
     <div className="p-4 md:p-6">
       <div className="mb-4 flex justify-between items-center gap-3">
         <div className="flex items-center gap-2">
-          <button
-            aria-label="Back"
-            className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-Gray-50 bg-white text-Text-Primary hover:bg-backgroundColor-Card"
-            onClick={() => navigate(-1)}
-          >
-            {/* Left arrow icon */}
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M15 18L9 12L15 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <div className="flex items-center gap-2">
-            <label
-              htmlFor="clinicIdInput"
-              className="text-xs text-Text-Secondary"
-            >
-              Clinic ID
-            </label>
-            <input
-              id="clinicIdInput"
-              value={clinicIdInput}
-              onChange={(e) => setClinicIdInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && clinicIdInput.trim()) {
-                  navigate(`/log/${clinicIdInput.trim()}`);
-                }
-              }}
-              placeholder="Enter clinic id"
-              className="text-xs md:text-sm border border-Gray-50 rounded-md px-2 py-1 outline-none focus:ring-1 focus:ring-Primary-DeepTeal bg-white text-Text-Primary min-w-[160px]"
-            />
-            <button
-              className="text-xs bg-Primary-DeepTeal text-white px-3 py-1 rounded-md disabled:opacity-50"
-              disabled={!clinicIdInput.trim()}
-              onClick={() =>
-                clinicIdInput.trim() && navigate(`/log/${clinicIdInput.trim()}`)
-              }
-            >
-              Go
-            </button>
+
+          <div className="text-[14px] font-medium text-Text-Primary">
+            {clinicId}
           </div>
         </div>
         <div className="flex justify-end items-center">
-          <div className="text-Text-Primary text-xs md:text-sm min-w-[60px]">
-            From
+          <div className="flex items-center justify-start">
+            <div className="text-Text-Primary text-xs md:text-sm mr-2">
+              From
+            </div>
+            <SimpleDatePicker
+              date={fromDate}
+              setDate={setFromDate}
+              placeholder="Select"
+            />
+
           </div>
-          <SimpleDatePicker
-            date={fromDate}
-            setDate={setFromDate}
-            placeholder="Select"
-          />
-          <div className="text-Text-Primary text-xs md:text-sm min-w-[60px]">
-            To
+          <div className="flex items-center ml-4 justify-start">
+            <div className="text-Text-Primary text-xs md:text-sm mr-2">
+              To
+            </div>
+            <SimpleDatePicker
+              date={toDate}
+              setDate={setToDate}
+              placeholder="Select"
+              maxDate={new Date()}
+            />
+
           </div>
-          <SimpleDatePicker
-            date={toDate}
-            setDate={setToDate}
-            placeholder="Select"
-          />
           <button
             aria-label="Reload"
             className="ml-2 text-xs bg-Primary-DeepTeal text-white px-3 py-1 rounded-md disabled:opacity-50"
             disabled={!clinicId || loading}
             onClick={fetchLogs}
           >
-            {loading ? 'Loading...' : 'Reload'}
+            {loading ? 'Loading...' : ' Get Latest Info'}
           </button>
-          <button
-            className="ml-auto md:ml-3 text-xs bg-Primary-DeepTeal text-white px-3 py-1 rounded-md"
-            onClick={() => {
-              setFromDate(null);
-              setToDate(null);
-            }}
-          >
-            Clear
-          </button>
+
         </div>
       </div>
 
@@ -468,7 +423,7 @@ const LogDetails = () => {
         {/* Sessions list */}
         <div className="bg-white border border-Gray-50 rounded-2xl p-4 shadow-100">
           <div className="text-sm font-medium text-Text-Primary mb-3">
-            Sessions
+            Recent User Visits
           </div>
           <div
             className=" overflow-auto pr-1"
@@ -479,7 +434,7 @@ const LogDetails = () => {
                 <tr className="text-Text-Secondary text-left">
                   <th className="py-2 pr-2">User</th>
                   <th className="py-2">Start-End</th>
-                  <th className="py-2">Active (m)</th>
+                  <th className="py-2">Active Time (m)</th>
                   <th className="py-2">Device</th>
                 </tr>
               </thead>
@@ -539,7 +494,7 @@ const LogDetails = () => {
         {/* Events of selected session */}
         <div className="bg-white border border-Gray-50 rounded-2xl p-4 shadow-100">
           <div className="text-sm font-medium text-Text-Primary mb-1">
-            Session events
+            User Journey Details
           </div>
           {selectedSession ? (
             <div className="text-[10px] md:text-xs text-Text-Secondary mb-3 flex items-center gap-1">
@@ -563,43 +518,66 @@ const LogDetails = () => {
             className=" overflow-auto pr-2"
             style={{ height: window.innerHeight - 500 + 'px' }}
           >
-            {selectedSession?.events.map((ev, idx) => (
-              <div key={ev.id} className="relative pl-6 py-2">
-                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-Gray-50"></div>
-                <div
-                  className={`absolute left-[-5px] top-[14px] w-3 h-3 rounded-full ${
-                    ev.eventName === 'api_error'
-                      ? 'bg-red-500'
-                      : 'bg-Primary-DeepTeal'
-                  }`}
-                ></div>
-                <div className="flex items-center justify-between">
-                  <div className="text-Text-Primary font-medium">
-                    {idx + 1}. {ev.eventName}
-                  </div>
-                  <div className="text-Text-Secondary">
-                    {new Date(ev.timestamp).toLocaleTimeString()}
-                  </div>
-                </div>
-                <div className="mt-1 grid grid-cols-1 md:grid-cols-2 gap-2 text-Text-Secondary">
-                  {Object.entries(ev.props || {}).map(([k, v]) => (
-                    <div
-                      key={k}
-                      className={`${
-                        ev.eventName === 'api_error'
-                          ? 'bg-red-50 border border-red-200'
-                          : 'bg-backgroundColor-Card'
-                      } rounded-md px-2 py-1`}
-                    >
-                      <span className="text-[10px] text-Text-Primary">
-                        {k}:
-                      </span>{' '}
-                      <span className="break-all">{String(v)}</span>
+            {selectedSession?.events.map((ev, idx) => {
+              const isExpanded = expandedEvents.has(ev.id);
+              return (
+                <div key={ev.id} className="relative pl-6 py-2">
+                  <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-Gray-50"></div>
+                  <div
+                    className={`absolute left-[-5px] top-[14px] w-3 h-3 rounded-full ${
+                      ev.eventName === 'api_error'
+                        ? 'bg-red-500'
+                        : 'bg-Primary-DeepTeal'
+                    }`}
+                  ></div>
+                  <div className="flex items-center justify-between">
+                    <div className="text-[10px] md:text-xs text-Text-Primary font-medium">
+                      {idx + 1}. {ev.eventName}
                     </div>
-                  ))}
+                    <div className="flex items-center gap-2">
+                      <div className="text-[10px] md:text-xs text-Text-Secondary">
+                        {new Date(ev.timestamp).toLocaleDateString()}
+                      </div>
+                      <button
+                        onClick={() => {
+                          setExpandedEvents((prev) => {
+                            const next = new Set(prev);
+                            if (isExpanded) {
+                              next.delete(ev.id);
+                            } else {
+                              next.add(ev.id);
+                            }
+                            return next;
+                          });
+                        }}
+                        className="text-[9px] md:text-[10px] text-Primary-DeepTeal hover:underline px-2 py-1 rounded"
+                      >
+                        {isExpanded ? 'Hide Details' : 'Show Details'}
+                      </button>
+                    </div>
+                  </div>
+                  {isExpanded && (
+                    <div className="mt-1 grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {Object.entries(ev.props || {}).map(([k, v]) => (
+                        <div
+                          key={k}
+                          className={`${
+                            ev.eventName === 'api_error'
+                              ? 'bg-red-50 border border-red-200'
+                              : 'bg-backgroundColor-Card'
+                          } rounded-md px-2 py-1`}
+                        >
+                          <span className="text-[9px] md:text-[10px] text-Text-Primary">
+                            {k}:
+                          </span>{' '}
+                          <span className="text-[9px] md:text-[10px] break-all text-Text-Secondary">{String(v)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {!selectedSession && (
               <div className="py-6 text-center text-Text-Secondary">
                 No session selected

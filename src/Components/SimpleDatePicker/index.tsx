@@ -16,6 +16,7 @@ interface DatePickerProps {
   validation?: boolean;
   full?: boolean;
   isUploadFile?: boolean;
+  maxDate?: Date;
 }
 
 export default function SimpleDatePicker({
@@ -32,6 +33,7 @@ export default function SimpleDatePicker({
   onManualOpen,
   full,
   isUploadFile,
+  maxDate,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -62,6 +64,14 @@ export default function SimpleDatePicker({
         day: date.getDate(),
       }
     : null;
+
+  const maximumDate = maxDate
+    ? {
+        year: maxDate.getFullYear(),
+        month: maxDate.getMonth() + 1,
+        day: maxDate.getDate(),
+      }
+    : undefined;
 
   return (
     <div className="relative inline-block" ref={calendarRef}>
@@ -101,6 +111,7 @@ export default function SimpleDatePicker({
               setOpen(false);
             }}
             shouldHighlightWeekends
+            maximumDate={maximumDate}
           />
         </div>
       )}

@@ -23,7 +23,12 @@ const ClinicList = () => {
     // setIsLoading(false);
     Admin.getClinics().then((res) => {
       console.log(res.data);
-      setClinics(res.data);
+      if(res.data != 'Internal Server Error'){
+        setClinics(res.data);
+      }else{
+        localStorage.clear();
+        setClinics([]);
+      }
       setIsLoading(false);
     });
   };
@@ -71,14 +76,14 @@ const ClinicList = () => {
                   </tr>
                 ) : (
                   clinics
-                    .filter((c) => {
+                    ?.filter((c) => {
                       const q = search.trim().toLowerCase();
                       if (!q) return true;
                       const email = (c.clinic_email || '').toLowerCase();
                       const name = (c.clinic_name || '').toLowerCase();
                       return email.includes(q) || name.includes(q);
                     })
-                    .map((clinic, idx) => (
+                    ?.map((clinic, idx) => (
                       <tr
                         key={clinic.clinic_email + idx}
                         className={idx % 2 === 1 ? 'bg-gray-50' : ''}
