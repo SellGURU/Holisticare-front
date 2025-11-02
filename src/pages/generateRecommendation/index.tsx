@@ -67,14 +67,16 @@ export const GenerateRecommendation = () => {
     const selectedInterventions =
       treatmentPlanData?.suggestion_tab?.filter((item: any) => item.checked) ||
       [];
+    const payload =
+      treatmentPlanData?.looking_forwards?.map((issue: string) => ({
+        [issue]: false,
+      })) || [];
 
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
       key_areas_to_address:
-        coverageDetails.length > 0
-          ? coverageDetails
-          : treatmentPlanData?.looking_forwards || [],
+        coverageDetails.length > 0 ? coverageDetails : payload,
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
@@ -465,7 +467,6 @@ export const GenerateRecommendation = () => {
               }}
               treatMentPlanData={treatmentPlanData}
               setData={(newOrders) => {
-                console.log(newOrders);
                 setTratmentPlanData((pre: any) => {
                   return {
                     ...pre,
@@ -483,6 +484,16 @@ export const GenerateRecommendation = () => {
               suggestionsChecked={checkedSuggestions}
               treatmentPlanData={treatmentPlanData}
               Conflicts={Conflicts}
+              setDetails={setcoverageDetails}
+              setData={(newOrders) => {
+                setTratmentPlanData((pre: any) => {
+                  return {
+                    ...pre,
+                    suggestion_tab: newOrders,
+                  };
+                });
+              }}
+              data={treatmentPlanData?.suggestion_tab}
             ></Overview>
           )}
         </div>
