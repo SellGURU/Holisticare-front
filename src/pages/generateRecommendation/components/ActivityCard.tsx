@@ -173,11 +173,11 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 ></div>
                 {item?.label || '-'}
               </div>
-              <div className="flex items-center gap-1 relative">
+              <div className="flex flex-wrap items-center gap-1 relative">
                 {selectedIssues.map((issue: string, index: number) => (
                   <div
                     key={index}
-                    className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray"
+                    className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray text-nowrap"
                   >
                     {issue.split(':')[0].trim()}{' '}
                     <img
@@ -198,7 +198,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 {showAddIssue && (
                   <div
                     ref={addIssueRef}
-                    className="flex flex-col absolute top-6 right-0 w-[303px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
+                    className="flex flex-col absolute top-6 right-0 w-[333px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
                     style={{
                       scrollbarWidth: 'thin',
                       scrollbarColor: '#E9EDF5 #FFFFFF',
@@ -234,7 +234,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                       return (
                         <div
                           key={index}
-                          className="flex select-none text-justify items-start text-Text-Primary text-xs group relative pr-5 py-1"
+                          className="flex select-none text-justify items-start break-all text-Text-Primary text-xs group relative pr-5 py-1"
                         >
                           <Checkbox
                             checked={isInSelected}
