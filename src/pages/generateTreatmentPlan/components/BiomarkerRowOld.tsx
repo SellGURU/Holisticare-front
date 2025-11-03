@@ -29,6 +29,7 @@ interface BioMarkerRowOldSuggestionsProps {
   ) => void;
   setIssuesData: (value: any) => void;
   handleRemoveLookingForwards: (text: string) => void;
+  handleRemoveIssueFromList: (name: string) => void;
 }
 
 const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
@@ -43,6 +44,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
   handleUpdateIssueListByKey,
   setIssuesData,
   handleRemoveLookingForwards,
+  handleRemoveIssueFromList: handleRemoveIssueFromListData,
 }) => {
   const resolveIcon = () => {
     switch (value.Category) {
@@ -174,6 +176,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
   };
 
   const handleRemoveIssueFromList = (name: string) => {
+    handleRemoveIssueFromListData(name);
     setIssuesData((prev: any) => {
       const exists = prev.some((item: any) =>
         Object.prototype.hasOwnProperty.call(item, name),
