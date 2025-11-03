@@ -297,6 +297,20 @@ const NewGenerateHolisticPlan = () => {
       };
     });
   };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRemoveIssueFromList = (name: string) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        suggestion_tab: pre.suggestion_tab.map((item: any) => ({
+          ...item,
+          issue_list: item.issue_list.filter((issue: string) => issue !== name),
+        })),
+      };
+    });
+    handleRemoveLookingForwards(name);
+    setRefreshKey((k) => k + 1);
+  };
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -494,6 +508,7 @@ const NewGenerateHolisticPlan = () => {
                         });
                       }}
                       lookingForwardsData={treatmentPlanData?.looking_forwards}
+                      handleRemoveIssueFromList={handleRemoveIssueFromList}
                     />
                   </div>
                 )}
@@ -563,7 +578,7 @@ const NewGenerateHolisticPlan = () => {
                                     <>
                                       <div
                                         className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
-                                        key={`${el.title}-${suggestionIndex}`}
+                                        key={`${el.title}-${suggestionIndex}-${refreshKey}`}
                                       >
                                         <BioMarkerRowSuggestions
                                           editAble
@@ -572,6 +587,9 @@ const NewGenerateHolisticPlan = () => {
                                           issuesData={coverageDetails}
                                           handleRemoveLookingForwards={
                                             handleRemoveLookingForwards
+                                          }
+                                          handleRemoveIssueFromList={
+                                            handleRemoveIssueFromList
                                           }
                                           handleUpdateIssueListByKey={
                                             handleUpdateIssueListByKeys
