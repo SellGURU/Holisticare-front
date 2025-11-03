@@ -543,12 +543,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               </div>
                             )}
                             {mappingStatus[index] === 'removed' && (
-                               <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[220px]  rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
+                              <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[220px]  rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
                                 <img
                                   src="/icons/info-circle-orange.svg"
                                   alt=""
                                 />
-                               This mapping will only be used for this upload.
+                                This mapping will only be used for this upload.
                               </div>
                             )}
 
