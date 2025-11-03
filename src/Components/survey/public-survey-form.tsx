@@ -1281,7 +1281,10 @@ export function PublicSurveyForm({
               </CardDescription>
             )}
           </CardHeader>
-          <CardContent className="space-y-6   pb-20 overflow-y-scroll" style={{height: window.innerHeight - 400 + 'px'}} >
+          <CardContent
+            className="space-y-6   pb-20 overflow-y-scroll"
+            style={{ height: window.innerHeight - 400 + 'px' }}
+          >
             {renderQuestion(
               currentQuestion,
               getOriginalIndexForVisibleIndex(currentStep - 1),
