@@ -143,6 +143,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setRowErrors({});
         setAddedRowErrors({});
         setdeleteLoading(false);
+          publish("RESET_MAPPING_ROWS", {});
       })
       .catch((err) => {
         console.error('Error deleting the file:', err);

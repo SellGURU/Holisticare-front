@@ -8,6 +8,7 @@ import Application from '../../../api/app';
 import { Tooltip } from 'react-tooltip';
 // import { Scaling } from 'lucide-react';
 import SearchSelect from '../../searchableSelect';
+import { subscribe, unsubscribe } from '../../../utils/event';
 interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
@@ -332,7 +333,19 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       console.error('Mapping toggle failed:', err);
     }
   };
+useEffect(() => {
+  const listener = () => {
+    setMappedRows([]);
+    setChangedRows([]);
+    setMappingStatus({});
+  };
 
+
+  subscribe("RESET_MAPPING_ROWS", listener);
+
+
+  return () => unsubscribe("RESET_MAPPING_ROWS", listener);
+}, []);
   return (
     <div
       // style={{ height: window.innerHeight - 400 + 'px' }}
