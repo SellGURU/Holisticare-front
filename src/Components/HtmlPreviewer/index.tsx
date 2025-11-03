@@ -273,17 +273,18 @@ export default function HtmlEditor({
         editIcon.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          
+
           // Temporarily hide icon to avoid detecting its blue background
           const iconDisplay = editIcon.style.display;
           editIcon.style.display = 'none';
-          
+
           // Small delay to ensure icon is hidden before reading styles
           setTimeout(() => {
             setSelectedElement(htmlElement);
 
             // Get current styles from the element in iframe
-            const computedStyle = doc.defaultView?.getComputedStyle(htmlElement);
+            const computedStyle =
+              doc.defaultView?.getComputedStyle(htmlElement);
             if (computedStyle) {
               // Parse font size to get numeric value
               const fontSize = computedStyle.fontSize;
@@ -303,78 +304,78 @@ export default function HtmlEditor({
                 return color;
               };
 
-            // Check for inline styles first, then fall back to computed styles
-            const inlineStyle = htmlElement.style;
-            const hasInlineStyles = inlineStyle.cssText.length > 0;
+              // Check for inline styles first, then fall back to computed styles
+              const inlineStyle = htmlElement.style;
+              const hasInlineStyles = inlineStyle.cssText.length > 0;
 
-            const currentStyles: ElementStyles = {
-              fontWeight:
-                hasInlineStyles && inlineStyle.fontWeight
-                  ? (inlineStyle.fontWeight as 'bold' | 'normal')
-                  : (getTailwindStyleValue(htmlElement, 'fontWeight') as
-                      | 'bold'
-                      | 'normal') ||
-                    (computedStyle.fontWeight === 'bold' ||
-                    parseInt(computedStyle.fontWeight) >= 700
-                      ? 'bold'
-                      : 'normal'),
-              fontStyle:
-                hasInlineStyles && inlineStyle.fontStyle
-                  ? (inlineStyle.fontStyle as 'normal' | 'italic')
-                  : (getTailwindStyleValue(htmlElement, 'fontStyle') as
-                      | 'normal'
-                      | 'italic') ||
-                    (computedStyle.fontStyle === 'italic'
-                      ? 'italic'
-                      : 'normal'),
-              textDecoration:
-                hasInlineStyles && inlineStyle.textDecoration
-                  ? (inlineStyle.textDecoration as
-                      | 'none'
-                      | 'underline'
-                      | 'line-through')
-                  : (getTailwindStyleValue(htmlElement, 'textDecoration') as
-                      | 'none'
-                      | 'underline'
-                      | 'line-through') ||
-                    (computedStyle.textDecoration.includes('underline')
-                      ? 'underline'
-                      : computedStyle.textDecoration.includes('line-through')
-                        ? 'line-through'
-                        : 'none'),
-              color:
-                hasInlineStyles && inlineStyle.color
-                  ? inlineStyle.color
-                  : colorToHex(computedStyle.color),
-              backgroundColor: 'transparent', // Always set to transparent, don't read or apply background color
-              fontSize:
-                hasInlineStyles && inlineStyle.fontSize
-                  ? inlineStyle.fontSize
-                  : `${fontSizeNum}px`,
-              textAlign:
-                hasInlineStyles && inlineStyle.textAlign
-                  ? (inlineStyle.textAlign as
-                      | 'left'
-                      | 'center'
-                      | 'right'
-                      | 'justify')
-                  : (getTailwindStyleValue(htmlElement, 'textAlign') as
-                      | 'left'
-                      | 'center'
-                      | 'right'
-                      | 'justify') ||
-                    (computedStyle.textAlign as
-                      | 'left'
-                      | 'center'
-                      | 'right'
-                      | 'justify'),
-            };
-            setCurrentStyles(currentStyles);
-          }
+              const currentStyles: ElementStyles = {
+                fontWeight:
+                  hasInlineStyles && inlineStyle.fontWeight
+                    ? (inlineStyle.fontWeight as 'bold' | 'normal')
+                    : (getTailwindStyleValue(htmlElement, 'fontWeight') as
+                        | 'bold'
+                        | 'normal') ||
+                      (computedStyle.fontWeight === 'bold' ||
+                      parseInt(computedStyle.fontWeight) >= 700
+                        ? 'bold'
+                        : 'normal'),
+                fontStyle:
+                  hasInlineStyles && inlineStyle.fontStyle
+                    ? (inlineStyle.fontStyle as 'normal' | 'italic')
+                    : (getTailwindStyleValue(htmlElement, 'fontStyle') as
+                        | 'normal'
+                        | 'italic') ||
+                      (computedStyle.fontStyle === 'italic'
+                        ? 'italic'
+                        : 'normal'),
+                textDecoration:
+                  hasInlineStyles && inlineStyle.textDecoration
+                    ? (inlineStyle.textDecoration as
+                        | 'none'
+                        | 'underline'
+                        | 'line-through')
+                    : (getTailwindStyleValue(htmlElement, 'textDecoration') as
+                        | 'none'
+                        | 'underline'
+                        | 'line-through') ||
+                      (computedStyle.textDecoration.includes('underline')
+                        ? 'underline'
+                        : computedStyle.textDecoration.includes('line-through')
+                          ? 'line-through'
+                          : 'none'),
+                color:
+                  hasInlineStyles && inlineStyle.color
+                    ? inlineStyle.color
+                    : colorToHex(computedStyle.color),
+                backgroundColor: 'transparent', // Always set to transparent, don't read or apply background color
+                fontSize:
+                  hasInlineStyles && inlineStyle.fontSize
+                    ? inlineStyle.fontSize
+                    : `${fontSizeNum}px`,
+                textAlign:
+                  hasInlineStyles && inlineStyle.textAlign
+                    ? (inlineStyle.textAlign as
+                        | 'left'
+                        | 'center'
+                        | 'right'
+                        | 'justify')
+                    : (getTailwindStyleValue(htmlElement, 'textAlign') as
+                        | 'left'
+                        | 'center'
+                        | 'right'
+                        | 'justify') ||
+                      (computedStyle.textAlign as
+                        | 'left'
+                        | 'center'
+                        | 'right'
+                        | 'justify'),
+              };
+              setCurrentStyles(currentStyles);
+            }
 
-          // Restore icon display
-          editIcon.style.display = iconDisplay || '';
-          setIsStyleModalOpen(true);
+            // Restore icon display
+            editIcon.style.display = iconDisplay || '';
+            setIsStyleModalOpen(true);
           }, 50); // Small delay to ensure icon is hidden before reading styles
         });
 
