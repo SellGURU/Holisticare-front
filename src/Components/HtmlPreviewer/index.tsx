@@ -273,35 +273,35 @@ export default function HtmlEditor({
         editIcon.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          setSelectedElement(htmlElement);
+          
+          // Temporarily hide icon to avoid detecting its blue background
+          const iconDisplay = editIcon.style.display;
+          editIcon.style.display = 'none';
+          
+          // Small delay to ensure icon is hidden before reading styles
+          setTimeout(() => {
+            setSelectedElement(htmlElement);
 
-          // Get current styles from the element in iframe
-          const computedStyle = doc.defaultView?.getComputedStyle(htmlElement);
-          if (computedStyle) {
-            // Parse font size to get numeric value
-            const fontSize = computedStyle.fontSize;
-            const fontSizeNum = parseFloat(fontSize);
+            // Get current styles from the element in iframe
+            const computedStyle = doc.defaultView?.getComputedStyle(htmlElement);
+            if (computedStyle) {
+              // Parse font size to get numeric value
+              const fontSize = computedStyle.fontSize;
+              const fontSizeNum = parseFloat(fontSize);
 
-            // Parse color to hex format
-            const colorToHex = (color: string) => {
-              if (color.startsWith('rgb')) {
-                const rgb = color.match(/\d+/g);
-                if (rgb && rgb.length >= 3) {
-                  const r = parseInt(rgb[0]);
-                  const g = parseInt(rgb[1]);
-                  const b = parseInt(rgb[2]);
-                  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+              // Parse color to hex format
+              const colorToHex = (color: string) => {
+                if (color.startsWith('rgb')) {
+                  const rgb = color.match(/\d+/g);
+                  if (rgb && rgb.length >= 3) {
+                    const r = parseInt(rgb[0]);
+                    const g = parseInt(rgb[1]);
+                    const b = parseInt(rgb[2]);
+                    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+                  }
                 }
-              }
-              return color;
-            };
-
-            // Parse background color
-            const bgColor = computedStyle.backgroundColor;
-            const bgColorHex =
-              bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent'
-                ? 'transparent'
-                : colorToHex(bgColor);
+                return color;
+              };
 
             // Check for inline styles first, then fall back to computed styles
             const inlineStyle = htmlElement.style;
@@ -346,12 +346,7 @@ export default function HtmlEditor({
                 hasInlineStyles && inlineStyle.color
                   ? inlineStyle.color
                   : colorToHex(computedStyle.color),
-              backgroundColor:
-                hasInlineStyles && inlineStyle.backgroundColor
-                  ? inlineStyle.backgroundColor === 'transparent'
-                    ? 'transparent'
-                    : inlineStyle.backgroundColor
-                  : bgColorHex,
+              backgroundColor: 'transparent', // Always set to transparent, don't read or apply background color
               fontSize:
                 hasInlineStyles && inlineStyle.fontSize
                   ? inlineStyle.fontSize
@@ -377,7 +372,10 @@ export default function HtmlEditor({
             setCurrentStyles(currentStyles);
           }
 
+          // Restore icon display
+          editIcon.style.display = iconDisplay || '';
           setIsStyleModalOpen(true);
+          }, 50); // Small delay to ensure icon is hidden before reading styles
         });
 
         // Add hover effects
@@ -572,16 +570,13 @@ export default function HtmlEditor({
     });
 
     if (targetElement) {
-      // Apply styles
+      // Apply styles (excluding backgroundColor - never apply background color)
       (targetElement as HTMLElement).style.fontWeight = styles.fontWeight;
       (targetElement as HTMLElement).style.fontStyle = styles.fontStyle;
       (targetElement as HTMLElement).style.textDecoration =
         styles.textDecoration;
       (targetElement as HTMLElement).style.color = styles.color;
-      (targetElement as HTMLElement).style.backgroundColor =
-        styles.backgroundColor === 'transparent'
-          ? 'transparent'
-          : styles.backgroundColor;
+      // backgroundColor is intentionally not applied
       (targetElement as HTMLElement).style.fontSize = styles.fontSize;
       (targetElement as HTMLElement).style.textAlign = styles.textAlign;
 

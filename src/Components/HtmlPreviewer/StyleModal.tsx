@@ -109,10 +109,6 @@ export default function StyleModal({
                 fontStyle: styles.fontStyle,
                 textDecoration: styles.textDecoration,
                 color: styles.color,
-                backgroundColor:
-                  styles.backgroundColor === 'transparent'
-                    ? 'transparent'
-                    : styles.backgroundColor,
                 fontSize: styles.fontSize,
                 textAlign: styles.textAlign,
               }}
@@ -221,33 +217,6 @@ export default function StyleModal({
                 onChange={(e) => handleStyleChange('color', e.target.value)}
                 className="w-full h-10 border rounded"
               />
-            </div>
-
-            {/* Background Color */}
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Background Color
-              </label>
-              <input
-                type="color"
-                value={
-                  styles.backgroundColor === 'transparent'
-                    ? '#ffffff'
-                    : styles.backgroundColor
-                }
-                onChange={(e) =>
-                  handleStyleChange('backgroundColor', e.target.value)
-                }
-                className="w-full h-10 border rounded"
-              />
-              <button
-                onClick={() =>
-                  handleStyleChange('backgroundColor', 'transparent')
-                }
-                className="mt-1 text-sm text-blue-600 hover:text-blue-800"
-              >
-                Transparent
-              </button>
             </div>
 
             {/* Font Size */}
