@@ -17,7 +17,9 @@ interface ActivityCardProps {
     category: string,
     recommendation: string,
     newIssueList: string[],
+    text?: string,
   ) => void;
+  handleRemoveLookingForwards: (text: string) => void;
 }
 
 export const ActivityCard: FC<ActivityCardProps> = ({
@@ -28,6 +30,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   issuesData,
   setIssuesData,
   handleUpdateIssueListByKey,
+  handleRemoveLookingForwards,
 }) => {
   const { positive, negative } = splitInstructions(item.Instruction);
   const [Conflicts] = useState<Array<any>>(item?.flag?.conflicts);
@@ -82,7 +85,6 @@ export const ActivityCard: FC<ActivityCardProps> = ({
 
   const handleRemoveIssueCard = (issue: string) => {
     const newIssueList = selectedIssues.filter((r: string) => r !== issue);
-    console.log('newIssueList => ', newIssueList);
     handleUpdateIssueListByKey(
       activeCategory,
       item.Recommendation,
@@ -99,6 +101,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
       activeCategory,
       item.Recommendation,
       newIssueList,
+      issue,
     );
     setIssuesData((prev: any) => [...prev, { [name]: true }]);
     setSelectedIssues(newIssueList);
@@ -116,6 +119,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
         );
       }
     });
+    handleRemoveLookingForwards(name);
 
     setIsDeleting(null);
   };
@@ -213,7 +217,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                       const handleToggle = () => {
                         const newSelected = isInSelected
                           ? item.issue_list.filter((r: string) => r !== text)
-                          : [...item.issue_list, issueLabel];
+                          : [...item.issue_list, text];
 
                         handleUpdateIssueListByKey(
                           activeCategory,
@@ -226,7 +230,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                               (r: string) =>
                                 r.split(':')[0].trim() !== issueLabel,
                             )
-                          : [...selectedIssues, issueLabel];
+                          : [...selectedIssues, text];
 
                         setSelectedIssues(newIssueList);
                       };
