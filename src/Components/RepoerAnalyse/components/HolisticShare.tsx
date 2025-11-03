@@ -1,4 +1,5 @@
-import { publish } from '../../../utils/event';
+import { useEffect, useState } from 'react';
+import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import SpinnerLoader from '../../SpinnerLoader';
 
@@ -8,23 +9,42 @@ interface HolisticShareProps {
   dateShare: string | null;
   handleGetHtmlReport: () => void;
   loadingHtmlReport: boolean;
-  shareable: boolean;
+  // shareable: boolean;
 }
 
 const HolisticShare: React.FC<HolisticShareProps> = ({
   isHtmlReportExists,
-  shareable,
+  // shareable,
   isShareModalSuccess,
   dateShare,
   handleGetHtmlReport,
   loadingHtmlReport,
 }) => {
+  const [shareable, setShareable] = useState(true);
+  const [isShared, setIsShared] = useState(false);
+  useEffect(() => {
+    subscribe('holisticPlanSelectEnd', () => {
+      setShareable(true);
+    });
+    subscribe('holisticPlanSelectNotEnd', () => {
+      setShareable(false);
+    });
+    subscribe('shareModalHolisticPlanSuccess', () => {
+      setShareable(true);
+      setIsShared(true);
+    });
+    return () => {
+      unsubscribe('holisticPlanSelectEnd', () => {});
+      unsubscribe('holisticPlanSelectNotEnd', () => {});
+      unsubscribe('shareModalHolisticPlanSuccess', () => {});
+    };
+  }, []);
   return (
     <>
-      <div className="flex items-center gap-6">
+      <div className="flex items-baseline gap-6">
         {isHtmlReportExists && (
           <>
-            {isShareModalSuccess ? (
+            {(isShareModalSuccess || isShared) ? (
               <div className="flex flex-col items-center">
                 <div className="text-Text-Quadruple text-xs font-medium flex items-center gap-1">
                   <img src="/icons/tick-circle-gray.svg" alt="" />
@@ -46,7 +66,7 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
               </div>
             ) : (
               <>
-                {shareable && (
+                {(shareable && !isShared) && (
                   <div className="rounded-[20px] flex items-center justify-center w-[168px] h-[26px] bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen">
                     <ButtonPrimary
                       ClassName="
