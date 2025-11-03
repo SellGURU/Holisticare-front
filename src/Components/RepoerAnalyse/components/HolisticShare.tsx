@@ -44,7 +44,7 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
       <div className="flex items-baseline gap-6">
         {isHtmlReportExists && (
           <>
-            {(isShareModalSuccess || isShared) ? (
+            {isShareModalSuccess || isShared ? (
               <div className="flex flex-col items-center">
                 <div className="text-Text-Quadruple text-xs font-medium flex items-center gap-1">
                   <img src="/icons/tick-circle-gray.svg" alt="" />
@@ -66,7 +66,7 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
               </div>
             ) : (
               <>
-                {(shareable && !isShared) && (
+                {shareable && !isShared && (
                   <div className="rounded-[20px] flex items-center justify-center w-[168px] h-[26px] bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen">
                     <ButtonPrimary
                       ClassName="

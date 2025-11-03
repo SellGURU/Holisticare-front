@@ -367,9 +367,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                         setActiveTreatmnet(card.t_plan_id);
                         setIsShareModalSuccess(card.shared_report_with_client);
                         setDateShare(card.shared_report_with_client_date);
-                        if(index === cardData.length - 1){
+                        if (index === cardData.length - 1) {
                           publish('holisticPlanSelectEnd', {});
-                        }else{  
+                        } else {
                           publish('holisticPlanSelectNotEnd', {});
                         }
                       }}
