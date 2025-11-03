@@ -18,6 +18,8 @@ interface OverviewProps {
   setDetails: (value: Record<string, boolean>[]) => void;
   setData: (values: any) => void;
   data: any;
+  setLookingForwards: (values: any) => void;
+  lookingForwardsData: any;
 }
 export const Overview: FC<OverviewProps> = ({
   visibleCategoriy,
@@ -29,6 +31,8 @@ export const Overview: FC<OverviewProps> = ({
   setDetails,
   setData,
   data,
+  setLookingForwards,
+  lookingForwardsData,
 }) => {
   const getAllCheckedCategories = () => {
     const checkedCategories: string[] = [];
@@ -56,6 +60,7 @@ export const Overview: FC<OverviewProps> = ({
     category: string,
     recommendation: string,
     newIssueList: string[],
+    text?: string,
   ) => {
     setData(
       data.map((item: any) => {
@@ -68,6 +73,20 @@ export const Overview: FC<OverviewProps> = ({
         return item;
       }),
     );
+    if (text) {
+      handleAddLookingForwards(text);
+    }
+  };
+
+  const handleAddLookingForwards = (text: string) => {
+    setLookingForwards([
+      ...lookingForwardsData,
+      'Issue ' + (lookingForwardsData.length + 1) + ': ' + text,
+    ]);
+  };
+
+  const handleRemoveLookingForwards = (text: string) => {
+    setLookingForwards(lookingForwardsData.filter((el: any) => el !== text));
   };
 
   return (
@@ -132,6 +151,8 @@ export const Overview: FC<OverviewProps> = ({
             progress={progress}
             details={details}
             setDetails={setDetails}
+            setLookingForwards={setLookingForwards}
+            lookingForwardsData={lookingForwardsData}
           />
         </div>
 
@@ -179,6 +200,7 @@ export const Overview: FC<OverviewProps> = ({
                     issuesData={details}
                     setIssuesData={setDetails}
                     handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
+                    handleRemoveLookingForwards={handleRemoveLookingForwards}
                   ></BioMarkerRowOldSuggestions>
                 </div>
               </>
