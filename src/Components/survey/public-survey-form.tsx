@@ -919,8 +919,8 @@ export function PublicSurveyForm({
 
         return (
           <div className="bg-[#FCFCFC] p-3 w-full rounded-[12px] border border-gray-50">
-            <div className="flex justify-between items-center">
-              <div className="text-[12px] text-Text-Primary">
+            <div className="flex justify-between items-center gap-2">
+              <div className="text-[12px] text-Text-Primary break-words flex-1 min-w-0 max-w-full">
                 {questionIndex + 1}. {getQuestionText(question)}
               </div>
               {!isMultiUploadMode && (
@@ -1261,7 +1261,7 @@ export function PublicSurveyForm({
       {currentQuestion && (
         <Card
           style={{ height: window.innerHeight - 200 + 'px' }}
-          className="bg-white shadow-xl  border-0 flex flex-col relative"
+          className="bg-white shadow-xl overflow-y-scroll  border-0 flex flex-col relative"
         >
           <CardHeader>
             <div
@@ -1269,7 +1269,7 @@ export function PublicSurveyForm({
             >
               Question {currentStep} of {visibleQuestions.length}
             </div>
-            <CardTitle className="text-base 2xl:text-2xl font-bold">
+            <CardTitle className="text-[14px] 2xl:text-base max-h-[120px] overflow-y-scroll font-bold break-words pr-4 max-w-full">
               {getQuestionText(currentQuestion)}
               {currentQuestion.required && (
                 <span className="text-red-500 ml-1">*</span>
@@ -1281,7 +1281,7 @@ export function PublicSurveyForm({
               </CardDescription>
             )}
           </CardHeader>
-          <CardContent className="space-y-6 h-[60%]  pb-20 overflow-auto">
+          <CardContent className="space-y-6   pb-20">
             {renderQuestion(
               currentQuestion,
               getOriginalIndexForVisibleIndex(currentStep - 1),
