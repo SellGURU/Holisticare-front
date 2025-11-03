@@ -469,7 +469,7 @@ const LogDetails = () => {
                 <tr className="text-Text-Secondary text-left">
                   <th className="py-2 pr-2">User</th>
                   <th className="py-2">Start-End</th>
-                  <th className="py-2">Active Time (m)</th>
+                  <th className="py-2">Time (m)</th>
                   <th className="py-2">Device</th>
                 </tr>
               </thead>
