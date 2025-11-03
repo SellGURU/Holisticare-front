@@ -25,8 +25,10 @@ interface BioMarkerRowOldSuggestionsProps {
     category: string,
     recommendation: string,
     newIssueList: string[],
+    text?: string,
   ) => void;
   setIssuesData: (value: any) => void;
+  handleRemoveLookingForwards: (text: string) => void;
 }
 
 const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
@@ -40,6 +42,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
   issuesData,
   handleUpdateIssueListByKey,
   setIssuesData,
+  handleRemoveLookingForwards,
 }) => {
   const resolveIcon = () => {
     switch (value.Category) {
@@ -139,11 +142,10 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
   const [newIssue, setNewIssue] = useState('');
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
   useEffect(() => {
-    const result = value.issue_list
-      .filter((issue: string) =>
-        issuesData.some((obj) => Object.keys(obj)[0] === issue),
-      )
-      .map((matched: string) => matched.split(':')[0].trim());
+    const result = value.issue_list.filter((issue: string) =>
+      issuesData.some((obj) => Object.keys(obj)[0] === issue),
+    );
+    // .map((matched: string) => matched.split(':')[0].trim());
     setSelectedIssues(result);
   }, []);
   const handleRemoveIssueCard = (issue: string) => {
@@ -164,6 +166,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
       value.Category,
       value.Recommendation,
       newIssueList,
+      issue,
     );
     setIssuesData((prev: any) => [...prev, { [name]: true }]);
     setSelectedIssues(newIssueList);
@@ -181,7 +184,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
         );
       }
     });
-
+    handleRemoveLookingForwards(name);
     setIsDeleting(null);
   };
   return (
@@ -235,7 +238,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                         key={index}
                         className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray"
                       >
-                        {issue}{' '}
+                        {issue.split(':')[0].trim()}{' '}
                         <img
                           src="/icons/close-circle.svg"
                           alt=""
@@ -267,14 +270,16 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                         {issuesData?.map((issue, index) => {
                           const [text] = Object.entries(issue)[0];
                           const issueLabel = text.split(':')[0].trim();
-                          const isInSelected =
-                            selectedIssues.includes(issueLabel);
+                          const isInSelected = selectedIssues.some(
+                            (r: string) =>
+                              r.split(':')[0].trim() === issueLabel,
+                          );
                           const handleToggle = () => {
                             const newSelected = isInSelected
                               ? value.issue_list.filter(
                                   (r: string) => r !== text,
                                 )
-                              : [...value.issue_list, issueLabel];
+                              : [...value.issue_list, text];
 
                             handleUpdateIssueListByKey(
                               value.Category,
@@ -284,9 +289,10 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
 
                             const newIssueList = isInSelected
                               ? selectedIssues.filter(
-                                  (r: string) => r !== issueLabel,
+                                  (r: string) =>
+                                    r.split(':')[0].trim() !== issueLabel,
                                 )
-                              : [...selectedIssues, issueLabel];
+                              : [...selectedIssues, text];
 
                             setSelectedIssues(newIssueList);
                           };
@@ -316,7 +322,8 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                                     onClick={() => {
                                       handleRemoveIssueFromList(text);
                                       const newSelected = selectedIssues.filter(
-                                        (r: string) => r !== issueLabel,
+                                        (r: string) =>
+                                          r.split(':')[0].trim() !== issueLabel,
                                       );
                                       setSelectedIssues(newSelected);
                                       handleUpdateIssueListByKey(
