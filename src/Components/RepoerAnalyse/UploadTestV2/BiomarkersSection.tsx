@@ -6,6 +6,7 @@ import Circleloader from '../../CircleLoader';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Application from '../../../api/app';
 import { Tooltip } from 'react-tooltip';
+// import { Scaling } from 'lucide-react';
 import SearchSelect from '../../searchableSelect';
 interface BiomarkersSectionProps {
   biomarkers: any[];
@@ -15,6 +16,8 @@ interface BiomarkersSectionProps {
   setDateOfTest: (date: Date | null) => void;
   fileType: string;
   loading: boolean;
+  isScaling: boolean;
+  setIsScaling: (isScaling: boolean) => void;
   rowErrors?: any;
   setrowErrors: any;
 }
@@ -29,6 +32,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   loading,
   rowErrors,
   setrowErrors,
+  isScaling,
+  setIsScaling,
 }) => {
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -282,8 +287,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   return (
     <div
-      style={{ height: window.innerHeight - 400 + 'px' }}
-      className="w-full   rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-sm font-medium text-Text-Primary"
+      // style={{ height: window.innerHeight - 400 + 'px' }}
+      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-sm font-medium text-Text-Primary`}
     >
       {loading ? (
         <div
@@ -304,11 +309,27 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       ) : (
         <div className=" relative ">
           <div className="flex justify-between items-center mb-4">
-            <div className=" text-[10px] md:text-sm font-medium">
-              List of Biomarkers{' '}
-              <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
-                ({biomarkers.length})
-              </span>
+            <div className="flex items-center gap-2">
+              <div className=" text-[10px] md:text-sm font-medium">
+                List of Biomarkers{' '}
+                <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
+                  ({biomarkers.length})
+                </span>
+              </div>
+              <img
+                onClick={() => setIsScaling(!isScaling)}
+                className="w-4 h-4 cursor-pointer opacity-70"
+                src={
+                  isScaling
+                    ? '/icons/biomarkers/import.svg'
+                    : '/icons/biomarkers/export.svg'
+                }
+                alt=""
+              />
+              {/* <Scaling
+                onClick={() => setIsScaling(!isScaling)}
+                className="w-4 h-4 cursor-pointer text-Text-Secondary"
+              /> */}
             </div>
             <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
               Date of Test:
@@ -347,7 +368,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 ref={tableRef}
                 className="overflow-y-auto  w-[100.5%]"
                 style={{
-                  maxHeight: window.innerHeight - 500 + 'px',
+                  maxHeight: isScaling
+                    ? window.innerHeight - 330 + 'px'
+                    : window.innerHeight - 500 + 'px',
                 }}
               >
                 {biomarkers.map((b, index) => {
