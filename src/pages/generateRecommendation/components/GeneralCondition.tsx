@@ -77,7 +77,6 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
     clientInsights: false,
     lookingForwards: false,
   });
-
   const [tempData, setTempData] = useState<ConditionDataProps>(data);
 
   const handleEdit = (section: SectionKey): void => {
