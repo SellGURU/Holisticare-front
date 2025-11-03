@@ -11,12 +11,27 @@ export default class ActivityLogger {
   private sessionStartTime: number;
   private intervalId: NodeJS.Timeout | null = null;
   private resetIntervalMs = 2 * 60 * 1000;
+  private unloadHandler: (() => void) | null = null;
+  private pageHideHandler: ((e: PageTransitionEvent) => void) | null = null;
 
   private constructor() {
-    this.userId = localStorage.getItem('email') || 'anonymous_user';
+    this.userId = this.getOrCreateBrowserId();
     this.sessionId = uuidv4();
     this.sessionStartTime = Date.now();
     this.init();
+  }
+
+  /** Get or create a unique browser ID */
+  private getOrCreateBrowserId(): string {
+    const BROWSER_ID_KEY = 'browser_unique_id';
+    let browserId = localStorage.getItem(BROWSER_ID_KEY);
+    
+    if (!browserId) {
+      browserId = uuidv4();
+      localStorage.setItem(BROWSER_ID_KEY, browserId);
+    }
+    
+    return browserId;
   }
 
   public static getInstance(): ActivityLogger {
@@ -30,6 +45,7 @@ export default class ActivityLogger {
   private init() {
     this.addEvent('session_start', { path: window.location.pathname });
     this.attachGlobalListeners();
+    this.attachUnloadListeners();
     this.scheduleReset();
   }
 
@@ -83,6 +99,62 @@ export default class ActivityLogger {
         route: window.location.pathname,
       });
     });
+  }
+
+  /** Attach unload listeners to save data when tab closes (not when switching tabs) */
+  private attachUnloadListeners() {
+    // Save on before unload (tab/window closing)
+    this.unloadHandler = () => {
+      this.addEvent('session_end', { reason: 'tab_close' });
+      this.saveSessionToStorageSync();
+    };
+    window.addEventListener('beforeunload', this.unloadHandler);
+
+    // Save on page hide - only when page is being unloaded (tab closing)
+    // persisted property indicates if page is being cached (false = tab closing)
+    this.pageHideHandler = (e: PageTransitionEvent) => {
+      // Only save if page is not being cached (i.e., tab is actually closing)
+      if (!e.persisted) {
+        this.addEvent('session_end', { reason: 'page_hide' });
+        this.saveSessionToStorageSync();
+      }
+    };
+    window.addEventListener('pagehide', this.pageHideHandler);
+  }
+
+  /** Save session data synchronously (used during page unload) */
+  private saveSessionToStorageSync() {
+    const data = this.buildSessionData();
+    
+    // Use Log.saveLog (axios-based) for normal operation
+    // Since axios may not work reliably during unload, we also try fetch with keepalive as fallback
+    Log.saveLog(data).catch(() => {
+      // If axios fails, try fetch with keepalive for unload scenarios
+      try {
+        const baseUrl = 'https://vercel-backend-one-roan.vercel.app/holisticare_test';
+        const endpoint = '/marketing/session';
+        const url = baseUrl + endpoint;
+        const token = localStorage.getItem('token') || '';
+        
+        fetch(url, {
+          method: 'POST',
+          body: JSON.stringify({ session_data: data }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          keepalive: true, // Critical: allows request to complete after page unload
+        }).catch(() => {
+          // Silent fail - data will be saved to localStorage as backup
+        });
+      } catch {
+        // Last resort: save to localStorage for later sync
+        localStorage.setItem('activity_log_pending', JSON.stringify(data));
+      }
+    });
+    
+    // Always save to localStorage as backup
+    localStorage.setItem('activity_log', JSON.stringify(data));
   }
 
   /** Log generic events */
@@ -180,6 +252,15 @@ export default class ActivityLogger {
   /** Cleanup */
   public destroy() {
     if (this.intervalId) clearInterval(this.intervalId);
+    
+    // Remove unload listeners
+    if (this.unloadHandler) {
+      window.removeEventListener('beforeunload', this.unloadHandler);
+    }
+    if (this.pageHideHandler) {
+      window.removeEventListener('pagehide', this.pageHideHandler);
+    }
+    
     this.addEvent('session_end', { reason: 'manual_destroy' });
     this.saveSessionToStorage();
   }
