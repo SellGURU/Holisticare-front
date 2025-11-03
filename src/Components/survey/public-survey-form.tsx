@@ -1261,7 +1261,7 @@ export function PublicSurveyForm({
       {currentQuestion && (
         <Card
           style={{ height: window.innerHeight - 200 + 'px' }}
-          className="bg-white shadow-xl overflow-y-scroll  border-0 flex flex-col relative"
+          className="bg-white shadow-xl   border-0 flex flex-col relative"
         >
           <CardHeader>
             <div
@@ -1281,7 +1281,7 @@ export function PublicSurveyForm({
               </CardDescription>
             )}
           </CardHeader>
-          <CardContent className="space-y-6   pb-20">
+          <CardContent className="space-y-6   pb-20 overflow-y-scroll" style={{height: window.innerHeight - 400 + 'px'}} >
             {renderQuestion(
               currentQuestion,
               getOriginalIndexForVisibleIndex(currentStep - 1),
