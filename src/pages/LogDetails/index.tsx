@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import SimpleDatePicker from '../../Components/SimpleDatePicker';
 import Admin from '../../api/Admin';
 
@@ -92,12 +92,13 @@ function mergeContiguousSessions(
 
       const lastEnd = new Date(current.endedAt).getTime();
       const nextStart = new Date(s.startedAt).getTime();
+      const sameUser = current.userId === s.userId;
       const sameDevice =
         current.userAgent?.deviceType === s.userAgent?.deviceType &&
         current.userAgent?.browser === s.userAgent?.browser;
 
-      // Merge if contiguous (overlap or small gap) and same device
-      if (sameDevice && nextStart - lastEnd <= gapThresholdMs) {
+      // Merge if contiguous (overlap or small gap), same user, and same device
+      if (sameUser && sameDevice && nextStart - lastEnd <= gapThresholdMs) {
         current = {
           ...current,
           sessionId: `${current.sessionId}+${s.sessionId}`,
@@ -157,19 +158,37 @@ function hasData<T>(val: unknown): val is { data: T } {
 
 const LogDetails = () => {
   const { id: clinicId } = useParams<{ id: string }>();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   // const [clinicIdInput, setClinicIdInput] = useState<string>(clinicId || '');
 
   const [data, setData] = useState<SessionLog[]>([]);
   const [kpis, setKpis] = useState<AnalyticsResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [fromDate, setFromDate] = useState<Date | null>(() => {
+  const [fromDate, setFromDateInternal] = useState<Date | null>(() => {
     const d = new Date();
     d.setDate(d.getDate() - 2);
     return d;
   });
-  const [toDate, setToDate] = useState<Date | null>(() => new Date());
+  const [toDate, setToDateInternal] = useState<Date | null>(() => new Date());
+
+  // Handler for fromDate that ensures it doesn't exceed toDate
+  const setFromDate = (date: Date | null) => {
+    if (date && toDate && date > toDate) {
+      // If fromDate is greater than toDate, set toDate to the same date
+      setToDateInternal(date);
+    }
+    setFromDateInternal(date);
+  };
+
+  // Handler for toDate that ensures it's not less than fromDate
+  const setToDate = (date: Date | null) => {
+    if (date && fromDate && date < fromDate) {
+      // If toDate is less than fromDate, don't update
+      return;
+    }
+    setToDateInternal(date);
+  };
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
@@ -274,6 +293,26 @@ const LogDetails = () => {
     <div className="p-4 md:p-6">
       <div className="mb-4 flex justify-between items-center gap-3">
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-1 hover:bg-gray-100 rounded-md transition-colors"
+            aria-label="Go back"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-Text-Primary"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
           <div className="text-[14px] font-medium text-Text-Primary">
             {clinicId}
           </div>
@@ -287,6 +326,7 @@ const LogDetails = () => {
               date={fromDate}
               setDate={setFromDate}
               placeholder="Select"
+              maxDate={toDate || new Date()}
             />
           </div>
           <div className="flex items-center ml-4 justify-start">
