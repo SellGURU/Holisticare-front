@@ -88,6 +88,17 @@ export const Overview: FC<OverviewProps> = ({
   const handleRemoveLookingForwards = (text: string) => {
     setLookingForwards(lookingForwardsData.filter((el: any) => el !== text));
   };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRemoveIssueFromList = (name: string) => {
+    setData(
+      data.map((item: any) => ({
+        ...item,
+        issue_list: item.issue_list.filter((issue: string) => issue !== name),
+      })),
+    );
+    handleRemoveLookingForwards(name);
+    setRefreshKey((k) => k + 1);
+  };
 
   return (
     <>
@@ -153,6 +164,7 @@ export const Overview: FC<OverviewProps> = ({
             setDetails={setDetails}
             setLookingForwards={setLookingForwards}
             lookingForwardsData={lookingForwardsData}
+            handleRemoveIssueFromList={handleRemoveIssueFromList}
           />
         </div>
 
@@ -188,7 +200,7 @@ export const Overview: FC<OverviewProps> = ({
               <>
                 <div
                   className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
-                  key={`${el.title}-${suggestionIndex}`}
+                  key={`${el.title}-${suggestionIndex}-${refreshKey}`}
                 >
                   <BioMarkerRowOldSuggestions
                     index={suggestionIndex}
@@ -201,6 +213,7 @@ export const Overview: FC<OverviewProps> = ({
                     setIssuesData={setDetails}
                     handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
                     handleRemoveLookingForwards={handleRemoveLookingForwards}
+                    handleRemoveIssueFromList={handleRemoveIssueFromList}
                   ></BioMarkerRowOldSuggestions>
                 </div>
               </>
