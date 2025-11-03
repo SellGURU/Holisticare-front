@@ -25,12 +25,12 @@ export default class ActivityLogger {
   private getOrCreateBrowserId(): string {
     const BROWSER_ID_KEY = 'browser_unique_id';
     let browserId = localStorage.getItem(BROWSER_ID_KEY);
-    
+
     if (!browserId) {
       browserId = uuidv4();
       localStorage.setItem(BROWSER_ID_KEY, browserId);
     }
-    
+
     return browserId;
   }
 
@@ -125,23 +125,24 @@ export default class ActivityLogger {
   /** Save session data synchronously (used during page unload) */
   private saveSessionToStorageSync() {
     const data = this.buildSessionData();
-    
+
     // Use Log.saveLog (axios-based) for normal operation
     // Since axios may not work reliably during unload, we also try fetch with keepalive as fallback
     Log.saveLog(data).catch(() => {
       // If axios fails, try fetch with keepalive for unload scenarios
       try {
-        const baseUrl = 'https://vercel-backend-one-roan.vercel.app/holisticare_test';
+        const baseUrl =
+          'https://vercel-backend-one-roan.vercel.app/holisticare_test';
         const endpoint = '/marketing/session';
         const url = baseUrl + endpoint;
         const token = localStorage.getItem('token') || '';
-        
+
         fetch(url, {
           method: 'POST',
           body: JSON.stringify({ session_data: data }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           keepalive: true, // Critical: allows request to complete after page unload
         }).catch(() => {
@@ -152,7 +153,7 @@ export default class ActivityLogger {
         localStorage.setItem('activity_log_pending', JSON.stringify(data));
       }
     });
-    
+
     // Always save to localStorage as backup
     localStorage.setItem('activity_log', JSON.stringify(data));
   }
@@ -252,7 +253,7 @@ export default class ActivityLogger {
   /** Cleanup */
   public destroy() {
     if (this.intervalId) clearInterval(this.intervalId);
-    
+
     // Remove unload listeners
     if (this.unloadHandler) {
       window.removeEventListener('beforeunload', this.unloadHandler);
@@ -260,7 +261,7 @@ export default class ActivityLogger {
     if (this.pageHideHandler) {
       window.removeEventListener('pagehide', this.pageHideHandler);
     }
-    
+
     this.addEvent('session_end', { reason: 'manual_destroy' });
     this.saveSessionToStorage();
   }
