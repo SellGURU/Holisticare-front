@@ -980,7 +980,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       <div className="text-Primary-DeepTeal font-medium text-xs">
                         Sync with Latest Data
                       </div>
-                      {client['Latest Sync'] !='No Data' &&
+                      {client['Latest Sync'] != 'No Data' && (
                         <div className="text-Text-Quadruple text-[8px]">
                           Last sync:{' '}
                           {/* {lastRefreshTime
@@ -988,7 +988,7 @@ const ClientCard: FC<ClientCardProps> = ({
                             : client['Latest Sync']} */}
                           {formatLastRefresh(client['Latest Sync'])}
                         </div>
-                      }
+                      )}
                     </div>
                   )}
                 </div>

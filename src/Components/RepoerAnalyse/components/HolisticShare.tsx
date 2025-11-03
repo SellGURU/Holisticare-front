@@ -41,8 +41,10 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
   }, []);
   return (
     <>
-      <div className={`flex ${isShareModalSuccess || isShared ?'items-start':'items-center'}  gap-6`}>
-        {isHtmlReportExists &&
+      <div
+        className={`flex ${isShareModalSuccess || isShared ? 'items-start' : 'items-center'}  gap-6`}
+      >
+        {isHtmlReportExists && (
           <>
             {isShareModalSuccess || isShared ? (
               <div className="flex flex-col items-center">
@@ -53,23 +55,28 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
                 <div className="text-Text-Fivefold text-[10px]">
                   on{' '}
                   {dateShare
-                    ? new Date(dateShare as string).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })
+                    ? new Date(dateShare as string).toLocaleDateString(
+                        'en-US',
+                        {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        },
+                      )
                     : 'just now'}
                 </div>
               </div>
             ) : (
               <>
-              {(shareable && !isShared)  &&
-                <div
-                  className={`rounded-[20px] flex items-center justify-center w-[168px] h-[26px] ${!(shareable && !isShared) || !isHtmlReportExists ? 'border-Primary-DeepTeal border' : 'bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen'}`}
-                >
-                  <ButtonPrimary
-                    disabled={!(shareable && !isShared) || !isHtmlReportExists}
-                    ClassName={`
+                {shareable && !isShared && (
+                  <div
+                    className={`rounded-[20px] flex items-center justify-center w-[168px] h-[26px] ${!(shareable && !isShared) || !isHtmlReportExists ? 'border-Primary-DeepTeal border' : 'bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen'}`}
+                  >
+                    <ButtonPrimary
+                      disabled={
+                        !(shareable && !isShared) || !isHtmlReportExists
+                      }
+                      ClassName={`
                         relative z-10 !w-[166px] !h-[24px] !rounded-[20px]
                         !bg-backgroundColor-Main !font-medium
                         !text-Primary-DeepTeal !text-xs !text-nowrap
@@ -77,24 +84,24 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
                         
                         ${!(shareable && !isShared) || !isHtmlReportExists ? 'opacity-50 cursor-not-allowed' : ''}
                         `}
-                    onClick={() => {
-                      // setIsShareModalOpen(true);
-                      publish('openShareModalHolisticPlan', {});
-                    }}
-                  >
-                    <img
-                      src="/icons/document-upload.svg"
-                      alt=""
-                      className="w-4 h-4"
-                    />
-                    Share with Client
-                  </ButtonPrimary>
-                </div>
-              }
+                      onClick={() => {
+                        // setIsShareModalOpen(true);
+                        publish('openShareModalHolisticPlan', {});
+                      }}
+                    >
+                      <img
+                        src="/icons/document-upload.svg"
+                        alt=""
+                        className="w-4 h-4"
+                      />
+                      Share with Client
+                    </ButtonPrimary>
+                  </div>
+                )}
               </>
             )}
           </>
-        }
+        )}
 
         <div className="flex flex-col items-center gap-1">
           <div
