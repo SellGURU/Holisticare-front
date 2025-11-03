@@ -138,6 +138,14 @@ const formatTimeRange = (startIso: string, endIso: string) => {
   const two = (n: number) => (n < 10 ? `0${n}` : `${n}`);
   return `${two(s.getHours())}:${two(s.getMinutes())} - ${two(e.getHours())}:${two(e.getMinutes())}`;
 };
+const formatMinutes = (minutes: number): string => {
+  if (minutes < 60) {
+    return `${minutes}m`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+};
 
 function hasData<T>(val: unknown): val is { data: T } {
   return (
@@ -167,34 +175,7 @@ const LogDetails = () => {
   );
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
 
-  const sessionDurations = useMemo(() => {
-    const totalMs = data.reduce((acc, s) => acc + s.totalActiveTimeMs, 0);
-    const totalMin = msToMin(totalMs);
-    // Average per day across selected date range (inclusive)
-    const start = fromDate ? toLocalDateOnly(fromDate) : null;
-    const end = toDate ? toLocalDateOnly(toDate) : null;
-    let days = 1;
-    if (start && end) {
-      const diff = end.getTime() - start.getTime();
-      days = Math.max(1, Math.floor(diff / (24 * 60 * 60 * 1000)) + 1);
-    }
-    const avgMin = Math.round(totalMs / days / 60000);
-    return { totalMin, avgMin, days };
-  }, [data, fromDate, toDate]);
-
-  const totalEvents = useMemo(() => {
-    return data.reduce((acc, s) => acc + (s.events?.length || 0), 0);
-  }, [data]);
-
-  const activityScore = useMemo(() => {
-    const days = sessionDurations.days || 1;
-    const minutesPerDay = sessionDurations.totalMin / days;
-    const eventsPerDay = totalEvents / days;
-    const minutesScore = Math.min(1, minutesPerDay / 60); // 60 دقیقه در روز = 100%
-    const eventsScore = Math.min(1, eventsPerDay / 30); // 30 ایونت در روز = 100%
-    const score = Math.round((minutesScore * 0.6 + eventsScore * 0.4) * 100);
-    return Math.max(0, Math.min(100, score));
-  }, [sessionDurations, totalEvents]);
+  // moved active/waiting calculation to use merged, filtered sessions
 
   const filtered = useMemo(() => {
     const sorted = [...data].sort(
@@ -216,6 +197,44 @@ const LogDetails = () => {
   const merged = useMemo(() => mergeContiguousSessions(filtered), [filtered]);
 
   // stats removed; top KPIs now come directly from API in kpis
+
+  const activeAndWaitingTime = useMemo(() => {
+    // Sum active time as inter-event activity with an inactivity threshold
+    // Use merged, date-filtered sessions so numbers match the visible list
+    if (!merged.length) {
+      return { activeTimeMin: 0, waitingTimeMin: 0 };
+    }
+
+    const inactivityThresholdMs = 2 * 60 * 1000; // 2 minutes of inactivity breaks activity
+
+    let activeTimeMs = 0;
+    let totalSessionDurationMs = 0;
+
+    merged.forEach((session) => {
+      const start = new Date(session.startedAt).getTime();
+      const end = new Date(session.endedAt).getTime();
+      totalSessionDurationMs += Math.max(0, end - start);
+
+      const eventTimes = (session.events || [])
+        .map((e) => new Date(e.timestamp).getTime())
+        .filter((t) => !Number.isNaN(t))
+        .sort((a, b) => a - b);
+
+      for (let i = 1; i < eventTimes.length; i++) {
+        const gap = eventTimes[i] - eventTimes[i - 1];
+        if (gap <= 0) continue;
+        // Count up to the inactivity threshold per gap
+        activeTimeMs += Math.min(gap, inactivityThresholdMs);
+      }
+    });
+
+    const waitingTimeMs = Math.max(0, totalSessionDurationMs - activeTimeMs);
+
+    return {
+      activeTimeMin: msToMin(activeTimeMs),
+      waitingTimeMin: msToMin(waitingTimeMs),
+    };
+  }, [merged]);
 
   const selectedSession = useMemo(
     () => merged.find((s) => s.sessionId === selectedSessionId) || merged[0],
@@ -382,31 +401,15 @@ const LogDetails = () => {
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">
-            Total Active (min)
-          </div>
+          <div className="text-[10px] text-Text-Secondary">Active Time</div>
           <div className="text-base font-semibold text-Text-Primary">
-            {sessionDurations.totalMin}
+            {formatMinutes(activeAndWaitingTime.activeTimeMin)}
           </div>
         </div>
         <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">
-            Avg Active (min)
-          </div>
+          <div className="text-[10px] text-Text-Secondary">Waiting Time</div>
           <div className="text-base font-semibold text-Text-Primary">
-            {sessionDurations.avgMin}
-          </div>
-        </div>
-        <div className="bg-white border border-Gray-50 rounded-xl p-3 shadow-100">
-          <div className="text-[10px] text-Text-Secondary">Activity Score</div>
-          <div className="text-base font-semibold text-Text-Primary">
-            {activityScore}
-            <span className="ml-1 text-[10px] text-Text-Secondary">/100</span>
-          </div>
-          <div
-            className={`text-[10px] mt-1 ${activityScore >= 60 ? 'text-green-600' : 'text-amber-600'}`}
-          >
-            {activityScore >= 60 ? 'Active' : 'Needs Attention'}
+            {formatMinutes(activeAndWaitingTime.waitingTimeMin)}
           </div>
         </div>
       </div>
@@ -452,7 +455,11 @@ const LogDetails = () => {
                           <span className="relative inline-block w-2 h-2 rounded-full bg-green-500"></span>
                         </span>
                       )}
-                      {s.events?.some((e) => e.eventName === 'api_error') && (
+                      {s.events?.some(
+                        (e) =>
+                          e.eventName === 'api_error' &&
+                          e.props?.status !== 406,
+                      ) && (
                         <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-2 align-middle" />
                       )}
                       <span className="align-middle">{s.userId}</span>
@@ -510,68 +517,87 @@ const LogDetails = () => {
             className=" overflow-auto pr-2"
             style={{ height: window.innerHeight - 500 + 'px' }}
           >
-            {selectedSession?.events.map((ev, idx) => {
-              const isExpanded = expandedEvents.has(ev.id);
-              return (
-                <div key={ev.id} className="relative pl-6 py-2">
-                  <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-Gray-50"></div>
-                  <div
-                    className={`absolute left-[-5px] top-[14px] w-3 h-3 rounded-full ${
-                      ev.eventName === 'api_error'
-                        ? 'bg-red-500'
-                        : 'bg-Primary-DeepTeal'
-                    }`}
-                  ></div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-[10px] md:text-xs text-Text-Primary font-medium">
-                      {idx + 1}. {ev.eventName}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="text-[10px] md:text-xs text-Text-Secondary">
-                        {new Date(ev.timestamp).toLocaleDateString()}
+            {selectedSession?.events
+              .filter((ev) => {
+                // Hide api_error events with status 406
+                if (
+                  ev.eventName === 'api_error' &&
+                  ev.props?.status === 406
+                ) {
+                  return false;
+                }
+                return true;
+              })
+              .map((ev, idx) => {
+                const isExpanded = expandedEvents.has(ev.id);
+                // For all events, only show message, route, title, and text in details
+                const propsToShow = Object.entries(ev.props || {}).filter(
+                  ([k]) =>
+                    k === 'message' ||
+                    k === 'route' ||
+                    k === 'title' ||
+                    k === 'text',
+                );
+                return (
+                  <div key={ev.id} className="relative pl-6 py-2">
+                    <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-Gray-50"></div>
+                    <div
+                      className={`absolute left-[-5px] top-[14px] w-3 h-3 rounded-full ${
+                        ev.eventName === 'api_error'
+                          ? 'bg-red-500'
+                          : 'bg-Primary-DeepTeal'
+                      }`}
+                    ></div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-[10px] md:text-xs text-Text-Primary font-medium">
+                        {idx + 1}. {ev.eventName}
                       </div>
-                      <button
-                        onClick={() => {
-                          setExpandedEvents((prev) => {
-                            const next = new Set(prev);
-                            if (isExpanded) {
-                              next.delete(ev.id);
-                            } else {
-                              next.add(ev.id);
-                            }
-                            return next;
-                          });
-                        }}
-                        className="text-[9px] md:text-[10px] text-Primary-DeepTeal hover:underline px-2 py-1 rounded"
-                      >
-                        {isExpanded ? 'Hide Details' : 'Show Details'}
-                      </button>
-                    </div>
-                  </div>
-                  {isExpanded && (
-                    <div className="mt-1 grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {Object.entries(ev.props || {}).map(([k, v]) => (
-                        <div
-                          key={k}
-                          className={`${
-                            ev.eventName === 'api_error'
-                              ? 'bg-red-50 border border-red-200'
-                              : 'bg-backgroundColor-Card'
-                          } rounded-md px-2 py-1`}
-                        >
-                          <span className="text-[9px] md:text-[10px] text-Text-Primary">
-                            {k}:
-                          </span>{' '}
-                          <span className="text-[9px] md:text-[10px] break-all text-Text-Secondary">
-                            {String(v)}
-                          </span>
+                      <div className="flex items-center gap-2">
+                        <div className="text-[10px] md:text-xs text-Text-Secondary">
+                          {new Date(ev.timestamp).toLocaleDateString()}
                         </div>
-                      ))}
+                        <button
+                          onClick={() => {
+                            setExpandedEvents((prev) => {
+                              const next = new Set(prev);
+                              if (isExpanded) {
+                                next.delete(ev.id);
+                              } else {
+                                next.add(ev.id);
+                              }
+                              return next;
+                            });
+                          }}
+                          className="text-[9px] md:text-[10px] text-Primary-DeepTeal hover:underline px-2 py-1 rounded"
+                        >
+                          {isExpanded ? 'Hide Details' : 'Show Details'}
+                        </button>
+                      </div>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                    {isExpanded && (
+                      <div className="mt-1 grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {propsToShow.map(([k, v]) => (
+                          <div
+                            key={k}
+                            className={`${
+                              ev.eventName === 'api_error'
+                                ? 'bg-red-50 border border-red-200'
+                                : 'bg-backgroundColor-Card'
+                            } rounded-md px-2 py-1`}
+                          >
+                            <span className="text-[9px] md:text-[10px] text-Text-Primary">
+                              {k}:
+                            </span>{' '}
+                            <span className="text-[9px] md:text-[10px] break-all text-Text-Secondary">
+                              {String(v)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             {!selectedSession && (
               <div className="py-6 text-[14px] text-center text-Text-Secondary">
                 No user journey details found
