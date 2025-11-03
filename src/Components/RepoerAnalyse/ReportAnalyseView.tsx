@@ -1025,10 +1025,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                   {TreatMentPlanData?.length > 0 && isHaveReport && !isShare ? (
                     <HolisticShare
-                      shareable={
-                        TreatMentPlanData[treatmentPlanData.length - 1]
-                          ?.shared_report_with_client === dateShare
-                      }
                       isHtmlReportExists={isHtmlReportExists}
                       isShareModalSuccess={isShareModalSuccess}
                       dateShare={dateShare}
