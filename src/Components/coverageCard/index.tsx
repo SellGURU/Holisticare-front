@@ -9,6 +9,7 @@ interface CoverageCardProps {
   setDetails: (details: any) => void;
   setLookingForwards: (values: any) => void;
   lookingForwardsData: any;
+  handleRemoveIssueFromList: (name: string) => void;
 }
 
 export const CoverageCard: React.FC<CoverageCardProps> = ({
@@ -17,6 +18,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
   setDetails,
   setLookingForwards,
   lookingForwardsData,
+  handleRemoveIssueFromList,
 }) => {
   // Clamp value to 0–100
   const safeProgress = Math.min(100, Math.max(0, progress));
@@ -103,6 +105,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                         alt=""
                         className="w-[20px] h-[20px] cursor-pointer"
                         onClick={() => {
+                          handleRemoveIssueFromList(text);
                           setDetails((prev: any) => {
                             const exists = prev.some((item: any) =>
                               Object.prototype.hasOwnProperty.call(item, text),
