@@ -268,7 +268,7 @@ const ClientCard: FC<ClientCardProps> = ({
     return () => clearInterval(interval);
   }, []);
   const formatLastRefresh = (date: string) => {
-    if (date == 'No Data') return 'No Data';
+    if (date == 'No Data') return '';
     const lastTime = lastRefreshTime == null ? new Date(date) : lastRefreshTime;
     // if (!lastRefreshTime) return '';
     const now = new Date();
@@ -980,13 +980,15 @@ const ClientCard: FC<ClientCardProps> = ({
                       <div className="text-Primary-DeepTeal font-medium text-xs">
                         Sync with Latest Data
                       </div>
-                      <div className="text-Text-Quadruple text-[8px]">
-                        Last sync:{' '}
-                        {/* {lastRefreshTime
-                          ? formatLastRefresh()
-                          : client['Latest Sync']} */}
-                        {formatLastRefresh(client['Latest Sync'])}
-                      </div>
+                      {client['Latest Sync'] != 'No Data' && (
+                        <div className="text-Text-Quadruple text-[8px]">
+                          Last sync:{' '}
+                          {/* {lastRefreshTime
+                            ? formatLastRefresh()
+                            : client['Latest Sync']} */}
+                          {formatLastRefresh(client['Latest Sync'])}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
