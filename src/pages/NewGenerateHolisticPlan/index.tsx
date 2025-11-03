@@ -258,6 +258,7 @@ const NewGenerateHolisticPlan = () => {
     category: string,
     recommendation: string,
     newIssueList: string[],
+    text?: string,
   ) => {
     setTratmentPlanData((pre: any) => {
       return {
@@ -271,6 +272,28 @@ const NewGenerateHolisticPlan = () => {
           }
           return item;
         }),
+      };
+    });
+    if (text) {
+      handleAddLookingForwards(text);
+    }
+  };
+  const handleAddLookingForwards = (text: string) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        looking_forwards: [
+          ...pre.looking_forwards,
+          'Issue ' + (pre.looking_forwards.length + 1) + ': ' + text,
+        ],
+      };
+    });
+  };
+  const handleRemoveLookingForwards = (text: string) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        looking_forwards: pre.looking_forwards.filter((el: any) => el !== text),
       };
     });
   };
@@ -462,6 +485,15 @@ const NewGenerateHolisticPlan = () => {
                       progress={coverageProgess}
                       details={coverageDetails}
                       setDetails={setcoverageDetails}
+                      setLookingForwards={(newLookingForwards) => {
+                        setTratmentPlanData((pre: any) => {
+                          return {
+                            ...pre,
+                            looking_forwards: newLookingForwards,
+                          };
+                        });
+                      }}
+                      lookingForwardsData={treatmentPlanData?.looking_forwards}
                     />
                   </div>
                 )}
@@ -538,6 +570,9 @@ const NewGenerateHolisticPlan = () => {
                                           value={el}
                                           index={suggestionIndex}
                                           issuesData={coverageDetails}
+                                          handleRemoveLookingForwards={
+                                            handleRemoveLookingForwards
+                                          }
                                           handleUpdateIssueListByKey={
                                             handleUpdateIssueListByKeys
                                           }
