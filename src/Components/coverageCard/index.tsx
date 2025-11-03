@@ -7,12 +7,16 @@ interface CoverageCardProps {
   progress: number; // from 0 to 100
   details: Record<string, boolean>[];
   setDetails: (details: any) => void;
+  setLookingForwards: (values: any) => void;
+  lookingForwardsData: any;
 }
 
 export const CoverageCard: React.FC<CoverageCardProps> = ({
   progress,
   details,
   setDetails,
+  setLookingForwards,
+  lookingForwardsData,
 }) => {
   // Clamp value to 0–100
   const safeProgress = Math.min(100, Math.max(0, progress));
@@ -42,6 +46,10 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
     const name = 'Issue ' + (details.length + 1) + ': ' + issue;
     const newIssueList = [...details, { [name]: false }];
     setDetails(newIssueList);
+    setLookingForwards([
+      ...lookingForwardsData,
+      'Issue ' + (lookingForwardsData.length + 1) + ': ' + issue,
+    ]);
     setNewIssue('');
     setAddIssue(false);
   };
