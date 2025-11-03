@@ -474,6 +474,15 @@ export const GenerateRecommendation = () => {
                   };
                 });
               }}
+              setLookingForwards={(newLookingForwards) => {
+                setTratmentPlanData((pre: any) => {
+                  return {
+                    ...pre,
+                    looking_forwards: newLookingForwards,
+                  };
+                });
+              }}
+              lookingForwardsData={treatmentPlanData?.looking_forwards}
               data={treatmentPlanData?.suggestion_tab}
             ></SetOrders>
           ) : (
@@ -494,6 +503,15 @@ export const GenerateRecommendation = () => {
                 });
               }}
               data={treatmentPlanData?.suggestion_tab}
+              setLookingForwards={(newLookingForwards) => {
+                setTratmentPlanData((pre: any) => {
+                  return {
+                    ...pre,
+                    looking_forwards: newLookingForwards,
+                  };
+                });
+              }}
+              lookingForwardsData={treatmentPlanData?.looking_forwards}
             ></Overview>
           )}
         </div>
