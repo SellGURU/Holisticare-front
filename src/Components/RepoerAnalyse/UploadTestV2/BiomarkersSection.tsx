@@ -37,6 +37,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 }) => {
   const [changedRows, setChangedRows] = useState<number[]>([]);
   const [mappedRows, setMappedRows] = useState<number[]>([]);
+  const [mappingStatus, setMappingStatus] = useState<
+    Record<number, 'added' | 'removed' | null>
+  >({});
 
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -299,25 +302,36 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     try {
       if (mappedRows.includes(index)) {
-        // 🔹 Already mapped → remove mapping
+        // 🔴 Remove mapping
         await Application.remove_mapping({
           extracted_biomarker: extracted,
           system_biomarker: system,
         });
         setMappedRows((prev) => prev.filter((i) => i !== index));
+
+        // Show red div for 5 seconds
+        setMappingStatus((prev) => ({ ...prev, [index]: 'removed' }));
+        setTimeout(() => {
+          setMappingStatus((prev) => ({ ...prev, [index]: null }));
+        }, 5000);
       } else {
-        // 🔹 Not mapped → add mapping
+        // 🟢 Add mapping
         await Application.add_mapping({
           extracted_biomarker: extracted,
           system_biomarker: system,
         });
         setMappedRows((prev) => [...prev, index]);
+
+        // Show green div for 5 seconds
+        setMappingStatus((prev) => ({ ...prev, [index]: 'added' }));
+        setTimeout(() => {
+          setMappingStatus((prev) => ({ ...prev, [index]: null }));
+        }, 5000);
       }
     } catch (err) {
       console.error('Mapping toggle failed:', err);
     }
   };
-  console.log(mappedRows);
 
   return (
     <div
@@ -517,21 +531,40 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             />
                           </div>
                         ) : (
-                          <div className="flex items-center justify-end w-[47px] pl-8 md:pl-5 gap-1">
+                          <div className="relative flex items-center justify-end  pl-8 md:pl-5 gap-1">
+                            {/* Status Div */}
+                            {mappingStatus[index] === 'added' && (
+                              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
+                                <img
+                                  src="/icons/tick-circle-green-new.svg"
+                                  alt=""
+                                />
+                                Mapping saved for future uploads.
+                              </div>
+                            )}
+                            {mappingStatus[index] === 'removed' && (
+                               <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[220px]  rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
+                                <img
+                                  src="/icons/info-circle-orange.svg"
+                                  alt=""
+                                />
+                               This mapping will only be used for this upload.
+                              </div>
+                            )}
+
                             {(changedRows.includes(index) ||
                               mappedRows.includes(index)) && (
                               <img
-                               src={
-    mappedRows.includes(index)
-      ? '/icons/save-2-fill.svg'
-      : '/icons/save-2.svg'
-  }
+                                src={
+                                  mappedRows.includes(index)
+                                    ? '/icons/save-2-fill.svg'
+                                    : '/icons/save-2.svg'
+                                }
                                 alt="Mapping toggle"
                                 className="cursor-pointer w-4 h-4"
                                 onClick={() => handleMappingToggle(index)}
                               />
                             )}
-
                             <img
                               src="/icons/trash-blue.svg"
                               alt="Delete"
