@@ -20,6 +20,7 @@ interface ActivityCardProps {
     text?: string,
   ) => void;
   handleRemoveLookingForwards: (text: string) => void;
+  handleRemoveIssueFromList: (name: string) => void;
 }
 
 export const ActivityCard: FC<ActivityCardProps> = ({
@@ -31,6 +32,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   setIssuesData,
   handleUpdateIssueListByKey,
   handleRemoveLookingForwards,
+  handleRemoveIssueFromList: handleRemoveIssueFromListData,
 }) => {
   const { positive, negative } = splitInstructions(item.Instruction);
   const [Conflicts] = useState<Array<any>>(item?.flag?.conflicts);
@@ -109,6 +111,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   };
 
   const handleRemoveIssueFromList = (name: string) => {
+    handleRemoveIssueFromListData(name);
     setIssuesData((prev: any) => {
       const exists = prev.some((item: any) =>
         Object.prototype.hasOwnProperty.call(item, name),
