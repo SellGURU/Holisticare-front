@@ -520,10 +520,7 @@ const LogDetails = () => {
             {selectedSession?.events
               .filter((ev) => {
                 // Hide api_error events with status 406
-                if (
-                  ev.eventName === 'api_error' &&
-                  ev.props?.status === 406
-                ) {
+                if (ev.eventName === 'api_error' && ev.props?.status === 406) {
                   return false;
                 }
                 return true;
