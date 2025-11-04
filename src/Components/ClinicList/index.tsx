@@ -42,8 +42,8 @@ const ClinicList = () => {
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className="p-4">
-          <div className="mb-3 flex items-center justify-between gap-3">
+        <>
+          <div className="sticky p-4 top-0 pt-6 bg-bg-color z-10  pb-1 mb-3 flex items-center justify-between gap-3">
             <div className="text-sm text-Text-Primary font-medium">
               Clinic List
             </div>
@@ -59,31 +59,17 @@ const ClinicList = () => {
               className="w-full md:w-96 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-Primary-DeepTeal/40"
               type="text"
             /> */}
-          </div>
-          <div className="overflow-x-auto bg-white rounded-xl shadow border border-gray-100 max-h-[75vh] overflow-y-auto">
-            <table className="min-w-full text-left">
-              <thead className="bg-gray-50 sticky top-0 z-10">
-                <tr>
-                  <th className="px-4 py-3 text-sm font-semibold text-gray-700">
-                    Logo
-                  </th>
-                  <th className="px-4 py-3 text-sm font-semibold text-gray-700">
-                    Email
-                  </th>
-                  <th className="px-4 py-3 text-sm font-semibold text-gray-700">
-                    Clinic name
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {clinics?.length === 0 ? (
-                  <tr>
-                    <td className="px-4 py-4 text-sm text-gray-500" colSpan={2}>
-                      No clinics found.
-                    </td>
-                  </tr>
-                ) : (
-                  clinics
+          </div>        
+          <div className="p-4">
+
+            <div>
+              {clinics?.length === 0 ? (
+                <div className="bg-white rounded-xl shadow border border-gray-100 p-8 text-center">
+                  <p className="text-sm text-gray-500">No clinics found.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {clinics
                     ?.filter((c) => {
                       const q = search.trim().toLowerCase();
                       if (!q) return true;
@@ -92,41 +78,39 @@ const ClinicList = () => {
                       return email.includes(q) || name.includes(q);
                     })
                     ?.map((clinic, idx) => (
-                      <tr
+                      <Link
                         key={clinic.clinic_email + idx}
-                        className={idx % 2 === 1 ? 'bg-gray-50' : ''}
+                        to={'/log/' + clinic.clinic_email}
+                        className="bg-white rounded-xl shadow border border-gray-100 p-4 hover:shadow-lg hover:border-Primary-DeepTeal transition-all duration-200 cursor-pointer"
                       >
-                        <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
                           {clinic.clinic_logo ? (
                             <img
                               src={clinic.clinic_logo}
                               alt={clinic.clinic_name ?? clinic.clinic_email}
-                              className="h-12 w-12 rounded-full object-cover border border-gray-200"
+                              className="h-16 w-16 rounded-full object-cover border border-gray-200 flex-shrink-0"
                             />
                           ) : (
-                            <div className="h-12 w-12 rounded-full bg-gray-200 border border-gray-200 flex items-center justify-center text-sm font-semibold text-gray-700">
+                            <div className="h-16 w-16 rounded-full bg-gray-200 border border-gray-200 flex items-center justify-center text-lg font-semibold text-gray-700 flex-shrink-0">
                               {getEmailInitials(clinic.clinic_email)}
                             </div>
                           )}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-Primary-DeepTeal">
-                          <Link
-                            to={'/log/' + clinic.clinic_email}
-                            className="hover:underline"
-                          >
-                            {clinic.clinic_email}
-                          </Link>
-                        </td>
-                        <td className="px-4 py-3 text-sm text-Text-Primary">
-                          {clinic.clinic_name ?? '-'}
-                        </td>
-                      </tr>
-                    ))
-                )}
-              </tbody>
-            </table>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-Text-Primary truncate">
+                              {clinic.clinic_name ?? '-'}
+                            </p>
+                            <p className="text-[10px] text-Primary-DeepTeal truncate mt-1">
+                              {clinic.clinic_email}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
