@@ -68,11 +68,16 @@ export const GenerateRecommendation = () => {
     const selectedInterventions =
       treatmentPlanData?.suggestion_tab?.filter((item: any) => item.checked) ||
       [];
+    const payload =
+      treatmentPlanData?.looking_forwards?.map((issue: string) => ({
+        [issue]: false,
+      })) || [];
 
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
-      key_areas_to_address: treatmentPlanData?.looking_forwards || [],
+      key_areas_to_address:
+        coverageDetails.length > 0 ? coverageDetails : payload,
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
@@ -90,12 +95,10 @@ export const GenerateRecommendation = () => {
       });
   }, [treatmentPlanData, id]);
 
-  console.log(coverageDetails);
-
   const hasEssentialData = (data: any) => {
     return (
       // data?.client_insight &&
-      // data?.client_insight?.length > 0 &&
+      // data.client_insight.length > 0 &&
       data?.completion_suggestion
       // data.completion_suggestion.length > 0
       // data?.looking_forwards &&
@@ -449,6 +452,7 @@ export const GenerateRecommendation = () => {
             <SetOrders
               progress={coverageProgess}
               details={coverageDetails}
+              setDetails={setcoverageDetails}
               activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}
               visibleCategoriy={VisibleCategories}
@@ -471,7 +475,6 @@ export const GenerateRecommendation = () => {
               }}
               treatMentPlanData={treatmentPlanData}
               setData={(newOrders) => {
-                console.log(newOrders);
                 setTratmentPlanData((pre: any) => {
                   return {
                     ...pre,
@@ -479,6 +482,15 @@ export const GenerateRecommendation = () => {
                   };
                 });
               }}
+              setLookingForwards={(newLookingForwards) => {
+                setTratmentPlanData((pre: any) => {
+                  return {
+                    ...pre,
+                    looking_forwards: newLookingForwards,
+                  };
+                });
+              }}
+              lookingForwardsData={treatmentPlanData?.looking_forwards}
               data={treatmentPlanData?.suggestion_tab}
             ></SetOrders>
           ) : (
@@ -489,6 +501,25 @@ export const GenerateRecommendation = () => {
               suggestionsChecked={checkedSuggestions}
               treatmentPlanData={treatmentPlanData}
               Conflicts={Conflicts}
+              setDetails={setcoverageDetails}
+              setData={(newOrders) => {
+                setTratmentPlanData((pre: any) => {
+                  return {
+                    ...pre,
+                    suggestion_tab: newOrders,
+                  };
+                });
+              }}
+              data={treatmentPlanData?.suggestion_tab}
+              setLookingForwards={(newLookingForwards) => {
+                setTratmentPlanData((pre: any) => {
+                  return {
+                    ...pre,
+                    looking_forwards: newLookingForwards,
+                  };
+                });
+              }}
+              lookingForwardsData={treatmentPlanData?.looking_forwards}
             ></Overview>
           )}
         </div>

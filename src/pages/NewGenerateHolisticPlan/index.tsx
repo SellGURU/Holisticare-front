@@ -34,7 +34,6 @@ const NewGenerateHolisticPlan = () => {
   const [active, setActive] = useState<string>('Recommendation');
   const [clientGools, setClientGools] = useState<any>({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
-  console.log('treatmentPlanData => generate ', treatmentPlanData);
   const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
   const [isFinalLoading, setisFinalLoading] = useState(false);
   const [coverageProgess, setcoverageProgess] = useState(0);
@@ -45,11 +44,16 @@ const NewGenerateHolisticPlan = () => {
 
     // ✅ Only include checked items
     const selectedInterventions = treatmentPlanData?.suggestion_tab || [];
+    const payload =
+      treatmentPlanData?.looking_forwards?.map((issue: string) => ({
+        [issue]: false,
+      })) || [];
 
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
-      looking_forwards: treatmentPlanData?.looking_forwards,
+      key_areas_to_address:
+        coverageDetails.length > 0 ? coverageDetails : payload,
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
@@ -250,6 +254,63 @@ const NewGenerateHolisticPlan = () => {
     }
   }, [isSaving]);
   const [isToggle, setisToggle] = useState(false);
+  const handleUpdateIssueListByKeys = (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+    text?: string,
+  ) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        suggestion_tab: pre.suggestion_tab.map((item: any) => {
+          if (
+            item.Category === category &&
+            item.Recommendation === recommendation
+          ) {
+            return { ...item, issue_list: newIssueList };
+          }
+          return item;
+        }),
+      };
+    });
+    if (text) {
+      handleAddLookingForwards(text);
+    }
+  };
+  const handleAddLookingForwards = (text: string) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        looking_forwards: [
+          ...pre.looking_forwards,
+          'Issue ' + (pre.looking_forwards.length + 1) + ': ' + text,
+        ],
+      };
+    });
+  };
+  const handleRemoveLookingForwards = (text: string) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        looking_forwards: pre.looking_forwards.filter((el: any) => el !== text),
+      };
+    });
+  };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRemoveIssueFromList = (name: string) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        suggestion_tab: pre.suggestion_tab.map((item: any) => ({
+          ...item,
+          issue_list: item.issue_list.filter((issue: string) => issue !== name),
+        })),
+      };
+    });
+    handleRemoveLookingForwards(name);
+    setRefreshKey((k) => k + 1);
+  };
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -437,6 +498,17 @@ const NewGenerateHolisticPlan = () => {
                     <CoverageCard
                       progress={coverageProgess}
                       details={coverageDetails}
+                      setDetails={setcoverageDetails}
+                      setLookingForwards={(newLookingForwards) => {
+                        setTratmentPlanData((pre: any) => {
+                          return {
+                            ...pre,
+                            looking_forwards: newLookingForwards,
+                          };
+                        });
+                      }}
+                      lookingForwardsData={treatmentPlanData?.looking_forwards}
+                      handleRemoveIssueFromList={handleRemoveIssueFromList}
                     />
                   </div>
                 )}
@@ -506,12 +578,23 @@ const NewGenerateHolisticPlan = () => {
                                     <>
                                       <div
                                         className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
-                                        key={`${el.title}-${suggestionIndex}`}
+                                        key={`${el.title}-${suggestionIndex}-${refreshKey}`}
                                       >
                                         <BioMarkerRowSuggestions
                                           editAble
                                           value={el}
                                           index={suggestionIndex}
+                                          issuesData={coverageDetails}
+                                          handleRemoveLookingForwards={
+                                            handleRemoveLookingForwards
+                                          }
+                                          handleRemoveIssueFromList={
+                                            handleRemoveIssueFromList
+                                          }
+                                          handleUpdateIssueListByKey={
+                                            handleUpdateIssueListByKeys
+                                          }
+                                          setIssuesData={setcoverageDetails}
                                           onEdit={(editData) => {
                                             setTratmentPlanData((pre: any) => {
                                               const oldsData: any = { ...pre };
