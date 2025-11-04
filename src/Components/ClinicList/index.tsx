@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Circleloader from '../CircleLoader';
 import Admin from '../../api/Admin';
-
+import SearchBox from '../SearchBox';
 const ClinicList = () => {
   const [isLoading, setIsLoading] = useState(true);
   interface Clinic {
@@ -44,13 +44,15 @@ const ClinicList = () => {
       ) : (
         <div className="p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <input
+            <div className='text-sm text-Text-Primary font-medium'>Clinic List</div>
+            <SearchBox placeHolder='Search by email or clinic name...' value={search} onSearch={(e) => setSearch(e.target.value)}/>
+            {/* <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by email or clinic name..."
               className="w-full md:w-96 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-Primary-DeepTeal/40"
               type="text"
-            />
+            /> */}
           </div>
           <div className="overflow-x-auto bg-white rounded-xl shadow border border-gray-100 max-h-[75vh] overflow-y-auto">
             <table className="min-w-full text-left">
