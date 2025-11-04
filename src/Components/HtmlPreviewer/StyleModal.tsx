@@ -5,6 +5,8 @@ interface StyleModalProps {
   onClose: () => void;
   onApplyStyle: (styles: ElementStyles) => void;
   currentStyles?: ElementStyles;
+  selectedText: string;
+  onUpdatePreviewText: (text: string) => void;
 }
 
 export interface ElementStyles {
@@ -32,9 +34,15 @@ export default function StyleModal({
   onClose,
   onApplyStyle,
   currentStyles = defaultStyles,
+  selectedText,
+  onUpdatePreviewText,
 }: StyleModalProps) {
   const [styles, setStyles] = useState<ElementStyles>(currentStyles);
   const [previewText, setPreviewText] = useState('Preview Text');
+
+  useEffect(() => {
+    setPreviewText(selectedText);
+  }, [selectedText]);
 
   // Update styles when currentStyles prop changes
   useEffect(() => {
@@ -51,6 +59,7 @@ export default function StyleModal({
   };
 
   const handleApply = () => {
+    onUpdatePreviewText(previewText);
     onApplyStyle(styles);
     onClose();
   };
@@ -145,11 +154,18 @@ export default function StyleModal({
           </div>
 
           <div className="space-y-4">
-            {/* Font Weight */}
+            {/* Text */}
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Font Weight
-              </label>
+              <label className="block text-sm font-medium mb-2">Text</label>
+              <textarea
+                value={previewText}
+                onChange={(e) => setPreviewText(e.target.value)}
+                className="w-full p-2 border rounded min-h-[100px] resize-none text-sm"
+                placeholder="Enter text..."
+              />
+            </div>
+
+            <div>
               <select
                 value={styles.fontWeight}
                 onChange={(e) =>
