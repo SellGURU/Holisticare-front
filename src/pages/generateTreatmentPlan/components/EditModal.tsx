@@ -74,6 +74,7 @@ const EditModal: FC<EditModalProps> = ({
     foods_to_avoid: string[];
     exercises_to_do: string[];
     exercises_to_avoid: string[];
+    issue_list: string[];
   }
   const [formData, setFormData] = useState<FormValues>({
     Category: defalts?.Category || '',
@@ -90,6 +91,7 @@ const EditModal: FC<EditModalProps> = ({
     Notes: defalts?.['Client Notes'] || notes,
     PractitionerComments:
       defalts?.['Practitioner Comments'] || practitionerComments,
+    issue_list: defalts?.issue_list || [],
   });
   const updateFormData = (key: keyof typeof formData, value: any) => {
     setFormData((prevTheme) => ({
@@ -112,6 +114,7 @@ const EditModal: FC<EditModalProps> = ({
       foods_to_avoid: [],
       exercises_to_do: [],
       exercises_to_avoid: [],
+      issue_list: [],
     });
     setNewNote('');
     setNotes([]);
@@ -164,7 +167,7 @@ const EditModal: FC<EditModalProps> = ({
           ? [...formData.exercises_to_do, exercisesToDoValue]
           : formData.exercises_to_do,
       'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-      issue_list: [],
+      issue_list: formData.issue_list.length > 0 ? formData.issue_list : [],
     });
     onClose();
     clearFields();
