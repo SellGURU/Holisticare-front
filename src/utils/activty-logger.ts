@@ -2,6 +2,7 @@
 // utils/ActivityLogger.ts
 import { v4 as uuidv4 } from 'uuid';
 import Log from '../api/Log';
+import { getTokenFromLocalStorage } from '../store/token';
 
 export default class ActivityLogger {
   private static instance: ActivityLogger;
@@ -293,31 +294,9 @@ export default class ActivityLogger {
 
     // Use Log.saveLog (axios-based) for normal operation
     // Since axios may not work reliably during unload, we also try fetch with keepalive as fallback
-    Log.saveLog(data).catch(() => {
-      // If axios fails, try fetch with keepalive for unload scenarios
-      try {
-        const baseUrl =
-          'https://vercel-backend-one-roan.vercel.app/holisticare_test';
-        const endpoint = '/marketing/session';
-        const url = baseUrl + endpoint;
-        const token = localStorage.getItem('token') || '';
-
-        fetch(url, {
-          method: 'POST',
-          body: JSON.stringify({ session_data: data }),
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          keepalive: true, // Critical: allows request to complete after page unload
-        }).catch(() => {
-          // Silent fail - data will be saved to localStorage as backup
-        });
-      } catch {
-        // Last resort: save to localStorage for later sync
-        localStorage.setItem('activity_log_pending', JSON.stringify(data));
-      }
-    });
+    if(getTokenFromLocalStorage()!=null) {
+      Log.saveLog(data).catch(() => {});
+    }
 
     // Always save to localStorage as backup
     localStorage.setItem('activity_log', JSON.stringify(data));
@@ -436,7 +415,9 @@ export default class ActivityLogger {
   private saveSessionToStorage() {
     const data = this.buildSessionData();
     console.log(data);
-    Log.saveLog(data).catch(() => {});
+    if(getTokenFromLocalStorage()!=null) {
+      Log.saveLog(data).catch(() => {});
+    }
     localStorage.setItem('activity_log', JSON.stringify(data));
   }
 
