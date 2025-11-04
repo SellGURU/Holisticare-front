@@ -1092,6 +1092,12 @@ class Application extends Api {
       member_id: member_id,
     });
   };
+  static add_mapping = (data: any) => {
+    return this.post('/add_clinic_biomarker_mapping', data);
+  };
+  static remove_mapping = (data: any) => {
+    return this.post('/remove_clinic_biomarker_mapping', data);
+  };
 }
 
 export default Application;
