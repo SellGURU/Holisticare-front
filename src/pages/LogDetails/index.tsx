@@ -566,7 +566,10 @@ const LogDetails = () => {
                   return false;
                 }
                 // Hide session_start and session_end events
-                if (ev.eventName === 'session_start' || ev.eventName === 'session_end') {
+                if (
+                  ev.eventName === 'session_start' ||
+                  ev.eventName === 'session_end'
+                ) {
                   return false;
                 }
                 return true;
