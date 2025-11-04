@@ -5,6 +5,7 @@ import { version } from '../../../package.json';
 
 import { menus } from './menu';
 import { subscribe } from '../../utils/event';
+import Auth from '../../api/auth';
 interface sideMenuProps {
   onClose: () => void;
 }
@@ -202,6 +203,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                 ))}
               </div>
             ))}
+
             <div className="md:hidden text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
               Powered by
               <img src="/images/sidebar-final.svg" alt="Powered by" />
@@ -219,6 +221,24 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
           </div>
           <div className="text-center text-[8px] text-[#888888] font-medium">
             V{version}
+          </div>
+          <div
+            onClick={() => {
+              Auth.logOut();
+              localStorage.clear();
+              window.location.reload();
+            }}
+            onTouchEnd={() => {
+              Auth.logOut();
+              localStorage.clear();
+              window.location.reload();
+            }}
+            className="flex gap-1 justify-center mr-5 cursor-pointer"
+          >
+            <img src="/icons/logout.svg" alt="" />
+            <div className="text-[12px] font-medium text-Primary-DeepTeal">
+              Log out
+            </div>
           </div>
         </div>
       </div>

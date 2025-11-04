@@ -44,8 +44,14 @@ const ClinicList = () => {
       ) : (
         <div className="p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <div className='text-sm text-Text-Primary font-medium'>Clinic List</div>
-            <SearchBox placeHolder='Search by email or clinic name...' value={search} onSearch={(e) => setSearch(e.target.value)}/>
+            <div className="text-sm text-Text-Primary font-medium">
+              Clinic List
+            </div>
+            <SearchBox
+              placeHolder="Search by email or clinic name..."
+              value={search}
+             onSearch={(val) => setSearch(val)} 
+            />
             {/* <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
