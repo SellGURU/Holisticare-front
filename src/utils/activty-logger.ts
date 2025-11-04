@@ -15,23 +15,188 @@ export default class ActivityLogger {
   private pageHideHandler: ((e: PageTransitionEvent) => void) | null = null;
 
   private constructor() {
-    this.userId = this.getOrCreateBrowserId();
+    this.userId = null; // Will be set asynchronously
     this.sessionId = uuidv4();
     this.sessionStartTime = Date.now();
     this.init();
+    // Initialize browser ID asynchronously
+    this.initializeBrowserId();
+  }
+
+  /** Initialize browser ID asynchronously */
+  private async initializeBrowserId() {
+    this.userId = await this.getOrCreateBrowserId();
   }
 
   /** Get or create a unique browser ID */
-  private getOrCreateBrowserId(): string {
+  private async getOrCreateBrowserId(): Promise<string> {
     const BROWSER_ID_KEY = 'browser_unique_id';
     let browserId = localStorage.getItem(BROWSER_ID_KEY);
 
     if (!browserId) {
-      browserId = uuidv4();
+      // Get user email from localStorage
+      const email = localStorage.getItem('email') || '';
+
+      // Try to get user data from localStorage (for auth context)
+      let userName = '';
+      try {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          const user = JSON.parse(userData);
+          userName = user?.name || user?.email || user?.username || '';
+        }
+      } catch {
+        // Ignore parse errors
+      }
+
+      // Try to get Chrome account name from Credential Management API
+      const chromeAccountName = await this.getChromeAccountName();
+
+      // Get system/platform information
+      const platform = this.getSystemInfo();
+
+      // Get a short unique ID (first 8 characters of UUID)
+      const shortId = uuidv4().substring(0, 8);
+
+      // Build readable browser ID
+      const parts: string[] = [];
+
+      // Priority: Chrome account name > email > user name
+      const userIdentifier = chromeAccountName || email || userName;
+      if (userIdentifier) {
+        // Remove @ and domain for shorter ID, or use first part of email
+        const identifierPart = userIdentifier.includes('@')
+          ? userIdentifier.split('@')[0]
+          : userIdentifier;
+        // Clean identifier: remove special characters, keep only alphanumeric and dots/dashes
+        const cleanIdentifier = identifierPart
+          .replace(/[^a-zA-Z0-9._-]/g, '')
+          .slice(0, 30);
+        if (cleanIdentifier) {
+          parts.push(cleanIdentifier);
+        }
+      }
+
+      // Add platform name
+      parts.push(platform);
+
+      // Add short unique ID
+      parts.push(shortId);
+
+      browserId = parts.join('-');
       localStorage.setItem(BROWSER_ID_KEY, browserId);
     }
 
     return browserId;
+  }
+
+  /** Try to get Chrome account name from Credential Management API or Google services */
+  private async getChromeAccountName(): Promise<string> {
+    try {
+      // Method 1: Try Credential Management API (if user has saved credentials)
+      if (
+        'credentials' in navigator &&
+        'get' in (navigator as any).credentials
+      ) {
+        try {
+          const cred = await (navigator.credentials as any).get({
+            password: true,
+            mediation: 'silent' as any,
+          });
+          if (cred && (cred as any).id) {
+            const accountId = (cred as any).id;
+            // If it looks like an email, return it
+            if (accountId.includes('@')) {
+              return accountId;
+            }
+          }
+        } catch {
+          // Credential API not available or user denied
+        }
+      }
+
+      // Method 2: Try to get from Chrome's stored Google accounts
+      // Note: This only works if user has granted permission via Google OAuth
+      // Check if there's a Google OAuth token in localStorage
+      const googleToken =
+        localStorage.getItem('google_oauth_token') ||
+        sessionStorage.getItem('google_oauth_token');
+
+      if (googleToken) {
+        try {
+          const response = await fetch(
+            'https://www.googleapis.com/oauth2/v3/userinfo',
+            {
+              headers: {
+                Authorization: `Bearer ${googleToken}`,
+              },
+            },
+          );
+          if (response.ok) {
+            const userInfo = await response.json();
+            return userInfo.name || userInfo.email || '';
+          }
+        } catch {
+          // API call failed
+        }
+      }
+
+      // Method 3: Check if user info is stored from Google login (from AuthWithGoogle component)
+      // This would be in localStorage if user logged in with Google
+      try {
+        const googleUserData = localStorage.getItem('google_user_data');
+        if (googleUserData) {
+          const userData = JSON.parse(googleUserData);
+          return userData.name || userData.email || '';
+        }
+      } catch {
+        // No stored Google data
+      }
+
+      // Method 4: Try to detect Chrome profile name from user agent or other browser APIs
+      // Note: This is limited due to privacy restrictions
+      // Chrome sometimes includes profile info in user agent, but this is unreliable
+      // Direct access to Chrome profile name is not available via web APIs for security reasons
+    } catch (error) {
+      // Silently fail - this is not critical
+      console.debug('Could not get Chrome account name:', error);
+    }
+
+    return '';
+  }
+
+  /** Get system/platform information */
+  private getSystemInfo(): string {
+    const ua = navigator.userAgent;
+
+    // Try to get platform from userAgentData (modern browsers)
+    const platform = (navigator as any).userAgentData?.platform;
+    if (platform) {
+      return platform.toLowerCase().replace(/\s+/g, '-');
+    }
+
+    // Fallback to parsing userAgent
+    const osMatch = ua.match(
+      /(Windows NT|Macintosh|Linux|Android|iOS|iPhone|iPad)/i,
+    );
+    if (osMatch) {
+      let os = osMatch[0].toLowerCase();
+      // Normalize Windows versions
+      if (os.includes('windows')) {
+        const winVersion = ua.match(/Windows NT (\d+\.\d+)/);
+        if (winVersion) {
+          const version = parseFloat(winVersion[1]);
+          if (version >= 10) os = 'windows-10';
+          else if (version >= 6.3) os = 'windows-8.1';
+          else if (version >= 6.2) os = 'windows-8';
+          else if (version >= 6.1) os = 'windows-7';
+          else os = 'windows';
+        }
+      }
+      return os.replace(/\s+/g, '-');
+    }
+
+    return 'unknown-platform';
   }
 
   public static getInstance(): ActivityLogger {
@@ -198,15 +363,40 @@ export default class ActivityLogger {
   /** Build a snapshot of current session */
   private buildSessionData() {
     const now = Date.now();
+    // If userId is not yet initialized, use a fallback
+    const userId = this.userId || this.getFallbackUserId();
     return {
       sessionId: this.sessionId,
-      userId: this.userId,
+      userId: userId,
       startedAt: new Date(this.sessionStartTime).toISOString(),
       endedAt: new Date(now).toISOString(),
       totalActiveTimeMs: now - this.sessionStartTime,
       userAgent: this.getUserAgent(),
       events: this.events,
     };
+  }
+
+  /** Get fallback user ID if async initialization hasn't completed */
+  private getFallbackUserId(): string {
+    // Try to get from localStorage first
+    const stored = localStorage.getItem('browser_unique_id');
+    if (stored) return stored;
+
+    // Otherwise create a temporary ID
+    const email = localStorage.getItem('email') || '';
+    const platform = this.getSystemInfo();
+    const shortId = uuidv4().substring(0, 8);
+    const parts: string[] = [];
+
+    if (email) {
+      const emailPart = email.includes('@') ? email.split('@')[0] : email;
+      const cleanEmail = emailPart.replace(/[^a-zA-Z0-9._-]/g, '').slice(0, 30);
+      if (cleanEmail) parts.push(cleanEmail);
+    }
+
+    parts.push(platform);
+    parts.push(shortId);
+    return parts.join('-');
   }
 
   /** Save a live snapshot */
