@@ -164,6 +164,7 @@ const EditModal: FC<EditModalProps> = ({
           ? [...formData.exercises_to_do, exercisesToDoValue]
           : formData.exercises_to_do,
       'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+      issue_list: [],
     });
     onClose();
     clearFields();
