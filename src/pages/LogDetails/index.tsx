@@ -466,11 +466,11 @@ const LogDetails = () => {
           >
             <table className="w-full text-[10px] md:text-xs">
               <thead>
-                <tr className="text-Text-Secondary text-left">
-                  <th className="py-2 pr-2">User</th>
-                  <th className="py-2">Start-End</th>
-                  <th className="py-2">Time (m)</th>
-                  <th className="py-2">Device</th>
+                <tr className="text-Text-Secondary">
+                  <th className="py-2 pr-2 text-left">User</th>
+                  <th className="py-2 text-center">Start-End</th>
+                  <th className="py-2 text-center">Time (m)</th>
+                  <th className="py-2 text-center">Device</th>
                 </tr>
               </thead>
               <tbody>
@@ -484,33 +484,35 @@ const LogDetails = () => {
                     }`}
                     onClick={() => setSelectedSessionId(s.sessionId)}
                   >
-                    <td className="py-2 pr-2 text-Text-Primary">
-                      {Date.now() - new Date(s.endedAt).getTime() <=
-                        5 * 60 * 1000 && (
-                        <span
-                          title="online"
-                          className="relative inline-flex mr-2 align-middle"
-                        >
-                          <span className="absolute inline-flex w-2 h-2 rounded-full bg-green-500 opacity-75 animate-ping"></span>
-                          <span className="relative inline-block w-2 h-2 rounded-full bg-green-500"></span>
-                        </span>
-                      )}
-                      {s.events?.some(
-                        (e) =>
-                          e.eventName === 'api_error' &&
-                          e.props?.status !== 406,
-                      ) && (
-                        <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-2 align-middle" />
-                      )}
-                      <span className="align-middle">{s.userId}</span>
+                    <td className="py-2 pr-2 text-Text-Primary text-left">
+                      <div className="flex items-center justify-start gap-2">
+                        {Date.now() - new Date(s.endedAt).getTime() <=
+                          5 * 60 * 1000 && (
+                          <span
+                            title="online"
+                            className="relative inline-flex align-middle"
+                          >
+                            <span className="absolute inline-flex w-2 h-2 rounded-full bg-green-500 opacity-75 animate-ping"></span>
+                            <span className="relative inline-block w-2 h-2 rounded-full bg-green-500"></span>
+                          </span>
+                        )}
+                        {s.events?.some(
+                          (e) =>
+                            e.eventName === 'api_error' &&
+                            e.props?.status !== 406,
+                        ) && (
+                          <span className="inline-block w-2 h-2 rounded-full bg-red-500 align-middle" />
+                        )}
+                        <span className="align-middle">{s.userId}</span>
+                      </div>
                     </td>
-                    <td className="py-2 text-Text-Secondary">
+                    <td className="py-2 text-Text-Secondary text-center">
                       {formatTimeRange(s.startedAt, s.endedAt)}
                     </td>
-                    <td className="py-2 text-Text-Primary">
+                    <td className="py-2 text-Text-Primary text-center">
                       {msToMin(s.totalActiveTimeMs)}
                     </td>
-                    <td className="py-2 text-Text-Secondary">
+                    <td className="py-2 text-Text-Secondary text-center">
                       {s.userAgent.deviceType} / {s.userAgent.browser}
                     </td>
                   </tr>
@@ -563,10 +565,16 @@ const LogDetails = () => {
                 if (ev.eventName === 'api_error' && ev.props?.status === 406) {
                   return false;
                 }
+                // Hide session_start and session_end events
+                if (ev.eventName === 'session_start' || ev.eventName === 'session_end') {
+                  return false;
+                }
                 return true;
               })
-              .map((ev, idx) => {
-                const isExpanded = expandedEvents.has(ev.id);
+              .map((ev, index) => {
+                // Create a unique key combining sessionId and event timestamp/index to ensure uniqueness
+                const uniqueEventKey = `${selectedSession.sessionId}-${ev.timestamp}-${index}`;
+                const isExpanded = expandedEvents.has(uniqueEventKey);
                 // For all events, only show message, route, title, and text in details
                 const propsToShow = Object.entries(ev.props || {}).filter(
                   ([k]) =>
@@ -576,7 +584,7 @@ const LogDetails = () => {
                     k === 'text',
                 );
                 return (
-                  <div key={ev.id} className="relative pl-6 py-2">
+                  <div key={uniqueEventKey} className="relative pl-6 py-2">
                     <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-Gray-50"></div>
                     <div
                       className={`absolute left-[-5px] top-[14px] w-3 h-3 rounded-full ${
@@ -587,20 +595,20 @@ const LogDetails = () => {
                     ></div>
                     <div className="flex items-center justify-between">
                       <div className="text-[10px] md:text-xs text-Text-Primary font-medium">
-                        {idx + 1}. {ev.eventName}
+                        {ev.eventName}
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="text-[10px] md:text-xs text-Text-Secondary">
-                          {new Date(ev.timestamp).toLocaleDateString()}
+                          {new Date(ev.timestamp).toLocaleTimeString()}
                         </div>
                         <button
                           onClick={() => {
                             setExpandedEvents((prev) => {
                               const next = new Set(prev);
                               if (isExpanded) {
-                                next.delete(ev.id);
+                                next.delete(uniqueEventKey);
                               } else {
-                                next.add(ev.id);
+                                next.add(uniqueEventKey);
                               }
                               return next;
                             });
@@ -636,7 +644,7 @@ const LogDetails = () => {
                 );
               })}
             {!selectedSession && (
-              <div className="py-6 text-[14px] text-center text-Text-Secondary">
+              <div className="py-6 text-[12px] mt-10 text-center text-Text-Secondary">
                 No user journey details found
               </div>
             )}
