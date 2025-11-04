@@ -29,15 +29,17 @@ import resolveStatusArray from './resolveStatusArray';
 // import { useConstructor } from "@/help"
 import { decodeAccessUser } from '../../help';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
-import { ButtonSecondary } from '../Button/ButtosSecondary';
+// import { ButtonPrimary } from '../Button/ButtonPrimary';
 import Circleloader from '../CircleLoader';
 import InfoToltip from '../InfoToltip';
-import SpinnerLoader from '../SpinnerLoader';
+// import SpinnerLoader from '../SpinnerLoader';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
+// import { ShareModal } from './ShareModal';
 import { UploadTestV2 } from './UploadTestV2';
+import HolisticShare from './components/HolisticShare';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -58,6 +60,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [isHaveReport, setIsHaveReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [questionnaires, setQuestionnaires] = useState([]);
+  // const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
+  const [dateShare, setDateShare] = useState<string | null>(null);
+  useEffect(() => {
+    subscribe('shareModalHolisticPlanSuccess', () => {
+      setIsShareModalSuccess(true);
+    });
+  }, []);
   // const history = useHistory();
   const location = useLocation();
   // useEffect(() => {
@@ -1015,34 +1026,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   >
                     Holistic Plan
                   </div>
-                  {TreatMentPlanData?.length > 0 && isHaveReport ? (
-                    <div className="flex flex-col items-center gap-1">
-                      <ButtonSecondary
-                        disabled={!isHtmlReportExists}
-                        ClassName="rounded-[20px] h-[24px] w-[168px]"
-                        onClick={handleGetHtmlReport}
-                      >
-                        {isHtmlReportExists || loadingHtmlReport ? (
-                          <>
-                            <img
-                              className="w-4 h-4"
-                              src="/icons/download.svg"
-                              alt=""
-                            />
-                            Download Report
-                          </>
-                        ) : (
-                          <>
-                            <SpinnerLoader></SpinnerLoader>
-                          </>
-                        )}
-                      </ButtonSecondary>
-                      {!isHtmlReportExists && (
-                        <div className="text-[10px] text-Primary-DeepTeal">
-                          Your report is currently being prepared.
-                        </div>
-                      )}
-                    </div>
+                  {TreatMentPlanData?.length > 0 && isHaveReport && !isShare ? (
+                    <HolisticShare
+                      isHtmlReportExists={isHtmlReportExists}
+                      isShareModalSuccess={isShareModalSuccess}
+                      dateShare={dateShare}
+                      handleGetHtmlReport={handleGetHtmlReport}
+                      loadingHtmlReport={loadingHtmlReport}
+                    />
                   ) : (
                     ''
                   )}
@@ -1054,8 +1045,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   setPrintActionPlan={(value) => {
                     setActionPlanPrint(value);
                   }}
+                  setIsShareModalSuccess={setIsShareModalSuccess}
                   treatmentPlanData={TreatMentPlanData}
                   setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
+                  setDateShare={setDateShare}
                 />
               </div>
             )}
