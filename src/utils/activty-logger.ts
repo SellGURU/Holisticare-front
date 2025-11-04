@@ -294,7 +294,7 @@ export default class ActivityLogger {
 
     // Use Log.saveLog (axios-based) for normal operation
     // Since axios may not work reliably during unload, we also try fetch with keepalive as fallback
-    if(getTokenFromLocalStorage()!=null) {
+    if (getTokenFromLocalStorage() != null) {
       Log.saveLog(data).catch(() => {});
     }
 
@@ -415,7 +415,7 @@ export default class ActivityLogger {
   private saveSessionToStorage() {
     const data = this.buildSessionData();
     console.log(data);
-    if(getTokenFromLocalStorage()!=null) {
+    if (getTokenFromLocalStorage() != null) {
       Log.saveLog(data).catch(() => {});
     }
     localStorage.setItem('activity_log', JSON.stringify(data));
