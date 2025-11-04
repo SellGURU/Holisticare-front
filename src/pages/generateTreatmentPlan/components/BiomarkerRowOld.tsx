@@ -149,7 +149,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
     );
     // .map((matched: string) => matched.split(':')[0].trim());
     setSelectedIssues(result);
-  }, []);
+  }, [issuesData, value.issue_list]);
   const handleRemoveIssueCard = (issue: string) => {
     const newIssueList = selectedIssues.filter((r: string) => r !== issue);
     handleUpdateIssueListByKey(

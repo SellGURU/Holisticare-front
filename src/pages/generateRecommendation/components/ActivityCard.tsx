@@ -83,7 +83,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
     );
     // .map((matched: string) => matched.split(':')[0].trim());
     setSelectedIssues(result);
-  }, []);
+  }, [issuesData, item.issue_list]);
 
   const handleRemoveIssueCard = (issue: string) => {
     const newIssueList = selectedIssues.filter((r: string) => r !== issue);
