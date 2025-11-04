@@ -288,7 +288,13 @@ const LogDetails = () => {
     fetchLogs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clinicId, fromDate, toDate]);
+useEffect(() => {
+  const intervalId = setInterval(() => {
+    fetchLogs();
+  }, 2 * 60 * 1000); 
 
+  return () => clearInterval(intervalId);
+}, [clinicId, fromDate, toDate]);
   return (
     <div className="p-4 md:p-6">
       <div className="mb-4 flex justify-between items-center gap-3">

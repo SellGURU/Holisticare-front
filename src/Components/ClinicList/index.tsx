@@ -50,7 +50,7 @@ const ClinicList = () => {
             <SearchBox
               placeHolder="Search by email or clinic name..."
               value={search}
-             onSearch={(val) => setSearch(val)} 
+              onSearch={(val) => setSearch(val)}
             />
             {/* <input
               value={search}
