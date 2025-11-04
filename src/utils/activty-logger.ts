@@ -36,7 +36,7 @@ export default class ActivityLogger {
     if (!browserId) {
       // Get user email from localStorage
       const email = localStorage.getItem('email') || '';
-      
+
       // Try to get user data from localStorage (for auth context)
       let userName = '';
       try {
@@ -54,22 +54,24 @@ export default class ActivityLogger {
 
       // Get system/platform information
       const platform = this.getSystemInfo();
-      
+
       // Get a short unique ID (first 8 characters of UUID)
       const shortId = uuidv4().substring(0, 8);
 
       // Build readable browser ID
       const parts: string[] = [];
-      
+
       // Priority: Chrome account name > email > user name
       const userIdentifier = chromeAccountName || email || userName;
       if (userIdentifier) {
         // Remove @ and domain for shorter ID, or use first part of email
-        const identifierPart = userIdentifier.includes('@') 
-          ? userIdentifier.split('@')[0] 
+        const identifierPart = userIdentifier.includes('@')
+          ? userIdentifier.split('@')[0]
           : userIdentifier;
         // Clean identifier: remove special characters, keep only alphanumeric and dots/dashes
-        const cleanIdentifier = identifierPart.replace(/[^a-zA-Z0-9._-]/g, '').slice(0, 30);
+        const cleanIdentifier = identifierPart
+          .replace(/[^a-zA-Z0-9._-]/g, '')
+          .slice(0, 30);
         if (cleanIdentifier) {
           parts.push(cleanIdentifier);
         }
@@ -92,7 +94,10 @@ export default class ActivityLogger {
   private async getChromeAccountName(): Promise<string> {
     try {
       // Method 1: Try Credential Management API (if user has saved credentials)
-      if ('credentials' in navigator && 'get' in (navigator as any).credentials) {
+      if (
+        'credentials' in navigator &&
+        'get' in (navigator as any).credentials
+      ) {
         try {
           const cred = await (navigator.credentials as any).get({
             password: true,
@@ -113,16 +118,20 @@ export default class ActivityLogger {
       // Method 2: Try to get from Chrome's stored Google accounts
       // Note: This only works if user has granted permission via Google OAuth
       // Check if there's a Google OAuth token in localStorage
-      const googleToken = localStorage.getItem('google_oauth_token') || 
-                        sessionStorage.getItem('google_oauth_token');
-      
+      const googleToken =
+        localStorage.getItem('google_oauth_token') ||
+        sessionStorage.getItem('google_oauth_token');
+
       if (googleToken) {
         try {
-          const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-            headers: {
-              Authorization: `Bearer ${googleToken}`,
+          const response = await fetch(
+            'https://www.googleapis.com/oauth2/v3/userinfo',
+            {
+              headers: {
+                Authorization: `Bearer ${googleToken}`,
+              },
             },
-          });
+          );
           if (response.ok) {
             const userInfo = await response.json();
             return userInfo.name || userInfo.email || '';
@@ -148,7 +157,6 @@ export default class ActivityLogger {
       // Note: This is limited due to privacy restrictions
       // Chrome sometimes includes profile info in user agent, but this is unreliable
       // Direct access to Chrome profile name is not available via web APIs for security reasons
-      
     } catch (error) {
       // Silently fail - this is not critical
       console.debug('Could not get Chrome account name:', error);
@@ -160,7 +168,7 @@ export default class ActivityLogger {
   /** Get system/platform information */
   private getSystemInfo(): string {
     const ua = navigator.userAgent;
-    
+
     // Try to get platform from userAgentData (modern browsers)
     const platform = (navigator as any).userAgentData?.platform;
     if (platform) {
@@ -168,7 +176,9 @@ export default class ActivityLogger {
     }
 
     // Fallback to parsing userAgent
-    const osMatch = ua.match(/(Windows NT|Macintosh|Linux|Android|iOS|iPhone|iPad)/i);
+    const osMatch = ua.match(
+      /(Windows NT|Macintosh|Linux|Android|iOS|iPhone|iPad)/i,
+    );
     if (osMatch) {
       let os = osMatch[0].toLowerCase();
       // Normalize Windows versions
@@ -371,19 +381,19 @@ export default class ActivityLogger {
     // Try to get from localStorage first
     const stored = localStorage.getItem('browser_unique_id');
     if (stored) return stored;
-    
+
     // Otherwise create a temporary ID
     const email = localStorage.getItem('email') || '';
     const platform = this.getSystemInfo();
     const shortId = uuidv4().substring(0, 8);
     const parts: string[] = [];
-    
+
     if (email) {
       const emailPart = email.includes('@') ? email.split('@')[0] : email;
       const cleanEmail = emailPart.replace(/[^a-zA-Z0-9._-]/g, '').slice(0, 30);
       if (cleanEmail) parts.push(cleanEmail);
     }
-    
+
     parts.push(platform);
     parts.push(shortId);
     return parts.join('-');
