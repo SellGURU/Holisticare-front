@@ -42,7 +42,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     Record<string, 'added' | 'removed' | null>
   >({});
 
-
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleValueChange = (id: string, newValue: string) => {
@@ -97,7 +96,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     // update biomarkers
     const updated = biomarkers.filter((_, i) => i !== indexToDelete);
-    if(updated.length === 0) {
+    if (updated.length === 0) {
       // alert('delete file trigger1');
       publish('DELETE_FILE_TRIGGER', {});
     }
@@ -220,7 +219,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   ) => {
     // update local state immediately
     // console.log(updatedField);
-    let updated = biomarkers.map((b, ) =>
+    let updated = biomarkers.map((b) =>
       b.biomarker_id === id ? { ...b, ...updatedField } : b,
     );
 
@@ -339,19 +338,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       console.error('Mapping toggle failed:', err);
     }
   };
-useEffect(() => {
-  const listener = () => {
-    setMappedRows([]);
-    setChangedRows([]);
-    setMappingStatus({});
-  };
+  useEffect(() => {
+    const listener = () => {
+      setMappedRows([]);
+      setChangedRows([]);
+      setMappingStatus({});
+    };
 
+    subscribe('RESET_MAPPING_ROWS', listener);
 
-  subscribe("RESET_MAPPING_ROWS", listener);
-
-
-  return () => unsubscribe("RESET_MAPPING_ROWS", listener);
-}, []);
+    return () => unsubscribe('RESET_MAPPING_ROWS', listener);
+  }, []);
   return (
     <div
       // style={{ height: window.innerHeight - 400 + 'px' }}
@@ -484,7 +481,9 @@ useEffect(() => {
                           value={b.biomarker}
                           options={avalibaleBiomarkers || []}
                           onChange={(val: string) =>
-                            updateAndStandardize(b.biomarker_id, { biomarker: val })
+                            updateAndStandardize(b.biomarker_id, {
+                              biomarker: val,
+                            })
                           }
                         />
                         {/* <Select
@@ -498,9 +497,7 @@ useEffect(() => {
                       /> */}
                       </div>
                       {/* value (editable via input) */}
-                      <div className="text-center">
-                        {renderValueField(b)}
-                      </div>
+                      <div className="text-center">{renderValueField(b)}</div>
                       {/* unit (editable via select) */}
                       <div className="text-end flex justify-center">
                         <div className="w-full max-w-[100px]">
@@ -581,7 +578,9 @@ useEffect(() => {
                                 }
                                 alt="Mapping toggle"
                                 className="cursor-pointer w-4 h-4"
-                                onClick={() => handleMappingToggle(b.biomarker_id)}
+                                onClick={() =>
+                                  handleMappingToggle(b.biomarker_id)
+                                }
                               />
                             )}
                             <img

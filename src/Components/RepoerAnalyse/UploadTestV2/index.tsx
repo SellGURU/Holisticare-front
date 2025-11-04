@@ -50,7 +50,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [extractedBiomarkers, setExtractedBiomarkers] = useState<any[]>([]);
   const [fileType, setfileType] = useState('more_info');
   const [polling, setPolling] = useState(true); // ✅ control polling
-  const [deleteLoading,] = useState(false);
+  const [deleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
   console.log(uploadedFile);
   // console.log(extractedBiomarkers);
@@ -130,26 +130,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const [, forceReRender] = useState(0);
 
-
-  const handleDeleteFile = (fileId?:string) => {
-      setExtractedBiomarkers([]);
-      console.log(fileId);
-      setfileType('more_info');
-      setPolling(true);
-      setUploadedFile(null);
-      setRowErrors({});
-      setAddedRowErrors({});
-      publish('RESET_MAPPING_ROWS', {});
-      forceReRender(x => x + 1);
+  const handleDeleteFile = (fileId?: string) => {
+    setExtractedBiomarkers([]);
+    console.log(fileId);
+    setfileType('more_info');
+    setPolling(true);
+    setUploadedFile(null);
+    setRowErrors({});
+    setAddedRowErrors({});
+    publish('RESET_MAPPING_ROWS', {});
+    forceReRender((x) => x + 1);
   };
-useEffect(() => {
-  subscribe('DELETE_FILE_TRIGGER', () => {
-    // alert('delete file trigger');
-    handleDeleteFile();
-  });
-}, []);
+  useEffect(() => {
+    subscribe('DELETE_FILE_TRIGGER', () => {
+      // alert('delete file trigger');
+      handleDeleteFile();
+    });
+  }, []);
 
-console.log(uploadedFile);
+  console.log(uploadedFile);
 
   const sendToBackend = async (file: File, azureUrl: string) => {
     await Application.addLabReport(

@@ -58,7 +58,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
 
   const fileName = el.file_name || el.file.name;
   const fileIcon = getFileIcon(fileName);
-  
+
   return (
     <>
       <div
