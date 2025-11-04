@@ -316,9 +316,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         setMappedRows((prev) => prev.filter((i) => i !== id));
 
         // Show red div for 5 seconds
-        setMappingStatus((prev) => ({ ...prev, id: 'removed' }));
+        setMappingStatus((prev) => ({ ...prev, [id]: 'removed' }));
         setTimeout(() => {
-          setMappingStatus((prev) => ({ ...prev, id: null }));
+          setMappingStatus((prev) => ({ ...prev, [id]: null }));
         }, 5000);
       } else {
         // 🟢 Add mapping
@@ -329,9 +329,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         setMappedRows((prev) => [...prev, id]);
 
         // Show green div for 5 seconds
-        setMappingStatus((prev) => ({ ...prev, id: 'added' }));
+        setMappingStatus((prev) => ({ ...prev, [id]: 'added' }));
         setTimeout(() => {
-          setMappingStatus((prev) => ({ ...prev, id: null }));
+          setMappingStatus((prev) => ({ ...prev, [id]: null }));
         }, 5000);
       }
     } catch (err) {
@@ -549,7 +549,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         ) : (
                           <div className="relative flex items-center justify-end  pl-8 md:pl-5 gap-1">
                             {/* Status Div */}
-                            {mappingStatus[index] === 'added' && (
+                            {mappingStatus[b.biomarker_id] === 'added' && (
                               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
                                 <img
                                   src="/icons/tick-circle-green-new.svg"
@@ -558,7 +558,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                                 Mapping saved for future uploads.
                               </div>
                             )}
-                            {mappingStatus[index] === 'removed' && (
+                            {mappingStatus[b.biomarker_id] === 'removed' && (
                               <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[220px]  rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
                                 <img
                                   src="/icons/info-circle-orange.svg"
