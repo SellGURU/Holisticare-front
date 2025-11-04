@@ -59,9 +59,8 @@ const ClinicList = () => {
               className="w-full md:w-96 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-Primary-DeepTeal/40"
               type="text"
             /> */}
-          </div>        
+          </div>
           <div className="p-4">
-
             <div>
               {clinics?.length === 0 ? (
                 <div className="bg-white rounded-xl shadow border border-gray-100 p-8 text-center">
