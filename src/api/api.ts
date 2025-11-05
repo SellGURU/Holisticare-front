@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 // http://51.142.20.137:5052
 class Api {
   protected static base_url: string =
-    'https://marketing-vercel-one.vercel.app/test_dashboard';
+    'https://marketing-vercel-one.vercel.app/dashboard';
   // 'https://vercel-backend-one-roan.vercel.app/holisticare_test';
   // protected static base_url: string = "https://mock.app";
   protected static post(url: string, data?: any, config?: any) {
