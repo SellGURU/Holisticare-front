@@ -16,7 +16,11 @@ axios.interceptors.response.use(
         toast.error(response.data.detail);
       }
     }
-    if (response.status == 401 || response.data.detail == 'Invalid token.' || response.data.detail == 'No admin found.') {
+    if (
+      response.status == 401 ||
+      response.data.detail == 'Invalid token.' ||
+      response.data.detail == 'No admin found.'
+    ) {
       localStorage.clear();
       window.location.reload();
     }
