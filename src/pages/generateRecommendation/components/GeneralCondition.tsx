@@ -143,10 +143,20 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   };
 
   const handleAddNew = (section: SectionKey, value: string): void => {
-    setTempData((prev) => ({
-      ...prev,
-      [section]: [value, ...prev[section]],
-    }));
+    if (section == 'lookingForwards') {
+      setTempData((prev) => ({
+        ...prev,
+        [section]: [
+          ...prev[section],
+          'Issue ' + (prev[section].length + 1) + ': ' + value,
+        ],
+      }));
+    } else {
+      setTempData((prev) => ({
+        ...prev,
+        [section]: [value, ...prev[section]],
+      }));
+    }
   };
 
   // useEffect(() => {
@@ -259,7 +269,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           content={(editMode.lookingForwards
             ? tempData.lookingForwards
             : data.lookingForwards
-          )?.map((item) => item.split(':')[1]?.trim())}
+          )?.map((item) => item)}
           isEditing={editMode.lookingForwards}
           onEdit={() => handleEdit('lookingForwards')}
           onSave={() => handleSave('lookingForwards')}
@@ -445,8 +455,10 @@ const Card: React.FC<CardProps> = ({
                 >
                   {title === 'Health Planning Issues' ? (
                     <>
-                      <span className="text-gray-500">Issue {index + 1}:</span>{' '}
-                      {item}
+                      <span className="text-gray-500">
+                        {item.split(':')[0]}:
+                      </span>{' '}
+                      {item.split(':')[1]?.trim()}
                     </>
                   ) : (
                     item

@@ -93,7 +93,7 @@ export const GenerateRecommendation = () => {
       .catch((err) => {
         console.error('getCoverage error:', err);
       });
-  }, [treatmentPlanData, id]);
+  }, [treatmentPlanData?.suggestion_tab, id]);
 
   const hasEssentialData = (data: any) => {
     return (
