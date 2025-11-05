@@ -5,8 +5,8 @@ interface StyleModalProps {
   onClose: () => void;
   onApplyStyle: (styles: ElementStyles) => void;
   currentStyles?: ElementStyles;
-  selectedText: string;
-  onUpdatePreviewText: (text: string) => void;
+  // selectedText: string;
+  // onUpdatePreviewText: (text: string) => void;
 }
 
 export interface ElementStyles {
@@ -34,15 +34,15 @@ export default function StyleModal({
   onClose,
   onApplyStyle,
   currentStyles = defaultStyles,
-  selectedText,
-  onUpdatePreviewText,
+  // selectedText,
+  // onUpdatePreviewText,
 }: StyleModalProps) {
   const [styles, setStyles] = useState<ElementStyles>(currentStyles);
   const [previewText, setPreviewText] = useState('Preview Text');
 
-  useEffect(() => {
-    setPreviewText(selectedText);
-  }, [selectedText]);
+  // useEffect(() => {
+  //   setPreviewText(selectedText);
+  // }, [selectedText]);
 
   // Update styles when currentStyles prop changes
   useEffect(() => {
@@ -59,10 +59,19 @@ export default function StyleModal({
   };
 
   const handleApply = () => {
-    onUpdatePreviewText(previewText);
+    // onUpdatePreviewText(previewText);
     onApplyStyle(styles);
     onClose();
   };
+
+  const isResetButtonDisabled =
+    currentStyles?.backgroundColor == styles?.backgroundColor &&
+    currentStyles?.color == styles?.color &&
+    currentStyles?.fontWeight == styles?.fontWeight &&
+    currentStyles?.fontStyle == styles?.fontStyle &&
+    currentStyles?.textDecoration == styles?.textDecoration &&
+    currentStyles?.fontSize == styles?.fontSize &&
+    currentStyles?.textAlign == styles?.textAlign;
 
   if (!isOpen) return null;
 
@@ -155,7 +164,7 @@ export default function StyleModal({
 
           <div className="space-y-4">
             {/* Text */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium mb-2">Text</label>
               <textarea
                 value={previewText}
@@ -163,9 +172,12 @@ export default function StyleModal({
                 className="w-full p-2 border rounded min-h-[100px] resize-none text-sm"
                 placeholder="Enter text..."
               />
-            </div>
+            </div> */}
 
             <div>
+              <label className="block text-sm font-medium mb-2">
+                Font Weight
+              </label>
               <select
                 value={styles.fontWeight}
                 onChange={(e) =>
@@ -290,13 +302,15 @@ export default function StyleModal({
             >
               Apply
             </button>
-            <button
-              onClick={() => setStyles(currentStyles || defaultStyles)}
-              className="px-3 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-              title="Reset to original"
-            >
-              Reset
-            </button>
+            {!isResetButtonDisabled && (
+              <button
+                onClick={() => setStyles(currentStyles || defaultStyles)}
+                className="px-3 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                title="Reset to original"
+              >
+                Reset
+              </button>
+            )}
             <button
               onClick={onClose}
               className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"

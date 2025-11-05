@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import StyleModal, { ElementStyles } from './StyleModal';
 import { useNavigate } from 'react-router-dom';
+import { RotateCcw } from 'lucide-react';
 
 type Props = {
   html: string;
@@ -31,8 +32,7 @@ export default function HtmlEditor({
   const [currentStyles, setCurrentStyles] = useState<ElementStyles | null>(
     null,
   );
-  const [previewText, setPreviewText] = useState<string>('');
-  console.log('previewText => ', previewText);
+  // const [previewText, setPreviewText] = useState<string>('');
   const [, setIconsAdded] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedText, setSelectedText] = useState<string>('');
@@ -380,7 +380,7 @@ export default function HtmlEditor({
             setIsStyleModalOpen(true);
           }, 50); // Small delay to ensure icon is hidden before reading styles
         });
-        setPreviewText(htmlElement.textContent || '');
+        // setPreviewText(htmlElement.textContent || '');
 
         // Add hover effects
         editIcon.addEventListener('mouseenter', () => {
@@ -590,31 +590,31 @@ export default function HtmlEditor({
       }
     }
   };
-  const updatePreviewText = (text: string) => {
-    if (!selectedElement) return;
+  // const updatePreviewText = (text: string) => {
+  //   if (!selectedElement) return;
 
-    const iframe = iframeRef.current;
-    if (!iframe) return;
-    const doc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (!doc) return;
+  //   const iframe = iframeRef.current;
+  //   if (!iframe) return;
+  //   const doc = iframe.contentDocument || iframe.contentWindow?.document;
+  //   if (!doc) return;
 
-    const editableElements = doc.querySelectorAll('.editable');
-    let targetElement: HTMLElement | null = null;
+  //   const editableElements = doc.querySelectorAll('.editable');
+  //   let targetElement: HTMLElement | null = null;
 
-    editableElements.forEach((element) => {
-      if (element === selectedElement) {
-        targetElement = element as HTMLElement;
-      }
-    });
+  //   editableElements.forEach((element) => {
+  //     if (element === selectedElement) {
+  //       targetElement = element as HTMLElement;
+  //     }
+  //   });
 
-    if (targetElement) {
-      (targetElement as HTMLElement).textContent = text;
+  //   if (targetElement) {
+  //     (targetElement as HTMLElement).textContent = text;
 
-      if (onChange) {
-        onChange(doc.documentElement.outerHTML);
-      }
-    }
-  };
+  //     if (onChange) {
+  //       onChange(doc.documentElement.outerHTML);
+  //     }
+  //   }
+  // };
 
   const handleReset = () => {
     setIsEditMode(false);
@@ -627,40 +627,40 @@ export default function HtmlEditor({
     doc.write(originalHtml);
     doc.close();
 
-    if (editable && doc.body && isEditMode) {
-      // Make only elements with 'editable' class editable
-      const editableElements = doc.querySelectorAll('.editable');
-      editableElements.forEach((element) => {
-        (element as HTMLElement).contentEditable = 'true';
-      });
+    // if (editable && doc.body && isEditMode) {
+    // Make only elements with 'editable' class editable
+    const editableElements = doc.querySelectorAll('.editable');
+    editableElements.forEach((element) => {
+      (element as HTMLElement).removeAttribute('contenteditable');
+    });
 
-      // Reset icons added state and remove existing icons
-      setIconsAdded(false);
-      const existingIcons = doc.querySelectorAll('.edit-icon');
-      existingIcons.forEach((icon) => icon.remove());
+    // Reset icons added state and remove existing icons
+    setIconsAdded(false);
+    const existingIcons = doc.querySelectorAll('.edit-icon');
+    existingIcons.forEach((icon) => icon.remove());
 
-      // Add edit icons to editable elements after DOM is fully loaded
-      const addIconsWhenReady = () => {
-        if (doc.readyState === 'complete') {
-          requestAnimationFrame(() => {
-            addEditIcons(doc);
-          });
-        } else {
-          doc.addEventListener('DOMContentLoaded', () => {
-            requestAnimationFrame(() => {
-              addEditIcons(doc);
-            });
-          });
-        }
-      };
+    // Add edit icons to editable elements after DOM is fully loaded
+    // const addIconsWhenReady = () => {
+    //   if (doc.readyState === 'complete') {
+    //     requestAnimationFrame(() => {
+    //       addEditIcons(doc);
+    //     });
+    //   } else {
+    //     doc.addEventListener('DOMContentLoaded', () => {
+    //       requestAnimationFrame(() => {
+    //         addEditIcons(doc);
+    //       });
+    //     });
+    //   }
+    // };
 
-      addIconsWhenReady();
+    // addIconsWhenReady();
 
-      // Multiple fallback attempts
-      setTimeout(() => addEditIcons(doc), 500);
-      setTimeout(() => addEditIcons(doc), 1000);
-      setTimeout(() => addEditIcons(doc), 2000);
-    }
+    // Multiple fallback attempts
+    // setTimeout(() => addEditIcons(doc), 500);
+    // setTimeout(() => addEditIcons(doc), 1000);
+    // setTimeout(() => addEditIcons(doc), 2000);
+    // }
   };
 
   return (
@@ -681,13 +681,13 @@ export default function HtmlEditor({
                 onClick={toggleEditMode}
                 ClassName={`${isEditMode ? 'bg-purple-500 text-white hover:bg-purple-600' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
               >
-                {isEditMode ? '✏️ Exit Edit' : '✏️ Edit Mode'}
+                {isEditMode ? '✏️ Exit Editing' : '✏️ Edit'}
               </ButtonSecondary>
               <ButtonSecondary
                 onClick={handleReset}
                 ClassName="bg-red-500 text-white hover:bg-red-600"
               >
-                ❌ Reset
+                <RotateCcw size={16} /> Reset
               </ButtonSecondary>
               {isEditMode && (
                 <ButtonSecondary
@@ -725,8 +725,8 @@ export default function HtmlEditor({
         onClose={() => setIsStyleModalOpen(false)}
         onApplyStyle={applyStyles}
         currentStyles={currentStyles || undefined}
-        selectedText={previewText || ''}
-        onUpdatePreviewText={updatePreviewText}
+        // selectedText={previewText || ''}
+        // onUpdatePreviewText={updatePreviewText}
       />
 
       {/* Text Formatting Toolbar */}
