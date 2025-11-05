@@ -4,6 +4,7 @@ interface AuthResponse {
   data: {
     access_token: string;
     permission: any;
+    user_type:string
   };
 }
 // const mockUser = {
