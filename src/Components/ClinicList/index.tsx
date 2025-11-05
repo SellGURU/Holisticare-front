@@ -85,20 +85,20 @@ const ClinicList = () => {
                         <div className="flex items-center gap-3">
                           {clinic.clinic_logo ? (
                             <img
-                              src={clinic.clinic_logo}
+                              src={clinic.clinic_logo ? clinic.clinic_logo : `https://ui-avatars.com/api/?name=${clinic.clinic_name}`}
                               alt={clinic.clinic_name ?? clinic.clinic_email}
                               className="h-16 w-16 rounded-full object-cover border border-gray-200 flex-shrink-0"
                             />
                           ) : (
-                            <div className="h-16 w-16 rounded-full bg-gray-200 border border-gray-200 flex items-center justify-center text-lg font-semibold text-gray-700 flex-shrink-0">
+                            <div className="h-16 w-16 rounded-full bg-gray-200 border border-gray-200 flex items-center justify-center text-xs text-Text-Primary flex-shrink-0">
                               {getEmailInitials(clinic.clinic_email)}
                             </div>
                           )}
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-Text-Primary truncate">
+                            <p className="text-xs  text-Text-Primary truncate">
                               {clinic.clinic_name ?? '-'}
                             </p>
-                            <p className="text-[10px] text-Primary-DeepTeal truncate mt-1">
+                            <p className="text-[12px] text-Primary-DeepTeal truncate mt-1">
                               {clinic.clinic_email}
                             </p>
                           </div>
