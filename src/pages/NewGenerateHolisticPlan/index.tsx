@@ -69,7 +69,7 @@ const NewGenerateHolisticPlan = () => {
       .catch((err) => {
         console.error('getCoverage error:', err);
       });
-  }, [treatmentPlanData, id]);
+  }, [treatmentPlanData.suggestion_tab, id]);
   const resolveNextStep = () => {
     setisFinalLoading(true);
     const continueSteps = () => {
