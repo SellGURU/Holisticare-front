@@ -60,7 +60,7 @@ export const GenerateRecommendation = () => {
   const [coverageProgess, setcoverageProgess] = useState(0);
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
   // Function to check if essential data fields are present and not empty
-  useEffect(() => {
+  const resolveCoverage =() => {
     if (!treatmentPlanData) return;
 
     // ✅ Only include checked items
@@ -71,12 +71,12 @@ export const GenerateRecommendation = () => {
       treatmentPlanData?.looking_forwards?.map((issue: string) => ({
         [issue]: false,
       })) || [];
+    // console.log('payload', payload);
 
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
-      key_areas_to_address:
-        coverageDetails.length > 0 ? coverageDetails : payload,
+      key_areas_to_address:payload,
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
@@ -92,8 +92,13 @@ export const GenerateRecommendation = () => {
       .catch((err) => {
         console.error('getCoverage error:', err);
       });
+  }
+  useEffect(() => {
+    resolveCoverage();
   }, [treatmentPlanData?.suggestion_tab, id]);
-
+  // useEffect(() => {
+  //   subscribe('updateCoverage', resolveCoverage);
+  // })
   const hasEssentialData = (data: any) => {
     return (
       // data?.client_insight &&
@@ -170,6 +175,7 @@ export const GenerateRecommendation = () => {
 
   const handleNext = () => {
     if (currentStepIndex === 0) {
+      resolveCoverage();
       // Check if suggestion_tab is empty when moving from General Condition to Set Orders
       if (treatmentPlanData && !hasSuggestionsData(treatmentPlanData)) {
         setisButtonLoading(true); // Show loading on the button
@@ -390,6 +396,7 @@ export const GenerateRecommendation = () => {
                 <React.Fragment key={index}>
                   <div
                     onClick={() => {
+                      resolveCoverage();
                       // Prevent changing tabs if disableTabNavigation is true, unless it's the current tab
                       if (!disableTabNavigation || index === currentStepIndex) {
                         setCurrentStepIndex(index);
