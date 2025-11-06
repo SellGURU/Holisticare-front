@@ -1098,6 +1098,9 @@ class Application extends Api {
   static remove_mapping = (data: any) => {
     return this.post('/remove_clinic_biomarker_mapping', data);
   };
+  static remapIssues = (data: any) => {
+    return this.post('/issues/remap_issues', data);
+  };
 }
 
 export default Application;
