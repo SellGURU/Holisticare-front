@@ -136,8 +136,16 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     // اگر high مقدار null بود، یعنی بازه تا مثبت بی‌نهایت ادامه دارد
     if (el.high == null && el.low != null) {
       // اگر مقدار کاربر بیشتر از low باشد، درصد را نزدیک 100 قرار بده
-      if (Number(value) >= Number(el.low) * 1.5 && Number(value) < Number(el.low) * 2) return 30;
-      if (Number(value) >= Number(el.low) * 2 && Number(value) < Number(el.low) * 3) return 50;
+      if (
+        Number(value) >= Number(el.low) * 1.5 &&
+        Number(value) < Number(el.low) * 2
+      )
+        return 30;
+      if (
+        Number(value) >= Number(el.low) * 2 &&
+        Number(value) < Number(el.low) * 3
+      )
+        return 50;
       if (Number(value) >= Number(el.low) * 3) return 80;
       // اگر کمتر بود، درصد را نزدیک 0 قرار بده
       return 10;
