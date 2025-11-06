@@ -214,7 +214,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           publish('HolisticPlanStatus', { isempty: true });
         } else {
           publish('HolisticPlanStatus', { isempty: false });
-          pollHtmlReport()
+          pollHtmlReport();
         }
       },
     );
@@ -621,11 +621,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
-const stopPolling = useRef(false);
-
-
+  const stopPolling = useRef(false);
+useEffect(() => {
+  stopPolling.current = false; // reset on mount
+  return () => {
+    stopPolling.current = true; // stop polling when component unmounts
+  };
+}, []);
   const pollHtmlReport = () => {
-     if (stopPolling.current) return;
+    if (stopPolling.current) return;
     Application.checkHtmlReport(id?.toString() || '')
       .then((res) => {
         if (res.data.exists) {
@@ -635,7 +639,7 @@ const stopPolling = useRef(false);
         }
       })
       .catch(() => {
-        setTimeout(pollHtmlReport, 10000); 
+        setTimeout(pollHtmlReport, 10000);
       });
   };
 
