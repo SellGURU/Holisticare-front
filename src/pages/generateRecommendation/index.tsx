@@ -60,7 +60,7 @@ export const GenerateRecommendation = () => {
   const [coverageProgess, setcoverageProgess] = useState(0);
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
   // Function to check if essential data fields are present and not empty
-  const resolveCoverage =() => {
+  const resolveCoverage = () => {
     if (!treatmentPlanData) return;
 
     // ✅ Only include checked items
@@ -76,7 +76,7 @@ export const GenerateRecommendation = () => {
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
-      key_areas_to_address:payload,
+      key_areas_to_address: payload,
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
@@ -92,7 +92,7 @@ export const GenerateRecommendation = () => {
       .catch((err) => {
         console.error('getCoverage error:', err);
       });
-  }
+  };
   useEffect(() => {
     resolveCoverage();
   }, [treatmentPlanData?.suggestion_tab, id]);
