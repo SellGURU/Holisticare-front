@@ -93,12 +93,35 @@ export const GenerateRecommendation = () => {
         console.error('getCoverage error:', err);
       });
   };
+  const remapIssues =() => {
+    if (!treatmentPlanData) return;
+
+    // console.log('payload', payload);
+
+    Application.remapIssues({
+      member_id: id,
+      suggestion_tab: treatmentPlanData?.suggestion_tab,
+      key_areas_to_address: treatmentPlanData?.looking_forwards,
+    })
+      .then((res:any) => {
+        setTratmentPlanData((pre: any) => {
+          return {
+            ...pre,
+            suggestion_tab: res.data.suggestion_tab,
+            key_areas_to_address:res.data.key_areas_to_address
+          };
+        });
+      })
+      .catch((err) => {
+        console.error('getCoverage error:', err);
+      });    
+  }
   useEffect(() => {
     resolveCoverage();
   }, [treatmentPlanData?.suggestion_tab, id]);
-  // useEffect(() => {
-  //   subscribe('updateCoverage', resolveCoverage);
-  // })
+  useEffect(() => {
+    remapIssues();
+  }, [treatmentPlanData?.looking_forwards,id]);
   const hasEssentialData = (data: any) => {
     return (
       // data?.client_insight &&
