@@ -6,6 +6,7 @@ import { version } from '../../../package.json';
 import { menus } from './menu';
 import { subscribe } from '../../utils/event';
 import Auth from '../../api/auth';
+import MainModal from '../MainModal';
 interface sideMenuProps {
   onClose: () => void;
 }
@@ -81,7 +82,11 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     }
     return false;
   };
+  const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+
   return (
+    <>
+
     <div className="w-[180px] xs:w-[250px] md:w-[170px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 pt-4 drop-shadow">
       <div className="w-full  relative">
         <div className="px-4">
@@ -212,16 +217,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
         </div>
         <div className="hidden absolute bottom-0 md:bottom-5 text-[8px] text-[#888888] font-medium  pl-5 md:grid  w-full items-end gap-1">
           <div
-            onClick={() => {
-              Auth.logOut();
-              localStorage.clear();
-              window.location.reload();
-            }}
-            onTouchEnd={() => {
-              Auth.logOut();
-              localStorage.clear();
-              window.location.reload();
-            }}
+            onClick={() => setLogoutModalOpen(true)}
             className="flex gap-1 justify-center mb-2 cursor-pointer"
           >
             <img src="/icons/logout.svg" alt="" />
@@ -242,7 +238,45 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
           </div>
         </div>
       </div>
+ 
     </div>
+         <MainModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setLogoutModalOpen(false)}
+      >
+        <div className="flex bg-white rounded-2xl w-[360px] h-[200px] flex-col items-center justify-center p-4 gap-4">
+          <h2 className="text-lg font-semibold text-Primary-DeepTeal">
+            Confirm Logout
+          </h2>
+          <p className="text-sm text-Text-Primary text-center">
+            Are you sure you want to log out?
+          </p>
+          <div className="flex gap-4 mt-2">
+            <button
+              onClick={() => setLogoutModalOpen(false)}
+              className="px-4 py-2 rounded-lg border border-Primary-DeepTeal text-Primary-DeepTeal hover:bg-[#F0F0F0] transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                Auth.logOut();
+                localStorage.clear();
+                window.location.reload();
+              }}
+              onTouchEnd={() => {
+                Auth.logOut();
+                localStorage.clear();
+                window.location.reload();
+              }}
+              className="px-4 py-2 rounded-lg bg-Primary-DeepTeal text-white hover:bg-[#004B5A] transition"
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
+      </MainModal>
+        </>
   );
 };
 

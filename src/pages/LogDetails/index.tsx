@@ -569,7 +569,8 @@ const LogDetails = () => {
             style={{ height: window.innerHeight - 500 + 'px' }}
           >
             {selectedSession?.events
-            .reverse()
+              .slice()
+              .reverse()
               .filter((ev) => {
                 if (usertype !== 'admin') return true;
                 // Hide api_error events with status 406
@@ -582,9 +583,9 @@ const LogDetails = () => {
                   return false;
                 return true;
               })
-              .map((ev, index) => {
+              .map((ev) => {
                 // Create a unique key combining sessionId and event timestamp/index to ensure uniqueness
-                const uniqueEventKey = `${selectedSession.sessionId}-${ev.timestamp}-${index}`;
+                const uniqueEventKey = `${selectedSession.sessionId}-${ev.timestamp}`;
                 const isExpanded = expandedEvents.has(uniqueEventKey);
                 // For all events, only show message, route, title, and text in details
                 const propsToShow =
