@@ -70,7 +70,7 @@ const NewGenerateHolisticPlan = () => {
         console.error('getCoverage error:', err);
       });
   }, [treatmentPlanData?.suggestion_tab, id]);
-  const remapIssues =() => {
+  const remapIssues = () => {
     if (!treatmentPlanData) return;
 
     // console.log('payload', payload);
@@ -80,22 +80,22 @@ const NewGenerateHolisticPlan = () => {
       suggestion_tab: treatmentPlanData?.suggestion_tab,
       key_areas_to_address: treatmentPlanData?.looking_forwards,
     })
-      .then((res:any) => {
+      .then((res: any) => {
         setTratmentPlanData((pre: any) => {
           return {
             ...pre,
             suggestion_tab: res.data.suggestion_tab,
-            key_areas_to_address:res.data.key_areas_to_address
+            key_areas_to_address: res.data.key_areas_to_address,
           };
         });
       })
       .catch((err) => {
         console.error('getCoverage error:', err);
-      });    
-  }  
+      });
+  };
   useEffect(() => {
     remapIssues();
-  }, [treatmentPlanData?.looking_forwards,id]);
+  }, [treatmentPlanData?.looking_forwards, id]);
   const resolveNextStep = () => {
     setisFinalLoading(true);
     const continueSteps = () => {
