@@ -130,8 +130,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                   <div className="text-xs ml-9 text-Text-Quadruple leading-5">
                     {pageType === 'Supplement'
                       ? selectedRow?.Dose
-                      :
-                       selectedRow?.Value + " " + (selectedRow?.Unit || '')}
+                      : selectedRow?.Value + ' ' + (selectedRow?.Unit || '')}
                   </div>
                 </div>
               ) : (

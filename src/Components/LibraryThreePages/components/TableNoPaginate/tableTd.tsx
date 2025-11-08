@@ -11,10 +11,8 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <>
-          <div
-            className="flex justify-start text-xs text-Text-Primary cursor-default"
-          >
-              <EllipsedTooltip text={row.original?.Title || '-'} />
+          <div className="flex justify-start text-xs text-Text-Primary cursor-default">
+            <EllipsedTooltip text={row.original?.Title || '-'} />
           </div>
         </>
       );
@@ -56,24 +54,34 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           : 'Macros Goal',
     enableSorting: false,
     cell: ({ row }) => {
-
       return (
         <>
           <div className="text-xs text-Text-Quadruple cursor-default">
             {pageType === 'Supplement' ? (
-
               <EllipsedTooltip text={row.original?.Dose || '-'} />
             ) : pageType === 'Lifestyle' ? (
               <div className="flex items-center justify-center">
-               <EllipsedTooltip text={row.original?.Value +" "+ (row.original?.Unit || '')} />
+                <EllipsedTooltip
+                  text={row.original?.Value + ' ' + (row.original?.Unit || '')}
+                />
               </div>
             ) : (
               <div className="flex items-center justify-center gap-4">
-                <EllipsedTooltip text={
-                  'Carb: '+row.original?.['Total Macros'].Carbs +" gr" + ", "+
-                  'Pr:'+row.original?.['Total Macros'].Protein +" gr" + ",  "+
-                  'Fat:'+row.original?.['Total Macros'].Fats +" gr"
-                  } />
+                <EllipsedTooltip
+                  text={
+                    'Carb: ' +
+                    row.original?.['Total Macros'].Carbs +
+                    ' gr' +
+                    ', ' +
+                    'Pr:' +
+                    row.original?.['Total Macros'].Protein +
+                    ' gr' +
+                    ',  ' +
+                    'Fat:' +
+                    row.original?.['Total Macros'].Fats +
+                    ' gr'
+                  }
+                />
                 {/* <div>Carb: {row.original?.['Total Macros'].Carbs} gr</div>
                 <div>Pr: {row.original?.['Total Macros'].Protein} gr</div>
                 <div>Fat: {row.original?.['Total Macros'].Fats} gr</div> */}
@@ -106,7 +114,6 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     header: 'Clinical Guidance',
     enableSorting: false,
     cell: ({ row }) => {
-
       return (
         <>
           <div
@@ -118,7 +125,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
               textOverflow: 'ellipsis',
             }}
           >
-              <EllipsedTooltip text={row.original?.Ai_note || '-'} />
+            <EllipsedTooltip text={row.original?.Ai_note || '-'} />
           </div>
         </>
       );
