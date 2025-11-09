@@ -213,14 +213,19 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
         <div className="hidden absolute bottom-0 md:bottom-5 text-[8px] text-[#888888] font-medium  pl-5 md:grid  w-full items-end gap-1">
           <div
             onClick={() => {
-              Auth.logOut();
-              localStorage.clear();
-              window.location.reload();
+              Auth.logOut().then(() => {
+                // console.log(res);
+                localStorage.clear();
+                window.location.reload();
+              });
+
             }}
             onTouchEnd={() => {
-              Auth.logOut();
-              // localStorage.clear();
-              // window.location.reload();
+              Auth.logOut().then(() => {
+                // console.log(res);
+                localStorage.clear();
+                window.location.reload();
+              });
             }}
             className="flex gap-1 justify-center mb-2 cursor-pointer"
           >
