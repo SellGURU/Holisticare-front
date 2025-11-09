@@ -15,6 +15,7 @@ type SendMessage = {
 };
 type Message = {
   date: string;
+  recipient?:boolean;
   time: string;
   conversation_id: number;
   message_text: string;
@@ -73,6 +74,7 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
           sender_type: 'user',
           time: '',
           timestamp: Date.now(),
+          recipient: false,
           name: '',
         },
       ]);
@@ -128,6 +130,7 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
                   return (
                     <>
                       <UserMsg
+                        isRecipient={message.recipient}
                         time={new Date(message.timestamp).toLocaleTimeString(
                           [],
                           {
