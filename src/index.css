@@ -632,6 +632,11 @@ input:-webkit-autofill:active {
   animation: loadingBarAnim 1s linear infinite;
 }
 
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 @keyframes loadingBarAnim {
   0% {
     left: -30%;
