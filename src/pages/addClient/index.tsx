@@ -12,6 +12,12 @@ import SpinnerLoader from '../../Components/SpinnerLoader';
 import TextField from '../../Components/TextField';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import YoupValidation from '../../validation';
+
+import TimezoneSelect from 'react-timezone-select';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import CustomTimezoneField from '../../Components/CustomTimezoneField/CustomTimezoneField';
+
 const AddClient = () => {
   const [showValidation, setShowValidation] = useState(false);
   const [apiError, setApiError] = useState('');
@@ -48,6 +54,9 @@ const AddClient = () => {
       email: '',
       age: 30,
       gender: 'unset',
+      phone: '',
+      timeZone: '',
+      address: '',
     },
     validationSchema,
     validateOnMount: true,
@@ -434,6 +443,49 @@ const AddClient = () => {
                   placeholder="Enter an email (e.g. test@example.com)"
                 />
                 <div>
+                  <div className="w-full mb-3 flex flex-col md:flex-row justify-between items-center gap-2 md:h-[50px] overflow-visible">
+                    <div className="w-full">
+                      <label className="text-[12px] text-Text-Primary font-medium">
+                        Phone Number
+                      </label>
+                      <div className="mt-1">
+                        <PhoneInput
+                          country={'us'}
+                          value={formik.values.phone}
+                          onChange={(value) =>
+                            formik.setFieldValue('phone', value)
+                          }
+                          placeholder="234 567 890"
+                          containerClass="custom-phone-input"
+                          buttonClass="custom-phone-button"
+                          dropdownClass="custom-phone-dropdown"
+                          inputProps={{
+                            name: 'phone',
+                            required: false,
+                            autoFocus: false,
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Time Zone */}
+                    <div className="w-full">
+                      <label className="text-[12px] text-Text-Primary font-medium">
+                        Time Zone
+                      </label>
+                      <CustomTimezoneField
+                        value={formik.values.timeZone}
+                        onChange={(tz) => formik.setFieldValue('timeZone', tz)}
+                      />
+                    </div>
+                  </div>
+                  {/* Address */}
+                  <TextField
+                    type="text"
+                    {...formik.getFieldProps('address')}
+                    label="Address"
+                    placeholder="Enter street address"
+                  />
                   <label className="text-Text-Primary text-[12px] font-medium">
                     Client’s Photo
                   </label>
