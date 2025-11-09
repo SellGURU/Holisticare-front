@@ -480,12 +480,10 @@ const AddClient = () => {
                     </div>
                   </div>
                   {/* Address */}
-                  <TextField
-                    type="text"
-                    {...formik.getFieldProps('address')}
-                    label="Address"
-                    placeholder="Enter street address"
-                  />
+                  <div className="flex flex-col gap-1 text-[12px] text-Text-Primary font-medium mb-3">
+                    Address <textarea placeholder='Enter client’s address (e.g., 221B Baker Street, London)' className=' w-full h-[89px] rounded-2xl border border-Gray-50 py-1 px-3 bg-backgroundColor-Card resize-none outline-none text-xs placeholder:text-[#B0B0B0] placeholder:font-medium text-Text-Primary shadow-100' {...formik.getFieldProps('address')} />
+                  </div>
+
                   <label className="text-Text-Primary text-[12px] font-medium">
                     Client’s Photo
                   </label>

@@ -1,6 +1,6 @@
-import { useMemo, useRef, useState } from "react";
-import { useTimezoneSelect, allTimezones } from "react-timezone-select";
-import useModalAutoClose from "../../hooks/UseModalAutoClose";
+import { useMemo, useRef, useState } from 'react';
+import { useTimezoneSelect, allTimezones } from 'react-timezone-select';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
 
 interface Props {
   value: any;
@@ -9,16 +9,16 @@ interface Props {
 
 export default function CustomTimezoneField({ value, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState(value?.label || "");
+  const [query, setQuery] = useState(value?.label || '');
 
   const { options } = useTimezoneSelect({
-    labelStyle: "original",
+    labelStyle: 'original',
     timezones: allTimezones,
   });
 
   const filtered = useMemo(() => {
     return options.filter((o: any) =>
-      o.label.toLowerCase().includes(query.toLowerCase())
+      o.label.toLowerCase().includes(query.toLowerCase()),
     );
   }, [query, options]);
 
@@ -38,24 +38,23 @@ export default function CustomTimezoneField({ value, onChange }: Props) {
   });
 
   return (
-    <div className="tz-wrapper" >
+    <div className="tz-wrapper ">
       {/* Custom input */}
-      <div    ref={buttonRef} className="tz-input-box">
+      <div ref={buttonRef} className="tz-input-box">
         <img src="/icons/search-normal.svg" className="tz-left-icon" alt="" />
         <input
           value={query}
           className="tz-input-field"
-          placeholder="Search timezone"
+          placeholder="Select or search time zone"
           onChange={(e) => {
             setQuery(e.target.value);
             setOpen(true);
           }}
-        //   onFocus={() => setOpen(true)}
+          //   onFocus={() => setOpen(true)}
         />
         <img
-     
           src="/icons/arrow-down.svg"
-          className={`tz-right-icon  absolute right-3 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`tz-right-icon  absolute right-3 transition-transform ${open ? 'rotate-180' : ''}`}
           alt=""
           onClick={() => setOpen(!open)}
         />

@@ -684,8 +684,8 @@ input:-webkit-autofill:active {
   height: 28px !important;
   border-radius: 16px !important;
   font-size: 12px;
-  background-color: #FDFDFD !important;
-  border: 1px solid #E9EDF5 !important;
+  background-color: #fdfdfd !important;
+  border: 1px solid #e9edf5 !important;
   padding-left: 78px !important; /* Space for flag */
 }
 
@@ -693,8 +693,8 @@ input:-webkit-autofill:active {
 .custom-phone-input .flag-dropdown {
   padding: 8px 12px !important;
   border-radius: 16px 0 0 16px !important;
-  background-color: #F4F4F4 !important;
-  border: 1px solid #E9EDF5 !important;
+  background-color: #f4f4f4 !important;
+  border: 1px solid #e9edf5 !important;
 }
 
 /* Show dial code next to flag in the button */
@@ -724,12 +724,12 @@ input:-webkit-autofill:active {
 .custom-phone-input .country-list {
   width: 200px !important;
   border-radius: 12px !important;
-  box-shadow: 0px 4px 16px rgba(0,0,0,0.15) !important;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.15) !important;
   font-size: 12px !important;
   max-height: 200px !important;
 }
 .custom-phone-input .country-list .country:hover {
-  background-color: #F1F4F9 !important;
+  background-color: #f1f4f9 !important;
 }
 
 .tz-wrapper {
@@ -744,23 +744,21 @@ input:-webkit-autofill:active {
   gap: 8px;
   height: 28px;
   border-radius: 16px;
-  background: #FDFDFD;
-  border: 1px solid #E9EDF5;
-  padding: 0 12px;
+  background: #fdfdfd;
+  border: 1px solid #e9edf5;
+  padding: 8px 12px;
   cursor: text;
 }
 
 /* Search icon (left) */
 .tz-left-icon {
   width: 14px;
-
 }
 
 /* Arrow icon (right) */
 .tz-right-icon {
   width: 14px;
   cursor: pointer;
-  
 }
 
 /* Actual text field inside */
@@ -781,7 +779,7 @@ input:-webkit-autofill:active {
   background: white;
   border-radius: 12px;
   border: 1px solid #e9edf5;
-  box-shadow: 0px 4px 16px rgba(0,0,0,0.15);
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.15);
   z-index: 99;
 }
 
