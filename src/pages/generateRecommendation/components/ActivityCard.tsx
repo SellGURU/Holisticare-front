@@ -205,7 +205,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 {showAddIssue && (
                   <div
                     ref={addIssueRef}
-                    className="flex flex-col absolute top-6 right-0 w-[333px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
+                    className="flex flex-col absolute top-6 left-[-45px] w-[353px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
                     style={{
                       scrollbarWidth: 'thin',
                       scrollbarColor: '#E9EDF5 #FFFFFF',
@@ -241,16 +241,20 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                       return (
                         <div
                           key={index}
-                          className="flex select-none text-justify items-start break-all text-Text-Primary text-xs group relative pr-5 py-1"
+                          className="flex select-none text-[10px] text-justify items-center break-all text-Text-Primary text-xs group relative pr-5 py-1"
                         >
                           <Checkbox
+                            width="w-3"
+                            height="h-3"
                             checked={isInSelected}
                             onChange={handleToggle}
                           ></Checkbox>
-                          <span className="text-Text-Secondary text-nowrap mr-1">
+                          <span className="text-Text-Secondary text-[10px] text-nowrap mr-1">
                             {issueLabel}:{' '}
                           </span>
-                          {text?.split(':')[1]?.trim()}
+                          <div className="text-[10px] ">
+                            {text?.split(':')[1]?.trim()}
+                          </div>
                           {isDeleting === index + 1 ? (
                             <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                               {/* <div className="text-Text-Quadruple text-xs">
