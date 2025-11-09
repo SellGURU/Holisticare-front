@@ -328,9 +328,7 @@ const LogDetails = () => {
         </div>
         <div className="flex justify-end items-center">
           <div className="flex items-center justify-start">
-            <div className="text-Text-Primary text-xs  mr-2">
-              From
-            </div>
+            <div className="text-Text-Primary text-xs  mr-2">From</div>
             <SimpleDatePicker
               date={fromDate}
               setDate={setFromDate}

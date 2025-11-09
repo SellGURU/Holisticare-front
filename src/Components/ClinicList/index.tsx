@@ -85,7 +85,11 @@ const ClinicList = () => {
                         <div className="flex items-center gap-3">
                           {clinic.clinic_logo ? (
                             <img
-                              src={clinic.clinic_logo ? clinic.clinic_logo : `https://ui-avatars.com/api/?name=${clinic.clinic_name}`}
+                              src={
+                                clinic.clinic_logo
+                                  ? clinic.clinic_logo
+                                  : `https://ui-avatars.com/api/?name=${clinic.clinic_name}`
+                              }
                               alt={clinic.clinic_name ?? clinic.clinic_email}
                               className="h-16 w-16 rounded-full object-cover border border-gray-200 flex-shrink-0"
                             />
