@@ -83,22 +83,24 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     Application.PreviewQuestionary({
                       member_id: id,
                       q_unique_id: el.unique_id,
-                    }).then((res) => {
-                      console.log(res);
+                    })
+                      .then((res) => {
+                        console.log(res);
 
-                      // setViewQuestienry(res.data);
-                      // setIsView(true);
-                      // setshowModal(false);
-                      window.open(
-                        `/surveys-view/${id}/${el.unique_id}`,
-                        '_blank',
-                      );
+                        // setViewQuestienry(res.data);
+                        // setIsView(true);
+                        // setshowModal(false);
+                        window.open(
+                          `/surveys-view/${id}/${el.unique_id}`,
+                          '_blank',
+                        );
 
-                      // navigate(`/surveys/${id}/${el.unique_id}`)
-                    }).catch((err) => {
-                      console.log(err);
-                      toast.error(err.detail);
-                    });
+                        // navigate(`/surveys/${id}/${el.unique_id}`)
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                        toast.error(err.detail);
+                      });
                     // Application.Questionary_tracking_action({
                     //   form_name: el.title,
                     //   member_id: id,
