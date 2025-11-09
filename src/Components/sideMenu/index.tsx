@@ -219,8 +219,8 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
             }}
             onTouchEnd={() => {
               Auth.logOut();
-              localStorage.clear();
-              window.location.reload();
+              // localStorage.clear();
+              // window.location.reload();
             }}
             className="flex gap-1 justify-center mb-2 cursor-pointer"
           >
