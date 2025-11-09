@@ -263,7 +263,8 @@ const HistoricalChart = ({
 
               {el.high ? (
                 <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[4px] opacity-35 text-center">
-                  {el.high}
+                  {el.high && el.low != null && <>{el.high}</>}
+                  {el.low == null && <>{el.high + '>'}</>}
                 </div>
               ) : (
                 <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[4px] opacity-35 text-center">
