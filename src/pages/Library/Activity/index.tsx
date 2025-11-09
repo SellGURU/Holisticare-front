@@ -132,7 +132,9 @@ const Activity = () => {
 
     return result;
   }, [active, ExcercisesList, dataList, searchQuery, sortId]);
-
+  const allData = useMemo(() => {
+    return active === 'Exercise' ? ExcercisesList : dataList;
+  }, [active, ExcercisesList, dataList]);
   const sortLabelMap: Record<string, string> = {
     title_asc: 'Title (A → Z)',
     title_desc: 'Title (Z → A)',
@@ -178,7 +180,7 @@ const Activity = () => {
               {active}
             </div>
             <div className="flex items-center gap-2">
-              {filteredAndSortedData.length > 0 && (
+              {allData.length > 0 && (
                 <SearchBox
                   ClassName="rounded-xl h-6 !py-[0px] !px-3 !shadow-[unset]"
                   placeHolder={`Search in ${active.toLowerCase()}...`}
