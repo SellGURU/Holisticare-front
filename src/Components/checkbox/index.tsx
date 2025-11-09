@@ -23,7 +23,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
     if (checked) {
       return 'bg-Primary-DeepTeal border-none';
     }
-    if(isDisabled){
+    if (isDisabled) {
       return 'bg-Text-Secondary border-Gray-200';
     }
     return 'bg-white';
@@ -37,9 +37,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         className="hidden"
       />
       <div
-        className={`${width} ${height} flex items-center  justify-center rounded border ${borderColor} ${
-          resolveCheckBoxColor()
-        }`}
+        className={`${width} ${height} flex items-center  justify-center rounded border ${borderColor} ${resolveCheckBoxColor()}`}
       >
         {checked && (
           <svg

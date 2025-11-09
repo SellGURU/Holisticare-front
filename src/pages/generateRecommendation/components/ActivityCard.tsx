@@ -244,8 +244,8 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                           className="flex select-none text-[10px] text-justify items-center break-all text-Text-Primary text-xs group relative pr-5 py-1"
                         >
                           <Checkbox
-                            width='w-3'
-                            height='h-3'
+                            width="w-3"
+                            height="h-3"
                             checked={isInSelected}
                             onChange={handleToggle}
                           ></Checkbox>
@@ -253,8 +253,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                             {issueLabel}:{' '}
                           </span>
                           <div className="text-[10px] ">
-                           {text?.split(':')[1]?.trim()}
-
+                            {text?.split(':')[1]?.trim()}
                           </div>
                           {isDeleting === index + 1 ? (
                             <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity">

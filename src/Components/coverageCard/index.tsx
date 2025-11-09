@@ -90,7 +90,11 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                     }
                     alt=""
                   /> */}
-                  <Checkbox isDisabled checked={isChecked} onChange={() => {}}></Checkbox>
+                  <Checkbox
+                    isDisabled
+                    checked={isChecked}
+                    onChange={() => {}}
+                  ></Checkbox>
                   <span className="text-Text-Secondary text-nowrap mr-1">
                     {issueLabel}:{' '}
                   </span>
