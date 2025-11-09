@@ -556,7 +556,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                       <div className="text-xs text-Text-Primary">
                         {el.Title}
                       </div>
-                      <div className="text-[8px] text-Text-Quadruple">
+                      <div className="text-[8px] text-Text-Quadruple text-nowrap">
                         ({el.Files.length} Videos)
                       </div>
                     </div>
