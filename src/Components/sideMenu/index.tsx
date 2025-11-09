@@ -218,7 +218,6 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                 localStorage.clear();
                 window.location.reload();
               });
-
             }}
             onTouchEnd={() => {
               Auth.logOut().then(() => {
