@@ -86,7 +86,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
       >
         {table.getRowModel().rows.length > 0 ? (
           <table
-            className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
+            className={`border-collapse table-fixed  text-sm text-left rtl:text-right w-full`}
           >
             <thead className="text-xs text-Text-Primary bg-backgroundColor-Main">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -140,7 +140,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td
-                      className="px-3 py-3 text-center text-nowrap text-xs"
+                      className="px-3 py-3 text-center text-nowrap overflow-hidden text-xs"
                       key={cell.id}
                     >
                       {flexRender(
