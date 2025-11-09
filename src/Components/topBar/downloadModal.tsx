@@ -1,116 +1,130 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
-import { subscribe } from '../../utils/event';
+import { subscribe, unsubscribe } from '../../utils/event';
 import { useEffect } from 'react';
 interface DownloadModalProps {
+  mode: 'download' | 'share';
   onclose: () => void;
   onconfirm: (data: Array<any>) => void;
 }
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const DownloadModal: React.FC<DownloadModalProps> = ({
   onclose,
   onconfirm,
+  mode,
 }) => {
-  const [downloadSelect, setDownloadSelect] = useState([
-    {
-      name: 'Client Summary',
-      checked: true,
-    },
-    {
-      name: 'Need Focus Biomarker',
-      checked: false,
-    },
-    {
-      name: 'Concerning Result',
-      checked: true,
-    },
-    {
-      name: 'Detailed Analysis',
-      checked: true,
-    },
-    {
-      name: 'Holistic Plan',
-      checked: true,
-    },
-    {
-      name: 'Action Plan',
-      checked: true,
-      disabled: false,
-    },
-  ]);
-  console.log(downloadSelect);
+  const initialOptions = [
+    { name: 'Client Summary', checked: true },
+    { name: 'Need Focus Biomarker', checked: false },
+    { name: 'Concerning Result', checked: true },
+    { name: 'Detailed Analysis', checked: true },
+    { name: 'Holistic Plan', checked: true },
+    { name: 'Action Plan', checked: true, disabled: false },
+  ];
 
-  subscribe('ActionPlanStatus', (data: any) => {
-    setDownloadSelect((prev) =>
-      prev.map((item) =>
-        item.name === 'Action Plan'
-          ? {
-              ...item,
-              disabled: data.detail.isempty,
-              checked: !data.detail.isempty,
-            }
-          : item,
-      ),
-    );
-  });
+  const [downloadSelect, setDownloadSelect] = useState(initialOptions);
+  const [shareSelect, setShareSelect] = useState(initialOptions);
 
-  subscribe('HolisticPlanStatus', (data: any) => {
-    setDownloadSelect((prev) =>
-      prev.map((item) =>
-        item.name === 'Holistic Plan'
-          ? {
-              ...item,
-              disabled: data.detail.isempty,
-              checked: !data.detail.isempty,
-            }
-          : item,
-      ),
-    );
-  });
+  const activeSelect = mode === 'download' ? downloadSelect : shareSelect;
+  const setActiveSelect =
+    mode === 'download' ? setDownloadSelect : setShareSelect;
 
-  subscribe('DetailedAnalysisStatus', (data: any) => {
-    setDownloadSelect((prev) =>
-      prev.map((item) =>
-        item.name === 'Detailed Analysis'
-          ? {
-              ...item,
-              disabled: data.detail.isempty,
-              checked: !data.detail.isempty,
-            }
-          : item,
-      ),
-    );
-  });
+  useEffect(() => {
+    // Helper function to update both states
+    const updateBothStates = (
+      updater: (prev: typeof initialOptions) => typeof initialOptions,
+    ) => {
+      setDownloadSelect(updater);
+      setShareSelect(updater);
+    };
+    const handleActionPlanStatus = (data: any) => {
+      updateBothStates((prev) =>
+        prev.map((item) =>
+          item.name === 'Action Plan'
+            ? {
+                ...item,
+                disabled: data.detail.isempty,
+                checked: !data.detail.isempty,
+              }
+            : item,
+        ),
+      );
+    };
 
-  subscribe('NeedsFocusBiomarkerStatus', (data: any) => {
-    setDownloadSelect((prev) =>
-      prev.map((item) =>
-        item.name === 'Need Focus Biomarker'
-          ? {
-              ...item,
-              disabled: data.detail.isempty,
-              checked: !data.detail.isempty,
-            }
-          : item,
-      ),
-    );
-  });
-  subscribe('ConcerningResultStatus', (data: any) => {
-    setDownloadSelect((prev) =>
-      prev.map((item) =>
-        item.name === 'Concerning Result'
-          ? {
-              ...item,
-              disabled: data.detail.isempty,
-              checked: !data.detail.isempty,
-            }
-          : item,
-      ),
-    );
-  });
+    const handleHolisticPlanStatus = (data: any) => {
+      updateBothStates((prev) =>
+        prev.map((item) =>
+          item.name === 'Holistic Plan'
+            ? {
+                ...item,
+                disabled: data.detail.isempty,
+                checked: !data.detail.isempty,
+              }
+            : item,
+        ),
+      );
+    };
+
+    const handleDetailedAnalysisStatus = (data: any) => {
+      updateBothStates((prev) =>
+        prev.map((item) =>
+          item.name === 'Detailed Analysis'
+            ? {
+                ...item,
+                disabled: data.detail.isempty,
+                checked: !data.detail.isempty,
+              }
+            : item,
+        ),
+      );
+    };
+
+    const handleNeedsFocusBiomarkerStatus = (data: any) => {
+      updateBothStates((prev) =>
+        prev.map((item) =>
+          item.name === 'Need Focus Biomarker'
+            ? {
+                ...item,
+                disabled: data.detail.isempty,
+                checked: !data.detail.isempty,
+              }
+            : item,
+        ),
+      );
+    };
+
+    const handleConcerningResultStatus = (data: any) => {
+      updateBothStates((prev) =>
+        prev.map((item) =>
+          item.name === 'Concerning Result'
+            ? {
+                ...item,
+                disabled: data.detail.isempty,
+                checked: !data.detail.isempty,
+              }
+            : item,
+        ),
+      );
+    };
+
+    subscribe('ActionPlanStatus', handleActionPlanStatus);
+    subscribe('HolisticPlanStatus', handleHolisticPlanStatus);
+    subscribe('DetailedAnalysisStatus', handleDetailedAnalysisStatus);
+    subscribe('NeedsFocusBiomarkerStatus', handleNeedsFocusBiomarkerStatus);
+    subscribe('ConcerningResultStatus', handleConcerningResultStatus);
+
+    return () => {
+      unsubscribe('ActionPlanStatus', handleActionPlanStatus);
+      unsubscribe('HolisticPlanStatus', handleHolisticPlanStatus);
+      unsubscribe('DetailedAnalysisStatus', handleDetailedAnalysisStatus);
+      unsubscribe('NeedsFocusBiomarkerStatus', handleNeedsFocusBiomarkerStatus);
+      unsubscribe('ConcerningResultStatus', handleConcerningResultStatus);
+    };
+  }, []);
   const removeAll = () => {
-    setDownloadSelect((pre) => {
+    setActiveSelect((pre) => {
       return pre.map((el) => {
         return {
           ...el,
@@ -121,7 +135,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   };
 
   const selectAll = () => {
-    setDownloadSelect((pre) => {
+    setActiveSelect((pre) => {
       return pre.map((el) => {
         return {
           ...el,
@@ -132,7 +146,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   };
 
   const select = (active: number) => {
-    setDownloadSelect((pre) => {
+    setActiveSelect((pre) => {
       return pre.map((el, index: number) => {
         if (index == active) {
           return {
@@ -147,7 +161,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   };
 
   // Check if all enabled items are unselected
-  const allUnselected = downloadSelect
+  const allUnselected = activeSelect
     .filter((el) => !el.disabled)
     .every((el) => !el.checked);
   const [showValidate, setShowValidate] = useState(false);
@@ -160,8 +174,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     <>
       <div className="flex justify-between items-center">
         <div className="text-[10px] text-Text-Secondary">
-          {downloadSelect.filter((el: any) => el.checked == true).length}/
-          {downloadSelect.filter((el) => !el.disabled).length} selected
+          {activeSelect.filter((el: any) => el.checked == true).length}/
+          {activeSelect.filter((el) => !el.disabled).length} selected
         </div>
         <div
           onClick={allUnselected ? selectAll : removeAll}
@@ -172,7 +186,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       </div>
 
       <div className="grid gap-2 mt-2">
-        {downloadSelect
+        {activeSelect
           .filter((el) => !el.disabled)
           .map((el, index: number) => {
             return (
@@ -244,7 +258,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
             if (allUnselected) {
               setShowValidate(true);
             } else {
-              onconfirm(downloadSelect);
+              onconfirm(activeSelect);
             }
           }}
           size="small"

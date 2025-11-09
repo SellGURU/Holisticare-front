@@ -123,8 +123,11 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         </div>
       )}
       <div className="w-full flex items-center justify-between">
-        <div className="md:text-sm text-[12px] font-medium text-Text-Primary">
+        <div className="md:text-sm text-[12px] font-medium flex gap-1 items-center text-Text-Primary">
           List of Biomarkers
+          <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
+            ({biomarkers.length})
+          </span>
         </div>
 
         <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple">
@@ -241,7 +244,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         {/* Right side: Table */}
         <div
           ref={tableRef}
-          className={`w-full border-Gray-50 mt-6 overflow-x-auto  hidden-scrollbar   ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
+          className={`w-full border-Gray-50 overflow-x-auto  hidden-scrollbar   ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
         >
           <div className="w-full border border-Gray-50 min-w-[700px]    rounded-[20px] h-full text-xs">
             {/* Table Header */}

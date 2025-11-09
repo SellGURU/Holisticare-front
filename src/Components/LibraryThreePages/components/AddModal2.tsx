@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import Application from '../../../api/app';
 import {
   AssociatedInterventionInfoTextDiet,
-  DoseInfoText,
+  // DoseInfoText,
   DoseValidationEnglish,
   MacrosValidationNumber,
   ValueInfoText,
@@ -320,7 +320,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     ? ValidationForms.ValidationText('Dose', formData.dose)
                     : ''
                 }
-                InfoText={DoseInfoText}
+                // InfoText={DoseInfoText}
               />
             )}
 
@@ -476,6 +476,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 setShowValidation(true);
                 if (validateFields()) {
                   submit();
+                  onClear();
                 }
               }}
             >
