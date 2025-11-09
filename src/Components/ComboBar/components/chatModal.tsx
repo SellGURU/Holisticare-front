@@ -15,7 +15,7 @@ type SendMessage = {
 };
 type Message = {
   date: string;
-  recipient?:boolean;
+  recipient?: boolean;
   time: string;
   conversation_id: number;
   message_text: string;

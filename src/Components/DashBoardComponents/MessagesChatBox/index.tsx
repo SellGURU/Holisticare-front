@@ -21,7 +21,7 @@ type Message = {
   images?: string[];
   timestamp: number;
   name: string;
-  recipient?:boolean;
+  recipient?: boolean;
 };
 type SendMessage = {
   conversation_id?: number;
@@ -435,18 +435,16 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                                   //   />
                                   // </span>
                                 }
-                                {
-                                  message.recipient == true && (
-                                    <>
-                                   <span title={"Seen by the "+username}>
-                                     <SvgIcon
-                                       src="./icons/tick-green.svg"
-                                       color="#8a8a8a"
-                                     />
-                                   </span>                                    
-                                    </>
-                                  )
-                                }
+                                {message.recipient == true && (
+                                  <>
+                                    <span title={'Seen by the ' + username}>
+                                      <SvgIcon
+                                        src="./icons/tick-green.svg"
+                                        color="#8a8a8a"
+                                      />
+                                    </span>
+                                  </>
+                                )}
                                 <div
                                   style={{ overflowWrap: 'anywhere' }}
                                   className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
@@ -570,18 +568,16 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                                   //   />
                                   // </span>
                                 }
-                                {
-                                  message.recipient == true && (
-                                    <>
-                                   <span>
-                                     <SvgIcon
-                                       src="./icons/tick-green.svg"
-                                       color="#8a8a8a"
-                                     />
-                                   </span>                                    
-                                    </>
-                                  )
-                                }
+                                {message.recipient == true && (
+                                  <>
+                                    <span>
+                                      <SvgIcon
+                                        src="./icons/tick-green.svg"
+                                        color="#8a8a8a"
+                                      />
+                                    </span>
+                                  </>
+                                )}
                                 <div
                                   style={{ overflowWrap: 'anywhere' }}
                                   className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "

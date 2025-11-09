@@ -42,16 +42,11 @@ export const UserMsg = ({
               <MoonLoader color="#383838" size={12} />
             </span>
           )}
-          {
-            isRecipient && (
-              <span title={"Seen by the "+name}>
-                <SvgIcon
-                  src="/icons/tick-green.svg"
-                  color="#8a8a8a"
-                />
-              </span>
-            )
-          }
+          {isRecipient && (
+            <span title={'Seen by the ' + name}>
+              <SvgIcon src="/icons/tick-green.svg" color="#8a8a8a" />
+            </span>
+          )}
           <div className="max-w-[232px] bg-[#005F7340] border border-Gray-50 px-4 py-2 text-justify mt-1 text-Text-Primary text-xs rounded-[20px] rounded-tr-none">
             {formatText(msg)}
           </div>
