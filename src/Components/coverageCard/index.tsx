@@ -66,7 +66,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
           setNewIssue('');
         }}
       >
-        <div className="bg-white max-h-[408px] w-[465px] p-6 pb-8 rounded-2xl shadow-800">
+        <div className="bg-white max-h-[408px] w-[565px] p-6 pb-8 rounded-2xl shadow-800">
           <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
             Plan Coverage Details
           </div>
@@ -90,7 +90,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                     }
                     alt=""
                   /> */}
-                  <Checkbox checked={isChecked} onChange={() => {}}></Checkbox>
+                  <Checkbox isDisabled checked={isChecked} onChange={() => {}}></Checkbox>
                   <span className="text-Text-Secondary text-nowrap mr-1">
                     {issueLabel}:{' '}
                   </span>
