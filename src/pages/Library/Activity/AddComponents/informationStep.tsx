@@ -121,22 +121,22 @@ const InformationStep: FC<InformationStepProps> = ({
             }}
             disabled={mode === 'edit'}
             showDisabled={mode === 'edit'}
-            // isValid={
-            //   showValidation
-            //     ? ValidationForms.IsvalidField(
-            //         'Parent_Title',
-            //         addData.Parent_Title,
-            //       )
-            //     : true
-            // }
-            // validationText={
-            //   showValidation
-            //     ? ValidationForms.ValidationText(
-            //         'Parent_Title',
-            //         addData.Parent_Title,
-            //       )
-            //     : ''
-            // }
+            isValid={
+              (mode === 'add' && showValidation)
+                ? ValidationForms.IsvalidField(
+                    'Parent_Title',
+                    addData.Parent_Title,
+                  )
+                : true
+            }
+            validationText={
+              (mode === 'add' && showValidation)
+                ? ValidationForms.ValidationText(
+                    'Parent_Title',
+                    addData.Parent_Title,
+                  )
+                : ''
+            }
             placeholder={AssociatedInterventionInfoTextActivity}
             margin="mb-0"
           />
