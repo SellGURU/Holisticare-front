@@ -15,6 +15,7 @@ import YoupValidation from '../../validation';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import CustomTimezoneField from '../../Components/CustomTimezoneField/CustomTimezoneField';
+import { allTimezones } from 'react-timezone-select';
 
 const AddClient = () => {
   const [showValidation, setShowValidation] = useState(false);
@@ -43,6 +44,17 @@ const AddClient = () => {
       .string()
       .notOneOf(['unset'], 'This field is required.')
       .required(),
+    timeZone: yup
+      .string()
+      .nullable()
+      .test(
+        'valid-timezone',
+        'Please select a valid time zone.',
+        function (value) {
+          if (!value) return true; // empty is allowed
+          return Object.keys(allTimezones).includes(value);
+        },
+      ),
   });
 
   const formik = useFormik({
@@ -122,7 +134,7 @@ const AddClient = () => {
       wearable_devices: [],
       timezone: formik.values.timeZone,
       address: formik.values.address,
-      phone_number: "+" + formik.values.phone,
+      phone_number: '+' + formik.values.phone,
     })
       .then((res) => {
         setIsAdded(true);
@@ -455,8 +467,8 @@ const AddClient = () => {
                             country={'us'}
                             value={formik.values.phone}
                             onChange={(value) =>
-                            formik.setFieldValue('phone', value)
-                          }
+                              formik.setFieldValue('phone', value)
+                            }
                             placeholder="234 567 890"
                             containerClass="custom-phone-input"
                             buttonClass="custom-phone-button"
@@ -478,10 +490,20 @@ const AddClient = () => {
                         <div className="mt-[3px]">
                           <CustomTimezoneField
                             value={formik.values.timeZone}
-                            onChange={(tz) =>
-                              formik.setFieldValue('timeZone', tz)
-                            }
+                            onChange={(tz) => {
+                              formik.setFieldTouched('timeZone', true);
+                              formik.setFieldValue(
+                                'timeZone',
+                                tz?.value || tz || '',
+                              );
+                            }}
                           />
+                          {(formik.touched.timeZone || showValidation) &&
+                            formik.errors.timeZone && (
+                              <div className="text-Red text-[10px] mt-[2px]">
+                                {formik.errors.timeZone}
+                              </div>
+                            )}
                         </div>
                       </div>
                     </div>
