@@ -81,7 +81,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     });
   };
   useEffect(() => {
-    if(!isOpen){
+    if (!isOpen) {
       onClear();
     }
   }, [isOpen]);
@@ -134,8 +134,10 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       ValidationForms.IsvalidField('Score', formData.score)
       // ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title)
     ) {
-      if(mode === 'add'){
-        if(ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title) ){
+      if (mode === 'add') {
+        if (
+          ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title)
+        ) {
           return true;
         }
         return false;
@@ -266,7 +268,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 disabled={mode === 'edit'}
                 showDisabled={mode === 'edit'}
                 isValid={
-                  (mode === 'add' && showValidation)
+                  mode === 'add' && showValidation
                     ? ValidationForms.IsvalidField(
                         'Parent_Title',
                         formData.Parent_Title,
@@ -274,7 +276,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     : true
                 }
                 validationText={
-                  (mode === 'add' && showValidation)
+                  mode === 'add' && showValidation
                     ? ValidationForms.ValidationText(
                         'Parent_Title',
                         formData.Parent_Title,
@@ -487,7 +489,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 setShowValidation(true);
                 if (validateFields()) {
                   submit();
-                  
                 }
               }}
             >
