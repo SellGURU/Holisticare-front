@@ -12,6 +12,11 @@ import SpinnerLoader from '../../Components/SpinnerLoader';
 import TextField from '../../Components/TextField';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import YoupValidation from '../../validation';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import CustomTimezoneField from '../../Components/CustomTimezoneField/CustomTimezoneField';
+import { allTimezones } from 'react-timezone-select';
+
 const AddClient = () => {
   const [showValidation, setShowValidation] = useState(false);
   const [apiError, setApiError] = useState('');
@@ -39,6 +44,17 @@ const AddClient = () => {
       .string()
       .notOneOf(['unset'], 'This field is required.')
       .required(),
+    timeZone: yup
+      .string()
+      .nullable()
+      .test(
+        'valid-timezone',
+        'Please select a valid time zone.',
+        function (value) {
+          if (!value) return true; // empty is allowed
+          return Object.keys(allTimezones).includes(value);
+        },
+      ),
   });
 
   const formik = useFormik({
@@ -48,6 +64,9 @@ const AddClient = () => {
       email: '',
       age: 30,
       gender: 'unset',
+      phone: '',
+      timeZone: '',
+      address: '',
     },
     validationSchema,
     validateOnMount: true,
@@ -113,6 +132,9 @@ const AddClient = () => {
       date_of_birth: dateOfBirth,
       gender: formik.values.gender,
       wearable_devices: [],
+      timezone: formik.values.timeZone,
+      address: formik.values.address,
+      phone_number: '+' + formik.values.phone,
     })
       .then((res) => {
         setIsAdded(true);
@@ -162,7 +184,7 @@ const AddClient = () => {
       <div className="w-full hidden md:block sticky z-50 top-0 ">
         <MainTopBar></MainTopBar>
       </div>
-      <div className="w-full p-2 xs:p-4 sm:p-6 md:p-8 h-[100vh] overflow-y-auto">
+      <div className="w-full p-2 xs:p-4 sm:p-6 md:p-8 h-[100vh] overflow-y-auto relative ">
         {isAdded ? (
           <>
             <div className="w-full flex justify-center items-center h-[80vh]">
@@ -260,8 +282,9 @@ const AddClient = () => {
             </div>
 
             <div className="flex justify-center w-full">
-              <div className="md:max-w-[360px] w-full grid gap-4 pt-3 md:pt-0">
-                <div className="w-full flex gap-4 md:gap-0 flex-col md:flex-row justify-between items-start md:overflow-visible md:h-[50px]">
+              <div className=" w-full md:max-w-[360px] relative grid pt-3 md:pt-0 ">
+                <div className='pb-[40px]'>
+                <div className="w-full flex gap-4 mb-4 md:gap-0 flex-col md:flex-row justify-between items-start md:overflow-visible md:h-[50px]">
                   <div className="w-full md:w-[220px]">
                     <TextField
                       type="text"
@@ -305,7 +328,7 @@ const AddClient = () => {
                     )}
                   </div>
                 </div>
-                <div className="w-full mb-3 flex flex-col md:flex-row justify-between items-start md:h-[50px] overflow-visible">
+                <div className="w-full mb-6 flex flex-col md:flex-row justify-between items-start md:h-[50px] overflow-visible">
                   <div className=" w-full relative md:h-[28px] overflow-visible mb-4">
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Gender
@@ -434,6 +457,66 @@ const AddClient = () => {
                   placeholder="Enter an email (e.g. test@example.com)"
                 />
                 <div>
+                  <div className="w-full mb-3 mt-2 flex flex-col md:flex-row justify-between items-center gap-2 md:h-[50px] overflow-visible">
+                    <div className="w-full">
+                      <label className="text-[12px] text-Text-Primary font-medium">
+                        Phone Number
+                      </label>
+                      <div className="mt-1">
+                        <PhoneInput
+                          country={'us'}
+                          value={formik.values.phone}
+                          onChange={(value) =>
+                            formik.setFieldValue('phone', value)
+                          }
+                          placeholder="234 567 890"
+                          containerClass="custom-phone-input"
+                          buttonClass="custom-phone-button"
+                          dropdownClass="custom-phone-dropdown"
+                          inputProps={{
+                            name: 'phone',
+                            required: false,
+                            autoFocus: false,
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Time Zone */}
+                    <div className="w-full">
+                      <label className="text-[12px] text-Text-Primary font-medium">
+                        Time Zone
+                      </label>
+                      <div className="mt-[3px]">
+                        <CustomTimezoneField
+                          value={formik.values.timeZone}
+                          onChange={(tz) => {
+                            formik.setFieldTouched('timeZone', true);
+                            formik.setFieldValue(
+                              'timeZone',
+                              tz?.value || tz || '',
+                            );
+                          }}
+                        />
+                        {(formik.touched.timeZone || showValidation) &&
+                          formik.errors.timeZone && (
+                            <div className="text-Red text-[10px] mt-[2px]">
+                              {formik.errors.timeZone}
+                            </div>
+                          )}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Address */}
+                  <div className="flex flex-col gap-1 text-[12px] text-Text-Primary font-medium mb-3">
+                    Address{' '}
+                    <textarea
+                      placeholder="Enter client’s address (e.g., 221B Baker Street, London)"
+                      className=" w-full h-[89px] rounded-2xl border border-Gray-50 py-1 px-3 bg-backgroundColor-Card resize-none outline-none text-xs placeholder:text-[#B0B0B0] placeholder:font-medium text-Text-Primary shadow-100"
+                      {...formik.getFieldProps('address')}
+                    />
+                  </div>
+
                   <label className="text-Text-Primary text-[12px] font-medium">
                     Client’s Photo
                   </label>
@@ -521,7 +604,8 @@ const AddClient = () => {
                     </div>
                   )}
                 </div>
-                <div className="w-full h-fit flex justify-center mt-4">
+                </div>
+                <div className="w-full h-fit flex justify-center mt-4 sticky bottom-0 pb-4 bg-bg-color ">
                   <ButtonPrimary
                     // disabled={
                     //   isLoading ||
