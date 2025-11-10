@@ -9,6 +9,8 @@ import MainModal from '../../MainModal';
 // import TooltipText from '../../TooltipText';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import SvgIcon from '../../../utils/svgIcon';
+import SearchBox from '../../SearchBox';
+import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 type Message = {
   date: string;
   time: string;
@@ -33,14 +35,16 @@ type SendMessage = {
 interface MessagesChatBoxProps {
   onBack: () => void;
   onMessageSent?: (memberId: number) => void;
+  selectMessages: string | null;
 }
 
 const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
   onBack,
   onMessageSent,
+  selectMessages,
 }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [aiMessages, setAiMessages] = useState<Message[]>([]);
+const [allMessages, setAllMessages] = useState<Message[]>([]);
+const [messages, setMessages] = useState<Message[]>([]);  const [aiMessages, setAiMessages] = useState<Message[]>([]);
   const [memberId, setMemberId] = useState<any>(null);
   const [username, setUsername] = useState<any>(null);
   const [input, setInput] = useState('');
@@ -82,6 +86,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
     Application.userMessagesList({ member_id: member_id })
       .then((res) => {
         setMessages(res.data.reverse());
+        setAllMessages(res.data.reverse())
       })
       .catch(() => {})
       .finally(() => {
@@ -245,7 +250,25 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
     const b = parseInt(hex.substring(4, 6), 16);
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   };
-
+  const [isSearchOpen, setisSearchOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const searchRef = useRef(null);
+  useModalAutoClose({
+    refrence: searchRef,
+    close: () => {
+      setisSearchOpen(false);
+    },
+  });
+  useEffect(() => {
+  if (!search.trim()) {
+    setMessages(allMessages);
+  } else {
+    const filtered = allMessages.filter((msg) =>
+      msg.message_text.toLowerCase().includes(search.toLowerCase())
+    );
+    setMessages(filtered);
+  }
+}, [search, allMessages]);
   return (
     <>
       <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
@@ -293,44 +316,69 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                     </div>
                   </div>
                 </div>
-                <div
-                  className="relative inline-block w-[120px] font-normal"
-                  ref={wrapperRef}
-                >
-                  <div
-                    className="cursor-pointer bg-backgroundColor-Card border py-2 px-4 pr-3 rounded-2xl leading-tight text-[12px] text-Text-Primary flex justify-between items-center"
-                    onClick={() => setIsOpen(!isOpen)}
-                  >
-                    {options.find((opt) => opt.value === aiMode)?.label}
-                    <img
-                      className={`w-3 h-3 object-contain opacity-80 ml-2 transition-transform duration-200 ${
-                        isOpen ? 'rotate-180' : ''
-                      }`}
-                      src="/icons/arow-down-drop.svg"
-                      alt=""
-                    />
-                  </div>
-
-                  {isOpen && (
-                    <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-100 rounded-2xl shadow-sm text-[12px] text-Text-Primary">
-                      {options.map((opt, index) => (
-                        <li
-                          key={index}
-                          className={`cursor-pointer px-4 py-2 hover:bg-gray-100 rounded-2xl ${
-                            aiMode === opt.value
-                              ? 'bg-gray-50 font-semibold'
-                              : ''
-                          }`}
-                          onClick={() => {
-                            setAiMode(opt.value);
-                            setIsOpen(false);
-                          }}
-                        >
-                          {opt.label}
-                        </li>
-                      ))}
-                    </ul>
+                <div className="flex items-center gap-6">
+                  {isSearchOpen ? (
+                    <div ref={searchRef}>
+                      <SearchBox
+                        isGrayIcon
+                        isHaveBorder
+                        placeHolder="Search messages..."
+                        value={search}
+                        onSearch={(e) => {
+                          setSearch(e);
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div onClick={() => setisSearchOpen(true)}>
+                      <SvgIcon
+                        width="24px"
+                        height="24px"
+                        color="#005F73"
+                        src="icons/search-normal.svg"
+                      />
+                    </div>
                   )}
+
+                  <div
+                    className="relative  w-[120px] flex gap-6 items-center font-normal"
+                    ref={wrapperRef}
+                  >
+                    <div
+                      className="cursor-pointer bg-backgroundColor-Card border py-2 px-4 pr-3 rounded-2xl leading-tight text-[12px] text-Text-Primary flex justify-between items-center"
+                      onClick={() => setIsOpen(!isOpen)}
+                    >
+                      {options.find((opt) => opt.value === aiMode)?.label}
+                      <img
+                        className={`w-3 h-3 object-contain opacity-80 ml-2 transition-transform duration-200 ${
+                          isOpen ? 'rotate-180' : ''
+                        }`}
+                        src="/icons/arow-down-drop.svg"
+                        alt=""
+                      />
+                    </div>
+
+                    {isOpen && (
+                      <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-100 rounded-2xl shadow-sm text-[12px] text-Text-Primary">
+                        {options.map((opt, index) => (
+                          <li
+                            key={index}
+                            className={`cursor-pointer px-4 py-2 hover:bg-gray-100 rounded-2xl ${
+                              aiMode === opt.value
+                                ? 'bg-gray-50 font-semibold'
+                                : ''
+                            }`}
+                            onClick={() => {
+                              setAiMode(opt.value);
+                              setIsOpen(false);
+                            }}
+                          >
+                            {opt.label}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
               </div>
             ) : (
@@ -599,8 +647,18 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                   ))}
                 </>
               )}
-              {(aiMode === false && messages.length === 0) ||
-              (aiMode === true && aiMessages.length === 0) ? (
+              {selectMessages == null ? (
+                <div className="flex flex-col items-center justify-center w-full h-full text-base select-none text-Text-Primary font-medium g">
+                  <img src="/icons/noClient2.svg" alt="" />
+                  <div className="text-base font-medium -mt-10">
+                    No client selected
+                  </div>
+                  <div className="text-xs font-normal">
+                    Select a client from the list to view or send messages.
+                  </div>
+                </div>
+              ) : (aiMode === false && messages.length === 0) ||
+                (aiMode === true && aiMessages.length === 0) ? (
                 <div className="flex flex-col items-center justify-center w-full h-full text-base pt-8 text-Text-Primary font-medium gap-6">
                   <img src="/icons/empty-messages.svg" alt="" />
                   {username ? 'No messages found.' : 'No messages found.'}
