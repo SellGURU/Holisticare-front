@@ -98,7 +98,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   const handleAddIssue = (issue: string) => {
     if (issue.trim() === '') return;
     const name = 'Issue ' + (issuesData.length + 1) + ': ' + issue;
-    const newIssueList = [...selectedIssues, name];
+    const newIssueList = [...selectedIssues];
     handleUpdateIssueListByKey(
       activeCategory,
       item.Recommendation,

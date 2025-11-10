@@ -162,7 +162,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   const handleAddIssue = (issue: string) => {
     if (issue.trim() === '') return;
     const name = 'Issue ' + (issuesData.length + 1) + ': ' + issue;
-    const newIssueList = [...selectedIssues, name];
+    const newIssueList = [...selectedIssues];
     handleUpdateIssueListByKey(
       value.Category,
       value.Recommendation,
@@ -376,10 +376,13 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                             checked={isInSelected}
                             onChange={handleToggle}
                           ></Checkbox>
-                          <span className="text-Text-Secondary text-nowrap mr-1">
+                          <span className="text-Text-Secondary text-[10px] text-nowrap mr-1">
                             {issueLabel}:{' '}
                           </span>
-                          {text?.split(':')[1]?.trim()}
+                          <div className="text-[10px]">
+                            {text?.split(':')[1]?.trim()}
+
+                          </div>
                           {isDeleting === index + 1 ? (
                             <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                               {/* <div className="text-Text-Quadruple text-xs">
