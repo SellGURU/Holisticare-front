@@ -309,7 +309,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                     )} */}
                   </>
                 )}
-              <div className="flex items-center gap-1 relative">
+              <div className="flex items-center gap-1 ">
                 {selectedIssues.map((issue: string, index: number) => (
                   <div
                     key={index}
@@ -334,7 +334,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                 {showAddIssue && (
                   <div
                     ref={addIssueRef}
-                    className="flex flex-col absolute top-6 right-0 w-[303px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
+                    className="flex flex-col absolute top-8  w-[303px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
                     style={{
                       scrollbarWidth: 'thin',
                       scrollbarColor: '#E9EDF5 #FFFFFF',
@@ -370,9 +370,11 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                       return (
                         <div
                           key={index}
-                          className="flex select-none text-justify items-start text-Text-Primary text-xs group relative pr-5 py-1"
+                          className="flex select-none text-justify items-center text-Text-Primary text-xs group relative pr-5 py-1"
                         >
                           <Checkbox
+                            width="w-3"
+                            height="h-3"
                             checked={isInSelected}
                             onChange={handleToggle}
                           ></Checkbox>
