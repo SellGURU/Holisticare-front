@@ -381,7 +381,6 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                           </span>
                           <div className="text-[10px]">
                             {text?.split(':')[1]?.trim()}
-
                           </div>
                           {isDeleting === index + 1 ? (
                             <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity">
