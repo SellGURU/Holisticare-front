@@ -61,6 +61,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
       const videoFiles = exercise.Files.filter(
         (file: any) =>
           file.Type?.split('/')[0] === 'video' ||
+          file.Type?.split('/')[0] === 'Video' ||
           file.Type === 'link' ||
           file.Type?.split('/')[0] === 'image',
       );
@@ -68,6 +69,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
       const videoPromises = videoFiles.map((file: any) => {
         if (
           file.Type?.split('/')[0] === 'video' ||
+          file.Type?.split('/')[0] === 'Video' ||
           file.Type?.split('/')[0] === 'image'
         ) {
           return Application.showExerciseFille({
