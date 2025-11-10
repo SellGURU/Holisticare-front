@@ -4,6 +4,7 @@ import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import { useNavigate } from 'react-router-dom';
 import { publish } from '../../../utils/event';
+import { toast } from 'react-toastify';
 // import questionsDataMoch from './questions/data.json';
 // import SvgIcon from "../../../utils/svgIcon";
 
@@ -82,19 +83,24 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     Application.PreviewQuestionary({
                       member_id: id,
                       q_unique_id: el.unique_id,
-                    }).then((res) => {
-                      console.log(res);
+                    })
+                      .then((res) => {
+                        console.log(res);
 
-                      // setViewQuestienry(res.data);
-                      // setIsView(true);
-                      // setshowModal(false);
-                      window.open(
-                        `/surveys-view/${id}/${el.unique_id}`,
-                        '_blank',
-                      );
+                        // setViewQuestienry(res.data);
+                        // setIsView(true);
+                        // setshowModal(false);
+                        window.open(
+                          `/surveys-view/${id}/${el.unique_id}`,
+                          '_blank',
+                        );
 
-                      // navigate(`/surveys/${id}/${el.unique_id}`)
-                    });
+                        // navigate(`/surveys/${id}/${el.unique_id}`)
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                        toast.error(err.detail);
+                      });
                     // Application.Questionary_tracking_action({
                     //   form_name: el.title,
                     //   member_id: id,

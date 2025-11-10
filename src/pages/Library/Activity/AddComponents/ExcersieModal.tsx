@@ -10,6 +10,7 @@ import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
 import Checkbox from '../../../../Components/checkbox';
 import Application from '../../../../api/app';
 import ValidationForms from '../../../../utils/ValidationForms';
+import { Tooltip } from 'react-tooltip';
 interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -625,22 +626,45 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             <div className="w-full text-center text-xs font-medium">OR</div>
             <label
               className={`w-full h-[174px] rounded-2xl border ${
-                showFileValidation && fileError
+                (showFileValidation && fileError) ||
+                (showValidation &&
+                  fileList.length == 0 &&
+                  !isValidYouTubeUrl(youTubeLink))
                   ? 'border-Red'
                   : 'border-Gray-50'
               } bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer`}
             >
               <input
                 type="file"
-                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/jpeg,image/jpg"
+                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/jpeg,image/jpg,image/jfif,image/pjpeg,image/pjp,video/x-m4v,video/x-ms-wmv,video/x-matroska,video/x-msvideo,video/quicktime,image/gif"
                 style={{ display: 'none' }}
                 id="video-upload"
                 onChange={handleFileUpload}
               />
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-[10px] text-[#B0B0B0] text-center">
-                Supported Formats:{' '}
-                <span className="text-Text-Secondary"> PNG, JPG, JPEG</span>{' '}
+                <div className="flex items-center gap-1">
+                  Supported Formats:{' '}
+                  <img
+                    data-tooltip-id={`info-text-supported-formats`}
+                    src="/icons/info-circle.svg"
+                    alt=""
+                    className="w-3 h-3 cursor-pointer"
+                  />
+                </div>
+                <Tooltip
+                  id={`info-text-supported-formats`}
+                  place="top-start"
+                  className="!bg-white !w-fit !text-wrap max-w-[300px]
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  style={{
+                    zIndex: 9999,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  Supported Formats: JPG, JPEG, JFIF, PJPEG, PJPEG, PNG, MP4,
+                  MOV, AVI, MKV, WMV, M4V, WEBP, GIF, SVG, SVGZ, BPM
+                </Tooltip>
                 Maximum Size: <span className="text-Text-Secondary">4.5MB</span>
               </div>
               <div className="text-Primary-DeepTeal underline text-xs font-medium">
@@ -650,7 +674,8 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             {showFileValidation && fileError && (
               <div className="text-Red text-[10px]">{fileError}</div>
             )}
-            <div className="overflow-auto h-[75px]">
+
+            <div className="flex flex-col gap-1 h-[75px] overflow-auto">
               {uploadProgress > 0 && uploadProgress < 100 && (
                 <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]">
                   <div className="w-full flex justify-between">
@@ -677,44 +702,40 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                   </div>
                 </div>
               )}
-              <div className="flex flex-col gap-1 h-[75px] overflow-auto">
-                {fileList
-                  .filter((file) => file.Type !== 'link') // Filter out YouTube links
-                  .map((file) => (
-                    <div
-                      key={file.Title}
-                      className="rounded-xl border border-Gray-50 py-3 px-4 bg-white drop-shadow-sm w-full flex justify-between"
-                    >
-                      <div className="flex gap-2 items-start">
-                        {file.Type.startsWith('image/') ? (
-                          <img
-                            src={file.Content.url}
-                            alt={file.Title}
-                            className="w-6 h-6 object-cover"
-                          />
-                        ) : (
-                          <img src="/icons/pngwing.com (4) 2.svg" alt="" />
-                        )}
-                        <div
-                          className="text-xs font-semibold select-none"
-                          title={
-                            file.Title.length > 20 ? file.Title : undefined
-                          }
-                        >
-                          {file.Title.length > 20
-                            ? `${file.Title.substring(0, 20)}...`
-                            : file.Title}
-                        </div>
+              {fileList
+                .filter((file) => file.Type !== 'link') // Filter out YouTube links
+                .map((file) => (
+                  <div
+                    key={file.Title}
+                    className="rounded-xl border border-Gray-50 py-3 px-4 bg-white drop-shadow-sm w-full flex justify-between"
+                  >
+                    <div className="flex gap-2 items-start">
+                      {file.Type.startsWith('image/') ? (
+                        <img
+                          src={file.Content.url}
+                          alt={file.Title}
+                          className="w-6 h-6 object-cover"
+                        />
+                      ) : (
+                        <img src="/icons/pngwing.com (4) 2.svg" alt="" />
+                      )}
+                      <div
+                        className="text-xs font-semibold select-none"
+                        title={file.Title.length > 20 ? file.Title : undefined}
+                      >
+                        {file.Title.length > 20
+                          ? `${file.Title.substring(0, 20)}...`
+                          : file.Title}
                       </div>
-                      <img
-                        onClick={() => removeFile(file.Title)}
-                        className="cursor-pointer size-4"
-                        src="/icons/trash-blue.svg"
-                        alt=""
-                      />
                     </div>
-                  ))}
-              </div>
+                    <img
+                      onClick={() => removeFile(file.Title)}
+                      className="cursor-pointer size-4"
+                      src="/icons/trash-blue.svg"
+                      alt=""
+                    />
+                  </div>
+                ))}
             </div>
           </div>
         </div>

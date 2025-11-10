@@ -78,6 +78,14 @@ const Activity = () => {
     const result = base.filter((item) =>
       item.Title?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+    const getAddedDate = (item: any) =>
+      getDate(
+        item['Added on'] ??
+          item['Added On'] ??
+          item.AddedOn ??
+          item.CreatedAt ??
+          item.Created,
+      );
 
     // then sort
     switch (sortId) {
@@ -113,20 +121,11 @@ const Activity = () => {
         );
         break;
       case 'added_desc':
-        result.sort(
-          (a, b) =>
-            getDate(a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created) -
-            getDate(b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created),
-        );
+        result.sort((a, b) => getAddedDate(b) - getAddedDate(a));
         break;
 
       case 'added_asc':
-        result.sort((a, b) =>
-          getDate(a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created) <
-          getDate(b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created)
-            ? 1
-            : -1,
-        );
+        result.sort((a, b) => getAddedDate(a) - getAddedDate(b));
         break;
     }
 
@@ -192,7 +191,7 @@ const Activity = () => {
               <div className=" flex items-center gap-2">
                 <div className="flex gap-1 items-center text-nowrap text-xs text-Primary-DeepTeal">
                   <img src="/icons/sort.svg" alt="" />
-                  Sort by:
+                  Sort by: ss
                 </div>
                 <div ref={btnRef} className="relative">
                   <button
