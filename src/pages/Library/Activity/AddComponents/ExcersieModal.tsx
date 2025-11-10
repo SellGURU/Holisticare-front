@@ -10,7 +10,7 @@ import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
 import Checkbox from '../../../../Components/checkbox';
 import Application from '../../../../api/app';
 import ValidationForms from '../../../../utils/ValidationForms';
-import { Tooltip } from 'react-tooltip';
+// import { Tooltip } from 'react-tooltip';
 interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -627,15 +627,17 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-[10px] text-[#B0B0B0] text-center">
                 <div className="flex items-center gap-1">
-                  Supported Formats:{' '}
-                  <img
+                  {/* Supported Formats:{' '} */}
+                  Supported Formats: JPG, JPEG, JFIF, PJPEG, PJPEG, PNG, MP4,
+                  MOV, AVI, MKV, WMV, M4V, WEBP, GIF, SVG, SVGZ, BPM
+                  {/* <img
                     data-tooltip-id={`info-text-supported-formats`}
                     src="/icons/info-circle.svg"
                     alt=""
                     className="w-3 h-3 cursor-pointer"
-                  />
+                  /> */}
                 </div>
-                <Tooltip
+                {/* <Tooltip
                   id={`info-text-supported-formats`}
                   place="top-start"
                   className="!bg-white !w-fit !text-wrap max-w-[300px]
@@ -647,7 +649,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 >
                   Supported Formats: JPG, JPEG, JFIF, PJPEG, PJPEG, PNG, MP4,
                   MOV, AVI, MKV, WMV, M4V, WEBP, GIF, SVG, SVGZ, BPM
-                </Tooltip>
+                </Tooltip> */}
                 Maximum Size: <span className="text-Text-Secondary">4.5MB</span>
               </div>
               <div className="text-Primary-DeepTeal underline text-xs font-medium">
