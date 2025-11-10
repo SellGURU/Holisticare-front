@@ -15,7 +15,7 @@ interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (exerciseData: any) => void;
-  exercise?: any; // Optional, used for editing
+  exerciseId?: string;
   isEdit?: boolean;
   loadingCall: boolean;
   clearData: boolean;
@@ -35,26 +35,25 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  exercise = {}, // Default to an empty object for adding
+  exerciseId,
   isEdit,
   loadingCall,
   clearData,
   handleClearData,
 }) => {
   const [formData, setFormData] = useState({
-    title: exercise.Title || '',
-    instruction: exercise.Instruction || '',
-    score: exercise.Base_Score || 0,
-    clinical_guidance: exercise.Ai_note || '',
+    title: '',
+    instruction: '',
+    score: 0,
+    clinical_guidance: '',
   });
-
   const [filters, setFilters] = useState({
-    type: exercise.Exercise_Filters?.Type || '',
-    terms: exercise.Exercise_Filters?.Terms || [],
-    condition: exercise.Exercise_Filters?.Conditions || [],
-    muscle: exercise.Exercise_Filters?.Muscle || [],
-    equipment: exercise.Exercise_Filters?.Equipment || [],
-    level: exercise.Exercise_Filters?.Level || '',
+    type: '',
+    terms: [],
+    condition: [],
+    muscle: [],
+    equipment: [],
+    level: '',
   });
   const updateFilters = (key: keyof typeof filters, value: any) => {
     setFilters((prev) => ({
@@ -62,12 +61,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       [key]: value,
     }));
   };
-  const [location, setLocation] = useState<string[]>(
-    exercise.Exercise_Location || [],
-  );
+  const [location, setLocation] = useState<string[]>([]);
   const [locationBoxs, setLocationBoxs] = useState([]);
-  const [fileList, setFileList] = useState<FileData[]>(exercise.Files || []);
-  const [, setScore] = useState(exercise.Base_Score || 0);
+  const [fileList, setFileList] = useState<FileData[]>([]);
+  const [files, setFiles] = useState<FileData[]>([]);
+  const [, setScore] = useState(0);
   const [youTubeLink, setYouTubeLink] = useState<string>('');
   const [ConditionsOptions, setConditionsOptions] = useState([]);
   const [EquipmentOptions, setEquipmentOptions] = useState([]);
@@ -81,6 +79,40 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|shorts\/|embed\/|v\/)?([a-zA-Z0-9_-]{11})(?:[?&].*)?$/;
     return youtubeRegex.test(url);
   };
+  const handleGetExerciseDetails = () => {
+    setIsLoading(true);
+    Application.showExerciseDetails(exerciseId as string)
+      .then((res) => {
+        setFormData({
+          title: res.data.Title,
+          instruction: res.data.Instruction,
+          score: res.data.Base_Score,
+          clinical_guidance: res.data.Ai_note,
+        });
+        setFilters({
+          type: res.data.Exercise_Filters.Type,
+          terms: res.data.Exercise_Filters.Terms,
+          condition: res.data.Exercise_Filters.Conditions,
+          muscle: res.data.Exercise_Filters.Muscle,
+          equipment: res.data.Exercise_Filters.Equipment,
+          level: res.data.Exercise_Filters.Level,
+        });
+        setLocation(res.data.Exercise_Location);
+        setFiles(res.data.Files);
+        setScore(res.data.Base_Score);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+  useEffect(() => {
+    if (isOpen && exerciseId && isEdit) {
+      handleGetExerciseDetails();
+    }
+  }, [isOpen, exerciseId, isEdit]);
   useEffect(() => {
     if (isOpen) {
       Application.getExerciseFilters({}).then((res) => {
@@ -92,19 +124,12 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         setTypeOptions(res.data.Type);
         setLocationBoxs(res.data.Location);
       });
-      setFormData({
-        title: exercise.Title || '',
-        instruction: exercise.Instruction || '',
-        score: exercise.Base_Score || 0,
-        clinical_guidance: exercise.Ai_note || '',
-      });
     }
   }, [isOpen]);
   useEffect(() => {
     const fetchVideos = async () => {
-      setIsLoading(true);
       setFileList([]);
-      const videoFiles = exercise.Files.filter(
+      const videoFiles = files.filter(
         (file: any) =>
           file.Type?.split('/')[0] === 'video' ||
           file.Type === 'link' ||
@@ -139,21 +164,19 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       });
 
       const videos = await Promise.all(videoPromises);
-      console.log('videos', videos);
-      setFileList(videos);
-      setIsLoading(false);
+      setFileList(videos as FileData[]);
     };
 
-    if (isOpen && exercise.Files && exercise.Files.length > 0) {
+    if (isOpen && files && files.length > 0 && isEdit) {
       fetchVideos();
     }
-  }, [isOpen, exercise.Files]);
+  }, [isOpen, files, isEdit]);
   useEffect(() => {
-    const existingLink = fileList.find((file) => file.Type === 'link');
+    const existingLink = files.find((file) => file.Type === 'link');
     if (existingLink) {
       setYouTubeLink(existingLink.Content.url || '');
     }
-  }, [fileList]);
+  }, [files]);
 
   const handleCheckboxChange = (value: string) => {
     setLocation((prev) =>
@@ -164,7 +187,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   };
   const handleSubmit = () => {
     setShowValidation(true);
-    const hasFile = fileList.length > 0;
+    const hasFile = files.length > 0;
     const isYouTubeLinkValid = isValidYouTubeUrl(youTubeLink);
 
     if (!hasFile && !isYouTubeLinkValid) {
@@ -180,7 +203,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       return;
     }
 
-    const filesData = fileList.slice();
+    const filesData = files.slice();
     if (isYouTubeLinkValid) {
       const existingLinkIndex = filesData.findIndex(
         (file) => file.Type === 'link',
@@ -230,7 +253,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       Exercise_Filters: exerciseFilters,
       'Added on': new Date(),
       Exercise_Location: location || [],
-      Exercise_Id: exercise.Exercise_Id,
+      Exercise_Id: exerciseId,
       Files: cleanedFiles,
       Base_Score: formData.score,
       Ai_note: formData.clinical_guidance,
@@ -326,28 +349,22 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setFileError(undefined);
     // setDescription(exercise.Description || '');
     setFormData({
-      title: exercise.Title || '',
-      instruction: exercise.Instruction || '',
-      score: exercise.Base_Score || 0,
-      clinical_guidance: exercise.Ai_note || '',
+      title: '',
+      instruction: '',
+      score: 0,
+      clinical_guidance: '',
     });
     setFilters({
-      type:
-        exercise.Exercise_Filters?.Type.length > 0
-          ? exercise.Exercise_Filters?.Type[0]
-          : '',
-      terms: exercise.Exercise_Filters?.Terms || [],
-      condition: exercise.Exercise_Filters?.Conditions || [],
-      muscle: exercise.Exercise_Filters?.Muscle || [],
-      equipment: exercise.Exercise_Filters?.Equipment || [],
-      level:
-        exercise.Exercise_Filters?.Level.length > 0
-          ? exercise.Exercise_Filters?.Level[0]
-          : '',
+      type: '',
+      terms: [],
+      condition: [],
+      muscle: [],
+      equipment: [],
+      level: '',
     });
-    setLocation(exercise.Exercise_Location || []);
-    setFileList(exercise.Files || []);
-    setScore(exercise.Base_Score || 0);
+    setLocation([]);
+    setFileList([]);
+    setScore(0);
     setYouTubeLink('');
   };
   const [uploadProgress, setUploadProgress] = useState(0);

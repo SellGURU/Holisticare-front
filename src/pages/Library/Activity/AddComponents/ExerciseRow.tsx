@@ -1,37 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
-import ExerciseModal from './ExcersieModal';
 import PreviewExerciseModal from './PreviewModal';
 import Application from '../../../../api/app';
 interface ExerciseRowProps {
   exercise: any;
   index: number;
   onDelete: () => void;
-  onUpdate: (updatedExercise: any) => void;
-  loadingCall: boolean;
-  clearData: boolean;
-  handleClearData: (value: boolean) => void;
-  showEditModalIndex: number | null;
-  setShowEditModalIndex: (value: number | null) => void;
+  onEdit: () => void;
 }
 export const ExerciseRow: React.FC<ExerciseRowProps> = ({
   exercise,
   index,
   onDelete,
-  onUpdate,
-  loadingCall,
-  clearData,
-  handleClearData,
-  showEditModalIndex,
-  setShowEditModalIndex,
+  onEdit,
 }) => {
   const [ConfirmDelete, setConfirmDelete] = useState(false);
-  const [viewModal, setViewModal] = useState(false);
-
-  const handleUpdate = (updatedExercise: any) => {
-    onUpdate(updatedExercise);
-  };
   const formatDate = (isoString: any) => {
     const date = new Date(isoString);
     const year = date.getFullYear();
@@ -40,6 +24,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
 
     return `${year}/${month}/${day}`;
   };
+  const [viewModal, setViewModal] = useState(false);
   const handleDownloadFiles = async (exercise: any) => {
     if (!exercise?.Files?.length) return;
 
@@ -83,25 +68,13 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
 
   return (
     <>
-      <ExerciseModal
-        isEdit
-        exercise={exercise}
-        isOpen={showEditModalIndex === index}
-        onClose={() => {
-          setShowEditModalIndex(null);
-        }}
-        onSubmit={handleUpdate}
-        loadingCall={loadingCall}
-        clearData={clearData}
-        handleClearData={handleClearData}
-      />
       <PreviewExerciseModal
         isOpen={viewModal}
         onClose={() => setViewModal(false)}
         exercise={exercise}
         onEdit={() => {
           setViewModal(false);
-          setShowEditModalIndex(index);
+          onEdit();
         }}
       />
       <tr
@@ -229,7 +202,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
                 alt=""
               />
               <img
-                onClick={() => setShowEditModalIndex(index)}
+                onClick={onEdit}
                 className="cursor-pointer"
                 src="/icons/edit-blue.svg"
                 alt=""
