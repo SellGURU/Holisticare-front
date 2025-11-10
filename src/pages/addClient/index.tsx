@@ -171,7 +171,7 @@ const AddClient = () => {
       <div className="w-full hidden md:block sticky z-50 top-0 ">
         <MainTopBar></MainTopBar>
       </div>
-      <div className="w-full p-2 xs:p-4 sm:p-6 md:p-8 h-[100vh] overflow-y-auto">
+      <div className="w-full p-2 xs:p-4 sm:p-6 md:p-8 h-[100vh] ">
         {isAdded ? (
           <>
             <div className="w-full flex justify-center items-center h-[80vh]">
@@ -268,8 +268,11 @@ const AddClient = () => {
               </div>
             </div>
 
-            <div className="flex justify-center w-full">
+            <div className="flex justify-center w-full max-h-[80%] overflow-y-auto overflow-x-hidden">
               <div className="md:max-w-[360px] w-full grid gap-4 pt-3 md:pt-0">
+                <div className=''>
+
+              
                 <div className="w-full flex gap-4 md:gap-0 flex-col md:flex-row justify-between items-start md:overflow-visible md:h-[50px]">
                   <div className="w-full md:w-[220px]">
                     <TextField
@@ -443,7 +446,7 @@ const AddClient = () => {
                   placeholder="Enter an email (e.g. test@example.com)"
                 />
                 <div>
-                  <div className="w-full mb-3 flex flex-col md:flex-row justify-between items-center gap-2 md:h-[50px] overflow-visible">
+                  <div className="w-full mb-3 mt-2 flex flex-col md:flex-row justify-between items-center gap-2 md:h-[50px] overflow-visible">
                     <div className="w-full">
                       <label className="text-[12px] text-Text-Primary font-medium">
                         Phone Number
@@ -473,15 +476,24 @@ const AddClient = () => {
                       <label className="text-[12px] text-Text-Primary font-medium">
                         Time Zone
                       </label>
-                      <CustomTimezoneField
-                        value={formik.values.timeZone}
-                        onChange={(tz) => formik.setFieldValue('timeZone', tz)}
-                      />
+                      <div className='mt-[3px]'>
+                        <CustomTimezoneField
+                          value={formik.values.timeZone}
+                          onChange={(tz) =>
+                            formik.setFieldValue('timeZone', tz)
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
                   {/* Address */}
                   <div className="flex flex-col gap-1 text-[12px] text-Text-Primary font-medium mb-3">
-                    Address <textarea placeholder='Enter client’s address (e.g., 221B Baker Street, London)' className=' w-full h-[89px] rounded-2xl border border-Gray-50 py-1 px-3 bg-backgroundColor-Card resize-none outline-none text-xs placeholder:text-[#B0B0B0] placeholder:font-medium text-Text-Primary shadow-100' {...formik.getFieldProps('address')} />
+                    Address{' '}
+                    <textarea
+                      placeholder="Enter client’s address (e.g., 221B Baker Street, London)"
+                      className=" w-full h-[89px] rounded-2xl border border-Gray-50 py-1 px-3 bg-backgroundColor-Card resize-none outline-none text-xs placeholder:text-[#B0B0B0] placeholder:font-medium text-Text-Primary shadow-100"
+                      {...formik.getFieldProps('address')}
+                    />
                   </div>
 
                   <label className="text-Text-Primary text-[12px] font-medium">
@@ -571,7 +583,11 @@ const AddClient = () => {
                     </div>
                   )}
                 </div>
-                <div className="w-full h-fit flex justify-center mt-4">
+                  </div>
+                
+              </div>
+            </div>
+            <div className="w-full h-fit flex justify-center mt-4 md:ml-11">
                   <ButtonPrimary
                     // disabled={
                     //   isLoading ||
@@ -600,8 +616,6 @@ const AddClient = () => {
                     )}
                   </ButtonPrimary>
                 </div>
-              </div>
-            </div>
           </>
         )}
       </div>
