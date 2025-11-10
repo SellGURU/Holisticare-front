@@ -268,10 +268,10 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         data.sort((a, b) => getPriorityValue(b) - getPriorityValue(a));
         break;
       case 'added_desc':
-        data.sort((a, b) => getAddedDate(a) - getAddedDate(b));
+        data.sort((a, b) => getAddedDate(b) - getAddedDate(a));
         break;
       case 'added_asc':
-        data.sort((a, b) => getAddedDate(b) - getAddedDate(a));
+        data.sort((a, b) => getAddedDate(a) - getAddedDate(b));
         break;
       default:
         break;
