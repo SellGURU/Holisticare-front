@@ -191,7 +191,7 @@ const Activity = () => {
               <div className=" flex items-center gap-2">
                 <div className="flex gap-1 items-center text-nowrap text-xs text-Primary-DeepTeal">
                   <img src="/icons/sort.svg" alt="" />
-                  Sort by: ss
+                  Sort by: 
                 </div>
                 <div ref={btnRef} className="relative">
                   <button
