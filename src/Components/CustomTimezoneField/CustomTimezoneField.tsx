@@ -23,7 +23,7 @@ export default function CustomTimezoneField({ value, onChange }: Props) {
   }, [query, options]);
 
   const handleSelect = (option: any) => {
-    onChange(option);
+    onChange(option.value);
     setQuery(option.label);
     setOpen(false);
   };
