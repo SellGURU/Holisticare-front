@@ -135,7 +135,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
         conflicts={Conflicts}
       ></ConflictsModal>
 
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-2 mb-3 relative">
         <div className="hidden md:block">
           <Checkbox
             checked={item.checked}
@@ -180,7 +180,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 ></div>
                 {item?.label || '-'}
               </div>
-              <div className="flex flex-wrap items-center gap-1 relative">
+              <div className="flex flex-wrap items-center gap-1 ">
                 {selectedIssues.map((issue: string, index: number) => (
                   <div
                     key={index}
@@ -205,7 +205,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 {showAddIssue && (
                   <div
                     ref={addIssueRef}
-                    className="flex flex-col absolute top-6 left-[-45px] w-[353px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
+                    className="flex flex-col absolute top-10 w-[353px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
                     style={{
                       scrollbarWidth: 'thin',
                       scrollbarColor: '#E9EDF5 #FFFFFF',
