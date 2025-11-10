@@ -80,6 +80,11 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       Parent_Title: '',
     });
   };
+  useEffect(() => {
+    if(!isOpen){
+      onClear();
+    }
+  }, [isOpen]);
   const [showValidation, setShowValidation] = useState(false);
   const updateAddData = (key: keyof typeof formData, value: any) => {
     setFormData((prevTheme) => ({
@@ -129,6 +134,12 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       ValidationForms.IsvalidField('Score', formData.score)
       // ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title)
     ) {
+      if(mode === 'add'){
+        if(ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title) ){
+          return true;
+        }
+        return false;
+      }
       return true;
     }
     return false;
@@ -254,22 +265,22 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 }}
                 disabled={mode === 'edit'}
                 showDisabled={mode === 'edit'}
-                // isValid={
-                //   showValidation
-                //     ? ValidationForms.IsvalidField(
-                //         'Parent_Title',
-                //         formData.Parent_Title,
-                //       )
-                //     : true
-                // }
-                // validationText={
-                //   showValidation
-                //     ? ValidationForms.ValidationText(
-                //         'Parent_Title',
-                //         formData.Parent_Title,
-                //       )
-                //     : ''
-                // }
+                isValid={
+                  (mode === 'add' && showValidation)
+                    ? ValidationForms.IsvalidField(
+                        'Parent_Title',
+                        formData.Parent_Title,
+                      )
+                    : true
+                }
+                validationText={
+                  (mode === 'add' && showValidation)
+                    ? ValidationForms.ValidationText(
+                        'Parent_Title',
+                        formData.Parent_Title,
+                      )
+                    : ''
+                }
                 placeholder={AssociatedInterventionInfoTextDiet}
                 margin="mb-0 mt-2"
               />
@@ -476,7 +487,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 setShowValidation(true);
                 if (validateFields()) {
                   submit();
-                  onClear();
+                  
                 }
               }}
             >
