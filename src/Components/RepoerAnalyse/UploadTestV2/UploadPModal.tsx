@@ -171,34 +171,33 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               </div>
             ) : null}
           </div>
-          {activeMenu === 'Upload File' ? (
-            <div className="w-full h-full flex flex-col mt-4 gap-2">
-              <FileUploaderSection
-                isShare={isShare}
-                isScaling={isScaling}
-                errorMessage={errorMessage}
-                handleFileChange={handleFileChange}
-                uploadedFile={uploadedFile}
-                handleDeleteFile={handleDeleteFile}
-                formatFileSize={formatFileSize}
-                fileInputRef={fileInputRef}
-                onClose={onClose}
-              />
-              <BiomarkersSection
-                rowErrors={rowErrors}
-                isScaling={isScaling}
-                setIsScaling={setIsScaling}
-                setrowErrors={setrowErrors}
-                loading={loading}
-                fileType={fileType}
-                dateOfTest={modifiedDateOfTest}
-                setDateOfTest={handleModifiedDateOfTestChange}
-                uploadedFile={uploadedFile}
-                biomarkers={extractedBiomarkers}
-                onChange={(updated) => setExtractedBiomarkers(updated)}
-              />
-            </div>
-          ) : (
+          <div className={`w-full h-full flex flex-col mt-4 gap-2 ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}>
+            <FileUploaderSection
+              isShare={isShare}
+              isScaling={isScaling}
+              errorMessage={errorMessage}
+              handleFileChange={handleFileChange}
+              uploadedFile={uploadedFile}
+              handleDeleteFile={handleDeleteFile}
+              formatFileSize={formatFileSize}
+              fileInputRef={fileInputRef}
+              onClose={onClose}
+            />
+            <BiomarkersSection
+              rowErrors={rowErrors}
+              isScaling={isScaling}
+              setIsScaling={setIsScaling}
+              setrowErrors={setrowErrors}
+              loading={loading}
+              fileType={fileType}
+              dateOfTest={modifiedDateOfTest}
+              setDateOfTest={handleModifiedDateOfTestChange}
+              uploadedFile={uploadedFile}
+              biomarkers={extractedBiomarkers}
+              onChange={(updated) => setExtractedBiomarkers(updated)}
+            />
+          </div>
+          <div className={activeMenu !== 'Add Biomarker' ? 'hidden' : ''}>
             <AddBiomarker
               biomarkers={addedBiomarkers}
               rowErrors={AddedRowErrors}
@@ -210,7 +209,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               dateOfTest={addedDateOfTest}
               setDateOfTest={handleAddedDateOfTestChange}
             ></AddBiomarker>
-          )}
+          </div>
         </div>
       </div>
     </>
