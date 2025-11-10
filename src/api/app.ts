@@ -1082,6 +1082,12 @@ class Application extends Api {
   static updateHtmlReport = (data: any) => {
     return this.post(`/update_report_data`, data);
   };
+  static add_mapping = (data: any) => {
+    return this.post('/add_clinic_biomarker_mapping', data);
+  };
+  static remove_mapping = (data: any) => {
+    return this.post('/remove_clinic_biomarker_mapping', data);
+  };
   static checkRefreshProgress = (member_id: string) => {
     return this.post(`/patients/check_refresh_progress`, {
       member_id: member_id,
@@ -1097,12 +1103,12 @@ class Application extends Api {
       member_id: member_id,
     });
   };
-  static add_mapping = (data: any) => {
-    return this.post('/add_clinic_biomarker_mapping', data);
-  };
-  static remove_mapping = (data: any) => {
-    return this.post('/remove_clinic_biomarker_mapping', data);
-  };
+  // static add_mapping = (data: any) => {
+  //   return this.post('/add_clinic_biomarker_mapping', data);
+  // };
+  // static remove_mapping = (data: any) => {
+  //   return this.post('/remove_clinic_biomarker_mapping', data);
+  // };
   static remapIssues = (data: any) => {
     return this.post('/issues/remap_issues', data);
   };
