@@ -543,7 +543,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                         <img
                           src="/images/activity/activity-demo.png"
                           alt=""
-                          className="w-8 h-8 bg-cover rounded-lg mr-1"
+                          className="w-8 h-8 min-w-8 min-h-8 bg-cover rounded-lg mr-1"
                         />
                         {Array.isArray(el?.Files) && el.Files.length > 0 && (
                           <img
@@ -553,11 +553,11 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                           />
                         )}
                       </div>
-                      <div className="text-xs text-Text-Primary">
-                        {el.Title}
-                      </div>
-                      <div className="text-[8px] text-Text-Quadruple text-nowrap">
-                        ({el.Files.length} Videos)
+                      <div className="text-xs text-Text-Primary leading-tight">
+                        <span className="align-baseline">{el.Title} </span>
+                        <span className="text-[8px] text-Text-Quadruple whitespace-nowrap align-baseline">
+                          ({el.Files.length} Videos)
+                        </span>
                       </div>
                     </div>
                     <img
