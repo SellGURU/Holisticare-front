@@ -1071,6 +1071,11 @@ class Application extends Api {
   static checkHtmlReport = (member_id: string) => {
     return this.post(`/check_html_report`, { member_id: member_id });
   };
+  static showExerciseDetails = (exercise_Id: string) => {
+    return this.post(`/activity_library/show_exercise_details`, {
+      Exercise_Id: exercise_Id,
+    });
+  };
   static getCoverage = (data: any) => {
     return this.post('/holistic_plan_coverage/calculate_progress', data);
   };
@@ -1079,6 +1084,21 @@ class Application extends Api {
   };
   static remove_mapping = (data: any) => {
     return this.post('/remove_clinic_biomarker_mapping', data);
+  };
+  static checkRefreshProgress = (member_id: string) => {
+    return this.post(`/patients/check_refresh_progress`, {
+      member_id: member_id,
+    });
+  };
+  static refreshData = (member_id: string) => {
+    return this.post(`/patients/refresh_data`, {
+      member_id: member_id,
+    });
+  };
+  static reportGeneratedNotification = (member_id: string) => {
+    return this.post(`/report_generated_notification`, {
+      member_id: member_id,
+    });
   };
 }
 

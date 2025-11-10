@@ -44,6 +44,7 @@ const BoxActivity: FC<Tasks> = ({ activities, encoded_mi }) => {
       const videoFiles = selectData?.Files?.filter(
         (file: any) =>
           file.Type?.split('/')[0] === 'video' ||
+          file.Type?.split('/')[0] === 'Video' ||
           file.Type === 'link' ||
           file.Type?.split('/')[0] === 'image',
       );
@@ -51,6 +52,7 @@ const BoxActivity: FC<Tasks> = ({ activities, encoded_mi }) => {
       const videoPromises = videoFiles?.map((file: any) => {
         if (
           file.Type?.split('/')[0] === 'video' ||
+          file.Type?.split('/')[0] === 'Video' ||
           file.Type?.split('/')[0] === 'image'
         ) {
           return Mobile.getExerciseFile({
