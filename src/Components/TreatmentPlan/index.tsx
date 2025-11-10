@@ -150,10 +150,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       });
     }
   }, [activeTreatment]);
-  const handleDeleteCard = (index: number, id: string) => {
+  const handleDeleteCard = (index: number, tretmentid: string) => {
     if (index === cardData.length - 1) {
       Application.deleteHolisticPlan({
-        treatment_id: id,
+        treatment_id: tretmentid,
+        member_id: id,
       }).catch(() => {});
 
       setCardData((prevCardData) => {
@@ -385,15 +386,16 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             {index + 1 < 10 && 0}
                             {index + 1}
                           </div>
-                          {index === cardData.length - 1 &&
-                            card.editable == true && (
+                          {(index === cardData.length - 1 &&
+                            card.editable == true) ||
+                            (card.state == 'Draft' && (
                               <img
                                 onClick={() => setShowModalIndex(index)}
                                 className="-mr-5 ml-3 cursor-pointer"
                                 src="/icons/dots.svg"
                                 alt=""
                               />
-                            )}
+                            ))}
                         </div>
 
                         <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
