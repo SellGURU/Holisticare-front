@@ -122,7 +122,7 @@ const InformationStep: FC<InformationStepProps> = ({
             disabled={mode === 'edit'}
             showDisabled={mode === 'edit'}
             isValid={
-              (mode === 'add' && showValidation)
+              mode === 'add' && showValidation
                 ? ValidationForms.IsvalidField(
                     'Parent_Title',
                     addData.Parent_Title,
@@ -130,7 +130,7 @@ const InformationStep: FC<InformationStepProps> = ({
                 : true
             }
             validationText={
-              (mode === 'add' && showValidation)
+              mode === 'add' && showValidation
                 ? ValidationForms.ValidationText(
                     'Parent_Title',
                     addData.Parent_Title,
