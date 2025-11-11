@@ -22,8 +22,12 @@ import { publish, subscribe } from '../../../utils/event';
 // import DatePicker from '../../DatePicker';
 interface QuestionaryProps {
   isOpen?: boolean;
+  handleCloseSlideOutPanel: () => void;
 }
-export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
+export const Questionary: React.FC<QuestionaryProps> = ({
+  isOpen,
+  handleCloseSlideOutPanel,
+}) => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [tryAdd, setTryAdd] = useState(false);
@@ -504,7 +508,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
           //   setTryComplete(false);
           // }
         }}
-        className={` ${tryComplete && 'opacity-40'} text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
+        className={` ${tryComplete && 'opacity-40'} text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
       >
         <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
         Add Questionnaire
@@ -823,6 +827,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
                         id={id as string}
                         resolveForm={resolveForm}
                         deleteRow={() => deleteQuestionRow(index)}
+                        handleCloseSlideOutPanel={handleCloseSlideOutPanel}
                       ></QuestionRow>
                     );
                   })}

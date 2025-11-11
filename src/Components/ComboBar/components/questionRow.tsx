@@ -5,6 +5,8 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import { useNavigate } from 'react-router-dom';
 import { publish } from '../../../utils/event';
 import { toast } from 'react-toastify';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import { BeatLoader } from 'react-spinners';
 // import questionsDataMoch from './questions/data.json';
 // import SvgIcon from "../../../utils/svgIcon";
 
@@ -21,6 +23,7 @@ interface QuestionRowProps {
     active: number,
     disabled?: boolean,
   ) => any;
+  handleCloseSlideOutPanel: () => void;
 }
 const QuestionRow: React.FC<QuestionRowProps> = ({
   el,
@@ -29,6 +32,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   onTryComplete,
   onAssign,
   // deleteRow,
+  handleCloseSlideOutPanel,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
@@ -36,6 +40,9 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   const [showModal, setshowModal] = useState(false);
   const [isAssigned, setisAssigned] = useState(false);
   const [countdown, setCountdown] = useState(3);
+  const [isSureRemoveId, setIsSureRemoveId] = useState<string | null>(null);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   const modalRef = useRef(null);
   useModalAutoClose({
@@ -66,11 +73,38 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     };
   }, [isAssigned, countdown]);
 
-  console.log(viewQuestienry);
-  // const navigate = useNavigate();
+  const handleDelete = (
+    member_id: string,
+    q_unique_id: string,
+    f_unique_id: string,
+  ) => {
+    setLoadingDelete(true);
+    setshowModal(false);
+    // onDelete();
+    handleCloseSlideOutPanel();
+
+    Application.deleteQuestionary({
+      f_unique_id: f_unique_id,
+      q_unique_id: q_unique_id,
+      member_id: Number(member_id),
+    })
+      .then(() => {
+        setLoadingDelete(false);
+        setIsDeleted(true);
+        publish('DeleteQuestionnaireTrackingSuccess', {});
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoadingDelete(false);
+        setIsSureRemoveId(null);
+      });
+  };
+
   return (
     <>
-      <div className=" bg-white border relative border-Gray-50  px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
+      <div
+        className={`bg-white border relative border-Gray-50  px-5 py-3 min-h-[48px]  w-full rounded-[12px]`}
+      >
         {showModal && (
           <>
             <div
@@ -163,7 +197,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                           });
                         }
                       }}
-                      className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
+                      className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} border-b border-Secondary-SelverGray flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2  cursor-pointer`}
                     >
                       <img
                         className="size-5"
@@ -174,11 +208,54 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     </div>
                   </>
                 )}
+                {isSureRemoveId === null ? (
+                  <>
+                    {loadingDelete ? (
+                      <>
+                        <BeatLoader color="#6CC24A" size={10} />
+                      </>
+                    ) : (
+                      <div
+                        onClick={() => {
+                          setIsSureRemoveId(el.unique_id);
+                        }}
+                        className={`flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1 cursor-pointer`}
+                      >
+                        <img
+                          className="size-5"
+                          src="/icons/delete-green.svg"
+                          alt=""
+                        />
+                        Delete
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center justify-start gap-2">
+                    <div className="text-Text-Quadruple text-xs">Sure?</div>
+                    <img
+                      src="/icons/tick-circle-green.svg"
+                      alt=""
+                      className="w-[20px] h-[20px] cursor-pointer"
+                      onClick={() => {
+                        handleDelete(id, el.unique_id, el.forms_unique_id);
+                      }}
+                    />
+                    <img
+                      src="/icons/close-circle-red.svg"
+                      alt=""
+                      className="w-[20px] h-[20px] cursor-pointer"
+                      onClick={() => setIsSureRemoveId(null)}
+                    />
+                  </div>
+                )}
               </>
             </div>
           </>
         )}
-        <div className=" flex justify-between items-center w-full">
+        <div
+          className={`flex justify-between items-center w-full ${isDeleted ? 'opacity-50' : ''}`}
+        >
           {isAssigned ? (
             <div className="w-full flex justify-between">
               <div
@@ -370,6 +447,38 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
               </div>
             </div>
           </div>
+        )}
+        {isDeleted ? (
+          <div className="flex flex-col mt-3">
+            <div className="flex items-center">
+              <img
+                src="/icons/tick-circle-upload.svg"
+                alt=""
+                className="w-5 h-5"
+              />
+              <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
+                Deleting Completed.
+              </div>
+            </div>
+            <div className="text-[10px] text-Text-Quadruple mt-2 leading-5">
+              If you would like to remove its related data from the report,
+              please click the “Unsync Data” button.
+            </div>
+            <div className="w-full flex justify-end">
+              <ButtonSecondary
+                ClassName="rounded-[20px] mt-1"
+                size="small"
+                onClick={() => {
+                  setIsSureRemoveId(null);
+                  publish('syncReport', {});
+                }}
+              >
+                Unsync Data
+              </ButtonSecondary>
+            </div>
+          </div>
+        ) : (
+          ''
         )}
       </div>
     </>

@@ -14,6 +14,7 @@ import './index.css';
 import AppContextProvider from './store/app.tsx';
 import UploadFileProgressModal from './Components/uploadFileProgressModal/index.tsx';
 import DeleteFileProgressModal from './Components/deleteFileProgressModal/index.tsx';
+import DeleteQuestionnaireTrackingProgressModal from './Components/ComboBar/components/deleteQuestionnaireTrackingProgressModal.tsx';
 
 initGlobalErrorHandler();
 
@@ -29,5 +30,6 @@ createRoot(document.getElementById('root')!).render(
     <DeletedTooltipContainer />
     <UploadFileProgressModal />
     <DeleteFileProgressModal />
+    <DeleteQuestionnaireTrackingProgressModal />
   </>,
 );
