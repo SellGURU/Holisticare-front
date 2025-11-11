@@ -684,7 +684,7 @@ const NewGenerateHolisticPlan = () => {
                                 <ButtonSecondary
                                   onClick={() => {
                                     navigate(
-                                      `/report/Generate-Recommendation/${id}`,
+                                      `/report/Generate-Recommendation/${id}/A`,
                                     );
                                     // setshowAutoGenerateModal(true)
                                   }}
@@ -719,7 +719,9 @@ const NewGenerateHolisticPlan = () => {
                           </div>
                           <ButtonSecondary
                             onClick={() => {
-                              navigate(`/report/Generate-Recommendation/${id}`);
+                              navigate(
+                                `/report/Generate-Recommendation/${id}/A`,
+                              );
                             }}
                             // onClick={() => setshowAutoGenerateModal(true)}
                             ClassName="w-full md:w-fit rounded-full"
@@ -1063,7 +1065,7 @@ const NewGenerateHolisticPlan = () => {
               <div
                 className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
                 onClick={() =>
-                  navigate(`/report/Generate-Recommendation/${id}`)
+                  navigate(`/report/Generate-Recommendation/${id}/A`)
                 }
               >
                 Confirm
