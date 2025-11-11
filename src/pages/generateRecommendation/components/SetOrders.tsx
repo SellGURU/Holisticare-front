@@ -393,7 +393,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                     }}
                   >
                     <img
-                      className="size-4"
+                      className="size-5"
                       src={
                         name === 'Activity'
                           ? '/icons/weight.svg'
@@ -401,7 +401,8 @@ export const SetOrders: FC<SetOrdersProps> = ({
                             ? '/icons/diet.svg'
                             : name === 'Lifestyle'
                               ? '/icons/LifeStyle2.svg'
-                              : '/icons/Supplement.svg'
+                              : name == "Supplement" ? '/icons/Supplement.svg':
+                              "/icons/others.svg"
                       }
                       alt=""
                     />

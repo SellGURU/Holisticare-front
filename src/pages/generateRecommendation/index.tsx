@@ -24,6 +24,7 @@ const initialCategoryState: CategoryState[] = [
   { name: 'Activity', visible: true },
   { name: 'Supplement', visible: true },
   { name: 'Lifestyle', visible: true },
+  { name: 'Other', visible: true },
 ];
 
 export const GenerateRecommendation = () => {
