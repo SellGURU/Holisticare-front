@@ -8,6 +8,7 @@ interface SearchBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   ClassName?: string;
   isHaveBorder?: boolean;
   isGrayIcon?: boolean;
+  isMessages?:boolean
 }
 
 const SearchBox: React.FC<SearchBoxProps> = ({
@@ -17,6 +18,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   isHaveBorder,
   isGrayIcon,
   value,
+  isMessages,
   ...props
 }) => {
   const [inputValue, setInputValue] = useState(value || '');
@@ -36,7 +38,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
 
   return (
     <div
-      className={`relative flex justify-start items-center   md:min-w-[300px] h-8 rounded-2xl bg-backgroundColor-Secondary  py-[10px] px-4 ${isHaveBorder ? 'border border-Gray-50' : 'shadow-200'}   ${ClassName}`}
+      className={`relative flex justify-start items-center   ${!isMessages && 'md:min-w-[300px] ' } h-8 rounded-2xl bg-backgroundColor-Secondary  py-[10px] px-4 ${isHaveBorder ? 'border border-Gray-50' : 'shadow-200'}   ${ClassName}`}
     >
       {isGrayIcon ? (
         <SvgIcon
