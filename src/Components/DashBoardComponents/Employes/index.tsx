@@ -268,7 +268,7 @@ const EmployeeRow: React.FC<{
                     </td>
                     <td className="py-2 text-[10px]   text-[#888888] w-[70px]   ">
                       <div
-                        className={` text-nowrap capitalize px-2 rounded-full w-fit text-[8px] ${client.Status == 'Checked' ? 'bg-[#F9DEDC]' : client.Status == 'incomplete data' ? 'bg-[#F9DEDC]' : 'bg-[#FFD8E4]'}  flex items-center justify-center gap-[2px]  ml-8 text-Text-Primary`}
+                        className={` text-nowrap capitalize px-2 rounded-full w-fit text-[8px] ${client.Status == 'Checked' ? 'bg-[#F9DEDC]' : client.Status == 'incomplete data' ? 'bg-[#F9DEDC]' : 'bg-[#FFD8E4]'} w-[70px] ml-5 flex items-center justify-end gap-[2px]  text-Text-Primary`}
                       >
                         <div
                           className={`size-2 rounded-full ${client.Status == 'Checked' ? 'bg-[#06C78D]' : client.Status == 'incomplete data' ? 'bg-[#FFAB2C]' : 'bg-[#FC5474]'}`}

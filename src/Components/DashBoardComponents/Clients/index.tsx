@@ -102,7 +102,7 @@ const RecentCheckIns: React.FC = () => {
                       {formatDate(client['Enroll Date'])}
                     </div>
 
-                    <div className="py-2 w-[60px]  xl:w-[105px] 2xl:w-[120px] pl-3 2xl:pl-0 flex justify-center ">
+                    <div className="py-2 w-[60px]  xl:w-[105px] 2xl:w-[118px] pl-3 2xl:pl-0 flex justify-center ">
                       <CircularProgressBar
                         percentage={client.Progress || 0}
                         startColor="#E742EB"
