@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  DoseFormatInfoText,
-  DoseValidationMetric,
+  // DoseFormatInfoText,
+  // DoseValidationMetric,
   LengthValidation,
   MacrosFormatInfoText,
   ValueFormatInfoText,
@@ -135,25 +135,27 @@ class ValidationForms {
   private static validationDose(value: string) {
     if (value.length == 0) {
       return false;
-    } else if (value.length > 0) {
-      const doseRegex = DoseValidationMetric(value);
-      if (doseRegex) {
-        return true;
-      }
-      return false;
     }
+    //  else if (value.length > 0) {
+    //   const doseRegex = DoseValidationMetric(value);
+    //   if (doseRegex) {
+    //     return true;
+    //   }
+    //   return false;
+    // }
     return true;
   }
   private static validationDoseText(value: string) {
     if (value.length == 0) {
       return 'This field is required.';
-    } else if (value.length > 0) {
-      const doseRegex = DoseValidationMetric(value);
-      if (!doseRegex) {
-        return DoseFormatInfoText;
-      }
-      return '';
     }
+    //  else if (value.length > 0) {
+    //   const doseRegex = DoseValidationMetric(value);
+    //   if (!doseRegex) {
+    //     return DoseFormatInfoText;
+    //   }
+    //   return '';
+    // }
     return '';
   }
   private static validationValue(value: string) {

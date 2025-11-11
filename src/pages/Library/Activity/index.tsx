@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState, useMemo, useRef } from 'react';
-import Toggle from '../../../Components/Toggle';
-import SearchBox from '../../../Components/SearchBox';
-import ActivityHandler from './ActivityHandler';
-import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Application from '../../../api/app';
+import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Circleloader from '../../../Components/CircleLoader';
-import Exercise from './Exercise';
-import SvgIcon from '../../../utils/svgIcon';
+import SearchBox from '../../../Components/SearchBox';
+import Toggle from '../../../Components/Toggle';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import SvgIcon from '../../../utils/svgIcon';
+import ActivityHandler from './ActivityHandler';
+import Exercise from './Exercise';
 
 const Activity = () => {
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
@@ -78,6 +78,14 @@ const Activity = () => {
     const result = base.filter((item) =>
       item.Title?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+    const getAddedDate = (item: any) =>
+      getDate(
+        item['Added on'] ??
+          item['Added On'] ??
+          item.AddedOn ??
+          item.CreatedAt ??
+          item.Created,
+      );
 
     // then sort
     switch (sortId) {
@@ -113,26 +121,19 @@ const Activity = () => {
         );
         break;
       case 'added_desc':
-        result.sort((a, b) =>
-          getDate(a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created) <
-          getDate(b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created)
-            ? 1
-            : -1,
-        );
+        result.sort((a, b) => getAddedDate(b) - getAddedDate(a));
         break;
 
       case 'added_asc':
-        result.sort(
-          (a, b) =>
-            getDate(a['Added On'] ?? a.AddedOn ?? a.CreatedAt ?? a.Created) -
-            getDate(b['Added On'] ?? b.AddedOn ?? b.CreatedAt ?? b.Created),
-        );
+        result.sort((a, b) => getAddedDate(a) - getAddedDate(b));
         break;
     }
 
     return result;
   }, [active, ExcercisesList, dataList, searchQuery, sortId]);
-
+  const allData = useMemo(() => {
+    return active === 'Exercise' ? ExcercisesList : dataList;
+  }, [active, ExcercisesList, dataList]);
   const sortLabelMap: Record<string, string> = {
     title_asc: 'Title (A → Z)',
     title_desc: 'Title (Z → A)',
@@ -178,7 +179,7 @@ const Activity = () => {
               {active}
             </div>
             <div className="flex items-center gap-2">
-              {filteredAndSortedData.length > 0 && (
+              {allData.length > 0 && (
                 <SearchBox
                   ClassName="rounded-xl h-6 !py-[0px] !px-3 !shadow-[unset]"
                   placeHolder={`Search in ${active.toLowerCase()}...`}

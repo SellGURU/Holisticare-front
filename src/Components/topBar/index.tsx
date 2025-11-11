@@ -300,7 +300,7 @@ export const TopBar: FC<TopBarProps> = ({
       {(hasReportInRoute || hasShareInRoute) && (
         <div className="flex xl:hidden items-center gap-2 xs:gap-4">
           <img
-            className="hidden xl:block"
+            className=" xl:block"
             onClick={() => {
               setOpenDownload(true);
             }}
@@ -423,6 +423,7 @@ export const TopBar: FC<TopBarProps> = ({
       >
         <>
           <DownloadModal
+            mode={openDownload ? 'download' : 'share'}
             // isOpen={openDownload || openShare}
             onconfirm={(settingsData) => {
               const locationAddress = window.location.pathname;

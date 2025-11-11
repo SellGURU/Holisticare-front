@@ -6,7 +6,7 @@ import SelectBoxField from '../../../Components/UnitComponents/SelectBoxField';
 import TextAreaField from '../../../Components/UnitComponents/TextAreaField';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import {
-  DoseInfoText,
+  // DoseInfoText,
   DoseValidationEnglish,
   ExercisesToAvoidInfoText,
   ExercisesToDoInfoText,
@@ -582,7 +582,7 @@ const EditModal: FC<EditModalProps> = ({
                   ? ValidationForms.ValidationText('Dose', formData.Dose)
                   : ''
               }
-              InfoText={DoseInfoText}
+              // InfoText={DoseInfoText}
             />
           )}
           <TextAreaField

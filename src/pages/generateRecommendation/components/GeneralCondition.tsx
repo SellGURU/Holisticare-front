@@ -236,7 +236,9 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
       <div className="flex justify-between gap-y-3 mt-3 flex-wrap ">
         <Card
           title="Biomarkers"
-          content={editMode.biomarkers ? tempData.biomarkers : data.biomarkers}
+          content={
+            editMode?.biomarkers ? tempData?.biomarkers : data?.biomarkers
+          }
           isEditing={editMode.biomarkers}
           onEdit={() => handleEdit('biomarkers')}
           onSave={() => handleSave('biomarkers')}
@@ -249,9 +251,9 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
         <Card
           title="Client Insights"
           content={
-            editMode.clientInsights
-              ? tempData.clientInsights
-              : data.clientInsights
+            editMode?.clientInsights
+              ? tempData?.clientInsights
+              : data?.clientInsights
           }
           isEditing={editMode.clientInsights}
           onEdit={() => handleEdit('clientInsights')}

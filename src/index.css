@@ -632,6 +632,11 @@ input:-webkit-autofill:active {
   animation: loadingBarAnim 1s linear infinite;
 }
 
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 @keyframes loadingBarAnim {
   0% {
     left: -30%;
@@ -644,4 +649,32 @@ input:-webkit-autofill:active {
     left: 100%;
     width: 30%;
   }
+}
+
+.biomarkerTableShowAnimation {
+  animation: biomarkerTableShowAnimation 1s forwards;
+}
+.biomarkerTableHideAnimation {
+  animation: biomarkerTableShowAnimation 1s reverse forwards;
+}
+
+@keyframes biomarkerTableShowAnimation {
+  0% {
+    height: calc(100vh - 400px);
+  }
+  100% {
+    height: calc(100vh - 230px);
+  }
+}
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
 }
