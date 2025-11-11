@@ -24,7 +24,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
       return 'bg-Primary-DeepTeal border-none';
     }
     if (isDisabled) {
-      return 'bg-Text-Secondary border-Gray-200';
+      return 'bg-[#B0B0B0] border-[#B0B0B0]';
     }
     return 'bg-white';
   };

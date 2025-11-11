@@ -63,6 +63,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         return '#55DD4A';
       case 'On Going':
         return '#3C79D6';
+      case 'Draft':
+        return '#F4E25C';
       case 'Paused':
         return '#E84040';
       case 'Upcoming':
@@ -71,6 +73,12 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         return '#000000'; // Fallback color
     }
   };
+  const resolveCanGenerateNew = () => {
+    if(cardData.length > 0) {
+      return cardData[cardData.length - 1].state !== 'Draft';
+    }
+    return true;
+  }
   const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
@@ -150,8 +158,15 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       });
     }
   }, [activeTreatment]);
+  const resolveCardBorderColor = (state: string) => {
+    switch (state) {
+      case 'Draft':
+        return 'border-[#F4E25C]';
+      default:
+        return 'border-Primary-EmeraldGreen';
+    }
+  }
   const handleDeleteCard = (index: number, tretmentid: string) => {
-    if (index === cardData.length - 1) {
       Application.deleteHolisticPlan({
         treatment_id: tretmentid,
         member_id: id,
@@ -173,7 +188,6 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       // setDeleteConfirmIndex(null);
 
       publish('syncReport', { part: 'treatmentPlan' });
-    }
   };
   return (
     <>
@@ -376,7 +390,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       }}
                       className={`absolute cursor-pointer  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
                         activeTreatment == card.t_plan_id
-                          ? 'border-Primary-EmeraldGreen'
+                          ? resolveCardBorderColor(card.state)
                           : 'border-Gray-25'
                       }`}
                     >
@@ -418,19 +432,19 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       {showModalIndex === index && (
                         <div
                           ref={showModalRefrence}
-                          className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] pl-2 pr-1 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
+                          className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] pl-2 pr-1 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-1"
                         >
-                          {/* <div
+                          <div
                           onClick={(e) => {
                             e.stopPropagation();
 
-                            navigate(`/action-plan/edit/${id}`);
+                            navigate(`/report/Generate-Recommendation/${id}/${card.t_plan_id}`);
                           }}
                           className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
                         >
                           <img src="/icons/edit-green.svg" alt="" />
                           Edit
-                        </div> */}
+                        </div>
                           <div
                             onClick={(e) => {
                               e.stopPropagation();
@@ -463,7 +477,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             ) : (
                               <>
                                 <img src="/icons/delete-green.svg" alt="" />
-                                Remove
+                                Delete
                               </>
                             )}
                           </div>
@@ -474,11 +488,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 ))}
                 <div
                   onClick={() => {
-                    setTreatmentId('');
-                    // navigate(`/report/Generate-Recommendation/${id}`);
-                    navigate(`/report/Generate-Holistic-Plan/${id}`);
+                    if(resolveCanGenerateNew()) {
+                      setTreatmentId('');
+                      // navigate(`/report/Generate-Recommendation/${id}`);
+                      navigate(`/report/Generate-Holistic-Plan/${id}`);
+                    }
                   }}
-                  className={`  relative mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed cursor-pointer `}
+                  className={` 
+                    relative ${resolveCanGenerateNew()?'opacity-100 cursor-pointer':'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
                   <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
                   <div className="text-sm font-medium text-Primary-DeepTeal">
