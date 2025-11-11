@@ -719,7 +719,9 @@ const NewGenerateHolisticPlan = () => {
                           </div>
                           <ButtonSecondary
                             onClick={() => {
-                              navigate(`/report/Generate-Recommendation/${id}/A`);
+                              navigate(
+                                `/report/Generate-Recommendation/${id}/A`,
+                              );
                             }}
                             // onClick={() => setshowAutoGenerateModal(true)}
                             ClassName="w-full md:w-fit rounded-full"

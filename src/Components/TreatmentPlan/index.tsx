@@ -74,11 +74,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     }
   };
   const resolveCanGenerateNew = () => {
-    if(cardData.length > 0) {
+    if (cardData.length > 0) {
       return cardData[cardData.length - 1].state !== 'Draft';
     }
     return true;
-  }
+  };
   const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
@@ -165,29 +165,29 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       default:
         return 'border-Primary-EmeraldGreen';
     }
-  }
+  };
   const handleDeleteCard = (index: number, tretmentid: string) => {
-      Application.deleteHolisticPlan({
-        treatment_id: tretmentid,
-        member_id: id,
-      }).catch(() => {});
+    Application.deleteHolisticPlan({
+      treatment_id: tretmentid,
+      member_id: id,
+    }).catch(() => {});
 
-      setCardData((prevCardData) => {
-        const newCardData = prevCardData.filter((_, i) => i !== index);
-        if (index > 0) {
-          setActiveTreatmnet(newCardData[index - 1].t_plan_id);
-        } else if (newCardData.length > 0) {
-          setActiveTreatmnet(newCardData[0].t_plan_id);
-        } else {
-          setActiveTreatmnet('');
-        }
-        return newCardData;
-      });
+    setCardData((prevCardData) => {
+      const newCardData = prevCardData.filter((_, i) => i !== index);
+      if (index > 0) {
+        setActiveTreatmnet(newCardData[index - 1].t_plan_id);
+      } else if (newCardData.length > 0) {
+        setActiveTreatmnet(newCardData[0].t_plan_id);
+      } else {
+        setActiveTreatmnet('');
+      }
+      return newCardData;
+    });
 
-      setShowModalIndex(null);
-      // setDeleteConfirmIndex(null);
+    setShowModalIndex(null);
+    // setDeleteConfirmIndex(null);
 
-      publish('syncReport', { part: 'treatmentPlan' });
+    publish('syncReport', { part: 'treatmentPlan' });
   };
   return (
     <>
@@ -435,16 +435,18 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                           className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] pl-2 pr-1 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-1"
                         >
                           <div
-                          onClick={(e) => {
-                            e.stopPropagation();
+                            onClick={(e) => {
+                              e.stopPropagation();
 
-                            navigate(`/report/Generate-Recommendation/${id}/${card.t_plan_id}`);
-                          }}
-                          className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
-                        >
-                          <img src="/icons/edit-green.svg" alt="" />
-                          Edit
-                        </div>
+                              navigate(
+                                `/report/Generate-Recommendation/${id}/${card.t_plan_id}`,
+                              );
+                            }}
+                            className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                          >
+                            <img src="/icons/edit-green.svg" alt="" />
+                            Edit
+                          </div>
                           <div
                             onClick={(e) => {
                               e.stopPropagation();
@@ -488,14 +490,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 ))}
                 <div
                   onClick={() => {
-                    if(resolveCanGenerateNew()) {
+                    if (resolveCanGenerateNew()) {
                       setTreatmentId('');
                       // navigate(`/report/Generate-Recommendation/${id}`);
                       navigate(`/report/Generate-Holistic-Plan/${id}`);
                     }
                   }}
                   className={` 
-                    relative ${resolveCanGenerateNew()?'opacity-100 cursor-pointer':'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
+                    relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
                   <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
                   <div className="text-sm font-medium text-Primary-DeepTeal">
