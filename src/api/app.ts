@@ -1079,6 +1079,9 @@ class Application extends Api {
   static getCoverage = (data: any) => {
     return this.post('/holistic_plan_coverage/calculate_progress', data);
   };
+  static remapIssues = (data: any) => {
+    return this.post('/issues/remap_issues', data);
+  };
   static checkRefreshProgress = (member_id: string) => {
     return this.post(`/patients/check_refresh_progress`, {
       member_id: member_id,

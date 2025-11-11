@@ -524,6 +524,11 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                       onDelete={() =>
                                         handleDelete(suggestionIndex)
                                       }
+                                      issuesData={[]}
+                                      handleUpdateIssueListByKey={() => {}}
+                                      setIssuesData={() => {}}
+                                      handleRemoveLookingForwards={() => {}}
+                                      handleRemoveIssueFromList={() => {}}
                                       onchange={(valu: any) => {
                                         setData((pre: any) => {
                                           const newData = { ...pre };

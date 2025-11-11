@@ -15,6 +15,11 @@ interface OverviewProps {
   Conflicts: Array<any>;
   progress: number; // from 0 to 100
   details: Record<string, boolean>[];
+  setDetails: (value: Record<string, boolean>[]) => void;
+  setData: (values: any) => void;
+  data: any;
+  setLookingForwards: (values: any) => void;
+  lookingForwardsData: any;
 }
 export const Overview: FC<OverviewProps> = ({
   visibleCategoriy,
@@ -23,6 +28,11 @@ export const Overview: FC<OverviewProps> = ({
   Conflicts,
   progress,
   details,
+  setDetails,
+  setData,
+  data,
+  setLookingForwards,
+  lookingForwardsData,
 }) => {
   const getAllCheckedCategories = () => {
     const checkedCategories: string[] = [];
@@ -46,6 +56,50 @@ export const Overview: FC<OverviewProps> = ({
       (prevIndex) => (prevIndex - 1 + Conflicts.length) % Conflicts.length,
     );
   };
+  const handleUpdateIssueListByKeys = (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+    text?: string,
+  ) => {
+    setData(
+      data.map((item: any) => {
+        if (
+          item.Category === category &&
+          item.Recommendation === recommendation
+        ) {
+          return { ...item, issue_list: newIssueList };
+        }
+        return item;
+      }),
+    );
+    if (text) {
+      handleAddLookingForwards(text);
+    }
+  };
+
+  const handleAddLookingForwards = (text: string) => {
+    setLookingForwards([
+      ...lookingForwardsData,
+      'Issue ' + (lookingForwardsData.length + 1) + ': ' + text,
+    ]);
+  };
+
+  const handleRemoveLookingForwards = (text: string) => {
+    setLookingForwards(lookingForwardsData.filter((el: any) => el !== text));
+  };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRemoveIssueFromList = (name: string) => {
+    setData(
+      data.map((item: any) => ({
+        ...item,
+        issue_list: item.issue_list.filter((issue: string) => issue !== name),
+      })),
+    );
+    handleRemoveLookingForwards(name);
+    setRefreshKey((k) => k + 1);
+  };
+
   return (
     <>
       <div className=" w-full relative  p-4 rounded-2xl bg-white">
@@ -104,7 +158,14 @@ export const Overview: FC<OverviewProps> = ({
           </div>
         )}
         <div className="w-full my-4">
-          <CoverageCard progress={progress} details={details} />
+          <CoverageCard
+            progress={progress}
+            details={details}
+            setDetails={setDetails}
+            setLookingForwards={setLookingForwards}
+            lookingForwardsData={lookingForwardsData}
+            handleRemoveIssueFromList={handleRemoveIssueFromList}
+          />
         </div>
 
         {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
@@ -139,7 +200,7 @@ export const Overview: FC<OverviewProps> = ({
               <>
                 <div
                   className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
-                  key={`${el.title}-${suggestionIndex}`}
+                  key={`${el.title}-${suggestionIndex}-${refreshKey}`}
                 >
                   <BioMarkerRowOldSuggestions
                     index={suggestionIndex}
@@ -148,6 +209,11 @@ export const Overview: FC<OverviewProps> = ({
                     onEdit={() => {}}
                     onchange={() => {}}
                     onDelete={() => {}}
+                    issuesData={details}
+                    setIssuesData={setDetails}
+                    handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
+                    handleRemoveLookingForwards={handleRemoveLookingForwards}
+                    handleRemoveIssueFromList={handleRemoveIssueFromList}
                   ></BioMarkerRowOldSuggestions>
                 </div>
               </>
