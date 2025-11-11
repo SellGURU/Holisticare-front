@@ -465,8 +465,8 @@ const AddClient = () => {
                     placeholder="Enter an email (e.g. test@example.com)"
                   />
                   <div>
-                    <div className="w-full mb-3 mt-2 flex flex-col md:flex-row justify-between items-center gap-2 md:h-[50px] overflow-visible">
-                      <div className="w-full">
+                    <div className="w-full mb-3 mt-2 flex flex-col md:flex-row justify-between items-center gap-2 overflow-visible">
+                      <div className="w-full h-[70px]">
                         <label className="text-[12px] text-Text-Primary font-medium">
                           Phone Number
                         </label>
@@ -474,9 +474,10 @@ const AddClient = () => {
                           <PhoneInput
                             country={'us'}
                             value={formik.values.phone}
-                            onChange={(value) =>
-                              formik.setFieldValue('phone', value)
-                            }
+                            onChange={(value) => {
+                              formik.setFieldValue('phone', value);
+                              setPhoneApiError('');
+                            }}
                             placeholder="234 567 890"
                             containerClass="custom-phone-input"
                             buttonClass="custom-phone-button"
@@ -489,7 +490,7 @@ const AddClient = () => {
                           />
                           {(showValidation || phoneApiError) &&
                             phoneApiError && (
-                              <div className="text-Red text-[10px] mt-[2px]">
+                              <div className="text-Red  text-[10px] mt-[2px]">
                                 {phoneApiError}
                               </div>
                             )}
@@ -497,7 +498,7 @@ const AddClient = () => {
                       </div>
 
                       {/* Time Zone */}
-                      <div className="w-full">
+                      <div className="w-full h-[70px]">
                         <label className="text-[12px] text-Text-Primary font-medium">
                           Time Zone
                         </label>
@@ -510,14 +511,15 @@ const AddClient = () => {
                                 'timeZone',
                                 tz?.value || tz || '',
                               );
+                              setTimeZoneApiError('');
                             }}
                           />
-                          {(formik.touched.timeZone || showValidation) &&
-                            (formik.errors.timeZone || timeZoneApiError) && (
-                              <div className="text-Red text-[10px] ml-1 mt-[2px]">
-                                {formik.errors.timeZone || timeZoneApiError}
-                              </div>
-                            )}
+                          <div className=" text-[10px] text-Red ml-1">
+                            {(formik.touched.timeZone || showValidation) &&
+                            (formik.errors.timeZone || timeZoneApiError)
+                              ? formik.errors.timeZone || timeZoneApiError
+                              : ''}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -619,7 +621,7 @@ const AddClient = () => {
                     )}
                   </div>
                 </div>
-                <div className="w-full h-fit flex justify-center mt-4 sticky bottom-0 pb-4 bg-bg-color ">
+                <div className="w-full h-fit flex justify-center mt-4 sticky bottom-0 py-6 pb-8 bg-bg-color ">
                   <ButtonPrimary
                     // disabled={
                     //   isLoading ||
