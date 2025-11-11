@@ -6,7 +6,6 @@ import {
 } from '../../Components/DashBoardComponents';
 
 const Messages = () => {
-
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   // Clear unread badge when a chat is opened
@@ -70,7 +69,7 @@ const Messages = () => {
           className={`w-full   ${selectedMessage ? 'block ' : 'hidden md:block '}`}
         >
           <MessagesChatBox
-          selectMessages={selectedMessage}
+            selectMessages={selectedMessage}
             onMessageSent={handleMessageSent}
             onBack={() => setSelectedMessage(null)}
           />

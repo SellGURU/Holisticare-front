@@ -580,7 +580,7 @@ input:-webkit-autofill:active {
 }
 .Custom-scrollbar {
   scrollbar-width: thin; /* Firefox */
-  
+
   scroll-behavior: smooth;
 }
 

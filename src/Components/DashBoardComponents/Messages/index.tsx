@@ -135,7 +135,16 @@ const MessageList: React.FC<MessageListProps> = ({
             </div>
           )}
           <ul className="mt-5 w-full h-full pr-3 overflow-y-scroll divide-y ">
-            <li><SearchBox isMessages isHaveBorder isGrayIcon value={search}  onSearch={(e) => setSearch(e)} placeHolder='Search clients...'/></li>
+            <li>
+              <SearchBox
+                isMessages
+                isHaveBorder
+                isGrayIcon
+                value={search}
+                onSearch={(e) => setSearch(e)}
+                placeHolder="Search clients..."
+              />
+            </li>
             {messagesSearched.map((message, index) => {
               const isSelected = expandedMessage === message.member_id;
               const isBeforeSelected =

@@ -43,8 +43,9 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
   onMessageSent,
   selectMessages,
 }) => {
-const [allMessages, setAllMessages] = useState<Message[]>([]);
-const [messages, setMessages] = useState<Message[]>([]);  const [aiMessages, setAiMessages] = useState<Message[]>([]);
+  const [allMessages, setAllMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [aiMessages, setAiMessages] = useState<Message[]>([]);
   const [memberId, setMemberId] = useState<any>(null);
   const [username, setUsername] = useState<any>(null);
   const [input, setInput] = useState('');
@@ -86,7 +87,7 @@ const [messages, setMessages] = useState<Message[]>([]);  const [aiMessages, set
     Application.userMessagesList({ member_id: member_id })
       .then((res) => {
         setMessages(res.data.reverse());
-        setAllMessages(res.data.reverse())
+        setAllMessages(res.data.reverse());
       })
       .catch(() => {})
       .finally(() => {
@@ -260,15 +261,15 @@ const [messages, setMessages] = useState<Message[]>([]);  const [aiMessages, set
     },
   });
   useEffect(() => {
-  if (!search.trim()) {
-    setMessages(allMessages);
-  } else {
-    const filtered = allMessages.filter((msg) =>
-      msg.message_text.toLowerCase().includes(search.toLowerCase())
-    );
-    setMessages(filtered);
-  }
-}, [search, allMessages]);
+    if (!search.trim()) {
+      setMessages(allMessages);
+    } else {
+      const filtered = allMessages.filter((msg) =>
+        msg.message_text.toLowerCase().includes(search.toLowerCase()),
+      );
+      setMessages(filtered);
+    }
+  }, [search, allMessages]);
   return (
     <>
       <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
