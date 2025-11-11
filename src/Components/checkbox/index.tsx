@@ -7,6 +7,7 @@ type CheckboxProps = {
   borderColor?: string;
   width?: string;
   height?: string;
+  isDisabled?: boolean;
 };
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -16,7 +17,17 @@ const Checkbox: React.FC<CheckboxProps> = ({
   borderColor = 'border-Primary-DeepTeal',
   width = 'w-4',
   height = 'h-4',
+  isDisabled = false,
 }) => {
+  const resolveCheckBoxColor = () => {
+    if (checked) {
+      return 'bg-Primary-DeepTeal border-none';
+    }
+    if (isDisabled) {
+      return 'bg-[#B0B0B0] border-[#B0B0B0]';
+    }
+    return 'bg-white';
+  };
   return (
     <label className="flex items-center cursor-pointer">
       <input
@@ -26,9 +37,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         className="hidden"
       />
       <div
-        className={`${width} ${height} flex items-center justify-center rounded border ${borderColor} ${
-          checked ? 'bg-Primary-DeepTeal border-none' : 'bg-white'
-        }`}
+        className={`${width} ${height} flex items-center  justify-center rounded border ${borderColor} ${resolveCheckBoxColor()}`}
       >
         {checked && (
           <svg

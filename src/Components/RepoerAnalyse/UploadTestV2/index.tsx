@@ -715,7 +715,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       }}
                     >
                       <img src="/icons/tick-square.svg" alt="" />
-                      Develop Health Plan
+                      Save & Continue to Health Plan
                     </ButtonSecondary>
                   </div>
                 </div>
