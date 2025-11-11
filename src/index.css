@@ -688,7 +688,10 @@ input:-webkit-autofill:active {
   border: 1px solid #e9edf5 !important;
   padding-left: 78px !important; /* Space for flag */
 }
-
+.custom-phone-input .form-control::placeholder {
+  font-weight: 300; /* or bold / 700 */
+  color: #B0B0B0; /* optional */
+}
 /* Custom flag button (country selector) */
 .custom-phone-input .flag-dropdown {
   padding: 8px 12px !important;
