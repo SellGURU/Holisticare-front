@@ -189,8 +189,23 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
 
     publish('syncReport', { part: 'treatmentPlan' });
   };
-  const isShowDot = (card: any) => {
+  const isShowDot = (card: any, index: number) => {
     if (card.state == 'Draft' || card.editable == true) {
+      return true;
+    }
+    // پیدا کردن آخرین index که state آن On Going یا Completed است
+    let lastOnGoingOrCompletedIndex = -1;
+    for (let i = cardData.length - 1; i >= 0; i--) {
+      if (
+        cardData[i].state === 'On Going' ||
+        cardData[i].state === 'Completed'
+      ) {
+        lastOnGoingOrCompletedIndex = i;
+        break;
+      }
+    }
+    // اگر این card همان آخرین آیتم با state On Going یا Completed باشد، true برگردان
+    if (index === lastOnGoingOrCompletedIndex) {
       return true;
     }
     return false;
@@ -406,7 +421,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             {index + 1 < 10 && 0}
                             {index + 1}
                           </div>
-                          {isShowDot(card) && (
+                          {isShowDot(card, index) && (
                             <img
                               onClick={() => setShowModalIndex(index)}
                               className="-mr-5 ml-3 cursor-pointer"
