@@ -330,7 +330,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     setTreatmentId('');
                     // navigate(`/report/Generate-Recommendation/${id}`);
-                    navigate(`/report/Generate-Holistic-Plan/${id}`);
+                    navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                   }}
                 >
                   <img src="/icons/tick-square.svg" alt="" /> Generate New
@@ -493,7 +493,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                     if (resolveCanGenerateNew()) {
                       setTreatmentId('');
                       // navigate(`/report/Generate-Recommendation/${id}`);
-                      navigate(`/report/Generate-Holistic-Plan/${id}`);
+                      navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                     }
                   }}
                   className={` 

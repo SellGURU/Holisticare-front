@@ -138,7 +138,7 @@ const router = createBrowserRouter([
         element: <GenerateActionPlan></GenerateActionPlan>,
       },
       {
-        path: 'report/Generate-Holistic-Plan/:id',
+        path: 'report/Generate-Holistic-Plan/:id/:treatment_id',
         element: <NewGenerateHolisticPlan></NewGenerateHolisticPlan>,
       },
       {

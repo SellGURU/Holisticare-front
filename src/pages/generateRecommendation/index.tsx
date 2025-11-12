@@ -51,6 +51,13 @@ export const GenerateRecommendation = () => {
     id: string;
     treatment_id: string;
   }>();
+  const resolveTreatmentId = () => {
+    if(treatment_id && treatment_id?.length > 1) {
+      return treatment_id;
+    } else {
+      return treatmentPlanData.treatment_id;
+    }
+  }
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const [suggestionsDefualt, setSuggestionsDefualt] = useState([]);
@@ -309,13 +316,15 @@ export const GenerateRecommendation = () => {
         ),
       ],
       is_update: treatment_id && treatment_id?.length > 1 ? true : false,
+      treatment_id:resolveTreatmentId(),
+      result_tab:treatment_id && treatment_id?.length > 1 ? [] : [],
     })
       .then(() => {
         setTreatmentId(treatmentPlanData.treatment_id);
       })
       .finally(() => {
         setisButtonLoading(false);
-        navigate(`/report/Generate-Holistic-Plan/${id}`);
+        navigate(`/report/Generate-Holistic-Plan/${id}/${resolveTreatmentId()}`);
       });
   };
 
