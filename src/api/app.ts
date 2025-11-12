@@ -1101,6 +1101,13 @@ class Application extends Api {
   }) => {
     return this.post(`/questionary_tracking/delete_questionary`, data);
   };
+  static EditQuestionary = (data: any) => {
+    const response = this.post(
+      `/questionary_tracking/edit_filled_questionary`,
+      data,
+    );
+    return response;
+  };
 }
 
 export default Application;
