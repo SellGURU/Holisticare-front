@@ -117,6 +117,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     Application.PreviewQuestionary({
                       member_id: id,
                       q_unique_id: el.unique_id,
+                      f_unique_id: el.forms_unique_id,
                     })
                       .then((res) => {
                         console.log(res);
@@ -125,7 +126,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         // setIsView(true);
                         // setshowModal(false);
                         window.open(
-                          `/surveys-view/${id}/${el.unique_id}`,
+                          `/surveys-view/${id}/${el.unique_id}/${el.forms_unique_id}`,
                           '_blank',
                         );
 
@@ -144,11 +145,30 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     //   setshowModal(false);
                     // });
                   }}
-                  className={`flex items-center ${el.status != 'completed' && 'border-b border-Secondary-SelverGray '}  gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
+                  className={`flex items-center border-b border-Secondary-SelverGray  gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
                 >
                   <img className="" src="/icons/eye-green.svg" alt="" />
                   Preview
                 </div>
+                {el.status == 'completed' ? (
+                  <>
+                    <div
+                      onClick={() => {
+                        publish('openFullscreenModal', {
+                          url: `/surveys/${id}/${el.unique_id}/${el.forms_unique_id}/edit`,
+                        });
+                      }}
+                      className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
+                    >
+                      <img
+                        className="w-[22px] h-[22px]"
+                        src="/icons/edit-2-green.svg"
+                        alt=""
+                      />
+                      Edit
+                    </div>
+                  </>
+                ) : null}
                 {el.status == 'completed' ? null : (
                   <>
                     <div
@@ -170,7 +190,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
                         // navigate(`/surveys/${id}/${el.unique_id}`);
                         publish('openFullscreenModal', {
-                          url: `/surveys/${id}/${el.unique_id}`,
+                          url: `/surveys/${id}/${el.unique_id}/${el.forms_unique_id}/fill`,
                         });
                         // window.open(`/surveys/${id}/${el.unique_id}`, '_blank');
                       }}
@@ -189,6 +209,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                           Application.QuestionaryAction({
                             member_id: id,
                             q_unique_id: el.unique_id,
+                            f_unique_id: el.forms_unique_id,
                             action: 'assign',
                           }).then(() => {
                             setisAssigned(true);
