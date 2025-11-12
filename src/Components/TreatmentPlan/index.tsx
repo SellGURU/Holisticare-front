@@ -189,12 +189,12 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
 
     publish('syncReport', { part: 'treatmentPlan' });
   };
-  const isShowDot = ( card: any) => {
-    if(card.state == 'Draft' || card.editable == true) {
-      return true
+  const isShowDot = (card: any) => {
+    if (card.state == 'Draft' || card.editable == true) {
+      return true;
     }
-    return false
-  }
+    return false;
+  };
   return (
     <>
       {isShare ? (
@@ -407,13 +407,13 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             {index + 1}
                           </div>
                           {isShowDot(card) && (
-                              <img
-                                onClick={() => setShowModalIndex(index)}
-                                className="-mr-5 ml-3 cursor-pointer"
-                                src="/icons/dots.svg"
-                                alt=""
-                              />
-                            )}
+                            <img
+                              onClick={() => setShowModalIndex(index)}
+                              className="-mr-5 ml-3 cursor-pointer"
+                              src="/icons/dots.svg"
+                              alt=""
+                            />
+                          )}
                         </div>
 
                         <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
