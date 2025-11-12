@@ -99,6 +99,10 @@ class Application extends Api {
     const response = this.post(`/patients/generate_treatment_plan`, data);
     return response;
   }
+  static getGeneratedTreatmentPlan(data: any) {
+    const response = this.post(`/patients/get_treatment_plan_data`, data);
+    return response;
+  }  
   static getTreatmentPlanDescriptions(member_id: number) {
     const response = this.get(`/patients/show-tplan-description/${member_id}`);
     return response;
