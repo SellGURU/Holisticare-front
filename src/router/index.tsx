@@ -196,11 +196,11 @@ const router = createBrowserRouter([
     element: <Tasks></Tasks>,
   },
   {
-    path: '/surveys/:member-id/:q-id',
+    path: '/surveys/:member-id/:q-id/:f-id/:action',
     element: <PublicSurveyPage></PublicSurveyPage>,
   },
   {
-    path: '/surveys-view/:member-id/:q-id',
+    path: '/surveys-view/:member-id/:q-id/:f-id',
     element: <SurveyResponsesPage></SurveyResponsesPage>,
   },
   {
