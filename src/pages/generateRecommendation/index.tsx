@@ -47,7 +47,10 @@ export const GenerateRecommendation = () => {
   });
 
   const [checkedSuggestions, setCheckedSuggestion] = useState<Array<any>>([]);
-  const { id ,treatment_id} = useParams<{ id: string, treatment_id: string }>();
+  const { id, treatment_id } = useParams<{
+    id: string;
+    treatment_id: string;
+  }>();
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const [suggestionsDefualt, setSuggestionsDefualt] = useState([]);
@@ -179,15 +182,16 @@ export const GenerateRecommendation = () => {
     }
     setisButtonLoading(true); // Always show button loading when calling API
     // handlePlan(mocktemtment,retryForSuggestions)
-    if(treatment_id && treatment_id?.length> 1) {
+    if (treatment_id && treatment_id?.length > 1) {
       Application.getGeneratedTreatmentPlan({
         treatment_id: treatment_id,
         member_id: id,
-      }).then((res) => {
-        handlePlan(res.data, retryForSuggestions);
-      }).catch(() => {
-      });
-    }else {
+      })
+        .then((res) => {
+          handlePlan(res.data, retryForSuggestions);
+        })
+        .catch(() => {});
+    } else {
       Application.generateTreatmentPlan({
         member_id: id,
       })
@@ -201,7 +205,6 @@ export const GenerateRecommendation = () => {
             15000,
           ); // Pass the retryForSuggestions flag
         });
-
     }
   };
 
@@ -305,7 +308,7 @@ export const GenerateRecommendation = () => {
               .includes(el.Category),
         ),
       ],
-      is_update: treatment_id && treatment_id?.length> 1 ? true : false,
+      is_update: treatment_id && treatment_id?.length > 1 ? true : false,
     })
       .then(() => {
         setTreatmentId(treatmentPlanData.treatment_id);
