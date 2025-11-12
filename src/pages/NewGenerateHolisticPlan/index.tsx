@@ -30,7 +30,10 @@ const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
   const [isLoading] = useState(false);
-  const { id, treatment_id } = useParams<{ id: string, treatment_id: string }>();
+  const { id, treatment_id } = useParams<{
+    id: string;
+    treatment_id: string;
+  }>();
   const [active, setActive] = useState<string>('Recommendation');
   const [clientGools, setClientGools] = useState<any>({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
@@ -205,7 +208,7 @@ const NewGenerateHolisticPlan = () => {
     if (treatment_id && treatment_id?.length > 1) {
       setisFirstLoading(true);
       Application.showHolisticPlan({
-        treatment_id:treatment_id,
+        treatment_id: treatment_id,
         member_id: id,
       })
         .then((res) => {
@@ -253,12 +256,18 @@ const NewGenerateHolisticPlan = () => {
     if (!id || !treatment_id) return;
 
     const handlePopState = () => {
-      navigate(`/report/Generate-Recommendation/${id}/${treatment_id}`, { replace: true });
+      navigate(`/report/Generate-Recommendation/${id}/${treatment_id}`, {
+        replace: true,
+      });
     };
 
     // Add a history entry to detect back button press
-    window.history.pushState({ page: 'holistic-plan' }, '', window.location.href);
-    
+    window.history.pushState(
+      { page: 'holistic-plan' },
+      '',
+      window.location.href,
+    );
+
     window.addEventListener('popstate', handlePopState);
 
     return () => {
@@ -411,7 +420,9 @@ const NewGenerateHolisticPlan = () => {
               <div className="hidden lg:flex w-full items-center gap-3">
                 <div
                   onClick={() => {
-                    navigate(`/report/Generate-Recommendation/${id}/${treatment_id}`);
+                    navigate(
+                      `/report/Generate-Recommendation/${id}/${treatment_id}`,
+                    );
                   }}
                   className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
                 >
