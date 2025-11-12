@@ -11,6 +11,7 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import SvgIcon from '../../../utils/svgIcon';
 import SearchBox from '../../SearchBox';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import { Tooltip } from 'react-tooltip';
 type Message = {
   date: string;
   time: string;
@@ -24,6 +25,7 @@ type Message = {
   timestamp: number;
   name: string;
   recipient?: boolean;
+  flag?:boolean
 };
 type SendMessage = {
   conversation_id?: number;
@@ -443,8 +445,29 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                         </>
                       ) : (
                         <>
-                          <div className="flex justify-end items-start gap-1">
-                            <div className="flex flex-col items-end">
+                          <div className="flex  justify-end items-start gap-1">
+                            <div className="flex relative flex-col items-end">
+                              {
+                                message.flag == true &&(
+                                  <>
+                                   <img
+                                data-tooltip-id={
+                                  message.conversation_id + 'flag'
+                                }
+                                className="absolute -left-5 cursor-pointer top-5"
+                                src="/icons/flag-2.svg"
+                                alt=""
+                              />
+                              <Tooltip
+                              
+                                id={message.conversation_id + 'flag'}
+                              >
+                                This response was reported by the client.
+                              </Tooltip>
+                                  </>
+                                )
+                              }
+                             
                               <div className="text-Text-Primary text-xs font-medium">
                                 <span className="text-[#888888] text-[12px] font-normal mr-1">
                                   {new Date(
@@ -577,7 +600,27 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                       ) : (
                         <>
                           <div className="flex justify-end items-start gap-1">
-                            <div className="flex flex-col items-end">
+                            <div className=" relative flex flex-col items-end">
+                               {
+                                message.flag == true &&(
+                                  <>
+                                   <img
+                                data-tooltip-id={
+                                  message.conversation_id + 'flag'
+                                }
+                                className="absolute -left-5 cursor-pointer top-5"
+                                src="/icons/flag-2.svg"
+                                alt=""
+                              />
+                              <Tooltip
+                              
+                                id={message.conversation_id + 'flag'}
+                              >
+                                This response was reported by the client.
+                              </Tooltip>
+                                  </>
+                                )
+                              }
                               <div className="text-Text-Primary text-xs font-medium">
                                 <span className="text-Text-Primary mr-1">
                                   {new Date(
