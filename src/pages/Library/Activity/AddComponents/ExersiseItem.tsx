@@ -180,10 +180,10 @@ const ExerciseItem = ({
           )}
         </div>
         <div>
-          <div className="text-xs max-w-[450px] flex text-nowrap overflow-hidden text-ellipsis text-Text-Primary mt-2">
+          <div className="text-xs max-w-[450px] flex text-nowrap gap-1 overflow-hidden text-ellipsis text-Text-Primary mt-2">
             <span className="font-medium text-Text-Secondary">
               Instruction:
-            </span>{' '}
+            </span>
             <TooltipTextAuto tooltipPlace="top" maxWidth="450px">
               {exercise.Exercise.Instruction}
             </TooltipTextAuto>

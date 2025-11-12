@@ -580,7 +580,7 @@ input:-webkit-autofill:active {
 }
 .Custom-scrollbar {
   scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #005f73 #f4f4f4; /* thumb, track (for Firefox) */
+
   scroll-behavior: smooth;
 }
 
@@ -632,6 +632,11 @@ input:-webkit-autofill:active {
   animation: loadingBarAnim 1s linear infinite;
 }
 
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 @keyframes loadingBarAnim {
   0% {
     left: -30%;
@@ -660,4 +665,16 @@ input:-webkit-autofill:active {
   100% {
     height: calc(100vh - 230px);
   }
+}
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
 }

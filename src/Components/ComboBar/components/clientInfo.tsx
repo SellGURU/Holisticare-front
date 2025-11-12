@@ -19,6 +19,7 @@ export const ClientInfo = () => {
     'phone number': string;
     medication: string;
     conditions: string;
+    allergy: string;
   };
 
   const [data, setData] = useState<ClientInfoType | null>(null);
@@ -171,6 +172,15 @@ export const ClientInfo = () => {
               </div>
               <TooltipTextAuto maxWidth="150px">
                 {data['conditions']}
+              </TooltipTextAuto>
+            </div>
+            <div className="w-full flex justify-between items-center">
+              <div className="text-Text-Secondary font-medium flex items-center gap-1 text-nowrap">
+                <img src="/icons/allergy.svg" alt="" />
+                Allergy
+              </div>
+              <TooltipTextAuto maxWidth="150px">
+                {data['allergy']}
               </TooltipTextAuto>
             </div>
           </div>
