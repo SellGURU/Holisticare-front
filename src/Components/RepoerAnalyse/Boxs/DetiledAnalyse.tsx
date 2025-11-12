@@ -440,18 +440,19 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                   )}
                 </div>
               )}
-              {
-                refrences.length == 0 && (
-                  <>
-                  <div className=' flex justify-center w-full items-center'>
-                    <div className='flex flex-col justify-center items-center'>
+              {refrences.length == 0 && (
+                <>
+                  <div className=" flex justify-center w-full items-center">
+                    <div className="flex flex-col justify-center items-center">
                       <img src="/icons/EmptyState-biomarkerbox.svg" alt="" />
-                      <div className='TextStyle-Body-3 mt-[-10px] text-center text-Text-Primary'>This biomarker is currently hidden due to changes in its mapping.</div>
+                      <div className="TextStyle-Body-3 mt-[-10px] text-center text-Text-Primary">
+                        This biomarker is currently hidden due to changes in its
+                        mapping.
+                      </div>
                     </div>
                   </div>
-                  </>
-                )
-              }
+                </>
+              )}
             </div>
           </>
         )}
