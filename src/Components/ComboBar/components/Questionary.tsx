@@ -617,6 +617,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                       Application.SaveQuestionary({
                         member_id: id,
                         q_unique_id: questionsFormData.unique_id,
+                        f_unique_id: questionsFormData.forms_unique_id,
                         respond: questionsFormData.questions,
                       })
                         .then(() => {
@@ -803,6 +804,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                           Application.QuestionaryAction({
                             member_id: id,
                             q_unique_id: el.unique_id,
+                            f_unique_id: el.forms_unique_id,
                             action: 'fill',
                           }).then((res) => {
                             const modifiedResponseData = {
