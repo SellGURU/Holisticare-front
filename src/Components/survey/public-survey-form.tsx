@@ -65,6 +65,7 @@ interface PublicSurveyFormProps {
   survey: ApiSurvey;
   isClient?: boolean;
   onSubmitClient?: (respond: ApiQuestion[]) => void;
+  action?: string;
 }
 
 // --- EMOJI SELECTOR COMPONENT ---
@@ -198,15 +199,23 @@ export function PublicSurveyForm({
   survey,
   isClient = false,
   onSubmitClient,
+  action,
 }: PublicSurveyFormProps) {
   console.log(survey);
 
+  useEffect(() => {
+    if (action === 'edit') {
+      setCurrentStep(1);
+    }
+  }, [action]);
+
   // const navigate = useNavigate();
-  const { 'member-id': memberId, 'q-id': qId } = useParams();
+  const { 'member-id': memberId, 'q-id': qId, 'f-id': fId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<
     Record<number, string | string[] | MultiFileResponse | null | number>
   >({});
+  console.log('responses => ', responses);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [visibleQuestions, setVisibleQuestions] = useState<ApiQuestion[]>([]);
@@ -318,12 +327,27 @@ export function PublicSurveyForm({
       switch (q.type?.toLowerCase()) {
         case 'checkbox': {
           // Added block scope
-          initialResponses[index] = [];
+          initialResponses[index] = (q.response as string[]) || [];
+          break;
+        }
+        case 'yes_no': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
           break;
         }
         case 'file uploader': {
           // Added block scope
-          initialResponses[index] = {};
+          initialResponses[index] = (q.response as MultiFileResponse) || {};
+          break;
+        }
+        case 'paragraph': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
+          break;
+        }
+        case 'text': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
           break;
         }
         case 'scale': {
@@ -332,17 +356,24 @@ export function PublicSurveyForm({
           const options = getQuestionOptions(q);
           const min = Number.parseInt(options[0] || '1'); // Safely access with default fallback
           const max = Number.parseInt(options[1] || '10'); // Safely access with default fallback
-          initialResponses[index] = Math.floor((min + max) / 2).toString();
+          initialResponses[index] =
+            (q.response as string) || Math.floor((min + max) / 2).toString();
           break;
         }
         case 'star rating': {
           // Added block scope
-          initialResponses[index] = '0'; // Default to 0 stars
+          initialResponses[index] = (q.response as string) || '0'; // Default to 0 stars
           break;
         }
         case 'emojis': {
           // Added block scope
-          initialResponses[index] = emojeysData[2].name; // Default to neutral emoji
+          initialResponses[index] =
+            (q.response as string) || emojeysData[2].name; // Default to neutral emoji
+          break;
+        }
+        case 'multiple_choice': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
           break;
         }
         default: {
@@ -563,17 +594,39 @@ export function PublicSurveyForm({
       if (isClient) {
         onSubmitClient?.(respond);
       } else {
-        await Application.SaveQuestionary({
-          member_id: memberId,
-          q_unique_id: qId,
-          respond,
-        }).finally(() => {
-          setTimeout(() => {
-            // publish('closeFullscreenModal',{});
-            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
-            // navigate('/report/' + memberId + '/' + 'N');
-          }, 2000);
-        });
+        if (action === 'fill') {
+          await Application.SaveQuestionary({
+            member_id: memberId,
+            q_unique_id: qId,
+            f_unique_id: fId,
+            respond,
+          }).finally(() => {
+            setTimeout(() => {
+              // publish('closeFullscreenModal',{});
+              parent.postMessage(
+                { type: 'closeFullscreenModal', data: '' },
+                '*',
+              );
+              // navigate('/report/' + memberId + '/' + 'N');
+            }, 2000);
+          });
+        } else if (action === 'edit') {
+          await Application.EditQuestionary({
+            member_id: memberId,
+            q_unique_id: qId,
+            f_unique_id: fId,
+            respond,
+          }).finally(() => {
+            setTimeout(() => {
+              // publish('closeFullscreenModal',{});
+              parent.postMessage(
+                { type: 'closeFullscreenModal', data: '' },
+                '*',
+              );
+              // navigate('/report/' + memberId + '/' + 'N');
+            }, 2000);
+          });
+        }
       }
 
       setCurrentStep(sortedQuestions.length + 1);
@@ -1332,7 +1385,9 @@ export function PublicSurveyForm({
               {currentStep === visibleQuestions.length
                 ? submitting
                   ? 'Submitting...'
-                  : 'Submit'
+                  : action === 'edit'
+                    ? 'Update'
+                    : 'Submit'
                 : 'Next'}
             </Button>
           </CardFooter>
