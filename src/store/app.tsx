@@ -6,7 +6,12 @@ interface AppContextProp {
   permisions: any;
   token: string | null;
   isLoggedId: boolean;
-  login: (token: string, permisions?: any, email?: string) => void;
+  login: (
+    token: string,
+    permisions?: any,
+    email?: string,
+    user_type?: string,
+  ) => void;
   logout: () => void;
   PackageManager: PackageManager;
   treatmentId: string | null;
@@ -49,12 +54,18 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     logout: logOut,
     isLoggedId: !!token,
 
-    login: (token: string, permisins?: any, email?: string) => {
+    login: (
+      token: string,
+      permisins?: any,
+      email?: string,
+      user_type?: string,
+    ) => {
       setToken(token);
       setPermisions(permisins);
       localStorage.setItem('permisins', JSON.stringify(permisins));
       localStorage.setItem('token', token);
       localStorage.setItem('email', email || '');
+      localStorage.setItem('user_type', user_type || '');
     },
     permisions: permisions,
     PackageManager: new PackageManager(),

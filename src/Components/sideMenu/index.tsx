@@ -6,6 +6,7 @@ import { version } from '../../../package.json';
 import { menus } from './menu';
 import { subscribe } from '../../utils/event';
 import Auth from '../../api/auth';
+import MainModal from '../MainModal';
 interface sideMenuProps {
   onClose: () => void;
 }
@@ -81,172 +82,201 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     }
     return false;
   };
+  const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
+
   return (
-    <div className="w-[180px] xs:w-[250px] md:w-[170px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 pt-4 drop-shadow">
-      <div className="w-full  relative">
-        <div className="px-4">
-          <div className="flex items-center justify-center">
-            <img
-              className="size-10 h-sm:size-[46px]"
-              src="/images/new-clinic-log.svg"
-              alt="Clinic Logo"
-            />
+    <>
+      <div className="w-[180px] xs:w-[250px] md:w-[170px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 pt-4 drop-shadow">
+        <div className="w-full  relative">
+          <div className="px-4">
+            <div className="flex items-center justify-center">
+              <img
+                className="size-10 h-sm:size-[46px]"
+                src="/images/new-clinic-log.svg"
+                alt="Clinic Logo"
+              />
+            </div>
           </div>
-        </div>
-        <div className="w-full">
-          <div
-            className="h-fit md:h-full overflow-y-auto hidden-scrollbar"
-            style={{ height: `${height}px` }}
-          >
-            {menus.map((menuCategory) => (
-              <div className="mt-2" key={menuCategory.category}>
-                <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">
-                  <>
-                    {(menuCategory.category !== 'MANAGE' ||
-                      (!dontPermisionsToRender('Staff') &&
-                        !dontPermisionsToRender('Setting') &&
-                        !dontPermisionsToRender('Package'))) && (
-                      <>{menuCategory.category}</>
-                    )}
-                  </>
-                </div>
-                {menuCategory.items.map((menu) => (
-                  <>
-                    {menu.name === 'Knowledge Graph' &&
-                    !dontPermisionsToRender(menu.name) ? (
-                      <div className=" my-2  w-full flex pl-5  items-center">
-                        {' '}
-                        <div
-                          onClick={() => {
-                            changeMenu(menu);
-                          }}
-                          // style={{
-                          //   background: `
-                          //   linear-gradient(transparent, transparent) padding-box,
-                          //   linear-gradient(to right, #005F73, #6CC24A) border-box
-                          //   `,
-                          //   border: "1px solid transparent",
-                          //   borderRadius: "16px",
-                          // }}
-                          className={` cursor-pointer flex border rounded-[20px]  border-Primary-DeepTeal flex-row  items-center gap-x-2 w-[133px] justify-center text-center text-[8px] h-sm:text-[9px] text-white font-semibold py-[2px] px-3 ${
-                            activeMenu.name === menu.name
-                              ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]'
-                              : ''
-                          }`}
-                        >
-                          {activeMenu.name === menu.name ? (
-                            <img
-                              className="w-4 h-4 h-sm:w-4 h-sm:h-4"
-                              src="/icons/side-menu/command-square-active.svg"
-                              alt=""
-                            />
-                          ) : (
-                            <img
-                              className="w-4 h-4 h-sm:w-4 h-sm:h-4"
-                              src="/icons/side-menu/command-square.svg"
-                              alt=""
-                            />
-                          )}
+          <div className="w-full">
+            <div
+              className="h-fit md:h-full overflow-y-auto hidden-scrollbar"
+              style={{ height: `${height}px` }}
+            >
+              {menus.map((menuCategory) => (
+                <div className="mt-2" key={menuCategory.category}>
+                  <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">
+                    <>
+                      {(menuCategory.category !== 'MANAGE' ||
+                        (!dontPermisionsToRender('Staff') &&
+                          !dontPermisionsToRender('Setting') &&
+                          !dontPermisionsToRender('Package'))) && (
+                        <>{menuCategory.category}</>
+                      )}
+                    </>
+                  </div>
+                  {menuCategory.items.map((menu) => (
+                    <>
+                      {menu.name === 'Knowledge Graph' &&
+                      !dontPermisionsToRender(menu.name) ? (
+                        <div className=" my-2  w-full flex pl-5  items-center">
+                          {' '}
                           <div
-                            className={` text-[8px] xs:text-[10px]  font-medium block text-nowrap  ${
+                            onClick={() => {
+                              changeMenu(menu);
+                            }}
+                            // style={{
+                            //   background: `
+                            //   linear-gradient(transparent, transparent) padding-box,
+                            //   linear-gradient(to right, #005F73, #6CC24A) border-box
+                            //   `,
+                            //   border: "1px solid transparent",
+                            //   borderRadius: "16px",
+                            // }}
+                            className={` cursor-pointer flex border rounded-[20px]  border-Primary-DeepTeal flex-row  items-center gap-x-2 w-[133px] justify-center text-center text-[8px] h-sm:text-[9px] text-white font-semibold py-[2px] px-3 ${
                               activeMenu.name === menu.name
-                                ? 'text-white'
-                                : ' bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent block '
+                                ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]'
+                                : ''
                             }`}
                           >
-                            {menu.name}
-                          </div>
-                          {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
-                          {/* { activeMenu.name === graph.name && graph.name} */}
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        {dontPermisionsToRender(menu.name) ? (
-                          <></>
-                        ) : (
-                          <div className="" key={menu.name}>
-                            <div
-                              onClick={() => {
-                                if (menu.active) {
-                                  changeMenu(menu);
-                                }
-                              }}
-                              className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
-                                activeMenu.name === menu.name
-                                  ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
-                                  : 'bg-white'
-                              } ${!menu.active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} text-[8px] h-sm:text-[10px] `}
-                            >
-                              <div
-                                className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
-                                  activeMenu.name === menu.name
-                                    ? 'text-Primary-DeepTeal'
-                                    : 'text-Text-Primary'
-                                }`}
+                            {activeMenu.name === menu.name ? (
+                              <img
+                                className="w-4 h-4 h-sm:w-4 h-sm:h-4"
+                                src="/icons/side-menu/command-square-active.svg"
+                                alt=""
                               />
+                            ) : (
+                              <img
+                                className="w-4 h-4 h-sm:w-4 h-sm:h-4"
+                                src="/icons/side-menu/command-square.svg"
+                                alt=""
+                              />
+                            )}
+                            <div
+                              className={` text-[8px] xs:text-[10px]  font-medium block text-nowrap  ${
+                                activeMenu.name === menu.name
+                                  ? 'text-white'
+                                  : ' bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent block '
+                              }`}
+                            >
+                              {menu.name}
+                            </div>
+                            {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
+                            {/* { activeMenu.name === graph.name && graph.name} */}
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {dontPermisionsToRender(menu.name) ? (
+                            <></>
+                          ) : (
+                            <div className="" key={menu.name}>
                               <div
-                                className={`${
+                                onClick={() => {
+                                  if (menu.active) {
+                                    changeMenu(menu);
+                                  }
+                                }}
+                                className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
                                   activeMenu.name === menu.name
-                                    ? 'text-Primary-DeepTeal'
-                                    : 'text-Text-Primary block '
-                                }`}
+                                    ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
+                                    : 'bg-white'
+                                } ${!menu.active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} text-[8px] h-sm:text-[10px] `}
                               >
-                                {menu.name}
+                                <div
+                                  className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
+                                    activeMenu.name === menu.name
+                                      ? 'text-Primary-DeepTeal'
+                                      : 'text-Text-Primary'
+                                  }`}
+                                />
+                                <div
+                                  className={`${
+                                    activeMenu.name === menu.name
+                                      ? 'text-Primary-DeepTeal'
+                                      : 'text-Text-Primary block '
+                                  }`}
+                                >
+                                  {menu.name}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </>
-                ))}
-              </div>
-            ))}
+                          )}
+                        </>
+                      )}
+                    </>
+                  ))}
+                </div>
+              ))}
 
-            <div className="md:hidden text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
+              <div className="md:hidden text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
+                Powered by
+                <img src="/images/sidebar-final.svg" alt="Powered by" />
+              </div>
+            </div>
+          </div>
+          <div className="hidden absolute bottom-0 md:bottom-5 text-[8px] text-[#888888] font-medium  pl-5 md:grid  w-full items-end gap-1">
+            <div
+              onClick={() => setLogoutModalOpen(true)}
+              className="flex gap-1 justify-center mb-2 cursor-pointer"
+            >
+              <img src="/icons/logout.svg" alt="" />
+              <div className="text-[12px] font-medium text-Primary-DeepTeal">
+                Log out
+              </div>
+            </div>
+            <div className="flex w-full justify-center items-end ml-[-16px]">
               Powered by
-              <img src="/images/sidebar-final.svg" alt="Powered by" />
+              <img
+                className=""
+                src="/images/sidebar-final.svg"
+                alt="Powered by"
+              />
             </div>
-          </div>
-        </div>
-        <div className="hidden absolute bottom-0 md:bottom-5 text-[8px] text-[#888888] font-medium  pl-5 md:grid  w-full items-end gap-1">
-          <div
-            onClick={() => {
-              Auth.logOut().then(() => {
-                // console.log(res);
-                localStorage.clear();
-                window.location.reload();
-              });
-            }}
-            onTouchEnd={() => {
-              Auth.logOut().then(() => {
-                // console.log(res);
-                localStorage.clear();
-                window.location.reload();
-              });
-            }}
-            className="flex gap-1 justify-center mb-2 cursor-pointer"
-          >
-            <img src="/icons/logout.svg" alt="" />
-            <div className="text-[12px] font-medium text-Primary-DeepTeal">
-              Log out
+            <div className="text-center text-[8px] text-[#888888] font-medium">
+              V{version}
             </div>
-          </div>
-          <div className="flex w-full justify-center items-end ml-[-16px]">
-            Powered by
-            <img
-              className=""
-              src="/images/sidebar-final.svg"
-              alt="Powered by"
-            />
-          </div>
-          <div className="text-center text-[8px] text-[#888888] font-medium">
-            V{version}
           </div>
         </div>
       </div>
-    </div>
+      <MainModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setLogoutModalOpen(false)}
+      >
+        <div className="flex bg-white rounded-2xl w-[360px] h-[200px] flex-col items-center justify-center p-4 gap-4">
+          <h2 className="text-lg font-semibold text-Primary-DeepTeal">
+            Confirm Logout
+          </h2>
+          <p className="text-sm text-Text-Primary text-center">
+            Are you sure you want to log out?
+          </p>
+          <div className="flex gap-4 mt-2">
+            <button
+              onClick={() => setLogoutModalOpen(false)}
+              className="px-4 py-2 rounded-lg border border-Primary-DeepTeal text-Primary-DeepTeal hover:bg-[#F0F0F0] transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                Auth.logOut().then(() => {
+                  localStorage.clear();
+                  window.location.reload();
+                });
+              }}
+              onTouchEnd={() => {
+                Auth.logOut().then(() => {
+                  localStorage.clear();
+                  window.location.reload();
+                });
+              }}
+              className="px-4 py-2 rounded-lg bg-Primary-DeepTeal text-white hover:bg-[#004B5A] transition"
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
+      </MainModal>
+    </>
   );
 };
 

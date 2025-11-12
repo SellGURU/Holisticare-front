@@ -298,6 +298,8 @@ const LogDetails = () => {
 
     return () => clearInterval(intervalId);
   }, [clinicId, fromDate, toDate]);
+  const usertype = localStorage.getItem('user_type');
+
   return (
     <div className="p-4 md:p-6">
       <div className="mb-4 flex justify-between items-center gap-3">
@@ -517,7 +519,10 @@ const LogDetails = () => {
                       {formatTimeRange(s.startedAt, s.endedAt)}
                     </td>
                     <td className="py-2 text-Text-Primary text-center">
-                      {msToMin(s.totalActiveTimeMs)}
+                      {msToMin(
+                        new Date(s.endedAt).getTime() -
+                          new Date(s.startedAt).getTime(),
+                      )}
                     </td>
                     <td className="py-2 text-Text-Secondary text-center">
                       {s.userAgent.deviceType} / {s.userAgent.browser}
@@ -569,30 +574,30 @@ const LogDetails = () => {
             {selectedSession?.events
               .filter((ev) => {
                 // Hide api_error events with status 406
-                if (ev.eventName === 'api_error' && ev.props?.status === 406) {
+                if (ev.eventName === 'api_error' && ev.props?.status === 406)
                   return false;
-                }
-                // Hide session_start and session_end events
                 if (
                   ev.eventName === 'session_start' ||
                   ev.eventName === 'session_end'
-                ) {
+                )
                   return false;
-                }
                 return true;
               })
-              .map((ev, index) => {
+              .map((ev,index) => {
                 // Create a unique key combining sessionId and event timestamp/index to ensure uniqueness
                 const uniqueEventKey = `${selectedSession.sessionId}-${ev.timestamp}-${index}`;
                 const isExpanded = expandedEvents.has(uniqueEventKey);
                 // For all events, only show message, route, title, and text in details
-                const propsToShow = Object.entries(ev.props || {}).filter(
-                  ([k]) =>
-                    k === 'message' ||
-                    k === 'route' ||
-                    k === 'title' ||
-                    k === 'text',
-                );
+                const propsToShow =
+                  usertype !== 'admin'
+                    ? Object.entries(ev.props || {})
+                    : Object.entries(ev.props || {}).filter(
+                        ([k]) =>
+                          k === 'message' ||
+                          k === 'route' ||
+                          k === 'title' ||
+                          k === 'text',
+                      );
                 return (
                   <div key={uniqueEventKey} className="relative pl-6 py-2">
                     <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-Gray-50"></div>
