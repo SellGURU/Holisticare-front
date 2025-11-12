@@ -122,7 +122,19 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               {data.description}
             </div>
             <div className="w-full  flex items-start gap-2  bg-backgroundColor-Card  rounded-[12px] min-h-[30px] mt-4">
-              <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden ">
+              {
+                refrences.length == 0 && (
+                  <>
+                  <div className=' flex justify-center w-full items-center'>
+                    <div className='flex flex-col justify-center items-center'>
+                      <img src="/icons/EmptyState-biomarkerbox.svg" alt="" />
+                      <div className='TextStyle-Body-3 mt-[-10px] text-center text-Text-Primary'>This biomarker is currently hidden due to changes in its mapping.</div>
+                    </div>
+                  </div>
+                  </>
+                )
+              }                
+              <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden ">              
                 {refrences.map((value: any) => {
                   return (
                     <>
