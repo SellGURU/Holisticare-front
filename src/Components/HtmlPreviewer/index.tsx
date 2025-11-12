@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import StyleModal, { ElementStyles } from './StyleModal';
 import { useNavigate } from 'react-router-dom';
+import { RotateCcw } from 'lucide-react';
 
 type Props = {
   html: string;
@@ -31,6 +32,7 @@ export default function HtmlEditor({
   const [currentStyles, setCurrentStyles] = useState<ElementStyles | null>(
     null,
   );
+  // const [previewText, setPreviewText] = useState<string>('');
   const [, setIconsAdded] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedText, setSelectedText] = useState<string>('');
@@ -273,112 +275,112 @@ export default function HtmlEditor({
         editIcon.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          setSelectedElement(htmlElement);
 
-          // Get current styles from the element in iframe
-          const computedStyle = doc.defaultView?.getComputedStyle(htmlElement);
-          if (computedStyle) {
-            // Parse font size to get numeric value
-            const fontSize = computedStyle.fontSize;
-            const fontSizeNum = parseFloat(fontSize);
+          // Temporarily hide icon to avoid detecting its blue background
+          const iconDisplay = editIcon.style.display;
+          editIcon.style.display = 'none';
 
-            // Parse color to hex format
-            const colorToHex = (color: string) => {
-              if (color.startsWith('rgb')) {
-                const rgb = color.match(/\d+/g);
-                if (rgb && rgb.length >= 3) {
-                  const r = parseInt(rgb[0]);
-                  const g = parseInt(rgb[1]);
-                  const b = parseInt(rgb[2]);
-                  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+          // Small delay to ensure icon is hidden before reading styles
+          setTimeout(() => {
+            setSelectedElement(htmlElement);
+
+            // Get current styles from the element in iframe
+            const computedStyle =
+              doc.defaultView?.getComputedStyle(htmlElement);
+            if (computedStyle) {
+              // Parse font size to get numeric value
+              const fontSize = computedStyle.fontSize;
+              const fontSizeNum = parseFloat(fontSize);
+
+              // Parse color to hex format
+              const colorToHex = (color: string) => {
+                if (color.startsWith('rgb')) {
+                  const rgb = color.match(/\d+/g);
+                  if (rgb && rgb.length >= 3) {
+                    const r = parseInt(rgb[0]);
+                    const g = parseInt(rgb[1]);
+                    const b = parseInt(rgb[2]);
+                    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+                  }
                 }
-              }
-              return color;
-            };
+                return color;
+              };
 
-            // Parse background color
-            const bgColor = computedStyle.backgroundColor;
-            const bgColorHex =
-              bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent'
-                ? 'transparent'
-                : colorToHex(bgColor);
+              // Check for inline styles first, then fall back to computed styles
+              const inlineStyle = htmlElement.style;
+              const hasInlineStyles = inlineStyle.cssText.length > 0;
 
-            // Check for inline styles first, then fall back to computed styles
-            const inlineStyle = htmlElement.style;
-            const hasInlineStyles = inlineStyle.cssText.length > 0;
+              const currentStyles: ElementStyles = {
+                fontWeight:
+                  hasInlineStyles && inlineStyle.fontWeight
+                    ? (inlineStyle.fontWeight as 'bold' | 'normal')
+                    : (getTailwindStyleValue(htmlElement, 'fontWeight') as
+                        | 'bold'
+                        | 'normal') ||
+                      (computedStyle.fontWeight === 'bold' ||
+                      parseInt(computedStyle.fontWeight) >= 700
+                        ? 'bold'
+                        : 'normal'),
+                fontStyle:
+                  hasInlineStyles && inlineStyle.fontStyle
+                    ? (inlineStyle.fontStyle as 'normal' | 'italic')
+                    : (getTailwindStyleValue(htmlElement, 'fontStyle') as
+                        | 'normal'
+                        | 'italic') ||
+                      (computedStyle.fontStyle === 'italic'
+                        ? 'italic'
+                        : 'normal'),
+                textDecoration:
+                  hasInlineStyles && inlineStyle.textDecoration
+                    ? (inlineStyle.textDecoration as
+                        | 'none'
+                        | 'underline'
+                        | 'line-through')
+                    : (getTailwindStyleValue(htmlElement, 'textDecoration') as
+                        | 'none'
+                        | 'underline'
+                        | 'line-through') ||
+                      (computedStyle.textDecoration.includes('underline')
+                        ? 'underline'
+                        : computedStyle.textDecoration.includes('line-through')
+                          ? 'line-through'
+                          : 'none'),
+                color:
+                  hasInlineStyles && inlineStyle.color
+                    ? inlineStyle.color
+                    : colorToHex(computedStyle.color),
+                backgroundColor: 'transparent', // Always set to transparent, don't read or apply background color
+                fontSize:
+                  hasInlineStyles && inlineStyle.fontSize
+                    ? inlineStyle.fontSize
+                    : `${fontSizeNum}px`,
+                textAlign:
+                  hasInlineStyles && inlineStyle.textAlign
+                    ? (inlineStyle.textAlign as
+                        | 'left'
+                        | 'center'
+                        | 'right'
+                        | 'justify')
+                    : (getTailwindStyleValue(htmlElement, 'textAlign') as
+                        | 'left'
+                        | 'center'
+                        | 'right'
+                        | 'justify') ||
+                      (computedStyle.textAlign as
+                        | 'left'
+                        | 'center'
+                        | 'right'
+                        | 'justify'),
+              };
+              setCurrentStyles(currentStyles);
+            }
 
-            const currentStyles: ElementStyles = {
-              fontWeight:
-                hasInlineStyles && inlineStyle.fontWeight
-                  ? (inlineStyle.fontWeight as 'bold' | 'normal')
-                  : (getTailwindStyleValue(htmlElement, 'fontWeight') as
-                      | 'bold'
-                      | 'normal') ||
-                    (computedStyle.fontWeight === 'bold' ||
-                    parseInt(computedStyle.fontWeight) >= 700
-                      ? 'bold'
-                      : 'normal'),
-              fontStyle:
-                hasInlineStyles && inlineStyle.fontStyle
-                  ? (inlineStyle.fontStyle as 'normal' | 'italic')
-                  : (getTailwindStyleValue(htmlElement, 'fontStyle') as
-                      | 'normal'
-                      | 'italic') ||
-                    (computedStyle.fontStyle === 'italic'
-                      ? 'italic'
-                      : 'normal'),
-              textDecoration:
-                hasInlineStyles && inlineStyle.textDecoration
-                  ? (inlineStyle.textDecoration as
-                      | 'none'
-                      | 'underline'
-                      | 'line-through')
-                  : (getTailwindStyleValue(htmlElement, 'textDecoration') as
-                      | 'none'
-                      | 'underline'
-                      | 'line-through') ||
-                    (computedStyle.textDecoration.includes('underline')
-                      ? 'underline'
-                      : computedStyle.textDecoration.includes('line-through')
-                        ? 'line-through'
-                        : 'none'),
-              color:
-                hasInlineStyles && inlineStyle.color
-                  ? inlineStyle.color
-                  : colorToHex(computedStyle.color),
-              backgroundColor:
-                hasInlineStyles && inlineStyle.backgroundColor
-                  ? inlineStyle.backgroundColor === 'transparent'
-                    ? 'transparent'
-                    : inlineStyle.backgroundColor
-                  : bgColorHex,
-              fontSize:
-                hasInlineStyles && inlineStyle.fontSize
-                  ? inlineStyle.fontSize
-                  : `${fontSizeNum}px`,
-              textAlign:
-                hasInlineStyles && inlineStyle.textAlign
-                  ? (inlineStyle.textAlign as
-                      | 'left'
-                      | 'center'
-                      | 'right'
-                      | 'justify')
-                  : (getTailwindStyleValue(htmlElement, 'textAlign') as
-                      | 'left'
-                      | 'center'
-                      | 'right'
-                      | 'justify') ||
-                    (computedStyle.textAlign as
-                      | 'left'
-                      | 'center'
-                      | 'right'
-                      | 'justify'),
-            };
-            setCurrentStyles(currentStyles);
-          }
-
-          setIsStyleModalOpen(true);
+            // Restore icon display
+            editIcon.style.display = iconDisplay || '';
+            setIsStyleModalOpen(true);
+          }, 50); // Small delay to ensure icon is hidden before reading styles
         });
+        // setPreviewText(htmlElement.textContent || '');
 
         // Add hover effects
         editIcon.addEventListener('mouseenter', () => {
@@ -572,16 +574,13 @@ export default function HtmlEditor({
     });
 
     if (targetElement) {
-      // Apply styles
+      // Apply styles (excluding backgroundColor - never apply background color)
       (targetElement as HTMLElement).style.fontWeight = styles.fontWeight;
       (targetElement as HTMLElement).style.fontStyle = styles.fontStyle;
       (targetElement as HTMLElement).style.textDecoration =
         styles.textDecoration;
       (targetElement as HTMLElement).style.color = styles.color;
-      (targetElement as HTMLElement).style.backgroundColor =
-        styles.backgroundColor === 'transparent'
-          ? 'transparent'
-          : styles.backgroundColor;
+      // backgroundColor is intentionally not applied
       (targetElement as HTMLElement).style.fontSize = styles.fontSize;
       (targetElement as HTMLElement).style.textAlign = styles.textAlign;
 
@@ -591,6 +590,31 @@ export default function HtmlEditor({
       }
     }
   };
+  // const updatePreviewText = (text: string) => {
+  //   if (!selectedElement) return;
+
+  //   const iframe = iframeRef.current;
+  //   if (!iframe) return;
+  //   const doc = iframe.contentDocument || iframe.contentWindow?.document;
+  //   if (!doc) return;
+
+  //   const editableElements = doc.querySelectorAll('.editable');
+  //   let targetElement: HTMLElement | null = null;
+
+  //   editableElements.forEach((element) => {
+  //     if (element === selectedElement) {
+  //       targetElement = element as HTMLElement;
+  //     }
+  //   });
+
+  //   if (targetElement) {
+  //     (targetElement as HTMLElement).textContent = text;
+
+  //     if (onChange) {
+  //       onChange(doc.documentElement.outerHTML);
+  //     }
+  //   }
+  // };
 
   const handleReset = () => {
     setIsEditMode(false);
@@ -603,40 +627,40 @@ export default function HtmlEditor({
     doc.write(originalHtml);
     doc.close();
 
-    if (editable && doc.body && isEditMode) {
-      // Make only elements with 'editable' class editable
-      const editableElements = doc.querySelectorAll('.editable');
-      editableElements.forEach((element) => {
-        (element as HTMLElement).contentEditable = 'true';
-      });
+    // if (editable && doc.body && isEditMode) {
+    // Make only elements with 'editable' class editable
+    const editableElements = doc.querySelectorAll('.editable');
+    editableElements.forEach((element) => {
+      (element as HTMLElement).removeAttribute('contenteditable');
+    });
 
-      // Reset icons added state and remove existing icons
-      setIconsAdded(false);
-      const existingIcons = doc.querySelectorAll('.edit-icon');
-      existingIcons.forEach((icon) => icon.remove());
+    // Reset icons added state and remove existing icons
+    setIconsAdded(false);
+    const existingIcons = doc.querySelectorAll('.edit-icon');
+    existingIcons.forEach((icon) => icon.remove());
 
-      // Add edit icons to editable elements after DOM is fully loaded
-      const addIconsWhenReady = () => {
-        if (doc.readyState === 'complete') {
-          requestAnimationFrame(() => {
-            addEditIcons(doc);
-          });
-        } else {
-          doc.addEventListener('DOMContentLoaded', () => {
-            requestAnimationFrame(() => {
-              addEditIcons(doc);
-            });
-          });
-        }
-      };
+    // Add edit icons to editable elements after DOM is fully loaded
+    // const addIconsWhenReady = () => {
+    //   if (doc.readyState === 'complete') {
+    //     requestAnimationFrame(() => {
+    //       addEditIcons(doc);
+    //     });
+    //   } else {
+    //     doc.addEventListener('DOMContentLoaded', () => {
+    //       requestAnimationFrame(() => {
+    //         addEditIcons(doc);
+    //       });
+    //     });
+    //   }
+    // };
 
-      addIconsWhenReady();
+    // addIconsWhenReady();
 
-      // Multiple fallback attempts
-      setTimeout(() => addEditIcons(doc), 500);
-      setTimeout(() => addEditIcons(doc), 1000);
-      setTimeout(() => addEditIcons(doc), 2000);
-    }
+    // Multiple fallback attempts
+    // setTimeout(() => addEditIcons(doc), 500);
+    // setTimeout(() => addEditIcons(doc), 1000);
+    // setTimeout(() => addEditIcons(doc), 2000);
+    // }
   };
 
   return (
@@ -657,13 +681,13 @@ export default function HtmlEditor({
                 onClick={toggleEditMode}
                 ClassName={`${isEditMode ? 'bg-purple-500 text-white hover:bg-purple-600' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
               >
-                {isEditMode ? '✏️ Exit Edit' : '✏️ Edit Mode'}
+                {isEditMode ? '✏️ Exit Editing' : '✏️ Edit'}
               </ButtonSecondary>
               <ButtonSecondary
                 onClick={handleReset}
                 ClassName="bg-red-500 text-white hover:bg-red-600"
               >
-                ❌ Reset
+                <RotateCcw size={16} /> Reset
               </ButtonSecondary>
               {isEditMode && (
                 <ButtonSecondary
@@ -701,6 +725,8 @@ export default function HtmlEditor({
         onClose={() => setIsStyleModalOpen(false)}
         onApplyStyle={applyStyles}
         currentStyles={currentStyles || undefined}
+        // selectedText={previewText || ''}
+        // onUpdatePreviewText={updatePreviewText}
       />
 
       {/* Text Formatting Toolbar */}
