@@ -167,7 +167,7 @@ const LogDetails = () => {
 
   const [fromDate, setFromDateInternal] = useState<Date | null>(() => {
     const d = new Date();
-    d.setDate(d.getDate() - 2);
+    d.setMonth(d.getMonth() - 1);
     return d;
   });
   const [toDate, setToDateInternal] = useState<Date | null>(() => new Date());
