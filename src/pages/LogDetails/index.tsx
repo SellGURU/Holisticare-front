@@ -583,7 +583,7 @@ const LogDetails = () => {
                   return false;
                 return true;
               })
-              .map((ev,index) => {
+              .map((ev, index) => {
                 // Create a unique key combining sessionId and event timestamp/index to ensure uniqueness
                 const uniqueEventKey = `${selectedSession.sessionId}-${ev.timestamp}-${index}`;
                 const isExpanded = expandedEvents.has(uniqueEventKey);
