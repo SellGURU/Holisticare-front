@@ -454,7 +454,7 @@ export const GenerateRecommendation = () => {
                 <React.Fragment key={index}>
                   <div
                     onClick={() => {
-                      resolveCoverage();
+                      // resolveCoverage();
                       // Prevent changing tabs if disableTabNavigation is true, unless it's the current tab
                       if (!disableTabNavigation || index === currentStepIndex) {
                         setCurrentStepIndex(index);
