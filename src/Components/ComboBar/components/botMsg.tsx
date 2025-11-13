@@ -16,13 +16,13 @@ export const BotMsg = ({
     // Reset displayed text when msg changes
     setDisplayedText('');
     setIsDone(false);
-    
+
     // Ensure msg is a valid string
     if (!msg || typeof msg !== 'string') {
       setIsDone(true);
       return;
     }
-    
+
     // Split by words but keep punctuation spacing natural
     const words = msg.split(/(\s+)/);
     let index = 0;
