@@ -1085,7 +1085,7 @@ class Application extends Api {
   };
   static updateHtmlReport = (data: any) => {
     return this.post(`/update_report_data`, data);
-  }
+  };
   static remapIssues = (data: any) => {
     return this.post('/issues/remap_issues', data);
   };
