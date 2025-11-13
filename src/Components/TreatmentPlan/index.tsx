@@ -189,6 +189,27 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
 
     publish('syncReport', { part: 'treatmentPlan' });
   };
+  const isShowDot = (card: any, index: number) => {
+    if (card.state == 'Draft' || card.editable == true) {
+      return true;
+    }
+    // پیدا کردن آخرین index که state آن On Going یا Completed است
+    let lastOnGoingOrCompletedIndex = -1;
+    for (let i = cardData.length - 1; i >= 0; i--) {
+      if (
+        cardData[i].state === 'On Going' ||
+        cardData[i].state === 'Completed'
+      ) {
+        lastOnGoingOrCompletedIndex = i;
+        break;
+      }
+    }
+    // اگر این card همان آخرین آیتم با state On Going یا Completed باشد، true برگردان
+    if (index === lastOnGoingOrCompletedIndex) {
+      return true;
+    }
+    return false;
+  };
   return (
     <>
       {isShare ? (
@@ -330,7 +351,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     setTreatmentId('');
                     // navigate(`/report/Generate-Recommendation/${id}`);
-                    navigate(`/report/Generate-Holistic-Plan/${id}`);
+                    navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                   }}
                 >
                   <img src="/icons/tick-square.svg" alt="" /> Generate New
@@ -400,16 +421,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             {index + 1 < 10 && 0}
                             {index + 1}
                           </div>
-                          {(index === cardData.length - 1 &&
-                            card.editable == true) ||
-                            (card.state == 'Draft' && (
-                              <img
-                                onClick={() => setShowModalIndex(index)}
-                                className="-mr-5 ml-3 cursor-pointer"
-                                src="/icons/dots.svg"
-                                alt=""
-                              />
-                            ))}
+                          {isShowDot(card, index) && (
+                            <img
+                              onClick={() => setShowModalIndex(index)}
+                              className="-mr-5 ml-3 cursor-pointer"
+                              src="/icons/dots.svg"
+                              alt=""
+                            />
+                          )}
                         </div>
 
                         <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
@@ -493,7 +512,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                     if (resolveCanGenerateNew()) {
                       setTreatmentId('');
                       // navigate(`/report/Generate-Recommendation/${id}`);
-                      navigate(`/report/Generate-Holistic-Plan/${id}`);
+                      navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                     }
                   }}
                   className={` 
