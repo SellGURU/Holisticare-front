@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { TopBar } from '../topBar';
 // import CategorieyWeight from './components/CategorieyWeight';
 import Application from '../../api/app';
@@ -18,24 +18,26 @@ import CircularProgressBar from './components/CircularProgressBar';
 // import { AlertModal } from '../AlertModal';
 
 const GenerateActionPlan = () => {
-  const [plans, setPlans] = useState<any>(null);
+  // const [plans, setPlans] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
+  const isMountedRef = useRef(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isLoadingPlans, setIsLoadingPlans] = useState(true);
   const [isWeighted, setIsWeighted] = useState(false);
   const [actions, setActions] = useState<any>({
     checkIn: [],
     category: [],
   });
-  useEffect(() => {
-    Application.getActionPlanMethodsNew().then((res) => {
-      setPlans(res.data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   Application.getActionPlanMethodsNew().then((res) => {
+  //     setPlans(res.data);
+  //   });
+  // }, []);
   const [categories, setCategories] = useState<any>({
     checkIn: [],
     category: [],
   });
-  const checkSelectedTaskConflict = (newPlans: any) => {
+  const checkSelectedTaskConflict = useCallback((newPlans: any) => {
     setIsLoadingPlans(true);
     Application.checkSelectedTaskConflict({
       member_id: id,
@@ -50,14 +52,16 @@ const GenerateActionPlan = () => {
       .finally(() => {
         setIsLoadingPlans(false);
       });
-  };
+  }, [id]);
   const [actionPlanError, setActionPlanError] = useState(false);
-  const savePlan = () => {
+  const savePlan = useCallback(() => {
     Application.getActionPlanTaskDirectoryNew({
       member_id: id,
       // percents: newPlans,
     })
       .then((res) => {
+        if (!isMountedRef.current) return;
+        
         const checkInItems = res.data.filter(
           (item: any) => item.Task_Type === 'Checkin',
         );
@@ -75,16 +79,27 @@ const GenerateActionPlan = () => {
         setActionPlanError(false);
       })
       .catch(() => {
+        if (!isMountedRef.current) return;
+        
         setActionPlanError(true);
-        setTimeout(() => {
-          savePlan();
+        timeoutRef.current = setTimeout(() => {
+          if (isMountedRef.current) {
+            savePlan();
+          }
         }, 5000);
         // navigate(-1);
       });
-  };
+  }, [id, checkSelectedTaskConflict]);
   useEffect(() => {
     savePlan();
-  }, []);
+    
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [savePlan]);
   const [isLoadingSaveChanges, setISLoadingSaveChanges] = useState(false);
   const [isLoadingCalendarView, setIsLoadingCalendarView] = useState(false);
   const navigate = useNavigate();
@@ -255,7 +270,7 @@ const GenerateActionPlan = () => {
                   setData={setCategories}
                   data={categories}
                   setCalendarView={setCalendarView}
-                  plans={plans}
+                  plans={[]}
                   handleShowConflictsModal={handleShowConflictsModal}
                 />
                 <div className="absolute right-5 top-[75px] z-50">
