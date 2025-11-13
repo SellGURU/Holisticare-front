@@ -94,12 +94,18 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                     }
                   }}
                   className={`text-[12px] flex items-center p-2 ${
-                    selectedOption.includes(option) ? 'bg-bg-color' : ''
+                    selectedOption.includes(option) ||
+                    (isMulti && selectedOption.length == 0 && option == 'None')
+                      ? 'bg-bg-color'
+                      : ''
                   } cursor-pointer text-Text-Primary py-1`}
                 >
                   <div
                     className={`h-4 w-4 flex items-center justify-center rounded border border-Primary-DeepTeal mr-1.5 ${
-                      selectedOption.includes(option)
+                      selectedOption.includes(option) ||
+                      (isMulti &&
+                        selectedOption.length == 0 &&
+                        option == 'None')
                         ? 'bg-Primary-DeepTeal border-none'
                         : 'bg-white'
                     }`}
@@ -111,7 +117,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                       }
                     }}
                   >
-                    {selectedOption.includes(option) && (
+                    {selectedOption.includes(option) ||
+                    (isMulti &&
+                      selectedOption.length == 0 &&
+                      option == 'None') ? (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-3 w-3 text-white"
@@ -124,6 +133,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                           clipRule="evenodd"
                         />
                       </svg>
+                    ) : (
+                      ''
                     )}
                   </div>
                   {option}

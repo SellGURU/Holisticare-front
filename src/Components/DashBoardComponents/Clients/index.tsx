@@ -98,11 +98,11 @@ const RecentCheckIns: React.FC = () => {
                       </TooltipTextAuto>
                     </div>
 
-                    <div className="py-2 w-[125px] pl-3  md:w-[70px] xl:w-[90px] 2xl:w-[100px]  text-center text-Text-Secondary text-[10px]">
+                    <div className="py-2 w-[125px] pl-1  md:w-[70px] xl:w-[90px] 2xl:w-[100px]  text-center text-Text-Secondary text-[10px]">
                       {formatDate(client['Enroll Date'])}
                     </div>
 
-                    <div className="py-2 w-[60px]  xl:w-[105px] 2xl:w-[120px] pl-6 2xl:pl-4 flex justify-center ">
+                    <div className="py-2 w-[60px]  xl:w-[105px] 2xl:w-[120px] pl-3 2xl:pl-0 flex justify-center ">
                       <CircularProgressBar
                         percentage={client.Progress || 0}
                         startColor="#E742EB"

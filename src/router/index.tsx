@@ -142,7 +142,7 @@ const router = createBrowserRouter([
         element: <NewGenerateHolisticPlan></NewGenerateHolisticPlan>,
       },
       {
-        path: 'report/Generate-Recommendation/:id',
+        path: 'report/Generate-Recommendation/:id/:treatment_id',
         element: <GenerateRecommendation></GenerateRecommendation>,
       },
       // {

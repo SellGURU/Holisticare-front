@@ -10,11 +10,12 @@ import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
 import Checkbox from '../../../../Components/checkbox';
 import Application from '../../../../api/app';
 import ValidationForms from '../../../../utils/ValidationForms';
+// import { Tooltip } from 'react-tooltip';
 interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (exerciseData: any) => void;
-  exercise?: any; // Optional, used for editing
+  exerciseId?: string;
   isEdit?: boolean;
   loadingCall: boolean;
   clearData: boolean;
@@ -34,26 +35,25 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  exercise = {}, // Default to an empty object for adding
+  exerciseId,
   isEdit,
   loadingCall,
   clearData,
   handleClearData,
 }) => {
   const [formData, setFormData] = useState({
-    title: exercise.Title || '',
-    instruction: exercise.Instruction || '',
-    score: exercise.Base_Score || 0,
-    clinical_guidance: exercise.Ai_note || '',
+    title: '',
+    instruction: '',
+    score: 0,
+    clinical_guidance: '',
   });
-
   const [filters, setFilters] = useState({
-    type: exercise.Exercise_Filters?.Type || '',
-    terms: exercise.Exercise_Filters?.Terms || [],
-    condition: exercise.Exercise_Filters?.Conditions || [],
-    muscle: exercise.Exercise_Filters?.Muscle || [],
-    equipment: exercise.Exercise_Filters?.Equipment || [],
-    level: exercise.Exercise_Filters?.Level || '',
+    type: '',
+    terms: [],
+    condition: [],
+    muscle: [],
+    equipment: [],
+    level: '',
   });
   const updateFilters = (key: keyof typeof filters, value: any) => {
     setFilters((prev) => ({
@@ -61,12 +61,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       [key]: value,
     }));
   };
-  const [location, setLocation] = useState<string[]>(
-    exercise.Exercise_Location || [],
-  );
+  const [location, setLocation] = useState<string[]>([]);
   const [locationBoxs, setLocationBoxs] = useState([]);
-  const [fileList, setFileList] = useState<FileData[]>(exercise.Files || []);
-  const [, setScore] = useState(exercise.Base_Score || 0);
+  const [fileList, setFileList] = useState<FileData[]>([]);
+  const [files, setFiles] = useState<FileData[]>([]);
+  const [, setScore] = useState(0);
   const [youTubeLink, setYouTubeLink] = useState<string>('');
   const [ConditionsOptions, setConditionsOptions] = useState([]);
   const [EquipmentOptions, setEquipmentOptions] = useState([]);
@@ -80,6 +79,40 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|shorts\/|embed\/|v\/)?([a-zA-Z0-9_-]{11})(?:[?&].*)?$/;
     return youtubeRegex.test(url);
   };
+  const handleGetExerciseDetails = () => {
+    setIsLoading(true);
+    Application.showExerciseDetails(exerciseId as string)
+      .then((res) => {
+        setFormData({
+          title: res.data.Title,
+          instruction: res.data.Instruction,
+          score: res.data.Base_Score,
+          clinical_guidance: res.data.Ai_note,
+        });
+        setFilters({
+          type: res.data.Exercise_Filters.Type,
+          terms: res.data.Exercise_Filters.Terms,
+          condition: res.data.Exercise_Filters.Conditions,
+          muscle: res.data.Exercise_Filters.Muscle,
+          equipment: res.data.Exercise_Filters.Equipment,
+          level: res.data.Exercise_Filters.Level,
+        });
+        setLocation(res.data.Exercise_Location);
+        setFiles(res.data.Files);
+        setScore(res.data.Base_Score);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+  useEffect(() => {
+    if (isOpen && exerciseId && isEdit) {
+      handleGetExerciseDetails();
+    }
+  }, [isOpen, exerciseId, isEdit]);
   useEffect(() => {
     if (isOpen) {
       Application.getExerciseFilters({}).then((res) => {
@@ -91,19 +124,12 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         setTypeOptions(res.data.Type);
         setLocationBoxs(res.data.Location);
       });
-      setFormData({
-        title: exercise.Title || '',
-        instruction: exercise.Instruction || '',
-        score: exercise.Base_Score || 0,
-        clinical_guidance: exercise.Ai_note || '',
-      });
     }
   }, [isOpen]);
   useEffect(() => {
     const fetchVideos = async () => {
-      setIsLoading(true);
       setFileList([]);
-      const videoFiles = exercise.Files.filter(
+      const videoFiles = files.filter(
         (file: any) =>
           file.Type?.split('/')[0] === 'video' ||
           file.Type === 'link' ||
@@ -138,21 +164,19 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       });
 
       const videos = await Promise.all(videoPromises);
-      console.log('videos', videos);
-      setFileList(videos);
-      setIsLoading(false);
+      setFileList(videos as FileData[]);
     };
 
-    if (isOpen && exercise.Files && exercise.Files.length > 0) {
+    if (isOpen && files && files.length > 0 && isEdit) {
       fetchVideos();
     }
-  }, [isOpen, exercise.Files]);
+  }, [isOpen, files, isEdit]);
   useEffect(() => {
-    const existingLink = fileList.find((file) => file.Type === 'link');
+    const existingLink = files.find((file) => file.Type === 'link');
     if (existingLink) {
       setYouTubeLink(existingLink.Content.url || '');
     }
-  }, [fileList]);
+  }, [files]);
 
   const handleCheckboxChange = (value: string) => {
     setLocation((prev) =>
@@ -163,7 +187,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   };
   const handleSubmit = () => {
     setShowValidation(true);
-    const hasFile = fileList.length > 0;
+    const hasFile = files.length > 0;
     const isYouTubeLinkValid = isValidYouTubeUrl(youTubeLink);
 
     if (!hasFile && !isYouTubeLinkValid) {
@@ -179,7 +203,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       return;
     }
 
-    const filesData = fileList.slice();
+    const filesData = files.slice();
     if (isYouTubeLinkValid) {
       const existingLinkIndex = filesData.findIndex(
         (file) => file.Type === 'link',
@@ -229,7 +253,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       Exercise_Filters: exerciseFilters,
       'Added on': new Date(),
       Exercise_Location: location || [],
-      Exercise_Id: exercise.Exercise_Id,
+      Exercise_Id: exerciseId,
       Files: cleanedFiles,
       Base_Score: formData.score,
       Ai_note: formData.clinical_guidance,
@@ -325,28 +349,22 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setFileError(undefined);
     // setDescription(exercise.Description || '');
     setFormData({
-      title: exercise.Title || '',
-      instruction: exercise.Instruction || '',
-      score: exercise.Base_Score || 0,
-      clinical_guidance: exercise.Ai_note || '',
+      title: '',
+      instruction: '',
+      score: 0,
+      clinical_guidance: '',
     });
     setFilters({
-      type:
-        exercise.Exercise_Filters?.Type.length > 0
-          ? exercise.Exercise_Filters?.Type[0]
-          : '',
-      terms: exercise.Exercise_Filters?.Terms || [],
-      condition: exercise.Exercise_Filters?.Conditions || [],
-      muscle: exercise.Exercise_Filters?.Muscle || [],
-      equipment: exercise.Exercise_Filters?.Equipment || [],
-      level:
-        exercise.Exercise_Filters?.Level.length > 0
-          ? exercise.Exercise_Filters?.Level[0]
-          : '',
+      type: '',
+      terms: [],
+      condition: [],
+      muscle: [],
+      equipment: [],
+      level: '',
     });
-    setLocation(exercise.Exercise_Location || []);
-    setFileList(exercise.Files || []);
-    setScore(exercise.Base_Score || 0);
+    setLocation([]);
+    setFileList([]);
+    setScore(0);
     setYouTubeLink('');
   };
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -608,22 +626,47 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             <div className="w-full text-center text-xs font-medium">OR</div>
             <label
               className={`w-full h-[174px] rounded-2xl border ${
-                showFileValidation && fileError
+                (showFileValidation && fileError) ||
+                (showValidation &&
+                  fileList.length == 0 &&
+                  !isValidYouTubeUrl(youTubeLink))
                   ? 'border-Red'
                   : 'border-Gray-50'
               } bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer`}
             >
               <input
                 type="file"
-                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/jpeg,image/jpg"
+                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/jpeg,image/jpg,image/jfif,image/pjpeg,image/pjp,video/x-m4v,video/x-ms-wmv,video/x-matroska,video/x-msvideo,video/quicktime,image/gif"
                 style={{ display: 'none' }}
                 id="video-upload"
                 onChange={handleFileUpload}
               />
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-[10px] text-[#B0B0B0] text-center">
-                Supported Formats:{' '}
-                <span className="text-Text-Secondary"> PNG, JPG, JPEG</span>{' '}
+                <div className="flex items-center gap-1">
+                  {/* Supported Formats:{' '} */}
+                  Supported Formats: JPG, JPEG, JFIF, PJPEG, PJPEG, PNG, MP4,
+                  MOV, AVI, MKV, WMV, M4V, WEBP, GIF, SVG, SVGZ, BPM
+                  {/* <img
+                    data-tooltip-id={`info-text-supported-formats`}
+                    src="/icons/info-circle.svg"
+                    alt=""
+                    className="w-3 h-3 cursor-pointer"
+                  /> */}
+                </div>
+                {/* <Tooltip
+                  id={`info-text-supported-formats`}
+                  place="top-start"
+                  className="!bg-white !w-fit !text-wrap max-w-[300px]
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  style={{
+                    zIndex: 9999,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  Supported Formats: JPG, JPEG, JFIF, PJPEG, PJPEG, PNG, MP4,
+                  MOV, AVI, MKV, WMV, M4V, WEBP, GIF, SVG, SVGZ, BPM
+                </Tooltip> */}
                 Maximum Size: <span className="text-Text-Secondary">4.5MB</span>
               </div>
               <div className="text-Primary-DeepTeal underline text-xs font-medium">
@@ -633,7 +676,8 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             {showFileValidation && fileError && (
               <div className="text-Red text-[10px]">{fileError}</div>
             )}
-            <div className="overflow-auto h-[75px]">
+
+            <div className="flex flex-col gap-1 h-[75px] overflow-auto">
               {uploadProgress > 0 && uploadProgress < 100 && (
                 <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]">
                   <div className="w-full flex justify-between">
@@ -660,44 +704,40 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                   </div>
                 </div>
               )}
-              <div className="flex flex-col gap-1 h-[75px] overflow-auto">
-                {fileList
-                  .filter((file) => file.Type !== 'link') // Filter out YouTube links
-                  .map((file) => (
-                    <div
-                      key={file.Title}
-                      className="rounded-xl border border-Gray-50 py-3 px-4 bg-white drop-shadow-sm w-full flex justify-between"
-                    >
-                      <div className="flex gap-2 items-start">
-                        {file.Type.startsWith('image/') ? (
-                          <img
-                            src={file.Content.url}
-                            alt={file.Title}
-                            className="w-6 h-6 object-cover"
-                          />
-                        ) : (
-                          <img src="/icons/pngwing.com (4) 2.svg" alt="" />
-                        )}
-                        <div
-                          className="text-xs font-semibold select-none"
-                          title={
-                            file.Title.length > 20 ? file.Title : undefined
-                          }
-                        >
-                          {file.Title.length > 20
-                            ? `${file.Title.substring(0, 20)}...`
-                            : file.Title}
-                        </div>
+              {fileList
+                .filter((file) => file.Type !== 'link') // Filter out YouTube links
+                .map((file) => (
+                  <div
+                    key={file.Title}
+                    className="rounded-xl border border-Gray-50 py-3 px-4 bg-white drop-shadow-sm w-full flex justify-between"
+                  >
+                    <div className="flex gap-2 items-start">
+                      {file.Type.startsWith('image/') ? (
+                        <img
+                          src={file.Content.url}
+                          alt={file.Title}
+                          className="w-6 h-6 object-cover"
+                        />
+                      ) : (
+                        <img src="/icons/pngwing.com (4) 2.svg" alt="" />
+                      )}
+                      <div
+                        className="text-xs font-semibold select-none"
+                        title={file.Title.length > 20 ? file.Title : undefined}
+                      >
+                        {file.Title.length > 20
+                          ? `${file.Title.substring(0, 20)}...`
+                          : file.Title}
                       </div>
-                      <img
-                        onClick={() => removeFile(file.Title)}
-                        className="cursor-pointer size-4"
-                        src="/icons/trash-blue.svg"
-                        alt=""
-                      />
                     </div>
-                  ))}
-              </div>
+                    <img
+                      onClick={() => removeFile(file.Title)}
+                      className="cursor-pointer size-4"
+                      src="/icons/trash-blue.svg"
+                      alt=""
+                    />
+                  </div>
+                ))}
             </div>
           </div>
         </div>

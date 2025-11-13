@@ -21,10 +21,9 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
 }) => {
   const [loadingCall, setLoadingCall] = useState(false);
   const [clearData, setClearData] = useState(false);
-  const [showEditModalIndex, setShowEditModalIndex] = useState<number | null>(
-    null,
-  );
   const [showDeleteError, setshowDeleteError] = useState('');
+  const [exerciseId, setExerciseId] = useState<string | undefined>(undefined);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleClearData = (value: boolean) => {
     setClearData(value);
@@ -71,7 +70,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
     Application.updateExercise(updatedExercise)
       .then(() => {
         onAdd();
-        setShowEditModalIndex(null);
+        setShowEditModal(false);
         setClearData(true);
       })
       .catch((error) => {
@@ -183,12 +182,10 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
                       onDelete={() =>
                         handleDeleteExercise(exercise.Exercise_Id)
                       }
-                      onUpdate={handleUpdateExercise}
-                      loadingCall={loadingCall}
-                      clearData={clearData}
-                      handleClearData={handleClearData}
-                      showEditModalIndex={showEditModalIndex}
-                      setShowEditModalIndex={setShowEditModalIndex}
+                      onEdit={() => {
+                        setShowEditModal(true);
+                        setExerciseId(exercise.Exercise_Id);
+                      }}
                     />
                   ))}
                 </tbody>
@@ -207,6 +204,18 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
         isOpen={showAdd}
         onClose={() => setShowAdd(false)}
         onSubmit={handleAddExercise}
+        loadingCall={loadingCall}
+        clearData={clearData}
+        handleClearData={handleClearData}
+      />
+      <ExerciseModal
+        isEdit
+        exerciseId={exerciseId as string}
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+        }}
+        onSubmit={handleUpdateExercise}
         loadingCall={loadingCall}
         clearData={clearData}
         handleClearData={handleClearData}
