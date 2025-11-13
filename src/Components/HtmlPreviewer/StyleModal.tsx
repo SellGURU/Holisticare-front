@@ -5,8 +5,9 @@ interface StyleModalProps {
   onClose: () => void;
   onApplyStyle: (styles: ElementStyles) => void;
   currentStyles?: ElementStyles;
-  // selectedText: string;
-  // onUpdatePreviewText: (text: string) => void;
+  selectedText: string;
+  onUpdatePreviewText: (text: string) => void;
+  setShowReset: () => void;
 }
 
 export interface ElementStyles {
@@ -34,15 +35,16 @@ export default function StyleModal({
   onClose,
   onApplyStyle,
   currentStyles = defaultStyles,
-  // selectedText,
-  // onUpdatePreviewText,
+  selectedText,
+  onUpdatePreviewText,
+  setShowReset,
 }: StyleModalProps) {
   const [styles, setStyles] = useState<ElementStyles>(currentStyles);
-  const [previewText, setPreviewText] = useState('Preview Text');
+  const [previewText, setPreviewText] = useState(selectedText);
 
-  // useEffect(() => {
-  //   setPreviewText(selectedText);
-  // }, [selectedText]);
+  useEffect(() => {
+    setPreviewText(selectedText);
+  }, [selectedText]);
 
   // Update styles when currentStyles prop changes
   useEffect(() => {
@@ -59,8 +61,9 @@ export default function StyleModal({
   };
 
   const handleApply = () => {
-    // onUpdatePreviewText(previewText);
+    onUpdatePreviewText(previewText);
     onApplyStyle(styles);
+    setShowReset();
     onClose();
   };
 
@@ -95,7 +98,7 @@ export default function StyleModal({
           <h4 className="text-lg font-semibold mb-4 text-gray-700">Preview</h4>
 
           {/* Preview Text Input */}
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label className="block text-sm font-medium mb-2 text-gray-600">
               Preview Text
             </label>
@@ -115,12 +118,26 @@ export default function StyleModal({
                 Sample
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Live Preview */}
-          <div className="flex-1 border rounded bg-white p-4">
+          <div className="border rounded bg-white p-4">
             <div className="text-sm text-gray-500 mb-2">Live Preview:</div>
-            <div
+            <textarea
+              value={previewText}
+              onChange={(e) => setPreviewText(e.target.value)}
+              className="w-full p-2 border rounded resize-none min-h-[350px]"
+              placeholder="Enter text..."
+              style={{
+                fontWeight: styles.fontWeight,
+                fontStyle: styles.fontStyle,
+                textDecoration: styles.textDecoration,
+                color: styles.color,
+                fontSize: styles.fontSize,
+                textAlign: styles.textAlign,
+              }}
+            />
+            {/* <div
               className="min-h-[200px] p-4 border rounded"
               style={{
                 fontWeight: styles.fontWeight,
@@ -132,11 +149,11 @@ export default function StyleModal({
               }}
             >
               {previewText || 'Preview Text'}
-            </div>
+            </div> */}
           </div>
 
           {/* Style Summary */}
-          <div className="mt-4 p-3 bg-blue-50 rounded text-sm">
+          {/* <div className="mt-4 p-3 bg-blue-50 rounded text-sm">
             <div className="font-medium text-blue-800 mb-2">
               Current Styles:
             </div>
@@ -147,22 +164,21 @@ export default function StyleModal({
               <div>Size: {styles.fontSize}</div>
               <div>Align: {styles.textAlign}</div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Style Controls Panel */}
-        <div className="w-1/2 p-6 overflow-y-auto">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Edit Style</h3>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-xl"
-            >
-              ×
-            </button>
-          </div>
-
+        <div className="w-1/2 p-6 overflow-y-auto flex flex-col justify-between">
           <div className="space-y-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Edit Style</h3>
+              <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700 text-xl"
+              >
+                ×
+              </button>
+            </div>
             {/* Text */}
             {/* <div>
               <label className="block text-sm font-medium mb-2">Text</label>
