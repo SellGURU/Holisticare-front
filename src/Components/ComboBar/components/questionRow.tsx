@@ -68,9 +68,9 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
   console.log(viewQuestienry);
   // const navigate = useNavigate();
-useEffect(()=>{
-  setshowModal(false)
-},[el.status])
+  useEffect(() => {
+    setshowModal(false);
+  }, [el.status]);
 
   return (
     <>

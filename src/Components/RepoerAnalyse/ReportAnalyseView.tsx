@@ -622,12 +622,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
   const stopPolling = useRef(false);
-useEffect(() => {
-  stopPolling.current = false; // reset on mount
-  return () => {
-    stopPolling.current = true; // stop polling when component unmounts
-  };
-}, []);
+  useEffect(() => {
+    stopPolling.current = false; // reset on mount
+    return () => {
+      stopPolling.current = true; // stop polling when component unmounts
+    };
+  }, []);
   const pollHtmlReport = () => {
     if (stopPolling.current) return;
     Application.checkHtmlReport(id?.toString() || '')
