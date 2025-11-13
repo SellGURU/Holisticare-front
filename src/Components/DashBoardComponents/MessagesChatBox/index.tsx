@@ -262,35 +262,16 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setisSearchOpen(false);
     },
   });
-  const [searchedMessages, setSearchedMessages] = useState<Message[] | null>(null);
-const [searchedAiMessages, setSearchedAiMessages] = useState<Message[] | null>(null);
-
-useEffect(() => {
-  if (!memberId) return;
-
-  const term = search.trim().toLowerCase();
-
-  if (!term) {
-    // Clear search results and restore full messages
-    setSearchedMessages(null);
-    setSearchedAiMessages(null);
-    return;
-  }
-
-  if (aiMode) {
-    const filtered = aiMessages.filter(
-      (msg) => msg.message_text?.toLowerCase().includes(term)
-    );
-    setSearchedAiMessages(filtered);
-  } else {
-    const filtered = allMessages.filter(
-      (msg) => msg.message_text?.toLowerCase().includes(term)
-    );
-    setSearchedMessages(filtered);
-  }
-}, [search, aiMode, allMessages, aiMessages, memberId]);
-
-
+  useEffect(() => {
+    if (!search.trim()) {
+      setMessages(allMessages);
+    } else {
+      const filtered = allMessages.filter((msg) =>
+        msg.message_text.toLowerCase().includes(search.toLowerCase()),
+      );
+      setMessages(filtered);
+    }
+  }, [search, allMessages]);
   return (
     <>
       <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
@@ -409,7 +390,7 @@ useEffect(() => {
             <div id="userChat" className="p-4 h-full space-y-4 overflow-auto ">
               {!aiMode && (
                 <>
-                  {(searchedMessages ?? messages).map((message, index: number) => (
+                  {messages.map((message, index: number) => (
                     <Fragment key={index}>
                       {message.sender_type === 'patient' ? (
                         <>
@@ -560,7 +541,7 @@ useEffect(() => {
               )}
               {aiMode && (
                 <>
-                  {(searchedAiMessages ?? aiMessages).map((message, index: number) => (
+                  {aiMessages.map((message, index: number) => (
                     <Fragment key={index}>
                       {message.sender_type === 'patient' ? (
                         <>
