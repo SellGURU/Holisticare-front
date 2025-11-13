@@ -198,7 +198,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     for (let i = cardData.length - 1; i >= 0; i--) {
       if (
         cardData[i].state === 'On Going' ||
-        cardData[i].state === 'Completed'
+        cardData[i].state === 'Completed'||
+        cardData[i].state === 'Paused'
       ) {
         lastOnGoingOrCompletedIndex = i;
         break;
