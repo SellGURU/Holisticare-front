@@ -262,16 +262,35 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setisSearchOpen(false);
     },
   });
-  useEffect(() => {
-    if (!search.trim()) {
-      setMessages(allMessages);
+useEffect(() => {
+  // choose correct source list (ai or normal)
+  const source = aiMode ? aiMessages : allMessages;
+
+  if (!search.trim()) {
+    // when search box is empty, restore full messages
+    if (aiMode) {
+      aiMessagesList(parseInt(memberId)); // re-fetch or reset
     } else {
-      const filtered = allMessages.filter((msg) =>
-        msg.message_text.toLowerCase().includes(search.toLowerCase()),
-      );
-      setMessages(filtered);
+      setMessages(allMessages);
     }
-  }, [search, allMessages]);
+    return;
+  }
+
+  const term = search.toLowerCase();
+
+  // filter all messages by text (includes all sender types)
+  const filtered = source.filter(
+    (msg) => msg.message_text && msg.message_text.toLowerCase().includes(term),
+  );
+
+  if (aiMode) {
+    setAiMessages(filtered);
+  } else {
+    setMessages(filtered);
+  }
+}, [search, aiMode, allMessages]);
+
+
   return (
     <>
       <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
