@@ -17,6 +17,8 @@ interface SetOrdersProps {
   data: any;
   treatMentPlanData: any;
   setData: (values: any) => void;
+  setLookingForwards: (values: any) => void;
+  lookingForwardsData: any;
   storeChecked: (data: any) => void;
   // checkeds: Array<any>;
   reset: () => void;
@@ -28,12 +30,15 @@ interface SetOrdersProps {
   setActiveCategory: (value: string) => void;
   progress: number; // from 0 to 100
   details: Record<string, boolean>[];
+  setDetails: (value: Record<string, boolean>[]) => void;
 }
 
 export const SetOrders: FC<SetOrdersProps> = ({
   data,
   // treatMentPlanData,
   setData,
+  setLookingForwards,
+  lookingForwardsData,
   storeChecked,
   // checkeds,
   // reset,
@@ -44,6 +49,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
   setVisibleCategorieys,
   progress,
   details,
+  setDetails,
 }) => {
   // const [activeCategory, setActiveCategory] = useState<string>(
   //   visibleCategoriy[visibleCategoriy.length - 1].name || 'Activity',
@@ -290,6 +296,50 @@ export const SetOrders: FC<SetOrdersProps> = ({
       activityContainer.current.scrollTop = 0;
     }
   }, [activeCategory]);
+
+  const handleAddLookingForwards = (text: string) => {
+    setLookingForwards([
+      ...lookingForwardsData,
+      'Issue ' + (lookingForwardsData.length + 1) + ': ' + text,
+    ]);
+  };
+  const handleRemoveLookingForwards = (text: string) => {
+    setLookingForwards(lookingForwardsData.filter((el: any) => el !== text));
+  };
+
+  const handleUpdateIssueListByKeys = (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+    text?: string,
+  ) => {
+    setData(
+      data.map((item: any) => {
+        if (
+          item.Category === category &&
+          item.Recommendation === recommendation
+        ) {
+          return { ...item, issue_list: newIssueList };
+        }
+        return item;
+      }),
+    );
+    if (text) {
+      handleAddLookingForwards(text);
+    }
+  };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRemoveIssueFromList = (name: string) => {
+    setData(
+      data.map((item: any) => ({
+        ...item,
+        issue_list: item.issue_list.filter((issue: string) => issue !== name),
+      })),
+    );
+    handleRemoveLookingForwards(name);
+    setRefreshKey((k) => k + 1);
+  };
+
   return (
     <>
       <MainModal
@@ -378,7 +428,14 @@ export const SetOrders: FC<SetOrdersProps> = ({
         </div>
       )}
       <div className="bg-white rounded-2xl h-[65vh] shadow-100 p-4 md:p-6 border border-Gray-50">
-        <CoverageCard progress={progress} details={details} />
+        <CoverageCard
+          progress={progress}
+          details={details}
+          setDetails={setDetails}
+          setLookingForwards={setLookingForwards}
+          lookingForwardsData={lookingForwardsData}
+          handleRemoveIssueFromList={handleRemoveIssueFromList}
+        />
         <div className="flex mt-4 w-full flex-wrap ss:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
           <div className="flex w-[80%]   md:w-[50%] gap-8 md:gap-[80px]">
             {categories.map(
@@ -455,11 +512,16 @@ export const SetOrders: FC<SetOrdersProps> = ({
             .map((item: any, index: number) => {
               return (
                 <ActivityCard
-                  key={index}
+                  key={`${index}-${refreshKey}`}
                   item={item}
                   index={index}
                   activeCategory={activeCategory}
                   handleCheckboxChange={handleCheckboxChange}
+                  issuesData={details}
+                  setIssuesData={setDetails}
+                  handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
+                  handleRemoveLookingForwards={handleRemoveLookingForwards}
+                  handleRemoveIssueFromList={handleRemoveIssueFromList}
                 />
               );
             })}

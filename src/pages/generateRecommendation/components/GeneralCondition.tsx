@@ -77,7 +77,6 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
     clientInsights: false,
     lookingForwards: false,
   });
-
   const [tempData, setTempData] = useState<ConditionDataProps>(data);
 
   const handleEdit = (section: SectionKey): void => {
@@ -144,10 +143,20 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   };
 
   const handleAddNew = (section: SectionKey, value: string): void => {
-    setTempData((prev) => ({
-      ...prev,
-      [section]: [value, ...prev[section]],
-    }));
+    if (section == 'lookingForwards') {
+      setTempData((prev) => ({
+        ...prev,
+        [section]: [
+          ...prev[section],
+          'Issue ' + (prev[section].length + 1) + ': ' + value,
+        ],
+      }));
+    } else {
+      setTempData((prev) => ({
+        ...prev,
+        [section]: [value, ...prev[section]],
+      }));
+    }
   };
 
   // useEffect(() => {
@@ -256,12 +265,11 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           onAddNew={(value) => handleAddNew('clientInsights', value)}
         />
         <Card
-          title="Key Areas to Address"
-          content={
-            editMode?.lookingForwards
-              ? tempData?.lookingForwards
-              : data?.lookingForwards
-          }
+          title="Health Planning Issues"
+          content={(editMode.lookingForwards
+            ? tempData.lookingForwards
+            : data.lookingForwards
+          )?.map((item) => item)}
           isEditing={editMode.lookingForwards}
           onEdit={() => handleEdit('lookingForwards')}
           onSave={() => handleSave('lookingForwards')}
@@ -306,7 +314,7 @@ const Card: React.FC<CardProps> = ({
   return (
     <div className="bg-white p-4 md:p-6 pt-4 border rounded-2xl border-Gray-50 shadow-100 md:min-w-[444px] w-full md:w-[33%] text-Text-Primary">
       <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
-        {title == 'Key Areas to Address' ? (
+        {title == 'Health Planning Issues' ? (
           <div className="flex items-center gap-2 text-Primary-DeepTeal">
             <img src="/icons/lamp-on.svg" alt="" />
             {title}
@@ -439,9 +447,22 @@ const Card: React.FC<CardProps> = ({
                 </div>
               ) : (
                 <li
-                  className={` ${item.length > 1 && 'list-disc'} text-sm text-justify mt-2`}
+                  className={` ${item.length > 1 && 'list-disc'} text-sm text-justify mt-2 ${
+                    title === 'Health Planning Issues'
+                      ? 'marker:text-gray-400'
+                      : ''
+                  }`}
                 >
-                  {item}
+                  {title === 'Health Planning Issues' ? (
+                    <>
+                      <span className="text-gray-500">
+                        {item.split(':')[0]}:
+                      </span>{' '}
+                      {item.split(':')[1]?.trim()}
+                    </>
+                  ) : (
+                    item
+                  )}
                 </li>
               )}
             </>

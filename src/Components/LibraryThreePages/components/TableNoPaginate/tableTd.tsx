@@ -136,18 +136,20 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     header: 'Added on',
     enableSorting: false,
     cell: ({ row }) => {
-      const dateStr = row.original?.['Added on']?.substring(0, 10) || '-';
-      let formattedDate = '-';
+      const formatDate = (isoString: any) => {
+        const date = new Date(isoString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
 
-      if (dateStr !== '-') {
-        const [year, month, day] = dateStr.split('-');
-        formattedDate = `${month.padStart(2, '0')}/${day.padStart(
-          2,
-          '0',
-        )}/${year}`;
-      }
+        return `${year}/${month}/${day}`;
+      };
 
-      return <div className="text-xs text-Text-Quadruple">{formattedDate}</div>;
+      return (
+        <div className="text-xs text-Text-Quadruple">
+          {formatDate(row.original?.['Added on'])}
+        </div>
+      );
     },
   },
 ];

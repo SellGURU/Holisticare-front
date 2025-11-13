@@ -50,7 +50,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [extractedBiomarkers, setExtractedBiomarkers] = useState<any[]>([]);
   const [fileType, setfileType] = useState('more_info');
   const [polling, setPolling] = useState(true); // ✅ control polling
-  const [deleteLoading, setdeleteLoading] = useState(false);
+  const [deleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
   console.log(uploadedFile);
   // console.log(extractedBiomarkers);
@@ -128,26 +128,27 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     return `${kb.toFixed(1)} KB`;
   };
 
-  const handleDeleteFile = () => {
-    setdeleteLoading(true);
-    setUploadedFile(null);
+  const [, forceReRender] = useState(0);
+
+  const handleDeleteFile = (fileId?: string) => {
     setExtractedBiomarkers([]);
+    console.log(fileId);
     setfileType('more_info');
     setPolling(true);
-    Application.deleteLapReport({
-      file_id: uploadedFile?.file_id,
-      member_id: memberId,
-    }) // adjust if backend expects id
-      .then(() => {
-        setUploadedFile(null);
-        setRowErrors({});
-        setAddedRowErrors({});
-        setdeleteLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error deleting the file:', err);
-      });
+    setUploadedFile(null);
+    setRowErrors({});
+    setAddedRowErrors({});
+    publish('RESET_MAPPING_ROWS', {});
+    forceReRender((x) => x + 1);
   };
+  useEffect(() => {
+    subscribe('DELETE_FILE_TRIGGER', () => {
+      // alert('delete file trigger');
+      handleDeleteFile();
+    });
+  }, []);
+
+  console.log(uploadedFile);
 
   const sendToBackend = async (file: File, azureUrl: string) => {
     await Application.addLabReport(
@@ -715,7 +716,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       }}
                     >
                       <img src="/icons/tick-square.svg" alt="" />
-                      Develop Health Plan
+                      Save & Continue to Health Plan
                     </ButtonSecondary>
                   </div>
                 </div>
