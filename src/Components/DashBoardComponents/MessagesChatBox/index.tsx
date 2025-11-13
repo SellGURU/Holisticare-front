@@ -526,10 +526,11 @@ useEffect(() => {
                                 {message.recipient == true && (
                                   <>
                                     <span title={'Seen by the ' + username}>
-                                      <SvgIcon
-                                        src="./icons/tick-green.svg"
-                                        color="#8a8a8a"
-                                      />
+                                      <img className='w-4 h-4 object-contain' src="/icons/telegram_read.svg" alt="" />
+                                      {/* <SvgIcon
+                                        src="./icons/telegram_read.svg"
+                                        // color="#8a8a8a"
+                                      /> */}
                                     </span>
                                   </>
                                 )}
@@ -676,10 +677,11 @@ useEffect(() => {
                                 {message.recipient == true && (
                                   <>
                                     <span>
-                                      <SvgIcon
-                                        src="./icons/tick-green.svg"
+                                      <img className='w-4 h-4 object-contain' src="/icons/telegram_read.svg" alt="" />
+                                      {/* <SvgIcon
+                                        src="./icons/telegram_read.svg"
                                         color="#8a8a8a"
-                                      />
+                                      /> */}
                                     </span>
                                   </>
                                 )}
