@@ -11,6 +11,7 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import SvgIcon from '../../../utils/svgIcon';
 import SearchBox from '../../SearchBox';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import { Tooltip } from 'react-tooltip';
 type Message = {
   date: string;
   time: string;
@@ -24,6 +25,7 @@ type Message = {
   timestamp: number;
   name: string;
   recipient?: boolean;
+  reported?: boolean;
 };
 type SendMessage = {
   conversation_id?: number;
@@ -260,16 +262,35 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setisSearchOpen(false);
     },
   });
-  useEffect(() => {
-    if (!search.trim()) {
-      setMessages(allMessages);
-    } else {
-      const filtered = allMessages.filter((msg) =>
-        msg.message_text.toLowerCase().includes(search.toLowerCase()),
-      );
-      setMessages(filtered);
-    }
-  }, [search, allMessages]);
+  const [searchedMessages, setSearchedMessages] = useState<Message[] | null>(null);
+const [searchedAiMessages, setSearchedAiMessages] = useState<Message[] | null>(null);
+
+useEffect(() => {
+  if (!memberId) return;
+
+  const term = search.trim().toLowerCase();
+
+  if (!term) {
+    // Clear search results and restore full messages
+    setSearchedMessages(null);
+    setSearchedAiMessages(null);
+    return;
+  }
+
+  if (aiMode) {
+    const filtered = aiMessages.filter(
+      (msg) => msg.message_text?.toLowerCase().includes(term)
+    );
+    setSearchedAiMessages(filtered);
+  } else {
+    const filtered = allMessages.filter(
+      (msg) => msg.message_text?.toLowerCase().includes(term)
+    );
+    setSearchedMessages(filtered);
+  }
+}, [search, aiMode, allMessages, aiMessages, memberId]);
+
+
   return (
     <>
       <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
@@ -388,7 +409,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
             <div id="userChat" className="p-4 h-full space-y-4 overflow-auto ">
               {!aiMode && (
                 <>
-                  {messages.map((message, index: number) => (
+                  {(searchedMessages ?? messages).map((message, index: number) => (
                     <Fragment key={index}>
                       {message.sender_type === 'patient' ? (
                         <>
@@ -443,8 +464,26 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                         </>
                       ) : (
                         <>
-                          <div className="flex justify-end items-start gap-1">
-                            <div className="flex flex-col items-end">
+                          <div className="flex  justify-end items-start gap-1">
+                            <div className="flex relative flex-col items-end">
+                              {message.reported == true && (
+                                <>
+                                  <img
+                                    data-tooltip-id={
+                                      message.conversation_id + 'flag'
+                                    }
+                                    className="absolute -left-5 cursor-pointer top-5"
+                                    src="/icons/flag-2.svg"
+                                    alt=""
+                                  />
+                                  <Tooltip
+                                    id={message.conversation_id + 'flag'}
+                                  >
+                                    This response was reported by the client.
+                                  </Tooltip>
+                                </>
+                              )}
+
                               <div className="text-Text-Primary text-xs font-medium">
                                 <span className="text-[#888888] text-[12px] font-normal mr-1">
                                   {new Date(
@@ -521,7 +560,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
               )}
               {aiMode && (
                 <>
-                  {aiMessages.map((message, index: number) => (
+                  {(searchedAiMessages ?? aiMessages).map((message, index: number) => (
                     <Fragment key={index}>
                       {message.sender_type === 'patient' ? (
                         <>
@@ -577,7 +616,24 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                       ) : (
                         <>
                           <div className="flex justify-end items-start gap-1">
-                            <div className="flex flex-col items-end">
+                            <div className=" relative flex flex-col items-end">
+                              {message.reported == true && (
+                                <>
+                                  <img
+                                    data-tooltip-id={
+                                      message.conversation_id + 'flag'
+                                    }
+                                    className="absolute -left-5 cursor-pointer top-5"
+                                    src="/icons/flag-2.svg"
+                                    alt=""
+                                  />
+                                  <Tooltip
+                                    id={message.conversation_id + 'flag'}
+                                  >
+                                    This response was reported by the client.
+                                  </Tooltip>
+                                </>
+                              )}
                               <div className="text-Text-Primary text-xs font-medium">
                                 <span className="text-Text-Primary mr-1">
                                   {new Date(
