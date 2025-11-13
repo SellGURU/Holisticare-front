@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../api/app';
 import { ComboBar, MainModal } from '../../Components';
@@ -34,6 +34,9 @@ const NewGenerateHolisticPlan = () => {
     id: string;
     treatment_id: string;
   }>();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const isUpdate = searchParams.get("isUpdate") === "true";  
   const [active, setActive] = useState<string>('Recommendation');
   const [clientGools, setClientGools] = useState<any>({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
@@ -105,6 +108,7 @@ const NewGenerateHolisticPlan = () => {
       Application.saveTreatmentPaln({
         ...treatmentPlanData,
         member_id: id,
+        is_update: isUpdate,
       })
         .then(() => {
           return Application.checkHtmlReport(id?.toString() || '');

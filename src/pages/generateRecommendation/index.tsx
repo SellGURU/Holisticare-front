@@ -325,7 +325,7 @@ export const GenerateRecommendation = () => {
       .finally(() => {
         setisButtonLoading(false);
         navigate(
-          `/report/Generate-Holistic-Plan/${id}/${resolveTreatmentId()}`,
+          `/report/Generate-Holistic-Plan/${id}/${resolveTreatmentId()+'?isUpdate='+(treatment_id && treatment_id?.length > 1 ? 'true' : 'false')}`,
         );
       });
   };
