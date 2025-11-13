@@ -32,11 +32,13 @@ export default function HtmlEditor({
   const [currentStyles, setCurrentStyles] = useState<ElementStyles | null>(
     null,
   );
-  // const [previewText, setPreviewText] = useState<string>('');
+  const [previewText, setPreviewText] = useState<string>('');
   const [, setIconsAdded] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedText, setSelectedText] = useState<string>('');
   const [showTextFormatting, setShowTextFormatting] = useState(false);
+
+  const [showReset, setShowReset] = useState(false);
 
   // Helper function to detect Tailwind classes and get their values
   const getTailwindStyleValue = (element: HTMLElement, property: string) => {
@@ -82,20 +84,20 @@ export default function HtmlEditor({
   };
 
   // Function to handle text selection in editable elements
-  const handleTextSelection = (doc: Document) => {
-    const selection = doc.getSelection();
-    console.log('Selection detected:', selection?.toString()); // Debug log
+  // const handleTextSelection = (doc: Document) => {
+  //   const selection = doc.getSelection();
+  //   console.log('Selection detected:', selection?.toString()); // Debug log
 
-    if (selection && selection.toString().trim().length > 0) {
-      const selectedText = selection.toString().trim();
-      console.log('Selected text:', selectedText); // Debug log
-      setSelectedText(selectedText);
-      setShowTextFormatting(true);
-    } else {
-      setSelectedText('');
-      setShowTextFormatting(false);
-    }
-  };
+  //   if (selection && selection.toString().trim().length > 0) {
+  //     const selectedText = selection.toString().trim();
+  //     console.log('Selected text:', selectedText); // Debug log
+  //     setSelectedText(selectedText);
+  //     setShowTextFormatting(true);
+  //   } else {
+  //     setSelectedText('');
+  //     setShowTextFormatting(false);
+  //   }
+  // };
 
   // Function to apply formatting to selected text
   const applyTextFormatting = (format: 'bold' | 'italic' | 'underline') => {
@@ -162,8 +164,11 @@ export default function HtmlEditor({
 
       if (newEditMode) {
         // Enable edit mode
+        // editableElements.forEach((element) => {
+        //   (element as HTMLElement).setAttribute('contenteditable', 'true');
+        // });
         editableElements.forEach((element) => {
-          (element as HTMLElement).setAttribute('contenteditable', 'true');
+          (element as HTMLElement).removeAttribute('contenteditable');
         });
 
         // Add edit icons
@@ -255,21 +260,21 @@ export default function HtmlEditor({
         htmlElement.appendChild(editIcon);
 
         // Add selection event listeners to the element itself
-        htmlElement.addEventListener('mouseup', () => {
-          if (isEditMode) {
-            setTimeout(() => {
-              handleTextSelection(doc);
-            }, 10);
-          }
-        });
+        // htmlElement.addEventListener('mouseup', () => {
+        //   if (isEditMode) {
+        //     setTimeout(() => {
+        //       handleTextSelection(doc);
+        //     }, 10);
+        //   }
+        // });
 
-        htmlElement.addEventListener('keyup', () => {
-          if (isEditMode) {
-            setTimeout(() => {
-              handleTextSelection(doc);
-            }, 10);
-          }
-        });
+        // htmlElement.addEventListener('keyup', () => {
+        //   if (isEditMode) {
+        //     setTimeout(() => {
+        //       handleTextSelection(doc);
+        //     }, 10);
+        //   }
+        // });
 
         // Add click event to edit icon
         editIcon.addEventListener('click', (e) => {
@@ -378,36 +383,38 @@ export default function HtmlEditor({
             // Restore icon display
             editIcon.style.display = iconDisplay || '';
             setIsStyleModalOpen(true);
+            setPreviewText(
+              htmlElement?.innerText.replace(/✏️/g, '').trim() || '',
+            );
           }, 50); // Small delay to ensure icon is hidden before reading styles
         });
-        // setPreviewText(htmlElement.textContent || '');
 
         // Add hover effects
-        editIcon.addEventListener('mouseenter', () => {
-          editIcon.style.transform = 'scale(1.1)';
-          editIcon.style.background = '#2563eb';
-        });
+        // editIcon.addEventListener('mouseenter', () => {
+        //   editIcon.style.transform = 'scale(1.1)';
+        //   editIcon.style.background = '#2563eb';
+        // });
 
-        editIcon.addEventListener('mouseleave', () => {
-          editIcon.style.transform = 'scale(1)';
-          editIcon.style.background = '#3b82f6';
-        });
+        // editIcon.addEventListener('mouseleave', () => {
+        //   editIcon.style.transform = 'scale(1)';
+        //   editIcon.style.background = '#3b82f6';
+        // });
 
         // Prevent text selection on the icon
-        editIcon.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        });
+        // editIcon.addEventListener('mousedown', (e) => {
+        //   e.preventDefault();
+        //   e.stopPropagation();
+        // });
 
-        editIcon.addEventListener('selectstart', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        });
+        // editIcon.addEventListener('selectstart', (e) => {
+        //   e.preventDefault();
+        //   e.stopPropagation();
+        // });
 
-        editIcon.addEventListener('dragstart', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        });
+        // editIcon.addEventListener('dragstart', (e) => {
+        //   e.preventDefault();
+        //   e.stopPropagation();
+        // });
 
         iconsAddedCount++;
       });
@@ -436,11 +443,11 @@ export default function HtmlEditor({
         // Make only elements with 'editable' class editable
         const editableElements = doc.querySelectorAll('.editable');
         editableElements.forEach((element) => {
-          if (isEditMode) {
-            (element as HTMLElement).setAttribute('contenteditable', 'true');
-          } else {
-            (element as HTMLElement).removeAttribute('contenteditable');
-          }
+          // if (isEditMode) {
+          // (element as HTMLElement).setAttribute('contenteditable', 'true');
+          // } else {
+          (element as HTMLElement).removeAttribute('contenteditable');
+          // }
         });
 
         // Add edit icons to editable elements after DOM is fully loaded
@@ -466,44 +473,44 @@ export default function HtmlEditor({
         }, 1000);
 
         // Add event listener to the document for input events
-        doc.addEventListener('input', () => {
-          if (onChange) onChange(doc.documentElement.outerHTML);
-        });
+        // doc.addEventListener('input', () => {
+        //   if (onChange) onChange(doc.documentElement.outerHTML);
+        // });
 
         // Add event listener for text selection
-        doc.addEventListener('mouseup', () => {
-          if (isEditMode) {
-            setTimeout(() => {
-              handleTextSelection(doc);
-            }, 10);
-          }
-        });
+        // doc.addEventListener('mouseup', () => {
+        //   if (isEditMode) {
+        //     setTimeout(() => {
+        //       handleTextSelection(doc);
+        //     }, 10);
+        //   }
+        // });
 
-        doc.addEventListener('keyup', () => {
-          if (isEditMode) {
-            setTimeout(() => {
-              handleTextSelection(doc);
-            }, 10);
-          }
-        });
+        // doc.addEventListener('keyup', () => {
+        //   if (isEditMode) {
+        //     setTimeout(() => {
+        //       handleTextSelection(doc);
+        //     }, 10);
+        //   }
+        // });
 
         // Also listen for selection change
-        doc.addEventListener('selectionchange', () => {
-          if (isEditMode) {
-            setTimeout(() => {
-              handleTextSelection(doc);
-            }, 10);
-          }
-        });
+        // doc.addEventListener('selectionchange', () => {
+        //   if (isEditMode) {
+        //     setTimeout(() => {
+        //       handleTextSelection(doc);
+        //     }, 10);
+        //   }
+        // });
 
         // Hide formatting toolbar when clicking outside
-        doc.addEventListener('click', (e) => {
-          const target = e.target as HTMLElement;
-          if (!target.closest('.text-formatting-toolbar')) {
-            setShowTextFormatting(false);
-            setSelectedText('');
-          }
-        });
+        // doc.addEventListener('click', (e) => {
+        //   const target = e.target as HTMLElement;
+        //   if (!target.closest('.text-formatting-toolbar')) {
+        //     setShowTextFormatting(false);
+        //     setSelectedText('');
+        //   }
+        // });
       } else {
         const editableElements = doc.querySelectorAll('.editable');
         editableElements.forEach((element) => {
@@ -590,31 +597,41 @@ export default function HtmlEditor({
       }
     }
   };
-  // const updatePreviewText = (text: string) => {
-  //   if (!selectedElement) return;
+  const updatePreviewText = (text: string) => {
+    if (!selectedElement) return;
 
-  //   const iframe = iframeRef.current;
-  //   if (!iframe) return;
-  //   const doc = iframe.contentDocument || iframe.contentWindow?.document;
-  //   if (!doc) return;
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
 
-  //   const editableElements = doc.querySelectorAll('.editable');
-  //   let targetElement: HTMLElement | null = null;
+    const editableElements = doc.querySelectorAll('.editable');
+    let targetElement: HTMLElement | null = null;
 
-  //   editableElements.forEach((element) => {
-  //     if (element === selectedElement) {
-  //       targetElement = element as HTMLElement;
-  //     }
-  //   });
+    editableElements.forEach((element) => {
+      if (element === selectedElement) {
+        targetElement = element as HTMLElement;
+      }
+    });
 
-  //   if (targetElement) {
-  //     (targetElement as HTMLElement).textContent = text;
+    if (targetElement) {
+      (targetElement as HTMLElement).innerText = text;
 
-  //     if (onChange) {
-  //       onChange(doc.documentElement.outerHTML);
-  //     }
-  //   }
-  // };
+      if (onChange) {
+        onChange(doc.documentElement.outerHTML);
+      }
+      const tryAddIcons = () => {
+        const editableElements = doc.querySelectorAll('.editable');
+        if (editableElements.length > 0) {
+          addEditIcons(doc);
+        } else {
+          // Retry after a short delay
+          setTimeout(tryAddIcons, 200);
+        }
+      };
+      setTimeout(tryAddIcons, 200);
+    }
+  };
 
   const handleReset = () => {
     setIsEditMode(false);
@@ -622,6 +639,8 @@ export default function HtmlEditor({
     if (!iframe) return;
     const doc = iframe.contentDocument || iframe.contentWindow?.document;
     if (!doc) return;
+
+    setShowReset(false);
 
     doc.open();
     doc.write(originalHtml);
@@ -683,12 +702,14 @@ export default function HtmlEditor({
               >
                 {isEditMode ? '✏️ Exit Editing' : '✏️ Edit'}
               </ButtonSecondary>
-              <ButtonSecondary
-                onClick={handleReset}
-                ClassName="bg-red-500 text-white hover:bg-red-600"
-              >
-                <RotateCcw size={16} /> Reset
-              </ButtonSecondary>
+              {showReset && (
+                <ButtonSecondary
+                  onClick={handleReset}
+                  ClassName="bg-red-500 text-white hover:bg-red-600"
+                >
+                  <RotateCcw size={16} /> Reset
+                </ButtonSecondary>
+              )}
               {isEditMode && (
                 <ButtonSecondary
                   onClick={handleSave}
@@ -725,8 +746,9 @@ export default function HtmlEditor({
         onClose={() => setIsStyleModalOpen(false)}
         onApplyStyle={applyStyles}
         currentStyles={currentStyles || undefined}
-        // selectedText={previewText || ''}
-        // onUpdatePreviewText={updatePreviewText}
+        selectedText={previewText || ''}
+        onUpdatePreviewText={updatePreviewText}
+        setShowReset={() => setShowReset(true)}
       />
 
       {/* Text Formatting Toolbar */}
