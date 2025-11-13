@@ -37,22 +37,25 @@ const GenerateActionPlan = () => {
     checkIn: [],
     category: [],
   });
-  const checkSelectedTaskConflict = useCallback((newPlans: any) => {
-    setIsLoadingPlans(true);
-    Application.checkSelectedTaskConflict({
-      member_id: id,
-      tasks: newPlans,
-    })
-      .then((res) => {
-        setCategories((prevCategories: any) => ({
-          ...prevCategories,
-          category: res.data,
-        }));
+  const checkSelectedTaskConflict = useCallback(
+    (newPlans: any) => {
+      setIsLoadingPlans(true);
+      Application.checkSelectedTaskConflict({
+        member_id: id,
+        tasks: newPlans,
       })
-      .finally(() => {
-        setIsLoadingPlans(false);
-      });
-  }, [id]);
+        .then((res) => {
+          setCategories((prevCategories: any) => ({
+            ...prevCategories,
+            category: res.data,
+          }));
+        })
+        .finally(() => {
+          setIsLoadingPlans(false);
+        });
+    },
+    [id],
+  );
   const [actionPlanError, setActionPlanError] = useState(false);
   const savePlan = useCallback(() => {
     Application.getActionPlanTaskDirectoryNew({
@@ -61,7 +64,7 @@ const GenerateActionPlan = () => {
     })
       .then((res) => {
         if (!isMountedRef.current) return;
-        
+
         const checkInItems = res.data.filter(
           (item: any) => item.Task_Type === 'Checkin',
         );
@@ -80,7 +83,7 @@ const GenerateActionPlan = () => {
       })
       .catch(() => {
         if (!isMountedRef.current) return;
-        
+
         setActionPlanError(true);
         timeoutRef.current = setTimeout(() => {
           if (isMountedRef.current) {
@@ -92,7 +95,7 @@ const GenerateActionPlan = () => {
   }, [id, checkSelectedTaskConflict]);
   useEffect(() => {
     savePlan();
-    
+
     return () => {
       isMountedRef.current = false;
       if (timeoutRef.current) {
