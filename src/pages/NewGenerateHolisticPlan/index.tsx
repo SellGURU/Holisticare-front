@@ -36,7 +36,7 @@ const NewGenerateHolisticPlan = () => {
   }>();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const isUpdate = searchParams.get("isUpdate") === "true";  
+  const isUpdate = searchParams.get('isUpdate') === 'true';
   const [active, setActive] = useState<string>('Recommendation');
   const [clientGools, setClientGools] = useState<any>({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
