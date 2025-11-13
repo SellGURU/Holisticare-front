@@ -119,51 +119,56 @@ const AddClient = () => {
   const validateDate = (date: any) => {
     return !isNaN(date.getTime()); // Returns true if it's a valid date
   };
-  const submit = () => {
-    setShowValidation(true);
-    if (!formik.isValid) {
-      return;
-    }
-    setisLoading(true);
+const submit = () => {
+  setShowValidation(true);
+  if (!formik.isValid) return;
 
-    Application.addClient({
-      first_name: formik.values.firstName,
-      email: formik.values.email,
-      last_name: formik.values.lastName,
-      picture: photo,
-      date_of_birth: dateOfBirth,
-      gender: formik.values.gender,
-      wearable_devices: [],
-      timezone: formik.values.timeZone ? formik.values.timeZone : null,
-      address: formik.values.address ?formik.values.address :null ,
-      phone_number: formik.values.phone ? '+' + formik.values.phone : null,
-    })
-      .then((res) => {
-        setIsAdded(true);
-        setMemberID(res.data.member_id);
-      })
-      .catch((error) => {
-        console.log(error);
-        setDobApiError('');
-        setApiError('');
-        const errorDetail = error?.detail;
-        if (errorDetail === 'Client must be at least 18 years old.') {
-          setDobApiError('Client must be at least 18 years old.');
-        }
-        if (errorDetail === 'Client already exists.') {
-          setApiError('An account with this email address already exists.');
-        }
-        if (errorDetail.toLowerCase().includes('phone')) {
-          setPhoneApiError('Please provide a valid phone number.');
-        }
-        if (errorDetail.toLowerCase().includes('timezone')) {
-          setTimeZoneApiError('Please select a valid time zone.');
-        }
-      })
-      .finally(() => {
-        setisLoading(false);
-      });
+  setisLoading(true);
+
+  // Build the base payload
+  const payload: any = {
+    first_name: formik.values.firstName,
+    email: formik.values.email,
+    last_name: formik.values.lastName,
+    picture: photo,
+    date_of_birth: dateOfBirth,
+    gender: formik.values.gender,
+    wearable_devices: [],
   };
+
+  // Conditionally add optional fields only if they have values
+  if (formik.values.timeZone) payload.timezone = formik.values.timeZone;
+  if (formik.values.address) payload.address = formik.values.address;
+  if (formik.values.phone) payload.phone_number = '+' + formik.values.phone;
+
+  Application.addClient(payload)
+    .then((res) => {
+      setIsAdded(true);
+      setMemberID(res.data.member_id);
+    })
+    .catch((error) => {
+      console.log(error);
+      setDobApiError('');
+      setApiError('');
+      const errorDetail = error?.detail;
+      if (errorDetail === 'Client must be at least 18 years old.') {
+        setDobApiError('Client must be at least 18 years old.');
+      }
+      if (errorDetail === 'Client already exists.') {
+        setApiError('An account with this email address already exists.');
+      }
+      if (errorDetail?.toLowerCase()?.includes('phone')) {
+        setPhoneApiError('Please provide a valid phone number.');
+      }
+      if (errorDetail?.toLowerCase()?.includes('timezone')) {
+        setTimeZoneApiError('Please select a valid time zone.');
+      }
+    })
+    .finally(() => {
+      setisLoading(false);
+    });
+};
+
   const handleSaveClick = () => {
     setShowValidation(true);
     formik.validateForm().then((errors) => {
