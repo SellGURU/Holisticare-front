@@ -136,7 +136,7 @@ const AddClient = () => {
       wearable_devices: [],
       timezone: formik.values.timeZone,
       address: formik.values.address,
-      phone_number: '+' + formik.values.phone,
+phone_number: formik.values.phone ? '+' + formik.values.phone : '',
     })
       .then((res) => {
         setIsAdded(true);
