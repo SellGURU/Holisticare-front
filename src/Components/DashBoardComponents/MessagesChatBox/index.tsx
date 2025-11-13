@@ -11,6 +11,7 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import SvgIcon from '../../../utils/svgIcon';
 import SearchBox from '../../SearchBox';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import { Tooltip } from 'react-tooltip';
 type Message = {
   date: string;
   time: string;
@@ -24,6 +25,7 @@ type Message = {
   timestamp: number;
   name: string;
   recipient?: boolean;
+  reported?: boolean;
 };
 type SendMessage = {
   conversation_id?: number;
@@ -260,16 +262,38 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setisSearchOpen(false);
     },
   });
+  const [searchedMessages, setSearchedMessages] = useState<Message[] | null>(
+    null,
+  );
+  const [searchedAiMessages, setSearchedAiMessages] = useState<
+    Message[] | null
+  >(null);
+
   useEffect(() => {
-    if (!search.trim()) {
-      setMessages(allMessages);
+    if (!memberId) return;
+
+    const term = search.trim().toLowerCase();
+
+    if (!term) {
+      // Clear search results and restore full messages
+      setSearchedMessages(null);
+      setSearchedAiMessages(null);
+      return;
+    }
+
+    if (aiMode) {
+      const filtered = aiMessages.filter((msg) =>
+        msg.message_text?.toLowerCase().includes(term),
+      );
+      setSearchedAiMessages(filtered);
     } else {
       const filtered = allMessages.filter((msg) =>
-        msg.message_text.toLowerCase().includes(search.toLowerCase()),
+        msg.message_text?.toLowerCase().includes(term),
       );
-      setMessages(filtered);
+      setSearchedMessages(filtered);
     }
-  }, [search, allMessages]);
+  }, [search, aiMode, allMessages, aiMessages, memberId]);
+
   return (
     <>
       <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
@@ -388,264 +412,313 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
             <div id="userChat" className="p-4 h-full space-y-4 overflow-auto ">
               {!aiMode && (
                 <>
-                  {messages.map((message, index: number) => (
-                    <Fragment key={index}>
-                      {message.sender_type === 'patient' ? (
-                        <>
-                          {index == messages.length - 1 && (
-                            <div ref={messagesEndRef}></div>
-                          )}
-                          <div className="flex justify-start items-start gap-1">
-                            <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
-                              <img
-                                src={`https://ui-avatars.com/api/?name=${username}`}
-                                alt=""
-                                className="rounded-full"
-                              />
-                            </div>
-                            <div>
-                              <div className="text-Text-Primary font-medium text-[12px]">
-                                {username}{' '}
-                                <span className="text-[#888888] text-[12px] font-normal ml-1">
-                                  {new Date(
-                                    message.timestamp,
-                                  ).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                  })}
-                                </span>
+                  {(searchedMessages ?? messages).map(
+                    (message, index: number) => (
+                      <Fragment key={index}>
+                        {message.sender_type === 'patient' ? (
+                          <>
+                            {index == messages.length - 1 && (
+                              <div ref={messagesEndRef}></div>
+                            )}
+                            <div className="flex justify-start items-start gap-1">
+                              <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
+                                <img
+                                  src={`https://ui-avatars.com/api/?name=${username}`}
+                                  alt=""
+                                  className="rounded-full"
+                                />
                               </div>
-                              <div className="flex flex-row gap-2">
-                                {message.images?.map((image, index) => {
-                                  return (
-                                    <img
-                                      src={image}
-                                      alt=""
-                                      key={index}
-                                      className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                      onClick={() => handleImageClick(image)}
-                                    />
-                                  );
-                                })}
-                              </div>
-                              <div
-                                className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
-                                style={{
-                                  lineHeight: '26px',
-                                  overflowWrap: 'anywhere',
-                                }}
-                              >
-                                {formatText(message.message_text)}
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex justify-end items-start gap-1">
-                            <div className="flex flex-col items-end">
-                              <div className="text-Text-Primary text-xs font-medium">
-                                <span className="text-[#888888] text-[12px] font-normal mr-1">
-                                  {new Date(
-                                    message.timestamp,
-                                  ).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                  })}
-                                </span>
-                                {message.name}
-                              </div>
-                              <div className="flex flex-row gap-2">
-                                {message.images?.map((image, index) => {
-                                  return (
-                                    <img
-                                      src={image}
-                                      alt=""
-                                      key={index}
-                                      className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                      onClick={() => handleImageClick(image)}
-                                    />
-                                  );
-                                })}
-                              </div>
-                              <div className="flex items-end ml-1">
-                                {
-                                  message.isSending ? (
-                                    <span>
-                                      <MoonLoader color="#383838" size={12} />
-                                    </span>
-                                  ) : null
-                                  // <span>
-                                  //   <SvgIcon
-                                  //     src="./icons/tick-green.svg"
-                                  //     color="#8a8a8a"
-                                  //   />
-                                  // </span>
-                                }
-                                {message.recipient == true && (
-                                  <>
-                                    <span title={'Seen by the ' + username}>
-                                      <SvgIcon
-                                        src="./icons/tick-green.svg"
-                                        color="#8a8a8a"
+                              <div>
+                                <div className="text-Text-Primary font-medium text-[12px]">
+                                  {username}{' '}
+                                  <span className="text-[#888888] text-[12px] font-normal ml-1">
+                                    {new Date(
+                                      message.timestamp,
+                                    ).toLocaleTimeString([], {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                      hour12: false,
+                                    })}
+                                  </span>
+                                </div>
+                                <div className="flex flex-row gap-2">
+                                  {message.images?.map((image, index) => {
+                                    return (
+                                      <img
+                                        src={image}
+                                        alt=""
+                                        key={index}
+                                        className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                                        onClick={() => handleImageClick(image)}
                                       />
-                                    </span>
-                                  </>
-                                )}
+                                    );
+                                  })}
+                                </div>
                                 <div
-                                  style={{ overflowWrap: 'anywhere' }}
-                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
+                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
+                                  style={{
+                                    lineHeight: '26px',
+                                    overflowWrap: 'anywhere',
+                                  }}
                                 >
                                   {formatText(message.message_text)}
                                 </div>
                               </div>
                             </div>
-                            <div className="min-w-[40px] min-h-[40px] size-10 overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
-                              <img
-                                className="rounded-full"
-                                src={`https://ui-avatars.com/api/?name=${message.name}`}
-                                alt=""
-                              />
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex  justify-end items-start gap-1">
+                              <div className="flex relative flex-col items-end">
+                                {message.reported == true && (
+                                  <>
+                                    <img
+                                      data-tooltip-id={
+                                        message.conversation_id + 'flag'
+                                      }
+                                      className="absolute -left-5 cursor-pointer top-5"
+                                      src="/icons/flag-2.svg"
+                                      alt=""
+                                    />
+                                    <Tooltip
+                                      id={message.conversation_id + 'flag'}
+                                    >
+                                      This response was reported by the client.
+                                    </Tooltip>
+                                  </>
+                                )}
+
+                                <div className="text-Text-Primary text-xs font-medium">
+                                  <span className="text-[#888888] text-[12px] font-normal mr-1">
+                                    {new Date(
+                                      message.timestamp,
+                                    ).toLocaleTimeString([], {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                      hour12: false,
+                                    })}
+                                  </span>
+                                  {message.name}
+                                </div>
+                                <div className="flex flex-row gap-2">
+                                  {message.images?.map((image, index) => {
+                                    return (
+                                      <img
+                                        src={image}
+                                        alt=""
+                                        key={index}
+                                        className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                                        onClick={() => handleImageClick(image)}
+                                      />
+                                    );
+                                  })}
+                                </div>
+                                <div className="flex items-end ml-1">
+                                  {
+                                    message.isSending ? (
+                                      <span>
+                                        <MoonLoader color="#383838" size={12} />
+                                      </span>
+                                    ) : null
+                                    // <span>
+                                    //   <SvgIcon
+                                    //     src="./icons/tick-green.svg"
+                                    //     color="#8a8a8a"
+                                    //   />
+                                    // </span>
+                                  }
+                                  {message.recipient == true && (
+                                    <>
+                                      <span title={'Seen by the ' + username}>
+                                        <img
+                                          className="w-4 h-4 object-contain"
+                                          src="/icons/telegram_read.svg"
+                                          alt=""
+                                        />
+                                        {/* <SvgIcon
+                                        src="./icons/telegram_read.svg"
+                                        // color="#8a8a8a"
+                                      /> */}
+                                      </span>
+                                    </>
+                                  )}
+                                  <div
+                                    style={{ overflowWrap: 'anywhere' }}
+                                    className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
+                                  >
+                                    {formatText(message.message_text)}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="min-w-[40px] min-h-[40px] size-10 overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
+                                <img
+                                  className="rounded-full"
+                                  src={`https://ui-avatars.com/api/?name=${message.name}`}
+                                  alt=""
+                                />
+                              </div>
                             </div>
-                          </div>
-                          {index == messages.length - 1 && (
-                            <div ref={messagesEndRef}></div>
-                          )}
-                        </>
-                      )}
-                    </Fragment>
-                  ))}
+                            {index == messages.length - 1 && (
+                              <div ref={messagesEndRef}></div>
+                            )}
+                          </>
+                        )}
+                      </Fragment>
+                    ),
+                  )}
                 </>
               )}
               {aiMode && (
                 <>
-                  {aiMessages.map((message, index: number) => (
-                    <Fragment key={index}>
-                      {message.sender_type === 'patient' ? (
-                        <>
-                          {index == aiMessages.length - 1 && (
-                            <div ref={messagesEndRef}></div>
-                          )}
-                          <div className="flex justify-start items-start gap-1">
-                            <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
-                              <img
-                                src={`https://ui-avatars.com/api/?name=${username}`}
-                                alt=""
-                                className="rounded-full"
-                              />
-                            </div>
-                            <div>
-                              <div className="text-Text-Primary font-medium text-xs">
-                                {username}{' '}
-                                <span className="text-Text-Primary ml-1">
-                                  {new Date(
-                                    message.timestamp,
-                                  ).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                  })}
-                                </span>
+                  {(searchedAiMessages ?? aiMessages).map(
+                    (message, index: number) => (
+                      <Fragment key={index}>
+                        {message.sender_type === 'patient' ? (
+                          <>
+                            {index == aiMessages.length - 1 && (
+                              <div ref={messagesEndRef}></div>
+                            )}
+                            <div className="flex justify-start items-start gap-1">
+                              <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
+                                <img
+                                  src={`https://ui-avatars.com/api/?name=${username}`}
+                                  alt=""
+                                  className="rounded-full"
+                                />
                               </div>
-                              <div className="flex flex-row gap-2">
-                                {message.images?.map((image, index) => {
-                                  return (
-                                    <img
-                                      src={image}
-                                      alt=""
-                                      key={index}
-                                      className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                      onClick={() => handleImageClick(image)}
-                                    />
-                                  );
-                                })}
-                              </div>
-                              <div
-                                className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
-                                style={{
-                                  lineHeight: '26px',
-                                  overflowWrap: 'anywhere',
-                                }}
-                              >
-                                {formatText(message.message_text)}
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex justify-end items-start gap-1">
-                            <div className="flex flex-col items-end">
-                              <div className="text-Text-Primary text-xs font-medium">
-                                <span className="text-Text-Primary mr-1">
-                                  {new Date(
-                                    message.timestamp,
-                                  ).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                  })}
-                                </span>
-                                AI Copilot
-                              </div>
-                              <div className="flex flex-row gap-2">
-                                {message.images?.map((image, index) => {
-                                  return (
-                                    <img
-                                      src={image}
-                                      alt=""
-                                      key={index}
-                                      className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                      onClick={() => handleImageClick(image)}
-                                    />
-                                  );
-                                })}
-                              </div>
-                              <div className="flex items-end ml-1">
-                                {
-                                  message.isSending ? (
-                                    <span>
-                                      <MoonLoader color="#383838" size={12} />
-                                    </span>
-                                  ) : null
-                                  // <span>
-                                  //   <SvgIcon
-                                  //     src="./icons/tick-green.svg"
-                                  //     color="#8a8a8a"
-                                  //   />
-                                  // </span>
-                                }
-                                {message.recipient == true && (
-                                  <>
-                                    <span>
-                                      <SvgIcon
-                                        src="./icons/tick-green.svg"
-                                        color="#8a8a8a"
+                              <div>
+                                <div className="text-Text-Primary font-medium text-xs">
+                                  {username}{' '}
+                                  <span className="text-Text-Primary ml-1">
+                                    {new Date(
+                                      message.timestamp,
+                                    ).toLocaleTimeString([], {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                      hour12: false,
+                                    })}
+                                  </span>
+                                </div>
+                                <div className="flex flex-row gap-2">
+                                  {message.images?.map((image, index) => {
+                                    return (
+                                      <img
+                                        src={image}
+                                        alt=""
+                                        key={index}
+                                        className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                                        onClick={() => handleImageClick(image)}
                                       />
-                                    </span>
-                                  </>
-                                )}
+                                    );
+                                  })}
+                                </div>
                                 <div
-                                  style={{ overflowWrap: 'anywhere' }}
-                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
+                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
+                                  style={{
+                                    lineHeight: '26px',
+                                    overflowWrap: 'anywhere',
+                                  }}
                                 >
                                   {formatText(message.message_text)}
                                 </div>
                               </div>
                             </div>
-                            <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center">
-                              <img src="/icons/ai-pic-messages.svg" alt="" />
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex justify-end items-start gap-1">
+                              <div className=" relative flex flex-col items-end">
+                                {message.reported == true && (
+                                  <>
+                                    <img
+                                      data-tooltip-id={
+                                        message.conversation_id + 'flag'
+                                      }
+                                      className="absolute -left-5 cursor-pointer top-5"
+                                      src="/icons/flag-2.svg"
+                                      alt=""
+                                    />
+                                    <Tooltip
+                                      id={message.conversation_id + 'flag'}
+                                    >
+                                      This response was reported by the client.
+                                    </Tooltip>
+                                  </>
+                                )}
+                                <div className="text-Text-Primary text-xs font-medium">
+                                  <span className="text-Text-Primary mr-1">
+                                    {new Date(
+                                      message.timestamp,
+                                    ).toLocaleTimeString([], {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                      hour12: false,
+                                    })}
+                                  </span>
+                                  AI Copilot
+                                </div>
+                                <div className="flex flex-row gap-2">
+                                  {message.images?.map((image, index) => {
+                                    return (
+                                      <img
+                                        src={image}
+                                        alt=""
+                                        key={index}
+                                        className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                                        onClick={() => handleImageClick(image)}
+                                      />
+                                    );
+                                  })}
+                                </div>
+                                <div className="flex items-end ml-1">
+                                  {
+                                    message.isSending ? (
+                                      <span>
+                                        <MoonLoader color="#383838" size={12} />
+                                      </span>
+                                    ) : null
+                                    // <span>
+                                    //   <SvgIcon
+                                    //     src="./icons/tick-green.svg"
+                                    //     color="#8a8a8a"
+                                    //   />
+                                    // </span>
+                                  }
+                                  {message.recipient == true && (
+                                    <>
+                                      <span>
+                                        <img
+                                          className="w-4 h-4 object-contain"
+                                          src="/icons/telegram_read.svg"
+                                          alt=""
+                                        />
+                                        {/* <SvgIcon
+                                        src="./icons/telegram_read.svg"
+                                        color="#8a8a8a"
+                                      /> */}
+                                      </span>
+                                    </>
+                                  )}
+                                  <div
+                                    style={{ overflowWrap: 'anywhere' }}
+                                    className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
+                                  >
+                                    {formatText(message.message_text)}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center">
+                                <img src="/icons/ai-pic-messages.svg" alt="" />
+                              </div>
                             </div>
-                          </div>
-                          {index == messages.length - 1 && (
-                            <div ref={messagesEndRef}></div>
-                          )}
-                        </>
-                      )}
-                    </Fragment>
-                  ))}
+                            {index == messages.length - 1 && (
+                              <div ref={messagesEndRef}></div>
+                            )}
+                          </>
+                        )}
+                      </Fragment>
+                    ),
+                  )}
                 </>
               )}
               {selectMessages == null ? (
