@@ -214,6 +214,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           publish('HolisticPlanStatus', { isempty: true });
         } else {
           publish('HolisticPlanStatus', { isempty: false });
+          pollHtmlReport();
         }
       },
     );
@@ -620,46 +621,27 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
-
-  useEffect(() => {
-    if (TreatMentPlanData?.length > 0 && isHaveReport) {
-      Application.checkHtmlReport(id?.toString() || '')
-        .then((res) => {
-          setIsHtmlReportExists(res.data.exists);
-        })
-        .catch(() => {});
-    }
-  }, [TreatMentPlanData]);
-
-  useEffect(() => {
-    if (
-      sessionStorage.getItem('isHtmlReportExists') &&
-      TreatMentPlanData?.length > 0 &&
-      isHaveReport &&
-      !isHtmlReportExists
-    ) {
-      setIsHtmlReportExists(
-        sessionStorage.getItem('isHtmlReportExists') === 'true',
-      );
-      sessionStorage.removeItem('isHtmlReportExists');
-    } else {
-      if (
-        isHaveReport &&
-        TreatMentPlanData?.length > 0 &&
-        !isHtmlReportExists
-      ) {
-        const intervalId = setInterval(() => {
-          Application.checkHtmlReport(id?.toString() || '')
-            .then((res) => {
-              setIsHtmlReportExists(res.data.exists);
-            })
-            .catch(() => {});
-        }, 10000);
-
-        return () => clearInterval(intervalId);
-      }
-    }
-  }, [TreatMentPlanData, isHaveReport, isHtmlReportExists]);
+  const stopPolling = useRef(false);
+useEffect(() => {
+  stopPolling.current = false; // reset on mount
+  return () => {
+    stopPolling.current = true; // stop polling when component unmounts
+  };
+}, []);
+  const pollHtmlReport = () => {
+    if (stopPolling.current) return;
+    Application.checkHtmlReport(id?.toString() || '')
+      .then((res) => {
+        if (res.data.exists) {
+          setIsHtmlReportExists(true);
+        } else {
+          setTimeout(pollHtmlReport, 10000);
+        }
+      })
+      .catch(() => {
+        setTimeout(pollHtmlReport, 10000);
+      });
+  };
 
   const [loadingHtmlReport, setLoadingHtmlReport] = useState(false);
 
