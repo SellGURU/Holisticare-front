@@ -1085,15 +1085,15 @@ class Application extends Api {
   };
   static updateHtmlReport = (data: any) => {
     return this.post(`/update_report_data`, data);
+  }
+  static remapIssues = (data: any) => {
+    return this.post('/issues/remap_issues', data);
   };
   static add_mapping = (data: any) => {
     return this.post('/add_clinic_biomarker_mapping', data);
   };
   static remove_mapping = (data: any) => {
     return this.post('/remove_clinic_biomarker_mapping', data);
-  };
-  static remapIssues = (data: any) => {
-    return this.post('/issues/remap_issues', data);
   };
   static checkRefreshProgress = (member_id: string) => {
     return this.post(`/patients/check_refresh_progress`, {

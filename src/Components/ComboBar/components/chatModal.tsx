@@ -158,9 +158,9 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
                             hour12: false,
                           },
                         )}
-                        msg={message.message_text}
+                        msg={message.message_text || ''}
                         key={message.conversation_id}
-                        name={message.name}
+                        name={message.name || ''}
                       />
                     </>
                   );
