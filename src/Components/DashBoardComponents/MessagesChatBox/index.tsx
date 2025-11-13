@@ -262,33 +262,33 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setisSearchOpen(false);
     },
   });
-useEffect(() => {
-  // choose correct source list (ai or normal)
-  const source = aiMode ? aiMessages : allMessages;
+  const [searchedMessages, setSearchedMessages] = useState<Message[] | null>(null);
+const [searchedAiMessages, setSearchedAiMessages] = useState<Message[] | null>(null);
 
-  if (!search.trim()) {
-    // when search box is empty, restore full messages
-    if (aiMode) {
-      aiMessagesList(parseInt(memberId)); // re-fetch or reset
-    } else {
-      setMessages(allMessages);
-    }
+useEffect(() => {
+  if (!memberId) return;
+
+  const term = search.trim().toLowerCase();
+
+  if (!term) {
+    // Clear search results and restore full messages
+    setSearchedMessages(null);
+    setSearchedAiMessages(null);
     return;
   }
 
-  const term = search.toLowerCase();
-
-  // filter all messages by text (includes all sender types)
-  const filtered = source.filter(
-    (msg) => msg.message_text && msg.message_text.toLowerCase().includes(term),
-  );
-
   if (aiMode) {
-    setAiMessages(filtered);
+    const filtered = aiMessages.filter(
+      (msg) => msg.message_text?.toLowerCase().includes(term)
+    );
+    setSearchedAiMessages(filtered);
   } else {
-    setMessages(filtered);
+    const filtered = allMessages.filter(
+      (msg) => msg.message_text?.toLowerCase().includes(term)
+    );
+    setSearchedMessages(filtered);
   }
-}, [search, aiMode, allMessages]);
+}, [search, aiMode, allMessages, aiMessages, memberId]);
 
 
   return (
@@ -409,7 +409,7 @@ useEffect(() => {
             <div id="userChat" className="p-4 h-full space-y-4 overflow-auto ">
               {!aiMode && (
                 <>
-                  {messages.map((message, index: number) => (
+                  {(searchedMessages ?? messages).map((message, index: number) => (
                     <Fragment key={index}>
                       {message.sender_type === 'patient' ? (
                         <>
@@ -560,7 +560,7 @@ useEffect(() => {
               )}
               {aiMode && (
                 <>
-                  {aiMessages.map((message, index: number) => (
+                  {(searchedAiMessages ?? aiMessages).map((message, index: number) => (
                     <Fragment key={index}>
                       {message.sender_type === 'patient' ? (
                         <>

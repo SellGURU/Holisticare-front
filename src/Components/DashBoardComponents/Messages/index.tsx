@@ -126,7 +126,7 @@ const MessageList: React.FC<MessageListProps> = ({
               isMessages
             />
           </div>
-           <div className='mt-4'>
+           <div className='my-4'>
               <SearchBox
                 isMessages
                 isHaveBorder
