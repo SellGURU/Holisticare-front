@@ -1,250 +1,107 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { MoonLoader } from 'react-spinners';
+import React, { useEffect, useState } from 'react';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
-import InputMentions from './InputMentions';
-import MainModal from '../../MainModal';
-// import TooltipText from '../../TooltipText';
-import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-import SvgIcon from '../../../utils/svgIcon';
-import SearchBox from '../../SearchBox';
-import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import Toggle from '../../Toggle';
 import { Tooltip } from 'react-tooltip';
+import SearchBox from '../../SearchBox';
+
 type Message = {
-  date: string;
-  time: string;
-  conversation_id: number;
-  message_text: string;
-  sender_id: number;
-  isSending?: boolean;
-  replied_message_id: number | null;
-  sender_type: string;
-  images?: string[];
-  timestamp: number;
   name: string;
-  recipient?: boolean;
-  reported?: boolean;
+  patient_picture: string;
+  member_id: number;
+  Date: string;
+  message: string;
+  sender_type: string;
+  unread: boolean;
+  unread_count: number;
+  online_status: boolean;
 };
-type SendMessage = {
-  conversation_id?: number;
-  receiver_id: number;
-  message_text: string;
-  replied_conv_id?: number;
-  images: string[];
-};
-interface MessagesChatBoxProps {
-  onBack: () => void;
-  onMessageSent?: (memberId: number) => void;
-  selectMessages: string | null;
+
+interface MessageListProps {
+  // search: string;
+  onSelectMessage: (messageId: string | null) => void;
+  messages: Message[]; // Receive messages from parent
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Receive setter for initial load
 }
 
-const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
-  onBack,
-  onMessageSent,
-  selectMessages,
+const MessageList: React.FC<MessageListProps> = ({
+  // search,
+  onSelectMessage,
+  messages,
+  setMessages,
 }) => {
-  const [allMessages, setAllMessages] = useState<Message[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [aiMessages, setAiMessages] = useState<Message[]>([]);
-  const [memberId, setMemberId] = useState<any>(null);
-  const [username, setUsername] = useState<any>(null);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [Images, setImages] = useState<string[]>([]);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [aiMode, setAiMode] = useState<boolean>(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const options = [
-    { label: 'Coach', value: false },
-    { label: 'AI Copilot', value: true },
-  ];
-  useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-  useEffect(() => {
-    setAiMode(false);
-  }, [memberId]);
+  const navigate = useNavigate();
+  const [filter, setFilter] = useState<string>('All');
+  const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
+  const [messagesSearched, setMessagesSearched] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
-  const usernameParams = searchParams.get('username');
-  const statusParams = searchParams.get('status');
-  const [oneLoadingUser, setOneLoadingUser] = useState(true);
-  const userMessagesList = (member_id: number) => {
-    if (oneLoadingUser) {
-      setIsLoading(true);
-      setOneLoadingUser(false);
-    }
-    Application.userMessagesList({ member_id: member_id })
-      .then((res) => {
-        setMessages(res.data.reverse());
-        setAllMessages(res.data.reverse());
-      })
-      .catch(() => {})
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-  const aiMessagesList = (member_id: number) => {
-    setIsLoading(true);
-    Application.userMessagesList({ member_id: member_id, message_from: 'ai' })
-      .then((res) => {
-        setAiMessages(res.data);
-      })
-      .catch(() => {})
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+  const [search, setSearch] = useState('');
   useEffect(() => {
     if (id != undefined) {
-      setOneLoadingUser(true);
-      userMessagesList(parseInt(id));
+      setExpandedMessage(parseInt(id));
+      onSelectMessage(id);
     }
-  }, [id]);
-  useEffect(() => {
-    if (id != undefined && aiMode === true) {
-      aiMessagesList(parseInt(id));
-    }
-  }, [aiMode, id]);
-  useEffect(() => {
-    if (id != undefined && usernameParams != undefined) {
-      setMemberId(id);
-      setUsername(usernameParams);
-    } else {
-      setMemberId(null);
-      setUsername(null);
-      setMessages([]);
-    }
-  }, [id, usernameParams]);
-  useEffect(() => {
-    if (username && memberId) {
-      const intervalId = setInterval(() => {
-        Application.has_unread_message({
-          member_id: memberId,
-        })
-          .then((res) => {
-            if (res?.data?.has_unread === true) {
-              if (aiMode === true) {
-                aiMessagesList(parseInt(memberId));
-              } else {
-                userMessagesList(parseInt(memberId));
-              }
-            }
-          })
-          .catch(() => {});
-      }, 15000);
+  }, [id, onSelectMessage]);
 
-      return () => clearInterval(intervalId);
-    }
-  }, [username, memberId, aiMode]);
-  const [, setSelectedBenchMarks] = useState<Array<string>>([]);
-  const handleSend = async () => {
-    if (input.trim() && memberId !== null) {
-      const lastConversationId =
-        messages.length > 0
-          ? messages[messages.length - 1].conversation_id
-          : undefined;
-      const newMessage: SendMessage = {
-        message_text: input,
-        receiver_id: memberId,
-        images: Images,
-        conversation_id: lastConversationId,
-      };
-      setMessages([
-        ...messages,
-        {
-          conversation_id: Number(lastConversationId),
-          date: new Date().toISOString(),
-          message_text: input,
-          replied_message_id: 0,
-          sender_id: Number(memberId),
-          isSending: true,
-          sender_type: 'user',
-          time: '',
-          images: Images,
-          timestamp: Date.now(),
-          name: '',
-        },
-      ]);
-      setInput('');
-      setImages([]);
-      try {
-        await Application.sendMessage(newMessage);
-        userMessagesList(parseInt(memberId));
-        if (onMessageSent) {
-          onMessageSent(parseInt(memberId));
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
-
-  const formatText = (text: string) => {
-    const boldedText = text.replace(
-      /\*(.*?)\*/g,
-      (_match, p1) => `<strong>${p1}</strong>`,
-    );
-
-    const lines = boldedText.split('\n');
-
-    return lines.map((line, index) => (
-      <span key={index}>
-        <span dangerouslySetInnerHTML={{ __html: line }} />
-        <br />
-      </span>
-    ));
-  };
-  const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  const scrollToBottom = () => {
-    const objDiv: any = document.getElementById('userChat');
-    if (objDiv) {
-      objDiv.scrollTop = objDiv.scrollHeight;
-    }
+  const messagesUsersList = () => {
+    Application.messagesUsersList()
+      .then((res) => {
+        setMessages(res.data);
+        // setMessagesSearched(res.data);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, aiMode]);
-  // const handleUpload = (file: File) => {
-  //   const reader = new FileReader();
-  //   reader.onloadend = () => {
-  //     const base64String = reader.result as string;
-  //     setImages((prevImages) => [...prevImages, base64String]);
-  //   };
-  //   reader.readAsDataURL(file);
-  // };
-  // const handleDeleteImage = (indexToDelete: number) => {
-  //   setImages((prev) => prev.filter((_, i) => i !== indexToDelete));
-  // };
+    setIsLoading(true);
+    messagesUsersList();
+  }, []);
+  const applyFilters = () => {
+    let filtered = [...messages];
 
-  const handleImageClick = (image: string) => {
-    setSelectedImage(image);
-    setIsImageModalOpen(true);
+    if (search) {
+      filtered = filtered.filter((message) =>
+        message.name.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
+
+    if (filter === 'Read') {
+      filtered = filtered.filter((message) => message.unread === false);
+    } else if (filter === 'Unread') {
+      filtered = filtered.filter((message) => message.unread === true);
+    }
+
+    setMessagesSearched(filtered);
   };
 
-  const handleCloseImageModal = () => {
-    setIsImageModalOpen(false);
-    setSelectedImage(null);
-  };
+  useEffect(() => {
+    applyFilters();
+  }, [search, filter, messages]);
+
   const colors = ['#CC85FF', '#90CAFA', '#FABA90', '#90FAB2'];
+
   const getColorForUsername = (username: string): string => {
     let hash = 0;
     for (let i = 0; i < username.length; i++) {
       hash = username.charCodeAt(i) + ((hash << 5) - hash);
     }
     return colors[Math.abs(hash) % colors.length];
+  };
+  const handleClickMessage = (
+    id: string,
+    username: string,
+    status: boolean,
+  ) => {
+    navigate(`?id=${id}&username=${username}&status=${status}`);
+    onSelectMessage(id);
+  };
+  const handleClickAgainMessage = () => {
+    navigate(``);
+    onSelectMessage(null);
   };
   const hexToRGBA = (hex: string, opacity: number = 1) => {
     hex = hex.replace('#', '');
@@ -253,511 +110,143 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
     const b = parseInt(hex.substring(4, 6), 16);
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   };
-  const [isSearchOpen, setisSearchOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const searchRef = useRef(null);
-  useModalAutoClose({
-    refrence: searchRef,
-    close: () => {
-      setisSearchOpen(false);
-    },
-  });
-  const [searchedMessages, setSearchedMessages] = useState<Message[] | null>(null);
-const [searchedAiMessages, setSearchedAiMessages] = useState<Message[] | null>(null);
-
-useEffect(() => {
-  if (!memberId) return;
-
-  const term = search.trim().toLowerCase();
-
-  if (!term) {
-    // Clear search results and restore full messages
-    setSearchedMessages(null);
-    setSearchedAiMessages(null);
-    return;
-  }
-
-  if (aiMode) {
-    const filtered = aiMessages.filter(
-      (msg) => msg.message_text?.toLowerCase().includes(term)
-    );
-    setSearchedAiMessages(filtered);
-  } else {
-    const filtered = allMessages.filter(
-      (msg) => msg.message_text?.toLowerCase().includes(term)
-    );
-    setSearchedMessages(filtered);
-  }
-}, [search, aiMode, allMessages, aiMessages, memberId]);
-
-
   return (
     <>
-      <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
-        {isLoading ? (
-          <>
-            <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
-              <Circleloader />
+      {isLoading ? (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-95 z-20">
+          <Circleloader></Circleloader>
+        </div>
+      ) : (
+        <div className=" w-full md:w-[315px] h-[75vh] pb-20 md:h-full overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
+          <div className="w-full bg-white  flex justify-center mt-2">
+            <Toggle
+              active={filter}
+              setActive={setFilter}
+              value={['All', 'Read', 'Unread']}
+              isMessages
+            />
+          </div>
+          {messagesSearched.length === 0 && (
+            <div className="flex flex-col items-center w-full h-[70vh] md:h-[90%] justify-center">
+              <img src="/icons/empty-messages-coach.svg" alt="" />
+              <div className="text-base font-medium text-Text-Primary -mt-5">
+                No results found.
+              </div>
             </div>
-          </>
-        ) : (
-          <>
-            {messages.length !== 0 || username ? (
-              <div className="px-4 pt-4 pb-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]  flex items-center justify-between ">
-                <div className="flex items-center gap-2">
-                  <div
-                    onClick={onBack}
-                    className="flex cursor-pointer md:hidden"
-                  >
-                    <img
-                      src="/icons/arrow-left-new.svg"
-                      className="size-8"
-                      alt=""
-                    />
-                  </div>
-                  <div
-                    className="min-w-12 h-12 rounded-full flex items-center justify-center mr-1"
-                    style={{
-                      backgroundColor: hexToRGBA(
-                        getColorForUsername(username),
-                        0.2,
-                      ),
-                      color: hexToRGBA(getColorForUsername(username), 0.87),
-                    }}
-                  >
-                    {username?.substring(0, 1).toUpperCase()}
-                  </div>
-                  <div className="w-[80%]">
-                    <div className="text-sm font-medium w-full text-Text-Primary">
-                      <TooltipTextAuto maxWidth="350px">
-                        {username}
-                      </TooltipTextAuto>
+          )}
+          <ul className="mt-5 w-full h-full pr-3 overflow-y-scroll divide-y ">
+            <li>
+              <SearchBox
+                isMessages
+                isHaveBorder
+                isGrayIcon
+                value={search}
+                onSearch={(e) => setSearch(e)}
+                placeHolder="Search clients..."
+              />
+            </li>
+            {messagesSearched.map((message, index) => {
+              const isSelected = expandedMessage === message.member_id;
+              const isBeforeSelected =
+                index < messagesSearched.length - 1 &&
+                messagesSearched[index + 1].member_id === expandedMessage;
+              const isAfterSelected =
+                index > 0 &&
+                messagesSearched[index - 1].member_id === expandedMessage;
+
+              return (
+                <li
+                  key={message.member_id}
+                  onClick={() => {
+                    setExpandedMessage(
+                      expandedMessage === message.member_id
+                        ? null
+                        : message.member_id,
+                    );
+                    if (expandedMessage === message.member_id) {
+                      handleClickAgainMessage();
+                    } else {
+                      handleClickMessage(
+                        message.member_id.toString(),
+                        message.name,
+                        message.online_status,
+                      );
+                    }
+                  }}
+                  className={`py-2 relative cursor-pointer border-y border-Boarder
+              ${index === 0 && '!border-y-0'}
+              ${isSelected ? 'bg-backgroundColor-Card shadow-100 rounded-2xl p-2' : ''}
+              ${isBeforeSelected && '!border-b-0'}
+            ${isAfterSelected && '!border-t-0'}
+            `}
+                >
+                  <div className="flex justify-start">
+                    <div
+                      style={{
+                        backgroundColor: hexToRGBA(
+                          getColorForUsername(message.name),
+                          0.2,
+                        ),
+                        color: hexToRGBA(
+                          getColorForUsername(message.name),
+                          0.87,
+                        ),
+                      }}
+                      className="min-w-10 h-10   rounded-full  flex items-center justify-center mr-3 capitalize"
+                    >
+                      {message.name.charAt(0)}
                     </div>
-                    <div className="text-[10px] text-Text-Quadruple">
-                      {statusParams == 'true' ? 'Online' : 'Offline'}
+                    <div className="w-full flex flex-col justify-center">
+                      <div className="flex items-center justify-between flex-wrap">
+                        <div>
+                          <div
+                            data-tooltip-id={message.name}
+                            className="text-[10px] font-medium text-Text-Primary"
+                          >
+                            {message.name.length > 25
+                              ? message.name.substring(0, 25) + '...'
+                              : message.name}
+                            {message.name.length > 25 && (
+                              <Tooltip
+                                place="top"
+                                id={message.name}
+                                className="!bg-white !w-fit !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !z-[99] !border-Gray-50 !p-2"
+                              >
+                                {message.name}
+                              </Tooltip>
+                            )}
+                          </div>
+                        </div>
+                        {expandedMessage !== message.member_id && (
+                          <div
+                            className={`text-[8px] text-Text-Secondary mt-1 ${message.message === 'No messages found' && 'invisible'}`}
+                          >
+                            {message.Date}
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        className={`text-[10px] text-nowrap  overflow-ellipsis overflow-hidden w-[150px] max-w-[150px] text-Text-Secondary   ${
+                          expandedMessage === message.member_id ? '' : ''
+                        } `}
+                      >
+                        {message.message}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-6">
-                  {isSearchOpen ? (
-                    <div ref={searchRef}>
-                      <SearchBox
-                        isGrayIcon
-                        isHaveBorder
-                        placeHolder="Search messages..."
-                        value={search}
-                        onSearch={(e) => {
-                          setSearch(e);
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div onClick={() => setisSearchOpen(true)}>
-                      <SvgIcon
-                        width="24px"
-                        height="24px"
-                        color="#005F73"
-                        src="icons/search-normal.svg"
-                      />
+                  {message.unread_count > 0 && (
+                    <div className="absolute bottom-[10px] right-0 rounded-full flex items-center justify-center bg-Primary-DeepTeal size-[14px] text-white text-[8px]">
+                      {message.unread_count}
                     </div>
                   )}
-
-                  <div
-                    className="relative  w-[120px] flex gap-6 items-center font-normal"
-                    ref={wrapperRef}
-                  >
-                    <div
-                      className="cursor-pointer bg-backgroundColor-Card border py-2 px-4 pr-3 rounded-2xl leading-tight text-[12px] text-Text-Primary flex justify-between items-center"
-                      onClick={() => setIsOpen(!isOpen)}
-                    >
-                      {options.find((opt) => opt.value === aiMode)?.label}
-                      <img
-                        className={`w-3 h-3 object-contain opacity-80 ml-2 transition-transform duration-200 ${
-                          isOpen ? 'rotate-180' : ''
-                        }`}
-                        src="/icons/arow-down-drop.svg"
-                        alt=""
-                      />
-                    </div>
-
-                    {isOpen && (
-                      <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-100 rounded-2xl shadow-sm text-[12px] text-Text-Primary">
-                        {options.map((opt, index) => (
-                          <li
-                            key={index}
-                            className={`cursor-pointer px-4 py-2 hover:bg-gray-100 rounded-2xl ${
-                              aiMode === opt.value
-                                ? 'bg-gray-50 font-semibold'
-                                : ''
-                            }`}
-                            onClick={() => {
-                              setAiMode(opt.value);
-                              setIsOpen(false);
-                            }}
-                          >
-                            {opt.label}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              ''
-            )}
-            <div id="userChat" className="p-4 h-full space-y-4 overflow-auto ">
-              {!aiMode && (
-                <>
-                  {(searchedMessages ?? messages).map((message, index: number) => (
-                    <Fragment key={index}>
-                      {message.sender_type === 'patient' ? (
-                        <>
-                          {index == messages.length - 1 && (
-                            <div ref={messagesEndRef}></div>
-                          )}
-                          <div className="flex justify-start items-start gap-1">
-                            <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
-                              <img
-                                src={`https://ui-avatars.com/api/?name=${username}`}
-                                alt=""
-                                className="rounded-full"
-                              />
-                            </div>
-                            <div>
-                              <div className="text-Text-Primary font-medium text-[12px]">
-                                {username}{' '}
-                                <span className="text-[#888888] text-[12px] font-normal ml-1">
-                                  {new Date(
-                                    message.timestamp,
-                                  ).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                  })}
-                                </span>
-                              </div>
-                              <div className="flex flex-row gap-2">
-                                {message.images?.map((image, index) => {
-                                  return (
-                                    <img
-                                      src={image}
-                                      alt=""
-                                      key={index}
-                                      className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                      onClick={() => handleImageClick(image)}
-                                    />
-                                  );
-                                })}
-                              </div>
-                              <div
-                                className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
-                                style={{
-                                  lineHeight: '26px',
-                                  overflowWrap: 'anywhere',
-                                }}
-                              >
-                                {formatText(message.message_text)}
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex  justify-end items-start gap-1">
-                            <div className="flex relative flex-col items-end">
-                              {message.reported == true && (
-                                <>
-                                  <img
-                                    data-tooltip-id={
-                                      message.conversation_id + 'flag'
-                                    }
-                                    className="absolute -left-5 cursor-pointer top-5"
-                                    src="/icons/flag-2.svg"
-                                    alt=""
-                                  />
-                                  <Tooltip
-                                    id={message.conversation_id + 'flag'}
-                                  >
-                                    This response was reported by the client.
-                                  </Tooltip>
-                                </>
-                              )}
-
-                              <div className="text-Text-Primary text-xs font-medium">
-                                <span className="text-[#888888] text-[12px] font-normal mr-1">
-                                  {new Date(
-                                    message.timestamp,
-                                  ).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                  })}
-                                </span>
-                                {message.name}
-                              </div>
-                              <div className="flex flex-row gap-2">
-                                {message.images?.map((image, index) => {
-                                  return (
-                                    <img
-                                      src={image}
-                                      alt=""
-                                      key={index}
-                                      className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                      onClick={() => handleImageClick(image)}
-                                    />
-                                  );
-                                })}
-                              </div>
-                              <div className="flex items-end ml-1">
-                                {
-                                  message.isSending ? (
-                                    <span>
-                                      <MoonLoader color="#383838" size={12} />
-                                    </span>
-                                  ) : null
-                                  // <span>
-                                  //   <SvgIcon
-                                  //     src="./icons/tick-green.svg"
-                                  //     color="#8a8a8a"
-                                  //   />
-                                  // </span>
-                                }
-                                {message.recipient == true && (
-                                  <>
-                                    <span title={'Seen by the ' + username}>
-                                      <SvgIcon
-                                        src="./icons/tick-green.svg"
-                                        color="#8a8a8a"
-                                      />
-                                    </span>
-                                  </>
-                                )}
-                                <div
-                                  style={{ overflowWrap: 'anywhere' }}
-                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
-                                >
-                                  {formatText(message.message_text)}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="min-w-[40px] min-h-[40px] size-10 overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
-                              <img
-                                className="rounded-full"
-                                src={`https://ui-avatars.com/api/?name=${message.name}`}
-                                alt=""
-                              />
-                            </div>
-                          </div>
-                          {index == messages.length - 1 && (
-                            <div ref={messagesEndRef}></div>
-                          )}
-                        </>
-                      )}
-                    </Fragment>
-                  ))}
-                </>
-              )}
-              {aiMode && (
-                <>
-                  {(searchedAiMessages ?? aiMessages).map((message, index: number) => (
-                    <Fragment key={index}>
-                      {message.sender_type === 'patient' ? (
-                        <>
-                          {index == aiMessages.length - 1 && (
-                            <div ref={messagesEndRef}></div>
-                          )}
-                          <div className="flex justify-start items-start gap-1">
-                            <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
-                              <img
-                                src={`https://ui-avatars.com/api/?name=${username}`}
-                                alt=""
-                                className="rounded-full"
-                              />
-                            </div>
-                            <div>
-                              <div className="text-Text-Primary font-medium text-xs">
-                                {username}{' '}
-                                <span className="text-Text-Primary ml-1">
-                                  {new Date(
-                                    message.timestamp,
-                                  ).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                  })}
-                                </span>
-                              </div>
-                              <div className="flex flex-row gap-2">
-                                {message.images?.map((image, index) => {
-                                  return (
-                                    <img
-                                      src={image}
-                                      alt=""
-                                      key={index}
-                                      className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                      onClick={() => handleImageClick(image)}
-                                    />
-                                  );
-                                })}
-                              </div>
-                              <div
-                                className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
-                                style={{
-                                  lineHeight: '26px',
-                                  overflowWrap: 'anywhere',
-                                }}
-                              >
-                                {formatText(message.message_text)}
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex justify-end items-start gap-1">
-                            <div className=" relative flex flex-col items-end">
-                              {message.reported == true && (
-                                <>
-                                  <img
-                                    data-tooltip-id={
-                                      message.conversation_id + 'flag'
-                                    }
-                                    className="absolute -left-5 cursor-pointer top-5"
-                                    src="/icons/flag-2.svg"
-                                    alt=""
-                                  />
-                                  <Tooltip
-                                    id={message.conversation_id + 'flag'}
-                                  >
-                                    This response was reported by the client.
-                                  </Tooltip>
-                                </>
-                              )}
-                              <div className="text-Text-Primary text-xs font-medium">
-                                <span className="text-Text-Primary mr-1">
-                                  {new Date(
-                                    message.timestamp,
-                                  ).toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                  })}
-                                </span>
-                                AI Copilot
-                              </div>
-                              <div className="flex flex-row gap-2">
-                                {message.images?.map((image, index) => {
-                                  return (
-                                    <img
-                                      src={image}
-                                      alt=""
-                                      key={index}
-                                      className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                      onClick={() => handleImageClick(image)}
-                                    />
-                                  );
-                                })}
-                              </div>
-                              <div className="flex items-end ml-1">
-                                {
-                                  message.isSending ? (
-                                    <span>
-                                      <MoonLoader color="#383838" size={12} />
-                                    </span>
-                                  ) : null
-                                  // <span>
-                                  //   <SvgIcon
-                                  //     src="./icons/tick-green.svg"
-                                  //     color="#8a8a8a"
-                                  //   />
-                                  // </span>
-                                }
-                                {message.recipient == true && (
-                                  <>
-                                    <span>
-                                      <SvgIcon
-                                        src="./icons/tick-green.svg"
-                                        color="#8a8a8a"
-                                      />
-                                    </span>
-                                  </>
-                                )}
-                                <div
-                                  style={{ overflowWrap: 'anywhere' }}
-                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
-                                >
-                                  {formatText(message.message_text)}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center">
-                              <img src="/icons/ai-pic-messages.svg" alt="" />
-                            </div>
-                          </div>
-                          {index == messages.length - 1 && (
-                            <div ref={messagesEndRef}></div>
-                          )}
-                        </>
-                      )}
-                    </Fragment>
-                  ))}
-                </>
-              )}
-              {selectMessages == null ? (
-                <div className="flex flex-col items-center justify-center w-full h-full text-base select-none text-Text-Primary font-medium g">
-                  <img src="/icons/noClient2.svg" alt="" />
-                  <div className="text-base font-medium -mt-10">
-                    No client selected
-                  </div>
-                  <div className="text-xs font-normal">
-                    Select a client from the list to view or send messages.
-                  </div>
-                </div>
-              ) : (aiMode === false && messages.length === 0) ||
-                (aiMode === true && aiMessages.length === 0) ? (
-                <div className="flex flex-col items-center justify-center w-full h-full text-base pt-8 text-Text-Primary font-medium gap-6">
-                  <img src="/icons/empty-messages.svg" alt="" />
-                  {username ? 'No messages found.' : 'No messages found.'}
-                </div>
-              ) : (
-                ''
-              )}
-            </div>
-            {username && !aiMode ? (
-              <div className="px-2 w-full flex justify-center h-[100px]">
-                <InputMentions
-                  // onUpload={handleUpload}
-                  // handleDeleteImage={handleDeleteImage}
-                  changeBenchMarks={(val: Array<string>) => {
-                    setSelectedBenchMarks(val);
-                  }}
-                  onChange={setInput}
-                  onSubmit={handleSend}
-                  value={input}
-                  PlaceHolder="Enter your message here..."
-                />
-              </div>
-            ) : (
-              ''
-            )}
-          </>
-        )}
-      </div>
-
-      <MainModal isOpen={isImageModalOpen} onClose={handleCloseImageModal}>
-        <div className="flex flex-col items-center ">
-          {selectedImage && (
-            <img
-              src={selectedImage}
-              alt="Full size preview"
-              className="max-w-full max-h-[80vh] object-contain"
-            />
-          )}
+                </li>
+              );
+            })}
+          </ul>
         </div>
-      </MainModal>
+      )}
     </>
   );
 };
 
-export default MessagesChatBox;
+export default MessageList;
