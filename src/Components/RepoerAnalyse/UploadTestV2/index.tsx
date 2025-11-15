@@ -389,7 +389,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
     setBtnLoading(true);
-
+    const modifiedTimestamp = modifiedDateOfTest
+      ? Date.UTC(
+          modifiedDateOfTest.getFullYear(),
+          modifiedDateOfTest.getMonth(),
+          modifiedDateOfTest.getDate(),
+        ).toString()
+      : null;
+    const addedTimestamp = addedDateOfTest
+      ? Date.UTC(
+          addedDateOfTest.getFullYear(),
+          addedDateOfTest.getMonth(),
+          addedDateOfTest.getDate(),
+        ).toString()
+      : null;
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
@@ -400,6 +413,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     Application.validateBiomarkers({
       modified_biomarkers_list: mappedExtractedBiomarkers,
       added_biomarkers_list: addedBiomarkers,
+      modified_biomarkers_date_of_test: modifiedTimestamp,
+      added_biomarkers_date_of_test: addedTimestamp,
       modified_lab_type: fileType,
       modified_file_id: uploadedFile?.file_id ?? '',
     })
