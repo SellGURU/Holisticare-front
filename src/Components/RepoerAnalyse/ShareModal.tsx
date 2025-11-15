@@ -9,7 +9,11 @@ interface ShareModalProps {
   treatmentId?: string;
   onClose: () => void;
 }
-export const ShareModal: FC<ShareModalProps> = ({ isOpen, onClose, treatmentId }) => {
+export const ShareModal: FC<ShareModalProps> = ({
+  isOpen,
+  onClose,
+  treatmentId,
+}) => {
   const modalRefrence = useRef(null);
   const { id } = useParams<{ id: string; name: string }>();
   const [isShareModalLoading, setIsShareModalLoading] = useState(false);

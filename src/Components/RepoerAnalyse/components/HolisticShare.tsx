@@ -23,10 +23,10 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
 }) => {
   const [shareable, setShareable] = useState(true);
   const [isShared, setIsShared] = useState(false);
-  const [showDownload,] = useState(false);
+  const [showDownload] = useState(false);
   const [activeTreatment, setActiveTreatment] = useState<any>(null);
   useEffect(() => {
-    subscribe('holisticPlanactiveChange', (data:any) => {
+    subscribe('holisticPlanactiveChange', (data: any) => {
       setActiveTreatment(data.detail.data);
       // setShowDownload(data.detail.isEnd);
     });
@@ -45,7 +45,7 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
       >
         {isHtmlReportExists && (
           <>
-            {activeTreatment?.shared_report_with_client ==true ? (
+            {activeTreatment?.shared_report_with_client == true ? (
               <div className="flex flex-col items-center">
                 <div className="text-Text-Quadruple text-xs font-medium flex items-center gap-1">
                   <img src="/icons/tick-circle-gray.svg" alt="" />
@@ -101,23 +101,28 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
             )}
           </>
         )}
-        {showDownload && ( 
+        {showDownload && (
           <>
             <div className="flex flex-col items-center gap-1">
               <div
                 className="text-Primary-DeepTeal text-xs font-medium cursor-pointer flex items-center gap-1"
                 onClick={() => {
-                  if (isHtmlReportExists || activeTreatment.readonly_html_url!='') {
-                    if(activeTreatment.readonly_html_url!=''){
+                  if (
+                    isHtmlReportExists ||
+                    activeTreatment.readonly_html_url != ''
+                  ) {
+                    if (activeTreatment.readonly_html_url != '') {
                       handleGetHtmlReport(activeTreatment.readonly_html_url);
-                    }else{
+                    } else {
                       handleGetHtmlReport();
                     }
                     // handleGetHtmlReport();
                   }
                 }}
               >
-                {(isHtmlReportExists || loadingHtmlReport || activeTreatment.readonly_html_url!='') ? (
+                {isHtmlReportExists ||
+                loadingHtmlReport ||
+                activeTreatment.readonly_html_url != '' ? (
                   <>
                     <img className="w-5 h-5" src="/icons/monitor.svg" alt="" />
                     View Holistic Plan
@@ -135,7 +140,7 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
               )} */}
             </div>
           </>
-         ) }
+        )}
       </div>
     </>
   );

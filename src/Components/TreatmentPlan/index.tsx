@@ -16,9 +16,7 @@ type CardData = {
   status: string;
 };
 
-const initialCardData: CardData[] = [
-
-];
+const initialCardData: CardData[] = [];
 
 interface TreatmentPlanProps {
   treatmentPlanData: any;
@@ -107,7 +105,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         setPrintActionPlan(res.data);
         if (res.data.length > 0) {
           setActiveTreatmnet(res.data[res.data.length - 1].t_plan_id);
-          publish('holisticPlanactiveChange',{data:res.data[res.data.length - 1]})
+          publish('holisticPlanactiveChange', {
+            data: res.data[res.data.length - 1],
+          });
           setIsShareModalSuccess(
             res.data[res.data.length - 1].shared_report_with_client,
           );
@@ -125,26 +125,30 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     }
   }, []);
   useEffect(() => {
-    subscribe('shareModalHolisticPlanSuccess',(data:any) => {
-      setCardData((prev:any) => {
-        const newData =prev.map((el:any) => {
-          if(el.t_plan_id == data.detail.treatmentId){
+    subscribe('shareModalHolisticPlanSuccess', (data: any) => {
+      setCardData((prev: any) => {
+        const newData = prev.map((el: any) => {
+          if (el.t_plan_id == data.detail.treatmentId) {
             return {
               ...el,
               shared_report_with_client: true,
               shared_report_with_client_date: new Date().toISOString(),
-            }
+            };
           }
           return el;
-        })
-        publish('holisticPlanactiveChange',{data:newData.filter((el:any) => el.t_plan_id == data.detail.treatmentId)[0]})
+        });
+        publish('holisticPlanactiveChange', {
+          data: newData.filter(
+            (el: any) => el.t_plan_id == data.detail.treatmentId,
+          )[0],
+        });
         return newData;
-      })
-    })
+      });
+    });
     return () => {
       unsubscribe('shareModalHolisticPlanSuccess', () => {});
     };
-  },[])  
+  }, []);
   useEffect(() => {
     if (activeTreatment != '' && !isShare) {
       Application.getTreatmentPlanDetail({
@@ -175,21 +179,23 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     }).catch(() => {});
 
     setCardData((prevCardData) => {
-      const newCardData = prevCardData.filter((_, i) => i !== index).map((el:any,inde:number) => {
-        if(inde == index -1){
-          return {
-            ...el,
-            state: 'On Going',
+      const newCardData = prevCardData
+        .filter((_, i) => i !== index)
+        .map((el: any, inde: number) => {
+          if (inde == index - 1) {
+            return {
+              ...el,
+              state: 'On Going',
+            };
           }
-        }
-        return el;
-      });
+          return el;
+        });
       if (index > 0) {
         setActiveTreatmnet(newCardData[index - 1].t_plan_id);
-        publish('holisticPlanactiveChange', {data:newCardData[index - 1]});
+        publish('holisticPlanactiveChange', { data: newCardData[index - 1] });
       } else if (newCardData.length > 0) {
         setActiveTreatmnet(newCardData[0].t_plan_id);
-        publish('holisticPlanactiveChange', {data:newCardData[0]});
+        publish('holisticPlanactiveChange', { data: newCardData[0] });
       } else {
         setActiveTreatmnet('');
       }
@@ -416,7 +422,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                         setActiveTreatmnet(card.t_plan_id);
                         setIsShareModalSuccess(card.shared_report_with_client);
                         setDateShare(card.shared_report_with_client_date);
-                        publish('holisticPlanactiveChange', {data:card,isEnd:isShowDot(card, index) && card.state != 'Draft'});
+                        publish('holisticPlanactiveChange', {
+                          data: card,
+                          isEnd:
+                            isShowDot(card, index) && card.state != 'Draft',
+                        });
                       }}
                       className={`absolute cursor-pointer  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
                         activeTreatment == card.t_plan_id

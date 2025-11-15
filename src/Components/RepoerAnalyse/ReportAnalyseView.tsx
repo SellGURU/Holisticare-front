@@ -648,7 +648,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const handleGetHtmlReport = (url?: string) => {
     // if(loadingHtmlReport) return;
-    if(url){
+    if (url) {
       const link = document.createElement('a');
       link.href = url;
       link.download = 'HolisticPlanReport';
@@ -1023,10 +1023,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     //   handleGetHtmlReport={handleGetHtmlReport}
                     //   loadingHtmlReport={loadingHtmlReport}
                     // />
-                    <HolisticPlanShareAndDownload 
-                    handleGetHtmlReport={handleGetHtmlReport}
-                    loadingHtmlReport={loadingHtmlReport}
-                    isHtmlReportExists={isHtmlReportExists} />
+                    <HolisticPlanShareAndDownload
+                      handleGetHtmlReport={handleGetHtmlReport}
+                      loadingHtmlReport={loadingHtmlReport}
+                      isHtmlReportExists={isHtmlReportExists}
+                    />
                   ) : (
                     ''
                   )}
@@ -1041,7 +1042,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   setIsShareModalSuccess={() => {}}
                   treatmentPlanData={TreatMentPlanData}
                   setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
-                  setDateShare={() =>{}}
+                  setDateShare={() => {}}
                 />
               </div>
             )}

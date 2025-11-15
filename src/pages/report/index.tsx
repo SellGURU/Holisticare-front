@@ -14,7 +14,7 @@ const Report = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [treatmentId, setTreatmentId] = useState<string>('');
   useEffect(() => {
-    subscribe('openShareModalHolisticPlan', (data:any) => {
+    subscribe('openShareModalHolisticPlan', (data: any) => {
       setIsShareModalOpen(true);
       console.log(data.detail);
       setTreatmentId(data.detail.treatmentId);
