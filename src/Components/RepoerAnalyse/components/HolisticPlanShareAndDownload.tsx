@@ -130,8 +130,12 @@ const HolisticPlanShareAndDownload = ({
   return (
     <>
       <div className={`flex  items-center  gap-6`}>
-        {resolveShareButtonHadler()}
-        {resolveDownloadButtonHadler()}
+        {activeTreatment?.state != 'Draft' && 
+        <>
+            {resolveShareButtonHadler()}
+            {resolveDownloadButtonHadler()}
+        </>
+        }
       </div>
     </>
   );
