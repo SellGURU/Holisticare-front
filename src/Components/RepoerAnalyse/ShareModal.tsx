@@ -6,9 +6,10 @@ import { useParams } from 'react-router-dom';
 import { publish } from '../../utils/event';
 interface ShareModalProps {
   isOpen?: boolean;
+  treatmentId?: string;
   onClose: () => void;
 }
-export const ShareModal: FC<ShareModalProps> = ({ isOpen, onClose }) => {
+export const ShareModal: FC<ShareModalProps> = ({ isOpen, onClose, treatmentId }) => {
   const modalRefrence = useRef(null);
   const { id } = useParams<{ id: string; name: string }>();
   const [isShareModalLoading, setIsShareModalLoading] = useState(false);
@@ -22,8 +23,10 @@ export const ShareModal: FC<ShareModalProps> = ({ isOpen, onClose }) => {
     setIsShareModalLoading(true);
     Application.reportGeneratedNotification(id || '')
       .then(() => {
+        publish('shareModalHolisticPlanSuccess', {
+          treatmentId: treatmentId,
+        });
         onClose();
-        publish('shareModalHolisticPlanSuccess', {});
       })
       .catch(() => {})
       .finally(() => {

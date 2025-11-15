@@ -39,7 +39,8 @@ import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
 // import { ShareModal } from './ShareModal';
 import { UploadTestV2 } from './UploadTestV2';
-import HolisticShare from './components/HolisticShare';
+// import HolisticShare from './components/HolisticShare';
+import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -62,13 +63,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [questionnaires, setQuestionnaires] = useState([]);
   // const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-  const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
-  const [dateShare, setDateShare] = useState<string | null>(null);
-  useEffect(() => {
-    subscribe('shareModalHolisticPlanSuccess', () => {
-      setIsShareModalSuccess(true);
-    });
-  }, []);
+  // const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
+  // const [dateShare, setDateShare] = useState<string | null>(null);
+  // useEffect(() => {
+  //   subscribe('shareModalHolisticPlanSuccess', () => {
+  //     setIsShareModalSuccess(true);
+  //   });
+  // }, []);
   // const history = useHistory();
   const location = useLocation();
   // useEffect(() => {
@@ -645,13 +646,22 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const [loadingHtmlReport, setLoadingHtmlReport] = useState(false);
 
-  const handleGetHtmlReport = () => {
+  const handleGetHtmlReport = (url?: string) => {
     // if(loadingHtmlReport) return;
+    if(url){
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'HolisticPlanReport';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
     if (!isHaveReport) return;
 
     setLoadingHtmlReport(true);
 
-    Application.getHtmlReport(resolvedMemberID?.toString() || '')
+    Application.getHtmlReport(id?.toString() || '')
       .then((res) => {
         try {
           const blobUrl = res.data;
@@ -1006,13 +1016,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     Holistic Plan
                   </div>
                   {TreatMentPlanData?.length > 0 && isHaveReport && !isShare ? (
-                    <HolisticShare
-                      isHtmlReportExists={isHtmlReportExists}
-                      isShareModalSuccess={isShareModalSuccess}
-                      dateShare={dateShare}
-                      handleGetHtmlReport={handleGetHtmlReport}
-                      loadingHtmlReport={loadingHtmlReport}
-                    />
+                    // <HolisticShare
+                    //   isHtmlReportExists={isHtmlReportExists}
+                    //   isShareModalSuccess={isShareModalSuccess}
+                    //   dateShare={dateShare}
+                    //   handleGetHtmlReport={handleGetHtmlReport}
+                    //   loadingHtmlReport={loadingHtmlReport}
+                    // />
+                    <HolisticPlanShareAndDownload 
+                    handleGetHtmlReport={handleGetHtmlReport}
+                    loadingHtmlReport={loadingHtmlReport}
+                    isHtmlReportExists={isHtmlReportExists} />
                   ) : (
                     ''
                   )}
@@ -1024,10 +1038,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   setPrintActionPlan={(value) => {
                     setActionPlanPrint(value);
                   }}
-                  setIsShareModalSuccess={setIsShareModalSuccess}
+                  setIsShareModalSuccess={() => {}}
                   treatmentPlanData={TreatMentPlanData}
                   setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
-                  setDateShare={setDateShare}
+                  setDateShare={() =>{}}
                 />
               </div>
             )}
