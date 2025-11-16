@@ -1110,15 +1110,20 @@ class Application extends Api {
       member_id: member_id,
     });
   };
-  // static add_mapping = (data: any) => {
-  //   return this.post('/add_clinic_biomarker_mapping', data);
-  // };
-  // static remove_mapping = (data: any) => {
-  //   return this.post('/remove_clinic_biomarker_mapping', data);
-  // };
-  // static remapIssues = (data: any) => {
-  //   return this.post('/issues/remap_issues', data);
-  // };
+  static deleteQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: number;
+  }) => {
+    return this.post(`/questionary_tracking/delete_questionary`, data);
+  };
+  static EditQuestionary = (data: any) => {
+    const response = this.post(
+      `/questionary_tracking/edit_filled_questionary`,
+      data,
+    );
+    return response;
+  };
 }
 
 export default Application;
