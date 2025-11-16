@@ -183,70 +183,74 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
               {data.description}
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
-              <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
-                {refrences?.map((value: any, index: number) => {
-                  if (selectGroup == value.name) {
-                    setActiveBOx(index);
-                    setSelectGroup(null);
-                  }
-                  return (
-                    <>
-                      <div
-                        onClick={() => {
-                          setActiveBOx(index);
-                          setActive(value);
-                        }}
-                        className={`w-full h-10 mb-2 cursor-pointer text-sm ${
-                          activeBox == index
-                            ? 'border-Primary-EmeraldGreen '
-                            : 'border-Gray-50'
-                        }  border items-center bg-white  rounded-[6px] flex justify-between px-4`}
-                      >
-                        <div className="flex justify-start items-center gap-2">
+              {refrences.length > 0 && (
+                <>
+                  <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
+                    {refrences?.map((value: any, index: number) => {
+                      if (selectGroup == value.name) {
+                        setActiveBOx(index);
+                        setSelectGroup(null);
+                      }
+                      return (
+                        <>
                           <div
-                            data-tooltip-id={`tooltip-detiledAnalyse-${index + '-' + value.name}`}
-                            className=" text-[12px]"
+                            onClick={() => {
+                              setActiveBOx(index);
+                              setActive(value);
+                            }}
+                            className={`w-full h-10 mb-2 cursor-pointer text-sm ${
+                              activeBox == index
+                                ? 'border-Primary-EmeraldGreen '
+                                : 'border-Gray-50'
+                            }  border items-center bg-white  rounded-[6px] flex justify-between px-4`}
                           >
-                            {value.name.length > 40
-                              ? value.name.substring(0, 40) + '...'
-                              : value.name}
-                          </div>
-                          {value.name.length > 40 ? (
-                            <Tooltip
-                              id={`tooltip-detiledAnalyse-${index + '-' + value.name}`}
-                              place="bottom-end"
-                              className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                            >
-                              {value.name}
-                            </Tooltip>
-                          ) : (
-                            ''
-                          )}
-                          {value?.status && (
-                            <>
-                              {(value?.status[0] == 'CriticalRange' ||
-                                value?.status[0] == 'DiseaseRange' ||
-                                value?.status[0] == 'BorderlineRange') && (
-                                <div
-                                  className="w-3 h-3 rounded-full "
-                                  style={{
-                                    backgroundColor: '#FC5474',
-                                  }}
-                                ></div>
+                            <div className="flex justify-start items-center gap-2">
+                              <div
+                                data-tooltip-id={`tooltip-detiledAnalyse-${index + '-' + value.name}`}
+                                className=" text-[12px]"
+                              >
+                                {value.name.length > 40
+                                  ? value.name.substring(0, 40) + '...'
+                                  : value.name}
+                              </div>
+                              {value.name.length > 40 ? (
+                                <Tooltip
+                                  id={`tooltip-detiledAnalyse-${index + '-' + value.name}`}
+                                  place="bottom-end"
+                                  className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                                >
+                                  {value.name}
+                                </Tooltip>
+                              ) : (
+                                ''
                               )}
-                            </>
-                          )}
-                        </div>
-                        <img
-                          className="h-4  w-4"
-                          src="/icons/arrow-right.svg"
-                          alt=""
-                        />
-                      </div>
-                    </>
-                  );
-                })}
-              </div>
+                              {value?.status && (
+                                <>
+                                  {(value?.status[0] == 'CriticalRange' ||
+                                    value?.status[0] == 'DiseaseRange' ||
+                                    value?.status[0] == 'BorderlineRange') && (
+                                    <div
+                                      className="w-3 h-3 rounded-full "
+                                      style={{
+                                        backgroundColor: '#FC5474',
+                                      }}
+                                    ></div>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                            <img
+                              className="h-4  w-4"
+                              src="/icons/arrow-right.svg"
+                              alt=""
+                            />
+                          </div>
+                        </>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
               {refrences.length > 0 && (
                 <div className="flex-grow gap-2 relative flex items-center justify-center">
                   {/* <div className="absolute  cursor-pointer top-4 right-4">
@@ -435,6 +439,19 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                     </div>
                   )}
                 </div>
+              )}
+              {refrences.length == 0 && (
+                <>
+                  <div className=" flex justify-center w-full items-center">
+                    <div className="flex flex-col justify-center items-center">
+                      <img src="/icons/EmptyState-biomarkerbox.svg" alt="" />
+                      <div className="TextStyle-Body-3 mt-[-10px] text-center text-Text-Primary">
+                        This biomarker is currently hidden due to changes in its
+                        mapping.
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           </>
