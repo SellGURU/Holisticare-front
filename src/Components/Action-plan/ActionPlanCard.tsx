@@ -85,7 +85,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
     return () => window.removeEventListener('resize', checkOverflow);
   }, [el.description]);
   const resolveBorderColorActive = () => {
-    if(el.state === 'Draft'){
+    if (el.state === 'Draft') {
       return 'border-[#F4E25C]';
     }
     return 'border-Primary-EmeraldGreen';
@@ -168,7 +168,9 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   if (!isDisabled) {
-                    navigate(`/report/Generate-Action-Plan/${id}?planId=${el.id}`);
+                    navigate(
+                      `/report/Generate-Action-Plan/${id}?planId=${el.id}`,
+                    );
                   }
                 }}
                 className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"

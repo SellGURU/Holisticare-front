@@ -126,7 +126,6 @@ const GenerateActionPlan = () => {
       })
       .catch(() => {
         // if (!isMountedRef.current) return;
-
         // setActionPlanError(true);
         // timeoutRef.current = setTimeout(() => {
         //   if (isMountedRef.current) {
@@ -135,14 +134,13 @@ const GenerateActionPlan = () => {
         // }, 5000);
         // navigate(-1);
       });
-  };  
+  };
   useEffect(() => {
     const planIdFromUrl = searchParams.get('planId');
-    if(planIdFromUrl){
+    if (planIdFromUrl) {
       getSavedPaln(planIdFromUrl);
-    }else {
+    } else {
       getPaln();
-
     }
 
     return () => {
@@ -153,7 +151,6 @@ const GenerateActionPlan = () => {
     };
   }, [getPaln]);
 
-  
   const [isLoadingSaveChanges, setISLoadingSaveChanges] = useState(false);
   const [isLoadingCalendarView, setIsLoadingCalendarView] = useState(false);
   const navigate = useNavigate();
@@ -174,8 +171,8 @@ const GenerateActionPlan = () => {
       tasks: flattenedData,
       duration: duration,
       plan_objective: planObjective,
-      id:actionPlanId?actionPlanId:undefined,
-      is_update:!isDarft,
+      id: actionPlanId ? actionPlanId : undefined,
+      is_update: !isDarft,
     })
       .then(() => {
         // navigate(-1);
@@ -190,8 +187,8 @@ const GenerateActionPlan = () => {
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);
   const [checkSave, setCheckSave] = useState(false);
-  const [actionPlanId,setActionPlanId] = useState<string | null>(null);
-  
+  const [actionPlanId, setActionPlanId] = useState<string | null>(null);
+
   // Read planId from URL query parameter
   useEffect(() => {
     const planIdFromUrl = searchParams.get('planId');
@@ -202,31 +199,32 @@ const GenerateActionPlan = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if(actionPlanId){
-      navigate(`/report/Generate-Action-Plan/${id}?planId=`+actionPlanId)
+    if (actionPlanId) {
+      navigate(`/report/Generate-Action-Plan/${id}?planId=` + actionPlanId);
     }
-  },[actionPlanId])
-  const [isDarft,setIsDarft] = useState<boolean | null>(null);
+  }, [actionPlanId]);
+  const [isDarft, setIsDarft] = useState<boolean | null>(null);
   const autoSaveActionPlan = () => {
     const prepareDataForBackend = (data: any) => {
       return [...data.checkIn, ...data.category];
     };
-    const flattenedData = prepareDataForBackend(actions);    
-    if(flattenedData.length>0&& (isDarft===null||isDarft===true)){
+    const flattenedData = prepareDataForBackend(actions);
+    if (flattenedData.length > 0 && (isDarft === null || isDarft === true)) {
       Application.initialSaveActionPlan({
         member_id: id,
         tasks: flattenedData,
         duration: duration,
         plan_objective: planObjective,
-        id:actionPlanId?actionPlanId:undefined,
-      }).then((res:any) => {
-        setActionPlanId(res.data.id);
-        setIsDarft(true);
-        // console.log('Action plan saved successfully');
-      }).catch(() => {
-        // console.log('Action plan save failed');
-      });
-
+        id: actionPlanId ? actionPlanId : undefined,
+      })
+        .then((res: any) => {
+          setActionPlanId(res.data.id);
+          setIsDarft(true);
+          // console.log('Action plan saved successfully');
+        })
+        .catch(() => {
+          // console.log('Action plan save failed');
+        });
     }
   };
   useEffect(() => {

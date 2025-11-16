@@ -641,12 +641,12 @@ class Application extends Api {
   static deleteActionPlan = (data: any) => {
     const response = this.post(`/action_plan/delete_block`, data);
     return response;
-  };  
+  };
 
   static actionPalnShowTasks = (data: any) => {
     const response = this.post(`/action_plan/edit/show_tasks`, data);
     return response;
-  }
+  };
 
   static SendVerification = ({ email }: { email: string }) => {
     const response = this.post('/auth/forget_password/send_verification', {
@@ -1119,7 +1119,7 @@ class Application extends Api {
 
   static initialSaveActionPlan = (data: any) => {
     return this.post('/action_plan/draft/initial_save', data);
-  }
+  };
 }
 
 export default Application;
