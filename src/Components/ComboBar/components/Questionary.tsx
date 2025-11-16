@@ -69,19 +69,25 @@ export const Questionary: React.FC<QuestionaryProps> = ({
     Application.AddQuestionary({
       member_id: id,
       q_unique_id: selectedFormIDs,
-    });
-    const selectedData = AddForms.filter((form: any) =>
-      selectedFormIDs.includes(form.unique_id),
-    ).map((form: any) => ({
-      title: form.title,
-      'Completed on': null, // Assuming no completion date initially
-      status: 'Incomplete',
-      unique_id: form.unique_id,
-    }));
+    })
+      .then(() => {
+        setSelectedFormIDs([]);
+        setTryAdd(false);
+        getQuestionnaires();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    // const selectedData = AddForms.filter((form: any) =>
+    //   selectedFormIDs.includes(form.unique_id),
+    // ).map((form: any) => ({
+    //   title: form.title,
+    //   'Completed on': null, // Assuming no completion date initially
+    //   status: 'Incomplete',
+    //   unique_id: form.unique_id,
+    // }));
 
-    setData((prev: any) => [...prev, ...selectedData]);
-    setSelectedFormIDs([]);
-    setTryAdd(false);
+    // setData((prev: any) => [...prev, ...selectedData]);
   };
 
   const deleteQuestionRow = (index: number) => {
