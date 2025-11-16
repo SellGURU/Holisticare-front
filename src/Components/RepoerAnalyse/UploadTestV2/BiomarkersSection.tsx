@@ -480,13 +480,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           isSetting
                           value={b.biomarker}
                           options={avalibaleBiomarkers || []}
-                          onChange={(val: string) =>{
+                          onChange={(val: string) => {
                             updateAndStandardize(b.biomarker_id, {
                               biomarker: val,
-                            })
-                            setChangedRows((prev) => (prev.includes(b.biomarker_id) ? prev : [...prev, b.biomarker_id]));
-                          }
-                          }
+                            });
+                            setChangedRows((prev) =>
+                              prev.includes(b.biomarker_id)
+                                ? prev
+                                : [...prev, b.biomarker_id],
+                            );
+                          }}
                         />
                         {/* <Select
                         isLarge
