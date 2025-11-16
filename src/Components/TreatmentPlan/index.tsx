@@ -176,6 +176,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     Application.deleteHolisticPlan({
       treatment_id: tretmentid,
       member_id: id,
+    }).then(() => {
+      publish("reckecHtmlReport", {});
     }).catch(() => {});
 
     setCardData((prevCardData) => {
@@ -186,6 +188,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             return {
               ...el,
               state: 'On Going',
+              readonly_html_url:''
             };
           }
           return el;
