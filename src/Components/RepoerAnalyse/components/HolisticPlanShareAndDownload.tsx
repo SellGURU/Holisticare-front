@@ -94,10 +94,10 @@ const HolisticPlanShareAndDownload = ({
             onClick={() => {
               if (
                 isHtmlReportExists ||
-                activeTreatment?.readonly_html_url != ''
+                activeTreatment?.state != 'On Going'
               ) {
-                if (activeTreatment.readonly_html_url != '') {
-                  handleGetHtmlReport(activeTreatment.readonly_html_url);
+                if (activeTreatment?.state != 'On Going') {
+                  handleGetHtmlReport(activeTreatment?.readonly_html_url);
                 } else {
                   handleGetHtmlReport();
                 }
@@ -107,7 +107,7 @@ const HolisticPlanShareAndDownload = ({
           >
             {isHtmlReportExists ||
             loadingHtmlReport ||
-            activeTreatment?.readonly_html_url != '' ? (
+            activeTreatment?.state != 'On Going' ? (
               <>
                 <img className="w-5 h-5" src="/icons/monitor.svg" alt="" />
                 View Holistic Plan
