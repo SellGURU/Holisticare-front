@@ -42,7 +42,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   const [countdown, setCountdown] = useState(3);
   const [isSureRemoveId, setIsSureRemoveId] = useState<string | null>(null);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-  const [isDeleted, setIsDeleted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState<string | null>(null);
 
   const modalRef = useRef(null);
   useModalAutoClose({
@@ -81,6 +81,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     setLoadingDelete(true);
     setshowModal(false);
     // onDelete();
+    setIsDeleted(q_unique_id);
     handleCloseSlideOutPanel();
 
     Application.deleteQuestionary({
@@ -90,7 +91,6 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     })
       .then(() => {
         setLoadingDelete(false);
-        setIsDeleted(true);
         publish('DeleteQuestionnaireTrackingSuccess', {});
       })
       .catch((err) => {
@@ -275,7 +275,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
           </>
         )}
         <div
-          className={`flex justify-between items-center w-full ${isDeleted ? 'opacity-50' : ''}`}
+          className={`flex justify-between items-center w-full ${isDeleted === el.unique_id ? 'opacity-50' : ''}`}
         >
           {isAssigned ? (
             <div className="w-full flex justify-between">
@@ -469,7 +469,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
             </div>
           </div>
         )}
-        {isDeleted ? (
+        {isDeleted === el.unique_id ? (
           <div className="flex flex-col mt-3">
             <div className="flex items-center">
               <img
@@ -491,6 +491,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                 size="small"
                 onClick={() => {
                   setIsSureRemoveId(null);
+                  setIsDeleted(null);
                   publish('syncReport', {});
                 }}
               >
