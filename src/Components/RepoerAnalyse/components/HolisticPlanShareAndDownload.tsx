@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { publish, subscribe } from '../../../utils/event';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import SpinnerLoader from '../../SpinnerLoader';
+import SvgIcon from '../../../utils/svgIcon';
 
 interface HolisticPlanShareAndDownloadProps {
   isHtmlReportExists: boolean;
@@ -39,6 +40,25 @@ const HolisticPlanShareAndDownload = ({
               day: 'numeric',
               year: 'numeric',
             })}
+          </div>
+        </div>
+      </>
+    );
+  };
+  const resolveisNotSharedUi = () => {
+    return (
+      <>
+        <div className="flex flex-col items-center">
+          <div className="text-Text-Quadruple text-xs font-medium cursor-none flex items-center gap-1">
+            <SvgIcon
+              src="/icons/close-circle.svg"
+              stroke="#888888"
+              width="14"
+              height="14"
+              color="transparent"
+            ></SvgIcon>
+            {/* <img src="/icons/close-circle.svg" alt="" /> */}
+            Not shared with Client
           </div>
         </div>
       </>
@@ -82,7 +102,7 @@ const HolisticPlanShareAndDownload = ({
     }
     return activeTreatment?.state == 'On Going'
       ? resolveisNotSharedButtonUi()
-      : '';
+      : resolveisNotSharedUi();
   };
 
   const resolveDownloadButtonHadler = () => {
@@ -106,8 +126,21 @@ const HolisticPlanShareAndDownload = ({
             loadingHtmlReport ||
             activeTreatment?.state != 'On Going' ? (
               <>
-                <img className="w-5 h-5" src="/icons/monitor.svg" alt="" />
-                View Holistic Plan
+                {activeTreatment?.state != 'On Going' ? (
+                  <>
+                    <SvgIcon
+                      src="/icons/download.svg"
+                      color="#005F73"
+                    ></SvgIcon>
+                    {/* <img className="w-5 h-5" src="/icons/download.svg" alt="" /> */}
+                    Download Holistic Plan
+                  </>
+                ) : (
+                  <>
+                    <img className="w-5 h-5" src="/icons/monitor.svg" alt="" />
+                    View Holistic Plan
+                  </>
+                )}
               </>
             ) : (
               <div className="flex flex-col items-center gap-1">

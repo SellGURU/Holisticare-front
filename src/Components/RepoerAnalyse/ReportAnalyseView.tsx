@@ -643,6 +643,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setTimeout(pollHtmlReport, 10000);
       });
   };
+  useEffect(() => {
+    subscribe('reckecHtmlReport', () => {
+      setIsHtmlReportExists(false);
+      pollHtmlReport();
+    });
+  }, []);
 
   const [loadingHtmlReport] = useState(false);
 
