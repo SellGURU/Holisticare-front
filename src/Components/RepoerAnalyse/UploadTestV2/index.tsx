@@ -139,7 +139,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setRowErrors({});
     setAddedRowErrors({});
     publish('RESET_MAPPING_ROWS', {});
+    setbiomarkerLoading(false);
     forceReRender((x) => x + 1);
+    Application.deleteFileHistory({
+      file_id: fileId,
+      member_id: memberId,
+    }).catch(() =>{})
   };
   useEffect(() => {
     subscribe('DELETE_FILE_TRIGGER', () => {
