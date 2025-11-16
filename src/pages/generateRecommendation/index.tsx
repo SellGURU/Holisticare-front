@@ -58,6 +58,7 @@ export const GenerateRecommendation = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
+  const isFirstRemapRef = useRef(true);
   const [coverageProgess, setcoverageProgess] = useState(0);
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
   // Function to check if essential data fields are present and not empty
@@ -121,6 +122,10 @@ export const GenerateRecommendation = () => {
     resolveCoverage();
   }, [treatmentPlanData?.suggestion_tab, id]);
   useEffect(() => {
+    if (isFirstRemapRef.current) {
+      isFirstRemapRef.current = false;
+      return;
+    }
     remapIssues();
   }, [treatmentPlanData?.looking_forwards, id]);
   const hasEssentialData = (data: any) => {
