@@ -92,10 +92,7 @@ const HolisticPlanShareAndDownload = ({
           <div
             className="text-Primary-DeepTeal text-xs font-medium cursor-pointer flex items-center gap-1"
             onClick={() => {
-              if (
-                isHtmlReportExists ||
-                activeTreatment?.state != 'On Going'
-              ) {
+              if (isHtmlReportExists || activeTreatment?.state != 'On Going') {
                 if (activeTreatment?.state != 'On Going') {
                   handleGetHtmlReport(activeTreatment?.readonly_html_url);
                 } else {
