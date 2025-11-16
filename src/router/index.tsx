@@ -188,7 +188,7 @@ const router = createBrowserRouter([
     element: <FormView mode="checkin"></FormView>,
   },
   {
-    path: '/questionary/:encode/:id',
+    path: '/questionary/:encode/:id/:f-id',
     element: <FormView mode="questionary"></FormView>,
   },
   {
