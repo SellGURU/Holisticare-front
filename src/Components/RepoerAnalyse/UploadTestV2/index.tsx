@@ -144,7 +144,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     Application.deleteFileHistory({
       file_id: fileId,
       member_id: memberId,
-    }).catch(() =>{})
+    }).catch(() => {});
   };
   useEffect(() => {
     subscribe('DELETE_FILE_TRIGGER', () => {
