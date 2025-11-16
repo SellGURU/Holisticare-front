@@ -44,7 +44,7 @@ export default function CustomTimezoneField({ value, onChange }: Props) {
         <img src="/icons/search-normal.svg" className="tz-left-icon" alt="" />
         <input
           value={query}
-          className="tz-input-field"
+          className="tz-input-field placeholder:font-light"
           placeholder="Select or search time zone"
           onChange={(e) => {
             setQuery(e.target.value);

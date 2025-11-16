@@ -114,48 +114,61 @@ const AddClient = () => {
   const [memberId, setMemberID] = useState('');
   const [isLoading, setisLoading] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
+  const [phoneApiError, setPhoneApiError] = useState('');
+  const [timeZoneApiError, setTimeZoneApiError] = useState('');
   const validateDate = (date: any) => {
     return !isNaN(date.getTime()); // Returns true if it's a valid date
   };
-  const submit = () => {
-    setShowValidation(true);
-    if (!formik.isValid) {
-      return;
-    }
-    setisLoading(true);
+const submit = () => {
+  setShowValidation(true);
+  if (!formik.isValid) return;
 
-    Application.addClient({
-      first_name: formik.values.firstName,
-      email: formik.values.email,
-      last_name: formik.values.lastName,
-      picture: photo,
-      date_of_birth: dateOfBirth,
-      gender: formik.values.gender,
-      wearable_devices: [],
-      timezone: formik.values.timeZone,
-      address: formik.values.address,
-      phone_number: '+' + formik.values.phone,
-    })
-      .then((res) => {
-        setIsAdded(true);
-        setMemberID(res.data.member_id);
-      })
-      .catch((error) => {
-        console.log(error);
-        setDobApiError('');
-        setApiError('');
-        const errorDetail = error?.detail;
-        if (errorDetail === 'Client must be at least 18 years old.') {
-          setDobApiError('Client must be at least 18 years old.');
-        }
-        if (errorDetail === 'Client already exists.') {
-          setApiError('An account with this email address already exists.');
-        }
-      })
-      .finally(() => {
-        setisLoading(false);
-      });
+  setisLoading(true);
+
+  // Build the base payload
+  const payload: any = {
+    first_name: formik.values.firstName,
+    email: formik.values.email,
+    last_name: formik.values.lastName,
+    picture: photo,
+    date_of_birth: dateOfBirth,
+    gender: formik.values.gender,
+    wearable_devices: [],
   };
+
+  // Conditionally add optional fields only if they have values
+  if (formik.values.timeZone) payload.timezone = formik.values.timeZone;
+  if (formik.values.address) payload.address = formik.values.address;
+  if (formik.values.phone) payload.phone_number = '+' + formik.values.phone;
+
+  Application.addClient(payload)
+    .then((res) => {
+      setIsAdded(true);
+      setMemberID(res.data.member_id);
+    })
+    .catch((error) => {
+      console.log(error);
+      setDobApiError('');
+      setApiError('');
+      const errorDetail = error?.detail;
+      if (errorDetail === 'Client must be at least 18 years old.') {
+        setDobApiError('Client must be at least 18 years old.');
+      }
+      if (errorDetail === 'Client already exists.') {
+        setApiError('An account with this email address already exists.');
+      }
+      if (errorDetail?.toLowerCase()?.includes('phone')) {
+        setPhoneApiError('Please provide a valid phone number.');
+      }
+      if (errorDetail?.toLowerCase()?.includes('timezone')) {
+        setTimeZoneApiError('Please select a valid time zone.');
+      }
+    })
+    .finally(() => {
+      setisLoading(false);
+    });
+};
+
   const handleSaveClick = () => {
     setShowValidation(true);
     formik.validateForm().then((errors) => {
@@ -457,8 +470,8 @@ const AddClient = () => {
                     placeholder="Enter an email (e.g. test@example.com)"
                   />
                   <div>
-                    <div className="w-full mb-3 mt-2 flex flex-col md:flex-row justify-between items-center gap-2 md:h-[50px] overflow-visible">
-                      <div className="w-full">
+                    <div className="w-full mb-3 mt-2 flex flex-col md:flex-row justify-between items-center gap-2 overflow-visible">
+                      <div className="w-full h-[70px]">
                         <label className="text-[12px] text-Text-Primary font-medium">
                           Phone Number
                         </label>
@@ -466,9 +479,10 @@ const AddClient = () => {
                           <PhoneInput
                             country={'us'}
                             value={formik.values.phone}
-                            onChange={(value) =>
-                              formik.setFieldValue('phone', value)
-                            }
+                            onChange={(value) => {
+                              formik.setFieldValue('phone', value);
+                              setPhoneApiError('');
+                            }}
                             placeholder="234 567 890"
                             containerClass="custom-phone-input"
                             buttonClass="custom-phone-button"
@@ -479,11 +493,17 @@ const AddClient = () => {
                               autoFocus: false,
                             }}
                           />
+                          {(showValidation || phoneApiError) &&
+                            phoneApiError && (
+                              <div className="text-Red  text-[10px] mt-[2px]">
+                                {phoneApiError}
+                              </div>
+                            )}
                         </div>
                       </div>
 
                       {/* Time Zone */}
-                      <div className="w-full">
+                      <div className="w-full h-[70px]">
                         <label className="text-[12px] text-Text-Primary font-medium">
                           Time Zone
                         </label>
@@ -496,14 +516,15 @@ const AddClient = () => {
                                 'timeZone',
                                 tz?.value || tz || '',
                               );
+                              setTimeZoneApiError('');
                             }}
                           />
-                          {(formik.touched.timeZone || showValidation) &&
-                            formik.errors.timeZone && (
-                              <div className="text-Red text-[10px] mt-[2px]">
-                                {formik.errors.timeZone}
-                              </div>
-                            )}
+                          <div className=" text-[10px] text-Red ml-1">
+                            {(formik.touched.timeZone || showValidation) &&
+                            (formik.errors.timeZone || timeZoneApiError)
+                              ? formik.errors.timeZone || timeZoneApiError
+                              : ''}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -512,7 +533,7 @@ const AddClient = () => {
                       Address{' '}
                       <textarea
                         placeholder="Enter client’s address (e.g., 221B Baker Street, London)"
-                        className=" w-full h-[89px] rounded-2xl border border-Gray-50 py-1 px-3 bg-backgroundColor-Card resize-none outline-none text-xs placeholder:text-[#B0B0B0] placeholder:font-medium text-Text-Primary shadow-100"
+                        className=" w-full h-[89px] rounded-2xl border border-Gray-50 py-1 px-3 bg-backgroundColor-Card resize-none outline-none text-xs placeholder:text-[#B0B0B0] placeholder:font-light text-Text-Primary shadow-100"
                         {...formik.getFieldProps('address')}
                       />
                     </div>
@@ -605,7 +626,7 @@ const AddClient = () => {
                     )}
                   </div>
                 </div>
-                <div className="w-full h-fit flex justify-center mt-4 sticky bottom-0 pb-4 bg-bg-color ">
+                <div className="w-full h-fit flex justify-center mt-4 sticky bottom-0 py-6 pb-8 bg-bg-color ">
                   <ButtonPrimary
                     // disabled={
                     //   isLoading ||
