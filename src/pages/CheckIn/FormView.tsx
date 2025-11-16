@@ -14,7 +14,7 @@ interface FormViewProps {
 }
 
 const FormView: React.FC<FormViewProps> = ({ mode }) => {
-  const { encode, id } = useParams();
+  const { encode, id, 'f-id': fId } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
   const [isComplete] = useState(false);
 
@@ -26,6 +26,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
       Mobile.getQuestionaryEmpty({
         encoded_mi: encode as string,
         unique_id: id as string,
+        f_unique_id: fId as string,
       })
         .then((e) => {
           setData(e.data);
@@ -49,11 +50,20 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
     const apiCall =
       mode === 'questionary' ? Mobile.fillQuestionary : Mobile.fillCheckin;
 
-    apiCall({
+    const dataQuestionary = {
       encoded_mi: encode,
       unique_id: id,
       respond: e,
-    })
+      f_unique_id: fId || '',
+    };
+
+    const dataCheckin = {
+      encoded_mi: encode,
+      unique_id: id,
+      respond: e,
+    };
+
+    apiCall(mode === 'questionary' ? dataQuestionary : dataCheckin)
       .then(() => {
         // On successful submission, update state and then close the window
         setTimeout(() => {
