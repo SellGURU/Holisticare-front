@@ -23,7 +23,7 @@ interface QuestionRowProps {
     active: number,
     disabled?: boolean,
   ) => any;
-  handleCloseSlideOutPanel: () => void;
+  // handleCloseSlideOutPanel: () => void;
 }
 const QuestionRow: React.FC<QuestionRowProps> = ({
   el,
@@ -32,7 +32,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   onTryComplete,
   onAssign,
   // deleteRow,
-  handleCloseSlideOutPanel,
+  // handleCloseSlideOutPanel,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
@@ -82,7 +82,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     setshowModal(false);
     // onDelete();
     setIsDeleted(q_unique_id);
-    handleCloseSlideOutPanel();
+    // handleCloseSlideOutPanel();
 
     Application.deleteQuestionary({
       f_unique_id: f_unique_id,
@@ -124,7 +124,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
                         // setViewQuestienry(res.data);
                         // setIsView(true);
-                        // setshowModal(false);
+                        setshowModal(false);
                         window.open(
                           `/surveys-view/${id}/${el.unique_id}/${el.forms_unique_id}`,
                           '_blank',
@@ -154,6 +154,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   <>
                     <div
                       onClick={() => {
+                        setshowModal(false);
                         publish('openFullscreenModal', {
                           url: `/surveys/${id}/${el.unique_id}/${el.forms_unique_id}/edit`,
                         });
@@ -186,7 +187,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         console.log(onTryComplete);
 
                         //  onTryComplete();
-                        // setshowModal(false);
+                        setshowModal(false);
 
                         // navigate(`/surveys/${id}/${el.unique_id}`);
                         publish('openFullscreenModal', {
