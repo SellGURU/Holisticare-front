@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import ConflictsModal from './ConflictsModal';
+import EllipsedTooltip from '../../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface LibBoxProps {
@@ -63,7 +64,7 @@ const LibBox: FC<LibBoxProps> = ({
         break;
     }
   }, [data?.label]);
-console.log(data);
+  console.log(data);
 
   return (
     <>
@@ -77,25 +78,13 @@ console.log(data);
               alt=""
             />
             <div
-              data-tooltip-id={`tooltip-${data.Category}-${data.Title}`}
               className="select-none text-[12px] text-Text-Primary w-[200px] overflow-hidden cursor-text"
               style={{
                 textWrap: 'nowrap',
               }}
             >
-              {data.Title.length > 33
-                ? data.Title.substring(0, 33) + '...'
-                : data.Title}
+              <EllipsedTooltip text={data.Title} />
             </div>
-            {data.Title.length > 33 && (
-              <Tooltip
-                id={`tooltip-${data.Category}-${data.Title}`}
-                place="top"
-                className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
-              >
-                {data.Title}
-              </Tooltip>
-            )}
           </div>
           {!checkIn && (
             <img
@@ -123,19 +112,18 @@ console.log(data);
                 ></div>
                 {data?.label || '-'}
               </div>
-               {
-                  data.holisticare_recommendation && (
-                     <div
-                    className={`select-none rounded-full px-2 py-[2px] h-[14px] text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
-                    style={{ backgroundColor: "#E2F1F8" }}
-                  >
-                    <div
-                      className={`size-[8px] select-none rounded-full`}
-                      style={{ backgroundColor: "#005F73" }}
-                    ></div>
+              {data.holisticare_recommendation && (
+                <div
+                  className={`select-none rounded-full px-2 py-[2px] h-[14px] text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
+                  style={{ backgroundColor: '#E2F1F8' }}
+                >
+                  <div
+                    className={`size-[8px] select-none rounded-full`}
+                    style={{ backgroundColor: '#005F73' }}
+                  ></div>
                   Holistic Plan Recommended
-                  </div>
-                  )}
+                </div>
+              )}
               {/* <div
                 className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                 data-tooltip-id={`tooltip-system-score-${index}`}
