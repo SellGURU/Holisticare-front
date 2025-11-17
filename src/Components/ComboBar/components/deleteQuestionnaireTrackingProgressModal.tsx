@@ -6,6 +6,13 @@ export const DeleteQuestionnaireTrackingProgressModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [IsinProgress, setIsinProgress] = useState(true);
 
+  subscribe('openDeleteQuestionnaireTrackingProgressModal', () => {
+    setTimeout(() => {
+      setshowProgressModal(true);
+      setIsinProgress(true);
+    }, 2000);
+  });
+
   subscribe('DeleteQuestionnaireTrackingSuccess', () => {
     setshowProgressModal(true);
     setIsinProgress(false);

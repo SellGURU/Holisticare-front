@@ -43,6 +43,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   const [isSureRemoveId, setIsSureRemoveId] = useState<string | null>(null);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [isDeleted, setIsDeleted] = useState<string | null>(null);
+  const [isDeletedSuccess, setIsDeletedSuccess] = useState<boolean>(false);
 
   const modalRef = useRef(null);
   useModalAutoClose({
@@ -83,6 +84,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     // onDelete();
     setIsDeleted(q_unique_id);
     // handleCloseSlideOutPanel();
+    publish('openDeleteQuestionnaireTrackingProgressModal', {});
 
     Application.deleteQuestionary({
       f_unique_id: f_unique_id,
@@ -91,13 +93,32 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     })
       .then(() => {
         setLoadingDelete(false);
-        publish('DeleteQuestionnaireTrackingSuccess', {});
       })
       .catch((err) => {
         console.error(err);
         setLoadingDelete(false);
         setIsSureRemoveId(null);
       });
+    const checkDelete = async () => {
+      try {
+        const res = await Application.checkDeleteQuestionary({
+          f_unique_id: f_unique_id,
+          q_unique_id: q_unique_id,
+          member_id: Number(member_id),
+        });
+        if (res.status === 200 && res.data.status === true) {
+          setIsDeletedSuccess(true);
+          publish('DeleteQuestionnaireTrackingSuccess', {});
+        } else {
+          setTimeout(checkDelete, 1000);
+        }
+      } catch (err) {
+        console.error('err', err);
+
+        setTimeout(checkDelete, 1000);
+      }
+    };
+    checkDelete();
   };
 
   return (
@@ -479,26 +500,31 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                 className="w-5 h-5"
               />
               <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
-                Deleting Completed.
+                {isDeletedSuccess
+                  ? 'Deleting Completed.'
+                  : 'The questionnaire is being removed.'}
               </div>
             </div>
             <div className="text-[10px] text-Text-Quadruple mt-2 leading-5">
-              If you would like to remove its related data from the report,
-              please click the “Unsync Data” button.
+              {isDeletedSuccess
+                ? 'If you would like to remove its related data from the report, please click the “Unsync Data” button.'
+                : "If you'd like, you may continue working while the system removes the questionnaire."}
             </div>
-            <div className="w-full flex justify-end">
-              <ButtonSecondary
-                ClassName="rounded-[20px] mt-1"
-                size="small"
-                onClick={() => {
-                  setIsSureRemoveId(null);
-                  setIsDeleted(null);
-                  publish('syncReport', {});
-                }}
-              >
-                Unsync Data
-              </ButtonSecondary>
-            </div>
+            {isDeletedSuccess && (
+              <div className="w-full flex justify-end">
+                <ButtonSecondary
+                  ClassName="rounded-[20px] mt-1"
+                  size="small"
+                  onClick={() => {
+                    setIsSureRemoveId(null);
+                    setIsDeleted(null);
+                    publish('syncReport', {});
+                  }}
+                >
+                  Unsync Data
+                </ButtonSecondary>
+              </div>
+            )}
           </div>
         ) : (
           ''

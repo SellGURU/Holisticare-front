@@ -1108,6 +1108,13 @@ class Application extends Api {
     );
     return response;
   };
+  static checkDeleteQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: number;
+  }) => {
+    return this.post(`/questionary_tracking/check_delete_questionary`, data);
+  };
 }
 
 export default Application;
