@@ -55,14 +55,39 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   });
   const [showValidation, setShowValidation] = useState(false);
 
+  const adjustDateToNextMonthIfPast = (day: string): string => {
+    // Parse the date string (format: YYYY-MM-DD)
+    const selectedDate = new Date(day);
+    const currentDate = new Date();
+    
+    // Reset time to compare only dates
+    currentDate.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    // If the selected date is in the past, move it to the next month
+    if (selectedDate < currentDate) {
+      const date = new Date(day);
+      date.setMonth(date.getMonth() + 1);
+      
+      // Format back to YYYY-MM-DD
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const dayNum = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${dayNum}`;
+    }
+    
+    return day;
+  };
+
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
   };
   const toggleDayMonthSelection = (day: string) => {
+    const adjustedDay = adjustDateToNextMonthIfPast(day);
     setSelectedDaysMonth((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+      prev.includes(adjustedDay) ? prev.filter((d) => d !== adjustedDay) : [...prev, adjustedDay],
     );
   };
   const [groups, setGroups] = useState<any[]>([]);
@@ -1130,7 +1155,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                               key={index}
                               onClick={() => toggleDayMonthSelection(day)}
                               className={`w-[24px] h-[32px] flex items-center justify-center cursor-pointer capitalize border border-b-0 border-Gray-50 ${index == dayMonth.slice(0, 15).length - 1 && 'rounded-tr-[8px]'} ${index == 0 && 'rounded-tl-[8px]'} text-xs text-center ${
-                                selectedDaysMonth.includes(day)
+                                selectedDaysMonth.includes(adjustDateToNextMonthIfPast(day))
                                   ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
                                   : 'text-Text-Secondary bg-backgroundColor-Card'
                               }`}
@@ -1145,7 +1170,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                               key={index}
                               onClick={() => toggleDayMonthSelection(day)}
                               className={`w-[24px] h-[32px] flex items-center justify-center cursor-pointer capitalize border border-Gray-50 ${index == dayMonth.slice(15).length - 1 && 'rounded-br-[8px]'} ${index == 0 && 'rounded-bl-[8px]'} text-xs text-center ${
-                                selectedDaysMonth.includes(day)
+                                selectedDaysMonth.includes(adjustDateToNextMonthIfPast(day))
                                   ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
                                   : 'text-Text-Secondary bg-backgroundColor-Card'
                               }`}

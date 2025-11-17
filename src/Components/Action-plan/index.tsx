@@ -190,19 +190,25 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                               member_id: id,
                               id: el.id,
                             }).catch(() => {});
-                            setTimeout(() => {
-                              getActionPlan();
-                              publish('syncReport', { part: 'treatmentPlan' });
-                            }, 3000);
+                            // setTimeout(() => {
+                            //   getActionPlan();
+                            //   publish('syncReport', { part: 'treatmentPlan' });
+                            // }, 3000);
+                            const isDeletingActivePlan = activeAction?.id === el.id;
                             setCardData((prevCardData) => {
                               const newCardData = prevCardData.filter(
                                 (card) => card.id !== el.id,
                               );
+                              // اگر پلن فعلی حذف شد و پلن قبلی وجود دارد، state آن را On Going کن
+                              if (isDeletingActivePlan && newCardData.length > 0) {
+                                const lastCard = newCardData[newCardData.length - 1];
+                                lastCard.state = 'On Going';
+                                setActiveAction(lastCard);
+                              } else if (newCardData.length > 0) {
+                                setActiveAction(newCardData[newCardData.length - 1]);
+                              }
                               return newCardData;
                             });
-                            if (CardData.length > 0) {
-                              setActiveAction(CardData[CardData.length - 1]);
-                            }
                           }}
                           key={i}
                           el={el}
