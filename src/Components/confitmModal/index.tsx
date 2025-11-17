@@ -35,9 +35,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       >
         <div className=" w-full border-b border-Gray-50 pb-2 flex items-center mb-4">
           <img src="/icons/danger.svg" alt="Warning" className="mr-2" />
-          <h2 className="text-sm font-medium text-Text-Primary">
-            {heading}
-          </h2>
+          <h2 className="text-sm font-medium text-Text-Primary">{heading}</h2>
         </div>
         {heading !== 'Generate by AI' && (
           <p className="text-xs font-medium text-Text-Primary text-center mb-4">

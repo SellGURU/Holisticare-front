@@ -41,7 +41,9 @@ export default function HtmlEditor({
 
   const [showReset, setShowReset] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
-  const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
+  const [pendingNavigation, setPendingNavigation] = useState<
+    (() => void) | null
+  >(null);
 
   // Update originalHtmlRef when html prop changes
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function HtmlEditor({
   // Block navigation when there are unsaved changes
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-      showReset && currentLocation.pathname !== nextLocation.pathname
+      showReset && currentLocation.pathname !== nextLocation.pathname,
   );
 
   // Handle blocked navigation
@@ -229,36 +231,38 @@ export default function HtmlEditor({
   const handleSave = async () => {
     if (isEditMode) {
       // Get the current HTML before toggling edit mode
-      const doc = iframeRef.current?.contentDocument || iframeRef.current?.contentWindow?.document;
+      const doc =
+        iframeRef.current?.contentDocument ||
+        iframeRef.current?.contentWindow?.document;
       if (!doc) return;
-      
+
       // Add contenteditable="true" to all elements with 'editable' class
       const editableElements = doc.querySelectorAll('.editable');
       editableElements.forEach((element) => {
         (element as HTMLElement).setAttribute('contenteditable', 'true');
       });
-      
+
       // Get the HTML with contenteditable attributes
       const currentHtml = doc.documentElement.outerHTML;
-      
+
       // Toggle edit mode without resetting (skipReset = true)
       await toggleEditMode(true);
-      
+
       // Save the HTML that was captured before toggle
       try {
         await onSave(currentHtml);
-        
+
         // Update originalHtmlRef to the saved HTML so reset will use the new saved version
         originalHtmlRef.current = currentHtml;
-        
+
         setShowReset(false); // Reset the flag after saving
-        
+
         // Reset StyleModal states after saving
         setSelectedElement(null);
         setCurrentStyles(null);
         setPreviewText('');
         setIsStyleModalOpen(false);
-        
+
         // Navigate back after successful save
         navigate(-1);
       } catch (error) {
@@ -753,7 +757,7 @@ export default function HtmlEditor({
     if (!doc) return;
 
     setShowReset(false);
-    
+
     // Reset StyleModal states
     setSelectedElement(null);
     setCurrentStyles(null);
