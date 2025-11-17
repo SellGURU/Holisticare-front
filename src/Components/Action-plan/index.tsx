@@ -186,7 +186,10 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                             setActiveAction(el);
                           }}
                           onDelete={() => {
-                            Application.deleteActionCard({ id: el.id });
+                            Application.deleteActionPlan({
+                              member_id: id,
+                              id: el.id,
+                            }).catch(() => {});
                             setTimeout(() => {
                               getActionPlan();
                               publish('syncReport', { part: 'treatmentPlan' });
@@ -208,9 +211,11 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       ))}
                       <div
                         onClick={() => {
-                          navigate('/report/Generate-Action-Plan/' + id);
+                          if (CardData[CardData.length - 1].state !== 'Draft') {
+                            navigate('/report/Generate-Action-Plan/' + id);
+                          }
                         }}
-                        className=" min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
+                        className={` ${CardData[CardData.length - 1].state == 'Draft' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal `}
                       >
                         <div className="flex flex-col  TextStyle-Subtitle-2 items-center justify-center ">
                           <img
