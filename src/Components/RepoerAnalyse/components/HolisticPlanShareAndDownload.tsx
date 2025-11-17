@@ -23,6 +23,23 @@ const HolisticPlanShareAndDownload = ({
     });
   }, []);
 
+  const formatSharedDate = (dateString: string): string => {
+    const sharedDate = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - sharedDate.getTime();
+    const twoMinutesInMs = 2 * 60 * 1000; // 2 minutes in milliseconds
+
+    if (diffInMs < twoMinutesInMs) {
+      return 'just now';
+    }
+
+    return sharedDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
   const resolveisSharedButtonUi = () => {
     return (
       <>
@@ -33,13 +50,9 @@ const HolisticPlanShareAndDownload = ({
           </div>
           <div className="text-Text-Fivefold text-[10px]">
             on{' '}
-            {new Date(
+            {formatSharedDate(
               activeTreatment.shared_report_with_client_date as string,
-            ).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric',
-            })}
+            )}
           </div>
         </div>
       </>
@@ -159,7 +172,7 @@ const HolisticPlanShareAndDownload = ({
   };
   return (
     <>
-      <div className={`flex  items-center  gap-6`}>
+      <div className={`flex ${activeTreatment?.shared_report_with_client?'items-start':'items-center'}  gap-6`}>
         {activeTreatment?.state != 'Draft' && (
           <>
             {resolveShareButtonHadler()}

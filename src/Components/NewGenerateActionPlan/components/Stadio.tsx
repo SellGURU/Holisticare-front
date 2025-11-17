@@ -322,10 +322,12 @@ const Stadio: FC<StadioProps> = ({
         ClassName="!z-[60] !overflow-y-auto"
       >
         {isLoading ? (
-          <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
+          <div style={{height: 'calc(100vh - 300px)'}} className="flex  flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
             <Circleloader />
           </div>
         ) : (
+          <>
+          {holisticPlan.length > 0 ?
           <div className="w-full flex flex-col gap-2">
             {category.map((item, index) => {
               return (
@@ -418,7 +420,16 @@ const Stadio: FC<StadioProps> = ({
                 </div>
               );
             })}
-          </div>
+          </div>          
+           :
+           <>
+            <div style={{height: 'calc(100vh - 300px)'}} className="w-full h-full flex flex-col items-center justify-center ">
+              <img src="/icons/Empty/EmptyStateHolistcAction.svg" alt="" />
+              <div className="text-Text-Primary mt-[-20px] text-headline-6 text-[12px] font-medium">This plan is no longer available.</div>
+            </div>
+           </>}
+
+          </>
         )}
       </SlideOutPanel>
       <ActionEditModal
