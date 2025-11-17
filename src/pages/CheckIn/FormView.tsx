@@ -74,6 +74,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
               'Flutter WebView bridge not available, attempting to close window.',
             );
             window.close();
+            window.parent.postMessage({ type: "QUESTIONARY_SUBMITTED" }, "*");
           }
         }, 1500); // Wait for 1.5 seconds to give the user time to see the success message
       })
@@ -84,6 +85,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
           window.flutter_inappwebview.callHandler('closeWebView');
         } else {
           window.close();
+          window.parent.postMessage({ type: "QUESTIONARY_SUBMITTED" }, "*");
         }
       })
       .finally(() => {
