@@ -53,7 +53,8 @@ const GenerateActionPlan = () => {
         })
         .finally(() => {
           setIsLoadingPlans(false);
-        }).catch(() =>{});
+        })
+        .catch(() => {});
     },
     [id],
   );
