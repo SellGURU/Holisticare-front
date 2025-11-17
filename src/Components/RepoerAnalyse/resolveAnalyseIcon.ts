@@ -8,7 +8,7 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Diabetes & Glucose') {
     return '/icons/biomarkers/donor.svg';
   }
-  if ( name == 'Immune Health') {
+  if (name == 'Immune Health') {
     return '/icons/biomarkers/Inflammation.svg';
   }
   if (name == 'Phenotypic Age') {
@@ -77,10 +77,13 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Vitamins') {
     return '/icons/biomarkers/vitamins.svg';
   }
-  if (name == 'Inflammation & Coagulation' || name == 'Immune Health and Inflammation') {
+  if (
+    name == 'Inflammation & Coagulation' ||
+    name == 'Immune Health and Inflammation'
+  ) {
     return '/icons/biomarkers/cell.svg';
   }
-  if(name == 'Hormone Health'){
+  if (name == 'Hormone Health') {
     return '/icons/biomarkers/brain_02.svg';
   }
   if (name == 'Trace Essential Minerals') {
