@@ -172,7 +172,9 @@ const HolisticPlanShareAndDownload = ({
   };
   return (
     <>
-      <div className={`flex ${activeTreatment?.shared_report_with_client?'items-start':'items-center'}  gap-6`}>
+      <div
+        className={`flex ${activeTreatment?.shared_report_with_client ? 'items-start' : 'items-center'}  gap-6`}
+      >
         {activeTreatment?.state != 'Draft' && (
           <>
             {resolveShareButtonHadler()}
