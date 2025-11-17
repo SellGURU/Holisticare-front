@@ -8,6 +8,12 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Diabetes & Glucose') {
     return '/icons/biomarkers/donor.svg';
   }
+  if(name == 'Immune Health and Inflammation' || name == 'Immune Health'){
+    return '/icons/biomarkers/Inflammation.svg';
+  }
+  if(name == 'Phenotypic Age'){
+    return '/icons/biomarkers/Age.svg';
+  }
   if (name == 'Inflammatory Health') {
     return '/icons/biomarkers/medicine.svg';
   }
