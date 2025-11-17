@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import StyleModal, { ElementStyles } from './StyleModal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useBlocker } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
+import ConfirmModal from '../confitmModal';
 
 type Props = {
   html: string;
@@ -24,7 +25,7 @@ export default function HtmlEditor({
   const navigate = useNavigate();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const loadedRef = useRef(false);
-  const [originalHtml] = useState(html);
+  const originalHtmlRef = useRef(html);
   const [isStyleModalOpen, setIsStyleModalOpen] = useState(false);
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(
     null,
@@ -39,6 +40,29 @@ export default function HtmlEditor({
   const [showTextFormatting, setShowTextFormatting] = useState(false);
 
   const [showReset, setShowReset] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
+
+  // Update originalHtmlRef when html prop changes
+  useEffect(() => {
+    originalHtmlRef.current = html;
+  }, [html]);
+
+  // Block navigation when there are unsaved changes
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      showReset && currentLocation.pathname !== nextLocation.pathname
+  );
+
+  // Handle blocked navigation
+  useEffect(() => {
+    if (blocker.state === 'blocked' && showReset) {
+      setShowExitConfirm(true);
+      setPendingNavigation(() => () => {
+        blocker.proceed?.();
+      });
+    }
+  }, [blocker, showReset]);
 
   // Helper function to detect Tailwind classes and get their values
   const getTailwindStyleValue = (element: HTMLElement, property: string) => {
@@ -150,7 +174,7 @@ export default function HtmlEditor({
   };
 
   // Function to toggle edit mode
-  const toggleEditMode = () => {
+  const toggleEditMode = (skipReset: boolean = false) => {
     const newEditMode = !isEditMode;
     setIsEditMode(newEditMode);
 
@@ -184,18 +208,63 @@ export default function HtmlEditor({
         // Remove all edit icons
         const existingIcons = doc.querySelectorAll('.edit-icon');
         existingIcons.forEach((icon) => icon.remove());
+
+        // Reset to original HTML only if not saving
+        if (!skipReset) {
+          doc.open();
+          doc.write(originalHtmlRef.current);
+          doc.close();
+
+          // Reset StyleModal states
+          setSelectedElement(null);
+          setCurrentStyles(null);
+          setPreviewText('');
+          setIsStyleModalOpen(false);
+          setShowReset(false);
+        }
       }
     }
   };
 
   const handleSave = async () => {
     if (isEditMode) {
-      await toggleEditMode();
-      setTimeout(() => {
-        onSave(
-          iframeRef.current?.contentDocument?.documentElement.outerHTML || '',
-        );
-      }, 800);
+      // Get the current HTML before toggling edit mode
+      const doc = iframeRef.current?.contentDocument || iframeRef.current?.contentWindow?.document;
+      if (!doc) return;
+      
+      // Add contenteditable="true" to all elements with 'editable' class
+      const editableElements = doc.querySelectorAll('.editable');
+      editableElements.forEach((element) => {
+        (element as HTMLElement).setAttribute('contenteditable', 'true');
+      });
+      
+      // Get the HTML with contenteditable attributes
+      const currentHtml = doc.documentElement.outerHTML;
+      
+      // Toggle edit mode without resetting (skipReset = true)
+      await toggleEditMode(true);
+      
+      // Save the HTML that was captured before toggle
+      try {
+        await onSave(currentHtml);
+        
+        // Update originalHtmlRef to the saved HTML so reset will use the new saved version
+        originalHtmlRef.current = currentHtml;
+        
+        setShowReset(false); // Reset the flag after saving
+        
+        // Reset StyleModal states after saving
+        setSelectedElement(null);
+        setCurrentStyles(null);
+        setPreviewText('');
+        setIsStyleModalOpen(false);
+        
+        // Navigate back after successful save
+        navigate(-1);
+      } catch (error) {
+        console.error('Error saving HTML:', error);
+        // Don't navigate if save failed
+      }
     }
   };
 
@@ -633,20 +702,68 @@ export default function HtmlEditor({
     }
   };
 
+  // Handle browser back/close with beforeunload
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (showReset) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [showReset]);
+
+  const handleBackClick = () => {
+    if (showReset) {
+      setShowExitConfirm(true);
+      setPendingNavigation(() => () => {
+        navigate(-1);
+      });
+    } else {
+      navigate(-1);
+    }
+  };
+
+  const handleConfirmExit = () => {
+    setShowReset(false);
+    setShowExitConfirm(false);
+    if (pendingNavigation) {
+      pendingNavigation();
+      setPendingNavigation(null);
+    }
+  };
+
+  const handleCancelExit = () => {
+    setShowExitConfirm(false);
+    setPendingNavigation(null);
+    if (blocker.state === 'blocked') {
+      blocker.reset?.();
+    }
+  };
+
   const handleReset = () => {
-    setIsEditMode(false);
     const iframe = iframeRef.current;
     if (!iframe) return;
     const doc = iframe.contentDocument || iframe.contentWindow?.document;
     if (!doc) return;
 
     setShowReset(false);
+    
+    // Reset StyleModal states
+    setSelectedElement(null);
+    setCurrentStyles(null);
+    setPreviewText('');
+    setIsStyleModalOpen(false);
 
     doc.open();
-    doc.write(originalHtml);
+    doc.write(originalHtmlRef.current);
     doc.close();
 
-    // if (editable && doc.body && isEditMode) {
     // Make only elements with 'editable' class editable
     const editableElements = doc.querySelectorAll('.editable');
     editableElements.forEach((element) => {
@@ -658,28 +775,29 @@ export default function HtmlEditor({
     const existingIcons = doc.querySelectorAll('.edit-icon');
     existingIcons.forEach((icon) => icon.remove());
 
-    // Add edit icons to editable elements after DOM is fully loaded
-    // const addIconsWhenReady = () => {
-    //   if (doc.readyState === 'complete') {
-    //     requestAnimationFrame(() => {
-    //       addEditIcons(doc);
-    //     });
-    //   } else {
-    //     doc.addEventListener('DOMContentLoaded', () => {
-    //       requestAnimationFrame(() => {
-    //         addEditIcons(doc);
-    //       });
-    //     });
-    //   }
-    // };
+    // If still in edit mode, re-add edit icons after reset
+    if (isEditMode && editable) {
+      const addIconsWhenReady = () => {
+        if (doc.readyState === 'complete') {
+          requestAnimationFrame(() => {
+            addEditIcons(doc);
+          });
+        } else {
+          doc.addEventListener('DOMContentLoaded', () => {
+            requestAnimationFrame(() => {
+              addEditIcons(doc);
+            });
+          });
+        }
+      };
 
-    // addIconsWhenReady();
+      addIconsWhenReady();
 
-    // Multiple fallback attempts
-    // setTimeout(() => addEditIcons(doc), 500);
-    // setTimeout(() => addEditIcons(doc), 1000);
-    // setTimeout(() => addEditIcons(doc), 2000);
-    // }
+      // Multiple fallback attempts to ensure icons are added
+      setTimeout(() => addEditIcons(doc), 100);
+      setTimeout(() => addEditIcons(doc), 500);
+      setTimeout(() => addEditIcons(doc), 1000);
+    }
   };
 
   return (
@@ -688,7 +806,7 @@ export default function HtmlEditor({
         {editable && (
           <>
             <ButtonSecondary
-              onClick={() => navigate(-1)}
+              onClick={handleBackClick}
               size="small"
               ClassName="bg-gray-200 !text-Primary-DeepTeal hover:bg-gray-300"
             >
@@ -799,6 +917,16 @@ export default function HtmlEditor({
           </button>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={showExitConfirm}
+        onClose={handleCancelExit}
+        onConfirm={handleConfirmExit}
+        heading="Unsaved Changes"
+        message="You have unsaved changes that will be lost if you leave this page. Are you sure you want to exit?"
+        confirmText="Yes, Exit"
+        cancelText="Cancel"
+      />
     </div>
   );
 }

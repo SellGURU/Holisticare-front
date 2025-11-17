@@ -58,6 +58,12 @@ export default function StyleModal({
       ...prev,
       [property]: value,
     }));
+    setShowReset(); // Activate reset button when styles change
+  };
+
+  const handleTextChange = (text: string) => {
+    setPreviewText(text);
+    setShowReset(); // Activate reset button when text changes
   };
 
   const handleApply = () => {
@@ -74,7 +80,8 @@ export default function StyleModal({
     currentStyles?.fontStyle == styles?.fontStyle &&
     currentStyles?.textDecoration == styles?.textDecoration &&
     currentStyles?.fontSize == styles?.fontSize &&
-    currentStyles?.textAlign == styles?.textAlign;
+    currentStyles?.textAlign == styles?.textAlign &&
+    selectedText === previewText; // Also check if text has changed
 
   if (!isOpen) return null;
 
@@ -122,10 +129,10 @@ export default function StyleModal({
 
           {/* Live Preview */}
           <div className="border rounded bg-white p-4">
-            <div className="text-sm text-gray-500 mb-2">Live Preview:</div>
+            <div className="text-sm text-gray-500 mb-2"> Your Text:</div>
             <textarea
               value={previewText}
-              onChange={(e) => setPreviewText(e.target.value)}
+              onChange={(e) => handleTextChange(e.target.value)}
               className="w-full p-2 border rounded resize-none min-h-[350px]"
               placeholder="Enter text..."
               style={{
@@ -174,7 +181,7 @@ export default function StyleModal({
               <h3 className="text-lg font-semibold">Edit Style</h3>
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 text-xl"
+                className="text-gray-500 hover:text-gray-700 text-2xl"
               >
                 ×
               </button>
@@ -320,7 +327,10 @@ export default function StyleModal({
             </button>
             {!isResetButtonDisabled && (
               <button
-                onClick={() => setStyles(currentStyles || defaultStyles)}
+                onClick={() => {
+                  setStyles(currentStyles || defaultStyles);
+                  setPreviewText(selectedText); // Reset text to original
+                }}
                 className="px-3 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                 title="Reset to original"
               >

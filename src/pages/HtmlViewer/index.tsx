@@ -35,19 +35,18 @@ const HtmlViewer = () => {
     handleGetHtmlReport(id?.toString() || '');
   }, [id]);
 
-  const handleUpdateHtmlReport = (html: string) => {
+  const handleUpdateHtmlReport = async (html: string) => {
     setLoading(true);
-    Application.updateHtmlReport({ member_id: id, html_report: html })
-      .then(() => {
-        setHtml(html);
-        toast.success('HTML report updated successfully');
-      })
-      .catch((err) => {
-        console.error('Error updating HTML report:', err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      await Application.updateHtmlReport({ member_id: id, html_report: html });
+      setHtml(html);
+      toast.success('HTML report updated successfully');
+    } catch (err) {
+      console.error('Error updating HTML report:', err);
+      throw err; // Re-throw to allow error handling in parent
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
