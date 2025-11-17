@@ -119,7 +119,15 @@ export const ActionPlan: FC<ActionPlanProps> = ({
     getActionPlan();
   }, []);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
+  const canCreateNewActionPlan = () => {
+    if(isHolisticPlanEmpty) {
+      return false;
+    }
+    if(CardData.length > 0) {
+      return CardData[CardData.length - 1].state !== 'Draft';
+    }
+    return true;
+  }
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -224,11 +232,11 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       ))}
                       <div
                         onClick={() => {
-                          if (CardData[CardData.length - 1].state !== 'Draft') {
+                          if (canCreateNewActionPlan()) {
                             navigate('/report/Generate-Action-Plan/' + id);
                           }
                         }}
-                        className={` ${CardData[CardData.length - 1].state == 'Draft' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal `}
+                        className={` ${!canCreateNewActionPlan()? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal `}
                       >
                         <div className="flex flex-col  TextStyle-Subtitle-2 items-center justify-center ">
                           <img

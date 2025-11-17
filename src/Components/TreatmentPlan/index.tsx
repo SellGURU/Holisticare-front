@@ -99,6 +99,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         if (res.data.length == 0) {
           setIsHolisticPlanEmpty(true);
         } else {
+          if(res.data[res.data.length - 1].state == 'Draft' &&res.data.length == 1) {
+            setIsHolisticPlanEmpty(true);
+          }
           setIsHolisticPlanEmpty(false);
         }
         setCardData(res.data);

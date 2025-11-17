@@ -53,7 +53,7 @@ const GenerateActionPlan = () => {
         })
         .finally(() => {
           setIsLoadingPlans(false);
-        });
+        }).catch(() =>{});
     },
     [id],
   );
@@ -272,7 +272,7 @@ const GenerateActionPlan = () => {
                 <div
                   onClick={() => {
                     if (!calendarView) {
-                      navigate(-1);
+                      navigate('/report/' + id + '/a?section=Action Plan');
                     } else {
                       setCalendarView(false);
                     }
