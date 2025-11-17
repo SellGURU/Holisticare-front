@@ -14,6 +14,7 @@ import './index.css';
 import AppContextProvider from './store/app.tsx';
 import UploadFileProgressModal from './Components/uploadFileProgressModal/index.tsx';
 import DeleteFileProgressModal from './Components/deleteFileProgressModal/index.tsx';
+import { RefreshProgressModal } from './Components/holisticPlan-refreshModal/index.tsx';
 
 initGlobalErrorHandler();
 
@@ -28,6 +29,7 @@ createRoot(document.getElementById('root')!).render(
     <UploaderTooltipContainer />
     <DeletedTooltipContainer />
     <UploadFileProgressModal />
+    <RefreshProgressModal/>
     <DeleteFileProgressModal />
   </>,
 );

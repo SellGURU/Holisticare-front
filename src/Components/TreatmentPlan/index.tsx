@@ -196,7 +196,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     <>
       {/* {showRefreshModal && ( */}
       <MainModal
-      isOpen={showRefreshModal}
+        isOpen={showRefreshModal}
         onClose={() => {
           setshowRefreshModal(false);
         }}
@@ -207,11 +207,15 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             Data needs to be synced before generating a new plan
           </div>
 
-          <div style={{
-            textAlignLast:'center'
-          }} className="font-medium mt-4 text-xs flex w-full justify-center leading-6 ">
-            Some of the client’s data has changed since the last update. <br/> Please
-            sync the latest data to ensure the plan is generated accurately.
+          <div
+            style={{
+              textAlignLast: 'center',
+            }}
+            className="font-medium mt-4 text-xs flex w-full justify-center leading-6 "
+          >
+            Some of the client’s data has changed since the last update. <br />{' '}
+            Please sync the latest data to ensure the plan is generated
+            accurately.
           </div>
           <div className="absolute bottom-6 right-8 flex gap-4">
             <div
@@ -222,7 +226,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             >
               Cancel
             </div>
-            <div className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm">
+            <div onClick={()=>{
+              setshowRefreshModal(false)
+              publish("SyncRefresh",{})
+            }} className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm">
               Sync Data
             </div>
           </div>
@@ -532,10 +539,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       if (id) {
                         Application.checkClientRefresh(id).then((res) => {
                           if (res.data.need_of_refresh == true) {
-                                 setshowRefreshModal(true);
-                         
+                            setshowRefreshModal(true);
                           } else {
-                          //  setTreatmentId('');
+                            //  setTreatmentId('');
                             //  navigate(`/report/Generate-Holistic-Plan/${id}`);
                           }
                         });

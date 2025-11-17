@@ -1104,12 +1104,14 @@ class Application extends Api {
     });
   };
   static checkClientRefresh = (member_id: string) => {
-    return this.post(
-      `/patients/check_need_of_refresh`,
-      {
-        member_id: member_id,
-      },
-    );
+    return this.post(`/patients/check_need_of_refresh`, {
+      member_id: member_id,
+    });}
+  static ClientRefresh = (member_id: string) => {
+    return this.post(`/patients/refresh_data`, {
+      member_id: member_id,
+      full_refresh:false
+    });
   };
 }
 

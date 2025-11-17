@@ -673,6 +673,38 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setLoadingHtmlReport(false);
       });
   };
+useEffect(() => {
+  const handler = () => {
+    publish('openRefreshProgressModal', userInfoData?.name);
+
+    if (!id) return;
+
+    let intervalId: any = null;
+
+    const checkStatus = () => {
+      Application.ClientRefresh(id).then((res) => {
+        const done = res.data.need_of_refresh === true;
+
+        if (done) {
+          clearInterval(intervalId);
+          publish('RefreshStepTwoSuccess', {});
+        }
+      });
+    };
+
+    checkStatus();
+
+    intervalId = setInterval(checkStatus, 10000);
+  };
+
+  subscribe('SyncRefresh', handler);
+
+  return () => {
+    unsubscribe('SyncRefresh', handler); // ← this is how your system works
+  };
+}, [id, userInfoData?.name]);
+
+
 
   return (
     <>
