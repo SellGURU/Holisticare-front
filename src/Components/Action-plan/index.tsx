@@ -194,18 +194,25 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                             //   getActionPlan();
                             //   publish('syncReport', { part: 'treatmentPlan' });
                             // }, 3000);
-                            const isDeletingActivePlan = activeAction?.id === el.id;
+                            const isDeletingActivePlan =
+                              activeAction?.id === el.id;
                             setCardData((prevCardData) => {
                               const newCardData = prevCardData.filter(
                                 (card) => card.id !== el.id,
                               );
                               // اگر پلن فعلی حذف شد و پلن قبلی وجود دارد، state آن را On Going کن
-                              if (isDeletingActivePlan && newCardData.length > 0) {
-                                const lastCard = newCardData[newCardData.length - 1];
+                              if (
+                                isDeletingActivePlan &&
+                                newCardData.length > 0
+                              ) {
+                                const lastCard =
+                                  newCardData[newCardData.length - 1];
                                 lastCard.state = 'On Going';
                                 setActiveAction(lastCard);
                               } else if (newCardData.length > 0) {
-                                setActiveAction(newCardData[newCardData.length - 1]);
+                                setActiveAction(
+                                  newCardData[newCardData.length - 1],
+                                );
                               }
                               return newCardData;
                             });
