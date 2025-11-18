@@ -172,7 +172,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
             <div
               onClick={() => {
                 if (id) {
-                  Application.refreshData(id).then(() => {
+                  Application.refreshData(id,false).then(() => {
                     setshowRefreshModal(false);
                     publish('SyncRefresh', {});
                     setDisableGenerate(true);

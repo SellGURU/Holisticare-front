@@ -236,9 +236,13 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             </div>
             <div
               onClick={() => {
-                setshowRefreshModal(false);
-                publish('SyncRefresh', {});
-                setDisableGenerate(true);
+                if (id) {
+                  Application.refreshData(id,false).then(() => {
+                    setshowRefreshModal(false);
+                    publish('SyncRefresh', {});
+                    setDisableGenerate(true);
+                  });
+                }
               }}
               className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm"
             >
