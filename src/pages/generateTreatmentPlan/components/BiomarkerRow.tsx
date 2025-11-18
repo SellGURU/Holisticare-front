@@ -189,7 +189,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
     handleRemoveLookingForwards(name);
     setIsDeleting(null);
   };
- const [showAnalysisWarning, setShowAnalysisWarning] = useState(false);
+  const [showAnalysisWarning, setShowAnalysisWarning] = useState(false);
   useEffect(() => {
     const analysisText = value['Practitioner Comments']?.[0] || '';
     const benefitsText = positive || '';
@@ -505,45 +505,44 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
           <div className="flex flex-col gap-1 ml-4 mt-3">
             {value['Practitioner Comments'][0]?.length > 0 && (
               <div className="flex flex-col gap-1 mb-1.5">
-                    {showAnalysisWarning && (
-                <div className="flex items-center gap-1 text-xs text-[#F4A261]  my-1">
-                  <img
-                    src="/icons/danger-fill.svg"
-                    className="w-4 h-4"
-                    alt=""
-                  />
-                  Due to a temporary issue, this intervention’s content couldn’t
-                  be loaded. Please edit it manually or use “Sync with Latest
-                  Data” to refresh and try again.
-                </div>
-              )}
+                {showAnalysisWarning && (
+                  <div className="flex items-center gap-1 text-xs text-[#F4A261]  my-1">
+                    <img
+                      src="/icons/danger-fill.svg"
+                      className="w-4 h-4"
+                      alt=""
+                    />
+                    Due to a temporary issue, this intervention’s content
+                    couldn’t be loaded. Please edit it manually or use “Sync
+                    with Latest Data” to refresh and try again.
+                  </div>
+                )}
                 <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
                   <img src="/icons/info-circle-blue.svg" alt="" />
                   Analysis Info
                 </div>
-                 <div className="text-[#666666] leading-5 text-xs text-justify">
-                          {showAnalysisWarning ? (
-                            '-' // ⬅️ analysis failed → show only "-"
-                          ) : (
-                            <>
-                              {value['Practitioner Comments'][0]?.substring(
-                                0,
-                                showMore
-                                  ? value['Practitioner Comments'][0]?.length
-                                  : 570,
-                              )}{' '}
-                              {value['Practitioner Comments'][0]?.length >
-                                570 && (
-                                <span
-                                  className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-                                  onClick={() => setShowMore(!showMore)}
-                                >
-                                  {showMore ? 'See less' : 'See more'}
-                                </span>
-                              )}
-                            </>
-                          )}
-                        </div>
+                <div className="text-[#666666] leading-5 text-xs text-justify">
+                  {showAnalysisWarning ? (
+                    '-' // ⬅️ analysis failed → show only "-"
+                  ) : (
+                    <>
+                      {value['Practitioner Comments'][0]?.substring(
+                        0,
+                        showMore
+                          ? value['Practitioner Comments'][0]?.length
+                          : 570,
+                      )}{' '}
+                      {value['Practitioner Comments'][0]?.length > 570 && (
+                        <span
+                          className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                          onClick={() => setShowMore(!showMore)}
+                        >
+                          {showMore ? 'See less' : 'See more'}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
             )}
             <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">

@@ -127,27 +127,28 @@ export const ActivityCard: FC<ActivityCardProps> = ({
     setIsDeleting(null);
   };
   const [showAnalysisWarning, setShowAnalysisWarning] = useState(false);
-useEffect(() => {
-  const analysisText = item['Practitioner Comments']?.[0] || '';
-  const benefitsText = positive || '';
-  const risksText = negative || '';
+  useEffect(() => {
+    const analysisText = item['Practitioner Comments']?.[0] || '';
+    const benefitsText = positive || '';
+    const risksText = negative || '';
 
-  const analysisFailed =
-    analysisText.includes('Validation failed - using fallback') ||
-    analysisText.includes('Validation failed');
+    const analysisFailed =
+      analysisText.includes('Validation failed - using fallback') ||
+      analysisText.includes('Validation failed');
 
-  const benefitsFailed =
-    benefitsText.includes('Please review this intervention manually');
+    const benefitsFailed = benefitsText.includes(
+      'Please review this intervention manually',
+    );
 
-  const risksFailed =
-    risksText.includes('Please review this intervention manually');
-  if (analysisFailed || benefitsFailed || risksFailed) {
-    setShowAnalysisWarning(true);
-  } else {
-    setShowAnalysisWarning(false);
-  }
-}, [item]);
-
+    const risksFailed = risksText.includes(
+      'Please review this intervention manually',
+    );
+    if (analysisFailed || benefitsFailed || risksFailed) {
+      setShowAnalysisWarning(true);
+    } else {
+      setShowAnalysisWarning(false);
+    }
+  }, [item]);
 
   return (
     <>
@@ -483,11 +484,11 @@ useEffect(() => {
             <span className="text-Text-Secondary bullet-point">
               Key Benefits:
             </span>{' '}
-          {showAnalysisWarning ? '-' : positive}
+            {showAnalysisWarning ? '-' : positive}
           </li>
           <li className=" text-justify">
             <span className="text-Text-Secondary bullet-point">Key Risks:</span>{' '}
-         {showAnalysisWarning ? '-' : negative}
+            {showAnalysisWarning ? '-' : negative}
           </li>
         </ul>
       </div>

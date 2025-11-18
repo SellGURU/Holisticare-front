@@ -532,18 +532,19 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                     <div className="w-full bg-bg-color h-[1px] mt-3"></div>
                     {value['Practitioner Comments'][0]?.length > 0 && (
                       <div className="flex flex-col gap-1 pl-3 mt-2 mb-2">
-                         {showAnalysisWarning && (
-                <div className="flex items-center gap-1 text-xs text-[#F4A261]  my-1">
-                  <img
-                    src="/icons/danger-fill.svg"
-                    className="w-4 h-4"
-                    alt=""
-                  />
-                  Due to a temporary issue, this intervention’s content couldn’t
-                  be loaded. Please edit it manually or use “Sync with Latest
-                  Data” to refresh and try again.
-                </div>
-              )}
+                        {showAnalysisWarning && (
+                          <div className="flex items-center gap-1 text-xs text-[#F4A261]  my-1">
+                            <img
+                              src="/icons/danger-fill.svg"
+                              className="w-4 h-4"
+                              alt=""
+                            />
+                            Due to a temporary issue, this intervention’s
+                            content couldn’t be loaded. Please edit it manually
+                            or use “Sync with Latest Data” to refresh and try
+                            again.
+                          </div>
+                        )}
                         <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
                           <img src="/icons/info-circle-blue.svg" alt="" />
                           Analysis Info
@@ -580,13 +581,13 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                         <span className="text-Text-Secondary bullet-point">
                           Key Benefits:{' '}
                         </span>
-                       {showAnalysisWarning ? '-' : positive}
+                        {showAnalysisWarning ? '-' : positive}
                       </div>
                       <div className="text-Text-Primary mt-1.5 text-justify">
                         <span className="text-Text-Secondary bullet-point">
                           Key Risks:{' '}
                         </span>
-                       {showAnalysisWarning ? '-' : negative}
+                        {showAnalysisWarning ? '-' : negative}
                       </div>{' '}
                     </div>
                   </>
