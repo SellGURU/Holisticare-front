@@ -842,7 +842,7 @@ export default function HtmlEditor({
             <div className="flex gap-2">
               <ButtonSecondary
                 onClick={() => {
-                  toggleEditMode(false)
+                  toggleEditMode(false);
                 }}
                 ClassName={`${isEditMode ? 'bg-purple-500 text-white hover:bg-purple-600' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
               >

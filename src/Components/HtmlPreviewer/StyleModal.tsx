@@ -84,11 +84,11 @@ export default function StyleModal({
       // Always set content when modal opens to ensure HTML is preserved
       const hasHtml = /<[^>]+>/g.test(selectedText);
       const htmlContent = hasHtml ? selectedText : selectedText || '';
-      
+
       // Store original HTML when modal opens
       originalHtmlRef.current = htmlContent;
       originalTextRef.current = selectedText;
-      
+
       if (hasHtml) {
         editorRef.current.innerHTML = selectedText;
       } else {
@@ -481,11 +481,11 @@ export default function StyleModal({
                 onClick={() => {
                   // Reset styles to original
                   setStyles(currentStyles || defaultStyles);
-                  
+
                   // Reset text to original
                   setPreviewText(originalTextRef.current);
                   setPreviewHtml(originalHtmlRef.current);
-                  
+
                   // Reset editor content to original HTML
                   if (editorRef.current) {
                     editorRef.current.innerHTML = originalHtmlRef.current;
