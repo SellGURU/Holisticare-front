@@ -40,9 +40,11 @@ export default function StyleModal({
   setShowReset,
 }: StyleModalProps) {
   const [styles, setStyles] = useState<ElementStyles>(currentStyles);
-  const [previewText, setPreviewText] = useState(selectedText);
+  const [, setPreviewText] = useState(selectedText);
   const [previewHtml, setPreviewHtml] = useState(selectedText);
   const editorRef = useRef<HTMLDivElement>(null);
+  const originalTextRef = useRef<string>(selectedText);
+  const originalHtmlRef = useRef<string>(selectedText);
 
   useEffect(() => {
     // Check if selectedText contains HTML
@@ -57,6 +59,10 @@ export default function StyleModal({
       setPreviewText(selectedText);
       setPreviewHtml(selectedText);
     }
+
+    // Store original text and HTML when selectedText changes
+    originalTextRef.current = selectedText;
+    originalHtmlRef.current = hasHtml ? selectedText : selectedText || '';
 
     // Update editor content when selectedText changes
     if (editorRef.current) {
@@ -77,6 +83,12 @@ export default function StyleModal({
     if (isOpen && editorRef.current) {
       // Always set content when modal opens to ensure HTML is preserved
       const hasHtml = /<[^>]+>/g.test(selectedText);
+      const htmlContent = hasHtml ? selectedText : selectedText || '';
+      
+      // Store original HTML when modal opens
+      originalHtmlRef.current = htmlContent;
+      originalTextRef.current = selectedText;
+      
       if (hasHtml) {
         editorRef.current.innerHTML = selectedText;
       } else {
@@ -140,6 +152,9 @@ export default function StyleModal({
     onClose();
   };
 
+  // Check if HTML content has changed
+  const hasTextChanged = previewHtml !== originalHtmlRef.current;
+
   const isResetButtonDisabled =
     currentStyles?.backgroundColor == styles?.backgroundColor &&
     currentStyles?.color == styles?.color &&
@@ -148,7 +163,7 @@ export default function StyleModal({
     currentStyles?.textDecoration == styles?.textDecoration &&
     currentStyles?.fontSize == styles?.fontSize &&
     currentStyles?.textAlign == styles?.textAlign &&
-    selectedText === previewText; // Also check if text has changed
+    !hasTextChanged; // Check if text/HTML has changed
 
   if (!isOpen) return null;
 
@@ -464,8 +479,17 @@ export default function StyleModal({
             {!isResetButtonDisabled && (
               <button
                 onClick={() => {
+                  // Reset styles to original
                   setStyles(currentStyles || defaultStyles);
-                  setPreviewText(selectedText); // Reset text to original
+                  
+                  // Reset text to original
+                  setPreviewText(originalTextRef.current);
+                  setPreviewHtml(originalHtmlRef.current);
+                  
+                  // Reset editor content to original HTML
+                  if (editorRef.current) {
+                    editorRef.current.innerHTML = originalHtmlRef.current;
+                  }
                 }}
                 className="px-3 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                 title="Reset to original"
