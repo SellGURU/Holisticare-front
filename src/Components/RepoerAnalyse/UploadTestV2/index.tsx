@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useRef, useState, useEffect } from 'react';
-import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 import { uploadToAzure } from '../../../help';
 import { publish, subscribe } from '../../../utils/event';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
 // import SpinnerLoader from '../../SpinnerLoader';
@@ -417,6 +417,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       added_biomarkers_date_of_test: addedTimestamp,
       modified_lab_type: fileType,
       modified_file_id: uploadedFile?.file_id ?? '',
+      member_id: memberId,
     })
       .then(() => {
         // 200 response
