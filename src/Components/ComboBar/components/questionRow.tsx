@@ -68,6 +68,10 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
   console.log(viewQuestienry);
   // const navigate = useNavigate();
+  useEffect(() => {
+    setshowModal(false);
+  }, [el.status]);
+
   return (
     <>
       <div className=" bg-white border relative border-Gray-50  px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
