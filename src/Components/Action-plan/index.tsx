@@ -9,6 +9,7 @@ import { publish } from '../../utils/event';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 import ProgressCalenderView from './ProgressCalendarView';
+import MainModal from '../MainModal';
 
 // type CardData = {
 //   cardID: number;
@@ -128,9 +129,57 @@ export const ActionPlan: FC<ActionPlanProps> = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+  const [showRefreshModal, setshowRefreshModal] = useState(false);
 
   return (
     <>
+      <MainModal
+        isOpen={showRefreshModal}
+        onClose={() => {
+          setshowRefreshModal(false);
+        }}
+      >
+        <div className="w-[500px] h-[208px] rounded-2xl relative py-6 px-8 bg-white shadow-800 text-Text-Primary">
+          <div className="w-full flex items-center gap-2 border-b border-Gray-50 pb-2 font-medium text-sm">
+            <img src="/icons/danger.svg" alt="" />
+            Data needs to be synced before generating a new plan
+          </div>
+
+          <div
+            style={{
+              textAlignLast: 'center',
+            }}
+            className="font-medium mt-4 text-xs flex w-full justify-center leading-6 "
+          >
+            Some of the client’s data has changed since the last update. <br />{' '}
+            Please sync the latest data to ensure the plan is generated
+            accurately.
+          </div>
+          <div className="absolute bottom-6 right-8 flex gap-4">
+            <div
+              className="text-[#909090] font-medium text-sm cursor-pointer"
+              onClick={() => {
+                setshowRefreshModal(false);
+              }}
+            >
+              Cancel
+            </div>
+            <div
+              onClick={() => {
+                if (id) {
+                  Application.refreshData(id).then(() => {
+                    setshowRefreshModal(false);
+                    publish('SyncRefresh', {});
+                  });
+                }
+              }}
+              className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm"
+            >
+              Sync Data
+            </div>
+          </div>
+        </div>
+      </MainModal>
       <div className="flex flex-col gap-3 w-full relative">
         <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
           {isShare ? (
@@ -208,7 +257,15 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       ))}
                       <div
                         onClick={() => {
-                          navigate('/report/Generate-Action-Plan/' + id);
+                          if (id) {
+                            Application.checkClientRefresh(id).then((res) => {
+                              if (res.data.need_of_refresh == true) {
+                                setshowRefreshModal(true);
+                              } else {
+                                navigate('/report/Generate-Action-Plan/' + id);
+                              }
+                            });
+                          }
                         }}
                         className=" min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
                       >
@@ -307,7 +364,17 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                         <ButtonSecondary
                           ClassName="py-[6px] px-6"
                           onClick={() => {
-                            navigate('/report/Generate-Action-Plan/' + id);
+                            if (id) {
+                              Application.checkClientRefresh(id).then((res) => {
+                                if (res.data.need_of_refresh == true) {
+                                  setshowRefreshModal(true);
+                                } else {
+                                  navigate(
+                                    '/report/Generate-Action-Plan/' + id,
+                                  );
+                                }
+                              });
+                            }
                           }}
                         >
                           <img src="/icons/tick.svg" alt="" />

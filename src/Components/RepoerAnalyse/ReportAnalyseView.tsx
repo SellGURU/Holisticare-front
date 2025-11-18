@@ -682,8 +682,8 @@ useEffect(() => {
     let intervalId: any = null;
 
     const checkStatus = () => {
-      Application.ClientRefresh(id).then((res) => {
-        const done = res.data.need_of_refresh === true;
+      Application.checkRefreshProgress(id).then((res) => {
+        const done = res.data.status === true;
 
         if (done) {
           clearInterval(intervalId);
