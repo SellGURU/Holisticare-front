@@ -110,12 +110,12 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
           setIsDeletedSuccess(true);
           publish('DeleteQuestionnaireTrackingSuccess', {});
         } else {
-          setTimeout(checkDelete, 1000);
+          setTimeout(checkDelete, 15000);
         }
       } catch (err) {
         console.error('err', err);
 
-        setTimeout(checkDelete, 1000);
+        setTimeout(checkDelete, 15000);
       }
     };
     checkDelete();
