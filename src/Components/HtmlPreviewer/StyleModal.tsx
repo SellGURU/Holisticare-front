@@ -47,7 +47,7 @@ export default function StyleModal({
   useEffect(() => {
     // Check if selectedText contains HTML
     const hasHtml = /<[^>]+>/g.test(selectedText);
-    
+
     if (hasHtml) {
       // If it's HTML, use it directly
       setPreviewHtml(selectedText);
@@ -57,7 +57,7 @@ export default function StyleModal({
       setPreviewText(selectedText);
       setPreviewHtml(selectedText);
     }
-    
+
     // Update editor content when selectedText changes
     if (editorRef.current) {
       // Always update to ensure content is synced
@@ -81,7 +81,11 @@ export default function StyleModal({
         editorRef.current.innerHTML = selectedText;
       } else {
         // If empty or just <br>, set the text
-        if (!editorRef.current.innerHTML || editorRef.current.innerHTML === '<br>' || editorRef.current.innerHTML.trim() === '') {
+        if (
+          !editorRef.current.innerHTML ||
+          editorRef.current.innerHTML === '<br>' ||
+          editorRef.current.innerHTML.trim() === ''
+        ) {
           editorRef.current.innerHTML = selectedText || '';
         }
       }
@@ -100,7 +104,9 @@ export default function StyleModal({
     if (editorRef.current) {
       const html = editorRef.current.innerHTML;
       setPreviewHtml(html);
-      setPreviewText(editorRef.current.innerText || editorRef.current.textContent || '');
+      setPreviewText(
+        editorRef.current.innerText || editorRef.current.textContent || '',
+      );
       setShowReset();
     }
   };
@@ -191,7 +197,7 @@ export default function StyleModal({
           {/* Live Preview */}
           <div className="border rounded bg-white p-4 flex flex-col overflow-hidden">
             <div className="text-sm text-gray-500 mb-2">Your Text:</div>
-            
+
             {/* Rich Text Editor Toolbar */}
             <div className="flex gap-1 mb-2 p-2 bg-gray-100 rounded border-b flex-wrap">
               <button

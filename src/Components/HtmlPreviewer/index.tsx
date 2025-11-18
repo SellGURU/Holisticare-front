@@ -456,18 +456,24 @@ export default function HtmlEditor({
             // Restore icon display
             editIcon.style.display = iconDisplay || '';
             setIsStyleModalOpen(true);
-            
+
             // Get HTML content to preserve formatting (bold, italic, etc.)
             let htmlContent = htmlElement?.innerHTML || '';
             // Remove edit icon from HTML if present
-            htmlContent = htmlContent.replace(/<div[^>]*class="edit-icon"[^>]*>.*?<\/div>/gi, '');
+            htmlContent = htmlContent.replace(
+              /<div[^>]*class="edit-icon"[^>]*>.*?<\/div>/gi,
+              '',
+            );
             htmlContent = htmlContent.replace(/✏️/g, '');
-            
+
             // Also get plain text for fallback
-            const plainText = htmlElement?.innerText.replace(/✏️/g, '').trim() || '';
-            
+            const plainText =
+              htmlElement?.innerText.replace(/✏️/g, '').trim() || '';
+
             // Use HTML if it contains formatting tags, otherwise use plain text
-            const contentToSet = /<[^>]+>/g.test(htmlContent) ? htmlContent : plainText;
+            const contentToSet = /<[^>]+>/g.test(htmlContent)
+              ? htmlContent
+              : plainText;
             setPreviewText(contentToSet);
           }, 50); // Small delay to ensure icon is hidden before reading styles
         });
