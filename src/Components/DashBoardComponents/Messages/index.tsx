@@ -144,7 +144,7 @@ const MessageList: React.FC<MessageListProps> = ({
               </div>
             </div>
           )}
-          <ul className="mt-5 w-full h-full pr-3 overflow-y-scroll divide-y ">
+          <ul className="mt-5 w-full h-[90%] pr-3   overflow-y-scroll divide-y ">
             {messagesSearched.map((message, index) => {
               const isSelected = expandedMessage === message.member_id;
               const isBeforeSelected =
