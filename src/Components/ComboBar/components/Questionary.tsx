@@ -22,11 +22,11 @@ import { publish, subscribe } from '../../../utils/event';
 // import DatePicker from '../../DatePicker';
 interface QuestionaryProps {
   isOpen?: boolean;
-  // handleCloseSlideOutPanel: () => void;
+  handleCloseSlideOutPanel: () => void;
 }
 export const Questionary: React.FC<QuestionaryProps> = ({
   isOpen,
-  // handleCloseSlideOutPanel,
+  handleCloseSlideOutPanel,
 }) => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
@@ -835,7 +835,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                         id={id as string}
                         resolveForm={resolveForm}
                         deleteRow={() => deleteQuestionRow(index)}
-                        // handleCloseSlideOutPanel={handleCloseSlideOutPanel}
+                        handleCloseSlideOutPanel={handleCloseSlideOutPanel}
                       ></QuestionRow>
                     );
                   })}
