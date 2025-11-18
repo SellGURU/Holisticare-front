@@ -346,7 +346,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
         isOpen={showchangeOrders}
         onClose={() => setshowchangeOrders(false)}
       >
-        <div className=" w-[90vw] md:w-full relative h-[380px] p-4 rounded-2xl bg-white">
+        <div className=" w-[90vw] md:w-full relative h-[420px] p-4 rounded-2xl bg-white">
           <div className="flex items-center w-full gap-2 border-b border-Gray-50 py-2 text-base font-medium text-Text-Primary">
             <img src="/icons/danger.svg" alt="" />
             Change Order
@@ -373,7 +373,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                           ? '/icons/diet.svg'
                           : category.name === 'Lifestyle'
                             ? '/icons/LifeStyle2.svg'
-                            : '/icons/Supplement.svg'
+                            : category.name == 'Supplement' ? '/icons/Supplement.svg' : '/icons/others.svg'
                     }
                     alt=""
                   />
@@ -450,7 +450,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                     }}
                   >
                     <img
-                      className="size-4"
+                      className="size-5"
                       src={
                         name === 'Activity'
                           ? '/icons/weight.svg'
@@ -458,7 +458,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
                             ? '/icons/diet.svg'
                             : name === 'Lifestyle'
                               ? '/icons/LifeStyle2.svg'
-                              : '/icons/Supplement.svg'
+                              : name == 'Supplement'
+                                ? '/icons/Supplement.svg'
+                                : '/icons/others.svg'
                       }
                       alt=""
                     />
