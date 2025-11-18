@@ -456,9 +456,19 @@ export default function HtmlEditor({
             // Restore icon display
             editIcon.style.display = iconDisplay || '';
             setIsStyleModalOpen(true);
-            setPreviewText(
-              htmlElement?.innerText.replace(/✏️/g, '').trim() || '',
-            );
+            
+            // Get HTML content to preserve formatting (bold, italic, etc.)
+            let htmlContent = htmlElement?.innerHTML || '';
+            // Remove edit icon from HTML if present
+            htmlContent = htmlContent.replace(/<div[^>]*class="edit-icon"[^>]*>.*?<\/div>/gi, '');
+            htmlContent = htmlContent.replace(/✏️/g, '');
+            
+            // Also get plain text for fallback
+            const plainText = htmlElement?.innerText.replace(/✏️/g, '').trim() || '';
+            
+            // Use HTML if it contains formatting tags, otherwise use plain text
+            const contentToSet = /<[^>]+>/g.test(htmlContent) ? htmlContent : plainText;
+            setPreviewText(contentToSet);
           }, 50); // Small delay to ensure icon is hidden before reading styles
         });
 
@@ -688,7 +698,13 @@ export default function HtmlEditor({
     });
 
     if (targetElement) {
-      (targetElement as HTMLElement).innerText = text;
+      // Check if text contains HTML tags
+      const hasHtml = /<[^>]+>/g.test(text);
+      if (hasHtml) {
+        (targetElement as HTMLElement).innerHTML = text;
+      } else {
+        (targetElement as HTMLElement).innerText = text;
+      }
 
       if (onChange) {
         onChange(doc.documentElement.outerHTML);
@@ -824,7 +840,7 @@ export default function HtmlEditor({
               >
                 {isEditMode ? '✏️ Exit Editing' : '✏️ Edit'}
               </ButtonSecondary>
-              {showReset && (
+              {showReset && isEditMode && (
                 <ButtonSecondary
                   onClick={handleReset}
                   ClassName="bg-red-500 text-white hover:bg-red-600"

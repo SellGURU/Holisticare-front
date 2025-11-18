@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface StyleModalProps {
   isOpen: boolean;
@@ -41,9 +41,28 @@ export default function StyleModal({
 }: StyleModalProps) {
   const [styles, setStyles] = useState<ElementStyles>(currentStyles);
   const [previewText, setPreviewText] = useState(selectedText);
+  const [previewHtml, setPreviewHtml] = useState(selectedText);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setPreviewText(selectedText);
+    // Check if selectedText contains HTML
+    const hasHtml = /<[^>]+>/g.test(selectedText);
+    
+    if (hasHtml) {
+      // If it's HTML, use it directly
+      setPreviewHtml(selectedText);
+      setPreviewText(selectedText.replace(/<[^>]+>/g, '')); // Extract plain text for fallback
+    } else {
+      // If it's plain text, use it for both
+      setPreviewText(selectedText);
+      setPreviewHtml(selectedText);
+    }
+    
+    // Update editor content when selectedText changes
+    if (editorRef.current) {
+      // Always update to ensure content is synced
+      editorRef.current.innerHTML = hasHtml ? selectedText : selectedText || '';
+    }
   }, [selectedText]);
 
   // Update styles when currentStyles prop changes
@@ -53,6 +72,22 @@ export default function StyleModal({
     }
   }, [currentStyles]);
 
+  // Initialize editor content when modal opens
+  useEffect(() => {
+    if (isOpen && editorRef.current) {
+      // Always set content when modal opens to ensure HTML is preserved
+      const hasHtml = /<[^>]+>/g.test(selectedText);
+      if (hasHtml) {
+        editorRef.current.innerHTML = selectedText;
+      } else {
+        // If empty or just <br>, set the text
+        if (!editorRef.current.innerHTML || editorRef.current.innerHTML === '<br>' || editorRef.current.innerHTML.trim() === '') {
+          editorRef.current.innerHTML = selectedText || '';
+        }
+      }
+    }
+  }, [isOpen, selectedText]);
+
   const handleStyleChange = (property: keyof ElementStyles, value: string) => {
     setStyles((prev) => ({
       ...prev,
@@ -61,13 +96,39 @@ export default function StyleModal({
     setShowReset(); // Activate reset button when styles change
   };
 
-  const handleTextChange = (text: string) => {
-    setPreviewText(text);
-    setShowReset(); // Activate reset button when text changes
+  const handleHtmlChange = () => {
+    if (editorRef.current) {
+      const html = editorRef.current.innerHTML;
+      setPreviewHtml(html);
+      setPreviewText(editorRef.current.innerText || editorRef.current.textContent || '');
+      setShowReset();
+    }
+  };
+
+  const applyFormat = (command: string, value?: string) => {
+    if (editorRef.current) {
+      editorRef.current.focus();
+      document.execCommand(command, false, value);
+      handleHtmlChange();
+    }
+  };
+
+  const isFormatActive = (command: string): boolean => {
+    if (!editorRef.current) return false;
+    // Check if editor has focus
+    const isFocused = document.activeElement === editorRef.current;
+    if (!isFocused) return false;
+    try {
+      return document.queryCommandState(command);
+    } catch {
+      return false;
+    }
   };
 
   const handleApply = () => {
-    onUpdatePreviewText(previewText);
+    // Always get the latest HTML from the editor
+    const htmlContent = editorRef.current?.innerHTML || previewHtml;
+    onUpdatePreviewText(htmlContent);
     onApplyStyle(styles);
     setShowReset();
     onClose();
@@ -128,13 +189,81 @@ export default function StyleModal({
           </div> */}
 
           {/* Live Preview */}
-          <div className="border rounded bg-white p-4">
-            <div className="text-sm text-gray-500 mb-2"> Your Text:</div>
-            <textarea
-              value={previewText}
-              onChange={(e) => handleTextChange(e.target.value)}
-              className="w-full p-2 border rounded resize-none min-h-[350px]"
-              placeholder="Enter text..."
+          <div className="border rounded bg-white p-4 flex flex-col overflow-hidden">
+            <div className="text-sm text-gray-500 mb-2">Your Text:</div>
+            
+            {/* Rich Text Editor Toolbar */}
+            <div className="flex gap-1 mb-2 p-2 bg-gray-100 rounded border-b flex-wrap">
+              <button
+                type="button"
+                onClick={() => applyFormat('bold')}
+                className={`px-2 py-1 rounded text-sm ${
+                  isFormatActive('bold')
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-white hover:bg-gray-200'
+                }`}
+                title="Bold"
+              >
+                <strong>B</strong>
+              </button>
+              <button
+                type="button"
+                onClick={() => applyFormat('italic')}
+                className={`px-2 py-1 rounded text-sm ${
+                  isFormatActive('italic')
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-white hover:bg-gray-200'
+                }`}
+                title="Italic"
+              >
+                <em>I</em>
+              </button>
+              <button
+                type="button"
+                onClick={() => applyFormat('underline')}
+                className={`px-2 py-1 rounded text-sm ${
+                  isFormatActive('underline')
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-white hover:bg-gray-200'
+                }`}
+                title="Underline"
+              >
+                <u>U</u>
+              </button>
+              <div className="w-px bg-gray-300 mx-1"></div>
+              <button
+                type="button"
+                onClick={() => applyFormat('justifyLeft')}
+                className="px-2 py-1 rounded text-sm bg-white hover:bg-gray-200"
+                title="Align Left"
+              >
+                ⬅
+              </button>
+              <button
+                type="button"
+                onClick={() => applyFormat('justifyCenter')}
+                className="px-2 py-1 rounded text-sm bg-white hover:bg-gray-200"
+                title="Align Center"
+              >
+                ⬌
+              </button>
+              <button
+                type="button"
+                onClick={() => applyFormat('justifyRight')}
+                className="px-2 py-1 rounded text-sm bg-white hover:bg-gray-200"
+                title="Align Right"
+              >
+                ➡
+              </button>
+            </div>
+
+            {/* Rich Text Editor */}
+            <div
+              ref={editorRef}
+              contentEditable
+              onInput={handleHtmlChange}
+              onBlur={handleHtmlChange}
+              className="w-full p-2 border rounded resize-none min-h-[350px] max-h-[500px] focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto"
               style={{
                 fontWeight: styles.fontWeight,
                 fontStyle: styles.fontStyle,
@@ -143,6 +272,7 @@ export default function StyleModal({
                 fontSize: styles.fontSize,
                 textAlign: styles.textAlign,
               }}
+              suppressContentEditableWarning
             />
             {/* <div
               className="min-h-[200px] p-4 border rounded"
