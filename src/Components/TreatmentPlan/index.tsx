@@ -85,8 +85,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     if (cardData.length > 0) {
       return cardData[cardData.length - 1].state !== 'Draft';
     }
-    if(disableGenerate){
-      return false
+    if (disableGenerate) {
+      return false;
     }
     return true;
   };

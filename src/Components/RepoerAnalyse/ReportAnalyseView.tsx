@@ -673,7 +673,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setLoadingHtmlReport(false);
       });
   };
-  const [disableGenerate, setDisableGenerate] = useState(false)
+  const [disableGenerate, setDisableGenerate] = useState(false);
   useEffect(() => {
     const handler = () => {
       publish('openRefreshProgressModal', userInfoData?.name);
@@ -689,7 +689,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           if (done) {
             clearInterval(intervalId);
             publish('RefreshStepTwoSuccess', {});
-            setDisableGenerate(false)
+            setDisableGenerate(false);
           }
         });
       };
@@ -1052,10 +1052,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                 </div>
                 <TreatmentPlan
-                disableGenerate={disableGenerate}
-                setDisableGenerate={
-                  (val:boolean)=>setDisableGenerate(val)
-                }
+                  disableGenerate={disableGenerate}
+                  setDisableGenerate={(val: boolean) => setDisableGenerate(val)}
                   isShare={isShare}
                   setPrintActionPlan={(value) => {
                     setActionPlanPrint(value);
@@ -1109,10 +1107,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   }}
                   calenderDataUper={caldenderData}
                   isHolisticPlanEmpty={isHolisticPlanEmpty}
-                       disableGenerate={disableGenerate}
-                setDisableGenerate={
-                  (val:boolean)=>setDisableGenerate(val)
-                }
+                  disableGenerate={disableGenerate}
+                  setDisableGenerate={(val: boolean) => setDisableGenerate(val)}
                 />
               </div>
             )}
