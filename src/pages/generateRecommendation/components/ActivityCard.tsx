@@ -126,6 +126,28 @@ export const ActivityCard: FC<ActivityCardProps> = ({
 
     setIsDeleting(null);
   };
+  const [showAnalysisWarning, setShowAnalysisWarning] = useState(false);
+useEffect(() => {
+  const analysisText = item['Practitioner Comments']?.[0] || '';
+  const benefitsText = positive || '';
+  const risksText = negative || '';
+
+  const analysisFailed =
+    analysisText.includes('Validation failed - using fallback') ||
+    analysisText.includes('Validation failed');
+
+  const benefitsFailed =
+    benefitsText.includes('Please review this intervention manually');
+
+  const risksFailed =
+    risksText.includes('Please review this intervention manually');
+  if (analysisFailed || benefitsFailed || risksFailed) {
+    setShowAnalysisWarning(true);
+  } else {
+    setShowAnalysisWarning(false);
+  }
+}, [item]);
+
 
   return (
     <>
@@ -415,39 +437,57 @@ export const ActivityCard: FC<ActivityCardProps> = ({
           <div className="w-full bg-bg-color h-[1px] mt-1"></div>
           {item['Practitioner Comments'][0]?.length > 0 && (
             <div className="flex flex-col gap-1 pl-3 mt-2 mb-2">
+              {/* 🔥 Warning Banner */}
+              {showAnalysisWarning && (
+                <div className="flex items-center gap-1 text-xs text-[#F4A261]  my-1">
+                  <img
+                    src="/icons/danger-fill.svg"
+                    className="w-4 h-4"
+                    alt=""
+                  />
+                  Due to a temporary issue, this intervention’s content couldn’t
+                  be loaded. Please edit it manually or use “Sync with Latest
+                  Data” to refresh and try again.
+                </div>
+              )}
+
               <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
                 <img src="/icons/info-circle-blue.svg" alt="" />
                 Analysis Info
               </div>
               <div className="text-[#666666] leading-5 text-xs text-justify">
-                {item['Practitioner Comments'][0]?.substring(
-                  0,
-                  showMore ? item['Practitioner Comments'][0]?.length : 570,
-                )}{' '}
-                {item['Practitioner Comments'][0]?.length > 570 && (
+                {showAnalysisWarning ? (
+                  '-' // ⬅️ analysis failed → show only "-"
+                ) : (
                   <>
-                    {' '}
-                    <span
-                      className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-                      onClick={() => setShowMore(!showMore)}
-                    >
-                      {showMore ? 'See less' : 'See more'}
-                    </span>
+                    {item['Practitioner Comments'][0]?.substring(
+                      0,
+                      showMore ? item['Practitioner Comments'][0]?.length : 570,
+                    )}{' '}
+                    {item['Practitioner Comments'][0]?.length > 570 && (
+                      <span
+                        className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                        onClick={() => setShowMore(!showMore)}
+                      >
+                        {showMore ? 'See less' : 'See more'}
+                      </span>
+                    )}
                   </>
                 )}
               </div>
             </div>
           )}
+
           <div className="w-full bg-bg-color h-[1px] mt-1 mb-2"></div>
           <li className="mb-1.5 text-justify">
             <span className="text-Text-Secondary bullet-point">
               Key Benefits:
             </span>{' '}
-            {positive}
+          {showAnalysisWarning ? '-' : positive}
           </li>
           <li className=" text-justify">
             <span className="text-Text-Secondary bullet-point">Key Risks:</span>{' '}
-            {negative}
+         {showAnalysisWarning ? '-' : negative}
           </li>
         </ul>
       </div>

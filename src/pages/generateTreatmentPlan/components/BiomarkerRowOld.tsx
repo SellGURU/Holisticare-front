@@ -190,6 +190,29 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
     handleRemoveLookingForwards(name);
     setIsDeleting(null);
   };
+  const [showAnalysisWarning, setShowAnalysisWarning] = useState(false);
+  useEffect(() => {
+    const analysisText = value['Practitioner Comments']?.[0] || '';
+    const benefitsText = positive || '';
+    const risksText = negative || '';
+
+    const analysisFailed =
+      analysisText.includes('Validation failed - using fallback') ||
+      analysisText.includes('Validation failed');
+
+    const benefitsFailed = benefitsText.includes(
+      'Please review this intervention manually',
+    );
+
+    const risksFailed = risksText.includes(
+      'Please review this intervention manually',
+    );
+    if (analysisFailed || benefitsFailed || risksFailed) {
+      setShowAnalysisWarning(true);
+    } else {
+      setShowAnalysisWarning(false);
+    }
+  }, [value]);
   return (
     <>
       <ConflictsModal
@@ -509,23 +532,44 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                     <div className="w-full bg-bg-color h-[1px] mt-3"></div>
                     {value['Practitioner Comments'][0]?.length > 0 && (
                       <div className="flex flex-col gap-1 pl-3 mt-2 mb-2">
+                         {showAnalysisWarning && (
+                <div className="flex items-center gap-1 text-xs text-[#F4A261]  my-1">
+                  <img
+                    src="/icons/danger-fill.svg"
+                    className="w-4 h-4"
+                    alt=""
+                  />
+                  Due to a temporary issue, this intervention’s content couldn’t
+                  be loaded. Please edit it manually or use “Sync with Latest
+                  Data” to refresh and try again.
+                </div>
+              )}
                         <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal">
                           <img src="/icons/info-circle-blue.svg" alt="" />
                           Analysis Info
                         </div>
                         <div className="text-[#666666] leading-5 text-xs text-justify">
-                          {value['Practitioner Comments'][0]?.substring(
-                            0,
-                            showMore
-                              ? value['Practitioner Comments'][0]?.length
-                              : 560,
-                          )}{' '}
-                          <span
-                            className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-                            onClick={() => setShowMore(!showMore)}
-                          >
-                            {showMore ? 'See less' : 'See more'}
-                          </span>
+                          {showAnalysisWarning ? (
+                            '-' // ⬅️ analysis failed → show only "-"
+                          ) : (
+                            <>
+                              {value['Practitioner Comments'][0]?.substring(
+                                0,
+                                showMore
+                                  ? value['Practitioner Comments'][0]?.length
+                                  : 570,
+                              )}{' '}
+                              {value['Practitioner Comments'][0]?.length >
+                                570 && (
+                                <span
+                                  className="text-Primary-DeepTeal cursor-pointer underline font-medium"
+                                  onClick={() => setShowMore(!showMore)}
+                                >
+                                  {showMore ? 'See less' : 'See more'}
+                                </span>
+                              )}
+                            </>
+                          )}
                         </div>
                       </div>
                     )}
@@ -536,13 +580,13 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                         <span className="text-Text-Secondary bullet-point">
                           Key Benefits:{' '}
                         </span>
-                        {positive}
+                       {showAnalysisWarning ? '-' : positive}
                       </div>
                       <div className="text-Text-Primary mt-1.5 text-justify">
                         <span className="text-Text-Secondary bullet-point">
                           Key Risks:{' '}
                         </span>
-                        {negative}
+                       {showAnalysisWarning ? '-' : negative}
                       </div>{' '}
                     </div>
                   </>
