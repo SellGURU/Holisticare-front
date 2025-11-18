@@ -30,14 +30,14 @@ const AddClient = () => {
       .string()
       .required('This field is required.')
       .matches(
-        /^[A-Za-z\u0600-\u06FF\s]+$/,
+        /^[A-Za-z\u0600-\u06FF]+(?:-[A-Za-z\u0600-\u06FF]+)*(?:\s[A-Za-z\u0600-\u06FF]+(?:-[A-Za-z\u0600-\u06FF]+)*)*$/,
         'First name must only contain letters.',
       ),
     lastName: yup
       .string()
       .required('This field is required.')
       .matches(
-        /^[A-Za-z\u0600-\u06FF\s]+$/,
+        /^[A-Za-z\u0600-\u06FF]+(?:-[A-Za-z\u0600-\u06FF]+)*(?:\s[A-Za-z\u0600-\u06FF]+(?:-[A-Za-z\u0600-\u06FF]+)*)*$/,
         'Last name must only contain letters.',
       ),
     gender: yup
