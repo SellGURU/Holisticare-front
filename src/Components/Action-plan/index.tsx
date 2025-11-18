@@ -10,6 +10,7 @@ import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 import ProgressCalenderView from './ProgressCalendarView';
 import MainModal from '../MainModal';
+import SpinnerLoader from '../SpinnerLoader';
 
 // type CardData = {
 //   cardID: number;
@@ -25,6 +26,8 @@ interface ActionPlanProps {
   isShare?: boolean;
   isHolisticPlanEmpty: boolean;
   setCalendarPrintData: (data: any) => void;
+  disableGenerate: boolean;
+  setDisableGenerate: (val: boolean) => void;
 }
 
 export const ActionPlan: FC<ActionPlanProps> = ({
@@ -33,6 +36,8 @@ export const ActionPlan: FC<ActionPlanProps> = ({
   calenderDataUper,
   isHolisticPlanEmpty,
   setCalendarPrintData,
+  disableGenerate,
+  setDisableGenerate,
 }) => {
   const { id } = useParams<{ id: string }>();
   const [actionPlanData, setActionPlanData] = useState<any>(calenderDataUper);
@@ -170,6 +175,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                   Application.refreshData(id).then(() => {
                     setshowRefreshModal(false);
                     publish('SyncRefresh', {});
+                    setDisableGenerate(true);
                   });
                 }
               }}
@@ -257,7 +263,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       ))}
                       <div
                         onClick={() => {
-                          if (id) {
+                          if (id && !disableGenerate) {
                             Application.checkClientRefresh(id).then((res) => {
                               if (res.data.need_of_refresh == true) {
                                 setshowRefreshModal(true);
@@ -269,14 +275,18 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                         }}
                         className=" min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
                       >
-                        <div className="flex flex-col  TextStyle-Subtitle-2 items-center justify-center ">
-                          <img
-                            className="size-[50px]"
-                            src="/icons/add-blue.svg"
-                            alt=""
-                          />
-                          Add New
-                        </div>
+                        {disableGenerate ? (
+                          <SpinnerLoader color="#005F73" />
+                        ) : (
+                          <div className="flex flex-col  TextStyle-Subtitle-2 items-center justify-center ">
+                            <img
+                              className="size-[50px]"
+                              src="/icons/add-blue.svg"
+                              alt=""
+                            />
+                            Add New
+                          </div>
+                        )}
                       </div>
                     </>
                   </div>
@@ -364,7 +374,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                         <ButtonSecondary
                           ClassName="py-[6px] px-6"
                           onClick={() => {
-                            if (id) {
+                            if (id && !disableGenerate) {
                               Application.checkClientRefresh(id).then((res) => {
                                 if (res.data.need_of_refresh == true) {
                                   setshowRefreshModal(true);
@@ -377,8 +387,14 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                             }
                           }}
                         >
-                          <img src="/icons/tick.svg" alt="" />
-                          Generate New
+                          {disableGenerate ? (
+                            <SpinnerLoader />
+                          ) : (
+                            <>
+                              <img src="/icons/tick.svg" alt="" />
+                              Generate New
+                            </>
+                          )}
                         </ButtonSecondary>
                       </div>
                     </div>

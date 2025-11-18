@@ -673,38 +673,38 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setLoadingHtmlReport(false);
       });
   };
-useEffect(() => {
-  const handler = () => {
-    publish('openRefreshProgressModal', userInfoData?.name);
+  const [disableGenerate, setDisableGenerate] = useState(false)
+  useEffect(() => {
+    const handler = () => {
+      publish('openRefreshProgressModal', userInfoData?.name);
 
-    if (!id) return;
+      if (!id) return;
 
-    let intervalId: any = null;
+      let intervalId: any = null;
 
-    const checkStatus = () => {
-      Application.checkRefreshProgress(id).then((res) => {
-        const done = res.data.status === true;
+      const checkStatus = () => {
+        Application.checkRefreshProgress(id).then((res) => {
+          const done = res.data.status === true;
 
-        if (done) {
-          clearInterval(intervalId);
-          publish('RefreshStepTwoSuccess', {});
-        }
-      });
+          if (done) {
+            clearInterval(intervalId);
+            publish('RefreshStepTwoSuccess', {});
+            setDisableGenerate(false)
+          }
+        });
+      };
+
+      checkStatus();
+
+      intervalId = setInterval(checkStatus, 10000);
     };
 
-    checkStatus();
+    subscribe('SyncRefresh', handler);
 
-    intervalId = setInterval(checkStatus, 10000);
-  };
-
-  subscribe('SyncRefresh', handler);
-
-  return () => {
-    unsubscribe('SyncRefresh', handler); // ← this is how your system works
-  };
-}, [id, userInfoData?.name]);
-
-
+    return () => {
+      unsubscribe('SyncRefresh', handler); // ← this is how your system works
+    };
+  }, [id, userInfoData?.name]);
 
   return (
     <>
@@ -1052,6 +1052,10 @@ useEffect(() => {
                   {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                 </div>
                 <TreatmentPlan
+                disableGenerate={disableGenerate}
+                setDisableGenerate={
+                  (val:boolean)=>setDisableGenerate(val)
+                }
                   isShare={isShare}
                   setPrintActionPlan={(value) => {
                     setActionPlanPrint(value);
@@ -1105,6 +1109,10 @@ useEffect(() => {
                   }}
                   calenderDataUper={caldenderData}
                   isHolisticPlanEmpty={isHolisticPlanEmpty}
+                       disableGenerate={disableGenerate}
+                setDisableGenerate={
+                  (val:boolean)=>setDisableGenerate(val)
+                }
                 />
               </div>
             )}

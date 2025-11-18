@@ -11,6 +11,7 @@ import { SlideOutPanel } from '../SlideOutPanel';
 import TreatmentCard from './TreatmentCard';
 import { publish } from '../../utils/event';
 import MainModal from '../MainModal';
+import SpinnerLoader from '../SpinnerLoader';
 
 type CardData = {
   id: number;
@@ -49,6 +50,8 @@ interface TreatmentPlanProps {
   setIsHolisticPlanEmpty: (value: boolean) => void;
   setIsShareModalSuccess: (value: boolean) => void;
   setDateShare: (value: string | null) => void;
+  disableGenerate: boolean;
+  setDisableGenerate: (val: boolean) => void;
 }
 
 export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
@@ -58,6 +61,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   setIsHolisticPlanEmpty,
   setIsShareModalSuccess,
   setDateShare,
+  disableGenerate,
+  setDisableGenerate,
 }) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
@@ -79,6 +84,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const resolveCanGenerateNew = () => {
     if (cardData.length > 0) {
       return cardData[cardData.length - 1].state !== 'Draft';
+    }
+    if(disableGenerate){
+      return false
     }
     return true;
   };
@@ -226,10 +234,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             >
               Cancel
             </div>
-            <div onClick={()=>{
-              setshowRefreshModal(false)
-              publish("SyncRefresh",{})
-            }} className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm">
+            <div
+              onClick={() => {
+                setshowRefreshModal(false);
+                publish('SyncRefresh', {});
+                setDisableGenerate(true);
+              }}
+              className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm"
+            >
               Sync Data
             </div>
           </div>
@@ -373,9 +385,18 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <ButtonSecondary
                   ClassName="w-full md:w-fit"
                   onClick={() => {
-                    setTreatmentId('');
+                    if (id) {
+                      Application.checkClientRefresh(id).then((res) => {
+                        if (res.data.need_of_refresh == true) {
+                          setshowRefreshModal(true);
+                        } else {
+                          setTreatmentId('');
+                          navigate(`/report/Generate-Holistic-Plan/${id}`);
+                        }
+                      });
+                    }
+
                     // navigate(`/report/Generate-Recommendation/${id}`);
-                    navigate(`/report/Generate-Holistic-Plan/${id}`);
                   }}
                 >
                   <img src="/icons/tick-square.svg" alt="" /> Generate New
@@ -541,8 +562,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                           if (res.data.need_of_refresh == true) {
                             setshowRefreshModal(true);
                           } else {
-                            //  setTreatmentId('');
-                            //  navigate(`/report/Generate-Holistic-Plan/${id}`);
+                            setTreatmentId('');
+                            navigate(`/report/Generate-Holistic-Plan/${id}`);
                           }
                         });
                       }
@@ -553,10 +574,21 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   className={` 
                     relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
-                  <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
-                  <div className="text-sm font-medium text-Primary-DeepTeal">
-                    Generate New
-                  </div>
+                  {disableGenerate ? (
+                    <SpinnerLoader color="#005F73" />
+                  ) : (
+                    <>
+                      {' '}
+                      <img
+                        className="w-6 h-6"
+                        src="/icons/add-blue.svg"
+                        alt=""
+                      />
+                      <div className="text-sm font-medium text-Primary-DeepTeal">
+                        Generate New
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
               {/* <div className="w-full flex justify-center md:justify-end gap-2 my-3">

@@ -1106,8 +1106,8 @@ class Application extends Api {
   static checkClientRefresh = (member_id: string) => {
     return this.post(`/patients/check_need_of_refresh`, {
       member_id: member_id,
-    });}
-
+    });
+  };
 }
 
 export default Application;

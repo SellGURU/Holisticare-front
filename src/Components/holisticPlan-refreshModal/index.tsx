@@ -38,7 +38,9 @@ export const RefreshProgressModal = () => {
         `}
       >
         <div className="flex items-center justify-between text-xs font-medium text-Primary-DeepTeal">
-          {IsinProgress ? `Sync in Progress for ${name}` : ' Data synced successfully!'}
+          {IsinProgress
+            ? `Sync in Progress for ${name}`
+            : ' Data synced successfully!'}
           <img
             onClick={() => setshowProgressModal(false)}
             src="/icons/close.svg"
