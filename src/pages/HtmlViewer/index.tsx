@@ -40,7 +40,7 @@ const HtmlViewer = () => {
     try {
       await Application.updateHtmlReport({ member_id: id, html_report: html });
       setHtml(html);
-      toast.success('HTML report updated successfully');
+      toast.success('Your changes have been saved successfully.');
     } catch (err) {
       console.error('Error updating HTML report:', err);
       throw err; // Re-throw to allow error handling in parent
