@@ -148,7 +148,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div className="w-8 h-8 bg-backgroundColor-Card border border-Gray-50 flex justify-center items-center rounded-[8px] mr-2">
                   <img className="w-4" src={resolvePillarIcon()} alt="" />
                 </div>
-                {value.Title}
+                {value.Title} 
                 {value?.label && (
                   <div
                     className={`select-none rounded-full px-2 flex items-center gap-1 text-[8px] text-Text-Primary ml-3`}
@@ -161,6 +161,19 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     {value?.label}
                   </div>
                 )}
+                  {
+                  value.holisticare_recommendation && (
+                     <div
+                    className={`select-none ml-2 rounded-full px-2  text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
+                    style={{ backgroundColor: "#E2F1F8" }}
+                  >
+                    <div
+                      className={`size-[8px] select-none rounded-full`}
+                      style={{ backgroundColor: "#005F73" }}
+                    ></div>
+                  Holistic Plan Recommended
+                  </div>
+                  )}
                 {value.flag && value.flag.conflicts.length > 0 && (
                   <button
                     className="flex items-center gap-1 cursor-pointer ml-7"

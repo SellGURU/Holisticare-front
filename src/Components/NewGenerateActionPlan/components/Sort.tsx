@@ -4,19 +4,21 @@ interface SortProps {
   options: {
     label: string;
     value: string;
-    color: string;
+    color?: string;
   }[];
   handleChangeSort: (value: string) => void;
   sortBy: string;
 }
 
 const Sort = ({ options, handleChangeSort, sortBy }: SortProps) => {
+  console.log(options);
+  
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="w-full flex items-center justify-between mt-2">
       <div className="flex items-center gap-1">
         <img src="/icons/sort.svg" alt="" className="w-4 h-4" />
-        <div className="text-Primary-DeepTeal text-xs">Sort by:</div>
+        <div className="text-Primary-DeepTeal text-xs">Filter by:</div>
       </div>
       <div className="relative inline-block w-[227px] font-normal">
         <button
@@ -24,11 +26,16 @@ const Sort = ({ options, handleChangeSort, sortBy }: SortProps) => {
           className={`flex items-center justify-between w-full h-[28px] bg-backgroundColor-Card border px-4 pr-8 ${isOpen ? 'rounded-t-2xl' : 'rounded-2xl'} leading-tight focus:outline-none text-xs text-Text-Primary`}
         >
           <span className="flex items-center gap-2">
-            <span
+            {
+               options.find((opt) => opt.value === sortBy)?.color && (
+                 <span
               className={`w-[10px] h-[10px] rounded-full ${
                 options.find((opt) => opt.value === sortBy)?.color || ''
               }`}
             />
+               )
+            }
+           
             {options.find((opt) => opt.value === sortBy)?.label}
           </span>
         </button>
@@ -51,9 +58,14 @@ const Sort = ({ options, handleChangeSort, sortBy }: SortProps) => {
                 }}
                 className={`flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-gray-100 text-xs text-Text-Primary ${option.value === options[options.length - 1].value ? 'rounded-b-2xl' : ''}`}
               >
-                <span
-                  className={`w-[10px] h-[10px] rounded-full ${option.color}`}
+                {
+                  option.color  && (
+ <span
+                  className={` w-[10px] h-[10px] rounded-full ${option.color}`}
                 />
+                  )
+                }
+               
                 {option.label}
               </li>
             ))}
