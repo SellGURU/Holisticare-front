@@ -652,7 +652,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     });
   }, []);
 
-  const [loadingHtmlReport,] = useState(false);
+  const [loadingHtmlReport] = useState(false);
 
   const handleGetHtmlReport = (url?: string) => {
     // if(loadingHtmlReport) return;
