@@ -264,7 +264,7 @@ export default function HtmlEditor({
         setIsStyleModalOpen(false);
 
         // Navigate back after successful save
-        navigate(-1);
+        // navigate(-1);
       } catch (error) {
         console.error('Error saving HTML:', error);
         // Don't navigate if save failed
