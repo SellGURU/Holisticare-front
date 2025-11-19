@@ -645,35 +645,35 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
   };
 
-  const [loadingHtmlReport, setLoadingHtmlReport] = useState(false);
+  const [loadingHtmlReport] = useState(false);
 
   const handleGetHtmlReport = () => {
     // if(loadingHtmlReport) return;
     if (!isHaveReport) return;
 
-    setLoadingHtmlReport(true);
+    // setLoadingHtmlReport(true);
+    navigate(`/html-previewer/${resolvedMemberID}`);
+    // Application.getHtmlReport(resolvedMemberID?.toString() || '')
+    //   .then((res) => {
+    //     try {
+    //       const blobUrl = res.data;
 
-    Application.getHtmlReport(resolvedMemberID?.toString() || '')
-      .then((res) => {
-        try {
-          const blobUrl = res.data;
-
-          const link = document.createElement('a');
-          link.href = blobUrl;
-          link.download = 'HolisticPlanReport';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } catch (error: any) {
-          console.error('Error downloading file:', error);
-        }
-      })
-      .catch((err) => {
-        console.error('Error loading HTML report:', err);
-      })
-      .finally(() => {
-        setLoadingHtmlReport(false);
-      });
+    //       const link = document.createElement('a');
+    //       link.href = blobUrl;
+    //       link.download = 'HolisticPlanReport';
+    //       document.body.appendChild(link);
+    //       link.click();
+    //       document.body.removeChild(link);
+    //     } catch (error: any) {
+    //       console.error('Error downloading file:', error);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.error('Error loading HTML report:', err);
+    //   })
+    //   .finally(() => {
+    //     setLoadingHtmlReport(false);
+    //   });
   };
 
   return (
