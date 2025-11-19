@@ -373,7 +373,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
                           ? '/icons/diet.svg'
                           : category.name === 'Lifestyle'
                             ? '/icons/LifeStyle2.svg'
-                            : category.name == 'Supplement' ? '/icons/Supplement.svg' : '/icons/others.svg'
+                            : category.name == 'Supplement'
+                              ? '/icons/Supplement.svg'
+                              : '/icons/others.svg'
                     }
                     alt=""
                   />
