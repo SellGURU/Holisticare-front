@@ -340,7 +340,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <ButtonSecondary
                   ClassName="w-full md:w-fit"
                   onClick={() => {
-                    if (id) {
+                    if (id && !disableGenerate) {
                       Application.checkClientRefresh(id).then((res) => {
                         if (res.data.need_of_refresh == true) {
                           publish("openRefreshModal",{})
@@ -512,7 +512,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <div
                   onClick={() => {
                     if (resolveCanGenerateNew()) {
-                      if (id) {
+                      if (id && !disableGenerate) {
                         Application.checkClientRefresh(id).then((res) => {
                           if (res.data.need_of_refresh == true) {
                            publish("openRefreshModal",{})
