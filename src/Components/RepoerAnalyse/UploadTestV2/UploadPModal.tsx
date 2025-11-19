@@ -108,7 +108,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   // Total combined
   const activeErrorCount =
     activeMenu === 'Upload File' ? uploadErrorCount : addBiomarkerErrorCount;
-
+useEffect(()=>{
+  setShowOnlyErrors(false)
+},[activeMenu])
   return (
     <>
       <div
