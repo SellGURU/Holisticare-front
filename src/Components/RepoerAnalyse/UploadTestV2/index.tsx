@@ -467,7 +467,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     if (showReport) {
       return true;
     }
-    if(has_wearable_data) {
+    if (has_wearable_data) {
       return true;
     }
     if (uploadedFile != null) {
