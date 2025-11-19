@@ -12,7 +12,7 @@ const HtmlViewer = () => {
   const [html, setHtml] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  
+
   const handleGetHtmlReport = (id: string) => {
     setLoading(true);
     Application.getHtmlReport(id)
