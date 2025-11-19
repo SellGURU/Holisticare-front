@@ -6,8 +6,10 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Select from '../../Select';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
-import { Tooltip } from 'react-tooltip';
+// import { Tooltip } from 'react-tooltip';
 import SearchSelect from '../../searchableSelect';
+import Toggle from '../Boxs/Toggle';
+import EllipsedTooltip from '../../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip';
 
 // Define the props for the AddBiomarker component, now using 'biomarker' instead of 'name'
 interface AddBiomarkerProps {
@@ -24,6 +26,8 @@ interface AddBiomarkerProps {
   dateOfTest: Date | null;
   setDateOfTest: (date: Date | null) => void;
   rowErrors?: any;
+  showOnlyErrors: boolean;
+  setShowOnlyErrors: (showOnlyErrors: boolean) => void;
 }
 
 export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
@@ -36,6 +40,8 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   deleteIndex,
   dateOfTest,
   setDateOfTest,
+  showOnlyErrors,
+  setShowOnlyErrors,
 }) => {
   // Local form states, now using 'biomarkerName' to avoid conflict
   const [biomarkerName, setBiomarkerName] = useState('');
@@ -129,16 +135,23 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             ({biomarkers.length})
           </span>
         </div>
-
-        <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple">
-          Date of Test:
-          <SimpleDatePicker
-            isUploadFile
-            date={dateOfTest}
-            setDate={setDateOfTest}
-            placeholder="Select Date"
-            ClassName="ml-2 border border-Gray-50 !rounded-2xl px-2 py-1 text-Text-Primary"
-          />
+        <div className='flex gap-7'>
+          <div className="flex items-center gap-3">
+            <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
+            <div className="text-[10px] md:text-xs font-normal text-Text-Primary">
+              Show Only Errors
+            </div>
+          </div>
+          <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple">
+            Date of Test:
+            <SimpleDatePicker
+              isUploadFile
+              date={dateOfTest}
+              setDate={setDateOfTest}
+              placeholder="Select Date"
+              ClassName="ml-2 border border-Gray-50 !rounded-2xl px-2 py-1 text-Text-Primary"
+            />
+          </div>
         </div>
       </div>
 
@@ -270,9 +283,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                   <div
                     ref={(el) => (rowRefs.current[index] = el)}
                     key={index}
-                    className={`grid py-2 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
-                    }`}
+                    className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
                     style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
                   >
                     {/* Biomarker Name */}
@@ -280,7 +291,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                       <TooltipTextAuto maxWidth="250px">
                         {biomarker.biomarker}
                       </TooltipTextAuto>
-                      {errorForRow && (
+                      {/* {errorForRow && (
                         <>
                           <img
                             data-tooltip-id={`tooltip-${index}`}
@@ -296,12 +307,13 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                             {errorForRow}
                           </Tooltip>
                         </>
-                      )}
+                      )} */}
                     </div>
 
                     {/* Value */}
                     <div className="text-center text-[#888888]">
-                      {biomarker.value}
+                      <EllipsedTooltip text=   {biomarker.value}/>
+                   
                     </div>
 
                     {/* Unit */}
@@ -340,6 +352,11 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                         </div>
                       )}
                     </div>
+                    {errorForRow && (
+                      <div className="text-Red font-normal text-[10px] text-nowrap mt-1">
+                        {errorForRow}
+                      </div>
+                    )}
                   </div>
                 );
               })}

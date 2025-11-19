@@ -139,6 +139,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setRowErrors({});
     setAddedRowErrors({});
     publish('RESET_MAPPING_ROWS', {});
+   setModifiedDateOfTest(new Date())
     forceReRender((x) => x + 1);
   };
   useEffect(() => {
@@ -490,6 +491,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
     return false;
   };
+  
   return (
     <>
       {deleteLoading && (

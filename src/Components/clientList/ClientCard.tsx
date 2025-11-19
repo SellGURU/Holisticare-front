@@ -11,6 +11,7 @@ import { Tooltip } from 'react-tooltip';
 import MainModal from '../MainModal/index.tsx';
 import Checkbox from '../checkbox/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';
+import EllipsedTooltip from '../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip.tsx';
 interface ClientCardProps {
   client: any;
   indexItem: number;
@@ -775,11 +776,12 @@ const ClientCard: FC<ClientCardProps> = ({
             className="pl-2 flex flex-col mt-4 cursor-default"
           >
             <div
-              data-tooltip-id={`${client.member_id}-${client.name}`}
+              // data-tooltip-id={`${client.member_id}-${client.name}`}
               className="text-Text-Primary truncate max-w-[90px] sm:max-w-[100px] md:max-w-[150px] text-xs sm:text-[14px] font-medium text-nowrap mb-2 cursor-default"
             >
-              {client.name}
-              {client.name.length > 15 && (
+              <EllipsedTooltip text={client.name}/>
+              {/* {client.name} */}
+              {/* {client.name.length > 15 && (
                 <Tooltip
                   place="top"
                   id={`${client.member_id}-${client.name}`}
@@ -787,7 +789,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 >
                   {client.name}
                 </Tooltip>
-              )}
+              )} */}
             </div>
             {/* <div className="text-Text-Secondary text-[10px] sm:text-[12px]">
               {client.age} years{' '}
