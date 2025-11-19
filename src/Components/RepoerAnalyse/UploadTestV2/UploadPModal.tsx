@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
-import Toggle from '../../Toggle';
-import FileUploaderSection from './FileUploaderSection';
-import BiomarkersSection from './BiomarkersSection';
-import { AddBiomarker } from './AddBiomarker';
 import SpinnerLoader from '../../SpinnerLoader';
+import Toggle from '../../Toggle';
+import { AddBiomarker } from './AddBiomarker';
+import BiomarkersSection from './BiomarkersSection';
+import FileUploaderSection from './FileUploaderSection';
 
 interface UploadPModalProps {
   OnBack: () => void;
@@ -69,8 +69,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   setrowErrors,
 }) => {
   const [activeMenu, setactiveMenu] = useState('Upload File');
-  console.log(rowErrors);
-  console.log(AddedRowErrors);
+  const [showOnlyErrors, setShowOnlyErrors] = useState(false);
   const [isScaling, setIsScaling] = useState(false);
   useEffect(() => {
     const rowErrorCount = rowErrors ? Object.keys(rowErrors).length : 0;
@@ -156,10 +155,17 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               value={['Upload File', 'Add Biomarker']}
             ></Toggle>
             {showReview ? (
-              <div className="bg-[#FFD8E4] absolute right-0 bottom-0 text-[10px] text-Text-Primary w-[328px] rounded-[20px] h-[36px] py-2 px-4 flex justify-between items-center gap-2">
+              <div className="bg-[#FFD8E4] absolute right-0 bottom-0 text-[10px] text-Text-Primary w-[291px] rounded-[20px] h-[36px] py-2 px-4 flex justify-between items-center gap-2">
                 <div className="flex items-cente gap-1">
                   <img src="/icons/info-circle-red-2.svg" alt="" />
-                  Review required: some biomarkers contain errors.
+                  {rowErrors ? Object.keys(rowErrors).length : 0} errors found
+                  in biomarkers.
+                  <div
+                    className="underline cursor-pointer text-[10px] text-Text-Primary"
+                    onClick={() => setShowOnlyErrors(true)}
+                  >
+                    View Errors
+                  </div>
                 </div>
 
                 <img
@@ -197,6 +203,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               uploadedFile={uploadedFile}
               biomarkers={extractedBiomarkers}
               onChange={(updated) => setExtractedBiomarkers(updated)}
+              showOnlyErrors={showOnlyErrors}
+              setShowOnlyErrors={setShowOnlyErrors}
             />
           </div>
           <div className={activeMenu !== 'Add Biomarker' ? 'hidden' : ''}>
