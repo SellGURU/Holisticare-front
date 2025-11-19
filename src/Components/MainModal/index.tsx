@@ -1,5 +1,4 @@
 import { ReactNode, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 
 interface MainModalProps {
@@ -7,38 +6,36 @@ interface MainModalProps {
   onClose: () => void;
   children: ReactNode;
 }
-
 const MainModal: React.FC<MainModalProps> = ({ isOpen, onClose, children }) => {
-  const modalRef = useRef(null);
-
+  // useEffect(() => {
+  //     if (isOpen) {
+  //     document.body.style.overflow = "hidden";
+  //     } else {
+  //     document.body.style.overflow = "auto";
+  //     }
+  //     return () => {document.body.style.overflow = "auto"};
+  // }, [isOpen]);
+  const modalRefrence = useRef(null);
   useModalAutoClose({
-    refrence: modalRef,
+    refrence: modalRefrence,
     close() {
       onClose();
     },
   });
-
   if (!isOpen) return null;
 
-  const modalRoot = document.getElementById('modal-root');
-  if (!modalRoot) return null;
-
-  return createPortal(
+  return (
     <>
-      {/* Backdrop */}
-      <div className="fixed inset-0 bg-black opacity-30 z-[9998]" />
-
-      {/* Modal wrapper */}
-      <div className="fixed inset-0 flex items-center justify-center z-[9999]">
+      <div className="w-full h-screen flex justify-center fixed z-[120] top-0 left-0 items-center">
         <div
-          ref={modalRef}
-          className="bg-[#FFFFFF66] min-w-[309px] min-h-[200px] rounded-[20px] p-2 shadow-800"
+          ref={modalRefrence}
+          className="bg-[#FFFFFF66] min-w-[309px] min-h-[200px] rounded-[20px]  p-2 shadow-800"
         >
           {children}
         </div>
       </div>
-    </>,
-    modalRoot,
+      <div className="w-full h-full min-h-screen fixed top-0 left-0 bg-black opacity-30 z-[100]"></div>
+    </>
   );
 };
 

@@ -10,7 +10,6 @@ import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import TreatmentCard from './TreatmentCard';
 import { publish } from '../../utils/event';
-import MainModal from '../MainModal';
 import SpinnerLoader from '../SpinnerLoader';
 
 type CardData = {
@@ -51,7 +50,7 @@ interface TreatmentPlanProps {
   setIsShareModalSuccess: (value: boolean) => void;
   setDateShare: (value: string | null) => void;
   disableGenerate: boolean;
-  setDisableGenerate: (val: boolean) => void;
+ 
 }
 
 export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
@@ -62,7 +61,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   setIsShareModalSuccess,
   setDateShare,
   disableGenerate,
-  setDisableGenerate,
+
 }) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
@@ -80,7 +79,6 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         return '#000000'; // Fallback color
     }
   };
-  const [showRefreshModal, setshowRefreshModal] = useState(false);
   const resolveCanGenerateNew = () => {
     if (cardData.length > 0) {
       return cardData[cardData.length - 1].state !== 'Draft';
@@ -203,54 +201,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   return (
     <>
       {/* {showRefreshModal && ( */}
-      <MainModal
-        isOpen={showRefreshModal}
-        onClose={() => {
-          setshowRefreshModal(false);
-        }}
-      >
-        <div className="w-[500px] h-[208px] rounded-2xl relative py-6 px-8 bg-white shadow-800 text-Text-Primary">
-          <div className="w-full flex items-center gap-2 border-b border-Gray-50 pb-2 font-medium text-sm">
-            <img src="/icons/danger.svg" alt="" />
-            Data needs to be synced before generating a new plan
-          </div>
-
-          <div
-            style={{
-              textAlignLast: 'center',
-            }}
-            className="font-medium mt-4 text-xs flex w-full justify-center leading-6 "
-          >
-            Some of the client’s data has changed since the last update. <br />{' '}
-            Please sync the latest data to ensure the plan is generated
-            accurately.
-          </div>
-          <div className="absolute bottom-6 right-8 flex gap-4">
-            <div
-              className="text-[#909090] font-medium text-sm cursor-pointer"
-              onClick={() => {
-                setshowRefreshModal(false);
-              }}
-            >
-              Cancel
-            </div>
-            <div
-              onClick={() => {
-                if (id) {
-                  Application.refreshData(id,false).then(() => {
-                    setshowRefreshModal(false);
-                    publish('SyncRefresh', {});
-                    setDisableGenerate(true);
-                  });
-                }
-              }}
-              className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm"
-            >
-              Sync Data
-            </div>
-          </div>
-        </div>
-      </MainModal>
+    
       {/* )} */}
       {isShare ? (
         <>
@@ -392,7 +343,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                     if (id) {
                       Application.checkClientRefresh(id).then((res) => {
                         if (res.data.need_of_refresh == true) {
-                          setshowRefreshModal(true);
+                          publish("openRefreshModal",{})
                         } else {
                           setTreatmentId('');
                           navigate(`/report/Generate-Holistic-Plan/${id}`);
@@ -564,7 +515,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       if (id) {
                         Application.checkClientRefresh(id).then((res) => {
                           if (res.data.need_of_refresh == true) {
-                            setshowRefreshModal(true);
+                           publish("openRefreshModal",{})
                           } else {
                             setTreatmentId('');
                             navigate(`/report/Generate-Holistic-Plan/${id}`);

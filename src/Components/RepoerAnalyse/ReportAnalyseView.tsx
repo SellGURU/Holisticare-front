@@ -705,6 +705,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       unsubscribe('SyncRefresh', handler); // ← this is how your system works
     };
   }, [id, userInfoData?.name]);
+  useEffect(()=>{
+    subscribe('disableGenerate',()=>{
+      setDisableGenerate(true)
+    })
+  })
 
   return (
     <>
@@ -1053,7 +1058,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 </div>
                 <TreatmentPlan
                   disableGenerate={disableGenerate}
-                  setDisableGenerate={(val: boolean) => setDisableGenerate(val)}
                   isShare={isShare}
                   setPrintActionPlan={(value) => {
                     setActionPlanPrint(value);
@@ -1108,7 +1112,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   calenderDataUper={caldenderData}
                   isHolisticPlanEmpty={isHolisticPlanEmpty}
                   disableGenerate={disableGenerate}
-                  setDisableGenerate={(val: boolean) => setDisableGenerate(val)}
                 />
               </div>
             )}

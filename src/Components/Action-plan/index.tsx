@@ -9,7 +9,6 @@ import { publish } from '../../utils/event';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 import ProgressCalenderView from './ProgressCalendarView';
-import MainModal from '../MainModal';
 import SpinnerLoader from '../SpinnerLoader';
 
 // type CardData = {
@@ -27,7 +26,6 @@ interface ActionPlanProps {
   isHolisticPlanEmpty: boolean;
   setCalendarPrintData: (data: any) => void;
   disableGenerate: boolean;
-  setDisableGenerate: (val: boolean) => void;
 }
 
 export const ActionPlan: FC<ActionPlanProps> = ({
@@ -37,7 +35,6 @@ export const ActionPlan: FC<ActionPlanProps> = ({
   isHolisticPlanEmpty,
   setCalendarPrintData,
   disableGenerate,
-  setDisableGenerate,
 }) => {
   const { id } = useParams<{ id: string }>();
   const [actionPlanData, setActionPlanData] = useState<any>(calenderDataUper);
@@ -134,58 +131,10 @@ export const ActionPlan: FC<ActionPlanProps> = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  const [showRefreshModal, setshowRefreshModal] = useState(false);
 
   return (
     <>
-      <MainModal
-        isOpen={showRefreshModal}
-        onClose={() => {
-          setshowRefreshModal(false);
-        }}
-      >
-        <div className="w-[500px] h-[208px] rounded-2xl relative py-6 px-8 bg-white shadow-800 text-Text-Primary">
-          <div className="w-full flex items-center gap-2 border-b border-Gray-50 pb-2 font-medium text-sm">
-            <img src="/icons/danger.svg" alt="" />
-            Data needs to be synced before generating a new plan
-          </div>
 
-          <div
-            style={{
-              textAlignLast: 'center',
-            }}
-            className="font-medium mt-4 text-xs flex w-full justify-center leading-6 "
-          >
-            Some of the client’s data has changed since the last update. <br />{' '}
-            Please sync the latest data to ensure the plan is generated
-            accurately.
-          </div>
-          <div className="absolute bottom-6 right-8 flex gap-4">
-            <div
-              className="text-[#909090] font-medium text-sm cursor-pointer"
-              onClick={() => {
-                setshowRefreshModal(false);
-              }}
-            >
-              Cancel
-            </div>
-            <div
-              onClick={() => {
-                if (id) {
-                  Application.refreshData(id,false).then(() => {
-                    setshowRefreshModal(false);
-                    publish('SyncRefresh', {});
-                    setDisableGenerate(true);
-                  });
-                }
-              }}
-              className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm"
-            >
-              Sync Data
-            </div>
-          </div>
-        </div>
-      </MainModal>
       <div className="flex flex-col gap-3 w-full relative">
         <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
           {isShare ? (
@@ -266,7 +215,8 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                           if (id && !disableGenerate) {
                             Application.checkClientRefresh(id).then((res) => {
                               if (res.data.need_of_refresh == true) {
-                                setshowRefreshModal(true);
+                                                         publish("openRefreshModal",{})
+
                               } else {
                                 navigate('/report/Generate-Action-Plan/' + id);
                               }
@@ -377,7 +327,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                             if (id && !disableGenerate) {
                               Application.checkClientRefresh(id).then((res) => {
                                 if (res.data.need_of_refresh == true) {
-                                  setshowRefreshModal(true);
+                          publish("openRefreshModal",{})
                                 } else {
                                   navigate(
                                     '/report/Generate-Action-Plan/' + id,
