@@ -58,6 +58,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [caldenderData, setCalenderData] = useState<any>(null);
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
+  const [has_wearable_data, setHasWearableData] = useState(false);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [questionnaires, setQuestionnaires] = useState([]);
   // const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -104,6 +105,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
+        setHasWearableData(res.data.has_wearable_data);
         setShowUploadTest(!res.data.first_time_view);
         setQuestionnaires(res.data.questionnaires);
         setTimeout(() => {
@@ -1124,6 +1126,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </>
                 ) : (
                   <UploadTestV2
+                    has_wearable_data={has_wearable_data}
                     isLoadingQuestionnaires={isLoadingQuestionnaires}
                     questionnaires={questionnaires}
                     onDiscard={() => {
