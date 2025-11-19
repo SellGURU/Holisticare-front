@@ -158,7 +158,7 @@ const AddClient = () => {
           setApiError('An account with this email address already exists.');
         }
         if (errorDetail?.toLowerCase()?.includes('phone')) {
-          setPhoneApiError('Please provide a valid phone number.');
+          setPhoneApiError(errorDetail);
         }
         if (errorDetail?.toLowerCase()?.includes('timezone')) {
           setTimeZoneApiError('Please select a valid time zone.');
@@ -470,63 +470,67 @@ const AddClient = () => {
                     placeholder="Enter an email (e.g. test@example.com)"
                   />
                   <div>
-                    <div className="w-full mb-3 mt-2 flex flex-col md:flex-row justify-between items-center gap-2 overflow-visible">
-                      <div className="w-full h-[70px]">
-                        <label className="text-[12px] text-Text-Primary font-medium">
-                          Phone Number
-                        </label>
-                        <div className="mt-1">
-                          <PhoneInput
-                            country={'us'}
-                            value={formik.values.phone}
-                            onChange={(value) => {
-                              formik.setFieldValue('phone', value);
-                              setPhoneApiError('');
-                            }}
-                            placeholder="234 567 890"
-                            containerClass="custom-phone-input"
-                            buttonClass="custom-phone-button"
-                            dropdownClass="custom-phone-dropdown"
-                            inputProps={{
-                              name: 'phone',
-                              required: false,
-                              autoFocus: false,
-                            }}
-                          />
-                          {(showValidation || phoneApiError) &&
-                            phoneApiError && (
-                              <div className="text-Red  text-[10px] mt-[2px]">
-                                {phoneApiError}
-                              </div>
-                            )}
+                    <div className=" mt-2">
+                      <div className="w-full  flex flex-col md:flex-row justify-between items-center gap-2 overflow-visible">
+                        <div className="w-full h-[70px]">
+                          <label className="text-[12px] text-Text-Primary font-medium">
+                            Phone Number
+                          </label>
+                          <div className="mt-1">
+                            <PhoneInput
+                              country={'us'}
+                              value={formik.values.phone}
+                              onChange={(value) => {
+                                formik.setFieldValue('phone', value);
+                                setPhoneApiError('');
+                              }}
+                              placeholder="234 567 890"
+                              containerClass="custom-phone-input"
+                              buttonClass="custom-phone-button"
+                              dropdownClass="custom-phone-dropdown"
+                              inputProps={{
+                                name: 'phone',
+                                required: false,
+                                autoFocus: false,
+                              }}
+                            />
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Time Zone */}
-                      <div className="w-full h-[70px]">
-                        <label className="text-[12px] text-Text-Primary font-medium">
-                          Time Zone
-                        </label>
-                        <div className="mt-[3px]">
-                          <CustomTimezoneField
-                            value={formik.values.timeZone}
-                            onChange={(tz) => {
-                              formik.setFieldTouched('timeZone', true);
-                              formik.setFieldValue(
-                                'timeZone',
-                                tz?.value || tz || '',
-                              );
-                              setTimeZoneApiError('');
-                            }}
-                          />
-                          <div className=" text-[10px] text-Red ml-1">
-                            {(formik.touched.timeZone || showValidation) &&
-                            (formik.errors.timeZone || timeZoneApiError)
-                              ? formik.errors.timeZone || timeZoneApiError
-                              : ''}
+                        {/* Time Zone */}
+                        <div className="w-full h-[70px]">
+                          <label className="text-[12px] text-Text-Primary font-medium">
+                            Time Zone
+                          </label>
+                          <div className="mt-[3px]">
+                            <CustomTimezoneField
+                              value={formik.values.timeZone}
+                              onChange={(tz) => {
+                                formik.setFieldTouched('timeZone', true);
+                                formik.setFieldValue(
+                                  'timeZone',
+                                  tz?.value || tz || '',
+                                );
+                                setTimeZoneApiError('');
+                              }}
+                            />
                           </div>
                         </div>
                       </div>
+                      {(showValidation || phoneApiError) && phoneApiError && (
+                        <div className="text-Red overflow-visible text-nowrap  text-[10px] mt-[-10px]">
+                          {phoneApiError}
+                        </div>
+                      )}
+
+                      {(formik.touched.timeZone || showValidation) &&
+                      (formik.errors.timeZone || timeZoneApiError) ? (
+                        <div className=" text-[10px] text-Red ml-1 mt-[-10px]">
+                          {formik.errors.timeZone || timeZoneApiError}
+                        </div>
+                      ) : (
+                        ''
+                      )}
                     </div>
                     {/* Address */}
                     <div className="flex flex-col gap-1 text-[12px] text-Text-Primary font-medium mb-3">
