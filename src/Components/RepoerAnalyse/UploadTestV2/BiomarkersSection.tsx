@@ -446,7 +446,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 ref={tableRef}
                 className="overflow-y-auto  w-[100%]"
                 style={{
-                  minHeight:isScaling
+                  minHeight: isScaling
                     ? window.innerHeight - 330 + 'px'
                     : window.innerHeight - 500 + 'px',
                   maxHeight: isScaling
