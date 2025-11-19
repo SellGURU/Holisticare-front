@@ -6,30 +6,29 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'autoUpdate',    // important
+      injectRegister: 'auto',       // به صورت خودکار register را inject می‌کند
       manifest: {
         name: 'Holisticare',
         short_name: 'Holisticare',
         description: '',
         theme_color: '#ffffff',
         icons: [
-          {
-            src: '/icons/icon-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: '/icons/icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
+          { src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
         ],
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 5000000, // 5 MiB
-        skipWaiting: true, // Forces the new service worker to activate immediately
-        clientsClaim: true, // Takes control of clients without requiring a reload
+        cleanupOutdatedCaches: true, // پاکسازی کش‌های قدیمی
+        maximumFileSizeToCacheInBytes: 5000000,
+        // این‌ها برای اطمینان از فعال شدن سریع نسخه جدید
+        skipWaiting: true,
+        clientsClaim: true,
       },
+      devOptions: {
+        enabled: false, // برای تولید true نکن؛ فقط در حالت develop اگر لازم است true کن
+      }
     }),
   ],
 });
+
