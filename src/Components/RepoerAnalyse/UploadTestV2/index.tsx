@@ -28,6 +28,7 @@ interface UploadTestProps {
   showReport: boolean;
   onDiscard: () => void;
   questionnaires: any[];
+  has_wearable_data: boolean;
   isLoadingQuestionnaires: boolean;
 }
 
@@ -38,6 +39,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   showReport,
   onDiscard,
   questionnaires,
+  has_wearable_data,
   isLoadingQuestionnaires,
 }) => {
   const fileInputRef = useRef<any>(null);
@@ -479,6 +481,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const resolveActiveButtonReportAnalyse = () => {
     if (showReport) {
+      return true;
+    }
+    if (has_wearable_data) {
       return true;
     }
     if (uploadedFile != null) {
