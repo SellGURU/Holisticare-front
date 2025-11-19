@@ -1136,6 +1136,13 @@ class Application extends Api {
   static initialSaveActionPlan = (data: any) => {
     return this.post('/action_plan/draft/initial_save', data);
   };
+  static checkDeleteQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: number;
+  }) => {
+    return this.post(`/questionary_tracking/check_delete_questionary`, data);
+  };
 }
 
 export default Application;

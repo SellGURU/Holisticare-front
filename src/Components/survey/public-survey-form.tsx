@@ -1,6 +1,18 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  Activity,
+  AlertCircle,
+  ArrowRight,
+  Check,
+  CheckCircle2,
+  Star,
+  UploadCloud,
+  X,
+} from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import Application from '../../api/app';
 import { Button } from '../ui/button';
 import {
   Card,
@@ -10,24 +22,12 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import { Textarea } from '../ui/textarea';
 import { Checkbox } from '../ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Label } from '../ui/label';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Slider } from '../ui/slider';
-import {
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-  Star,
-  Activity,
-  UploadCloud,
-  X,
-  Check,
-} from 'lucide-react';
+import { Textarea } from '../ui/textarea';
 import { toast } from '../ui/use-toast';
-import Application from '../../api/app';
-import { useParams } from 'react-router-dom';
 // import { publish } from '../../utils/event';
 
 // Define flexible interfaces to handle different API response structures
@@ -601,14 +601,11 @@ export function PublicSurveyForm({
             f_unique_id: fId,
             respond,
           }).finally(() => {
-            setTimeout(() => {
-              // publish('closeFullscreenModal',{});
-              parent.postMessage(
-                { type: 'closeFullscreenModal', data: '' },
-                '*',
-              );
-              // navigate('/report/' + memberId + '/' + 'N');
-            }, 2000);
+            // setTimeout(() => {
+            // publish('closeFullscreenModal', {});
+            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
+            // navigate('/report/' + memberId + '/' + 'N');
+            // }, 2000);
           });
         } else if (action === 'edit') {
           await Application.EditQuestionary({
@@ -617,14 +614,11 @@ export function PublicSurveyForm({
             f_unique_id: fId,
             respond,
           }).finally(() => {
-            setTimeout(() => {
-              // publish('closeFullscreenModal',{});
-              parent.postMessage(
-                { type: 'closeFullscreenModal', data: '' },
-                '*',
-              );
-              // navigate('/report/' + memberId + '/' + 'N');
-            }, 2000);
+            // setTimeout(() => {
+            // publish('closeFullscreenModal',{});
+            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
+            // navigate('/report/' + memberId + '/' + 'N');
+            // }, 2000);
           });
         }
       }
