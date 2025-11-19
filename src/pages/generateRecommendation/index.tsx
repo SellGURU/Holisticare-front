@@ -47,7 +47,17 @@ export const GenerateRecommendation = () => {
   });
 
   const [checkedSuggestions, setCheckedSuggestion] = useState<Array<any>>([]);
-  const { id } = useParams<{ id: string }>();
+  const { id, treatment_id } = useParams<{
+    id: string;
+    treatment_id: string;
+  }>();
+  const resolveTreatmentId = () => {
+    if (treatment_id && treatment_id?.length > 1) {
+      return treatment_id;
+    } else {
+      return treatmentPlanData.treatment_id;
+    }
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const [suggestionsDefualt, setSuggestionsDefualt] = useState([]);
@@ -184,19 +194,30 @@ export const GenerateRecommendation = () => {
     }
     setisButtonLoading(true); // Always show button loading when calling API
     // handlePlan(mocktemtment,retryForSuggestions)
-    Application.generateTreatmentPlan({
-      member_id: id,
-    })
-      .then((res) => {
-        handlePlan(res.data, retryForSuggestions);
+    if (treatment_id && treatment_id?.length > 1) {
+      Application.getGeneratedTreatmentPlan({
+        treatment_id: treatment_id,
+        member_id: id,
       })
-      .catch(() => {
-        if (!isMountedRef.current) return;
-        timeoutRef.current = setTimeout(
-          () => generatePaln(retryForSuggestions),
-          15000,
-        ); // Pass the retryForSuggestions flag
-      });
+        .then((res) => {
+          handlePlan(res.data, retryForSuggestions);
+        })
+        .catch(() => {});
+    } else {
+      Application.generateTreatmentPlan({
+        member_id: id,
+      })
+        .then((res) => {
+          handlePlan(res.data, retryForSuggestions);
+        })
+        .catch(() => {
+          if (!isMountedRef.current) return;
+          timeoutRef.current = setTimeout(
+            () => generatePaln(retryForSuggestions),
+            15000,
+          ); // Pass the retryForSuggestions flag
+        });
+    }
   };
 
   useEffect(() => {
@@ -299,13 +320,18 @@ export const GenerateRecommendation = () => {
               .includes(el.Category),
         ),
       ],
+      is_update: treatment_id && treatment_id?.length > 1 ? true : false,
+      treatment_id: resolveTreatmentId(),
+      result_tab: treatment_id && treatment_id?.length > 1 ? [] : [],
     })
       .then(() => {
         setTreatmentId(treatmentPlanData.treatment_id);
       })
       .finally(() => {
         setisButtonLoading(false);
-        navigate(`/report/Generate-Holistic-Plan/${id}`);
+        navigate(
+          `/report/Generate-Holistic-Plan/${id}/${resolveTreatmentId() + '?isUpdate=' + (treatment_id && treatment_id?.length > 1 ? 'true' : 'false')}`,
+        );
       });
   };
 

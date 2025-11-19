@@ -5,6 +5,7 @@ interface SvgIconProps {
   color: string;
   width?: string; // Optional width prop
   height?: string; // Optional height prop
+  stroke?: string;
   onClick?: () => void; // Optional onClick prop
 }
 
@@ -13,6 +14,7 @@ const SvgIcon: React.FC<SvgIconProps> = ({
   color,
   width,
   height,
+  stroke,
   onClick,
 }) => {
   const svgRef = useRef<HTMLDivElement>(null);
@@ -31,6 +33,7 @@ const SvgIcon: React.FC<SvgIconProps> = ({
           const svgPaths = svgRef.current.querySelectorAll('path');
           svgPaths.forEach((path) => {
             path.setAttribute('fill', color);
+            if (stroke) path.setAttribute('stroke', stroke);
           });
         }
       })
