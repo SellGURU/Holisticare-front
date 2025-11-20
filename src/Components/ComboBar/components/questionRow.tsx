@@ -164,7 +164,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                             setisAssigned(true);
                             setshowModal(false);
                             onAssign(el.unique_id);
-                          });
+                          }).catch(() => {});
                         }
                       }}
                       className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
