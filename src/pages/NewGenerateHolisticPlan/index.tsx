@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../api/app';
 import { ComboBar, MainModal } from '../../Components';
@@ -22,7 +22,7 @@ import TextBoxAi from '../generateTreatmentPlan/components/TextBoxAi';
 import HistoricalChart from '../../Components/RepoerAnalyse/HistoricalChart';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
 import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
-import { AppContext } from '../../store/app';
+// import { AppContext } from '../../store/app';
 import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
 import { CoverageCard } from '../../Components/coverageCard';
 import { SourceTag } from '../../Components/source-badge';
@@ -30,7 +30,13 @@ const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
   const [isLoading] = useState(false);
-  const { id } = useParams<{ id: string }>();
+  const { id, treatment_id } = useParams<{
+    id: string;
+    treatment_id: string;
+  }>();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const isUpdate = searchParams.get('isUpdate') === 'true';
   const [active, setActive] = useState<string>('Recommendation');
   const [clientGools, setClientGools] = useState<any>({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
@@ -102,6 +108,7 @@ const NewGenerateHolisticPlan = () => {
       Application.saveTreatmentPaln({
         ...treatmentPlanData,
         member_id: id,
+        is_update: isUpdate,
       })
         .then(() => {
           return Application.checkHtmlReport(id?.toString() || '');
@@ -122,23 +129,7 @@ const NewGenerateHolisticPlan = () => {
           }, 3000);
         });
     };
-    if (!treatmentId) {
-      Application.saveHolisticPlan(treatmentPlanData)
-        .then((res) => {
-          setTratmentPlanData(res.data);
-          setClientGools({ ...res.data.client_goals });
-          setActiveEl(res.data.result_tab[0]);
-        })
-        .then(() => {
-          continueSteps();
-        })
-        .catch((err) => {
-          console.log('error in saveHolisticPlan:', err);
-          setisFinalLoading(false);
-        });
-    } else {
-      continueSteps();
-    }
+    continueSteps();
   };
 
   const [activeEl, setActiveEl] = useState<any>();
@@ -205,7 +196,7 @@ const NewGenerateHolisticPlan = () => {
     // return subs;
     return resultTabData;
   };
-  const { treatmentId } = useContext(AppContext);
+  // const { treatmentId } = useContext(AppContext);
   const hasEssentialData = (data: any) => {
     return (
       data?.client_insight &&
@@ -218,10 +209,10 @@ const NewGenerateHolisticPlan = () => {
   };
 
   useEffect(() => {
-    if (treatmentId !== null && treatmentId != '') {
+    if (treatment_id && treatment_id?.length > 1) {
       setisFirstLoading(true);
       Application.showHolisticPlan({
-        treatment_id: treatmentId,
+        treatment_id: treatment_id,
         member_id: id,
       })
         .then((res) => {
@@ -263,6 +254,31 @@ const NewGenerateHolisticPlan = () => {
         });
     }
   }, []);
+
+  // Handle browser back button
+  useEffect(() => {
+    if (!id || !treatment_id) return;
+
+    const handlePopState = () => {
+      navigate(`/report/Generate-Recommendation/${id}/${treatment_id}`, {
+        replace: true,
+      });
+    };
+
+    // Add a history entry to detect back button press
+    window.history.pushState(
+      { page: 'holistic-plan' },
+      '',
+      window.location.href,
+    );
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [id, treatment_id, navigate]);
+
   const [isFirstLoading, setisFirstLoading] = useState(false);
   // const isChartDataEmpty = !activeEl?.values.some(
   //   (value: string) => !isNaN(parseFloat(value)),
@@ -408,7 +424,9 @@ const NewGenerateHolisticPlan = () => {
               <div className="hidden lg:flex w-full items-center gap-3">
                 <div
                   onClick={() => {
-                    navigate(-1);
+                    navigate(
+                      `/report/Generate-Recommendation/${id}/${treatment_id}`,
+                    );
                   }}
                   className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
                 >
