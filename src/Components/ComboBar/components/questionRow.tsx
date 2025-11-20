@@ -160,11 +160,13 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                             member_id: id,
                             q_unique_id: el.unique_id,
                             action: 'assign',
-                          }).then(() => {
-                            setisAssigned(true);
-                            setshowModal(false);
-                            onAssign(el.unique_id);
-                          });
+                          })
+                            .then(() => {
+                              setisAssigned(true);
+                              setshowModal(false);
+                              onAssign(el.unique_id);
+                            })
+                            .catch(() => {});
                         }
                       }}
                       className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
