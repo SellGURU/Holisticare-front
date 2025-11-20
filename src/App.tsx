@@ -18,9 +18,22 @@ function App() {
     if ('serviceWorker' in navigator) {
       let refreshing = false;
 
-      const reloadPage = () => {
+      const reloadPage = async () => {
         if (refreshing) return;
         refreshing = true;
+        
+        // Clear all caches before reloading to ensure fresh content
+        try {
+          const cacheNames = await caches.keys();
+          await Promise.all(
+            cacheNames.map((cacheName) => caches.delete(cacheName))
+          );
+          console.log('All caches cleared, reloading...');
+        } catch (error) {
+          console.error('Error clearing caches:', error);
+        }
+        
+        // Force hard reload to bypass any remaining cache
         window.location.reload();
       };
 
@@ -39,11 +52,16 @@ function App() {
               if (!newWorker) return;
 
               // Listen for state changes
-              newWorker.addEventListener('statechange', () => {
+              newWorker.addEventListener('statechange', async () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                   // New service worker is installed and ready
-                  console.log('New service worker installed, reloading...');
-                  reloadPage();
+                  console.log('New service worker installed, clearing caches and reloading...');
+                  
+                  // Wait a bit for the new service worker to activate
+                  await new Promise(resolve => setTimeout(resolve, 100));
+                  
+                  // Clear all caches and reload
+                  await reloadPage();
                 }
               });
             });

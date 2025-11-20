@@ -42,6 +42,9 @@ export default defineConfig({
         clientsClaim: true,
         // Add unique cache ID to ensure service worker changes on each build
         cacheId: cacheId,
+        // Don't precache - let NetworkFirst strategy handle everything
+        // This ensures we always check the network first
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
         // Use NetworkFirst for HTML to always check for updates
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/_/, /\/[^/?]+\.[^/]+$/],
@@ -52,7 +55,7 @@ export default defineConfig({
             urlPattern: /^https?:\/\/.*\.html$/,
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'html-cache',
+              cacheName: `html-cache-${cacheId}`,
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24, // 24 hours
@@ -65,7 +68,7 @@ export default defineConfig({
             urlPattern: /^https?:\/\/[^/]+\/?$/,
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'html-cache',
+              cacheName: `html-cache-${cacheId}`,
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24, // 24 hours
@@ -78,7 +81,7 @@ export default defineConfig({
             urlPattern: /^https?:\/\/.*\.(js|css)$/,
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'static-resources',
+              cacheName: `static-resources-${cacheId}`,
               expiration: {
                 maxEntries: 60,
                 maxAgeSeconds: 60 * 60 * 24, // 24 hours (fallback cache)
@@ -91,7 +94,7 @@ export default defineConfig({
             urlPattern: /^https?:\/\/.*\/api\/.*/,
             handler: 'NetworkOnly',
             options: {
-              cacheName: 'api-cache',
+              cacheName: `api-cache-${cacheId}`,
             },
           },
           {
@@ -99,7 +102,7 @@ export default defineConfig({
             urlPattern: /^https?:\/\/.*\.(png|jpg|jpeg|svg|gif|webp|ico)$/,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'image-cache',
+              cacheName: `image-cache-${cacheId}`,
               expiration: {
                 maxEntries: 100,
                 maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
