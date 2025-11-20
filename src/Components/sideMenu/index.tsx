@@ -21,8 +21,15 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
         .find((item) => item.url === location.pathname) || menus[0].items[0]
     );
   });
+  const usertype = localStorage.getItem('user_type');
   const [showPlayground, setShowPlayground] = useState(false);
   const [permissions, setPermissions] = useState<any>({});
+  const [showVersionControl, setShowVersionControl] = useState(false);
+  useEffect(() => {
+    if(usertype == 'tech_team') {
+      setShowVersionControl(true);
+    }
+  }, [usertype]);
   subscribe('knowledge_playground-Show', () => {
     // alert("show playground");
     setShowPlayground(true);
@@ -62,6 +69,9 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
   }, []);
   const dontPermisionsToRender = (name: string) => {
     // console.log(permissions);
+    if(name == 'Version Control' && showVersionControl == false) {
+      return true;
+    }
     if (name === 'Playground' && !showPlayground) {
       return true;
     }

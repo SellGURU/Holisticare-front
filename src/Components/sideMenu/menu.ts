@@ -15,6 +15,12 @@ export const menus = [
         icon: 'sidemenu-menu-icon-clientList',
         active: true,
       },
+      {
+        name: 'Version Control',
+        url: 'version-control',
+        icon: 'sidemenu-menu-icon-lamp',
+        active: true,
+      },
       // {
       //   name: 'Drift Analysis',
       //   url: '/drift-analysis',

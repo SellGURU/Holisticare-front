@@ -12,6 +12,7 @@ import Login from '../pages/login/index2';
 import MaintenancePage from '../pages/maintenance/index.tsx';
 import ClinicList from '../Components/ClinicList/index.tsx';
 import LogDetails from '../pages/LogDetails/index.tsx';
+import VersionControl from '../pages/versionControll/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
             path: '/log/:id',
             element: <LogDetails></LogDetails>,
           },
+          {
+            path: '/version-control',
+            element: <VersionControl></VersionControl>,
+          }
           // {
           //   path: '/dashboard',
           //   element: <DashBoard></DashBoard>,
