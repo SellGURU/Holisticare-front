@@ -10,7 +10,6 @@ import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import TreatmentCard from './TreatmentCard';
 import { publish } from '../../utils/event';
-import SpinnerLoader from '../SpinnerLoader';
 
 type CardData = {
   id: number;
@@ -79,15 +78,17 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         return '#000000'; // Fallback color
     }
   };
-  const resolveCanGenerateNew = () => {
-    if (cardData.length > 0) {
-      return cardData[cardData.length - 1].state !== 'Draft';
-    }
-    if (disableGenerate) {
-      return false;
-    }
-    return true;
-  };
+const resolveCanGenerateNew = () => {
+
+  if (disableGenerate) return false;
+
+  // If we have plans, check if the last one is Draft
+  if (cardData.length > 0) {
+    return cardData[cardData.length - 1].state !== 'Draft';
+  }
+
+  return true;
+};
   const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
@@ -529,9 +530,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   className={` 
                     relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
-                  {disableGenerate ? (
-                    <SpinnerLoader color="#005F73" />
-                  ) : (
+               
                     <>
                       {' '}
                       <img
@@ -543,7 +542,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                         Generate New
                       </div>
                     </>
-                  )}
+              
                 </div>
               </div>
               {/* <div className="w-full flex justify-center md:justify-end gap-2 my-3">

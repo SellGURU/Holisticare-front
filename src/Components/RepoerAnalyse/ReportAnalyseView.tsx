@@ -683,10 +683,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       let intervalId: any = null;
 
       const checkStatus = () => {
-        Application.checkRefreshProgress(id).then((res) => {
-          const done = res.data.status === true;
+        // Immediately stop further polling
+        if (stopPolling.current) {
+          clearInterval(intervalId);
+          return;
+        }
 
-          if (done) {
+        Application.checkRefreshProgress(id).then((res) => {
+          if (res.data.status === true) {
             clearInterval(intervalId);
             publish('RefreshStepTwoSuccess', {});
             setDisableGenerate(false);
@@ -702,14 +706,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     subscribe('SyncRefresh', handler);
 
     return () => {
-      unsubscribe('SyncRefresh', handler); // ← this is how your system works
+      unsubscribe('SyncRefresh', handler);
     };
   }, [id, userInfoData?.name]);
-  useEffect(()=>{
-    subscribe('disableGenerate',()=>{
-      setDisableGenerate(true)
-    })
-  })
+
+  useEffect(() => {
+    subscribe('disableGenerate', () => {
+      setDisableGenerate(true);
+    });
+  });
 
   return (
     <>

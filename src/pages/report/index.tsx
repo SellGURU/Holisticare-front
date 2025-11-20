@@ -11,6 +11,10 @@ import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
 import Application from '../../api/app';
 import { publish } from '../../utils/event';
 import { useParams } from 'react-router-dom';
+import UploadFileProgressModal from '../../Components/uploadFileProgressModal';
+import RefreshProgressModal from '../../Components/holisticPlan-refreshModal';
+import DeleteFileProgressModal from '../../Components/deleteFileProgressModal';
+
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -181,6 +185,10 @@ const Report = () => {
           </div>
         </div>
       </MainModal>
+    
+    <UploadFileProgressModal />
+    <RefreshProgressModal />
+    <DeleteFileProgressModal />
     </div>
   );
 };
