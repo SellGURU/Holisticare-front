@@ -9,6 +9,8 @@ import AddQuestionsModal from './AddQuestionModal';
 import QuestionItem from './QuestionItem';
 import TimerPicker from './TimerPicker';
 import Circleloader from '../../../Components/CircleLoader';
+import { TextAreaField } from '../../../Components/UnitComponents';
+import Toggle from '../../../Components/RepoerAnalyse/Boxs/Toggle';
 interface QuestionaryControllerModalProps {
   editId?: string;
   mode?: 'Edit' | 'Reposition' | 'Add';
@@ -45,15 +47,29 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       setIsSaveLoading(false);
     }
   }, [error]);
+  const stepTitleInfo = (step: number) => {
+    switch (step) {
+      case 0:
+        return ': General Info';
+      case 1:
+        return ': Questions';
+      case 2:
+        return ': Time & Assignment';
+    }
+  };
   const resolveFormTitle = () => {
     if (templateData == null && mode == 'Add') {
-      if (step === 1 && titleForm.length) {
-        return titleForm + ' Form';
+      if (step !== 0 && titleForm.length) {
+        return (
+          titleForm + ' Form' + ' - Step ' + (step + 1) + stepTitleInfo(step)
+        );
       }
-      return 'Create Personal Form';
+      return (
+        'Create Personal Form' + ' - Step ' + (step + 1) + stepTitleInfo(step)
+      );
     } else if (templateData != null) {
-      if (step === 1 && titleForm.length) return titleForm;
-      return templateData.title;
+      if (step !== 0 && titleForm.length) return titleForm;
+      return templateData.title + ' - Step ' + (step + 1) + stepTitleInfo(step);
     }
     switch (mode) {
       case 'Add':
@@ -147,12 +163,15 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
         );
     }
   };
-  const [titleForm, setTitleForm] = useState('');
+  const [titleForm, setTitleForm] = useState(templateData?.title || '');
+  const [descriptionForm, setDescriptionForm] = useState(templateData?.description || '');
+  const [consentText, setConsentText] = useState(templateData?.consent_text || '');
+  const [requireClientConsent, setRequireClientConsent] = useState(templateData?.require_client_consent || false);
   const isDisable = () => {
     if (templateData == null) {
       if (titleForm.length == 0) {
         return true;
-      } else if (questions.length == 0) {
+      } else if (questions.length == 0 && step !== 0) {
         return true;
       }
     }
@@ -183,6 +202,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       FormsApi.showQuestinary(editId).then((res) => {
         setQuestions(res.data.questions);
         setTitleForm(res.data.title);
+        setDescriptionForm(res.data.description);
+        setRequireClientConsent(res.data.require_client_consent);
+        setConsentText(res.data.consent_text);
         const totalMs = res.data.time;
         const mins = Math.floor(totalMs / 60000);
         const secs = Math.floor((totalMs % 60000) / 1000);
@@ -210,49 +232,87 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
           {step == 0 && (
             <>
-              {(templateData == null || error) &&
-              mode == 'Add' &&
+              {mode == 'Add' &&
               (AddquestionStep == 0 || AddquestionStep == 2) ? (
-                <div className="w-full mt-6">
-                  <TextField
-                    newStyle
-                    type="text"
-                    name="formtitle"
-                    label="Form Title"
-                    placeholder="Enter form title (e.g., Feedback Form)"
-                    value={titleForm}
-                    onChange={(e) => {
-                      setTitleForm(e.target.value);
-                      setIsError(false);
-                      setShowTitleRequired(false);
-                    }}
-                    inValid={
-                      isError ||
-                      (showValidation && !titleForm) ||
-                      (showTitleRequired && !titleForm)
-                    }
-                    errorMessage={
-                      isError
-                        ? 'Form title already exists. Please choose another.'
-                        : 'This field is required.'
-                    }
-                  />
-                </div>
+                <>
+                  <div className="w-full mt-6">
+                    <TextField
+                      newStyle
+                      type="text"
+                      name="formtitle"
+                      label="Form Title"
+                      placeholder="Enter form title (e.g., Feedback Form)"
+                      value={titleForm}
+                      onChange={(e) => {
+                        setTitleForm(e.target.value);
+                        setIsError(false);
+                        setShowTitleRequired(false);
+                      }}
+                      inValid={
+                        isError ||
+                        (showValidation && !titleForm) ||
+                        (showTitleRequired && !titleForm)
+                      }
+                      errorMessage={
+                        isError
+                          ? 'Form title already exists. Please choose another.'
+                          : 'This field is required.'
+                      }
+                    />
+                  </div>
+                  <div className="w-full mt-4 mb-2">
+                    <TextAreaField
+                      label="Description"
+                      placeholder="Explain the purpose of this questionnaire or give brief instructions for your client"
+                      value={descriptionForm}
+                      onChange={(e) => setDescriptionForm(e.target.value)}
+                      height="h-[140px]"
+                    />
+                  </div>
+                  {requireClientConsent && (
+                    <div className="w-full mt-4 mb-2">
+                      <TextAreaField
+                        label="Consent Text"
+                        placeholder="Write the consent statement that your client must agree to before proceeding."
+                        value={consentText}
+                        onChange={(e) => setConsentText(e.target.value)}
+                        isValid={showValidation && !consentText ? false : true}
+                        validationText={
+                          showValidation && !consentText
+                            ? 'This field is required.'
+                            : ''
+                        }
+                        height="h-[140px]"
+                      />
+                    </div>
+                  )}
+                  <div className="w-full mt-5 mb-2 flex items-center gap-2">
+                    <Toggle
+                      checked={requireClientConsent}
+                      setChecked={setRequireClientConsent}
+                    />
+                    <div className="text-xs text-Text-Primary font-normal">
+                      Require client consent before starting this questionnaire.
+                    </div>
+                  </div>
+                </>
               ) : (
                 ''
               )}
-              {AddquestionStep == 0 && (
-                <div className="w-full text-xs text-Text-Primary font-medium mt-6">
-                  {templateData == null ? 'Questions' : 'Initial Questionnaire'}
-                </div>
-              )}
             </>
           )}
-          <div className="flex flex-col w-full mt-3 items-center justify-center">
-            {resolveBoxRender()}
-          </div>
+          {AddquestionStep == 0 && step === 1 && (
+            <div className="w-full text-xs text-Text-Primary font-medium mt-6">
+              {templateData == null ? 'Questions' : 'Initial Questionnaire'}
+            </div>
+          )}
+          {step !== 0 && (
+            <div className="flex flex-col w-full mt-3 items-center justify-center">
+              {resolveBoxRender()}
+            </div>
+          )}
         </div>
-        {showValidation && questions.length == 0 && (
+        {showValidation && questions.length == 0 && step === 1 && (
           <div className="text-[10px] text-Red">Add question to continue.</div>
         )}
         <div
@@ -272,8 +332,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             onClick={() => {
               setShowValidation(true);
               if (!isDisable()) {
-                if (step == 0 && mode != 'Reposition') {
-                  setStep(1);
+                if ((step === 0 || step === 1) && mode != 'Reposition') {
+                  setStep(step + 1);
                   setShowValidation(false);
                 } else {
                   addCheckinForm();
@@ -289,7 +349,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
               <>
                 {mode == 'Reposition'
                   ? 'Update'
-                  : step == 0
+                  : step === 0 || step === 1
                     ? 'Next'
                     : mode == 'Edit'
                       ? 'Update'
@@ -358,7 +418,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   }, [upQuestions]);
   return (
     <>
-      {step == 0 || mode == 'Reposition' ? (
+      {step === 1 || mode == 'Reposition' ? (
         <>
           {questions.length > 0 && !addMore && (
             <>
