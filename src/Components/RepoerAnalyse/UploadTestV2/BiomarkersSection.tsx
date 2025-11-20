@@ -416,7 +416,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   date={dateOfTest}
                   setDate={setDateOfTest}
                   placeholder="Select Date"
-                  ClassName="ml-2 border border-Gray-50  1rounded-2xl px-2 py-1 text-Text-Primary"
+                  ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
                 />
               </div>
             </div>

@@ -139,7 +139,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setRowErrors({});
     setAddedRowErrors({});
     publish('RESET_MAPPING_ROWS', {});
-   setModifiedDateOfTest(new Date())
+    setModifiedDateOfTest(new Date());
     forceReRender((x) => x + 1);
   };
   useEffect(() => {
@@ -491,7 +491,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
     return false;
   };
-  
+
   return (
     <>
       {deleteLoading && (
@@ -753,6 +753,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             }
             setstep(0);
             setUploadedFile(null);
+            setModifiedDateOfTest(new Date());
+            setAddedDateOfTest(new Date())
             setPolling(true);
             setbiomarkerLoading(false);
             setExtractedBiomarkers([]);

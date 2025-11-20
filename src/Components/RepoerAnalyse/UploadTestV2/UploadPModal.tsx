@@ -71,7 +71,11 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   const [activeMenu, setactiveMenu] = useState('Upload File');
   const [showOnlyErrors, setShowOnlyErrors] = useState(false);
   const [isScaling, setIsScaling] = useState(false);
+  const [shouldAutoSwitch, setShouldAutoSwitch] = useState(false);
+
   useEffect(() => {
+    if (!shouldAutoSwitch) return;
+
     const rowErrorCount = rowErrors ? Object.keys(rowErrors).length : 0;
     const addedErrorCount = AddedRowErrors
       ? Object.keys(AddedRowErrors).length
@@ -83,7 +87,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
     if (addedErrorCount > 0 && rowErrorCount === 0) {
       setactiveMenu('Add Biomarker');
     }
-  }, [rowErrors, AddedRowErrors]);
+
+    setShouldAutoSwitch(false);
+  }, [rowErrors, AddedRowErrors, shouldAutoSwitch]);
+
   const [showReview, setshowReview] = useState(false);
   useEffect(() => {
     if (
@@ -108,9 +115,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   // Total combined
   const activeErrorCount =
     activeMenu === 'Upload File' ? uploadErrorCount : addBiomarkerErrorCount;
-useEffect(()=>{
-  setShowOnlyErrors(false)
-},[activeMenu])
+  useEffect(() => {
+    setShowOnlyErrors(false);
+  }, [activeMenu]);
   return (
     <>
       <div
@@ -138,7 +145,10 @@ useEffect(()=>{
                   addedBiomarkers.length == 0) ||
                 btnLoading
               }
-              onClick={onSave}
+              onClick={() => {
+                onSave();
+                setShouldAutoSwitch(true);
+              }}
               ClassName=" w-[127px] md:w-[167px]"
             >
               {btnLoading ? (
@@ -230,7 +240,7 @@ useEffect(()=>{
               deleteIndex={deleteIndex}
               dateOfTest={addedDateOfTest}
               setDateOfTest={handleAddedDateOfTestChange}
-                 showOnlyErrors={showOnlyErrors}
+              showOnlyErrors={showOnlyErrors}
               setShowOnlyErrors={setShowOnlyErrors}
             ></AddBiomarker>
           </div>

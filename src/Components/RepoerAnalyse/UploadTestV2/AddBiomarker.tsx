@@ -135,16 +135,18 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             ({biomarkers.length})
           </span>
         </div>
-        <div className='flex gap-7'>
+        <div className="flex gap-7">
           <div className="flex items-center gap-3">
             <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
             <div className="text-[10px] md:text-xs font-normal text-Text-Primary">
               Show Only Errors
             </div>
           </div>
+       
           <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple">
             Date of Test:
             <SimpleDatePicker
+            textStyle
               isUploadFile
               date={dateOfTest}
               setDate={setDateOfTest}
@@ -312,8 +314,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
                     {/* Value */}
                     <div className="text-center text-[#888888]">
-                      <EllipsedTooltip text=   {biomarker.value}/>
-                   
+                      <EllipsedTooltip text={biomarker.value} />
                     </div>
 
                     {/* Unit */}
@@ -353,7 +354,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                       )}
                     </div>
                     {errorForRow && (
-                      <div className="text-Red font-normal text-[10px] text-nowrap mt-1">
+                      <div className="text-Red col-span-4 leading-tight font-normal text-[10px] text-nowrap mt-1">
                         {errorForRow}
                       </div>
                     )}
