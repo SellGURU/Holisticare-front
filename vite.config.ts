@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // Generate unique build ID to ensure service worker changes on each build
-const buildId = (process.env as any).VERCEL_GIT_COMMIT_SHA?.substring(0, 7) || 
-                (process.env as any).VERCEL_DEPLOYMENT_ID || 
-                Date.now().toString();
+const buildId =
+  (process.env as any).VERCEL_GIT_COMMIT_SHA?.substring(0, 7) ||
+  (process.env as any).VERCEL_DEPLOYMENT_ID ||
+  Date.now().toString();
 
 export default defineConfig({
   plugins: [
@@ -54,4 +55,3 @@ export default defineConfig({
     }),
   ],
 });
- 
