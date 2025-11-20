@@ -8,10 +8,6 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-
-      // 🔥 This disables all caching + ensures instant updates
-      selfDestroying: true,
-
       manifest: {
         name: 'Holisticare',
         short_name: 'Holisticare',
@@ -30,13 +26,15 @@ export default defineConfig({
           },
         ],
       },
-
-      // 🚫 Completely disable precaching & runtime caching
       workbox: {
-        globPatterns: [],   // no precaching
-        runtimeCaching: [], // no runtime caching
+        // Disable precaching to prevent install hangs
+        globPatterns: [],
+        // No runtime caching - always fetch fresh from network
+        runtimeCaching: [],
+        // Critical: These ensure immediate activation
         skipWaiting: true,
         clientsClaim: true,
+        cleanupOutdatedCaches: true,
       },
 
       devOptions: {
