@@ -564,9 +564,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                             .catch((err) => {
                               console.log(err);
                             });
-                          onGenderate(
-                            uploadedFile?.file_id || 'customBiomarker',
-                          );
+                          onGenderate('customBiomarker');
                         } else {
                           onGenderate(undefined);
                         }

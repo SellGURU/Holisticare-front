@@ -1179,9 +1179,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         publish('openProgressModal', {});
                         setShowUploadTest(false);
                         setIsHaveReport(true);
+                        setCheckedStepTwo(false);
                         setISGenerateLoading(false);
                         if (file_id !== 'customBiomarker') {
-                          checkStepTwo(file_id);
+                          setTimeout(() => {
+                            checkStepTwo(file_id);
+                          }, 4000);
                         }
                       }
                       // if (file_id && file_id !== "customBiomarker") {
