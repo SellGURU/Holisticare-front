@@ -1,6 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { readFileSync } from 'fs';
+
+// Get package version and build identifier
+const packageJson = JSON.parse(readFileSync('./package.json', 'utf-8'));
+const buildId = (process.env as any).VERCEL_GIT_COMMIT_SHA?.substring(0, 7) || 
+                (process.env as any).VERCEL_DEPLOYMENT_ID || 
+                Date.now().toString();
+const cacheId = `holisticare-v${packageJson.version}-${buildId}`;
 
 export default defineConfig({
   plugins: [
@@ -32,6 +40,8 @@ export default defineConfig({
         // این‌ها برای اطمینان از فعال شدن سریع نسخه جدید
         skipWaiting: true,
         clientsClaim: true,
+        // Add unique cache ID to ensure service worker changes on each build
+        cacheId: cacheId,
         // Use NetworkFirst for HTML to always check for updates
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/_/, /\/[^/?]+\.[^/]+$/],
