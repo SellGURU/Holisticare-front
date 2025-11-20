@@ -119,7 +119,15 @@ export const ActionPlan: FC<ActionPlanProps> = ({
     getActionPlan();
   }, []);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
+  const canCreateNewActionPlan = () => {
+    if (isHolisticPlanEmpty) {
+      return false;
+    }
+    if (CardData.length > 0) {
+      return CardData[CardData.length - 1].state !== 'Draft';
+    }
+    return true;
+  };
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -186,20 +194,36 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                             setActiveAction(el);
                           }}
                           onDelete={() => {
-                            Application.deleteActionCard({ id: el.id });
-                            setTimeout(() => {
-                              getActionPlan();
-                              publish('syncReport', { part: 'treatmentPlan' });
-                            }, 3000);
+                            Application.deleteActionPlan({
+                              member_id: id,
+                              id: el.id,
+                            }).catch(() => {});
+                            // setTimeout(() => {
+                            //   getActionPlan();
+                            //   publish('syncReport', { part: 'treatmentPlan' });
+                            // }, 3000);
+                            const isDeletingActivePlan =
+                              activeAction?.id === el.id;
                             setCardData((prevCardData) => {
                               const newCardData = prevCardData.filter(
                                 (card) => card.id !== el.id,
                               );
+                              // اگر پلن فعلی حذف شد و پلن قبلی وجود دارد، state آن را On Going کن
+                              if (
+                                isDeletingActivePlan &&
+                                newCardData.length > 0
+                              ) {
+                                const lastCard =
+                                  newCardData[newCardData.length - 1];
+                                lastCard.state = 'On Going';
+                                setActiveAction(lastCard);
+                              } else if (newCardData.length > 0) {
+                                setActiveAction(
+                                  newCardData[newCardData.length - 1],
+                                );
+                              }
                               return newCardData;
                             });
-                            if (CardData.length > 0) {
-                              setActiveAction(CardData[CardData.length - 1]);
-                            }
                           }}
                           key={i}
                           el={el}
@@ -208,9 +232,11 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       ))}
                       <div
                         onClick={() => {
-                          navigate('/report/Generate-Action-Plan/' + id);
+                          if (canCreateNewActionPlan()) {
+                            navigate('/report/Generate-Action-Plan/' + id);
+                          }
                         }}
-                        className=" min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
+                        className={` ${!canCreateNewActionPlan() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal `}
                       >
                         <div className="flex flex-col  TextStyle-Subtitle-2 items-center justify-center ">
                           <img

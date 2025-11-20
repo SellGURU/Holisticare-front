@@ -39,7 +39,8 @@ import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
 // import { ShareModal } from './ShareModal';
 import { UploadTestV2 } from './UploadTestV2';
-import HolisticShare from './components/HolisticShare';
+// import HolisticShare from './components/HolisticShare';
+import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -58,17 +59,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [caldenderData, setCalenderData] = useState<any>(null);
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
+  const [has_wearable_data, setHasWearableData] = useState(false);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [questionnaires, setQuestionnaires] = useState([]);
   // const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-  const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
-  const [dateShare, setDateShare] = useState<string | null>(null);
-  useEffect(() => {
-    subscribe('shareModalHolisticPlanSuccess', () => {
-      setIsShareModalSuccess(true);
-    });
-  }, []);
+  // const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
+  // const [dateShare, setDateShare] = useState<string | null>(null);
+  // useEffect(() => {
+  //   subscribe('shareModalHolisticPlanSuccess', () => {
+  //     setIsShareModalSuccess(true);
+  //   });
+  // }, []);
   // const history = useHistory();
   const location = useLocation();
   // useEffect(() => {
@@ -104,6 +106,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
+        setHasWearableData(res.data.has_wearable_data);
         setShowUploadTest(!res.data.first_time_view);
         setQuestionnaires(res.data.questionnaires);
         setTimeout(() => {
@@ -642,36 +645,56 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setTimeout(pollHtmlReport, 10000);
       });
   };
+  useEffect(() => {
+    subscribe('reckecHtmlReport', () => {
+      setIsHtmlReportExists(false);
+      pollHtmlReport();
+    });
+  }, []);
 
-  const [loadingHtmlReport, setLoadingHtmlReport] = useState(false);
+  const [loadingHtmlReport] = useState(false);
 
-  const handleGetHtmlReport = () => {
+  const handleGetHtmlReport = (url?: string) => {
     // if(loadingHtmlReport) return;
+    if (url) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'HolisticPlanReport';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
     if (!isHaveReport) return;
 
-    setLoadingHtmlReport(true);
+    // setLoadingHtmlReport(true);
+    navigate(`/html-previewer/${resolvedMemberID}`);
+    // Application.getHtmlReport(resolvedMemberID?.toString() || '')
+    //   .then((res) => {
+    //     try {
+    //       const blobUrl = res.data;
 
-    Application.getHtmlReport(resolvedMemberID?.toString() || '')
-      .then((res) => {
-        try {
-          const blobUrl = res.data;
+    // Application.getHtmlReport(id?.toString() || '')
+    //   .then((res) => {
+    //     try {
+    //       const blobUrl = res.data;
 
-          const link = document.createElement('a');
-          link.href = blobUrl;
-          link.download = 'HolisticPlanReport';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } catch (error: any) {
-          console.error('Error downloading file:', error);
-        }
-      })
-      .catch((err) => {
-        console.error('Error loading HTML report:', err);
-      })
-      .finally(() => {
-        setLoadingHtmlReport(false);
-      });
+    //       const link = document.createElement('a');
+    //       link.href = blobUrl;
+    //       link.download = 'HolisticPlanReport';
+    //       document.body.appendChild(link);
+    //       link.click();
+    //       document.body.removeChild(link);
+    //     } catch (error: any) {
+    //       console.error('Error downloading file:', error);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.error('Error loading HTML report:', err);
+    //   })
+    //   .finally(() => {
+    //     setLoadingHtmlReport(false);
+    //   });
   };
 
   return (
@@ -1006,12 +1029,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     Holistic Plan
                   </div>
                   {TreatMentPlanData?.length > 0 && isHaveReport && !isShare ? (
-                    <HolisticShare
-                      isHtmlReportExists={isHtmlReportExists}
-                      isShareModalSuccess={isShareModalSuccess}
-                      dateShare={dateShare}
+                    // <HolisticShare
+                    //   isHtmlReportExists={isHtmlReportExists}
+                    //   isShareModalSuccess={isShareModalSuccess}
+                    //   dateShare={dateShare}
+                    //   handleGetHtmlReport={handleGetHtmlReport}
+                    //   loadingHtmlReport={loadingHtmlReport}
+                    // />
+                    <HolisticPlanShareAndDownload
                       handleGetHtmlReport={handleGetHtmlReport}
                       loadingHtmlReport={loadingHtmlReport}
+                      isHtmlReportExists={isHtmlReportExists}
                     />
                   ) : (
                     ''
@@ -1024,10 +1052,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   setPrintActionPlan={(value) => {
                     setActionPlanPrint(value);
                   }}
-                  setIsShareModalSuccess={setIsShareModalSuccess}
+                  setIsShareModalSuccess={() => {}}
                   treatmentPlanData={TreatMentPlanData}
                   setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
-                  setDateShare={setDateShare}
+                  setDateShare={() => {}}
                 />
               </div>
             )}
@@ -1124,6 +1152,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </>
                 ) : (
                   <UploadTestV2
+                    has_wearable_data={has_wearable_data}
                     isLoadingQuestionnaires={isLoadingQuestionnaires}
                     questionnaires={questionnaires}
                     onDiscard={() => {
