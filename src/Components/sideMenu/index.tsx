@@ -26,7 +26,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
   const [permissions, setPermissions] = useState<any>({});
   const [showVersionControl, setShowVersionControl] = useState(false);
   useEffect(() => {
-    if(usertype == 'tech_team') {
+    if (usertype == 'tech_team') {
       setShowVersionControl(true);
     }
   }, [usertype]);
@@ -69,7 +69,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
   }, []);
   const dontPermisionsToRender = (name: string) => {
     // console.log(permissions);
-    if(name == 'Version Control' && showVersionControl == false) {
+    if (name == 'Version Control' && showVersionControl == false) {
       return true;
     }
     if (name === 'Playground' && !showPlayground) {

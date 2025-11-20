@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../Components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../Components/ui/card';
 import { Button } from '../../Components/ui/button';
 import TextField from '../../Components/TextField';
 import Admin, { VersionControlData } from '../../api/Admin';
@@ -10,7 +16,10 @@ type Platform = 'web_main' | 'web_test' | 'ios' | 'android' | 'pwa';
 const activePlatforms: Platform[] = ['ios', 'android'];
 const disabledPlatforms: Platform[] = ['web_main', 'web_test', 'pwa'];
 
-const platformLabels: Record<Platform, { title: string; description: string; icon: string }> = {
+const platformLabels: Record<
+  Platform,
+  { title: string; description: string; icon: string }
+> = {
   web_main: {
     title: 'Web App - Main',
     description: 'Version control for main web application link',
@@ -60,33 +69,38 @@ const VersionControl = () => {
       const response = await Admin.getVersionControl();
       // Check if data exists directly in response.data or in response.data.data
       const versionData = response.data?.data || response.data;
-      
+
       if (versionData && typeof versionData === 'object') {
         // Ensure all required fields exist with default values
         setVersions({
           web_main: {
             version: versionData.web_main?.version || '',
-            minimumSupportedVersion: versionData.web_main?.minimumSupportedVersion || '',
+            minimumSupportedVersion:
+              versionData.web_main?.minimumSupportedVersion || '',
             maintenance: versionData.web_main?.maintenance ?? false,
           },
           web_test: {
             version: versionData.web_test?.version || '',
-            minimumSupportedVersion: versionData.web_test?.minimumSupportedVersion || '',
+            minimumSupportedVersion:
+              versionData.web_test?.minimumSupportedVersion || '',
             maintenance: versionData.web_test?.maintenance ?? false,
           },
           ios: {
             version: versionData.ios?.version || '',
-            minimumSupportedVersion: versionData.ios?.minimumSupportedVersion || '',
+            minimumSupportedVersion:
+              versionData.ios?.minimumSupportedVersion || '',
             maintenance: versionData.ios?.maintenance ?? false,
           },
           android: {
             version: versionData.android?.version || '',
-            minimumSupportedVersion: versionData.android?.minimumSupportedVersion || '',
+            minimumSupportedVersion:
+              versionData.android?.minimumSupportedVersion || '',
             maintenance: versionData.android?.maintenance ?? false,
           },
           pwa: {
             version: versionData.pwa?.version || '',
-            minimumSupportedVersion: versionData.pwa?.minimumSupportedVersion || '',
+            minimumSupportedVersion:
+              versionData.pwa?.minimumSupportedVersion || '',
             maintenance: versionData.pwa?.maintenance ?? false,
           },
         });
@@ -99,7 +113,10 @@ const VersionControl = () => {
       // If API doesn't exist yet or returns empty, use default values
       if (error && typeof error === 'object' && 'response' in error) {
         const apiError = error as { response?: { status?: number } };
-        if (apiError.response?.status === 404 || apiError.response?.status === 200) {
+        if (
+          apiError.response?.status === 404 ||
+          apiError.response?.status === 200
+        ) {
           setHasDataFromBackend(false);
         } else {
           toast.error('Error fetching version control data');
@@ -115,7 +132,7 @@ const VersionControl = () => {
   const handleVersionChange = (platform: Platform, value: string) => {
     if (!activePlatforms.includes(platform)) return;
     if (versions[platform].maintenance) return;
-    
+
     setVersions((prev) => ({
       ...prev,
       [platform]: {
@@ -125,10 +142,13 @@ const VersionControl = () => {
     }));
   };
 
-  const handleMinimumSupportedVersionChange = (platform: Platform, value: string) => {
+  const handleMinimumSupportedVersionChange = (
+    platform: Platform,
+    value: string,
+  ) => {
     if (!activePlatforms.includes(platform)) return;
     if (versions[platform].maintenance) return;
-    
+
     setVersions((prev) => ({
       ...prev,
       [platform]: {
@@ -156,7 +176,9 @@ const VersionControl = () => {
     });
 
     if (hasErrors) {
-      toast.error('Please enter version for all active platforms (iOS and Android)');
+      toast.error(
+        'Please enter version for all active platforms (iOS and Android)',
+      );
       return;
     }
 
@@ -193,7 +215,8 @@ const VersionControl = () => {
               Application Version Control
             </h1>
             <p className="text-Text-Secondary">
-              Manage version and minimum supported version settings for each platform
+              Manage version and minimum supported version settings for each
+              platform
             </p>
           </div>
           <Button
@@ -221,7 +244,9 @@ const VersionControl = () => {
                   No Data from Backend
                 </h3>
                 <p className="text-sm text-Text-Secondary">
-                  No version control data found. Please configure the versions and click "Save All" to create and send the JSON to the backend.
+                  No version control data found. Please configure the versions
+                  and click "Save All" to create and send the JSON to the
+                  backend.
                 </p>
               </div>
             </div>
@@ -237,8 +262,8 @@ const VersionControl = () => {
             const isFullyDisabled = isDisabled || isMaintenance;
 
             return (
-              <Card 
-                key={platform} 
+              <Card
+                key={platform}
                 className={`bg-backgroundColor-Card border-Boarder shadow-sm ${
                   isFullyDisabled ? 'opacity-60' : ''
                 } ${isMaintenance ? 'border-Orange' : ''}`}
@@ -251,10 +276,14 @@ const VersionControl = () => {
                         <CardTitle className="text-lg text-Text-Primary">
                           {label.title}
                           {isDisabled && (
-                            <span className="ml-2 text-xs text-Text-Triarty">(Disabled)</span>
+                            <span className="ml-2 text-xs text-Text-Triarty">
+                              (Disabled)
+                            </span>
                           )}
                           {isMaintenance && (
-                            <span className="ml-2 text-xs text-Orange font-semibold">(Under Maintenance)</span>
+                            <span className="ml-2 text-xs text-Orange font-semibold">
+                              (Under Maintenance)
+                            </span>
                           )}
                         </CardTitle>
                         <CardDescription className="text-xs text-Text-Secondary mt-1">
@@ -270,7 +299,9 @@ const VersionControl = () => {
                           onChange={() => handleMaintenanceToggle(platform)}
                           className="w-4 h-4 text-Orange border-Gray-200 rounded focus:ring-Orange focus:ring-2"
                         />
-                        <span className="text-xs text-Text-Secondary">Maintenance</span>
+                        <span className="text-xs text-Text-Secondary">
+                          Maintenance
+                        </span>
                       </label>
                     </div>
                   </div>
@@ -281,7 +312,9 @@ const VersionControl = () => {
                       label="Current Version"
                       type="text"
                       value={versionData.version}
-                      onChange={(e) => handleVersionChange(platform, e.target.value)}
+                      onChange={(e) =>
+                        handleVersionChange(platform, e.target.value)
+                      }
                       placeholder="Example: 1.0.0"
                       className="w-full"
                       newStyle
@@ -297,7 +330,12 @@ const VersionControl = () => {
                       label="Minimum Supported Version"
                       type="text"
                       value={versionData.minimumSupportedVersion}
-                      onChange={(e) => handleMinimumSupportedVersionChange(platform, e.target.value)}
+                      onChange={(e) =>
+                        handleMinimumSupportedVersionChange(
+                          platform,
+                          e.target.value,
+                        )
+                      }
                       placeholder="Example: 1.0.0"
                       className="w-full"
                       newStyle
@@ -321,26 +359,25 @@ const VersionControl = () => {
                 Usage Guide
               </h3>
               <ul className="text-sm text-Text-Secondary space-y-1 list-disc list-inside">
-                <li>
-                  Only iOS and Android platforms are currently active
-                </li>
+                <li>Only iOS and Android platforms are currently active</li>
                 <li>
                   Enter the current version for active platforms (format: x.y.z)
                 </li>
                 <li>
-                  Set minimum supported version - users with versions below this will be required to update
+                  Set minimum supported version - users with versions below this
+                  will be required to update
                 </li>
                 <li>
-                  If minimum supported version is empty, all versions are supported
+                  If minimum supported version is empty, all versions are
+                  supported
                 </li>
                 <li>
                   Click "Save All" to save the complete JSON data to the backend
                 </li>
+                <li>All version data is stored in a single JSON object</li>
                 <li>
-                  All version data is stored in a single JSON object
-                </li>
-                <li>
-                  Enable "Maintenance" mode to disable a platform during maintenance or reconstruction
+                  Enable "Maintenance" mode to disable a platform during
+                  maintenance or reconstruction
                 </li>
               </ul>
             </div>

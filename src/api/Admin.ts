@@ -32,12 +32,12 @@ class Admin extends Api {
       end_date: formatDateYMD(new Date(endDate)),
     });
   }
-  
+
   // Version Control APIs
   static getVersionControl() {
     return this.get('/config');
   }
-  
+
   static saveVersionControl(data: VersionControlData) {
     return this.post('/config', { config_data: data });
   }

@@ -33,7 +33,7 @@ const router = createBrowserRouter([
           {
             path: '/version-control',
             element: <VersionControl></VersionControl>,
-          }
+          },
           // {
           //   path: '/dashboard',
           //   element: <DashBoard></DashBoard>,
