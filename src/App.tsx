@@ -26,7 +26,7 @@ function App() {
         window.location.reload();
       });
 
-      // Check for updates periodically (every 5 minutes)
+      // Check for updates periodically (every 1 minutes)
       const checkForUpdates = () => {
         navigator.serviceWorker.getRegistrations().then((registrations) => {
           registrations.forEach((registration) => {
@@ -35,9 +35,9 @@ function App() {
         });
       };
 
-      // Check immediately and then every 5 minutes
+      // Check immediately and then every 1 minutes
       checkForUpdates();
-      const updateInterval = setInterval(checkForUpdates, 5 * 60 * 1000);
+      const updateInterval = setInterval(checkForUpdates, 1 * 60 * 1000);
 
       return () => clearInterval(updateInterval);
     }
