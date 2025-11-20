@@ -164,9 +164,15 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     }
   };
   const [titleForm, setTitleForm] = useState(templateData?.title || '');
-  const [descriptionForm, setDescriptionForm] = useState(templateData?.description || '');
-  const [consentText, setConsentText] = useState(templateData?.consent_text || '');
-  const [requireClientConsent, setRequireClientConsent] = useState(templateData?.require_client_consent || false);
+  const [descriptionForm, setDescriptionForm] = useState(
+    templateData?.description || '',
+  );
+  const [consentText, setConsentText] = useState(
+    templateData?.consent_text || '',
+  );
+  const [requireClientConsent, setRequireClientConsent] = useState(
+    templateData?.require_client_consent || false,
+  );
   const isDisable = () => {
     if (templateData == null) {
       if (titleForm.length == 0) {
