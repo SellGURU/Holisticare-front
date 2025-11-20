@@ -335,4 +335,3 @@ export function useServiceWorker() {
     }
   }, []);
 }
-
