@@ -46,21 +46,78 @@ function App() {
           const registrations = await navigator.serviceWorker.getRegistrations();
           
           registrations.forEach((registration) => {
+            // Check if there's a waiting service worker (stuck in installing/waiting state)
+            if (registration.waiting) {
+              console.log('Found waiting service worker, activating...');
+              // Post message to skip waiting
+              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+              // Force activation
+              registration.waiting.addEventListener('statechange', async () => {
+                if (registration.waiting?.state === 'activated') {
+                  console.log('Waiting service worker activated, reloading...');
+                  await reloadPage();
+                }
+              });
+            }
+
+            // Check if there's an installing service worker
+            if (registration.installing) {
+              console.log('Service worker is installing...');
+              registration.installing.addEventListener('statechange', async () => {
+                const worker = registration.installing;
+                if (!worker) return;
+
+                console.log(`Service worker state: ${worker.state}`);
+                
+                if (worker.state === 'installed') {
+                  if (navigator.serviceWorker.controller) {
+                    // New service worker is installed, wait for it to activate
+                    console.log('New service worker installed, waiting for activation...');
+                    // Post message to skip waiting if it's waiting
+                    if (registration.waiting) {
+                      registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    }
+                    // Wait a bit and reload
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    await reloadPage();
+                  } else {
+                    // First time installation
+                    console.log('Service worker installed for the first time');
+                  }
+                } else if (worker.state === 'activated') {
+                  console.log('Service worker activated, reloading...');
+                  await reloadPage();
+                }
+              });
+            }
+
             // Listen for new service worker installation
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;
               if (!newWorker) return;
 
+              console.log('Update found, new service worker installing...');
+
               // Listen for state changes
               newWorker.addEventListener('statechange', async () => {
+                console.log(`New worker state: ${newWorker.state}`);
+                
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                   // New service worker is installed and ready
-                  console.log('New service worker installed, clearing caches and reloading...');
+                  console.log('New service worker installed, activating...');
                   
-                  // Wait a bit for the new service worker to activate
-                  await new Promise(resolve => setTimeout(resolve, 100));
+                  // Post message to skip waiting
+                  if (registration.waiting) {
+                    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                  }
+                  
+                  // Wait a bit for activation
+                  await new Promise(resolve => setTimeout(resolve, 500));
                   
                   // Clear all caches and reload
+                  await reloadPage();
+                } else if (newWorker.state === 'activated') {
+                  console.log('New service worker activated, reloading...');
                   await reloadPage();
                 }
               });
@@ -74,11 +131,33 @@ function App() {
         }
       };
 
-      // Check immediately
+      // Immediate check for waiting service workers
+      const immediateCheck = async () => {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            if (registration.waiting) {
+              console.log('Found waiting service worker on page load, activating immediately...');
+              // Force skip waiting and reload
+              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+              await new Promise(resolve => setTimeout(resolve, 200));
+              await reloadPage();
+              return; // Exit early if we found a waiting worker
+            }
+          }
+        } catch (error) {
+          console.error('Error in immediate check:', error);
+        }
+      };
+
+      // Check immediately for waiting workers
+      immediateCheck();
+
+      // Also check for updates
       checkForUpdates();
 
-      // Check periodically (every 1 minute)
-      const updateInterval = setInterval(checkForUpdates, 1 * 60 * 1000);
+      // Check periodically (every 10 seconds for faster detection)
+      const updateInterval = setInterval(checkForUpdates, 10 * 1000);
 
       // Check when page becomes visible (user returns to tab)
       const handleVisibilityChange = () => {
