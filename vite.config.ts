@@ -35,6 +35,10 @@ export default defineConfig({
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
+        // Remove navigateFallback since we're not precaching
+        // This prevents the "non-precached-url" error
+        navigateFallback: undefined,
+        navigateFallbackDenylist: undefined,
       },
 
       devOptions: {
