@@ -1161,7 +1161,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     isShare={isShare}
                     showReport={isHaveReport}
                     onGenderate={(file_id: string | undefined) => {
-                      
                       if (file_id == 'discard') {
                         setShowUploadTest(false);
                         return;
@@ -1177,7 +1176,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         publish('openProgressModal', {});
                         setShowUploadTest(false);
                         setIsHaveReport(true);
-                        setCheckedStepTwo(false)
+                        setCheckedStepTwo(false);
                         setISGenerateLoading(false);
                         if (file_id !== 'customBiomarker') {
                           setTimeout(() => {
