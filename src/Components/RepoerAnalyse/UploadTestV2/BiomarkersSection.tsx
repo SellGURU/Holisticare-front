@@ -544,7 +544,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       </div>
                       <div className="text-center text-[#888888]">{b.unit}</div>
                       {/* delete logic */}
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-center gap-2">
                         {b.status === 'confirm' ? (
                           <div className="flex items-center justify-end w-full gap-1">
                             <div className="text-Text-Quadruple text-[10px]">
@@ -564,7 +564,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             />
                           </div>
                         ) : (
-                          <div className="relative flex items-center justify-end  pl-8 md:pl-5 gap-1">
+                          <div className="relative flex items-center pl-8 md:pl-6 justify-start gap-1">
                             {/* Status Div */}
                             {mappingStatus[b.biomarker_id] === 'added' && (
                               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
@@ -603,7 +603,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             <img
                               src="/icons/trash-blue.svg"
                               alt="Delete"
-                              className="cursor-pointer w-4 h-4"
+                              className="cursor-pointer  w-4 h-4"
                               onClick={() => handleTrashClick(index)}
                             />
                           </div>
