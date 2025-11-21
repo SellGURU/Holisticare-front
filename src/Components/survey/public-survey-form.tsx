@@ -917,7 +917,11 @@ export function PublicSurveyForm({
                   <Checkbox
                     id={`option-${questionIndex}-${index}`}
                     checked={isChecked}
-                    onCheckedChange={() => {
+                    onCheckedChange={() => {}}
+                    className="mt-1 text-green-600 border-green-600 pointer-events-none"
+                  />
+                  <Label
+                    onClick={() => {
                       const currentValue = Array.isArray(response)
                         ? response
                         : [];
@@ -929,9 +933,6 @@ export function PublicSurveyForm({
                         handleResponseChange([...currentValue, option]);
                       }
                     }}
-                    className="mt-1 text-green-600 border-green-600 pointer-events-none"
-                  />
-                  <Label
                     htmlFor={`option-${questionIndex}-${index}`}
                     className="flex-grow font-medium"
                   >
