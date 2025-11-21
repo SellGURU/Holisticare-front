@@ -874,7 +874,7 @@ export function PublicSurveyForm({
                     className="mt-1 text-green-600 border-green-600 pointer-events-none"
                   />
                   <Label
-                  onClick={() => {
+                    onClick={() => {
                       const currentValue = Array.isArray(response)
                         ? response
                         : [];
@@ -884,8 +884,8 @@ export function PublicSurveyForm({
                         );
                       } else {
                         handleResponseChange([...currentValue, option]);
-                      }                    
-                  }}
+                      }
+                    }}
                     htmlFor={`option-${questionIndex}-${index}`}
                     className="flex-grow font-medium"
                   >
