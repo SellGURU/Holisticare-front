@@ -52,11 +52,36 @@ const VersionControl = () => {
   const [saving, setSaving] = useState(false);
   const [hasDataFromBackend, setHasDataFromBackend] = useState(false);
   const [versions, setVersions] = useState<VersionControlData>({
-    web_main: { version: '', minimumSupportedVersion: '', maintenance: false, downloadLink: '' },
-    web_test: { version: '', minimumSupportedVersion: '', maintenance: false, downloadLink: '' },
-    ios: { version: '', minimumSupportedVersion: '', maintenance: false, downloadLink: '' },
-    android: { version: '', minimumSupportedVersion: '', maintenance: false, downloadLink: '' },
-    pwa: { version: '', minimumSupportedVersion: '', maintenance: false, downloadLink: '' },
+    web_main: {
+      version: '',
+      minimumSupportedVersion: '',
+      maintenance: false,
+      downloadLink: '',
+    },
+    web_test: {
+      version: '',
+      minimumSupportedVersion: '',
+      maintenance: false,
+      downloadLink: '',
+    },
+    ios: {
+      version: '',
+      minimumSupportedVersion: '',
+      maintenance: false,
+      downloadLink: '',
+    },
+    android: {
+      version: '',
+      minimumSupportedVersion: '',
+      maintenance: false,
+      downloadLink: '',
+    },
+    pwa: {
+      version: '',
+      minimumSupportedVersion: '',
+      maintenance: false,
+      downloadLink: '',
+    },
   });
 
   useEffect(() => {
@@ -173,10 +198,7 @@ const VersionControl = () => {
     }));
   };
 
-  const handleDownloadLinkChange = (
-    platform: Platform,
-    value: string,
-  ) => {
+  const handleDownloadLinkChange = (platform: Platform, value: string) => {
     if (!activePlatforms.includes(platform)) return;
     if (versions[platform].maintenance) return;
 
@@ -373,10 +395,7 @@ const VersionControl = () => {
                       type="text"
                       value={versionData.downloadLink || ''}
                       onChange={(e) =>
-                        handleDownloadLinkChange(
-                          platform,
-                          e.target.value,
-                        )
+                        handleDownloadLinkChange(platform, e.target.value)
                       }
                       placeholder="https://example.com/download"
                       className="w-full"
