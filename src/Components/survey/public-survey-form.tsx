@@ -870,7 +870,18 @@ export function PublicSurveyForm({
                   <Checkbox
                     id={`option-${questionIndex}-${index}`}
                     checked={isChecked}
-                    onCheckedChange={() => {}}
+                    onCheckedChange={() => {
+                    const currentValue = Array.isArray(response)
+                      ? response
+                      : [];
+                    if (isChecked) {
+                      handleResponseChange(
+                        currentValue.filter((item) => item !== option),
+                      );
+                    } else {
+                      handleResponseChange([...currentValue, option]);
+                    }                      
+                    }}
                     className="mt-1 text-green-600 border-green-600 pointer-events-none"
                   />
                   <Label
