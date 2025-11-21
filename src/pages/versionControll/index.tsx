@@ -52,11 +52,11 @@ const VersionControl = () => {
   const [saving, setSaving] = useState(false);
   const [hasDataFromBackend, setHasDataFromBackend] = useState(false);
   const [versions, setVersions] = useState<VersionControlData>({
-    web_main: { version: '', minimumSupportedVersion: '', maintenance: false },
-    web_test: { version: '', minimumSupportedVersion: '', maintenance: false },
-    ios: { version: '', minimumSupportedVersion: '', maintenance: false },
-    android: { version: '', minimumSupportedVersion: '', maintenance: false },
-    pwa: { version: '', minimumSupportedVersion: '', maintenance: false },
+    web_main: { version: '', minimumSupportedVersion: '', maintenance: false, downloadLink: '' },
+    web_test: { version: '', minimumSupportedVersion: '', maintenance: false, downloadLink: '' },
+    ios: { version: '', minimumSupportedVersion: '', maintenance: false, downloadLink: '' },
+    android: { version: '', minimumSupportedVersion: '', maintenance: false, downloadLink: '' },
+    pwa: { version: '', minimumSupportedVersion: '', maintenance: false, downloadLink: '' },
   });
 
   useEffect(() => {
@@ -78,30 +78,35 @@ const VersionControl = () => {
             minimumSupportedVersion:
               versionData.web_main?.minimumSupportedVersion || '',
             maintenance: versionData.web_main?.maintenance ?? false,
+            downloadLink: versionData.web_main?.downloadLink || '',
           },
           web_test: {
             version: versionData.web_test?.version || '',
             minimumSupportedVersion:
               versionData.web_test?.minimumSupportedVersion || '',
             maintenance: versionData.web_test?.maintenance ?? false,
+            downloadLink: versionData.web_test?.downloadLink || '',
           },
           ios: {
             version: versionData.ios?.version || '',
             minimumSupportedVersion:
               versionData.ios?.minimumSupportedVersion || '',
             maintenance: versionData.ios?.maintenance ?? false,
+            downloadLink: versionData.ios?.downloadLink || '',
           },
           android: {
             version: versionData.android?.version || '',
             minimumSupportedVersion:
               versionData.android?.minimumSupportedVersion || '',
             maintenance: versionData.android?.maintenance ?? false,
+            downloadLink: versionData.android?.downloadLink || '',
           },
           pwa: {
             version: versionData.pwa?.version || '',
             minimumSupportedVersion:
               versionData.pwa?.minimumSupportedVersion || '',
             maintenance: versionData.pwa?.maintenance ?? false,
+            downloadLink: versionData.pwa?.downloadLink || '',
           },
         });
         setHasDataFromBackend(true);
@@ -164,6 +169,22 @@ const VersionControl = () => {
       [platform]: {
         ...prev[platform],
         maintenance: !prev[platform].maintenance,
+      },
+    }));
+  };
+
+  const handleDownloadLinkChange = (
+    platform: Platform,
+    value: string,
+  ) => {
+    if (!activePlatforms.includes(platform)) return;
+    if (versions[platform].maintenance) return;
+
+    setVersions((prev) => ({
+      ...prev,
+      [platform]: {
+        ...prev[platform],
+        downloadLink: value,
       },
     }));
   };
@@ -343,6 +364,27 @@ const VersionControl = () => {
                     />
                     <p className="text-[10px] text-Text-Triarty mt-1">
                       Versions below this will require update (format: x.y.z)
+                    </p>
+                  </div>
+
+                  <div>
+                    <TextField
+                      label="Download Link"
+                      type="text"
+                      value={versionData.downloadLink || ''}
+                      onChange={(e) =>
+                        handleDownloadLinkChange(
+                          platform,
+                          e.target.value,
+                        )
+                      }
+                      placeholder="https://example.com/download"
+                      className="w-full"
+                      newStyle
+                      disabled={isFullyDisabled}
+                    />
+                    <p className="text-[10px] text-Text-Triarty mt-1">
+                      Link to download the application
                     </p>
                   </div>
                 </CardContent>

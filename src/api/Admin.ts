@@ -11,6 +11,7 @@ export interface VersionConfig {
   version: string;
   minimumSupportedVersion: string;
   maintenance: boolean;
+  downloadLink?: string;
 }
 
 export interface VersionControlData {
