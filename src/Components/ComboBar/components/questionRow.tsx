@@ -89,7 +89,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     Application.deleteQuestionary({
       f_unique_id: f_unique_id,
       q_unique_id: q_unique_id,
-      member_id: Number(member_id),
+      member_id: member_id,
     })
       .then(() => {
         setLoadingDelete(false);
@@ -104,7 +104,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
         const res = await Application.checkDeleteQuestionary({
           f_unique_id: f_unique_id,
           q_unique_id: q_unique_id,
-          member_id: Number(member_id),
+          member_id: member_id,
         });
         if (res.status === 200 && res.data.status === true) {
           setIsDeletedSuccess(true);
@@ -179,6 +179,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         publish('openFullscreenModal', {
                           url: `/surveys/${id}/${el.unique_id}/${el.forms_unique_id}/edit`,
                         });
+                        handleCloseSlideOutPanel();
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
                     >
@@ -214,6 +215,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         publish('openFullscreenModal', {
                           url: `/surveys/${id}/${el.unique_id}/${el.forms_unique_id}/fill`,
                         });
+                        handleCloseSlideOutPanel();
                         // window.open(`/surveys/${id}/${el.unique_id}`, '_blank');
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
