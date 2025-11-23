@@ -603,7 +603,19 @@ export function PublicSurveyForm({
           }).finally(() => {
             // setTimeout(() => {
             // publish('closeFullscreenModal', {});
-            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
+            parent.postMessage(
+              {
+                type: 'closeFullscreenModal',
+                data: {
+                  isFill: true,
+                  isUpdate: false,
+                  member_id: memberId as string,
+                  q_unique_id: qId as string,
+                  f_unique_id: fId as string,
+                },
+              },
+              '*',
+            );
             // navigate('/report/' + memberId + '/' + 'N');
             // }, 2000);
           });
@@ -616,7 +628,19 @@ export function PublicSurveyForm({
           }).finally(() => {
             // setTimeout(() => {
             // publish('closeFullscreenModal',{});
-            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
+            parent.postMessage(
+              {
+                type: 'closeFullscreenModal',
+                data: {
+                  isUpdate: true,
+                  isFill: false,
+                  member_id: memberId as string,
+                  q_unique_id: qId as string,
+                  f_unique_id: fId as string,
+                },
+              },
+              '*',
+            );
             // navigate('/report/' + memberId + '/' + 'N');
             // }, 2000);
           });
