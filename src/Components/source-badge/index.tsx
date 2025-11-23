@@ -13,7 +13,9 @@ export const SourceTag = ({ source, isSmall }: SourceTagProps) => {
                 ? '#DEF7EC'
                 : source === 'From Lab Result'
                   ? '#FFD8E4'
-                  : '#CADCFF',
+                  : source == 'Derived'
+                    ? '#DDCAFF'
+                    : '#CADCFF',
           }}
           className={` ${isSmall ? 'w-4 h-4 rounded flex  items-center justify-center' : 'h-4 p-2 py-[10px] rounded-full '}  flex items-center gap-[2px] text-[8px] text-Text-Primary  `}
         >
@@ -23,7 +25,9 @@ export const SourceTag = ({ source, isSmall }: SourceTagProps) => {
                 ? '/icons/task-square-green.svg'
                 : source === 'From Lab Result'
                   ? '/icons/glass-red.svg'
-                  : '/icons/watch-status-blue-small.svg'
+                  : source === 'Derived'
+                    ? '/icons/Derived.svg'
+                    : '/icons/watch-status-blue-small.svg'
             }
             alt={source}
             className={`${isSmall ? 'size-[12px]' : 'size-4'}`}

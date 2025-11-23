@@ -518,7 +518,7 @@ const AddClient = () => {
                         </div>
                       </div>
                       {(showValidation || phoneApiError) && phoneApiError && (
-                        <div className="text-Red overflow-visible text-nowrap  text-[10px] mt-[-10px]">
+                        <div className="text-Red break-words text-[10px] mt-[-10px] max-w-full">
                           {phoneApiError}
                         </div>
                       )}
