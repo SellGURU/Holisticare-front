@@ -7,14 +7,16 @@ import { createRoot } from 'react-dom/client';
 import { ToastContainer } from 'react-toastify';
 import './api/axios.ts';
 import App from './App.tsx';
+import DeleteQuestionnaireTrackingProgressModal from './Components/ComboBar/components/deleteQuestionnaireTrackingProgressModal.tsx';
+import FilloutQuestionnaireTrackingProgressModal from './Components/ComboBar/components/filloutQuestionnaireTrackingProgressModal.tsx';
+import UpdateQuestionnaireTrackingProgressModal from './Components/ComboBar/components/updateQuestionnaireTrackingProgressModal.tsx';
 import DeletedTooltipContainer from './Components/DeletedTooltip/index.tsx';
+import DeleteFileProgressModal from './Components/deleteFileProgressModal/index.tsx';
 import UploaderTooltipContainer from './Components/UploaderTooltip/index.tsx';
+import UploadFileProgressModal from './Components/uploadFileProgressModal/index.tsx';
 import { initGlobalErrorHandler } from './globalErrorHandler.ts';
 import './index.css';
 import AppContextProvider from './store/app.tsx';
-import UploadFileProgressModal from './Components/uploadFileProgressModal/index.tsx';
-import DeleteFileProgressModal from './Components/deleteFileProgressModal/index.tsx';
-import DeleteQuestionnaireTrackingProgressModal from './Components/ComboBar/components/deleteQuestionnaireTrackingProgressModal.tsx';
 
 initGlobalErrorHandler();
 
@@ -31,5 +33,7 @@ createRoot(document.getElementById('root')!).render(
     <UploadFileProgressModal />
     <DeleteFileProgressModal />
     <DeleteQuestionnaireTrackingProgressModal />
+    <UpdateQuestionnaireTrackingProgressModal />
+    <FilloutQuestionnaireTrackingProgressModal />
   </>,
 );
