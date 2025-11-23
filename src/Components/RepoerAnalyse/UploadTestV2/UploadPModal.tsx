@@ -71,7 +71,11 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   const [activeMenu, setactiveMenu] = useState('Upload File');
   const [showOnlyErrors, setShowOnlyErrors] = useState(false);
   const [isScaling, setIsScaling] = useState(false);
+  const [shouldAutoSwitch, setShouldAutoSwitch] = useState(false);
+
   useEffect(() => {
+    if (!shouldAutoSwitch) return;
+
     const rowErrorCount = rowErrors ? Object.keys(rowErrors).length : 0;
     const addedErrorCount = AddedRowErrors
       ? Object.keys(AddedRowErrors).length
@@ -83,7 +87,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
     if (addedErrorCount > 0 && rowErrorCount === 0) {
       setactiveMenu('Add Biomarker');
     }
-  }, [rowErrors, AddedRowErrors]);
+
+    setShouldAutoSwitch(false);
+  }, [rowErrors, AddedRowErrors, shouldAutoSwitch]);
+
   const [showReview, setshowReview] = useState(false);
   useEffect(() => {
     if (
@@ -95,10 +102,21 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
       setshowReview(false);
     }
   }, [rowErrors, AddedRowErrors, uploadedFile]);
+  // useEffect(() => {
+  //   if (activeMenu !== 'Upload File') {
+  //     setshowReview(false);
+  //   }
+  // }, [activeMenu]);
+  const uploadErrorCount = rowErrors ? Object.keys(rowErrors).length : 0;
+  const addBiomarkerErrorCount = AddedRowErrors
+    ? Object.keys(AddedRowErrors).length
+    : 0;
+
+  // Total combined
+  const activeErrorCount =
+    activeMenu === 'Upload File' ? uploadErrorCount : addBiomarkerErrorCount;
   useEffect(() => {
-    if (activeMenu !== 'Upload File') {
-      setshowReview(false);
-    }
+    setShowOnlyErrors(false);
   }, [activeMenu]);
   return (
     <>
@@ -127,7 +145,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   addedBiomarkers.length == 0) ||
                 btnLoading
               }
-              onClick={onSave}
+              onClick={() => {
+                onSave();
+                setShouldAutoSwitch(true);
+              }}
               ClassName=" w-[127px] md:w-[167px]"
             >
               {btnLoading ? (
@@ -154,17 +175,18 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               setActive={setactiveMenu}
               value={['Upload File', 'Add Biomarker']}
             ></Toggle>
-            {showReview ? (
+            {showReview && activeErrorCount > 0 ? (
               <div className="bg-[#FFD8E4] absolute right-0 bottom-0 text-[10px] text-Text-Primary w-[291px] rounded-[20px] h-[36px] py-2 px-4 flex justify-between items-center gap-2">
                 <div className="flex items-cente gap-1">
                   <img src="/icons/info-circle-red-2.svg" alt="" />
-                  {rowErrors ? Object.keys(rowErrors).length : 0} errors found
-                  in biomarkers.
+                  {activeErrorCount}{' '}
+                  {activeErrorCount === 1 ? 'error' : 'errors'} found in
+                  biomarkers.
                   <div
                     className="underline cursor-pointer text-[10px] text-Text-Primary"
                     onClick={() => setShowOnlyErrors(true)}
                   >
-                    View Errors
+                    View {activeErrorCount === 1 ? 'Error' : 'Errors'}
                   </div>
                 </div>
 
@@ -218,6 +240,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               deleteIndex={deleteIndex}
               dateOfTest={addedDateOfTest}
               setDateOfTest={handleAddedDateOfTestChange}
+              showOnlyErrors={showOnlyErrors}
+              setShowOnlyErrors={setShowOnlyErrors}
             ></AddBiomarker>
           </div>
         </div>

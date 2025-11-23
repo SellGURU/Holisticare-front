@@ -142,6 +142,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setAddedRowErrors({});
     publish('RESET_MAPPING_ROWS', {});
     setbiomarkerLoading(false);
+    setModifiedDateOfTest(new Date());
     forceReRender((x) => x + 1);
     Application.deleteFileHistory({
       file_id: fileId,
@@ -500,6 +501,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
     return false;
   };
+
   return (
     <>
       {deleteLoading && (
@@ -759,6 +761,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             }
             setstep(0);
             setUploadedFile(null);
+            setModifiedDateOfTest(new Date());
+            setAddedDateOfTest(new Date());
             setPolling(true);
             setbiomarkerLoading(false);
             setExtractedBiomarkers([]);

@@ -173,7 +173,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   }}
                   className={`flex items-center border-b border-Secondary-SelverGray  gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
                 >
-                  <img className="" src="/icons/eye-green.svg" alt="" />
+                  <img className="size-5" src="/icons/eye-green.svg" alt="" />
                   Preview
                 </div>
                 {el.status == 'completed' ? (
