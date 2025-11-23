@@ -779,7 +779,7 @@ const ClientCard: FC<ClientCardProps> = ({
               // data-tooltip-id={`${client.member_id}-${client.name}`}
               className="text-Text-Primary truncate max-w-[90px] sm:max-w-[100px] md:max-w-[150px] text-xs sm:text-[14px] font-medium text-nowrap mb-2 cursor-default"
             >
-              <EllipsedTooltip text={client.name}/>
+              <EllipsedTooltip text={client.name} />
               {/* {client.name} */}
               {/* {client.name.length > 15 && (
                 <Tooltip

@@ -142,11 +142,11 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               Show Only Errors
             </div>
           </div>
-       
+
           <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple">
             Date of Test:
             <SimpleDatePicker
-            textStyle
+              textStyle
               isUploadFile
               date={dateOfTest}
               setDate={setDateOfTest}
