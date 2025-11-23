@@ -241,7 +241,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         b.biomarker_id === id ? { ...b, ...standardized } : b,
       );
     }
-    setChangedRows((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    // setChangedRows((prev) => (prev.includes(id) ? prev : [...prev, id]));
     onChange(updated);
   };
   const [unitOptions, setUnitOptions] = React.useState<
@@ -497,10 +497,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           isSetting
                           value={b.biomarker}
                           options={avalibaleBiomarkers || []}
-                          onChange={(val: string) =>
+                          onChange={(val: string) =>{
                             updateAndStandardize(b.biomarker_id, {
                               biomarker: val,
                             })
+                            setChangedRows((prev) =>
+                              prev.includes(b.biomarker_id)
+                                ? prev
+                                : [...prev, b.biomarker_id],
+                            );
+                          }
                           }
                         />
                         {/* <Select
