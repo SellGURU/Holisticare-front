@@ -438,7 +438,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 <div className="text-center">Extracted Unit</div>
                 <div className="text-center">System Value</div>
                 <div className="text-center">System Unit</div>
-                <div className="text-end">Action</div>
+                <div className="text-center">Action</div>
               </div>
 
               {/* Table Rows */}
