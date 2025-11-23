@@ -1097,7 +1097,7 @@ class Application extends Api {
   static deleteQuestionary = (data: {
     f_unique_id: string;
     q_unique_id: string;
-    member_id: number;
+    member_id: string;
   }) => {
     return this.post(`/questionary_tracking/delete_questionary`, data);
   };
@@ -1111,9 +1111,23 @@ class Application extends Api {
   static checkDeleteQuestionary = (data: {
     f_unique_id: string;
     q_unique_id: string;
-    member_id: number;
+    member_id: string;
   }) => {
     return this.post(`/questionary_tracking/check_delete_questionary`, data);
+  };
+  static checkUpdateQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: string;
+  }) => {
+    return this.post(`/questionary_tracking/check_edit_questionnaire`, data);
+  };
+  static checkFilloutQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: string;
+  }) => {
+    return this.post(`/questionary_tracking/check_save_questionnaire`, data);
   };
 }
 
