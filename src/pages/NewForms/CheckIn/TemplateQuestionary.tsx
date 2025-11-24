@@ -108,10 +108,13 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                   Personal Form
                   {/* {el.title} */}
                 </div>
-                <div className="text-[10px] text-justify  text-Text-Quadruple mt-2">
-                  {/* {el.description} */}A personalized form to track users'
-                  activities
-                </div>
+                {templates.some(
+                  (el: any) => el.description && el.description.trim() !== '',
+                ) && (
+                  <div className="text-[10px] text-justify  text-Text-Quadruple mt-2">
+                    A personalized form to track users' activities
+                  </div>
+                )}
                 <div className="w-full">
                   <div className="w-[93px] h-[16px] rounded-xl bg-Primary-DeepTeal bg-opacity-10 text-[8px] text-Primary-DeepTeal flex items-center justify-center mt-2">
                     {/* {el.questions.length} Questions */}
