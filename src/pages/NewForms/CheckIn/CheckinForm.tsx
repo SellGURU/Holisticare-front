@@ -120,6 +120,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         setShowFeedBack(false);
       });
     } else {
+      setErrorQuestionary('');
       FormsApi.addQuestionary(values)
         .then(() => {
           getQuestionary();
