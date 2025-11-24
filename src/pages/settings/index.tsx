@@ -6,6 +6,7 @@ import SearchBox from '../../Components/SearchBox';
 import { Zappier } from './components/Zappier';
 import PackagePage from './components/Package';
 import { ClinicPreferences } from './components/ClinicPreferences';
+import { ChangePassword } from '../../Components/changePassword';
 const Setting: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState('Clinic Preferences');
   const renderContent = () => {
@@ -18,7 +19,7 @@ const Setting: React.FC = () => {
         return <></>;
       // return <UpdateProfileContent />;
       case 'Change Password':
-        return <></>;
+        return <ChangePassword></ChangePassword>;
 
       case 'Packages':
         return <PackagePage></PackagePage>;
