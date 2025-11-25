@@ -19,7 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
         },
         {
           title: 'Change Password',
-          isActive: false,
+          isActive: true,
         },
       ],
       'Integrations & AI': [
