@@ -16,6 +16,14 @@ const FullScreenModal = () => {
       if (receivedData.isUpdate) {
         publish('openUpdateQuestionnaireTrackingProgressModal', {});
         const checkUpdate = async () => {
+          const pathname = window.location.pathname
+            .split('/')
+            .slice(1, 3)
+            .join('/');
+          if (pathname !== `report/${receivedData.member_id}`) {
+            publish('closeUpdateQuestionnaireTrackingProgressModal', {});
+            return;
+          }
           try {
             const res = await Application.checkUpdateQuestionary({
               f_unique_id: receivedData.f_unique_id as string,
@@ -25,12 +33,12 @@ const FullScreenModal = () => {
             if (res.status === 200 && res.data.status === true) {
               publish('UpdateQuestionnaireTrackingSuccess', {});
             } else {
-              setTimeout(checkUpdate, 15000);
+              setTimeout(checkUpdate, 30000);
             }
           } catch (err) {
             console.error('err', err);
 
-            setTimeout(checkUpdate, 15000);
+            setTimeout(checkUpdate, 30000);
           }
         };
         checkUpdate();
@@ -38,6 +46,14 @@ const FullScreenModal = () => {
       if (receivedData.isFill) {
         publish('openFilloutQuestionnaireTrackingProgressModal', {});
         const checkFillout = async () => {
+          const pathname = window.location.pathname
+            .split('/')
+            .slice(1, 3)
+            .join('/');
+          if (pathname !== `report/${receivedData.member_id}`) {
+            publish('closeFilloutQuestionnaireTrackingProgressModal', {});
+            return;
+          }
           try {
             const res = await Application.checkFilloutQuestionary({
               f_unique_id: receivedData.f_unique_id as string,
@@ -47,12 +63,12 @@ const FullScreenModal = () => {
             if (res.status === 200 && res.data.status === true) {
               publish('FilloutQuestionnaireTrackingSuccess', {});
             } else {
-              setTimeout(checkFillout, 15000);
+              setTimeout(checkFillout, 30000);
             }
           } catch (err) {
             console.error('err', err);
 
-            setTimeout(checkFillout, 15000);
+            setTimeout(checkFillout, 30000);
           }
         };
         checkFillout();
