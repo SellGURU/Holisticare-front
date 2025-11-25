@@ -24,6 +24,6 @@ createRoot(document.getElementById('root')!).render(
     </AppContextProvider>
     <ToastContainer />
     <UploaderTooltipContainer />
-    <DeletedTooltipContainer />   
+    <DeletedTooltipContainer />
   </>,
 );

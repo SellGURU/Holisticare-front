@@ -123,7 +123,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
   }, []);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const canCreateNewActionPlan = () => {
-    if(!id || !disableGenerate){
+    if (!id || !disableGenerate) {
       return false;
     }
     if (isHolisticPlanEmpty) {
@@ -239,13 +239,17 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       <div
                         onClick={() => {
                           if (canCreateNewActionPlan()) {
-                            Application.checkClientRefresh(id??'').then((res) => {
-                              if (res.data.need_of_refresh == true) {
-                                publish('openRefreshModal', {});
-                              } else {
-                                navigate('/report/Generate-Action-Plan/' + id);
-                              }
-                            });
+                            Application.checkClientRefresh(id ?? '').then(
+                              (res) => {
+                                if (res.data.need_of_refresh == true) {
+                                  publish('openRefreshModal', {});
+                                } else {
+                                  navigate(
+                                    '/report/Generate-Action-Plan/' + id,
+                                  );
+                                }
+                              },
+                            );
                           }
                         }}
                         className={` min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal c ${!canCreateNewActionPlan() ? 'opacity-40 cursor-not-allowed' : 'cursor-default'}`}
