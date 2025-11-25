@@ -44,51 +44,63 @@ const biomarkerItem = ({
   const [activeBiomarker, setActiveBiomarker] = useState(() => {
     const maleKeys = getMaleThresholdKeys();
     const femaleKeys = getFemaleThresholdKeys();
-    
+
     // Try to get male data first
     if (maleKeys.length > 0 && data?.thresholds?.male?.[maleKeys[0]]) {
       const maleData = data.thresholds.male[maleKeys[0]];
       // Check if male data is not empty (has actual data)
-      if (maleData && (Array.isArray(maleData) ? maleData.length > 0 : Object.keys(maleData).length > 0)) {
+      if (
+        maleData &&
+        (Array.isArray(maleData)
+          ? maleData.length > 0
+          : Object.keys(maleData).length > 0)
+      ) {
         return maleData;
       }
     }
-    
+
     // If male data is empty or doesn't exist, use female data
     if (femaleKeys.length > 0 && data?.thresholds?.female?.[femaleKeys[0]]) {
       return data.thresholds.female[femaleKeys[0]];
     }
-    
+
     return null;
   });
   const [errorDetails, setErrorDetails] = useState('');
   useEffect(() => {
     // Get male threshold keys
-    const maleKeys = data && data.thresholds && data.thresholds.male 
-      ? Object.keys(data.thresholds.male) 
-      : [];
-    
+    const maleKeys =
+      data && data.thresholds && data.thresholds.male
+        ? Object.keys(data.thresholds.male)
+        : [];
+
     // Get female threshold keys
-    const femaleKeys = data && data.thresholds && data.thresholds.female 
-      ? Object.keys(data.thresholds.female) 
-      : [];
-    
+    const femaleKeys =
+      data && data.thresholds && data.thresholds.female
+        ? Object.keys(data.thresholds.female)
+        : [];
+
     // Try to get male data first
     if (maleKeys.length > 0 && data?.thresholds?.male?.[maleKeys[0]]) {
       const maleData = data.thresholds.male[maleKeys[0]];
       // Check if male data is not empty (has actual data)
-      if (maleData && (Array.isArray(maleData) ? maleData.length > 0 : Object.keys(maleData).length > 0)) {
+      if (
+        maleData &&
+        (Array.isArray(maleData)
+          ? maleData.length > 0
+          : Object.keys(maleData).length > 0)
+      ) {
         setActiveBiomarker(maleData);
         return;
       }
     }
-    
+
     // If male data is empty or doesn't exist, use female data
     if (femaleKeys.length > 0 && data?.thresholds?.female?.[femaleKeys[0]]) {
       setActiveBiomarker(data.thresholds.female[femaleKeys[0]]);
       return;
     }
-    
+
     setActiveBiomarker(null);
   }, [data]);
   const [gender, setGender] = useState('male');
