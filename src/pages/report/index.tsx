@@ -8,6 +8,9 @@ import { subscribe, unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
+import DeleteQuestionnaireTrackingProgressModal from '../../Components/ComboBar/components/deleteQuestionnaireTrackingProgressModal';
+import UpdateQuestionnaireTrackingProgressModal from '../../Components/ComboBar/components/updateQuestionnaireTrackingProgressModal';
+import FilloutQuestionnaireTrackingProgressModal from '../../Components/ComboBar/components/filloutQuestionnaireTrackingProgressModal';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
@@ -122,6 +125,9 @@ const Report = () => {
           // setIsShareModalLoading(false);
         }}
       />
+      <DeleteQuestionnaireTrackingProgressModal />
+      <UpdateQuestionnaireTrackingProgressModal />
+      <FilloutQuestionnaireTrackingProgressModal />
     </div>
   );
 };
