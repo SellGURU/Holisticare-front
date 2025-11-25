@@ -18,12 +18,16 @@ export const DeleteQuestionnaireTrackingProgressModal = () => {
     setIsinProgress(false);
   });
 
+  subscribe('closeDeleteQuestionnaireTrackingProgressModal', () => {
+    setshowProgressModal(false);
+  });
+
   return (
     <>
       <div
         style={{ zIndex: 1000 }}
         className={`
-          fixed top-[48px] right-6
+          fixed top-[48px] right-[86px]
           w-[320px]
           rounded-2xl border-2 border-r-0 border-Gray-50 
           shadow-200 p-4 bg-white
