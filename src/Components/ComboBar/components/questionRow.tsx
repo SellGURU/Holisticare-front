@@ -78,13 +78,16 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     member_id: string,
     q_unique_id: string,
     f_unique_id: string,
+    status: string,
   ) => {
     setLoadingDelete(true);
     setshowModal(false);
     // onDelete();
     setIsDeleted(q_unique_id);
     handleCloseSlideOutPanel();
-    publish('openDeleteQuestionnaireTrackingProgressModal', {});
+    if (status == 'completed') {
+      publish('openDeleteQuestionnaireTrackingProgressModal', {});
+    }
 
     Application.deleteQuestionary({
       f_unique_id: f_unique_id,
@@ -93,32 +96,45 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     })
       .then(() => {
         setLoadingDelete(false);
+        if (status !== 'completed') {
+          setIsDeletedSuccess(true);
+        }
       })
       .catch((err) => {
         console.error(err);
         setLoadingDelete(false);
         setIsSureRemoveId(null);
       });
-    const checkDelete = async () => {
-      try {
-        const res = await Application.checkDeleteQuestionary({
-          f_unique_id: f_unique_id,
-          q_unique_id: q_unique_id,
-          member_id: member_id,
-        });
-        if (res.status === 200 && res.data.status === true) {
-          setIsDeletedSuccess(true);
-          publish('DeleteQuestionnaireTrackingSuccess', {});
-        } else {
-          setTimeout(checkDelete, 15000);
+    if (status == 'completed') {
+      const checkDelete = async () => {
+        const pathname = window.location.pathname
+          .split('/')
+          .slice(1, 3)
+          .join('/');
+        if (pathname !== `report/${member_id}`) {
+          publish('closeDeleteQuestionnaireTrackingProgressModal', {});
+          return;
         }
-      } catch (err) {
-        console.error('err', err);
+        try {
+          const res = await Application.checkDeleteQuestionary({
+            f_unique_id: f_unique_id,
+            q_unique_id: q_unique_id,
+            member_id: member_id,
+          });
+          if (res.status === 200 && res.data.status === true) {
+            setIsDeletedSuccess(true);
+            publish('DeleteQuestionnaireTrackingSuccess', {});
+          } else {
+            setTimeout(checkDelete, 30000);
+          }
+        } catch (err) {
+          console.error('err', err);
 
-        setTimeout(checkDelete, 15000);
-      }
-    };
-    checkDelete();
+          setTimeout(checkDelete, 30000);
+        }
+      };
+      checkDelete();
+    }
   };
 
   return (
@@ -283,7 +299,12 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                       alt=""
                       className="w-[20px] h-[20px] cursor-pointer"
                       onClick={() => {
-                        handleDelete(id, el.unique_id, el.forms_unique_id);
+                        handleDelete(
+                          id,
+                          el.unique_id,
+                          el.forms_unique_id,
+                          el.status,
+                        );
                       }}
                     />
                     <img
