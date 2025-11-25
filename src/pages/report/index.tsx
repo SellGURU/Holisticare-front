@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ReportSideMenu } from '../../Components';
+import { MainModal, ReportSideMenu } from '../../Components';
 import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
 import { TopBar } from '../../Components/topBar';
 import { ComboBar } from '../../Components';
@@ -8,16 +8,30 @@ import { subscribe, unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
+import Application from '../../api/app';
+import { publish } from '../../utils/event';
+import { useParams } from 'react-router-dom';
+import UploadFileProgressModal from '../../Components/uploadFileProgressModal';
+import RefreshProgressModal from '../../Components/holisticPlan-refreshModal';
+import DeleteFileProgressModal from '../../Components/deleteFileProgressModal';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [treatmentId, setTreatmentId] = useState<string>('');
+  const [showRefreshModal, setshowRefreshModal] = useState(false);
+  const { id } = useParams<{ id: string }>();
+
   useEffect(() => {
     subscribe('openShareModalHolisticPlan', (data: any) => {
       setIsShareModalOpen(true);
       console.log(data.detail);
       setTreatmentId(data.detail.treatmentId);
+    });
+  }, []);
+  useEffect(() => {
+    subscribe('openRefreshModal', () => {
+      setshowRefreshModal(true)
     });
   }, []);
   subscribe('openSideOut', () => {
@@ -126,6 +140,59 @@ const Report = () => {
           // setIsShareModalLoading(false);
         }}
       />
+        <MainModal
+        isOpen={showRefreshModal}
+        onClose={() => {
+          setshowRefreshModal(false);
+        }}
+      >
+        <div className="w-[500px] h-[208px] rounded-2xl relative py-6 px-8 bg-white shadow-800 text-Text-Primary">
+          <div className="w-full flex items-center gap-2 border-b border-Gray-50 pb-2 font-medium text-sm">
+            <img src="/icons/danger.svg" alt="" />
+            Data needs to be synced before generating a new plan
+          </div>
+
+          <div
+            style={{
+              textAlignLast: 'center',
+            }}
+            className="font-medium mt-4 text-xs flex w-full justify-center leading-6 "
+          >
+            Some of the client’s data has changed since the last update. <br />{' '}
+            Please sync the latest data to ensure the plan is generated
+            accurately.
+          </div>
+          <div className="absolute bottom-6 right-8 flex gap-4">
+            <div
+              className="text-[#909090] font-medium text-sm cursor-pointer"
+              onClick={() => {
+                setshowRefreshModal(false);
+              }}
+            >
+              Cancel
+            </div>
+            <div
+              onClick={() => {
+                if (id) {
+                  Application.refreshData(id,false).then(() => {
+                    setshowRefreshModal(false);
+                    publish('SyncRefresh', {});
+                    publish('disableGenerate',{})
+                    
+                  });
+                }
+              }}
+              className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm"
+            >
+              Sync Data
+            </div>
+          </div>
+        </div>
+      </MainModal>
+    
+    <UploadFileProgressModal />
+    <RefreshProgressModal />
+    <DeleteFileProgressModal />
     </div>
   );
 };

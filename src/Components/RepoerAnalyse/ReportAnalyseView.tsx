@@ -696,6 +696,48 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //     // setLoadingHtmlReport(false);
     //   });
   };
+  const [disableGenerate, setDisableGenerate] = useState(false);
+  useEffect(() => {
+    const handler = () => {
+      publish('openRefreshProgressModal', userInfoData?.name);
+
+      if (!id) return;
+
+      let intervalId: any = null;
+
+      const checkStatus = () => {
+        // Immediately stop further polling
+        if (stopPolling.current) {
+          clearInterval(intervalId);
+          return;
+        }
+
+        Application.checkRefreshProgress(id).then((res) => {
+          if (res.data.status === true) {
+            clearInterval(intervalId);
+            publish('RefreshStepTwoSuccess', {});
+            setDisableGenerate(false);
+          }
+        });
+      };
+
+      checkStatus();
+
+      intervalId = setInterval(checkStatus, 10000);
+    };
+
+    subscribe('SyncRefresh', handler);
+
+    return () => {
+      unsubscribe('SyncRefresh', handler);
+    };
+  }, [id, userInfoData?.name]);
+
+  useEffect(() => {
+    subscribe('disableGenerate', () => {
+      setDisableGenerate(true);
+    });
+  });
 
   return (
     <>
@@ -1048,6 +1090,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                 </div>
                 <TreatmentPlan
+                  disableGenerate={disableGenerate}
                   isShare={isShare}
                   setPrintActionPlan={(value) => {
                     setActionPlanPrint(value);
@@ -1101,6 +1144,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   }}
                   calenderDataUper={caldenderData}
                   isHolisticPlanEmpty={isHolisticPlanEmpty}
+                  disableGenerate={disableGenerate}
                 />
               </div>
             )}

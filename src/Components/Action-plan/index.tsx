@@ -9,6 +9,7 @@ import { publish } from '../../utils/event';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 import ProgressCalenderView from './ProgressCalendarView';
+import SpinnerLoader from '../SpinnerLoader';
 
 // type CardData = {
 //   cardID: number;
@@ -24,6 +25,7 @@ interface ActionPlanProps {
   isShare?: boolean;
   isHolisticPlanEmpty: boolean;
   setCalendarPrintData: (data: any) => void;
+  disableGenerate: boolean;
 }
 
 export const ActionPlan: FC<ActionPlanProps> = ({
@@ -32,6 +34,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
   calenderDataUper,
   isHolisticPlanEmpty,
   setCalendarPrintData,
+  disableGenerate,
 }) => {
   const { id } = useParams<{ id: string }>();
   const [actionPlanData, setActionPlanData] = useState<any>(calenderDataUper);
@@ -120,6 +123,9 @@ export const ActionPlan: FC<ActionPlanProps> = ({
   }, []);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const canCreateNewActionPlan = () => {
+    if(!id || !disableGenerate){
+      return false;
+    }
     if (isHolisticPlanEmpty) {
       return false;
     }
@@ -233,10 +239,16 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       <div
                         onClick={() => {
                           if (canCreateNewActionPlan()) {
-                            navigate('/report/Generate-Action-Plan/' + id);
+                            Application.checkClientRefresh(id??'').then((res) => {
+                              if (res.data.need_of_refresh == true) {
+                                publish('openRefreshModal', {});
+                              } else {
+                                navigate('/report/Generate-Action-Plan/' + id);
+                              }
+                            });
                           }
                         }}
-                        className={` ${!canCreateNewActionPlan() ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal `}
+                        className={` min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal c ${!canCreateNewActionPlan() ? 'opacity-40 cursor-not-allowed' : 'cursor-default'}`}
                       >
                         <div className="flex flex-col  TextStyle-Subtitle-2 items-center justify-center ">
                           <img
@@ -333,11 +345,27 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                         <ButtonSecondary
                           ClassName="py-[6px] px-6"
                           onClick={() => {
-                            navigate('/report/Generate-Action-Plan/' + id);
+                            if (id && !disableGenerate) {
+                              Application.checkClientRefresh(id).then((res) => {
+                                if (res.data.need_of_refresh == true) {
+                                  publish('openRefreshModal', {});
+                                } else {
+                                  navigate(
+                                    '/report/Generate-Action-Plan/' + id,
+                                  );
+                                }
+                              });
+                            }
                           }}
                         >
-                          <img src="/icons/tick.svg" alt="" />
-                          Generate New
+                          {disableGenerate ? (
+                            <SpinnerLoader />
+                          ) : (
+                            <>
+                              <img src="/icons/tick.svg" alt="" />
+                              Generate New
+                            </>
+                          )}
                         </ButtonSecondary>
                       </div>
                     </div>

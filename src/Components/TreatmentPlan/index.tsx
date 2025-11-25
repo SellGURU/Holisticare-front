@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
@@ -25,6 +26,8 @@ interface TreatmentPlanProps {
   setIsHolisticPlanEmpty: (value: boolean) => void;
   setIsShareModalSuccess: (value: boolean) => void;
   setDateShare: (value: string | null) => void;
+  disableGenerate: boolean;
+ 
 }
 
 export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
@@ -34,6 +37,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   setIsHolisticPlanEmpty,
   setIsShareModalSuccess,
   setDateShare,
+  disableGenerate,
+
 }) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
@@ -51,12 +56,17 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         return '#000000'; // Fallback color
     }
   };
-  const resolveCanGenerateNew = () => {
-    if (cardData.length > 0) {
-      return cardData[cardData.length - 1].state !== 'Draft';
-    }
-    return true;
-  };
+const resolveCanGenerateNew = () => {
+
+  if (disableGenerate) return false;
+
+  // If we have plans, check if the last one is Draft
+  if (cardData.length > 0) {
+    return cardData[cardData.length - 1].state !== 'Draft';
+  }
+
+  return true;
+};
   const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
@@ -242,6 +252,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   };
   return (
     <>
+      {/* {showRefreshModal && ( */}
+    
+      {/* )} */}
       {isShare ? (
         <>
           <div className="w-full gap-1 md:gap-2 mt-4 flex justify-between items-center hidden-scrollbar overflow-x-scroll md:overflow-x-hidden">
@@ -379,9 +392,18 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <ButtonSecondary
                   ClassName="w-full md:w-fit"
                   onClick={() => {
-                    setTreatmentId('');
+                    if (id && !disableGenerate) {
+                      Application.checkClientRefresh(id).then((res) => {
+                        if (res.data.need_of_refresh == true) {
+                          publish("openRefreshModal",{})
+                        } else {
+                          setTreatmentId('');
+                          navigate(`/report/Generate-Holistic-Plan/${id}`);
+                        }
+                      });
+                    }
+
                     // navigate(`/report/Generate-Recommendation/${id}`);
-                    navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                   }}
                 >
                   <img src="/icons/tick-square.svg" alt="" /> Generate New
@@ -540,18 +562,36 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <div
                   onClick={() => {
                     if (resolveCanGenerateNew()) {
-                      setTreatmentId('');
+                      if (id && !disableGenerate) {
+                        Application.checkClientRefresh(id).then((res) => {
+                          if (res.data.need_of_refresh == true) {
+                           publish("openRefreshModal",{})
+                          } else {
+                            setTreatmentId('');
+                            navigate(`/report/Generate-Holistic-Plan/${id}`);
+                          }
+                        });
+                      }
+
                       // navigate(`/report/Generate-Recommendation/${id}`);
-                      navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                     }
                   }}
                   className={` 
                     relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
-                  <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
-                  <div className="text-sm font-medium text-Primary-DeepTeal">
-                    Generate New
-                  </div>
+               
+                    <>
+                      {' '}
+                      <img
+                        className="w-6 h-6"
+                        src="/icons/add-blue.svg"
+                        alt=""
+                      />
+                      <div className="text-sm font-medium text-Primary-DeepTeal">
+                        Generate New
+                      </div>
+                    </>
+              
                 </div>
               </div>
               {/* <div className="w-full flex justify-center md:justify-end gap-2 my-3">
