@@ -62,7 +62,7 @@ export const ChangePassword = () => {
         current_password: currentPassword,
       });
     } catch (err: any) {
-         setbtnLoading(false);
+      setbtnLoading(false);
       const apiError = err?.detail;
       if (typeof apiError === 'string') {
         setErrors((prev) => ({
@@ -82,7 +82,7 @@ export const ChangePassword = () => {
       });
       setbtnLoading(false);
       resetForm(); // all good, clear the form
-      toast.success("Password changed successfully.")
+      toast.success('Password changed successfully.');
     } catch (err: any) {
       const apiError = err?.detail;
       console.log(err);
@@ -218,7 +218,11 @@ export const ChangePassword = () => {
           Discard Changes
         </div>
 
-        <ButtonPrimary ClassName='min-w-[150px]' disabled={!isFormReady || btnLoading} onClick={handleUpdatePassword}>
+        <ButtonPrimary
+          ClassName="min-w-[150px]"
+          disabled={!isFormReady || btnLoading}
+          onClick={handleUpdatePassword}
+        >
           {btnLoading ? <SpinnerLoader></SpinnerLoader> : <> Update Password</>}
         </ButtonPrimary>
       </div>
