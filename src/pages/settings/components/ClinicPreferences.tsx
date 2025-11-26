@@ -115,7 +115,7 @@ export const ClinicPreferences = () => {
               Back to Default
             </div>
             <ButtonPrimary
-            // disabled={!isFormReady}
+              // disabled={!isFormReady}
               ClassName="min-w-[150px]"
               onClick={() => {
                 if (btnLoading == false) {

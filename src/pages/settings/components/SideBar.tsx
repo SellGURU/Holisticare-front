@@ -3,9 +3,14 @@ import { useSearchParams } from 'react-router-dom';
 type SidebarProps = {
   activeMenu: string;
   setActiveMenu: (menu: string) => void;
+  loginWithGoogle: boolean;
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  activeMenu,
+  setActiveMenu,
+  loginWithGoogle,
+}) => {
   const menuItems = useMemo(
     () => ({
       General: [
@@ -19,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
         },
         {
           title: 'Change Password',
-          isActive: true,
+          isActive: loginWithGoogle === false,
         },
       ],
       'Integrations & AI': [

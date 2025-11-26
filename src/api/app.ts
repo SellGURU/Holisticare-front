@@ -1124,7 +1124,7 @@ class Application extends Api {
     return this.post('/action_plan/draft/initial_save', data);
   };
   static verifyPassword = (data: any) => {
-    return this.post('/setting/verify_current_password', data);
+    return this.post('/setting/verify_password', data);
   };
   static changePassword = (data: any) => {
     return this.post('/setting/change_password', data);
