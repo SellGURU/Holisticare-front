@@ -127,10 +127,11 @@ export const Questionary: React.FC<QuestionaryProps> = ({
       }
     }
   }, [isOpen, tryComplete, id]);
-
-  subscribe('reloadQuestionnaires', () => {
-    getQuestionnaires();
-  });
+  useEffect(() => {
+    subscribe('reloadQuestionnaires', () => {
+      getQuestionnaires();
+    });
+  }, []);
   // const formValueChange = (id: string, value: any) => {
   //   setQuestionsFormData((prev: any) => ({
   //     ...prev,
