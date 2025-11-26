@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { publish, subscribe } from '../../utils/event';
 import Application from '../../api/app';
+import { publish, subscribe } from '../../utils/event';
 
 const FullScreenModal = () => {
   const [isOpen, setIsOpen] = useState(false);

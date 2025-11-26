@@ -24,6 +24,7 @@ interface QuestionRowProps {
     disabled?: boolean,
   ) => any;
   handleCloseSlideOutPanel: () => void;
+  getQuestionnaires: () => void;
 }
 const QuestionRow: React.FC<QuestionRowProps> = ({
   el,
@@ -33,6 +34,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   onAssign,
   // deleteRow,
   handleCloseSlideOutPanel,
+  getQuestionnaires,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
@@ -84,8 +86,8 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     setshowModal(false);
     // onDelete();
     setIsDeleted(q_unique_id);
-    handleCloseSlideOutPanel();
     if (status == 'completed') {
+      handleCloseSlideOutPanel();
       publish('openDeleteQuestionnaireTrackingProgressModal', {});
     }
 
@@ -98,6 +100,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
         setLoadingDelete(false);
         if (status !== 'completed') {
           setIsDeletedSuccess(true);
+          getQuestionnaires();
         }
       })
       .catch((err) => {

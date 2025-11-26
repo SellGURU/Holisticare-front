@@ -837,6 +837,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                         resolveForm={resolveForm}
                         deleteRow={() => deleteQuestionRow(index)}
                         handleCloseSlideOutPanel={handleCloseSlideOutPanel}
+                        getQuestionnaires={getQuestionnaires}
                       ></QuestionRow>
                     );
                   })}
