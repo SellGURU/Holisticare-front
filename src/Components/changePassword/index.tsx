@@ -60,6 +60,7 @@ export const ChangePassword = () => {
     try {
       await Application.verifyPassword({
         current_password: currentPassword,
+        new_password: newPassword,
       });
     } catch (err: any) {
       setbtnLoading(false);

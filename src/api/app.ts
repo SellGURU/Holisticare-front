@@ -1154,7 +1154,7 @@ class Application extends Api {
     return this.post(`/questionary_tracking/check_delete_questionary`, data);
   };
   static verifyPassword = (data: any) => {
-    return this.post('/setting/verify_current_password', data);
+    return this.post('/setting/verify_password', data);
   };
   static changePassword = (data: any) => {
     return this.post('/setting/change_password', data);
