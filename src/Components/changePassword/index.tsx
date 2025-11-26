@@ -65,6 +65,18 @@ export const ChangePassword = () => {
     } catch (err: any) {
       setbtnLoading(false);
       const apiError = err?.detail;
+
+      // Case: object with field errors (new API format)
+      if (apiError && typeof apiError === 'object') {
+        setErrors({
+          current: apiError.current_password || '',
+          new: apiError.new_password || '',
+          confirm: '',
+        });
+        return;
+      }
+
+      // Case: simple string
       if (typeof apiError === 'string') {
         setErrors((prev) => ({
           ...prev,
