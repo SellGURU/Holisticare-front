@@ -129,8 +129,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setIsLoadingQuestionnaires(false);
         });
     });
-
-  },[])
+  }, []);
   const fetchPatentDataWithState = () => {
     if (isShare) {
       Application.getPatientsInfoShare(
