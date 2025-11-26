@@ -395,7 +395,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                           publish('openRefreshModal', {});
                         } else {
                           setTreatmentId('');
-                          navigate(`/report/Generate-Holistic-Plan/${id}`);
+                          navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                         }
                       });
                     }
@@ -565,7 +565,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             publish('openRefreshModal', {});
                           } else {
                             setTreatmentId('');
-                            navigate(`/report/Generate-Holistic-Plan/${id}`);
+                            navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                           }
                         });
                       }
