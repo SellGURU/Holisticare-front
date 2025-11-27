@@ -241,8 +241,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         b.biomarker_id === id ? { ...b, ...standardized } : b,
       );
     }
-
-    // setChangedRows((prev) => (prev.includes(id) ? prev : [...prev, id]));
     onChange(updated);
   };
   const [unitOptions, setUnitOptions] = React.useState<
