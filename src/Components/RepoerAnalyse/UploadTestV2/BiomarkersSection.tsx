@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react';
+import Application from '../../../api/app';
+import Circleloader from '../../CircleLoader';
 import Select from '../../Select';
 import SimpleDatePicker from '../../SimpleDatePicker';
-import Circleloader from '../../CircleLoader';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-import Application from '../../../api/app';
-import { Tooltip } from 'react-tooltip';
 // import { Scaling } from 'lucide-react';
-import SearchSelect from '../../searchableSelect';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
+import SearchSelect from '../../searchableSelect';
+import Toggle from '../Boxs/Toggle';
 interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
@@ -21,6 +21,8 @@ interface BiomarkersSectionProps {
   setIsScaling: (isScaling: boolean) => void;
   rowErrors?: any;
   setrowErrors: any;
+  showOnlyErrors: boolean;
+  setShowOnlyErrors: (showOnlyErrors: boolean) => void;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -35,13 +37,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   setrowErrors,
   isScaling,
   setIsScaling,
+  showOnlyErrors,
+  setShowOnlyErrors,
 }) => {
   const [changedRows, setChangedRows] = useState<string[]>([]);
   const [mappedRows, setMappedRows] = useState<string[]>([]);
   const [mappingStatus, setMappingStatus] = useState<
     Record<string, 'added' | 'removed' | null>
   >({});
-
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleValueChange = (id: string, newValue: string) => {
@@ -238,7 +241,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         b.biomarker_id === id ? { ...b, ...standardized } : b,
       );
     }
-
     onChange(updated);
   };
   const [unitOptions, setUnitOptions] = React.useState<
@@ -352,7 +354,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   return (
     <div
       // style={{ height: window.innerHeight - 400 + 'px' }}
-      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-sm font-medium text-Text-Primary`}
+      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-sm  text-Text-Primary`}
     >
       {loading ? (
         <div
@@ -395,16 +397,27 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 className="w-4 h-4 cursor-pointer text-Text-Secondary"
               /> */}
             </div>
-            <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
-              Date of Test:
-              <SimpleDatePicker
-                textStyle
-                isUploadFile
-                date={dateOfTest}
-                setDate={setDateOfTest}
-                placeholder="Select Date"
-                ClassName="ml-2 border border-Gray-50  1rounded-2xl px-2 py-1 text-Text-Primary"
-              />
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <Toggle
+                  checked={showOnlyErrors}
+                  setChecked={setShowOnlyErrors}
+                />
+                <div className="text-[10px] md:text-xs font-normal text-Text-Primary">
+                  Show Only Errors
+                </div>
+              </div>
+              <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
+                Date of Test:
+                <SimpleDatePicker
+                  textStyle
+                  isUploadFile
+                  date={dateOfTest}
+                  setDate={setDateOfTest}
+                  placeholder="Select Date"
+                  ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
+                />
+              </div>
             </div>
           </div>
 
@@ -412,7 +425,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="min-w-[800px] ">
               {/* Table Header */}
               <div
-                className="grid w-full sticky top-0 z-20 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
                 style={{
                   gridTemplateColumns:
                     'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
@@ -424,14 +437,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 <div className="text-center">Extracted Unit</div>
                 <div className="text-center">System Value</div>
                 <div className="text-center">System Unit</div>
-                <div className="text-end">Action</div>
+                <div className="text-center">Action</div>
               </div>
 
               {/* Table Rows */}
               <div
                 ref={tableRef}
-                className="overflow-y-auto  w-[100.5%]"
+                className="overflow-y-auto  w-[100%]"
                 style={{
+                  minHeight: isScaling
+                    ? window.innerHeight - 330 + 'px'
+                    : window.innerHeight - 500 + 'px',
                   maxHeight: isScaling
                     ? window.innerHeight - 330 + 'px'
                     : window.innerHeight - 500 + 'px',
@@ -444,7 +460,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     <div
                       ref={(el) => (rowRefs.current[index] = el)}
                       key={index}
-                      className={` ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
+                      className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
                       style={{
                         gridTemplateColumns:
                           'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
@@ -454,7 +470,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         <TooltipTextAuto maxWidth="160px">
                           {b.original_biomarker_name}
                         </TooltipTextAuto>
-                        {errorForRow && (
+                        {/* {errorForRow && (
                           <>
                             <img
                               data-tooltip-id={`tooltip-${index}`}
@@ -470,7 +486,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               {errorForRow}
                             </Tooltip>
                           </>
-                        )}
+                        )} */}
                       </div>
                       {/* biomarker (editable via select) */}
                       <div className="text-center">
@@ -532,7 +548,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       </div>
                       <div className="text-center text-[#888888]">{b.unit}</div>
                       {/* delete logic */}
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-center gap-2">
                         {b.status === 'confirm' ? (
                           <div className="flex items-center justify-end w-full gap-1">
                             <div className="text-Text-Quadruple text-[10px]">
@@ -552,7 +568,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             />
                           </div>
                         ) : (
-                          <div className="relative flex items-center justify-end  pl-8 md:pl-5 gap-1">
+                          <div className="relative flex items-center pl-8 md:pl-6 justify-start gap-1">
                             {/* Status Div */}
                             {mappingStatus[b.biomarker_id] === 'added' && (
                               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
@@ -591,12 +607,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             <img
                               src="/icons/trash-blue.svg"
                               alt="Delete"
-                              className="cursor-pointer w-4 h-4"
+                              className="cursor-pointer  w-4 h-4"
                               onClick={() => handleTrashClick(index)}
                             />
                           </div>
                         )}
                       </div>
+                      {errorForRow && (
+                        <div className="text-Red font-normal text-[10px] text-nowrap mt-1">
+                          {errorForRow}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
