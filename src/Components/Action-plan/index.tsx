@@ -9,7 +9,6 @@ import { publish } from '../../utils/event';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 import ProgressCalenderView from './ProgressCalendarView';
-import SpinnerLoader from '../SpinnerLoader';
 
 // type CardData = {
 //   cardID: number;
@@ -344,6 +343,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       <div className="mt-6 flex w-full justify-center">
                         <ButtonSecondary
                           ClassName="py-[6px] px-6"
+                          disabled={!canCreateNewActionPlan()}
                           onClick={() => {
                             if (canCreateNewActionPlan() && id) {
                               Application.checkClientRefresh(id).then((res) => {
@@ -358,14 +358,12 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                             }
                           }}
                         >
-                          {disableGenerate ? (
-                            <SpinnerLoader />
-                          ) : (
-                            <>
+                       
+                            
                               <img src="/icons/tick.svg" alt="" />
                               Generate New
-                            </>
-                          )}
+                            
+                        
                         </ButtonSecondary>
                       </div>
                     </div>

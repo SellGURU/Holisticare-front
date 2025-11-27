@@ -388,8 +388,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 </div>
                 <ButtonSecondary
                   ClassName="w-full md:w-fit"
+                  disabled={!resolveCanGenerateNew()}
                   onClick={() => {
-                    if (id && !disableGenerate) {
+                  if (resolveCanGenerateNew() && id) {
                       Application.checkClientRefresh(id).then((res) => {
                         if (res.data.need_of_refresh == true) {
                           publish('openRefreshModal', {});
