@@ -354,7 +354,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   return (
     <div
       // style={{ height: window.innerHeight - 400 + 'px' }}
-      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-sm  text-Text-Primary`}
+      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary`}
     >
       {loading ? (
         <div
@@ -548,7 +548,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       </div>
                       <div className="text-center text-[#888888]">{b.unit}</div>
                       {/* delete logic */}
-                      <div className="flex items-center justify-center gap-2">
+                      <div
+                        className={`flex items-center ${
+                          changedRows.includes(b.biomarker_id) ||
+                          mappedRows.includes(b.biomarker_id)
+                            ? 'justify-end'
+                            : 'justify-center'
+                        }  gap-2  h-full`}
+                      >
                         {b.status === 'confirm' ? (
                           <div className="flex items-center justify-end w-full gap-1">
                             <div className="text-Text-Quadruple text-[10px]">
@@ -568,8 +575,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             />
                           </div>
                         ) : (
-                          <div className="relative flex items-center pl-8 md:pl-6 justify-start gap-1">
-                            {/* Status Div */}
+                          <div className="relative flex items-center justify-end   gap-1  h-full">
                             {mappingStatus[b.biomarker_id] === 'added' && (
                               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
                                 <img
@@ -579,8 +585,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                                 Mapping saved for future uploads.
                               </div>
                             )}
+
                             {mappingStatus[b.biomarker_id] === 'removed' && (
-                              <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[220px]  rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
+                              <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[220px] rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
                                 <img
                                   src="/icons/info-circle-orange.svg"
                                   alt=""
@@ -604,12 +611,21 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                                 }
                               />
                             )}
-                            <img
-                              src="/icons/trash-blue.svg"
-                              alt="Delete"
-                              className="cursor-pointer  w-4 h-4"
-                              onClick={() => handleTrashClick(index)}
-                            />
+                            <div
+                              className={` ${
+                                changedRows.includes(b.biomarker_id) ||
+                                mappedRows.includes(b.biomarker_id)
+                                  ? 'pl-0'
+                                  : 'pl-6'
+                              } `}
+                            >
+                              <img
+                                src="/icons/trash-blue.svg"
+                                alt="Delete"
+                                className="cursor-pointer w-4 h-4 "
+                                onClick={() => handleTrashClick(index)}
+                              />
+                            </div>
                           </div>
                         )}
                       </div>
