@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useRef, useState, useEffect } from 'react';
-import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 import { uploadToAzure } from '../../../help';
 import { publish, subscribe } from '../../../utils/event';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
 // import SpinnerLoader from '../../SpinnerLoader';
@@ -28,6 +28,7 @@ interface UploadTestProps {
   showReport: boolean;
   onDiscard: () => void;
   questionnaires: any[];
+  has_wearable_data: boolean;
   isLoadingQuestionnaires: boolean;
 }
 
@@ -38,6 +39,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   showReport,
   onDiscard,
   questionnaires,
+  has_wearable_data,
   isLoadingQuestionnaires,
 }) => {
   const fileInputRef = useRef<any>(null);
@@ -139,7 +141,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setRowErrors({});
     setAddedRowErrors({});
     publish('RESET_MAPPING_ROWS', {});
+    setbiomarkerLoading(false);
+    setModifiedDateOfTest(new Date());
     forceReRender((x) => x + 1);
+    Application.deleteFileHistory({
+      file_id: fileId,
+      member_id: memberId,
+    }).catch(() => {});
   };
   useEffect(() => {
     subscribe('DELETE_FILE_TRIGGER', () => {
@@ -389,7 +397,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
     setBtnLoading(true);
-
+    const modifiedTimestamp = modifiedDateOfTest
+      ? Date.UTC(
+          modifiedDateOfTest.getFullYear(),
+          modifiedDateOfTest.getMonth(),
+          modifiedDateOfTest.getDate(),
+        ).toString()
+      : null;
+    const addedTimestamp = addedDateOfTest
+      ? Date.UTC(
+          addedDateOfTest.getFullYear(),
+          addedDateOfTest.getMonth(),
+          addedDateOfTest.getDate(),
+        ).toString()
+      : null;
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
@@ -400,8 +421,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     Application.validateBiomarkers({
       modified_biomarkers_list: mappedExtractedBiomarkers,
       added_biomarkers_list: addedBiomarkers,
+      modified_biomarkers_date_of_test: modifiedTimestamp,
+      added_biomarkers_date_of_test: addedTimestamp,
       modified_lab_type: fileType,
       modified_file_id: uploadedFile?.file_id ?? '',
+      member_id: memberId,
     })
       .then(() => {
         // 200 response
@@ -460,6 +484,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     if (showReport) {
       return true;
     }
+    if (has_wearable_data) {
+      return true;
+    }
     if (uploadedFile != null) {
       return true;
     }
@@ -474,6 +501,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
     return false;
   };
+
   return (
     <>
       {deleteLoading && (
@@ -554,9 +582,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                             .catch((err) => {
                               console.log(err);
                             });
-                          onGenderate(
-                            uploadedFile?.file_id || 'customBiomarker',
-                          );
+                          onGenderate('customBiomarker');
                         } else {
                           onGenderate(undefined);
                         }
@@ -735,6 +761,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             }
             setstep(0);
             setUploadedFile(null);
+            setModifiedDateOfTest(new Date());
+            setAddedDateOfTest(new Date());
             setPolling(true);
             setbiomarkerLoading(false);
             setExtractedBiomarkers([]);

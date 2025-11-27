@@ -126,6 +126,16 @@ const MessageList: React.FC<MessageListProps> = ({
               isMessages
             />
           </div>
+          <div className="my-4">
+            <SearchBox
+              isMessages
+              isHaveBorder
+              isGrayIcon
+              value={search}
+              onSearch={(e) => setSearch(e)}
+              placeHolder="Search clients..."
+            />
+          </div>
           {messagesSearched.length === 0 && (
             <div className="flex flex-col items-center w-full h-[70vh] md:h-[90%] justify-center">
               <img src="/icons/empty-messages-coach.svg" alt="" />
@@ -134,17 +144,7 @@ const MessageList: React.FC<MessageListProps> = ({
               </div>
             </div>
           )}
-          <ul className="mt-5 w-full h-full pr-3 overflow-y-scroll divide-y ">
-            <li>
-              <SearchBox
-                isMessages
-                isHaveBorder
-                isGrayIcon
-                value={search}
-                onSearch={(e) => setSearch(e)}
-                placeHolder="Search clients..."
-              />
-            </li>
+          <ul className="mt-5 w-full h-[90%] pr-3   overflow-y-scroll divide-y ">
             {messagesSearched.map((message, index) => {
               const isSelected = expandedMessage === message.member_id;
               const isBeforeSelected =

@@ -38,6 +38,7 @@ import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
 import Playground from '../pages/playground/index.tsx';
+import HtmlViewer from '../pages/HtmlViewer/index.tsx';
 import MaintenancePage from '../pages/maintenance/index.tsx';
 const router = createBrowserRouter([
   {
@@ -138,7 +139,7 @@ const router = createBrowserRouter([
         element: <GenerateActionPlan></GenerateActionPlan>,
       },
       {
-        path: 'report/Generate-Holistic-Plan/:id',
+        path: 'report/Generate-Holistic-Plan/:id/:treatment_id',
         element: <NewGenerateHolisticPlan></NewGenerateHolisticPlan>,
       },
       {
@@ -202,6 +203,10 @@ const router = createBrowserRouter([
   {
     path: '/surveys-view/:member-id/:q-id',
     element: <SurveyResponsesPage></SurveyResponsesPage>,
+  },
+  {
+    path: '/html-previewer/:id',
+    element: <HtmlViewer></HtmlViewer>,
   },
   {
     path: '/maintenance',

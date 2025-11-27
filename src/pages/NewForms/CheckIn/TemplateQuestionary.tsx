@@ -36,6 +36,12 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
         return '/images/forms/ems.png';
       case 'Functional Medicine & EMS Client Questionnaire':
         return '/images/forms/ems.png';
+      case 'Digestive Health & Balanced Diet Check':
+        return '/images/forms/Group6.svg';
+      case 'Mental Health, Sleep, and Stress Profile':
+        return '/images/forms/Group8svg.svg';
+      case 'Physical Activity Readiness & Fitness Profile':
+        return '/images/forms/Group9.svg';
     }
   };
   return (
@@ -53,12 +59,12 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
               <Circleloader></Circleloader>
             </div>
           ) : (
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 mt-6 max-h-[450px] overflow-auto pr-2 md:pr-0">
+            <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0 mt-6 max-h-[450px] overflow-auto pr-2 md:pr-0">
               {templates.map((el: any) => {
                 return (
                   <>
                     <div
-                      className="flex flex-col items-center h-[352px] w-full md:w-[193px] cursor-pointer"
+                      className="flex flex-col items-center  w-full md:w-[193px] cursor-pointer"
                       onClick={() => {
                         onselect(el);
                       }}
@@ -85,7 +91,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                 );
               })}
               <div
-                className="flex flex-col items-center h-[352px] w-full md:w-[193px] cursor-pointer"
+                className="flex flex-col items-center w-full md:w-[193px] cursor-pointer"
                 onClick={() => {
                   onselect(null);
                 }}
@@ -102,10 +108,13 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                   Personal Form
                   {/* {el.title} */}
                 </div>
-                <div className="text-[10px] text-justify  text-Text-Quadruple mt-2">
-                  {/* {el.description} */}A personalized form to track users'
-                  activities
-                </div>
+                {templates.some(
+                  (el: any) => el.description && el.description.trim() !== '',
+                ) && (
+                  <div className="text-[10px] text-justify  text-Text-Quadruple mt-2">
+                    A personalized form to track users' activities
+                  </div>
+                )}
                 <div className="w-full">
                   <div className="w-[93px] h-[16px] rounded-xl bg-Primary-DeepTeal bg-opacity-10 text-[8px] text-Primary-DeepTeal flex items-center justify-center mt-2">
                     {/* {el.questions.length} Questions */}

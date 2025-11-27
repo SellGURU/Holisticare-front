@@ -68,6 +68,10 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
   console.log(viewQuestienry);
   // const navigate = useNavigate();
+  useEffect(() => {
+    setshowModal(false);
+  }, [el.status]);
+
   return (
     <>
       <div className=" bg-white border relative border-Gray-50  px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
@@ -112,7 +116,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   }}
                   className={`flex items-center ${el.status != 'completed' && 'border-b border-Secondary-SelverGray '}  gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
                 >
-                  <img className="" src="/icons/eye-green.svg" alt="" />
+                  <img className="size-5" src="/icons/eye-green.svg" alt="" />
                   Preview
                 </div>
                 {el.status == 'completed' ? null : (
@@ -156,11 +160,13 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                             member_id: id,
                             q_unique_id: el.unique_id,
                             action: 'assign',
-                          }).then(() => {
-                            setisAssigned(true);
-                            setshowModal(false);
-                            onAssign(el.unique_id);
-                          });
+                          })
+                            .then(() => {
+                              setisAssigned(true);
+                              setshowModal(false);
+                              onAssign(el.unique_id);
+                            })
+                            .catch(() => {});
                         }
                       }}
                       className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
