@@ -227,8 +227,8 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                   </div>
                                   <div className="  cursor-pointer  ">
                                     <div className="flex gap-2  justify-end items-center">
-                                      {active.source && (
-                                        <SourceTag source={active.source} />
+                                      {biomarker.source && (
+                                        <SourceTag source={biomarker.source} />
                                       )}
                                       <div className="  md:TextStyle-Headline-6 text-[8px]  md:text-Text-Primary">
                                         Historical Chart

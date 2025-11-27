@@ -11,6 +11,7 @@ import { Tooltip } from 'react-tooltip';
 import MainModal from '../MainModal/index.tsx';
 import Checkbox from '../checkbox/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';
+import EllipsedTooltip from '../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip.tsx';
 interface ClientCardProps {
   client: any;
   indexItem: number;
@@ -165,7 +166,7 @@ const ClientCard: FC<ClientCardProps> = ({
   const { backgroundColor, ellipseColor } = getStatusStyles(client.status);
   const [showAccessModal, setShowAccessModal] = useState(false);
   const [AccessUserName, setAccessUserName] = useState('');
-  const [AccessPassword, setAccessPassword] = useState('');
+  const [AccessPassword, setAccessPassword] = useState<string | null>(null);
   const [isShared, setIsShared] = useState(false);
   // Application.giveClientAccess({ member_id: client.member_id }).then((res) => {
   //   console.log(res);
@@ -352,16 +353,23 @@ const ClientCard: FC<ClientCardProps> = ({
                   </Tooltip>
                 )}
               </div>
-              <div className="mt-6 text-xs font-medium text-justify">
-                Share the email address and password with your client to give
-                them access.
+              <div className="mt-6 text-xs font-medium text-justify text-Text-Primary leading-6">
+                {AccessPassword
+                  ? 'Share the email address and password with your client to give them access.'
+                  : 'The client has successfully logged in and changed their password. You no longer have access to their password.'}
               </div>
-              <div className="text-xs text-Text-Secondary mt-3">
-                Do not share this information with anyone else.
-              </div>
-              <div className="flex flex-col gap-2 mt-6">
+              {AccessPassword && (
+                <div className="text-xs text-Text-Secondary mt-3">
+                  Do not share this information with anyone else.
+                </div>
+              )}
+              <div
+                className={`flex flex-col gap-2 ${AccessPassword ? 'mt-6' : 'mt-5'}`}
+              >
                 <div className="text-xs font-medium">Email Address</div>
-                <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD] relative">
+                <div
+                  className={`w-full flex justify-between py-1 ${AccessPassword ? 'rounded-2xl border border-Gray-50 px-3 bg-[#FDFDFD]' : ''} relative`}
+                >
                   <span
                     className="text-xs select-none"
                     data-tooltip-id={'tooltip-client-access' + AccessUserName}
@@ -379,12 +387,14 @@ const ClientCard: FC<ClientCardProps> = ({
                       </Tooltip>
                     )}
                   </span>
-                  <img
-                    onClick={() => copyToClipboard(AccessUserName, 'Email')}
-                    className="cursor-pointer"
-                    src="/icons/copy.svg"
-                    alt=""
-                  />
+                  {AccessPassword && (
+                    <img
+                      onClick={() => copyToClipboard(AccessUserName, 'Email')}
+                      className="cursor-pointer"
+                      src="/icons/copy.svg"
+                      alt=""
+                    />
+                  )}
                   {notificationMessage && notifType == 'Email' && (
                     <div
                       ref={notifCopyModal}
@@ -398,30 +408,51 @@ const ClientCard: FC<ClientCardProps> = ({
               </div>
               <div className="flex flex-col gap-2 mt-6">
                 <div className="text-xs font-medium">Password</div>
-                <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD] relative">
-                  <span
-                    className="text-xs select-none"
-                    data-tooltip-id={'tooltip-client-access' + AccessPassword}
-                  >
-                    {AccessPassword.length > 35
-                      ? AccessPassword.substring(0, 35) + '...'
-                      : AccessPassword}
-                    {AccessPassword.length > 35 && (
-                      <Tooltip
-                        place="top"
-                        id={'tooltip-client-access' + AccessPassword}
-                        className="!bg-white !opacity-100 !bg-opacity-100 !w-[250px] !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
+                <div
+                  className={`w-full flex justify-between py-1 ${AccessPassword ? 'rounded-2xl border px-3 border-Gray-50 bg-[#FDFDFD]' : ''} relative`}
+                >
+                  {AccessPassword ? (
+                    <>
+                      <span
+                        className="text-xs select-none"
+                        data-tooltip-id={
+                          'tooltip-client-access' + AccessPassword
+                        }
                       >
-                        {AccessPassword}
-                      </Tooltip>
-                    )}
-                  </span>
-                  <img
-                    onClick={() => copyToClipboard(AccessPassword, 'Password')}
-                    className="cursor-pointer"
-                    src="/icons/copy.svg"
-                    alt=""
-                  />
+                        {AccessPassword.length > 35
+                          ? AccessPassword.substring(0, 35) + '...'
+                          : AccessPassword}
+                        {AccessPassword.length > 35 && (
+                          <Tooltip
+                            place="top"
+                            id={'tooltip-client-access' + AccessPassword}
+                            className="!bg-white !opacity-100 !bg-opacity-100 !w-[250px] !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
+                          >
+                            {AccessPassword}
+                          </Tooltip>
+                        )}
+                      </span>
+                      <img
+                        onClick={() =>
+                          copyToClipboard(AccessPassword, 'Password')
+                        }
+                        className="cursor-pointer"
+                        src="/icons/copy.svg"
+                        alt=""
+                      />
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <img
+                        className="size-4"
+                        src="/icons/security-safe.svg"
+                        alt=""
+                      />
+                      <div className="text-xs font-normal text-Text-Primary">
+                        Password is now private.
+                      </div>
+                    </div>
+                  )}
                   {notificationMessage && notifType == 'Password' && (
                     <div
                       ref={notifCopyModal}
@@ -775,11 +806,12 @@ const ClientCard: FC<ClientCardProps> = ({
             className="pl-2 flex flex-col mt-4 cursor-default"
           >
             <div
-              data-tooltip-id={`${client.member_id}-${client.name}`}
+              // data-tooltip-id={`${client.member_id}-${client.name}`}
               className="text-Text-Primary truncate max-w-[90px] sm:max-w-[100px] md:max-w-[150px] text-xs sm:text-[14px] font-medium text-nowrap mb-2 cursor-default"
             >
-              {client.name}
-              {client.name.length > 15 && (
+              <EllipsedTooltip text={client.name} />
+              {/* {client.name} */}
+              {/* {client.name.length > 15 && (
                 <Tooltip
                   place="top"
                   id={`${client.member_id}-${client.name}`}
@@ -787,7 +819,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 >
                   {client.name}
                 </Tooltip>
-              )}
+              )} */}
             </div>
             {/* <div className="text-Text-Secondary text-[10px] sm:text-[12px]">
               {client.age} years{' '}
