@@ -48,9 +48,15 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   const [isDeletedSuccess, setIsDeletedSuccess] = useState<boolean>(false);
 
   const modalRef = useRef(null);
+  const CloseAction = () => {
+    setshowModal(false);
+    setIsSureRemoveId(null);
+    setIsDeleted(null);
+    setIsDeletedSuccess(false);
+  };
   useModalAutoClose({
     refrence: modalRef,
-    close: () => setshowModal(false),
+    close: CloseAction,
   });
   useEffect(() => {
     // Initialize timer with a safe default value
@@ -98,9 +104,9 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     })
       .then(() => {
         setLoadingDelete(false);
+        setIsSureRemoveId(null);
         if (status !== 'completed') {
           setIsDeletedSuccess(true);
-          getQuestionnaires();
         }
       })
       .catch((err) => {
@@ -544,7 +550,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   onClick={() => {
                     setIsSureRemoveId(null);
                     setIsDeleted(null);
-                    publish('syncReport', {});
+                    if (el.status !== 'completed') {
+                      getQuestionnaires();
+                    } else {
+                      publish('syncReport', {});
+                    }
                   }}
                 >
                   Unsync Data
