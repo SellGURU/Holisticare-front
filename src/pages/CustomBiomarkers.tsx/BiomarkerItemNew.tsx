@@ -175,7 +175,8 @@ const biomarkerItem = ({
             <div className=" text-[10px] md:text-[12px] font-medium text-Text-Primary   ">
               {highlightText(data.Biomarker, searchTerm)}
               <span className=" text-[8px] md:text-[10px] text-[#888888] ml-[2px]">
-                ({data.unit})
+                             {data.unit && <> ({data.unit})</>}
+
               </span>
             </div>
             <div className=" text-[8px] md:text-[10px] text-nowrap mt-1 text-Text-Quadruple">

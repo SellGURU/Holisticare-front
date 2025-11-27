@@ -473,7 +473,7 @@ const Card: React.FC<CardProps> = ({
                 <div className="flex flex-col items-center justify-center">
                   <img src="/icons/Empty/HolisticPlanEmpty.svg" alt="" />
                   <div className="text-Text-Primary text-center mt-[-20px] TextStyle-Headline-6">
-                    No biomarker insights found.
+                    No {title.toLowerCase()} found.
                   </div>
                 </div>
               </div>
