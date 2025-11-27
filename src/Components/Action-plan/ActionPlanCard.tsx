@@ -215,7 +215,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 ) : (
                   <>
                     <img src="/icons/delete-green.svg" alt="" />
-                    Remove
+                    Delete
                   </>
                 )}
               </div>
