@@ -31,7 +31,7 @@ const Report = () => {
   }, []);
   useEffect(() => {
     subscribe('openRefreshModal', () => {
-      setshowRefreshModal(true)
+      setshowRefreshModal(true);
     });
   }, []);
   subscribe('openSideOut', () => {
@@ -140,7 +140,7 @@ const Report = () => {
           // setIsShareModalLoading(false);
         }}
       />
-        <MainModal
+      <MainModal
         isOpen={showRefreshModal}
         onClose={() => {
           setshowRefreshModal(false);
@@ -174,11 +174,10 @@ const Report = () => {
             <div
               onClick={() => {
                 if (id) {
-                  Application.refreshData(id,false).then(() => {
+                  Application.refreshData(id, false).then(() => {
                     setshowRefreshModal(false);
                     publish('SyncRefresh', {});
-                    publish('disableGenerate',{})
-                    
+                    publish('disableGenerate', {});
                   });
                 }
               }}
@@ -189,10 +188,10 @@ const Report = () => {
           </div>
         </div>
       </MainModal>
-    
-    <UploadFileProgressModal />
-    <RefreshProgressModal />
-    <DeleteFileProgressModal />
+
+      <UploadFileProgressModal />
+      <RefreshProgressModal />
+      <DeleteFileProgressModal />
     </div>
   );
 };

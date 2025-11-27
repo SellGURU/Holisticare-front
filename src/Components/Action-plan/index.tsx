@@ -126,7 +126,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
     if (isHolisticPlanEmpty) {
       return false;
     }
-    if(disableGenerate) {
+    if (disableGenerate) {
       return false;
     }
     if (CardData.length > 0) {

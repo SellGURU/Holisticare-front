@@ -13,7 +13,6 @@ import { initGlobalErrorHandler } from './globalErrorHandler.ts';
 import './index.css';
 import AppContextProvider from './store/app.tsx';
 
-
 initGlobalErrorHandler();
 
 createRoot(document.getElementById('root')!).render(
@@ -26,6 +25,5 @@ createRoot(document.getElementById('root')!).render(
     <ToastContainer />
     <UploaderTooltipContainer />
     <DeletedTooltipContainer />
-   
   </>,
 );

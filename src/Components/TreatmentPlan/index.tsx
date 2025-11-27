@@ -27,7 +27,6 @@ interface TreatmentPlanProps {
   setIsShareModalSuccess: (value: boolean) => void;
   setDateShare: (value: string | null) => void;
   disableGenerate: boolean;
- 
 }
 
 export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
@@ -38,7 +37,6 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   setIsShareModalSuccess,
   setDateShare,
   disableGenerate,
-
 }) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
@@ -56,16 +54,16 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         return '#000000'; // Fallback color
     }
   };
-const resolveCanGenerateNew = () => {
-  if (disableGenerate) return false;
+  const resolveCanGenerateNew = () => {
+    if (disableGenerate) return false;
 
-  // If we have plans, check if the last one is Draft
-  if (cardData.length > 0) {
-    return cardData[cardData.length - 1].state !== 'Draft';
-  }
+    // If we have plans, check if the last one is Draft
+    if (cardData.length > 0) {
+      return cardData[cardData.length - 1].state !== 'Draft';
+    }
 
-  return true;
-};
+    return true;
+  };
   const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
@@ -252,7 +250,7 @@ const resolveCanGenerateNew = () => {
   return (
     <>
       {/* {showRefreshModal && ( */}
-    
+
       {/* )} */}
       {isShare ? (
         <>
@@ -394,7 +392,7 @@ const resolveCanGenerateNew = () => {
                     if (id && !disableGenerate) {
                       Application.checkClientRefresh(id).then((res) => {
                         if (res.data.need_of_refresh == true) {
-                          publish("openRefreshModal",{})
+                          publish('openRefreshModal', {});
                         } else {
                           setTreatmentId('');
                           navigate(`/report/Generate-Holistic-Plan/${id}/a`);
@@ -562,14 +560,14 @@ const resolveCanGenerateNew = () => {
                 <div
                   onClick={() => {
                     if (resolveCanGenerateNew() && id) {
-                        Application.checkClientRefresh(id).then((res) => {
-                          if (res.data.need_of_refresh == true) {
-                           publish("openRefreshModal",{})
-                          } else {
-                            setTreatmentId('');
-                            navigate(`/report/Generate-Holistic-Plan/${id}/a`);
-                          }
-                        });
+                      Application.checkClientRefresh(id).then((res) => {
+                        if (res.data.need_of_refresh == true) {
+                          publish('openRefreshModal', {});
+                        } else {
+                          setTreatmentId('');
+                          navigate(`/report/Generate-Holistic-Plan/${id}/a`);
+                        }
+                      });
 
                       // navigate(`/report/Generate-Recommendation/${id}`);
                       // navigate(`/report/Generate-Holistic-Plan/${id}/a`);
@@ -578,19 +576,13 @@ const resolveCanGenerateNew = () => {
                   className={` 
                     relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
-               
-                    <>
-                      {' '}
-                      <img
-                        className="w-6 h-6"
-                        src="/icons/add-blue.svg"
-                        alt=""
-                      />
-                      <div className="text-sm font-medium text-Primary-DeepTeal">
-                        Generate New
-                      </div>
-                    </>
-              
+                  <>
+                    {' '}
+                    <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
+                    <div className="text-sm font-medium text-Primary-DeepTeal">
+                      Generate New
+                    </div>
+                  </>
                 </div>
               </div>
               {/* <div className="w-full flex justify-center md:justify-end gap-2 my-3">
