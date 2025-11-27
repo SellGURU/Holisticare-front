@@ -380,7 +380,7 @@ const NewGenerateHolisticPlan = () => {
             {' '}
             <div
               onClick={() => {
-         navigate(`/report/${id}/a`);
+                navigate(`/report/${id}/a`);
               }}
               className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer`}
             >
