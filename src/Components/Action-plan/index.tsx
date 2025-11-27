@@ -122,9 +122,9 @@ export const ActionPlan: FC<ActionPlanProps> = ({
   }, []);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const canCreateNewActionPlan = () => {
-    if (!id || !disableGenerate) {
-      return false;
-    }
+    // if (!id || !disableGenerate) {
+    //   return false;
+    // }
     if (isHolisticPlanEmpty) {
       return false;
     }
