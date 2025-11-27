@@ -142,7 +142,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     subscribe('QuestionaryTrackingCall', () => {
       // setUpdated(true);
       handleItemClick('Questionnaire Tracking');
-    });    
+    });
   }, []);
   // Refs for modal and button to close it when clicking outside
   const modalRef = useRef<HTMLDivElement>(null);
