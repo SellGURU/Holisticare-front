@@ -18,10 +18,10 @@ import DeleteFileProgressModal from '../../Components/deleteFileProgressModal';
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [treatmentId, setTreatmentId] = useState<string>('');
   const [showRefreshModal, setshowRefreshModal] = useState(false);
   const { id } = useParams<{ id: string }>();
 
+  const [treatmentId, setTreatmentId] = useState<string>('');
   useEffect(() => {
     subscribe('openShareModalHolisticPlan', (data: any) => {
       setIsShareModalOpen(true);

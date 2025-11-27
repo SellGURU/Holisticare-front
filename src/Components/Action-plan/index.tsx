@@ -9,7 +9,6 @@ import { publish } from '../../utils/event';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 import ProgressCalenderView from './ProgressCalendarView';
-import SpinnerLoader from '../SpinnerLoader';
 
 // type CardData = {
 //   cardID: number;
@@ -129,6 +128,9 @@ export const ActionPlan: FC<ActionPlanProps> = ({
     if (isHolisticPlanEmpty) {
       return false;
     }
+    if (disableGenerate) {
+      return false;
+    }
     if (CardData.length > 0) {
       return CardData[CardData.length - 1].state !== 'Draft';
     }
@@ -238,18 +240,14 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       ))}
                       <div
                         onClick={() => {
-                          if (canCreateNewActionPlan()) {
-                            Application.checkClientRefresh(id ?? '').then(
-                              (res) => {
-                                if (res.data.need_of_refresh == true) {
-                                  publish('openRefreshModal', {});
-                                } else {
-                                  navigate(
-                                    '/report/Generate-Action-Plan/' + id,
-                                  );
-                                }
-                              },
-                            );
+                          if (canCreateNewActionPlan() && id) {
+                            Application.checkClientRefresh(id).then((res) => {
+                              if (res.data.need_of_refresh == true) {
+                                publish('openRefreshModal', {});
+                              } else {
+                                navigate('/report/Generate-Action-Plan/' + id);
+                              }
+                            });
                           }
                         }}
                         className={` min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal c ${!canCreateNewActionPlan() ? 'opacity-40 cursor-not-allowed' : 'cursor-default'}`}
@@ -348,8 +346,9 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       <div className="mt-6 flex w-full justify-center">
                         <ButtonSecondary
                           ClassName="py-[6px] px-6"
+                          disabled={!canCreateNewActionPlan()}
                           onClick={() => {
-                            if (id && !disableGenerate) {
+                            if (canCreateNewActionPlan() && id) {
                               Application.checkClientRefresh(id).then((res) => {
                                 if (res.data.need_of_refresh == true) {
                                   publish('openRefreshModal', {});
@@ -362,14 +361,12 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                             }
                           }}
                         >
-                          {disableGenerate ? (
-                            <SpinnerLoader />
-                          ) : (
-                            <>
+                       
+                            
                               <img src="/icons/tick.svg" alt="" />
                               Generate New
-                            </>
-                          )}
+                            
+                        
                         </ButtonSecondary>
                       </div>
                     </div>

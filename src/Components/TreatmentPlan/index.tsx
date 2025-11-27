@@ -388,8 +388,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 </div>
                 <ButtonSecondary
                   ClassName="w-full md:w-fit"
+                  disabled={!resolveCanGenerateNew()}
                   onClick={() => {
-                    if (id && !disableGenerate) {
+                  if (resolveCanGenerateNew() && id) {
                       Application.checkClientRefresh(id).then((res) => {
                         if (res.data.need_of_refresh == true) {
                           publish('openRefreshModal', {});
@@ -401,6 +402,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                     }
 
                     // navigate(`/report/Generate-Recommendation/${id}`);
+                    // navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                   }}
                 >
                   <img src="/icons/tick-square.svg" alt="" /> Generate New
@@ -558,19 +560,18 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 ))}
                 <div
                   onClick={() => {
-                    if (resolveCanGenerateNew()) {
-                      if (id && !disableGenerate) {
-                        Application.checkClientRefresh(id).then((res) => {
-                          if (res.data.need_of_refresh == true) {
-                            publish('openRefreshModal', {});
-                          } else {
-                            setTreatmentId('');
-                            navigate(`/report/Generate-Holistic-Plan/${id}/a`);
-                          }
-                        });
-                      }
+                    if (resolveCanGenerateNew() && id) {
+                      Application.checkClientRefresh(id).then((res) => {
+                        if (res.data.need_of_refresh == true) {
+                          publish('openRefreshModal', {});
+                        } else {
+                          setTreatmentId('');
+                          navigate(`/report/Generate-Holistic-Plan/${id}/a`);
+                        }
+                      });
 
                       // navigate(`/report/Generate-Recommendation/${id}`);
+                      // navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                     }
                   }}
                   className={` 

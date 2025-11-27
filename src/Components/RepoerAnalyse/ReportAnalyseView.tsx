@@ -700,7 +700,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   useEffect(() => {
     const handler = () => {
       publish('openRefreshProgressModal', userInfoData?.name);
-
+      setDisableGenerate(true);
       if (!id) return;
 
       let intervalId: any = null;
@@ -733,11 +733,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     };
   }, [id, userInfoData?.name]);
 
-  useEffect(() => {
-    subscribe('disableGenerate', () => {
-      setDisableGenerate(true);
-    });
-  });
+  // useEffect(() => {
+  //   subscribe('disableGenerate', () => {
+  //     setDisableGenerate(true);
+  //   });
+  // });
 
   return (
     <>
