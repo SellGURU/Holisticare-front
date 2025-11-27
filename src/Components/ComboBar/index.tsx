@@ -132,12 +132,18 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  subscribe('fileIsUploading', (value: any) => {
-    setIsUploading(value.detail.isUploading);
-  });
-  subscribe('fileIsDeleting', (value: any) => {
-    setIsDeleting(value.detail.isDeleting);
-  });
+  useEffect(() => {
+    subscribe('fileIsUploading', (value: any) => {
+      setIsUploading(value.detail.isUploading);
+    });
+    subscribe('fileIsDeleting', (value: any) => {
+      setIsDeleting(value.detail.isDeleting);
+    });
+    subscribe('QuestionaryTrackingCall', () => {
+      // setUpdated(true);
+      handleItemClick('Questionnaire Tracking');
+    });    
+  }, []);
   // Refs for modal and button to close it when clicking outside
   const modalRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -169,10 +175,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     setIsSlideOutPanel(false);
   };
   const [updated, setUpdated] = useState(false);
-  subscribe('QuestionaryTrackingCall', () => {
-    // setUpdated(true);
-    handleItemClick('Questionnaire Tracking');
-  });
+
   const handleItemClick = (name: string) => {
     if (isHolisticPlan && name !== "Expert's Note" && name !== 'Client Info') {
       return; // Prevent click action if isHolisticPlan is true and it's not the Expert's Note
