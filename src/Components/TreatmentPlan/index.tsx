@@ -8,7 +8,7 @@ import { AppContext } from '../../store/app';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import TreatmentCard from './TreatmentCard';
-import { publish } from '../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../utils/event';
 
 type CardData = {
   id: number;
@@ -16,29 +16,7 @@ type CardData = {
   status: string;
 };
 
-const initialCardData: CardData[] = [
-  // {
-  //   id: 1,
-  //   date: "2024/29/09",
-  //   status: "Completed",
-  // },
-  // { id: 2, date: "2024/29/09", status: "Paused" },
-  // {
-  //   id: 3,
-  //   date: "2024/29/09",
-  //   status: "Completed",
-  // },
-  // {
-  //   id: 4,
-  //   date: "2024/29/09",
-  //   status: "On Going",
-  // },
-  // {
-  //   id: 5,
-  //   date: "2024/29/11",
-  //   status: "Upcoming",
-  // },
-];
+const initialCardData: CardData[] = [];
 
 interface TreatmentPlanProps {
   treatmentPlanData: any;
@@ -63,6 +41,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         return '#55DD4A';
       case 'On Going':
         return '#3C79D6';
+      case 'Draft':
+        return '#F4E25C';
       case 'Paused':
         return '#E84040';
       case 'Upcoming':
@@ -70,6 +50,12 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       default:
         return '#000000'; // Fallback color
     }
+  };
+  const resolveCanGenerateNew = () => {
+    if (cardData.length > 0) {
+      return cardData[cardData.length - 1].state !== 'Draft';
+    }
+    return true;
   };
   const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
   const showModalRefrence = useRef(null);
@@ -113,12 +99,21 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         if (res.data.length == 0) {
           setIsHolisticPlanEmpty(true);
         } else {
+          if (
+            res.data[res.data.length - 1].state == 'Draft' &&
+            res.data.length == 1
+          ) {
+            setIsHolisticPlanEmpty(true);
+          }
           setIsHolisticPlanEmpty(false);
         }
         setCardData(res.data);
         setPrintActionPlan(res.data);
         if (res.data.length > 0) {
           setActiveTreatmnet(res.data[res.data.length - 1].t_plan_id);
+          publish('holisticPlanactiveChange', {
+            data: res.data[res.data.length - 1],
+          });
           setIsShareModalSuccess(
             res.data[res.data.length - 1].shared_report_with_client,
           );
@@ -136,6 +131,31 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     }
   }, []);
   useEffect(() => {
+    subscribe('shareModalHolisticPlanSuccess', (data: any) => {
+      setCardData((prev: any) => {
+        const newData = prev.map((el: any) => {
+          if (el.t_plan_id == data.detail.treatmentId) {
+            return {
+              ...el,
+              shared_report_with_client: true,
+              shared_report_with_client_date: new Date().toISOString(),
+            };
+          }
+          return el;
+        });
+        publish('holisticPlanactiveChange', {
+          data: newData.filter(
+            (el: any) => el.t_plan_id == data.detail.treatmentId,
+          )[0],
+        });
+        return newData;
+      });
+    });
+    return () => {
+      unsubscribe('shareModalHolisticPlanSuccess', () => {});
+    };
+  }, []);
+  useEffect(() => {
     if (activeTreatment != '' && !isShare) {
       Application.getTreatmentPlanDetail({
         treatment_id: activeTreatment,
@@ -150,29 +170,75 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       });
     }
   }, [activeTreatment]);
-  const handleDeleteCard = (index: number, id: string) => {
-    if (index === cardData.length - 1) {
-      Application.deleteHolisticPlan({
-        treatment_id: id,
-      }).catch(() => {});
-
-      setCardData((prevCardData) => {
-        const newCardData = prevCardData.filter((_, i) => i !== index);
-        if (index > 0) {
-          setActiveTreatmnet(newCardData[index - 1].t_plan_id);
-        } else if (newCardData.length > 0) {
-          setActiveTreatmnet(newCardData[0].t_plan_id);
-        } else {
-          setActiveTreatmnet('');
-        }
-        return newCardData;
-      });
-
-      setShowModalIndex(null);
-      // setDeleteConfirmIndex(null);
-
-      publish('syncReport', { part: 'treatmentPlan' });
+  const resolveCardBorderColor = (state: string) => {
+    switch (state) {
+      case 'Draft':
+        return 'border-[#F4E25C]';
+      default:
+        return 'border-Primary-EmeraldGreen';
     }
+  };
+  const handleDeleteCard = (index: number, tretmentid: string) => {
+    Application.deleteHolisticPlan({
+      treatment_id: tretmentid,
+      member_id: id,
+    })
+      .then(() => {
+        publish('reckecHtmlReport', {});
+      })
+      .catch(() => {});
+
+    setCardData((prevCardData) => {
+      const newCardData = prevCardData
+        .filter((_, i) => i !== index)
+        .map((el: any, inde: number) => {
+          if (inde == index - 1) {
+            return {
+              ...el,
+              state: 'On Going',
+              readonly_html_url: '',
+            };
+          }
+          return el;
+        });
+      if (index > 0) {
+        setActiveTreatmnet(newCardData[index - 1].t_plan_id);
+        publish('holisticPlanactiveChange', { data: newCardData[index - 1] });
+      } else if (newCardData.length > 0) {
+        setActiveTreatmnet(newCardData[0].t_plan_id);
+        publish('holisticPlanactiveChange', { data: newCardData[0] });
+      } else {
+        setActiveTreatmnet('');
+      }
+      return newCardData;
+    });
+
+    setShowModalIndex(null);
+    // setDeleteConfirmIndex(null);
+
+    publish('syncReport', { part: 'treatmentPlan' });
+  };
+  const isShowDot = (card: any, index: number) => {
+    if (card.state == 'Draft' || card.editable == true) {
+      return true;
+    }
+    // پیدا کردن آخرین index که state آن On Going یا Completed است
+    let lastOnGoingOrCompletedIndex = -1;
+    for (let i = cardData.length - 1; i >= 0; i--) {
+      if (
+        cardData[i].state === 'On Going' ||
+        cardData[i].state === 'Completed' ||
+        cardData[i].state === 'Paused'
+      ) {
+        lastOnGoingOrCompletedIndex = i;
+        break;
+      }
+    }
+    // اگر این card همان آخرین آیتم با state On Going یا Completed باشد، true برگردان
+    if (index === lastOnGoingOrCompletedIndex) {
+      return true;
+    }
+    return false;
   };
   return (
     <>
@@ -315,7 +381,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     setTreatmentId('');
                     // navigate(`/report/Generate-Recommendation/${id}`);
-                    navigate(`/report/Generate-Holistic-Plan/${id}`);
+                    navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                   }}
                 >
                   <img src="/icons/tick-square.svg" alt="" /> Generate New
@@ -367,15 +433,15 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                         setActiveTreatmnet(card.t_plan_id);
                         setIsShareModalSuccess(card.shared_report_with_client);
                         setDateShare(card.shared_report_with_client_date);
-                        if (index === cardData.length - 1) {
-                          publish('holisticPlanSelectEnd', {});
-                        } else {
-                          publish('holisticPlanSelectNotEnd', {});
-                        }
+                        publish('holisticPlanactiveChange', {
+                          data: card,
+                          isEnd:
+                            isShowDot(card, index) && card.state != 'Draft',
+                        });
                       }}
                       className={`absolute cursor-pointer  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
                         activeTreatment == card.t_plan_id
-                          ? 'border-Primary-EmeraldGreen'
+                          ? resolveCardBorderColor(card.state)
                           : 'border-Gray-25'
                       }`}
                     >
@@ -385,15 +451,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             {index + 1 < 10 && 0}
                             {index + 1}
                           </div>
-                          {index === cardData.length - 1 &&
-                            card.editable == true && (
-                              <img
-                                onClick={() => setShowModalIndex(index)}
-                                className="-mr-5 ml-3 cursor-pointer"
-                                src="/icons/dots.svg"
-                                alt=""
-                              />
-                            )}
+                          {isShowDot(card, index) && (
+                            <img
+                              onClick={() => setShowModalIndex(index)}
+                              className="-mr-5 ml-3 cursor-pointer"
+                              src="/icons/dots.svg"
+                              alt=""
+                            />
+                          )}
                         </div>
 
                         <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
@@ -416,19 +481,21 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       {showModalIndex === index && (
                         <div
                           ref={showModalRefrence}
-                          className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] pl-2 pr-1 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
+                          className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] pl-2 pr-1 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-1"
                         >
-                          {/* <div
-                          onClick={(e) => {
-                            e.stopPropagation();
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation();
 
-                            navigate(`/action-plan/edit/${id}`);
-                          }}
-                          className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
-                        >
-                          <img src="/icons/edit-green.svg" alt="" />
-                          Edit
-                        </div> */}
+                              navigate(
+                                `/report/Generate-Recommendation/${id}/${card.t_plan_id}`,
+                              );
+                            }}
+                            className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                          >
+                            <img src="/icons/edit-green.svg" alt="" />
+                            Edit
+                          </div>
                           <div
                             onClick={(e) => {
                               e.stopPropagation();
@@ -461,7 +528,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             ) : (
                               <>
                                 <img src="/icons/delete-green.svg" alt="" />
-                                Remove
+                                Delete
                               </>
                             )}
                           </div>
@@ -472,11 +539,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 ))}
                 <div
                   onClick={() => {
-                    setTreatmentId('');
-                    // navigate(`/report/Generate-Recommendation/${id}`);
-                    navigate(`/report/Generate-Holistic-Plan/${id}`);
+                    if (resolveCanGenerateNew()) {
+                      setTreatmentId('');
+                      // navigate(`/report/Generate-Recommendation/${id}`);
+                      navigate(`/report/Generate-Holistic-Plan/${id}/a`);
+                    }
                   }}
-                  className={`  relative mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed cursor-pointer `}
+                  className={` 
+                    relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
                   <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
                   <div className="text-sm font-medium text-Primary-DeepTeal">

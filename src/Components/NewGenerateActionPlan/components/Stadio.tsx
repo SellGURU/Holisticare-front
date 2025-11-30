@@ -322,103 +322,122 @@ const Stadio: FC<StadioProps> = ({
         ClassName="!z-[60] !overflow-y-auto"
       >
         {isLoading ? (
-          <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
+          <div
+            style={{ height: 'calc(100vh - 300px)' }}
+            className="flex  flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]"
+          >
             <Circleloader />
           </div>
         ) : (
-          <div className="w-full flex flex-col gap-2">
-            {category.map((item, index) => {
-              return (
-                <div className="w-full flex flex-col">
-                  <div
-                    key={index}
-                    className={`bg-bg-color border border-Gray-50 rounded-xl flex items-center justify-between px-4 py-2 h-[40px] cursor-pointer ${holisticPlanIndex === index ? 'rounded-b-none' : ''}`}
-                    onClick={() => {
-                      if (holisticPlanIndex === index) {
-                        setHolisticPlanIndex(null);
-                      } else {
-                        setHolisticPlanIndex(index);
-                      }
-                    }}
-                  >
-                    <div className="flex items-center gap-2 font-medium text-xs text-Text-Quadruple">
-                      <img src={`/icons/${item.icon}`} alt="" />
-                      {item.value}
-                    </div>
-                    <img
-                      src="/icons/arrow-down-blue.svg"
-                      alt=""
-                      className={`${holisticPlanIndex === index ? 'rotate-180' : ''} size-4`}
-                    />
-                  </div>
-                  {holisticPlanIndex === index && (
-                    <div className="bg-backgroundColor-Card border border-Gray-50 rounded-b-xl flex flex-col gap-2 px-4 py-2">
-                      {holisticPlan
-                        .filter((el) => el.category === item.value)
-                        .map((item) => {
-                          return item.data.map((el, index) => {
-                            return (
-                              <div
-                                key={index}
-                                className="bg-white border border-Gray-50 rounded-xl p-2 flex flex-col"
-                              >
-                                <div className="font-medium text-[10px] text-Text-Primary">
-                                  {el.title}
-                                </div>
-                                <div
-                                  data-tooltip-id={`analysis-info-${index}`}
-                                  className="text-[10px] text-Primary-DeepTeal mt-1.5 cursor-pointer"
-                                >
-                                  Analysis Info
-                                </div>
-                                <Tooltip
-                                  id={`analysis-info-${index}`}
-                                  place="top"
-                                  className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
-                                  style={{
-                                    zIndex: 9999,
-                                    pointerEvents: 'none',
-                                  }}
-                                >
-                                  <div className="text-Text-Secondary">
-                                    {el?.['Practitioner Comments']?.[0]}
+          <>
+            {holisticPlan.length > 0 ? (
+              <div className="w-full flex flex-col gap-2">
+                {category.map((item, index) => {
+                  return (
+                    <div className="w-full flex flex-col">
+                      <div
+                        key={index}
+                        className={`bg-bg-color border border-Gray-50 rounded-xl flex items-center justify-between px-4 py-2 h-[40px] cursor-pointer ${holisticPlanIndex === index ? 'rounded-b-none' : ''}`}
+                        onClick={() => {
+                          if (holisticPlanIndex === index) {
+                            setHolisticPlanIndex(null);
+                          } else {
+                            setHolisticPlanIndex(index);
+                          }
+                        }}
+                      >
+                        <div className="flex items-center gap-2 font-medium text-xs text-Text-Quadruple">
+                          <img src={`/icons/${item.icon}`} alt="" />
+                          {item.value}
+                        </div>
+                        <img
+                          src="/icons/arrow-down-blue.svg"
+                          alt=""
+                          className={`${holisticPlanIndex === index ? 'rotate-180' : ''} size-4`}
+                        />
+                      </div>
+                      {holisticPlanIndex === index && (
+                        <div className="bg-backgroundColor-Card border border-Gray-50 rounded-b-xl flex flex-col gap-2 px-4 py-2">
+                          {holisticPlan
+                            .filter((el) => el.category === item.value)
+                            .map((item) => {
+                              return item.data.map((el, index) => {
+                                return (
+                                  <div
+                                    key={index}
+                                    className="bg-white border border-Gray-50 rounded-xl p-2 flex flex-col"
+                                  >
+                                    <div className="font-medium text-[10px] text-Text-Primary">
+                                      {el.title}
+                                    </div>
+                                    <div
+                                      data-tooltip-id={`analysis-info-${index}`}
+                                      className="text-[10px] text-Primary-DeepTeal mt-1.5 cursor-pointer"
+                                    >
+                                      Analysis Info
+                                    </div>
+                                    <Tooltip
+                                      id={`analysis-info-${index}`}
+                                      place="top"
+                                      className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
+                                      style={{
+                                        zIndex: 9999,
+                                        pointerEvents: 'none',
+                                      }}
+                                    >
+                                      <div className="text-Text-Secondary">
+                                        {el?.['Practitioner Comments']?.[0]}
+                                      </div>
+                                    </Tooltip>
+                                    <div className="leading-5 mt-1 text-Text-Primary text-[10px]">
+                                      <span className="text-Text-Quadruple text-[10px] text-nowrap mr-1">
+                                        Key Benefits:
+                                      </span>
+                                      {splitInstructions(el.Notes).positive}
+                                    </div>
+                                    <div className="leading-5 mt-1 text-Text-Primary text-[10px]">
+                                      <span className="text-Text-Quadruple text-[10px] text-nowrap mr-1">
+                                        Key Risks:
+                                      </span>
+                                      {splitInstructions(el.Notes).negative}
+                                    </div>
                                   </div>
-                                </Tooltip>
-                                <div className="leading-5 mt-1 text-Text-Primary text-[10px]">
-                                  <span className="text-Text-Quadruple text-[10px] text-nowrap mr-1">
-                                    Key Benefits:
-                                  </span>
-                                  {splitInstructions(el.Notes).positive}
-                                </div>
-                                <div className="leading-5 mt-1 text-Text-Primary text-[10px]">
-                                  <span className="text-Text-Quadruple text-[10px] text-nowrap mr-1">
-                                    Key Risks:
-                                  </span>
-                                  {splitInstructions(el.Notes).negative}
-                                </div>
+                                );
+                              });
+                            })}
+                          {holisticPlan.find((el) => el.category === item.value)
+                            ?.data.length === 0 && (
+                            <div className="flex flex-col items-center gap-4 my-6">
+                              <img
+                                src="/icons/empty-state-new.svg"
+                                alt=""
+                                className="w-[100px]"
+                              />
+                              <div className="font-medium text-[10px] text-Text-Primary">
+                                No recommendations found.
                               </div>
-                            );
-                          });
-                        })}
-                      {holisticPlan.find((el) => el.category === item.value)
-                        ?.data.length === 0 && (
-                        <div className="flex flex-col items-center gap-4 my-6">
-                          <img
-                            src="/icons/empty-state-new.svg"
-                            alt=""
-                            className="w-[100px]"
-                          />
-                          <div className="font-medium text-[10px] text-Text-Primary">
-                            No recommendations found.
-                          </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
-                  )}
+                  );
+                })}
+              </div>
+            ) : (
+              <>
+                <div
+                  style={{ height: 'calc(100vh - 300px)' }}
+                  className="w-full h-full flex flex-col items-center justify-center "
+                >
+                  <img src="/icons/Empty/EmptyStateHolistcAction.svg" alt="" />
+                  <div className="text-Text-Primary mt-[-20px] text-headline-6 text-[12px] font-medium">
+                    This plan is no longer available.
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+              </>
+            )}
+          </>
         )}
       </SlideOutPanel>
       <ActionEditModal

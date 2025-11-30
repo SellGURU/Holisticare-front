@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../api/app';
 import { ComboBar, MainModal } from '../../Components';
@@ -22,7 +22,7 @@ import TextBoxAi from '../generateTreatmentPlan/components/TextBoxAi';
 import HistoricalChart from '../../Components/RepoerAnalyse/HistoricalChart';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
 import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
-import { AppContext } from '../../store/app';
+// import { AppContext } from '../../store/app';
 import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
 import { CoverageCard } from '../../Components/coverageCard';
 import { SourceTag } from '../../Components/source-badge';
@@ -30,11 +30,16 @@ const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
   const [isLoading] = useState(false);
-  const { id } = useParams<{ id: string }>();
+  const { id, treatment_id } = useParams<{
+    id: string;
+    treatment_id: string;
+  }>();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const isUpdate = searchParams.get('isUpdate') === 'true';
   const [active, setActive] = useState<string>('Recommendation');
   const [clientGools, setClientGools] = useState<any>({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
-  console.log('treatmentPlanData => generate ', treatmentPlanData);
   const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
   const [isFinalLoading, setisFinalLoading] = useState(false);
   const [coverageProgess, setcoverageProgess] = useState(0);
@@ -45,10 +50,16 @@ const NewGenerateHolisticPlan = () => {
 
     // ✅ Only include checked items
     const selectedInterventions = treatmentPlanData?.suggestion_tab || [];
+    const payload =
+      treatmentPlanData?.looking_forwards?.map((issue: string) => ({
+        [issue]: false,
+      })) || [];
 
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
+      key_areas_to_address:
+        coverageDetails.length > 0 ? coverageDetails : payload,
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
@@ -64,13 +75,40 @@ const NewGenerateHolisticPlan = () => {
       .catch((err) => {
         console.error('getCoverage error:', err);
       });
-  }, [treatmentPlanData, id]);
+  }, [treatmentPlanData?.suggestion_tab, id]);
+  const remapIssues = () => {
+    if (!treatmentPlanData) return;
+
+    // console.log('payload', payload);
+
+    Application.remapIssues({
+      member_id: id,
+      suggestion_tab: treatmentPlanData?.suggestion_tab,
+      key_areas_to_address: treatmentPlanData?.looking_forwards,
+    })
+      .then((res: any) => {
+        setTratmentPlanData((pre: any) => {
+          return {
+            ...pre,
+            suggestion_tab: res.data.suggestion_tab,
+            key_areas_to_address: res.data.key_areas_to_address,
+          };
+        });
+      })
+      .catch((err) => {
+        console.error('getCoverage error:', err);
+      });
+  };
+  useEffect(() => {
+    remapIssues();
+  }, [treatmentPlanData?.looking_forwards, id]);
   const resolveNextStep = () => {
     setisFinalLoading(true);
     const continueSteps = () => {
       Application.saveTreatmentPaln({
         ...treatmentPlanData,
         member_id: id,
+        is_update: isUpdate,
       })
         .then(() => {
           return Application.checkHtmlReport(id?.toString() || '');
@@ -91,23 +129,7 @@ const NewGenerateHolisticPlan = () => {
           }, 3000);
         });
     };
-    if (!treatmentId) {
-      Application.saveHolisticPlan(treatmentPlanData)
-        .then((res) => {
-          setTratmentPlanData(res.data);
-          setClientGools({ ...res.data.client_goals });
-          setActiveEl(res.data.result_tab[0]);
-        })
-        .then(() => {
-          continueSteps();
-        })
-        .catch((err) => {
-          console.log('error in saveHolisticPlan:', err);
-          setisFinalLoading(false);
-        });
-    } else {
-      continueSteps();
-    }
+    continueSteps();
   };
 
   const [activeEl, setActiveEl] = useState<any>();
@@ -174,7 +196,7 @@ const NewGenerateHolisticPlan = () => {
     // return subs;
     return resultTabData;
   };
-  const { treatmentId } = useContext(AppContext);
+  // const { treatmentId } = useContext(AppContext);
   const hasEssentialData = (data: any) => {
     return (
       data?.client_insight &&
@@ -187,10 +209,10 @@ const NewGenerateHolisticPlan = () => {
   };
 
   useEffect(() => {
-    if (treatmentId !== null && treatmentId != '') {
+    if (treatment_id && treatment_id?.length > 1) {
       setisFirstLoading(true);
       Application.showHolisticPlan({
-        treatment_id: treatmentId,
+        treatment_id: treatment_id,
         member_id: id,
       })
         .then((res) => {
@@ -232,6 +254,31 @@ const NewGenerateHolisticPlan = () => {
         });
     }
   }, []);
+
+  // Handle browser back button
+  useEffect(() => {
+    if (!id || !treatment_id) return;
+
+    const handlePopState = () => {
+      navigate(`/report/Generate-Recommendation/${id}/${treatment_id}`, {
+        replace: true,
+      });
+    };
+
+    // Add a history entry to detect back button press
+    window.history.pushState(
+      { page: 'holistic-plan' },
+      '',
+      window.location.href,
+    );
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [id, treatment_id, navigate]);
+
   const [isFirstLoading, setisFirstLoading] = useState(false);
   // const isChartDataEmpty = !activeEl?.values.some(
   //   (value: string) => !isNaN(parseFloat(value)),
@@ -249,6 +296,63 @@ const NewGenerateHolisticPlan = () => {
     }
   }, [isSaving]);
   const [isToggle, setisToggle] = useState(false);
+  const handleUpdateIssueListByKeys = (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+    text?: string,
+  ) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        suggestion_tab: pre.suggestion_tab.map((item: any) => {
+          if (
+            item.Category === category &&
+            item.Recommendation === recommendation
+          ) {
+            return { ...item, issue_list: newIssueList };
+          }
+          return item;
+        }),
+      };
+    });
+    if (text) {
+      handleAddLookingForwards(text);
+    }
+  };
+  const handleAddLookingForwards = (text: string) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        looking_forwards: [
+          ...pre.looking_forwards,
+          'Issue ' + (pre.looking_forwards.length + 1) + ': ' + text,
+        ],
+      };
+    });
+  };
+  const handleRemoveLookingForwards = (text: string) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        looking_forwards: pre.looking_forwards.filter((el: any) => el !== text),
+      };
+    });
+  };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRemoveIssueFromList = (name: string) => {
+    setTratmentPlanData((pre: any) => {
+      return {
+        ...pre,
+        suggestion_tab: pre.suggestion_tab.map((item: any) => ({
+          ...item,
+          issue_list: item.issue_list.filter((issue: string) => issue !== name),
+        })),
+      };
+    });
+    handleRemoveLookingForwards(name);
+    setRefreshKey((k) => k + 1);
+  };
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -276,7 +380,7 @@ const NewGenerateHolisticPlan = () => {
             {' '}
             <div
               onClick={() => {
-                navigate(-1);
+                navigate(`/report/${id}/a`);
               }}
               className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer`}
             >
@@ -320,7 +424,7 @@ const NewGenerateHolisticPlan = () => {
               <div className="hidden lg:flex w-full items-center gap-3">
                 <div
                   onClick={() => {
-                    navigate(-1);
+                    navigate(`/report/${id}/a`);
                   }}
                   className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
                 >
@@ -436,6 +540,17 @@ const NewGenerateHolisticPlan = () => {
                     <CoverageCard
                       progress={coverageProgess}
                       details={coverageDetails}
+                      setDetails={setcoverageDetails}
+                      setLookingForwards={(newLookingForwards) => {
+                        setTratmentPlanData((pre: any) => {
+                          return {
+                            ...pre,
+                            looking_forwards: newLookingForwards,
+                          };
+                        });
+                      }}
+                      lookingForwardsData={treatmentPlanData?.looking_forwards}
+                      handleRemoveIssueFromList={handleRemoveIssueFromList}
                     />
                   </div>
                 )}
@@ -505,12 +620,23 @@ const NewGenerateHolisticPlan = () => {
                                     <>
                                       <div
                                         className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
-                                        key={`${el.title}-${suggestionIndex}`}
+                                        key={`${el.title}-${suggestionIndex}-${refreshKey}`}
                                       >
                                         <BioMarkerRowSuggestions
                                           editAble
                                           value={el}
                                           index={suggestionIndex}
+                                          issuesData={coverageDetails}
+                                          handleRemoveLookingForwards={
+                                            handleRemoveLookingForwards
+                                          }
+                                          handleRemoveIssueFromList={
+                                            handleRemoveIssueFromList
+                                          }
+                                          handleUpdateIssueListByKey={
+                                            handleUpdateIssueListByKeys
+                                          }
+                                          setIssuesData={setcoverageDetails}
                                           onEdit={(editData) => {
                                             setTratmentPlanData((pre: any) => {
                                               const oldsData: any = { ...pre };
@@ -574,7 +700,7 @@ const NewGenerateHolisticPlan = () => {
                                 <ButtonSecondary
                                   onClick={() => {
                                     navigate(
-                                      `/report/Generate-Recommendation/${id}`,
+                                      `/report/Generate-Recommendation/${id}/A`,
                                     );
                                     // setshowAutoGenerateModal(true)
                                   }}
@@ -609,7 +735,9 @@ const NewGenerateHolisticPlan = () => {
                           </div>
                           <ButtonSecondary
                             onClick={() => {
-                              navigate(`/report/Generate-Recommendation/${id}`);
+                              navigate(
+                                `/report/Generate-Recommendation/${id}/A`,
+                              );
                             }}
                             // onClick={() => setshowAutoGenerateModal(true)}
                             ClassName="w-full md:w-fit rounded-full"
@@ -953,7 +1081,7 @@ const NewGenerateHolisticPlan = () => {
               <div
                 className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
                 onClick={() =>
-                  navigate(`/report/Generate-Recommendation/${id}`)
+                  navigate(`/report/Generate-Recommendation/${id}/A`)
                 }
               >
                 Confirm

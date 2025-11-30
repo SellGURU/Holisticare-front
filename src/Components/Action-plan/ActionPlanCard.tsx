@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef, useEffect } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
-// import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 // import ConfirmModal from "./sections/ConfirmModal";
 
@@ -30,8 +30,8 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   isActive,
 }) => {
   // const { status, title, subtitle, progress, time, cardID } = el;
-  // const navigate = useNavigate();
-  // const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
 
   const resolveStatusColor = () => {
     switch (el.state) {
@@ -42,6 +42,8 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
       case 'Paused':
         return '#E84040';
       case 'Upcoming':
+        return '#FFC123';
+      case 'Draft':
         return '#FFC123';
       default:
         return '#3C79D6'; // Fallback color
@@ -82,6 +84,12 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
     window.addEventListener('resize', checkOverflow);
     return () => window.removeEventListener('resize', checkOverflow);
   }, [el.description]);
+  const resolveBorderColorActive = () => {
+    if (el.state === 'Draft') {
+      return 'border-[#F4E25C]';
+    }
+    return 'border-Primary-EmeraldGreen';
+  };
   return (
     <div
       onClick={() => {
@@ -89,7 +97,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
           onClick();
         }
       }}
-      className={` min-w-[218px] relative min-h-[238px] w-[218px] h-[238px] flex flex-col justify-between  rounded-[40px] bg-white  border-2 shadow-100  px-3 pt-2 cursor-pointer pb-3 select-none ${isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50  '}  ${
+      className={` min-w-[218px] relative min-h-[238px] w-[218px] h-[238px] flex flex-col justify-between  rounded-[40px] bg-white  border-2 shadow-100  px-3 pt-2 cursor-pointer pb-3 select-none ${isActive ? resolveBorderColorActive() : 'border-Gray-50  '}  ${
         isDisabled ? 'opacity-45 cursor-not-allowed' : ''
       }`}
     >
@@ -103,7 +111,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         </div>
         <div
           // style={{ borderColor: resolveStatusColor() }}
-          className={`w-[65px] z-[-1] h-[46px] border-2 ${isActive ? 'border-Primary-EmeraldGreen ' : 'border-Gray-50   '} rounded-t-[22px]  flex items-center justify-center text-lg font-medium relative -top-12 mr-6 bg-white text-Primary-DeepTeal  `}
+          className={`w-[65px] z-[-1] h-[46px] border-2 ${isActive ? resolveBorderColorActive() : 'border-Gray-50   '} rounded-t-[22px]  flex items-center justify-center text-lg font-medium relative -top-12 mr-6 bg-white text-Primary-DeepTeal  `}
         >
           {index < 10 && 0}
           {index}
@@ -156,18 +164,20 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 />
                 Calendar
               </div> */}
-              {/* <div
+              <div
                 onClick={(e) => {
                   e.stopPropagation();
                   if (!isDisabled) {
-                    navigate(`/action-plan/edit/${id}/${el.id}`);
+                    navigate(
+                      `/report/Generate-Action-Plan/${id}?planId=${el.id}`,
+                    );
                   }
                 }}
                 className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
               >
                 <img src="/icons/edit-green.svg" alt="" />
                 Edit
-              </div> */}
+              </div>
               <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -205,7 +215,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 ) : (
                   <>
                     <img src="/icons/delete-green.svg" alt="" />
-                    Remove
+                    Delete
                   </>
                 )}
               </div>

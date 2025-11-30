@@ -122,6 +122,19 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               {data.description}
             </div>
             <div className="w-full  flex items-start gap-2  bg-backgroundColor-Card  rounded-[12px] min-h-[30px] mt-4">
+              {refrences.length == 0 && (
+                <>
+                  <div className=" flex justify-center w-full items-center">
+                    <div className="flex flex-col justify-center items-center">
+                      <img src="/icons/EmptyState-biomarkerbox.svg" alt="" />
+                      <div className="TextStyle-Body-3 mt-[-10px] text-center text-Text-Primary">
+                        This biomarker is currently hidden due to changes in its
+                        mapping.
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
               <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden ">
                 {refrences.map((value: any) => {
                   return (
@@ -214,8 +227,8 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                   </div>
                                   <div className="  cursor-pointer  ">
                                     <div className="flex gap-2  justify-end items-center">
-                                      {active.source && (
-                                        <SourceTag source={active.source} />
+                                      {biomarker.source && (
+                                        <SourceTag source={biomarker.source} />
                                       )}
                                       <div className="  md:TextStyle-Headline-6 text-[8px]  md:text-Text-Primary">
                                         Historical Chart

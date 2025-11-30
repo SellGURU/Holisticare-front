@@ -99,6 +99,10 @@ class Application extends Api {
     const response = this.post(`/patients/generate_treatment_plan`, data);
     return response;
   }
+  static getGeneratedTreatmentPlan(data: any) {
+    const response = this.post(`/patients/get_treatment_plan_data`, data);
+    return response;
+  }
   static getTreatmentPlanDescriptions(member_id: number) {
     const response = this.get(`/patients/show-tplan-description/${member_id}`);
     return response;
@@ -634,6 +638,15 @@ class Application extends Api {
     const response = this.post(`/delete_treatment_plan`, data);
     return response;
   };
+  static deleteActionPlan = (data: any) => {
+    const response = this.post(`/action_plan/delete_block`, data);
+    return response;
+  };
+
+  static actionPalnShowTasks = (data: any) => {
+    const response = this.post(`/action_plan/edit/show_tasks`, data);
+    return response;
+  };
 
   static SendVerification = ({ email }: { email: string }) => {
     const response = this.post('/auth/forget_password/send_verification', {
@@ -1079,6 +1092,18 @@ class Application extends Api {
   static getCoverage = (data: any) => {
     return this.post('/holistic_plan_coverage/calculate_progress', data);
   };
+  static updateHtmlReport = (data: any) => {
+    return this.post(`/update_report_data`, data);
+  };
+  static remapIssues = (data: any) => {
+    return this.post('/issues/remap_issues', data);
+  };
+  static add_mapping = (data: any) => {
+    return this.post('/add_clinic_biomarker_mapping', data);
+  };
+  static remove_mapping = (data: any) => {
+    return this.post('/remove_clinic_biomarker_mapping', data);
+  };
   static checkRefreshProgress = (member_id: string) => {
     return this.post(`/patients/check_refresh_progress`, {
       member_id: member_id,
@@ -1128,6 +1153,9 @@ class Application extends Api {
     member_id: string;
   }) => {
     return this.post(`/questionary_tracking/check_save_questionnaire`, data);
+  };
+  static initialSaveActionPlan = (data: any) => {
+    return this.post('/action_plan/draft/initial_save', data);
   };
 }
 

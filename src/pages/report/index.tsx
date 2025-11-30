@@ -15,9 +15,12 @@ import FilloutQuestionnaireTrackingProgressModal from '../../Components/ComboBar
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [treatmentId, setTreatmentId] = useState<string>('');
   useEffect(() => {
-    subscribe('openShareModalHolisticPlan', () => {
+    subscribe('openShareModalHolisticPlan', (data: any) => {
       setIsShareModalOpen(true);
+      console.log(data.detail);
+      setTreatmentId(data.detail.treatmentId);
     });
   }, []);
   subscribe('openSideOut', () => {
@@ -119,6 +122,7 @@ const Report = () => {
       </div>
 
       <ShareModal
+        treatmentId={treatmentId}
         isOpen={isShareModalOpen}
         onClose={() => {
           setIsShareModalOpen(false);

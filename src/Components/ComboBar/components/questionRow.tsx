@@ -145,6 +145,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
       checkDelete();
     }
   };
+  console.log(viewQuestienry);
+  // const navigate = useNavigate();
+  useEffect(() => {
+    setshowModal(false);
+  }, [el.status]);
 
   return (
     <>
@@ -193,7 +198,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   }}
                   className={`flex items-center border-b border-Secondary-SelverGray  gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
                 >
-                  <img className="" src="/icons/eye-green.svg" alt="" />
+                  <img className="size-5" src="/icons/eye-green.svg" alt="" />
                   Preview
                 </div>
                 {el.status == 'completed' ? (
@@ -260,11 +265,13 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                             q_unique_id: el.unique_id,
                             f_unique_id: el.forms_unique_id,
                             action: 'assign',
-                          }).then(() => {
-                            setisAssigned(true);
-                            setshowModal(false);
-                            onAssign(el.unique_id);
-                          });
+                          })
+                            .then(() => {
+                              setisAssigned(true);
+                              setshowModal(false);
+                              onAssign(el.unique_id);
+                            })
+                            .catch(() => {});
                         }
                       }}
                       className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} border-b border-Secondary-SelverGray flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2  cursor-pointer`}

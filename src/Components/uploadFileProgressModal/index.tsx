@@ -11,7 +11,7 @@ export const UploadFileProgressModal = () => {
     setTimeout(() => {
       setshowProgressModal(true);
       setIsinProgress(true);
-    }, 2000);
+    }, 100);
   });
 
   subscribe('StepTwoSuccess', () => {

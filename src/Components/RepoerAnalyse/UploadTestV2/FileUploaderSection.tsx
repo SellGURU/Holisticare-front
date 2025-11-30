@@ -82,10 +82,10 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 mt-[2px] gap-2 ">
+            <div className="grid grid-cols-1 mt-[2px] gap-4 ">
               <FileBoxUploadingV2
                 onClose={onClose}
-                onDelete={() => handleDeleteFile(uploadedFile)}
+                onDelete={() => handleDeleteFile(uploadedFile.file_id)}
                 el={{
                   ...uploadedFile,
                   uploadedSize: uploadedFile.uploadedSize || 0,
@@ -96,6 +96,22 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
                   )} / ${formatFileSize(uploadedFile?.file?.size || 1)}`,
                 }}
               />
+              {uploadedFile.progress >= 100 && (
+                <div
+                  className="flex items-start gap-1 text-xs text-Text-Primary 
+              text-justify"
+                >
+                  {' '}
+                  <img
+                    className="size-5 -mt-[2px]"
+                    src="/icons/danger-fill.svg"
+                    alt=""
+                  />{' '}
+                  The blood test information has been automatically extracted
+                  from the uploaded file. <br /> Please review the data and
+                  confirm its accuracy.
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -41,7 +41,7 @@ export const DataSyncing = () => {
                   {data?.map((el: any) => {
                     return (
                       <div className=" bg-white border border-Gray-50  pl-2 xs:pl-3 md:pl-5 pr-1 md:pr-2 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center text-Text-Primary text-[10px]">
-                        <div className="text-[10px] w-[50px]  text-Text-Primary">
+                        <div className="text-[10px] w-[80px]  text-Text-Primary">
                           {el.Data}
                         </div>
                         <div className=" w-[18px] md:w-[30px] text-right">

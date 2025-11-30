@@ -128,6 +128,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
     }
   }, [isOpen, tryComplete, id]);
   useEffect(() => {
+    // publish('QuestionaryTrackingCall', {});
     subscribe('reloadQuestionnaires', () => {
       getQuestionnaires();
     });

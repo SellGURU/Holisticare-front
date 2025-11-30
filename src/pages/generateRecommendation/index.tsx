@@ -24,6 +24,7 @@ const initialCategoryState: CategoryState[] = [
   { name: 'Activity', visible: true },
   { name: 'Supplement', visible: true },
   { name: 'Lifestyle', visible: true },
+  { name: 'Other', visible: true },
 ];
 
 export const GenerateRecommendation = () => {
@@ -47,7 +48,17 @@ export const GenerateRecommendation = () => {
   });
 
   const [checkedSuggestions, setCheckedSuggestion] = useState<Array<any>>([]);
-  const { id } = useParams<{ id: string }>();
+  const { id, treatment_id } = useParams<{
+    id: string;
+    treatment_id: string;
+  }>();
+  const resolveTreatmentId = () => {
+    if (treatment_id && treatment_id?.length > 1) {
+      return treatment_id;
+    } else {
+      return treatmentPlanData.treatment_id;
+    }
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const [suggestionsDefualt, setSuggestionsDefualt] = useState([]);
@@ -58,20 +69,27 @@ export const GenerateRecommendation = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
+  const isFirstRemapRef = useRef(true);
   const [coverageProgess, setcoverageProgess] = useState(0);
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
   // Function to check if essential data fields are present and not empty
-  useEffect(() => {
+  const resolveCoverage = () => {
     if (!treatmentPlanData) return;
 
     // ✅ Only include checked items
     const selectedInterventions =
       treatmentPlanData?.suggestion_tab?.filter((item: any) => item.checked) ||
       [];
+    const payload =
+      treatmentPlanData?.looking_forwards?.map((issue: string) => ({
+        [issue]: false,
+      })) || [];
+    // console.log('payload', payload);
 
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
+      key_areas_to_address: payload,
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
@@ -87,13 +105,44 @@ export const GenerateRecommendation = () => {
       .catch((err) => {
         console.error('getCoverage error:', err);
       });
-  }, [treatmentPlanData, id]);
+  };
+  const remapIssues = () => {
+    if (!treatmentPlanData) return;
 
-  console.log(coverageDetails);
+    // console.log('payload', payload);
 
+    Application.remapIssues({
+      member_id: id,
+      suggestion_tab: treatmentPlanData?.suggestion_tab,
+      key_areas_to_address: treatmentPlanData?.looking_forwards,
+    })
+      .then((res: any) => {
+        setTratmentPlanData((pre: any) => {
+          return {
+            ...pre,
+            suggestion_tab: res.data.suggestion_tab,
+            key_areas_to_address: res.data.key_areas_to_address,
+          };
+        });
+      })
+      .catch((err) => {
+        console.error('getCoverage error:', err);
+      });
+  };
+  useEffect(() => {
+    resolveCoverage();
+  }, [treatmentPlanData?.suggestion_tab, id]);
+  useEffect(() => {
+    if (isFirstRemapRef.current) {
+      isFirstRemapRef.current = false;
+      return;
+    }
+    remapIssues();
+  }, [treatmentPlanData?.looking_forwards, id]);
   const hasEssentialData = (data: any) => {
     return (
       // data?.client_insight &&
+      // data.client_insight.length > 0 &&
       // data?.client_insight?.length > 0 &&
       data?.completion_suggestion
       // data.completion_suggestion.length > 0
@@ -146,19 +195,30 @@ export const GenerateRecommendation = () => {
     }
     setisButtonLoading(true); // Always show button loading when calling API
     // handlePlan(mocktemtment,retryForSuggestions)
-    Application.generateTreatmentPlan({
-      member_id: id,
-    })
-      .then((res) => {
-        handlePlan(res.data, retryForSuggestions);
+    if (treatment_id && treatment_id?.length > 1) {
+      Application.getGeneratedTreatmentPlan({
+        treatment_id: treatment_id,
+        member_id: id,
       })
-      .catch(() => {
-        if (!isMountedRef.current) return;
-        timeoutRef.current = setTimeout(
-          () => generatePaln(retryForSuggestions),
-          15000,
-        ); // Pass the retryForSuggestions flag
-      });
+        .then((res) => {
+          handlePlan(res.data, retryForSuggestions);
+        })
+        .catch(() => {});
+    } else {
+      Application.generateTreatmentPlan({
+        member_id: id,
+      })
+        .then((res) => {
+          handlePlan(res.data, retryForSuggestions);
+        })
+        .catch(() => {
+          if (!isMountedRef.current) return;
+          timeoutRef.current = setTimeout(
+            () => generatePaln(retryForSuggestions),
+            15000,
+          ); // Pass the retryForSuggestions flag
+        });
+    }
   };
 
   useEffect(() => {
@@ -174,6 +234,7 @@ export const GenerateRecommendation = () => {
 
   const handleNext = () => {
     if (currentStepIndex === 0) {
+      resolveCoverage();
       // Check if suggestion_tab is empty when moving from General Condition to Set Orders
       if (treatmentPlanData && !hasSuggestionsData(treatmentPlanData)) {
         setisButtonLoading(true); // Show loading on the button
@@ -260,13 +321,18 @@ export const GenerateRecommendation = () => {
               .includes(el.Category),
         ),
       ],
+      is_update: treatment_id && treatment_id?.length > 1 ? true : false,
+      treatment_id: resolveTreatmentId(),
+      result_tab: treatment_id && treatment_id?.length > 1 ? [] : [],
     })
       .then(() => {
         setTreatmentId(treatmentPlanData.treatment_id);
       })
       .finally(() => {
         setisButtonLoading(false);
-        navigate(`/report/Generate-Holistic-Plan/${id}`);
+        navigate(
+          `/report/Generate-Holistic-Plan/${id}/${resolveTreatmentId() + '?isUpdate=' + (treatment_id && treatment_id?.length > 1 ? 'true' : 'false')}`,
+        );
       });
   };
 
@@ -394,6 +460,7 @@ export const GenerateRecommendation = () => {
                 <React.Fragment key={index}>
                   <div
                     onClick={() => {
+                      // resolveCoverage();
                       // Prevent changing tabs if disableTabNavigation is true, unless it's the current tab
                       if (!disableTabNavigation || index === currentStepIndex) {
                         setCurrentStepIndex(index);
@@ -448,6 +515,7 @@ export const GenerateRecommendation = () => {
             <SetOrders
               progress={coverageProgess}
               details={coverageDetails}
+              setDetails={setcoverageDetails}
               activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}
               visibleCategoriy={VisibleCategories}
@@ -470,7 +538,6 @@ export const GenerateRecommendation = () => {
               }}
               treatMentPlanData={treatmentPlanData}
               setData={(newOrders) => {
-                console.log(newOrders);
                 setTratmentPlanData((pre: any) => {
                   return {
                     ...pre,
@@ -478,6 +545,15 @@ export const GenerateRecommendation = () => {
                   };
                 });
               }}
+              setLookingForwards={(newLookingForwards) => {
+                setTratmentPlanData((pre: any) => {
+                  return {
+                    ...pre,
+                    looking_forwards: newLookingForwards,
+                  };
+                });
+              }}
+              lookingForwardsData={treatmentPlanData?.looking_forwards}
               data={treatmentPlanData?.suggestion_tab}
             ></SetOrders>
           ) : (
@@ -488,6 +564,25 @@ export const GenerateRecommendation = () => {
               suggestionsChecked={checkedSuggestions}
               treatmentPlanData={treatmentPlanData}
               Conflicts={Conflicts}
+              setDetails={setcoverageDetails}
+              setData={(newOrders) => {
+                setTratmentPlanData((pre: any) => {
+                  return {
+                    ...pre,
+                    suggestion_tab: newOrders,
+                  };
+                });
+              }}
+              data={treatmentPlanData?.suggestion_tab}
+              setLookingForwards={(newLookingForwards) => {
+                setTratmentPlanData((pre: any) => {
+                  return {
+                    ...pre,
+                    looking_forwards: newLookingForwards,
+                  };
+                });
+              }}
+              lookingForwardsData={treatmentPlanData?.looking_forwards}
             ></Overview>
           )}
         </div>

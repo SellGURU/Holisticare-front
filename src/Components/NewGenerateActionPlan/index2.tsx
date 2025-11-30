@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { TopBar } from '../topBar';
 // import CategorieyWeight from './components/CategorieyWeight';
 import Application from '../../api/app';
 import LoaderBox from './components/LoaderBox';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
 import TimeDuration from './components/TimeDuration';
 import PlanObjective from './components/PlanObjective';
@@ -18,46 +18,55 @@ import CircularProgressBar from './components/CircularProgressBar';
 // import { AlertModal } from '../AlertModal';
 
 const GenerateActionPlan = () => {
-  const [plans, setPlans] = useState<any>(null);
+  // const [plans, setPlans] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const isMountedRef = useRef(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isLoadingPlans, setIsLoadingPlans] = useState(true);
   const [isWeighted, setIsWeighted] = useState(false);
   const [actions, setActions] = useState<any>({
     checkIn: [],
     category: [],
   });
-  useEffect(() => {
-    Application.getActionPlanMethodsNew().then((res) => {
-      setPlans(res.data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   Application.getActionPlanMethodsNew().then((res) => {
+  //     setPlans(res.data);
+  //   });
+  // }, []);
   const [categories, setCategories] = useState<any>({
     checkIn: [],
     category: [],
   });
-  const checkSelectedTaskConflict = (newPlans: any) => {
-    setIsLoadingPlans(true);
-    Application.checkSelectedTaskConflict({
-      member_id: id,
-      tasks: newPlans,
-    })
-      .then((res) => {
-        setCategories((prevCategories: any) => ({
-          ...prevCategories,
-          category: res.data,
-        }));
+  const checkSelectedTaskConflict = useCallback(
+    (newPlans: any) => {
+      setIsLoadingPlans(true);
+      Application.checkSelectedTaskConflict({
+        member_id: id,
+        tasks: newPlans,
       })
-      .finally(() => {
-        setIsLoadingPlans(false);
-      });
-  };
+        .then((res) => {
+          setCategories((prevCategories: any) => ({
+            ...prevCategories,
+            category: res.data,
+          }));
+        })
+        .finally(() => {
+          setIsLoadingPlans(false);
+        })
+        .catch(() => {});
+    },
+    [id],
+  );
   const [actionPlanError, setActionPlanError] = useState(false);
-  const savePlan = () => {
+  const getPaln = useCallback(() => {
     Application.getActionPlanTaskDirectoryNew({
       member_id: id,
       // percents: newPlans,
     })
       .then((res) => {
+        if (!isMountedRef.current) return;
+
         const checkInItems = res.data.filter(
           (item: any) => item.Task_Type === 'Checkin',
         );
@@ -75,16 +84,74 @@ const GenerateActionPlan = () => {
         setActionPlanError(false);
       })
       .catch(() => {
+        if (!isMountedRef.current) return;
+
         setActionPlanError(true);
-        setTimeout(() => {
-          savePlan();
+        timeoutRef.current = setTimeout(() => {
+          if (isMountedRef.current) {
+            getPaln();
+          }
         }, 5000);
+        // navigate(-1);
+      });
+  }, [id, checkSelectedTaskConflict]);
+  const getSavedPaln = (planId: string) => {
+    Application.actionPalnShowTasks({
+      member_id: id,
+      id: planId,
+      // percents: newPlans,
+    })
+      .then((res) => {
+        const checkInItems = res.data.tasks.filter(
+          (item: any) => item.Task_Type === 'Checkin',
+        );
+        const categoryItems = res.data.tasks.filter(
+          (item: any) => item.Task_Type !== 'Checkin',
+        );
+        setIsDarft(res.data.is_draft);
+        // setCategories({
+        //   checkIn: checkInItems,
+        //   category: categoryItems,
+        // });
+        setActions({
+          checkIn: checkInItems,
+          category: categoryItems,
+        });
+        setDuration(res.data.duration);
+        setPlanObjective(res.data.plan_objective);
+
+        setIsWeighted(true);
+        checkSelectedTaskConflict(res.data.tasks);
+        setActionPlanError(false);
+        setIsLoadingPlans(false);
+      })
+      .catch(() => {
+        // if (!isMountedRef.current) return;
+        // setActionPlanError(true);
+        // timeoutRef.current = setTimeout(() => {
+        //   if (isMountedRef.current) {
+        //     getSavedPaln(planId);
+        //   }
+        // }, 5000);
         // navigate(-1);
       });
   };
   useEffect(() => {
-    savePlan();
-  }, []);
+    const planIdFromUrl = searchParams.get('planId');
+    if (planIdFromUrl) {
+      getSavedPaln(planIdFromUrl);
+    } else {
+      getPaln();
+    }
+
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [getPaln]);
+
   const [isLoadingSaveChanges, setISLoadingSaveChanges] = useState(false);
   const [isLoadingCalendarView, setIsLoadingCalendarView] = useState(false);
   const navigate = useNavigate();
@@ -105,6 +172,8 @@ const GenerateActionPlan = () => {
       tasks: flattenedData,
       duration: duration,
       plan_objective: planObjective,
+      id: actionPlanId ? actionPlanId : undefined,
+      is_update: !isDarft,
     })
       .then(() => {
         // navigate(-1);
@@ -119,7 +188,49 @@ const GenerateActionPlan = () => {
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);
   const [checkSave, setCheckSave] = useState(false);
+  const [actionPlanId, setActionPlanId] = useState<string | null>(null);
 
+  // Read planId from URL query parameter
+  useEffect(() => {
+    const planIdFromUrl = searchParams.get('planId');
+    console.log(planIdFromUrl);
+    if (planIdFromUrl) {
+      setActionPlanId(planIdFromUrl);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (actionPlanId) {
+      navigate(`/report/Generate-Action-Plan/${id}?planId=` + actionPlanId);
+    }
+  }, [actionPlanId]);
+  const [isDarft, setIsDarft] = useState<boolean | null>(null);
+  const autoSaveActionPlan = () => {
+    const prepareDataForBackend = (data: any) => {
+      return [...data.checkIn, ...data.category];
+    };
+    const flattenedData = prepareDataForBackend(actions);
+    if (flattenedData.length > 0 && (isDarft === null || isDarft === true)) {
+      Application.initialSaveActionPlan({
+        member_id: id,
+        tasks: flattenedData,
+        duration: duration,
+        plan_objective: planObjective,
+        id: actionPlanId ? actionPlanId : undefined,
+      })
+        .then((res: any) => {
+          setActionPlanId(res.data.id);
+          setIsDarft(true);
+          // console.log('Action plan saved successfully');
+        })
+        .catch(() => {
+          // console.log('Action plan save failed');
+        });
+    }
+  };
+  useEffect(() => {
+    autoSaveActionPlan();
+  }, [actions, duration, planObjective]);
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
     if (calendarView) {
@@ -162,7 +273,7 @@ const GenerateActionPlan = () => {
                 <div
                   onClick={() => {
                     if (!calendarView) {
-                      navigate(-1);
+                      navigate('/report/' + id + '/a?section=Action Plan');
                     } else {
                       setCalendarView(false);
                     }
@@ -255,7 +366,7 @@ const GenerateActionPlan = () => {
                   setData={setCategories}
                   data={categories}
                   setCalendarView={setCalendarView}
-                  plans={plans}
+                  plans={[]}
                   handleShowConflictsModal={handleShowConflictsModal}
                 />
                 <div className="absolute right-5 top-[75px] z-50">

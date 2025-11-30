@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react';
+import Application from '../../../api/app';
+import Circleloader from '../../CircleLoader';
 import Select from '../../Select';
 import SimpleDatePicker from '../../SimpleDatePicker';
-import Circleloader from '../../CircleLoader';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-import Application from '../../../api/app';
-import { Tooltip } from 'react-tooltip';
 // import { Scaling } from 'lucide-react';
+import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import SearchSelect from '../../searchableSelect';
+import Toggle from '../Boxs/Toggle';
 interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
@@ -20,6 +21,8 @@ interface BiomarkersSectionProps {
   setIsScaling: (isScaling: boolean) => void;
   rowErrors?: any;
   setrowErrors: any;
+  showOnlyErrors: boolean;
+  setShowOnlyErrors: (showOnlyErrors: boolean) => void;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -34,13 +37,20 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   setrowErrors,
   isScaling,
   setIsScaling,
+  showOnlyErrors,
+  setShowOnlyErrors,
 }) => {
+  const [changedRows, setChangedRows] = useState<string[]>([]);
+  const [mappedRows, setMappedRows] = useState<string[]>([]);
+  const [mappingStatus, setMappingStatus] = useState<
+    Record<string, 'added' | 'removed' | null>
+  >({});
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleValueChange = (index: number, newValue: string) => {
+  const handleValueChange = (id: string, newValue: string) => {
     // update local state immediately so UI feels responsive
-    const updated = biomarkers.map((b, i) =>
-      i === index ? { ...b, original_value: newValue } : b,
+    const updated = biomarkers.map((b) =>
+      b.biomarker_id === id ? { ...b, original_value: newValue } : b,
     );
     onChange(updated);
 
@@ -51,7 +61,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     // set new timer (3s)
     typingTimeoutRef.current = setTimeout(() => {
-      updateAndStandardize(index, { original_value: newValue });
+      updateAndStandardize(id, { original_value: newValue });
     }, 3000);
   };
   // const handleValueChange = (index: number, newValue: number | string) => {
@@ -89,6 +99,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     // update biomarkers
     const updated = biomarkers.filter((_, i) => i !== indexToDelete);
+    if (updated.length === 0) {
+      // alert('delete file trigger1');
+      publish('DELETE_FILE_TRIGGER', {});
+    }
     onChange(updated);
 
     // update rowErrors
@@ -133,7 +147,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       .catch(() => {});
   }, []);
   const gutOptions = ['Good for GUT', 'Bad for GUT'];
-  const renderValueField = (b: any, index: number) => {
+  const renderValueField = (b: any) => {
     if (fileType.toLowerCase() === 'dna') {
       return (
         <Select
@@ -142,7 +156,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           value={b.original_value}
           options={dnaOptions}
           onChange={(val: string) =>
-            updateAndStandardize(index, { original_value: val })
+            updateAndStandardize(b.biomarker_id, { original_value: val })
           }
         />
       );
@@ -154,7 +168,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           value={b.original_value}
           options={gutOptions}
           onChange={(val: string) =>
-            updateAndStandardize(index, { original_value: val })
+            updateAndStandardize(b.biomarker_id, { original_value: val })
           }
         />
       );
@@ -164,7 +178,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           type="number"
           value={b.original_value}
           className="text-center border border-Gray-50 w-[70px] md:w-[95px] outline-none rounded-md text-[8px] md:text-[12px] text-Text-Primary px-2 md:py-1"
-          onChange={(e) => handleValueChange(index, e.target.value)}
+          onChange={(e) => handleValueChange(b.biomarker_id, e.target.value)}
         />
       );
     }
@@ -203,15 +217,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   };
 
   const updateAndStandardize = async (
-    index: number,
+    id: string,
     updatedField: Partial<any>,
   ) => {
     // update local state immediately
-    let updated = biomarkers.map((b, i) =>
-      i === index ? { ...b, ...updatedField } : b,
+    // console.log(updatedField);
+    let updated = biomarkers.map((b) =>
+      b.biomarker_id === id ? { ...b, ...updatedField } : b,
     );
 
-    const current = updated[index];
+    const current = updated.filter((b) => b.biomarker_id === id)[0];
     const payload = {
       biomarker: current.biomarker,
       value: current.original_value?.toString() || '',
@@ -222,11 +237,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     const standardized = await standardizeBiomarkers(payload);
 
     if (standardized) {
-      updated = updated.map((b, i) =>
-        i === index ? { ...b, ...standardized } : b,
+      updated = updated.map((b) =>
+        b.biomarker_id === id ? { ...b, ...standardized } : b,
       );
     }
-
     onChange(updated);
   };
   const [unitOptions, setUnitOptions] = React.useState<
@@ -284,11 +298,63 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     }
   }, [biomarkers]);
   console.log(biomarkers);
+  const handleMappingToggle = async (id: string) => {
+    const row = biomarkers.filter((b) => b.biomarker_id === id)[0];
+    const extracted = row.original_biomarker_name;
+    const system = row.biomarker;
 
+    if (!extracted || !system) {
+      console.warn('Missing biomarker names for mapping');
+      return;
+    }
+
+    try {
+      if (mappedRows.includes(id)) {
+        // 🔴 Remove mapping
+        await Application.remove_mapping({
+          extracted_biomarker: extracted,
+          system_biomarker: system,
+        });
+        setMappedRows((prev) => prev.filter((i) => i !== id));
+
+        // Show red div for 5 seconds
+        setMappingStatus((prev) => ({ ...prev, [id]: 'removed' }));
+        setTimeout(() => {
+          setMappingStatus((prev) => ({ ...prev, [id]: null }));
+        }, 5000);
+      } else {
+        // 🟢 Add mapping
+        await Application.add_mapping({
+          extracted_biomarker: extracted,
+          system_biomarker: system,
+        });
+        setMappedRows((prev) => [...prev, id]);
+
+        // Show green div for 5 seconds
+        setMappingStatus((prev) => ({ ...prev, [id]: 'added' }));
+        setTimeout(() => {
+          setMappingStatus((prev) => ({ ...prev, [id]: null }));
+        }, 5000);
+      }
+    } catch (err) {
+      console.error('Mapping toggle failed:', err);
+    }
+  };
+  useEffect(() => {
+    const listener = () => {
+      setMappedRows([]);
+      setChangedRows([]);
+      setMappingStatus({});
+    };
+
+    subscribe('RESET_MAPPING_ROWS', listener);
+
+    return () => unsubscribe('RESET_MAPPING_ROWS', listener);
+  }, []);
   return (
     <div
       // style={{ height: window.innerHeight - 400 + 'px' }}
-      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-sm font-medium text-Text-Primary`}
+      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary`}
     >
       {loading ? (
         <div
@@ -331,16 +397,27 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 className="w-4 h-4 cursor-pointer text-Text-Secondary"
               /> */}
             </div>
-            <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
-              Date of Test:
-              <SimpleDatePicker
-                textStyle
-                isUploadFile
-                date={dateOfTest}
-                setDate={setDateOfTest}
-                placeholder="Select Date"
-                ClassName="ml-2 border border-Gray-50  1rounded-2xl px-2 py-1 text-Text-Primary"
-              />
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <Toggle
+                  checked={showOnlyErrors}
+                  setChecked={setShowOnlyErrors}
+                />
+                <div className="text-[10px] md:text-xs font-normal text-Text-Primary">
+                  Show Only Errors
+                </div>
+              </div>
+              <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
+                Date of Test:
+                <SimpleDatePicker
+                  textStyle
+                  isUploadFile
+                  date={dateOfTest}
+                  setDate={setDateOfTest}
+                  placeholder="Select Date"
+                  ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
+                />
+              </div>
             </div>
           </div>
 
@@ -348,7 +425,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="min-w-[800px] ">
               {/* Table Header */}
               <div
-                className="grid w-full sticky top-0 z-20 py-1 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
                 style={{
                   gridTemplateColumns:
                     'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
@@ -360,14 +437,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 <div className="text-center">Extracted Unit</div>
                 <div className="text-center">System Value</div>
                 <div className="text-center">System Unit</div>
-                <div className="text-end">Action</div>
+                <div className="text-center">Action</div>
               </div>
 
               {/* Table Rows */}
               <div
                 ref={tableRef}
-                className="overflow-y-auto  w-[100.5%]"
+                className="overflow-y-auto  w-[100%]"
                 style={{
+                  minHeight: isScaling
+                    ? window.innerHeight - 330 + 'px'
+                    : window.innerHeight - 500 + 'px',
                   maxHeight: isScaling
                     ? window.innerHeight - 330 + 'px'
                     : window.innerHeight - 500 + 'px',
@@ -380,7 +460,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     <div
                       ref={(el) => (rowRefs.current[index] = el)}
                       key={index}
-                      className={` ${index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
+                      className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
                       style={{
                         gridTemplateColumns:
                           'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
@@ -390,7 +470,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         <TooltipTextAuto maxWidth="160px">
                           {b.original_biomarker_name}
                         </TooltipTextAuto>
-                        {errorForRow && (
+                        {/* {errorForRow && (
                           <>
                             <img
                               data-tooltip-id={`tooltip-${index}`}
@@ -406,7 +486,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               {errorForRow}
                             </Tooltip>
                           </>
-                        )}
+                        )} */}
                       </div>
                       {/* biomarker (editable via select) */}
                       <div className="text-center">
@@ -416,9 +496,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           isSetting
                           value={b.biomarker}
                           options={avalibaleBiomarkers || []}
-                          onChange={(val: string) =>
-                            updateAndStandardize(index, { biomarker: val })
-                          }
+                          onChange={(val: string) => {
+                            updateAndStandardize(b.biomarker_id, {
+                              biomarker: val,
+                            });
+                            setChangedRows((prev) =>
+                              prev.includes(b.biomarker_id)
+                                ? prev
+                                : [...prev, b.biomarker_id],
+                            );
+                          }}
                         />
                         {/* <Select
                         isLarge
@@ -431,9 +518,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       /> */}
                       </div>
                       {/* value (editable via input) */}
-                      <div className="text-center">
-                        {renderValueField(b, index)}
-                      </div>
+                      <div className="text-center">{renderValueField(b)}</div>
                       {/* unit (editable via select) */}
                       <div className="text-end flex justify-center">
                         <div className="w-full max-w-[100px]">
@@ -450,7 +535,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               }
                             }}
                             onChange={(val: string) =>
-                              updateAndStandardize(index, {
+                              updateAndStandardize(b.biomarker_id, {
                                 original_unit: val,
                               })
                             }
@@ -463,7 +548,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       </div>
                       <div className="text-center text-[#888888]">{b.unit}</div>
                       {/* delete logic */}
-                      <div className="flex items-center justify-end gap-2">
+                      <div
+                        className={`flex items-center ${
+                          changedRows.includes(b.biomarker_id) ||
+                          mappedRows.includes(b.biomarker_id)
+                            ? 'justify-end'
+                            : 'justify-center'
+                        }  gap-2  h-full`}
+                      >
                         {b.status === 'confirm' ? (
                           <div className="flex items-center justify-end w-full gap-1">
                             <div className="text-Text-Quadruple text-[10px]">
@@ -483,16 +575,65 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             />
                           </div>
                         ) : (
-                          <div className="w-[47px] pl-8 md:pl-5">
-                            <img
-                              src="/icons/trash-blue.svg"
-                              alt="Delete"
-                              className="cursor-pointer w-4 h-4"
-                              onClick={() => handleTrashClick(index)}
-                            />
+                          <div className="relative flex items-center justify-end   gap-1  h-full">
+                            {mappingStatus[b.biomarker_id] === 'added' && (
+                              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
+                                <img
+                                  src="/icons/tick-circle-green-new.svg"
+                                  alt=""
+                                />
+                                Mapping saved for future uploads.
+                              </div>
+                            )}
+
+                            {mappingStatus[b.biomarker_id] === 'removed' && (
+                              <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[220px] rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
+                                <img
+                                  src="/icons/info-circle-orange.svg"
+                                  alt=""
+                                />
+                                This mapping will only be used for this upload.
+                              </div>
+                            )}
+
+                            {(changedRows.includes(b.biomarker_id) ||
+                              mappedRows.includes(b.biomarker_id)) && (
+                              <img
+                                src={
+                                  mappedRows.includes(b.biomarker_id)
+                                    ? '/icons/save-2-fill.svg'
+                                    : '/icons/save-2.svg'
+                                }
+                                alt="Mapping toggle"
+                                className="cursor-pointer w-4 h-4"
+                                onClick={() =>
+                                  handleMappingToggle(b.biomarker_id)
+                                }
+                              />
+                            )}
+                            <div
+                              className={` ${
+                                changedRows.includes(b.biomarker_id) ||
+                                mappedRows.includes(b.biomarker_id)
+                                  ? 'pl-0'
+                                  : 'pl-6'
+                              } `}
+                            >
+                              <img
+                                src="/icons/trash-blue.svg"
+                                alt="Delete"
+                                className="cursor-pointer w-4 h-4 "
+                                onClick={() => handleTrashClick(index)}
+                              />
+                            </div>
                           </div>
                         )}
                       </div>
+                      {errorForRow && (
+                        <div className="text-Red font-normal text-[10px] text-nowrap mt-1">
+                          {errorForRow}
+                        </div>
+                      )}
                     </div>
                   );
                 })}

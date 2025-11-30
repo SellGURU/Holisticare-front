@@ -239,8 +239,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     setIsFormValid(
       addData.title.trim() !== '' &&
         addData.instruction.trim() !== '' &&
-        addData.score > 0,
-      // addData.Parent_Title.trim() !== '',
+        addData.score > 0 &&
+        (addData.Parent_Title.trim() !== '' || editid !== null),
     );
   }, [addData.title, addData.instruction, addData.score, addData.Parent_Title]);
 
