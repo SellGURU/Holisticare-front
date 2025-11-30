@@ -1119,6 +1119,10 @@ class Application extends Api {
       member_id: member_id,
     });
   };
+
+  static initialSaveActionPlan = (data: any) => {
+    return this.post('/action_plan/draft/initial_save', data);
+  };
   static deleteQuestionary = (data: {
     f_unique_id: string;
     q_unique_id: string;
@@ -1153,9 +1157,6 @@ class Application extends Api {
     member_id: string;
   }) => {
     return this.post(`/questionary_tracking/check_save_questionnaire`, data);
-  };
-  static initialSaveActionPlan = (data: any) => {
-    return this.post('/action_plan/draft/initial_save', data);
   };
 }
 

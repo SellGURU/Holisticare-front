@@ -82,6 +82,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     };
   }, [isAssigned, countdown]);
 
+  console.log(viewQuestienry);
+  // const navigate = useNavigate();
+  useEffect(() => {
+    setshowModal(false);
+  }, [el.status]);
   const handleDelete = (
     member_id: string,
     q_unique_id: string,
@@ -145,11 +150,6 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
       checkDelete();
     }
   };
-  console.log(viewQuestienry);
-  // const navigate = useNavigate();
-  useEffect(() => {
-    setshowModal(false);
-  }, [el.status]);
 
   return (
     <>
