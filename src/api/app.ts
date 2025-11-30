@@ -1146,9 +1146,7 @@ class Application extends Api {
     );
     return response;
   };
-  static initialSaveActionPlan = (data: any) => {
-    return this.post('/action_plan/draft/initial_save', data);
-  };
+
   static checkDeleteQuestionary = (data: {
     f_unique_id: string;
     q_unique_id: string;
