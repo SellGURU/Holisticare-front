@@ -300,17 +300,22 @@ export const TopBar: FC<TopBarProps> = ({
       {(hasReportInRoute || hasShareInRoute) && (
         <div className="flex xl:hidden items-center gap-2 xs:gap-4">
           <img
-            className=" xl:block"
+            className={`xl:block ${shouldEnableActions && 'opacity-40'} `}
             onClick={() => {
-              setOpenDownload(true);
+              if (!shouldEnableActions) {
+                setOpenDownload(true);
+              }
             }}
             src="/icons/document-download.svg"
             alt=""
           />
           {!hasShareInRoute && (
             <img
+              className={`${shouldEnableActions && 'opacity-40'} `}
               onClick={() => {
-                setOpenShare(true);
+                if (!shouldEnableActions) {
+                  setOpenShare(true);
+                }
               }}
               src="/icons/link-2.svg"
               alt=""
