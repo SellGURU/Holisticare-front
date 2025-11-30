@@ -330,6 +330,11 @@ export function PublicSurveyForm({
           initialResponses[index] = (q.response as string[]) || [];
           break;
         }
+        case 'number': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
+          break;
+        }
         case 'yes_no': {
           // Added block scope
           initialResponses[index] = (q.response as string) || '';
