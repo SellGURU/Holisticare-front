@@ -63,6 +63,7 @@ export const GenerateRecommendation = () => {
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const [suggestionsDefualt, setSuggestionsDefualt] = useState([]);
   const [isButtonLoading, setisButtonLoading] = useState(false);
+  const [isRemapLoading, setIsRemapLoading] = useState(false);
   const [, setScrollPosition] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isClosed, setisClosed] = useState(false);
@@ -70,6 +71,7 @@ export const GenerateRecommendation = () => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
   const isFirstRemapRef = useRef(true);
+  const remapLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [coverageProgess, setcoverageProgess] = useState(0);
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
   // Function to check if essential data fields are present and not empty
@@ -109,6 +111,17 @@ export const GenerateRecommendation = () => {
   const remapIssues = () => {
     if (!treatmentPlanData) return;
 
+    // Clear any existing timeout
+    if (remapLoadingTimeoutRef.current) {
+      clearTimeout(remapLoadingTimeoutRef.current);
+      remapLoadingTimeoutRef.current = null;
+    }
+
+    // Set timeout to show loading after 2 seconds
+    remapLoadingTimeoutRef.current = setTimeout(() => {
+      setIsRemapLoading(true);
+    }, 2000);
+
     // console.log('payload', payload);
 
     Application.remapIssues({
@@ -127,6 +140,14 @@ export const GenerateRecommendation = () => {
       })
       .catch((err) => {
         console.error('getCoverage error:', err);
+      })
+      .finally(() => {
+        // Clear timeout and hide loading
+        if (remapLoadingTimeoutRef.current) {
+          clearTimeout(remapLoadingTimeoutRef.current);
+          remapLoadingTimeoutRef.current = null;
+        }
+        setIsRemapLoading(false);
       });
   };
   useEffect(() => {
@@ -228,6 +249,9 @@ export const GenerateRecommendation = () => {
       isMountedRef.current = false;
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+      }
+      if (remapLoadingTimeoutRef.current) {
+        clearTimeout(remapLoadingTimeoutRef.current);
       }
     };
   }, []);
@@ -368,6 +392,14 @@ export const GenerateRecommendation = () => {
           <Circleloader></Circleloader>
           <div className="text-Text-Primary TextStyle-Body-1 mt-3 mx-6 text-center lg:mx-0">
             We are generating your Holistic Plan. This may take a moment.
+          </div>
+        </div>
+      )}
+      {isRemapLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-50 z-20">
+          <Circleloader></Circleloader>
+          <div className="text-Text-Primary TextStyle-Body-1 mt-3 mx-6 text-center lg:mx-0">
+            Updating recommendations...
           </div>
         </div>
       )}
