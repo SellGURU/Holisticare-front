@@ -2,23 +2,23 @@ import { useState } from 'react';
 import { publish, subscribe } from '../../../utils/event';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 
-export const DeleteQuestionnaireTrackingProgressModal = () => {
+export const UpdateQuestionnaireTrackingProgressModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [IsinProgress, setIsinProgress] = useState(true);
 
-  subscribe('openDeleteQuestionnaireTrackingProgressModal', () => {
+  subscribe('openUpdateQuestionnaireTrackingProgressModal', () => {
     setTimeout(() => {
       setshowProgressModal(true);
       setIsinProgress(true);
     }, 2000);
   });
 
-  subscribe('DeleteQuestionnaireTrackingSuccess', () => {
+  subscribe('UpdateQuestionnaireTrackingSuccess', () => {
     setshowProgressModal(true);
     setIsinProgress(false);
   });
 
-  subscribe('closeDeleteQuestionnaireTrackingProgressModal', () => {
+  subscribe('closeUpdateQuestionnaireTrackingProgressModal', () => {
     setshowProgressModal(false);
   });
 
@@ -40,7 +40,7 @@ export const DeleteQuestionnaireTrackingProgressModal = () => {
         `}
       >
         <div className="flex items-center justify-between text-xs font-medium text-Primary-DeepTeal">
-          {IsinProgress ? 'Deletion in Progress' : 'Processing Completed!'}
+          {IsinProgress ? 'Update in Progress' : 'Processing Completed!'}
           <img
             onClick={() => setshowProgressModal(false)}
             src="/icons/close.svg"
@@ -66,14 +66,14 @@ export const DeleteQuestionnaireTrackingProgressModal = () => {
             <img src="/icons/tick-circle-upload.svg" alt="" />
           )}
           {IsinProgress
-            ? 'The questionnaire is being removed.'
-            : 'Deletion completed.'}
+            ? 'The questionnaire responses are being updated.'
+            : 'Update completed.'}
         </div>
 
         <div className="mt-4 text-[10px] text-Text-Quadruple transition-opacity duration-500">
           {IsinProgress
-            ? "If you'd like, you may continue working while the system removes the questionnaire."
-            : 'If you’d like to remove its related data from the system, please click the “Unsync Data” button.'}
+            ? "If you'd like, you may continue working while the system saves your changes"
+            : 'If you’d like to refresh the related data in the system, please click the “Resync Data” button.'}
         </div>
 
         {!IsinProgress && (
@@ -84,7 +84,7 @@ export const DeleteQuestionnaireTrackingProgressModal = () => {
                 publish('syncReport', {});
               }}
             >
-              Unsync Data
+              Resync Data
             </ButtonSecondary>
           </div>
         )}
@@ -92,4 +92,4 @@ export const DeleteQuestionnaireTrackingProgressModal = () => {
     </>
   );
 };
-export default DeleteQuestionnaireTrackingProgressModal;
+export default UpdateQuestionnaireTrackingProgressModal;

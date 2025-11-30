@@ -24,6 +24,7 @@ interface QuestionRowProps {
     disabled?: boolean,
   ) => any;
   handleCloseSlideOutPanel: () => void;
+  getQuestionnaires: () => void;
 }
 const QuestionRow: React.FC<QuestionRowProps> = ({
   el,
@@ -33,6 +34,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   onAssign,
   // deleteRow,
   handleCloseSlideOutPanel,
+  getQuestionnaires,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
@@ -46,9 +48,15 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   const [isDeletedSuccess, setIsDeletedSuccess] = useState<boolean>(false);
 
   const modalRef = useRef(null);
+  const CloseAction = () => {
+    setshowModal(false);
+    setIsSureRemoveId(null);
+    setIsDeleted(null);
+    setIsDeletedSuccess(false);
+  };
   useModalAutoClose({
     refrence: modalRef,
-    close: () => setshowModal(false),
+    close: CloseAction,
   });
   useEffect(() => {
     // Initialize timer with a safe default value
@@ -83,47 +91,64 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     member_id: string,
     q_unique_id: string,
     f_unique_id: string,
+    status: string,
   ) => {
     setLoadingDelete(true);
     setshowModal(false);
     // onDelete();
     setIsDeleted(q_unique_id);
-    handleCloseSlideOutPanel();
-    publish('openDeleteQuestionnaireTrackingProgressModal', {});
+    if (status == 'completed') {
+      handleCloseSlideOutPanel();
+      publish('openDeleteQuestionnaireTrackingProgressModal', {});
+    }
 
     Application.deleteQuestionary({
       f_unique_id: f_unique_id,
       q_unique_id: q_unique_id,
-      member_id: Number(member_id),
+      member_id: member_id,
     })
       .then(() => {
         setLoadingDelete(false);
+        setIsSureRemoveId(null);
+        if (status !== 'completed') {
+          setIsDeletedSuccess(true);
+        }
       })
       .catch((err) => {
         console.error(err);
         setLoadingDelete(false);
         setIsSureRemoveId(null);
       });
-    const checkDelete = async () => {
-      try {
-        const res = await Application.checkDeleteQuestionary({
-          f_unique_id: f_unique_id,
-          q_unique_id: q_unique_id,
-          member_id: Number(member_id),
-        });
-        if (res.status === 200 && res.data.status === true) {
-          setIsDeletedSuccess(true);
-          publish('DeleteQuestionnaireTrackingSuccess', {});
-        } else {
-          setTimeout(checkDelete, 15000);
+    if (status == 'completed') {
+      const checkDelete = async () => {
+        const pathname = window.location.pathname
+          .split('/')
+          .slice(1, 3)
+          .join('/');
+        if (pathname !== `report/${member_id}`) {
+          publish('closeDeleteQuestionnaireTrackingProgressModal', {});
+          return;
         }
-      } catch (err) {
-        console.error('err', err);
+        try {
+          const res = await Application.checkDeleteQuestionary({
+            f_unique_id: f_unique_id,
+            q_unique_id: q_unique_id,
+            member_id: member_id,
+          });
+          if (res.status === 200 && res.data.status === true) {
+            setIsDeletedSuccess(true);
+            publish('DeleteQuestionnaireTrackingSuccess', {});
+          } else {
+            setTimeout(checkDelete, 30000);
+          }
+        } catch (err) {
+          console.error('err', err);
 
-        setTimeout(checkDelete, 15000);
-      }
-    };
-    checkDelete();
+          setTimeout(checkDelete, 30000);
+        }
+      };
+      checkDelete();
+    }
   };
 
   return (
@@ -184,6 +209,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         publish('openFullscreenModal', {
                           url: `/surveys/${id}/${el.unique_id}/${el.forms_unique_id}/edit`,
                         });
+                        handleCloseSlideOutPanel();
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
                     >
@@ -219,6 +245,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         publish('openFullscreenModal', {
                           url: `/surveys/${id}/${el.unique_id}/${el.forms_unique_id}/fill`,
                         });
+                        handleCloseSlideOutPanel();
                         // window.open(`/surveys/${id}/${el.unique_id}`, '_blank');
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
@@ -288,7 +315,12 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                       alt=""
                       className="w-[20px] h-[20px] cursor-pointer"
                       onClick={() => {
-                        handleDelete(id, el.unique_id, el.forms_unique_id);
+                        handleDelete(
+                          id,
+                          el.unique_id,
+                          el.forms_unique_id,
+                          el.status,
+                        );
                       }}
                     />
                     <img
@@ -525,7 +557,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   onClick={() => {
                     setIsSureRemoveId(null);
                     setIsDeleted(null);
-                    publish('syncReport', {});
+                    if (el.status !== 'completed') {
+                      getQuestionnaires();
+                    } else {
+                      publish('syncReport', {});
+                    }
                   }}
                 >
                   Unsync Data

@@ -306,12 +306,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   useEffect(() => {
     const handleSyncReport = (data: any) => {
-      if (data.detail.part == 'treatmentPlan') {
-        getTreatmentPlanData();
-      } else {
-        setCallSync(true);
-        if (location.search) {
-          navigate(location.pathname, { replace: true });
+      if (isHaveReport) {
+        if (data.detail.part == 'treatmentPlan') {
+          getTreatmentPlanData();
+        } else {
+          setCallSync(true);
+          if (location.search) {
+            navigate(location.pathname, { replace: true });
+          }
         }
       }
     };
@@ -321,7 +323,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return () => {
       unsubscribe('syncReport', handleSyncReport);
     };
-  }, []);
+  }, [isHaveReport]);
   const [accessManager, setAccessManager] = useState<
     Array<{
       name: string;

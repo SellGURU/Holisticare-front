@@ -1129,10 +1129,13 @@ class Application extends Api {
       member_id: member_id,
     });
   };
+  static initialSaveActionPlan = (data: any) => {
+    return this.post('/action_plan/draft/initial_save', data);
+  };
   static deleteQuestionary = (data: {
     f_unique_id: string;
     q_unique_id: string;
-    member_id: number;
+    member_id: string;
   }) => {
     return this.post(`/questionary_tracking/delete_questionary`, data);
   };
@@ -1149,7 +1152,7 @@ class Application extends Api {
   static checkDeleteQuestionary = (data: {
     f_unique_id: string;
     q_unique_id: string;
-    member_id: number;
+    member_id: string;
   }) => {
     return this.post(`/questionary_tracking/check_delete_questionary`, data);
   };
@@ -1158,6 +1161,20 @@ class Application extends Api {
   };
   static changePassword = (data: any) => {
     return this.post('/setting/change_password', data);
+  };
+  static checkUpdateQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: string;
+  }) => {
+    return this.post(`/questionary_tracking/check_edit_questionnaire`, data);
+  };
+  static checkFilloutQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: string;
+  }) => {
+    return this.post(`/questionary_tracking/check_save_questionnaire`, data);
   };
 }
 

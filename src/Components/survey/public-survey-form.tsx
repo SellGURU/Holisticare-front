@@ -330,6 +330,11 @@ export function PublicSurveyForm({
           initialResponses[index] = (q.response as string[]) || [];
           break;
         }
+        case 'number': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
+          break;
+        }
         case 'yes_no': {
           // Added block scope
           initialResponses[index] = (q.response as string) || '';
@@ -603,7 +608,19 @@ export function PublicSurveyForm({
           }).finally(() => {
             // setTimeout(() => {
             // publish('closeFullscreenModal', {});
-            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
+            parent.postMessage(
+              {
+                type: 'closeFullscreenModal',
+                data: {
+                  isFill: true,
+                  isUpdate: false,
+                  member_id: memberId as string,
+                  q_unique_id: qId as string,
+                  f_unique_id: fId as string,
+                },
+              },
+              '*',
+            );
             // navigate('/report/' + memberId + '/' + 'N');
             // }, 2000);
           });
@@ -616,7 +633,19 @@ export function PublicSurveyForm({
           }).finally(() => {
             // setTimeout(() => {
             // publish('closeFullscreenModal',{});
-            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
+            parent.postMessage(
+              {
+                type: 'closeFullscreenModal',
+                data: {
+                  isUpdate: true,
+                  isFill: false,
+                  member_id: memberId as string,
+                  q_unique_id: qId as string,
+                  f_unique_id: fId as string,
+                },
+              },
+              '*',
+            );
             // navigate('/report/' + memberId + '/' + 'N');
             // }, 2000);
           });
@@ -845,6 +874,18 @@ export function PublicSurveyForm({
             onChange={(e) => handleResponseChange(e.target.value)}
             placeholder="Type your answer here..."
             className={`min-h-[120px] mt-2 text-base ${
+              validationError ? 'border-red-500 focus-visible:ring-red-500' : ''
+            } ${response ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
+          />
+        );
+      case 'number':
+        return (
+          <input
+            type="number"
+            value={(response as string) || ''}
+            onChange={(e) => handleResponseChange(e.target.value)}
+            placeholder="Type your answer here..."
+            className={` 'flex  w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-2  ${
               validationError ? 'border-red-500 focus-visible:ring-red-500' : ''
             } ${response ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
           />

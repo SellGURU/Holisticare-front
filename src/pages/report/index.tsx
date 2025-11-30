@@ -14,6 +14,9 @@ import { useParams } from 'react-router-dom';
 import UploadFileProgressModal from '../../Components/uploadFileProgressModal';
 import RefreshProgressModal from '../../Components/holisticPlan-refreshModal';
 import DeleteFileProgressModal from '../../Components/deleteFileProgressModal';
+import DeleteQuestionnaireTrackingProgressModal from '../../Components/ComboBar/components/deleteQuestionnaireTrackingProgressModal';
+import UpdateQuestionnaireTrackingProgressModal from '../../Components/ComboBar/components/updateQuestionnaireTrackingProgressModal';
+import FilloutQuestionnaireTrackingProgressModal from '../../Components/ComboBar/components/filloutQuestionnaireTrackingProgressModal';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
@@ -192,6 +195,9 @@ const Report = () => {
       <UploadFileProgressModal />
       <RefreshProgressModal />
       <DeleteFileProgressModal />
+      <DeleteQuestionnaireTrackingProgressModal />
+      <UpdateQuestionnaireTrackingProgressModal />
+      <FilloutQuestionnaireTrackingProgressModal />
     </div>
   );
 };
