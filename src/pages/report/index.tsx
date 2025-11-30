@@ -15,7 +15,7 @@ const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [treatmentId, setTreatmentId] = useState<string>('');
-  const {id} = useParams<{id: string}>();
+  const { id } = useParams<{ id: string }>();
   useEffect(() => {
     subscribe('openShareModalHolisticPlan', (data: any) => {
       setIsShareModalOpen(true);
