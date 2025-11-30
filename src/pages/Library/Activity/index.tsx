@@ -174,11 +174,11 @@ const Activity = () => {
             />
           </div>
 
-          <div className="w-full flex justify-between mt-3 items-center">
+          <div className="w-full flex justify-between mt-3 md:items-center flex-col md:flex-row gap-3 md:gap-0">
             <div className="text-Text-Primary font-medium opacity-[87%]">
               {active}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex md:items-center gap-3 md:gap-2 md:flex-row flex-col">
               {allData.length > 0 && (
                 <SearchBox
                   ClassName="rounded-xl h-6 !py-[0px] !px-3 !shadow-[unset]"
@@ -252,7 +252,7 @@ const Activity = () => {
               {active === 'Exercise' && (
                 <ButtonSecondary
                   onClick={() => setShowAdd(true)}
-                  ClassName="rounded-full min-w-[180px]"
+                  ClassName="rounded-full w-[180px]"
                 >
                   <img src="./icons/add-square.svg" alt="" />
                   Add Exercise
@@ -261,7 +261,7 @@ const Activity = () => {
               {active === 'Activity' && (
                 <ButtonSecondary
                   onClick={() => setShowAddActivity(true)}
-                  ClassName="rounded-full min-w-[180px]"
+                  ClassName="rounded-full w-[180px]"
                 >
                   <img src="./icons/add-square.svg" alt="" />
                   Add Activity
