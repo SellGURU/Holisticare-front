@@ -16,7 +16,7 @@ import TimeLine from './components/timeLine.tsx';
 // import { FilleHistory } from './components/filleHistory.tsx';
 import { Tooltip } from 'react-tooltip';
 import SvgIcon from '../../utils/svgIcon.tsx';
-import FileHistoryNew from './components/FileHistoryNew.tsx';
+import FileHistoryNew from './components/FileHistory/FileHistoryNew.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
 import { motion } from 'framer-motion';
 
@@ -198,7 +198,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'File History':
         return (
           <FileHistoryNew
+            isOpen={isSlideOutPanel && activeItem === 'File History'}
             handleCloseSlideOutPanel={handleCloseSlideOutPanel}
+            // handleCloseSlideOutPanel={handleCloseSlideOutPanel}
           ></FileHistoryNew>
         );
       case 'Questionnaire Tracking':
