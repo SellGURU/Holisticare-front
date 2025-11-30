@@ -8,11 +8,14 @@ import { subscribe, unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
+import UnderProgressController from './underProgressController';
+import { useParams } from 'react-router-dom';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [treatmentId, setTreatmentId] = useState<string>('');
+  const {id} = useParams<{id: string}>();
   useEffect(() => {
     subscribe('openShareModalHolisticPlan', (data: any) => {
       setIsShareModalOpen(true);
@@ -126,6 +129,7 @@ const Report = () => {
           // setIsShareModalLoading(false);
         }}
       />
+      <UnderProgressController member_id={id as string} />
     </div>
   );
 };
