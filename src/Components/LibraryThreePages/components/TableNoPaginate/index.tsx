@@ -97,7 +97,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                   {headerGroup.headers.map((header, index) => (
                     <th
                       key={header.id}
-                      className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer `}
+                      className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer w-[100px] md:w-[unset]`}
                     >
                       <div
                         className={`flex items-center  ${index == 0 ? 'justify-start ' : 'justify-center '} `}
@@ -121,7 +121,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                     </th>
                   ))}
                   <th
-                    className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer`}
+                    className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer w-[100px] md:w-[unset]`}
                   >
                     <div className={`flex items-center justify-center`}>
                       <div className="flex items-center justify-center text-nowrap">
