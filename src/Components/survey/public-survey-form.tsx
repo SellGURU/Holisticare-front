@@ -876,8 +876,7 @@ export function PublicSurveyForm({
       case 'number':
         return (
           <input
-        
-          type='number'
+            type="number"
             value={(response as string) || ''}
             onChange={(e) => handleResponseChange(e.target.value)}
             placeholder="Type your answer here..."
