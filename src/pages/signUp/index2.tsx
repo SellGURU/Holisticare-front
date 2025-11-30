@@ -72,7 +72,7 @@ const SignUp = () => {
         .catch((error) => {
           if (error.detail.includes('email')) {
             formik.setErrors({
-              email: 'This email is already registered in our system.',
+              email: error.detail,
             });
             formik.setFieldTouched('email', true, false);
           }
