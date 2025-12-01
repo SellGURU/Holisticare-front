@@ -77,9 +77,7 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Vitamins') {
     return '/icons/biomarkers/vitamins.svg';
   }
-  if (
-    name == 'Inflammation & Coagulation'
-  ) {
+  if (name == 'Inflammation & Coagulation') {
     return '/icons/biomarkers/cell.svg';
   }
   if (name == 'Hormone Health') {
