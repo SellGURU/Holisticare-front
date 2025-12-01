@@ -7,7 +7,7 @@ interface ActionSectionProps {
   file: any;
   isDeleted: boolean;
   memberId: string;
-  onDelete:() => void;
+  onDelete: () => void;
 }
 const ActionSection: FC<ActionSectionProps> = ({
   file,
@@ -16,7 +16,7 @@ const ActionSection: FC<ActionSectionProps> = ({
   onDelete,
 }) => {
   const [isSureRemove, setIsSureRemove] = useState(false);
-  const [loadingDelete, ] = useState<boolean>(false);
+  const [loadingDelete] = useState<boolean>(false);
   const downloadFile = () => {
     if (file.file_id) {
       Application.downloadFille({

@@ -8,20 +8,20 @@ export const UploadFileProgressModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [IsinProgress, setIsinProgress] = useState(true);
   const idOnworksRef = useRef<Array<string>>([]);
-  
+
   useEffect(() => {
     const handleOpenProgressModal = (data: any) => {
       console.log(data);
       const fileId = data?.detail?.file_id;
-      
+
       if (!fileId) {
         return;
       }
-      
+
       if (idOnworksRef.current.includes(fileId)) {
         return;
       }
-      
+
       idOnworksRef.current = [...idOnworksRef.current, fileId];
       setTimeout(() => {
         setshowProgressModal(true);
@@ -30,10 +30,12 @@ export const UploadFileProgressModal = () => {
     };
 
     const handleStepTwoSuccess = () => {
-      if(idOnworksRef.current.length === 0) {
+      if (idOnworksRef.current.length === 0) {
         return;
       }
-      idOnworksRef.current = idOnworksRef.current.filter((id) => id !== idOnworksRef.current[0]);
+      idOnworksRef.current = idOnworksRef.current.filter(
+        (id) => id !== idOnworksRef.current[0],
+      );
       setshowProgressModal(true);
       setIsinProgress(false);
     };

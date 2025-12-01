@@ -30,25 +30,29 @@ const UnderProgressController = ({
     Application.checkStepTwoUpload({
       file_id: file.file_id,
       member_id: member_id,
-    }).then((res) => {
-      if(res.data.step_two == true) {
-        publish('StepTwoSuccess', {file_id: file.file_id});
-      }else {
-        setTimeout(() => {
-          checkUploadedFile(file);
-        }, 15000);
-      }
-      // console.log(res);
-    }).catch(() =>{});
+    })
+      .then((res) => {
+        if (res.data.step_two == true) {
+          publish('StepTwoSuccess', { file_id: file.file_id });
+        } else {
+          setTimeout(() => {
+            checkUploadedFile(file);
+          }, 15000);
+        }
+        // console.log(res);
+      })
+      .catch(() => {});
   };
-  const checkDeleteFile =(file:any) => {
+  const checkDeleteFile = (file: any) => {
     Application.checkDeleteLabReport({
       file_id: file.file_id,
       member_id: member_id,
-    }).then(() => {
-      // console.log(res);
-    }).catch(() =>{});
-  }
+    })
+      .then(() => {
+        // console.log(res);
+      })
+      .catch(() => {});
+  };
   const resolveFileController = (files: any[]) => {
     files.forEach((file) => {
       if (file.action_type === 'uploaded') {
@@ -68,8 +72,11 @@ const UnderProgressController = ({
   useEffect(() => {
     getProgress();
     subscribe('checkProgress', (data: any) => {
-      if(data.detail.type === 'file') {
-        SetAllprogress({...allprogress, files: [...allprogress.files, data.detail]});
+      if (data.detail.type === 'file') {
+        SetAllprogress({
+          ...allprogress,
+          files: [...allprogress.files, data.detail],
+        });
       }
     });
     // const interval = setInterval(() => {

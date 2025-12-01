@@ -1186,8 +1186,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           publish('checkProgress', {
                             date: new Date().toISOString(),
                             file_id: file_id,
-                            action_type: "uploaded",
-                            type:'file'
+                            action_type: 'uploaded',
+                            type: 'file',
                           });
                         }, 4000);
                         // if (file_id !== 'customBiomarker') {
@@ -1195,8 +1195,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         //     checkStepTwo(file_id);
                         //   }, 4000);
                         // }
-                      }
-                      else {
+                      } else {
                         setTimeout(() => {
                           fetchPatentDataWithState();
                           publish('QuestionaryTrackingCall', {});
