@@ -57,7 +57,12 @@ const UnderProgressController = ({
         if (res.data.step_two == true) {
           publish('completedProgress', { file_id: file.file_id });
           // publish('StepTwoSuccess', { file_id: file.file_id });
-          SetAllprogress({...allprogress, files: allprogress.files.filter((f:any) => f.file_id !== file.file_id)});
+          SetAllprogress({
+            ...allprogress,
+            files: allprogress.files.filter(
+              (f: any) => f.file_id !== file.file_id,
+            ),
+          });
         } else {
           const timeoutId = setTimeout(() => {
             checkUploadedFile(file);
@@ -80,11 +85,16 @@ const UnderProgressController = ({
       file_id: file.file_id,
       member_id: member_id,
     })
-      .then((res) => {  
-        if( res.data.deleted_date !== null) {
+      .then((res) => {
+        if (res.data.deleted_date !== null) {
           publish('DeleteSuccess', { file_id: file.file_id });
-          SetAllprogress({...allprogress, files: allprogress.files.filter((f:any) => f.file_id !== file.file_id)});
-        }else {
+          SetAllprogress({
+            ...allprogress,
+            files: allprogress.files.filter(
+              (f: any) => f.file_id !== file.file_id,
+            ),
+          });
+        } else {
           const timeoutId = setTimeout(() => {
             checkDeleteFile(file);
           }, 15000);
@@ -100,8 +110,11 @@ const UnderProgressController = ({
   };
   const resolveFileController = (files: any[]) => {
     files.forEach((file) => {
-      if(!idHaveAction.includes(file.action_type+'_'+file.file_id)){
-        SetIdHaveAction([...idHaveAction, file.action_type+'_'+file.file_id]);
+      if (!idHaveAction.includes(file.action_type + '_' + file.file_id)) {
+        SetIdHaveAction([
+          ...idHaveAction,
+          file.action_type + '_' + file.file_id,
+        ]);
         if (file.action_type === 'uploaded') {
           checkUploadedFile(file);
         }
@@ -116,20 +129,30 @@ const UnderProgressController = ({
     if (allprogress.files.length > 0) {
       resolveFileController(allprogress.files);
     }
-    if(allprogress.questionnaires.length > 0 || allprogress.refresh.length > 0 || allprogress.files.length > 0) {
+    if (
+      allprogress.questionnaires.length > 0 ||
+      allprogress.refresh.length > 0 ||
+      allprogress.files.length > 0
+    ) {
       const progressArray: ProgressData = [
-        ...allprogress.files.map((item: any): FileProgress => ({
-          ...item,
-          category: 'file' as const,
-        })),
-        ...allprogress.questionnaires.map((item: any): QuestionnaireProgress => ({
-          ...item,
-          category: 'questionnaire' as const,
-        })),
-        ...allprogress.refresh.map((item: any): RefreshProgress => ({
-          ...item,
-          category: 'refresh' as const,
-        })),
+        ...allprogress.files.map(
+          (item: any): FileProgress => ({
+            ...item,
+            category: 'file' as const,
+          }),
+        ),
+        ...allprogress.questionnaires.map(
+          (item: any): QuestionnaireProgress => ({
+            ...item,
+            category: 'questionnaire' as const,
+          }),
+        ),
+        ...allprogress.refresh.map(
+          (item: any): RefreshProgress => ({
+            ...item,
+            category: 'refresh' as const,
+          }),
+        ),
       ];
       publish('openProgressModal', {
         data: progressArray,
@@ -146,14 +169,14 @@ const UnderProgressController = ({
         }));
       }
     });
-    
+
     return () => {
       SetAllprogress({
         files: [],
         questionnaires: [],
         refresh: [],
       });
-      publish('clearAllProgress',{});
+      publish('clearAllProgress', {});
       timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
       timeoutsRef.current = [];
     };

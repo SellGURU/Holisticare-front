@@ -16,8 +16,8 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
   >('upload');
   const { id } = useParams<{ id: string }>();
   useEffect(() => {
-    if(file.action_type === 'deleted') {
-      if(file.process_done === true) {
+    if (file.action_type === 'deleted') {
+      if (file.process_done === true) {
         setFileStatus('deleted');
       } else {
         setFileStatus('deleting');

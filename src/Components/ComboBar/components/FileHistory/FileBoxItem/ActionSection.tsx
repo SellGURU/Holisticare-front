@@ -76,7 +76,7 @@ const ActionSection: FC<ActionSectionProps> = ({
       file_id: file.file_id,
       action_type: 'deleted',
       type: 'file',
-    });       
+    });
     Application.deleteFileHistory({
       file_id: file.file_id,
       member_id: memberId,
@@ -91,7 +91,7 @@ const ActionSection: FC<ActionSectionProps> = ({
         console.error(err);
       });
 
-      onDelete();
+    onDelete();
   };
   return (
     <>

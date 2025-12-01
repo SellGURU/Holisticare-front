@@ -1182,7 +1182,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         setIsHaveReport(true);
                         setCheckedStepTwo(false);
                         setISGenerateLoading(false);
-                        if(file_id !== 'customBiomarker') {
+                        if (file_id !== 'customBiomarker') {
                           setTimeout(() => {
                             publish('checkProgress', {
                               date: new Date().toISOString(),
