@@ -354,7 +354,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   return (
     <div
       // style={{ height: window.innerHeight - 400 + 'px' }}
-      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary`}
+      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary overflow-hidden`}
     >
       {loading ? (
         <div
@@ -375,8 +375,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       ) : (
         <div className=" relative ">
           <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
+            <div className='flex w-full justify-between'>
             <div className="flex items-center gap-2">
-              <div className=" text-[10px] md:text-sm font-medium">
+              <div className=" text-[8px] xs:text-[10px] md:text-sm font-medium">
                 List of Biomarkers{' '}
                 <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
                   ({biomarkers.length})
@@ -397,8 +398,18 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 className="w-4 h-4 cursor-pointer text-Text-Secondary"
               /> */}
             </div>
+             <div className=" flex sm:hidden items-center gap-3">
+                <Toggle
+                  checked={showOnlyErrors}
+                  setChecked={setShowOnlyErrors}
+                />
+                <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+                  Show Only Errors
+                </div>
+              </div>
+            </div>
             <div className="flex items-center gap-6">
-              <div className="flex items-center gap-3">
+              <div className=" hidden sm:flexitems-center gap-3">
                 <Toggle
                   checked={showOnlyErrors}
                   setChecked={setShowOnlyErrors}
@@ -421,8 +432,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             </div>
           </div>
 
-          <div className=" relative w-full  text-xs h-full">
-            <div className="min-w-[800px] ">
+          <div className="  relative w-full text-xs h-full">
+            <div className=" w-full min-w-[800px] ">
               {/* Table Header */}
               <div
                 className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
@@ -443,7 +454,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               {/* Table Rows */}
               <div
                 ref={tableRef}
-                className="overflow-y-auto  w-[100%]"
+                className="overflow-auto  w-[100%]"
                 style={{
                   minHeight: isScaling
                     ? window.innerHeight - 330 + 'px'
