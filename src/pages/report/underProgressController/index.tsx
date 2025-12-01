@@ -78,9 +78,6 @@ const UnderProgressController = ({
       });
   };
   const checkDeleteFile = (file: any) => {
-    publish('openDeleteProgressModal', {
-      file_id: file.file_id,
-    });
     Application.checkDeleteLabReport({
       file_id: file.file_id,
       member_id: member_id,
@@ -161,13 +158,14 @@ const UnderProgressController = ({
   };
   useEffect(() => {
     getProgress();
-    subscribe('checkProgress', (data: any) => {
-      if (data.detail.type === 'file') {
-        SetAllprogress((prev: any) => ({
-          ...prev,
-          files: [...prev.files, data.detail],
-        }));
-      }
+    subscribe('checkProgress', () => {
+      getProgress();
+      // if (data.detail.type === 'file') {
+      //   SetAllprogress((prev: any) => ({
+      //     ...prev,
+      //     files: [...prev.files, data.detail],
+      //   }));
+      // }
     });
 
     return () => {

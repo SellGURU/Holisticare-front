@@ -71,26 +71,25 @@ const ActionSection: FC<ActionSectionProps> = ({
   const handleDelete = () => {
     // setLoadingDelete(true);
     setIsSureRemove(false);
-    publish('checkProgress', {
-      date: new Date().toISOString(),
-      file_id: file.file_id,
-      action_type: 'deleted',
-      type: 'file',
-    });
+
     Application.deleteFileHistory({
       file_id: file.file_id,
       member_id: memberId,
     })
       .then(() => {
+        console.log('delete file success');
         // setLoadingDelete(false);
         // setisDeleted(true);
+        
         // onDelete();
         // onDeleteSuccess();
       })
       .catch((err) => {
         console.error(err);
       });
-
+    setTimeout(() => {
+      publish('checkProgress', {})
+    }, 4000);
     onDelete();
   };
   return (
