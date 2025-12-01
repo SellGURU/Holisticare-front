@@ -40,7 +40,7 @@ export const FilloutQuestionnaireTrackingProgressModal = () => {
         `}
       >
         <div className="flex items-center justify-between text-xs font-medium text-Primary-DeepTeal">
-          {IsinProgress ? 'Fill out in Progress' : 'Processing Completed!'}
+          {IsinProgress ? 'Saving in Progress' : 'Processing Completed!'}
           <img
             onClick={() => setshowProgressModal(false)}
             src="/icons/close.svg"
@@ -66,14 +66,14 @@ export const FilloutQuestionnaireTrackingProgressModal = () => {
             <img src="/icons/tick-circle-upload.svg" alt="" />
           )}
           {IsinProgress
-            ? 'The questionnaire responses are being filled out.'
-            : 'Fill out completed.'}
+            ? 'Your questionnaire responses are being saved...'
+            : 'Your responses have been successfully saved.'}
         </div>
 
         <div className="mt-4 text-[10px] text-Text-Quadruple transition-opacity duration-500">
           {IsinProgress
-            ? "If you'd like, you may continue working while the system fill out the questionnaire."
-            : 'If you’d like to refresh the related data in the system, please click the “Sync Data” button.'}
+            ? "If you'd like, you may continue working while the system processes your entries."
+            : 'If you’d like to refresh the related data in the system, please click the “Resync Data” button.'}
         </div>
 
         {!IsinProgress && (
@@ -84,7 +84,7 @@ export const FilloutQuestionnaireTrackingProgressModal = () => {
                 publish('syncReport', {});
               }}
             >
-              Sync Data
+              Resync Data
             </ButtonSecondary>
           </div>
         )}
