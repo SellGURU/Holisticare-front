@@ -374,7 +374,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         </div>
       ) : (
         <div className=" relative ">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className=" text-[10px] md:text-sm font-medium">
                 List of Biomarkers{' '}
@@ -403,7 +403,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   checked={showOnlyErrors}
                   setChecked={setShowOnlyErrors}
                 />
-                <div className="text-[10px] md:text-xs font-normal text-Text-Primary">
+                <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
                   Show Only Errors
                 </div>
               </div>

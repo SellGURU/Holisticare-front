@@ -120,30 +120,39 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
   return (
     <div
-      style={{ height: window.innerHeight - 235 + 'px' }}
-      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200 mt-4 "
+      // style={{ height: window.innerHeight - 235 + 'px' }}
+      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200  h-[100vh] md:h-[calc(100vh-235px)] mt-4 overflow-y-auto md:overflow-hidden  "
     >
       {loading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="w-full flex items-center justify-between">
-        <div className="md:text-sm text-[12px] font-medium flex gap-1 items-center text-Text-Primary">
-          List of Biomarkers
-          <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
-            ({biomarkers.length})
-          </span>
-        </div>
-        <div className="flex gap-7">
-          <div className="flex items-center gap-3">
+      <div className="w-full flex flex-wrap gap-4 items-center justify-between">
+        <div className="flex justify-between w-full gap-3">
+          <div className="md:text-sm xs:text-[12px] text-[10px] font-medium flex gap-1 items-center text-Text-Primary">
+            List of Biomarkers
+            <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
+              ({biomarkers.length})
+            </span>
+          </div>
+          <div className="flex sm:hidden items-center gap-3">
             <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
-            <div className="text-[10px] md:text-xs font-normal text-Text-Primary">
+            <div className=" text-[8px] sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+              Show Only Errors
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-7">
+          <div className=" hidden sm:flex items-center gap-3">
+            <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
+            <div className=" text-[8px] sm:text-[10px] md:text-xs font-normal text-Text-Primary">
               Show Only Errors
             </div>
           </div>
 
-          <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple">
+          <div className="flex items-center  text-[8px] sm:text-[10px] md:text-xs text-Text-Quadruple">
             Date of Test:
             <SimpleDatePicker
               textStyle
@@ -158,8 +167,8 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
       </div>
 
       <div
-        style={{ height: window.innerHeight - 330 + 'px' }}
-        className="w-full  flex flex-col md:flex-row md:justify-between gap-4 mt-6"
+        // style={{ height: window.innerHeight - 330 + 'px' }}
+        className="w-full  flex flex-col md:flex-row md:justify-between gap-4 mt-3 sm:mt-6  md:h-[calc(100vh-330px)] "
       >
         {/* Left side: Add biomarker form */}
         <div className="rounded-2xl  w-full md:w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px] overflow-auto p">

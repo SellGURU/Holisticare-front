@@ -130,10 +130,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
           className="bg-white p-2 md:p-6 rounded-md w-full overflow-auto md:overflow-hidden  h-fit z-[99]"
         >
           <div className="w-full flex items-center justify-between">
-            <div className="flex gap-2 items-center text-xs text-Text-Primary font-medium">
+            <div className="flex gap-2 items-center text-[10px] xs:text-xs text-Text-Primary font-medium">
               <div
                 onClick={() => OnBack()}
-                className="cursor-pointer size-8 rounded-md p-1 bg-white border border-Gray-50 shadow-100 flex items-center justify-center"
+                className="cursor-pointer size-6 md:size-8 rounded-md p-1 bg-white border border-Gray-50 shadow-100 flex items-center justify-center"
               >
                 <img src="/icons/arrow-back.svg" alt="" />
               </div>
@@ -149,7 +149,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 onSave();
                 setShouldAutoSwitch(true);
               }}
-              ClassName=" w-[127px] md:w-[167px]"
+              ClassName=" w-[100px] xs:w-[127px] md:w-[167px]"
             >
               {btnLoading ? (
                 <>
@@ -158,14 +158,14 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   Continue
                 </>
               ) : (
-                <>
+              <div className='flex gap-2 justify-center text-[10px] xs:text-xs'>
                   <img
                     className="size-4"
                     src="/icons/arrow-right-white.svg"
                     alt=""
                   />
                   Continue{' '}
-                </>
+               </div>
               )}
             </ButtonPrimary>
           </div>
