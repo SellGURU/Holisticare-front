@@ -116,7 +116,7 @@ const SearchSelect: React.FC<SelectProps> = ({
         tabIndex={0}
       >
         <span
-          className={`text-Text-Primary text-[12px] text-wrap w-[90px] xl:w-auto`}
+          className={`text-Text-Primary md:text-[12px] text-wrap w-[90px] xl:w-auto`}
         >
           <TooltipTextAuto maxWidth={isSmall ? '100px' : '190px'}>
             {selectedValue || placeholder}

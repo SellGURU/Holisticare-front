@@ -375,41 +375,32 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       ) : (
         <div className=" relative ">
           <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
-            <div className='flex w-full justify-between'>
-            <div className="flex items-center gap-2">
-              <div className=" text-[8px] xs:text-[10px] md:text-sm font-medium">
-                List of Biomarkers{' '}
-                <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
-                  ({biomarkers.length})
-                </span>
-              </div>
-              <img
-                onClick={() => setIsScaling(!isScaling)}
-                className="w-4 h-4 cursor-pointer opacity-70"
-                src={
-                  isScaling
-                    ? '/icons/biomarkers/import.svg'
-                    : '/icons/biomarkers/export.svg'
-                }
-                alt=""
-              />
-              {/* <Scaling
+            <div className="flex w-full justify-between">
+              <div className="flex items-center gap-2">
+                <div className=" text-[8px] xs:text-[10px] md:text-sm font-medium">
+                  List of Biomarkers{' '}
+                  <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
+                    ({biomarkers.length})
+                  </span>
+                </div>
+                <img
+                  onClick={() => setIsScaling(!isScaling)}
+                  className="w-4 h-4 cursor-pointer opacity-70"
+                  src={
+                    isScaling
+                      ? '/icons/biomarkers/import.svg'
+                      : '/icons/biomarkers/export.svg'
+                  }
+                  alt=""
+                />
+                {/* <Scaling
                 onClick={() => setIsScaling(!isScaling)}
                 className="w-4 h-4 cursor-pointer text-Text-Secondary"
               /> */}
-            </div>
-             <div className=" flex sm:hidden items-center gap-3">
-                <Toggle
-                  checked={showOnlyErrors}
-                  setChecked={setShowOnlyErrors}
-                />
-                <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
-                  Show Only Errors
-                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-6">
-              <div className=" hidden sm:flexitems-center gap-3">
+              
+              <div className="flex items-center gap-6">
+              <div className=" hidden sm:flex items-center gap-3">
                 <Toggle
                   checked={showOnlyErrors}
                   setChecked={setShowOnlyErrors}
@@ -430,58 +421,69 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 />
               </div>
             </div>
+            </div>
+            <div className=" flex sm:hidden items-center gap-3">
+                <Toggle
+                  checked={showOnlyErrors}
+                  setChecked={setShowOnlyErrors}
+                />
+                <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+                  Show Only Errors
+                </div>
+              </div>
           </div>
 
           <div className="  relative w-full text-xs h-full">
-            <div className=" w-full min-w-[800px] ">
-              {/* Table Header */}
-              <div
-                className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-                style={{
+            <div className="w-full overflow-x-auto md:overflow-x-visible">
+              <div className=" w-full min-w-[800px] ">
+                {/* Table Header */}
+                <div
+                  className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+ style={{
                   gridTemplateColumns:
                     'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
                 }}
-              >
-                <div className="text-left">Extracted Biomarker</div>
-                <div className="text-center">System Biomarker</div>
-                <div className="text-center">Extracted Value</div>
-                <div className="text-center">Extracted Unit</div>
-                <div className="text-center">System Value</div>
-                <div className="text-center">System Unit</div>
-                <div className="text-center">Action</div>
-              </div>
+                >
+                  <div className="text-left">Extracted Biomarker</div>
+                  <div className="text-center">System Biomarker</div>
+                  <div className="text-center">Extracted Value</div>
+                  <div className="text-center">Extracted Unit</div>
+                  <div className="text-center">System Value</div>
+                  <div className="text-center">System Unit</div>
+                  <div className="text-center">Action</div>
+                </div>
 
-              {/* Table Rows */}
-              <div
-                ref={tableRef}
-                className="overflow-auto  w-[100%]"
-                style={{
-                  minHeight: isScaling
-                    ? window.innerHeight - 330 + 'px'
-                    : window.innerHeight - 500 + 'px',
-                  maxHeight: isScaling
-                    ? window.innerHeight - 330 + 'px'
-                    : window.innerHeight - 500 + 'px',
-                }}
-              >
-                {biomarkers.map((b, index) => {
-                  const errorForRow = rowErrors[index];
+                {/* Table Rows */}
+                <div
+                  ref={tableRef}
+                  className=" w-[100%]"
+                  style={{
+                    minHeight: isScaling
+                      ? window.innerHeight - 330 + 'px'
+                      : window.innerHeight - 500 + 'px',
+                    maxHeight: isScaling
+                      ? window.innerHeight - 330 + 'px'
+                      : window.innerHeight - 500 + 'px',
+                  }}
+                >
+                  {biomarkers.map((b, index) => {
+                    const errorForRow = rowErrors[index];
 
-                  return (
-                    <div
-                      ref={(el) => (rowRefs.current[index] = el)}
-                      key={index}
-                      className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
-                      style={{
+                    return (
+                      <div
+                        ref={(el) => (rowRefs.current[index] = el)}
+                        key={index}
+                        className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
+style={{
                         gridTemplateColumns:
                           'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
                       }}
-                    >
-                      <div className="text-left text-Text-Primary flex gap-1">
-                        <TooltipTextAuto maxWidth="160px">
-                          {b.original_biomarker_name}
-                        </TooltipTextAuto>
-                        {/* {errorForRow && (
+                      >
+                        <div className="text-left text-Text-Primary flex gap-1">
+                          <TooltipTextAuto maxWidth="160px">
+                            {b.original_biomarker_name}
+                          </TooltipTextAuto>
+                          {/* {errorForRow && (
                           <>
                             <img
                               data-tooltip-id={`tooltip-${index}`}
@@ -498,27 +500,27 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             </Tooltip>
                           </>
                         )} */}
-                      </div>
-                      {/* biomarker (editable via select) */}
-                      <div className="text-center">
-                        <SearchSelect
-                          isStaff
-                          isLarge
-                          isSetting
-                          value={b.biomarker}
-                          options={avalibaleBiomarkers || []}
-                          onChange={(val: string) => {
-                            updateAndStandardize(b.biomarker_id, {
-                              biomarker: val,
-                            });
-                            setChangedRows((prev) =>
-                              prev.includes(b.biomarker_id)
-                                ? prev
-                                : [...prev, b.biomarker_id],
-                            );
-                          }}
-                        />
-                        {/* <Select
+                        </div>
+                        {/* biomarker (editable via select) */}
+                        <div className="text-center">
+                          <SearchSelect
+                            isStaff
+                            isLarge
+                            isSetting
+                            value={b.biomarker}
+                            options={avalibaleBiomarkers || []}
+                            onChange={(val: string) => {
+                              updateAndStandardize(b.biomarker_id, {
+                                biomarker: val,
+                              });
+                              setChangedRows((prev) =>
+                                prev.includes(b.biomarker_id)
+                                  ? prev
+                                  : [...prev, b.biomarker_id],
+                              );
+                            }}
+                          />
+                          {/* <Select
                         isLarge
                         isSetting
                         value={b.biomarker}
@@ -527,127 +529,131 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           updateAndStandardize(index, { biomarker: val })
                         }
                       /> */}
-                      </div>
-                      {/* value (editable via input) */}
-                      <div className="text-center">{renderValueField(b)}</div>
-                      {/* unit (editable via select) */}
-                      <div className="text-end flex justify-center">
-                        <div className="w-full max-w-[100px]">
-                          <Select
-                            isLarge
-                            isSetting
-                            value={
-                              b.original_unit || b.possible_values?.units[0]
-                            }
-                            options={unitOptions[index] || []}
-                            onMenuOpen={() => {
-                              if (!unitOptions[index]) {
-                                fetchUnits(index, b.biomarker);
-                              }
-                            }}
-                            onChange={(val: string) =>
-                              updateAndStandardize(b.biomarker_id, {
-                                original_unit: val,
-                              })
-                            }
-                          />
                         </div>
-                      </div>
-                      {/* read-only original fields */}
-                      <div className="text-center text-[#888888]">
-                        {b.value}
-                      </div>
-                      <div className="text-center text-[#888888]">{b.unit}</div>
-                      {/* delete logic */}
-                      <div
-                        className={`flex items-center ${
-                          changedRows.includes(b.biomarker_id) ||
-                          mappedRows.includes(b.biomarker_id)
-                            ? 'justify-end'
-                            : 'justify-center'
-                        }  gap-2  h-full`}
-                      >
-                        {b.status === 'confirm' ? (
-                          <div className="flex items-center justify-end w-full gap-1">
-                            <div className="text-Text-Quadruple text-[10px]">
-                              Sure?
-                            </div>
-                            <img
-                              src="/icons/tick-circle-green.svg"
-                              alt="Confirm"
-                              className="w-[16px] h-[16px] cursor-pointer"
-                              onClick={() => handleConfirm(index)}
-                            />
-                            <img
-                              src="/icons/close-circle-red.svg"
-                              alt="Cancel"
-                              className="w-[16px] h-[16px] cursor-pointer"
-                              onClick={() => handleCancel(index)}
+                        {/* value (editable via input) */}
+                        <div className="text-center">{renderValueField(b)}</div>
+                        {/* unit (editable via select) */}
+                        <div className=" flex justify-center">
+                          <div className="w-full max-w-[100px] 2xl:max-w-[140px]">
+                            <Select
+                              isLarge
+                              isSetting
+                              value={
+                                b.original_unit || b.possible_values?.units[0]
+                              }
+                              options={unitOptions[index] || []}
+                              onMenuOpen={() => {
+                                if (!unitOptions[index]) {
+                                  fetchUnits(index, b.biomarker);
+                                }
+                              }}
+                              onChange={(val: string) =>
+                                updateAndStandardize(b.biomarker_id, {
+                                  original_unit: val,
+                                })
+                              }
                             />
                           </div>
-                        ) : (
-                          <div className="relative flex items-center justify-end   gap-1  h-full">
-                            {mappingStatus[b.biomarker_id] === 'added' && (
-                              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
-                                <img
-                                  src="/icons/tick-circle-green-new.svg"
-                                  alt=""
-                                />
-                                Mapping saved for future uploads.
+                        </div>
+                        {/* read-only original fields */}
+                        <div className="text-center text-[#888888]">
+                          {b.value}
+                        </div>
+                        <div className="text-center text-[#888888]">
+                          {b.unit}
+                        </div>
+                        {/* delete logic */}
+                        <div
+                          className={`flex items-center ${
+                            changedRows.includes(b.biomarker_id) ||
+                            mappedRows.includes(b.biomarker_id)
+                              ? 'justify-end'
+                              : 'justify-center'
+                          }  gap-2  h-full`}
+                        >
+                          {b.status === 'confirm' ? (
+                            <div className="flex items-center justify-end w-full gap-1">
+                              <div className="text-Text-Quadruple text-[10px]">
+                                Sure?
                               </div>
-                            )}
-
-                            {mappingStatus[b.biomarker_id] === 'removed' && (
-                              <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[220px] rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
-                                <img
-                                  src="/icons/info-circle-orange.svg"
-                                  alt=""
-                                />
-                                This mapping will only be used for this upload.
-                              </div>
-                            )}
-
-                            {(changedRows.includes(b.biomarker_id) ||
-                              mappedRows.includes(b.biomarker_id)) && (
                               <img
-                                src={
-                                  mappedRows.includes(b.biomarker_id)
-                                    ? '/icons/save-2-fill.svg'
-                                    : '/icons/save-2.svg'
-                                }
-                                alt="Mapping toggle"
-                                className="cursor-pointer w-4 h-4"
-                                onClick={() =>
-                                  handleMappingToggle(b.biomarker_id)
-                                }
+                                src="/icons/tick-circle-green.svg"
+                                alt="Confirm"
+                                className="w-[16px] h-[16px] cursor-pointer"
+                                onClick={() => handleConfirm(index)}
                               />
-                            )}
-                            <div
-                              className={` ${
-                                changedRows.includes(b.biomarker_id) ||
-                                mappedRows.includes(b.biomarker_id)
-                                  ? 'pl-0'
-                                  : 'pl-6'
-                              } `}
-                            >
                               <img
-                                src="/icons/trash-blue.svg"
-                                alt="Delete"
-                                className="cursor-pointer w-4 h-4 "
-                                onClick={() => handleTrashClick(index)}
+                                src="/icons/close-circle-red.svg"
+                                alt="Cancel"
+                                className="w-[16px] h-[16px] cursor-pointer"
+                                onClick={() => handleCancel(index)}
                               />
                             </div>
+                          ) : (
+                            <div className="relative flex items-center justify-end   gap-1  h-full">
+                              {mappingStatus[b.biomarker_id] === 'added' && (
+                                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
+                                  <img
+                                    src="/icons/tick-circle-green-new.svg"
+                                    alt=""
+                                  />
+                                  Mapping saved for future uploads.
+                                </div>
+                              )}
+
+                              {mappingStatus[b.biomarker_id] === 'removed' && (
+                                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[220px] rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
+                                  <img
+                                    src="/icons/info-circle-orange.svg"
+                                    alt=""
+                                  />
+                                  This mapping will only be used for this
+                                  upload.
+                                </div>
+                              )}
+
+                              {(changedRows.includes(b.biomarker_id) ||
+                                mappedRows.includes(b.biomarker_id)) && (
+                                <img
+                                  src={
+                                    mappedRows.includes(b.biomarker_id)
+                                      ? '/icons/save-2-fill.svg'
+                                      : '/icons/save-2.svg'
+                                  }
+                                  alt="Mapping toggle"
+                                  className="cursor-pointer w-4 h-4"
+                                  onClick={() =>
+                                    handleMappingToggle(b.biomarker_id)
+                                  }
+                                />
+                              )}
+                              <div
+                                className={` ${
+                                  changedRows.includes(b.biomarker_id) ||
+                                  mappedRows.includes(b.biomarker_id)
+                                    ? 'pl-0'
+                                    : 'pl-6'
+                                } `}
+                              >
+                                <img
+                                  src="/icons/trash-blue.svg"
+                                  alt="Delete"
+                                  className="cursor-pointer w-4 h-4 "
+                                  onClick={() => handleTrashClick(index)}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        {errorForRow && (
+                          <div className="text-Red font-normal text-[10px] text-nowrap mt-1">
+                            {errorForRow}
                           </div>
                         )}
                       </div>
-                      {errorForRow && (
-                        <div className="text-Red font-normal text-[10px] text-nowrap mt-1">
-                          {errorForRow}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>

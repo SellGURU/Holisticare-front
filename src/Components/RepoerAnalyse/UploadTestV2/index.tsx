@@ -604,7 +604,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               >
                 <div className="flex flex-col gap-6 w-full">
                   <div className="flex items-center flex-col gap-4">
-                    <div style={{textAlignLast:'center'}} className=" text-center text-base font-medium text-Text-Primary">
+                    <div
+                      style={{ textAlignLast: 'center' }}
+                      className=" text-center text-base font-medium text-Text-Primary"
+                    >
                       Provide Data to Generate Health Plan
                     </div>
                     <div className="text-xs text-Text-Primary text-center">
@@ -633,7 +636,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           </div>
                         )}
 
-                      <div  style={{textAlignLast:'center'}}  className="text-[#000000] text-[10px] md:text-xs font-medium mt-3">
+                      <div
+                        style={{ textAlignLast: 'center' }}
+                        className="text-[#000000] text-[10px] md:text-xs font-medium mt-3"
+                      >
                         Upload Lab Report or Add Biomarkers
                       </div>
                       <img
