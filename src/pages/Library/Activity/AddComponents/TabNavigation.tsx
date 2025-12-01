@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { useState } from 'react';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SectionOrderModal from './SectionOrder';
 
 interface TabNavigationProps {
@@ -30,10 +30,20 @@ const TabNavigation = ({
   );
   // "name": "Warm-Up", "enabled": True, "order": 1
   const [showSectionOrder, setShowSectionOrder] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   return (
     <>
       <div className="flex items-center justify-between border-b border-Gray-50 mb-4">
-        <div className="flex gap-2 flex-grow-[1]">
+        <div
+          className={`flex gap-2 flex-grow-[1] w-full md:w-[unset] whitespace-nowrap ${isMobile ? 'overflow-x-auto overflow-y-hidden' : ''}`}
+        >
           {tabs
             .filter((tab) => tab.enabled)
             .sort((a, b) => a.order - b.order)
@@ -41,7 +51,7 @@ const TabNavigation = ({
               <div
                 key={tab.name}
                 onClick={() => setActiveTab(tab.name)}
-                className={`text-sm transition-all duration-300 cursor-pointer min-w-[12%] flex items-center justify-center flex-col ${
+                className={`text-sm transition-all duration-300 cursor-pointer min-w-[25%] md:min-w-[12%] flex items-center justify-center flex-col ${
                   activeTab === tab.name
                     ? 'font-medium bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent'
                     : 'text-Text-Quadruple hover:text-Gray-500'
