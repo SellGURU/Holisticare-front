@@ -39,9 +39,14 @@ export const UploadFileProgressModal = () => {
       setshowProgressModal(true);
       setIsinProgress(false);
     };
-
+    const handleClearAllProgress = () => {
+      setshowProgressModal(false);
+      setIsinProgress(false);
+      idOnworksRef.current = [];
+    };
     subscribe('openProgressModal', handleOpenProgressModal);
     subscribe('StepTwoSuccess', handleStepTwoSuccess);
+    subscribe('clearAllProgress', handleClearAllProgress);
 
     return () => {
       unsubscribe('openProgressModal', handleOpenProgressModal);

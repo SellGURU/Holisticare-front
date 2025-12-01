@@ -1175,21 +1175,23 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       );
                       // console.log(file_id);
                       if (file_id) {
-                        // publish('openProgressModal', {
-                        //   file_id: file_id,
-                        // });
+                        publish('openProgressModal', {
+                          file_id: file_id,
+                        });
                         setShowUploadTest(false);
                         setIsHaveReport(true);
                         setCheckedStepTwo(false);
                         setISGenerateLoading(false);
-                        setTimeout(() => {
-                          publish('checkProgress', {
-                            date: new Date().toISOString(),
-                            file_id: file_id,
-                            action_type: 'uploaded',
-                            type: 'file',
-                          });
-                        }, 4000);
+                        if(file_id !== 'customBiomarker') {
+                          setTimeout(() => {
+                            publish('checkProgress', {
+                              date: new Date().toISOString(),
+                              file_id: file_id,
+                              action_type: 'uploaded',
+                              type: 'file',
+                            });
+                          }, 4000);
+                        }
                         // if (file_id !== 'customBiomarker') {
                         //   setTimeout(() => {
                         //     checkStepTwo(file_id);

@@ -2,6 +2,7 @@
 import { FC, useState } from 'react';
 import Application from '../../../../../api/app';
 import { BeatLoader } from 'react-spinners';
+import { publish } from '../../../../../utils/event';
 
 interface ActionSectionProps {
   file: any;
@@ -70,7 +71,12 @@ const ActionSection: FC<ActionSectionProps> = ({
   const handleDelete = () => {
     // setLoadingDelete(true);
     setIsSureRemove(false);
-    onDelete();
+    publish('checkProgress', {
+      date: new Date().toISOString(),
+      file_id: file.file_id,
+      action_type: 'deleted',
+      type: 'file',
+    });       
     Application.deleteFileHistory({
       file_id: file.file_id,
       member_id: memberId,
@@ -84,6 +90,8 @@ const ActionSection: FC<ActionSectionProps> = ({
       .catch((err) => {
         console.error(err);
       });
+
+      onDelete();
   };
   return (
     <>

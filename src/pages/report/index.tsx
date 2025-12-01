@@ -10,6 +10,7 @@ import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
 import UnderProgressController from './underProgressController';
 import { useParams } from 'react-router-dom';
+import ProgressUiModal from './underProgressController/ProgressUiModal';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
@@ -130,6 +131,7 @@ const Report = () => {
         }}
       />
       <UnderProgressController member_id={id as string} />
+      <ProgressUiModal />
     </div>
   );
 };

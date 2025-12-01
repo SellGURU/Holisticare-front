@@ -174,6 +174,13 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     }
     setIsSlideOutPanel(false);
   };
+  useEffect(() => {
+    if(isSlideOutPanel) {
+      publish('closeProgressModal', {});
+    }else {
+      publish('openProgressModal', {});
+    }
+  }, [isSlideOutPanel]);
   const [updated, setUpdated] = useState(false);
 
   const handleItemClick = (name: string) => {

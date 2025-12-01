@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import TooltipTextAuto from '../../../TooltipText/TooltipTextAuto';
 import { formatDate } from './help';
 import ActionSection from './FileBoxItem/ActionSection';
@@ -15,7 +15,15 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
     'upload' | 'deleting' | 'deleted'
   >('upload');
   const { id } = useParams<{ id: string }>();
-
+  useEffect(() => {
+    if(file.action_type === 'deleted') {
+      if(file.process_done === true) {
+        setFileStatus('deleted');
+      } else {
+        setFileStatus('deleting');
+      }
+    }
+  }, []);
   return (
     <>
       <div
