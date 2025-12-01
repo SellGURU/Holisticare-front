@@ -79,8 +79,8 @@ const resolveAnalyseIcon = (name: string) => {
   }
   if (
     name == 'Inflammation & Coagulation' ||
-    name == 'Immune Health and Inflammation' ||     name == 'Inflammation'
-
+    name == 'Immune Health and Inflammation' ||
+    name == 'Inflammation'
   ) {
     return '/icons/biomarkers/cell.svg';
   }
