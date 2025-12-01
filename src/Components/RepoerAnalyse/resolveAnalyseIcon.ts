@@ -86,7 +86,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/HormoneHealth.svg';
   }
   if (name == 'Immune Health and Inflammation') {
-    return '/public/icons/biomarkers/egg2.svg';
+    return '/icons/biomarkers/egg2.svg';
   }
   if (name == 'Trace Essential Minerals') {
     return '/icons/biomarkers/Urine.svg';
