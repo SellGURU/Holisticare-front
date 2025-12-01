@@ -80,7 +80,7 @@ const ActionSection: FC<ActionSectionProps> = ({
         console.log('delete file success');
         // setLoadingDelete(false);
         // setisDeleted(true);
-        
+
         // onDelete();
         // onDeleteSuccess();
       })
@@ -88,7 +88,7 @@ const ActionSection: FC<ActionSectionProps> = ({
         console.error(err);
       });
     setTimeout(() => {
-      publish('checkProgress', {})
+      publish('checkProgress', {});
     }, 4000);
     onDelete();
   };

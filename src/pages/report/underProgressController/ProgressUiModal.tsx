@@ -15,19 +15,34 @@ const ProgressUiModal = () => {
     }
   };
   const resolveSectionName = (item: any) => {
-    if(item.category === 'file') {
-      if(item.action_type === 'deleted') {
-        if(completedIdes.includes(item.file_id)) {
-          return {'title': 'File deleted successfully!', 'description': 'The file deletion completed.'}
+    if (item.category === 'file') {
+      if (item.action_type === 'deleted') {
+        if (completedIdes.includes(item.file_id)) {
+          return {
+            title: 'File deleted successfully!',
+            description: 'The file deletion completed.',
+          };
         }
-        return {'title': 'File deletion in progress…', 'description': 'The file is being deleted.'}
+        return {
+          title: 'File deletion in progress…',
+          description: 'The file is being deleted.',
+        };
       }
-      if(completedIdes.includes(item.file_id)) {
-        return {'title': 'File uploaded successfully!', 'description': 'The file upload completed.'}
+      if (completedIdes.includes(item.file_id)) {
+        return {
+          title: 'File uploaded successfully!',
+          description: 'The file upload completed.',
+        };
       }
-      return {'title': 'File upload in progress…', 'description': 'The file is being uploaded.'}
+      return {
+        title: 'File upload in progress…',
+        description: 'The file is being uploaded.',
+      };
     }
-    return {'title': 'Processing Completed', 'description': 'The processing completed.'};
+    return {
+      title: 'Processing Completed',
+      description: 'The processing completed.',
+    };
   };
   useEffect(() => {
     subscribe('openProgressModal', (data?: any) => {
@@ -36,21 +51,24 @@ const ProgressUiModal = () => {
         setprogressData((prevData) => {
           const newData = data?.detail?.data || [];
           const updatedData = [...prevData];
-          
+
           newData.forEach((newItem: any) => {
             const existingIndex = updatedData.findIndex(
-              (item: any) => item.file_id === newItem.file_id
+              (item: any) => item.file_id === newItem.file_id,
             );
-            
+
             if (existingIndex !== -1) {
               // Merge new data with existing data
-              updatedData[existingIndex] = { ...updatedData[existingIndex], ...newItem };
+              updatedData[existingIndex] = {
+                ...updatedData[existingIndex],
+                ...newItem,
+              };
             } else {
               // Add new item if it doesn't exist
               updatedData.push(newItem);
             }
           });
-          
+
           return updatedData;
         });
       }
@@ -73,7 +91,7 @@ const ProgressUiModal = () => {
   const isSynced = () => {
     if (progressData.length === 0) return false;
     return progressData.every((progress: any) => {
-      const progressId = progress.file_id ;
+      const progressId = progress.file_id;
       return progressId && completedIdes.includes(progressId);
     });
   };
@@ -102,13 +120,16 @@ const ProgressUiModal = () => {
         />
       </div>
       <div>
-        {progressData.map((el,index:number) => {
+        {progressData.map((el, index: number) => {
           return (
             <>
               <div>
-                <div className='text-Primary-DeepTeal TextStyle-Headline-6'> {resolveSectionName(el).title}</div>
+                <div className="text-Primary-DeepTeal TextStyle-Headline-6">
+                  {' '}
+                  {resolveSectionName(el).title}
+                </div>
                 <div className="mt-1 w-full flex items-center gap-1 p-3 rounded-[12px] border border-Gray-50 text-[10px] text-Primary-DeepTeal transition-colors">
-                  { !completedIdes.includes(el.file_id) ? (
+                  {!completedIdes.includes(el.file_id) ? (
                     <div
                       style={{
                         background:
@@ -125,15 +146,14 @@ const ProgressUiModal = () => {
                     <img src="/icons/tick-circle-upload.svg" alt="" />
                   )}
                   {resolveSectionName(el).description}
-                </div>                
+                </div>
               </div>
-              {progressData.length -1 > index  &&
-              <div className='w-full h-[1px] bg-Gray-50 mt-4'></div>
-              }
+              {progressData.length - 1 > index && (
+                <div className="w-full h-[1px] bg-Gray-50 mt-4"></div>
+              )}
             </>
-          )
+          );
         })}
-
       </div>
       {isSynced() && (
         <div className="w-full  flex justify-end mt-4">
