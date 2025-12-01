@@ -1,23 +1,51 @@
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState, useRef } from 'react';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
-import { subscribe } from '../../utils/event';
+import { subscribe, unsubscribe } from '../../utils/event';
 import { publish } from '../../utils/event';
 
 export const UploadFileProgressModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [IsinProgress, setIsinProgress] = useState(true);
+  const idOnworksRef = useRef<Array<string>>([]);
+  
+  useEffect(() => {
+    const handleOpenProgressModal = (data: any) => {
+      console.log(data);
+      const fileId = data?.detail?.file_id;
+      
+      if (!fileId) {
+        return;
+      }
+      
+      if (idOnworksRef.current.includes(fileId)) {
+        return;
+      }
+      
+      idOnworksRef.current = [...idOnworksRef.current, fileId];
+      setTimeout(() => {
+        setshowProgressModal(true);
+        setIsinProgress(true);
+      }, 100);
+    };
 
-  subscribe('openProgressModal', () => {
-    setTimeout(() => {
+    const handleStepTwoSuccess = () => {
+      if(idOnworksRef.current.length === 0) {
+        return;
+      }
+      idOnworksRef.current = idOnworksRef.current.filter((id) => id !== idOnworksRef.current[0]);
       setshowProgressModal(true);
-      setIsinProgress(true);
-    }, 100);
-  });
+      setIsinProgress(false);
+    };
 
-  subscribe('StepTwoSuccess', () => {
-    setshowProgressModal(true);
-    setIsinProgress(false);
-  });
+    subscribe('openProgressModal', handleOpenProgressModal);
+    subscribe('StepTwoSuccess', handleStepTwoSuccess);
+
+    return () => {
+      unsubscribe('openProgressModal', handleOpenProgressModal);
+      unsubscribe('StepTwoSuccess', handleStepTwoSuccess);
+    };
+  }, []);
 
   return (
     <>

@@ -7,14 +7,16 @@ interface ActionSectionProps {
   file: any;
   isDeleted: boolean;
   memberId: string;
+  onDelete:() => void;
 }
 const ActionSection: FC<ActionSectionProps> = ({
   file,
   isDeleted,
   memberId,
+  onDelete,
 }) => {
   const [isSureRemove, setIsSureRemove] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [loadingDelete, ] = useState<boolean>(false);
   const downloadFile = () => {
     if (file.file_id) {
       Application.downloadFille({
@@ -66,15 +68,17 @@ const ActionSection: FC<ActionSectionProps> = ({
     }
   };
   const handleDelete = () => {
-    setLoadingDelete(true);
+    // setLoadingDelete(true);
+    setIsSureRemove(false);
+    onDelete();
     Application.deleteFileHistory({
       file_id: file.file_id,
       member_id: memberId,
     })
       .then(() => {
-        setLoadingDelete(false);
+        // setLoadingDelete(false);
         // setisDeleted(true);
-
+        // onDelete();
         // onDeleteSuccess();
       })
       .catch((err) => {

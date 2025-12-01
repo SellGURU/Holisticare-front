@@ -609,21 +609,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }, 3000);
     }
   }, [checkedSteptwo]);
-  const checkStepTwo = (fileID: string | undefined) => {
-    if (!fileID) return;
+  // const checkStepTwo = (fileID: string | undefined) => {
+  //   if (!fileID) return;
 
-    Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
-      if (res.data.step_two == true && checkedSteptwo == false) {
-        setCheckedStepTwo(true);
-        // The condition is met, so we stop here.
-        publish('StepTwoSuccess', {});
-      } else {
-        setTimeout(() => {
-          checkStepTwo(fileID);
-        }, 15000); // 15 seconds delay
-      }
-    });
-  };
+  //   Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
+  //     if (res.data.step_two == true && checkedSteptwo == false) {
+  //       setCheckedStepTwo(true);
+  //       // The condition is met, so we stop here.
+  //       publish('StepTwoSuccess', {});
+  //     } else {
+  //       setTimeout(() => {
+  //         checkStepTwo(fileID);
+  //       }, 15000); // 15 seconds delay
+  //     }
+  //   });
+  // };
 
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
   const stopPolling = useRef(false);
@@ -1173,26 +1173,29 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           console.log(res);
                         },
                       );
-                      console.log(file_id);
+                      // console.log(file_id);
                       if (file_id) {
-                        publish('openProgressModal', {});
+                        // publish('openProgressModal', {
+                        //   file_id: file_id,
+                        // });
                         setShowUploadTest(false);
                         setIsHaveReport(true);
                         setCheckedStepTwo(false);
                         setISGenerateLoading(false);
-                        if (file_id !== 'customBiomarker') {
-                          setTimeout(() => {
-                            checkStepTwo(file_id);
-                          }, 4000);
-                        }
+                        setTimeout(() => {
+                          publish('checkProgress', {
+                            date: new Date().toISOString(),
+                            file_id: file_id,
+                            action_type: "uploaded",
+                            type:'file'
+                          });
+                        }, 4000);
+                        // if (file_id !== 'customBiomarker') {
+                        //   setTimeout(() => {
+                        //     checkStepTwo(file_id);
+                        //   }, 4000);
+                        // }
                       }
-                      // if (file_id && file_id !== "customBiomarker") {
-                      //   publish('openProgressModal', {});
-                      //   setShowUploadTest(false);
-                      //   setIsHaveReport(true);
-                      //   checkStepTwo(file_id);
-                      //   setISGenerateLoading(false);
-                      // }
                       else {
                         setTimeout(() => {
                           fetchPatentDataWithState();
@@ -1201,12 +1204,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           setISGenerateLoading(false);
                         }, 5000);
                       }
-
-                      // setTimeout(() => {
-                      //   fetchPatentDataWithState();
-                      //   publish('QuestionaryTrackingCall', {});
-                      //   fetchData();
-                      // }, 5000);
                     }}
                     memberId={resolvedMemberID}
                   ></UploadTestV2>

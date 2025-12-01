@@ -43,7 +43,7 @@ const FileUploadProgressList: FC<FileUploadProgressListProps> = ({
     >
       <div className="mt-[2px] w-full space-y-[2px] ">
         {uploadedFiles.map((fileUpload, index) => (
-          <div key={index}>
+          <div key={fileUpload.file_id+'-'+index}>
             <FileUploadProgressItem file={fileUpload} />
           </div>
         ))}
