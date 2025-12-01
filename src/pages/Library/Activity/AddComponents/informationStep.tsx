@@ -90,12 +90,15 @@ const InformationStep: FC<InformationStepProps> = ({
 
   return (
     <>
-      <div className="w-full flex gap-4 mt-6 relative">
+      <div
+        className="w-full flex flex-col md:flex-row gap-4 mt-6 relative overflow-y-auto md:overflow-hidden h-[80vh] md:h-[unset] pr-2 md:pr-0"
+        style={{ scrollbarWidth: 'thin', scrollbarColor: '#E9EDF5 #E9EDF5' }}
+      >
         <div className="flex flex-col gap-4">
           <TextField
             label="Title"
             placeholder="Write the activity's title..."
-            margin="!w-[360px]"
+            margin="md:!w-[360px]"
             value={addData.title}
             onChange={(e) => {
               updateAddData('title', e.target.value);
@@ -223,10 +226,10 @@ const InformationStep: FC<InformationStepProps> = ({
             margin="mt-0"
           />
         </div>
-        <div className="bg-[#E9EDF5] h-[492px] w-px"></div>
+        <div className="bg-[#E9EDF5] h-[2px] md:h-[492px] w-full md:w-px"></div>
         <div className="flex flex-col gap-4">
           <div className="text-xs font-medium">Filters</div>
-          <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4">
             <CustomSelect
               placeHolder="Type"
               options={TypesOptions}
