@@ -9,7 +9,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/donor.svg';
   }
   if (name == 'Immune Health') {
-    return '/icons/biomarkers/Inflammation.svg';
+    return '/icons/biomarkers/shield-plus.svg';
   }
   if (name == 'Phenotypic Age') {
     return '/icons/biomarkers/Age.svg';
@@ -21,7 +21,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/Abdominal.svg';
   }
   if (name == 'Urine Test Parameters') {
-    return '/icons/biomarkers/eye medicine.svg';
+    return '/icons/biomarkers/UrineTestParameters.svg';
   }
   if (name == 'Cardiovascular Risk') {
     return '/icons/biomarkers/heart.svg';
@@ -35,7 +35,7 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Vitamins') {
     return '/icons/biomarkers/pil.svg';
   }
-  if (name == 'Tumor health') {
+  if (name == 'Tumor Health') {
     return '/icons/biomarkers/dna (1).svg';
   }
   if (name == 'Genetics/DNA') {
@@ -51,13 +51,13 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/bones.svg';
   }
   if (name == 'Liver Function') {
-    return '/icons/biomarkers/monitor.svg';
+    return '/icons/biomarkers/liver.svg';
   }
   if (name == 'Trace Essential Minerals') {
     return '/icons/biomarkers/result.svg';
   }
   if (name == 'Essential Minerals') {
-    return '/icons/biomarkers/minerals.svg';
+    return '/icons/biomarkers/EssentialMinerals.svg';
   }
   if (name == 'Thyroid Function') {
     return '/icons/biomarkers/thyroid.svg';
@@ -78,14 +78,15 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/vitamins.svg';
   }
   if (
-    name == 'Inflammation & Coagulation' ||
-    name == 'Immune Health and Inflammation' ||     name == 'Inflammation'
-
+    name == 'Inflammation & Coagulation'
   ) {
     return '/icons/biomarkers/cell.svg';
   }
   if (name == 'Hormone Health') {
-    return '/icons/biomarkers/brain_02.svg';
+    return '/icons/biomarkers/HormoneHealth.svg';
+  }
+  if (name == 'Immune Health and Inflammation') {
+    return '/public/icons/biomarkers/egg2.svg';
   }
   if (name == 'Trace Essential Minerals') {
     return '/icons/biomarkers/Urine.svg';
@@ -116,10 +117,10 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/bones.svg';
   }
   if (name == 'Telomere Lengths') {
-    return '/icons/biomarkers/Telomere Lengths.svg';
+    return '/icons/biomarkers/TelomereLengths.svg';
   }
   if (name == 'Epigenetic Clocks') {
-    return '/icons/biomarkers/Epigenetic Clocks.svg';
+    return '/icons/biomarkers/EpigeneticClocks.svg';
   }
   if (name == 'Skin Health') {
     return '/icons/biomarkers/skin.svg';
@@ -137,7 +138,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/lungs.svg';
   }
   if (name == 'Heavy Metals') {
-    return '/icons/biomarkers/lungs.svg';
+    return '/icons/biomarkers/poison.svg';
   }
   if (name == 'Viruses') {
     return '/icons/biomarkers/virus.svg';
@@ -149,28 +150,28 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/moon.svg';
   }
   if (name == 'Upper Body Power') {
-    return '/icons/biomarkers/Upper Body Power.svg';
+    return '/icons/biomarkers/UpperBodyPower.svg';
   }
   if (name == 'Lower Body Power') {
-    return '/icons/biomarkers/Lower Body Power.svg';
+    return '/icons/biomarkers/LowerBodyPower.svg';
   }
   if (name == 'Upper Body Strength') {
     return '/icons/biomarkers/Upper Body Strength.svg';
   }
   if (name == 'Core Strength') {
-    return '/icons/biomarkers/Core Strength.svg';
+    return '/icons/biomarkers/CoreStrength.svg';
   }
   if (name == 'Lower Body Strength') {
     return '/icons/biomarkers/Lower Body Strength.svg';
   }
   if (name == 'Upper Body Endurance') {
-    return '/icons/biomarkers/Upper Body Enduranceh.svg';
+    return '/icons/biomarkers/UpperBodyEndurance.svg';
   }
   if (name == 'Lower Body Endurance') {
-    return '/icons/biomarkers/Lower Body Endurance.svg';
+    return '/icons/biomarkers/LowerBodyEndurance.svg';
   }
   if (name == 'Core Endurance') {
-    return '/icons/biomarkers/Core Endurance.svg';
+    return '/icons/biomarkers/CoreEndurance.svg';
   }
   if (name == 'Metabolomics') {
     return '/icons/biomarkers/metabolism 1.svg';
@@ -188,7 +189,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/antibody 1.svg';
   }
   if (name == 'Body Composition') {
-    return '/icons/biomarkers/chest (1)svg';
+    return '/icons/biomarkers/chest (1).svg';
   }
   if (name == 'Mental Health') {
     return '/icons/biomarkers/brain_02.svg';
@@ -197,7 +198,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/waist.svg';
   }
   if (name == 'Nutrition') {
-    return '/icons/biomarkers/Nutrition.svg';
+    return '/icons/biomarkers/nutrition.svg';
   }
   if (name == 'Distance') {
     return '/icons/biomarkers/maximize-4.svg';
@@ -215,7 +216,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/oxygen-symbol 1.svg';
   }
   if (name == 'Mood') {
-    return '/icons/biomarkers/Mood.svg';
+    return '/icons/biomarkers/mood.svg';
   }
   if (name == 'Hydration') {
     return '/icons/biomarkers/water 1.svg';
@@ -224,7 +225,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/calories 1.svg';
   }
   if (name == 'Stress') {
-    return '/icons/biomarkers/Stress.svg';
+    return '/icons/biomarkers/stress.svg';
   }
   if (name == 'Health Score') {
     return '/icons/biomarkers/ranking.svg';
