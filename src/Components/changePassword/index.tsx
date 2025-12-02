@@ -221,11 +221,7 @@ export const ChangePassword = () => {
 
       <div className="absolute bottom-4 right-4 flex items-center gap-4">
         <div
-          className={`font-medium text-sm ${
-            !isFormReady
-              ? 'text-[#c5c5c5] cursor-not-allowed'
-              : 'text-[#005F73] cursor-pointer'
-          }`}
+          className={`font-medium text-sm text-[#005F73] cursor-pointer`}
           onClick={() => (isFormReady ? resetForm() : null)}
         >
           Discard Changes
@@ -233,7 +229,7 @@ export const ChangePassword = () => {
 
         <ButtonPrimary
           ClassName="min-w-[150px]"
-          disabled={!isFormReady || btnLoading}
+          disabled={btnLoading}
           onClick={handleUpdatePassword}
         >
           {btnLoading ? <SpinnerLoader></SpinnerLoader> : <> Update Password</>}
