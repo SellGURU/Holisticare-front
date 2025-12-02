@@ -109,6 +109,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setHasWearableData(res.data.has_wearable_data);
         setShowUploadTest(!res.data.first_time_view);
         setQuestionnaires(res.data.questionnaires);
+        if (res.data.has_minimum_data == false) {
+          setDisableGenerate(true);
+        }
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchData();
