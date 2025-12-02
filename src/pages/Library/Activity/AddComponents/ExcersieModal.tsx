@@ -382,6 +382,15 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       handleClearData(false);
     }
   }, [clearData]);
+  const [isMobile, setIsMobile] = useState(false);
+  console.log('isMobile', isMobile);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   return (
     <MainModal
       isOpen={isOpen}
@@ -396,12 +405,15 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="w-[1107px] h-[503px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative">
+      <div
+        className={`w-[90vw] md:w-[1107px] h-[80vh] md:h-[503px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative ${isMobile ? 'overflow-y-auto' : ''}`}
+        style={{ scrollbarWidth: 'thin', scrollbarColor: '#E9EDF5 #E9EDF5' }}
+      >
         <div className="w-full border-b border-Gray-50 pb-2 text-sm font-medium">
           {isEdit ? 'Edit Exercise' : 'Add Exercise'}
         </div>
-        <div className="w-full flex gap-4 mt-6">
-          <div className="w-[35%] flex flex-col gap-4">
+        <div className="w-full flex gap-4 mt-6 flex-col md:flex-row">
+          <div className="w-full md:w-[35%] flex flex-col gap-4">
             <TextField
               label="Title"
               placeholder="Write the exercise's title..."
@@ -523,10 +535,10 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               onChange={(e) => setInstruction(e.target.value)}
             /> */}
           </div>
-          <div className="bg-[#E9EDF5] h-[365px] w-px"></div>
-          <div className="w-[35%] flex flex-col gap-4">
+          <div className="bg-[#E9EDF5] h-px md:h-[365px] w-full md:w-px"></div>
+          <div className="w-full md:w-[35%] flex flex-col gap-4">
             <div className="text-xs font-medium">Filters</div>
-            <div className="grid grid-cols-2 gap-y-2 gap-x-">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2">
               <CustomSelect
                 placeHolder="Type"
                 options={TypesOptions}
@@ -604,8 +616,8 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="bg-[#E9EDF5] h-[365px] w-px"></div>
-          <div className="w-[25%] flex flex-col gap-4">
+          <div className="bg-[#E9EDF5] h-px md:h-[365px] w-full md:w-px"></div>
+          <div className="w-full md:w-[25%] flex flex-col gap-4">
             <TextField
               disabled={fileList.length > 0}
               value={youTubeLink}
@@ -741,7 +753,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             </div>
           </div>
         </div>
-        <div className="flex w-full justify-end gap-4 absolute right-4 bottom-4">
+        <div className="flex w-full justify-end gap-4 md:absolute md:right-4 md:bottom-4">
           <div
             onClick={() => {
               resetForm();
