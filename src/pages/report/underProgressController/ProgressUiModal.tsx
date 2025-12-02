@@ -7,7 +7,7 @@ const ProgressUiModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [progressData, setprogressData] = useState<Array<any>>([]);
   const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
-  const [isClosed,setIsClosed] = useState(false);
+  const [isClosed, setIsClosed] = useState(false);
   const isVisibleModal = () => {
     if (progressData.length > 0 && showProgressModal && !isClosed) {
       return true;
@@ -72,14 +72,14 @@ const ProgressUiModal = () => {
 
           return updatedData;
         });
-        setIsClosed(false)
+        setIsClosed(false);
       }
     });
     subscribe('closeProgressModal', () => {
       setshowProgressModal(false);
     });
     subscribe('completedProgress', (data: any) => {
-      setIsClosed(false)
+      setIsClosed(false);
       setCompletedIdes((prev) => [...prev, data?.detail?.file_id]);
     });
     return () => {
@@ -151,9 +151,8 @@ const ProgressUiModal = () => {
                   {resolveSectionName(el).description}
                 </div>
               </div>
-              
+
               <div className="w-full h-[1px] bg-Gray-50 mt-4"></div>
-              
             </>
           );
         })}
@@ -171,15 +170,16 @@ const ProgressUiModal = () => {
             Sync Data
           </ButtonSecondary>
         </div>
-      ):
-      <>
-      <div className='w-full mt-4 text-Text-Secondary TextStyle-Body-3'>
-        <div>
-          Feel free to continue working while the system completes the process.
-        </div>
-      </div>
-      </>
-    }
+      ) : (
+        <>
+          <div className="w-full mt-4 text-Text-Secondary TextStyle-Body-3">
+            <div>
+              Feel free to continue working while the system completes the
+              process.
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -40,11 +40,11 @@ const UnderProgressController = ({
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
   const getProgress = () => {
-    Application.getProgress(member_id).then((res) => {
-      SetAllprogress(res.data);
-    }).catch(() => {
-
-    });
+    Application.getProgress(member_id)
+      .then((res) => {
+        SetAllprogress(res.data);
+      })
+      .catch(() => {});
   };
 
   const checkUploadedFile = (file: any) => {
