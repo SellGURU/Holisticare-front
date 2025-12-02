@@ -1126,6 +1126,7 @@ class Application extends Api {
   static getProgress = (member_id: string) => {
     return this.post(`/check_all_ongoing_operations`, {
       member_id: member_id,
+      from_date: new Date().toISOString().split('T')[0],
     });
   };
 }

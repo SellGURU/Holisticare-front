@@ -42,6 +42,8 @@ const UnderProgressController = ({
   const getProgress = () => {
     Application.getProgress(member_id).then((res) => {
       SetAllprogress(res.data);
+    }).catch(() => {
+
     });
   };
 
@@ -83,8 +85,8 @@ const UnderProgressController = ({
       member_id: member_id,
     })
       .then((res) => {
-        if (res.data.deleted_date !== null) {
-          publish('DeleteSuccess', { file_id: file.file_id });
+        if (res.data.deleted == true) {
+          publish('completedProgress', { file_id: file.file_id });
           SetAllprogress({
             ...allprogress,
             files: allprogress.files.filter(
