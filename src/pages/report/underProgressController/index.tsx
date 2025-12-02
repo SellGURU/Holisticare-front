@@ -41,7 +41,7 @@ const formatDateTime = (date: Date): string => {
 const UnderProgressController = ({
   member_id,
 }: UnderProgressControllerProps) => {
-  const [fromDate, ] = useState<Date>(new Date());
+  const [fromDate] = useState<Date>(new Date());
   const [allprogress, SetAllprogress] = useState<any>({
     files: [],
     questionnaires: [],
@@ -53,12 +53,12 @@ const UnderProgressController = ({
   const needCheckProgress = () => {
     Application.needCheckProgress(member_id)
       .then((res) => {
-        if (res.data.response== true) {
+        if (res.data.response == true) {
           getProgress();
         }
       })
       .catch(() => {});
-  }
+  };
 
   const getProgress = () => {
     Application.getProgress(member_id, formatDateTime(fromDate))
@@ -129,20 +129,22 @@ const UnderProgressController = ({
       });
   };
   const resolveFileController = (files: any[]) => {
-    files.filter((item: any) => item.process_status ==false).forEach((file) => {
-      if (!idHaveAction.includes(file.action_type + '_' + file.file_id)) {
-        SetIdHaveAction([
-          ...idHaveAction,
-          file.action_type + '_' + file.file_id,
-        ]);
-        if (file.action_type === 'uploaded') {
-          checkUploadedFile(file);
+    files
+      .filter((item: any) => item.process_status == false)
+      .forEach((file) => {
+        if (!idHaveAction.includes(file.action_type + '_' + file.file_id)) {
+          SetIdHaveAction([
+            ...idHaveAction,
+            file.action_type + '_' + file.file_id,
+          ]);
+          if (file.action_type === 'uploaded') {
+            checkUploadedFile(file);
+          }
+          if (file.action_type === 'deleted') {
+            checkDeleteFile(file);
+          }
         }
-        if (file.action_type === 'deleted') {
-          checkDeleteFile(file);
-        }
-      }
-    });
+      });
   };
 
   const controllProgress = () => {
@@ -175,13 +177,13 @@ const UnderProgressController = ({
         ),
       ];
       publish('openProgressModal', {
-        data: progressArray.filter((item: any) => item.process_status ==false),
+        data: progressArray.filter((item: any) => item.process_status == false),
       });
     }
   };
   useEffect(() => {
     // getProgress();
-    needCheckProgress()
+    needCheckProgress();
     // subscribe('checkProgress', () => {
     //   getProgress();
     //   // if (data.detail.type === 'file') {

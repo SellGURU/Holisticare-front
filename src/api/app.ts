@@ -1123,7 +1123,7 @@ class Application extends Api {
   static initialSaveActionPlan = (data: any) => {
     return this.post('/action_plan/draft/initial_save', data);
   };
-  static getProgress = (member_id: string,from_date:string) => {
+  static getProgress = (member_id: string, from_date: string) => {
     return this.post(`/check_all_ongoing_operations`, {
       member_id: member_id,
       from_date: from_date,
