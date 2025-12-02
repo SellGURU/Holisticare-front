@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useRef } from 'react';
 import Application from '../../../api/app';
-import { publish, subscribe } from '../../../utils/event';
+import { publish } from '../../../utils/event';
 
 interface UnderProgressControllerProps {
   member_id: string;
@@ -28,9 +28,20 @@ type ProgressItem = FileProgress | QuestionnaireProgress | RefreshProgress;
 
 type ProgressData = ProgressItem[];
 
+const formatDateTime = (date: Date): string => {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  // const hours = String(date.getUTCHours()).padStart(2, '0');
+  // const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  // const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${'00'}:${'00'}:${'00'}`;
+};
+
 const UnderProgressController = ({
   member_id,
 }: UnderProgressControllerProps) => {
+  const [fromDate, ] = useState<Date>(new Date());
   const [allprogress, SetAllprogress] = useState<any>({
     files: [],
     questionnaires: [],
@@ -39,8 +50,18 @@ const UnderProgressController = ({
   const [idHaveAction, SetIdHaveAction] = useState<Array<string>>([]);
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
+  const needCheckProgress = () => {
+    Application.needCheckProgress(member_id)
+      .then((res) => {
+        if (res.data.response== true) {
+          getProgress();
+        }
+      })
+      .catch(() => {});
+  }
+
   const getProgress = () => {
-    Application.getProgress(member_id)
+    Application.getProgress(member_id, formatDateTime(fromDate))
       .then((res) => {
         SetAllprogress(res.data);
       })
@@ -108,7 +129,7 @@ const UnderProgressController = ({
       });
   };
   const resolveFileController = (files: any[]) => {
-    files.forEach((file) => {
+    files.filter((item: any) => item.process_status ==false).forEach((file) => {
       if (!idHaveAction.includes(file.action_type + '_' + file.file_id)) {
         SetIdHaveAction([
           ...idHaveAction,
@@ -154,21 +175,22 @@ const UnderProgressController = ({
         ),
       ];
       publish('openProgressModal', {
-        data: progressArray,
+        data: progressArray.filter((item: any) => item.process_status ==false),
       });
     }
   };
   useEffect(() => {
-    getProgress();
-    subscribe('checkProgress', () => {
-      getProgress();
-      // if (data.detail.type === 'file') {
-      //   SetAllprogress((prev: any) => ({
-      //     ...prev,
-      //     files: [...prev.files, data.detail],
-      //   }));
-      // }
-    });
+    // getProgress();
+    needCheckProgress()
+    // subscribe('checkProgress', () => {
+    //   getProgress();
+    //   // if (data.detail.type === 'file') {
+    //   //   SetAllprogress((prev: any) => ({
+    //   //     ...prev,
+    //   //     files: [...prev.files, data.detail],
+    //   //   }));
+    //   // }
+    // });
 
     return () => {
       SetAllprogress({
@@ -176,7 +198,7 @@ const UnderProgressController = ({
         questionnaires: [],
         refresh: [],
       });
-      publish('clearAllProgress', {});
+      // publish('clearAllProgress', {});
       timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
       timeoutsRef.current = [];
     };
