@@ -138,7 +138,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/lungs.svg';
   }
   if (name == 'Heavy Metals') {
-    return '/icons/biomarkers/poison.svg';
+    return '/icons/biomarkers/poison-icon.svg';
   }
   if (name == 'Viruses') {
     return '/icons/biomarkers/virus.svg';
@@ -198,7 +198,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/waist.svg';
   }
   if (name == 'Nutrition') {
-    return '/icons/biomarkers/nutrition.svg';
+    return '/icons/biomarkers/nutrition-icon.svg';
   }
   if (name == 'Distance') {
     return '/icons/biomarkers/maximize-4.svg';
@@ -216,7 +216,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/oxygen-symbol 1.svg';
   }
   if (name == 'Mood') {
-    return '/icons/biomarkers/mood.svg';
+    return '/icons/biomarkers/mood-icon.svg';
   }
   if (name == 'Hydration') {
     return '/icons/biomarkers/water 1.svg';
@@ -225,7 +225,7 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/calories 1.svg';
   }
   if (name == 'Stress') {
-    return '/icons/biomarkers/stress.svg';
+    return '/icons/biomarkers/stress-icon.svg';
   }
   if (name == 'Health Score') {
     return '/icons/biomarkers/ranking.svg';
