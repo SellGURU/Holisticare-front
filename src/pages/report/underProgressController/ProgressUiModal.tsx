@@ -152,17 +152,17 @@ const ProgressUiModal = () => {
                 </div>
               </div>
 
-              <div className="w-full h-[1px] bg-Gray-50 mt-4"></div>
+              <div className="w-full h-[1px] bg-Gray-50 my-4"></div>
             </>
           );
         })}
       </div>
       {isSynced() ? (
-        <div className="w-full  flex justify-end mt-4">
+        <div className="w-full  flex justify-end ">
           <ButtonSecondary
             onClick={() => {
               setshowProgressModal(false);
-              setCompletedIdes([]);
+              // setCompletedIdes([]);
               setprogressData([]);
               publish('syncReport', {});
             }}
@@ -172,7 +172,7 @@ const ProgressUiModal = () => {
         </div>
       ) : (
         <>
-          <div className="w-full mt-4 text-Text-Secondary TextStyle-Body-3">
+          <div className="w-full  text-Text-Secondary TextStyle-Body-3">
             <div>
               Feel free to continue working while the system completes the
               process.

@@ -5,7 +5,7 @@ import { formatDate } from './help';
 import ActionSection from './FileBoxItem/ActionSection';
 import { useParams } from 'react-router-dom';
 import { ButtonSecondary } from '../../../Button/ButtosSecondary';
-import { publish } from '../../../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../../../utils/event';
 
 interface FileUploadProgressItemProps {
   file: any;
@@ -23,6 +23,18 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
         setFileStatus('deleting');
       }
     }
+    subscribe('completedProgress', (data: any) => {
+      if (data.detail.file_id === file.file_id) {
+        setFileStatus('deleted');
+      }
+    });
+    return () => {
+      unsubscribe('completedProgress', (data: any) => {
+        if (data.detail.file_id === file.file_id) {
+          setFileStatus('deleted');
+        }
+      });
+    };
   }, []);
   return (
     <>
