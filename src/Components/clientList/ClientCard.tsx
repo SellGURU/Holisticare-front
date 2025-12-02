@@ -1010,7 +1010,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       </div>
                     ) : (
                       <div className="flex flex-col">
-                        <div className="text-Primary-DeepTeal font-medium text-xs">
+                        <div className="text-Primary-DeepTeal text-nowrap font-medium text-xs">
                           Sync with Latest Data
                         </div>
                         {client['Latest Sync'] != 'No Data' && (
