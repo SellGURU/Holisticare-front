@@ -110,7 +110,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setShowUploadTest(!res.data.first_time_view);
         setQuestionnaires(res.data.questionnaires);
         setTimeout(() => {
-          if (res.data.show_report == true || res.data.first_time_view == true) {
+          if (
+            res.data.show_report == true ||
+            res.data.first_time_view == true
+          ) {
             fetchData();
           }
         }, 2000);
