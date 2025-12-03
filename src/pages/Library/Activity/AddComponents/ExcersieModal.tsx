@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MainModal } from '../../../../Components';
 import Circleloader from '../../../../Components/CircleLoader';
 import CustomSelect from '../../../../Components/CustomSelect';
@@ -382,15 +382,10 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       handleClearData(false);
     }
   }, [clearData]);
-  const [isMobile, setIsMobile] = useState(false);
-  console.log('isMobile', isMobile);
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+  const isMobilePage = useMemo(() => {
+    return window.innerWidth < 768;
   }, []);
+
   return (
     <MainModal
       isOpen={isOpen}
@@ -406,7 +401,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         </div>
       )}
       <div
-        className={`w-[90vw] md:w-[1107px] h-[80vh] md:h-[503px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative ${isMobile ? 'overflow-y-auto' : ''}`}
+        className={`w-[90vw] md:w-[1107px] h-[80vh] md:h-[503px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative ${isMobilePage ? 'overflow-y-auto' : ''}`}
         style={{ scrollbarWidth: 'thin', scrollbarColor: '#E9EDF5 #E9EDF5' }}
       >
         <div className="w-full border-b border-Gray-50 pb-2 text-sm font-medium">
