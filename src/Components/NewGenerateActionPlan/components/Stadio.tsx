@@ -80,10 +80,10 @@ const Stadio: FC<StadioProps> = ({
     setSortBy(value);
   };
   const sortOptions = [
-    { label: 'All Actions', value: 'AllActions'},
+    { label: 'All Actions', value: 'AllActions' },
     {
       label: 'Holistic Plan Recommended',
-      value: 'HolisticPlan'
+      value: 'HolisticPlan',
     },
   ];
 
