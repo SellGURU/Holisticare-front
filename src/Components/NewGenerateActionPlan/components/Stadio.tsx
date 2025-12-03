@@ -15,6 +15,7 @@ import { SlideOutPanel } from '../../SlideOutPanel';
 import Circleloader from '../../CircleLoader';
 import { Tooltip } from 'react-tooltip';
 import { splitInstructions } from '../../../help';
+import Sort from './Sort';
 
 interface StadioProps {
   data: {
@@ -54,6 +55,8 @@ const Stadio: FC<StadioProps> = ({
   handleShowConflictsModal,
   isCheckSave,
 }) => {
+  console.log(data);
+
   const [selectCategory, setSelectedCategory] = useState('Diet');
   const [haveConflic, setHaveConflic] = useState(false);
   const [haveConflicText, setHaveConflicText] = useState([]);
@@ -64,11 +67,26 @@ const Stadio: FC<StadioProps> = ({
     'Lifestyle',
     'Checkin',
   ];
+  console.log(actions);
+
   const [searchValue, setSearchValue] = useState('');
   const [isAutoGenerate, setIsAutoGenerate] = useState(false);
   const [isAutoGenerateComplete, setIsAutoGenerateComplete] = useState(false);
   const [isAutoGenerateShow, setIsAutoGenerateShow] = useState(true);
   // const [ setIsDragging] = useState(false);
+  const [sortBy, setSortBy] = useState('AllActions');
+
+  const handleChangeSort = (value: string) => {
+    setSortBy(value);
+  };
+  const sortOptions = [
+    { label: 'All Actions', value: 'AllActions'},
+    {
+      label: 'Holistic Plan Recommended',
+      value: 'HolisticPlan'
+    },
+  ];
+
   const addToActions = (item: any) => {
     if (item.Task_Type === 'Checkin') {
       setActions((prevActions: any) => ({
@@ -209,13 +227,21 @@ const Stadio: FC<StadioProps> = ({
   //   setSortBy(value);
   // };
   const filteredDataCategory = useMemo(() => {
-    return data.category.filter(
+    let filtered = data.category.filter(
       (el: any) =>
         el.Category === selectCategory &&
         el.Title.toLowerCase().includes(searchValue.toLowerCase()),
     );
-    // .sort((a: any, b: any) => (b[sortBy] || 0) - (a[sortBy] || 0));
-  }, [data.category, selectCategory, searchValue]);
+
+    if (sortBy === 'HolisticPlan') {
+      filtered = filtered.filter(
+        (el: any) => el.holisticare_recommendation === true,
+      );
+    }
+
+    return filtered;
+  }, [data.category, selectCategory, searchValue, sortBy]);
+
   const filteredDataCheckIn = data.checkIn
     .filter(
       (el) =>
@@ -226,6 +252,8 @@ const Stadio: FC<StadioProps> = ({
       ...el, // Spread existing properties
       category: 'Check-In', // Add the category key with value 'Check-In'
     }));
+  console.log(filteredDataCategory);
+
   const [showAddModal, setshowAddModal] = useState(false);
   // const options = [
   //   {
@@ -673,6 +701,11 @@ const Stadio: FC<StadioProps> = ({
               onSearch={(value) => {
                 setSearchValue(value);
               }}
+            />
+            <Sort
+              options={sortOptions}
+              handleChangeSort={handleChangeSort}
+              sortBy={sortBy}
             />
 
             <div>
