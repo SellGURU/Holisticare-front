@@ -1123,6 +1123,12 @@ class Application extends Api {
   static initialSaveActionPlan = (data: any) => {
     return this.post('/action_plan/draft/initial_save', data);
   };
+  static verifyPassword = (data: any) => {
+    return this.post('/setting/verify_password', data);
+  };
+  static changePassword = (data: any) => {
+    return this.post('/setting/change_password', data);
+  };
 }
 
 export default Application;
