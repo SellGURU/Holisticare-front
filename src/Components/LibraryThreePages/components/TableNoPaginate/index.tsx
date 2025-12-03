@@ -83,6 +83,10 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
     >
       <div
         className={`flex flex-col justify-between overflow-x-auto bg-white text-Text-Primary border border-Boarder`}
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#E5E5E5 #E5E5E5',
+        }}
       >
         {table.getRowModel().rows.length > 0 ? (
           <table
