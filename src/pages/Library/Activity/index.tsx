@@ -188,16 +188,19 @@ const Activity = () => {
               )}
 
               {/* Sort dropdown */}
-              <div className=" flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full md:w-fit">
                 <div className="flex gap-1 items-center text-nowrap text-xs text-Primary-DeepTeal">
                   <img src="/icons/sort.svg" alt="" />
                   Sort by:
                 </div>
-                <div ref={btnRef} className="relative">
+                <div
+                  ref={btnRef}
+                  className="relative w-full md:w-fit pl-2 md:pl-0"
+                >
                   <button
                     type="button"
                     onClick={() => setIsSortOpen((v) => !v)}
-                    className={`h-8 rounded-[20px] border w-fit min-w-[183px] border-[#E2F1F8] px-[12px] py-[10px] bg-white text-xs text-Text-Primary text-nowrap flex items-center justify-between gap-2 shadow-100 ${
+                    className={`h-8 rounded-[20px] border w-full md:min-w-[183px] border-[#E2F1F8] px-[12px] py-[10px] bg-white text-xs text-Text-Primary text-nowrap flex items-center justify-between gap-2 shadow-100 ${
                       isSortOpen ? 'rounded-b-none' : ''
                     }`}
                   >
@@ -217,7 +220,7 @@ const Activity = () => {
                   {isSortOpen && (
                     <div
                       ref={modalRef}
-                      className={`absolute w-full top-8 z-20 right-0 bg-white rounded-[20px] px-2 py-3 shadow-md ${
+                      className={`absolute w-[97%] md:w-full top-8 z-20 right-0 bg-white rounded-[20px] px-2 py-3 shadow-md ${
                         isSortOpen ? 'rounded-t-none' : ''
                       }`}
                     >
@@ -252,7 +255,7 @@ const Activity = () => {
               {active === 'Exercise' && (
                 <ButtonSecondary
                   onClick={() => setShowAdd(true)}
-                  ClassName="rounded-full w-[180px]"
+                  ClassName="rounded-full w-full md:w-[180px]"
                 >
                   <img src="./icons/add-square.svg" alt="" />
                   Add Exercise
@@ -261,7 +264,7 @@ const Activity = () => {
               {active === 'Activity' && (
                 <ButtonSecondary
                   onClick={() => setShowAddActivity(true)}
-                  ClassName="rounded-full w-[180px]"
+                  ClassName="rounded-full w-full md:w-[180px]"
                 >
                   <img src="./icons/add-square.svg" alt="" />
                   Add Activity
