@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import ConflictsModal from './ConflictsModal';
+import EllipsedTooltip from '../../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface LibBoxProps {
@@ -63,6 +64,7 @@ const LibBox: FC<LibBoxProps> = ({
         break;
     }
   }, [data?.label]);
+  console.log(data);
 
   return (
     <>
@@ -76,25 +78,13 @@ const LibBox: FC<LibBoxProps> = ({
               alt=""
             />
             <div
-              data-tooltip-id={`tooltip-${data.Category}-${data.Title}`}
               className="select-none text-[12px] text-Text-Primary w-[200px] overflow-hidden cursor-text"
               style={{
                 textWrap: 'nowrap',
               }}
             >
-              {data.Title.length > 33
-                ? data.Title.substring(0, 33) + '...'
-                : data.Title}
+              <EllipsedTooltip text={data.Title} />
             </div>
-            {data.Title.length > 33 && (
-              <Tooltip
-                id={`tooltip-${data.Category}-${data.Title}`}
-                place="top"
-                className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
-              >
-                {data.Title}
-              </Tooltip>
-            )}
           </div>
           {!checkIn && (
             <img
@@ -109,9 +99,9 @@ const LibBox: FC<LibBoxProps> = ({
         </div>
         {!checkIn && (
           <div
-            className={`${showMore ? '' : 'ml-6'} mt-2 flex items-center gap-6 justify-between`}
+            className={`${showMore ? '' : 'ml-'} mt-2 flex  items-center flex-wrap gap-2 justify-between`}
           >
-            <div className={`flex items-center gap-1`}>
+            <div className={`flex  items-center gap-1`}>
               <div
                 className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary text-nowrap`}
                 style={{ backgroundColor: bgColor }}
@@ -122,6 +112,18 @@ const LibBox: FC<LibBoxProps> = ({
                 ></div>
                 {data?.label || '-'}
               </div>
+              {data.holisticare_recommendation && (
+                <div
+                  className={`select-none rounded-full px-2 py-[2px] h-[14px] text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
+                  style={{ backgroundColor: '#E2F1F8' }}
+                >
+                  <div
+                    className={`size-[8px] select-none rounded-full`}
+                    style={{ backgroundColor: '#005F73' }}
+                  ></div>
+                  Holistic Plan Recommended
+                </div>
+              )}
               {/* <div
                 className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                 data-tooltip-id={`tooltip-system-score-${index}`}
