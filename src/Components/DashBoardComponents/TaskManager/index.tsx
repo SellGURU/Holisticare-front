@@ -142,7 +142,7 @@ const TaskManager = () => {
           setShowValidation(false);
         }}
       >
-        <div className="bg-white rounded-2xl w-[500px] h-[286px] p-6 pb-8 shadow-800 text-Text-Primary relative">
+        <div className="bg-white rounded-2xl w-[90vw] md:w-[500px] h-[286px] p-6 pb-8 shadow-800 text-Text-Primary relative">
           <div className="w-full border-b border-Gray-50 text-sm pb-2 font-medium mb-4">
             Add New Task
           </div>
@@ -161,7 +161,7 @@ const TaskManager = () => {
             errorMessage={showValidation ? formik.errors.title : undefined}
           />
           <div className="w-full flex items-center mt-4 gap-3">
-            <div className="flex flex-col min-w-[222px] min-h-[65px] text-xs font-medium">
+            <div className="flex flex-col min-w-[48%] md:min-w-[222px] min-h-[65px] text-xs font-medium">
               <label className="mb-1">Deadline</label>
               <SimpleDatePicker
                 textStyle
@@ -180,7 +180,7 @@ const TaskManager = () => {
                 </div>
               )}
             </div>
-            <div className="flex flex-col relative min-w-[222px] min-h-[65px] text-xs font-medium">
+            <div className="flex flex-col relative min-w-[48%] md:min-w-[222px] min-h-[65px] text-xs font-medium">
               <label className="mb-1">Priority</label>
               <div
                 ref={selectButRef}
