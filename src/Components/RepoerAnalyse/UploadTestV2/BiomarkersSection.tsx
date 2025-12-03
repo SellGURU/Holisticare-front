@@ -425,7 +425,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               </div>
             </div>
             <div className=" flex sm:hidden items-center gap-3">
-              
               <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
               <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
                 Show Only Errors
@@ -458,14 +457,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 {/* Table Rows */}
                 <div
                   ref={tableRef}
-                  className=" overflow-y-auto pb-[40px] sm:pb-0 w-[100%]"
+                  className=" overflow-y-auto  w-[100%]"
                   style={{
                     minHeight: isScaling
                       ? window.innerHeight - 330 + 'px'
                       : window.innerHeight - 500 + 'px',
                     maxHeight: isScaling
                       ? window.innerHeight - 330 + 'px'
-                      : window.innerHeight - 500 + 'px',
+                      : window.innerWidth > 640 ? window.innerHeight - 500 + 'px' : window.innerHeight - 300 + 'px',
                   }}
                 >
                   {biomarkers.map((b, index) => {
@@ -477,11 +476,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         key={index}
                         className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
                         style={{
-                    gridTemplateColumns:
-                      window.innerWidth > 640
-                        ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
-                        : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
-                  }}
+                          gridTemplateColumns:
+                            window.innerWidth > 640
+                              ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
+                              : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
+                        }}
                       >
                         <div className="text-left text-Text-Primary flex gap-1">
                           <TooltipTextAuto maxWidth="160px">
@@ -563,7 +562,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         <div className="text-center text-[#888888]">
                           {b.value}
                         </div>
-                        <div className="text-center text-[#888888]">
+                        <div className="text-center pl-3 sm:pl-0 text-[#888888]">
                           {b.unit}
                         </div>
                         {/* delete logic */}
@@ -636,7 +635,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                                   changedRows.includes(b.biomarker_id) ||
                                   mappedRows.includes(b.biomarker_id)
                                     ? 'pl-0'
-                                    : ' pl-4 sm:pl-6'
+                                    : ' sm:pl-6'
                                 } `}
                               >
                                 <img

@@ -274,7 +274,12 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             {/* Table Header */}
             <div
               className="grid sticky top-0 w-full z-10 py-2 px-2 sm:px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px]   border-Gray-50"
-              style={{ gridTemplateColumns: window.innerWidth > 640 ? '1fr 200px 200px 100px' : '80px 60px 60px 60px' }}
+              style={{
+                gridTemplateColumns:
+                  window.innerWidth > 640
+                    ? '1fr 200px 200px 100px'
+                    : '80px 60px 60px 60px',
+              }}
             >
               <div className="text-left">Biomarker Name</div>
               <div className="text-center">Value</div>
@@ -295,7 +300,12 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                     ref={(el) => (rowRefs.current[index] = el)}
                     key={index}
                     className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-2 sm:px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary `}
-              style={{ gridTemplateColumns: window.innerWidth > 640 ? '1fr 200px 200px 100px' : '80px 60px 60px 60px' }}
+                    style={{
+                      gridTemplateColumns:
+                        window.innerWidth > 640
+                          ? '1fr 200px 200px 100px'
+                          : '80px 60px 60px 60px',
+                    }}
                   >
                     {/* Biomarker Name */}
                     <div className="flex items-center  gap-1">
@@ -372,7 +382,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
               })}
 
               {biomarkers.length === 0 && (
-                <div className="flex flex-col h-full pt-10 min-h-[100px] items-center justify-center gap-4">
+                <div className="flex flex-col h-full pt-10 min-h-[200px] md:min-h-[100px] items-center justify-start sm:justify-center gap-4">
                   <img src="/icons/table-empty.svg" alt="" />
                   <div className="text-xs -mt-10 font-medium text-Text-Primary">
                     No biomarker added yet.
