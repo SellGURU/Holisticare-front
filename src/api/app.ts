@@ -1135,6 +1135,12 @@ class Application extends Api {
       member_id: member_id,
       from_date: from_date ? from_date : undefined,
     });
+  }; 
+  static verifyPassword = (data: any) => {
+    return this.post('/setting/verify_password', data);
+  };
+  static changePassword = (data: any) => {
+    return this.post('/setting/change_password', data);
   };
 }
 
