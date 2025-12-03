@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Application from '../../../../api/app';
 import SearchBox from '../../../../Components/SearchBox';
 import ExerciseItem from './ExersiseItem';
@@ -62,13 +62,8 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+  const isMobilePage = useMemo(() => {
+    return window.innerWidth < 768;
   }, []);
   const validateExercise = (exercise: ExerciseGroup) => {
     const newErrors: { [key: string]: string } = {};
@@ -432,7 +427,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
       <div
         className="w-full mt-6 overflow-y-auto md:overflow-hidden h-[80vh] md:h-[unset]"
         style={{
-          ...(isMobile
+          ...(isMobilePage
             ? { scrollbarWidth: 'thin', scrollbarColor: '#E9EDF5 #E9EDF5' }
             : {}),
         }}
