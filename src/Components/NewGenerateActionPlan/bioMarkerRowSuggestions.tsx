@@ -161,6 +161,18 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     {value?.label}
                   </div>
                 )}
+                {value.holisticare_recommendation && (
+                  <div
+                    className={`select-none ml-2 rounded-full px-2  text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
+                    style={{ backgroundColor: '#E2F1F8' }}
+                  >
+                    <div
+                      className={`size-[8px] select-none rounded-full`}
+                      style={{ backgroundColor: '#005F73' }}
+                    ></div>
+                    Holistic Plan Recommended
+                  </div>
+                )}
                 {value.flag && value.flag.conflicts.length > 0 && (
                   <button
                     className="flex items-center gap-1 cursor-pointer ml-7"
