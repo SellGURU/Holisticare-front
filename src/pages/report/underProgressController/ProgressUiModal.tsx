@@ -6,7 +6,7 @@ import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 const ProgressUiModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [progressData, setprogressData] = useState<Array<any>>([]);
-  const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
+  // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
   const [isClosed, setIsClosed] = useState(false);
   const isVisibleModal = () => {
     if (progressData.length > 0 && showProgressModal && !isClosed) {
@@ -18,7 +18,7 @@ const ProgressUiModal = () => {
   const resolveSectionName = (item: any) => {
     if (item.category === 'file') {
       if (item.action_type === 'deleted') {
-        if (completedIdes.includes(item.file_id)) {
+        if (item.process_status == true) {
           return {
             title: 'File deleted successfully!',
             description: 'The file deletion completed.',
@@ -29,7 +29,7 @@ const ProgressUiModal = () => {
           description: 'The file is being deleted.',
         };
       }
-      if (completedIdes.includes(item.file_id)) {
+      if (item.process_status == true) {
         return {
           title: 'File uploaded successfully!',
           description: 'The file upload completed.',
@@ -78,9 +78,15 @@ const ProgressUiModal = () => {
     subscribe('closeProgressModal', () => {
       setshowProgressModal(false);
     });
-    subscribe('completedProgress', (data: any) => {
+    subscribe('allProgressCompleted', () => {
       setIsClosed(false);
-      setCompletedIdes((prev) => [...prev, data?.detail?.file_id]);
+      setprogressData((pre)=>{
+        return pre.map((item: any) => ({
+          ...item,
+          process_status: true,
+        }));
+      });
+      // setCompletedIdes((prev) => [...prev, data?.detail?.file_id]);
     });
     return () => {
       unsubscribe('openProgressModal', () => {
@@ -95,7 +101,7 @@ const ProgressUiModal = () => {
     if (progressData.length === 0) return false;
     return progressData.every((progress: any) => {
       const progressId = progress.file_id;
-      return progressId && completedIdes.includes(progressId);
+      return progressId && progress.process_status == true;
     });
   };
   return (
@@ -132,7 +138,7 @@ const ProgressUiModal = () => {
                   {resolveSectionName(el).title}
                 </div>
                 <div className="mt-1 w-full flex items-center gap-1 p-3 rounded-[12px] border border-Gray-50 text-[10px] text-Primary-DeepTeal transition-colors">
-                  {!completedIdes.includes(el.file_id) ? (
+                  {el.process_status ==false ? (
                     <div
                       style={{
                         background:

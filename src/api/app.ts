@@ -1130,9 +1130,10 @@ class Application extends Api {
     });
   };
 
-  static needCheckProgress = (member_id: string) => {
+  static needCheckProgress = (member_id: string, from_date: string|null) => {
     return this.post(`/need_to_check_all_ongoing_operations`, {
       member_id: member_id,
+      from_date: from_date ? from_date : undefined,
     });
   };
 }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useRef } from 'react';
 import Application from '../../../api/app';
-import { publish } from '../../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../../utils/event';
 
 interface UnderProgressControllerProps {
   member_id: string;
@@ -32,16 +32,17 @@ const formatDateTime = (date: Date): string => {
   const year = date.getUTCFullYear();
   const month = String(date.getUTCMonth() + 1).padStart(2, '0');
   const day = String(date.getUTCDate()).padStart(2, '0');
-  // const hours = String(date.getUTCHours()).padStart(2, '0');
-  // const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-  // const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day} ${'00'}:${'00'}:${'00'}`;
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
 const UnderProgressController = ({
   member_id,
 }: UnderProgressControllerProps) => {
-  const [fromDate] = useState<Date>(new Date());
+  const [fromDate, setfromDate] = useState<Date>(new Date());
+  const lastNeedCheckProgressRef = useRef<Date|null>(null);
   const [allprogress, SetAllprogress] = useState<any>({
     files: [],
     questionnaires: [],
@@ -51,10 +52,13 @@ const UnderProgressController = ({
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
   const needCheckProgress = () => {
-    Application.needCheckProgress(member_id)
+    const lastDate = lastNeedCheckProgressRef.current;
+    Application.needCheckProgress(member_id, lastDate != null ? formatDateTime(lastDate) : null)
       .then((res) => {
         if (res.data.response == true) {
           getProgress();
+          const newDate = new Date();
+          lastNeedCheckProgressRef.current = newDate;
         }
       })
       .catch(() => {});
@@ -68,66 +72,66 @@ const UnderProgressController = ({
       .catch(() => {});
   };
 
-  const checkUploadedFile = (file: any) => {
-    // publish('openProgressModal', {
-    //   file_id: file.file_id,
-    // });
-    Application.checkStepTwoUpload({
-      file_id: file.file_id,
-      member_id: member_id,
-    })
-      .then((res) => {
-        if (res.data.step_two == true) {
-          publish('completedProgress', { file_id: file.file_id });
-          // publish('StepTwoSuccess', { file_id: file.file_id });
-          SetAllprogress({
-            ...allprogress,
-            files: allprogress.files.filter(
-              (f: any) => f.file_id !== file.file_id,
-            ),
-          });
-        } else {
-          const timeoutId = setTimeout(() => {
-            checkUploadedFile(file);
-          }, 15000);
-          timeoutsRef.current.push(timeoutId);
-        }
-      })
-      .catch(() => {
-        const timeoutId = setTimeout(() => {
-          checkUploadedFile(file);
-        }, 15000);
-        timeoutsRef.current.push(timeoutId);
-      });
-  };
-  const checkDeleteFile = (file: any) => {
-    Application.checkDeleteLabReport({
-      file_id: file.file_id,
-      member_id: member_id,
-    })
-      .then((res) => {
-        if (res.data.deleted == true) {
-          publish('completedProgress', { file_id: file.file_id });
-          SetAllprogress({
-            ...allprogress,
-            files: allprogress.files.filter(
-              (f: any) => f.file_id !== file.file_id,
-            ),
-          });
-        } else {
-          const timeoutId = setTimeout(() => {
-            checkDeleteFile(file);
-          }, 15000);
-          timeoutsRef.current.push(timeoutId);
-        }
-      })
-      .catch(() => {
-        const timeoutId = setTimeout(() => {
-          checkDeleteFile(file);
-        }, 15000);
-        timeoutsRef.current.push(timeoutId);
-      });
-  };
+  // const checkUploadedFile = (file: any) => {
+  //   // publish('openProgressModal', {
+  //   //   file_id: file.file_id,
+  //   // });
+  //   Application.checkStepTwoUpload({
+  //     file_id: file.file_id,
+  //     member_id: member_id,
+  //   })
+  //     .then((res) => {
+  //       if (res.data.step_two == true) {
+  //         publish('completedProgress', { file_id: file.file_id });
+  //         // publish('StepTwoSuccess', { file_id: file.file_id });
+  //         SetAllprogress({
+  //           ...allprogress,
+  //           files: allprogress.files.filter(
+  //             (f: any) => f.file_id !== file.file_id,
+  //           ),
+  //         });
+  //       } else {
+  //         const timeoutId = setTimeout(() => {
+  //           checkUploadedFile(file);
+  //         }, 15000);
+  //         timeoutsRef.current.push(timeoutId);
+  //       }
+  //     })
+  //     .catch(() => {
+  //       const timeoutId = setTimeout(() => {
+  //         checkUploadedFile(file);
+  //       }, 15000);
+  //       timeoutsRef.current.push(timeoutId);
+  //     });
+  // };
+  // const checkDeleteFile = (file: any) => {
+  //   Application.checkDeleteLabReport({
+  //     file_id: file.file_id,
+  //     member_id: member_id,
+  //   })
+  //     .then((res) => {
+  //       if (res.data.deleted == true) {
+  //         publish('completedProgress', { file_id: file.file_id });
+  //         SetAllprogress({
+  //           ...allprogress,
+  //           files: allprogress.files.filter(
+  //             (f: any) => f.file_id !== file.file_id,
+  //           ),
+  //         });
+  //       } else {
+  //         const timeoutId = setTimeout(() => {
+  //           checkDeleteFile(file);
+  //         }, 15000);
+  //         timeoutsRef.current.push(timeoutId);
+  //       }
+  //     })
+  //     .catch(() => {
+  //       const timeoutId = setTimeout(() => {
+  //         checkDeleteFile(file);
+  //       }, 15000);
+  //       timeoutsRef.current.push(timeoutId);
+  //     });
+  // };
   const resolveFileController = (files: any[]) => {
     files
       .filter((item: any) => item.process_status == false)
@@ -137,12 +141,12 @@ const UnderProgressController = ({
             ...idHaveAction,
             file.action_type + '_' + file.file_id,
           ]);
-          if (file.action_type === 'uploaded') {
-            checkUploadedFile(file);
-          }
-          if (file.action_type === 'deleted') {
-            checkDeleteFile(file);
-          }
+          // if (file.action_type === 'uploaded') {
+          //   checkUploadedFile(file);
+          // }
+          // if (file.action_type === 'deleted') {
+          //   checkDeleteFile(file);
+          // }
         }
       });
   };
@@ -177,22 +181,38 @@ const UnderProgressController = ({
         ),
       ];
       publish('openProgressModal', {
-        data: progressArray.filter((item: any) => item.process_status == false),
+        data: progressArray,
       });
+      if(progressArray.length == 0){
+        publish("allProgressCompleted", {});
+      }
     }
   };
   useEffect(() => {
     // getProgress();
     needCheckProgress();
-    // subscribe('checkProgress', () => {
-    //   getProgress();
-    //   // if (data.detail.type === 'file') {
-    //   //   SetAllprogress((prev: any) => ({
-    //   //     ...prev,
-    //   //     files: [...prev.files, data.detail],
-    //   //   }));
-    //   // }
-    // });
+    const interval = setInterval(() => {
+      needCheckProgress();
+    }, 30000);
+
+    subscribe('checkProgress', (data?: any) => {
+      if(data){
+        if (data.detail.type === 'file') {
+          SetAllprogress((prev: any) => ({
+            ...prev,
+            files: [...prev.files, data.detail],
+          }));
+        }
+        setTimeout(() => {
+          getProgress();
+        }, 2000);
+      }else {
+        getProgress();
+      }
+    });
+    subscribe("syncReport", () => {
+      setfromDate(new Date());
+    });
 
     return () => {
       SetAllprogress({
@@ -200,7 +220,11 @@ const UnderProgressController = ({
         questionnaires: [],
         refresh: [],
       });
-      // publish('clearAllProgress', {});
+      clearInterval(interval);
+      unsubscribe('checkProgress', () => {
+        getProgress();
+      });
+      // publish('clearAllProgress', {});       lastNeedCheckProgressRef.current = null;
       timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
       timeoutsRef.current = [];
     };
