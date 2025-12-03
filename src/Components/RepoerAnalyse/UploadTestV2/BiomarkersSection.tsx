@@ -362,7 +362,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
         >
           <Circleloader></Circleloader>
-          <div>Processing… We’ll show the detected biomarkers shortly.</div>
+          <div style={{ textAlignLast: 'center' }} className="text-center">
+            Processing… We’ll show the detected biomarkers shortly.
+          </div>
         </div>
       ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <div
@@ -375,7 +377,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       ) : (
         <div className=" relative ">
           <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
-            <div className="flex w-full justify-between">
+            <div className="flex text-nowrap overflow-x-auto hidden-scrollbar w-full gap-6 justify-between">
               <div className="flex items-center gap-2">
                 <div className=" text-[8px] xs:text-[10px] md:text-sm font-medium">
                   List of Biomarkers{' '}
@@ -385,7 +387,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 </div>
                 <img
                   onClick={() => setIsScaling(!isScaling)}
-                  className="w-4 h-4 cursor-pointer opacity-70"
+                  className="xs:w-4 xs:h-4 w-3 h-3 cursor-pointer opacity-70"
                   src={
                     isScaling
                       ? '/icons/biomarkers/import.svg'
@@ -398,51 +400,51 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 className="w-4 h-4 cursor-pointer text-Text-Secondary"
               /> */}
               </div>
-              
+
               <div className="flex items-center gap-6">
-              <div className=" hidden sm:flex items-center gap-3">
-                <Toggle
-                  checked={showOnlyErrors}
-                  setChecked={setShowOnlyErrors}
-                />
-                <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
-                  Show Only Errors
+                <div className=" hidden sm:flex items-center gap-3">
+                  <Toggle
+                    checked={showOnlyErrors}
+                    setChecked={setShowOnlyErrors}
+                  />
+                  <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+                    Show Only Errors
+                  </div>
+                </div>
+                <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
+                  Date of Test:
+                  <SimpleDatePicker
+                    textStyle
+                    isUploadFile
+                    date={dateOfTest}
+                    setDate={setDateOfTest}
+                    placeholder="Select Date"
+                    ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
+                  />
                 </div>
               </div>
-              <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
-                Date of Test:
-                <SimpleDatePicker
-                  textStyle
-                  isUploadFile
-                  date={dateOfTest}
-                  setDate={setDateOfTest}
-                  placeholder="Select Date"
-                  ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
-                />
-              </div>
-            </div>
             </div>
             <div className=" flex sm:hidden items-center gap-3">
-                <Toggle
-                  checked={showOnlyErrors}
-                  setChecked={setShowOnlyErrors}
-                />
-                <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
-                  Show Only Errors
-                </div>
+              
+              <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
+              <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+                Show Only Errors
               </div>
+            </div>
           </div>
 
           <div className="  relative w-full text-xs h-full">
-            <div className="w-full overflow-x-auto md:overflow-x-visible">
+            <div className="w-full hidden-scrollbar  overflow-x-auto md:overflow-x-visible">
               <div className=" w-full min-w-[800px] ">
                 {/* Table Header */}
                 <div
                   className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
- style={{
-                  gridTemplateColumns:
-                    'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
-                }}
+                  style={{
+                    gridTemplateColumns:
+                      window.innerWidth > 640
+                        ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
+                        : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
+                  }}
                 >
                   <div className="text-left">Extracted Biomarker</div>
                   <div className="text-center">System Biomarker</div>
@@ -456,7 +458,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 {/* Table Rows */}
                 <div
                   ref={tableRef}
-                  className=" w-[100%]"
+                  className=" overflow-y-auto pb-[40px] sm:pb-0 w-[100%]"
                   style={{
                     minHeight: isScaling
                       ? window.innerHeight - 330 + 'px'
@@ -474,10 +476,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         ref={(el) => (rowRefs.current[index] = el)}
                         key={index}
                         className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
-style={{
-                        gridTemplateColumns:
-                          'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
-                      }}
+                        style={{
+                    gridTemplateColumns:
+                      window.innerWidth > 640
+                        ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
+                        : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
+                  }}
                       >
                         <div className="text-left text-Text-Primary flex gap-1">
                           <TooltipTextAuto maxWidth="160px">
@@ -632,7 +636,7 @@ style={{
                                   changedRows.includes(b.biomarker_id) ||
                                   mappedRows.includes(b.biomarker_id)
                                     ? 'pl-0'
-                                    : 'pl-6'
+                                    : ' pl-4 sm:pl-6'
                                 } `}
                               >
                                 <img

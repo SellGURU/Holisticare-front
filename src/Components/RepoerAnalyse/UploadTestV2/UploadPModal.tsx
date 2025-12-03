@@ -200,7 +200,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             ) : null}
           </div>
           <div
-            className={`w-full h-full flex flex-col mt-4 gap-2 ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
+            className={`w-full h-fit sm:h-full flex flex-col mt-4 gap-2 ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
           >
             <FileUploaderSection
               isShare={isShare}

@@ -121,15 +121,15 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   return (
     <div
       // style={{ height: window.innerHeight - 235 + 'px' }}
-      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200  h-[100vh] md:h-[calc(100vh-235px)] mt-4 overflow-y-auto md:overflow-hidden  "
+      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200  h-[100vh] md:h-[calc(100vh-235px)] mt-4 overflow-y-auto md:overflow-hidden overflow-x-hidden "
     >
       {loading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="w-full flex flex-wrap gap-4 items-center justify-between">
-        <div className="flex justify-between w-full gap-3">
+      <div className="w-full flex text-nowrap flex-wrap md:flex-nowrap  gap-4 items-center justify-between">
+        <div className="flex flex-wrap justify-between w-full gap-3">
           <div className="md:text-sm xs:text-[12px] text-[10px] font-medium flex gap-1 items-center text-Text-Primary">
             List of Biomarkers
             <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
@@ -138,13 +138,13 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           </div>
           <div className="flex sm:hidden items-center gap-3">
             <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
-            <div className=" text-[8px] sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+            <div className=" text-[10px] md:text-xs font-normal text-Text-Primary">
               Show Only Errors
             </div>
           </div>
         </div>
 
-        <div className="flex gap-7">
+        <div className="flex w-full justify-end gap-7">
           <div className=" hidden sm:flex items-center gap-3">
             <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
             <div className=" text-[8px] sm:text-[10px] md:text-xs font-normal text-Text-Primary">
@@ -152,7 +152,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center  text-[8px] sm:text-[10px] md:text-xs text-Text-Quadruple">
+          <div className="flex items-center   text-[10px] md:text-xs text-Text-Quadruple">
             Date of Test:
             <SimpleDatePicker
               textStyle
@@ -270,11 +270,11 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           ref={tableRef}
           className={`w-full border-Gray-50 overflow-x-auto  hidden-scrollbar   ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
         >
-          <div className="w-full border border-Gray-50 min-w-[700px]    rounded-[20px] h-full text-xs">
+          <div className="w-full border border-Gray-50  min-w-[300px] sm:min-w-[700px]    rounded-[20px] h-full text-xs">
             {/* Table Header */}
             <div
-              className="grid sticky top-0 w-full z-10 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-              style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
+              className="grid sticky top-0 w-full z-10 py-2 px-2 sm:px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px]   border-Gray-50"
+              style={{ gridTemplateColumns: window.innerWidth > 640 ? '1fr 200px 200px 100px' : '80px 60px 60px 60px' }}
             >
               <div className="text-left">Biomarker Name</div>
               <div className="text-center">Value</div>
@@ -294,8 +294,8 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                   <div
                     ref={(el) => (rowRefs.current[index] = el)}
                     key={index}
-                    className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
-                    style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
+                    className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-2 sm:px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary `}
+              style={{ gridTemplateColumns: window.innerWidth > 640 ? '1fr 200px 200px 100px' : '80px 60px 60px 60px' }}
                   >
                     {/* Biomarker Name */}
                     <div className="flex items-center  gap-1">
@@ -332,9 +332,9 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                     </div>
 
                     {/* Action */}
-                    <div className="flex justify-end">
+                    <div className="flex justify-end ">
                       {deleteIndex === index ? (
-                        <div className="flex items-center justify-end w-full gap-1">
+                        <div className="flex items-center justify-end  w-full gap-1">
                           <div className="text-Text-Quadruple text-[10px]">
                             Sure?
                           </div>
@@ -352,7 +352,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                           />
                         </div>
                       ) : (
-                        <div className="w-[47px] pl-5">
+                        <div className=" w-[40px] sm:w-[47px] pl-5">
                           <img
                             src="/icons/trash-blue.svg"
                             alt="Delete"
