@@ -42,7 +42,7 @@ const UnderProgressController = ({
   member_id,
 }: UnderProgressControllerProps) => {
   const [fromDate, setfromDate] = useState<Date>(new Date());
-  const lastNeedCheckProgressRef = useRef<Date|null>(null);
+  const lastNeedCheckProgressRef = useRef<Date | null>(null);
   const [allprogress, SetAllprogress] = useState<any>({
     files: [],
     questionnaires: [],
@@ -53,7 +53,10 @@ const UnderProgressController = ({
 
   const needCheckProgress = () => {
     const lastDate = lastNeedCheckProgressRef.current;
-    Application.needCheckProgress(member_id, lastDate != null ? formatDateTime(lastDate) : null)
+    Application.needCheckProgress(
+      member_id,
+      lastDate != null ? formatDateTime(lastDate) : null,
+    )
       .then((res) => {
         if (res.data.response == true) {
           getProgress();
@@ -183,8 +186,8 @@ const UnderProgressController = ({
       publish('openProgressModal', {
         data: progressArray,
       });
-      if(progressArray.length == 0){
-        publish("allProgressCompleted", {});
+      if (progressArray.length == 0) {
+        publish('allProgressCompleted', {});
       }
     }
   };
@@ -196,7 +199,7 @@ const UnderProgressController = ({
     }, 30000);
 
     subscribe('checkProgress', (data?: any) => {
-      if(data){
+      if (data) {
         if (data.detail.type === 'file') {
           SetAllprogress((prev: any) => ({
             ...prev,
@@ -206,11 +209,11 @@ const UnderProgressController = ({
         setTimeout(() => {
           getProgress();
         }, 2000);
-      }else {
+      } else {
         getProgress();
       }
     });
-    subscribe("syncReport", () => {
+    subscribe('syncReport', () => {
       setfromDate(new Date());
     });
 

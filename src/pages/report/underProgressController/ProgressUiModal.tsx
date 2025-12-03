@@ -80,7 +80,7 @@ const ProgressUiModal = () => {
     });
     subscribe('allProgressCompleted', () => {
       setIsClosed(false);
-      setprogressData((pre)=>{
+      setprogressData((pre) => {
         return pre.map((item: any) => ({
           ...item,
           process_status: true,
@@ -138,7 +138,7 @@ const ProgressUiModal = () => {
                   {resolveSectionName(el).title}
                 </div>
                 <div className="mt-1 w-full flex items-center gap-1 p-3 rounded-[12px] border border-Gray-50 text-[10px] text-Primary-DeepTeal transition-colors">
-                  {el.process_status ==false ? (
+                  {el.process_status == false ? (
                     <div
                       style={{
                         background:

@@ -89,12 +89,12 @@ const ActionSection: FC<ActionSectionProps> = ({
       });
     setTimeout(() => {
       publish('checkProgress', {
-          "date": "",
-          "file_id": file.file_id,
-          "action_type": "deleted",
-          "file_name": file.file_name,
-          "process_status": false,
-          "type":'file'        
+        date: '',
+        file_id: file.file_id,
+        action_type: 'deleted',
+        file_name: file.file_name,
+        process_status: false,
+        type: 'file',
       });
     }, 4000);
     onDelete();
