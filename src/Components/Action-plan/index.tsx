@@ -358,12 +358,8 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                             }
                           }}
                         >
-                       
-                            
-                              <img src="/icons/tick.svg" alt="" />
-                              Generate New
-                            
-                        
+                          <img src="/icons/tick.svg" alt="" />
+                          Generate New
                         </ButtonSecondary>
                       </div>
                     </div>

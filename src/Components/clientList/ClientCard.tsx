@@ -994,7 +994,7 @@ const ClientCard: FC<ClientCardProps> = ({
                   />
                   Drift Analyzed
                 </div> */}
-            {client.has_minimum_data == true && (
+                {client.has_minimum_data == true && (
                   <div
                     className="flex w-full items-center justify-start gap-2 cursor-pointer"
                     onClick={handleRefreshData}
