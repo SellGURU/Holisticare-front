@@ -38,15 +38,15 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     if (id) {
       getFileList(id);
     }
-    
+
     subscribe('syncReport', () => {
-      if(id) {
+      if (id) {
         getFileList(id);
       }
     });
     return () => {
       unsubscribe('syncReport', () => {
-        if(id) {
+        if (id) {
           getFileList(id);
         }
       });
