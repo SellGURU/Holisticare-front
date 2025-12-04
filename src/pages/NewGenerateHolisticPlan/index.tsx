@@ -375,7 +375,7 @@ const NewGenerateHolisticPlan = () => {
         <div className="fixed w-full top-0 hidden lg:flex z-[9]">
           <TopBar></TopBar>
         </div>
-        <div className="fixed flex lg:hidden w-full justify-between top-0 shadow-300 items-center py-3 px-4 md:px-6 bg-bg-color z-[9]">
+        <div className="fixed flex lg:hidden w-full justify-between top-0 shadow-300 items-center py-3 px-2 md:px-6 bg-bg-color z-[9]">
           <div className="flex items-center gap=2 ">
             {' '}
             <div
@@ -386,13 +386,13 @@ const NewGenerateHolisticPlan = () => {
             >
               <img className="w-6 h-6" src="/icons/arrow-back.svg" />
             </div>
-            <div className="TextStyle-Headline-5 text-Text-Primary">
+            <div className="TextStyle-Headline-5 text-nowrap text-Text-Primary">
               Generate Holistic Plan
             </div>
           </div>
 
           {treatmentPlanData && (
-            <div className="">
+            <div className="text-nowrap">
               <ButtonPrimary
                 disabled={isLoading}
                 onClick={() => {
@@ -405,7 +405,7 @@ const NewGenerateHolisticPlan = () => {
                     <BeatLoader size={8} color={'white'}></BeatLoader>
                   </div>
                 ) : (
-                  <div className=" min-w-[100px] flex items-center justify-center gap-1">
+                  <div className=" w-[80px] md:w-auto md:min-w-[100px] flex items-center justify-center gap-1">
                     <img className="w-4" src="/icons/tick-square.svg" alt="" />
                     Save Changes
                   </div>
@@ -584,7 +584,7 @@ const NewGenerateHolisticPlan = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-1 items-center text-nowrap">
+                    <div className="flex gap-1 items-center text-nowrap mb-4 md:mb-0">
                       {/* {treatmentPlanData?.suggestion_tab?.length == 0 && (
                         <ButtonSecondary
                           onClick={() => {
@@ -837,6 +837,12 @@ const NewGenerateHolisticPlan = () => {
                                             <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                               Last Value
                                             </div>
+                                            <StatusBarChartV3
+                                    values={activeEl.values}
+                                    unit={activeEl.unit}
+                                    status={activeEl.status}
+                                    data={activeEl.chart_bounds}
+                                  ></StatusBarChartV3>
                                             {/* <StatusBarChartV2
                                                     data={resol.chart_bounds}
                                                     mapingData={Object.fromEntries(
@@ -867,6 +873,19 @@ const NewGenerateHolisticPlan = () => {
                                               Historical Data
                                             </div>
                                             <div className="mt-0 relative">
+                                              <HistoricalChart
+                                      unit={activeEl?.unit}
+                                      chartId={activeEl.name}
+                                      sources={activeEl?.historical_sources}
+                                      statusBar={activeEl.chart_bounds}
+                                      dataPoints={[
+                                        ...activeEl.values,
+                                      ].reverse()}
+                                      dataStatus={[
+                                        ...activeEl.status,
+                                      ].reverse()}
+                                      labels={[...activeEl.date].reverse()}
+                                    ></HistoricalChart>
                                               {/* <HistoricalChart
                                                       statusBar={
                                                         resol.chart_bounds
