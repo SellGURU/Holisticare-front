@@ -181,18 +181,26 @@ const ProgressUiModal = () => {
         })}
       </div>
       {isSynced() ? (
-        <div className="w-full  flex justify-end ">
-          <ButtonSecondary
-            onClick={() => {
-              setshowProgressModal(false);
-              // setCompletedIdes([]);
-              setprogressData([]);
-              publish('syncReport', {});
-            }}
-          >
-            Sync Data
-          </ButtonSecondary>
-        </div>
+        <>
+          <div>
+            <div className="text-Text-Secondary TextStyle-Body-3 mb-4">
+              Click “Sync Data” to save these updates to the system.
+            </div>
+          </div>
+          <div className="w-full  flex justify-end ">
+            <ButtonSecondary
+              size="small"
+              onClick={() => {
+                setshowProgressModal(false);
+                // setCompletedIdes([]);
+                setprogressData([]);
+                publish('syncReport', {});
+              }}
+            >
+              Sync Data
+            </ButtonSecondary>
+          </div>
+        </>
       ) : (
         <>
           <div className="w-full  text-Text-Secondary TextStyle-Body-3">
