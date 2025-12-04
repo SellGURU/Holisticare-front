@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import TextField from '../../TextField';
 import SimpleDatePicker from '../../SimpleDatePicker';
-import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Select from '../../Select';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
@@ -273,13 +272,14 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           <div className="w-full border border-Gray-50  min-w-[300px] sm:min-w-[700px]    rounded-[20px] h-full text-xs">
             {/* Table Header */}
             <div
-              className="grid sticky top-0 w-full z-10 py-2 px-2 sm:px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px]   border-Gray-50"
-              style={{
-                gridTemplateColumns:
-                  window.innerWidth > 640
-                    ? '1fr 200px 200px 100px'
-                    : '80px 60px 60px 60px',
-              }}
+              className="grid   grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]
+    sm:grid-cols-[1fr_200px_200px_100px] sticky top-0 w-full z-10 py-2 px-2 sm:px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px]   border-Gray-50"
+              // style={{
+              //   gridTemplateColumns:
+              //     window.innerWidth > 640
+              //       ? '1fr 200px 200px 100px'
+              //       : '80px 60px 60px 60px',
+              // }}
             >
               <div className="text-left">Biomarker Name</div>
               <div className="text-center">Value</div>
@@ -299,19 +299,18 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                   <div
                     ref={(el) => (rowRefs.current[index] = el)}
                     key={index}
-                    className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-2 sm:px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary `}
-                    style={{
-                      gridTemplateColumns:
-                        window.innerWidth > 640
-                          ? '1fr 200px 200px 100px'
-                          : '80px 60px 60px 60px',
-                    }}
+                    className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid   grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]
+    sm:grid-cols-[minmax(0,1fr)_200px_200px_100px] py-1 px-2 sm:px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary `}
+                    // style={{
+                    //   gridTemplateColumns:
+                    //     window.innerWidth > 640
+                    //       ? '1fr 200px 200px 100px'
+                    //       : '80px 60px 60px 60px',
+                    // }}
                   >
                     {/* Biomarker Name */}
                     <div className="flex items-center  gap-1">
-                      <TooltipTextAuto maxWidth="250px">
-                        {biomarker.biomarker}
-                      </TooltipTextAuto>
+                     <EllipsedTooltip text={biomarker.biomarker}></EllipsedTooltip>
                       {/* {errorForRow && (
                         <>
                           <img

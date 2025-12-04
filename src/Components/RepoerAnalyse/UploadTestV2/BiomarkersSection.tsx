@@ -433,17 +433,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           </div>
 
           <div className="  relative w-full text-xs h-full">
-            <div className="w-full hidden-scrollbar  overflow-x-auto md:overflow-x-visible">
-              <div className=" w-full min-w-[800px] ">
+            <div className="w-full hidden-scrollbar p overflow-x-auto md:overflow-x-visible">
+              <div className=" w-full  min-w-[800px] ">
                 {/* Table Header */}
                 <div
-                  className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-                  style={{
-                    gridTemplateColumns:
-                      window.innerWidth > 640
-                        ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
-                        : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
-                  }}
+                  className="grid    biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                  // style={{
+                  //   gridTemplateColumns:
+                  //     window.innerWidth > 640
+                  //       ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
+                  //       : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
+                  // }}
                 >
                   <div className="text-left">Extracted Biomarker</div>
                   <div className="text-center">System Biomarker</div>
@@ -457,14 +457,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 {/* Table Rows */}
                 <div
                   ref={tableRef}
-                  className=" overflow-y-auto  w-[100%]"
+                  className=" overflow-y-auto pb-[40px] sm:pb-0 w-[100%]"
                   style={{
                     minHeight: isScaling
                       ? window.innerHeight - 330 + 'px'
                       : window.innerHeight - 500 + 'px',
                     maxHeight: isScaling
                       ? window.innerHeight - 330 + 'px'
-                      : window.innerWidth > 640 ? window.innerHeight - 500 + 'px' : window.innerHeight - 300 + 'px',
+                      : window.innerWidth > 640 ? window.innerHeight - 500 + 'px' : window.innerHeight - 700 + 'px',
                   }}
                 >
                   {biomarkers.map((b, index) => {
@@ -474,13 +474,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       <div
                         ref={(el) => (rowRefs.current[index] = el)}
                         key={index}
-                        className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
-                        style={{
-                          gridTemplateColumns:
-                            window.innerWidth > 640
-                              ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
-                              : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
-                        }}
+                        className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid    biomarker-grid-desktop biomarker-grid-mobile py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
+                        // style={{
+                        //   gridTemplateColumns:
+                        //     window.innerWidth > 640
+                        //       ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
+                        //       : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
+                        // }}
                       >
                         <div className="text-left text-Text-Primary flex gap-1">
                           <TooltipTextAuto maxWidth="160px">
@@ -635,7 +635,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                                   changedRows.includes(b.biomarker_id) ||
                                   mappedRows.includes(b.biomarker_id)
                                     ? 'pl-0'
-                                    : ' sm:pl-6'
+                                    : ' pl-4 sm:pl-6'
                                 } `}
                               >
                                 <img
