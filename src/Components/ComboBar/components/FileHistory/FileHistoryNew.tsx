@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import Circleloader from '../../../CircleLoader';
 import Application from '../../../../api/app';
 import { useParams } from 'react-router-dom';
-import { publish } from '../../../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../../../utils/event';
 import FileUploadProgressList from './FileUploadProgressList';
 
 interface FileHistoryNewProps {
@@ -38,6 +38,19 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     if (id) {
       getFileList(id);
     }
+    
+    subscribe('syncReport', () => {
+      if(id) {
+        getFileList(id);
+      }
+    });
+    return () => {
+      unsubscribe('syncReport', () => {
+        if(id) {
+          getFileList(id);
+        }
+      });
+    };
   }, [id, isOpen]);
   return (
     <>

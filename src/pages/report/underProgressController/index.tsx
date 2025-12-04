@@ -41,7 +41,8 @@ const formatDateTime = (date: Date): string => {
 const UnderProgressController = ({
   member_id,
 }: UnderProgressControllerProps) => {
-  const [fromDate, setfromDate] = useState<Date>(new Date());
+  // const [fromDate, setfromDate] = useState<Date>(new Date());
+  const fromDate = useRef<Date>(new Date());
   const lastNeedCheckProgressRef = useRef<Date | null>(null);
   const [allprogress, SetAllprogress] = useState<any>({
     files: [],
@@ -68,7 +69,7 @@ const UnderProgressController = ({
   };
 
   const getProgress = () => {
-    Application.getProgress(member_id, formatDateTime(fromDate))
+    Application.getProgress(member_id, formatDateTime(fromDate.current))
       .then((res) => {
         SetAllprogress(res.data);
       })
@@ -152,6 +153,12 @@ const UnderProgressController = ({
           // }
         }
       });
+
+    files.forEach((file) => {
+      if(file.process_status == true) {
+        publish('completedProgress', { file_id: file.file_id });
+      }
+    });
   };
 
   const controllProgress = () => {
@@ -214,7 +221,7 @@ const UnderProgressController = ({
       }
     });
     subscribe('syncReport', () => {
-      setfromDate(new Date());
+      fromDate.current = new Date();
     });
 
     return () => {
