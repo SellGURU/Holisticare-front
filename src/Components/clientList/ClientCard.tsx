@@ -994,37 +994,40 @@ const ClientCard: FC<ClientCardProps> = ({
                   />
                   Drift Analyzed
                 </div> */}
-                <div
-                  className="flex items-center justify-center gap-2 cursor-pointer"
-                  onClick={handleRefreshData}
-                >
-                  <img
-                    src="/icons/refresh-circle.svg"
-                    alt=""
-                    className={refresh ? 'animate-spin-slow' : ''}
-                  />
-                  {refresh ? (
-                    <div className="text-Primary-DeepTeal text-xs font-medium">
-                      Syncing...
-                    </div>
-                  ) : (
-                    <div className="flex flex-col">
-                      <div className="text-Primary-DeepTeal font-medium text-xs">
-                        Sync with Latest Data
+            {client.has_minimum_data == true && (
+                  <div
+                    className="flex w-full items-center justify-start gap-2 cursor-pointer"
+                    onClick={handleRefreshData}
+                  >
+                    <img
+                      src="/icons/refresh-circle.svg"
+                      alt=""
+                      className={refresh ? 'animate-spin-slow' : ''}
+                    />
+                    {refresh ? (
+                      <div className="text-Primary-DeepTeal text-xs font-medium">
+                        Syncing...
                       </div>
-                      {client['Latest Sync'] != 'No Data' && (
-                        <div className="text-Text-Quadruple text-[8px]">
-                          Last sync:{' '}
-                          {/* {lastRefreshTime
+                    ) : (
+                      <div className="flex flex-col">
+                        <div className="text-Primary-DeepTeal text-nowrap font-medium text-xs">
+                          Sync with Latest Data
+                        </div>
+                        {client['Latest Sync'] != 'No Data' && (
+                          <div className="text-Text-Quadruple text-[8px]">
+                            Last sync:{' '}
+                            {/* {lastRefreshTime
                             ? formatLastRefresh()
                             : client['Latest Sync']} */}
-                          {formatLastRefresh(client['Latest Sync'])}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <div className="hidden md:flex justify-end items-center">
+                            {formatLastRefresh(client['Latest Sync'])}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="hidden w-full md:flex justify-end items-center">
                   <ButtonPrimary
                     onClick={() => {
                       navigate(`/report/${client.member_id}/${client.name}`);

@@ -1109,13 +1109,23 @@ class Application extends Api {
       member_id: member_id,
     });
   };
-  static refreshData = (member_id: string) => {
-    return this.post(`/patients/refresh_data`, {
+  static refreshData = (member_id: string, full_refresh?: boolean) => {
+    const payload: any = { member_id };
+
+    if (full_refresh !== undefined) {
+      payload.full_refresh = full_refresh;
+    }
+
+    return this.post(`/patients/refresh_data`, payload);
+  };
+
+  static reportGeneratedNotification = (member_id: string) => {
+    return this.post(`/report_generated_notification`, {
       member_id: member_id,
     });
   };
-  static reportGeneratedNotification = (member_id: string) => {
-    return this.post(`/report_generated_notification`, {
+  static checkClientRefresh = (member_id: string) => {
+    return this.post(`/patients/check_need_of_refresh`, {
       member_id: member_id,
     });
   };
