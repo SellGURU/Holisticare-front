@@ -97,10 +97,10 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     setshowModal(false);
     // onDelete();
     setIsDeleted(q_unique_id);
-    if (status == 'completed') {
-      handleCloseSlideOutPanel();
-      publish('openDeleteQuestionnaireTrackingProgressModal', {});
-    }
+    // if (status == 'completed') {
+    //   handleCloseSlideOutPanel();
+    //   publish('openDeleteQuestionnaireTrackingProgressModal', {});
+    // }
 
     Application.deleteQuestionary({
       f_unique_id: f_unique_id,
@@ -119,36 +119,39 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
         setLoadingDelete(false);
         setIsSureRemoveId(null);
       });
-    if (status == 'completed') {
-      const checkDelete = async () => {
-        const pathname = window.location.pathname
-          .split('/')
-          .slice(1, 3)
-          .join('/');
-        if (pathname !== `report/${member_id}`) {
-          publish('closeDeleteQuestionnaireTrackingProgressModal', {});
-          return;
-        }
-        try {
-          const res = await Application.checkDeleteQuestionary({
-            f_unique_id: f_unique_id,
-            q_unique_id: q_unique_id,
-            member_id: member_id,
-          });
-          if (res.status === 200 && res.data.status === true) {
-            setIsDeletedSuccess(true);
-            publish('DeleteQuestionnaireTrackingSuccess', {});
-          } else {
-            setTimeout(checkDelete, 30000);
-          }
-        } catch (err) {
-          console.error('err', err);
+      setTimeout(() => {
+        publish("checkProgress",{})
+      }, 1000);
+    // if (status == 'completed') {
+    //   const checkDelete = async () => {
+    //     const pathname = window.location.pathname
+    //       .split('/')
+    //       .slice(1, 3)
+    //       .join('/');
+    //     if (pathname !== `report/${member_id}`) {
+    //       publish('closeDeleteQuestionnaireTrackingProgressModal', {});
+    //       return;
+    //     }
+    //     try {
+    //       const res = await Application.checkDeleteQuestionary({
+    //         f_unique_id: f_unique_id,
+    //         q_unique_id: q_unique_id,
+    //         member_id: member_id,
+    //       });
+    //       if (res.status === 200 && res.data.status === true) {
+    //         setIsDeletedSuccess(true);
+    //         publish('DeleteQuestionnaireTrackingSuccess', {});
+    //       } else {
+    //         setTimeout(checkDelete, 30000);
+    //       }
+    //     } catch (err) {
+    //       console.error('err', err);
 
-          setTimeout(checkDelete, 30000);
-        }
-      };
-      checkDelete();
-    }
+    //       setTimeout(checkDelete, 30000);
+    //     }
+    //   };
+    //   checkDelete();
+    // }
   };
 
   return (
@@ -411,7 +414,10 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
               ) : (
                 <div
                   onClick={() => {
-                    setshowModal(true);
+                    if(isDeleted !== el.unique_id ){
+                      setshowModal(true);
+
+                    }
                   }}
                   // onClick={() => {
                   //   if (!isView) {

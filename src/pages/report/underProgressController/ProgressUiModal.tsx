@@ -46,6 +46,61 @@ const ProgressUiModal = () => {
         description: 'The file is being uploaded.',
       };
     }
+    if(item.category === 'questionnaire'){
+      if(item.action_type == 'entered'){
+        if(item.filled_by =='client'){
+          if(item.process_status == true){
+            return {
+              title: 'Client questionnaire submitted successfully!',
+              description: 'Client questionnaire submission completed.',
+            };
+          }else {
+            return {
+              title: 'Client questionnaire submission in progress…',
+              description: 'Your client’s responses are being processed.',
+            };
+          }
+        }else {
+          if(item.process_status == true){
+            return {
+              title: 'Questionnaire filled out successfully!',
+              description: 'Questionnaire submission completed.',
+            };
+          }else {
+            return {
+              title: 'Questionnaire completion in progress…',
+              description: 'Your questionnaire responses are being saved.',
+            };
+          }
+        }
+      }
+      if(item.action_type == 'deleted'){
+        if(item.process_status == true){
+          return {
+            title: 'Questionnaire deleted successfully!',
+            description: 'Questionnaire deletion completed.',
+          };
+        }else {
+          return {
+            title: 'Questionnaire deletion in progress…',
+            description: 'The questionnaire is being deleted.',
+          };
+        }
+      }
+      if(item.action_type == 'edited'){
+        if(item.process_status == true){
+          return {
+            title: 'Questionnaire edited successfully!',
+            description: 'Questionnaire updates completed.',
+          };
+        }else {
+          return {
+            title: 'Questionnaire editing in progress…',
+            description: 'The questionnaire responses are being updated.',
+          };
+        }
+      }
+    }
     return {
       title: 'Processing Completed',
       description: 'The processing completed.',
@@ -61,7 +116,15 @@ const ProgressUiModal = () => {
 
           newData.forEach((newItem: any) => {
             const existingIndex = updatedData.findIndex(
-              (item: any) => item.file_id === newItem.file_id,
+              (item: any) => {
+                if (item.category === 'file' && newItem.category === 'file') {
+                  return item.file_id === newItem.file_id;
+                }
+                if (item.category === 'questionnaire' && newItem.category === 'questionnaire') {
+                  return item.q_unique_id === newItem.q_unique_id;
+                }
+                return false;
+              },
             );
 
             if (existingIndex !== -1) {
@@ -101,13 +164,11 @@ const ProgressUiModal = () => {
       setprogressData([]);
     });
     return () => {
-      unsubscribe('syncReport', () => {
-        setprogressData([]);
-      });
-    };
-    return () => {
       unsubscribe('openProgressModal', () => {
         setshowProgressModal(false);
+      });
+      unsubscribe('syncReport', () => {
+        setprogressData([]);
       });
       unsubscribe('closeProgressModal', () => {
         setshowProgressModal(false);
@@ -117,8 +178,7 @@ const ProgressUiModal = () => {
   const isSynced = () => {
     if (progressData.length === 0) return false;
     return progressData.every((progress: any) => {
-      const progressId = progress.file_id;
-      return progressId && progress.process_status == true;
+       return progress.process_status == true;
     });
   };
   return (

@@ -1,77 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
-import Application from '../../api/app';
-import { publish, subscribe } from '../../utils/event';
+import { useEffect, useState } from 'react';
+import { publish, subscribe, unsubscribe } from '../../utils/event';
 
 const FullScreenModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [url, setUrl] = useState('');
-  subscribe('openFullscreenModal', (e: any) => {
-    setIsOpen(true);
-    setUrl(e.detail.url);
-  });
+  useEffect(() => {
+    subscribe('openFullscreenModal', (e: any) => {
+      setIsOpen(true);
+      setUrl(e.detail.url);
+    });
+    setTimeout(() => {
+      if (isOpen) {
+        publish('openSideMenu', { status: true });
+      } else {
+        publish('openSideMenu', { status: false });
+      }    
+      
+    }, 300);
+    return () => {
+      unsubscribe('openFullscreenModal', () => {
+        setIsOpen(false);
+        setUrl('');
+      });
+      unsubscribe('openSideMenu', () => {
+        publish('openSideMenu', { status: false });
+      });
+    };
+  },[isOpen])
   window.addEventListener('message', (event) => {
     if (event.data.type === 'closeFullscreenModal') {
       const receivedData = event.data.data;
       if (receivedData.isUpdate) {
-        publish('openUpdateQuestionnaireTrackingProgressModal', {});
-        const checkUpdate = async () => {
-          const pathname = window.location.pathname
-            .split('/')
-            .slice(1, 3)
-            .join('/');
-          if (pathname !== `report/${receivedData.member_id}`) {
-            publish('closeUpdateQuestionnaireTrackingProgressModal', {});
-            return;
-          }
-          try {
-            const res = await Application.checkUpdateQuestionary({
-              f_unique_id: receivedData.f_unique_id as string,
-              q_unique_id: receivedData.q_unique_id as string,
-              member_id: receivedData.member_id as string,
-            });
-            if (res.status === 200 && res.data.status === true) {
-              publish('UpdateQuestionnaireTrackingSuccess', {});
-            } else {
-              setTimeout(checkUpdate, 30000);
-            }
-          } catch (err) {
-            console.error('err', err);
-
-            setTimeout(checkUpdate, 30000);
-          }
-        };
-        checkUpdate();
-      }
-      if (receivedData.isFill) {
-        publish('openFilloutQuestionnaireTrackingProgressModal', {});
-        const checkFillout = async () => {
-          const pathname = window.location.pathname
-            .split('/')
-            .slice(1, 3)
-            .join('/');
-          if (pathname !== `report/${receivedData.member_id}`) {
-            publish('closeFilloutQuestionnaireTrackingProgressModal', {});
-            return;
-          }
-          try {
-            const res = await Application.checkFilloutQuestionary({
-              f_unique_id: receivedData.f_unique_id as string,
-              q_unique_id: receivedData.q_unique_id as string,
-              member_id: receivedData.member_id as string,
-            });
-            if (res.status === 200 && res.data.status === true) {
-              publish('FilloutQuestionnaireTrackingSuccess', {});
-            } else {
-              setTimeout(checkFillout, 30000);
-            }
-          } catch (err) {
-            console.error('err', err);
-
-            setTimeout(checkFillout, 30000);
-          }
-        };
-        checkFillout();
+        publish("checkProgress",{})
       }
 
       setIsOpen(false);

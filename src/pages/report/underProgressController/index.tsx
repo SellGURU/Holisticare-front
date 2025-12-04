@@ -160,10 +160,19 @@ const UnderProgressController = ({
       }
     });
   };
-
+  const resolveQuestionnaireController = (questionnaires: any[]) => {
+    questionnaires.forEach((file) => {
+      if (file.process_status == true) {
+        publish('completedProgress', { file_id: file.file_id });
+      }
+    });    
+  }
   const controllProgress = () => {
     if (allprogress.files.length > 0) {
       resolveFileController(allprogress.files);
+    }
+    if (allprogress.questionnaires.length > 0) {
+      resolveQuestionnaireController(allprogress.questionnaires);
     }
     if (
       allprogress.questionnaires.length > 0 ||
