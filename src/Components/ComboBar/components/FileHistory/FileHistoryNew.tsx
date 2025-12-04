@@ -38,7 +38,6 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     if (id) {
       getFileList(id);
     }
-
   }, [id, isOpen]);
   useEffect(() => {
     subscribe('syncReport', () => {
@@ -52,8 +51,8 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           getFileList(id);
         }
       });
-    };    
-  },[])
+    };
+  }, []);
   return (
     <>
       {isLoading && (
