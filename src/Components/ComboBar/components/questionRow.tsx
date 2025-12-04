@@ -3,7 +3,7 @@ import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import { useNavigate } from 'react-router-dom';
-import { publish } from '../../../utils/event';
+import { publish, subscribe } from '../../../utils/event';
 import { toast } from 'react-toastify';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import { BeatLoader } from 'react-spinners';
@@ -87,6 +87,13 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   useEffect(() => {
     setshowModal(false);
   }, [el.status]);
+  useEffect(() => {
+    subscribe('completedProgress', (data: any) => {
+      if (data.detail.q_unique_id === el.unique_id) {
+        setIsDeletedSuccess(true);
+      }
+    });
+  });
   const handleDelete = (
     member_id: string,
     q_unique_id: string,
@@ -97,10 +104,10 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
     setshowModal(false);
     // onDelete();
     setIsDeleted(q_unique_id);
-    if (status == 'completed') {
-      handleCloseSlideOutPanel();
-      publish('openDeleteQuestionnaireTrackingProgressModal', {});
-    }
+    // if (status == 'completed') {
+    //   handleCloseSlideOutPanel();
+    //   publish('openDeleteQuestionnaireTrackingProgressModal', {});
+    // }
 
     Application.deleteQuestionary({
       f_unique_id: f_unique_id,
@@ -119,36 +126,39 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
         setLoadingDelete(false);
         setIsSureRemoveId(null);
       });
-    if (status == 'completed') {
-      const checkDelete = async () => {
-        const pathname = window.location.pathname
-          .split('/')
-          .slice(1, 3)
-          .join('/');
-        if (pathname !== `report/${member_id}`) {
-          publish('closeDeleteQuestionnaireTrackingProgressModal', {});
-          return;
-        }
-        try {
-          const res = await Application.checkDeleteQuestionary({
-            f_unique_id: f_unique_id,
-            q_unique_id: q_unique_id,
-            member_id: member_id,
-          });
-          if (res.status === 200 && res.data.status === true) {
-            setIsDeletedSuccess(true);
-            publish('DeleteQuestionnaireTrackingSuccess', {});
-          } else {
-            setTimeout(checkDelete, 30000);
-          }
-        } catch (err) {
-          console.error('err', err);
+    setTimeout(() => {
+      publish('checkProgress', {});
+    }, 1000);
+    // if (status == 'completed') {
+    //   const checkDelete = async () => {
+    //     const pathname = window.location.pathname
+    //       .split('/')
+    //       .slice(1, 3)
+    //       .join('/');
+    //     if (pathname !== `report/${member_id}`) {
+    //       publish('closeDeleteQuestionnaireTrackingProgressModal', {});
+    //       return;
+    //     }
+    //     try {
+    //       const res = await Application.checkDeleteQuestionary({
+    //         f_unique_id: f_unique_id,
+    //         q_unique_id: q_unique_id,
+    //         member_id: member_id,
+    //       });
+    //       if (res.status === 200 && res.data.status === true) {
+    //         setIsDeletedSuccess(true);
+    //         publish('DeleteQuestionnaireTrackingSuccess', {});
+    //       } else {
+    //         setTimeout(checkDelete, 30000);
+    //       }
+    //     } catch (err) {
+    //       console.error('err', err);
 
-          setTimeout(checkDelete, 30000);
-        }
-      };
-      checkDelete();
-    }
+    //       setTimeout(checkDelete, 30000);
+    //     }
+    //   };
+    //   checkDelete();
+    // }
   };
 
   return (
@@ -411,7 +421,9 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
               ) : (
                 <div
                   onClick={() => {
-                    setshowModal(true);
+                    if (isDeleted !== el.unique_id) {
+                      setshowModal(true);
+                    }
                   }}
                   // onClick={() => {
                   //   if (!isView) {
@@ -533,11 +545,29 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
         {isDeleted === el.unique_id ? (
           <div className="flex flex-col mt-3">
             <div className="flex items-center">
-              <img
-                src="/icons/tick-circle-upload.svg"
-                alt=""
-                className="w-5 h-5"
-              />
+              {isDeletedSuccess ? (
+                <>
+                  <img
+                    src="/icons/tick-circle-upload.svg"
+                    alt=""
+                    className="w-5 h-5"
+                  />
+                </>
+              ) : (
+                <>
+                  <div
+                    style={{
+                      background:
+                        'linear-gradient(to right, rgba(0,95,115,0.4), rgba(108,194,74,0.4))',
+                    }}
+                    className="flex size-5   rounded-full items-center justify-center gap-[3px]"
+                  >
+                    <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot1"></div>
+                    <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot2"></div>
+                    <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot3"></div>
+                  </div>
+                </>
+              )}
               <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
                 {isDeletedSuccess
                   ? 'Deleting Completed.'

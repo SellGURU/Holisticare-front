@@ -1132,6 +1132,25 @@ class Application extends Api {
   static initialSaveActionPlan = (data: any) => {
     return this.post('/action_plan/draft/initial_save', data);
   };
+  static getProgress = (member_id: string, from_date: string) => {
+    return this.post(`/check_all_ongoing_operations`, {
+      member_id: member_id,
+      from_date: from_date,
+    });
+  };
+
+  static needCheckProgress = (member_id: string, from_date: string | null) => {
+    return this.post(`/need_to_check_all_ongoing_operations`, {
+      member_id: member_id,
+      from_date: from_date ? from_date : undefined,
+    });
+  };
+  static verifyPassword = (data: any) => {
+    return this.post('/setting/verify_password', data);
+  };
+  static changePassword = (data: any) => {
+    return this.post('/setting/change_password', data);
+  };
   static deleteQuestionary = (data: {
     f_unique_id: string;
     q_unique_id: string;
@@ -1153,12 +1172,6 @@ class Application extends Api {
     member_id: string;
   }) => {
     return this.post(`/questionary_tracking/check_delete_questionary`, data);
-  };
-  static verifyPassword = (data: any) => {
-    return this.post('/setting/verify_password', data);
-  };
-  static changePassword = (data: any) => {
-    return this.post('/setting/change_password', data);
   };
   static checkUpdateQuestionary = (data: {
     f_unique_id: string;

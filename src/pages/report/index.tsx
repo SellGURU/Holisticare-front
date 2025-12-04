@@ -8,15 +8,11 @@ import { subscribe, unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
+import UnderProgressController from './underProgressController';
+import { useParams } from 'react-router-dom';
+import ProgressUiModal from './underProgressController/ProgressUiModal';
 import Application from '../../api/app';
 import { publish } from '../../utils/event';
-import { useParams } from 'react-router-dom';
-import UploadFileProgressModal from '../../Components/uploadFileProgressModal';
-import RefreshProgressModal from '../../Components/holisticPlan-refreshModal';
-import DeleteFileProgressModal from '../../Components/deleteFileProgressModal';
-import DeleteQuestionnaireTrackingProgressModal from '../../Components/ComboBar/components/deleteQuestionnaireTrackingProgressModal';
-import UpdateQuestionnaireTrackingProgressModal from '../../Components/ComboBar/components/updateQuestionnaireTrackingProgressModal';
-import FilloutQuestionnaireTrackingProgressModal from '../../Components/ComboBar/components/filloutQuestionnaireTrackingProgressModal';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
@@ -143,6 +139,8 @@ const Report = () => {
           // setIsShareModalLoading(false);
         }}
       />
+      <UnderProgressController member_id={id as string} />
+      <ProgressUiModal />
       <MainModal
         isOpen={showRefreshModal}
         onClose={() => {
@@ -181,6 +179,7 @@ const Report = () => {
                     setshowRefreshModal(false);
                     publish('SyncRefresh', {});
                     publish('disableGenerate', {});
+                    publish('checkProgress', {});
                   });
                 }
               }}
@@ -191,13 +190,6 @@ const Report = () => {
           </div>
         </div>
       </MainModal>
-
-      <UploadFileProgressModal />
-      <RefreshProgressModal />
-      <DeleteFileProgressModal />
-      <DeleteQuestionnaireTrackingProgressModal />
-      <UpdateQuestionnaireTrackingProgressModal />
-      <FilloutQuestionnaireTrackingProgressModal />
     </div>
   );
 };

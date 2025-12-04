@@ -109,8 +109,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setHasWearableData(res.data.has_wearable_data);
         setShowUploadTest(!res.data.first_time_view);
         setQuestionnaires(res.data.questionnaires);
+        if (res.data.has_minimum_data == false) {
+          setDisableGenerate(true);
+        } else {
+          setDisableGenerate(false);
+        }
         setTimeout(() => {
-          if (res.data.show_report == true) {
+          if (
+            res.data.show_report == true ||
+            res.data.first_time_view == true
+          ) {
             fetchData();
           }
         }, 2000);
@@ -611,21 +619,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }, 3000);
     }
   }, [checkedSteptwo]);
-  const checkStepTwo = (fileID: string | undefined) => {
-    if (!fileID) return;
+  // const checkStepTwo = (fileID: string | undefined) => {
+  //   if (!fileID) return;
 
-    Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
-      if (res.data.step_two == true && checkedSteptwo == false) {
-        setCheckedStepTwo(true);
-        // The condition is met, so we stop here.
-        publish('StepTwoSuccess', {});
-      } else {
-        setTimeout(() => {
-          checkStepTwo(fileID);
-        }, 15000); // 15 seconds delay
-      }
-    });
-  };
+  //   Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
+  //     if (res.data.step_two == true && checkedSteptwo == false) {
+  //       setCheckedStepTwo(true);
+  //       // The condition is met, so we stop here.
+  //       publish('StepTwoSuccess', {});
+  //     } else {
+  //       setTimeout(() => {
+  //         checkStepTwo(fileID);
+  //       }, 15000); // 15 seconds delay
+  //     }
+  //   });
+  // };
 
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
   const stopPolling = useRef(false);
@@ -701,42 +709,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //   });
   };
   const [disableGenerate, setDisableGenerate] = useState(false);
-  useEffect(() => {
-    const handler = () => {
-      publish('openRefreshProgressModal', userInfoData?.name);
-      setDisableGenerate(true);
-      if (!id) return;
-
-      let intervalId: any = null;
-
-      const checkStatus = () => {
-        // Immediately stop further polling
-        if (stopPolling.current) {
-          clearInterval(intervalId);
-          return;
-        }
-
-        Application.checkRefreshProgress(id).then((res) => {
-          if (res.data.status === true) {
-            clearInterval(intervalId);
-            publish('RefreshStepTwoSuccess', {});
-            setDisableGenerate(false);
-          }
-        });
-      };
-
-      checkStatus();
-
-      intervalId = setInterval(checkStatus, 10000);
-    };
-
-    subscribe('SyncRefresh', handler);
-
-    return () => {
-      unsubscribe('SyncRefresh', handler);
-    };
-  }, [id, userInfoData?.name]);
-
   // useEffect(() => {
   //   subscribe('disableGenerate', () => {
   //     setDisableGenerate(true);
@@ -1219,27 +1191,33 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           console.log(res);
                         },
                       );
-                      console.log(file_id);
+                      // console.log(file_id);
                       if (file_id) {
-                        publish('openProgressModal', {});
+                        // publish('openProgressModal',{});
                         setShowUploadTest(false);
                         setIsHaveReport(true);
                         setCheckedStepTwo(false);
                         setISGenerateLoading(false);
-                        if (file_id !== 'customBiomarker') {
-                          setTimeout(() => {
-                            checkStepTwo(file_id);
-                          }, 4000);
-                        }
-                      }
-                      // if (file_id && file_id !== "customBiomarker") {
-                      //   publish('openProgressModal', {});
-                      //   setShowUploadTest(false);
-                      //   setIsHaveReport(true);
-                      //   checkStepTwo(file_id);
-                      //   setISGenerateLoading(false);
-                      // }
-                      else {
+                        setTimeout(() => {
+                          publish('checkProgress', {});
+                        }, 4000);
+                        // if (file_id !== 'customBiomarker') {
+                        //   setTimeout(() => {
+                        //     publish('checkProgress', {
+                        //       date: new Date().toISOString(),
+                        //       file_id: file_id,
+                        //       file_name: 'Manual Entry',
+                        //       action_type: 'uploaded',
+                        //       type: 'file',
+                        //     });
+                        //   }, 4000);
+                        // }
+                        // if (file_id !== 'customBiomarker') {
+                        //   setTimeout(() => {
+                        //     checkStepTwo(file_id);
+                        //   }, 4000);
+                        // }
+                      } else {
                         setTimeout(() => {
                           fetchPatentDataWithState();
                           publish('QuestionaryTrackingCall', {});
@@ -1247,12 +1225,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           setISGenerateLoading(false);
                         }, 5000);
                       }
-
-                      // setTimeout(() => {
-                      //   fetchPatentDataWithState();
-                      //   publish('QuestionaryTrackingCall', {});
-                      //   fetchData();
-                      // }, 5000);
                     }}
                     memberId={resolvedMemberID}
                   ></UploadTestV2>
