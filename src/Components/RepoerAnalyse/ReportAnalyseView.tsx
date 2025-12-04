@@ -111,7 +111,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setQuestionnaires(res.data.questionnaires);
         if (res.data.has_minimum_data == false) {
           setDisableGenerate(true);
-        }else{
+        } else {
           setDisableGenerate(false);
         }
         setTimeout(() => {

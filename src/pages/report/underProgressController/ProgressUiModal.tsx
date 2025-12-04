@@ -9,7 +9,7 @@ const ProgressUiModal = () => {
   const [progressData, setprogressData] = useState<Array<any>>([]);
   // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
   const [isClosed, setIsClosed] = useState(false);
-  
+
   const isVisibleModal = () => {
     if (
       progressData.length > 0 &&
@@ -102,19 +102,19 @@ const ProgressUiModal = () => {
         }
       }
     }
-    if(item.category === 'refresh'){
-      if(item.process_status == true){
+    if (item.category === 'refresh') {
+      if (item.process_status == true) {
         return {
           title: `client data update in progress…`,
           description: 'Client data is being updated...',
         };
-      }else{
+      } else {
         return {
           title: 'client data updated successfully!',
           description: 'Client data update completed.',
         };
       }
-    }     
+    }
     return {
       title: 'Processing Completed',
       description: 'The processing completed.',
@@ -139,7 +139,10 @@ const ProgressUiModal = () => {
               ) {
                 return item.q_unique_id === newItem.q_unique_id;
               }
-              if(item.category === 'refresh' && newItem.category === 'refresh'){
+              if (
+                item.category === 'refresh' &&
+                newItem.category === 'refresh'
+              ) {
                 return true;
               }
               return false;
