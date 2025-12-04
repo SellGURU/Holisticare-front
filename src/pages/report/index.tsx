@@ -179,6 +179,7 @@ const Report = () => {
                     setshowRefreshModal(false);
                     publish('SyncRefresh', {});
                     publish('disableGenerate', {});
+                    publish('checkProgress', {});
                   });
                 }
               }}

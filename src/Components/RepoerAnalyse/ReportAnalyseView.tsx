@@ -111,6 +111,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setQuestionnaires(res.data.questionnaires);
         if (res.data.has_minimum_data == false) {
           setDisableGenerate(true);
+        }else{
+          setDisableGenerate(false);
         }
         setTimeout(() => {
           if (
@@ -707,42 +709,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //   });
   };
   const [disableGenerate, setDisableGenerate] = useState(false);
-  useEffect(() => {
-    const handler = () => {
-      publish('openRefreshProgressModal', userInfoData?.name);
-      setDisableGenerate(true);
-      if (!id) return;
-
-      let intervalId: any = null;
-
-      const checkStatus = () => {
-        // Immediately stop further polling
-        if (stopPolling.current) {
-          clearInterval(intervalId);
-          return;
-        }
-
-        Application.checkRefreshProgress(id).then((res) => {
-          if (res.data.status === true) {
-            clearInterval(intervalId);
-            publish('RefreshStepTwoSuccess', {});
-            setDisableGenerate(false);
-          }
-        });
-      };
-
-      checkStatus();
-
-      intervalId = setInterval(checkStatus, 10000);
-    };
-
-    subscribe('SyncRefresh', handler);
-
-    return () => {
-      unsubscribe('SyncRefresh', handler);
-    };
-  }, [id, userInfoData?.name]);
-
   // useEffect(() => {
   //   subscribe('disableGenerate', () => {
   //     setDisableGenerate(true);
