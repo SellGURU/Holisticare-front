@@ -3,7 +3,7 @@ import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import { useNavigate } from 'react-router-dom';
-import { publish } from '../../../utils/event';
+import { publish, subscribe } from '../../../utils/event';
 import { toast } from 'react-toastify';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import { BeatLoader } from 'react-spinners';
@@ -87,6 +87,13 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   useEffect(() => {
     setshowModal(false);
   }, [el.status]);
+  useEffect(() => {
+    subscribe('completedProgress', (data: any) => {
+      if (data.detail.q_unique_id === el.unique_id) {
+        setIsDeletedSuccess(true);
+      }
+    });
+  })
   const handleDelete = (
     member_id: string,
     q_unique_id: string,
@@ -538,11 +545,29 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
         {isDeleted === el.unique_id ? (
           <div className="flex flex-col mt-3">
             <div className="flex items-center">
-              <img
-                src="/icons/tick-circle-upload.svg"
-                alt=""
-                className="w-5 h-5"
-              />
+              {isDeletedSuccess ? 
+                <>
+                <img
+                  src="/icons/tick-circle-upload.svg"
+                  alt=""
+                  className="w-5 h-5"
+                />                
+                </>
+                :
+                <>
+                <div
+                  style={{
+                    background:
+                      'linear-gradient(to right, rgba(0,95,115,0.4), rgba(108,194,74,0.4))',
+                  }}
+                  className="flex size-5   rounded-full items-center justify-center gap-[3px]"
+                >
+                  <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot1"></div>
+                  <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot2"></div>
+                  <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot3"></div>
+                </div>
+                </>
+                }
               <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
                 {isDeletedSuccess
                   ? 'Deleting Completed.'
