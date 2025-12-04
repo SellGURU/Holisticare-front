@@ -46,27 +46,27 @@ const ProgressUiModal = () => {
         description: 'The file is being uploaded.',
       };
     }
-    if(item.category === 'questionnaire'){
-      if(item.action_type == 'entered'){
-        if(item.filled_by =='client'){
-          if(item.process_status == true){
+    if (item.category === 'questionnaire') {
+      if (item.action_type == 'entered') {
+        if (item.filled_by == 'client') {
+          if (item.process_status == true) {
             return {
               title: 'Client questionnaire submitted successfully!',
               description: 'Client questionnaire submission completed.',
             };
-          }else {
+          } else {
             return {
               title: 'Client questionnaire submission in progress…',
               description: 'Your client’s responses are being processed.',
             };
           }
-        }else {
-          if(item.process_status == true){
+        } else {
+          if (item.process_status == true) {
             return {
               title: 'Questionnaire filled out successfully!',
               description: 'Questionnaire submission completed.',
             };
-          }else {
+          } else {
             return {
               title: 'Questionnaire completion in progress…',
               description: 'Your questionnaire responses are being saved.',
@@ -74,26 +74,26 @@ const ProgressUiModal = () => {
           }
         }
       }
-      if(item.action_type == 'deleted'){
-        if(item.process_status == true){
+      if (item.action_type == 'deleted') {
+        if (item.process_status == true) {
           return {
             title: 'Questionnaire deleted successfully!',
             description: 'Questionnaire deletion completed.',
           };
-        }else {
+        } else {
           return {
             title: 'Questionnaire deletion in progress…',
             description: 'The questionnaire is being deleted.',
           };
         }
       }
-      if(item.action_type == 'edited'){
-        if(item.process_status == true){
+      if (item.action_type == 'edited') {
+        if (item.process_status == true) {
           return {
             title: 'Questionnaire edited successfully!',
             description: 'Questionnaire updates completed.',
           };
-        }else {
+        } else {
           return {
             title: 'Questionnaire editing in progress…',
             description: 'The questionnaire responses are being updated.',
@@ -115,17 +115,18 @@ const ProgressUiModal = () => {
           const updatedData = [...prevData];
 
           newData.forEach((newItem: any) => {
-            const existingIndex = updatedData.findIndex(
-              (item: any) => {
-                if (item.category === 'file' && newItem.category === 'file') {
-                  return item.file_id === newItem.file_id;
-                }
-                if (item.category === 'questionnaire' && newItem.category === 'questionnaire') {
-                  return item.q_unique_id === newItem.q_unique_id;
-                }
-                return false;
-              },
-            );
+            const existingIndex = updatedData.findIndex((item: any) => {
+              if (item.category === 'file' && newItem.category === 'file') {
+                return item.file_id === newItem.file_id;
+              }
+              if (
+                item.category === 'questionnaire' &&
+                newItem.category === 'questionnaire'
+              ) {
+                return item.q_unique_id === newItem.q_unique_id;
+              }
+              return false;
+            });
 
             if (existingIndex !== -1) {
               // Merge new data with existing data
@@ -178,7 +179,7 @@ const ProgressUiModal = () => {
   const isSynced = () => {
     if (progressData.length === 0) return false;
     return progressData.every((progress: any) => {
-       return progress.process_status == true;
+      return progress.process_status == true;
     });
   };
   return (

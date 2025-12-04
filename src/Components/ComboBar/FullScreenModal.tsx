@@ -15,8 +15,7 @@ const FullScreenModal = () => {
         publish('openSideMenu', { status: true });
       } else {
         publish('openSideMenu', { status: false });
-      }    
-      
+      }
     }, 300);
     return () => {
       unsubscribe('openFullscreenModal', () => {
@@ -27,12 +26,12 @@ const FullScreenModal = () => {
         publish('openSideMenu', { status: false });
       });
     };
-  },[isOpen])
+  }, [isOpen]);
   window.addEventListener('message', (event) => {
     if (event.data.type === 'closeFullscreenModal') {
       const receivedData = event.data.data;
       if (receivedData.isUpdate) {
-        publish("checkProgress",{})
+        publish('checkProgress', {});
       }
 
       setIsOpen(false);

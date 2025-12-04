@@ -119,9 +119,9 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
         setLoadingDelete(false);
         setIsSureRemoveId(null);
       });
-      setTimeout(() => {
-        publish("checkProgress",{})
-      }, 1000);
+    setTimeout(() => {
+      publish('checkProgress', {});
+    }, 1000);
     // if (status == 'completed') {
     //   const checkDelete = async () => {
     //     const pathname = window.location.pathname
@@ -414,9 +414,8 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
               ) : (
                 <div
                   onClick={() => {
-                    if(isDeleted !== el.unique_id ){
+                    if (isDeleted !== el.unique_id) {
                       setshowModal(true);
-
                     }
                   }}
                   // onClick={() => {

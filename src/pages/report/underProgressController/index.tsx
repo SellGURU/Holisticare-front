@@ -165,8 +165,8 @@ const UnderProgressController = ({
       if (file.process_status == true) {
         publish('completedProgress', { file_id: file.file_id });
       }
-    });    
-  }
+    });
+  };
   const controllProgress = () => {
     if (allprogress.files.length > 0) {
       resolveFileController(allprogress.files);
