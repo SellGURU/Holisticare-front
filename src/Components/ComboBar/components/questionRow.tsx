@@ -5,6 +5,8 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import { useNavigate } from 'react-router-dom';
 import { publish } from '../../../utils/event';
 import { toast } from 'react-toastify';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import { BeatLoader } from 'react-spinners';
 // import questionsDataMoch from './questions/data.json';
 // import SvgIcon from "../../../utils/svgIcon";
 
@@ -21,6 +23,8 @@ interface QuestionRowProps {
     active: number,
     disabled?: boolean,
   ) => any;
+  handleCloseSlideOutPanel: () => void;
+  getQuestionnaires: () => void;
 }
 const QuestionRow: React.FC<QuestionRowProps> = ({
   el,
@@ -29,6 +33,8 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   onTryComplete,
   onAssign,
   // deleteRow,
+  handleCloseSlideOutPanel,
+  getQuestionnaires,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
@@ -36,11 +42,21 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   const [showModal, setshowModal] = useState(false);
   const [isAssigned, setisAssigned] = useState(false);
   const [countdown, setCountdown] = useState(3);
+  const [isSureRemoveId, setIsSureRemoveId] = useState<string | null>(null);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [isDeleted, setIsDeleted] = useState<string | null>(null);
+  const [isDeletedSuccess, setIsDeletedSuccess] = useState<boolean>(false);
 
   const modalRef = useRef(null);
+  const CloseAction = () => {
+    setshowModal(false);
+    setIsSureRemoveId(null);
+    setIsDeleted(null);
+    setIsDeletedSuccess(false);
+  };
   useModalAutoClose({
     refrence: modalRef,
-    close: () => setshowModal(false),
+    close: CloseAction,
   });
   useEffect(() => {
     // Initialize timer with a safe default value
@@ -71,10 +87,75 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   useEffect(() => {
     setshowModal(false);
   }, [el.status]);
+  const handleDelete = (
+    member_id: string,
+    q_unique_id: string,
+    f_unique_id: string,
+    status: string,
+  ) => {
+    setLoadingDelete(true);
+    setshowModal(false);
+    // onDelete();
+    setIsDeleted(q_unique_id);
+    if (status == 'completed') {
+      handleCloseSlideOutPanel();
+      publish('openDeleteQuestionnaireTrackingProgressModal', {});
+    }
+
+    Application.deleteQuestionary({
+      f_unique_id: f_unique_id,
+      q_unique_id: q_unique_id,
+      member_id: member_id,
+    })
+      .then(() => {
+        setLoadingDelete(false);
+        setIsSureRemoveId(null);
+        if (status !== 'completed') {
+          setIsDeletedSuccess(true);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoadingDelete(false);
+        setIsSureRemoveId(null);
+      });
+    if (status == 'completed') {
+      const checkDelete = async () => {
+        const pathname = window.location.pathname
+          .split('/')
+          .slice(1, 3)
+          .join('/');
+        if (pathname !== `report/${member_id}`) {
+          publish('closeDeleteQuestionnaireTrackingProgressModal', {});
+          return;
+        }
+        try {
+          const res = await Application.checkDeleteQuestionary({
+            f_unique_id: f_unique_id,
+            q_unique_id: q_unique_id,
+            member_id: member_id,
+          });
+          if (res.status === 200 && res.data.status === true) {
+            setIsDeletedSuccess(true);
+            publish('DeleteQuestionnaireTrackingSuccess', {});
+          } else {
+            setTimeout(checkDelete, 30000);
+          }
+        } catch (err) {
+          console.error('err', err);
+
+          setTimeout(checkDelete, 30000);
+        }
+      };
+      checkDelete();
+    }
+  };
 
   return (
     <>
-      <div className=" bg-white border relative border-Gray-50  px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
+      <div
+        className={`bg-white border relative border-Gray-50  px-5 py-3 min-h-[48px]  w-full rounded-[12px]`}
+      >
         {showModal && (
           <>
             <div
@@ -87,15 +168,16 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     Application.PreviewQuestionary({
                       member_id: id,
                       q_unique_id: el.unique_id,
+                      f_unique_id: el.forms_unique_id,
                     })
                       .then((res) => {
                         console.log(res);
 
                         // setViewQuestienry(res.data);
                         // setIsView(true);
-                        // setshowModal(false);
+                        setshowModal(false);
                         window.open(
-                          `/surveys-view/${id}/${el.unique_id}`,
+                          `/surveys-view/${id}/${el.unique_id}/${el.forms_unique_id}`,
                           '_blank',
                         );
 
@@ -114,11 +196,32 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     //   setshowModal(false);
                     // });
                   }}
-                  className={`flex items-center ${el.status != 'completed' && 'border-b border-Secondary-SelverGray '}  gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
+                  className={`flex items-center border-b border-Secondary-SelverGray  gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
                 >
                   <img className="size-5" src="/icons/eye-green.svg" alt="" />
                   Preview
                 </div>
+                {el.status == 'completed' ? (
+                  <>
+                    <div
+                      onClick={() => {
+                        setshowModal(false);
+                        publish('openFullscreenModal', {
+                          url: `/surveys/${id}/${el.unique_id}/${el.forms_unique_id}/edit`,
+                        });
+                        handleCloseSlideOutPanel();
+                      }}
+                      className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
+                    >
+                      <img
+                        className="w-[22px] h-[22px]"
+                        src="/icons/edit-2-green.svg"
+                        alt=""
+                      />
+                      Edit
+                    </div>
+                  </>
+                ) : null}
                 {el.status == 'completed' ? null : (
                   <>
                     <div
@@ -136,12 +239,13 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         console.log(onTryComplete);
 
                         //  onTryComplete();
-                        // setshowModal(false);
+                        setshowModal(false);
 
                         // navigate(`/surveys/${id}/${el.unique_id}`);
                         publish('openFullscreenModal', {
-                          url: `/surveys/${id}/${el.unique_id}`,
+                          url: `/surveys/${id}/${el.unique_id}/${el.forms_unique_id}/fill`,
                         });
+                        handleCloseSlideOutPanel();
                         // window.open(`/surveys/${id}/${el.unique_id}`, '_blank');
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
@@ -159,6 +263,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                           Application.QuestionaryAction({
                             member_id: id,
                             q_unique_id: el.unique_id,
+                            f_unique_id: el.forms_unique_id,
                             action: 'assign',
                           })
                             .then(() => {
@@ -169,7 +274,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                             .catch(() => {});
                         }
                       }}
-                      className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
+                      className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} border-b border-Secondary-SelverGray flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2  cursor-pointer`}
                     >
                       <img
                         className="size-5"
@@ -180,11 +285,59 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     </div>
                   </>
                 )}
+                {isSureRemoveId === null ? (
+                  <>
+                    {loadingDelete ? (
+                      <>
+                        <BeatLoader color="#6CC24A" size={10} />
+                      </>
+                    ) : (
+                      <div
+                        onClick={() => {
+                          setIsSureRemoveId(el.unique_id);
+                        }}
+                        className={`flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1 cursor-pointer`}
+                      >
+                        <img
+                          className="size-5"
+                          src="/icons/delete-green.svg"
+                          alt=""
+                        />
+                        Delete
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center justify-start gap-2">
+                    <div className="text-Text-Quadruple text-xs">Sure?</div>
+                    <img
+                      src="/icons/tick-circle-green.svg"
+                      alt=""
+                      className="w-[20px] h-[20px] cursor-pointer"
+                      onClick={() => {
+                        handleDelete(
+                          id,
+                          el.unique_id,
+                          el.forms_unique_id,
+                          el.status,
+                        );
+                      }}
+                    />
+                    <img
+                      src="/icons/close-circle-red.svg"
+                      alt=""
+                      className="w-[20px] h-[20px] cursor-pointer"
+                      onClick={() => setIsSureRemoveId(null)}
+                    />
+                  </div>
+                )}
               </>
             </div>
           </>
         )}
-        <div className=" flex justify-between items-center w-full">
+        <div
+          className={`flex justify-between items-center w-full ${isDeleted === el.unique_id ? 'opacity-50' : ''}`}
+        >
           {isAssigned ? (
             <div className="w-full flex justify-between">
               <div
@@ -376,6 +529,48 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
               </div>
             </div>
           </div>
+        )}
+        {isDeleted === el.unique_id ? (
+          <div className="flex flex-col mt-3">
+            <div className="flex items-center">
+              <img
+                src="/icons/tick-circle-upload.svg"
+                alt=""
+                className="w-5 h-5"
+              />
+              <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
+                {isDeletedSuccess
+                  ? 'Deleting Completed.'
+                  : 'The questionnaire is being removed.'}
+              </div>
+            </div>
+            <div className="text-[10px] text-Text-Quadruple mt-2 leading-5">
+              {isDeletedSuccess
+                ? 'If you would like to remove its related data from the report, please click the “Unsync Data” button.'
+                : "If you'd like, you may continue working while the system removes the questionnaire."}
+            </div>
+            {isDeletedSuccess && (
+              <div className="w-full flex justify-end">
+                <ButtonSecondary
+                  ClassName="rounded-[20px] mt-1"
+                  size="small"
+                  onClick={() => {
+                    setIsSureRemoveId(null);
+                    setIsDeleted(null);
+                    if (el.status !== 'completed') {
+                      getQuestionnaires();
+                    } else {
+                      publish('syncReport', {});
+                    }
+                  }}
+                >
+                  Unsync Data
+                </ButtonSecondary>
+              </div>
+            )}
+          </div>
+        ) : (
+          ''
         )}
       </div>
     </>

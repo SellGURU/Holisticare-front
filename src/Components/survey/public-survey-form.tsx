@@ -1,6 +1,18 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  Activity,
+  AlertCircle,
+  ArrowRight,
+  Check,
+  CheckCircle2,
+  Star,
+  UploadCloud,
+  X,
+} from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import Application from '../../api/app';
 import { Button } from '../ui/button';
 import {
   Card,
@@ -10,24 +22,12 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import { Textarea } from '../ui/textarea';
 import { Checkbox } from '../ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Label } from '../ui/label';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Slider } from '../ui/slider';
-import {
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-  Star,
-  Activity,
-  UploadCloud,
-  X,
-  Check,
-} from 'lucide-react';
+import { Textarea } from '../ui/textarea';
 import { toast } from '../ui/use-toast';
-import Application from '../../api/app';
-import { useParams } from 'react-router-dom';
 // import { publish } from '../../utils/event';
 
 // Define flexible interfaces to handle different API response structures
@@ -65,6 +65,7 @@ interface PublicSurveyFormProps {
   survey: ApiSurvey;
   isClient?: boolean;
   onSubmitClient?: (respond: ApiQuestion[]) => void;
+  action?: string;
 }
 
 // --- EMOJI SELECTOR COMPONENT ---
@@ -198,15 +199,23 @@ export function PublicSurveyForm({
   survey,
   isClient = false,
   onSubmitClient,
+  action,
 }: PublicSurveyFormProps) {
   console.log(survey);
 
+  useEffect(() => {
+    if (action === 'edit') {
+      setCurrentStep(1);
+    }
+  }, [action]);
+
   // const navigate = useNavigate();
-  const { 'member-id': memberId, 'q-id': qId } = useParams();
+  const { 'member-id': memberId, 'q-id': qId, 'f-id': fId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<
     Record<number, string | string[] | MultiFileResponse | null | number>
   >({});
+  console.log('responses => ', responses);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [visibleQuestions, setVisibleQuestions] = useState<ApiQuestion[]>([]);
@@ -318,12 +327,32 @@ export function PublicSurveyForm({
       switch (q.type?.toLowerCase()) {
         case 'checkbox': {
           // Added block scope
-          initialResponses[index] = [];
+          initialResponses[index] = (q.response as string[]) || [];
+          break;
+        }
+        case 'number': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
+          break;
+        }
+        case 'yes_no': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
           break;
         }
         case 'file uploader': {
           // Added block scope
-          initialResponses[index] = {};
+          initialResponses[index] = (q.response as MultiFileResponse) || {};
+          break;
+        }
+        case 'paragraph': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
+          break;
+        }
+        case 'text': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
           break;
         }
         case 'scale': {
@@ -332,17 +361,24 @@ export function PublicSurveyForm({
           const options = getQuestionOptions(q);
           const min = Number.parseInt(options[0] || '1'); // Safely access with default fallback
           const max = Number.parseInt(options[1] || '10'); // Safely access with default fallback
-          initialResponses[index] = Math.floor((min + max) / 2).toString();
+          initialResponses[index] =
+            (q.response as string) || Math.floor((min + max) / 2).toString();
           break;
         }
         case 'star rating': {
           // Added block scope
-          initialResponses[index] = '0'; // Default to 0 stars
+          initialResponses[index] = (q.response as string) || '0'; // Default to 0 stars
           break;
         }
         case 'emojis': {
           // Added block scope
-          initialResponses[index] = emojeysData[2].name; // Default to neutral emoji
+          initialResponses[index] =
+            (q.response as string) || emojeysData[2].name; // Default to neutral emoji
+          break;
+        }
+        case 'multiple_choice': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
           break;
         }
         default: {
@@ -563,17 +599,57 @@ export function PublicSurveyForm({
       if (isClient) {
         onSubmitClient?.(respond);
       } else {
-        await Application.SaveQuestionary({
-          member_id: memberId,
-          q_unique_id: qId,
-          respond,
-        }).finally(() => {
-          setTimeout(() => {
-            // publish('closeFullscreenModal',{});
-            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
+        if (action === 'fill') {
+          await Application.SaveQuestionary({
+            member_id: memberId,
+            q_unique_id: qId,
+            f_unique_id: fId,
+            respond,
+          }).finally(() => {
+            // setTimeout(() => {
+            // publish('closeFullscreenModal', {});
+            parent.postMessage(
+              {
+                type: 'closeFullscreenModal',
+                data: {
+                  isFill: true,
+                  isUpdate: false,
+                  member_id: memberId as string,
+                  q_unique_id: qId as string,
+                  f_unique_id: fId as string,
+                },
+              },
+              '*',
+            );
             // navigate('/report/' + memberId + '/' + 'N');
-          }, 2000);
-        });
+            // }, 2000);
+          });
+        } else if (action === 'edit') {
+          await Application.EditQuestionary({
+            member_id: memberId,
+            q_unique_id: qId,
+            f_unique_id: fId,
+            respond,
+          }).finally(() => {
+            // setTimeout(() => {
+            // publish('closeFullscreenModal',{});
+            parent.postMessage(
+              {
+                type: 'closeFullscreenModal',
+                data: {
+                  isUpdate: true,
+                  isFill: false,
+                  member_id: memberId as string,
+                  q_unique_id: qId as string,
+                  f_unique_id: fId as string,
+                },
+              },
+              '*',
+            );
+            // navigate('/report/' + memberId + '/' + 'N');
+            // }, 2000);
+          });
+        }
       }
 
       setCurrentStep(sortedQuestions.length + 1);
@@ -798,6 +874,18 @@ export function PublicSurveyForm({
             onChange={(e) => handleResponseChange(e.target.value)}
             placeholder="Type your answer here..."
             className={`min-h-[120px] mt-2 text-base ${
+              validationError ? 'border-red-500 focus-visible:ring-red-500' : ''
+            } ${response ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
+          />
+        );
+      case 'number':
+        return (
+          <input
+            type="number"
+            value={(response as string) || ''}
+            onChange={(e) => handleResponseChange(e.target.value)}
+            placeholder="Type your answer here..."
+            className={` 'flex  w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-2  ${
               validationError ? 'border-red-500 focus-visible:ring-red-500' : ''
             } ${response ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
           />
@@ -1344,7 +1432,9 @@ export function PublicSurveyForm({
               {currentStep === visibleQuestions.length
                 ? submitting
                   ? 'Submitting...'
-                  : 'Submit'
+                  : action === 'edit'
+                    ? 'Update'
+                    : 'Submit'
                 : 'Next'}
             </Button>
           </CardFooter>

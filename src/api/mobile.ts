@@ -4,6 +4,7 @@ import ApiMobile from './apiMobile';
 interface getQuestionaryEmptyData {
   encoded_mi: string;
   unique_id: string;
+  f_unique_id?: string;
 }
 
 interface getTasksProps {

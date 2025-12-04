@@ -213,6 +213,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'Questionnaire Tracking':
         return (
           <Questionary
+            handleCloseSlideOutPanel={handleCloseSlideOutPanel}
             isOpen={isSlideOutPanel && activeItem === 'Questionnaire Tracking'}
           ></Questionary>
         );

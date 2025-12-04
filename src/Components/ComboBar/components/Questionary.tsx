@@ -22,8 +22,12 @@ import { publish, subscribe } from '../../../utils/event';
 // import DatePicker from '../../DatePicker';
 interface QuestionaryProps {
   isOpen?: boolean;
+  handleCloseSlideOutPanel: () => void;
 }
-export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
+export const Questionary: React.FC<QuestionaryProps> = ({
+  isOpen,
+  handleCloseSlideOutPanel,
+}) => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [tryAdd, setTryAdd] = useState(false);
@@ -65,19 +69,25 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
     Application.AddQuestionary({
       member_id: id,
       q_unique_id: selectedFormIDs,
-    });
-    const selectedData = AddForms.filter((form: any) =>
-      selectedFormIDs.includes(form.unique_id),
-    ).map((form: any) => ({
-      title: form.title,
-      'Completed on': null, // Assuming no completion date initially
-      status: 'Incomplete',
-      unique_id: form.unique_id,
-    }));
+    })
+      .then(() => {
+        setSelectedFormIDs([]);
+        setTryAdd(false);
+        getQuestionnaires();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    // const selectedData = AddForms.filter((form: any) =>
+    //   selectedFormIDs.includes(form.unique_id),
+    // ).map((form: any) => ({
+    //   title: form.title,
+    //   'Completed on': null, // Assuming no completion date initially
+    //   status: 'Incomplete',
+    //   unique_id: form.unique_id,
+    // }));
 
-    setData((prev: any) => [...prev, ...selectedData]);
-    setSelectedFormIDs([]);
-    setTryAdd(false);
+    // setData((prev: any) => [...prev, ...selectedData]);
   };
 
   const deleteQuestionRow = (index: number) => {
@@ -506,7 +516,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
           //   setTryComplete(false);
           // }
         }}
-        className={` ${tryComplete && 'opacity-40'} text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
+        className={` ${tryComplete && 'opacity-40'} text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
       >
         <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
         Add Questionnaire
@@ -615,6 +625,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
                       Application.SaveQuestionary({
                         member_id: id,
                         q_unique_id: questionsFormData.unique_id,
+                        f_unique_id: questionsFormData.forms_unique_id,
                         respond: questionsFormData.questions,
                       })
                         .then(() => {
@@ -801,6 +812,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
                           Application.QuestionaryAction({
                             member_id: id,
                             q_unique_id: el.unique_id,
+                            f_unique_id: el.forms_unique_id,
                             action: 'fill',
                           }).then((res) => {
                             const modifiedResponseData = {
@@ -825,6 +837,8 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
                         id={id as string}
                         resolveForm={resolveForm}
                         deleteRow={() => deleteQuestionRow(index)}
+                        handleCloseSlideOutPanel={handleCloseSlideOutPanel}
+                        getQuestionnaires={getQuestionnaires}
                       ></QuestionRow>
                     );
                   })}
