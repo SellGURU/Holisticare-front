@@ -307,41 +307,43 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
           <>
             {messages.length !== 0 || username ? (
               <div className="px-4 pt-4 pb-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]  flex items-center justify-between ">
-                <div className="flex items-center gap-2">
-                  <div
-                    onClick={onBack}
-                    className="flex cursor-pointer md:hidden"
-                  >
-                    <img
-                      src="/icons/arrow-left-new.svg"
-                      className="size-8"
-                      alt=""
-                    />
-                  </div>
-                  <div
-                    className="min-w-12 h-12 rounded-full flex items-center justify-center mr-1"
-                    style={{
-                      backgroundColor: hexToRGBA(
-                        getColorForUsername(username),
-                        0.2,
-                      ),
-                      color: hexToRGBA(getColorForUsername(username), 0.87),
-                    }}
-                  >
-                    {username?.substring(0, 1).toUpperCase()}
-                  </div>
-                  <div className="w-[80%]">
-                    <div className="text-sm font-medium w-full text-Text-Primary">
-                      <TooltipTextAuto maxWidth="350px">
-                        {username}
-                      </TooltipTextAuto>
+                {!isSearchOpen && (
+                  <div className="flex items-center gap-2">
+                    <div
+                      onClick={onBack}
+                      className="flex cursor-pointer md:hidden"
+                    >
+                      <img
+                        src="/icons/arrow-left-new.svg"
+                        className="size-8"
+                        alt=""
+                      />
                     </div>
-                    <div className="text-[10px] text-Text-Quadruple">
-                      {statusParams == 'true' ? 'Online' : 'Offline'}
+                    <div
+                      className="min-w-12 h-12 rounded-full flex items-center justify-center mr-1"
+                      style={{
+                        backgroundColor: hexToRGBA(
+                          getColorForUsername(username),
+                          0.2,
+                        ),
+                        color: hexToRGBA(getColorForUsername(username), 0.87),
+                      }}
+                    >
+                      {username?.substring(0, 1).toUpperCase()}
+                    </div>
+                    <div className="w-[80%]">
+                      <div className="text-sm font-medium w-full text-Text-Primary">
+                        <TooltipTextAuto maxWidth="350px">
+                          {username}
+                        </TooltipTextAuto>
+                      </div>
+                      <div className="text-[10px] text-Text-Quadruple">
+                        {statusParams == 'true' ? 'Online' : 'Offline'}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-6">
+                )}
+                <div className="flex items-center md:gap-6 gap-3">
                   {isSearchOpen ? (
                     <div ref={searchRef}>
                       <SearchBox
@@ -366,7 +368,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                   )}
 
                   <div
-                    className="relative  w-[120px] flex gap-6 items-center font-normal"
+                    className="relative md:w-[120px] flex gap-6 items-center font-normal"
                     ref={wrapperRef}
                   >
                     <div
