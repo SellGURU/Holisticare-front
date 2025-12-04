@@ -47,7 +47,7 @@ const ProgressUiModal = () => {
   };
   useEffect(() => {
     subscribe('openProgressModal', (data?: any) => {
-      if(!showProgressModal){
+      if (!showProgressModal) {
         setshowProgressModal(true);
       }
       if (data?.detail?.data) {
