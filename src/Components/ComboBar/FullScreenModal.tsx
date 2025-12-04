@@ -29,10 +29,8 @@ const FullScreenModal = () => {
   }, [isOpen]);
   window.addEventListener('message', (event) => {
     if (event.data.type === 'closeFullscreenModal') {
-      const receivedData = event.data.data;
-      if (receivedData.isUpdate) {
-        publish('checkProgress', {});
-      }
+      // const receivedData = event.data.data;
+      publish('checkProgress', {});
 
       setIsOpen(false);
       publish('reloadQuestionnaires', {});
