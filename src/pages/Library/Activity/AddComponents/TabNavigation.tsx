@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { useState } from 'react';
 
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { SelectBoxField } from '../../../../Components/UnitComponents';
 import SectionOrderModal from './SectionOrder';
 
 interface TabNavigationProps {
@@ -30,40 +31,52 @@ const TabNavigation = ({
   );
   // "name": "Warm-Up", "enabled": True, "order": 1
   const [showSectionOrder, setShowSectionOrder] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+  const isMobilePage = useMemo(() => {
+    return window.innerWidth < 768;
   }, []);
   return (
     <>
-      <div className="flex items-center justify-between border-b border-Gray-50 mb-4">
-        <div
-          className={`flex gap-2 flex-grow-[1] w-full md:w-[unset] whitespace-nowrap ${isMobile ? 'overflow-x-auto overflow-y-hidden' : ''}`}
-        >
-          {tabs
-            .filter((tab) => tab.enabled)
-            .sort((a, b) => a.order - b.order)
-            .map((tab) => (
-              <div
-                key={tab.name}
-                onClick={() => setActiveTab(tab.name)}
-                className={`text-sm transition-all duration-300 cursor-pointer min-w-[25%] md:min-w-[12%] flex items-center justify-center flex-col ${
-                  activeTab === tab.name
-                    ? 'font-medium bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent'
-                    : 'text-Text-Quadruple hover:text-Gray-500'
-                }`}
-              >
-                {tab.name}
+      <div className="flex items-center justify-between border-b border-Gray-50 mb-4 gap-3 md:gap-0 pr-2 md:pr-0">
+        {isMobilePage ? (
+          <>
+            <SelectBoxField
+              label=""
+              options={tabs
+                .filter((tab) => tab.enabled)
+                .sort((a, b) => a.order - b.order)
+                .map((tab) => tab.name)}
+              value={activeTab}
+              onChange={(value) => {
+                setActiveTab(value);
+              }}
+              margin="mb-2"
+              top="top-[31px]"
+              placeholder=""
+            />
+          </>
+        ) : (
+          <div className={`flex gap-2 flex-grow-[1] whitespace-nowrap`}>
+            {tabs
+              .filter((tab) => tab.enabled)
+              .sort((a, b) => a.order - b.order)
+              .map((tab) => (
                 <div
-                  className={`w-full h-[1px] ${activeTab === tab.name && 'bg-Primary-DeepTeal'} mt-2.5 -mb-[3px]`}
-                ></div>
-              </div>
-            ))}
-        </div>
+                  key={tab.name}
+                  onClick={() => setActiveTab(tab.name)}
+                  className={`text-sm transition-all duration-300 cursor-pointer min-w-[12%] flex items-center justify-center flex-col ${
+                    activeTab === tab.name
+                      ? 'font-medium bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent'
+                      : 'text-Text-Quadruple hover:text-Gray-500'
+                  }`}
+                >
+                  {tab.name}
+                  <div
+                    className={`w-full h-[1px] ${activeTab === tab.name && 'bg-Primary-DeepTeal'} mt-2.5 -mb-[3px]`}
+                  ></div>
+                </div>
+              ))}
+          </div>
+        )}
         <img
           src="/icons/setting-4.svg"
           alt=""
