@@ -24,13 +24,13 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
       }
     }
     subscribe('completedProgress', (data: any) => {
-      if (data.detail.file_id === file.file_id) {
+      if (data.detail.file_id === file.file_id && file.action_type != 'uploaded') {
         setFileStatus('deleted');
       }
     });
     return () => {
       unsubscribe('completedProgress', (data: any) => {
-        if (data.detail.file_id === file.file_id) {
+        if (data.detail.file_id === file.file_id && file.action_type != 'uploaded') {
           setFileStatus('deleted');
         }
       });

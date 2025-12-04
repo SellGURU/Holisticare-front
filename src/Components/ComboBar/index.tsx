@@ -176,9 +176,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   };
   useEffect(() => {
     if (isSlideOutPanel) {
-      publish('closeProgressModal', {});
+      publish('openSideMenu', { status: true });
     } else {
-      publish('openProgressModal', {});
+      publish('openSideMenu', { status: false });
     }
   }, [isSlideOutPanel]);
   const [updated, setUpdated] = useState(false);

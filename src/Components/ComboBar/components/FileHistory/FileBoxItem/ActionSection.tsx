@@ -145,7 +145,9 @@ const ActionSection: FC<ActionSectionProps> = ({
                 {file.file_name !== 'Manual Entry' && (
                   <img
                     onClick={() => {
-                      downloadFile();
+                      if (!isDeleted) {
+                        downloadFile();
+                      }
                     }}
                     className="cursor-pointer"
                     src="/icons/import.svg"

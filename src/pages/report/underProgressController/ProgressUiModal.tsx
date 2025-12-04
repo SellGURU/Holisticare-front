@@ -5,11 +5,12 @@ import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 
 const ProgressUiModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
+  const [isSideMenuOpen,setIsSideMenuOpen] = useState(false);
   const [progressData, setprogressData] = useState<Array<any>>([]);
   // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
   const [isClosed, setIsClosed] = useState(false);
   const isVisibleModal = () => {
-    if (progressData.length > 0 && showProgressModal && !isClosed) {
+    if (progressData.length > 0 && showProgressModal && !isClosed&&!isSideMenuOpen) {
       return true;
     } else {
       return false;
@@ -47,9 +48,7 @@ const ProgressUiModal = () => {
   };
   useEffect(() => {
     subscribe('openProgressModal', (data?: any) => {
-      if (!showProgressModal) {
-        setshowProgressModal(true);
-      }
+      setshowProgressModal(true);
       if (data?.detail?.data) {
         setprogressData((prevData) => {
           const newData = data?.detail?.data || [];
@@ -80,6 +79,9 @@ const ProgressUiModal = () => {
     subscribe('closeProgressModal', () => {
       setshowProgressModal(false);
     });
+    subscribe('openSideMenu', (status:any) => {
+      setIsSideMenuOpen(status.detail.status);
+    })
     subscribe('allProgressCompleted', () => {
       setIsClosed(false);
       setprogressData((pre) => {
@@ -90,6 +92,14 @@ const ProgressUiModal = () => {
       });
       // setCompletedIdes((prev) => [...prev, data?.detail?.file_id]);
     });
+    subscribe('syncReport', () => {
+      setprogressData([]);
+    });
+    return () => {
+      unsubscribe('syncReport', () => {
+        setprogressData([]);
+      });
+    };
     return () => {
       unsubscribe('openProgressModal', () => {
         setshowProgressModal(false);
