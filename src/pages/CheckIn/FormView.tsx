@@ -98,8 +98,8 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
       unique_id: id,
       respond: e,
       f_unique_id: fId || '',
-    }).catch(() => {})
-  }
+    }).catch(() => {});
+  };
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   // const scrollUp = () => {

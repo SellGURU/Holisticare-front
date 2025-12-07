@@ -36,10 +36,12 @@ export default function PublicSurveyPage() {
             member_id: memberId,
             q_unique_id: qId,
             f_unique_id: fId,
-          }).then((res2) => {
-            setSurvey({...res.data, ...res2.data});
-            setLoading(false);
-          }).catch(() => {})
+          })
+            .then((res2) => {
+              setSurvey({ ...res.data, ...res2.data });
+              setLoading(false);
+            })
+            .catch(() => {});
         })
         .catch((err) => {
           setError(
