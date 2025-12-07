@@ -93,7 +93,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
         setIsDeletedSuccess(true);
       }
     });
-  },[]);
+  }, []);
   const handleDelete = (
     member_id: string,
     q_unique_id: string,
