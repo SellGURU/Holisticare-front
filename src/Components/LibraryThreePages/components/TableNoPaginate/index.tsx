@@ -83,6 +83,10 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
     >
       <div
         className={`flex flex-col justify-between overflow-x-auto bg-white text-Text-Primary border border-Boarder`}
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#E5E5E5 #E5E5E5',
+        }}
       >
         {table.getRowModel().rows.length > 0 ? (
           <table
@@ -97,7 +101,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                   {headerGroup.headers.map((header, index) => (
                     <th
                       key={header.id}
-                      className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer `}
+                      className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer w-[100px] md:w-[unset]`}
                     >
                       <div
                         className={`flex items-center  ${index == 0 ? 'justify-start ' : 'justify-center '} `}
@@ -121,7 +125,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                     </th>
                   ))}
                   <th
-                    className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer`}
+                    className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer w-[100px] md:w-[unset]`}
                   >
                     <div className={`flex items-center justify-center`}>
                       <div className="flex items-center justify-center text-nowrap">

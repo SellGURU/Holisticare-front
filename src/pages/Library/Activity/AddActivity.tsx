@@ -267,7 +267,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         </div>
       )}
       <div
-        className={`bg-white ${step === 0 ? 'w-[784px]' : 'w-[884px]'} p-4 rounded-[16px] h-full`}
+        className={`bg-white ${step === 0 ? 'w-[90vw] md:w-[800px]' : 'w-[90vw] md:w-[884px]'} p-4 rounded-[16px] h-full`}
       >
         <div className="flex w-full  justify-start">
           <div className="text-[14px] font-medium text-Text-Primary">
@@ -275,7 +275,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           </div>
         </div>
         <div className="w-full h-[1px] bg-Boarder my-3"></div>
-        <div className="min-h-[300px]">
+        <div className="md:min-h-[300px]">
           {step === 0 ? (
             <InformationStep
               showValidation={showValidation}
