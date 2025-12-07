@@ -156,7 +156,10 @@ const UnderProgressController = ({
 
     files.forEach((file) => {
       if (file.process_status == true) {
-        publish('completedProgress', { file_id: file.file_id ,type: file.action_type});
+        publish('completedProgress', {
+          file_id: file.file_id,
+          type: file.action_type,
+        });
       }
     });
   };

@@ -110,15 +110,14 @@ const ProgressUiModal = () => {
     if (item.category === 'refresh') {
       if (item.process_status == true) {
         return {
-          title: userInfoData?.name+ `'s data updated successfully!`,
+          title: userInfoData?.name + `'s data updated successfully!`,
           description: 'Client data update completed.',
-        };        
+        };
       } else {
         return {
-          title: userInfoData?.name+ `'s data update in progress…`,
+          title: userInfoData?.name + `'s data update in progress…`,
           description: 'Client data is being updated...',
         };
-
       }
     }
     return {
