@@ -89,11 +89,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   }, [el.status]);
   useEffect(() => {
     subscribe('completedProgress', (data: any) => {
-      if (data.detail.q_unique_id === el.unique_id) {
+      if (data.detail.file_id === el.unique_id) {
         setIsDeletedSuccess(true);
       }
     });
-  });
+  },[]);
   const handleDelete = (
     member_id: string,
     q_unique_id: string,
@@ -587,11 +587,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   onClick={() => {
                     setIsSureRemoveId(null);
                     setIsDeleted(null);
-                    if (el.status !== 'completed') {
-                      getQuestionnaires();
-                    } else {
-                      publish('syncReport', {});
-                    }
+                    // if (el.status !== 'completed') {
+                    getQuestionnaires();
+                    // } else {
+                    publish('syncReport', {});
+                    // }
                   }}
                 >
                   Unsync Data
