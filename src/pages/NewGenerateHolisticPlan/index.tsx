@@ -585,7 +585,7 @@ const NewGenerateHolisticPlan = () => {
                       </div>
                     </div>
                     <div className="flex gap-1 items-center text-nowrap">
-                      {/* {treatmentPlanData?.suggestion_tab?.length == 0 && (
+                      {treatmentPlanData?.suggestion_tab?.length > 0 &&treatment_id =='a' && (
                         <ButtonSecondary
                           onClick={() => {
                             navigate(`/report/Generate-Recommendation/${id}`);
@@ -595,7 +595,7 @@ const NewGenerateHolisticPlan = () => {
                           <img src="/icons/tick-square.svg" alt="" /> Auto
                           Generate
                         </ButtonSecondary>
-                      )} */}
+                      )}
                       <ButtonPrimary
                         onClick={() => {
                           setshowAddModal(true);
