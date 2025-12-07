@@ -1187,6 +1187,10 @@ class Application extends Api {
   }) => {
     return this.post(`/questionary_tracking/check_save_questionnaire`, data);
   };
+
+  static autoSaveQuestionary = (data: any) => {
+    return this.post(`/questionary_tracking/autosave`, data);
+  }
 }
 
 export default Application;

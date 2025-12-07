@@ -65,6 +65,7 @@ interface PublicSurveyFormProps {
   survey: ApiSurvey;
   isClient?: boolean;
   onSubmitClient?: (respond: ApiQuestion[]) => void;
+  onAutoSaveClient?: (respond: ApiQuestion[]) => void;
   action?: string;
 }
 
@@ -199,6 +200,7 @@ export function PublicSurveyForm({
   survey,
   isClient = false,
   onSubmitClient,
+  onAutoSaveClient,
   action,
 }: PublicSurveyFormProps) {
   console.log(survey);
@@ -215,6 +217,65 @@ export function PublicSurveyForm({
   const [responses, setResponses] = useState<
     Record<number, string | string[] | MultiFileResponse | null | number>
   >({});
+
+  const resolveRespond = () => {
+      const respond = sortedQuestions.map((q, idx) => {
+        if (q.hide) {
+          return {
+            ...q,
+            response: '', // always empty for hidden
+          };
+        }
+        let responseValue = responses[idx];
+
+        // Convert null/undefined to empty string for relevant types
+        if (
+          responseValue === undefined ||
+          responseValue === null ||
+          (typeof responseValue === 'string' && responseValue.trim() === '')
+        ) {
+          // Only set to empty string if it's not a checkbox or file uploader
+          // Checkbox should be [] and File Uploader should be {}
+          if (
+            q.type?.toLowerCase() !== 'checkbox' &&
+            q.type?.toLowerCase() !== 'file uploader' &&
+            q.type?.toLowerCase() !== 'star rating' && // Star rating might default to '0'
+            q.type?.toLowerCase() !== 'scale' && // Scale might have a default value
+            q.type?.toLowerCase() !== 'emojis' // Emojis has a default value
+          ) {
+            responseValue = '';
+          }
+        }
+        // Special handling for number-like responses to ensure they are strings
+        if (
+          (q.type?.toLowerCase() === 'scale' ||
+            q.type?.toLowerCase() === 'star rating') &&
+          typeof responseValue === 'number'
+        ) {
+          responseValue = responseValue.toString();
+        }
+
+        return {
+          ...q,
+          response: responseValue,
+        };
+      });    
+      return respond;
+  }
+  useEffect(() => {
+    if(currentStep === 0) return;
+    if(isClient){
+      onAutoSaveClient?.(resolveRespond());
+    }else {
+      Application.autoSaveQuestionary({
+        member_id: memberId,
+        q_unique_id: qId,
+        f_unique_id: fId,
+        respond: resolveRespond(),      
+      }).catch(() => {})
+
+    }
+  },[currentStep])
   console.log('responses => ', responses);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -553,47 +614,7 @@ export function PublicSurveyForm({
     setSubmitting(true);
     try {
       // --- MODIFIED: Ensure response is explicitly an empty string for null/undefined values ---
-      const respond = sortedQuestions.map((q, idx) => {
-        if (q.hide) {
-          return {
-            ...q,
-            response: '', // always empty for hidden
-          };
-        }
-        let responseValue = responses[idx];
-
-        // Convert null/undefined to empty string for relevant types
-        if (
-          responseValue === undefined ||
-          responseValue === null ||
-          (typeof responseValue === 'string' && responseValue.trim() === '')
-        ) {
-          // Only set to empty string if it's not a checkbox or file uploader
-          // Checkbox should be [] and File Uploader should be {}
-          if (
-            q.type?.toLowerCase() !== 'checkbox' &&
-            q.type?.toLowerCase() !== 'file uploader' &&
-            q.type?.toLowerCase() !== 'star rating' && // Star rating might default to '0'
-            q.type?.toLowerCase() !== 'scale' && // Scale might have a default value
-            q.type?.toLowerCase() !== 'emojis' // Emojis has a default value
-          ) {
-            responseValue = '';
-          }
-        }
-        // Special handling for number-like responses to ensure they are strings
-        if (
-          (q.type?.toLowerCase() === 'scale' ||
-            q.type?.toLowerCase() === 'star rating') &&
-          typeof responseValue === 'number'
-        ) {
-          responseValue = responseValue.toString();
-        }
-
-        return {
-          ...q,
-          response: responseValue,
-        };
-      });
+      const respond =resolveRespond()
       // --- END MODIFICATION ---
 
       if (isClient) {

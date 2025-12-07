@@ -18,6 +18,9 @@ interface getExerciseFileProps {
 }
 
 class Mobile extends ApiMobile {
+  static autoSaveQuestionary = (data: any) => {
+    return this.post('/tasks/autosave', data);
+  }
   static getQuestionaryEmpty = (data: getQuestionaryEmptyData) => {
     return this.post('/tasks/show_empty_questionary', data);
   };

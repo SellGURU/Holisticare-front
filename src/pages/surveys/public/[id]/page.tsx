@@ -32,8 +32,14 @@ export default function PublicSurveyPage() {
         f_unique_id: fId,
       })
         .then((res) => {
-          setSurvey(res.data);
-          setLoading(false);
+          Application.PreviewQuestionary({
+            member_id: memberId,
+            q_unique_id: qId,
+            f_unique_id: fId,
+          }).then((res2) => {
+            setSurvey({...res.data, ...res2.data});
+            setLoading(false);
+          }).catch(() => {})
         })
         .catch((err) => {
           setError(

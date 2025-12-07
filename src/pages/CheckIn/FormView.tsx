@@ -92,6 +92,14 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
         setIsLaoding(false);
       });
   };
+  const autoSave = (e: any) => {
+    Mobile.autoSaveQuestionary({
+      encoded_mi: encode,
+      unique_id: id,
+      respond: e,
+      f_unique_id: fId || '',
+    }).catch(() => {})
+  }
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   // const scrollUp = () => {
@@ -147,6 +155,9 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
                   }}
                   isClient={true}
                   survey={data}
+                  onAutoSaveClient={(e) => {
+                    autoSave(e);
+                  }}
                 />
                 {/* <Checkin
                       upData={data?.questions}
