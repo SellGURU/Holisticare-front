@@ -105,6 +105,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         member_id: resolvedMemberID,
       }).then((res) => {
         setUserInfoData(res.data);
+        publish("userInfoData", res.data);
         setIsHaveReport(res.data.show_report);
         setHasWearableData(res.data.has_wearable_data);
         setShowUploadTest(!res.data.first_time_view);
@@ -314,7 +315,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   useEffect(() => {
     const handleSyncReport = (data: any) => {
-      if (isHaveReport) {
+      if (!showUploadTest) {
         if (data.detail.part == 'treatmentPlan') {
           getTreatmentPlanData();
         } else {
@@ -709,11 +710,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //   });
   };
   const [disableGenerate, setDisableGenerate] = useState(false);
-  // useEffect(() => {
-  //   subscribe('disableGenerate', () => {
-  //     setDisableGenerate(true);
-  //   });
-  // });
+  useEffect(() => {
+    subscribe('disableGenerate', () => {
+      setDisableGenerate(true);
+    });
+  },[resolvedMemberID]);
 
   return (
     <>

@@ -9,7 +9,12 @@ const ProgressUiModal = () => {
   const [progressData, setprogressData] = useState<Array<any>>([]);
   // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
   const [isClosed, setIsClosed] = useState(false);
-
+  const [userInfoData, setUserInfoData] = useState<any>(null);
+  useEffect(() => {
+    subscribe('userInfoData', (data: any) => {
+      setUserInfoData(data.detail);
+    });
+  }, []);
   const isVisibleModal = () => {
     if (
       progressData.length > 0 &&
@@ -105,14 +110,15 @@ const ProgressUiModal = () => {
     if (item.category === 'refresh') {
       if (item.process_status == true) {
         return {
-          title: `client data update in progress…`,
-          description: 'Client data is being updated...',
-        };
+          title: userInfoData?.name+ `'s data updated successfully!`,
+          description: 'Client data update completed.',
+        };        
       } else {
         return {
-          title: 'client data updated successfully!',
-          description: 'Client data update completed.',
+          title: userInfoData?.name+ `'s data update in progress…`,
+          description: 'Client data is being updated...',
         };
+
       }
     }
     return {

@@ -24,9 +24,10 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
       }
     }
     subscribe('completedProgress', (data: any) => {
+      console.log(data);
       if (
         data.detail.file_id === file.file_id &&
-        file.action_type != 'uploaded'
+        data.detail.type == 'deleted'
       ) {
         setFileStatus('deleted');
       }
