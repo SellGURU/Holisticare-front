@@ -5,7 +5,7 @@ import SearchBox from '../../SearchBox';
 import StatusMenu from '../../StatusMenu';
 import { ClientCard } from '../../../pages/driftAnaysis/ClientCard';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Circleloader from '../../CircleLoader';
 interface Patient {
   email: string;
@@ -41,7 +41,6 @@ export const SwitchClient: FC<SwitchClientProps> = ({
       tags: [],
     },
   ]);
-  const navigate = useNavigate();
   const resolvedFiltersData = () => {
     return patients.filter((el) => {
       const matchesSearch =
@@ -92,7 +91,7 @@ export const SwitchClient: FC<SwitchClientProps> = ({
 
       if (activeClient) {
         const { member_id, name } = activeClient;
-        navigate(`/report/${member_id}/${encodeURIComponent(name)}`);
+        window.location.href = `/report/${member_id}/${encodeURIComponent(name)}`;
         handleCloseSlideOutPanel();
       }
     }

@@ -156,7 +156,10 @@ const UnderProgressController = ({
 
     files.forEach((file) => {
       if (file.process_status == true) {
-        publish('completedProgress', { file_id: file.file_id });
+        publish('completedProgress', {
+          file_id: file.file_id,
+          type: file.action_type,
+        });
       }
     });
   };
@@ -232,7 +235,6 @@ const UnderProgressController = ({
     subscribe('syncReport', () => {
       fromDate.current = new Date();
     });
-
     return () => {
       SetAllprogress({
         files: [],
@@ -248,7 +250,7 @@ const UnderProgressController = ({
       timeoutsRef.current = [];
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [member_id]);
   useEffect(() => {
     controllProgress();
     // eslint-disable-next-line react-hooks/exhaustive-deps
