@@ -464,7 +464,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       : window.innerHeight - 500 + 'px',
                     maxHeight: isScaling
                       ? window.innerHeight - 330 + 'px'
-                      : window.innerWidth > 640 ? window.innerHeight - 500 + 'px' : window.innerHeight - 700 + 'px',
+                      : window.innerWidth > 640
+                        ? window.innerHeight - 500 + 'px'
+                        : window.innerHeight - 700 + 'px',
                   }}
                 >
                   {biomarkers.map((b, index) => {

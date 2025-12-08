@@ -80,7 +80,11 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                     isChecked && ' line-through'
                   }`}
                 >
-                  <Checkbox isDisabled checked={isChecked} onChange={() => {}} />
+                  <Checkbox
+                    isDisabled
+                    checked={isChecked}
+                    onChange={() => {}}
+                  />
 
                   <span className="text-Text-Secondary text-nowrap mr-1">
                     {issueLabel}:{' '}
@@ -98,15 +102,15 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
                           handleRemoveIssueFromList(text);
                           setDetails((prev: any) => {
                             const exists = prev.some((item: any) =>
-                              Object.prototype.hasOwnProperty.call(item, text)
+                              Object.prototype.hasOwnProperty.call(item, text),
                             );
                             if (exists) {
                               return prev.filter(
                                 (item: any) =>
                                   !Object.prototype.hasOwnProperty.call(
                                     item,
-                                    text
-                                  )
+                                    text,
+                                  ),
                               );
                             }
                           });
@@ -180,7 +184,6 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
       {/* ============================= */}
 
       <div className="relative flex flex-col md:flex-row fw-full select-none h-auto md:h-[43px] items-start md:items-center justify-between gap-2 bg-backgroundColor-Main px-2 py-1 rounded-lg">
-
         {/* Message — top on mobile, centered on desktop */}
         <div className="flex md:absolute md:left-1/2 md:-translate-x-1/2 items-center justify-center gap-1 text-[10px] md:text-xs text-Text-Primary order-1 md:order-none">
           {safeProgress == 100 ? (
@@ -193,7 +196,6 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
 
         {/* Bottom row (Progress + View details) */}
         <div className="flex w-full justify-between items-center order-2 md:order-none">
-
           {/* Progress */}
           <div className="flex flex-col w-full md:w-[352px] gap-1">
             <div className="flex items-start gap-1">

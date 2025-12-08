@@ -120,7 +120,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   return (
     <div
       // style={{ height: window.innerHeight - 235 + 'px' }}
-      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200  h-[100vh] md:h-[calc(100vh-235px)] mt-4 overflow-y-auto md:overflow-hidden overflow-x-hidden "
+      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200   md:h-[calc(100vh-235px)] mt-4 overflow-y-auto md:overflow-hidden overflow-x-hidden "
     >
       {loading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
@@ -170,7 +170,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         className="w-full  flex flex-col md:flex-row md:justify-between gap-4 mt-3 sm:mt-6  md:h-[calc(100vh-330px)] "
       >
         {/* Left side: Add biomarker form */}
-        <div className="rounded-2xl  w-full md:w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px] overflow-auto p">
+        <div className="rounded-2xl  w-full md:w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px] md:overflow-auto">
           <div className="text-xs text-Text-Primary text-justify">
             Add a biomarker by filling in its details (Name, Value, Unit) and
             clicking Add Biomarker. You’ll see it added right away in the
@@ -310,7 +310,9 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                   >
                     {/* Biomarker Name */}
                     <div className="flex items-center  gap-1">
-                     <EllipsedTooltip text={biomarker.biomarker}></EllipsedTooltip>
+                      <EllipsedTooltip
+                        text={biomarker.biomarker}
+                      ></EllipsedTooltip>
                       {/* {errorForRow && (
                         <>
                           <img

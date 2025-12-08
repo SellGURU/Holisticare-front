@@ -94,7 +94,7 @@ const SearchSelect: React.FC<SelectProps> = ({
   return (
     <div
       ref={selectWrapperRef}
-      className={`relative inline-block ${
+      className={`relative inline-block z-[100]  ${
         isSmall && 'w-[101px]'
       } ${isLarge ? 'w-full' : 'w-[142px]'} text-nowrap cursor-pointer font-normal`}
       key={key}
@@ -147,7 +147,7 @@ const SearchSelect: React.FC<SelectProps> = ({
             isSetting
               ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
               : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
-          } overflow-auto n max-h-60`}
+          } overflow-auto n max-h-[190px] md:max-h-60`}
         >
           {/* Search input */}
           <div className="sticky top-0 bg-inherit p-2 z-10">

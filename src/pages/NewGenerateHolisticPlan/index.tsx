@@ -838,11 +838,11 @@ const NewGenerateHolisticPlan = () => {
                                               Last Value
                                             </div>
                                             <StatusBarChartV3
-                                    values={activeEl.values}
-                                    unit={activeEl.unit}
-                                    status={activeEl.status}
-                                    data={activeEl.chart_bounds}
-                                  ></StatusBarChartV3>
+                                              values={activeEl.values}
+                                              unit={activeEl.unit}
+                                              status={activeEl.status}
+                                              data={activeEl.chart_bounds}
+                                            ></StatusBarChartV3>
                                             {/* <StatusBarChartV2
                                                     data={resol.chart_bounds}
                                                     mapingData={Object.fromEntries(
@@ -874,18 +874,24 @@ const NewGenerateHolisticPlan = () => {
                                             </div>
                                             <div className="mt-0 relative">
                                               <HistoricalChart
-                                      unit={activeEl?.unit}
-                                      chartId={activeEl.name}
-                                      sources={activeEl?.historical_sources}
-                                      statusBar={activeEl.chart_bounds}
-                                      dataPoints={[
-                                        ...activeEl.values,
-                                      ].reverse()}
-                                      dataStatus={[
-                                        ...activeEl.status,
-                                      ].reverse()}
-                                      labels={[...activeEl.date].reverse()}
-                                    ></HistoricalChart>
+                                                unit={activeEl?.unit}
+                                                chartId={activeEl.name}
+                                                sources={
+                                                  activeEl?.historical_sources
+                                                }
+                                                statusBar={
+                                                  activeEl.chart_bounds
+                                                }
+                                                dataPoints={[
+                                                  ...activeEl.values,
+                                                ].reverse()}
+                                                dataStatus={[
+                                                  ...activeEl.status,
+                                                ].reverse()}
+                                                labels={[
+                                                  ...activeEl.date,
+                                                ].reverse()}
+                                              ></HistoricalChart>
                                               {/* <HistoricalChart
                                                       statusBar={
                                                         resol.chart_bounds
