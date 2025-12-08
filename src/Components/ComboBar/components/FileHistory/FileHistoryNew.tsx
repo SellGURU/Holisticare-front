@@ -17,7 +17,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const { id } = useParams<{ id: string }>();
-  const [unsyncedIdes,setUnsyncedIdes] = useState<string[]>([]);
+  const [unsyncedIdes, setUnsyncedIdes] = useState<string[]>([]);
   const getFileList = (id: string) => {
     setIsLoading(true);
     Application.getFilleList({ member_id: id })
@@ -27,7 +27,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
             res.data.map((file: any) => ({
               ...file,
               isNeedSync: unsyncedIdes.includes(file.file_id),
-            }))
+            })),
           );
         } else {
           throw new Error('Unexpected data format');
@@ -46,15 +46,15 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       getFileList(id);
     }
   }, [id, isOpen]);
-  
+
   const handleCompletedProgress = (data: any) => {
-    if(data.detail.file_id && data.detail.type == 'uploaded'){
+    if (data.detail.file_id && data.detail.type == 'uploaded') {
       // alert('handleCompletedProgress');
       setUnsyncedIdes((prev) => [...prev, data.detail.file_id]);
     }
-  }
+  };
   useEffect(() => {
-    subscribe('completedProgress',handleCompletedProgress)
+    subscribe('completedProgress', handleCompletedProgress);
     subscribe('syncReport', () => {
       setUnsyncedIdes([]);
       if (id) {
@@ -67,7 +67,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           getFileList(id);
         }
       });
-      unsubscribe('completedProgress',handleCompletedProgress)
+      unsubscribe('completedProgress', handleCompletedProgress);
     };
   }, []);
   return (

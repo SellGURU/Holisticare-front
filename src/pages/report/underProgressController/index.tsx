@@ -214,10 +214,10 @@ const UnderProgressController = ({
   useEffect(() => {
     // Update current member_id ref
     currentMemberIdRef.current = member_id;
-    
+
     // Store the member_id for this effect run to check in callbacks
     const effectMemberId = member_id;
-    
+
     // getProgress();
     needCheckProgress();
     const interval = setInterval(() => {
@@ -230,7 +230,7 @@ const UnderProgressController = ({
       if (currentMemberIdRef.current !== effectMemberId) {
         return;
       }
-      
+
       if (data) {
         if (data.detail.type === 'file') {
           SetAllprogress((prev: any) => ({

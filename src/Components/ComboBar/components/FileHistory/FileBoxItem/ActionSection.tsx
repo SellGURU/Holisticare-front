@@ -88,7 +88,7 @@ const ActionSection: FC<ActionSectionProps> = ({
         console.error(err);
       });
     setTimeout(() => {
-      publish('checkProgress',{});
+      publish('checkProgress', {});
     }, 400);
     onDelete();
   };

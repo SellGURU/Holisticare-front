@@ -12,23 +12,20 @@ interface FileUploadProgressItemProps {
 }
 const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
   const [fileStatus, setFileStatus] = useState<
-    'uploading'|'uploaded'|'upload' | 'deleting' | 'deleted'
+    'uploading' | 'uploaded' | 'upload' | 'deleting' | 'deleted'
   >('upload');
   const { id } = useParams<{ id: string }>();
   const handleCompletedProgress = (data: any) => {
-      if (
-        data.detail.file_id === file.file_id &&
-        data.detail.type == 'deleted'
-      ) {
-        setFileStatus('deleted');
-      }
-      if (
-        data.detail.file_id === file.file_id &&
-        data.detail.type == 'uploaded'
-      ) {
-        setFileStatus('uploaded');
-      }
-  }
+    if (data.detail.file_id === file.file_id && data.detail.type == 'deleted') {
+      setFileStatus('deleted');
+    }
+    if (
+      data.detail.file_id === file.file_id &&
+      data.detail.type == 'uploaded'
+    ) {
+      setFileStatus('uploaded');
+    }
+  };
   useEffect(() => {
     if (file.action_type === 'deleted') {
       if (file.process_done === true) {
@@ -37,21 +34,20 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
         setFileStatus('deleting');
       }
     }
-    if(file.action_type === 'uploaded') {
-      if(file.isNeedSync) {
+    if (file.action_type === 'uploaded') {
+      if (file.isNeedSync) {
         setFileStatus('uploaded');
       } else {
-      if(file.process_done === true) {
+        if (file.process_done === true) {
           setFileStatus('upload');
         } else {
           setFileStatus('uploading');
         }
       }
-
     }
-    subscribe('completedProgress',handleCompletedProgress);
+    subscribe('completedProgress', handleCompletedProgress);
     return () => {
-      unsubscribe('completedProgress', handleCompletedProgress)
+      unsubscribe('completedProgress', handleCompletedProgress);
     };
   }, []);
   return (
@@ -151,8 +147,8 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
               </div>
             </div>
           </>
-        )}        
-        {(fileStatus == 'deleting')&& (
+        )}
+        {fileStatus == 'deleting' && (
           <>
             <div className="flex flex-col mt-3">
               <div className="flex items-center">
@@ -168,7 +164,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
                   <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot3"></div>
                 </div>
                 <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
-                   Your file is being removed.
+                  Your file is being removed.
                 </div>
               </div>
               <div className="text-[10px] text-Text-Quadruple mt-2 leading-5">
@@ -178,7 +174,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
             </div>
           </>
         )}
-        {(fileStatus == 'uploading')&& (
+        {fileStatus == 'uploading' && (
           <>
             <div className="flex flex-col mt-3">
               <div className="flex items-center">
@@ -194,15 +190,16 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
                   <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot3"></div>
                 </div>
                 <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
-                   The file is being uploaded.
+                  The file is being uploaded.
                 </div>
               </div>
               <div className="text-[10px] text-Text-Quadruple mt-2 leading-5">
-                Feel free to continue working while the system completes the process.
+                Feel free to continue working while the system completes the
+                process.
               </div>
             </div>
           </>
-        )}        
+        )}
       </div>
     </>
   );
