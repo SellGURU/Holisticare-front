@@ -7,7 +7,7 @@ import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import Checkbox from './CheckBox';
 // import SpinnerLoader from '../../SpinnerLoader';
 import Circleloader from '../../CircleLoader';
-import QuestionRow from './questionRow';
+import QuestionRow from './Questionary/QuestionRow';
 // import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import SpinnerLoader from '../../SpinnerLoader';
 import {
@@ -18,7 +18,7 @@ import {
 } from '../../../pages/CheckIn/components';
 import UploadCard from '../../../pages/CheckIn/components/UploadCard';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-import { publish, subscribe } from '../../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../../utils/event';
 // import DatePicker from '../../DatePicker';
 interface QuestionaryProps {
   isOpen?: boolean;
@@ -57,7 +57,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
         : [...prev, id],
     );
   };
-
+  const [unsyncedIdes, setUnsyncedIdes] = useState<string[]>([]);
   const handleAddQuestionnaires = () => {
     // const selectedData = AddForms
     //   .filter((form: any) => selectedQuestionnaires.includes(form.id))
@@ -90,16 +90,21 @@ export const Questionary: React.FC<QuestionaryProps> = ({
     // setData((prev: any) => [...prev, ...selectedData]);
   };
 
-  const deleteQuestionRow = (index: number) => {
-    setData((prevData: any) =>
-      prevData.filter((_: any, i: number) => i !== index),
-    );
-  };
+  // const deleteQuestionRow = (index: number) => {
+  //   setData((prevData: any) =>
+  //     prevData.filter((_: any, i: number) => i !== index),
+  //   );
+  // };
   const getQuestionnaires = () => {
     Application.getQuestionary_tracking({ member_id: id })
       .then((res) => {
         if (res.data) {
-          setData(res.data);
+            setData(
+            res.data.map((file: any) => ({
+              ...file,
+              isNeedSync: unsyncedIdes.includes(file.forms_unique_id),
+            })),
+          );
           if (res.data.length > 0) {
             if (res.data[0].status === 'completed') {
               publish('questionaryLength', {
@@ -132,7 +137,49 @@ export const Questionary: React.FC<QuestionaryProps> = ({
     subscribe('reloadQuestionnaires', () => {
       getQuestionnaires();
     });
+    return () => {
+      unsubscribe('reloadQuestionnaires', () => {
+        getQuestionnaires();
+      });
+    };
   }, []);
+  const handleCompletedProgress = (data: any) => {
+    const resolveStatus = () => {
+      if(data.detail.type == 'entered'){
+        return 'completed'
+      }
+      if(data.detail.type == 'deleted'){
+        return 'deleted'
+      }
+      if(data.detail.type == 'edited'){
+        return 'edited'
+      }
+      return 'completed'
+    }
+    if (data.detail.file_id ) {
+      // alert('handleCompletedProgress');
+      setUnsyncedIdes((prev) => [...prev, data.detail.file_id]);
+      setData((prev: any) =>
+        prev.map((el: any) =>
+          el.forms_unique_id === data.detail.file_id
+            ? { ...el, isNeedSync: true,status:resolveStatus() }
+            : el,
+        ),
+      );      
+    }
+  };
+  useEffect(() => {
+      subscribe('completedQuestionnaireProgress',handleCompletedProgress);
+      subscribe('syncReport',() => {
+        setUnsyncedIdes([]);
+        setData((prev: any) =>
+          prev.map((el: any) =>
+            el.isNeedSync ? { ...el, isNeedSync: false } : el,
+          ),
+        );
+        getQuestionnaires();
+      });
+  }, []);    
   // const formValueChange = (id: string, value: any) => {
   //   setQuestionsFormData((prev: any) => ({
   //     ...prev,
@@ -805,25 +852,11 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                   style={{ overflowWrap: 'break-word' }}
                   className="w-full flex flex-col gap-[2px] mt-[2px] h-[70vh] overflow-auto"
                 >
-                  {data?.map((el: any, index: number) => {
+                  {data?.map((el: any) => {
                     return (
-                      <QuestionRow
-                        onTryComplete={() => {
-                          Application.QuestionaryAction({
-                            member_id: id,
-                            q_unique_id: el.unique_id,
-                            f_unique_id: el.forms_unique_id,
-                            action: 'fill',
-                          }).then((res) => {
-                            const modifiedResponseData = {
-                              ...res.data,
-                              unique_id: el.unique_id,
-                            };
-
-                            setQuestionsFormData(modifiedResponseData);
-                            setTryComplete(true);
-                          });
-                        }}
+                      <QuestionRow el={el}
+                        handleCloseSlideOutPanel={handleCloseSlideOutPanel}
+                        member_id={id as string} 
                         onAssign={(unique_id: string) => {
                           setData((prev: any) =>
                             prev.map((el: any) =>
@@ -832,14 +865,41 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                                 : el,
                             ),
                           );
-                        }}
-                        el={el}
-                        id={id as string}
-                        resolveForm={resolveForm}
-                        deleteRow={() => deleteQuestionRow(index)}
-                        handleCloseSlideOutPanel={handleCloseSlideOutPanel}
-                        getQuestionnaires={getQuestionnaires}
-                      ></QuestionRow>
+                        }}                        
+                        />
+                      // <QuestionRow
+                      //   onTryComplete={() => {
+                      //     Application.QuestionaryAction({
+                      //       member_id: id,
+                      //       q_unique_id: el.unique_id,
+                      //       f_unique_id: el.forms_unique_id,
+                      //       action: 'fill',
+                      //     }).then((res) => {
+                      //       const modifiedResponseData = {
+                      //         ...res.data,
+                      //         unique_id: el.unique_id,
+                      //       };
+
+                      //       setQuestionsFormData(modifiedResponseData);
+                      //       setTryComplete(true);
+                      //     });
+                      //   }}
+                      //   onAssign={(unique_id: string) => {
+                      //     setData((prev: any) =>
+                      //       prev.map((el: any) =>
+                      //         el.unique_id === unique_id
+                      //           ? { ...el, assinged_to_client: true }
+                      //           : el,
+                      //       ),
+                      //     );
+                      //   }}
+                      //   el={el}
+                      //   id={id as string}
+                      //   resolveForm={resolveForm}
+                      //   deleteRow={() => deleteQuestionRow(index)}
+                      //   handleCloseSlideOutPanel={handleCloseSlideOutPanel}
+                      //   getQuestionnaires={getQuestionnaires}
+                      // ></QuestionRow>
                     );
                   })}
                 </div>

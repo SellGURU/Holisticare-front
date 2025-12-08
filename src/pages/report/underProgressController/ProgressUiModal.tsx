@@ -211,7 +211,7 @@ const ProgressUiModal = () => {
     <div
       style={{ zIndex: 1000 }}
       className={`
-            fixed top-[48px] right-6
+            fixed top-[48px] right-[85px]
             w-[320px]
             max-h-[calc(100vh-100px)]
             overflow-y-auto

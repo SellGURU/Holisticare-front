@@ -51,12 +51,24 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     if (data.detail.file_id && data.detail.type == 'uploaded') {
       // alert('handleCompletedProgress');
       setUnsyncedIdes((prev) => [...prev, data.detail.file_id]);
+      setUploadedFiles((prev: any) =>
+        prev.map((el: any) =>
+          el.file_id === data.detail.file_id
+            ? { ...el, isNeedSync: true }
+            : el,
+        ),
+      );      
     }
   };
   useEffect(() => {
     subscribe('completedProgress', handleCompletedProgress);
     subscribe('syncReport', () => {
       setUnsyncedIdes([]);
+      setUploadedFiles((prev: any) =>
+        prev.map((el: any) =>
+          el.isNeedSync ? { ...el, isNeedSync: false } : el,
+        ),
+      );
       if (id) {
         getFileList(id);
       }
