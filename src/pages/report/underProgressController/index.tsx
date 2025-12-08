@@ -167,7 +167,10 @@ const UnderProgressController = ({
   const resolveQuestionnaireController = (questionnaires: any[]) => {
     questionnaires.forEach((file) => {
       if (file.process_status == true) {
-        publish('completedQuestionnaireProgress', { file_id: file.f_unique_id ,type:file.action_type});
+        publish('completedQuestionnaireProgress', {
+          file_id: file.f_unique_id,
+          type: file.action_type,
+        });
       }
     });
   };

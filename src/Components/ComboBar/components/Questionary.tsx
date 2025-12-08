@@ -99,7 +99,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
     Application.getQuestionary_tracking({ member_id: id })
       .then((res) => {
         if (res.data) {
-            setData(
+          setData(
             res.data.map((file: any) => ({
               ...file,
               isNeedSync: unsyncedIdes.includes(file.forms_unique_id),
@@ -145,41 +145,41 @@ export const Questionary: React.FC<QuestionaryProps> = ({
   }, []);
   const handleCompletedProgress = (data: any) => {
     const resolveStatus = () => {
-      if(data.detail.type == 'entered'){
-        return 'completed'
+      if (data.detail.type == 'entered') {
+        return 'completed';
       }
-      if(data.detail.type == 'deleted'){
-        return 'deleted'
+      if (data.detail.type == 'deleted') {
+        return 'deleted';
       }
-      if(data.detail.type == 'edited'){
-        return 'edited'
+      if (data.detail.type == 'edited') {
+        return 'edited';
       }
-      return 'completed'
-    }
-    if (data.detail.file_id ) {
+      return 'completed';
+    };
+    if (data.detail.file_id) {
       // alert('handleCompletedProgress');
       setUnsyncedIdes((prev) => [...prev, data.detail.file_id]);
       setData((prev: any) =>
         prev.map((el: any) =>
           el.forms_unique_id === data.detail.file_id
-            ? { ...el, isNeedSync: true,status:resolveStatus() }
+            ? { ...el, isNeedSync: true, status: resolveStatus() }
             : el,
         ),
-      );      
+      );
     }
   };
   useEffect(() => {
-      subscribe('completedQuestionnaireProgress',handleCompletedProgress);
-      subscribe('syncReport',() => {
-        setUnsyncedIdes([]);
-        setData((prev: any) =>
-          prev.map((el: any) =>
-            el.isNeedSync ? { ...el, isNeedSync: false } : el,
-          ),
-        );
-        getQuestionnaires();
-      });
-  }, []);    
+    subscribe('completedQuestionnaireProgress', handleCompletedProgress);
+    subscribe('syncReport', () => {
+      setUnsyncedIdes([]);
+      setData((prev: any) =>
+        prev.map((el: any) =>
+          el.isNeedSync ? { ...el, isNeedSync: false } : el,
+        ),
+      );
+      getQuestionnaires();
+    });
+  }, []);
   // const formValueChange = (id: string, value: any) => {
   //   setQuestionsFormData((prev: any) => ({
   //     ...prev,
@@ -854,9 +854,10 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                 >
                   {data?.map((el: any) => {
                     return (
-                      <QuestionRow el={el}
+                      <QuestionRow
+                        el={el}
                         handleCloseSlideOutPanel={handleCloseSlideOutPanel}
-                        member_id={id as string} 
+                        member_id={id as string}
                         onAssign={(unique_id: string) => {
                           setData((prev: any) =>
                             prev.map((el: any) =>
@@ -865,8 +866,8 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                                 : el,
                             ),
                           );
-                        }}                        
-                        />
+                        }}
+                      />
                       // <QuestionRow
                       //   onTryComplete={() => {
                       //     Application.QuestionaryAction({

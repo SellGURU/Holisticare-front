@@ -6,7 +6,9 @@ const FullScreenModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [url, setUrl] = useState('');
   const isProcessingRef = useRef(false);
-  const messageHandlerRef = useRef<((event: MessageEvent) => void) | null>(null);
+  const messageHandlerRef = useRef<((event: MessageEvent) => void) | null>(
+    null,
+  );
 
   useEffect(() => {
     subscribe('openFullscreenModal', (e: any) => {
@@ -39,9 +41,9 @@ const FullScreenModal = () => {
         if (isProcessingRef.current) {
           return;
         }
-        
+
         isProcessingRef.current = true;
-        
+
         // const receivedData = event.data.data;
         publish('checkProgress', {});
         setIsOpen(false);

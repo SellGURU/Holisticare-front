@@ -53,11 +53,9 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       setUnsyncedIdes((prev) => [...prev, data.detail.file_id]);
       setUploadedFiles((prev: any) =>
         prev.map((el: any) =>
-          el.file_id === data.detail.file_id
-            ? { ...el, isNeedSync: true }
-            : el,
+          el.file_id === data.detail.file_id ? { ...el, isNeedSync: true } : el,
         ),
-      );      
+      );
     }
   };
   useEffect(() => {
