@@ -213,6 +213,8 @@ const ProgressUiModal = () => {
       className={`
             fixed top-[48px] right-6
             w-[320px]
+            max-h-[calc(100vh-100px)]
+            overflow-y-auto
             rounded-2xl border-2 border-r-0 border-Gray-50 
             shadow-200 p-4 bg-white
             transition-all duration-[1000] ease-[cubic-bezier(0.4,0,0.2,1)]

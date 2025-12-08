@@ -12,9 +12,23 @@ interface FileUploadProgressItemProps {
 }
 const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
   const [fileStatus, setFileStatus] = useState<
-    'upload' | 'deleting' | 'deleted'
+    'uploading'|'uploaded'|'upload' | 'deleting' | 'deleted'
   >('upload');
   const { id } = useParams<{ id: string }>();
+  const handleCompletedProgress = (data: any) => {
+      if (
+        data.detail.file_id === file.file_id &&
+        data.detail.type == 'deleted'
+      ) {
+        setFileStatus('deleted');
+      }
+      if (
+        data.detail.file_id === file.file_id &&
+        data.detail.type == 'uploaded'
+      ) {
+        setFileStatus('uploaded');
+      }
+  }
   useEffect(() => {
     if (file.action_type === 'deleted') {
       if (file.process_done === true) {
@@ -23,24 +37,21 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
         setFileStatus('deleting');
       }
     }
-    subscribe('completedProgress', (data: any) => {
-      console.log(data);
-      if (
-        data.detail.file_id === file.file_id &&
-        data.detail.type == 'deleted'
-      ) {
-        setFileStatus('deleted');
-      }
-    });
-    return () => {
-      unsubscribe('completedProgress', (data: any) => {
-        if (
-          data.detail.file_id === file.file_id &&
-          file.action_type != 'uploaded'
-        ) {
-          setFileStatus('deleted');
+    if(file.action_type === 'uploaded') {
+      if(file.isNeedSync) {
+        setFileStatus('uploaded');
+      } else {
+      if(file.process_done === true) {
+          setFileStatus('upload');
+        } else {
+          setFileStatus('uploading');
         }
-      });
+      }
+
+    }
+    subscribe('completedProgress',handleCompletedProgress);
+    return () => {
+      unsubscribe('completedProgress', handleCompletedProgress)
     };
   }, []);
   return (
@@ -110,7 +121,38 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
             </div>
           </>
         )}
-        {fileStatus == 'deleting' && (
+        {fileStatus === 'uploaded' && (
+          <>
+            <div className="flex flex-col mt-3">
+              <div className="flex items-center">
+                <img
+                  src="/icons/tick-circle-upload.svg"
+                  alt=""
+                  className="w-5 h-5"
+                />
+                <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
+                  The file upload completed.
+                </div>
+              </div>
+              <div className="text-[10px] text-Text-Quadruple mt-2 leading-5">
+                Click “Sync Data” to save this update to the system.
+              </div>
+              <div className="w-full flex justify-end">
+                <ButtonSecondary
+                  ClassName="rounded-[20px] mt-1"
+                  size="small"
+                  onClick={() => {
+                    publish('syncReport', {});
+                    setFileStatus('upload');
+                  }}
+                >
+                  Sync Data
+                </ButtonSecondary>
+              </div>
+            </div>
+          </>
+        )}        
+        {(fileStatus == 'deleting')&& (
           <>
             <div className="flex flex-col mt-3">
               <div className="flex items-center">
@@ -126,7 +168,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
                   <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot3"></div>
                 </div>
                 <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
-                  Your file is being removed.
+                   Your file is being removed.
                 </div>
               </div>
               <div className="text-[10px] text-Text-Quadruple mt-2 leading-5">
@@ -136,6 +178,31 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
             </div>
           </>
         )}
+        {(fileStatus == 'uploading')&& (
+          <>
+            <div className="flex flex-col mt-3">
+              <div className="flex items-center">
+                <div
+                  style={{
+                    background:
+                      'linear-gradient(to right, rgba(0,95,115,0.4), rgba(108,194,74,0.4))',
+                  }}
+                  className="flex size-5   rounded-full items-center justify-center gap-[3px]"
+                >
+                  <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot1"></div>
+                  <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot2"></div>
+                  <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot3"></div>
+                </div>
+                <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
+                   The file is being uploaded.
+                </div>
+              </div>
+              <div className="text-[10px] text-Text-Quadruple mt-2 leading-5">
+                Feel free to continue working while the system completes the process.
+              </div>
+            </div>
+          </>
+        )}        
       </div>
     </>
   );

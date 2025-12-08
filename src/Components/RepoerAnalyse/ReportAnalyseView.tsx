@@ -1201,7 +1201,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         setISGenerateLoading(false);
                         setTimeout(() => {
                           publish('checkProgress', {});
-                        }, 4000);
+                        }, 400);
                         // if (file_id !== 'customBiomarker') {
                         //   setTimeout(() => {
                         //     publish('checkProgress', {
@@ -1221,7 +1221,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       } else {
                         setTimeout(() => {
                           fetchPatentDataWithState();
-                          publish('QuestionaryTrackingCall', {});
+                          // publish('QuestionaryTrackingCall', {});
                           fetchData();
                           setISGenerateLoading(false);
                         }, 5000);
