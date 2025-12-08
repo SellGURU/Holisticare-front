@@ -584,7 +584,7 @@ const NewGenerateHolisticPlan = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-1 items-center text-nowrap mb-4 md:mb-0">
+                    <div className="flex gap-1 w-full md:w-auto items-center text-nowrap mb-4 md:mb-0">
                       {/* {treatmentPlanData?.suggestion_tab?.length == 0 && (
                         <ButtonSecondary
                           onClick={() => {
@@ -597,6 +597,7 @@ const NewGenerateHolisticPlan = () => {
                         </ButtonSecondary>
                       )} */}
                       <ButtonPrimary
+                      ClassName='w-full'
                         onClick={() => {
                           setshowAddModal(true);
                         }}

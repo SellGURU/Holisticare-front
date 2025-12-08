@@ -183,9 +183,9 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
       {/* RESPONSIVE CARD STARTS HERE */}
       {/* ============================= */}
 
-      <div className="relative flex flex-col md:flex-row fw-full select-none h-auto md:h-[43px] items-start md:items-center justify-between gap-2 bg-backgroundColor-Main px-2 py-1 rounded-lg">
+      <div className="relative flex flex-col md:flex-row fw-full select-none h-auto md:h-[53px] items-start md:items-center justify-between gap-2 bg-backgroundColor-Main px-2 py-1 rounded-lg">
         {/* Message — top on mobile, centered on desktop */}
-        <div className="flex md:absolute md:left-1/2 md:-translate-x-1/2 items-center justify-center gap-1 text-[10px] md:text-xs text-Text-Primary order-1 md:order-none">
+        <div className="flex pb-3 2xl:pb-0  md:absolute md:left-1/2 md:-translate-x-1/2 items-center justify-center gap-1 text-[10px] md:text-xs text-Text-Primary order-1 md:order-none">
           {safeProgress == 100 ? (
             <img src="/icons/copy-success.svg" />
           ) : (
@@ -220,7 +220,7 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
             onClick={() => {
               if (details.length > 0) setShowDetail(true);
             }}
-            className={`text-[8px] md:text-xs mb-4 <md:mb-0></md:mb-0> text-Primary-DeepTeal flex items-center gap-1 ${
+            className={`text-[8px] md:text-xs pr-3 xs:pr-2 md:pr-0 mb-4 xl:mb-0 text-nowrap text-Primary-DeepTeal flex items-center gap-1 ${
               details.length > 0
                 ? 'cursor-pointer opacity-100'
                 : 'cursor-not-allowed opacity-50'

@@ -438,8 +438,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
           lookingForwardsData={lookingForwardsData}
           handleRemoveIssueFromList={handleRemoveIssueFromList}
         />
-        <div className="flex mt-4 w-full flex-wrap ss:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
-          <div className="flex w-full flex-wrap  md:w-[50%] gap-8 md:gap-[80px]">
+        <div className="flex mt-4 w-full flex-wrap sm:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
+          <div className="flex w-full flex-wrap gap-8   
+          xl:gap-[80px] ">
             {categories.map(
               ({ name, visible }) =>
                 visible && (
@@ -471,7 +472,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                 ),
             )}
           </div>
-          <div className="gap-2 text-[12px] w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
+          <div className="gap-2 text-[12px] w-full sm:w-[20%] text-nowrap flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
             {/* {activeCategory != categories.filter((el) => el.visible)[0].name &&
               visibleCategoriy.filter((el) => el.visible).length > 1 && (
                 <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
