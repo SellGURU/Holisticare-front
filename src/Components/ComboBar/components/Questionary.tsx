@@ -166,7 +166,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
             : el,
         ),
       );
-      publish('reloadMainQuestionnaires',{})
+      publish('reloadMainQuestionnaires', {});
     }
   };
   useEffect(() => {

@@ -51,7 +51,7 @@ interface ReportAnalyseViewprops {
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   memberID,
-  isShare,  
+  isShare,
   setActiveCheckProgress,
   uniqKey,
 }) => {
@@ -117,9 +117,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         } else {
           setDisableGenerate(false);
         }
-        if(res.data.first_time_view == true){
+        if (res.data.first_time_view == true) {
           setActiveCheckProgress?.(true);
-        }else {
+        } else {
           setActiveCheckProgress?.(false);
         }
         setTimeout(() => {
@@ -178,7 +178,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
         setShowUploadTest(!res.data.first_time_view);
-        if(res.data.first_time_view == true){
+        if (res.data.first_time_view == true) {
           setActiveCheckProgress?.(true);
         }
         setTimeout(() => {
@@ -1260,7 +1260,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           fetchData();
                           setTimeout(() => {
                             publish('checkProgress', {});
-                          }, 400);                          
+                          }, 400);
                           // setISGenerateLoading(false);
                         }, 5000);
                       }

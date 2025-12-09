@@ -127,7 +127,9 @@ const Report = () => {
       </div>
 
       <div className="w-full xl:pl-[200px] fixed">
-        <ReportAnalyseView setActiveCheckProgress={setActiveCheckProgress}></ReportAnalyseView>
+        <ReportAnalyseView
+          setActiveCheckProgress={setActiveCheckProgress}
+        ></ReportAnalyseView>
       </div>
 
       <div
@@ -148,7 +150,7 @@ const Report = () => {
       <UnderProgressController member_id={id as string} />
       {activeCheckProgress && (
         <>
-        <ProgressUiModal userInfoData={userInfoData} />
+          <ProgressUiModal userInfoData={userInfoData} />
         </>
       )}
       <MainModal
