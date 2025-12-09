@@ -430,7 +430,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
           handleChangeSetOrder={handleChangeSetOrder}
         />
         <div className="flex flex-col-reverse lg:flex-row w-full items-center justify-between">
-          <div className='w-full'>
+          <div className="w-full">
             <div
               className={` w-full lg:w-[530px] h-[432px] border  border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
               onDragOver={handleDragOver}

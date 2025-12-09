@@ -148,7 +148,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div className="w-8 h-8 bg-backgroundColor-Card border border-Gray-50 flex justify-center items-center rounded-[8px] mr-2">
                   <img className="w-4" src={resolvePillarIcon()} alt="" />
                 </div>
-                {value.Title} 
+                {value.Title}
                 {value?.label && (
                   <div
                     className={`select-none mt-4 xs:mt-0 rounded-full px-2 flex items-center gap-1 text-[8px] text-Text-Primary ml-3`}
@@ -244,50 +244,48 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       : 'rotate(0deg)',
                   }}
                 /> */}
-               
               </div>
-          
             </div>
-                 <div
-                  className={`flex flex-col items-center absolute right-2 top-4 `}
-                >
-                  {sureRemoveIndex !== index ? (
-                    <>
-                      <img
-                        src="/icons/edit.svg"
-                        alt=""
-                        className="w-[24px] h-[24px] cursor-pointer"
-                        onClick={() => setShowEditModal(true)}
-                      />
-                      <img
-                        src="/icons/trash-red.svg"
-                        alt=""
-                        className="w-[24px] h-[24px] cursor-pointer mt-2"
-                        onClick={() => setSureRemoveIndex(index)}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <div className="text-Text-Quadruple text-xs">Sure?</div>
-                      <img
-                        src="/icons/tick-circle-green.svg"
-                        alt=""
-                        className="w-[20px] h-[20px] cursor-pointer mt-2"
-                        onClick={() => {
-                          onRemove();
-                          setSureRemoveIndex(null);
-                          // toggleExpand(index);
-                        }}
-                      />
-                      <img
-                        src="/icons/close-circle-red.svg"
-                        alt=""
-                        className="w-[20px] h-[20px] cursor-pointer mt-2"
-                        onClick={() => setSureRemoveIndex(null)}
-                      />
-                    </>
-                  )}
-                </div>
+            <div
+              className={`flex flex-col items-center absolute right-2 top-4 `}
+            >
+              {sureRemoveIndex !== index ? (
+                <>
+                  <img
+                    src="/icons/edit.svg"
+                    alt=""
+                    className="w-[24px] h-[24px] cursor-pointer"
+                    onClick={() => setShowEditModal(true)}
+                  />
+                  <img
+                    src="/icons/trash-red.svg"
+                    alt=""
+                    className="w-[24px] h-[24px] cursor-pointer mt-2"
+                    onClick={() => setSureRemoveIndex(index)}
+                  />
+                </>
+              ) : (
+                <>
+                  <div className="text-Text-Quadruple text-xs">Sure?</div>
+                  <img
+                    src="/icons/tick-circle-green.svg"
+                    alt=""
+                    className="w-[20px] h-[20px] cursor-pointer mt-2"
+                    onClick={() => {
+                      onRemove();
+                      setSureRemoveIndex(null);
+                      // toggleExpand(index);
+                    }}
+                  />
+                  <img
+                    src="/icons/close-circle-red.svg"
+                    alt=""
+                    className="w-[20px] h-[20px] cursor-pointer mt-2"
+                    onClick={() => setSureRemoveIndex(null)}
+                  />
+                </>
+              )}
+            </div>
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
                 {value['Practitioner Comments'][0]?.length > 0 && (

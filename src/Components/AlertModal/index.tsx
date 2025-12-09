@@ -16,7 +16,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2 text-xs font-medium text-Text-Primary">
           <img src="/icons/check-circle.svg" alt="" />
-          {heading} 
+          {heading}
         </div>
         <img
           className="cursor-pointer size-5"

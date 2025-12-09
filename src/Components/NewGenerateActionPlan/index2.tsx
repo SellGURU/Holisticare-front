@@ -280,7 +280,10 @@ const GenerateActionPlan = () => {
                   }}
                   className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 lg:rounded-md shadow-100`}
                 >
-                  <img className="w-4 xs:w-6 h-4 xs:h-6" src="/icons/arrow-back.svg" />
+                  <img
+                    className="w-4 xs:w-6 h-4 xs:h-6"
+                    src="/icons/arrow-back.svg"
+                  />
                 </div>
                 <div className="TextStyle-Headline-5 text-Text-Primary">
                   {calendarView ? 'Calendar View' : 'Generate Action Plan'}
@@ -290,7 +293,10 @@ const GenerateActionPlan = () => {
                 <>
                   {isWeighted && (
                     <div className="md:pr-[70px]">
-                      <ButtonPrimary ClassName='h-[33px] w-[120px] xs:w-[155px] text-[10px] xs:text-xs text-nowrap' onClick={saveChanges}>
+                      <ButtonPrimary
+                        ClassName="h-[33px] w-[120px] xs:w-[155px] text-[10px] xs:text-xs text-nowrap"
+                        onClick={saveChanges}
+                      >
                         {isLoadingSaveChanges ? (
                           <>
                             <SpinnerLoader />

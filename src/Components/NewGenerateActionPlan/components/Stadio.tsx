@@ -511,7 +511,7 @@ const Stadio: FC<StadioProps> = ({
               </div>
             )} */}
             <div
-              className={`flex-grow flex flex-col lg:flex-row  gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
+              className={`flex-grow flex gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
               <div
                 className="flex items-center gap-1 select-none lg:pl-2 cursor-pointer"
@@ -522,11 +522,11 @@ const Stadio: FC<StadioProps> = ({
                   Review Holistic Plan
                 </div>
               </div>
-              <div className="flex items-center flex-wrap justify-between select-none gap-3">
+              <div className="flex items-center flex-wra justify-between select-none gap-3">
                 {actions.checkIn.length !== 0 ||
                 actions.category.length !== 0 ? (
                   <div
-                    className=" flex items-center select-none text-nowrap gap-1 text-[10px] md:text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
+                    className=" hidden items-center select-none text-nowrap gap-1 text-[10px] md:text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
                     onClick={() => setCalendarView(true)}
                   >
                     <img
