@@ -41,6 +41,8 @@ import PrintReportV2 from './PrintReportV2';
 import { UploadTestV2 } from './UploadTestV2';
 // import HolisticShare from './components/HolisticShare';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
+import ProgressDashboard from '../ProgressDashboard';
+import { subDays, format } from 'date-fns';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -62,6 +64,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [has_wearable_data, setHasWearableData] = useState(false);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [questionnaires, setQuestionnaires] = useState([]);
+  const [activeTab, setActiveTab] = useState<'Health' | 'Progress'>('Health');
+  const [wellnessData, setWellnessData] = useState<any>(null);
+  const [progressionData, setProgressionData] = useState<any[] | null>(null);
+  const [wellnessLoading, setWellnessLoading] = useState(false);
+  const [progressionLoading, setProgressionLoading] = useState(false);
+  const [wellnessError, setWellnessError] = useState<string | null>(null);
+  const [progressionDateRange, setProgressionDateRange] = useState<{
+    from_date?: string;
+    to_date?: string;
+  }>({});
   // const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   // const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
@@ -306,12 +318,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   useEffect(() => {
     const handleSyncReport = (data: any) => {
-      if (data.detail.part == 'treatmentPlan') {
-        getTreatmentPlanData();
-      } else {
-        setCallSync(true);
-        if (location.search) {
-          navigate(location.pathname, { replace: true });
+      if (isHaveReport) {
+        if (data.detail.part == 'treatmentPlan') {
+          getTreatmentPlanData();
+        } else {
+          setCallSync(true);
+          if (location.search) {
+            navigate(location.pathname, { replace: true });
+          }
         }
       }
     };
@@ -321,7 +335,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return () => {
       unsubscribe('syncReport', handleSyncReport);
     };
-  }, []);
+  }, [isHaveReport]);
   const [accessManager, setAccessManager] = useState<
     Array<{
       name: string;
@@ -375,6 +389,435 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setAccessManager(decodeAccessUser(name as string));
     }
   }, [name]);
+
+  // Subscribe to activeTab changes
+  useEffect(() => {
+    const handleTabChange = (data: any) => {
+      setActiveTab(data.detail.tab);
+    };
+    subscribe('activeTabChange', handleTabChange);
+    return () => {
+      unsubscribe('activeTabChange', handleTabChange);
+    };
+  }, []);
+
+  // Fetch wellness data from API (current scores only, no date filter)
+  const fetchWellnessData = async () => {
+    if (!resolvedMemberID || resolvedMemberID === 123) {
+      // Skip for demo/test member or invalid ID
+      setWellnessData(null);
+      return;
+    }
+
+    setWellnessLoading(true);
+    setWellnessError(null);
+
+    try {
+      const requestData = {
+        member_id: resolvedMemberID,
+      };
+
+      const wellnessResponse = await Application.getWellnessScores(requestData);
+
+      if (wellnessResponse?.data) {
+        const data = wellnessResponse.data;
+        
+        console.log('Wellness API Response:', data); // Debug: check if latest_date exists
+        console.log('latest_date from API:', data.latest_date); // Debug: check latest_date specifically
+
+        // Helper function to parse score values
+        const parseScore = (value: any): number => {
+          if (value === null || value === undefined || value === '') return 0;
+          const parsed = typeof value === 'string' ? parseFloat(value) : Number(value);
+          return isNaN(parsed) ? 0 : parsed;
+        };
+
+        // Transform wellness data for WellnessSummary component
+        // The API returns scores as an array of objects with name, score, description, and factors
+        if (data.scores && Array.isArray(data.scores)) {
+          // Helper function to find score by matching name patterns
+          const findScore = (patterns: string[], scoresArray: any[]): any => {
+            for (const pattern of patterns) {
+              const found = scoresArray.find((item: any) => {
+                if (!item || !item.name) return false;
+                const name = item.name.toLowerCase();
+                return name.includes(pattern.toLowerCase()) || name === pattern.toLowerCase();
+              });
+              if (found) return found;
+            }
+            return null;
+          };
+
+          // Helper function to get score value
+          const getScoreValue = (scoreItem: any): number => {
+            if (!scoreItem) return 0;
+            return parseScore(scoreItem.score || scoreItem.value || scoreItem);
+          };
+
+          // Extract all scores dynamically (except archetype)
+          const allScores: { [key: string]: any } = {};
+          const allScoresData: { [key: string]: any } = {};
+          let archetypeItem: any = null;
+
+          data.scores.forEach((item: any) => {
+            if (item && item.name) {
+              const name = item.name.toLowerCase();
+              // Skip archetype - handle separately
+              if (name.includes('archetype') || name.includes('type') || name.includes('profile')) {
+                archetypeItem = item;
+              } else {
+                // Store all other scores dynamically
+                allScores[item.name] = getScoreValue(item);
+                allScoresData[item.name] = item;
+              }
+            }
+          });
+
+          // Find global score separately (for the circular gauge)
+          const globalScoreItem = findScore(['global', 'wellness', 'overall'], data.scores);
+          const globalScoreValue = getScoreValue(globalScoreItem);
+
+          // Extract latest_date from API response (should be at root level of data)
+          const latestDate = data.latest_date || null;
+          console.log('Extracted latest_date from array scores:', latestDate); // Debug
+          console.log('latestDate type:', typeof latestDate); // Debug
+          console.log('latestDate truthy?', !!latestDate); // Debug
+
+          setWellnessData({
+            scores: allScores, // All scores dynamically
+            scoresData: allScoresData, // All score data dynamically
+            globalScore: globalScoreValue, // Separate global score for the gauge
+            globalScoreData: globalScoreItem, // Global score data for tooltip
+            archetype: archetypeItem?.score || archetypeItem?.value || null,
+            archetypeData: archetypeItem,
+            latestDate: latestDate, // Last sync date
+          });
+          
+          console.log('Set wellnessData with latestDate:', latestDate); // Debug
+        } else if (data.scores && typeof data.scores === 'object' && !Array.isArray(data.scores)) {
+          // Fallback: handle if scores is already an object
+          // Extract latest_date from API response
+          const latestDate = data.latest_date || null;
+          console.log('Extracted latest_date:', latestDate); // Debug
+
+          setWellnessData({
+            scores: {
+              sleep: parseFloat(data.scores.sleep) || parseFloat(data.scores.sleep_score) || 0,
+              activity: parseFloat(data.scores.activity) || parseFloat(data.scores.activity_score) || 0,
+              heart: parseFloat(data.scores.heart) || parseFloat(data.scores.heart_score) || 0,
+              stress: parseFloat(data.scores.stress) || parseFloat(data.scores.stress_score) || 0,
+              calories: parseFloat(data.scores.calories) || parseFloat(data.scores.calories_score) || 0,
+              body: parseFloat(data.scores.body) || parseFloat(data.scores.body_score) || 0,
+              global: parseFloat(data.scores.global) || parseFloat(data.scores.global_score) || 0,
+            },
+            scoresData: data.scores, // Use the object directly as scoresData
+            archetype: data.archetype || null,
+            archetypeData: data.archetype ? { description: data.archetype } : null,
+            latestDate: latestDate, // Last sync date
+          });
+        } else {
+          setWellnessData(null);
+        }
+      } else {
+        setWellnessData(null);
+      }
+    } catch (error: any) {
+      console.error('Error fetching wellness data:', error);
+      setWellnessError(
+        error?.response?.data?.detail ||
+          error?.message ||
+          'Failed to load wellness data',
+      );
+      setWellnessData(null);
+    } finally {
+      setWellnessLoading(false);
+    }
+  };
+
+  // Fetch historical data separately for Score Progression
+  const fetchHistoricalData = async (fromDate?: string, toDate?: string) => {
+    if (!resolvedMemberID || resolvedMemberID === 123) {
+      setProgressionData(null);
+      return;
+    }
+
+    // Validate date range
+    if (fromDate && toDate) {
+      const from = new Date(fromDate);
+      const to = new Date(toDate);
+      if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+        setWellnessError('Invalid date format');
+        return;
+      }
+      if (from > to) {
+        setWellnessError('From date cannot be greater than to date');
+        return;
+      }
+    }
+
+    setProgressionLoading(true);
+
+    try {
+      const requestData: {
+        member_id: number;
+        from_date?: string;
+        to_date?: string;
+      } = {
+        member_id: resolvedMemberID,
+      };
+
+      if (fromDate) {
+        requestData.from_date = fromDate;
+      }
+      if (toDate) {
+        requestData.to_date = toDate;
+      }
+
+      const historicalResponse = await Application.getWellnessScoresHistorical(requestData);
+
+      console.log('Historical API Full Response:', historicalResponse); // Debug log
+      console.log('Historical API Response Data:', historicalResponse?.data); // Debug log
+      console.log('Historical Response Structure:', {
+        isArray: Array.isArray(historicalResponse?.data),
+        hasHistorical: historicalResponse?.data?.historical,
+        hasData: historicalResponse?.data?.data,
+        keys: historicalResponse?.data ? Object.keys(historicalResponse.data) : [],
+        type: typeof historicalResponse?.data,
+      });
+
+      // Handle response - could be in response.data or directly in response
+      const responseData = historicalResponse?.data || historicalResponse;
+      
+      if (responseData) {
+        const historicalData = responseData;
+        const parseScore = (value: any): number => {
+          if (value === null || value === undefined || value === '') return 0;
+          if (typeof value === 'number') return isNaN(value) ? 0 : value;
+          const parsed = typeof value === 'string' ? parseFloat(value) : Number(value);
+          return isNaN(parsed) ? 0 : parsed;
+        };
+
+        // Handle different possible response structures
+        let historicalArray: any[] = [];
+        
+        if (Array.isArray(historicalData)) {
+          historicalArray = historicalData;
+          console.log('Historical data is array, length:', historicalArray.length);
+        } else if (historicalData.historical && Array.isArray(historicalData.historical)) {
+          historicalArray = historicalData.historical;
+          console.log('Historical data found in .historical, length:', historicalArray.length);
+        } else if (historicalData.data && Array.isArray(historicalData.data)) {
+          historicalArray = historicalData.data;
+          console.log('Historical data found in .data, length:', historicalArray.length);
+        } else {
+          // Try to find any array property
+          for (const key in historicalData) {
+            if (Array.isArray(historicalData[key])) {
+              historicalArray = historicalData[key];
+              console.log(`Historical data found in .${key}, length:`, historicalArray.length);
+              break;
+            }
+          }
+        }
+
+        console.log('Processed historical array:', historicalArray);
+
+        if (historicalArray.length > 0) {
+          // The API returns an array where each item has: { name, score, date }
+          // We need to group by date and collect all scores for each date
+          const dateMap: { [date: string]: { date: string; [scoreName: string]: any } } = {};
+          
+          historicalArray.forEach((item: any, index: number) => {
+            console.log(`Processing historical item ${index}:`, item);
+            
+            // Extract name, score, and date from the item
+            const scoreName = item.name;
+            const scoreValue = parseScore(item.score || item.value);
+            let dateStr = item.date;
+            
+            // Skip only if missing required fields (scoreValue === 0 is valid data)
+            if (!scoreName || !dateStr) {
+              console.warn(`Item ${index} missing required fields, skipping`, { scoreName, scoreValue, dateStr });
+              return;
+            }
+            
+            // Allow scoreValue of 0 as it's valid data (not missing)
+            
+            // Format date properly - ensure it's in YYYY-MM-DD format
+            if (dateStr.includes('T')) {
+              dateStr = dateStr.split('T')[0];
+            }
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) {
+              console.warn(`Item ${index} has invalid date: ${dateStr}`);
+              return;
+            }
+            dateStr = format(date, 'yyyy-MM-dd');
+            
+            // Group by date
+            if (!dateMap[dateStr]) {
+              dateMap[dateStr] = { date: dateStr };
+            }
+            
+            // Add this score to the date entry (include even if scoreValue is 0)
+            dateMap[dateStr][scoreName] = scoreValue;
+            console.log(`Added score: ${scoreName} = ${scoreValue} for date: ${dateStr}`);
+          });
+          
+          // Log all score names found
+          const allScoreNames = new Set<string>();
+          Object.values(dateMap).forEach((point: any) => {
+            Object.keys(point).forEach((key) => {
+              if (key !== 'date') {
+                allScoreNames.add(key);
+              }
+            });
+          });
+          console.log('All unique score names found:', Array.from(allScoreNames));
+          
+          // Convert map to array and sort by date
+          const transformedHistorical = Object.values(dateMap)
+            .sort((a, b) => {
+              return new Date(a.date).getTime() - new Date(b.date).getTime();
+            });
+          
+          console.log('Final transformed historical data:', transformedHistorical);
+          console.log('Number of dates:', transformedHistorical.length);
+          if (transformedHistorical.length > 0) {
+            console.log('Score names in first date:', Object.keys(transformedHistorical[0]).filter(k => k !== 'date'));
+          }
+          setProgressionData(transformedHistorical.length > 0 ? transformedHistorical : null);
+        } else {
+          console.warn('Historical array is empty or not found');
+          setProgressionData(null);
+        }
+      } else {
+        console.warn('Historical response data is missing');
+        setProgressionData(null);
+      }
+    } catch (error: any) {
+      console.error('Error fetching historical data:', error);
+      console.error('Error details:', {
+        message: error?.message,
+        response: error?.response?.data,
+        status: error?.response?.status,
+      });
+      setProgressionData(null);
+    } finally {
+      setProgressionLoading(false);
+    }
+  };
+
+  // Check for wellness data availability when member ID changes to auto-navigate to Progress tab
+  // This only runs once when member ID is first set, not on every change
+  const [hasCheckedWellness, setHasCheckedWellness] = useState(false);
+  
+  useEffect(() => {
+    const checkWellnessDataAvailability = async () => {
+      if (!resolvedMemberID || resolvedMemberID === 123 || hasCheckedWellness) {
+        return;
+      }
+
+      try {
+        const requestData = {
+          member_id: resolvedMemberID,
+        };
+
+        const wellnessResponse = await Application.getWellnessScores(requestData);
+
+        if (wellnessResponse?.data) {
+          const data = wellnessResponse.data;
+          
+          // Check if there's at least one score available
+          let hasWellnessData = false;
+          
+          if (data.scores && Array.isArray(data.scores)) {
+            // Check if there's at least one score (excluding archetype)
+            hasWellnessData = data.scores.some((item: any) => {
+              if (!item || !item.name) return false;
+              const name = item.name.toLowerCase();
+              // Skip archetype
+              if (name.includes('archetype') || name.includes('type') || name.includes('profile')) {
+                return false;
+              }
+              // Check if score exists and is not null/undefined (0 is valid)
+              const score = item.score || item.value;
+              return score !== null && score !== undefined && score !== '';
+            });
+          } else if (data.scores && typeof data.scores === 'object') {
+            // Check if scores object has at least one non-null value
+            const scoreKeys = Object.keys(data.scores).filter(key => {
+              const lowerKey = key.toLowerCase();
+              return !lowerKey.includes('archetype') && !lowerKey.includes('type') && !lowerKey.includes('profile');
+            });
+            hasWellnessData = scoreKeys.some(key => {
+              const value = data.scores[key];
+              return value !== null && value !== undefined && value !== '';
+            });
+          }
+
+          // If wellness data exists, switch to Progress tab
+          if (hasWellnessData) {
+            setActiveTab('Progress');
+            // Publish event to update sidebar menu
+            publish('activeTabChange', { tab: 'Progress' });
+            setHasCheckedWellness(true);
+          } else {
+            setHasCheckedWellness(true);
+          }
+        } else {
+          setHasCheckedWellness(true);
+        }
+      } catch (error) {
+        console.log('Wellness data check failed, staying on Health tab:', error);
+        setHasCheckedWellness(true);
+        // If check fails, stay on Health tab (default)
+      }
+    };
+
+    // Only check once when member ID is first resolved
+    if (resolvedMemberID && !hasCheckedWellness) {
+      checkWellnessDataAvailability();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedMemberID, hasCheckedWellness]);
+  
+  // Reset check flag when member ID changes
+  useEffect(() => {
+    setHasCheckedWellness(false);
+  }, [resolvedMemberID]);
+
+  // Fetch wellness data when member ID changes or when Progress tab is active (no date filter)
+  useEffect(() => {
+    if (activeTab === 'Progress' && resolvedMemberID) {
+      fetchWellnessData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedMemberID, activeTab]);
+
+  // Initialize date range on mount (only once)
+  useEffect(() => {
+    if (activeTab === 'Progress' && resolvedMemberID) {
+      // If no date range is set, initialize with default 7 days
+      if (!progressionDateRange.from_date || !progressionDateRange.to_date) {
+        const endDate = new Date();
+        const startDate = subDays(endDate, 7);
+        setProgressionDateRange({
+          from_date: format(startDate, 'yyyy-MM-dd'),
+          to_date: format(endDate, 'yyyy-MM-dd'),
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedMemberID, activeTab]);
+
+  // Fetch historical data when date range changes (separate effect to prevent full page refresh)
+  useEffect(() => {
+    if (activeTab === 'Progress' && resolvedMemberID && progressionDateRange.from_date && progressionDateRange.to_date) {
+      fetchHistoricalData(progressionDateRange.from_date, progressionDateRange.to_date);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progressionDateRange.from_date, progressionDateRange.to_date]);
   useEffect(() => {
     if (resolvedMemberID == 123 || !isHaveReport) {
       setReferenceData(referencedataMoch);
@@ -695,9 +1138,51 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //     console.error('Error loading HTML report:', err);
     //   })
     //   .finally(() => {
-    //     setLoadingHtmlReport(false);
+    //     // setLoadingHtmlReport(false);
     //   });
   };
+  const [disableGenerate, setDisableGenerate] = useState(false);
+  useEffect(() => {
+    const handler = () => {
+      publish('openRefreshProgressModal', userInfoData?.name);
+      setDisableGenerate(true);
+      if (!id) return;
+
+      let intervalId: any = null;
+
+      const checkStatus = () => {
+        // Immediately stop further polling
+        if (stopPolling.current) {
+          clearInterval(intervalId);
+          return;
+        }
+
+        Application.checkRefreshProgress(id).then((res) => {
+          if (res.data.status === true) {
+            clearInterval(intervalId);
+            publish('RefreshStepTwoSuccess', {});
+            setDisableGenerate(false);
+          }
+        });
+      };
+
+      checkStatus();
+
+      intervalId = setInterval(checkStatus, 10000);
+    };
+
+    subscribe('SyncRefresh', handler);
+
+    return () => {
+      unsubscribe('SyncRefresh', handler);
+    };
+  }, [id, userInfoData?.name]);
+
+  // useEffect(() => {
+  //   subscribe('disableGenerate', () => {
+  //     setDisableGenerate(true);
+  //   });
+  // });
 
   return (
     <>
@@ -710,13 +1195,30 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           {showUploadTest && (
             <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
           )}
-          <div
-            ref={scrollContainerRef}
-            onScrollCapture={() => {
-              handleScroll();
-            }}
-            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
-          >
+          {activeTab === 'Progress' ? (
+            <div
+              ref={scrollContainerRef}
+              className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 overflow-y-scroll overflow-x-hidden xl:overflow-x-hidden px-5 xl:px-0`}
+            >
+              <ProgressDashboard
+                wellnessData={wellnessData}
+                progressionData={progressionData}
+                wellnessLoading={wellnessLoading}
+                progressionLoading={progressionLoading}
+                error={wellnessError}
+                onDateRangeChange={(fromDate, toDate) => {
+                  setProgressionDateRange({ from_date: fromDate, to_date: toDate });
+                }}
+              />
+            </div>
+          ) : (
+            <div
+              ref={scrollContainerRef}
+              onScrollCapture={() => {
+                handleScroll();
+              }}
+              className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
+            >
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
               <div className="flex flex-col xl:flex-row gap-6 xl:gap-14 ">
@@ -1050,6 +1552,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                 </div>
                 <TreatmentPlan
+                  disableGenerate={disableGenerate}
                   isShare={isShare}
                   setPrintActionPlan={(value) => {
                     setActionPlanPrint(value);
@@ -1103,6 +1606,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   }}
                   calenderDataUper={caldenderData}
                   isHolisticPlanEmpty={isHolisticPlanEmpty}
+                  disableGenerate={disableGenerate}
                 />
               </div>
             )}
@@ -1231,7 +1735,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 )}
               </>
             )}
-          </div>
+            </div>
+          )}
         </>
       )}
     </>
