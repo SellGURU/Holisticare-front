@@ -271,10 +271,10 @@ export function PublicSurveyForm({
         setShowSaveIndicator('idle');
       }, 1000);
     }
-  })
+  });
   useEffect(() => {
-    if (currentStep <=1) return;
-    if(isQuestionary){
+    if (currentStep <= 1) return;
+    if (isQuestionary) {
       if (isClient) {
         setShowSaveIndicator('saving');
         onAutoSaveClient?.(resolveRespond());
@@ -288,11 +288,12 @@ export function PublicSurveyForm({
           q_unique_id: qId,
           f_unique_id: fId,
           respond: resolveRespond(),
-        }).finally(() => {
-          setShowSaveIndicator('saved');
-        }).catch(() => {});
+        })
+          .finally(() => {
+            setShowSaveIndicator('saved');
+          })
+          .catch(() => {});
       }
-
     }
   }, [currentStep]);
   console.log('responses => ', responses);
@@ -619,7 +620,9 @@ export function PublicSurveyForm({
       }
     }
   };
-  const [showSaveIndicator, setShowSaveIndicator] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [showSaveIndicator, setShowSaveIndicator] = useState<
+    'idle' | 'saving' | 'saved'
+  >('idle');
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
@@ -1408,35 +1411,35 @@ export function PublicSurveyForm({
               className={`px-3 py-1 rounded-full items-center flex text-sm font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
             >
               Question {currentStep} of {visibleQuestions.length}
-              {showSaveIndicator == 'saving' &&
-              <>
-                <div className=' ml-2 flex items-center gap-1'>
-                  <SvgIcon
-                    stroke='#FFFFFF'
-                    width='16px'
-                    height='16px'
-                    src='/icons/refresh-2.svg' color={''}
-                    className='animate-spin'
-                    ></SvgIcon>          
-                    <div className='text-xs'>
-                    Saving response…
-                    </div>   
-                </div>
-              </>
-              }
-              {showSaveIndicator == 'saved' &&
-              <>
-                <div className=' ml-2 flex items-center gap-1'>
-                  <SvgIcon
-                    stroke='#FFFFFF'
-                    width='16px'
-                    height='16px'
-                    src='/icons/tick-circle2.svg' color={''}
-                    ></SvgIcon>          
-                  <span>Response saved</span>
-                </div>
-              </>
-              }
+              {showSaveIndicator == 'saving' && (
+                <>
+                  <div className=" ml-2 flex items-center gap-1">
+                    <SvgIcon
+                      stroke="#FFFFFF"
+                      width="16px"
+                      height="16px"
+                      src="/icons/refresh-2.svg"
+                      color={''}
+                      className="animate-spin"
+                    ></SvgIcon>
+                    <div className="text-xs">Saving response…</div>
+                  </div>
+                </>
+              )}
+              {showSaveIndicator == 'saved' && (
+                <>
+                  <div className=" ml-2 flex items-center gap-1">
+                    <SvgIcon
+                      stroke="#FFFFFF"
+                      width="16px"
+                      height="16px"
+                      src="/icons/tick-circle2.svg"
+                      color={''}
+                    ></SvgIcon>
+                    <span>Response saved</span>
+                  </div>
+                </>
+              )}
             </div>
             <CardTitle className="text-[14px] 2xl:text-base max-h-[120px] overflow-y-scroll font-bold break-words pr-4 max-w-full">
               {getQuestionText(currentQuestion)}
