@@ -511,10 +511,10 @@ const Stadio: FC<StadioProps> = ({
               </div>
             )} */}
             <div
-              className={`flex-grow flex gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
+              className={`flex-grow flex flex-wrap gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
               <div
-                className="flex items-center gap-1 select-none lg:pl-2 cursor-pointer"
+                className="flex  items-center gap-1 select-none lg:pl-2 cursor-pointer"
                 onClick={() => setIsSlideOutPanel(true)}
               >
                 <img src="/icons/eye-blue.svg" alt="" className="size-5" />
