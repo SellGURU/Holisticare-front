@@ -2,6 +2,7 @@
 import React, { useMemo } from 'react';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { format } from 'date-fns';
 import InfoIcon from './InfoIcon';
 
 interface WellnessSummaryProps {
@@ -141,24 +142,31 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
     latestDateValue: latestDate
   }); // Debug
   
-  // Format last sync date to be client-friendly
+  // Format last sync date to be client-friendly: yyyy-mm-dd hh:mm:ss
   const formatLastSync = (dateStr: string | null | undefined): string => {
     if (!dateStr) {
+      console.log('formatLastSync - No date string provided');
       return '';
     }
     try {
+      console.log('formatLastSync - Input:', dateStr, 'Type:', typeof dateStr);
+      
       // JavaScript Date can handle ISO strings with microseconds directly
       const date = new Date(dateStr);
       
       if (isNaN(date.getTime())) {
-        console.warn('Invalid date:', dateStr);
+        console.warn('formatLastSync - Invalid date:', dateStr);
         return '';
       }
       
-      // Format as "Dec 9 at 10:04:57 AM" (client-friendly format with time including seconds)
-      return format(date, "MMM d 'at' h:mm:ss a");
+      console.log('formatLastSync - Parsed date:', date);
+      
+      // Format as "yyyy-mm-dd hh:mm:ss" (24-hour format)
+      const formatted = format(date, "yyyy-MM-dd HH:mm:ss");
+      console.log('formatLastSync - Formatted:', formatted);
+      return formatted;
     } catch (e) {
-      console.error('Error formatting date:', dateStr, e);
+      console.error('formatLastSync - Error formatting date:', dateStr, e);
       return '';
     }
   };
@@ -172,29 +180,28 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
     
     console.log('WellnessSummary - Formatting latestDate:', latestDate, 'Type:', typeof latestDate);
     
+    // Try the main formatting function
+    const formatted = formatLastSync(latestDate);
+    if (formatted) {
+      console.log('WellnessSummary - Formatted successfully:', formatted);
+      return formatted;
+    }
+    
+    // Fallback: try direct Date parsing with simpler format
+    console.log('WellnessSummary - Main formatting failed, trying fallback');
     try {
-      // Try the main formatting function
-      const formatted = formatLastSync(latestDate);
-      if (formatted) {
-        console.log('WellnessSummary - Formatted successfully:', formatted);
-        return formatted;
-      }
-      
-      // Fallback: try direct Date parsing
-      console.log('WellnessSummary - Main formatting failed, trying fallback');
       const date = new Date(latestDate);
       if (!isNaN(date.getTime())) {
-        const fallbackFormatted = format(date, "MMM d 'at' h:mm:ss a");
+        const fallbackFormatted = format(date, "yyyy-MM-dd HH:mm:ss");
         console.log('WellnessSummary - Fallback formatted:', fallbackFormatted);
         return fallbackFormatted;
       }
-      
-      console.warn('WellnessSummary - All formatting attempts failed for:', latestDate);
-      return '';
     } catch (e) {
-      console.error('WellnessSummary - Error in lastSyncText formatting:', e);
-      return '';
+      console.error('WellnessSummary - Fallback formatting error:', e);
     }
+    
+    console.warn('WellnessSummary - All formatting attempts failed for:', latestDate);
+    return '';
   }, [latestDate]);
   
   // Get all score names except global (global is shown separately in the gauge)
@@ -294,7 +301,7 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
           <span className="text-xs text-gray-500">
-            Last synced {lastSyncText || 'date unavailable'}
+            Last synced {lastSyncText || (latestDate ? String(latestDate).substring(0, 19).replace('T', ' ') : 'date unavailable')}
           </span>
         </div>
       )}
