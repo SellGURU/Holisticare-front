@@ -235,7 +235,7 @@ const ExerciseItem = ({
               value={sets}
               onChange={handleSetChange}
               onKeyDown={preventEInput}
-              className={`w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
+              className={`md:w-[112px] w-[60px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
                 showValidation && isSetEmpty
                   ? 'border-red-500'
                   : 'border-gray-50'
@@ -259,7 +259,7 @@ const ExerciseItem = ({
               value={exercise.Reps}
               onChange={handleRepsChange}
               onKeyDown={preventEInput}
-              className={`w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
+              className={`md:w-[112px] w-[60px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
                 (showValidation && (!exercise.Reps || exercise.Reps === '')) ||
                 getError('reps')
                   ? 'border-red-500'
@@ -286,7 +286,7 @@ const ExerciseItem = ({
               value={exercise.Weight}
               onChange={handleWeightChange}
               onKeyDown={preventEInput}
-              className={`w-[112px] px-3 pr-6 text-center h-[24px] rounded-[8px] bg-white border ${
+              className={`md:w-[112px] w-[60px] px-3 pr-6 text-center h-[24px] rounded-[8px] bg-white border ${
                 getError('weight') ? 'border-red-500' : 'border-gray-50'
               } outline-none text-[10px] text-Text-Primary`}
             />
@@ -303,7 +303,7 @@ const ExerciseItem = ({
               value={exercise.Rest}
               onChange={handleRestChange}
               onKeyDown={preventEInput}
-              className={`w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
+              className={`md:w-[112px] w-[60px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
                 getError('rest') ? 'border-red-500' : 'border-gray-50'
               } outline-none text-[10px] text-Text-Primary`}
             />
