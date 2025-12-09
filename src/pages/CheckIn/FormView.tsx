@@ -154,6 +154,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
                     // });
                   }}
                   isClient={true}
+                  isQuestionary={mode === 'questionary'}
                   survey={data}
                   onAutoSaveClient={(e) => {
                     autoSave(e);
