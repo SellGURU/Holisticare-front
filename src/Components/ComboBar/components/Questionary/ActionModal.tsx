@@ -11,6 +11,7 @@ interface ActionModalProps {
   status: 'completed' | 'incomplete';
   onAssign: () => void;
   onDelete: () => void;
+  handleCloseSlideOutPanel: () => void;
 }
 
 const ActionModal: FC<ActionModalProps> = ({
@@ -20,6 +21,7 @@ const ActionModal: FC<ActionModalProps> = ({
   status,
   onAssign,
   onDelete,
+  handleCloseSlideOutPanel,
 }) => {
   const modalRef = useRef(null);
   const CloseAction = () => {
@@ -70,7 +72,7 @@ const ActionModal: FC<ActionModalProps> = ({
                 publish('openFullscreenModal', {
                   url: `/surveys/${member_id}/${el.unique_id}/${el.forms_unique_id}/edit`,
                 });
-                // handleCloseSlideOutPanel();
+                handleCloseSlideOutPanel();
               }}
               className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
             >
@@ -91,7 +93,7 @@ const ActionModal: FC<ActionModalProps> = ({
                 publish('openFullscreenModal', {
                   url: `/surveys/${member_id}/${el.unique_id}/${el.forms_unique_id}/fill`,
                 });
-                // handleCloseSlideOutPanel();
+                handleCloseSlideOutPanel();
               }}
               className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
             >

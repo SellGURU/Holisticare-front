@@ -46,11 +46,13 @@ interface ReportAnalyseViewprops {
   memberID?: number | null;
   isShare?: boolean;
   uniqKey?: string;
+  setActiveCheckProgress?: (status: boolean) => void;
 }
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   memberID,
-  isShare,
+  isShare,  
+  setActiveCheckProgress,
   uniqKey,
 }) => {
   const { id, name } = useParams<{ id: string; name: string }>();
@@ -115,6 +117,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         } else {
           setDisableGenerate(false);
         }
+        if(res.data.first_time_view == true){
+          setActiveCheckProgress?.(true);
+        }else {
+          setActiveCheckProgress?.(false);
+        }
         setTimeout(() => {
           if (
             res.data.show_report == true ||
@@ -128,7 +135,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
   const [isLoadingQuestionnaires, setIsLoadingQuestionnaires] = useState(false);
   useEffect(() => {
-    subscribe('reloadQuestionnaires', () => {
+    const handleReloadQuestionnaires = () => {
       setIsLoadingQuestionnaires(true);
       Application.getPatientsInfo({
         member_id: resolvedMemberID,
@@ -140,8 +147,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         .finally(() => {
           setIsLoadingQuestionnaires(false);
         });
-    });
-  }, []);
+    };
+
+    subscribe('reloadMainQuestionnaires', handleReloadQuestionnaires);
+
+    return () => {
+      unsubscribe('reloadMainQuestionnaires', handleReloadQuestionnaires);
+    };
+  }, [resolvedMemberID]);
   const fetchPatentDataWithState = () => {
     if (isShare) {
       Application.getPatientsInfoShare(
@@ -165,8 +178,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
         setShowUploadTest(!res.data.first_time_view);
+        if(res.data.first_time_view == true){
+          setActiveCheckProgress?.(true);
+        }
         setTimeout(() => {
           if (res.data.show_report == true) {
+            setISGenerateLoading(false);
             fetchData();
           }
         }, 2000);
@@ -580,7 +597,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, []);
   const [, setSearchParams] = useSearchParams();
   useEffect(() => {
-    subscribe('uploadTestShow', (data: any) => {
+    const handleUploadTestShow = (data: any) => {
       setSearchParams({ ['section']: 'Client Summary' });
       document.getElementById('Client Summary')?.scrollIntoView({
         behavior: 'instant',
@@ -589,8 +606,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         publish('uploadTestShow-stepTwo', {});
       }, 4);
       setShowUploadTest(data.detail.isShow);
-    });
-  }, []);
+    };
+
+    subscribe('uploadTestShow', handleUploadTestShow);
+
+    return () => {
+      unsubscribe('uploadTestShow', handleUploadTestShow);
+    };
+  }, [setSearchParams]);
   const [isHolisticPlanEmpty, setIsHolisticPlanEmpty] = useState(true);
 
   const memoizedPoints = useMemo(() => {
@@ -659,10 +682,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
   };
   useEffect(() => {
-    subscribe('reckecHtmlReport', () => {
+    const handleRecheckHtmlReport = () => {
       setIsHtmlReportExists(false);
       pollHtmlReport();
-    });
+    };
+
+    subscribe('reckecHtmlReport', handleRecheckHtmlReport);
+
+    return () => {
+      unsubscribe('reckecHtmlReport', handleRecheckHtmlReport);
+    };
   }, []);
 
   const [loadingHtmlReport] = useState(false);
@@ -711,9 +740,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
   const [disableGenerate, setDisableGenerate] = useState(false);
   useEffect(() => {
-    subscribe('disableGenerate', () => {
+    const handleDisableGenerate = () => {
       setDisableGenerate(true);
-    });
+    };
+
+    subscribe('disableGenerate', handleDisableGenerate);
+
+    return () => {
+      unsubscribe('disableGenerate', handleDisableGenerate);
+    };
   }, [resolvedMemberID]);
 
   return (
@@ -1192,7 +1227,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           console.log(res);
                         },
                       );
-                      // console.log(file_id);
+                      console.log(file_id);
                       if (file_id) {
                         // publish('openProgressModal',{});
                         setShowUploadTest(false);
@@ -1223,7 +1258,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           fetchPatentDataWithState();
                           // publish('QuestionaryTrackingCall', {});
                           fetchData();
-                          setISGenerateLoading(false);
+                          setTimeout(() => {
+                            publish('checkProgress', {});
+                          }, 400);                          
+                          // setISGenerateLoading(false);
                         }, 5000);
                       }
                     }}

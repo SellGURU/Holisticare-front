@@ -1,20 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
-
-const ProgressUiModal = () => {
+interface ProgressUiModalProps {
+  userInfoData: any;
+}
+const ProgressUiModal: FC<ProgressUiModalProps> = ({ userInfoData }) => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [progressData, setprogressData] = useState<Array<any>>([]);
   // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
   const [isClosed, setIsClosed] = useState(false);
-  const [userInfoData, setUserInfoData] = useState<any>(null);
-  useEffect(() => {
-    subscribe('userInfoData', (data: any) => {
-      setUserInfoData(data.detail);
-    });
-  }, []);
+
   const isVisibleModal = () => {
     if (
       progressData.length > 0 &&

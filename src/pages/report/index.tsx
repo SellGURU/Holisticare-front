@@ -18,8 +18,14 @@ const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [showRefreshModal, setshowRefreshModal] = useState(false);
+  const [activeCheckProgress, setActiveCheckProgress] = useState(false);
   const { id } = useParams<{ id: string }>();
-
+  const [userInfoData, setUserInfoData] = useState<any>(null);
+  useEffect(() => {
+    subscribe('userInfoData', (data: any) => {
+      setUserInfoData(data.detail);
+    });
+  }, []);
   const [treatmentId, setTreatmentId] = useState<string>('');
   useEffect(() => {
     subscribe('openShareModalHolisticPlan', (data: any) => {
@@ -121,7 +127,7 @@ const Report = () => {
       </div>
 
       <div className="w-full xl:pl-[200px] fixed">
-        <ReportAnalyseView></ReportAnalyseView>
+        <ReportAnalyseView setActiveCheckProgress={setActiveCheckProgress}></ReportAnalyseView>
       </div>
 
       <div
@@ -140,7 +146,11 @@ const Report = () => {
         }}
       />
       <UnderProgressController member_id={id as string} />
-      <ProgressUiModal />
+      {activeCheckProgress && (
+        <>
+        <ProgressUiModal userInfoData={userInfoData} />
+        </>
+      )}
       <MainModal
         isOpen={showRefreshModal}
         onClose={() => {

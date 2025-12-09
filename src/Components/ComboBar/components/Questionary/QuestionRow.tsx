@@ -129,6 +129,7 @@ const QuestionRow: FC<QuestionRowProps> = ({
       >
         {showModal && (
           <ActionModal
+            handleCloseSlideOutPanel={handleCloseSlideOutPanel}
             status={resolveStatusName()}
             member_id={member_id}
             el={el}
