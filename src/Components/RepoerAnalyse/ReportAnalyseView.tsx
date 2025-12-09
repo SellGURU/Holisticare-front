@@ -143,6 +143,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         .then((res) => {
           setQuestionnaires(res.data.questionnaires);
           setIsLoadingQuestionnaires(false);
+          setIsHaveReport(res.data.show_report);
+          setShowUploadTest(!res.data.first_time_view);          
         })
         .finally(() => {
           setIsLoadingQuestionnaires(false);
