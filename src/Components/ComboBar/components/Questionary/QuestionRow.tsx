@@ -19,7 +19,10 @@ const QuestionRow: FC<QuestionRowProps> = ({
   handleCloseSlideOutPanel,
 }) => {
   const isActive = () => {
-    if ((el.status != 'completed' && el.status != 'incomplete') || el.isNeedSync) {
+    if (
+      (el.status != 'completed' && el.status != 'incomplete') ||
+      el.isNeedSync
+    ) {
       return false;
     }
     return true;
@@ -29,7 +32,7 @@ const QuestionRow: FC<QuestionRowProps> = ({
       el.status == 'being_entered' ||
       el.status == 'being_deleted' ||
       el.status == 'being_edited' ||
-      el.status == 'edited'||
+      el.status == 'edited' ||
       el.status == 'deleted'
     ) {
       return 'completed';
