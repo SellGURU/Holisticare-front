@@ -44,6 +44,7 @@ const UnderProgressController = ({
   // const [fromDate, setfromDate] = useState<Date>(new Date());
   const fromDate = useRef<Date>(new Date());
   const lastNeedCheckProgressRef = useRef<Date | null>(null);
+  const currentMemberIdRef = useRef<string>(member_id);
   const [allprogress, SetAllprogress] = useState<any>({
     files: [],
     questionnaires: [],
@@ -166,7 +167,10 @@ const UnderProgressController = ({
   const resolveQuestionnaireController = (questionnaires: any[]) => {
     questionnaires.forEach((file) => {
       if (file.process_status == true) {
-        publish('completedProgress', { file_id: file.q_unique_id });
+        publish('completedQuestionnaireProgress', {
+          file_id: file.f_unique_id,
+          type: file.action_type,
+        });
       }
     });
   };
@@ -211,13 +215,25 @@ const UnderProgressController = ({
     }
   };
   useEffect(() => {
+    // Update current member_id ref
+    currentMemberIdRef.current = member_id;
+
+    // Store the member_id for this effect run to check in callbacks
+    const effectMemberId = member_id;
+
     // getProgress();
     needCheckProgress();
     const interval = setInterval(() => {
       needCheckProgress();
     }, 30000);
 
-    subscribe('checkProgress', (data?: any) => {
+    // Store callback references for proper cleanup
+    const handleCheckProgress = (data?: any) => {
+      // Extra safety: check if member_id still matches to avoid stale callbacks
+      if (currentMemberIdRef.current !== effectMemberId) {
+        return;
+      }
+
       if (data) {
         if (data.detail.type === 'file') {
           SetAllprogress((prev: any) => ({
@@ -231,10 +247,19 @@ const UnderProgressController = ({
       } else {
         getProgress();
       }
-    });
-    subscribe('syncReport', () => {
+    };
+
+    const handleSyncReport = () => {
+      // Extra safety: check if member_id still matches
+      if (currentMemberIdRef.current !== effectMemberId) {
+        return;
+      }
       fromDate.current = new Date();
-    });
+    };
+
+    subscribe('checkProgress', handleCheckProgress);
+    subscribe('syncReport', handleSyncReport);
+
     return () => {
       SetAllprogress({
         files: [],
@@ -242,9 +267,9 @@ const UnderProgressController = ({
         refresh: [],
       });
       clearInterval(interval);
-      unsubscribe('checkProgress', () => {
-        getProgress();
-      });
+      // Use the same callback references for unsubscribe
+      unsubscribe('checkProgress', handleCheckProgress);
+      unsubscribe('syncReport', handleSyncReport);
       // publish('clearAllProgress', {});       lastNeedCheckProgressRef.current = null;
       timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
       timeoutsRef.current = [];

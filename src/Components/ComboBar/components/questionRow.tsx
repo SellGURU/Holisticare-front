@@ -29,14 +29,13 @@ interface QuestionRowProps {
 const QuestionRow: React.FC<QuestionRowProps> = ({
   el,
   id,
-  resolveForm,
   onTryComplete,
   onAssign,
   // deleteRow,
   handleCloseSlideOutPanel,
   getQuestionnaires,
 }) => {
-  const [activeCard, setActiveCard] = useState(1);
+  // const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
   const [viewQuestienry] = useState<any>({});
   const [showModal, setshowModal] = useState(false);
@@ -485,63 +484,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
             </>
           )}
         </div>
-        {isView && (
-          <div className="mt-2 select-none">
-            <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
-              <div className="text-[12px]  font-medium">
-                {/* {viewQuestienry.questions[activeCard - 1].question} */}
-                <TooltipTextAuto tooltipPlace="left" maxWidth="200px">
-                  {viewQuestienry.questions[activeCard - 1].question}
-                </TooltipTextAuto>
-              </div>
-            </div>
-            <div
-              className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] min-h-[100px] max-h-[200px]  ${viewQuestienry.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
-            >
-              {resolveForm(
-                viewQuestienry.questions[activeCard - 1].type,
-                viewQuestienry,
-                activeCard,
-                true,
-              )}
-            </div>
-            <div className="w-full flex justify-center  mt-3">
-              <div className="flex justify-center items-center gap-3">
-                <div
-                  onClick={() => {
-                    if (activeCard > 1) {
-                      setActiveCard(activeCard - 1);
-                    }
-                  }}
-                  className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
-                >
-                  <img
-                    className="rotate-90 w-3"
-                    src="/icons/arrow-down-green.svg"
-                    alt=""
-                  />
-                </div>
-                <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
-                  {activeCard} /{viewQuestienry.questions.length}
-                </div>
-                <div
-                  onClick={() => {
-                    if (activeCard < viewQuestienry.questions.length) {
-                      setActiveCard(activeCard + 1);
-                    }
-                  }}
-                  className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
-                >
-                  <img
-                    className="rotate-[270deg] w-3"
-                    src="/icons/arrow-down-green.svg"
-                    alt=""
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+
         {isDeleted === el.unique_id ? (
           <div className="flex flex-col mt-3">
             <div className="flex items-center">

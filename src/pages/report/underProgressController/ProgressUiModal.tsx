@@ -1,20 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
-
-const ProgressUiModal = () => {
+interface ProgressUiModalProps {
+  userInfoData: any;
+}
+const ProgressUiModal: FC<ProgressUiModalProps> = ({ userInfoData }) => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [progressData, setprogressData] = useState<Array<any>>([]);
   // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
   const [isClosed, setIsClosed] = useState(false);
-  const [userInfoData, setUserInfoData] = useState<any>(null);
-  useEffect(() => {
-    subscribe('userInfoData', (data: any) => {
-      setUserInfoData(data.detail);
-    });
-  }, []);
+
   const isVisibleModal = () => {
     if (
       progressData.length > 0 &&
@@ -211,8 +208,10 @@ const ProgressUiModal = () => {
     <div
       style={{ zIndex: 1000 }}
       className={`
-            fixed top-[48px] right-6
+            fixed top-[48px] right-[85px]
             w-[320px]
+            max-h-[calc(100vh-100px)]
+            overflow-y-auto
             rounded-2xl border-2 border-r-0 border-Gray-50 
             shadow-200 p-4 bg-white
             transition-all duration-[1000] ease-[cubic-bezier(0.4,0,0.2,1)]
