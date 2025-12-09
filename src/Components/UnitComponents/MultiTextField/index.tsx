@@ -77,7 +77,7 @@ const MultiTextField: FC<MultiTextFieldProps> = ({
                   onPaste={onPaste}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
                     !el.isValid ? 'border-Red' : 'border-Gray-50'
-                  } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
+                  } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold focus-visible:outline-none md:focus-visible:border-black`}
                 />
               </div>
             );

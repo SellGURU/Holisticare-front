@@ -43,7 +43,7 @@ const TextField: FC<TextFieldProps> = ({
           onChange={onChange}
           className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
             !isValid ? 'border-Red' : 'border-Gray-50'
-          } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
+          } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold focus-visible:outline-none md:focus-visible:border-black`}
           disabled={disabled}
         />
         {validationText && (

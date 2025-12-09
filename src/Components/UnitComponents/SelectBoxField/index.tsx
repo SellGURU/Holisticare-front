@@ -66,7 +66,9 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
         {value ? (
           <div className="text-[12px] text-Text-Primary">{value}</div>
         ) : (
-          <div className="text-[12px] text-Text-Fivefold">{placeholder}</div>
+          <div className="text-[10px] md:text-[12px] text-Text-Fivefold">
+            {placeholder}
+          </div>
         )}
         <div>
           <img
