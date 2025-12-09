@@ -5,6 +5,7 @@ import { publish, subscribe, unsubscribe } from '../../../utils/event';
 
 interface UnderProgressControllerProps {
   member_id: string;
+  activeUi: boolean;
 }
 
 interface FileProgress {
@@ -40,6 +41,7 @@ const formatDateTime = (date: Date): string => {
 
 const UnderProgressController = ({
   member_id,
+  activeUi,
 }: UnderProgressControllerProps) => {
   // const [fromDate, setfromDate] = useState<Date>(new Date());
   const fromDate = useRef<Date>(new Date());
@@ -50,7 +52,7 @@ const UnderProgressController = ({
     questionnaires: [],
     refresh: [],
   });
-  const [idHaveAction, SetIdHaveAction] = useState<Array<string>>([]);
+  // const [idHaveAction, SetIdHaveAction] = useState<Array<string>>([]);
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
   const needCheckProgress = () => {
@@ -138,23 +140,6 @@ const UnderProgressController = ({
   //     });
   // };
   const resolveFileController = (files: any[]) => {
-    files
-      .filter((item: any) => item.process_status == false)
-      .forEach((file) => {
-        if (!idHaveAction.includes(file.action_type + '_' + file.file_id)) {
-          SetIdHaveAction([
-            ...idHaveAction,
-            file.action_type + '_' + file.file_id,
-          ]);
-          // if (file.action_type === 'uploaded') {
-          //   checkUploadedFile(file);
-          // }
-          // if (file.action_type === 'deleted') {
-          //   checkDeleteFile(file);
-          // }
-        }
-      });
-
     files.forEach((file) => {
       if (file.process_status == true) {
         publish('completedProgress', {
@@ -206,9 +191,11 @@ const UnderProgressController = ({
           }),
         ),
       ];
-      publish('openProgressModal', {
-        data: progressArray,
-      });
+      if (activeUi) {
+        publish('openProgressModal', {
+          data: progressArray,
+        });
+      }
       if (progressArray.length == 0) {
         publish('allProgressCompleted', {});
       }
