@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Application from '../../../../api/app';
 import SearchBox from '../../../../Components/SearchBox';
 import ExerciseItem from './ExersiseItem';
@@ -62,8 +62,15 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const isMobilePage = useMemo(() => {
-    return window.innerWidth < 768;
+  const [isMobilePage, setIsMobilePage] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobilePage(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
   const validateExercise = (exercise: ExerciseGroup) => {
     const newErrors: { [key: string]: string } = {};
