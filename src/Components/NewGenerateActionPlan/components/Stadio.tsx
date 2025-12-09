@@ -487,7 +487,7 @@ const Stadio: FC<StadioProps> = ({
           setshowAddModal(false);
         }}
       />
-      <div className="flex flex-col md:flex-row w-full px-4 md:px-6 gap-4 select-none">
+      <div className="flex flex-col md:flex-row w-full pb-[80px] lg:pb-0 px-4 md:px-6 gap-4 select-none">
         <div className="flex-grow md:mr-[360px]">
           {haveConflic && (
             <div className="w-full  my-2 ">
@@ -511,10 +511,10 @@ const Stadio: FC<StadioProps> = ({
               </div>
             )} */}
             <div
-              className={`flex-grow flex flex-col gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
+              className={`flex-grow flex flex-col lg:flex-row  gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
               <div
-                className="flex items-center gap-1 select-none pl-2 cursor-pointer"
+                className="flex items-center gap-1 select-none lg:pl-2 cursor-pointer"
                 onClick={() => setIsSlideOutPanel(true)}
               >
                 <img src="/icons/eye-blue.svg" alt="" className="size-5" />
@@ -522,7 +522,7 @@ const Stadio: FC<StadioProps> = ({
                   Review Holistic Plan
                 </div>
               </div>
-              <div className="flex items-center select-none gap-3">
+              <div className="flex items-center flex-wrap justify-between select-none gap-3">
                 {actions.checkIn.length !== 0 ||
                 actions.category.length !== 0 ? (
                   <div
@@ -546,7 +546,7 @@ const Stadio: FC<StadioProps> = ({
                       actions.category.length !== 0 ? (
                         !isAutoGenerateComplete ? (
                           <ButtonSecondary
-                            ClassName="rounded-[30px] w-[130px]  md:w-[141px] text-nowrap"
+                            ClassName="rounded-[30px] w-[141px] text-nowrap"
                             onClick={() => {
                               AutoGenerate();
                             }}
@@ -578,7 +578,7 @@ const Stadio: FC<StadioProps> = ({
                     )}
                     <ButtonPrimary
                       onClick={() => setshowAddModal(true)}
-                      ClassName=" md:w-[108px]"
+                      ClassName=" w-full md:w-[108px]"
                     >
                       <img src="/icons/add-square.svg" alt="" /> Add
                     </ButtonPrimary>
@@ -663,9 +663,9 @@ const Stadio: FC<StadioProps> = ({
             )}
           </div>
         </div>
-        <div className="  w-[342px] md:fixed md:top-[190px] md:right-[100px]  h-full">
+        <div className="  w-full md:w-[342px] md:fixed md:top-[190px] md:right-[100px]  h-full">
           <div
-            className={`w-[342px]  p-4   bg-white rounded-[24px] border border-gray-50 shadow-100`}
+            className={`w-full md:w-[342px]  p-4   bg-white rounded-[24px] border border-gray-50 shadow-100`}
           >
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"

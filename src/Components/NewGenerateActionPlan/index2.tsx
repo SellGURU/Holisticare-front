@@ -260,9 +260,9 @@ const GenerateActionPlan = () => {
 
   return (
     <>
-      <div className="h-[100vh] overflow-auto overflow-y-scroll">
+      <div className="h-[100vh]  overflow-auto overflow-y-scroll">
         <div
-          className={`w-full fixed top-0 z-10 md:z-0  bg-[#E9F0F2] flex ${
+          className={`w-full fixed  top-0 z-10 md:z-0  bg-[#E9F0F2] flex ${
             showConflictsModal ? 'lg:z-0' : 'lg:z-[9]'
           }`}
         >
@@ -280,7 +280,7 @@ const GenerateActionPlan = () => {
                   }}
                   className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 lg:rounded-md shadow-100`}
                 >
-                  <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+                  <img className="w-4 xs:w-6 h-4 xs:h-6" src="/icons/arrow-back.svg" />
                 </div>
                 <div className="TextStyle-Headline-5 text-Text-Primary">
                   {calendarView ? 'Calendar View' : 'Generate Action Plan'}
@@ -290,7 +290,7 @@ const GenerateActionPlan = () => {
                 <>
                   {isWeighted && (
                     <div className="md:pr-[70px]">
-                      <ButtonPrimary onClick={saveChanges}>
+                      <ButtonPrimary ClassName='h-[33px] w-[120px] xs:w-[155px] text-[10px] xs:text-xs text-nowrap' onClick={saveChanges}>
                         {isLoadingSaveChanges ? (
                           <>
                             <SpinnerLoader />
@@ -356,8 +356,8 @@ const GenerateActionPlan = () => {
             {/* ) : ( */}
             <>
               <div
-                style={{ height: window.innerHeight - 190 + 'px' }}
-                className="w-full mt-[250px] md:mt-[190px] pb-10 md:pr-[70px] "
+                // style={{ height: window.innerHeight - 190 + 'px' }}
+                className="w-full h-[calc(100vh-190px)]   mt-[250px] lg:mt-[190px] pb-10 lg:pr-[70px] "
               >
                 <Stadio
                   isCheckSave={checkSave}

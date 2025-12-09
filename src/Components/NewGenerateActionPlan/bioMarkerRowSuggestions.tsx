@@ -141,17 +141,17 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       <div className="w-full h-auto  p-2 lg:px-6 lg:py-1 break-all ">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
           <div
-            className={`w-full bg-backgroundColor-Card  px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${isinvalid() ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
+            className={`w-full bg-backgroundColor-Card relative   px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${isinvalid() ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
           >
-            <div className="flex items-center gap-4 text-nowrap  justify-between w-full">
-              <div className="text-Text-Primary flex   justify-start items-center sm:text-sm text-xs font-medium">
+            <div className="flex items-center flex-wrap gap-4 text-nowrap  justify-between  w-full">
+              <div className="text-Text-Primary flex flex-wrap   justify-start items-center sm:text-sm text-xs font-medium">
                 <div className="w-8 h-8 bg-backgroundColor-Card border border-Gray-50 flex justify-center items-center rounded-[8px] mr-2">
                   <img className="w-4" src={resolvePillarIcon()} alt="" />
                 </div>
                 {value.Title} 
                 {value?.label && (
                   <div
-                    className={`select-none rounded-full px-2 flex items-center gap-1 text-[8px] text-Text-Primary ml-3`}
+                    className={`select-none mt-4 xs:mt-0 rounded-full px-2 flex items-center gap-1 text-[8px] text-Text-Primary ml-3`}
                     style={{ backgroundColor: bgColor }}
                   >
                     <div
@@ -178,7 +178,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </button>
                 )}
               </div>
-              <div className="flex  items-center relative pr-10">
+              <div className="flex   items-center relative pr-10">
                 {value.Frequency_Type === 'weekly' && (
                   <>
                     <div className="w-[76px] h-[24px] rounded-2xl bg-[#DEF7EC] flex items-center justify-center gap-1 text-Primary-DeepTeal text-[10px]">
@@ -244,8 +244,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       : 'rotate(0deg)',
                   }}
                 /> */}
-                <div
-                  className={`flex flex-col items-center absolute right-2 -top-1`}
+               
+              </div>
+          
+            </div>
+                 <div
+                  className={`flex flex-col items-center absolute right-2 top-4 `}
                 >
                   {sureRemoveIndex !== index ? (
                     <>
@@ -284,8 +288,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </>
                   )}
                 </div>
-              </div>
-            </div>
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
                 {value['Practitioner Comments'][0]?.length > 0 && (
