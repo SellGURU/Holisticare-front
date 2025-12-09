@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { useState } from 'react';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SelectBoxField } from '../../../../Components/UnitComponents';
 import SectionOrderModal from './SectionOrder';
 
@@ -31,8 +31,15 @@ const TabNavigation = ({
   );
   // "name": "Warm-Up", "enabled": True, "order": 1
   const [showSectionOrder, setShowSectionOrder] = useState(false);
-  const isMobilePage = useMemo(() => {
-    return window.innerWidth < 768;
+  const [isMobilePage, setIsMobilePage] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobilePage(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
   return (
     <>
