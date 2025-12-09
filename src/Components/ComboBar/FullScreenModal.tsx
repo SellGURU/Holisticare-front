@@ -48,6 +48,7 @@ const FullScreenModal = () => {
         publish('checkProgress', {});
         setIsOpen(false);
         publish('reloadQuestionnaires', {});
+        publish('reloadMainQuestionnaires', {});
         setUrl('');
 
         // Reset the flag after a short delay to allow processing
