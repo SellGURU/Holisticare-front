@@ -597,7 +597,7 @@ const NewGenerateHolisticPlan = () => {
                         </ButtonSecondary>
                       )} */}
                       <ButtonPrimary
-                      ClassName='w-full'
+                        ClassName="w-full"
                         onClick={() => {
                           setshowAddModal(true);
                         }}

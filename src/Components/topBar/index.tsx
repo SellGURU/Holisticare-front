@@ -263,7 +263,7 @@ export const TopBar: FC<TopBarProps> = ({
   const shouldEnableActions = !isReportAvailable && !showReport;
 
   return (
-    <div className="w-full flex items-center justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">
+    <div className="w-full flex items-center text-nowrap justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">
       {!isShare ? (
         <div className="flex gap-2 items-center ">
           <img onClick={() => navigate('/')} src="/icons/home.svg" alt="" />
@@ -276,7 +276,7 @@ export const TopBar: FC<TopBarProps> = ({
                       navigate(el.url);
                     }
                   }}
-                  className={`TextStyle-Button ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} ${index == resolveNav().length - 1 ? 'opacity-50' : ''} cursor-pointer ml-1`}
+                  className={`text-[10px] md:text-xs font-medium ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} ${index == resolveNav().length - 1 ? 'opacity-50' : ''} cursor-pointer ml-1`}
                 >
                   {el.name}
                 </div>

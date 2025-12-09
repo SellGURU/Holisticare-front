@@ -138,17 +138,17 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
 
   return (
     <>
-      <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
+      <div className="w-full h-auto  p-2 lg:px-6 lg:py-1 break-all ">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
           <div
-            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${isinvalid() ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
+            className={`w-full bg-backgroundColor-Card  px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${isinvalid() ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
           >
-            <div className="flex items-center justify-between w-full">
-              <div className="text-Text-Primary flex justify-start items-center text-sm font-medium">
+            <div className="flex items-center gap-4 text-nowrap  justify-between w-full">
+              <div className="text-Text-Primary flex   justify-start items-center sm:text-sm text-xs font-medium">
                 <div className="w-8 h-8 bg-backgroundColor-Card border border-Gray-50 flex justify-center items-center rounded-[8px] mr-2">
                   <img className="w-4" src={resolvePillarIcon()} alt="" />
                 </div>
-                {value.Title}
+                {value.Title} 
                 {value?.label && (
                   <div
                     className={`select-none rounded-full px-2 flex items-center gap-1 text-[8px] text-Text-Primary ml-3`}
@@ -178,7 +178,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </button>
                 )}
               </div>
-              <div className="flex items-center relative pr-10">
+              <div className="flex  items-center relative pr-10">
                 {value.Frequency_Type === 'weekly' && (
                   <>
                     <div className="w-[76px] h-[24px] rounded-2xl bg-[#DEF7EC] flex items-center justify-center gap-1 text-Primary-DeepTeal text-[10px]">
@@ -221,7 +221,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 )}
                 {!value.Frequency_Type || value.Frequency_Type.length === 0 ? (
                   <div
-                    className="flex items-center gap-1 text-xs"
+                    className="flex items-center gap-1 text-[10px] md:text-xs"
                     style={{ color: isinvalid() ? '#FC5474' : '#FFAB2C' }}
                   >
                     <SvgIcon
@@ -245,7 +245,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   }}
                 /> */}
                 <div
-                  className={`flex flex-col items-center absolute right-0 -top-1`}
+                  className={`flex flex-col items-center absolute right-2 -top-1`}
                 >
                   {sureRemoveIndex !== index ? (
                     <>
@@ -294,7 +294,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       <img src="/icons/info-circle-blue.svg" alt="" />
                       Analysis Info
                     </div>
-                    <div className="text-[#666666] leading-5 text-xs text-justify">
+                    <div className="text-[#666666]  leading-5 break-words text-xs text-justify">
                       {value['Practitioner Comments'][0]?.substring(
                         0,
                         showMore
@@ -589,7 +589,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </div> */}
                 {value.Category === 'Activity' && value.Sections.length > 0 && (
                   <div
-                    className={`w-full h-full bg-[#E9F0F2] rounded-[16px] mt-2`}
+                    className={`   overflow-x-auto overflow-y-hidden hidden-scrollbr h-full bg-[#E9F0F2] rounded-[16px] mt-2`}
                   >
                     {(() => {
                       // Create a map to track section numbers
@@ -611,8 +611,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
 
                         return (
                           <>
-                            <div className="p-4">
-                              <div className="flex justify-between items-start">
+                            <div className=" p-2 hidden md:block md:p-4 ">
+                              <div className="flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start">
                                 <div
                                   className={` ${el.Section && isFirstOccurrence ? 'visible' : 'invisible'} text-[12px] text-Text-Primary font-medium`}
                                 >
@@ -656,11 +656,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                                                   className="w-[15.48px] h-[16px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
                                                 />
                                               </div>
-                                              <div className="text-xs text-Text-Primary ml-2 font-medium">
+                                              <div className=" text-[10px] md:text-xs text-nowrap text-Text-Primary ml-2 font-medium">
                                                 {val?.Title}
                                               </div>
                                             </div>
-                                            <div className="flex items-center w-[400px] h-[28px] gap-2 border border-Gray-50 rounded-lg text-[10px] text-Text-Quadruple">
+                                            <div className="flex items-center min-w-[200px] w-full md:w-[400px] h-[28px] gap-2 border border-Gray-50 rounded-lg text-[10px] text-Text-Quadruple">
                                               <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
                                                 Set {el?.Sets}
                                               </div>

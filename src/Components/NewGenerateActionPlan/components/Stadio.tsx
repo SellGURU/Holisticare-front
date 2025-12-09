@@ -487,8 +487,8 @@ const Stadio: FC<StadioProps> = ({
           setshowAddModal(false);
         }}
       />
-      <div className="flex px-6 gap-4 select-none">
-        <div className="flex-grow mr-[360px]">
+      <div className="flex flex-col md:flex-row w-full px-4 md:px-6 gap-4 select-none">
+        <div className="flex-grow md:mr-[360px]">
           {haveConflic && (
             <div className="w-full  my-2 ">
               <AlertModal
@@ -500,7 +500,7 @@ const Stadio: FC<StadioProps> = ({
               />
             </div>
           )}
-          <div className="flex justify-between w-full items-center">
+          <div className="flex  justify-between w-full items-center">
             {/* {(actions.category.filter((el) => el.Category == 'Activity')
               .length > 1 ||
               actions.category.filter((el) => el.Category == 'Diet').length >
@@ -511,14 +511,14 @@ const Stadio: FC<StadioProps> = ({
               </div>
             )} */}
             <div
-              className={`flex-grow flex justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
+              className={`flex-grow flex flex-col gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
               <div
                 className="flex items-center gap-1 select-none pl-2 cursor-pointer"
                 onClick={() => setIsSlideOutPanel(true)}
               >
                 <img src="/icons/eye-blue.svg" alt="" className="size-5" />
-                <div className="text-Primary-DeepTeal font-medium text-xs">
+                <div className="text-Primary-DeepTeal font-medium text-[10px] md:text-xs">
                   Review Holistic Plan
                 </div>
               </div>
@@ -526,7 +526,7 @@ const Stadio: FC<StadioProps> = ({
                 {actions.checkIn.length !== 0 ||
                 actions.category.length !== 0 ? (
                   <div
-                    className="flex items-center select-none gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
+                    className=" flex items-center select-none text-nowrap gap-1 text-[10px] md:text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
                     onClick={() => setCalendarView(true)}
                   >
                     <img
@@ -546,7 +546,7 @@ const Stadio: FC<StadioProps> = ({
                       actions.category.length !== 0 ? (
                         !isAutoGenerateComplete ? (
                           <ButtonSecondary
-                            ClassName="rounded-[30px] w-[141px] text-nowrap"
+                            ClassName="rounded-[30px] w-[130px]  md:w-[141px] text-nowrap"
                             onClick={() => {
                               AutoGenerate();
                             }}
@@ -558,7 +558,7 @@ const Stadio: FC<StadioProps> = ({
                                 <img
                                   src="/icons/tree-start-white.svg"
                                   alt=""
-                                  className="mr-2"
+                                  className="md:mr-2"
                                 />
                                 Generate by AI
                               </>
@@ -578,7 +578,7 @@ const Stadio: FC<StadioProps> = ({
                     )}
                     <ButtonPrimary
                       onClick={() => setshowAddModal(true)}
-                      ClassName="w-[108px]"
+                      ClassName=" md:w-[108px]"
                     >
                       <img src="/icons/add-square.svg" alt="" /> Add
                     </ButtonPrimary>
@@ -588,7 +588,7 @@ const Stadio: FC<StadioProps> = ({
             </div>
           </div>
           <div
-            className={`w-full min-h-[494px] bg-white pt-2 pr-1 rounded-[24px] border border-gray-50 shadow-100 ${
+            className={`w-full md:min-h-[494px] bg-white pt-2 pr-1 rounded-[24px] border border-gray-50 shadow-100 ${
               actions.checkIn.length == 0 && actions.category.length == 0 && ''
             }`}
             onDragOver={handleDragOver}
@@ -627,7 +627,7 @@ const Stadio: FC<StadioProps> = ({
               </div>
             ) : (
               <>
-                <div className="flex flex-col gap-3 py-3 min-h-[420px] ">
+                <div className="flex flex-col gap-3 md:py-3 md:min-h-[420px] ">
                   {actions.checkIn.map((act: any, index: number) => {
                     return (
                       <>
@@ -663,7 +663,7 @@ const Stadio: FC<StadioProps> = ({
             )}
           </div>
         </div>
-        <div className="w-[342px] fixed top-[190px] right-[100px]  h-full">
+        <div className="  w-[342px] md:fixed md:top-[190px] md:right-[100px]  h-full">
           <div
             className={`w-[342px]  p-4   bg-white rounded-[24px] border border-gray-50 shadow-100`}
           >

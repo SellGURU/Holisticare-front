@@ -429,10 +429,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
           orderList={orderList}
           handleChangeSetOrder={handleChangeSetOrder}
         />
-        <div className="flex w-full items-center justify-between">
+        <div className="flex flex-col lg:flex-row w-full items-center justify-between">
           <div>
             <div
-              className={`w-[530px] h-[432px] border  border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
+              className={` w-full lg:w-[530px] h-[432px] border  border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}

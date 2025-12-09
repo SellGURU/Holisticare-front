@@ -717,7 +717,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       isOpen={isOpen}
     >
       <div
-        className={`bg-white p-2 pb-6 rounded-2xl shadow-800 relative pt-10 ${selectedGroup == 'Activity' && step == 1 ? 'w-[920px]' : 'w-[530px]'}  text-Text-Primary`}
+        className={`bg-white p-2 pb-6 rounded-2xl shadow-800 relative pt-10 ${selectedGroup == 'Activity' && step == 1 ? ' w-[90vw] lg:w-[920px]' : ' w-[90vw] lg:w-[530px]'}  text-Text-Primary`}
       >
         <div className="overflow-auto max-h-[620px] p-4 pt-0">
           <h2

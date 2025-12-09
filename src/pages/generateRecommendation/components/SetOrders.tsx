@@ -439,8 +439,10 @@ export const SetOrders: FC<SetOrdersProps> = ({
           handleRemoveIssueFromList={handleRemoveIssueFromList}
         />
         <div className="flex mt-4 w-full flex-wrap sm:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
-          <div className="flex w-full flex-wrap gap-8   
-          xl:gap-[80px] ">
+          <div
+            className="flex w-full flex-wrap gap-8   
+          xl:gap-[80px] "
+          >
             {categories.map(
               ({ name, visible }) =>
                 visible && (

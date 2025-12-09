@@ -262,13 +262,13 @@ const GenerateActionPlan = () => {
     <>
       <div className="h-[100vh] overflow-auto overflow-y-scroll">
         <div
-          className={`w-full fixed top-0 hidden bg-[#E9F0F2] lg:flex ${
+          className={`w-full fixed top-0 z-10 md:z-0  bg-[#E9F0F2] flex ${
             showConflictsModal ? 'lg:z-0' : 'lg:z-[9]'
           }`}
         >
           <div className="w-full ">
             <TopBar></TopBar>
-            <div className="flex justify-between items-center mt-9 mx-8">
+            <div className="flex justify-between items-center mt-9 mx-4 md:mx-8">
               <div className="flex items-center gap-3">
                 <div
                   onClick={() => {
@@ -278,7 +278,7 @@ const GenerateActionPlan = () => {
                       setCalendarView(false);
                     }
                   }}
-                  className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer lg:bg-white lg:border lg:border-Gray-50 lg:rounded-md lg:shadow-100`}
+                  className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 lg:rounded-md shadow-100`}
                 >
                   <img className="w-6 h-6" src="/icons/arrow-back.svg" />
                 </div>
@@ -289,7 +289,7 @@ const GenerateActionPlan = () => {
               {!calendarView && (
                 <>
                   {isWeighted && (
-                    <div className="pr-[70px]">
+                    <div className="md:pr-[70px]">
                       <ButtonPrimary onClick={saveChanges}>
                         {isLoadingSaveChanges ? (
                           <>
@@ -311,14 +311,14 @@ const GenerateActionPlan = () => {
               <>
                 {isWeighted && (
                   <>
-                    <div className="flex pb-3 justify-between gap-4 mx-8 mt-4 items-center pr-[70px]">
-                      <div className="flex-grow">
+                    <div className="flex flex-col md:flex-row pb-3 justify-between gap-4 mx-4 md:mx-8 mt-4 items-center md:pr-[70px]">
+                      <div className="flex-grow w-full md:w-auto">
                         <PlanObjective
                           value={planObjective}
                           setValue={setPlanObjective}
                         />
                       </div>
-                      <div className="w-[342px]">
+                      <div className=" w-full md:w-[342px]">
                         <TimeDuration
                           setDuration={(value) => {
                             setDuration(value);
@@ -357,7 +357,7 @@ const GenerateActionPlan = () => {
             <>
               <div
                 style={{ height: window.innerHeight - 190 + 'px' }}
-                className="w-full overflow-auto mt-[190px] pb-10 pr-[70px] "
+                className="w-full mt-[250px] md:mt-[190px] pb-10 md:pr-[70px] "
               >
                 <Stadio
                   isCheckSave={checkSave}
@@ -369,7 +369,7 @@ const GenerateActionPlan = () => {
                   plans={[]}
                   handleShowConflictsModal={handleShowConflictsModal}
                 />
-                <div className="absolute right-5 top-[75px] z-50">
+                <div className=" hidden md:block absolute right-5 top-[75px] z-50">
                   <ComboBar isHolisticPlan></ComboBar>
                 </div>
               </div>
