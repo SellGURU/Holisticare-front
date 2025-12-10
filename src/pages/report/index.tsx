@@ -147,10 +147,11 @@ const Report = () => {
           // setIsShareModalLoading(false);
         }}
       />
-      <UnderProgressController
-        member_id={id as string}
+      <UnderProgressController member_id={id as string} />
+      <ProgressUiModal
+        activeUi={activeCheckProgress}
+        userInfoData={userInfoData}
       />
-      <ProgressUiModal activeUi={activeCheckProgress} userInfoData={userInfoData} />
       <MainModal
         isOpen={showRefreshModal}
         onClose={() => {

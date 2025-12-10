@@ -190,9 +190,9 @@ const UnderProgressController = ({
         ),
       ];
       // if (activeUi) {
-        publish('openProgressModal', {
-          data: progressArray,
-        });
+      publish('openProgressModal', {
+        data: progressArray,
+      });
       // }
       if (progressArray.length == 0) {
         publish('allProgressCompleted', {});

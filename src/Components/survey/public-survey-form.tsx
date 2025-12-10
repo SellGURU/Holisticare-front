@@ -1293,8 +1293,11 @@ export function PublicSurveyForm({
       }
 
       case 'yes/no':
-        return renderYesNo(response?.toString().trim() ? response as string : question.response as string, (value) =>
-          handleResponseChange(value),
+        return renderYesNo(
+          response?.toString().trim()
+            ? (response as string)
+            : (question.response as string),
+          (value) => handleResponseChange(value),
         );
 
       default:
