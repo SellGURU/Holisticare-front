@@ -5,7 +5,6 @@ import { publish, subscribe, unsubscribe } from '../../../utils/event';
 
 interface UnderProgressControllerProps {
   member_id: string;
-  activeUi: boolean;
 }
 
 interface FileProgress {
@@ -41,7 +40,6 @@ const formatDateTime = (date: Date): string => {
 
 const UnderProgressController = ({
   member_id,
-  activeUi,
 }: UnderProgressControllerProps) => {
   // const [fromDate, setfromDate] = useState<Date>(new Date());
   const fromDate = useRef<Date>(new Date());
@@ -191,11 +189,11 @@ const UnderProgressController = ({
           }),
         ),
       ];
-      if (activeUi) {
+      // if (activeUi) {
         publish('openProgressModal', {
           data: progressArray,
         });
-      }
+      // }
       if (progressArray.length == 0) {
         publish('allProgressCompleted', {});
       }

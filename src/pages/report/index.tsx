@@ -148,10 +148,9 @@ const Report = () => {
         }}
       />
       <UnderProgressController
-        activeUi={activeCheckProgress}
         member_id={id as string}
       />
-      <ProgressUiModal userInfoData={userInfoData} />
+      <ProgressUiModal activeUi={activeCheckProgress} userInfoData={userInfoData} />
       <MainModal
         isOpen={showRefreshModal}
         onClose={() => {

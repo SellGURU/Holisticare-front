@@ -4,8 +4,9 @@ import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 interface ProgressUiModalProps {
   userInfoData: any;
+  activeUi: boolean;
 }
-const ProgressUiModal: FC<ProgressUiModalProps> = ({ userInfoData }) => {
+const ProgressUiModal: FC<ProgressUiModalProps> = ({ userInfoData, activeUi }) => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [progressData, setprogressData] = useState<Array<any>>([]);
@@ -13,6 +14,9 @@ const ProgressUiModal: FC<ProgressUiModalProps> = ({ userInfoData }) => {
   const [isClosed, setIsClosed] = useState(false);
 
   const isVisibleModal = () => {
+    if(!activeUi) {
+      return false;
+    }
     if (
       progressData.length > 0 &&
       showProgressModal &&

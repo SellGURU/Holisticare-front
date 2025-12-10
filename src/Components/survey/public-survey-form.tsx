@@ -830,6 +830,7 @@ export function PublicSurveyForm({
     value: string | undefined,
     onChange: (value: string) => void,
   ) => {
+    console.log('value => ', value);
     return (
       <div className="flex justify-center space-x-4">
         <button
@@ -1292,7 +1293,7 @@ export function PublicSurveyForm({
       }
 
       case 'yes/no':
-        return renderYesNo(response as string, (value) =>
+        return renderYesNo(response?.toString().trim() ? response as string : question.response as string, (value) =>
           handleResponseChange(value),
         );
 
