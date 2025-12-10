@@ -18,28 +18,28 @@
 
 @media screen and (max-width: 768px) {
   .clients-container {
-    height: calc(100vh - 240px);
+    height: fit-content
   }
 
   .clients-content {
-    height: calc(100vh - 260px);
+    height: fit-content;
   }
 
   .clients-table {
-    height: calc(100vh - 300px);
+    height: fit-content;
   }
 }
 
 @media screen and (max-width: 480px) {
   .clients-container {
-    height: calc(100vh - 210px);
+    height: fit-content;
   }
 
   .clients-content {
-    height: calc(100vh - 250px);
+    height: fit-content;
   }
 
   .clients-table {
-    height: calc(100vh - 300px);
+    height: fit-content;
   }
 }
