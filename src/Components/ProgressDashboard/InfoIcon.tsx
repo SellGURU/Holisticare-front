@@ -23,7 +23,7 @@ const InfoIcon: React.FC<InfoIconProps> = ({ text, id }) => {
       />
       <Tooltip
         id={tooltipId}
-        className="!bg-white !w-[300px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-gray-700 !text-[11px] !rounded-[6px] !border !border-gray-200 !p-3 !z-[99999]"
+        className="!bg-white !max-w-[200px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-gray-700 !text-[11px] !rounded-[6px] !border !border-gray-200 !p-3 !z-[99999]"
         style={{ whiteSpace: 'pre-line' }}
       />
     </>
