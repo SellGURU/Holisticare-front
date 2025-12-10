@@ -28,6 +28,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   const { id } = useParams<{ id: string }>();
   const [idData, setIdData] = useState<string>('');
   const [hasUnreadMessage, setHasUnreadMessage] = useState<boolean>(false);
+  const [unsyncedIdes, setUnsyncedIdes] = useState<string[]>([]);
   useEffect(() => {
     if (id) {
       setIdData(id);
@@ -205,6 +206,8 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'File History':
         return (
           <FileHistoryNew
+            unsyncedIdes={unsyncedIdes}
+            setUnsyncedIdes={setUnsyncedIdes}
             isOpen={isSlideOutPanel && activeItem === 'File History'}
             handleCloseSlideOutPanel={handleCloseSlideOutPanel}
             // handleCloseSlideOutPanel={handleCloseSlideOutPanel}
