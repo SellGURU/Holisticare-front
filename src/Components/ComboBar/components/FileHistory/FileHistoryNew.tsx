@@ -9,15 +9,18 @@ import FileUploadProgressList from './FileUploadProgressList';
 interface FileHistoryNewProps {
   handleCloseSlideOutPanel: () => void;
   isOpen: boolean;
+  setUnsyncedIdes: (ids: string[]) => void;
+  unsyncedIdes: string[];
 }
 const FileHistoryNew: FC<FileHistoryNewProps> = ({
-  isOpen,
+  isOpen, 
   handleCloseSlideOutPanel,
+  unsyncedIdes,
+  setUnsyncedIdes,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const { id } = useParams<{ id: string }>();
-  const [unsyncedIdes, setUnsyncedIdes] = useState<string[]>([]);
   const getFileList = (id: string) => {
     setIsLoading(true);
     Application.getFilleList({ member_id: id })
@@ -50,7 +53,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   const handleCompletedProgress = (data: any) => {
     if (data.detail.file_id && data.detail.type == 'uploaded') {
       // alert('handleCompletedProgress');
-      setUnsyncedIdes((prev) => [...prev, data.detail.file_id]);
+      setUnsyncedIdes([...unsyncedIdes, data.detail.file_id]);
       setUploadedFiles((prev: any) =>
         prev.map((el: any) =>
           el.file_id === data.detail.file_id ? { ...el, isNeedSync: true } : el,

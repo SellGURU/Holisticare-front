@@ -266,8 +266,8 @@ const ProgressUiModal: FC<ProgressUiModalProps> = ({
                   {resolveSectionName(el).description}
                 </div>
               </div>
-
-              <div className="w-full h-[1px] bg-Gray-50 my-4"></div>
+              
+              <div className={`${progressData.length>0?'visible':'invisible'} w-full h-[1px] bg-Gray-50 my-4`}></div>
             </>
           );
         })}
