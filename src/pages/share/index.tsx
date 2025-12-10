@@ -96,6 +96,8 @@ const Share = () => {
           <ReportSideMenu
             onClose={() => isMobileView && setIsMobileMenuOpen(false)}
             isShare
+            activeReportSection="Health"
+            setActiveReportSection={() => {}}
           ></ReportSideMenu>
         </div>
         {memberId != '123' && (

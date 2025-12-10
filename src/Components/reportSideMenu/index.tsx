@@ -184,58 +184,60 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       style={{ height: window.innerHeight - 100 + 'px' }}
       className={` min-h-[272px]  w-[178px] bg-white '} border border-gray-50 rounded-[12px] p-4 shadow-100 relative`}
     >
-      <div className="flex gap-1 mb-4">
-        <div
-          onClick={() => {
-            setActiveReportSection('Health');
-            setactiveMenu('Client Summary');
-            setactiveImg(1);
-            publish('activeTabChange', { tab: 'Health' });
-          }}
-          className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
-            activeReportSection === 'Health'
-              ? 'bg-Primary-EmeraldGreen text-white'
-              : 'bg-backgroundColor-Main text-Text-Primary'
-          }`}
-        >
-          <img
-            src="/icons/health.svg"
-            alt="Health"
-            className="w-4 h-4"
-            style={
+      {!isShare && (
+        <div className="flex gap-1 mb-4">
+          <div
+            onClick={() => {
+              setActiveReportSection('Health');
+              setactiveMenu('Client Summary');
+              setactiveImg(1);
+              publish('activeTabChange', { tab: 'Health' });
+            }}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
               activeReportSection === 'Health'
-                ? { filter: 'brightness(0) invert(1)' }
-                : { filter: 'opacity(0.5) brightness(0) saturate(0)' }
-            }
-          />
-          <span className="text-[10px] font-medium">Health</span>
-        </div>
-        <div
-          onClick={() => {
-            setActiveReportSection('Progress');
-            setactiveMenu('Wellness Data');
-            setactiveImg(1);
-            publish('activeTabChange', { tab: 'Progress' });
-          }}
-          className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
-            activeReportSection === 'Progress'
-              ? 'bg-Primary-EmeraldGreen text-white'
-              : 'bg-backgroundColor-Main text-Text-Primary'
-          }`}
-        >
-          <img
-            src="/icons/chart.svg"
-            alt="Progress"
-            className="w-4 h-4"
-            style={
+                ? 'bg-Primary-EmeraldGreen text-white'
+                : 'bg-backgroundColor-Main text-Text-Primary'
+            }`}
+          >
+            <img
+              src="/icons/health.svg"
+              alt="Health"
+              className="w-4 h-4"
+              style={
+                activeReportSection === 'Health'
+                  ? { filter: 'brightness(0) invert(1)' }
+                  : { filter: 'opacity(0.5) brightness(0) saturate(0)' }
+              }
+            />
+            <span className="text-[10px] font-medium">Health</span>
+          </div>
+          <div
+            onClick={() => {
+              setActiveReportSection('Progress');
+              setactiveMenu('Wellness Data');
+              setactiveImg(1);
+              publish('activeTabChange', { tab: 'Progress' });
+            }}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
               activeReportSection === 'Progress'
-                ? { filter: 'brightness(0) invert(1)' }
-                : { filter: 'opacity(0.5) brightness(0) saturate(0)' }
-            }
-          />
-          <span className="text-[10px] font-medium">Progress</span>
+                ? 'bg-Primary-EmeraldGreen text-white'
+                : 'bg-backgroundColor-Main text-Text-Primary'
+            }`}
+          >
+            <img
+              src="/icons/chart.svg"
+              alt="Progress"
+              className="w-4 h-4"
+              style={
+                activeReportSection === 'Progress'
+                  ? { filter: 'brightness(0) invert(1)' }
+                  : { filter: 'opacity(0.5) brightness(0) saturate(0)' }
+              }
+            />
+            <span className="text-[10px] font-medium">Progress</span>
+          </div>
         </div>
-      </div>
+      )}
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() =>
