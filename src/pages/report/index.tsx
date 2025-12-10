@@ -8,6 +8,7 @@ import { subscribe, unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
+import ProgressDashboardView from '../../Components/ProgressDashboard/ProgressDashboardView';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
@@ -60,6 +61,7 @@ const Report = () => {
     }
   };
   const [isReportAvailable, setIsReportAvailable] = useState(true);
+  const [activeReportSection, setActiveReportSection] = useState<'Health' | 'Progress'>( 'Health');
 
   useEffect(() => {
     const handleReportStatus = (message: any) => {
@@ -107,8 +109,12 @@ const Report = () => {
         ></ReportSideMenu>
       </div>
 
-      <div className="w-full xl:pl-[200px] fixed">
+      <div className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}>
         <ReportAnalyseView></ReportAnalyseView>
+      </div>
+
+      <div className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}>
+        <ProgressDashboardView />
       </div>
 
       <div
