@@ -228,6 +228,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   return (
     <div className="h-full flex flex-col justify-between items-center">
       <SlideOutPanel
+      isResizable
         isOpen={isSlideOutPanel}
         isCombo={true}
         onClose={handleCloseSlideOutPanel}
