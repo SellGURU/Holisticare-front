@@ -136,6 +136,52 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
   data,
   loading = false,
 }) => {
+  // Format last sync date to be client-friendly: yyyy-mm-dd hh:mm:ss
+  const formatLastSync = (dateStr: string | null | undefined): string => {
+    if (!dateStr) {
+      return '';
+    }
+    try {
+      // JavaScript Date can handle ISO strings with microseconds directly
+      const date = new Date(dateStr);
+
+      if (isNaN(date.getTime())) {
+        console.warn('formatLastSync - Invalid date:', dateStr);
+        return '';
+      }
+
+      // Format as "yyyy-mm-dd hh:mm:ss" (24-hour format)
+      const formatted = format(date, 'yyyy-MM-dd HH:mm:ss');
+      return formatted;
+    } catch (e) {
+      console.error('formatLastSync - Error formatting date:', dateStr, e);
+      return '';
+    }
+  };
+  // Format the last sync date
+  const lastSyncText = useMemo(() => {
+    if (!data?.latestDate) {
+      return '';
+    }
+
+    // Try the main formatting function
+    const formatted = formatLastSync(data?.latestDate);
+    if (formatted) {
+      return formatted;
+    }
+
+    // Fallback: try direct Date parsing with simpler format
+    try {
+      const date = new Date(data?.latestDate);
+      if (!isNaN(date.getTime())) {
+        const fallbackFormatted = format(date, 'yyyy-MM-dd HH:mm:ss');
+        return fallbackFormatted;
+      }
+    } catch (e) {
+      console.error('WellnessSummary - Fallback formatting error:', e);
+    }
+    return '';
+  }, [data?.latestDate]);
   if (loading) {
     return (
       <div className="bg-white rounded-xl p-6 shadow-sm">
@@ -162,7 +208,6 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
       </div>
     );
   }
-
   const {
     scores,
     scoresData,
@@ -177,83 +222,6 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
   // Check if latestDate exists (not null, undefined, or empty string)
   const hasLatestDate =
     latestDate !== null && latestDate !== undefined && latestDate !== '';
-
-  console.log('WellnessSummary - data received:', {
-    hasLatestDate,
-    latestDate,
-    latestDateType: typeof latestDate,
-    latestDateValue: latestDate,
-  }); // Debug
-
-  // Format last sync date to be client-friendly: yyyy-mm-dd hh:mm:ss
-  const formatLastSync = (dateStr: string | null | undefined): string => {
-    if (!dateStr) {
-      console.log('formatLastSync - No date string provided');
-      return '';
-    }
-    try {
-      console.log('formatLastSync - Input:', dateStr, 'Type:', typeof dateStr);
-
-      // JavaScript Date can handle ISO strings with microseconds directly
-      const date = new Date(dateStr);
-
-      if (isNaN(date.getTime())) {
-        console.warn('formatLastSync - Invalid date:', dateStr);
-        return '';
-      }
-
-      console.log('formatLastSync - Parsed date:', date);
-
-      // Format as "yyyy-mm-dd hh:mm:ss" (24-hour format)
-      const formatted = format(date, 'yyyy-MM-dd HH:mm:ss');
-      console.log('formatLastSync - Formatted:', formatted);
-      return formatted;
-    } catch (e) {
-      console.error('formatLastSync - Error formatting date:', dateStr, e);
-      return '';
-    }
-  };
-
-  // Format the last sync date
-  const lastSyncText = useMemo(() => {
-    if (!latestDate) {
-      console.log('WellnessSummary - No latestDate provided');
-      return '';
-    }
-
-    console.log(
-      'WellnessSummary - Formatting latestDate:',
-      latestDate,
-      'Type:',
-      typeof latestDate,
-    );
-
-    // Try the main formatting function
-    const formatted = formatLastSync(latestDate);
-    if (formatted) {
-      console.log('WellnessSummary - Formatted successfully:', formatted);
-      return formatted;
-    }
-
-    // Fallback: try direct Date parsing with simpler format
-    console.log('WellnessSummary - Main formatting failed, trying fallback');
-    try {
-      const date = new Date(latestDate);
-      if (!isNaN(date.getTime())) {
-        const fallbackFormatted = format(date, 'yyyy-MM-dd HH:mm:ss');
-        console.log('WellnessSummary - Fallback formatted:', fallbackFormatted);
-        return fallbackFormatted;
-      }
-    } catch (e) {
-      console.error('WellnessSummary - Fallback formatting error:', e);
-    }
-
-    console.warn(
-      'WellnessSummary - All formatting attempts failed for:',
-      latestDate,
-    );
-    return '';
-  }, [latestDate]);
 
   // Get all score names except global (global is shown separately in the gauge)
   const scoreNames = Object.keys(scores || {}).filter((name) => {
