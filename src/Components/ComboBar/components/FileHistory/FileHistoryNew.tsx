@@ -13,7 +13,7 @@ interface FileHistoryNewProps {
   unsyncedIdes: string[];
 }
 const FileHistoryNew: FC<FileHistoryNewProps> = ({
-  isOpen, 
+  isOpen,
   handleCloseSlideOutPanel,
   unsyncedIdes,
   setUnsyncedIdes,
