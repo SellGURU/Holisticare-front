@@ -4,6 +4,7 @@ import { Tooltip } from 'react-tooltip';
 import SpinnerLoader from '../../../Components/SpinnerLoader';
 import Application from '../../../api/app';
 import Circleloader from '../../../Components/CircleLoader';
+import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
 export const ClinicPreferences = () => {
   const [Preferences, setPreferences] = useState('');
@@ -38,6 +39,12 @@ export const ClinicPreferences = () => {
   };
   console.log(Preferences);
   console.log(initialPreferences);
+  // const isFormReady = useMemo(() => {
+  //   if (!Preferences || !textValue ) {
+  //     return false;
+  //   }
+  //   return true;
+  // }, [Preferences, textValue]);
 
   return (
     <div className="bg-backgroundColor-Card h-fit min-h-[348px]   w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary ">
@@ -97,9 +104,9 @@ export const ClinicPreferences = () => {
               />
             </div>
           </div>
-          <div className="flex items-center justify-end mt-3 md:mt-0 md:mb-1 mr-1 absolute bottom-4 right-4">
+          <div className="flex items-center gap-4 justify-end mt-3 md:mt-0 md:mb-1 mr-1 absolute bottom-4 right-4">
             <div
-              className="text-Disable text-xs md:text-sm font-medium cursor-pointer"
+              className={`text-Disable  text-xs md:text-sm font-medium cursor-pointer`}
               onClick={() => {
                 setPreferences(initialPreferences);
                 settextValue(initialTextValue);
@@ -107,8 +114,9 @@ export const ClinicPreferences = () => {
             >
               Back to Default
             </div>
-            <div
-              className="text-Primary-DeepTeal text-nowrap font-medium text-xs md:text-sm ml-6 cursor-pointer flex items-center justify-center"
+            <ButtonPrimary
+              // disabled={!isFormReady}
+              ClassName="min-w-[150px]"
               onClick={() => {
                 if (btnLoading == false) {
                   setBtnLoading(true);
@@ -131,7 +139,7 @@ export const ClinicPreferences = () => {
               ) : (
                 'Apply Changes'
               )}
-            </div>
+            </ButtonPrimary>
           </div>
         </>
       )}
