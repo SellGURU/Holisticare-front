@@ -235,7 +235,7 @@ const ReportAnalyse = () => {
               </div>
             </div>
             <div className="">
-              <ReportAnalyseView memberID={Number(id)}></ReportAnalyseView>
+              <ReportAnalyseView setActiveCheckProgress={() =>{}} memberID={Number(id)}></ReportAnalyseView>
             </div>
           </div>
         </div>
