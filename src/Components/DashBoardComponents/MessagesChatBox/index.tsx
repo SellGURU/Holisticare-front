@@ -372,7 +372,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                     ref={wrapperRef}
                   >
                     <div
-                      className="cursor-pointer bg-backgroundColor-Card border py-2 px-4 pr-3 rounded-2xl leading-tight text-[12px] text-Text-Primary flex justify-between items-center"
+                      className="cursor-pointer w-full bg-backgroundColor-Card border py-2 px-4 pr-3 rounded-2xl leading-tight text-[12px] text-Text-Primary flex justify-between items-center"
                       onClick={() => setIsOpen(!isOpen)}
                     >
                       {options.find((opt) => opt.value === aiMode)?.label}
@@ -386,7 +386,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                     </div>
 
                     {isOpen && (
-                      <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-100 rounded-2xl shadow-sm text-[12px] text-Text-Primary">
+                      <ul className="absolute z-10 top-7 mt-1 w-full bg-white border border-gray-100 rounded-2xl shadow-sm text-[12px] text-Text-Primary">
                         {options.map((opt, index) => (
                           <li
                             key={index}
