@@ -108,17 +108,19 @@ const Report = () => {
       >
         <ReportSideMenu
           onClose={() => isMobileView && setIsMobileMenuOpen(false)}
+          setActiveReportSection={setActiveReportSection}
+          activeReportSection={activeReportSection}
         ></ReportSideMenu>
       </div>
 
       <div
-        className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
+        className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
       >
         <ReportAnalyseView></ReportAnalyseView>
       </div>
 
       <div
-        className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
+        className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
       >
         <ProgressDashboardView />
       </div>
