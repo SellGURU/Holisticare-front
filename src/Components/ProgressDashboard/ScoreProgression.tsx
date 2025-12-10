@@ -1,24 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useMemo, useEffect } from 'react';
-import { Line } from 'react-chartjs-2';
 import {
-  Chart as ChartJS,
-  LineElement,
   CategoryScale,
+  Chart as ChartJS,
+  Filler,
+  Legend,
   LinearScale,
+  LineElement,
   PointElement,
   Title,
   Tooltip,
-  Legend,
-  Filler,
 } from 'chart.js';
-import {
-  format,
-  subDays,
-  startOfDay,
-  isWithinInterval,
-  eachDayOfInterval,
-} from 'date-fns';
+import { format, startOfDay, subDays } from 'date-fns';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Line } from 'react-chartjs-2';
 import SimpleDatePicker from '../SimpleDatePicker';
 
 ChartJS.register(
@@ -259,7 +253,7 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
       return {
         label: config.label,
         data: chartData.map((point) => {
-          const value = point[metric as keyof ScoreDataPoint];
+          const value = (point as Record<string, unknown>)[metric];
           return typeof value === 'number'
             ? value
             : typeof value === 'string'
