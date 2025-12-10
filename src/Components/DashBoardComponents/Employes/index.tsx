@@ -193,7 +193,7 @@ const EmployeeRow: React.FC<{
         isOpen={showAssignListModal}
         onClose={() => setshowAssignListModal(false)}
       >
-        <div className="bg-white rounded-2xl p-6  shadow-800 w-[706px] relative h-[416px]">
+        <div className="bg-white rounded-2xl p-6  shadow-800 w-[90vw] md:w-[706px] relative h-[416px]">
           <div className="w-full border-b pb-2 border-Gray-50 text-sm font-medium">
             Assign List
           </div>
