@@ -101,7 +101,7 @@ const Share = () => {
         {memberId != '123' && (
           <div className="w-full xl:pl-[200px] fixed">
             <ReportAnalyseView
-            setActiveCheckProgress={() =>{}}
+              setActiveCheckProgress={() => {}}
               memberID={Number(memberId)}
               uniqKey={id}
               isShare
