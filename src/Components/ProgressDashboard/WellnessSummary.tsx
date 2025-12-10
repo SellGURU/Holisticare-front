@@ -21,20 +21,24 @@ interface WellnessSummaryProps {
 // Helper function to format tooltip from API data
 const formatTooltip = (scoreData: any): string => {
   if (!scoreData) return '';
-  
+
   let tooltip = '';
-  
+
   if (scoreData.description) {
     tooltip += scoreData.description;
   }
-  
-  if (scoreData.factors && Array.isArray(scoreData.factors) && scoreData.factors.length > 0) {
+
+  if (
+    scoreData.factors &&
+    Array.isArray(scoreData.factors) &&
+    scoreData.factors.length > 0
+  ) {
     tooltip += '\n\nKey factors:';
     scoreData.factors.forEach((factor: string) => {
       tooltip += `\n• ${factor}`;
     });
   }
-  
+
   return tooltip || '';
 };
 
@@ -91,28 +95,54 @@ Your body may need recovery or lifestyle changes across multiple areas.`,
 };
 
 // Helper function to get icon and color for a score name
-const getScoreConfig = (name: string): { icon: string; color: string; label: string } => {
+const getScoreConfig = (
+  name: string,
+): { icon: string; color: string; label: string } => {
   const lowerName = name.toLowerCase();
-  
+
   // Icon mapping
-  if (lowerName.includes('sleep')) return { icon: '🌙', color: '#7F39FB', label: 'Sleep' };
-  if (lowerName.includes('activity')) return { icon: '🏃', color: '#06C78D', label: 'Activity' };
-  if (lowerName.includes('heart') || lowerName.includes('cardio')) return { icon: '❤️', color: '#FC5474', label: 'Heart Health' };
-  if (lowerName.includes('stress')) return { icon: '😮‍💨', color: '#FBAD37', label: 'Stress' };
-  if (lowerName.includes('calorie') || lowerName.includes('metabolic')) return { icon: '🔥', color: '#F5C842', label: 'Metabolic' };
-  if (lowerName.includes('body') || lowerName.includes('bmi') || lowerName.includes('composition')) return { icon: '🧍', color: '#4FC3F7', label: 'Body Composition' };
-  if (lowerName.includes('global') || lowerName.includes('wellness') || lowerName.includes('overall')) return { icon: '⭐', color: '#005F73', label: 'Global' };
-  
+  if (lowerName.includes('sleep'))
+    return { icon: '🌙', color: '#7F39FB', label: 'Sleep' };
+  if (lowerName.includes('activity'))
+    return { icon: '🏃', color: '#06C78D', label: 'Activity' };
+  if (lowerName.includes('heart') || lowerName.includes('cardio'))
+    return { icon: '❤️', color: '#FC5474', label: 'Heart Health' };
+  if (lowerName.includes('stress'))
+    return { icon: '😮‍💨', color: '#FBAD37', label: 'Stress' };
+  if (lowerName.includes('calorie') || lowerName.includes('metabolic'))
+    return { icon: '🔥', color: '#F5C842', label: 'Metabolic' };
+  if (
+    lowerName.includes('body') ||
+    lowerName.includes('bmi') ||
+    lowerName.includes('composition')
+  )
+    return { icon: '🧍', color: '#4FC3F7', label: 'Body Composition' };
+  if (
+    lowerName.includes('global') ||
+    lowerName.includes('wellness') ||
+    lowerName.includes('overall')
+  )
+    return { icon: '⭐', color: '#005F73', label: 'Global' };
+
   // Default fallback
-  return { icon: '📊', color: '#888888', label: name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) };
+  return {
+    icon: '📊',
+    color: '#888888',
+    label: name.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
+  };
 };
 
-const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false }) => {
+const WellnessSummary: React.FC<WellnessSummaryProps> = ({
+  data,
+  loading = false,
+}) => {
   if (loading) {
     return (
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <div className="text-center py-12">
-          <div className="text-gray-400 text-lg mb-2">Loading wellness data...</div>
+          <div className="text-gray-400 text-lg mb-2">
+            Loading wellness data...
+          </div>
         </div>
       </div>
     );
@@ -122,26 +152,39 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
     return (
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <div className="text-center py-12">
-          <div className="text-gray-400 text-lg mb-2">No wellness data available</div>
-          <div className="text-gray-300 text-sm">Wellness summary will appear here once data is available</div>
+          <div className="text-gray-400 text-lg mb-2">
+            No wellness data available
+          </div>
+          <div className="text-gray-300 text-sm">
+            Wellness summary will appear here once data is available
+          </div>
         </div>
       </div>
     );
   }
 
-  const { scores, scoresData, globalScore: globalScoreValue, globalScoreData, archetype, archetypeData, latestDate } = data;
+  const {
+    scores,
+    scoresData,
+    globalScore: globalScoreValue,
+    globalScoreData,
+    archetype,
+    archetypeData,
+    latestDate,
+  } = data;
   const globalScore = globalScoreValue || 0;
-  
+
   // Check if latestDate exists (not null, undefined, or empty string)
-  const hasLatestDate = latestDate !== null && latestDate !== undefined && latestDate !== '';
-  
-  console.log('WellnessSummary - data received:', { 
-    hasLatestDate, 
-    latestDate, 
+  const hasLatestDate =
+    latestDate !== null && latestDate !== undefined && latestDate !== '';
+
+  console.log('WellnessSummary - data received:', {
+    hasLatestDate,
+    latestDate,
     latestDateType: typeof latestDate,
-    latestDateValue: latestDate
+    latestDateValue: latestDate,
   }); // Debug
-  
+
   // Format last sync date to be client-friendly: yyyy-mm-dd hh:mm:ss
   const formatLastSync = (dateStr: string | null | undefined): string => {
     if (!dateStr) {
@@ -150,19 +193,19 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
     }
     try {
       console.log('formatLastSync - Input:', dateStr, 'Type:', typeof dateStr);
-      
+
       // JavaScript Date can handle ISO strings with microseconds directly
       const date = new Date(dateStr);
-      
+
       if (isNaN(date.getTime())) {
         console.warn('formatLastSync - Invalid date:', dateStr);
         return '';
       }
-      
+
       console.log('formatLastSync - Parsed date:', date);
-      
+
       // Format as "yyyy-mm-dd hh:mm:ss" (24-hour format)
-      const formatted = format(date, "yyyy-MM-dd HH:mm:ss");
+      const formatted = format(date, 'yyyy-MM-dd HH:mm:ss');
       console.log('formatLastSync - Formatted:', formatted);
       return formatted;
     } catch (e) {
@@ -170,57 +213,70 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
       return '';
     }
   };
-  
+
   // Format the last sync date
   const lastSyncText = useMemo(() => {
     if (!latestDate) {
       console.log('WellnessSummary - No latestDate provided');
       return '';
     }
-    
-    console.log('WellnessSummary - Formatting latestDate:', latestDate, 'Type:', typeof latestDate);
-    
+
+    console.log(
+      'WellnessSummary - Formatting latestDate:',
+      latestDate,
+      'Type:',
+      typeof latestDate,
+    );
+
     // Try the main formatting function
     const formatted = formatLastSync(latestDate);
     if (formatted) {
       console.log('WellnessSummary - Formatted successfully:', formatted);
       return formatted;
     }
-    
+
     // Fallback: try direct Date parsing with simpler format
     console.log('WellnessSummary - Main formatting failed, trying fallback');
     try {
       const date = new Date(latestDate);
       if (!isNaN(date.getTime())) {
-        const fallbackFormatted = format(date, "yyyy-MM-dd HH:mm:ss");
+        const fallbackFormatted = format(date, 'yyyy-MM-dd HH:mm:ss');
         console.log('WellnessSummary - Fallback formatted:', fallbackFormatted);
         return fallbackFormatted;
       }
     } catch (e) {
       console.error('WellnessSummary - Fallback formatting error:', e);
     }
-    
-    console.warn('WellnessSummary - All formatting attempts failed for:', latestDate);
+
+    console.warn(
+      'WellnessSummary - All formatting attempts failed for:',
+      latestDate,
+    );
     return '';
   }, [latestDate]);
-  
+
   // Get all score names except global (global is shown separately in the gauge)
-  const scoreNames = Object.keys(scores || {}).filter(
-    (name) => {
-      const lowerName = name.toLowerCase();
-      return !lowerName.includes('global') && !lowerName.includes('wellness') && !lowerName.includes('overall');
-    }
-  );
+  const scoreNames = Object.keys(scores || {}).filter((name) => {
+    const lowerName = name.toLowerCase();
+    return (
+      !lowerName.includes('global') &&
+      !lowerName.includes('wellness') &&
+      !lowerName.includes('overall')
+    );
+  });
 
   // Calculate percentage for circular progress (0-100)
   const globalPercentage = Math.min(100, Math.max(0, globalScore));
 
   // Get archetype tooltip from API or fallback
-  const archetypeTooltip = archetypeData?.description 
-    ? (archetypeData.factors && Array.isArray(archetypeData.factors) && archetypeData.factors.length > 0
-        ? `${archetypeData.description}\n\nKey factors:\n${archetypeData.factors.map((f: string) => `• ${f}`).join('\n')}`
-        : archetypeData.description)
-    : (archetypeExplanations[archetype] || 'User archetype based on health patterns');
+  const archetypeTooltip = archetypeData?.description
+    ? archetypeData.factors &&
+      Array.isArray(archetypeData.factors) &&
+      archetypeData.factors.length > 0
+      ? `${archetypeData.description}\n\nKey factors:\n${archetypeData.factors.map((f: string) => `• ${f}`).join('\n')}`
+      : archetypeData.description
+    : archetypeExplanations[archetype] ||
+      'User archetype based on health patterns';
 
   return (
     <div id="wellness-summary" className="bg-white rounded-xl p-6 shadow-sm">
@@ -228,7 +284,9 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
         <h2 className="text-2xl font-bold text-gray-900">Wellness Summary</h2>
         {archetype && (
           <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg">
-            <span className="text-sm font-medium text-blue-700">{archetype}</span>
+            <span className="text-sm font-medium text-blue-700">
+              {archetype}
+            </span>
             <InfoIcon text={archetypeTooltip} />
           </div>
         )}
@@ -241,7 +299,13 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
           <div className="relative" style={{ width: '200px', height: '200px' }}>
             <svg style={{ height: 0 }}>
               <defs>
-                <linearGradient id="globalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient
+                  id="globalGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
                   <stop offset="0%" stopColor="#4FC3F7" />
                   <stop offset="100%" stopColor="#7F39FB" />
                 </linearGradient>
@@ -261,8 +325,15 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
           {/* Global Score Label - Outside the circle */}
           <div className="mt-4 text-center">
             <div className="flex items-center gap-1 justify-center">
-              <span className="text-sm font-medium text-gray-700">Global Score</span>
-              <InfoIcon text={formatTooltip(globalScoreData) || 'Your Global Wellness Score is a combined view of all health metrics.'} />
+              <span className="text-sm font-medium text-gray-700">
+                Global Score
+              </span>
+              <InfoIcon
+                text={
+                  formatTooltip(globalScoreData) ||
+                  'Your Global Wellness Score is a combined view of all health metrics.'
+                }
+              />
             </div>
           </div>
         </div>
@@ -273,15 +344,20 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
             const score = scores[scoreName] || 0;
             const scoreData = scoresData?.[scoreName];
             const config = getScoreConfig(scoreName);
-            const tooltipText = formatTooltip(scoreData) || `Information about ${config.label} score`;
-            
+            const tooltipText =
+              formatTooltip(scoreData) ||
+              `Information about ${config.label} score`;
+
             return (
               <div
                 key={scoreName}
                 className="bg-gray-50 rounded-lg p-3 flex flex-col items-center justify-center min-h-[90px]"
               >
                 <div className="text-xl mb-1.5">{config.icon}</div>
-                <div className="text-2xl font-bold mb-1" style={{ color: config.color }}>
+                <div
+                  className="text-2xl font-bold mb-1"
+                  style={{ color: config.color }}
+                >
                   {Math.round(score)}
                 </div>
                 <div className="flex items-center gap-1">
@@ -293,15 +369,29 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
           })}
         </div>
       </div>
-      
+
       {/* Last Sync Date */}
       {hasLatestDate && (
         <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t border-gray-100">
-          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          <svg
+            className="w-4 h-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
           </svg>
           <span className="text-xs text-gray-500">
-            Last synced {lastSyncText || (latestDate ? String(latestDate).substring(0, 19).replace('T', ' ') : 'date unavailable')}
+            Last synced{' '}
+            {lastSyncText ||
+              (latestDate
+                ? String(latestDate).substring(0, 19).replace('T', ' ')
+                : 'date unavailable')}
           </span>
         </div>
       )}
@@ -310,4 +400,3 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({ data, loading = false
 };
 
 export default WellnessSummary;
-

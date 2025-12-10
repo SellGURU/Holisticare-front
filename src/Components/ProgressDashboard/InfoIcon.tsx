@@ -8,7 +8,8 @@ interface InfoIconProps {
 }
 
 const InfoIcon: React.FC<InfoIconProps> = ({ text, id }) => {
-  const tooltipId = id || `info-tooltip-${Math.random().toString(36).substring(2, 9)}`;
+  const tooltipId =
+    id || `info-tooltip-${Math.random().toString(36).substring(2, 9)}`;
 
   return (
     <>
@@ -30,4 +31,3 @@ const InfoIcon: React.FC<InfoIconProps> = ({ text, id }) => {
 };
 
 export default InfoIcon;
-

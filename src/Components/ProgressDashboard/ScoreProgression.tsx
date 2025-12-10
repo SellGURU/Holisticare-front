@@ -12,7 +12,13 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
-import { format, subDays, startOfDay, isWithinInterval, eachDayOfInterval } from 'date-fns';
+import {
+  format,
+  subDays,
+  startOfDay,
+  isWithinInterval,
+  eachDayOfInterval,
+} from 'date-fns';
 import SimpleDatePicker from '../SimpleDatePicker';
 
 ChartJS.register(
@@ -59,30 +65,44 @@ const formatScoreName = (name: string): string => {
     .replace(/_composition/g, '')
     .replace(/_/g, ' ')
     .trim();
-  
+
   // Capitalize first letter of each word
-  formatted = formatted.replace(/\b\w/g, l => l.toUpperCase());
-  
+  formatted = formatted.replace(/\b\w/g, (l) => l.toUpperCase());
+
   return formatted;
 };
 
 // Helper function to get color and label for a metric name dynamically
-const getMetricConfig = (metricName: string): { color: string; label: string } => {
+const getMetricConfig = (
+  metricName: string,
+): { color: string; label: string } => {
   const lowerName = metricName.toLowerCase();
-  
+
   // Color mapping based on name patterns
   let color = '#888888';
   if (lowerName.includes('sleep')) color = '#7F39FB';
   else if (lowerName.includes('activity')) color = '#06C78D';
-  else if (lowerName.includes('heart') || lowerName.includes('cardio')) color = '#FC5474';
+  else if (lowerName.includes('heart') || lowerName.includes('cardio'))
+    color = '#FC5474';
   else if (lowerName.includes('stress')) color = '#FBAD37';
-  else if (lowerName.includes('calorie') || lowerName.includes('metabolic')) color = '#F5C842';
-  else if (lowerName.includes('body') || lowerName.includes('bmi') || lowerName.includes('composition')) color = '#4FC3F7';
-  else if (lowerName.includes('global') || lowerName.includes('wellness') || lowerName.includes('overall')) color = '#005F73';
-  
+  else if (lowerName.includes('calorie') || lowerName.includes('metabolic'))
+    color = '#F5C842';
+  else if (
+    lowerName.includes('body') ||
+    lowerName.includes('bmi') ||
+    lowerName.includes('composition')
+  )
+    color = '#4FC3F7';
+  else if (
+    lowerName.includes('global') ||
+    lowerName.includes('wellness') ||
+    lowerName.includes('overall')
+  )
+    color = '#005F73';
+
   // Use formatted name from API response as label
   const label = formatScoreName(metricName);
-  
+
   return { color, label };
 };
 
@@ -100,7 +120,12 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
 
   // Initialize date range on mount - only once
   useEffect(() => {
-    if (onDateRangeChange && dateRange === '7' && !customStartDate && !customEndDate) {
+    if (
+      onDateRangeChange &&
+      dateRange === '7' &&
+      !customStartDate &&
+      !customEndDate
+    ) {
       const endDate = new Date();
       const startDate = subDays(endDate, 7);
       onDateRangeChange(
@@ -115,7 +140,7 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
   const allDatesInRange = useMemo(() => {
     const endDate = new Date();
     let startDate: Date;
-    
+
     if (dateRange === 'custom' && customStartDate && customEndDate) {
       startDate = startOfDay(customStartDate);
       endDate.setTime(startOfDay(customEndDate).getTime());
@@ -123,15 +148,15 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
       const days = dateRange === '7' ? 7 : dateRange === '14' ? 14 : 30;
       startDate = subDays(endDate, days - 1); // Include today
     }
-    
+
     const dates: string[] = [];
     const currentDate = new Date(startDate);
-    
+
     while (currentDate <= endDate) {
       dates.push(format(currentDate, 'yyyy-MM-dd'));
       currentDate.setDate(currentDate.getDate() + 1);
     }
-    
+
     return dates;
   }, [dateRange, customStartDate, customEndDate]);
 
@@ -139,7 +164,7 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
   const chartData = useMemo(() => {
     // Create a map of existing data by date
     const dataMap = new Map<string, ScoreDataPoint>();
-    
+
     if (data && data.length > 0) {
       data.forEach((point) => {
         let dateStr = point.date;
@@ -157,12 +182,12 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
         }
       });
     }
-    
+
     // Create chart data for all dates in range, filling missing dates with empty data
     return allDatesInRange.map((dateStr) => {
       const existingPoint = dataMap.get(dateStr);
       const displayDate = format(new Date(dateStr), 'MMM d');
-      
+
       if (existingPoint) {
         return {
           ...existingPoint,
@@ -195,14 +220,16 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
 
   // Filter metrics based on visibility
   const metrics = useMemo(() => {
-    return allMetrics.filter(metric => visibleScores.has(metric));
+    return allMetrics.filter((metric) => visibleScores.has(metric));
   }, [allMetrics, visibleScores]);
 
   if (loading) {
     return (
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <div className="text-center py-12">
-          <div className="text-gray-400 text-lg mb-2">Loading progression data...</div>
+          <div className="text-gray-400 text-lg mb-2">
+            Loading progression data...
+          </div>
         </div>
       </div>
     );
@@ -212,8 +239,12 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
     return (
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <div className="text-center py-12">
-          <div className="text-gray-400 text-lg mb-2">No progression data available</div>
-          <div className="text-gray-300 text-sm">Score progression will appear here once data is available</div>
+          <div className="text-gray-400 text-lg mb-2">
+            No progression data available
+          </div>
+          <div className="text-gray-300 text-sm">
+            Score progression will appear here once data is available
+          </div>
         </div>
       </div>
     );
@@ -229,18 +260,22 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
         label: config.label,
         data: chartData.map((point) => {
           const value = point[metric as keyof ScoreDataPoint];
-          return typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) || 0 : 0);
+          return typeof value === 'number'
+            ? value
+            : typeof value === 'string'
+              ? parseFloat(value) || 0
+              : 0;
         }),
-      borderColor: config.color,
-      backgroundColor: `${config.color}20`,
-      borderWidth: 2,
-      pointRadius: 4,
-      pointHoverRadius: 6,
-      pointBackgroundColor: config.color,
-      pointBorderColor: '#fff',
-      pointBorderWidth: 2,
-      tension: 0.4,
-      fill: false,
+        borderColor: config.color,
+        backgroundColor: `${config.color}20`,
+        borderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: config.color,
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        tension: 0.4,
+        fill: false,
       };
     }),
   };
@@ -308,7 +343,6 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
     },
   };
 
-
   return (
     <div id="score-progression" className="bg-white rounded-xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
@@ -318,12 +352,22 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
             onClick={() => setShowDatePicker(!showDatePicker)}
             className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
             </svg>
             {dateRange === 'custom' && customStartDate && customEndDate
               ? `${format(customStartDate, 'MMM d')} - ${format(customEndDate, 'MMM d')}`
-              : dateRange === '7' 
+              : dateRange === '7'
                 ? 'Last 7 days'
                 : `Last ${dateRange} days`}
           </button>
@@ -404,11 +448,15 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
                   30 days
                 </button>
               </div>
-              <div className="text-xs text-gray-500 mb-2">Or select custom range below</div>
+              <div className="text-xs text-gray-500 mb-2">
+                Or select custom range below
+              </div>
               <div className="flex flex-col gap-3">
                 <div className="flex gap-3">
                   <div className="flex-1">
-                    <label className="text-xs text-gray-600 mb-1.5 block font-medium">Start Date</label>
+                    <label className="text-xs text-gray-600 mb-1.5 block font-medium">
+                      Start Date
+                    </label>
                     <SimpleDatePicker
                       date={customStartDate}
                       setDate={(date) => {
@@ -417,13 +465,17 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
                           setDateRange('custom');
                           // Validate date range
                           if (customEndDate && date > customEndDate) {
-                            setDateError('Start date cannot be later than end date');
+                            setDateError(
+                              'Start date cannot be later than end date',
+                            );
                           } else {
                             setDateError(null); // Clear error if valid
                             if (onDateRangeChange) {
                               onDateRangeChange(
                                 date ? format(date, 'yyyy-MM-dd') : undefined,
-                                customEndDate ? format(customEndDate, 'yyyy-MM-dd') : undefined,
+                                customEndDate
+                                  ? format(customEndDate, 'yyyy-MM-dd')
+                                  : undefined,
                               );
                             }
                           }
@@ -440,7 +492,9 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
                     />
                   </div>
                   <div className="flex-1">
-                    <label className="text-xs text-gray-600 mb-1.5 block font-medium">End Date</label>
+                    <label className="text-xs text-gray-600 mb-1.5 block font-medium">
+                      End Date
+                    </label>
                     <SimpleDatePicker
                       date={customEndDate}
                       setDate={(date) => {
@@ -449,12 +503,16 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
                           setDateRange('custom');
                           // Validate date range
                           if (customStartDate && date < customStartDate) {
-                            setDateError('End date cannot be earlier than start date');
+                            setDateError(
+                              'End date cannot be earlier than start date',
+                            );
                           } else {
                             setDateError(null); // Clear error if valid
                             if (onDateRangeChange) {
                               onDateRangeChange(
-                                customStartDate ? format(customStartDate, 'yyyy-MM-dd') : undefined,
+                                customStartDate
+                                  ? format(customStartDate, 'yyyy-MM-dd')
+                                  : undefined,
                                 date ? format(date, 'yyyy-MM-dd') : undefined,
                               );
                             }
@@ -509,12 +567,18 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
                     : 'opacity-40 hover:opacity-60 border-dashed'
                 }`}
                 style={{
-                  backgroundColor: isVisible ? `${config.color}15` : 'transparent',
+                  backgroundColor: isVisible
+                    ? `${config.color}15`
+                    : 'transparent',
                   color: config.color,
                   borderColor: isVisible ? 'transparent' : config.color,
                   cursor: 'pointer',
                 }}
-                title={isVisible ? `Click to hide ${config.label}` : `Click to show ${config.label}`}
+                title={
+                  isVisible
+                    ? `Click to hide ${config.label}`
+                    : `Click to show ${config.label}`
+                }
               >
                 <div
                   className="w-2.5 h-2.5 rounded-full"
@@ -536,4 +600,3 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
 };
 
 export default ScoreProgression;
-

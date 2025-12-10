@@ -55,7 +55,3 @@ const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
 };
 
 export default ProgressDashboard;
-
-
-
-

@@ -61,7 +61,9 @@ const Report = () => {
     }
   };
   const [isReportAvailable, setIsReportAvailable] = useState(true);
-  const [activeReportSection, setActiveReportSection] = useState<'Health' | 'Progress'>( 'Health');
+  const [activeReportSection, setActiveReportSection] = useState<
+    'Health' | 'Progress'
+  >('Health');
 
   useEffect(() => {
     const handleReportStatus = (message: any) => {
@@ -109,11 +111,15 @@ const Report = () => {
         ></ReportSideMenu>
       </div>
 
-      <div className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}>
+      <div
+        className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
+      >
         <ReportAnalyseView></ReportAnalyseView>
       </div>
 
-      <div className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}>
+      <div
+        className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
+      >
         <ProgressDashboardView />
       </div>
 

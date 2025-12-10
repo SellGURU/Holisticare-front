@@ -80,7 +80,9 @@ export default function SimpleDatePicker({
          } ${ClassName}`}
       >
         {date ? (
-          <span className="text-xs md:text-sm">{date.toLocaleDateString()}</span>
+          <span className="text-xs md:text-sm">
+            {date.toLocaleDateString()}
+          </span>
         ) : (
           <div className="text-[#B0B0B0] text-xs font-light">{placeholder}</div>
         )}
