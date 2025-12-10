@@ -487,8 +487,8 @@ const Stadio: FC<StadioProps> = ({
           setshowAddModal(false);
         }}
       />
-      <div className="flex flex-col md:flex-row w-full pb-[80px] lg:pb-0 px-4 md:px-6 gap-4 select-none">
-        <div className="flex-grow md:mr-[360px]">
+      <div className="flex flex-col lg:flex-row w-full pb-[80px] lg:pb-0 px-4 lg:px-6 gap-4 select-none">
+        <div className="flex-grow lg:mr-[360px]">
           {haveConflic && (
             <div className="w-full  my-2 ">
               <AlertModal
@@ -511,22 +511,40 @@ const Stadio: FC<StadioProps> = ({
               </div>
             )} */}
             <div
-              className={`flex-grow flex flex-wrap gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
+              className={`flex-grow flex flex-col lg:flex-row gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
-              <div
-                className="flex  items-center gap-1 select-none lg:pl-2 cursor-pointer"
-                onClick={() => setIsSlideOutPanel(true)}
-              >
-                <img src="/icons/eye-blue.svg" alt="" className="size-5" />
-                <div className="text-Primary-DeepTeal font-medium text-[10px] md:text-xs">
-                  Review Holistic Plan
+              <div className='flex w-full justify-between'>
+                <div
+                  className="flex  items-center gap-1 select-none lg:pl-2 cursor-pointer"
+                  onClick={() => setIsSlideOutPanel(true)}
+                >
+                  <img src="/icons/eye-blue.svg" alt="" className="size-5" />
+                  <div className="text-Primary-DeepTeal font-medium text-[10px] md:text-xs">
+                    Review Holistic Plan
+                  </div>
                 </div>
+
+                {actions.checkIn.length !== 0 ||
+                  (actions.category.length !== 0 && (
+                    <div
+                      className=" flex lg:hidden items-center select-none text-nowrap gap-1 text-[10px] md:text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
+                      onClick={() => setCalendarView(true)}
+                    >
+                      <img
+                        src="/icons/calendar-date.svg"
+                        alt=""
+                        className="w-5"
+                      />
+                      Calendar View
+                    </div>
+                  ))}
               </div>
-              <div className="flex items-center flex-wra justify-between select-none gap-3">
+
+              <div className="flex items-center  justify-between select-none gap-3">
                 {actions.checkIn.length !== 0 ||
                 actions.category.length !== 0 ? (
                   <div
-                    className=" hidden items-center select-none text-nowrap gap-1 text-[10px] md:text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
+                    className=" hidden lg:flex items-center select-none text-nowrap gap-1 text-[10px] md:text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
                     onClick={() => setCalendarView(true)}
                   >
                     <img
@@ -578,7 +596,7 @@ const Stadio: FC<StadioProps> = ({
                     )}
                     <ButtonPrimary
                       onClick={() => setshowAddModal(true)}
-                      ClassName=" w-full md:w-[108px]"
+                      ClassName=" w-full lg:w-[108px]"
                     >
                       <img src="/icons/add-square.svg" alt="" /> Add
                     </ButtonPrimary>
@@ -663,9 +681,9 @@ const Stadio: FC<StadioProps> = ({
             )}
           </div>
         </div>
-        <div className="  w-full md:w-[342px] md:fixed md:top-[190px] md:right-[100px]  h-full">
+        <div className="  w-full lg:w-[342px] lg:fixed lg:top-[190px] lg:right-[100px]  h-full">
           <div
-            className={`w-full md:w-[342px]  p-4   bg-white rounded-[24px] border border-gray-50 shadow-100`}
+            className={`w-full lg:w-[342px]  p-4   bg-white rounded-[24px] border border-gray-50 shadow-100`}
           >
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"

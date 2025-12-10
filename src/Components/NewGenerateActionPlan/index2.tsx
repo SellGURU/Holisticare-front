@@ -262,13 +262,13 @@ const GenerateActionPlan = () => {
     <>
       <div className="h-[100vh]  overflow-auto overflow-y-scroll">
         <div
-          className={`w-full fixed  top-0 z-10 md:z-0  bg-[#E9F0F2] flex ${
+          className={`w-full fixed  top-0 z-10 lg:z-0  bg-[#E9F0F2] flex ${
             showConflictsModal ? 'lg:z-0' : 'lg:z-[9]'
           }`}
         >
           <div className="w-full ">
             <TopBar></TopBar>
-            <div className="flex justify-between items-center mt-9 mx-4 md:mx-8">
+            <div className="flex justify-between items-center mt-9 mx-4 lg:mx-8">
               <div className="flex items-center gap-3">
                 <div
                   onClick={() => {
@@ -292,7 +292,7 @@ const GenerateActionPlan = () => {
               {!calendarView && (
                 <>
                   {isWeighted && (
-                    <div className="md:pr-[70px]">
+                    <div className="lg:pr-[70px]">
                       <ButtonPrimary
                         ClassName="h-[33px] w-[120px] xs:w-[155px] text-[10px] xs:text-xs text-nowrap"
                         onClick={saveChanges}
@@ -317,14 +317,14 @@ const GenerateActionPlan = () => {
               <>
                 {isWeighted && (
                   <>
-                    <div className="flex flex-col md:flex-row pb-3 justify-between gap-4 mx-4 md:mx-8 mt-4 items-center md:pr-[70px]">
-                      <div className="flex-grow w-full md:w-auto">
+                    <div className="flex flex-col lg:flex-row pb-3 justify-between gap-4 mx-4 lg:mx-8 mt-4 items-center lg:pr-[70px]">
+                      <div className="flex-grow w-full lg:w-auto">
                         <PlanObjective
                           value={planObjective}
                           setValue={setPlanObjective}
                         />
                       </div>
-                      <div className=" w-full md:w-[342px]">
+                      <div className=" w-full lg:w-[342px]">
                         <TimeDuration
                           setDuration={(value) => {
                             setDuration(value);
@@ -375,7 +375,7 @@ const GenerateActionPlan = () => {
                   plans={[]}
                   handleShowConflictsModal={handleShowConflictsModal}
                 />
-                <div className=" hidden md:block absolute right-5 top-[75px] z-50">
+                <div className=" hidden lg:block absolute right-5 top-[75px] z-50">
                   <ComboBar isHolisticPlan></ComboBar>
                 </div>
               </div>
@@ -385,9 +385,9 @@ const GenerateActionPlan = () => {
         ) : (
           <>
             {calendarViewData && (
-              <div className="w-full h-full px-8 mt-[125px]">
+              <div className="w-full h-full px-4 lg:px-8 mt-[125px]">
                 {calendarViewData?.scheduled_tasks.length > 0 && (
-                  <div className="w-full h-[112px] rounded-2xl bg-backgroundColor-Card border border-Gray-50 p-4 flex justify-between">
+                  <div className="w-full  h-fit lg:h-[112px] rounded-2xl bg-backgroundColor-Card border border-Gray-50 p-4 flex flex-col lg:flex-row justify-between"> 
                     <div className="flex flex-col h-full justify-between">
                       <div className="font-medium text-sm text-Text-Primary">
                         Progress
@@ -401,8 +401,8 @@ const GenerateActionPlan = () => {
                       </div>
                     </div>
                     <div className="flex h-full gap-8">
-                      <div className="h-full w-[1px] bg-Gray-50"></div>
-                      <div className="flex flex-col items-center">
+                      <div className=" hidden lg:block h-full w-[1px] bg-Gray-50"></div>
+                      <div className="flex -ml-4 lg:ml-0 flex-col mt-4 lg:mt-0 items-center">
                         <div className="font-medium text-sm text-Text-Primary -mb-3">
                           Total
                         </div>
@@ -410,9 +410,9 @@ const GenerateActionPlan = () => {
                           percentage={calendarViewData.progress}
                         />
                       </div>
-                      <div className="h-full w-[1px] bg-Gray-50"></div>
+                      <div className=" hidden lg:block h-full w-[1px] bg-Gray-50"></div>
                     </div>
-                    <div className="flex h-full gap-8">
+                    <div className="flex -ml-4 lg:ml-0  h-full lg:gap-8">
                       <div className="flex flex-col items-center">
                         <div className="font-medium text-xs text-Text-Primary -mb-2">
                           Diet

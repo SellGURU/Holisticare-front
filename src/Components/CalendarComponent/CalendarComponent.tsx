@@ -351,7 +351,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
         </div>
       )}
       {isCheced || isTwoView === false || isActionPlan ? (
-        <div className="w-full py-4 rounded-lg relative">
+        <div className="w-full overflow-x-auto lg:overflow-hidden py-4 rounded-lg relative">
           {/* {!isActionPlan && (
             <div className="flex">
               <div className="bg-white px-3 py-1 rounded-md ">
@@ -362,19 +362,19 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
             </div>
           )} */}
 
-          <div className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-1  py-3">
+          <div className="grid grid-cols-7 w-full lg:gap-2 min-w-[980px] lg:min-w-full  mt-1  py-3">
             {getCurrentMonthWithBuffer(data[0].date)
               .slice(0, 7)
               .map((day, index) => (
                 <div
                   key={index}
-                  className="text-xs font-medium text-center text-Text-Primary"
+                  className="text-xs w-[140px] font-medium text-center text-Text-Primary"
                 >
                   {day.dayName.slice(0, 3)}
                 </div>
               ))}
           </div>
-          <div className="grid grid-cols-7 gap-[1px] w-full">
+          <div className="grid grid-cols-7 gap-[1px] w-full  min-w-[980px] lg:min-w-full">
             {getCurrentMonthWithBuffer(data[0].date).map((day, index) => {
               const activitiesForTheDay = data.filter(
                 (el: any) =>
