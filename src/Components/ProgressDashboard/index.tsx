@@ -7,11 +7,11 @@ interface ProgressDashboardProps {
   wellnessData: {
     scores: { [key: string]: number }; // Dynamic scores object
     scoresData?: { [key: string]: any }; // Dynamic scores data object
-    globalScore?: number; // Global score for the circular gauge
-    globalScoreData?: any; // Global score data for tooltip
+    globalScore: number; // Global score for the circular gauge
+    globalScoreData: any; // Global score data for tooltip
     archetype: string;
-    archetypeData?: any;
-    latestDate?: string | null; // Last sync date
+    archetypeData: any;
+    latestDate: string | null; // Last sync date
   } | null;
   progressionData: Array<{
     date: string;
