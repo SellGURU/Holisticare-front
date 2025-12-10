@@ -46,7 +46,7 @@ interface ReportAnalyseViewprops {
   memberID?: number | null;
   isShare?: boolean;
   uniqKey?: string;
-  setActiveCheckProgress?: (status: boolean) => void;
+  setActiveCheckProgress: (status: boolean) => void;
 }
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
@@ -118,9 +118,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setDisableGenerate(false);
         }
         if (res.data.first_time_view == true) {
-          setActiveCheckProgress?.(true);
+          setActiveCheckProgress(true);
         } else {
-          setActiveCheckProgress?.(false);
+          setActiveCheckProgress(false);
         }
         setTimeout(() => {
           if (
@@ -181,7 +181,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setIsHaveReport(res.data.show_report);
         setShowUploadTest(!res.data.first_time_view);
         if (res.data.first_time_view == true) {
-          setActiveCheckProgress?.(true);
+          setActiveCheckProgress(true);
         }
         setTimeout(() => {
           if (res.data.show_report == true) {
@@ -1229,6 +1229,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           console.log(res);
                         },
                       );
+                      setActiveCheckProgress(true);
                       console.log(file_id);
                       if (file_id) {
                         // publish('openProgressModal',{});
