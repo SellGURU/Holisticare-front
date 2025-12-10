@@ -341,7 +341,7 @@ const RecentCheckIns = () => {
         isOpen={showCheckInCommentModal}
         onClose={() => setshowCheckICommentnModal(false)}
       >
-        <div className="w-[500px] h-[324px] rounded-2xl p-6 pb-8 bg-white shadow-800 text-Text-Primary relative">
+        <div className="w-[90vw] md:w-[500px] h-[324px] rounded-2xl p-6 pb-8 bg-white shadow-800 text-Text-Primary relative">
           <div className="flex items-center pb-2 w-full text-sm font-medium border-b border-Gray-50  ">
             Check-In Review
           </div>
