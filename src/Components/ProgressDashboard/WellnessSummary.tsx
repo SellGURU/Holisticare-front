@@ -249,10 +249,12 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
   return (
     <div id="wellness-summary" className="bg-white rounded-xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Wellness Summary</h2>
+        <h2 className="md:text-xl text-[15px] font-bold text-nowrap text-gray-900">
+          Wellness Summary
+        </h2>
         {archetype && (
           <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg">
-            <span className="text-sm font-medium text-blue-700">
+            <span className="text-[10px] md:text-sm font-medium text-nowrap text-blue-700">
               {archetype}
             </span>
             <InfoIcon text={archetypeTooltip} />
@@ -307,7 +309,7 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
         </div>
 
         {/* Metric Cards Grid - Right Side - Dynamic based on API response */}
-        <div className="flex-1 grid grid-cols-3 gap-3">
+        <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-3">
           {scoreNames.map((scoreName) => {
             const score = scores[scoreName] || 0;
             const scoreData = scoresData?.[scoreName];
@@ -321,15 +323,17 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
                 key={scoreName}
                 className="bg-gray-50 rounded-lg p-3 flex flex-col items-center justify-center min-h-[90px]"
               >
-                <div className="text-xl mb-1.5">{config.icon}</div>
+                <div className="text-2xl mb-1.5">{config.icon}</div>
                 <div
-                  className="text-2xl font-bold mb-1"
+                  className="text-[18px] md:text-2xl font-bold mb-1"
                   style={{ color: config.color }}
                 >
                   {Math.round(score)}
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-xs text-gray-600">{config.label}</span>
+                  <span className="text-[10px] md:text-xs text-gray-600">
+                    {config.label}
+                  </span>
                   <InfoIcon text={tooltipText} />
                 </div>
               </div>
