@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
 
 interface ProgressDashboardViewProps {
-  onHaveScore:(isHave:boolean) => void;
+  onHaveScore: (isHave: boolean) => void;
 }
 
 const ProgressDashboardView = ({ onHaveScore }: ProgressDashboardViewProps) => {
@@ -48,7 +48,7 @@ const ProgressDashboardView = ({ onHaveScore }: ProgressDashboardViewProps) => {
 
       if (wellnessResponse?.data) {
         const data = wellnessResponse.data;
-        if( data.scores && data.scores.length > 0) {
+        if (data.scores && data.scores.length > 0) {
           onHaveScore(true);
         } else {
           onHaveScore(false);

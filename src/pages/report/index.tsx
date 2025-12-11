@@ -122,13 +122,15 @@ const Report = () => {
       <div
         className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
       >
-        <ProgressDashboardView onHaveScore={(isHave:boolean) => {
-          if(isHave) {
-            setActiveReportSection('Progress');
-          } else {
-            setActiveReportSection('Health');
-          }
-        }} />
+        <ProgressDashboardView
+          onHaveScore={(isHave: boolean) => {
+            if (isHave) {
+              setActiveReportSection('Progress');
+            } else {
+              setActiveReportSection('Health');
+            }
+          }}
+        />
       </div>
 
       <div
