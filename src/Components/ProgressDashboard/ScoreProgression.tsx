@@ -340,7 +340,9 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
   return (
     <div id="score-progression" className="bg-white rounded-xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-900">Score Progression</h2>
+        <h2 className="md:text-xl text-[15px] font-bold text-nowrap text-gray-900">
+          Score Progression
+        </h2>
         <div className="relative">
           <button
             onClick={() => setShowDatePicker(!showDatePicker)}
@@ -367,7 +369,7 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
           </button>
 
           {showDatePicker && (
-            <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 min-w-[300px]">
+            <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 w-[70vw] md:w-[fit-content]">
               <div className="flex gap-2 mb-4">
                 <button
                   onClick={() => {
@@ -446,7 +448,7 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
                 Or select custom range below
               </div>
               <div className="flex flex-col gap-3">
-                <div className="flex gap-3">
+                <div className="flex flex-col md:flex-row gap-3">
                   <div className="flex-1">
                     <label className="text-xs text-gray-600 mb-1.5 block font-medium">
                       Start Date
@@ -586,7 +588,7 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
       )}
 
       {/* Chart */}
-      <div className="h-[400px]">
+      <div className="h-fullmd:h-[400px]">
         <Line data={chartDataConfig} options={chartOptions} />
       </div>
     </div>
