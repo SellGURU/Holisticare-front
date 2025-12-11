@@ -754,6 +754,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         defalts={newValue}
         onAddNotes={() => {}}
         onSubmit={(editedData) => {
+          // alert(editedData.Unit)
           setValues((prevData: any) => {
             const updatedData = { ...prevData };
 
@@ -766,6 +767,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 ...updatedData.category[categoryIndex],
                 Category: editedData.Category ?? '',
                 Title: editedData.Title ?? '',
+                Unit: editedData.Unit ?? '',
                 'Based on': editedData['Based on'] ?? '',
                 // 'Practitioner Comments': editedData['Practitioner Comments'] ?? [],
                 Description: editedData.Description ?? '',
