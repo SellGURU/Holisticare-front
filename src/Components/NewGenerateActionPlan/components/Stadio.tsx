@@ -16,6 +16,7 @@ import Circleloader from '../../CircleLoader';
 import { Tooltip } from 'react-tooltip';
 import { splitInstructions } from '../../../help';
 import Sort from './Sort';
+import { Box } from 'lucide-react';
 
 interface StadioProps {
   data: {
@@ -339,7 +340,7 @@ const Stadio: FC<StadioProps> = ({
         });
     }
   }, [isSlideOutPanel]);
-
+const [showModal, setShowModal] = useState(false)
   return (
     <>
       <SlideOutPanel
@@ -541,6 +542,13 @@ const Stadio: FC<StadioProps> = ({
             <div
               className={`flex-grow flex flex-col lg:flex-row gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
+              <div className='flex lg:hidden w-full  justify-end text-Primary-DeepTeal font-medium text-[10px] md:text-xs' >
+                <div onClick={()=>{setShowModal(true)}} className='flex cursor-pointer items-center gap-1'>
+                  <Box size={20} color='#005f73'/>
+                  Open Add Box
+                  
+                </div>
+              </div>
               <div className='flex w-full justify-between'>
                 <div
                   className="flex  items-center gap-1 select-none lg:pl-2 cursor-pointer"
@@ -555,7 +563,7 @@ const Stadio: FC<StadioProps> = ({
                 {actions.checkIn.length !== 0 ||
                   (actions.category.length !== 0 && (
                     <div
-                      className=" flex lg:hidden items-center select-none text-nowrap gap-1 text-[10px] md:text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
+                      className=" flex lg:hidden items-center select-none text-nowrap gap-1 text-[10px] md:text-xs font-medium text-Primary-DeepTeal cursor-pointer lg:mr-2"
                       onClick={() => setCalendarView(true)}
                     >
                       <img
@@ -611,7 +619,7 @@ const Stadio: FC<StadioProps> = ({
                             )}
                           </ButtonSecondary>
                         ) : (
-                          <div className="flex items-center gap-2 text-Primary-EmeraldGreen font-medium text-xs">
+                          <div className="flex items-center min-w-[101px] lg:min-w-max  gap-2 text-Primary-EmeraldGreen font-medium text-xs">
                             <img src="/icons/tick-circle-bg.svg" alt="" />
                             Generated
                           </div>
@@ -709,7 +717,7 @@ const Stadio: FC<StadioProps> = ({
             )}
           </div>
         </div>
-        <div className="  w-full lg:w-[342px] lg:fixed lg:top-[190px] lg:right-[100px]  h-full">
+        <div className="  w-full lg:w-[342px] hidden lg:block lg:fixed lg:top-[190px] lg:right-[100px]  h-full">
           <div
             className={`w-full lg:w-[342px]  p-4   bg-white rounded-[24px] border border-gray-50 shadow-100`}
           >
@@ -805,6 +813,110 @@ const Stadio: FC<StadioProps> = ({
           </div>
         </div>
       </div>
+            <SlideOutPanel
+        isOpen={showModal}
+        isActionPLan
+        isCombo={true}
+        onClose={()=>setShowModal(false)}
+        headline="Add Action"
+        ClassName="!z-[60] !overflow-y-auto"
+      >
+            <div className="    h-full">
+          <div
+            className={`w-full lg:w-[342px]     bg-white rounded-[24px] border border-gray-50 shadow-100`}
+          >
+            <SearchBox
+              ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
+              placeHolder="Search for actions ..."
+              onSearch={(value) => {
+                setSearchValue(value);
+              }}
+            />
+            <Sort
+              options={sortOptions}
+              handleChangeSort={handleChangeSort}
+              sortBy={sortBy}
+            />
+
+            <div>
+              <div className="flex w-full gap-2 text-center items-center justify-between mt-2 flex-wrap">
+                {AllCategories.map((cat) => {
+                  return (
+                    <>
+                      <button
+                        className={`${selectCategory === cat ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-2 py-2 rounded-2xl text-[10px] flex-grow cursor-pointer`}
+                        onClick={() => setSelectedCategory(cat)}
+                      >
+                        {cat}
+                      </button>
+                    </>
+                  );
+                })}
+              </div>
+              <div
+                className="w-full  overflow-auto "
+                style={{ height: window.innerHeight - 240 + 'px' }}
+              >
+                <div className="mt-2 grid gap-2 relative">
+                  {filteredDataCategory.map((value: any, index: number) => {
+                    return (
+                      <div
+                        key={index}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, value)}
+                        onDragEnd={handleDragEnd}
+                        className="cursor-move"
+                      >
+                        <LibBox
+                          onAdd={() => addToActions(value)}
+                          data={value}
+                          index={index}
+                          handleShowConflictsModal={handleShowConflictsModal}
+                        />
+                      </div>
+                    );
+                  })}
+                  {filteredDataCheckIn.map((value: any, index: number) => {
+                    return (
+                      <div
+                        key={index}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, value)}
+                        onDragEnd={handleDragEnd}
+                        className="cursor-move"
+                      >
+                        <LibBox
+                          onAdd={() => addToActions(value)}
+                          data={value}
+                          checkIn={true}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+                {filteredDataCategory.length === 0 &&
+                  selectCategory !== 'Checkin' && (
+                    <div className="w-full h-[80%] flex flex-col items-center justify-center">
+                      <img src="/icons/empty-messages-coach.svg" alt="" />
+                      <div className="text-Text-Primary font-medium text-xs -mt-6">
+                        No results found.
+                      </div>
+                    </div>
+                  )}
+                {filteredDataCheckIn.length === 0 &&
+                  selectCategory === 'Checkin' && (
+                    <div className="w-full h-[80%] flex flex-col items-center justify-center">
+                      <img src="/icons/empty-messages-coach.svg" alt="" />
+                      <div className="text-Text-Primary font-medium text-xs -mt-6">
+                        No results found.
+                      </div>
+                    </div>
+                  )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </SlideOutPanel>
     </>
   );
 };
