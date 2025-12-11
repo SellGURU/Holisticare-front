@@ -93,7 +93,7 @@ const ActionSection: FC<ActionSectionProps> = ({
     onDelete();
   };
   return (
-    <div className='w-[16%]'>
+    <div className="w-[16%]">
       <div
         className={`flex justify-end gap-2 items-center ${
           isDeleted ? 'opacity-50' : ''
@@ -101,7 +101,7 @@ const ActionSection: FC<ActionSectionProps> = ({
       >
         {isSureRemove ? (
           <>
-            <div className='h-[24px]'></div>
+            <div className="h-[24px]"></div>
             <div className="flex items-center absolute justify-start gap-2 confirm-animation">
               <div className="text-Text-Quadruple text-xs">Sure?</div>
               <img
@@ -137,7 +137,7 @@ const ActionSection: FC<ActionSectionProps> = ({
                     src="/icons/import.svg"
                     alt=""
                   />
-                )}              
+                )}
                 <img
                   onClick={() => {
                     if (!isDeleted) {

@@ -94,7 +94,9 @@ const QuestionRow: FC<QuestionRowProps> = ({
     return (
       <>
         <div className="text-[10px]  text-Text-Primary w-[100px]">
-          <TooltipTextAuto isDisabled={!isActive()} maxWidth="100px">{el.title}</TooltipTextAuto>
+          <TooltipTextAuto isDisabled={!isActive()} maxWidth="100px">
+            {el.title}
+          </TooltipTextAuto>
         </div>
       </>
     );
@@ -148,12 +150,13 @@ const QuestionRow: FC<QuestionRowProps> = ({
             }}
           />
         )}
-        <div
-          className={`flex justify-between items-center w-full `}
-        >
+        <div className={`flex justify-between items-center w-full `}>
           {tryBeAssigned ? resolveAssignedUi() : resolveRowUi()}
           {!tryBeAssigned && (
-            <div className="text-[8px] w-[100px] text-center " style={{ opacity: !isActive() ? 0.5 : 1 }}>
+            <div
+              className="text-[8px] w-[100px] text-center "
+              style={{ opacity: !isActive() ? 0.5 : 1 }}
+            >
               <div
                 className={`rounded-full px-2.5 py-1 text-Text-Primary capitalize max-w-[84px] flex items-center justify-center gap-1 ${
                   resolveStatusName() == 'completed'
