@@ -111,7 +111,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           id="uploadFileBoxes"
           className="w-full absolute invisible h-full left-0 top-0"
         />
-        <div className="w-full text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
+        <div className="w-full text-[12px] px-2 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
           <div className="w-[70px] text-center text-nowrap">File Name</div>
           <div className="w-[80px]  text-nowrap">Upload Date</div>
           <div>Action</div>

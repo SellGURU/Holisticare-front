@@ -150,7 +150,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
         )}
         {fileStatus == 'deleting' && (
           <>
-            <div className="flex flex-col mt-3">
+            <div className="flex flex-col mt-3 confirm-animation">
               <div className="flex items-center">
                 <div
                   style={{
@@ -176,7 +176,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
         )}
         {fileStatus == 'uploading' && (
           <>
-            <div className="flex flex-col mt-3">
+            <div className="flex confirm-animation flex-col mt-3">
               <div className="flex items-center">
                 <div
                   style={{

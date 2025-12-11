@@ -93,26 +93,27 @@ const ActionSection: FC<ActionSectionProps> = ({
     onDelete();
   };
   return (
-    <>
+    <div className='w-[16%]'>
       <div
-        className={`flex justify-center gap-2 items-center ${
+        className={`flex justify-end gap-2 items-center ${
           isDeleted ? 'opacity-50' : ''
         }`}
       >
         {isSureRemove ? (
           <>
-            <div className="flex items-center justify-start gap-2">
+            <div className='h-[24px]'></div>
+            <div className="flex items-center absolute justify-start gap-2 confirm-animation">
               <div className="text-Text-Quadruple text-xs">Sure?</div>
               <img
                 src="/icons/tick-circle-green.svg"
                 alt=""
-                className="w-[20px] h-[20px] cursor-pointer"
+                className="w-[20px] h-[20px] cursor-pointer transition-transform hover:scale-110"
                 onClick={() => handleDelete()}
               />
               <img
                 src="/icons/close-circle-red.svg"
                 alt=""
-                className="w-[20px] h-[20px] cursor-pointer"
+                className="w-[20px] h-[20px] cursor-pointer transition-transform hover:scale-110"
                 onClick={() => setIsSureRemove(false)}
               />
             </div>
@@ -120,21 +121,11 @@ const ActionSection: FC<ActionSectionProps> = ({
         ) : (
           <>
             {loadingDelete ? (
-              <div className="flex items-center justify-start gap-2">
+              <div className="flex items-center justify-start gap-2 confirm-animation">
                 <BeatLoader color="#6CC24A" size={10} />
               </div>
             ) : (
-              <>
-                <img
-                  onClick={() => {
-                    if (!isDeleted) {
-                      setIsSureRemove(true);
-                    }
-                  }}
-                  src="/icons/delete-green.svg"
-                  alt=""
-                  className="cursor-pointer w-5 h-5"
-                />
+              <div className="flex items-center justify-start gap-1 confirm-animation">
                 {file.file_name !== 'Manual Entry' && (
                   <img
                     onClick={() => {
@@ -146,13 +137,23 @@ const ActionSection: FC<ActionSectionProps> = ({
                     src="/icons/import.svg"
                     alt=""
                   />
-                )}
-              </>
+                )}              
+                <img
+                  onClick={() => {
+                    if (!isDeleted) {
+                      setIsSureRemove(true);
+                    }
+                  }}
+                  src="/icons/delete-green.svg"
+                  alt=""
+                  className="cursor-pointer w-5 h-5"
+                />
+              </div>
             )}
           </>
         )}
       </div>
-    </>
+    </div>
   );
 };
 export default ActionSection;
