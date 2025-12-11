@@ -124,10 +124,19 @@ const Report = () => {
       >
         <ProgressDashboardView
           onHaveScore={(isHave: boolean) => {
+            const params = new URLSearchParams(location.search);
             if (isHave) {
-              setActiveReportSection('Progress');
+              if (params.get('type') === 'Health') {
+                setActiveReportSection('Health');
+              } else {
+                setActiveReportSection('Progress');
+              }
             } else {
-              setActiveReportSection('Health');
+              if (params.get('type') === 'Progress') {
+                setActiveReportSection('Progress');
+              } else {
+                setActiveReportSection('Health');
+              }
             }
           }}
         />
