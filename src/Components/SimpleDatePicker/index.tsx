@@ -94,7 +94,6 @@ export default function SimpleDatePicker({
           className={`absolute w-full  top-full mt-2 ${isUploadFile ? 'right-[70px]' : 'right-0'}  z-[999] `}
         >
           <Calendar
-            calendarClassName="!w-[220px]"
             value={selectedDay}
             onChange={(newDate) => {
               if (newDate) {
