@@ -5,7 +5,11 @@ import Application from '../../api/app';
 import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
 
-const ProgressDashboardView = () => {
+interface ProgressDashboardViewProps {
+  onHaveScore:(isHave:boolean) => void;
+}
+
+const ProgressDashboardView = ({ onHaveScore }: ProgressDashboardViewProps) => {
   const { id } = useParams<{ id: string }>();
   const [wellnessData, setWellnessData] = useState<any>(null);
   const [progressionData, setProgressionData] = useState<any>(null);
@@ -44,6 +48,11 @@ const ProgressDashboardView = () => {
 
       if (wellnessResponse?.data) {
         const data = wellnessResponse.data;
+        if( data.scores && data.scores.length > 0) {
+          onHaveScore(true);
+        } else {
+          onHaveScore(false);
+        }
 
         // Helper function to parse score values
         const parseScore = (value: any): number => {
