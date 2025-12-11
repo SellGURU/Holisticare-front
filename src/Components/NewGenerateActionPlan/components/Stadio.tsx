@@ -303,7 +303,11 @@ const Stadio: FC<StadioProps> = ({
         e.dataTransfer.getData('application/holisticare-action'),
       );
       if (itemData && (itemData.Task_Type || itemData.Category)) {
-        addToActions(itemData);
+        addToActions(
+          itemData.Category == 'Lifestyle'
+            ? { ...itemData, Unit: itemData.Unit || null }
+            : itemData,
+        );
       }
     } catch (error) {
       console.error('Error parsing dragged item data:', error);
@@ -738,7 +742,13 @@ const Stadio: FC<StadioProps> = ({
                         className="cursor-move"
                       >
                         <LibBox
-                          onAdd={() => addToActions(value)}
+                          onAdd={() =>
+                            addToActions(
+                              value.Category == 'Lifestyle'
+                                ? { ...value, Unit: value.Unit || null }
+                                : value,
+                            )
+                          }
                           data={value}
                           index={index}
                           handleShowConflictsModal={handleShowConflictsModal}
@@ -756,7 +766,13 @@ const Stadio: FC<StadioProps> = ({
                         className="cursor-move"
                       >
                         <LibBox
-                          onAdd={() => addToActions(value)}
+                          onAdd={() =>
+                            addToActions(
+                              value.Category == 'Lifestyle'
+                                ? { ...value, Unit: value.Unit || null }
+                                : value,
+                            )
+                          }
                           data={value}
                           checkIn={true}
                         />
