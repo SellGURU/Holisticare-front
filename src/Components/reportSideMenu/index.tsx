@@ -84,6 +84,11 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     const params = new URLSearchParams(location.search);
     const handleNoReportAvailable = () => {
       setDisableClicks(true);
+      if (params.get('type')) {
+        setActiveReportSection(params.get('type') as 'Health' | 'Progress');
+      } else {
+        setActiveReportSection('Health');
+      }
       if (params.get('section')) {
         setactiveMenu(params.get('section') as string);
       } else {
@@ -92,6 +97,11 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     };
     const handleReportAvailable = () => {
       setDisableClicks(false);
+      if (params.get('type')) {
+        setActiveReportSection(params.get('type') as 'Health' | 'Progress');
+      } else {
+        setActiveReportSection('Health');
+      }
       if (params.get('section')) {
         setactiveMenu(params.get('section') as string);
       } else {
@@ -106,6 +116,15 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
         activeReportSection === 'Progress'
           ? progressMenuItems
           : healthMenuItems;
+
+      if (params.get('type')) {
+        setActiveReportSection(params.get('type') as 'Health' | 'Progress');
+        if (params.get('section')) {
+          setactiveMenu(params.get('section') as string);
+        }
+      } else {
+        setActiveReportSection('Health');
+      }
       if (currentItems.includes(data.detail.section)) {
         setactiveMenu(data.detail.section);
       }
@@ -138,7 +157,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   }, [activeReportSection]);
   const [, setSearchParams] = useSearchParams();
   const onchangeMenu = (item: string) => {
-    setSearchParams({ ['section']: item });
+    setSearchParams({ ['type']: activeReportSection, ['section']: item });
     setactiveMenu(item);
     if (activeReportSection === 'Progress') {
       // For Progress tab, scroll to the specific section in the dashboard
@@ -188,10 +207,16 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
         <div className="flex gap-1 mb-4">
           <div
             onClick={() => {
-              setActiveReportSection('Health');
-              setactiveMenu('Client Summary');
-              setactiveImg(1);
-              publish('activeTabChange', { tab: 'Health' });
+              if (!disableClicks && (isReportAvailable || showReport)) {
+                setSearchParams({
+                  ['type']: 'Health',
+                  ['section']: 'Client Summary',
+                });
+                setActiveReportSection('Health');
+                setactiveMenu('Client Summary');
+                setactiveImg(1);
+                publish('activeTabChange', { tab: 'Health' });
+              }
             }}
             className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
               activeReportSection === 'Health'
@@ -213,10 +238,16 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
           </div>
           <div
             onClick={() => {
-              setActiveReportSection('Progress');
-              setactiveMenu('Wellness Data');
-              setactiveImg(1);
-              publish('activeTabChange', { tab: 'Progress' });
+              if (!disableClicks && (isReportAvailable || showReport)) {
+                setSearchParams({
+                  ['type']: 'Progress',
+                  ['section']: 'Wellness Data',
+                });
+                setActiveReportSection('Progress');
+                setactiveMenu('Wellness Data');
+                setactiveImg(1);
+                publish('activeTabChange', { tab: 'Progress' });
+              }
             }}
             className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
               activeReportSection === 'Progress'
