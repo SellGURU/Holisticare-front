@@ -387,7 +387,7 @@ const GenerateActionPlan = () => {
             {calendarViewData && (
               <div className="w-full h-full px-4 lg:px-8 mt-[125px]">
                 {calendarViewData?.scheduled_tasks.length > 0 && (
-                  <div className="w-full  h-fit lg:h-[112px] rounded-2xl bg-backgroundColor-Card border border-Gray-50 p-4 flex flex-col lg:flex-row justify-between"> 
+                  <div className="w-full  h-fit lg:h-[112px] rounded-2xl bg-backgroundColor-Card border border-Gray-50 p-4 flex flex-col lg:flex-row justify-between">
                     <div className="flex flex-col h-full justify-between">
                       <div className="font-medium text-sm text-Text-Primary">
                         Progress
