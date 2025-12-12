@@ -130,11 +130,13 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   }, [exercises, onValidationChange]);
 
   useEffect(() => {
-    Application.getExercisesList({}).then((res) => {
-      setExerciseList(res.data);
-    }).catch((err) => {
-      console.log('err', err);
-    });
+    Application.getExercisesList({})
+      .then((res) => {
+        setExerciseList(res.data);
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
   }, []);
 
   const addExercise = (exercise: Exercise) => {
@@ -434,7 +436,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
         <div className="flex w-full items-center justify-between">
           <div>
             <div
-              className={`w-[530px] h-[432px] border ${showValidation&&exercises.length === 0 && 'border-Red'}  border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
+              className={`w-[530px] h-[432px] border ${showValidation && exercises.length === 0 && 'border-Red'}  border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}

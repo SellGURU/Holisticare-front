@@ -253,7 +253,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       section.Exercises.some((exercise: any) => exercise.Reps === ''),
     );
     setIsExerciseStepValid(
-        sectionList.length > 0 &&
+      sectionList.length > 0 &&
         emptySetSections.length == 0 &&
         emptyRepsSections.length == 0,
     );
