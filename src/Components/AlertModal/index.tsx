@@ -12,7 +12,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
 }) => {
   const [index, setIndex] = useState(0);
   return (
-    <div className="bg-[#F9DEDC] w-full rounded-2xl pt-2 pb-3 px-4">
+    <div className="bg-[#F9DEDC] w-full rounded-2xl pt-2 pb-1 md:pb-3 px-2 md:px-4">
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2 text-xs font-medium text-Text-Primary">
           <img src="/icons/check-circle.svg" alt="" />
@@ -34,7 +34,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
             setIndex(index - 1);
           }}
         />
-        <div className="grow px-5">
+        <div className="grow px-2 md:px-5">
           <div className="text-[10px] text-Text-Primary mt-1 text-wrap">
             {texts[index]}
           </div>

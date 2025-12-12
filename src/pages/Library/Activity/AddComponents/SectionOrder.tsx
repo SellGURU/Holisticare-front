@@ -66,7 +66,7 @@ const SectionOrderModal: React.FC<SectionOrderModal> = ({
   return (
     <>
       <MainModal isOpen={isOpen} onClose={onClose}>
-        <div className=" w-full relative h-[380px] p-4 rounded-2xl bg-white">
+        <div className=" md:w-full relative h-[400px] md:h-[380px] w-[90vw] p-4 rounded-2xl bg-white">
           <div className="flex items-center w-full gap-2 border-b border-Gray-50 py-2 text-base font-medium text-Text-Primary">
             Section Order
           </div>

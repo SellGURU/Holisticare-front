@@ -438,10 +438,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
           orderList={orderList}
           handleChangeSetOrder={handleChangeSetOrder}
         />
-        <div className="flex w-full items-center justify-between flex-col-reverse md:flex-row gap-4 md:gap-0">
-          <div>
+        <div className="flex flex-col-reverse lg:flex-row w-full items-center justify-between">
+          <div className="w-full">
             <div
-              className={`w-[80vw] md:w-[530px] h-[432px] border  border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
+              className={` w-full lg:w-[530px] h-[432px] border  border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
@@ -517,7 +517,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
               </div>
             )} */}
           </div>
-          <div className="w-[80vw] md:w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
+          <div className=" w-full mb-4 lg:mb-0 md:w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
             <div className="flex w-full items-center justify-between mt-1">
               <div className="font-medium text-sm text-Text-Primary">
                 Exercise
