@@ -18,7 +18,7 @@ const Sort = ({ options, handleChangeSort, sortBy }: SortProps) => {
     <div className="w-full flex items-center justify-between mt-2">
       <div className="flex items-center gap-1">
         <img src="/icons/sort.svg" alt="" className="w-4 h-4" />
-        <div className="text-Primary-DeepTeal text-xs">Filter by:</div>
+        <div className="text-Primary-DeepTeal  text-[10px] sm:text-xs">Filter by:</div>
       </div>
       <div className="relative inline-block w-[227px] font-normal">
         <button

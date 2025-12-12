@@ -32,8 +32,8 @@ const TabNavigation = ({
   const [showSectionOrder, setShowSectionOrder] = useState(false);
   return (
     <>
-      <div className="flex items-center justify-between border-b border-Gray-50 mb-4">
-        <div className="flex gap-2 flex-grow-[1]">
+      <div className="flex items-start md:items-center  justify-between border-b border-Gray-50 mb-4">
+        <div className="flex gap-2 flex-wrap flex-grow-[1]">
           {tabs
             .filter((tab) => tab.enabled)
             .sort((a, b) => a.order - b.order)
