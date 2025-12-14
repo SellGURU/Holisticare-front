@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from 'react';
-import { subscribe, unsubscribe, publish } from '../../utils/event'; // Adjust the import path as needed
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import SvgIcon from '../../utils/svgIcon';
+import React, { useEffect, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { decodeAccessUser } from '../../help';
+import { publish, subscribe, unsubscribe } from '../../utils/event'; // Adjust the import path as needed
+import SvgIcon from '../../utils/svgIcon';
 interface ReportSideMenuProps {
   onClose: () => void;
   isShare?: boolean;
@@ -39,8 +39,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   const [activeMenu, setactiveMenu] = useState('Client Summary');
   const [ActiveLayer, setActiveLayer] = useState('menu');
   const [activeImg, setactiveImg] = useState(1);
-  const [disableClicks, setDisableClicks] = useState(false);
-  const location = useLocation();
   const [accessManager, setAccessManager] = useState<Array<any>>([
     {
       name: 'Client Summary',
@@ -80,81 +78,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     }
   };
   const { name } = useParams<{ name: string }>();
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const handleNoReportAvailable = () => {
-      setDisableClicks(true);
-      if (params.get('type')) {
-        setActiveReportSection(params.get('type') as 'Health' | 'Progress');
-      } else {
-        setActiveReportSection('Health');
-      }
-      if (params.get('section')) {
-        setactiveMenu(params.get('section') as string);
-      } else {
-        setactiveMenu('Client Summary');
-      }
-    };
-    const handleReportAvailable = () => {
-      setDisableClicks(false);
-      if (params.get('type')) {
-        setActiveReportSection(params.get('type') as 'Health' | 'Progress');
-      } else {
-        setActiveReportSection('Health');
-      }
-      if (params.get('section')) {
-        setactiveMenu(params.get('section') as string);
-      } else {
-        setactiveMenu('Client Summary');
-      }
-    };
-    subscribe('noReportAvailable', handleNoReportAvailable);
-    subscribe('ReportAvailable', handleReportAvailable);
-    const handleScrolledSection = (data: any) => {
-      // Only update if the section is in the current tab's menu items
-      const currentItems =
-        activeReportSection === 'Progress'
-          ? progressMenuItems
-          : healthMenuItems;
-
-      if (params.get('type')) {
-        setActiveReportSection(params.get('type') as 'Health' | 'Progress');
-        if (params.get('section')) {
-          setactiveMenu(params.get('section') as string);
-        }
-      } else {
-        setActiveReportSection('Health');
-      }
-      if (currentItems.includes(data.detail.section)) {
-        setactiveMenu(data.detail.section);
-      }
-    };
-    subscribe('scrolledSection', handleScrolledSection);
-
-    // Subscribe to tab changes from ReportAnalyseView
-    const handleTabChange = (data: any) => {
-      const newTab = data.detail.tab;
-      if (newTab !== activeReportSection) {
-        setActiveReportSection(newTab);
-        // Set default menu item for the new tab
-        if (newTab === 'Progress') {
-          setactiveMenu('Wellness Data');
-        } else {
-          setactiveMenu('Client Summary');
-        }
-        setactiveImg(1);
-      }
-    };
-    subscribe('activeTabChange', handleTabChange);
-
-    // Publish initial tab state
-    publish('activeTabChange', { tab: activeReportSection });
-
-    return () => {
-      unsubscribe('scrolledSection', handleScrolledSection);
-      unsubscribe('activeTabChange', handleTabChange);
-    };
-  }, [activeReportSection]);
   const [, setSearchParams] = useSearchParams();
   const onchangeMenu = (item: string) => {
     setSearchParams({ ['type']: activeReportSection, ['section']: item });
@@ -207,7 +130,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
         <div className="flex gap-1 mb-4">
           <div
             onClick={() => {
-              if (!disableClicks && (isReportAvailable || showReport)) {
+              if (isReportAvailable || showReport) {
                 setSearchParams({
                   ['type']: 'Health',
                   ['section']: 'Client Summary',
@@ -238,7 +161,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
           </div>
           <div
             onClick={() => {
-              if (!disableClicks && (isReportAvailable || showReport)) {
+              if (isReportAvailable || showReport) {
                 setSearchParams({
                   ['type']: 'Progress',
                   ['section']: 'Wellness Data',
@@ -272,9 +195,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() =>
-            !disableClicks &&
-            (isReportAvailable || showReport) &&
-            setActiveLayer('menu')
+            (isReportAvailable || showReport) && setActiveLayer('menu')
           }
           className={`flex ${ActiveLayer === 'menu' && 'bg-white '} items-center justify-center px-2 py-[2px] rounded-md cursor-pointer `}
         >
@@ -284,9 +205,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
         </div>
         <div
           onClick={() =>
-            !disableClicks &&
-            (isReportAvailable || showReport) &&
-            setActiveLayer('layer')
+            (isReportAvailable || showReport) && setActiveLayer('layer')
           }
           className={`flex ${ActiveLayer === 'layer' && 'bg-white '} items-center justify-center px-2 py-[2px] rounded-md cursor-pointer `}
         >
@@ -311,12 +230,12 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             resolveSteps().map((item, index) => (
               <div
                 onClick={() => {
-                  if (!disableClicks && (isReportAvailable || showReport)) {
+                  if (isReportAvailable || showReport) {
                     onchangeMenu(item);
                   }
                 }}
                 key={index}
-                className={`text-[10px] ${disableClicks && index != 0 ? 'opacity-50' : ''} h-[24px] flex justify-start items-center pl-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
+                className={`text-[10px] ${!isReportAvailable && index != 0 ? 'opacity-50' : ''} h-[24px] flex justify-start items-center pl-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
                   item === activeMenu
                     ? 'border-Primary-EmeraldGreen'
                     : 'border-gray-50'
@@ -349,7 +268,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                 return (
                   <div
                     onClick={() => {
-                      if (!disableClicks && (isReportAvailable || showReport)) {
+                      if (isReportAvailable || showReport) {
                         setactiveImg(index + 1);
                         if (activeReportSection === 'Progress') {
                           // For Progress tab, scroll to the specific section
