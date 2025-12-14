@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ReportSideMenu } from '../../Components';
-import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
-import { TopBar } from '../../Components/topBar';
-import { ComboBar } from '../../Components';
-import { useState, useEffect, useRef } from 'react';
-import { subscribe, unsubscribe } from '../../utils/event';
+import { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
+import { ComboBar, ReportSideMenu } from '../../Components';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
-import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
 import ProgressDashboardView from '../../Components/ProgressDashboard/ProgressDashboardView';
+import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
+import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
+import { TopBar } from '../../Components/topBar';
+import { subscribe, unsubscribe } from '../../utils/event';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
