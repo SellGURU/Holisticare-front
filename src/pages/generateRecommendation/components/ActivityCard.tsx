@@ -171,7 +171,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
             </div>
             <div className="flex gap-2 text-[8px]">
               <div
-                className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                className={`select-none rounded-full text-nowrap px-2 py-[2px] h-[20px] md:h-auto flex items-center gap-1 text-[8px] text-Text-Primary`}
                 style={{ backgroundColor: bgColor }}
               >
                 <div
@@ -205,7 +205,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 {showAddIssue && (
                   <div
                     ref={addIssueRef}
-                    className="flex flex-col absolute top-10 w-[353px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
+                    className="flex flex-col absolute right-0 md:right-auto top-10 w-[200px] md:w-[353px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-2 md:p-4 shadow-200 z-10"
                     style={{
                       scrollbarWidth: 'thin',
                       scrollbarColor: '#E9EDF5 #FFFFFF',

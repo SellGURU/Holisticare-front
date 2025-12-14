@@ -334,7 +334,7 @@ input[type='number'] {
     @apply text-[16px] font-medium;
   }
   .TextStyle-Headline-5 {
-    @apply text-xs md:text-[14px] font-medium;
+    @apply text-[10px] xs:text-xs md:text-[14px] font-medium;
   }
   .TextStyle-Headline-6 {
     @apply text-[12px] font-medium;
@@ -804,4 +804,28 @@ input:-webkit-autofill:active {
 .tz-empty {
   color: #999;
   cursor: default;
+}
+/* biomarker-table.css */
+.biomarker-grid-desktop {
+  grid-template-columns:
+    minmax(170px, 1fr)
+    minmax(220px, 1fr)
+    minmax(90px, 1fr)
+    minmax(120px, 1fr)
+    minmax(100px, 1fr)
+    minmax(100px, 1fr)
+    60px;
+}
+
+@media (max-width: 640px) {
+  .biomarker-grid-mobile {
+    grid-template-columns:
+      minmax(140px, 1fr)
+      minmax(190px, 1fr)
+      minmax(60px, 1fr)
+      minmax(90px, 1fr)
+      minmax(70px, 1fr)
+      minmax(70px, 1fr)
+      60px;
+  }
 }

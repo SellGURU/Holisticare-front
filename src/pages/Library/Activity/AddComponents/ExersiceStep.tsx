@@ -130,9 +130,13 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   }, [exercises, onValidationChange]);
 
   useEffect(() => {
-    Application.getExercisesList({}).then((res) => {
-      setExerciseList(res.data);
-    });
+    Application.getExercisesList({})
+      .then((res) => {
+        setExerciseList(res.data);
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
   }, []);
 
   const addExercise = (exercise: Exercise) => {
@@ -432,7 +436,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
         <div className="flex w-full items-center justify-between">
           <div>
             <div
-              className={`w-[530px] h-[432px] border  border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
+              className={`w-[530px] h-[432px] border ${showValidation && exercises.length === 0 && 'border-Red'}  border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
@@ -502,11 +506,11 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                   })}
               </div>
             </div>
-            {/* {showValidation && exercises.length === 0 && (
+            {showValidation && exercises.length === 0 && (
               <div className="text-Red text-xs mt-2">
                 Add exercise to continue.
               </div>
-            )} */}
+            )}
           </div>
           <div className="w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
             <div className="flex w-full items-center justify-between mt-1">

@@ -182,7 +182,7 @@ const LibBox: FC<LibBoxProps> = ({
             </div>
             {data.flag && data.flag.conflicts.length > 0 && (
               <button
-                className="flex items-center gap-1 cursor-pointer"
+                className=" hidden lg:flex items-center gap-1 cursor-pointer"
                 onClick={() => {
                   if (handleShowConflictsModal) {
                     handleShowConflictsModal();

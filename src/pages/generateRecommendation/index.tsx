@@ -487,7 +487,7 @@ export const GenerateRecommendation = () => {
           </div>
 
           <div className="px-4 md:px-8">
-            <div className="mt-5 flex justify-between py-4 md:px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full">
+            <div className="mt-5 flex overflow-x-auto hidden-scrollbar justify-between py-4 md:px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full">
               {steps.map((label, index) => (
                 <React.Fragment key={index}>
                   <div
