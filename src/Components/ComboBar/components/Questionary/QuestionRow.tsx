@@ -4,17 +4,19 @@ import TooltipTextAuto from '../../../TooltipText/TooltipTextAuto';
 import ActionModal from './ActionModal';
 import Application from '../../../../api/app';
 import { publish } from '../../../../utils/event';
-import { ButtonSecondary } from '../../../Button/ButtosSecondary';
+// import { ButtonSecondary } from '../../../Button/ButtosSecondary';
 
 interface QuestionRowProps {
   el: any;
   member_id: string;
   handleCloseSlideOutPanel: () => void;
+  onReload: () => void;
   onAssign: (unique_id: string) => void;
 }
 const QuestionRow: FC<QuestionRowProps> = ({
   el,
   member_id,
+  onReload,
   onAssign,
   handleCloseSlideOutPanel,
 }) => {
@@ -107,27 +109,30 @@ const QuestionRow: FC<QuestionRowProps> = ({
       q_unique_id: el.unique_id,
       member_id: member_id,
     })
-      .then(() => {})
+    .then(() => {
+        onReload();
+
+      })
       .catch((err) => {
         console.error(err);
       });
     setTimeout(() => {
       publish('checkProgress', {});
     }, 1000);
-    handleCloseSlideOutPanel();
+    // handleCloseSlideOutPanel();
   };
-  const resloveSyncTitle = () => {
-    if (el.status == 'completed') {
-      return 'Questionnaire submission completed.';
-    }
-    if (el.status == 'deleted') {
-      return 'Questionnaire deletion completed.';
-    }
-    if (el.status == 'edited') {
-      return 'Questionnaire update completed.';
-    }
-    return 'Questionnaire submission completed.';
-  };
+  // const resloveSyncTitle = () => {
+  //   if (el.status == 'completed') {
+  //     return 'Questionnaire submission completed.';
+  //   }
+  //   if (el.status == 'deleted') {
+  //     return 'Questionnaire deletion completed.';
+  //   }
+  //   if (el.status == 'edited') {
+  //     return 'Questionnaire update completed.';
+  //   }
+  //   return 'Questionnaire submission completed.';
+  // };
   return (
     <>
       <div
@@ -271,7 +276,7 @@ const QuestionRow: FC<QuestionRowProps> = ({
             </>
           </>
         )}
-        {el.isNeedSync && (
+        {/* {el.isNeedSync && (
           <>
             <div className="flex flex-col mt-3">
               <div className="flex items-center">
@@ -300,7 +305,7 @@ const QuestionRow: FC<QuestionRowProps> = ({
               </div>
             </div>
           </>
-        )}
+        )} */}
       </div>
     </>
   );

@@ -146,7 +146,7 @@ const ProgressUiModal: FC<ProgressUiModalProps> = ({
                 item.category === 'questionnaire' &&
                 newItem.category === 'questionnaire'
               ) {
-                return item.q_unique_id === newItem.q_unique_id;
+                return item.f_unique_id === newItem.f_unique_id;
               }
               if (
                 item.category === 'refresh' &&

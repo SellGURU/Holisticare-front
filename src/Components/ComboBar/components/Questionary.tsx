@@ -57,7 +57,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
         : [...prev, id],
     );
   };
-  const [unsyncedIdes, setUnsyncedIdes] = useState<string[]>([]);
+  // const [unsyncedIdes, setUnsyncedIdes] = useState<string[]>([]);
   const handleAddQuestionnaires = () => {
     // const selectedData = AddForms
     //   .filter((form: any) => selectedQuestionnaires.includes(form.id))
@@ -102,7 +102,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
           setData(
             res.data.map((file: any) => ({
               ...file,
-              isNeedSync: unsyncedIdes.includes(file.forms_unique_id),
+              // isNeedSync: unsyncedIdes.includes(file.forms_unique_id),
             })),
           );
           if (res.data.length > 0) {
@@ -143,41 +143,34 @@ export const Questionary: React.FC<QuestionaryProps> = ({
       });
     };
   }, []);
-  const handleCompletedProgress = (data: any) => {
-    const resolveStatus = () => {
-      if (data.detail.type == 'entered') {
-        return 'completed';
-      }
-      if (data.detail.type == 'deleted') {
-        return 'deleted';
-      }
-      if (data.detail.type == 'edited') {
-        return 'edited';
-      }
-      return 'completed';
-    };
-    if (data.detail.file_id) {
-      // alert('handleCompletedProgress');
-      setUnsyncedIdes((prev) => [...prev, data.detail.file_id]);
-      setData((prev: any) =>
-        prev.map((el: any) =>
-          el.forms_unique_id === data.detail.file_id
-            ? { ...el, isNeedSync: true, status: resolveStatus() }
-            : el,
-        ),
-      );
-      publish('reloadMainQuestionnaires', {});
-    }
-  };
+  // const handleCompletedProgress = (data: any) => {
+  //   const resolveStatus = () => {
+  //     if (data.detail.type == 'entered') {
+  //       return 'completed';
+  //     }
+  //     if (data.detail.type == 'deleted') {
+  //       return 'deleted';
+  //     }
+  //     if (data.detail.type == 'edited') {
+  //       return 'edited';
+  //     }
+  //     return 'completed';
+  //   };
+  //   if (data.detail.file_id) {
+  //     // alert('handleCompletedProgress');
+  //     setUnsyncedIdes((prev) => [...prev, data.detail.file_id]);
+  //     setData((prev: any) =>
+  //       prev.map((el: any) =>
+  //         el.forms_unique_id === data.detail.file_id
+  //           ? { ...el, isNeedSync: true, status: resolveStatus() }
+  //           : el,
+  //       ),
+  //     );
+  //     publish('reloadMainQuestionnaires', {});
+  //   }
+  // };
   useEffect(() => {
-    subscribe('completedQuestionnaireProgress', handleCompletedProgress);
     subscribe('syncReport', () => {
-      setUnsyncedIdes([]);
-      setData((prev: any) =>
-        prev.map((el: any) =>
-          el.isNeedSync ? { ...el, isNeedSync: false } : el,
-        ),
-      );
       getQuestionnaires();
     });
   }, []);
@@ -856,6 +849,9 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                   {data?.map((el: any) => {
                     return (
                       <QuestionRow
+                        onReload={() => {
+                          getQuestionnaires();
+                        }}
                         el={el}
                         handleCloseSlideOutPanel={handleCloseSlideOutPanel}
                         member_id={id as string}
