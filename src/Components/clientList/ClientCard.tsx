@@ -315,10 +315,9 @@ const ClientCard: FC<ClientCardProps> = ({
       <MainModal
         isOpen={showAccessModal}
         onClose={() => {
-          setShowAccessModal(false)
+          setShowAccessModal(false);
           setIsShared(false);
-        }
-        }
+        }}
       >
         <>
           {isShared ? (
@@ -333,10 +332,12 @@ const ClientCard: FC<ClientCardProps> = ({
                   The email address and password have been successfully sent to{' '}
                   {client.name}.
                 </div>
-                <ButtonPrimary onClick={() =>{
-                  setShowAccessModal(false);
-                  setIsShared(false);
-                } }>
+                <ButtonPrimary
+                  onClick={() => {
+                    setShowAccessModal(false);
+                    setIsShared(false);
+                  }}
+                >
                   <div className="w-[150px]">Got it</div>
                 </ButtonPrimary>
               </div>
@@ -476,7 +477,7 @@ const ClientCard: FC<ClientCardProps> = ({
                   onClick={() => setShowAccessModal(false)}
                   className="text-sm font-medium cursor-pointer text-Text-Secondary "
                 >
-                 {AccessPassword ? 'Close' : 'Cancel'}
+                  {AccessPassword ? 'Close' : 'Cancel'}
                 </div>
                 {!isShared && AccessPassword && (
                   <div
