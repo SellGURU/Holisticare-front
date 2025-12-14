@@ -9,6 +9,7 @@ import { publish } from '../../utils/event';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 import ProgressCalenderView from './ProgressCalendarView';
+import { Tooltip } from 'react-tooltip';
 
 // type CardData = {
 //   cardID: number;
@@ -247,6 +248,8 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                             });
                           }
                         }}
+                        data-tooltip-id={disableGenerate ? 'generate-new-tooltip2' : ''}
+                         data-tooltip-content={disableGenerate ? 'Data sync in progress — please wait until it’s complete' : ''}
                         className={` min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal c ${!canCreateNewActionPlan() ? 'opacity-40 cursor-not-allowed' : 'cursor-default'}`}
                       >
                         <div className="flex flex-col  TextStyle-Subtitle-2 items-center justify-center ">
@@ -258,6 +261,13 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                           Add New
                         </div>
                       </div>
+                      {disableGenerate && (
+                      <Tooltip
+                        id="generate-new-tooltip2"
+                        place="top"
+                        className="!bg-white !w-[200px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !z-[99999]"
+                      />
+                    )}
                     </>
                   </div>
                   <div className="mt-2 w-full">
