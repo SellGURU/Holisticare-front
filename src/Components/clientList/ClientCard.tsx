@@ -477,7 +477,7 @@ const ClientCard: FC<ClientCardProps> = ({
                   onClick={() => setShowAccessModal(false)}
                   className="text-sm font-medium cursor-pointer text-Text-Secondary "
                 >
-                  {AccessPassword ? 'Close' : 'Cancel'}
+                  {!AccessPassword ? 'Close' : 'Cancel'}
                 </div>
                 {!isShared && AccessPassword && (
                   <div
