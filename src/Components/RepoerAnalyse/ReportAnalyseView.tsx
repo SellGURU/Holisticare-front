@@ -745,11 +745,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     const handleDisableGenerate = () => {
       setDisableGenerate(true);
     };
-
+    const handleRefreshCompleted = () => {
+      setDisableGenerate(false);
+    };
     subscribe('disableGenerate', handleDisableGenerate);
-
+    subscribe('RefreshCompleted', handleRefreshCompleted);
     return () => {
       unsubscribe('disableGenerate', handleDisableGenerate);
+      unsubscribe('RefreshCompleted', handleRefreshCompleted);
     };
   }, [resolvedMemberID]);
 

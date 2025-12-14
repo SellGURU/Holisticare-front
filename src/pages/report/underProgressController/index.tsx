@@ -157,12 +157,27 @@ const UnderProgressController = ({
       }
     });
   };
+  const resolveRefreshController = (refresh: any[]) => {
+    refresh.forEach((item) => {
+      if (item.process_status == true) {
+        publish('RefreshCompleted', {
+          file_id: item.file_id,
+          type: item.action_type,
+        });
+      } else {
+        publish('disableGenerate', {});
+      }
+    });
+  };
   const controllProgress = () => {
     if (allprogress.files.length > 0) {
       resolveFileController(allprogress.files);
     }
     if (allprogress.questionnaires.length > 0) {
       resolveQuestionnaireController(allprogress.questionnaires);
+    }
+    if (allprogress.refresh.length > 0) {
+      resolveRefreshController(allprogress.refresh);
     }
     if (
       allprogress.questionnaires.length > 0 ||

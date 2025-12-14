@@ -10,6 +10,7 @@ import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import TreatmentCard from './TreatmentCard';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
+import { Tooltip } from 'react-tooltip';
 
 type CardData = {
   id: number;
@@ -574,6 +575,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       // navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                     }
                   }}
+                  data-tooltip-id={
+                    disableGenerate ? 'generate-new-tooltip' : ''
+                  }
+                  data-tooltip-content={
+                    disableGenerate
+                      ? 'Data sync in progress — please wait until it’s complete'
+                      : ''
+                  }
                   className={` 
                     relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
@@ -584,6 +593,13 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       Generate New
                     </div>
                   </>
+                  {disableGenerate && (
+                    <Tooltip
+                      id="generate-new-tooltip"
+                      place="top"
+                      className="!bg-white !w-[200px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !z-[99999]"
+                    />
+                  )}
                 </div>
               </div>
               {/* <div className="w-full flex justify-center md:justify-end gap-2 my-3">
