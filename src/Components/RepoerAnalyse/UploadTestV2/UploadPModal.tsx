@@ -121,19 +121,19 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   return (
     <>
       <div
-        style={{ height: window.innerHeight - 40 + 'px' }}
-        className="w-full rounded-[16px] y md:h-[89vh] top-4 flex justify-center absolute  left-0 text-Text-Primary px-2 md:px-6 xl:px-0 xl:pr-[95px]"
+        // style={{ height: window.innerHeight - 40 + 'px' }}
+        className="w-full  h-[calc(100vh-40px)] rounded-[16px] y md:h-[89vh] top-4 flex justify-center absolute  left-0 text-Text-Primary px-2 md:px-6 xl:px-0 xl:pr-[95px]"
       >
         <div className="w-full h-full opacity-85  rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
         <div
-          style={{ height: window.innerHeight - 80 + 'px' }}
-          className="bg-white p-2 md:p-6 rounded-md w-full overflow-auto md:overflow-hidden  h-fit z-[99]"
+          // style={{ height: window.innerHeight - 80 + 'px' }}
+          className="bg-white p-2 md:p-6 h-[calc(100vh-80px)] rounded-md pb-[80px] sm:pb-0 w-full overflow-auto md:overflow-hidden   z-[99]"
         >
           <div className="w-full flex items-center justify-between">
-            <div className="flex gap-2 items-center text-xs text-Text-Primary font-medium">
+            <div className="flex gap-2 items-center text-[10px] xs:text-xs text-Text-Primary font-medium">
               <div
                 onClick={() => OnBack()}
-                className="cursor-pointer size-8 rounded-md p-1 bg-white border border-Gray-50 shadow-100 flex items-center justify-center"
+                className="cursor-pointer size-6 md:size-8 rounded-md p-1 bg-white border border-Gray-50 shadow-100 flex items-center justify-center"
               >
                 <img src="/icons/arrow-back.svg" alt="" />
               </div>
@@ -149,7 +149,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 onSave();
                 setShouldAutoSwitch(true);
               }}
-              ClassName=" w-[127px] md:w-[167px]"
+              ClassName=" w-[100px] xs:w-[127px] md:w-[167px]"
             >
               {btnLoading ? (
                 <>
@@ -158,14 +158,14 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   Continue
                 </>
               ) : (
-                <>
+                <div className="flex gap-2 justify-center text-[10px] xs:text-xs">
                   <img
                     className="size-4"
                     src="/icons/arrow-right-white.svg"
                     alt=""
                   />
                   Continue{' '}
-                </>
+                </div>
               )}
             </ButtonPrimary>
           </div>
@@ -200,7 +200,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             ) : null}
           </div>
           <div
-            className={`w-full h-full flex flex-col mt-4 gap-2 ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
+            className={`w-full h-fit sm:h-full flex flex-col mt-4 gap-2 ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
           >
             <FileUploaderSection
               isShare={isShare}
