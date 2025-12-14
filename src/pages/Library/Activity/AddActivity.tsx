@@ -222,7 +222,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       { name: 'Finisher', enabled: true, order: 5 },
     ],
   });
-  const handleChangeSetOrder = (value: any) => {
+  const handleChangeSetOrder = (value: typeof addData.Set_Order) => {
     setAddData((prevTheme) => ({
       ...prevTheme,
       Set_Order: value,
@@ -240,7 +240,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       addData.title.trim() !== '' &&
         addData.instruction.trim() !== '' &&
         addData.score > 0 &&
-        (addData.Parent_Title.trim() !== '' || editid !== null),
+        (addData?.Parent_Title?.trim() !== '' || editid !== null),
     );
   }, [addData.title, addData.instruction, addData.score, addData.Parent_Title]);
 

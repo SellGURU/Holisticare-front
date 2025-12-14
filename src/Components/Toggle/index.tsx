@@ -25,7 +25,7 @@ const Toggle: React.FC<ToggleProps> = ({
           onClick={() => {
             setActive(value[0]);
           }}
-          className={` cursor-pointer ${active == value[0] ? 'bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} ${isNotif && 'w-[176px] h-[24px]'} h-[20px] w-[150px] ${isClientList && 'h-[24px] w-[100px]'} ${isMessages && 'w-[86.33px] h-[23px]'} rounded-[16px] flex justify-center items-center text-[12px]`}
+          className={` cursor-pointer ${active == value[0] ? 'bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} ${isNotif && 'w-[176px] h-[24px]'} h-[20px] w-[110px] xs:w-[150px] ${isClientList && 'h-[24px] w-[100px]'} ${isMessages && 'w-[86.33px] h-[23px]'} rounded-[16px] flex justify-center items-center text-[10px] xs:text-[12px]`}
         >
           {value[0]}
         </div>
@@ -34,7 +34,7 @@ const Toggle: React.FC<ToggleProps> = ({
           onClick={() => {
             setActive(value[1]);
           }}
-          className={` cursor-pointer ${active == value[1] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} ${isNotif && 'w-[176px] h-[24px]'} h-[20px] w-[150px]  ${isClientList && 'h-[24px] w-[100px]'} ${isMessages && 'w-[86.33px] h-[23px]'} rounded-[16px] flex justify-center items-center text-[12px]`}
+          className={` cursor-pointer ${active == value[1] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} ${isNotif && 'w-[176px] h-[24px]'} h-[20px] w-[110px] xs:w-[150px] ${isClientList && 'h-[24px] w-[100px]'} ${isMessages && 'w-[86.33px] h-[23px]'} rounded-[16px] flex justify-center items-center  text-[10px] xs:text-[12px]`}
         >
           {value[1]}
         </div>
