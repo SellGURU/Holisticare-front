@@ -15,8 +15,6 @@ interface FileHistoryNewProps {
 const FileHistoryNew: FC<FileHistoryNewProps> = ({
   isOpen,
   handleCloseSlideOutPanel,
-  unsyncedIdes,
-  setUnsyncedIdes,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
@@ -26,12 +24,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     Application.getFilleList({ member_id: id })
       .then((res) => {
         if (res.data) {
-          setUploadedFiles(
-            res.data.map((file: any) => ({
-              ...file,
-              isNeedSync: unsyncedIdes.includes(file.file_id),
-            })),
-          );
+          setUploadedFiles(res.data);
         } else {
           throw new Error('Unexpected data format');
         }
@@ -50,26 +43,20 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     }
   }, [id, isOpen]);
 
-  const handleCompletedProgress = (data: any) => {
-    if (data.detail.file_id && data.detail.type == 'uploaded') {
-      // alert('handleCompletedProgress');
-      setUnsyncedIdes([...unsyncedIdes, data.detail.file_id]);
-      setUploadedFiles((prev: any) =>
-        prev.map((el: any) =>
-          el.file_id === data.detail.file_id ? { ...el, isNeedSync: true } : el,
-        ),
-      );
-    }
-  };
+  // const handleCompletedProgress = (data: any) => {
+  //   if (data.detail.file_id && data.detail.type == 'uploaded') {
+  //     // alert('handleCompletedProgress');
+  //     setUnsyncedIdes([...unsyncedIdes, data.detail.file_id]);
+  //     setUploadedFiles((prev: any) =>
+  //       prev.map((el: any) =>
+  //         el.file_id === data.detail.file_id ? { ...el, isNeedSync: true } : el,
+  //       ),
+  //     );
+  //   }
+  // };
   useEffect(() => {
-    subscribe('completedProgress', handleCompletedProgress);
+    // subscribe('completedProgress', handleCompletedProgress);
     subscribe('syncReport', () => {
-      setUnsyncedIdes([]);
-      setUploadedFiles((prev: any) =>
-        prev.map((el: any) =>
-          el.isNeedSync ? { ...el, isNeedSync: false } : el,
-        ),
-      );
       if (id) {
         getFileList(id);
       }
@@ -80,7 +67,6 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           getFileList(id);
         }
       });
-      unsubscribe('completedProgress', handleCompletedProgress);
     };
   }, []);
   return (

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Application from '../../api/app.ts';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
-import { publish, subscribe } from '../../utils/event.ts';
+import { publish, subscribe, unsubscribe } from '../../utils/event.ts';
 import { PopUpChat } from '../popupChat';
 import { SlideOutPanel } from '../SlideOutPanel';
 
@@ -85,6 +85,16 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       setPatientInfo(res.data);
     });
   }, [id]);
+  useEffect(() => {
+    const handleCompletedProgress = () => {
+      setIsSlideOutPanel(false);
+    };
+    subscribe('completedProgress', handleCompletedProgress);
+    return () => {
+      unsubscribe('completedProgress', handleCompletedProgress);
+    };
+  },
+  [])
   // useConstructor(() => {
   //   // setIsLoading(true);
   //   Application.getSummary(id as string).then((res) => {

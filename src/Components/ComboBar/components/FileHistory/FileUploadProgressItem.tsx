@@ -4,52 +4,26 @@ import TooltipTextAuto from '../../../TooltipText/TooltipTextAuto';
 import { formatDate } from './help';
 import ActionSection from './FileBoxItem/ActionSection';
 import { useParams } from 'react-router-dom';
-import { ButtonSecondary } from '../../../Button/ButtosSecondary';
-import { publish, subscribe, unsubscribe } from '../../../../utils/event';
+// import { ButtonSecondary } from '../../../Button/ButtosSecondary';
+// import { publish } from '../../../../utils/event';
 
 interface FileUploadProgressItemProps {
   file: any;
 }
 const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
   const [fileStatus, setFileStatus] = useState<
-    'uploading' | 'uploaded' | 'upload' | 'deleting' | 'deleted'
+    'uploading' | 'upload' | 'deleting'
   >('upload');
   const { id } = useParams<{ id: string }>();
-  const handleCompletedProgress = (data: any) => {
-    if (data.detail.file_id === file.file_id && data.detail.type == 'deleted') {
-      setFileStatus('deleted');
-    }
-    if (
-      data.detail.file_id === file.file_id &&
-      data.detail.type == 'uploaded'
-    ) {
-      setFileStatus('uploaded');
-    }
-  };
   useEffect(() => {
-    if (file.action_type === 'deleted') {
-      if (file.process_done === true) {
-        setFileStatus('deleted');
-      } else {
-        setFileStatus('deleting');
-      }
-    }
     if (file.action_type === 'uploaded') {
-      if (file.isNeedSync) {
-        setFileStatus('uploaded');
+      if (file.process_done === true) {
+        setFileStatus('upload');
       } else {
-        if (file.process_done === true) {
-          setFileStatus('upload');
-        } else {
-          setFileStatus('uploading');
-        }
+        setFileStatus('uploading');
       }
     }
-    subscribe('completedProgress', handleCompletedProgress);
-    return () => {
-      unsubscribe('completedProgress', handleCompletedProgress);
-    };
-  }, []);
+  }, [file.action_type, file.process_done]);
   return (
     <>
       <div
@@ -83,7 +57,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
             }}
           />
         </div>
-        {fileStatus === 'deleted' && (
+        {/* {fileStatus === 'deleted' && (
           <>
             <div className="flex flex-col mt-3">
               <div className="flex items-center">
@@ -147,7 +121,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
               </div>
             </div>
           </>
-        )}
+        )} */}
         {fileStatus == 'deleting' && (
           <>
             <div className="flex flex-col mt-3 confirm-animation">
