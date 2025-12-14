@@ -189,7 +189,7 @@ const router = createBrowserRouter([
     element: <FormView mode="checkin"></FormView>,
   },
   {
-    path: '/questionary/:encode/:id',
+    path: '/questionary/:encode/:id/:f-id',
     element: <FormView mode="questionary"></FormView>,
   },
   {
@@ -197,11 +197,11 @@ const router = createBrowserRouter([
     element: <Tasks></Tasks>,
   },
   {
-    path: '/surveys/:member-id/:q-id',
+    path: '/surveys/:member-id/:q-id/:f-id/:action',
     element: <PublicSurveyPage></PublicSurveyPage>,
   },
   {
-    path: '/surveys-view/:member-id/:q-id',
+    path: '/surveys-view/:member-id/:q-id/:f-id',
     element: <SurveyResponsesPage></SurveyResponsesPage>,
   },
   {

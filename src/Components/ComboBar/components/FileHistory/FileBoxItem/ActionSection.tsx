@@ -1,0 +1,159 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FC, useState } from 'react';
+import Application from '../../../../../api/app';
+import { BeatLoader } from 'react-spinners';
+import { publish } from '../../../../../utils/event';
+
+interface ActionSectionProps {
+  file: any;
+  isDeleted: boolean;
+  memberId: string;
+  onDelete: () => void;
+}
+const ActionSection: FC<ActionSectionProps> = ({
+  file,
+  isDeleted,
+  memberId,
+  onDelete,
+}) => {
+  const [isSureRemove, setIsSureRemove] = useState(false);
+  const [loadingDelete] = useState<boolean>(false);
+  const downloadFile = () => {
+    if (file.file_id) {
+      Application.downloadFille({
+        file_id: file.file_id,
+        member_id: memberId,
+      })
+        .then((res) => {
+          try {
+            const blobUrl = res.data;
+
+            // Create a direct download link for the blob URL
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = file.file_name;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          } catch (error: any) {
+            console.error('Error downloading file:', error);
+            console.error('Error details:', {
+              errorName: error?.name,
+              errorMessage: error?.message,
+              errorStack: error?.stack,
+            });
+          }
+        })
+        .catch((error: any) => {
+          console.error('Error downloading file:', error);
+          console.error('Error details:', {
+            errorName: error?.name,
+            errorMessage: error?.message,
+            errorStack: error?.stack,
+          });
+        });
+    } else {
+      // For direct file object, create a blob URL
+      const blobUrl = URL.createObjectURL(file.file);
+
+      // Create a direct download link for the blob URL
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = file.file_name || file.file.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up the blob URL
+      URL.revokeObjectURL(blobUrl);
+    }
+  };
+  const handleDelete = () => {
+    // setLoadingDelete(true);
+    setIsSureRemove(false);
+
+    Application.deleteFileHistory({
+      file_id: file.file_id,
+      member_id: memberId,
+    })
+      .then(() => {
+        console.log('delete file success');
+        // setLoadingDelete(false);
+        // setisDeleted(true);
+
+        // onDelete();
+        // onDeleteSuccess();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    setTimeout(() => {
+      publish('checkProgress', {});
+    }, 400);
+    onDelete();
+  };
+  return (
+    <div className="w-[16%]">
+      <div
+        className={`flex justify-end gap-2 items-center ${
+          isDeleted ? 'opacity-50' : ''
+        }`}
+      >
+        {isSureRemove ? (
+          <>
+            <div className="h-[24px]"></div>
+            <div className="flex items-center absolute justify-start gap-2 confirm-animation">
+              <div className="text-Text-Quadruple text-xs">Sure?</div>
+              <img
+                src="/icons/tick-circle-green.svg"
+                alt=""
+                className="w-[20px] h-[20px] cursor-pointer transition-transform hover:scale-110"
+                onClick={() => handleDelete()}
+              />
+              <img
+                src="/icons/close-circle-red.svg"
+                alt=""
+                className="w-[20px] h-[20px] cursor-pointer transition-transform hover:scale-110"
+                onClick={() => setIsSureRemove(false)}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            {loadingDelete ? (
+              <div className="flex items-center justify-start gap-2 confirm-animation">
+                <BeatLoader color="#6CC24A" size={10} />
+              </div>
+            ) : (
+              <div className="flex items-center justify-start gap-1 confirm-animation">
+                {file.file_name !== 'Manual Entry' && (
+                  <img
+                    onClick={() => {
+                      if (!isDeleted) {
+                        downloadFile();
+                      }
+                    }}
+                    className="cursor-pointer"
+                    src="/icons/import.svg"
+                    alt=""
+                  />
+                )}
+                <img
+                  onClick={() => {
+                    if (!isDeleted) {
+                      setIsSureRemove(true);
+                    }
+                  }}
+                  src="/icons/delete-green.svg"
+                  alt=""
+                  className="cursor-pointer w-5 h-5"
+                />
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+export default ActionSection;

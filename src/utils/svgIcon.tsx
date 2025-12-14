@@ -7,6 +7,7 @@ interface SvgIconProps {
   height?: string; // Optional height prop
   stroke?: string;
   onClick?: () => void; // Optional onClick prop
+  className?: string; // Optional className prop
 }
 
 const SvgIcon: React.FC<SvgIconProps> = ({
@@ -16,6 +17,7 @@ const SvgIcon: React.FC<SvgIconProps> = ({
   height,
   stroke,
   onClick,
+  className,
 }) => {
   const svgRef = useRef<HTMLDivElement>(null);
 
@@ -40,7 +42,13 @@ const SvgIcon: React.FC<SvgIconProps> = ({
       .catch((error) => console.error('Error loading SVG:', error));
   }, [src, color, width, height]);
 
-  return <div className="cursor-pointer" ref={svgRef} onClick={onClick}></div>;
+  return (
+    <div
+      className={`cursor-pointer ${className || ''}`}
+      ref={svgRef}
+      onClick={onClick}
+    ></div>
+  );
 };
 
 export default SvgIcon;

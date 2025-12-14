@@ -1,53 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
-import { subscribe, unsubscribe } from '../../utils/event';
+import { subscribe } from '../../utils/event';
 import { publish } from '../../utils/event';
 
-export const DeleteFileProgressModal = () => {
+export const RefreshProgressModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [IsinProgress, setIsinProgress] = useState(true);
-  const idOnworksRef = useRef<Array<string>>([]);
-
-  useEffect(() => {
-    const handleOpenProgressModal = (data: any) => {
-      console.log(data);
-      const fileId = data?.detail?.file_id;
-
-      if (!fileId) {
-        return;
-      }
-
-      if (idOnworksRef.current.includes(fileId)) {
-        return;
-      }
-
-      idOnworksRef.current = [...idOnworksRef.current, fileId];
-      setTimeout(() => {
-        setshowProgressModal(true);
-        setIsinProgress(true);
-      }, 100);
-    };
-
-    const handleStepTwoSuccess = () => {
-      if (idOnworksRef.current.length === 0) {
-        return;
-      }
-      idOnworksRef.current = idOnworksRef.current.filter(
-        (id) => id !== idOnworksRef.current[0],
-      );
+  const [name, setName] = useState('');
+  subscribe('openRefreshProgressModal', (name: any) => {
+    setName(name.detail);
+    setTimeout(() => {
       setshowProgressModal(true);
-      setIsinProgress(false);
-    };
+      setIsinProgress(true);
+    }, 2000);
+  });
 
-    subscribe('openDeleteProgressModal', handleOpenProgressModal);
-    subscribe('DeleteSuccess', handleStepTwoSuccess);
-
-    return () => {
-      unsubscribe('openDeleteProgressModal', handleOpenProgressModal);
-      unsubscribe('DeleteSuccess', handleStepTwoSuccess);
-    };
-  }, []);
+  subscribe('RefreshStepTwoSuccess', () => {
+    setshowProgressModal(true);
+    setIsinProgress(false);
+  });
 
   return (
     <>
@@ -67,7 +38,9 @@ export const DeleteFileProgressModal = () => {
         `}
       >
         <div className="flex items-center justify-between text-xs font-medium text-Primary-DeepTeal">
-          {IsinProgress ? 'Deletion in Progress' : 'File History'}
+          {IsinProgress
+            ? `Sync in Progress for ${name}`
+            : ' Data synced successfully!'}
           <img
             onClick={() => setshowProgressModal(false)}
             src="/icons/close.svg"
@@ -90,15 +63,18 @@ export const DeleteFileProgressModal = () => {
               <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot3"></div>
             </div>
           ) : (
+            // <img src="/icons/more-circle.svg" alt="" />
             <img src="/icons/tick-circle-upload.svg" alt="" />
           )}
-          {IsinProgress ? 'Your file is being removed.' : 'Deleting Completed.'}
+          {IsinProgress
+            ? 'The client’s data is being updated...'
+            : 'Your client’s data has been successfully synced.'}
         </div>
 
         <div className="mt-4 text-[10px] text-Text-Quadruple transition-opacity duration-500">
           {IsinProgress
-            ? "If you'd like, you may continue working while the system removes the file."
-            : 'If you would like to remove its related data from the report, please click the “Unsync Data” button.'}
+            ? "If you'd like, you can continue working with other clients while this sync completes."
+            : 'Please click “Update Data” to update your client’s data and create a new plan.'}
         </div>
 
         {!IsinProgress && (
@@ -109,7 +85,7 @@ export const DeleteFileProgressModal = () => {
                 publish('syncReport', {});
               }}
             >
-              Unsync Data
+              Update Data
             </ButtonSecondary>
           </div>
         )}
@@ -117,4 +93,4 @@ export const DeleteFileProgressModal = () => {
     </>
   );
 };
-export default DeleteFileProgressModal;
+export default RefreshProgressModal;

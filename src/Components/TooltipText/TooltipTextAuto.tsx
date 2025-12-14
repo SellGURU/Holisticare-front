@@ -7,12 +7,14 @@ interface TooltipTextAutoProps {
   maxWidth?: string;
   tooltipPlace?: 'top' | 'bottom' | 'left' | 'right';
   tooltipClassName?: string;
+  isDisabled?: boolean;
 }
 
 const TooltipTextAuto: FC<TooltipTextAutoProps> = ({
   children,
   maxWidth = '200px',
   tooltipPlace = 'top',
+  isDisabled = false,
   tooltipClassName = '!bg-white !w-[200px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]',
 }) => {
   const textRef = useRef<HTMLDivElement>(null);
@@ -51,6 +53,7 @@ const TooltipTextAuto: FC<TooltipTextAutoProps> = ({
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
+          opacity: isDisabled ? 0.5 : 1,
         }}
       >
         {children}

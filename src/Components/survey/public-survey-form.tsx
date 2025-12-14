@@ -1,6 +1,18 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  Activity,
+  AlertCircle,
+  ArrowRight,
+  Check,
+  CheckCircle2,
+  Star,
+  UploadCloud,
+  X,
+} from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import Application from '../../api/app';
 import { Button } from '../ui/button';
 import {
   Card,
@@ -10,24 +22,13 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import { Textarea } from '../ui/textarea';
 import { Checkbox } from '../ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Label } from '../ui/label';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Slider } from '../ui/slider';
-import {
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-  Star,
-  Activity,
-  UploadCloud,
-  X,
-  Check,
-} from 'lucide-react';
+import { Textarea } from '../ui/textarea';
 import { toast } from '../ui/use-toast';
-import Application from '../../api/app';
-import { useParams } from 'react-router-dom';
+import SvgIcon from '../../utils/svgIcon';
 // import { publish } from '../../utils/event';
 
 // Define flexible interfaces to handle different API response structures
@@ -65,6 +66,9 @@ interface PublicSurveyFormProps {
   survey: ApiSurvey;
   isClient?: boolean;
   onSubmitClient?: (respond: ApiQuestion[]) => void;
+  onAutoSaveClient?: (respond: ApiQuestion[]) => void;
+  action?: string;
+  isQuestionary?: boolean;
 }
 
 // --- EMOJI SELECTOR COMPONENT ---
@@ -198,15 +202,101 @@ export function PublicSurveyForm({
   survey,
   isClient = false,
   onSubmitClient,
+  isQuestionary = true,
+  onAutoSaveClient,
+  action,
 }: PublicSurveyFormProps) {
   console.log(survey);
 
+  useEffect(() => {
+    if (action === 'edit') {
+      setCurrentStep(1);
+    }
+  }, [action]);
+
   // const navigate = useNavigate();
-  const { 'member-id': memberId, 'q-id': qId } = useParams();
+  const { 'member-id': memberId, 'q-id': qId, 'f-id': fId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<
     Record<number, string | string[] | MultiFileResponse | null | number>
   >({});
+
+  const resolveRespond = () => {
+    const respond = sortedQuestions.map((q, idx) => {
+      if (q.hide) {
+        return {
+          ...q,
+          response: '', // always empty for hidden
+        };
+      }
+      let responseValue = responses[idx];
+
+      // Convert null/undefined to empty string for relevant types
+      if (
+        responseValue === undefined ||
+        responseValue === null ||
+        (typeof responseValue === 'string' && responseValue.trim() === '')
+      ) {
+        // Only set to empty string if it's not a checkbox or file uploader
+        // Checkbox should be [] and File Uploader should be {}
+        if (
+          q.type?.toLowerCase() !== 'checkbox' &&
+          q.type?.toLowerCase() !== 'file uploader' &&
+          q.type?.toLowerCase() !== 'star rating' && // Star rating might default to '0'
+          q.type?.toLowerCase() !== 'scale' && // Scale might have a default value
+          q.type?.toLowerCase() !== 'emojis' // Emojis has a default value
+        ) {
+          responseValue = '';
+        }
+      }
+      // Special handling for number-like responses to ensure they are strings
+      if (
+        (q.type?.toLowerCase() === 'scale' ||
+          q.type?.toLowerCase() === 'star rating') &&
+        typeof responseValue === 'number'
+      ) {
+        responseValue = responseValue.toString();
+      }
+
+      return {
+        ...q,
+        response: responseValue,
+      };
+    });
+    return respond;
+  };
+  useEffect(() => {
+    if (showSaveIndicator == 'saved') {
+      setTimeout(() => {
+        setShowSaveIndicator('idle');
+      }, 1000);
+    }
+  });
+  useEffect(() => {
+    if (currentStep <= 1) return;
+    if (isQuestionary) {
+      if (isClient) {
+        setShowSaveIndicator('saving');
+        onAutoSaveClient?.(resolveRespond());
+        setTimeout(() => {
+          setShowSaveIndicator('saved');
+        }, 1000);
+      } else {
+        setShowSaveIndicator('saving');
+        Application.autoSaveQuestionary({
+          member_id: memberId,
+          q_unique_id: qId,
+          f_unique_id: fId,
+          respond: resolveRespond(),
+        })
+          .finally(() => {
+            setShowSaveIndicator('saved');
+          })
+          .catch(() => {});
+      }
+    }
+  }, [currentStep]);
+  console.log('responses => ', responses);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [visibleQuestions, setVisibleQuestions] = useState<ApiQuestion[]>([]);
@@ -318,12 +408,32 @@ export function PublicSurveyForm({
       switch (q.type?.toLowerCase()) {
         case 'checkbox': {
           // Added block scope
-          initialResponses[index] = [];
+          initialResponses[index] = (q.response as string[]) || [];
+          break;
+        }
+        case 'number': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
+          break;
+        }
+        case 'yes_no': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
           break;
         }
         case 'file uploader': {
           // Added block scope
-          initialResponses[index] = {};
+          initialResponses[index] = (q.response as MultiFileResponse) || {};
+          break;
+        }
+        case 'paragraph': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
+          break;
+        }
+        case 'text': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
           break;
         }
         case 'scale': {
@@ -332,17 +442,24 @@ export function PublicSurveyForm({
           const options = getQuestionOptions(q);
           const min = Number.parseInt(options[0] || '1'); // Safely access with default fallback
           const max = Number.parseInt(options[1] || '10'); // Safely access with default fallback
-          initialResponses[index] = Math.floor((min + max) / 2).toString();
+          initialResponses[index] =
+            (q.response as string) || Math.floor((min + max) / 2).toString();
           break;
         }
         case 'star rating': {
           // Added block scope
-          initialResponses[index] = '0'; // Default to 0 stars
+          initialResponses[index] = (q.response as string) || '0'; // Default to 0 stars
           break;
         }
         case 'emojis': {
           // Added block scope
-          initialResponses[index] = emojeysData[2].name; // Default to neutral emoji
+          initialResponses[index] =
+            (q.response as string) || emojeysData[2].name; // Default to neutral emoji
+          break;
+        }
+        case 'multiple_choice': {
+          // Added block scope
+          initialResponses[index] = (q.response as string) || '';
           break;
         }
         default: {
@@ -503,7 +620,9 @@ export function PublicSurveyForm({
       }
     }
   };
-
+  const [showSaveIndicator, setShowSaveIndicator] = useState<
+    'idle' | 'saving' | 'saved'
+  >('idle');
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
@@ -517,63 +636,63 @@ export function PublicSurveyForm({
     setSubmitting(true);
     try {
       // --- MODIFIED: Ensure response is explicitly an empty string for null/undefined values ---
-      const respond = sortedQuestions.map((q, idx) => {
-        if (q.hide) {
-          return {
-            ...q,
-            response: '', // always empty for hidden
-          };
-        }
-        let responseValue = responses[idx];
-
-        // Convert null/undefined to empty string for relevant types
-        if (
-          responseValue === undefined ||
-          responseValue === null ||
-          (typeof responseValue === 'string' && responseValue.trim() === '')
-        ) {
-          // Only set to empty string if it's not a checkbox or file uploader
-          // Checkbox should be [] and File Uploader should be {}
-          if (
-            q.type?.toLowerCase() !== 'checkbox' &&
-            q.type?.toLowerCase() !== 'file uploader' &&
-            q.type?.toLowerCase() !== 'star rating' && // Star rating might default to '0'
-            q.type?.toLowerCase() !== 'scale' && // Scale might have a default value
-            q.type?.toLowerCase() !== 'emojis' // Emojis has a default value
-          ) {
-            responseValue = '';
-          }
-        }
-        // Special handling for number-like responses to ensure they are strings
-        if (
-          (q.type?.toLowerCase() === 'scale' ||
-            q.type?.toLowerCase() === 'star rating') &&
-          typeof responseValue === 'number'
-        ) {
-          responseValue = responseValue.toString();
-        }
-
-        return {
-          ...q,
-          response: responseValue,
-        };
-      });
+      const respond = resolveRespond();
       // --- END MODIFICATION ---
 
       if (isClient) {
         onSubmitClient?.(respond);
       } else {
-        await Application.SaveQuestionary({
-          member_id: memberId,
-          q_unique_id: qId,
-          respond,
-        }).finally(() => {
-          setTimeout(() => {
-            // publish('closeFullscreenModal',{});
-            parent.postMessage({ type: 'closeFullscreenModal', data: '' }, '*');
+        if (action === 'fill') {
+          await Application.SaveQuestionary({
+            member_id: memberId,
+            q_unique_id: qId,
+            f_unique_id: fId,
+            respond,
+          }).finally(() => {
+            // setTimeout(() => {
+            // publish('closeFullscreenModal', {});
+            parent.postMessage(
+              {
+                type: 'closeFullscreenModal',
+                data: {
+                  isFill: true,
+                  isUpdate: false,
+                  member_id: memberId as string,
+                  q_unique_id: qId as string,
+                  f_unique_id: fId as string,
+                },
+              },
+              '*',
+            );
             // navigate('/report/' + memberId + '/' + 'N');
-          }, 2000);
-        });
+            // }, 2000);
+          });
+        } else if (action === 'edit') {
+          await Application.EditQuestionary({
+            member_id: memberId,
+            q_unique_id: qId,
+            f_unique_id: fId,
+            respond,
+          }).finally(() => {
+            // setTimeout(() => {
+            // publish('closeFullscreenModal',{});
+            parent.postMessage(
+              {
+                type: 'closeFullscreenModal',
+                data: {
+                  isUpdate: true,
+                  isFill: false,
+                  member_id: memberId as string,
+                  q_unique_id: qId as string,
+                  f_unique_id: fId as string,
+                },
+              },
+              '*',
+            );
+            // navigate('/report/' + memberId + '/' + 'N');
+            // }, 2000);
+          });
+        }
       }
 
       setCurrentStep(sortedQuestions.length + 1);
@@ -711,6 +830,7 @@ export function PublicSurveyForm({
     value: string | undefined,
     onChange: (value: string) => void,
   ) => {
+    console.log('value => ', value);
     return (
       <div className="flex justify-center space-x-4">
         <button
@@ -798,6 +918,18 @@ export function PublicSurveyForm({
             onChange={(e) => handleResponseChange(e.target.value)}
             placeholder="Type your answer here..."
             className={`min-h-[120px] mt-2 text-base ${
+              validationError ? 'border-red-500 focus-visible:ring-red-500' : ''
+            } ${response ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
+          />
+        );
+      case 'number':
+        return (
+          <input
+            type="number"
+            value={(response as string) || ''}
+            onChange={(e) => handleResponseChange(e.target.value)}
+            placeholder="Type your answer here..."
+            className={` 'flex  w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-2  ${
               validationError ? 'border-red-500 focus-visible:ring-red-500' : ''
             } ${response ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
           />
@@ -1161,8 +1293,11 @@ export function PublicSurveyForm({
       }
 
       case 'yes/no':
-        return renderYesNo(response as string, (value) =>
-          handleResponseChange(value),
+        return renderYesNo(
+          response?.toString().trim()
+            ? (response as string)
+            : (question.response as string),
+          (value) => handleResponseChange(value),
         );
 
       default:
@@ -1277,9 +1412,38 @@ export function PublicSurveyForm({
         >
           <CardHeader>
             <div
-              className={`inline-block px-3 py-1 rounded-full text-sm font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
+              className={`px-3 py-1 rounded-full items-center flex text-sm font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
             >
               Question {currentStep} of {visibleQuestions.length}
+              {showSaveIndicator == 'saving' && (
+                <>
+                  <div className=" ml-2 flex items-center gap-1">
+                    <SvgIcon
+                      stroke="#FFFFFF"
+                      width="16px"
+                      height="16px"
+                      src="/icons/refresh-2.svg"
+                      color={''}
+                      className="animate-spin"
+                    ></SvgIcon>
+                    <div className="text-xs">Saving response…</div>
+                  </div>
+                </>
+              )}
+              {showSaveIndicator == 'saved' && (
+                <>
+                  <div className=" ml-2 flex items-center gap-1">
+                    <SvgIcon
+                      stroke="#FFFFFF"
+                      width="16px"
+                      height="16px"
+                      src="/icons/tick-circle2.svg"
+                      color={''}
+                    ></SvgIcon>
+                    <span>Response saved</span>
+                  </div>
+                </>
+              )}
             </div>
             <CardTitle className="text-[14px] 2xl:text-base max-h-[120px] overflow-y-scroll font-bold break-words pr-4 max-w-full">
               {getQuestionText(currentQuestion)}
@@ -1344,7 +1508,9 @@ export function PublicSurveyForm({
               {currentStep === visibleQuestions.length
                 ? submitting
                   ? 'Submitting...'
-                  : 'Submit'
+                  : action === 'edit'
+                    ? 'Update'
+                    : 'Submit'
                 : 'Next'}
             </Button>
           </CardFooter>

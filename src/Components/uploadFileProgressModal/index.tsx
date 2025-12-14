@@ -1,23 +1,58 @@
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState, useRef } from 'react';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
-import { subscribe } from '../../utils/event';
+import { subscribe, unsubscribe } from '../../utils/event';
 import { publish } from '../../utils/event';
 
 export const UploadFileProgressModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [IsinProgress, setIsinProgress] = useState(true);
+  const idOnworksRef = useRef<Array<string>>([]);
 
-  subscribe('openProgressModal', () => {
-    setTimeout(() => {
+  useEffect(() => {
+    const handleOpenProgressModal = (data: any) => {
+      console.log(data);
+      const fileId = data?.detail?.file_id;
+
+      if (!fileId) {
+        return;
+      }
+
+      if (idOnworksRef.current.includes(fileId)) {
+        return;
+      }
+
+      idOnworksRef.current = [...idOnworksRef.current, fileId];
+      setTimeout(() => {
+        setshowProgressModal(true);
+        setIsinProgress(true);
+      }, 100);
+    };
+
+    const handleStepTwoSuccess = () => {
+      if (idOnworksRef.current.length === 0) {
+        return;
+      }
+      idOnworksRef.current = idOnworksRef.current.filter(
+        (id) => id !== idOnworksRef.current[0],
+      );
       setshowProgressModal(true);
-      setIsinProgress(true);
-    }, 100);
-  });
+      setIsinProgress(false);
+    };
+    const handleClearAllProgress = () => {
+      setshowProgressModal(false);
+      setIsinProgress(false);
+      idOnworksRef.current = [];
+    };
+    subscribe('openProgressModal', handleOpenProgressModal);
+    subscribe('StepTwoSuccess', handleStepTwoSuccess);
+    subscribe('clearAllProgress', handleClearAllProgress);
 
-  subscribe('StepTwoSuccess', () => {
-    setshowProgressModal(true);
-    setIsinProgress(false);
-  });
+    return () => {
+      unsubscribe('openProgressModal', handleOpenProgressModal);
+      unsubscribe('StepTwoSuccess', handleStepTwoSuccess);
+    };
+  }, []);
 
   return (
     <>
