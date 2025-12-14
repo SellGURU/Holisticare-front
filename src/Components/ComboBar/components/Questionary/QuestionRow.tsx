@@ -109,9 +109,8 @@ const QuestionRow: FC<QuestionRowProps> = ({
       q_unique_id: el.unique_id,
       member_id: member_id,
     })
-    .then(() => {
+      .then(() => {
         onReload();
-
       })
       .catch((err) => {
         console.error(err);
