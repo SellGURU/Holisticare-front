@@ -164,11 +164,11 @@ const UnderProgressController = ({
           file_id: item.file_id,
           type: item.action_type,
         });
-      }else {
-        publish('disableGenerate',{});
+      } else {
+        publish('disableGenerate', {});
       }
     });
-  }
+  };
   const controllProgress = () => {
     if (allprogress.files.length > 0) {
       resolveFileController(allprogress.files);

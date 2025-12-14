@@ -575,8 +575,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       // navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                     }
                   }}
-                  data-tooltip-id={disableGenerate ? 'generate-new-tooltip' : ''}
-                  data-tooltip-content={disableGenerate ? 'Data sync in progress — please wait until it’s complete' : ''}
+                  data-tooltip-id={
+                    disableGenerate ? 'generate-new-tooltip' : ''
+                  }
+                  data-tooltip-content={
+                    disableGenerate
+                      ? 'Data sync in progress — please wait until it’s complete'
+                      : ''
+                  }
                   className={` 
                     relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
