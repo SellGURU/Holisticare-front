@@ -93,8 +93,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     return () => {
       unsubscribe('completedProgress', handleCompletedProgress);
     };
-  },
-  [])
+  }, []);
   // useConstructor(() => {
   //   // setIsLoading(true);
   //   Application.getSummary(id as string).then((res) => {
