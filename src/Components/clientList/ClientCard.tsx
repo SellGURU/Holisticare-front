@@ -471,7 +471,9 @@ const ClientCard: FC<ClientCardProps> = ({
                 >
                   Cancel
                 </div>
-                <div
+                {
+                  !isShared && AccessPassword && (
+   <div
                   onClick={() => {
                     Application.shareClientAccess({
                       member_id: client.member_id,
@@ -487,6 +489,9 @@ const ClientCard: FC<ClientCardProps> = ({
                 >
                   Share with Email
                 </div>
+                  )
+                }
+             
               </div>
             </div>
           )}
