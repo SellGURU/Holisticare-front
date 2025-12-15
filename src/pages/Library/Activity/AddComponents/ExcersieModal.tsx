@@ -299,17 +299,16 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         });
 
         const { file_id } = response.data;
-        setFileList((prevList) => [
-          ...prevList,
-          {
-            ...fileData,
-            Content: {
-              ...fileData.Content,
-              file_id,
-              url: base64Data, // Add the base64 data as URL for preview
-            },
+         const uploadedFile: FileData = {
+          ...fileData,
+          Content: {
+            file_id,
+            url: base64Data,
           },
-        ]);
+        };
+
+        setFileList((prev) => [...prev, uploadedFile]);
+        setFiles((prev) => [...prev, uploadedFile]); 
         setUploadProgress(100);
         setYouTubeLink('');
       } catch (error) {
