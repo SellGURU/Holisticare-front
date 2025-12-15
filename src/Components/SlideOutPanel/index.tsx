@@ -8,7 +8,7 @@ type SlideOutPanelProps = {
   children: ReactNode;
   isCombo?: boolean;
   ClassName?: string;
-  isActionPLan?:boolean
+  isActionPLan?: boolean;
 };
 
 export const SlideOutPanel: FC<SlideOutPanelProps> = ({
@@ -18,7 +18,7 @@ export const SlideOutPanel: FC<SlideOutPanelProps> = ({
   children,
   headline,
   ClassName,
-  isActionPLan
+  isActionPLan,
 }) => {
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);

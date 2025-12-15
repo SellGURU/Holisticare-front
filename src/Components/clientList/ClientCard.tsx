@@ -314,7 +314,10 @@ const ClientCard: FC<ClientCardProps> = ({
     <>
       <MainModal
         isOpen={showAccessModal}
-        onClose={() => setShowAccessModal(false)}
+        onClose={() => {
+          setShowAccessModal(false);
+          setIsShared(false);
+        }}
       >
         <>
           {isShared ? (
@@ -329,7 +332,12 @@ const ClientCard: FC<ClientCardProps> = ({
                   The email address and password have been successfully sent to{' '}
                   {client.name}.
                 </div>
-                <ButtonPrimary onClick={() => setShowAccessModal(false)}>
+                <ButtonPrimary
+                  onClick={() => {
+                    setShowAccessModal(false);
+                    setIsShared(false);
+                  }}
+                >
                   <div className="w-[150px]">Got it</div>
                 </ButtonPrimary>
               </div>
@@ -467,26 +475,28 @@ const ClientCard: FC<ClientCardProps> = ({
               <div className="flex w-full justify-end mt-12 gap-4 items-center">
                 <div
                   onClick={() => setShowAccessModal(false)}
-                  className="text-sm font-medium text-Text-Secondary cursor-default"
+                  className="text-sm font-medium cursor-pointer text-Text-Secondary "
                 >
-                  Cancel
+                  {!AccessPassword ? 'Close' : 'Cancel'}
                 </div>
-                <div
-                  onClick={() => {
-                    Application.shareClientAccess({
-                      member_id: client.member_id,
-                      username: AccessUserName,
-                      password: AccessPassword,
-                    })
-                      .then(() => {
-                        setIsShared(true);
+                {!isShared && AccessPassword && (
+                  <div
+                    onClick={() => {
+                      Application.shareClientAccess({
+                        member_id: client.member_id,
+                        username: AccessUserName,
+                        password: AccessPassword,
                       })
-                      .catch(() => {});
-                  }}
-                  className="text-sm font-medium text-Primary-DeepTeal cursor-default"
-                >
-                  Share with Email
-                </div>
+                        .then(() => {
+                          setIsShared(true);
+                        })
+                        .catch(() => {});
+                    }}
+                    className="text-sm font-medium cursor-pointer text-Primary-DeepTeal "
+                  >
+                    Share with Email
+                  </div>
+                )}
               </div>
             </div>
           )}
