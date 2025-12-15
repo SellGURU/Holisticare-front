@@ -247,7 +247,10 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
       'User archetype based on health patterns';
 
   return (
-    <div id="wellness-summary" className="bg-white rounded-xl p-6 shadow-sm">
+    <div
+      id="wellness-summary"
+      className="bg-white rounded-xl p-6 shadow-sm sectionScrollEl"
+    >
       <div className="flex items-center justify-between mb-6">
         <h2 className="md:text-xl text-[15px] font-bold text-nowrap text-gray-900">
           Wellness Summary
