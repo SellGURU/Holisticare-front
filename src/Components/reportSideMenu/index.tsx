@@ -78,6 +78,32 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     }
   };
   const { name } = useParams<{ name: string }>();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const handleScrolledSection = (data: any) => {
+      const currentItems =
+        activeReportSection === 'Progress'
+          ? progressMenuItems
+          : healthMenuItems;
+
+      if (params.get('section')) {
+        setactiveMenu(params.get('section') as string);
+      }
+      if (params.get('type')) {
+        setActiveReportSection(params.get('type') as 'Health' | 'Progress');
+      } else {
+        setActiveReportSection('Health');
+      }
+      if (currentItems.includes(data.detail.section)) {
+        setactiveMenu(data.detail.section);
+      }
+    };
+    subscribe('scrolledSection', handleScrolledSection);
+
+    return () => {
+      unsubscribe('scrolledSection', handleScrolledSection);
+    };
+  }, [activeReportSection]);
   const [, setSearchParams] = useSearchParams();
   const onchangeMenu = (item: string) => {
     setSearchParams({ ['type']: activeReportSection, ['section']: item });
