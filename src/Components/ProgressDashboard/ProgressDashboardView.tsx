@@ -468,7 +468,7 @@ const ProgressDashboardView = ({ onHaveScore }: ProgressDashboardViewProps) => {
   };
   const handleScroll = () => {
     // Select all the sections with the class "content"
-    const sections = document.querySelectorAll('.sectionScrollEl');
+    const sections = document.querySelectorAll('.ProgresssectionScrollEl');
     sections.forEach((section) => {
       const element = section as HTMLElement;
       if (isInViewport(element)) {

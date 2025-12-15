@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
-import { ComboBar, ReportSideMenu } from '../../Components';
+import { ComboBar} from '../../Components';
+import ReportSideMenu from '../../Components/reportSideMenu/newSideMenu';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import ProgressDashboardView from '../../Components/ProgressDashboard/ProgressDashboardView';
 import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
@@ -106,9 +107,9 @@ const Report = () => {
         `}
       >
         <ReportSideMenu
-          onClose={() => isMobileView && setIsMobileMenuOpen(false)}
-          setActiveReportSection={setActiveReportSection}
           activeReportSection={activeReportSection}
+          setActiveReportSection={setActiveReportSection}
+          onClose={() => isMobileView && setIsMobileMenuOpen(false)}
         ></ReportSideMenu>
       </div>
 
