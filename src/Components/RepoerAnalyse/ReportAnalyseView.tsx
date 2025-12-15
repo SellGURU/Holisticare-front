@@ -334,7 +334,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   useEffect(() => {
     const handleSyncReport = (data: any) => {
-      if (!showUploadTest) {
         if (data.detail.part == 'treatmentPlan') {
           getTreatmentPlanData();
         } else {
@@ -343,7 +342,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             navigate(location.pathname, { replace: true });
           }
         }
-      }
     };
 
     subscribe('syncReport', handleSyncReport);
