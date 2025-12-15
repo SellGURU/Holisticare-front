@@ -229,7 +229,7 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
     );
   }
 
-  if (!data || data.length === 0) {
+  if ((!data || data.length === 0) && !customStartDate && !customEndDate) {
     return (
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <div className="text-center py-12">
@@ -338,7 +338,10 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
   };
 
   return (
-    <div id="score-progression" className="bg-white rounded-xl p-6 shadow-sm">
+    <div
+      id="score-progression"
+      className="bg-white rounded-xl p-6 shadow-sm sectionScrollEl"
+    >
       <div className="flex items-center justify-between mb-4">
         <h2 className="md:text-xl text-[15px] font-bold text-nowrap text-gray-900">
           Score Progression
