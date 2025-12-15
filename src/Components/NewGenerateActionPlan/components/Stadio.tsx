@@ -823,7 +823,7 @@ const [showModal, setShowModal] = useState(false)
       >
             <div className="    h-full">
           <div
-            className={`w-full lg:w-[342px]     bg-white rounded-[24px] border border-gray-50 shadow-100`}
+            className={`w-full lg:w-[342px]      bg-white rounded-[24px] border border-gray-50 shadow-100`}
           >
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
@@ -854,8 +854,8 @@ const [showModal, setShowModal] = useState(false)
                 })}
               </div>
               <div
-                className="w-full  overflow-auto "
-                style={{ height: window.innerHeight - 240 + 'px' }}
+                className="w-full pr-1 overflow-auto "
+                style={{ height: window.innerHeight - 290 + 'px' }}
               >
                 <div className="mt-2 grid gap-2 relative">
                   {filteredDataCategory.map((value: any, index: number) => {

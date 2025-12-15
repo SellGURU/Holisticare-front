@@ -149,6 +149,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <img className="w-4" src={resolvePillarIcon()} alt="" />
                 </div>
                 {value.Title}
+                <div className='flex mt-2 lg:mt-0'>
+
+           
                 {value?.label && (
                   <div
                     className={`select-none mt-4 xs:mt-0 rounded-full px-2 flex items-center gap-1 text-[8px] text-Text-Primary ml-3`}
@@ -173,6 +176,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     Holistic Plan Recommended
                   </div>
                 )}
+                     </div>
                 {value.flag && value.flag.conflicts.length > 0 && (
                   <button
                     className="flex items-center gap-1 cursor-pointer ml-7"
