@@ -4,6 +4,7 @@ import ProgressDashboard from '.';
 import Application from '../../api/app';
 import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
+import { publish } from '../../utils/event';
 
 interface ProgressDashboardViewProps {
   onHaveScore: (isHave: boolean) => void;
@@ -461,6 +462,28 @@ const ProgressDashboardView = ({ onHaveScore }: ProgressDashboardViewProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progressionDateRange.from_date, progressionDateRange.to_date]);
+  const isInViewport = (element: HTMLElement): boolean => {
+    const rect = element.getBoundingClientRect();
+    return rect.top >= 0 && rect.bottom <= window.innerHeight;
+  };
+  const handleScroll = () => {
+    // Select all the sections with the class "content"
+    const sections = document.querySelectorAll('.sectionScrollEl');
+    sections.forEach((section) => {
+      const element = section as HTMLElement;
+      if (isInViewport(element)) {
+        const sectionId = element.id;
+        publish('scrolledSection', { section: sectionId });
+      }
+    });
+  };
+  useEffect(() => {
+    if (!wellnessLoading && !progressionLoading) {
+      setTimeout(() => {
+        handleScroll();
+      }, 500);
+    }
+  }, [id, wellnessLoading, progressionLoading]);
   return (
     <div
       className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
