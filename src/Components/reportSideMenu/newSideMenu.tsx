@@ -41,7 +41,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     } else {
       return menuItems;
     }
-  }
+  };
 
   const [activeMenu, setactiveMenu] = useState('Client Summary');
   const [ActiveLayer, setActiveLayer] = useState('menu');
@@ -85,13 +85,13 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       // return menuItems.filter((el) => accessManager.filter((val) =>val.name == el)[0].checked ==true)
     }
   };
-  const resolveImageFolder =() => {
+  const resolveImageFolder = () => {
     if (activeReportSection === 'Progress') {
       return 'report-sidemenu-progress';
     } else {
       return 'report-sidemenu-c';
     }
-  }
+  };
   const { name } = useParams<{ name: string }>();
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -115,7 +115,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     subscribe('ReportAvailable', handleReportAvailable);
     subscribe('scrolledSection', (data) => {
       // console.log(data)
-      console.log(data.detail.section)
+      console.log(data.detail.section);
       // setSearchParams({["section"]: data.detail.section})
       setactiveMenu(data.detail.section);
     });
@@ -158,70 +158,70 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       style={{ height: window.innerHeight - 100 + 'px' }}
       className={` min-h-[272px]  w-[178px] bg-white '} border border-gray-50 rounded-[12px] p-4 shadow-100 relative`}
     >
-    <div className="flex gap-1 mb-4">
+      <div className="flex gap-1 mb-4">
         <div
-        onClick={() => {
+          onClick={() => {
             if (isReportAvailable || showReport) {
-            setSearchParams({
+              setSearchParams({
                 ['type']: 'Health',
                 ['section']: 'Client Summary',
-            });
-            setActiveReportSection('Health');
-            setactiveMenu('Client Summary');
-            setactiveImg(1);
-            // publish('activeTabChange', { tab: 'Health' });
+              });
+              setActiveReportSection('Health');
+              setactiveMenu('Client Summary');
+              setactiveImg(1);
+              // publish('activeTabChange', { tab: 'Health' });
             }
-        }}
-        className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
+          }}
+          className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
             activeReportSection === 'Health'
-            ? 'bg-Primary-EmeraldGreen text-white'
-            : 'bg-backgroundColor-Main text-Text-Primary'
-        }`}
+              ? 'bg-Primary-EmeraldGreen text-white'
+              : 'bg-backgroundColor-Main text-Text-Primary'
+          }`}
         >
-        <img
+          <img
             src="/icons/health.svg"
             alt="Health"
             className="w-4 h-4"
             style={
-            activeReportSection === 'Health'
+              activeReportSection === 'Health'
                 ? { filter: 'brightness(0) invert(1)' }
                 : { filter: 'opacity(0.5) brightness(0) saturate(0)' }
             }
-        />
-        <span className="text-[10px] font-medium">Health</span>
+          />
+          <span className="text-[10px] font-medium">Health</span>
         </div>
         <div
-        onClick={() => {
+          onClick={() => {
             if (isReportAvailable || showReport) {
-            setSearchParams({
+              setSearchParams({
                 ['type']: 'Progress',
                 ['section']: 'Wellness Data',
-            });
-            setActiveReportSection('Progress');
-            setactiveMenu('Wellness Data');
-            setactiveImg(1);
-            // publish('activeTabChange', { tab: 'Progress' });
+              });
+              setActiveReportSection('Progress');
+              setactiveMenu('Wellness Data');
+              setactiveImg(1);
+              // publish('activeTabChange', { tab: 'Progress' });
             }
-        }}
-        className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
+          }}
+          className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
             activeReportSection === 'Progress'
-            ? 'bg-Primary-EmeraldGreen text-white'
-            : 'bg-backgroundColor-Main text-Text-Primary'
-        }`}
+              ? 'bg-Primary-EmeraldGreen text-white'
+              : 'bg-backgroundColor-Main text-Text-Primary'
+          }`}
         >
-        <img
+          <img
             src="/icons/chart.svg"
             alt="Progress"
             className="w-4 h-4"
             style={
-            activeReportSection === 'Progress'
+              activeReportSection === 'Progress'
                 ? { filter: 'brightness(0) invert(1)' }
                 : { filter: 'opacity(0.5) brightness(0) saturate(0)' }
             }
-        />
-        <span className="text-[10px] font-medium">Progress</span>
+          />
+          <span className="text-[10px] font-medium">Progress</span>
         </div>
-    </div>        
+      </div>
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() =>

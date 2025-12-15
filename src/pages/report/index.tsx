@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
-import { ComboBar} from '../../Components';
+import { ComboBar } from '../../Components';
 import ReportSideMenu from '../../Components/reportSideMenu/newSideMenu';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import ProgressDashboardView from '../../Components/ProgressDashboard/ProgressDashboardView';
