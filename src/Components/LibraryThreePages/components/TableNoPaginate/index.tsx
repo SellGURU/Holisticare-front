@@ -76,7 +76,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   }, []);
   return (
     <div
-      className="w-full mt-6 mb-20 md:mb-14 overflow-y-auto"
+      className="w-full mt-6 mb-20 md:mb-14 overflow-y-auto overflow-x-auto"
       style={{
         height: dynamicHeight ? `${dynamicHeight}px` : 'auto',
       }}
@@ -90,7 +90,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
       >
         {table.getRowModel().rows.length > 0 ? (
           <table
-            className={`border-collapse table-fixed  text-sm text-left rtl:text-right w-full`}
+            className={`border-collapse table-fixed  text-sm text-left rtl:text-right w-full min-w-[782px]`}
           >
             <thead className="text-xs text-Text-Primary bg-backgroundColor-Main">
               {table.getHeaderGroups().map((headerGroup) => (
