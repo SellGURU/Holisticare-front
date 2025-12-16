@@ -116,7 +116,9 @@ const Report = () => {
       <div
         className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
       >
-        <ReportAnalyseView isActive={activeReportSection === 'Health'}></ReportAnalyseView>
+        <ReportAnalyseView
+          isActive={activeReportSection === 'Health'}
+        ></ReportAnalyseView>
       </div>
 
       <div

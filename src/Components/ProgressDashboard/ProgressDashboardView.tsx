@@ -11,7 +11,10 @@ interface ProgressDashboardViewProps {
   isActive?: boolean;
 }
 
-const ProgressDashboardView = ({ onHaveScore, isActive }: ProgressDashboardViewProps) => {
+const ProgressDashboardView = ({
+  onHaveScore,
+  isActive,
+}: ProgressDashboardViewProps) => {
   const { id } = useParams<{ id: string }>();
   const [wellnessData, setWellnessData] = useState<any>(null);
   const [progressionData, setProgressionData] = useState<any>(null);
