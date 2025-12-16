@@ -158,6 +158,8 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       style={{ height: window.innerHeight - 100 + 'px' }}
       className={` min-h-[272px]  w-[178px] bg-white '} border border-gray-50 rounded-[12px] p-4 shadow-100 relative`}
     >
+      {!isShare 
+      &&
       <div className="flex gap-1 mb-4">
         <div
           onClick={() => {
@@ -222,6 +224,8 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
           <span className="text-[10px] font-medium">Progress</span>
         </div>
       </div>
+
+      }
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() =>
@@ -250,7 +254,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       </div>
       <div
         onClick={() => onClose()}
-        className="size-8 rounded-md bg-white shadow-100 py-2 px-4 flex items-center justify-center xl:hidden absolute right-3 top-3 cursor-pointer"
+        className="size-8 rounded-md  py-2 px-4 flex items-center justify-center xl:hidden absolute right-[-10px] top-[-10px] cursor-pointer"
       >
         <SvgIcon src="/icons/close.svg" color="#005F73" />
       </div>
