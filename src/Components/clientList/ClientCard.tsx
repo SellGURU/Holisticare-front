@@ -343,7 +343,7 @@ const ClientCard: FC<ClientCardProps> = ({
               </div>
             </div>
           ) : (
-            <div className="bg-white w-[90vw] md:w-[500px] h-[352px] rounded-2xl p-4 shadow-800 text-Text-Primary">
+            <div className="bg-white w-[90vw] md:w-[500px] min-h-[352px] rounded-2xl p-4 shadow-800 text-Text-Primary">
               <div
                 className="border-b border-Gray-50 pb-2 text-sm font-medium"
                 data-tooltip-id={'tooltip-client-access' + client.name}
@@ -472,7 +472,7 @@ const ClientCard: FC<ClientCardProps> = ({
                   )}
                 </div>
               </div>
-              <div className="flex w-full justify-end mt-12 gap-4 items-center">
+              <div className="flex w-full justify-end mt-7 md:mt-9 gap-4 items-center">
                 <div
                   onClick={() => setShowAccessModal(false)}
                   className="text-sm font-medium cursor-pointer text-Text-Secondary "

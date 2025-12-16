@@ -87,7 +87,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
               return (
                 <div
                   key={index}
-                  className="bg-[#E9F0F2] px-2 py-[0px] text-[10px] text-[#005F73] rounded-[16px]"
+                  className="bg-[#E9F0F2] px-2 py-[0px] text-[10px] text-[#005F73] rounded-[16px] text-nowrap"
                 >
                   {el}
                 </div>
