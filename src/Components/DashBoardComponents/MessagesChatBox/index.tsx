@@ -293,7 +293,27 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setSearchedMessages(filtered);
     }
   }, [search, aiMode, allMessages, aiMessages, memberId]);
+  const [isMobilePage, setIsMobilePage] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobilePage(window.innerWidth < 768);
+    };
 
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  const isMobileSearchOpen = () => {
+    if (isSearchOpen) {
+      if (isMobilePage) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
+  };
   return (
     <>
       <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
@@ -307,7 +327,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
           <>
             {messages.length !== 0 || username ? (
               <div className="px-4 pt-4 pb-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]  flex items-center justify-between ">
-                {!isSearchOpen && (
+                {isMobileSearchOpen() ? (
                   <div className="flex items-center gap-2">
                     <div
                       onClick={onBack}
@@ -342,6 +362,8 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                       </div>
                     </div>
                   </div>
+                ) : (
+                  ''
                 )}
                 <div className="flex items-center md:gap-6 gap-3">
                   {isSearchOpen ? (

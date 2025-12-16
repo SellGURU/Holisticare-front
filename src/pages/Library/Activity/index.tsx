@@ -203,7 +203,7 @@ const Activity = () => {
 
               {/* Sort dropdown */}
               <div
-                className={`flex items-center gap-3 w-full ${
+                className={`flex items-center gap-6 w-full ${
                   isMobilePage ? 'w-full' : 'w-fit'
                 }`}
               >
