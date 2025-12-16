@@ -344,7 +344,7 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
     >
       <div className="flex items-center justify-between mb-4">
         <h2
-          id="Progress Data"
+          id="Score Progression"
           className="md:text-xl text-[15px] font-bold text-nowrap text-gray-900"
         >
           Score Progression

@@ -46,11 +46,13 @@ interface ReportAnalyseViewprops {
   memberID?: number | null;
   isShare?: boolean;
   uniqKey?: string;
+  isActive?: boolean;
 }
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   memberID,
   isShare,
+  isActive,
   uniqKey,
 }) => {
   const { id, name } = useParams<{ id: string; name: string }>();
@@ -517,12 +519,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     });
   };
   useEffect(() => {
-    if (!loading) {
+    if (!loading && isActive) {
       setTimeout(() => {
         handleScroll();
       }, 500);
     }
-  }, [id, loading]);
+  }, [id, loading, isActive]);
   const [isSticky, setIsSticky] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 

@@ -8,9 +8,10 @@ import { publish } from '../../utils/event';
 
 interface ProgressDashboardViewProps {
   onHaveScore: (isHave: boolean) => void;
+  isActive?: boolean;
 }
 
-const ProgressDashboardView = ({ onHaveScore }: ProgressDashboardViewProps) => {
+const ProgressDashboardView = ({ onHaveScore, isActive }: ProgressDashboardViewProps) => {
   const { id } = useParams<{ id: string }>();
   const [wellnessData, setWellnessData] = useState<any>(null);
   const [progressionData, setProgressionData] = useState<any>(null);
@@ -478,12 +479,12 @@ const ProgressDashboardView = ({ onHaveScore }: ProgressDashboardViewProps) => {
     });
   };
   useEffect(() => {
-    if (!wellnessLoading && !progressionLoading) {
+    if (!wellnessLoading && !progressionLoading && isActive) {
       setTimeout(() => {
         handleScroll();
       }, 500);
     }
-  }, [id, wellnessLoading, progressionLoading]);
+  }, [id, wellnessLoading, progressionLoading, isActive]);
   return (
     <div
       className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}

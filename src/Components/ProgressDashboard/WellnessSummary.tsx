@@ -248,12 +248,12 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
 
   return (
     <div
-      id="wellness-summary"
+      id="Wellness Summary"
       className="bg-white rounded-xl p-6 shadow-sm ProgresssectionScrollEl"
     >
       <div className="flex items-center justify-between mb-6">
         <h2
-          id="Wellness Data"
+          
           className="md:text-xl text-[15px] font-bold text-nowrap text-gray-900"
         >
           Wellness Summary

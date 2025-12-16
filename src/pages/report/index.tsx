@@ -116,13 +116,14 @@ const Report = () => {
       <div
         className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
       >
-        <ReportAnalyseView></ReportAnalyseView>
+        <ReportAnalyseView isActive={activeReportSection === 'Health'}></ReportAnalyseView>
       </div>
 
       <div
         className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
       >
         <ProgressDashboardView
+          isActive={activeReportSection === 'Progress'}
           onHaveScore={(isHave: boolean) => {
             const params = new URLSearchParams(location.search);
             if (isHave) {

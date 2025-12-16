@@ -33,7 +33,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     'Holistic Plan',
     'Action Plan',
   ];
-  const progressMenuItems = ['Wellness Data', 'Progress Data'];
+  const progressMenuItems = ['Wellness Summary', 'Score Progression'];
 
   const resolveActiveItems = () => {
     if (activeReportSection === 'Progress') {
