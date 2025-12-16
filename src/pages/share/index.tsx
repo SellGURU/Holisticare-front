@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useParams } from 'react-router-dom';
 import Application from '../../api/app';
-import  ReportSideMenu  from '../../Components/reportSideMenu/newSideMenu';
+import ReportSideMenu from '../../Components/reportSideMenu/newSideMenu';
 import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
 import { TopBar } from '../../Components/topBar';
 import { subscribe, unsubscribe } from '../../utils/event';
