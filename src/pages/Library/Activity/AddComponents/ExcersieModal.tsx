@@ -552,7 +552,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           >
             <div className="text-xs font-medium">Filters</div>
             <div
-              className={`grid grid-cols-1 ${isMobilePage ? 'grid-cols-1' : 'grid-cols-2'} gap-y-2`}
+              className={`grid ${isMobilePage ? 'grid-cols-1' : 'grid-cols-2'} gap-y-2 gap-x-2`}
             >
               <CustomSelect
                 placeHolder="Type"
@@ -561,6 +561,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 onOptionSelect={(option: string) =>
                   updateFilters('type', option)
                 }
+                wfull
               />
               <CustomSelect
                 placeHolder="Terms"
@@ -568,6 +569,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 isMulti
                 selectedOption={filters.terms}
                 onOptionSelect={(option: any) => updateFilters('terms', option)}
+                wfull
               />
               <CustomSelect
                 placeHolder="Condition"
@@ -577,6 +579,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 onOptionSelect={(option: any) =>
                   updateFilters('condition', option)
                 }
+                wfull
               />
               <CustomSelect
                 placeHolder="Muscle"
@@ -586,6 +589,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 onOptionSelect={(option: string) =>
                   updateFilters('muscle', option)
                 }
+                wfull
               />
               <CustomSelect
                 placeHolder="Equipment"
@@ -595,6 +599,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 onOptionSelect={(option: string) =>
                   updateFilters('equipment', option)
                 }
+                wfull
               />
               <CustomSelect
                 placeHolder="Level"
@@ -603,6 +608,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 onOptionSelect={(option: string) =>
                   updateFilters('level', option)
                 }
+                wfull
               />
             </div>
             <div className="flex flex-col text-xs gap-3 mt-2">
