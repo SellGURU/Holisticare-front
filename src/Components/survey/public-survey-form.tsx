@@ -1005,10 +1005,7 @@ export function PublicSurveyForm({
                     onCheckedChange={() => {}}
                     className="mt-1 text-green-600 border-green-600 pointer-events-none"
                   />
-                  <Label   
-                  >
-                    {option}
-                  </Label>
+                  <Label>{option}</Label>
                 </div>
               );
             })}
