@@ -381,7 +381,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
                     return (
                       <video
                         key={video.Content.file_id}
-                        className="rounded-xl h-[200px] w-[30px] border border-Gray-50 object-contain"
+                        className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
                         controls
                         src={video.Content.url}
                       >
