@@ -87,12 +87,12 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
         </div>
       ) : data.length > 0 ? (
         <div
-          className="mt-6 overflow-y-auto"
+          className="mt-6 overflow-y-auto overflow-x-auto"
           style={{
             height: dynamicHeight ? `${dynamicHeight}px` : 'auto',
           }}
         >
-          <table className="w-full">
+          <table className="w-full min-w-[982px]">
             <thead className="w-full">
               <tr className="text-left text-xs bg-[#F4F4F4] text-Text-Primary border-Gray-50 w-full ">
                 <th className="py-3 pl-4 w-[160px] rounded-tl-2xl text-nowrap">

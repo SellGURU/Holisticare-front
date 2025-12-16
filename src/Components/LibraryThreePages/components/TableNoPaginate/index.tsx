@@ -76,17 +76,21 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   }, []);
   return (
     <div
-      className="w-full mt-6 mb-20 md:mb-14 overflow-y-auto"
+      className="w-full mt-6 mb-20 md:mb-14 overflow-y-auto overflow-x-auto"
       style={{
         height: dynamicHeight ? `${dynamicHeight}px` : 'auto',
       }}
     >
       <div
         className={`flex flex-col justify-between overflow-x-auto bg-white text-Text-Primary border border-Boarder`}
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#E5E5E5 #E5E5E5',
+        }}
       >
         {table.getRowModel().rows.length > 0 ? (
           <table
-            className={`border-collapse table-fixed  text-sm text-left rtl:text-right w-full`}
+            className={`border-collapse table-fixed  text-sm text-left rtl:text-right w-full min-w-[782px]`}
           >
             <thead className="text-xs text-Text-Primary bg-backgroundColor-Main">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -97,7 +101,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                   {headerGroup.headers.map((header, index) => (
                     <th
                       key={header.id}
-                      className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer `}
+                      className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer w-[100px] md:w-[unset]`}
                     >
                       <div
                         className={`flex items-center  ${index == 0 ? 'justify-start ' : 'justify-center '} `}
@@ -121,7 +125,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                     </th>
                   ))}
                   <th
-                    className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer`}
+                    className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer w-[100px] md:w-[unset]`}
                   >
                     <div className={`flex items-center justify-center`}>
                       <div className="flex items-center justify-center text-nowrap">

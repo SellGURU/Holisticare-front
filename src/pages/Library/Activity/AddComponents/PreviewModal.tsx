@@ -147,7 +147,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
       }}
     >
       <div
-        className={`bg-white rounded-2xl p-4 ${data.instruction.length > 500 ? 'w-[800px]' : isActivty ? 'w-[600px]' : 'w-[500px]'} shadow-800 relative`}
+        className={`bg-white rounded-2xl p-4 ${data.instruction.length > 500 ? 'md:w-[800px] w-[90vw]' : isActivty ? 'md:w-[600px] w-[90vw]' : 'md:w-[500px] w-[90vw]'} shadow-800 relative`}
       >
         <div
           className="w-full flex justify-between items-center border-b border-Gray-50 pb-2"
@@ -183,7 +183,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
             </div>
           </div> */}
           {data.Parent_Title && (
-            <div className="flex w-full items-start gap-3">
+            <div className="flex w-full items-start md:gap-3 gap-1">
               <div className="text-xs font-medium">Associated Intervention</div>
               <div className="text-xs text-[#888888] text-justify">
                 {data.Parent_Title}
@@ -191,17 +191,17 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
             </div>
           )}
           <div
-            className={`flex w-full items-start ${isActivty ? 'gap-[87px]' : 'gap-3'}`}
+            className={`flex flex-col md:flex-row w-full items-start ${isActivty ? 'md:gap-[87px] gap-1' : 'md:gap-3 gap-1'}`}
           >
             <div className="text-xs font-medium">Instruction</div>
             <div
-              className={`text-xs text-[#888888] text-justify text-wrap break-words max-w-[375px] ${isActivty ? '' : 'ml-5'}`}
+              className={`text-xs text-[#888888] text-justify text-wrap break-words max-w-[375px] ${isActivty ? '' : 'md:ml-5 ml-0'}`}
             >
               {isActivty ? data.instruction : exercise.Instruction}
             </div>
           </div>
           <div
-            className={`flex w-full items-start ${isActivty ? 'gap-24' : 'gap-3'}`}
+            className={`flex flex-col md:flex-row w-full items-start ${isActivty ? 'md:gap-24 gap-1' : 'md:gap-3 gap-1'}`}
           >
             <div className="text-xs font-medium">
               {' '}
@@ -408,7 +408,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
             )}
           </div>
           <div
-            className={`flex w-full items-start ${isActivty ? 'gap-[60px]' : 'gap-3'} mt-3 mb-7`}
+            className={`flex w-full items-start ${isActivty ? 'md:gap-[60px] gap-2' : 'md:gap-3 gap-2'} mt-3 mb-7`}
           >
             <div className="text-xs font-medium">Priority Weight</div>
             <div className="bg-[#FFD8E4] w-[47px] select-none rounded-xl py-1 px-2 h-[18px] flex justify-center items-center text-[10px]">

@@ -100,7 +100,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
               </div> */}
               {selectedRow?.Parent_Title && (
                 <div
-                  className={`flex items-center ${selectedRow?.Category === 'Diet' ? 'gap-3' : 'gap-8'}`}
+                  className={`flex flex-col md:flex-row items-center ${selectedRow?.Category === 'Diet' ? 'md:gap-3 gap-1' : 'md:gap-8 gap-1'}`}
                 >
                   <div className="font-medium text-Text-Primary text-xs">
                     Associated Intervention
@@ -111,23 +111,23 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 </div>
               )}
               <div
-                className={`flex ${selectedRow?.Category === 'Diet' ? 'gap-[87.5px]' : 'gap-8'}`}
+                className={`flex flex-col md:flex-row ${selectedRow?.Category === 'Diet' ? 'md:gap-[87.5px] gap-1' : 'md:gap-8 gap-1'}`}
               >
                 <div className="font-medium text-Text-Primary text-xs">
                   Instruction
                 </div>
                 <div
-                  className={`text-xs text-Text-Secondary text-justify leading-5 ${selectedRow?.Category === 'Diet' ? '' : 'ml-9'} `}
+                  className={`text-xs text-Text-Secondary text-justify leading-5 ${selectedRow?.Category === 'Diet' ? '' : 'md:ml-9 ml-0'} `}
                 >
                   {selectedRow?.Instruction}
                 </div>
               </div>
               {pageType === 'Supplement' || pageType === 'Lifestyle' ? (
-                <div className="flex gap-16 items-center">
+                <div className="flex md:gap-16 gap-2 items-center">
                   <div className="font-medium text-Text-Primary text-xs">
                     {pageType === 'Supplement' ? 'Dose' : 'Value'}
                   </div>
-                  <div className="text-xs ml-9 text-Text-Quadruple leading-5">
+                  <div className="text-xs md:ml-9 ml-0 text-Text-Quadruple leading-5">
                     {pageType === 'Supplement'
                       ? selectedRow?.Dose
                       : selectedRow?.Value + ' ' + (selectedRow?.Unit || '')}
@@ -135,7 +135,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 </div>
               ) : (
                 <div
-                  className={`flex items-center ${selectedRow?.Category === 'Diet' ? 'gap-[74.5px]' : 'gap-8'} text-justify w-full`}
+                  className={`flex flex-col md:flex-row md:items-center ${selectedRow?.Category === 'Diet' ? 'md:gap-[74.5px] gap-1' : 'md:gap-8 gap-1'} text-justify w-full`}
                 >
                   <div className="font-medium text-Text-Primary text-xs text-nowrap">
                     Macros Goal
@@ -202,7 +202,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 </div>
               )}
               <div
-                className={`flex ${selectedRow?.Category === 'Diet' ? 'gap-[61px]' : 'gap-7'} items-center`}
+                className={`flex ${selectedRow?.Category === 'Diet' ? 'md:gap-[61px] gap-2' : 'md:gap-7 gap-2'} items-center`}
               >
                 <div className="font-medium text-Text-Primary text-xs">
                   Priority Weight
@@ -218,7 +218,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
               </div>
               {selectedRow?.Ai_note && (
                 <div
-                  className={`flex ${selectedRow?.Category === 'Diet' ? 'gap-12' : 'gap-8'}`}
+                  className={`flex flex-col md:flex-row ${selectedRow?.Category === 'Diet' ? 'md:gap-12 gap-1' : 'md:gap-8 gap-1'}`}
                 >
                   <div className="font-medium text-Text-Primary text-xs text-nowrap">
                     Clinical Guidance
