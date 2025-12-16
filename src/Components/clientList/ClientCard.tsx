@@ -35,7 +35,11 @@ const ClientCard: FC<ClientCardProps> = ({
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(client.refresh_in_progress);
+  useEffect(() => {
+  setRefresh(client.refresh_in_progress);
+}, [client.refresh_in_progress]);
+
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
   useModalAutoClose({
     refrence: showModalRefrence,
@@ -288,6 +292,7 @@ const ClientCard: FC<ClientCardProps> = ({
   };
 
   const handleRefreshData = () => {
+    if (refreshIntervalRef.current) return; 
     setRefresh(true);
 
     Application.refreshData(client.member_id)
