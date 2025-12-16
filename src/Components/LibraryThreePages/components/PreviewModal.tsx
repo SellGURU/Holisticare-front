@@ -70,7 +70,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
     <>
       <MainModal isOpen={previewShowModal} onClose={handlePreviewCloseModal}>
         <div
-          className={`flex flex-col justify-between bg-white ${selectedRow?.Instruction?.length > 500 || selectedRow?.Description?.length > 500 ? 'max-w-[1000px]' : `w-[350px] xs:w-[400px] ${selectedRow?.Category === 'Diet' ? 'sm:w-[600px]' : 'sm:w-[500px]'}`} rounded-[16px] p-4`}
+          className={`flex flex-col justify-between bg-white ${selectedRow?.Instruction?.length > 500 || selectedRow?.Description?.length > 500 ? 'w-[90vw] md:max-w-[1000px]' : `w-[90vw] ${selectedRow?.Category === 'Diet' ? 'sm:w-[600px]' : 'sm:w-[500px]'}`} rounded-[16px] p-4`}
         >
           <div className="w-full h-full">
             <div className="flex items-center justify-between">
@@ -100,7 +100,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
               </div> */}
               {selectedRow?.Parent_Title && (
                 <div
-                  className={`flex flex-col md:flex-row items-center ${selectedRow?.Category === 'Diet' ? 'md:gap-3 gap-1' : 'md:gap-8 gap-1'}`}
+                  className={`flex flex-col md:flex-row md:items-center ${selectedRow?.Category === 'Diet' ? 'md:gap-3 gap-1' : 'md:gap-8 gap-1'}`}
                 >
                   <div className="font-medium text-Text-Primary text-xs">
                     Associated Intervention
@@ -140,7 +140,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                   <div className="font-medium text-Text-Primary text-xs text-nowrap">
                     Macros Goal
                   </div>
-                  <div className="flex items-center flex-grow-[1] justify-between pr-2">
+                  <div className="flex items-center flex-grow-[1] justify-between pr-2 flex-wrap gap-2">
                     {renderNutrient(
                       'Carbs',
                       selectedRow?.['Total Macros'].Carbs ?? 0,
