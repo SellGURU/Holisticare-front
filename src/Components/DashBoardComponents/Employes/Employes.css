@@ -14,7 +14,8 @@
 
 @media screen and (max-width: 768px) {
   .employees-container {
-    height: calc(100vh - 240px);
+    height: max-content;
+    margin-bottom: 100px;
   }
 
   .employees-content {
@@ -24,7 +25,8 @@
 
 @media screen and (max-width: 480px) {
   .employees-container {
-    height: calc(100vh - 200px);
+    height: max-content;
+    margin-bottom: 100px;
   }
 
   .employees-content {

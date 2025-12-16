@@ -11,6 +11,7 @@ interface SelectBoxFieldProps {
   disabled?: boolean;
   showDisabled?: boolean;
   placeholder: string;
+  top?: string;
 }
 
 const SelectBoxField: FC<SelectBoxFieldProps> = ({
@@ -24,6 +25,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
   disabled,
   placeholder,
   showDisabled,
+  top,
 }) => {
   const [showSelect, setShowSelect] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -64,7 +66,9 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
         {value ? (
           <div className="text-[12px] text-Text-Primary">{value}</div>
         ) : (
-          <div className="text-[12px] text-Text-Fivefold">{placeholder}</div>
+          <div className="text-[10px] md:text-[12px] text-Text-Fivefold">
+            {placeholder}
+          </div>
         )}
         <div>
           <img
@@ -78,7 +82,9 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
         <div className="text-Red text-[10px] mt-1">{validationText}</div>
       )}
       {showSelect && (
-        <div className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px] max-h-[250px] overflow-y-auto">
+        <div
+          className={`w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 ${top ? top : 'top-[56px]'} max-h-[250px] overflow-y-auto`}
+        >
           {options.map((option, index) => {
             return (
               <div
