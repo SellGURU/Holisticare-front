@@ -241,8 +241,8 @@ const Stadio: FC<StadioProps> = ({
     }
 
     // Sort alphabetically by Title
-    return filtered.sort((a: any, b: any) => 
-      a.Title.localeCompare(b.Title, undefined, { sensitivity: 'base' })
+    return filtered.sort((a: any, b: any) =>
+      a.Title.localeCompare(b.Title, undefined, { sensitivity: 'base' }),
     );
   }, [data.category, selectCategory, searchValue, sortBy]);
 
@@ -256,8 +256,8 @@ const Stadio: FC<StadioProps> = ({
       ...el, // Spread existing properties
       category: 'Check-In', // Add the category key with value 'Check-In'
     }))
-    .sort((a: any, b: any) => 
-      a.Title.localeCompare(b.Title, undefined, { sensitivity: 'base' })
+    .sort((a: any, b: any) =>
+      a.Title.localeCompare(b.Title, undefined, { sensitivity: 'base' }),
     );
   console.log(filteredDataCategory);
 
