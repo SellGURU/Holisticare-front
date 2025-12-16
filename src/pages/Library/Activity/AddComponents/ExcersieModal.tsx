@@ -299,7 +299,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         });
 
         const { file_id } = response.data;
-         const uploadedFile: FileData = {
+        const uploadedFile: FileData = {
           ...fileData,
           Content: {
             file_id,
@@ -308,7 +308,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         };
 
         setFileList((prev) => [...prev, uploadedFile]);
-        setFiles((prev) => [...prev, uploadedFile]); 
+        setFiles((prev) => [...prev, uploadedFile]);
         setUploadProgress(100);
         setYouTubeLink('');
       } catch (error) {
