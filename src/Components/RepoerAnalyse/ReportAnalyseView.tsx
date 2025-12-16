@@ -47,12 +47,14 @@ interface ReportAnalyseViewprops {
   isShare?: boolean;
   uniqKey?: string;
   setActiveCheckProgress: (status: boolean) => void;
+  isActive?: boolean;
 }
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   memberID,
   isShare,
   setActiveCheckProgress,
+  isActive,
   uniqKey,
 }) => {
   const { id, name } = useParams<{ id: string; name: string }>();
@@ -545,12 +547,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     });
   };
   useEffect(() => {
-    if (!loading) {
+    if (!loading && isActive) {
       setTimeout(() => {
         handleScroll();
       }, 500);
     }
-  }, [id, loading]);
+  }, [id, loading, isActive]);
   const [isSticky, setIsSticky] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -890,8 +892,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 </div>
               </div>
             )}
-
-            {accessManager.filter((el) => el.name == 'Concerning Result')[0]
+            {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
               .checked == true && (
               <>
                 <div className=" my-[200px] xl:min-h-[700px] text-light-primary-text dark:text-primary-text ">
@@ -937,6 +938,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   )}
                   {/* <CustomCanvasChart></CustomCanvasChart> */}
                 </div>
+              </>
+            )}
+            {accessManager.filter((el) => el.name == 'Concerning Result')[0]
+              .checked == true && (
+              <>
                 <div className="my-10 min-h-[700px]">
                   <div className="w-full mb-3 flex items-center justify-between">
                     <div
@@ -1013,7 +1019,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 </div>
               </>
             )}
-
             {accessManager.filter((el) => el.name == 'Detailed Analysis')[0]
               .checked == true && (
               <div className="my-[200px] min-h-[700px]">
@@ -1117,7 +1122,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 />
               </div>
             )}
-
             <div className="my-10 hidden">
               <div className="w-full mb-3 flex items-center justify-between">
                 <div
