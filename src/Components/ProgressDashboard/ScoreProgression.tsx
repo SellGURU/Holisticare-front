@@ -229,21 +229,7 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
     );
   }
 
-  if ((!data || data.length === 0) && !customStartDate && !customEndDate) {
-    return (
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <div className="text-center py-12">
-          <div className="text-Text-Primary text-lg mb-2">
-            No progression data available
-          </div>
-          <div className="text-Text-Secondary text-sm">
-            Score progression will appear here once data is available
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  const hasData = data && data.length > 0;
   const labels = chartData.map((point) => point.displayDate);
 
   const chartDataConfig = {
@@ -594,9 +580,22 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
       )}
 
       {/* Chart */}
-      <div className="h-fullmd:h-[400px]">
-        <Line data={chartDataConfig} options={chartOptions} />
-      </div>
+      {hasData && metrics.length > 0 ? (
+        <div className="h-fullmd:h-[400px]">
+          <Line data={chartDataConfig} options={chartOptions} />
+        </div>
+      ) : (
+        <div className="h-[400px] flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-Text-Primary text-lg mb-2">
+              No progression data available
+            </div>
+            <div className="text-Text-Secondary text-sm">
+              Score progression will appear here once data is available
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
