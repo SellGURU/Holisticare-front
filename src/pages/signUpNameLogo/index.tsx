@@ -121,14 +121,14 @@ const SignUpNameLogo = () => {
                 if (e.target.value.length === 0) {
                   setErrorName('This field is required.');
                 } else if (
-                  e.target.value.length < 3 ||
-                  e.target.value.length > 15 ||
+                  e.target.value.length < 2 ||
+                  e.target.value.length > 30 ||
                   /^\d+$/.test(e.target.value)
                 ) {
                   setErrorName(
                     /^\d+$/.test(e.target.value)
                       ? 'Name cannot be only numbers.'
-                      : 'Must be between 3 and 15 characters.',
+                      : 'Must be between 2 and 30 characters.',
                   );
                 } else {
                   setErrorName('');

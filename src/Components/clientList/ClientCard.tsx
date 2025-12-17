@@ -35,7 +35,11 @@ const ClientCard: FC<ClientCardProps> = ({
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(client.refresh_in_progress);
+  useEffect(() => {
+    setRefresh(client.refresh_in_progress);
+  }, [client.refresh_in_progress]);
+
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
   useModalAutoClose({
     refrence: showModalRefrence,
@@ -286,24 +290,32 @@ const ClientCard: FC<ClientCardProps> = ({
       year: 'numeric',
     });
   };
+  const handleRefreshProgress = async () => {
+    refreshIntervalRef.current = setInterval(async () => {
+      const result = await handleCheckRefreshProgress();
 
+      if (result?.status) {
+        if (refreshIntervalRef.current) {
+          clearInterval(refreshIntervalRef.current);
+          refreshIntervalRef.current = null;
+        }
+        setRefresh(false);
+        setLastRefreshTime(new Date());
+      }
+    }, 30000);
+  };
+  useEffect(() => {
+    if (client.refresh_in_progress) {
+      handleRefreshProgress();
+    }
+  }, [client.refresh_in_progress]);
   const handleRefreshData = () => {
+    if (refreshIntervalRef.current) return;
     setRefresh(true);
 
     Application.refreshData(client.member_id)
       .then(() => {
-        refreshIntervalRef.current = setInterval(async () => {
-          const result = await handleCheckRefreshProgress();
-
-          if (result?.status) {
-            if (refreshIntervalRef.current) {
-              clearInterval(refreshIntervalRef.current);
-              refreshIntervalRef.current = null;
-            }
-            setRefresh(false);
-            setLastRefreshTime(new Date());
-          }
-        }, 30000);
+        handleRefreshProgress();
       })
       .catch(() => {
         setRefresh(false);
