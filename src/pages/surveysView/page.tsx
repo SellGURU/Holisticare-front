@@ -20,9 +20,14 @@ interface SurveyAPIResponse {
 }
 
 export default function SurveyResponsesPage() {
-  const { 'member-id': memberId, 'q-id': qId } = useParams<{
+  const {
+    'member-id': memberId,
+    'q-id': qId,
+    'f-id': fId,
+  } = useParams<{
     'member-id': string;
     'q-id': string;
+    'f-id': string;
   }>();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [filledBy, setFilledBy] = useState<string | undefined>(undefined);
@@ -30,12 +35,13 @@ export default function SurveyResponsesPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!memberId || !qId) return;
+    if (!memberId || !qId || !fId) return;
     setLoading(true);
     setError(null);
     Application.PreviewQuestionary({
       member_id: memberId,
       q_unique_id: qId,
+      f_unique_id: fId,
     })
       .then((res: { data: SurveyAPIResponse }) => {
         const visibleQuestions = (res.data.questions || []).filter(
@@ -49,7 +55,7 @@ export default function SurveyResponsesPage() {
         setError((err as Error)?.message || 'Failed to load survey response');
         setLoading(false);
       });
-  }, [memberId, qId]);
+  }, [memberId, qId, fId]);
 
   if (loading) {
     return <div className="p-8 text-center">Loading...</div>;

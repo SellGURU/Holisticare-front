@@ -1109,13 +1109,23 @@ class Application extends Api {
       member_id: member_id,
     });
   };
-  static refreshData = (member_id: string) => {
-    return this.post(`/patients/refresh_data`, {
+  static refreshData = (member_id: string, full_refresh?: boolean) => {
+    const payload: any = { member_id };
+
+    if (full_refresh !== undefined) {
+      payload.full_refresh = full_refresh;
+    }
+
+    return this.post(`/patients/refresh_data`, payload);
+  };
+
+  static reportGeneratedNotification = (member_id: string) => {
+    return this.post(`/report_generated_notification`, {
       member_id: member_id,
     });
   };
-  static reportGeneratedNotification = (member_id: string) => {
-    return this.post(`/report_generated_notification`, {
+  static checkClientRefresh = (member_id: string) => {
+    return this.post(`/patients/check_need_of_refresh`, {
       member_id: member_id,
     });
   };
@@ -1123,11 +1133,63 @@ class Application extends Api {
   static initialSaveActionPlan = (data: any) => {
     return this.post('/action_plan/draft/initial_save', data);
   };
+  static getProgress = (member_id: string, from_date: string) => {
+    return this.post(`/check_all_ongoing_operations`, {
+      member_id: member_id,
+      from_date: from_date,
+    });
+  };
+
+  static needCheckProgress = (member_id: string, from_date: string | null) => {
+    return this.post(`/need_to_check_all_ongoing_operations`, {
+      member_id: member_id,
+      from_date: from_date ? from_date : undefined,
+    });
+  };
   static verifyPassword = (data: any) => {
     return this.post('/setting/verify_password', data);
   };
   static changePassword = (data: any) => {
     return this.post('/setting/change_password', data);
+  };
+  static deleteQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: string;
+  }) => {
+    return this.post(`/questionary_tracking/delete_questionary`, data);
+  };
+  static EditQuestionary = (data: any) => {
+    const response = this.post(
+      `/questionary_tracking/edit_filled_questionary`,
+      data,
+    );
+    return response;
+  };
+  static checkDeleteQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: string;
+  }) => {
+    return this.post(`/questionary_tracking/check_delete_questionary`, data);
+  };
+  static checkUpdateQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: string;
+  }) => {
+    return this.post(`/questionary_tracking/check_edit_questionnaire`, data);
+  };
+  static checkFilloutQuestionary = (data: {
+    f_unique_id: string;
+    q_unique_id: string;
+    member_id: string;
+  }) => {
+    return this.post(`/questionary_tracking/check_save_questionnaire`, data);
+  };
+
+  static autoSaveQuestionary = (data: any) => {
+    return this.post(`/questionary_tracking/autosave`, data);
   };
 }
 
