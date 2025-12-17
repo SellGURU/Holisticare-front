@@ -233,10 +233,10 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
     return (
       <div className="bg-white rounded-xl p-6 shadow-sm">
         <div className="text-center py-12">
-          <div className="text-gray-400 text-lg mb-2">
+          <div className="text-Text-Primary text-lg mb-2">
             No progression data available
           </div>
-          <div className="text-gray-300 text-sm">
+          <div className="text-Text-Secondary text-sm">
             Score progression will appear here once data is available
           </div>
         </div>

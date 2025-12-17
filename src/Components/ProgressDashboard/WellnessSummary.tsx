@@ -33,7 +33,7 @@ const formatTooltip = (scoreData: any): string => {
     Array.isArray(scoreData.factors) &&
     scoreData.factors.length > 0
   ) {
-    tooltip += '\n\nKey factors:';
+    tooltip += '\nKey factors:';
     scoreData.factors.forEach((factor: string) => {
       tooltip += `\n• ${factor}`;
     });
@@ -241,7 +241,7 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
     ? archetypeData.factors &&
       Array.isArray(archetypeData.factors) &&
       archetypeData.factors.length > 0
-      ? `${archetypeData.description}\n\nKey factors:\n${archetypeData.factors.map((f: string) => `• ${f}`).join('\n')}`
+      ? `${archetypeData.description}\nKey factors:\n${archetypeData.factors.map((f: string) => `• ${f}`).join('\n')}`
       : archetypeData.description
     : archetypeExplanations[archetype] ||
       'User archetype based on health patterns';
@@ -286,12 +286,12 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
             </svg>
             <CircularProgressbar
               value={globalPercentage}
-              text={`${globalScore.toFixed(1)}`}
+              text={`${globalScore}/100`}
               styles={buildStyles({
                 pathColor: 'url(#globalGradient)',
                 trailColor: '#E5E5E5',
                 textColor: '#005F73',
-                textSize: '32px',
+                textSize: '20px',
               })}
             />
           </div>
@@ -312,37 +312,50 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
         </div>
 
         {/* Metric Cards Grid - Right Side - Dynamic based on API response */}
-        <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-3">
-          {scoreNames.map((scoreName) => {
-            const score = scores[scoreName] || 0;
-            const scoreData = scoresData?.[scoreName];
-            const config = getScoreConfig(scoreName);
-            const tooltipText =
-              formatTooltip(scoreData) ||
-              `Information about ${config.label} score`;
+        {scoreNames.length > 0 ? (
+          <div className="flex-1  grid grid-cols-2 md:grid-cols-3 gap-3">
+            {scoreNames.map((scoreName) => {
+              const score = scores[scoreName] || 0;
+              const scoreData = scoresData?.[scoreName];
+              const config = getScoreConfig(scoreName);
+              const tooltipText =
+                formatTooltip(scoreData) ||
+                `Information about ${config.label} score`;
 
-            return (
-              <div
-                key={scoreName}
-                className="bg-gray-50 rounded-lg p-3 flex flex-col items-center justify-center min-h-[90px]"
-              >
-                <div className="text-2xl mb-1.5">{config.icon}</div>
+              return (
                 <div
-                  className="text-[18px] md:text-2xl font-bold mb-1"
-                  style={{ color: config.color }}
+                  key={scoreName}
+                  className="bg-gray-50 rounded-lg p-3 flex flex-col items-center justify-center min-h-[90px]"
                 >
-                  {Math.round(score)}
+                  <div className="text-2xl mb-1.5">{config.icon}</div>
+                  <div
+                    className="text-[18px] md:text-2xl font-bold mb-1"
+                    style={{ color: config.color }}
+                  >
+                    {Math.round(score)}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] md:text-xs text-gray-600">
+                      {config.label}
+                    </span>
+                    <InfoIcon text={tooltipText} />
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-[10px] md:text-xs text-gray-600">
-                    {config.label}
-                  </span>
-                  <InfoIcon text={tooltipText} />
-                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="flex-1 flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="text-Text-Primary text-sm mb-1">
+                No metric data available
               </div>
-            );
-          })}
-        </div>
+              <div className="text-Text-Secondary text-xs">
+                Metric scores will appear here once data is available
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Last Sync Date */}
