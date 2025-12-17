@@ -302,10 +302,10 @@ const ClientCard: FC<ClientCardProps> = ({
         setRefresh(false);
         setLastRefreshTime(new Date());
       }
-    }, 30000);    
-  }
+    }, 30000);
+  };
   useEffect(() => {
-    if(client.refresh_in_progress) {
+    if (client.refresh_in_progress) {
       handleRefreshProgress();
     }
   }, [client.refresh_in_progress]);
