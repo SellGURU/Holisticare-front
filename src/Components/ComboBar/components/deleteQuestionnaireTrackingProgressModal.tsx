@@ -1,61 +1,34 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from 'react';
-import { ButtonSecondary } from '../Button/ButtosSecondary';
-import { subscribe, unsubscribe } from '../../utils/event';
-import { publish } from '../../utils/event';
+import { useState } from 'react';
+import { publish, subscribe } from '../../../utils/event';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
 
-export const DeleteFileProgressModal = () => {
+export const DeleteQuestionnaireTrackingProgressModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [IsinProgress, setIsinProgress] = useState(true);
-  const idOnworksRef = useRef<Array<string>>([]);
 
-  useEffect(() => {
-    const handleOpenProgressModal = (data: any) => {
-      console.log(data);
-      const fileId = data?.detail?.file_id;
-
-      if (!fileId) {
-        return;
-      }
-
-      if (idOnworksRef.current.includes(fileId)) {
-        return;
-      }
-
-      idOnworksRef.current = [...idOnworksRef.current, fileId];
-      setTimeout(() => {
-        setshowProgressModal(true);
-        setIsinProgress(true);
-      }, 100);
-    };
-
-    const handleStepTwoSuccess = () => {
-      if (idOnworksRef.current.length === 0) {
-        return;
-      }
-      idOnworksRef.current = idOnworksRef.current.filter(
-        (id) => id !== idOnworksRef.current[0],
-      );
+  subscribe('openDeleteQuestionnaireTrackingProgressModal', () => {
+    setTimeout(() => {
       setshowProgressModal(true);
-      setIsinProgress(false);
-    };
+      setIsinProgress(true);
+    }, 2000);
+  });
 
-    subscribe('openDeleteProgressModal', handleOpenProgressModal);
-    subscribe('DeleteSuccess', handleStepTwoSuccess);
+  subscribe('DeleteQuestionnaireTrackingSuccess', () => {
+    setshowProgressModal(true);
+    setIsinProgress(false);
+  });
 
-    return () => {
-      unsubscribe('openDeleteProgressModal', handleOpenProgressModal);
-      unsubscribe('DeleteSuccess', handleStepTwoSuccess);
-    };
-  }, []);
+  subscribe('closeDeleteQuestionnaireTrackingProgressModal', () => {
+    setshowProgressModal(false);
+  });
 
   return (
     <>
       <div
         style={{ zIndex: 1000 }}
         className={`
-          fixed top-[48px] right-6
-          w-[320px] h-[212px]
+          fixed top-[48px] right-[86px]
+          w-[320px]
           rounded-2xl border-2 border-r-0 border-Gray-50 
           shadow-200 p-4 bg-white
           transition-all duration-[1000] ease-[cubic-bezier(0.4,0,0.2,1)]
@@ -67,7 +40,7 @@ export const DeleteFileProgressModal = () => {
         `}
       >
         <div className="flex items-center justify-between text-xs font-medium text-Primary-DeepTeal">
-          {IsinProgress ? 'Deletion in Progress' : 'File History'}
+          {IsinProgress ? 'Deletion in Progress' : 'Processing Completed!'}
           <img
             onClick={() => setshowProgressModal(false)}
             src="/icons/close.svg"
@@ -83,7 +56,7 @@ export const DeleteFileProgressModal = () => {
                 background:
                   'linear-gradient(to right, rgba(0,95,115,0.4), rgba(108,194,74,0.4))',
               }}
-              className="flex size-5   rounded-full items-center justify-center gap-[3px]"
+              className="flex size-5 rounded-full items-center justify-center gap-[3px]"
             >
               <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot1"></div>
               <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot2"></div>
@@ -92,13 +65,15 @@ export const DeleteFileProgressModal = () => {
           ) : (
             <img src="/icons/tick-circle-upload.svg" alt="" />
           )}
-          {IsinProgress ? 'Your file is being removed.' : 'Deleting Completed.'}
+          {IsinProgress
+            ? 'The questionnaire is being removed.'
+            : 'Deletion completed.'}
         </div>
 
         <div className="mt-4 text-[10px] text-Text-Quadruple transition-opacity duration-500">
           {IsinProgress
-            ? "If you'd like, you may continue working while the system removes the file."
-            : 'If you would like to remove its related data from the report, please click the “Unsync Data” button.'}
+            ? "If you'd like, you may continue working while the system removes the questionnaire."
+            : 'If you’d like to remove its related data from the system, please click the “Unsync Data” button.'}
         </div>
 
         {!IsinProgress && (
@@ -117,4 +92,4 @@ export const DeleteFileProgressModal = () => {
     </>
   );
 };
-export default DeleteFileProgressModal;
+export default DeleteQuestionnaireTrackingProgressModal;

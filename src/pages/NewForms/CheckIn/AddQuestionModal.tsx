@@ -15,6 +15,11 @@ const checkInTypes = [
     title: 'Paragraph',
     desc: 'Small or log text like title or ...',
   },
+  {
+    icon: '/icons/number-category.svg',
+    title: 'Number',
+    desc: 'Numeric value like age or amount',
+  },
   { icon: '/icons/ruler.svg', title: 'Scale', desc: 'A Scale from 1-10' },
   { icon: '/icons/tick-square-blue.svg', title: 'Yes/No', desc: 'Yes or No' },
   {
