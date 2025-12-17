@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
@@ -9,6 +10,7 @@ import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import TreatmentCard from './TreatmentCard';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
+import { Tooltip } from 'react-tooltip';
 
 type CardData = {
   id: number;
@@ -25,6 +27,7 @@ interface TreatmentPlanProps {
   setIsHolisticPlanEmpty: (value: boolean) => void;
   setIsShareModalSuccess: (value: boolean) => void;
   setDateShare: (value: string | null) => void;
+  disableGenerate: boolean;
 }
 
 export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
@@ -34,6 +37,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   setIsHolisticPlanEmpty,
   setIsShareModalSuccess,
   setDateShare,
+  disableGenerate,
 }) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
@@ -52,9 +56,13 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     }
   };
   const resolveCanGenerateNew = () => {
+    if (disableGenerate) return false;
+
+    // If we have plans, check if the last one is Draft
     if (cardData.length > 0) {
       return cardData[cardData.length - 1].state !== 'Draft';
     }
+
     return true;
   };
   const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
@@ -242,6 +250,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   };
   return (
     <>
+      {/* {showRefreshModal && ( */}
+
+      {/* )} */}
       {isShare ? (
         <>
           <div className="w-full gap-1 md:gap-2 mt-4 flex justify-between items-center hidden-scrollbar overflow-x-scroll md:overflow-x-hidden">
@@ -378,10 +389,21 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 </div>
                 <ButtonSecondary
                   ClassName="w-full md:w-fit"
+                  disabled={!resolveCanGenerateNew()}
                   onClick={() => {
-                    setTreatmentId('');
+                    if (resolveCanGenerateNew() && id) {
+                      Application.checkClientRefresh(id).then((res) => {
+                        if (res.data.need_of_refresh == true) {
+                          publish('openRefreshModal', {});
+                        } else {
+                          setTreatmentId('');
+                          navigate(`/report/Generate-Holistic-Plan/${id}/a`);
+                        }
+                      });
+                    }
+
                     // navigate(`/report/Generate-Recommendation/${id}`);
-                    navigate(`/report/Generate-Holistic-Plan/${id}/a`);
+                    // navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                   }}
                 >
                   <img src="/icons/tick-square.svg" alt="" /> Generate New
@@ -539,19 +561,45 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 ))}
                 <div
                   onClick={() => {
-                    if (resolveCanGenerateNew()) {
-                      setTreatmentId('');
+                    if (resolveCanGenerateNew() && id) {
+                      Application.checkClientRefresh(id).then((res) => {
+                        if (res.data.need_of_refresh == true) {
+                          publish('openRefreshModal', {});
+                        } else {
+                          setTreatmentId('');
+                          navigate(`/report/Generate-Holistic-Plan/${id}/a`);
+                        }
+                      });
+
                       // navigate(`/report/Generate-Recommendation/${id}`);
-                      navigate(`/report/Generate-Holistic-Plan/${id}/a`);
+                      // navigate(`/report/Generate-Holistic-Plan/${id}/a`);
                     }
                   }}
+                  data-tooltip-id={
+                    disableGenerate ? 'generate-new-tooltip' : ''
+                  }
+                  data-tooltip-content={
+                    disableGenerate
+                      ? 'Data sync in progress — please wait until it’s complete'
+                      : ''
+                  }
                   className={` 
                     relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}
                 >
-                  <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
-                  <div className="text-sm font-medium text-Primary-DeepTeal">
-                    Generate New
-                  </div>
+                  <>
+                    {' '}
+                    <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
+                    <div className="text-sm font-medium text-Primary-DeepTeal">
+                      Generate New
+                    </div>
+                  </>
+                  {disableGenerate && (
+                    <Tooltip
+                      id="generate-new-tooltip"
+                      place="top"
+                      className="!bg-white !w-[200px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !z-[99999]"
+                    />
+                  )}
                 </div>
               </div>
               {/* <div className="w-full flex justify-center md:justify-end gap-2 my-3">

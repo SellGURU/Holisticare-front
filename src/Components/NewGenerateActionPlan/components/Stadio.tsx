@@ -240,7 +240,10 @@ const Stadio: FC<StadioProps> = ({
       );
     }
 
-    return filtered;
+    // Sort alphabetically by Title
+    return filtered.sort((a: any, b: any) =>
+      a.Title.localeCompare(b.Title, undefined, { sensitivity: 'base' }),
+    );
   }, [data.category, selectCategory, searchValue, sortBy]);
 
   const filteredDataCheckIn = data.checkIn
@@ -252,7 +255,10 @@ const Stadio: FC<StadioProps> = ({
     .map((el) => ({
       ...el, // Spread existing properties
       category: 'Check-In', // Add the category key with value 'Check-In'
-    }));
+    }))
+    .sort((a: any, b: any) =>
+      a.Title.localeCompare(b.Title, undefined, { sensitivity: 'base' }),
+    );
   console.log(filteredDataCategory);
 
   const [showAddModal, setshowAddModal] = useState(false);
@@ -755,7 +761,7 @@ const [showModal, setShowModal] = useState(false)
               </div>
               <div
                 className="w-full  overflow-auto "
-                style={{ height: window.innerHeight - 340 + 'px' }}
+                style={{ height: window.innerHeight - 360 + 'px' }}
               >
                 <div className="mt-2 grid gap-2 relative">
                   {filteredDataCategory.map((value: any, index: number) => {

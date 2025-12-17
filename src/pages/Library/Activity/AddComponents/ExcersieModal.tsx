@@ -299,7 +299,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         });
 
         const { file_id } = response.data;
-         const uploadedFile: FileData = {
+        const uploadedFile: FileData = {
           ...fileData,
           Content: {
             file_id,
@@ -308,7 +308,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         };
 
         setFileList((prev) => [...prev, uploadedFile]);
-        setFiles((prev) => [...prev, uploadedFile]); 
+        setFiles((prev) => [...prev, uploadedFile]);
         setUploadProgress(100);
         setYouTubeLink('');
       } catch (error) {
@@ -381,6 +381,21 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       handleClearData(false);
     }
   }, [clearData]);
+  const [isMobilePage, setIsMobilePage] = useState(window.innerWidth < 1120);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobilePage(window.innerWidth < 1120);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // const isMobilePage = useMemo(() => {
+  //   return window.innerWidth < 768;
+  // }, []);
+
   return (
     <MainModal
       isOpen={isOpen}
@@ -395,12 +410,19 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="w-[1107px] h-[503px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative">
+      <div
+        className={`${isMobilePage ? 'w-[90vw] h-[80vh]' : 'w-[1107px] h-[503px]'} rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative ${isMobilePage ? 'overflow-y-auto' : ''}`}
+        style={{ scrollbarWidth: 'thin', scrollbarColor: '#E9EDF5 #E9EDF5' }}
+      >
         <div className="w-full border-b border-Gray-50 pb-2 text-sm font-medium">
           {isEdit ? 'Edit Exercise' : 'Add Exercise'}
         </div>
-        <div className="w-full flex gap-4 mt-6">
-          <div className="w-[35%] flex flex-col gap-4">
+        <div
+          className={`w-full flex gap-4 mt-6 ${isMobilePage ? 'flex-col' : 'flex-row'}`}
+        >
+          <div
+            className={`w-full ${isMobilePage ? 'w-full' : 'w-[35%]'} flex flex-col gap-4`}
+          >
             <TextField
               label="Title"
               placeholder="Write the exercise's title..."
@@ -522,10 +544,16 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               onChange={(e) => setInstruction(e.target.value)}
             /> */}
           </div>
-          <div className="bg-[#E9EDF5] h-[365px] w-px"></div>
-          <div className="w-[35%] flex flex-col gap-4">
+          <div
+            className={`bg-[#E9EDF5] ${isMobilePage ? 'h-px' : 'h-[365px]'} w-full ${isMobilePage ? 'w-full' : 'w-px'}`}
+          ></div>
+          <div
+            className={`w-full ${isMobilePage ? 'w-full' : 'w-[35%]'} flex flex-col gap-4`}
+          >
             <div className="text-xs font-medium">Filters</div>
-            <div className="grid grid-cols-2 gap-y-2 gap-x-">
+            <div
+              className={`grid ${isMobilePage ? 'grid-cols-1' : 'grid-cols-2'} gap-y-2 gap-x-2`}
+            >
               <CustomSelect
                 placeHolder="Type"
                 options={TypesOptions}
@@ -533,6 +561,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 onOptionSelect={(option: string) =>
                   updateFilters('type', option)
                 }
+                wfull
               />
               <CustomSelect
                 placeHolder="Terms"
@@ -540,6 +569,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 isMulti
                 selectedOption={filters.terms}
                 onOptionSelect={(option: any) => updateFilters('terms', option)}
+                wfull
               />
               <CustomSelect
                 placeHolder="Condition"
@@ -549,6 +579,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 onOptionSelect={(option: any) =>
                   updateFilters('condition', option)
                 }
+                wfull
               />
               <CustomSelect
                 placeHolder="Muscle"
@@ -558,6 +589,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 onOptionSelect={(option: string) =>
                   updateFilters('muscle', option)
                 }
+                wfull
               />
               <CustomSelect
                 placeHolder="Equipment"
@@ -567,6 +599,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 onOptionSelect={(option: string) =>
                   updateFilters('equipment', option)
                 }
+                wfull
               />
               <CustomSelect
                 placeHolder="Level"
@@ -575,6 +608,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 onOptionSelect={(option: string) =>
                   updateFilters('level', option)
                 }
+                wfull
               />
             </div>
             <div className="flex flex-col text-xs gap-3 mt-2">
@@ -603,8 +637,12 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="bg-[#E9EDF5] h-[365px] w-px"></div>
-          <div className="w-[25%] flex flex-col gap-4">
+          <div
+            className={`bg-[#E9EDF5] ${isMobilePage ? 'h-px' : 'h-[365px]'} w-full ${isMobilePage ? 'w-full' : 'w-px'}`}
+          ></div>
+          <div
+            className={`w-full ${isMobilePage ? 'w-full' : 'w-[25%]'} flex flex-col gap-4`}
+          >
             <TextField
               disabled={fileList.length > 0}
               value={youTubeLink}
@@ -681,10 +719,14 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]">
                   <div className="w-full flex justify-between">
                     <div>
-                      <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
+                      <div
+                        className={`text-[10px] ${isMobilePage ? 'text-[10px]' : 'text-[12px]'} text-Text-Primary font-[600]`}
+                      >
                         Uploading...
                       </div>
-                      <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
+                      <div
+                        className={`text-Text-Secondary text-[10px] ${isMobilePage ? 'text-[10px]' : 'text-[12px]'} mt-1`}
+                      >
                         {uploadProgress}% • 30 seconds remaining
                       </div>
                     </div>
@@ -740,7 +782,9 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             </div>
           </div>
         </div>
-        <div className="flex w-full justify-end gap-4 absolute right-4 bottom-4">
+        <div
+          className={`flex w-full justify-end gap-4 ${isMobilePage ? '' : 'absolute right-4 bottom-4'}`}
+        >
           <div
             onClick={() => {
               resetForm();

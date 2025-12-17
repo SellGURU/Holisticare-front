@@ -4,6 +4,7 @@ import ApiMobile from './apiMobile';
 interface getQuestionaryEmptyData {
   encoded_mi: string;
   unique_id: string;
+  f_unique_id?: string;
 }
 
 interface getTasksProps {
@@ -17,6 +18,9 @@ interface getExerciseFileProps {
 }
 
 class Mobile extends ApiMobile {
+  static autoSaveQuestionary = (data: any) => {
+    return this.post('/tasks/autosave', data);
+  };
   static getQuestionaryEmpty = (data: getQuestionaryEmptyData) => {
     return this.post('/tasks/show_empty_questionary', data);
   };
