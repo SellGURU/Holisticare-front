@@ -345,7 +345,7 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
             })}
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center py-12">
+          <div className="flex-1 flex items-center justify-center py-20">
             <div className="text-center">
               <div className="text-Text-Primary text-sm mb-1">
                 No metric data available
