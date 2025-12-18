@@ -46,15 +46,15 @@ interface ReportAnalyseViewprops {
   memberID?: number | null;
   isShare?: boolean;
   uniqKey?: string;
-  setActiveCheckProgress: (status: boolean) => void;
   isActive?: boolean;
+  setActiveCheckProgress: (status: boolean) => void;
 }
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   memberID,
   isShare,
-  setActiveCheckProgress,
   isActive,
+  setActiveCheckProgress,
   uniqKey,
 }) => {
   const { id, name } = useParams<{ id: string; name: string }>();

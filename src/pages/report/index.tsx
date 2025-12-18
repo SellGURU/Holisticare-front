@@ -2,11 +2,11 @@
 import { MainModal } from '../../Components';
 import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
 import { TopBar } from '../../Components/topBar';
+import ReportSideMenu from '../../Components/reportSideMenu/newSideMenu';
 import { ComboBar } from '../../Components';
 import { useState, useEffect, useRef } from 'react';
 import { subscribe, unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
-import ReportSideMenu from '../../Components/reportSideMenu/newSideMenu';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import ProgressDashboardView from '../../Components/ProgressDashboard/ProgressDashboardView';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
