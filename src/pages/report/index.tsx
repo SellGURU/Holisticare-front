@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { MainModal} from '../../Components';
+import { MainModal } from '../../Components';
 import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
 import { TopBar } from '../../Components/topBar';
 import ReportSideMenu from '../../Components/reportSideMenu/newSideMenu';
