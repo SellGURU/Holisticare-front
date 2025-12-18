@@ -131,14 +131,17 @@ const getScoreConfig = (
   };
 };
 
-const resolveIcon =(name: string)=>{
-  if(name == 'Activity Score') return '/icons/biomarkers/activity.svg';
-  if(name == 'Sleep Score') return '/icons/biomarkers/moon.svg';
-  if(name == 'Heart Health Score') return '/icons/biomarkers/heart_rate_01.svg';
-  if(name == 'Stress Score') return '/icons/biomarkers/stress-icon.svg';
-  if(name == 'Calories / Metabolic Score') return '/icons/biomarkers/metabolism 1.svg';
-  if(name == 'Body Composition Score') return '/icons/biomarkers/chest (1).svg';
-}
+const resolveIcon = (name: string) => {
+  if (name == 'Activity Score') return '/icons/biomarkers/activity.svg';
+  if (name == 'Sleep Score') return '/icons/biomarkers/moon.svg';
+  if (name == 'Heart Health Score')
+    return '/icons/biomarkers/heart_rate_01.svg';
+  if (name == 'Stress Score') return '/icons/biomarkers/stress-icon.svg';
+  if (name == 'Calories / Metabolic Score')
+    return '/icons/biomarkers/metabolism 1.svg';
+  if (name == 'Body Composition Score')
+    return '/icons/biomarkers/chest (1).svg';
+};
 
 const WellnessSummary: React.FC<WellnessSummaryProps> = ({
   data,
@@ -319,10 +322,10 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
                     animationDelay: `${index * 0.1}s`,
                   }}
                 >
-                  <div className=' flex w-full items-center justify-between gap-2'>
+                  <div className=" flex w-full items-center justify-between gap-2">
                     {/* <div className="text-2xl ">{config.icon}</div> */}
                     <img src={resolveIcon(scoreName)} alt="" />
-                    <div className=' flex flex-col items-center justify-center'>
+                    <div className=" flex flex-col items-center justify-center">
                       <div
                         className="text-[18px] md:text-2xl font-bold mb-1"
                         style={{ color: config.color }}
@@ -335,7 +338,6 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
                         </span>
                         <InfoIcon text={tooltipText} />
                       </div>
-
                     </div>
                     <div className="text-2xl  invisible">{config.icon}</div>
                   </div>

@@ -56,11 +56,11 @@ const CircularGauge: React.FC<CircularGaugeProps> = ({
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // Easing function (ease-out)
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = startValue + (clampedValue - startValue) * eased;
-      
+
       setAnimatedValue(current);
 
       if (progress < 1) {
@@ -77,15 +77,15 @@ const CircularGauge: React.FC<CircularGaugeProps> = ({
   // SVG calculations
   const center = size / 2;
   const radius = (size - strokeWidth) / 2;
-  
+
   // Semi-circle arc: from -90 to 90 degrees (180 degrees total - bottom half)
   const arcStartAngle = -90;
   const arcEndAngle = 90;
   const arcTotalAngle = arcEndAngle - arcStartAngle; // 180 degrees
-  
+
   // Calculate current angle based on value (0-100 maps to arcStartAngle to arcEndAngle)
   const currentAngle = arcStartAngle + (animatedValue / 100) * arcTotalAngle;
-  
+
   // Convert angles to radians
   const startAngleRad = (arcStartAngle * Math.PI) / 180;
   const currentAngleRad = (currentAngle * Math.PI) / 180;
@@ -108,14 +108,14 @@ const CircularGauge: React.FC<CircularGaugeProps> = ({
   // Get all color band segments with opacity based on whether they've been reached
   const getAllBands = () => {
     const bands: Array<{ path: string; color: string; opacity: number }> = [];
-    
+
     colorBands.forEach((band) => {
       // Map band range (0-100) to arc angles
       const bandStartAngle = arcStartAngle + (band.min / 100) * arcTotalAngle;
       const bandEndAngle = arcStartAngle + (band.max / 100) * arcTotalAngle;
       const bandStartRad = (bandStartAngle * Math.PI) / 180;
       const bandEndRad = (bandEndAngle * Math.PI) / 180;
-      
+
       // Determine opacity: if band is reached, use higher opacity, otherwise lower
       let opacity = 0.25; // Default for unreached bands
       if (animatedValue >= band.max) {
@@ -123,7 +123,7 @@ const CircularGauge: React.FC<CircularGaugeProps> = ({
       } else if (animatedValue > band.min) {
         opacity = 0.4; // Partially reached bands
       }
-      
+
       bands.push({
         path: getArcPath(bandStartRad, bandEndRad),
         color: band.color,
@@ -139,7 +139,11 @@ const CircularGauge: React.FC<CircularGaugeProps> = ({
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="transform overflow-visible -rotate-90">
+      <svg
+        width={size}
+        height={size}
+        className="transform overflow-visible -rotate-90"
+      >
         <defs>
           {/* Shadow filter for indicator */}
           <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
