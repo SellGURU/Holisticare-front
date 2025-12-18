@@ -94,7 +94,7 @@ const SearchSelect: React.FC<SelectProps> = ({
   return (
     <div
       ref={selectWrapperRef}
-      className={`relative inline-block z-[100]  ${
+      className={`relative inline-block   ${
         isSmall && 'w-[101px]'
       } ${isLarge ? 'w-full' : 'w-[142px]'} text-nowrap cursor-pointer font-normal`}
       key={key}

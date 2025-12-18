@@ -257,7 +257,7 @@ const BoxActivity: FC<Tasks> = ({ activities, encoded_mi }) => {
                           return (
                             <video
                               key={video.Content.file_id}
-                              className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
+                              className="rounded-xl h-[200px] w-full md:w-[370px] border border-Gray-50 object-contain"
                               controls
                               src={video.Content.url}
                             >
@@ -270,7 +270,7 @@ const BoxActivity: FC<Tasks> = ({ activities, encoded_mi }) => {
                           return (
                             <iframe
                               key={video.Content.file_id}
-                              className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
+                              className="rounded-xl h-[200px] w-full md:w-[370px] border border-Gray-50"
                               src={getYouTubeEmbedUrl(video.Content.url || '')}
                               title="YouTube video player"
                               frameBorder="0"
