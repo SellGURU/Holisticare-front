@@ -28,7 +28,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col md:flex-row   w-full justify-between rounded-2xl border p-2 md:p-4 bg-white shadow-200 border-Gray-50 gap-8 ${isScaling ? 'h-0 hidden p-0' : 'h-auto visible'} `}
+      className={`flex flex-col md:flex-row lg:min-h-[210px]  w-full justify-between rounded-2xl border p-2 md:p-4 bg-white shadow-200 border-Gray-50 gap-8 ${isScaling ? 'h-0 hidden p-0' : 'h-auto visible'} `}
     >
       {/* Left side - Upload area */}
       <div
