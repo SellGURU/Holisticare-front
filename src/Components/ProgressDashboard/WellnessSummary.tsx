@@ -306,7 +306,7 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
         {/* Metric Cards Grid - Right Side - Dynamic based on API response */}
         {scoreNames.length > 0 ? (
           <div className="flex-1  grid grid-cols-2 md:grid-cols-3 gap-3">
-            {scoreNames.map((scoreName, index) => {
+            {scoreNames.map((scoreName) => {
               const score = scores[scoreName] || 0;
               const scoreData = scoresData?.[scoreName];
               const config = getScoreConfig(scoreName);
@@ -317,10 +317,7 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
               return (
                 <div
                   key={scoreName}
-                  className="bg-gray-50  rounded-lg p-3 flex flex-col items-center justify-center min-h-[90px] wellness-card-animate"
-                  style={{
-                    animationDelay: `${index * 0.1}s`,
-                  }}
+                  className="bg-gray-50  rounded-lg p-3 flex flex-col items-center justify-center min-h-[90px]"
                 >
                   <div className=" flex w-full items-center justify-between gap-2">
                     {/* <div className="text-2xl ">{config.icon}</div> */}
