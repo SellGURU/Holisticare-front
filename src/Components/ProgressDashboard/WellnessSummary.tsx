@@ -306,7 +306,7 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
         {/* Metric Cards Grid - Right Side - Dynamic based on API response */}
         {scoreNames.length > 0 ? (
           <div className="flex-1  grid grid-cols-2 md:grid-cols-3 gap-3">
-            {scoreNames.map((scoreName,) => {
+            {scoreNames.map((scoreName) => {
               const score = scores[scoreName] || 0;
               const scoreData = scoresData?.[scoreName];
               const config = getScoreConfig(scoreName);
