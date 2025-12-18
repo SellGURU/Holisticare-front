@@ -7,9 +7,16 @@ import { PublicSurveyForm } from '../../../../Components/survey/public-survey-fo
 import Application from '../../../../api/app';
 
 export default function PublicSurveyPage() {
-  const { 'member-id': memberId, 'q-id': qId } = useParams<{
+  const {
+    'member-id': memberId,
+    'q-id': qId,
+    'f-id': fId,
+    action: action,
+  } = useParams<{
     'member-id': string;
     'q-id': string;
+    'f-id': string;
+    action: string;
   }>();
   const [survey, setSurvey] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -17,20 +24,45 @@ export default function PublicSurveyPage() {
 
   useEffect(() => {
     setLoading(true);
-    Application.QuestionaryAction({
-      member_id: memberId,
-      q_unique_id: qId,
-      action: 'fill',
-    })
-      .then((res) => {
-        setSurvey(res.data);
-        setLoading(false);
+    if (action === 'fill') {
+      Application.QuestionaryAction({
+        member_id: memberId,
+        q_unique_id: qId,
+        action: 'fill',
+        f_unique_id: fId,
       })
-      .catch((err) => {
-        setError(
-          err instanceof Error ? err.message : 'An unknown error occurred',
-        );
-      });
+        .then((res) => {
+          Application.PreviewQuestionary({
+            member_id: memberId,
+            q_unique_id: qId,
+            f_unique_id: fId,
+          })
+            .then((res2) => {
+              setSurvey({ ...res.data, ...res2.data });
+              setLoading(false);
+            })
+            .catch(() => {});
+        })
+        .catch((err) => {
+          setError(
+            err instanceof Error ? err.message : 'An unknown error occurred',
+          );
+        });
+    } else if (action === 'edit') {
+      Application.PreviewQuestionary({
+        member_id: memberId,
+        q_unique_id: qId,
+        f_unique_id: fId,
+      })
+        .then((res) => {
+          setSurvey(res.data);
+          setLoading(false);
+        })
+        .catch((err: unknown) => {
+          setError((err as Error)?.message || 'Failed to load survey response');
+          setLoading(false);
+        });
+    }
     // async function fetchSurvey() {
     //   try {
     //     // Use the external API URL
@@ -115,7 +147,7 @@ export default function PublicSurveyPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
-      <PublicSurveyForm survey={survey} />
+      <PublicSurveyForm survey={survey} action={action} />
     </div>
   );
 }

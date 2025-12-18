@@ -44,7 +44,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         onChange={onChange}
         className={`w-full ${height ? height : 'h-[98px]'} text-justify rounded-[16px] py-1 px-3 border ${
           !isValid ? 'border-Red' : 'border-Gray-50'
-        } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold resize-none`}
+        } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold resize-none focus-visible:outline-none md:focus-visible:border-black`}
         onKeyDown={onKeyDown}
       />
       {validationText && (
