@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo } from 'react';
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
 import { format } from 'date-fns';
 import InfoIcon from './InfoIcon';
+import CircularGauge from './CircularGauge';
 
 interface WellnessSummaryProps {
   data: {
@@ -131,6 +130,15 @@ const getScoreConfig = (
     label: name.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
   };
 };
+
+const resolveIcon =(name: string)=>{
+  if(name == 'Activity Score') return '/icons/biomarkers/activity.svg';
+  if(name == 'Sleep Score') return '/icons/biomarkers/moon.svg';
+  if(name == 'Heart Health Score') return '/icons/biomarkers/heart_rate_01.svg';
+  if(name == 'Stress Score') return '/icons/biomarkers/stress-icon.svg';
+  if(name == 'Calories / Metabolic Score') return '/icons/biomarkers/metabolism 1.svg';
+  if(name == 'Body Composition Score') return '/icons/biomarkers/chest (1).svg';
+}
 
 const WellnessSummary: React.FC<WellnessSummaryProps> = ({
   data,
@@ -268,35 +276,16 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
       {/* Global Score and Metrics Layout */}
       <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 mb-6">
         {/* Global Score Circular Gauge - Centered with equal margins */}
-        <div className="flex-shrink-0 flex flex-col items-center justify-center lg:px-6">
-          <div className="relative" style={{ width: '200px', height: '200px' }}>
-            <svg style={{ height: 0 }}>
-              <defs>
-                <linearGradient
-                  id="globalGradient"
-                  x1="0%"
-                  y1="0%"
-                  x2="100%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="#4FC3F7" />
-                  <stop offset="100%" stopColor="#7F39FB" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <CircularProgressbar
-              value={globalPercentage}
-              text={`${globalScore}/100`}
-              styles={buildStyles({
-                pathColor: 'url(#globalGradient)',
-                trailColor: '#E5E5E5',
-                textColor: '#005F73',
-                textSize: '20px',
-              })}
-            />
-          </div>
+        <div className="flex-shrink-0 mt-6 overflow-visible flex flex-col items-center justify-center lg:px-6">
+          <CircularGauge
+            value={globalPercentage}
+            size={200}
+            strokeWidth={16}
+            showValue={true}
+            valueText={`${globalScore}/100`}
+          />
           {/* Global Score Label - Outside the circle */}
-          <div className="mt-4 text-center">
+          <div className="mt-[-70px] relative z-10 text-center">
             <div className="flex items-center gap-1 justify-center">
               <span className="text-sm font-medium text-gray-700">
                 Global Score
@@ -314,7 +303,7 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
         {/* Metric Cards Grid - Right Side - Dynamic based on API response */}
         {scoreNames.length > 0 ? (
           <div className="flex-1  grid grid-cols-2 md:grid-cols-3 gap-3">
-            {scoreNames.map((scoreName) => {
+            {scoreNames.map((scoreName, index) => {
               const score = scores[scoreName] || 0;
               const scoreData = scoresData?.[scoreName];
               const config = getScoreConfig(scoreName);
@@ -325,21 +314,32 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
               return (
                 <div
                   key={scoreName}
-                  className="bg-gray-50 rounded-lg p-3 flex flex-col items-center justify-center min-h-[90px]"
+                  className="bg-gray-50  rounded-lg p-3 flex flex-col items-center justify-center min-h-[90px] wellness-card-animate"
+                  style={{
+                    animationDelay: `${index * 0.1}s`,
+                  }}
                 >
-                  <div className="text-2xl mb-1.5">{config.icon}</div>
-                  <div
-                    className="text-[18px] md:text-2xl font-bold mb-1"
-                    style={{ color: config.color }}
-                  >
-                    {Math.round(score)}
+                  <div className=' flex w-full items-center justify-between gap-2'>
+                    {/* <div className="text-2xl ">{config.icon}</div> */}
+                    <img src={resolveIcon(scoreName)} alt="" />
+                    <div className=' flex flex-col items-center justify-center'>
+                      <div
+                        className="text-[18px] md:text-2xl font-bold mb-1"
+                        style={{ color: config.color }}
+                      >
+                        {Math.round(score)}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-[10px] md:text-xs text-gray-600">
+                          {config.label}
+                        </span>
+                        <InfoIcon text={tooltipText} />
+                      </div>
+
+                    </div>
+                    <div className="text-2xl  invisible">{config.icon}</div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-[10px] md:text-xs text-gray-600">
-                      {config.label}
-                    </span>
-                    <InfoIcon text={tooltipText} />
-                  </div>
+                  {/* <div className="text-2xl mb-1.5">{config.icon}</div> */}
                 </div>
               );
             })}
