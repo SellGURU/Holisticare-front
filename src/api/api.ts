@@ -2,12 +2,10 @@
 import axios from 'axios';
 import { getTokenFromLocalStorage } from '../store/token';
 import { toast } from 'react-toastify';
+import { resolveBaseEndPoint } from './base';
 // http://51.142.20.137:5052
 class Api {
-  protected static base_url: string =
-    'https://vercel-backend-one-roan.vercel.app/holisticare';
-  //'https://vercel-backend-one-roan.vercel.app/holisticare_test';
-  // protected static base_url: string = "https://mock.app";
+  protected static base_url: string = resolveBaseEndPoint();
   protected static post(url: string, data?: any, config?: any) {
     if (!config?.noPending) {
       toast.clearWaitingQueue();

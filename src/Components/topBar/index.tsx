@@ -11,6 +11,7 @@ import LogOutModal from '../LogOutModal';
 import { SlideOutPanel } from '../SlideOutPanel';
 import SpinnerLoader from '../SpinnerLoader';
 import DownloadModal from './downloadModal';
+// import { resolveBaseUrl } from '../../api/base';
 // import { CircleLoader } from 'react-spinners';
 // import { useEffect } from "react";
 
