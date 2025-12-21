@@ -149,30 +149,32 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <img className="w-4" src={resolvePillarIcon()} alt="" />
                 </div>
                 {value.Title}
-                {value?.label && (
-                  <div
-                    className={`select-none mt-4 xs:mt-0 rounded-full px-2 flex items-center gap-1 text-[8px] text-Text-Primary ml-3`}
-                    style={{ backgroundColor: bgColor }}
-                  >
+                <div className="flex mt-2 lg:mt-0">
+                  {value?.label && (
                     <div
-                      className={`size-[8px] select-none rounded-full`}
-                      style={{ backgroundColor: color }}
-                    ></div>
-                    {value?.label}
-                  </div>
-                )}
-                {value.holisticare_recommendation && (
-                  <div
-                    className={`select-none ml-2 rounded-full px-2  text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
-                    style={{ backgroundColor: '#E2F1F8' }}
-                  >
+                      className={`select-none mt-4 xs:mt-0 rounded-full px-2 flex items-center gap-1 text-[8px] text-Text-Primary ml-3`}
+                      style={{ backgroundColor: bgColor }}
+                    >
+                      <div
+                        className={`size-[8px] select-none rounded-full`}
+                        style={{ backgroundColor: color }}
+                      ></div>
+                      {value?.label}
+                    </div>
+                  )}
+                  {value.holisticare_recommendation && (
                     <div
-                      className={`size-[8px] select-none rounded-full`}
-                      style={{ backgroundColor: '#005F73' }}
-                    ></div>
-                    Holistic Plan Recommended
-                  </div>
-                )}
+                      className={`select-none ml-2 rounded-full px-2  text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
+                      style={{ backgroundColor: '#E2F1F8' }}
+                    >
+                      <div
+                        className={`size-[8px] select-none rounded-full`}
+                        style={{ backgroundColor: '#005F73' }}
+                      ></div>
+                      Holistic Plan Recommended
+                    </div>
+                  )}
+                </div>
                 {value.flag && value.flag.conflicts.length > 0 && (
                   <button
                     className="flex items-center gap-1 cursor-pointer ml-7"
@@ -754,7 +756,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         defalts={newValue}
         onAddNotes={() => {}}
         onSubmit={(editedData) => {
-          // alert(editedData.Unit)
           setValues((prevData: any) => {
             const updatedData = { ...prevData };
 
@@ -767,7 +768,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 ...updatedData.category[categoryIndex],
                 Category: editedData.Category ?? '',
                 Title: editedData.Title ?? '',
-                Unit: editedData.Unit ?? '',
                 'Based on': editedData['Based on'] ?? '',
                 // 'Practitioner Comments': editedData['Practitioner Comments'] ?? [],
                 Description: editedData.Description ?? '',

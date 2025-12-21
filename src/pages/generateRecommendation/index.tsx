@@ -386,7 +386,7 @@ export const GenerateRecommendation = () => {
     !(treatmentPlanData && hasSuggestionsData(treatmentPlanData));
 
   return (
-    <div ref={containerRef} className="h-[100vh] overflow-auto">
+    <div ref={containerRef} className="h-[100vh] pb-20 lg:pb-0 overflow-auto">
       {isLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-95 z-20">
           <Circleloader></Circleloader>
