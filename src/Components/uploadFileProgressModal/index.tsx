@@ -59,8 +59,8 @@ export const UploadFileProgressModal = () => {
       <div
         style={{ zIndex: 1000 }}
         className={`
-          fixed top-[48px] right-6
-          w-[320px] h-[212px]
+          fixed top-[48px] right-4 md:right-6
+            w-[290px] md:w-[320px] h-[212px]
           rounded-2xl border-2 border-r-0 border-Gray-50 
           shadow-200 p-4 bg-white
           transition-all duration-[1000] ease-[cubic-bezier(0.4,0,0.2,1)]
