@@ -455,7 +455,7 @@ export const TopBar: FC<TopBarProps> = ({
                         .share({
                           title: 'Holisticare',
                           url:
-                            `https://holisticare-develop.vercel.app` +
+                            `https://holisticare.vercel.app` +
                             '/share/' +
                             res.data.unique_key +
                             '/' +

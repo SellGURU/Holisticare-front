@@ -654,7 +654,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         Upload your client's lab test file and edit or add
                         biomarkers manually.
                       </div>
-                      <div className=" text-[8px]  xs:text-[10px]  md:text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
+                      <div
+                        className={` text-[8px]  xs:text-[10px]  md:text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute ${
+                          isSaveClicked &&
+                          extractedBiomarkers.length + addedBiomarkers.length
+                            ? 'bottom-4 lg:bottom-6'
+                            : 'bottom-6'
+                        } `}
+                      >
                         Enter or Upload Biomarkers
                       </div>
                     </div>

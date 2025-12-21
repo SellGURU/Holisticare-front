@@ -849,7 +849,7 @@ const Stadio: FC<StadioProps> = ({
       >
         <div className="    h-full">
           <div
-            className={`w-full lg:w-[342px]     bg-white rounded-[24px] border border-gray-50 shadow-100`}
+            className={`w-full lg:w-[342px]      bg-white rounded-[24px] border border-gray-50 shadow-100`}
           >
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
