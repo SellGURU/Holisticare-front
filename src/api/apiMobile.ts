@@ -1,9 +1,8 @@
 import Api from './api';
+import { resolveBaseEndPoint } from './base';
 
 class ApiMobile extends Api {
-  protected static base_url: string =
-    // 'https://vercel-backend-one-roan.vercel.app/holisticare/mobile';
-    'https://vercel-backend-one-roan.vercel.app/holisticare-test/mobile';
+  protected static base_url: string = resolveBaseEndPoint() + '/mobile';
 }
 
 export default ApiMobile;
