@@ -11,6 +11,7 @@ import LogOutModal from '../LogOutModal';
 import { SlideOutPanel } from '../SlideOutPanel';
 import SpinnerLoader from '../SpinnerLoader';
 import DownloadModal from './downloadModal';
+import { resolveBaseUrl } from '../../api/base';
 // import { CircleLoader } from 'react-spinners';
 // import { useEffect } from "react";
 
@@ -455,7 +456,7 @@ export const TopBar: FC<TopBarProps> = ({
                         .share({
                           title: 'Holisticare',
                           url:
-                            `https://holisticare-develop.vercel.app` +
+                            resolveBaseUrl() +
                             '/share/' +
                             res.data.unique_key +
                             '/' +
