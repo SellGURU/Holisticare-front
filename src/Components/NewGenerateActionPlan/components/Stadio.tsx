@@ -310,7 +310,7 @@ const Stadio: FC<StadioProps> = ({
         e.dataTransfer.getData('application/holisticare-action'),
       );
       if (itemData && (itemData.Task_Type || itemData.Category)) {
-          addToActions(
+        addToActions(
           itemData.Category == 'Lifestyle'
             ? { ...itemData, Unit: itemData.Unit || null }
             : itemData,
@@ -350,7 +350,7 @@ const Stadio: FC<StadioProps> = ({
         });
     }
   }, [isSlideOutPanel]);
-const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
   return (
     <>
       <SlideOutPanel
@@ -552,14 +552,18 @@ const [showModal, setShowModal] = useState(false)
             <div
               className={`flex-grow flex flex-col lg:flex-row gap-4 justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
-              <div className='flex lg:hidden w-full  justify-end text-Primary-DeepTeal font-medium text-[10px] md:text-xs' >
-                <div onClick={()=>{setShowModal(true)}} className='flex cursor-pointer items-center gap-1'>
-                  <Box size={20} color='#005f73'/>
+              <div className="flex lg:hidden w-full  justify-end text-Primary-DeepTeal font-medium text-[10px] md:text-xs">
+                <div
+                  onClick={() => {
+                    setShowModal(true);
+                  }}
+                  className="flex cursor-pointer items-center gap-1"
+                >
+                  <Box size={20} color="#005f73" />
                   Open Add Box
-                  
                 </div>
               </div>
-              <div className='flex w-full justify-between'>
+              <div className="flex w-full justify-between">
                 <div
                   className="flex  items-center gap-1 select-none lg:pl-2 cursor-pointer"
                   onClick={() => setIsSlideOutPanel(true)}
@@ -774,7 +778,7 @@ const [showModal, setShowModal] = useState(false)
                         className="cursor-move"
                       >
                         <LibBox
-                         onAdd={() =>
+                          onAdd={() =>
                             addToActions(
                               value.Category == 'Lifestyle'
                                 ? { ...value, Unit: value.Unit || null }
@@ -798,7 +802,7 @@ const [showModal, setShowModal] = useState(false)
                         className="cursor-move"
                       >
                         <LibBox
-                         onAdd={() =>
+                          onAdd={() =>
                             addToActions(
                               value.Category == 'Lifestyle'
                                 ? { ...value, Unit: value.Unit || null }
@@ -835,15 +839,15 @@ const [showModal, setShowModal] = useState(false)
           </div>
         </div>
       </div>
-            <SlideOutPanel
+      <SlideOutPanel
         isOpen={showModal}
         isActionPLan
         isCombo={true}
-        onClose={()=>setShowModal(false)}
+        onClose={() => setShowModal(false)}
         headline="Add Action"
         ClassName="!z-[60] !overflow-y-auto"
       >
-            <div className="    h-full">
+        <div className="    h-full">
           <div
             className={`w-full lg:w-[342px]      bg-white rounded-[24px] border border-gray-50 shadow-100`}
           >
