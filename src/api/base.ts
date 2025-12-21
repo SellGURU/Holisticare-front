@@ -5,7 +5,7 @@ const baseTestEndPoint =
   'https://vercel-backend-one-roan.vercel.app/holisticare_test';
 const baseProductUrl = 'https://holisticare.vercel.app';
 const baseTestUrl = 'https://holisticare-develop.vercel.app';
-let env: 'test' | 'production' = 'test';
+let env: 'test' | 'production' = 'production';
 
 const resolveBaseEndPoint = () => {
   if (env == 'test') {
