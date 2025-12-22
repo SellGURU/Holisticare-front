@@ -207,7 +207,6 @@ export function PublicSurveyForm({
   onAutoSaveClient,
   action,
 }: PublicSurveyFormProps) {
-
   useEffect(() => {
     if (action === 'edit') {
       setCurrentStep(1);
@@ -1293,9 +1292,7 @@ export function PublicSurveyForm({
   };
 
   if (sortedQuestions.length === 0 && !loading) {
-    return (
-      <EmptyQuestion />
-    );
+    return <EmptyQuestion />;
   }
 
   return (
@@ -1308,7 +1305,11 @@ export function PublicSurveyForm({
       </div>
 
       {currentStep === 0 && (
-        <StepOneQuestion survey={survey} visibleQuestions={visibleQuestions} handleStart={handleStart} />
+        <StepOneQuestion
+          survey={survey}
+          visibleQuestions={visibleQuestions}
+          handleStart={handleStart}
+        />
       )}
 
       {currentQuestion && (
