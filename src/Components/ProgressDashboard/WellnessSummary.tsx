@@ -344,8 +344,9 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
             })}
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center py-20">
-            <div className="text-center">
+          <div className="flex-1 -mt-7 flex flex-col items-center justify-center">
+            <img src="/images/EmptyState.svg" alt="" />
+            <div className="text-center -mt-10">
               <div className="text-Text-Primary text-sm mb-1">
                 No metric data available
               </div>

@@ -585,8 +585,9 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
           <Line data={chartDataConfig} options={chartOptions} />
         </div>
       ) : (
-        <div className="h-[400px] flex items-center justify-center">
-          <div className="text-center">
+        <div className="h-[400px] flex flex-col items-center justify-center">
+          <img src="/images/EmptyState.svg" alt="" />
+          <div className="text-center -mt-10">
             <div className="text-Text-Primary text-lg mb-2">
               No progression data available
             </div>
