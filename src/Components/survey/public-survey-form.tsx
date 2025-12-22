@@ -1,9 +1,7 @@
 'use client';
 
 import {
-  Activity,
   AlertCircle,
-  ArrowRight,
   Check,
   CheckCircle2,
   Star,
@@ -28,7 +26,10 @@ import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Slider } from '../ui/slider';
 import { Textarea } from '../ui/textarea';
 import { toast } from '../ui/use-toast';
-import SvgIcon from '../../utils/svgIcon';
+// import SvgIcon from '../../utils/svgIcon';
+import EmptyQuestion from './components/EmptyQuestion';
+import StepOneQuestion from './components/StepOneQuestion';
+import MainQuestionBox from './components/MainQuestionBox';
 // import { publish } from '../../utils/event';
 
 // Define flexible interfaces to handle different API response structures
@@ -206,7 +207,6 @@ export function PublicSurveyForm({
   onAutoSaveClient,
   action,
 }: PublicSurveyFormProps) {
-  console.log(survey);
 
   useEffect(() => {
     if (action === 'edit') {
@@ -214,7 +214,6 @@ export function PublicSurveyForm({
     }
   }, [action]);
 
-  // const navigate = useNavigate();
   const { 'member-id': memberId, 'q-id': qId, 'f-id': fId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<
@@ -296,7 +295,6 @@ export function PublicSurveyForm({
       }
     }
   }, [currentStep]);
-  console.log('responses => ', responses);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [visibleQuestions, setVisibleQuestions] = useState<ApiQuestion[]>([]);
@@ -1296,48 +1294,7 @@ export function PublicSurveyForm({
 
   if (sortedQuestions.length === 0 && !loading) {
     return (
-      <div className="container max-w-4xl mx-auto px-4 py-10">
-        <Card className="bg-white shadow-xl border-0 text-center">
-          <CardHeader>
-            <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
-              <svg
-                className="w-8 h-8 text-red-600"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <CardTitle className="text-2xl font-bold">
-              No Questions Available
-            </CardTitle>
-            <CardDescription className="text-lg mt-2">
-              This survey doesn't contain any questions.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pb-8">
-            <p className="text-gray-600 mb-6">
-              The survey data structure might not be in the expected format.
-              Please check the console for details.
-            </p>
-            <Button
-              onClick={() => (window.location.href = '/')}
-              variant="outline"
-              size="lg"
-              className="mt-4"
-            >
-              Return to Home
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <EmptyQuestion />
     );
   }
 
@@ -1351,153 +1308,25 @@ export function PublicSurveyForm({
       </div>
 
       {currentStep === 0 && (
-        <Card className="bg-white shadow-xl border-0">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-              <Activity className="w-8 h-8 text-green-600" />
-            </div>
-            <CardTitle className="text-3xl font-bold">
-              {survey.title || 'Health & Wellness Survey'}
-            </CardTitle>
-            <CardDescription className="text-lg mt-2">
-              {survey.description ||
-                'Help us understand your health needs better'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-gray-600 mb-6">
-              This survey contains {visibleQuestions.length} questions and will
-              take approximately {Math.ceil(visibleQuestions.length * 0.5)}{' '}
-              minutes to complete.
-            </p>
-            <p className="text-gray-600 mb-6">
-              <span className="text-red-500">*</span> indicates required
-              questions.
-            </p>
-          </CardContent>
-          <CardFooter className="flex justify-center pb-8">
-            <Button
-              onClick={handleStart}
-              size="lg"
-              className="px-8 py-6 text-lg rounded-full bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 transition-all shadow-lg hover:shadow-xl"
-            >
-              Start Survey
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </CardFooter>
-        </Card>
+        <StepOneQuestion survey={survey} visibleQuestions={visibleQuestions} handleStart={handleStart} />
       )}
 
       {currentQuestion && (
-        <Card
-          style={{ height: window.innerHeight - 200 + 'px' }}
-          className="bg-white shadow-xl   border-0 flex flex-col relative"
-        >
-          <CardHeader>
-            <div
-              className={`px-3 py-1 rounded-full items-center flex text-sm font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
-            >
-              Question {currentStep} of {visibleQuestions.length}
-              {showSaveIndicator == 'saving' && (
-                <>
-                  <div className=" ml-2 flex items-center gap-1">
-                    <SvgIcon
-                      stroke="#FFFFFF"
-                      width="16px"
-                      height="16px"
-                      src="/icons/refresh-2.svg"
-                      color={''}
-                      className="animate-spin"
-                    ></SvgIcon>
-                    <div className="text-xs">Saving response…</div>
-                  </div>
-                </>
-              )}
-              {showSaveIndicator == 'saved' && (
-                <>
-                  <div className=" ml-2 flex items-center gap-1">
-                    <SvgIcon
-                      stroke="#FFFFFF"
-                      width="16px"
-                      height="16px"
-                      src="/icons/tick-circle2.svg"
-                      color={''}
-                    ></SvgIcon>
-                    <span>Response saved</span>
-                  </div>
-                </>
-              )}
-            </div>
-            <CardTitle className="text-[14px] 2xl:text-base max-h-[120px] overflow-y-scroll font-bold break-words pr-4 max-w-full">
-              {getQuestionText(currentQuestion)}
-              {currentQuestion.required && (
-                <span className="text-red-500 ml-1">*</span>
-              )}
-            </CardTitle>
-            {currentQuestion.required && (
-              <CardDescription className="text-sm text-gray-500 mt-1">
-                Required
-              </CardDescription>
-            )}
-          </CardHeader>
-          <CardContent
-            className="space-y-6   pb-20 overflow-y-scroll"
-            style={{ height: window.innerHeight - 400 + 'px' }}
-          >
-            {renderQuestion(
-              currentQuestion,
-              getOriginalIndexForVisibleIndex(currentStep - 1),
-            )}
-
-            {validationErrors[
-              getOriginalIndexForVisibleIndex(currentStep - 1)
-            ] && (
-              <div className="flex items-center space-x-2 text-red-500 text-sm mt-2">
-                <AlertCircle className="h-4 w-4" />
-                <span>
-                  {
-                    validationErrors[
-                      getOriginalIndexForVisibleIndex(currentStep - 1)
-                    ]
-                  }
-                </span>
-              </div>
-            )}
-
-            {error && (
-              <div className="flex items-center space-x-2 text-red-500 text-sm mt-2">
-                <AlertCircle className="h-4 w-4" />
-                <span>{error}</span>
-              </div>
-            )}
-          </CardContent>
-          <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full bg-white">
-            <Button
-              className={`${currentStep > 1 ? 'visible' : 'invisible'}`}
-              type="button"
-              variant="outline"
-              onClick={handlePrevious}
-            >
-              Back
-            </Button>
-
-            <Button
-              type="button"
-              onClick={handleNext}
-              disabled={submitting}
-              data-testid="survey-next-button"
-              className={`bg-gradient-to-r ${gradientClass} -end hover:brightness-105 transition-all text-white`}
-            >
-              {currentStep === visibleQuestions.length
-                ? submitting
-                  ? 'Submitting...'
-                  : action === 'edit'
-                    ? 'Update'
-                    : 'Submit'
-                : 'Next'}
-            </Button>
-          </CardFooter>
-        </Card>
+        <MainQuestionBox
+          error={error}
+          handlePrevious={handlePrevious}
+          handleNext={handleNext}
+          submitting={submitting}
+          action={action}
+          validationErrors={validationErrors}
+          gradientClass={gradientClass}
+          showSaveIndicator={showSaveIndicator}
+          currentStep={currentStep}
+          visibleQuestions={visibleQuestions}
+          currentQuestion={currentQuestion}
+          renderQuestion={renderQuestion}
+          getOriginalIndexForVisibleIndex={getOriginalIndexForVisibleIndex}
+        />
       )}
       {currentStep == sortedQuestions.length + 1 && isNeedConfirm && (
         <>
