@@ -362,8 +362,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   if (ValueValidation(vales[0].value)) {
                     updateAddData('value', vales[0].value);
                   }
-                  const onlyLetters = vales[1].value.replace(/[^a-zA-Z]/g, '');
-                  updateAddData('unit', onlyLetters);
+const onlyLettersAndSpaces = vales[1].value.replace(/[^a-zA-Z\s]/g, '');
+                  updateAddData('unit', onlyLettersAndSpaces);
                 }}
                 InfoText={ValueInfoText}
                 validationText={
