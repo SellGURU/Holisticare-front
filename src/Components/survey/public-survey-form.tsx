@@ -305,23 +305,26 @@ export function PublicSurveyForm({
     Record<number, string>
   >({});
 
-  const getQuestionText = useCallback((question: ApiQuestion): string | null => {
-    if (question.hide == true) return null;
-    if (typeof question.text === 'string' && question.text)
-      return question.text;
-    if (typeof question.question === 'string' && question.question)
-      return question.question;
-    if (typeof question.title === 'string' && question.title)
-      return question.title;
-    return 'Question';
-  }, []);
+  const getQuestionText = useCallback(
+    (question: ApiQuestion): string | null => {
+      if (question.hide == true) return null;
+      if (typeof question.text === 'string' && question.text)
+        return question.text;
+      if (typeof question.question === 'string' && question.question)
+        return question.question;
+      if (typeof question.title === 'string' && question.title)
+        return question.title;
+      return 'Question';
+    },
+    [],
+  );
 
   // Compute visible questions with useMemo
   const visibleQuestions = useMemo(() => {
-    const resolve = resolveRespond().filter((q:any) => !q.hide);
+    const resolve = resolveRespond().filter((q: any) => !q.hide);
     // console.log(resolveRespond());
     return ResolveConditions(resolve);
-  }, [sortedQuestions,currentStep]);
+  }, [sortedQuestions, currentStep]);
 
   // Build mapping from visible index to original index
   const visibleToOriginalIndex = useMemo(() => {
