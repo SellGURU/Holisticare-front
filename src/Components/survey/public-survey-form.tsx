@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import {
@@ -8,7 +9,7 @@ import {
   UploadCloud,
   X,
 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Application from '../../api/app';
 import { Button } from '../ui/button';
@@ -30,6 +31,7 @@ import { toast } from '../ui/use-toast';
 import EmptyQuestion from './components/EmptyQuestion';
 import StepOneQuestion from './components/StepOneQuestion';
 import MainQuestionBox from './components/MainQuestionBox';
+import ResolveConditions from './resolveConditions';
 // import { publish } from '../../utils/event';
 
 // Define flexible interfaces to handle different API response structures
@@ -296,16 +298,49 @@ export function PublicSurveyForm({
   }, [currentStep]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [visibleQuestions, setVisibleQuestions] = useState<ApiQuestion[]>([]);
 
   const [sortedQuestions, setSortedQuestions] = useState<ApiQuestion[]>([]);
   const [loading] = useState(false);
   const [validationErrors, setValidationErrors] = useState<
     Record<number, string>
   >({});
-  const [visibleToOriginalIndex, setVisibleToOriginalIndex] = useState<
-    number[]
-  >([]);
+
+  const getQuestionText = useCallback((question: ApiQuestion): string | null => {
+    if (question.hide == true) return null;
+    if (typeof question.text === 'string' && question.text)
+      return question.text;
+    if (typeof question.question === 'string' && question.question)
+      return question.question;
+    if (typeof question.title === 'string' && question.title)
+      return question.title;
+    return 'Question';
+  }, []);
+
+  // Compute visible questions with useMemo
+  const visibleQuestions = useMemo(() => {
+    const resolve = resolveRespond().filter((q:any) => !q.hide);
+    // console.log(resolveRespond());
+    return ResolveConditions(resolve);
+  }, [sortedQuestions,currentStep]);
+
+  // Build mapping from visible index to original index
+  const visibleToOriginalIndex = useMemo(() => {
+    return visibleQuestions.map((vq) => {
+      let idx = sortedQuestions.findIndex((q) => q === vq);
+      if (idx !== -1) return idx;
+      // Fallback: match by text + type + options signature
+      const text = getQuestionText(vq) || 'Question';
+      const type = (vq.type || '').toLowerCase();
+      const opts = Array.isArray(vq.options) ? JSON.stringify(vq.options) : '';
+      idx = sortedQuestions.findIndex((q) => {
+        const qText = getQuestionText(q) || 'Question';
+        const qType = (q.type || '').toLowerCase();
+        const qOpts = Array.isArray(q.options) ? JSON.stringify(q.options) : '';
+        return qText === text && qType === type && qOpts === opts;
+      });
+      return idx;
+    });
+  }, [visibleQuestions, sortedQuestions, getQuestionText]);
 
   // States for 'File Uploader' specific logic
   const [tempFrontal, setTempFrontal] = useState<IndividualFileData | null>(
@@ -373,25 +408,6 @@ export function PublicSurveyForm({
 
     console.log('Final processed questions:', questions);
     setSortedQuestions(Array.isArray(questions) ? questions : []);
-    const visible = questions.filter((q) => !q.hide);
-    setVisibleQuestions(visible);
-    // Build mapping from visible index to original index
-    const mapping: number[] = visible.map((vq) => {
-      let idx = questions.findIndex((q) => q === vq);
-      if (idx !== -1) return idx;
-      // Fallback: match by text + type + options signature
-      const text = getQuestionText(vq) || 'Question';
-      const type = (vq.type || '').toLowerCase();
-      const opts = Array.isArray(vq.options) ? JSON.stringify(vq.options) : '';
-      idx = questions.findIndex((q) => {
-        const qText = getQuestionText(q) || 'Question';
-        const qType = (q.type || '').toLowerCase();
-        const qOpts = Array.isArray(q.options) ? JSON.stringify(q.options) : '';
-        return qText === text && qType === type && qOpts === opts;
-      });
-      return idx;
-    });
-    setVisibleToOriginalIndex(mapping);
     // --- NEW: Initialize responses for all questions ---
     const initialResponses: Record<
       number,
@@ -469,17 +485,6 @@ export function PublicSurveyForm({
     setResponses(initialResponses);
     // --- END NEW INITIALIZATION ---
   }, [survey]);
-
-  const getQuestionText = (question: ApiQuestion): string | null => {
-    if (question.hide == true) return null;
-    if (typeof question.text === 'string' && question.text)
-      return question.text;
-    if (typeof question.question === 'string' && question.question)
-      return question.question;
-    if (typeof question.title === 'string' && question.title)
-      return question.title;
-    return 'Question';
-  };
 
   const getQuestionOptions = (question: ApiQuestion): string[] => {
     if (!question.options) return [];
