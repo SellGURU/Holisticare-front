@@ -153,11 +153,11 @@ const Report = () => {
               if (params.get('type') === 'Health') {
                 setActiveReportSection('Health');
               } else {
-                setActiveReportSection('Progress');
+                // setActiveReportSection('Progress');
               }
             } else {
               if (params.get('type') === 'Progress') {
-                setActiveReportSection('Progress');
+                // setActiveReportSection('Progress');
               } else {
                 setActiveReportSection('Health');
               }

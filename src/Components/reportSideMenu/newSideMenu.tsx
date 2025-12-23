@@ -23,7 +23,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   onClose,
   isShare,
   activeReportSection,
-  setActiveReportSection,
+  // setActiveReportSection,
 }) => {
   const menuItems = [
     'Client Summary',
@@ -158,7 +158,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       style={{ height: window.innerHeight - 100 + 'px' }}
       className={` min-h-[272px]  w-[178px] bg-white '} border border-gray-50 rounded-[12px] p-4 shadow-100 relative`}
     >
-      {!isShare && (
+      {/* {!isShare && (
         <div className="flex gap-1 mb-4">
           <div
             onClick={() => {
@@ -223,7 +223,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             <span className="text-[10px] font-medium">Progress</span>
           </div>
         </div>
-      )}
+      )} */}
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() =>
