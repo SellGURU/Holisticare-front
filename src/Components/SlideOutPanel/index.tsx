@@ -53,7 +53,7 @@ export const SlideOutPanel: FC<SlideOutPanelProps> = ({
   // ---------------- RESIZE HANDLER ----------------
   const startResize = (e: React.MouseEvent) => {
     if (!isResizable) return;
-
+    if(window.innerWidth < 1400) return;
     e.preventDefault();
 
     const panel = panelRef.current;
@@ -67,16 +67,16 @@ export const SlideOutPanel: FC<SlideOutPanelProps> = ({
       const newWidth = startWidth + delta;
 
       const clamped = Math.max(minWidthRef.current, Math.min(900, newWidth));
-      panel.style.width = clamped + "px";
+      panel.style.width = clamped + 'px';
     };
 
     const stopResize = () => {
-      window.removeEventListener("mousemove", handleMove);
-      window.removeEventListener("mouseup", stopResize);
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', stopResize);
     };
 
-    window.addEventListener("mousemove", handleMove);
-    window.addEventListener("mouseup", stopResize);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', stopResize);
   };
 
   return (
@@ -88,15 +88,13 @@ export const SlideOutPanel: FC<SlideOutPanelProps> = ({
         showModalRefrence.current = el;
       }}
       className={`fixed top-[43px] z-20 right-0 h-[calc(100vh-43px)] 
-        ${isActionPLan ? 'w-[83vw]' : 'w-[260px] xs:w-[320px] md:w-[340px] lg:w-[340px]
-       '}  bg-white border-[2px] border-r-0 border-Gray-25 
+        ${isActionPLan ? 'w-[83vw]' : 'w-[260px] xs:w-[320px] md:w-[340px] lg:w-[340px]'}  bg-white border-[2px] border-r-0 border-Gray-25 
         rounded-tl-2xl rounded-bl-2xl shadow-lg 
         transform transition-transform duration-300 
-        ${ClassName} ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        ${ClassName} ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
     >
-
       {/* LEFT RESIZE ZONE (FULL VERTICAL STRIP) */}
-      {isResizable && (
+      {isResizable && window.innerWidth > 1400 && (
         <div
           onMouseDown={startResize}
           className="

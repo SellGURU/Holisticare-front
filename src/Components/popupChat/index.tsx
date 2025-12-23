@@ -94,20 +94,20 @@ export const PopUpChat = ({
     scrollToBottom();
   }, [MessageData, isOpen]);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
-    const boxRef = useRef<HTMLDivElement | null>(null);
+  const boxRef = useRef<HTMLDivElement | null>(null);
 
   const isRecent = (timestamp: number) => {
     const now = Date.now();
     const diffInSeconds = (now - timestamp) / 1000;
     return diffInSeconds <= 60; // within the last minute
   };
-   const edgeSize = 10; // px area for resize detection
+  const edgeSize = 10; // px area for resize detection
   const resizing = useRef(false);
   const resizeDir = useRef<'left' | 'top' | 'corner' | null>(null);
 
   const onMouseMoveWindow = (e: MouseEvent) => {
     if (!resizing.current || !boxRef.current) return;
-
+  if (window.innerWidth < 1400) return;
     const box = boxRef.current;
     const rect = box.getBoundingClientRect();
 
@@ -131,7 +131,7 @@ export const PopUpChat = ({
 
   const startResize = (e: React.MouseEvent) => {
     if (!boxRef.current) return;
-
+    if (window.innerWidth < 1400) return;
     const rect = boxRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -153,6 +153,7 @@ export const PopUpChat = ({
 
   const updateCursor = (e: React.MouseEvent) => {
     if (!boxRef.current) return;
+    if (window.innerWidth < 1400) return;
     const rect = boxRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -168,7 +169,7 @@ export const PopUpChat = ({
   return (
     <AnimatePresence>
       {isOpen && (
-         <motion.div
+        <motion.div
           ref={boxRef}
           onMouseMove={updateCursor}
           onMouseDown={startResize}
@@ -192,7 +193,6 @@ export const PopUpChat = ({
           }}
           className="bg-white border border-Gray-50 z-50 p-4 absolute bottom-0 right-16 rounded-2xl space-y-6 shadow-lg flex flex-col pb-4"
         >
-         
           <h1 className={'TextStyle-Headline-6  text-Text-Primary'}>Copilot</h1>
           <div
             className={
