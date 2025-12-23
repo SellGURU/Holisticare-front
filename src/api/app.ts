@@ -818,6 +818,24 @@ class Application extends Api {
     const response = this.post('/initial_save_treatment_plan', data);
     return response;
   };
+  static getWellnessScores = (data: {
+    member_id: number;
+    from_date?: string;
+    to_date?: string;
+  }) => {
+    const response = this.post('/wellness_scores', data);
+    return response;
+  };
+
+  static getWellnessScoresHistorical = (data: {
+    member_id: number;
+    from_date?: string;
+    to_date?: string;
+  }) => {
+    const response = this.post('/wellness_scores/historical', data);
+    return response;
+  };
+
   static showHolisticPlan = (data: any) => {
     const response = this.post('/show_initial_saved_treatment_plan', data);
     return response;
@@ -1129,7 +1147,6 @@ class Application extends Api {
       member_id: member_id,
     });
   };
-
   static initialSaveActionPlan = (data: any) => {
     return this.post('/action_plan/draft/initial_save', data);
   };
