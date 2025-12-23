@@ -386,7 +386,7 @@ export const GenerateRecommendation = () => {
     !(treatmentPlanData && hasSuggestionsData(treatmentPlanData));
 
   return (
-    <div ref={containerRef} className="h-[100vh] overflow-auto">
+    <div ref={containerRef} className="h-[100vh] pb-20 lg:pb-0 overflow-auto">
       {isLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-95 z-20">
           <Circleloader></Circleloader>
@@ -487,7 +487,7 @@ export const GenerateRecommendation = () => {
           </div>
 
           <div className="px-4 md:px-8">
-            <div className="mt-5 flex justify-between py-4 md:px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full">
+            <div className="mt-5 flex overflow-x-auto hidden-scrollbar justify-between py-4 md:px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full">
               {steps.map((label, index) => (
                 <React.Fragment key={index}>
                   <div

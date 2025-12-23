@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Application from '../../api/app.ts';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
-import { publish, subscribe } from '../../utils/event.ts';
+import { publish, subscribe, unsubscribe } from '../../utils/event.ts';
 import { PopUpChat } from '../popupChat';
 import { SlideOutPanel } from '../SlideOutPanel';
 
@@ -16,7 +16,7 @@ import TimeLine from './components/timeLine.tsx';
 // import { FilleHistory } from './components/filleHistory.tsx';
 import { Tooltip } from 'react-tooltip';
 import SvgIcon from '../../utils/svgIcon.tsx';
-import FileHistoryNew from './components/FileHistoryNew.tsx';
+import FileHistoryNew from './components/FileHistory/FileHistoryNew.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
 import { motion } from 'framer-motion';
 
@@ -28,6 +28,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   const { id } = useParams<{ id: string }>();
   const [idData, setIdData] = useState<string>('');
   const [hasUnreadMessage, setHasUnreadMessage] = useState<boolean>(false);
+  const [unsyncedIdes, setUnsyncedIdes] = useState<string[]>([]);
   useEffect(() => {
     if (id) {
       setIdData(id);
@@ -84,6 +85,15 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       setPatientInfo(res.data);
     });
   }, [id]);
+  useEffect(() => {
+    const handleCompletedProgress = () => {
+      setIsSlideOutPanel(false);
+    };
+    subscribe('completedProgress', handleCompletedProgress);
+    return () => {
+      unsubscribe('completedProgress', handleCompletedProgress);
+    };
+  }, []);
   // useConstructor(() => {
   //   // setIsLoading(true);
   //   Application.getSummary(id as string).then((res) => {
@@ -174,6 +184,13 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     }
     setIsSlideOutPanel(false);
   };
+  useEffect(() => {
+    if (isSlideOutPanel) {
+      publish('openSideMenu', { status: true });
+    } else {
+      publish('openSideMenu', { status: false });
+    }
+  }, [isSlideOutPanel]);
   const [updated, setUpdated] = useState(false);
 
   const handleItemClick = (name: string) => {
@@ -198,12 +215,17 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'File History':
         return (
           <FileHistoryNew
+            unsyncedIdes={unsyncedIdes}
+            setUnsyncedIdes={setUnsyncedIdes}
+            isOpen={isSlideOutPanel && activeItem === 'File History'}
             handleCloseSlideOutPanel={handleCloseSlideOutPanel}
+            // handleCloseSlideOutPanel={handleCloseSlideOutPanel}
           ></FileHistoryNew>
         );
       case 'Questionnaire Tracking':
         return (
           <Questionary
+            handleCloseSlideOutPanel={handleCloseSlideOutPanel}
             isOpen={isSlideOutPanel && activeItem === 'Questionnaire Tracking'}
           ></Questionary>
         );

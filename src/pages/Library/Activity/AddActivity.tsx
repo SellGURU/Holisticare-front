@@ -222,7 +222,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       { name: 'Finisher', enabled: true, order: 5 },
     ],
   });
-  const handleChangeSetOrder = (value: any) => {
+  const handleChangeSetOrder = (value: typeof addData.Set_Order) => {
     setAddData((prevTheme) => ({
       ...prevTheme,
       Set_Order: value,
@@ -240,7 +240,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       addData.title.trim() !== '' &&
         addData.instruction.trim() !== '' &&
         addData.score > 0 &&
-        (addData.Parent_Title.trim() !== '' || editid !== null),
+        (addData?.Parent_Title?.trim() !== '' || editid !== null),
     );
   }, [addData.title, addData.instruction, addData.score, addData.Parent_Title]);
 
@@ -267,7 +267,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         </div>
       )}
       <div
-        className={`bg-white ${step === 0 ? 'w-[784px]' : 'w-[884px]'} p-4 rounded-[16px] h-full`}
+        className={`bg-white ${step === 0 ? 'w-[90vw] md:w-[800px]' : 'w-[90vw] md:w-[884px]'} p-4 rounded-[16px] h-full`}
       >
         <div className="flex w-full  justify-start">
           <div className="text-[14px] font-medium text-Text-Primary">
@@ -275,7 +275,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           </div>
         </div>
         <div className="w-full h-[1px] bg-Boarder my-3"></div>
-        <div className="min-h-[300px]">
+        <div className="md:min-h-[300px]">
           {step === 0 ? (
             <InformationStep
               showValidation={showValidation}

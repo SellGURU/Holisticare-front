@@ -1,13 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from 'react';
-import { subscribe, unsubscribe } from '../../utils/event'; // Adjust the import path as needed
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import SvgIcon from '../../utils/svgIcon';
+import React, { useEffect, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { decodeAccessUser } from '../../help';
+import { publish, subscribe, unsubscribe } from '../../utils/event'; // Adjust the import path as needed
+import SvgIcon from '../../utils/svgIcon';
 interface ReportSideMenuProps {
   onClose: () => void;
   isShare?: boolean;
+  activeReportSection: 'Health' | 'Progress';
+  setActiveReportSection: (section: 'Health' | 'Progress') => void;
 }
 
 const formatStringWithQuotes = (str: string): string => {
@@ -20,8 +22,10 @@ const formatStringWithQuotes = (str: string): string => {
 const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   onClose,
   isShare,
+  activeReportSection,
+  setActiveReportSection,
 }) => {
-  const menuItems = [
+  const healthMenuItems = [
     'Client Summary',
     'Need Focus Biomarker',
     'Concerning Result',
@@ -30,11 +34,11 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     'Action Plan',
   ];
 
+  const progressMenuItems = ['Wellness Data', 'Progress Data'];
+
   const [activeMenu, setactiveMenu] = useState('Client Summary');
   const [ActiveLayer, setActiveLayer] = useState('menu');
   const [activeImg, setactiveImg] = useState(1);
-  const [disableClicks, setDisableClicks] = useState(false);
-  const location = useLocation();
   const [accessManager, setAccessManager] = useState<Array<any>>([
     {
       name: 'Client Summary',
@@ -62,50 +66,61 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     },
   ]);
   const resolveSteps = () => {
+    const items =
+      activeReportSection === 'Progress' ? progressMenuItems : healthMenuItems;
     if (!isShare) {
-      return menuItems;
+      return items;
     } else {
-      return menuItems.filter(
+      return items.filter(
         (el) =>
           accessManager.filter((val) => val.name == el)[0]?.checked == true,
       );
-      // return menuItems.filter((el) => accessManager.filter((val) =>val.name == el)[0].checked ==true)
     }
   };
   const { name } = useParams<{ name: string }>();
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const handleNoReportAvailable = () => {
-      setDisableClicks(true);
+    const handleScrolledSection = (data: any) => {
+      const currentItems =
+        activeReportSection === 'Progress'
+          ? progressMenuItems
+          : healthMenuItems;
+
       if (params.get('section')) {
         setactiveMenu(params.get('section') as string);
+      }
+      if (params.get('type')) {
+        setActiveReportSection(params.get('type') as 'Health' | 'Progress');
       } else {
-        setactiveMenu('Client Summary');
+        setActiveReportSection('Health');
+      }
+      if (currentItems.includes(data.detail.section)) {
+        setactiveMenu(data.detail.section);
       }
     };
-    const handleReportAvailable = () => {
-      setDisableClicks(false);
-      if (params.get('section')) {
-        setactiveMenu(params.get('section') as string);
-      } else {
-        setactiveMenu('Client Summary');
-      }
+    subscribe('scrolledSection', handleScrolledSection);
+
+    return () => {
+      unsubscribe('scrolledSection', handleScrolledSection);
     };
-    subscribe('noReportAvailable', handleNoReportAvailable);
-    subscribe('ReportAvailable', handleReportAvailable);
-    subscribe('scrolledSection', (data) => {
-      // console.log(data)
-      // setSearchParams({["section"]: data.detail.section})
-      setactiveMenu(data.detail.section);
-    });
-  }, []);
+  }, [activeReportSection]);
   const [, setSearchParams] = useSearchParams();
   const onchangeMenu = (item: string) => {
-    setSearchParams({ ['section']: item });
+    setSearchParams({ ['type']: activeReportSection, ['section']: item });
     setactiveMenu(item);
-    document.getElementById(item)?.scrollIntoView({
-      behavior: 'instant',
-    });
+    if (activeReportSection === 'Progress') {
+      // For Progress tab, scroll to the specific section in the dashboard
+      const elementId =
+        item === 'Wellness Data' ? 'wellness-summary' : 'score-progression';
+      document.getElementById(elementId)?.scrollIntoView({
+        behavior: 'smooth',
+      });
+    } else {
+      // For Health tab, use the original behavior
+      document.getElementById(item)?.scrollIntoView({
+        behavior: 'instant',
+      });
+    }
   };
   useEffect(() => {
     if (isShare) {
@@ -137,12 +152,76 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       style={{ height: window.innerHeight - 100 + 'px' }}
       className={` min-h-[272px]  w-[178px] bg-white '} border border-gray-50 rounded-[12px] p-4 shadow-100 relative`}
     >
+      {!isShare && (
+        <div className="flex gap-1 mb-4">
+          <div
+            onClick={() => {
+              if (isReportAvailable || showReport) {
+                setSearchParams({
+                  ['type']: 'Health',
+                  ['section']: 'Client Summary',
+                });
+                setActiveReportSection('Health');
+                setactiveMenu('Client Summary');
+                setactiveImg(1);
+                publish('activeTabChange', { tab: 'Health' });
+              }
+            }}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
+              activeReportSection === 'Health'
+                ? 'bg-Primary-EmeraldGreen text-white'
+                : 'bg-backgroundColor-Main text-Text-Primary'
+            }`}
+          >
+            <img
+              src="/icons/health.svg"
+              alt="Health"
+              className="w-4 h-4"
+              style={
+                activeReportSection === 'Health'
+                  ? { filter: 'brightness(0) invert(1)' }
+                  : { filter: 'opacity(0.5) brightness(0) saturate(0)' }
+              }
+            />
+            <span className="text-[10px] font-medium">Health</span>
+          </div>
+          <div
+            onClick={() => {
+              if (isReportAvailable || showReport) {
+                setSearchParams({
+                  ['type']: 'Progress',
+                  ['section']: 'Wellness Data',
+                });
+                setActiveReportSection('Progress');
+                setactiveMenu('Wellness Data');
+                setactiveImg(1);
+                publish('activeTabChange', { tab: 'Progress' });
+              }
+            }}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
+              activeReportSection === 'Progress'
+                ? 'bg-Primary-EmeraldGreen text-white'
+                : 'bg-backgroundColor-Main text-Text-Primary'
+            }`}
+          >
+            <img
+              src="/icons/chart.svg"
+              alt="Progress"
+              className="w-4 h-4"
+              style={
+                activeReportSection === 'Progress'
+                  ? { filter: 'brightness(0) invert(1)' }
+                  : { filter: 'opacity(0.5) brightness(0) saturate(0)' }
+              }
+            />
+            <span className="text-[10px] font-medium">Progress</span>
+          </div>
+        </div>
+      )}
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() =>
-            !disableClicks &&
-            (isReportAvailable || showReport) &&
-            setActiveLayer('menu')
+            (isReportAvailable || showReport) && setActiveLayer('menu')
           }
           className={`flex ${ActiveLayer === 'menu' && 'bg-white '} items-center justify-center px-2 py-[2px] rounded-md cursor-pointer `}
         >
@@ -152,9 +231,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
         </div>
         <div
           onClick={() =>
-            !disableClicks &&
-            (isReportAvailable || showReport) &&
-            setActiveLayer('layer')
+            (isReportAvailable || showReport) && setActiveLayer('layer')
           }
           className={`flex ${ActiveLayer === 'layer' && 'bg-white '} items-center justify-center px-2 py-[2px] rounded-md cursor-pointer `}
         >
@@ -179,12 +256,12 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             resolveSteps().map((item, index) => (
               <div
                 onClick={() => {
-                  if (!disableClicks && (isReportAvailable || showReport)) {
+                  if (isReportAvailable || showReport) {
                     onchangeMenu(item);
                   }
                 }}
                 key={index}
-                className={`text-[10px] ${disableClicks && index != 0 ? 'opacity-50' : ''} h-[24px] flex justify-start items-center pl-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
+                className={`text-[10px] ${!isReportAvailable && index != 0 ? 'opacity-50' : ''} h-[24px] flex justify-start items-center pl-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
                   item === activeMenu
                     ? 'border-Primary-EmeraldGreen'
                     : 'border-gray-50'
@@ -201,33 +278,68 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             ))}
           {ActiveLayer === 'layer' && (
             <div className="flex flex-col gap-2">
-              {resolveSteps().map((item, index) => (
-                <div
-                  onClick={() => {
-                    if (!disableClicks && (isReportAvailable || showReport)) {
-                      setactiveImg(index + 1);
-                      document.getElementById(item)?.scrollIntoView({
-                        behavior: 'smooth',
-                      });
-                    }
-                  }}
-                  key={index}
-                  className={`${
-                    index + 1 == activeImg
-                      ? 'border-Primary-EmeraldGreen'
-                      : 'border-gray-50'
-                  } border rounded-md relative cursor-pointer `}
-                >
-                  <img
-                    className=" "
-                    src={`/images/report-sidemenu-c/${index + 1}.png`}
-                    alt=""
-                  />
-                  <div className="absolute bg-white w-4 h-4 border-[0.5px] border-Gray-50 rounded-[3px] shadow-200 text-xs text-center text-Primary-DeepTeal bottom-[6px] left-1">
-                    {index + 1}
+              {resolveSteps().map((item, index) => {
+                // Determine image path based on active tab
+                let imagePath: string;
+                if (activeReportSection === 'Progress') {
+                  // For Progress tab, use progress-specific images
+                  // Assuming images are named: progress-1.png, progress-2.png
+                  // Or use a different folder: /images/report-sidemenu-progress/
+                  imagePath = `/images/report-sidemenu-progress/${index + 1}.png`;
+                } else {
+                  // For Health tab, use the existing health images
+                  imagePath = `/images/report-sidemenu-c/${index + 1}.png`;
+                }
+
+                return (
+                  <div
+                    onClick={() => {
+                      if (isReportAvailable || showReport) {
+                        setactiveImg(index + 1);
+                        if (activeReportSection === 'Progress') {
+                          // For Progress tab, scroll to the specific section
+                          const elementId =
+                            item === 'Wellness Data'
+                              ? 'wellness-summary'
+                              : 'score-progression';
+                          document.getElementById(elementId)?.scrollIntoView({
+                            behavior: 'smooth',
+                          });
+                        } else {
+                          // For Health tab, use the original behavior
+                          document.getElementById(item)?.scrollIntoView({
+                            behavior: 'smooth',
+                          });
+                        }
+                      }
+                    }}
+                    key={index}
+                    className={`${
+                      index + 1 == activeImg
+                        ? 'border-Primary-EmeraldGreen'
+                        : 'border-gray-50'
+                    } border rounded-md relative cursor-pointer `}
+                  >
+                    <img
+                      className=" "
+                      src={imagePath}
+                      alt=""
+                      onError={(e) => {
+                        // Fallback to a placeholder or default image if the specific image doesn't exist
+                        const target = e.target as HTMLImageElement;
+                        if (activeReportSection === 'Progress') {
+                          // If progress images don't exist, you might want to create them or use a placeholder
+                          // For now, we'll use a generic placeholder or the health images as fallback
+                          target.src = `/images/report-sidemenu-c/${index + 1}.png`;
+                        }
+                      }}
+                    />
+                    <div className="absolute bg-white w-4 h-4 border-[0.5px] border-Gray-50 rounded-[3px] shadow-200 text-xs text-center text-Primary-DeepTeal bottom-[6px] left-1">
+                      {index + 1}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

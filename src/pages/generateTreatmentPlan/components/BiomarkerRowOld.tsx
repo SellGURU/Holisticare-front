@@ -211,22 +211,22 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
           </div>
         </div>
         <div
-          className={`relative min-h-[120px] w-full bg-white px-4 py-3 pr-10 rounded-[16px] items-center border border-Gray-50`}
+          className={`relative min-h-[120px] w-full bg-white px-4 py-3  md:pr-10 rounded-[16px]  items-center border border-Gray-50`}
         >
-          <div className=" flex flex-wrap gap-6 items-center">
+          <div className=" flex w-full flex-wrap  gap-4 md:gap-6 items-center">
             <div className="text-xs font-medium text-Text-Primary">
               <TooltipTextAuto tooltipPlace="top" maxWidth="800px">
                 {value.Recommendation}
               </TooltipTextAuto>
             </div>
-            <div className="flex gap-2 text-[8px]">
+            <div className="flex  gap-2 text-[8px]">
               {(value.Category == 'Diet' ||
                 value.Category == 'Activity' ||
                 value.Category == 'Lifestyle' ||
                 value.Category == 'Supplement') && (
                 <>
                   <div
-                    className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                    className={`select-none rounded-full h-[20px] md:h-auto px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
                     style={{ backgroundColor: bgColor }}
                   >
                     <div
@@ -235,11 +235,11 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                     ></div>
                     {value?.label || '-'}
                   </div>
-                  <div className="flex items-center gap-1 relative">
+                  <div className="flex flex-wrap items-center gap-1 relative">
                     {selectedIssues.map((issue: string, index: number) => (
                       <div
                         key={index}
-                        className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray"
+                        className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray text-nowrap"
                       >
                         {issue.split(':')[0].trim()}{' '}
                         <img
@@ -251,7 +251,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                       </div>
                     ))}
                     <div
-                      className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray cursor-pointer"
+                      className="text-[10px] text-Primary-DeepTeal flex items-center gap-1 pr-[6px] pl-[10px] rounded-full bg-Secondary-SelverGray cursor-pointer text-nowrap"
                       onClick={() => setShowAddIssue(true)}
                     >
                       Add Issue{' '}
@@ -264,7 +264,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                     {showAddIssue && (
                       <div
                         ref={addIssueRef}
-                        className="flex flex-col absolute top-6 right-0 w-[303px] max-h-[282px] overflow-y-auto rounded-md border border-Gray-50 bg-white p-4 shadow-200 z-10"
+                        className="flex flex-col absolute top-6 right-0 w-[230px] xs:w-[260px] md:w-[303px] max-h-[282px] overflow-y-auto rounded-md border break-all border-Gray-50 bg-white p-4 shadow-200 z-10"
                         style={{
                           scrollbarWidth: 'thin',
                           scrollbarColor: '#E9EDF5 #FFFFFF',

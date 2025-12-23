@@ -80,7 +80,9 @@ export default function SimpleDatePicker({
          } ${ClassName}`}
       >
         {date ? (
-          ` ${date.toLocaleDateString()}`
+          <span className="text-xs md:text-sm">
+            {date.toLocaleDateString()}
+          </span>
         ) : (
           <div className="text-[#B0B0B0] text-xs font-light">{placeholder}</div>
         )}
@@ -92,7 +94,6 @@ export default function SimpleDatePicker({
           className={`absolute w-full  top-full mt-2 ${isUploadFile ? 'right-[70px]' : 'right-0'}  z-[999] `}
         >
           <Calendar
-            calendarClassName="!w-[220px]"
             value={selectedDay}
             onChange={(newDate) => {
               if (newDate) {

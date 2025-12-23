@@ -35,7 +35,11 @@ const ClientCard: FC<ClientCardProps> = ({
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(client.refresh_in_progress);
+  useEffect(() => {
+    setRefresh(client.refresh_in_progress);
+  }, [client.refresh_in_progress]);
+
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
   useModalAutoClose({
     refrence: showModalRefrence,
@@ -286,24 +290,32 @@ const ClientCard: FC<ClientCardProps> = ({
       year: 'numeric',
     });
   };
+  const handleRefreshProgress = async () => {
+    refreshIntervalRef.current = setInterval(async () => {
+      const result = await handleCheckRefreshProgress();
 
+      if (result?.status) {
+        if (refreshIntervalRef.current) {
+          clearInterval(refreshIntervalRef.current);
+          refreshIntervalRef.current = null;
+        }
+        setRefresh(false);
+        setLastRefreshTime(new Date());
+      }
+    }, 30000);
+  };
+  useEffect(() => {
+    if (client.refresh_in_progress) {
+      handleRefreshProgress();
+    }
+  }, [client.refresh_in_progress]);
   const handleRefreshData = () => {
+    if (refreshIntervalRef.current) return;
     setRefresh(true);
 
     Application.refreshData(client.member_id)
       .then(() => {
-        refreshIntervalRef.current = setInterval(async () => {
-          const result = await handleCheckRefreshProgress();
-
-          if (result?.status) {
-            if (refreshIntervalRef.current) {
-              clearInterval(refreshIntervalRef.current);
-              refreshIntervalRef.current = null;
-            }
-            setRefresh(false);
-            setLastRefreshTime(new Date());
-          }
-        }, 30000);
+        handleRefreshProgress();
       })
       .catch(() => {
         setRefresh(false);
@@ -314,7 +326,10 @@ const ClientCard: FC<ClientCardProps> = ({
     <>
       <MainModal
         isOpen={showAccessModal}
-        onClose={() => setShowAccessModal(false)}
+        onClose={() => {
+          setShowAccessModal(false);
+          setIsShared(false);
+        }}
       >
         <>
           {isShared ? (
@@ -329,13 +344,18 @@ const ClientCard: FC<ClientCardProps> = ({
                   The email address and password have been successfully sent to{' '}
                   {client.name}.
                 </div>
-                <ButtonPrimary onClick={() => setShowAccessModal(false)}>
+                <ButtonPrimary
+                  onClick={() => {
+                    setShowAccessModal(false);
+                    setIsShared(false);
+                  }}
+                >
                   <div className="w-[150px]">Got it</div>
                 </ButtonPrimary>
               </div>
             </div>
           ) : (
-            <div className="bg-white w-[90vw] md:w-[500px] h-[352px] rounded-2xl p-4 shadow-800 text-Text-Primary">
+            <div className="bg-white w-[90vw] md:w-[500px] min-h-[352px] rounded-2xl p-4 shadow-800 text-Text-Primary">
               <div
                 className="border-b border-Gray-50 pb-2 text-sm font-medium"
                 data-tooltip-id={'tooltip-client-access' + client.name}
@@ -464,29 +484,31 @@ const ClientCard: FC<ClientCardProps> = ({
                   )}
                 </div>
               </div>
-              <div className="flex w-full justify-end mt-12 gap-4 items-center">
+              <div className="flex w-full justify-end mt-7 md:mt-9 gap-4 items-center">
                 <div
                   onClick={() => setShowAccessModal(false)}
-                  className="text-sm font-medium text-Text-Secondary cursor-default"
+                  className="text-sm font-medium cursor-pointer text-Text-Secondary "
                 >
-                  Cancel
+                  {!AccessPassword ? 'Close' : 'Cancel'}
                 </div>
-                <div
-                  onClick={() => {
-                    Application.shareClientAccess({
-                      member_id: client.member_id,
-                      username: AccessUserName,
-                      password: AccessPassword,
-                    })
-                      .then(() => {
-                        setIsShared(true);
+                {!isShared && AccessPassword && (
+                  <div
+                    onClick={() => {
+                      Application.shareClientAccess({
+                        member_id: client.member_id,
+                        username: AccessUserName,
+                        password: AccessPassword,
                       })
-                      .catch(() => {});
-                  }}
-                  className="text-sm font-medium text-Primary-DeepTeal cursor-default"
-                >
-                  Share with Email
-                </div>
+                        .then(() => {
+                          setIsShared(true);
+                        })
+                        .catch(() => {});
+                    }}
+                    className="text-sm font-medium cursor-pointer text-Primary-DeepTeal "
+                  >
+                    Share with Email
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -537,7 +559,7 @@ const ClientCard: FC<ClientCardProps> = ({
           // e.stopPropagation();
           // navigate(`/report/${client.member_id}/${client.name}`);
         }}
-        className="sm:min-w-[315px] w-full xs:w-[344px] ss:w-full md:w-[333px] p-2 sm:p-4 bg-white shadow-200 xl:w-[24%] rounded-[16px] relative"
+        className="sm:min-w-[315px] lg:min-h-[292px] w-full xs:w-[344px] ss:w-full md:w-[333px] p-2 sm:p-4 bg-white shadow-200 xl:w-[24%] rounded-[16px] relative"
       >
         {showModal && (
           <div
@@ -994,37 +1016,40 @@ const ClientCard: FC<ClientCardProps> = ({
                   />
                   Drift Analyzed
                 </div> */}
-                <div
-                  className="flex items-center justify-center gap-2 cursor-pointer"
-                  onClick={handleRefreshData}
-                >
-                  <img
-                    src="/icons/refresh-circle.svg"
-                    alt=""
-                    className={refresh ? 'animate-spin-slow' : ''}
-                  />
-                  {refresh ? (
-                    <div className="text-Primary-DeepTeal text-xs font-medium">
-                      Syncing...
-                    </div>
-                  ) : (
-                    <div className="flex flex-col">
-                      <div className="text-Primary-DeepTeal font-medium text-xs">
-                        Sync with Latest Data
+                {client.has_minimum_data == true && (
+                  <div
+                    className="flex w-full items-center justify-start gap-2 cursor-pointer"
+                    onClick={handleRefreshData}
+                  >
+                    <img
+                      src="/icons/refresh-circle.svg"
+                      alt=""
+                      className={refresh ? 'animate-spin-slow' : ''}
+                    />
+                    {refresh ? (
+                      <div className="text-Primary-DeepTeal text-xs font-medium">
+                        Syncing...
                       </div>
-                      {client['Latest Sync'] != 'No Data' && (
-                        <div className="text-Text-Quadruple text-[8px]">
-                          Last sync:{' '}
-                          {/* {lastRefreshTime
+                    ) : (
+                      <div className="flex flex-col">
+                        <div className="text-Primary-DeepTeal text-nowrap font-medium text-xs">
+                          Sync with Latest Data
+                        </div>
+                        {client['Latest Sync'] != 'No Data' && (
+                          <div className="text-Text-Quadruple text-[8px]">
+                            Last sync:{' '}
+                            {/* {lastRefreshTime
                             ? formatLastRefresh()
                             : client['Latest Sync']} */}
-                          {formatLastRefresh(client['Latest Sync'])}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <div className="hidden md:flex justify-end items-center">
+                            {formatLastRefresh(client['Latest Sync'])}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="hidden w-full md:flex justify-end items-center">
                   <ButtonPrimary
                     onClick={() => {
                       navigate(`/report/${client.member_id}/${client.name}`);

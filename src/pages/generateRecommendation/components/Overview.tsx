@@ -104,7 +104,7 @@ export const Overview: FC<OverviewProps> = ({
     <>
       <div className=" w-full relative  p-4 rounded-2xl bg-white">
         {Conflicts.length > 0 && showConflict && (
-          <div className="w-full rounded-2xl px-4 py-3 bg-[#F9DEDC]">
+          <div className="w-full rounded-2xl px-2 md:px-4 py-3 bg-[#F9DEDC]">
             <div className="flex w-full justify-between items-center">
               <div className="flex gap-2 items-center text-xs font-medium text-Text-Primary">
                 <img src="/icons/check-circle.svg" alt="Check Circle" />{' '}
@@ -120,10 +120,10 @@ export const Overview: FC<OverviewProps> = ({
                 />
               </div>
             </div>
-            <div className="flex w-full px-6 justify-between items-center gap-6 mt-3">
+            <div className="flex w-full px-0 md:px-6 justify-between items-center gap-1 md:gap-6 mt-3">
               <div className="">
                 <img
-                  className={`cursor-pointer ${
+                  className={`cursor-pointer min-w-6 min-h-6 ${
                     currentConflictIndex === 0
                       ? 'opacity-50 cursor-not-allowed'
                       : ''
@@ -137,11 +137,11 @@ export const Overview: FC<OverviewProps> = ({
                   }}
                 />
               </div>
-              <div className="text-[10px] text-Text-Primary min-w-[1091px] text-center truncate">
+              <div className="text-[10px] text-Text-Primary xl:min-w-[1091px] text-center truncate">
                 {Conflicts[currentConflictIndex]}
               </div>
               <img
-                className={`cursor-pointer rotate-180 ${
+                className={`cursor-pointer min-w-6 min-h-6 rotate-180 ${
                   currentConflictIndex === Conflicts.length - 1
                     ? 'opacity-50 cursor-not-allowed'
                     : ''

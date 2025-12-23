@@ -43,7 +43,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     }
   };
   return (
-    <div className="flex flex-col relative min-w-[181px]  text-xs font-medium">
+    <div
+      className={`flex flex-col relative ${wfull ? 'min-w-full' : 'min-w-[181px]'}  text-xs font-medium`}
+    >
       {label && <label className="mb-1">{label}</label>}
 
       <div

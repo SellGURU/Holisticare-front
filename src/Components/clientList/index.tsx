@@ -378,7 +378,7 @@ const ClientList = () => {
         >
           {clientList.length > 0 ? (
             <>
-              <div className="w-full  flex justify-between items-center">
+              <div className="md:w-full flex justify-between items-center">
                 <div className="text-Text-Primary font-medium opacity-[87%]">
                   Client List
                 </div>

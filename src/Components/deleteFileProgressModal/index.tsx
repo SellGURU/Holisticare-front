@@ -1,23 +1,53 @@
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useRef, useState } from 'react';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
-import { subscribe } from '../../utils/event';
+import { subscribe, unsubscribe } from '../../utils/event';
 import { publish } from '../../utils/event';
 
 export const DeleteFileProgressModal = () => {
   const [showProgressModal, setshowProgressModal] = useState(false);
   const [IsinProgress, setIsinProgress] = useState(true);
+  const idOnworksRef = useRef<Array<string>>([]);
 
-  subscribe('openDeleteProgressModal', () => {
-    setTimeout(() => {
+  useEffect(() => {
+    const handleOpenProgressModal = (data: any) => {
+      console.log(data);
+      const fileId = data?.detail?.file_id;
+
+      if (!fileId) {
+        return;
+      }
+
+      if (idOnworksRef.current.includes(fileId)) {
+        return;
+      }
+
+      idOnworksRef.current = [...idOnworksRef.current, fileId];
+      setTimeout(() => {
+        setshowProgressModal(true);
+        setIsinProgress(true);
+      }, 100);
+    };
+
+    const handleStepTwoSuccess = () => {
+      if (idOnworksRef.current.length === 0) {
+        return;
+      }
+      idOnworksRef.current = idOnworksRef.current.filter(
+        (id) => id !== idOnworksRef.current[0],
+      );
       setshowProgressModal(true);
-      setIsinProgress(true);
-    }, 2000);
-  });
+      setIsinProgress(false);
+    };
 
-  subscribe('DeleteSuccess', () => {
-    setshowProgressModal(true);
-    setIsinProgress(false);
-  });
+    subscribe('openDeleteProgressModal', handleOpenProgressModal);
+    subscribe('DeleteSuccess', handleStepTwoSuccess);
+
+    return () => {
+      unsubscribe('openDeleteProgressModal', handleOpenProgressModal);
+      unsubscribe('DeleteSuccess', handleStepTwoSuccess);
+    };
+  }, []);
 
   return (
     <>
