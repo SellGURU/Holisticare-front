@@ -14,6 +14,7 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
 import { SourceTag } from '../../source-badge';
+import MarkdownText from '../../markdownText';
 
 interface DetiledAnalyseProps {
   data: any;
@@ -180,7 +181,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
               Description
             </div>
             <div className="  text-Text-Primary opacity-90 TextStyle-Body-2 mt-2 text-justify">
-              {data.description}
+              <MarkdownText text={data.description}/>
+              {/* {data.description} */}
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               {refrences.length > 0 && (
