@@ -844,11 +844,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       if (ValueValidation(vales[0].value)) {
                         setValue(vales[0].value);
                       }
-                      const onlyLetters = vales[1].value.replace(
-                        /[^a-zA-Z]/g,
+                      const onlyLettersAndSpaces = vales[1].value.replace(
+                        /[^a-zA-Z\s]/g,
                         '',
                       );
-                      setUnit(onlyLetters);
+
+                      setUnit(onlyLettersAndSpaces);
                     }}
                     onPaste={(e) => {
                       const pastedData = e.clipboardData.getData('text');

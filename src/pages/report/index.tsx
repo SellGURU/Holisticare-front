@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { MainModal, ReportSideMenu } from '../../Components';
+import { MainModal } from '../../Components';
 import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
 import { TopBar } from '../../Components/topBar';
+import ReportSideMenu from '../../Components/reportSideMenu/newSideMenu';
 import { ComboBar } from '../../Components';
 import { useState, useEffect, useRef } from 'react';
 import { subscribe, unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
+import ProgressDashboardView from '../../Components/ProgressDashboard/ProgressDashboardView';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
 import UnderProgressController from './underProgressController';
 import { useParams } from 'react-router-dom';
@@ -79,6 +81,9 @@ const Report = () => {
     }
   };
   const [isReportAvailable, setIsReportAvailable] = useState(true);
+  const [activeReportSection, setActiveReportSection] = useState<
+    'Health' | 'Progress'
+  >('Health');
 
   useEffect(() => {
     const handleReportStatus = (message: any) => {
@@ -122,14 +127,43 @@ const Report = () => {
         `}
       >
         <ReportSideMenu
+          activeReportSection={activeReportSection}
+          setActiveReportSection={setActiveReportSection}
           onClose={() => isMobileView && setIsMobileMenuOpen(false)}
         ></ReportSideMenu>
       </div>
 
-      <div className="w-full xl:pl-[200px] fixed">
+      <div
+        className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
+      >
         <ReportAnalyseView
           setActiveCheckProgress={setActiveCheckProgress}
+          isActive={activeReportSection === 'Health'}
         ></ReportAnalyseView>
+      </div>
+
+      <div
+        className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
+      >
+        <ProgressDashboardView
+          isActive={activeReportSection === 'Progress'}
+          onHaveScore={(isHave: boolean) => {
+            const params = new URLSearchParams(location.search);
+            if (isHave) {
+              if (params.get('type') === 'Health') {
+                setActiveReportSection('Health');
+              } else {
+                setActiveReportSection('Progress');
+              }
+            } else {
+              if (params.get('type') === 'Progress') {
+                setActiveReportSection('Progress');
+              } else {
+                setActiveReportSection('Health');
+              }
+            }
+          }}
+        />
       </div>
 
       <div
