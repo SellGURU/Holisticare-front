@@ -322,6 +322,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           editId={editFormId}
           error={errorQuestionary}
           mode={resolveMode()}
+          isQuestionary={true}
         ></QuestionaryControllerModal>
       </MainModal>
     </>
