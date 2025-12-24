@@ -22,9 +22,7 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({
     const el = ref.current;
 
     const calculate = () => {
-      const lineHeight = parseFloat(
-        window.getComputedStyle(el).lineHeight,
-      );
+      const lineHeight = parseFloat(window.getComputedStyle(el).lineHeight);
 
       const maxHeight = lineHeight * lines;
       const fullHeight = el.scrollHeight;
@@ -34,7 +32,6 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({
     };
 
     calculate();
-
 
     const observer = new ResizeObserver(calculate);
     observer.observe(el);
@@ -47,7 +44,7 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({
       <div
         ref={ref}
         style={{
-          maxHeight: expanded ? 'none' : collapsedHeight ?? 'none',
+          maxHeight: expanded ? 'none' : (collapsedHeight ?? 'none'),
           overflow: expanded ? 'visible' : 'hidden',
         }}
         className={`transition-all text-justify duration-300 ease-in-out ${className}`}

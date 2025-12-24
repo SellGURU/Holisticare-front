@@ -513,7 +513,9 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                           <img src="/icons/info-circle-blue.svg" alt="" />
                           Analysis Info
                         </div>
-                       <ExpandableText text={value['Practitioner Comments'][0]}/>
+                        <ExpandableText
+                          text={value['Practitioner Comments'][0]}
+                        />
                       </div>
                     )}
                     <div className="w-full bg-bg-color h-[1px] mt-1 mb-2"></div>
