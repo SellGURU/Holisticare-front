@@ -5,6 +5,7 @@ import ConflictsModal from '../../../Components/NewGenerateActionPlan/components
 import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
 import { splitInstructions } from '../../../help';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import ExpandableText from '../../../Components/expandableText';
 
 interface ActivityCardProps {
   item: any;
@@ -72,7 +73,6 @@ export const ActivityCard: FC<ActivityCardProps> = ({
     }
   }, [item?.label]);
 
-  const [showMore, setShowMore] = useState(false);
   const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
   const [addIssue, setAddIssue] = useState(false);
   const [newIssue, setNewIssue] = useState('');
@@ -419,23 +419,11 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 <img src="/icons/info-circle-blue.svg" alt="" />
                 Analysis Info
               </div>
-              <div className="text-[#666666] leading-5 text-xs text-justify">
-                {item['Practitioner Comments'][0]?.substring(
-                  0,
-                  showMore ? item['Practitioner Comments'][0]?.length : 570,
-                )}{' '}
-                {item['Practitioner Comments'][0]?.length > 570 && (
-                  <>
-                    {' '}
-                    <span
-                      className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-                      onClick={() => setShowMore(!showMore)}
-                    >
-                      {showMore ? 'See less' : 'See more'}
-                    </span>
-                  </>
-                )}
-              </div>
+              <ExpandableText
+                text={item['Practitioner Comments'][0]}
+                lines={2}
+                className="text-[#666666] leading-5 text-xs text-justify"
+              />
             </div>
           )}
           <div className="w-full bg-bg-color h-[1px] mt-1 mb-2"></div>
