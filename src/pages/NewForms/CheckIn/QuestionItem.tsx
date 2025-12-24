@@ -5,7 +5,6 @@ interface QuestionItemProps {
   index?: number;
   onRemove: () => void;
   onEdit: () => void;
-  isReposition?: boolean;
   moveItem?: (direction: 'up' | 'down') => void;
   length: number;
 }
@@ -15,7 +14,6 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   index,
   onRemove,
   onEdit,
-  isReposition,
   moveItem,
   length,
 }) => {
@@ -23,13 +21,13 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   return (
     <>
       <div className="flex items-center justify-between w-full h-[36px] py-2 px-4 bg-backgroundColor-Card rounded-xl border border-Gray-50">
-        <div className="text-Text-Quadruple text-ellipsis overflow-hidden text-nowrap text-[10px] w-[60%]">
+        <div className="text-Text-Quadruple text-ellipsis overflow-hidden text-nowrap text-[10px] w-[40%]">
           {index != undefined ? index + 1 + '.' : ''}
           {'  '}
           {question.question}
         </div>
-        <div className="flex items-center justify-between w-full gap-4 md:w-[40%]">
-          <div className="text-Orange text-[8px] flex items-center justify-center w-[41%]">
+        <div className="flex items-center justify-between w-full gap-4 md:w-[60%]">
+          <div className="text-Orange text-[8px] flex items-center justify-center w-[30%]">
             {question.required ? (
               <img
                 src="./icons/danger-new.svg"
@@ -44,71 +42,66 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
             {question.type}
           </div>
           <div
-            className={`flex items-center justify-end ${sureRemove ? 'md:w-[35%]' : 'md:w-[24%]'}`}
+            className={`flex items-center justify-end ${sureRemove ? 'md:w-[45%]' : 'md:w-[38%]'}`}
           >
             <>
-              {isReposition ? (
-                <>
+              {sureRemove ? (
+                <div className="flex items-center justify-center gap-1 ml-4">
+                  <div className="text-Text-Quadruple text-xs">Sure?</div>
                   <img
-                    src="./icons/arrow-circle-down.svg"
+                    src="/icons/tick-circle-green.svg"
                     alt=""
-                    className={`w-[16px] h-[16px] cursor-pointer ${index === length - 1 && 'opacity-50'}`}
+                    className="w-[20px] h-[20px] cursor-pointer"
                     onClick={() => {
-                      if (index !== length - 1 && moveItem) {
-                        moveItem('down');
-                      }
+                      setSureRemove(false);
+                      onRemove();
                     }}
                   />
                   <img
-                    src="./icons/arrow-circle-up.svg"
+                    src="/icons/close-circle-red.svg"
                     alt=""
-                    className={`w-[16px] h-[16px] ml-2 cursor-pointer ${index === 0 && 'opacity-50'}`}
-                    onClick={() => {
-                      if (index !== 0 && moveItem) {
-                        moveItem('up');
-                      }
-                    }}
+                    className="w-[20px] h-[20px] cursor-pointer"
+                    onClick={() => setSureRemove(false)}
                   />
-                </>
+                </div>
               ) : (
                 <>
-                  {sureRemove ? (
-                    <div className="flex items-center justify-center gap-1 ml-4">
-                      <div className="text-Text-Quadruple text-xs">Sure?</div>
-                      <img
-                        src="/icons/tick-circle-green.svg"
-                        alt=""
-                        className="w-[20px] h-[20px] cursor-pointer"
-                        onClick={() => {
-                          setSureRemove(false);
-                          onRemove();
-                        }}
-                      />
-                      <img
-                        src="/icons/close-circle-red.svg"
-                        alt=""
-                        className="w-[20px] h-[20px] cursor-pointer"
-                        onClick={() => setSureRemove(false)}
-                      />
-                    </div>
-                  ) : (
-                    <>
-                      <img
-                        src="./icons/edit-blue.svg"
-                        alt=""
-                        className="w-[16px] h-[16px] cursor-pointer"
-                        onClick={() => onEdit()}
-                      />
-                      <img
-                        src="./icons/trash-blue.svg"
-                        alt=""
-                        className="w-[16px] h-[16px] ml-2 cursor-pointer"
-                        onClick={() => setSureRemove(true)}
-                      />
-                    </>
-                  )}
+                  <img
+                    src="./icons/edit-blue.svg"
+                    alt=""
+                    className="w-[16px] h-[16px] cursor-pointer"
+                    onClick={() => onEdit()}
+                  />
+                  <img
+                    src="./icons/trash-blue.svg"
+                    alt=""
+                    className="w-[16px] h-[16px] ml-2 cursor-pointer"
+                    onClick={() => setSureRemove(true)}
+                  />
                 </>
               )}
+            </>
+            <>
+              <img
+                src="./icons/arrow-circle-down.svg"
+                alt=""
+                className={`w-[16px] h-[16px] cursor-pointer ml-6 ${index === length - 1 && 'opacity-50'}`}
+                onClick={() => {
+                  if (index !== length - 1 && moveItem) {
+                    moveItem('down');
+                  }
+                }}
+              />
+              <img
+                src="./icons/arrow-circle-up.svg"
+                alt=""
+                className={`w-[16px] h-[16px] ml-2 cursor-pointer ${index === 0 && 'opacity-50'}`}
+                onClick={() => {
+                  if (index !== 0 && moveItem) {
+                    moveItem('up');
+                  }
+                }}
+              />
             </>
           </div>
         </div>
