@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 // import StatusChart from '../StatusChart';
 import { subscribe } from '../../../utils/event';
 // import Legends from '../Legends';
@@ -102,6 +102,28 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   // const isChartDataEmpty = !active?.values.some(
   //   (value: string) => !isNaN(parseFloat(value)),
   // );
+  const NEED_FOCUS_STATUSES = [
+    'CriticalRange',
+    'DiseaseRange',
+    'BorderlineRange',
+  ];
+  const isNeedFocus = (item: any) =>
+    item?.status && NEED_FOCUS_STATUSES.includes(item.status[0]);
+  const sortedReferences = useMemo(() => {
+    if (!refrences || refrences.length === 0) return [];
+
+    return [...refrences].sort((a, b) => {
+      const aNeedFocus = isNeedFocus(a);
+      const bNeedFocus = isNeedFocus(b);
+
+      // Needs Focus first
+      if (aNeedFocus && !bNeedFocus) return -1;
+      if (!aNeedFocus && bNeedFocus) return 1;
+
+      // Optional: secondary sort (alphabetical)
+      return a.name.localeCompare(b.name);
+    });
+  }, [refrences]);
 
   return (
     <>
@@ -186,7 +208,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
               {refrences.length > 0 && (
                 <>
                   <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
-                    {refrences?.map((value: any, index: number) => {
+                    {sortedReferences.map((value: any, index: number) => {
                       if (selectGroup == value.name) {
                         setActiveBOx(index);
                         setSelectGroup(null);
