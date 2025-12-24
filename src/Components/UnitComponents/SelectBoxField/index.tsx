@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
 interface SelectBoxFieldProps {
-  label: string;
+  label?: string;
   options: string[];
   value: string;
   onChange: (value: string) => void;
@@ -47,13 +47,15 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
       ref={wrapperRef}
       className={`w-full relative overflow-visible ${margin ? margin : 'mt-1 mb-4'}`}
     >
-      <label
-        className={`text-xs font-medium text-Text-Primary ${showDisabled ? 'opacity-50' : 'opacity-100'}`}
-        htmlFor="select-box-field"
-        onClick={() => setShowSelect(false)}
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          className={`text-xs font-medium text-Text-Primary ${showDisabled ? 'opacity-50' : 'opacity-100'}`}
+          htmlFor="select-box-field"
+          onClick={() => setShowSelect(false)}
+        >
+          {label}
+        </label>
+      )}
       <div
         onClick={() => !disabled && setShowSelect(!showSelect)}
         id="select-box-field"
@@ -62,7 +64,9 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
         } ${showDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer'}`}
       >
         {value ? (
-          <div className="text-[12px] text-Text-Primary">{value}</div>
+          <div className="text-[12px] text-Text-Primary">
+            {value.length > 28 ? value.slice(0, 28) + '...' : value}
+          </div>
         ) : (
           <div className="text-[12px] text-Text-Fivefold">{placeholder}</div>
         )}
@@ -78,7 +82,9 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
         <div className="text-Red text-[10px] mt-1">{validationText}</div>
       )}
       {showSelect && (
-        <div className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px] max-h-[250px] overflow-y-auto">
+        <div
+          className={`w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 ${label ? 'top-[56px] max-h-[250px]' : 'top-[32px] max-h-[200px]'} overflow-y-auto`}
+        >
           {options.map((option, index) => {
             return (
               <div
