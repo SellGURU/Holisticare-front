@@ -24,11 +24,15 @@ type SendMessage = {
 export const PopUpChat = ({
   isOpen,
   memberId,
+  size,
+  onSizeChange
   // info,
 }: {
   memberId: string;
   isOpen: boolean;
   info: any;
+  size: { width: number; height: number };
+  onSizeChange: (s: { width: number; height: number }) => void;
 }) => {
   const [MessageData, setMessageData] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -107,7 +111,8 @@ export const PopUpChat = ({
 
   const onMouseMoveWindow = (e: MouseEvent) => {
     if (!resizing.current || !boxRef.current) return;
-  if (window.innerWidth < 1400) return;
+    if (window.innerWidth < 1400) return;
+    window.getSelection?.()?.removeAllRanges();
     const box = boxRef.current;
     const rect = box.getBoundingClientRect();
 
@@ -123,6 +128,14 @@ export const PopUpChat = ({
   };
 
   const stopResize = () => {
+
+  if (boxRef.current) {
+    onSizeChange({
+      width: boxRef.current.offsetWidth,
+      height: boxRef.current.offsetHeight,
+    });
+  }
+    document.body.classList.remove('no-select');
     resizing.current = false;
     resizeDir.current = null;
     window.removeEventListener('mousemove', onMouseMoveWindow);
@@ -140,6 +153,7 @@ export const PopUpChat = ({
     const onLeft = x < edgeSize;
     const onTop = y < edgeSize;
 
+    document.body.classList.add('no-select');
     if (onLeft && onTop) resizeDir.current = 'corner';
     else if (onLeft) resizeDir.current = 'left';
     else if (onTop) resizeDir.current = 'top';
@@ -168,85 +182,88 @@ export const PopUpChat = ({
   };
   return (
     <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          ref={boxRef}
-          onMouseMove={updateCursor}
-          onMouseDown={startResize}
-          style={{
-            width: '315px',
-            height: '458px',
-            minWidth: '315px',
-            maxWidth: '900px',
-            maxHeight: window.innerHeight - 140 + 'px',
-            minHeight: '458px',
-            position: 'absolute',
-          }}
-          initial={{ opacity: 0, x: 60 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 60 }}
-          transition={{
-            type: 'spring',
-            stiffness: 250,
-            damping: 25,
-            duration: 0.8,
-          }}
-          className="bg-white border border-Gray-50 z-50 p-4 absolute bottom-0 right-16 rounded-2xl space-y-6 shadow-lg flex flex-col pb-4"
+      {
+        isOpen && (
+      
+      <motion.div
+        ref={boxRef}
+        onMouseMove={updateCursor}
+        onMouseDown={startResize}
+        style={{
+   
+          width: size.width + 'px',
+          height: size.height + 'px',
+          minWidth: '315px',
+          maxWidth: '900px',
+          maxHeight: window.innerHeight - 140 + 'px',
+          minHeight: '458px',
+          position: 'absolute',
+        }}
+        initial={{ opacity: 0, x: 60 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 60 }}
+        transition={{
+          type: 'spring',
+          stiffness: 250,
+          damping: 25,
+          duration: 0.8,
+        }}
+        className="bg-white border border-Gray-50 z-50 p-4 absolute bottom-0 right-16 rounded-2xl space-y-6 shadow-lg flex flex-col pb-4"
+      >
+        <h1 className={'TextStyle-Headline-6  text-Text-Primary'}>Copilot</h1>
+        <div
+          className={
+            'min-w-[283px] w-full   flex-1 overflow-y-auto overscroll-y-auto'
+          }
         >
-          <h1 className={'TextStyle-Headline-6  text-Text-Primary'}>Copilot</h1>
-          <div
-            className={
-              'min-w-[283px] w-full   flex-1 overflow-y-auto overscroll-y-auto'
-            }
-          >
-            {MessageData.length == 0 ? (
-              <div className="flex flex-col items-center justify-center w-full h-full text-base  text-Text-Primary font-medium select-none">
-                <img
-                  className="size-[110px]"
-                  src="/icons/empty-messages.svg"
-                  alt=""
-                />
-                No messages found
-              </div>
-            ) : (
-              <>
-                {MessageData.map((MessageDatum, index) => {
-                  return (
-                    <Fragment key={index}>
-                      {MessageDatum.request && (
-                        <UserMsg
-                          time={MessageDatum.timestamp}
-                          msg={MessageDatum.request}
-                          info={{
-                            picture: JSON.parse(
-                              localStorage.getItem('brandInfoData') as string,
-                            )?.selectedImage,
-                            name: JSON.parse(
-                              localStorage.getItem('brandInfoData') as string,
-                            )?.name,
-                          }}
-                        />
-                      )}
-                      {MessageDatum.response && (
-                        <BotMsg
-                          isTyping={isRecent(MessageDatum.timestamp)}
-                          time={MessageDatum.timestamp}
-                          msg={MessageDatum.response}
-                        />
-                      )}
-                    </Fragment>
-                  );
-                })}
+          {MessageData.length == 0 ? (
+            <div className="flex flex-col items-center justify-center w-full h-full text-base  text-Text-Primary font-medium select-none">
+              <img
+                className="size-[110px]"
+                src="/icons/empty-messages.svg"
+                alt=""
+              />
+              No messages found
+            </div>
+          ) : (
+            <>
+              {MessageData.map((MessageDatum, index) => {
+                return (
+                  <Fragment key={index}>
+                    {MessageDatum.request && (
+                      <UserMsg
+                        time={MessageDatum.timestamp}
+                        msg={MessageDatum.request}
+                        info={{
+                          picture: JSON.parse(
+                            localStorage.getItem('brandInfoData') as string,
+                          )?.selectedImage,
+                          name: JSON.parse(
+                            localStorage.getItem('brandInfoData') as string,
+                          )?.name,
+                        }}
+                      />
+                    )}
+                    {MessageDatum.response && (
+                      <BotMsg
+                        isTyping={isRecent(MessageDatum.timestamp)}
+                        time={MessageDatum.timestamp}
+                        msg={MessageDatum.response}
+                      />
+                    )}
+                  </Fragment>
+                );
+              })}
 
-                <div ref={messagesEndRef}></div>
-              </>
-            )}
-          </div>
-          <InputChat
-            onChange={(event) => setInput(event.target.value)}
-            sendHandler={handleSend}
-          />
-        </motion.div>
+              <div ref={messagesEndRef}></div>
+            </>
+          )}
+        </div>
+        <InputChat
+          onChange={(event) => setInput(event.target.value)}
+          sendHandler={handleSend}
+        />
+      </motion.div>
       )}
     </AnimatePresence>
   );
