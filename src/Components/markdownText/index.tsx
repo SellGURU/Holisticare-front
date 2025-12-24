@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import rehypeRaw from "rehype-raw";
-import remarkGfm from "remark-gfm";
+import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
 
 type MarkdownTextProps = {
   text: string;
@@ -16,9 +16,7 @@ const MarkdownText: React.FC<MarkdownTextProps> = ({ text, className }) => {
         rehypePlugins={[rehypeRaw]}
         components={{
           strong: ({ children }) => (
-            <strong className="font-semibold">
-              {children}
-            </strong>
+            <strong className="font-semibold">{children}</strong>
           ),
         }}
       >

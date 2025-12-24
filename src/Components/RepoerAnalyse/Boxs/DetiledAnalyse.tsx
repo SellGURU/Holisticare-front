@@ -181,7 +181,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
               Description
             </div>
             <div className="  text-Text-Primary opacity-90 TextStyle-Body-2 mt-2 text-justify">
-              <MarkdownText text={data.description}/>
+              <MarkdownText text={data.description} />
               {/* {data.description} */}
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
