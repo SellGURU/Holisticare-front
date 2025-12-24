@@ -27,8 +27,8 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
           setIsLaoding(false);
         })
         .catch(() => {});
-        // setData(mokQuestionary);
-        // setIsLaoding(false);
+      // setData(mokQuestionary);
+      // setIsLaoding(false);
     } else {
       Mobile.getCheckInEmpty({
         encoded_mi: encode as string,

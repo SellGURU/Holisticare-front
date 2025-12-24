@@ -43,7 +43,7 @@ const mainCondition = (question: any, allQuestions: Array<any>) => {
     }
     if (rule.operator === 'less_than_or_equal') {
       return Number(checkQuestion.response) <= Number(rule.value);
-    } 
+    }
     if (rule.operator === 'between') {
       return (
         Number(checkQuestion.response) >= Number(rule.value[0]) &&
@@ -136,7 +136,10 @@ const mainCondition = (question: any, allQuestions: Array<any>) => {
       const responseLength = Array.isArray(checkQuestion.response)
         ? checkQuestion.response.length
         : String(checkQuestion.response || '').length;
-      return responseLength >= Number(rule.value[0]) && responseLength <= Number(rule.value[1]);
+      return (
+        responseLength >= Number(rule.value[0]) &&
+        responseLength <= Number(rule.value[1])
+      );
     }
     // DATE OPERATORS (format: 2024-01-15)
     if (rule.operator === 'date_after') {
@@ -163,10 +166,18 @@ const mainCondition = (question: any, allQuestions: Array<any>) => {
     // FILE OPERATORS
     if (rule.operator === 'file_uploaded') {
       console.log(checkQuestion.response);
-      return (checkQuestion.response?.frontal?.length > 0 || checkQuestion.response?.back?.length > 0 || checkQuestion.response?.side?.length > 0 )
+      return (
+        checkQuestion.response?.frontal?.length > 0 ||
+        checkQuestion.response?.back?.length > 0 ||
+        checkQuestion.response?.side?.length > 0
+      );
     }
     if (rule.operator === 'file_not_uploaded') {
-      return (!(checkQuestion.response?.frontal?.length > 0 || checkQuestion.response?.back?.length > 0 || checkQuestion.response?.side?.length > 0 ));
+      return !(
+        checkQuestion.response?.frontal?.length > 0 ||
+        checkQuestion.response?.back?.length > 0 ||
+        checkQuestion.response?.side?.length > 0
+      );
     }
     if (rule.operator === 'file_size_greater') {
       // rule.value format: 524288 (bytes)
