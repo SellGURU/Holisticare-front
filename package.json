@@ -58,6 +58,8 @@
     "react-toastify": "^11.0.0",
     "react-tooltip": "^5.28.0",
     "react-verification-input": "^4.2.0",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
     "sigma": "^3.0.0-beta.26",
     "symphony-ui": "^1.0.16",
     "tailwind-merge": "^3.3.1",
