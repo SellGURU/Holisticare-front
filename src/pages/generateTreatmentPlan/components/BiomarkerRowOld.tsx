@@ -10,6 +10,7 @@ import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
 import Checkbox from '../../../Components/checkbox';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import ExpandableText from '../../../Components/expandableText';
 
 interface BioMarkerRowOldSuggestionsProps {
   value: any;
@@ -69,7 +70,6 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
   const [notes, setNotes] = useState<string[]>(value['Client Notes'] || []);
   // const [isExpanded, setIsExpanded] = useState(false);
   const [showEditNote, setShowEditNote] = useState(false);
-  const [showMore, setShowMore] = useState(false);
   useEffect(() => {
     onchange({
       ...value,
@@ -513,20 +513,9 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                           <img src="/icons/info-circle-blue.svg" alt="" />
                           Analysis Info
                         </div>
-                        <div className="text-[#666666] leading-5 text-xs text-justify">
-                          {value['Practitioner Comments'][0]?.substring(
-                            0,
-                            showMore
-                              ? value['Practitioner Comments'][0]?.length
-                              : 560,
-                          )}{' '}
-                          <span
-                            className="text-Primary-DeepTeal cursor-pointer underline font-medium"
-                            onClick={() => setShowMore(!showMore)}
-                          >
-                            {showMore ? 'See less' : 'See more'}
-                          </span>
-                        </div>
+                        <ExpandableText
+                          text={value['Practitioner Comments'][0]}
+                        />
                       </div>
                     )}
                     <div className="w-full bg-bg-color h-[1px] mt-1 mb-2"></div>
