@@ -4,13 +4,13 @@ import { BeatLoader } from 'react-spinners';
 import FormsApi from '../../../api/Forms';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Checkbox from '../../../Components/checkbox';
+import Circleloader from '../../../Components/CircleLoader';
+import Toggle from '../../../Components/RepoerAnalyse/Boxs/Toggle';
 import TextField from '../../../Components/TextField';
+import { TextAreaField } from '../../../Components/UnitComponents';
 import AddQuestionsModal from './AddQuestionModal';
 import QuestionItem from './QuestionItem';
 import TimerPicker from './TimerPicker';
-import Circleloader from '../../../Components/CircleLoader';
-import { TextAreaField } from '../../../Components/UnitComponents';
-import Toggle from '../../../Components/RepoerAnalyse/Boxs/Toggle';
 interface QuestionaryControllerModalProps {
   editId?: string;
   mode?: 'Edit' | 'Reposition' | 'Add';
@@ -18,6 +18,7 @@ interface QuestionaryControllerModalProps {
   onSave: (values: any) => void;
   templateData?: any;
   error: string;
+  isQuestionary?: boolean;
 }
 
 const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
@@ -27,6 +28,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   editId,
   templateData,
   error,
+  isQuestionary,
 }) => {
   const [isError, setIsError] = useState(false);
   const [step, setStep] = useState(0);
@@ -59,23 +61,17 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   };
   const resolveFormTitle = () => {
     if (templateData == null && mode == 'Add') {
-      if (step !== 0 && titleForm.length) {
-        return (
-          titleForm + ' Form' + ' - Step ' + (step + 1) + stepTitleInfo(step)
-        );
-      }
       return (
         'Create Personal Form' + ' - Step ' + (step + 1) + stepTitleInfo(step)
       );
     } else if (templateData != null) {
-      if (step !== 0 && titleForm.length) return titleForm;
-      return templateData.title + ' - Step ' + (step + 1) + stepTitleInfo(step);
+      return 'Create Form - Step ' + (step + 1) + stepTitleInfo(step);
     }
     switch (mode) {
       case 'Add':
         return 'Feedback';
-      case 'Reposition':
-        return 'Reposition Check-in';
+      // case 'Reposition':
+      //   return 'Reposition Check-in';
       case 'Edit':
         return 'Edit';
     }
@@ -120,19 +116,20 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             upSeconds={seconds}
             step={step}
             mode={mode}
+            isQuestionary={isQuestionary}
           />
         );
-      case 'Reposition':
-        return (
-          <>
-            <RepositionCheckIn
-              onChange={(values) => {
-                setQuestions(values);
-              }}
-              upQuestions={questions}
-            ></RepositionCheckIn>
-          </>
-        );
+      // case 'Reposition':
+      //   return (
+      //     <>
+      //       <RepositionCheckIn
+      //         onChange={(values) => {
+      //           setQuestions(values);
+      //         }}
+      //         upQuestions={questions}
+      //       ></RepositionCheckIn>
+      //     </>
+      //   );
       case 'Edit':
         return (
           <AddCheckIn
@@ -159,6 +156,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             upSeconds={seconds}
             step={step}
             mode={mode}
+            isQuestionary={isQuestionary}
           />
         );
     }
@@ -174,13 +172,15 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     templateData?.require_client_consent || false,
   );
   const isDisable = () => {
-    if (templateData == null) {
-      if (titleForm.length == 0) {
-        return true;
-      } else if (questions.length == 0 && step !== 0) {
-        return true;
-      }
+    // if (templateData == null) {
+    if (titleForm.length == 0) {
+      return true;
+    } else if (requireClientConsent && consentText.length == 0) {
+      return true;
+    } else if (questions.length == 0 && step !== 0) {
+      return true;
     }
+    // }
     return false;
   };
   const [isSaveLoding, setIsSaveLoading] = useState(false);
@@ -208,9 +208,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       FormsApi.showQuestinary(editId).then((res) => {
         setQuestions(res.data.questions);
         setTitleForm(res.data.title);
-        setDescriptionForm(res.data.description);
-        setRequireClientConsent(res.data.require_client_consent);
-        setConsentText(res.data.consent_text);
+        setDescriptionForm(res.data.description || '');
+        setConsentText(res.data.consent_text || '');
+        setRequireClientConsent(res.data.consent_text?.length > 0);
         const totalMs = res.data.time;
         const mins = Math.floor(totalMs / 60000);
         const secs = Math.floor((totalMs % 60000) / 1000);
@@ -238,8 +238,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
           {step == 0 && (
             <>
-              {mode == 'Add' &&
-              (AddquestionStep == 0 || AddquestionStep == 2) ? (
+              {AddquestionStep == 0 || AddquestionStep == 2 ? (
                 <>
                   <div className="w-full mt-6">
                     <TextField
@@ -322,46 +321,58 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           <div className="text-[10px] text-Red">Add question to continue.</div>
         )}
         <div
-          className={`w-full flex justify-end items-center p-2 ${
+          className={`w-full flex ${step === 0 ? 'justify-end' : 'justify-between'} items-center p-2 ${
             AddquestionStep == 1 && 'hidden'
           } `}
         >
-          <div
-            className="text-Disable text-sm font-medium mr-4 cursor-pointer"
-            onClick={() => {
-              onClose();
-            }}
-          >
-            Cancel
-          </div>
-          <div
-            onClick={() => {
-              setShowValidation(true);
-              if (!isDisable()) {
-                if ((step === 0 || step === 1) && mode != 'Reposition') {
-                  setStep(step + 1);
-                  setShowValidation(false);
-                } else {
-                  addCheckinForm();
-                  setShowValidation(false);
+          {step !== 0 && (
+            <div
+              className={`text-sm text-Primary-DeepTeal font-medium cursor-pointer`}
+              onClick={() => {
+                setStep(step - 1);
+              }}
+            >
+              Back
+            </div>
+          )}
+          <div className="flex items-center">
+            <div
+              className="text-Disable text-sm font-medium mr-4 cursor-pointer"
+              onClick={() => {
+                onClose();
+              }}
+            >
+              Cancel
+            </div>
+            <div
+              onClick={() => {
+                setShowValidation(true);
+                if (!isDisable()) {
+                  if ((step === 0 || step === 1) && mode != 'Reposition') {
+                    setStep(step + 1);
+                    setShowValidation(false);
+                  } else {
+                    addCheckinForm();
+                    setShowValidation(false);
+                  }
                 }
-              }
-            }}
-            className={`text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
-          >
-            {isSaveLoding ? (
-              <BeatLoader size={6}></BeatLoader>
-            ) : (
-              <>
-                {mode == 'Reposition'
-                  ? 'Update'
-                  : step === 0 || step === 1
-                    ? 'Next'
-                    : mode == 'Edit'
-                      ? 'Update'
-                      : 'Save'}
-              </>
-            )}
+              }}
+              className={`text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
+            >
+              {isSaveLoding ? (
+                <BeatLoader size={6}></BeatLoader>
+              ) : (
+                <>
+                  {mode == 'Reposition'
+                    ? 'Update'
+                    : step === 0 || step === 1
+                      ? 'Next'
+                      : mode == 'Edit'
+                        ? 'Update'
+                        : 'Save'}
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -383,6 +394,7 @@ interface AddCheckInProps {
   questionStep: number;
   setQuestionStep: (value: number) => void;
   onAddQuestion: () => boolean;
+  isQuestionary?: boolean;
 }
 
 const AddCheckIn: FC<AddCheckInProps> = ({
@@ -399,6 +411,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   questionStep,
   setQuestionStep,
   onAddQuestion,
+  isQuestionary,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
@@ -422,6 +435,26 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   useEffect(() => {
     setQuestions(upQuestions);
   }, [upQuestions]);
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    setQuestions((prevList: any) => {
+      const newList = [...prevList];
+      if (direction === 'up' && index > 0) {
+        [newList[index], newList[index - 1]] = [
+          newList[index - 1],
+          newList[index],
+        ];
+      } else if (direction === 'down' && index < newList.length - 1) {
+        [newList[index], newList[index + 1]] = [
+          newList[index + 1],
+          newList[index],
+        ];
+      }
+      return newList;
+    });
+  };
+  useEffect(() => {
+    onChange(questions);
+  }, [questions]);
   return (
     <>
       {step === 1 || mode == 'Reposition' ? (
@@ -445,6 +478,9 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                             setEditingQuestionIndex(index);
                             setAddMore(true);
                             setQuestionStep(1);
+                          }}
+                          moveItem={(item: any) => {
+                            moveItem(index, item);
                           }}
                           onRemove={() => {
                             setQuestions((pre) => {
@@ -535,6 +571,8 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                   setAddMore(false);
                   setQuestionStep(0);
                 }}
+                questions={questions}
+                isQuestionary={isQuestionary}
               />
             </>
           )}
@@ -555,7 +593,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
               borderColor="border-Text-Quadruple"
               width="w-3.5"
               height="h-3.5"
-              label="Share with client"
+              label="Share time estimate with client"
             />
           </div>
           <div className="w-full flex items-center justify-center mt-4 mb-5">
@@ -572,79 +610,79 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   );
 };
 
-interface RepositionCheckInProps {
-  onChange: (questions: Array<checkinType>) => void;
-  upQuestions: Array<checkinType>;
-}
+// interface RepositionCheckInProps {
+//   onChange: (questions: Array<checkinType>) => void;
+//   upQuestions: Array<checkinType>;
+// }
 
-const RepositionCheckIn: FC<RepositionCheckInProps> = ({
-  upQuestions,
-  onChange,
-}) => {
-  const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
-  useEffect(() => {
-    setQuestions(upQuestions);
-  }, [upQuestions]);
-  const moveItem = (index: number, direction: 'up' | 'down') => {
-    setQuestions((prevList: any) => {
-      const newList = [...prevList];
-      if (direction === 'up' && index > 0) {
-        [newList[index], newList[index - 1]] = [
-          newList[index - 1],
-          newList[index],
-        ];
-      } else if (direction === 'down' && index < newList.length - 1) {
-        [newList[index], newList[index + 1]] = [
-          newList[index + 1],
-          newList[index],
-        ];
-      }
-      return newList;
-    });
-  };
-  useEffect(() => {
-    onChange(questions);
-  }, [questions]);
-  return (
-    <>
-      {questions.length > 0 && (
-        <>
-          <div
-            className={`max-h-[200px] min-h-[60px] overflow-y-auto w-full mb-3`}
-          >
-            <div className="flex flex-col items-center justify-center gap-1 w-full">
-              {questions.map((item: any, index: number) => {
-                return (
-                  <>
-                    <QuestionItem
-                      length={questions.length}
-                      onEdit={() => {
-                        // setEditingQuestionIndex(index);
-                        // setAddMore(true);
-                      }}
-                      moveItem={(item: any) => {
-                        moveItem(index, item);
-                      }}
-                      isReposition
-                      onRemove={() => {
-                        setQuestions((pre) => {
-                          const newQuestions = pre.filter(
-                            (_el, ind) => ind != index,
-                          );
-                          return newQuestions;
-                        });
-                      }}
-                      index={index}
-                      question={item}
-                    ></QuestionItem>
-                  </>
-                );
-              })}
-            </div>
-          </div>
-        </>
-      )}
-    </>
-  );
-};
+// const RepositionCheckIn: FC<RepositionCheckInProps> = ({
+//   upQuestions,
+//   onChange,
+// }) => {
+//   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
+//   useEffect(() => {
+//     setQuestions(upQuestions);
+//   }, [upQuestions]);
+//   const moveItem = (index: number, direction: 'up' | 'down') => {
+//     setQuestions((prevList: any) => {
+//       const newList = [...prevList];
+//       if (direction === 'up' && index > 0) {
+//         [newList[index], newList[index - 1]] = [
+//           newList[index - 1],
+//           newList[index],
+//         ];
+//       } else if (direction === 'down' && index < newList.length - 1) {
+//         [newList[index], newList[index + 1]] = [
+//           newList[index + 1],
+//           newList[index],
+//         ];
+//       }
+//       return newList;
+//     });
+//   };
+//   useEffect(() => {
+//     onChange(questions);
+//   }, [questions]);
+//   return (
+//     <>
+//       {questions.length > 0 && (
+//         <>
+//           <div
+//             className={`max-h-[200px] min-h-[60px] overflow-y-auto w-full mb-3`}
+//           >
+//             <div className="flex flex-col items-center justify-center gap-1 w-full">
+//               {questions.map((item: any, index: number) => {
+//                 return (
+//                   <>
+//                     <QuestionItem
+//                       length={questions.length}
+//                       onEdit={() => {
+//                         // setEditingQuestionIndex(index);
+//                         // setAddMore(true);
+//                       }}
+//                       moveItem={(item: any) => {
+//                         moveItem(index, item);
+//                       }}
+//                       // isReposition
+//                       onRemove={() => {
+//                         setQuestions((pre) => {
+//                           const newQuestions = pre.filter(
+//                             (_el, ind) => ind != index,
+//                           );
+//                           return newQuestions;
+//                         });
+//                       }}
+//                       index={index}
+//                       question={item}
+//                     ></QuestionItem>
+//                   </>
+//                 );
+//               })}
+//             </div>
+//           </div>
+//         </>
+//       )}
+//     </>
+//   );
+// };
 export default QuestionaryControllerModal;
