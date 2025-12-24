@@ -53,7 +53,7 @@ export const SlideOutPanel: FC<SlideOutPanelProps> = ({
   // ---------------- RESIZE HANDLER ----------------
   const startResize = (e: React.MouseEvent) => {
     if (!isResizable) return;
-    if(window.innerWidth < 1400) return;
+    if (window.innerWidth < 1400) return;
     e.preventDefault();
 
     const panel = panelRef.current;

@@ -107,7 +107,7 @@ export const PopUpChat = ({
 
   const onMouseMoveWindow = (e: MouseEvent) => {
     if (!resizing.current || !boxRef.current) return;
-  if (window.innerWidth < 1400) return;
+    if (window.innerWidth < 1400) return;
     const box = boxRef.current;
     const rect = box.getBoundingClientRect();
 
