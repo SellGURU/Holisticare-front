@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import Mobile from '../../api/mobile';
 import Circleloader from '../../Components/CircleLoader';
 import { PublicSurveyForm } from '../../Components/survey/public-survey-form';
-
+// import mokQuestionary from './mokQuestionary.json';
 interface FormViewProps {
   mode?: 'questionary' | 'checkin';
 }
@@ -27,6 +27,8 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
           setIsLaoding(false);
         })
         .catch(() => {});
+        // setData(mokQuestionary);
+        // setIsLaoding(false);
     } else {
       Mobile.getCheckInEmpty({
         encoded_mi: encode as string,

@@ -33,27 +33,27 @@ const mainCondition = (question: any, allQuestions: Array<any>) => {
     }
 
     if (rule.operator === 'greater_than') {
-      return checkQuestion.response > rule.value;
+      return Number(checkQuestion.response) > Number(rule.value);
     }
     if (rule.operator === 'less_than') {
-      return checkQuestion.response < rule.value;
+      return Number(checkQuestion.response) < Number(rule.value);
     }
     if (rule.operator === 'greater_than_or_equal') {
-      return checkQuestion.response >= rule.value;
+      return Number(checkQuestion.response) >= Number(rule.value);
     }
     if (rule.operator === 'less_than_or_equal') {
-      return checkQuestion.response <= rule.value;
-    }
+      return Number(checkQuestion.response) <= Number(rule.value);
+    } 
     if (rule.operator === 'between') {
       return (
-        checkQuestion.response >= rule.value[0] &&
-        checkQuestion.response <= rule.value[1]
+        Number(checkQuestion.response) >= Number(rule.value[0]) &&
+        Number(checkQuestion.response) <= Number(rule.value[1])
       );
     }
     if (rule.operator === 'not_between') {
       return (
-        checkQuestion.response < rule.value[0] ||
-        checkQuestion.response > rule.value[1]
+        Number(checkQuestion.response) < Number(rule.value[0]) ||
+        Number(checkQuestion.response) > Number(rule.value[1])
       );
     }
     // TEXT OPERATORS
@@ -118,25 +118,25 @@ const mainCondition = (question: any, allQuestions: Array<any>) => {
       const responseLength = Array.isArray(checkQuestion.response)
         ? checkQuestion.response.length
         : String(checkQuestion.response || '').length;
-      return responseLength === rule.value;
+      return responseLength === Number(rule.value);
     }
     if (rule.operator === 'length_greater') {
       const responseLength = Array.isArray(checkQuestion.response)
         ? checkQuestion.response.length
         : String(checkQuestion.response || '').length;
-      return responseLength > rule.value;
+      return responseLength > Number(rule.value);
     }
     if (rule.operator === 'length_less') {
       const responseLength = Array.isArray(checkQuestion.response)
         ? checkQuestion.response.length
         : String(checkQuestion.response || '').length;
-      return responseLength < rule.value;
+      return responseLength < Number(rule.value);
     }
     if (rule.operator === 'length_between') {
       const responseLength = Array.isArray(checkQuestion.response)
         ? checkQuestion.response.length
         : String(checkQuestion.response || '').length;
-      return responseLength >= rule.value[0] && responseLength <= rule.value[1];
+      return responseLength >= Number(rule.value[0]) && responseLength <= Number(rule.value[1]);
     }
     // DATE OPERATORS (format: 2024-01-15)
     if (rule.operator === 'date_after') {
@@ -162,18 +162,11 @@ const mainCondition = (question: any, allQuestions: Array<any>) => {
     }
     // FILE OPERATORS
     if (rule.operator === 'file_uploaded') {
-      return (
-        checkQuestion.response &&
-        checkQuestion.response !== null &&
-        checkQuestion.response !== ''
-      );
+      console.log(checkQuestion.response);
+      return (checkQuestion.response?.frontal?.length > 0 || checkQuestion.response?.back?.length > 0 || checkQuestion.response?.side?.length > 0 )
     }
     if (rule.operator === 'file_not_uploaded') {
-      return (
-        !checkQuestion.response ||
-        checkQuestion.response === null ||
-        checkQuestion.response === ''
-      );
+      return (!(checkQuestion.response?.frontal?.length > 0 || checkQuestion.response?.back?.length > 0 || checkQuestion.response?.side?.length > 0 ));
     }
     if (rule.operator === 'file_size_greater') {
       // rule.value format: 524288 (bytes)
