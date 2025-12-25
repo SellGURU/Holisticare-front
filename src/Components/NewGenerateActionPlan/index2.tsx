@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { TopBar } from '../topBar';
 // import CategorieyWeight from './components/CategorieyWeight';
 import Application from '../../api/app';
 import LoaderBox from './components/LoaderBox';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
 import TimeDuration from './components/TimeDuration';
 import PlanObjective from './components/PlanObjective';
@@ -18,46 +18,55 @@ import CircularProgressBar from './components/CircularProgressBar';
 // import { AlertModal } from '../AlertModal';
 
 const GenerateActionPlan = () => {
-  const [plans, setPlans] = useState<any>(null);
+  // const [plans, setPlans] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const isMountedRef = useRef(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isLoadingPlans, setIsLoadingPlans] = useState(true);
   const [isWeighted, setIsWeighted] = useState(false);
   const [actions, setActions] = useState<any>({
     checkIn: [],
     category: [],
   });
-  useEffect(() => {
-    Application.getActionPlanMethodsNew().then((res) => {
-      setPlans(res.data);
-    });
-  }, []);
+  // useEffect(() => {
+  //   Application.getActionPlanMethodsNew().then((res) => {
+  //     setPlans(res.data);
+  //   });
+  // }, []);
   const [categories, setCategories] = useState<any>({
     checkIn: [],
     category: [],
   });
-  const checkSelectedTaskConflict = (newPlans: any) => {
-    setIsLoadingPlans(true);
-    Application.checkSelectedTaskConflict({
-      member_id: id,
-      tasks: newPlans,
-    })
-      .then((res) => {
-        setCategories((prevCategories: any) => ({
-          ...prevCategories,
-          category: res.data,
-        }));
+  const checkSelectedTaskConflict = useCallback(
+    (newPlans: any) => {
+      setIsLoadingPlans(true);
+      Application.checkSelectedTaskConflict({
+        member_id: id,
+        tasks: newPlans,
       })
-      .finally(() => {
-        setIsLoadingPlans(false);
-      });
-  };
+        .then((res) => {
+          setCategories((prevCategories: any) => ({
+            ...prevCategories,
+            category: res.data,
+          }));
+        })
+        .finally(() => {
+          setIsLoadingPlans(false);
+        })
+        .catch(() => {});
+    },
+    [id],
+  );
   const [actionPlanError, setActionPlanError] = useState(false);
-  const savePlan = () => {
+  const getPaln = useCallback(() => {
     Application.getActionPlanTaskDirectoryNew({
       member_id: id,
       // percents: newPlans,
     })
       .then((res) => {
+        if (!isMountedRef.current) return;
+
         const checkInItems = res.data.filter(
           (item: any) => item.Task_Type === 'Checkin',
         );
@@ -75,16 +84,74 @@ const GenerateActionPlan = () => {
         setActionPlanError(false);
       })
       .catch(() => {
+        if (!isMountedRef.current) return;
+
         setActionPlanError(true);
-        setTimeout(() => {
-          savePlan();
+        timeoutRef.current = setTimeout(() => {
+          if (isMountedRef.current) {
+            getPaln();
+          }
         }, 5000);
+        // navigate(-1);
+      });
+  }, [id, checkSelectedTaskConflict]);
+  const getSavedPaln = (planId: string) => {
+    Application.actionPalnShowTasks({
+      member_id: id,
+      id: planId,
+      // percents: newPlans,
+    })
+      .then((res) => {
+        const checkInItems = res.data.tasks.filter(
+          (item: any) => item.Task_Type === 'Checkin',
+        );
+        const categoryItems = res.data.tasks.filter(
+          (item: any) => item.Task_Type !== 'Checkin',
+        );
+        setIsDarft(res.data.is_draft);
+        // setCategories({
+        //   checkIn: checkInItems,
+        //   category: categoryItems,
+        // });
+        setActions({
+          checkIn: checkInItems,
+          category: categoryItems,
+        });
+        setDuration(res.data.duration);
+        setPlanObjective(res.data.plan_objective);
+
+        setIsWeighted(true);
+        checkSelectedTaskConflict(res.data.tasks);
+        setActionPlanError(false);
+        setIsLoadingPlans(false);
+      })
+      .catch(() => {
+        // if (!isMountedRef.current) return;
+        // setActionPlanError(true);
+        // timeoutRef.current = setTimeout(() => {
+        //   if (isMountedRef.current) {
+        //     getSavedPaln(planId);
+        //   }
+        // }, 5000);
         // navigate(-1);
       });
   };
   useEffect(() => {
-    savePlan();
-  }, []);
+    const planIdFromUrl = searchParams.get('planId');
+    if (planIdFromUrl) {
+      getSavedPaln(planIdFromUrl);
+    } else {
+      getPaln();
+    }
+
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [getPaln]);
+
   const [isLoadingSaveChanges, setISLoadingSaveChanges] = useState(false);
   const [isLoadingCalendarView, setIsLoadingCalendarView] = useState(false);
   const navigate = useNavigate();
@@ -105,6 +172,8 @@ const GenerateActionPlan = () => {
       tasks: flattenedData,
       duration: duration,
       plan_objective: planObjective,
+      id: actionPlanId ? actionPlanId : undefined,
+      is_update: !isDarft,
     })
       .then(() => {
         // navigate(-1);
@@ -119,7 +188,49 @@ const GenerateActionPlan = () => {
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);
   const [checkSave, setCheckSave] = useState(false);
+  const [actionPlanId, setActionPlanId] = useState<string | null>(null);
 
+  // Read planId from URL query parameter
+  useEffect(() => {
+    const planIdFromUrl = searchParams.get('planId');
+    console.log(planIdFromUrl);
+    if (planIdFromUrl) {
+      setActionPlanId(planIdFromUrl);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (actionPlanId) {
+      navigate(`/report/Generate-Action-Plan/${id}?planId=` + actionPlanId);
+    }
+  }, [actionPlanId]);
+  const [isDarft, setIsDarft] = useState<boolean | null>(null);
+  const autoSaveActionPlan = () => {
+    const prepareDataForBackend = (data: any) => {
+      return [...data.checkIn, ...data.category];
+    };
+    const flattenedData = prepareDataForBackend(actions);
+    if (flattenedData.length > 0 && (isDarft === null || isDarft === true)) {
+      Application.initialSaveActionPlan({
+        member_id: id,
+        tasks: flattenedData,
+        duration: duration,
+        plan_objective: planObjective,
+        id: actionPlanId ? actionPlanId : undefined,
+      })
+        .then((res: any) => {
+          setActionPlanId(res.data.id);
+          setIsDarft(true);
+          // console.log('Action plan saved successfully');
+        })
+        .catch(() => {
+          // console.log('Action plan save failed');
+        });
+    }
+  };
+  useEffect(() => {
+    autoSaveActionPlan();
+  }, [actions, duration, planObjective]);
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
     if (calendarView) {
@@ -149,27 +260,30 @@ const GenerateActionPlan = () => {
 
   return (
     <>
-      <div className="h-[100vh] overflow-auto overflow-y-scroll">
+      <div className="h-[100vh]  overflow-auto overflow-y-scroll">
         <div
-          className={`w-full fixed top-0 hidden bg-[#E9F0F2] lg:flex ${
+          className={`w-full fixed  top-0 z-10 lg:z-0  bg-[#E9F0F2] flex ${
             showConflictsModal ? 'lg:z-0' : 'lg:z-[9]'
           }`}
         >
           <div className="w-full ">
             <TopBar></TopBar>
-            <div className="flex justify-between items-center mt-9 mx-8">
+            <div className="flex justify-between items-center mt-9 mx-4 lg:mx-8">
               <div className="flex items-center gap-3">
                 <div
                   onClick={() => {
                     if (!calendarView) {
-                      navigate(-1);
+                      navigate('/report/' + id + '/a?section=Action Plan');
                     } else {
                       setCalendarView(false);
                     }
                   }}
-                  className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer lg:bg-white lg:border lg:border-Gray-50 lg:rounded-md lg:shadow-100`}
+                  className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 lg:rounded-md shadow-100`}
                 >
-                  <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+                  <img
+                    className="w-4 xs:w-6 h-4 xs:h-6"
+                    src="/icons/arrow-back.svg"
+                  />
                 </div>
                 <div className="TextStyle-Headline-5 text-Text-Primary">
                   {calendarView ? 'Calendar View' : 'Generate Action Plan'}
@@ -178,8 +292,11 @@ const GenerateActionPlan = () => {
               {!calendarView && (
                 <>
                   {isWeighted && (
-                    <div className="pr-[70px]">
-                      <ButtonPrimary onClick={saveChanges}>
+                    <div className="lg:pr-[70px]">
+                      <ButtonPrimary
+                        ClassName="h-[33px] w-[120px] xs:w-[155px] text-[10px] xs:text-xs text-nowrap"
+                        onClick={saveChanges}
+                      >
                         {isLoadingSaveChanges ? (
                           <>
                             <SpinnerLoader />
@@ -200,14 +317,14 @@ const GenerateActionPlan = () => {
               <>
                 {isWeighted && (
                   <>
-                    <div className="flex pb-3 justify-between gap-4 mx-8 mt-4 items-center pr-[70px]">
-                      <div className="flex-grow">
+                    <div className="flex flex-col lg:flex-row pb-3 justify-between gap-4 mx-4 lg:mx-8 mt-4 items-center lg:pr-[70px]">
+                      <div className="flex-grow w-full lg:w-auto">
                         <PlanObjective
                           value={planObjective}
                           setValue={setPlanObjective}
                         />
                       </div>
-                      <div className="w-[342px]">
+                      <div className=" w-full lg:w-[342px]">
                         <TimeDuration
                           setDuration={(value) => {
                             setDuration(value);
@@ -245,8 +362,8 @@ const GenerateActionPlan = () => {
             {/* ) : ( */}
             <>
               <div
-                style={{ height: window.innerHeight - 190 + 'px' }}
-                className="w-full overflow-auto mt-[190px] pb-10 pr-[70px] "
+                // style={{ height: window.innerHeight - 190 + 'px' }}
+                className="w-full h-[calc(100vh-190px)]   mt-[250px] lg:mt-[190px] pb-10 lg:pr-[70px] "
               >
                 <Stadio
                   isCheckSave={checkSave}
@@ -255,10 +372,10 @@ const GenerateActionPlan = () => {
                   setData={setCategories}
                   data={categories}
                   setCalendarView={setCalendarView}
-                  plans={plans}
+                  plans={[]}
                   handleShowConflictsModal={handleShowConflictsModal}
                 />
-                <div className="absolute right-5 top-[75px] z-50">
+                <div className=" hidden lg:block absolute right-5 top-[75px] z-50">
                   <ComboBar isHolisticPlan></ComboBar>
                 </div>
               </div>
@@ -268,9 +385,9 @@ const GenerateActionPlan = () => {
         ) : (
           <>
             {calendarViewData && (
-              <div className="w-full h-full px-8 mt-[125px]">
+              <div className="w-full h-full px-4 lg:px-8 mt-[125px]">
                 {calendarViewData?.scheduled_tasks.length > 0 && (
-                  <div className="w-full h-[112px] rounded-2xl bg-backgroundColor-Card border border-Gray-50 p-4 flex justify-between">
+                  <div className="w-full  h-fit lg:h-[112px] rounded-2xl bg-backgroundColor-Card border border-Gray-50 p-4 flex flex-col lg:flex-row justify-between">
                     <div className="flex flex-col h-full justify-between">
                       <div className="font-medium text-sm text-Text-Primary">
                         Progress
@@ -284,8 +401,8 @@ const GenerateActionPlan = () => {
                       </div>
                     </div>
                     <div className="flex h-full gap-8">
-                      <div className="h-full w-[1px] bg-Gray-50"></div>
-                      <div className="flex flex-col items-center">
+                      <div className=" hidden lg:block h-full w-[1px] bg-Gray-50"></div>
+                      <div className="flex -ml-4 lg:ml-0 flex-col mt-4 lg:mt-0 items-center">
                         <div className="font-medium text-sm text-Text-Primary -mb-3">
                           Total
                         </div>
@@ -293,9 +410,9 @@ const GenerateActionPlan = () => {
                           percentage={calendarViewData.progress}
                         />
                       </div>
-                      <div className="h-full w-[1px] bg-Gray-50"></div>
+                      <div className=" hidden lg:block h-full w-[1px] bg-Gray-50"></div>
                     </div>
-                    <div className="flex h-full gap-8">
+                    <div className="flex -ml-4 lg:ml-0  h-full lg:gap-8">
                       <div className="flex flex-col items-center">
                         <div className="font-medium text-xs text-Text-Primary -mb-2">
                           Diet

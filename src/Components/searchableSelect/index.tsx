@@ -94,7 +94,7 @@ const SearchSelect: React.FC<SelectProps> = ({
   return (
     <div
       ref={selectWrapperRef}
-      className={`relative inline-block ${
+      className={`relative inline-block   ${
         isSmall && 'w-[101px]'
       } ${isLarge ? 'w-full' : 'w-[142px]'} text-nowrap cursor-pointer font-normal`}
       key={key}
@@ -115,7 +115,9 @@ const SearchSelect: React.FC<SelectProps> = ({
         aria-expanded={isOpen}
         tabIndex={0}
       >
-        <span className={`text-Text-Primary text-wrap w-[90px] xl:w-auto`}>
+        <span
+          className={`text-Text-Primary md:text-[12px] text-wrap w-[90px] xl:w-auto`}
+        >
           <TooltipTextAuto maxWidth={isSmall ? '100px' : '190px'}>
             {selectedValue || placeholder}
           </TooltipTextAuto>
@@ -141,14 +143,14 @@ const SearchSelect: React.FC<SelectProps> = ({
       {/* Dropdown menu */}
       {isOpen && (
         <div
-          className={`absolute z-10 w-full ${
+          className={`absolute z-[9] w-full ${
             isSetting
               ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
               : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
-          } overflow-auto n max-h-60`}
+          } overflow-auto n max-h-[190px] md:max-h-60`}
         >
           {/* Search input */}
-          <div className="sticky top-0 bg-inherit p-2 z-10">
+          <div className="sticky top-0 bg-inherit p-2 ">
             <input
               type="text"
               placeholder="Search..."

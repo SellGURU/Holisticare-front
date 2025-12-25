@@ -39,17 +39,23 @@ import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
 // import { ShareModal } from './ShareModal';
 import { UploadTestV2 } from './UploadTestV2';
-import HolisticShare from './components/HolisticShare';
+// import HolisticShare from './components/HolisticShare';
+import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
+import MarkdownText from '../markdownText';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
   isShare?: boolean;
   uniqKey?: string;
+  isActive?: boolean;
+  setActiveCheckProgress: (status: boolean) => void;
 }
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   memberID,
   isShare,
+  isActive,
+  setActiveCheckProgress,
   uniqKey,
 }) => {
   const { id, name } = useParams<{ id: string; name: string }>();
@@ -58,17 +64,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [caldenderData, setCalenderData] = useState<any>(null);
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
+  const [has_wearable_data, setHasWearableData] = useState(false);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [questionnaires, setQuestionnaires] = useState([]);
   // const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-  const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
-  const [dateShare, setDateShare] = useState<string | null>(null);
-  useEffect(() => {
-    subscribe('shareModalHolisticPlanSuccess', () => {
-      setIsShareModalSuccess(true);
-    });
-  }, []);
+  // const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
+  // const [dateShare, setDateShare] = useState<string | null>(null);
+  // useEffect(() => {
+  //   subscribe('shareModalHolisticPlanSuccess', () => {
+  //     setIsShareModalSuccess(true);
+  //   });
+  // }, []);
   // const history = useHistory();
   const location = useLocation();
   // useEffect(() => {
@@ -103,11 +110,26 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         member_id: resolvedMemberID,
       }).then((res) => {
         setUserInfoData(res.data);
+        publish('userInfoData', res.data);
         setIsHaveReport(res.data.show_report);
+        setHasWearableData(res.data.has_wearable_data);
         setShowUploadTest(!res.data.first_time_view);
         setQuestionnaires(res.data.questionnaires);
+        if (res.data.has_minimum_data == false) {
+          setDisableGenerate(true);
+        } else {
+          setDisableGenerate(false);
+        }
+        if (res.data.first_time_view == true) {
+          setActiveCheckProgress(true);
+        } else {
+          setActiveCheckProgress(false);
+        }
         setTimeout(() => {
-          if (res.data.show_report == true) {
+          if (
+            res.data.show_report == true ||
+            res.data.first_time_view == true
+          ) {
             fetchData();
           }
         }, 2000);
@@ -115,19 +137,29 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   };
   const [isLoadingQuestionnaires, setIsLoadingQuestionnaires] = useState(false);
-  subscribe('reloadQuestionnaires', () => {
-    setIsLoadingQuestionnaires(true);
-    Application.getPatientsInfo({
-      member_id: resolvedMemberID,
-    })
-      .then((res) => {
-        setQuestionnaires(res.data.questionnaires);
-        setIsLoadingQuestionnaires(false);
+  useEffect(() => {
+    const handleReloadQuestionnaires = () => {
+      setIsLoadingQuestionnaires(true);
+      Application.getPatientsInfo({
+        member_id: resolvedMemberID,
       })
-      .finally(() => {
-        setIsLoadingQuestionnaires(false);
-      });
-  });
+        .then((res) => {
+          setQuestionnaires(res.data.questionnaires);
+          setIsLoadingQuestionnaires(false);
+          setIsHaveReport(res.data.show_report);
+          setShowUploadTest(!res.data.first_time_view);
+        })
+        .finally(() => {
+          setIsLoadingQuestionnaires(false);
+        });
+    };
+
+    subscribe('reloadMainQuestionnaires', handleReloadQuestionnaires);
+
+    return () => {
+      unsubscribe('reloadMainQuestionnaires', handleReloadQuestionnaires);
+    };
+  }, [resolvedMemberID]);
   const fetchPatentDataWithState = () => {
     if (isShare) {
       Application.getPatientsInfoShare(
@@ -151,8 +183,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
         setShowUploadTest(!res.data.first_time_view);
+        if (res.data.first_time_view == true) {
+          setActiveCheckProgress(true);
+        }
         setTimeout(() => {
           if (res.data.show_report == true) {
+            setISGenerateLoading(false);
             fetchData();
           }
         }, 2000);
@@ -214,6 +250,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           publish('HolisticPlanStatus', { isempty: true });
         } else {
           publish('HolisticPlanStatus', { isempty: false });
+          pollHtmlReport();
         }
       },
     );
@@ -315,7 +352,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return () => {
       unsubscribe('syncReport', handleSyncReport);
     };
-  }, []);
+  }, [isHaveReport]);
   const [accessManager, setAccessManager] = useState<
     Array<{
       name: string;
@@ -511,12 +548,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     });
   };
   useEffect(() => {
-    if (!loading) {
+    if (!loading && isActive) {
       setTimeout(() => {
         handleScroll();
       }, 500);
     }
-  }, [id, loading]);
+  }, [id, loading, isActive]);
   const [isSticky, setIsSticky] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -563,7 +600,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, []);
   const [, setSearchParams] = useSearchParams();
   useEffect(() => {
-    subscribe('uploadTestShow', (data: any) => {
+    const handleUploadTestShow = (data: any) => {
       setSearchParams({ ['section']: 'Client Summary' });
       document.getElementById('Client Summary')?.scrollIntoView({
         behavior: 'instant',
@@ -572,8 +609,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         publish('uploadTestShow-stepTwo', {});
       }, 4);
       setShowUploadTest(data.detail.isShow);
-    });
-  }, []);
+    };
+
+    subscribe('uploadTestShow', handleUploadTestShow);
+
+    return () => {
+      unsubscribe('uploadTestShow', handleUploadTestShow);
+    };
+  }, [setSearchParams]);
   const [isHolisticPlanEmpty, setIsHolisticPlanEmpty] = useState(true);
 
   const memoizedPoints = useMemo(() => {
@@ -603,94 +646,116 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }, 3000);
     }
   }, [checkedSteptwo]);
-  const checkStepTwo = (fileID: string | undefined) => {
-    if (!fileID) return;
+  // const checkStepTwo = (fileID: string | undefined) => {
+  //   if (!fileID) return;
 
-    Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
-      if (res.data.step_two == true && checkedSteptwo == false) {
-        setCheckedStepTwo(true);
-        // The condition is met, so we stop here.
-        publish('StepTwoSuccess', {});
-      } else {
-        setTimeout(() => {
-          checkStepTwo(fileID);
-        }, 15000); // 15 seconds delay
-      }
-    });
-  };
+  //   Application.checkStepTwoUpload({ file_id: fileID }).then((res) => {
+  //     if (res.data.step_two == true && checkedSteptwo == false) {
+  //       setCheckedStepTwo(true);
+  //       // The condition is met, so we stop here.
+  //       publish('StepTwoSuccess', {});
+  //     } else {
+  //       setTimeout(() => {
+  //         checkStepTwo(fileID);
+  //       }, 15000); // 15 seconds delay
+  //     }
+  //   });
+  // };
 
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
-
+  const stopPolling = useRef(false);
   useEffect(() => {
-    if (TreatMentPlanData?.length > 0 && isHaveReport) {
-      Application.checkHtmlReport(id?.toString() || '')
-        .then((res) => {
-          setIsHtmlReportExists(res.data.exists);
-        })
-        .catch(() => {});
-    }
-  }, [TreatMentPlanData]);
-
-  useEffect(() => {
-    if (
-      sessionStorage.getItem('isHtmlReportExists') &&
-      TreatMentPlanData?.length > 0 &&
-      isHaveReport &&
-      !isHtmlReportExists
-    ) {
-      setIsHtmlReportExists(
-        sessionStorage.getItem('isHtmlReportExists') === 'true',
-      );
-      sessionStorage.removeItem('isHtmlReportExists');
-    } else {
-      if (
-        isHaveReport &&
-        TreatMentPlanData?.length > 0 &&
-        !isHtmlReportExists
-      ) {
-        const intervalId = setInterval(() => {
-          Application.checkHtmlReport(id?.toString() || '')
-            .then((res) => {
-              setIsHtmlReportExists(res.data.exists);
-            })
-            .catch(() => {});
-        }, 10000);
-
-        return () => clearInterval(intervalId);
-      }
-    }
-  }, [TreatMentPlanData, isHaveReport, isHtmlReportExists]);
-
-  const [loadingHtmlReport, setLoadingHtmlReport] = useState(false);
-
-  const handleGetHtmlReport = () => {
-    // if(loadingHtmlReport) return;
-    if (!isHaveReport) return;
-
-    setLoadingHtmlReport(true);
-
-    Application.getHtmlReport(resolvedMemberID?.toString() || '')
+    stopPolling.current = false; // reset on mount
+    return () => {
+      stopPolling.current = true; // stop polling when component unmounts
+    };
+  }, []);
+  const pollHtmlReport = () => {
+    if (stopPolling.current) return;
+    Application.checkHtmlReport(id?.toString() || '')
       .then((res) => {
-        try {
-          const blobUrl = res.data;
-
-          const link = document.createElement('a');
-          link.href = blobUrl;
-          link.download = 'HolisticPlanReport';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } catch (error: any) {
-          console.error('Error downloading file:', error);
+        if (res.data.exists) {
+          setIsHtmlReportExists(true);
+        } else {
+          setTimeout(pollHtmlReport, 10000);
         }
       })
-      .catch((err) => {
-        console.error('Error loading HTML report:', err);
-      })
-      .finally(() => {
-        setLoadingHtmlReport(false);
+      .catch(() => {
+        setTimeout(pollHtmlReport, 10000);
       });
   };
+  useEffect(() => {
+    const handleRecheckHtmlReport = () => {
+      setIsHtmlReportExists(false);
+      pollHtmlReport();
+    };
+
+    subscribe('reckecHtmlReport', handleRecheckHtmlReport);
+
+    return () => {
+      unsubscribe('reckecHtmlReport', handleRecheckHtmlReport);
+    };
+  }, []);
+
+  const [loadingHtmlReport] = useState(false);
+
+  const handleGetHtmlReport = (url?: string) => {
+    // if(loadingHtmlReport) return;
+    if (url) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'HolisticPlanReport';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+    if (!isHaveReport) return;
+
+    // setLoadingHtmlReport(true);
+    navigate(`/html-previewer/${resolvedMemberID}`);
+    // Application.getHtmlReport(resolvedMemberID?.toString() || '')
+    //   .then((res) => {
+    //     try {
+    //       const blobUrl = res.data;
+
+    // Application.getHtmlReport(id?.toString() || '')
+    //   .then((res) => {
+    //     try {
+    //       const blobUrl = res.data;
+
+    //       const link = document.createElement('a');
+    //       link.href = blobUrl;
+    //       link.download = 'HolisticPlanReport';
+    //       document.body.appendChild(link);
+    //       link.click();
+    //       document.body.removeChild(link);
+    //     } catch (error: any) {
+    //       console.error('Error downloading file:', error);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.error('Error loading HTML report:', err);
+    //   })
+    //   .finally(() => {
+    //     setLoadingHtmlReport(false);
+    //   });
+  };
+  const [disableGenerate, setDisableGenerate] = useState(false);
+  useEffect(() => {
+    const handleDisableGenerate = () => {
+      setDisableGenerate(true);
+    };
+    const handleRefreshCompleted = () => {
+      setDisableGenerate(false);
+    };
+    subscribe('disableGenerate', handleDisableGenerate);
+    subscribe('RefreshCompleted', handleRefreshCompleted);
+    return () => {
+      unsubscribe('disableGenerate', handleDisableGenerate);
+      unsubscribe('RefreshCompleted', handleRefreshCompleted);
+    };
+  }, [resolvedMemberID]);
 
   return (
     <>
@@ -800,7 +865,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
                     style={{ lineHeight: '24px' }}
                   >
-                    {ClientSummaryBoxs?.client_summary}
+                    <MarkdownText text={ClientSummaryBoxs?.client_summary} />
+                    {/* {ClientSummaryBoxs?.client_summary} */}
                   </div>
                   <div className="w-full mt-4 grid gap-4 grid-cols-1 xl:grid-cols-2">
                     {resolveCategories().map((el: any) => {
@@ -828,8 +894,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 </div>
               </div>
             )}
-
-            {accessManager.filter((el) => el.name == 'Concerning Result')[0]
+            {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
               .checked == true && (
               <>
                 <div className=" my-[200px] xl:min-h-[700px] text-light-primary-text dark:text-primary-text ">
@@ -875,6 +940,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   )}
                   {/* <CustomCanvasChart></CustomCanvasChart> */}
                 </div>
+              </>
+            )}
+            {accessManager.filter((el) => el.name == 'Concerning Result')[0]
+              .checked == true && (
+              <>
                 <div className="my-10 min-h-[700px]">
                   <div className="w-full mb-3 flex items-center justify-between">
                     <div
@@ -951,7 +1021,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 </div>
               </>
             )}
-
             {accessManager.filter((el) => el.name == 'Detailed Analysis')[0]
               .checked == true && (
               <div className="my-[200px] min-h-[700px]">
@@ -1024,12 +1093,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     Holistic Plan
                   </div>
                   {TreatMentPlanData?.length > 0 && isHaveReport && !isShare ? (
-                    <HolisticShare
-                      isHtmlReportExists={isHtmlReportExists}
-                      isShareModalSuccess={isShareModalSuccess}
-                      dateShare={dateShare}
+                    // <HolisticShare
+                    //   isHtmlReportExists={isHtmlReportExists}
+                    //   isShareModalSuccess={isShareModalSuccess}
+                    //   dateShare={dateShare}
+                    //   handleGetHtmlReport={handleGetHtmlReport}
+                    //   loadingHtmlReport={loadingHtmlReport}
+                    // />
+                    <HolisticPlanShareAndDownload
                       handleGetHtmlReport={handleGetHtmlReport}
                       loadingHtmlReport={loadingHtmlReport}
+                      isHtmlReportExists={isHtmlReportExists}
                     />
                   ) : (
                     ''
@@ -1038,18 +1112,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                 </div>
                 <TreatmentPlan
+                  disableGenerate={disableGenerate}
                   isShare={isShare}
                   setPrintActionPlan={(value) => {
                     setActionPlanPrint(value);
                   }}
-                  setIsShareModalSuccess={setIsShareModalSuccess}
+                  setIsShareModalSuccess={() => {}}
                   treatmentPlanData={TreatMentPlanData}
                   setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
-                  setDateShare={setDateShare}
+                  setDateShare={() => {}}
                 />
               </div>
             )}
-
             <div className="my-10 hidden">
               <div className="w-full mb-3 flex items-center justify-between">
                 <div
@@ -1091,6 +1165,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   }}
                   calenderDataUper={caldenderData}
                   isHolisticPlanEmpty={isHolisticPlanEmpty}
+                  disableGenerate={disableGenerate}
                 />
               </div>
             )}
@@ -1142,6 +1217,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </>
                 ) : (
                   <UploadTestV2
+                    has_wearable_data={has_wearable_data}
                     isLoadingQuestionnaires={isLoadingQuestionnaires}
                     questionnaires={questionnaires}
                     onDiscard={() => {
@@ -1160,37 +1236,44 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           console.log(res);
                         },
                       );
+                      setActiveCheckProgress(true);
                       console.log(file_id);
                       if (file_id) {
-                        publish('openProgressModal', {});
+                        // publish('openProgressModal',{});
                         setShowUploadTest(false);
                         setIsHaveReport(true);
+                        setCheckedStepTwo(false);
                         setISGenerateLoading(false);
-                        if (file_id !== 'customBiomarker') {
-                          checkStepTwo(file_id);
-                        }
-                      }
-                      // if (file_id && file_id !== "customBiomarker") {
-                      //   publish('openProgressModal', {});
-                      //   setShowUploadTest(false);
-                      //   setIsHaveReport(true);
-                      //   checkStepTwo(file_id);
-                      //   setISGenerateLoading(false);
-                      // }
-                      else {
+                        setTimeout(() => {
+                          publish('checkProgress', {});
+                        }, 400);
+                        // if (file_id !== 'customBiomarker') {
+                        //   setTimeout(() => {
+                        //     publish('checkProgress', {
+                        //       date: new Date().toISOString(),
+                        //       file_id: file_id,
+                        //       file_name: 'Manual Entry',
+                        //       action_type: 'uploaded',
+                        //       type: 'file',
+                        //     });
+                        //   }, 4000);
+                        // }
+                        // if (file_id !== 'customBiomarker') {
+                        //   setTimeout(() => {
+                        //     checkStepTwo(file_id);
+                        //   }, 4000);
+                        // }
+                      } else {
                         setTimeout(() => {
                           fetchPatentDataWithState();
-                          publish('QuestionaryTrackingCall', {});
+                          // publish('QuestionaryTrackingCall', {});
                           fetchData();
-                          setISGenerateLoading(false);
+                          setTimeout(() => {
+                            publish('checkProgress', {});
+                          }, 400);
+                          // setISGenerateLoading(false);
                         }, 5000);
                       }
-
-                      // setTimeout(() => {
-                      //   fetchPatentDataWithState();
-                      //   publish('QuestionaryTrackingCall', {});
-                      //   fetchData();
-                      // }, 5000);
                     }}
                     memberId={resolvedMemberID}
                   ></UploadTestV2>

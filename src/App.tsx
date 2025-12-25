@@ -3,6 +3,7 @@ import './App.css';
 import router from './router';
 import { useEffect } from 'react';
 import ActivityLogger from './utils/activty-logger';
+import { useServiceWorker } from './hooks/useServiceWorker';
 
 function App() {
   useEffect(() => {
@@ -12,6 +13,9 @@ function App() {
       logger.destroy(); // clean up before unmount/refresh
     };
   }, []);
+
+  useServiceWorker();
+
   return (
     <>
       <RouterProvider router={router} />

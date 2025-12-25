@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
@@ -7,7 +8,7 @@ interface HolisticShareProps {
   isHtmlReportExists: boolean;
   isShareModalSuccess: boolean;
   dateShare: string | null;
-  handleGetHtmlReport: () => void;
+  handleGetHtmlReport: (url?: string) => void;
   loadingHtmlReport: boolean;
   // shareable: boolean;
 }
@@ -22,20 +23,18 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
 }) => {
   const [shareable, setShareable] = useState(true);
   const [isShared, setIsShared] = useState(false);
+  const [showDownload] = useState(false);
+  const [activeTreatment, setActiveTreatment] = useState<any>(null);
   useEffect(() => {
-    subscribe('holisticPlanSelectEnd', () => {
-      setShareable(true);
-    });
-    subscribe('holisticPlanSelectNotEnd', () => {
-      setShareable(false);
+    subscribe('holisticPlanactiveChange', (data: any) => {
+      setActiveTreatment(data.detail.data);
+      // setShowDownload(data.detail.isEnd);
     });
     subscribe('shareModalHolisticPlanSuccess', () => {
       setShareable(true);
       setIsShared(true);
     });
     return () => {
-      unsubscribe('holisticPlanSelectEnd', () => {});
-      unsubscribe('holisticPlanSelectNotEnd', () => {});
       unsubscribe('shareModalHolisticPlanSuccess', () => {});
     };
   }, []);
@@ -46,7 +45,7 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
       >
         {isHtmlReportExists && (
           <>
-            {isShareModalSuccess || isShared ? (
+            {activeTreatment?.shared_report_with_client == true ? (
               <div className="flex flex-col items-center">
                 <div className="text-Text-Quadruple text-xs font-medium flex items-center gap-1">
                   <img src="/icons/tick-circle-gray.svg" alt="" />
@@ -102,33 +101,46 @@ const HolisticShare: React.FC<HolisticShareProps> = ({
             )}
           </>
         )}
-
-        <div className="flex flex-col items-center gap-1">
-          <div
-            className="text-Primary-DeepTeal text-xs font-medium cursor-pointer flex items-center gap-1"
-            onClick={() => {
-              if (isHtmlReportExists) {
-                handleGetHtmlReport();
-              }
-            }}
-          >
-            {isHtmlReportExists || loadingHtmlReport ? (
-              <>
-                <img className="w-5 h-5" src="/icons/monitor.svg" alt="" />
-                View Holistic Plan
-              </>
-            ) : (
-              <>
-                <SpinnerLoader color="#005F73"></SpinnerLoader>
-              </>
-            )}
-          </div>
-          {!isHtmlReportExists && (
-            <div className="text-[10px] text-Primary-DeepTeal">
-              Your report is currently being prepared.
+        {showDownload && (
+          <>
+            <div className="flex flex-col items-center gap-1">
+              <div
+                className="text-Primary-DeepTeal text-xs font-medium cursor-pointer flex items-center gap-1"
+                onClick={() => {
+                  if (
+                    isHtmlReportExists ||
+                    activeTreatment.readonly_html_url != ''
+                  ) {
+                    if (activeTreatment.readonly_html_url != '') {
+                      handleGetHtmlReport(activeTreatment.readonly_html_url);
+                    } else {
+                      handleGetHtmlReport();
+                    }
+                    // handleGetHtmlReport();
+                  }
+                }}
+              >
+                {isHtmlReportExists ||
+                loadingHtmlReport ||
+                activeTreatment.readonly_html_url != '' ? (
+                  <>
+                    <img className="w-5 h-5" src="/icons/monitor.svg" alt="" />
+                    View Holistic Plan
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center gap-1">
+                    <SpinnerLoader color="#005F73"></SpinnerLoader>
+                    <div className="text-[10px] text-Primary-DeepTeal">
+                      Your report is currently being prepared.
+                    </div>
+                  </div>
+                )}
+              </div>
+              {/* {!isHtmlReportExists && (
+              )} */}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </>
   );

@@ -129,7 +129,7 @@ export const ClientInfo = () => {
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1">
                 <img src="/icons/location.svg" alt="" />
-                Location{' '}
+                Address{' '}
               </div>
               <div>
                 <TooltipTextAuto maxWidth="150px">

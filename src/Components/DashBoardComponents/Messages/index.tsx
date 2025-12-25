@@ -4,6 +4,7 @@ import Circleloader from '../../CircleLoader';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Toggle from '../../Toggle';
 import { Tooltip } from 'react-tooltip';
+import SearchBox from '../../SearchBox';
 
 type Message = {
   name: string;
@@ -18,14 +19,14 @@ type Message = {
 };
 
 interface MessageListProps {
-  search: string;
+  // search: string;
   onSelectMessage: (messageId: string | null) => void;
   messages: Message[]; // Receive messages from parent
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Receive setter for initial load
 }
 
 const MessageList: React.FC<MessageListProps> = ({
-  search,
+  // search,
   onSelectMessage,
   messages,
   setMessages,
@@ -37,7 +38,7 @@ const MessageList: React.FC<MessageListProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
-
+  const [search, setSearch] = useState('');
   useEffect(() => {
     if (id != undefined) {
       setExpandedMessage(parseInt(id));
@@ -125,6 +126,16 @@ const MessageList: React.FC<MessageListProps> = ({
               isMessages
             />
           </div>
+          <div className="my-4">
+            <SearchBox
+              isMessages
+              isHaveBorder
+              isGrayIcon
+              value={search}
+              onSearch={(e) => setSearch(e)}
+              placeHolder="Search clients..."
+            />
+          </div>
           {messagesSearched.length === 0 && (
             <div className="flex flex-col items-center w-full h-[70vh] md:h-[90%] justify-center">
               <img src="/icons/empty-messages-coach.svg" alt="" />
@@ -133,7 +144,7 @@ const MessageList: React.FC<MessageListProps> = ({
               </div>
             </div>
           )}
-          <ul className="mt-5 w-full h-full pr-3 overflow-y-scroll divide-y ">
+          <ul className="mt-5 w-full h-[90%] pr-3   overflow-y-scroll divide-y ">
             {messagesSearched.map((message, index) => {
               const isSelected = expandedMessage === message.member_id;
               const isBeforeSelected =

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from './components/SideBar';
 import SearchBox from '../../Components/SearchBox';
 // import Content from './Content';
@@ -6,8 +6,19 @@ import SearchBox from '../../Components/SearchBox';
 import { Zappier } from './components/Zappier';
 import PackagePage from './components/Package';
 import { ClinicPreferences } from './components/ClinicPreferences';
+import { ChangePassword } from '../../Components/changePassword';
+import Application from '../../api/app';
 const Setting: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState('Clinic Preferences');
+  const [loginWithGoogle, setLoginWithGoogle] = useState(false);
+  const getShowBrandInfo = () => {
+    Application.getShowBrandInfo().then((res) => {
+      setLoginWithGoogle(res.data.brand_elements.login_with_Google);
+    });
+  };
+  useEffect(() => {
+    getShowBrandInfo();
+  }, []);
   const renderContent = () => {
     switch (activeMenu) {
       case 'Clinic Preferences':
@@ -18,7 +29,7 @@ const Setting: React.FC = () => {
         return <></>;
       // return <UpdateProfileContent />;
       case 'Change Password':
-        return <></>;
+        return <ChangePassword></ChangePassword>;
 
       case 'Packages':
         return <PackagePage></PackagePage>;
@@ -43,7 +54,11 @@ const Setting: React.FC = () => {
       <div className="w-full px-3 md:px-6 md:pt-9  ">
         <div className=" w-full flex  ">
           <div className=" hidden md:block   ">
-            <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+            <Sidebar
+              activeMenu={activeMenu}
+              setActiveMenu={setActiveMenu}
+              loginWithGoogle={loginWithGoogle}
+            />
           </div>
 
           <div className="md:mt-10 w-full  h-full  bg-bg-color">

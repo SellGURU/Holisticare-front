@@ -2,12 +2,13 @@
 import { useEffect, useRef, useState } from 'react';
 import TextField from '../../TextField';
 import SimpleDatePicker from '../../SimpleDatePicker';
-import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Select from '../../Select';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
-import { Tooltip } from 'react-tooltip';
+// import { Tooltip } from 'react-tooltip';
 import SearchSelect from '../../searchableSelect';
+import Toggle from '../Boxs/Toggle';
+import EllipsedTooltip from '../../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip';
 
 // Define the props for the AddBiomarker component, now using 'biomarker' instead of 'name'
 interface AddBiomarkerProps {
@@ -24,6 +25,8 @@ interface AddBiomarkerProps {
   dateOfTest: Date | null;
   setDateOfTest: (date: Date | null) => void;
   rowErrors?: any;
+  showOnlyErrors: boolean;
+  setShowOnlyErrors: (showOnlyErrors: boolean) => void;
 }
 
 export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
@@ -36,6 +39,8 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   deleteIndex,
   dateOfTest,
   setDateOfTest,
+  showOnlyErrors,
+  setShowOnlyErrors,
 }) => {
   // Local form states, now using 'biomarkerName' to avoid conflict
   const [biomarkerName, setBiomarkerName] = useState('');
@@ -114,40 +119,58 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
 
   return (
     <div
-      style={{ height: window.innerHeight - 235 + 'px' }}
-      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200 mt-4 "
+      // style={{ height: window.innerHeight - 235 + 'px' }}
+      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200   md:h-[calc(100vh-235px)] mt-4 overflow-y-auto md:overflow-hidden overflow-x-hidden "
     >
       {loading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="w-full flex items-center justify-between">
-        <div className="md:text-sm text-[12px] font-medium flex gap-1 items-center text-Text-Primary">
-          List of Biomarkers
-          <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
-            ({biomarkers.length})
-          </span>
+      <div className="w-full flex text-nowrap flex-wrap md:flex-nowrap  gap-4 items-center justify-between">
+        <div className="flex flex-wrap justify-between w-full gap-3">
+          <div className="md:text-sm xs:text-[12px] text-[10px] font-medium flex gap-1 items-center text-Text-Primary">
+            List of Biomarkers
+            <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
+              ({biomarkers.length})
+            </span>
+          </div>
+          <div className="flex sm:hidden items-center gap-3">
+            <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
+            <div className=" text-[10px] md:text-xs font-normal text-Text-Primary">
+              Show Only Errors
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple">
-          Date of Test:
-          <SimpleDatePicker
-            isUploadFile
-            date={dateOfTest}
-            setDate={setDateOfTest}
-            placeholder="Select Date"
-            ClassName="ml-2 border border-Gray-50 !rounded-2xl px-2 py-1 text-Text-Primary"
-          />
+        <div className="flex w-full justify-end gap-7">
+          <div className=" hidden sm:flex items-center gap-3">
+            <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
+            <div className=" text-[8px] sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+              Show Only Errors
+            </div>
+          </div>
+
+          <div className="flex items-center   text-[10px] md:text-xs text-Text-Quadruple">
+            Date of Test:
+            <SimpleDatePicker
+              textStyle
+              isUploadFile
+              date={dateOfTest}
+              setDate={setDateOfTest}
+              placeholder="Select Date"
+              ClassName="ml-2 border border-Gray-50 !rounded-2xl px-2 py-1 text-Text-Primary"
+            />
+          </div>
         </div>
       </div>
 
       <div
-        style={{ height: window.innerHeight - 330 + 'px' }}
-        className="w-full  flex flex-col md:flex-row md:justify-between gap-4 mt-6"
+        // style={{ height: window.innerHeight - 330 + 'px' }}
+        className="w-full  flex flex-col md:flex-row md:justify-between gap-4 mt-3 sm:mt-6  md:h-[calc(100vh-330px)] "
       >
         {/* Left side: Add biomarker form */}
-        <div className="rounded-2xl  w-full md:w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px] overflow-auto p">
+        <div className="rounded-2xl  w-full md:w-[50%] border border-Gray-50 px-6 py-4 bg-white shadow-100 flex flex-col gap-[12px] md:overflow-auto">
           <div className="text-xs text-Text-Primary text-justify">
             Add a biomarker by filling in its details (Name, Value, Unit) and
             clicking Add Biomarker. You’ll see it added right away in the
@@ -246,11 +269,17 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
           ref={tableRef}
           className={`w-full border-Gray-50 overflow-x-auto  hidden-scrollbar   ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
         >
-          <div className="w-full border border-Gray-50 min-w-[700px]    rounded-[20px] h-full text-xs">
+          <div className="w-full border border-Gray-50  min-w-[300px] sm:min-w-[700px]    rounded-[20px] h-full text-xs">
             {/* Table Header */}
             <div
-              className="grid sticky top-0 w-full z-10 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-              style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
+              className="grid   grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]
+    sm:grid-cols-[1fr_200px_200px_100px] sticky top-0 w-full z-10 py-2 px-2 sm:px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px]   border-Gray-50"
+              // style={{
+              //   gridTemplateColumns:
+              //     window.innerWidth > 640
+              //       ? '1fr 200px 200px 100px'
+              //       : '80px 60px 60px 60px',
+              // }}
             >
               <div className="text-left">Biomarker Name</div>
               <div className="text-center">Value</div>
@@ -270,17 +299,21 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                   <div
                     ref={(el) => (rowRefs.current[index] = el)}
                     key={index}
-                    className={`grid py-2 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'
-                    }`}
-                    style={{ gridTemplateColumns: '1fr 200px 200px 100px' }}
+                    className={`${showOnlyErrors && !errorForRow ? 'hidden' : ''} ${errorForRow ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid   grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]
+    sm:grid-cols-[minmax(0,1fr)_200px_200px_100px] py-1 px-2 sm:px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary `}
+                    // style={{
+                    //   gridTemplateColumns:
+                    //     window.innerWidth > 640
+                    //       ? '1fr 200px 200px 100px'
+                    //       : '80px 60px 60px 60px',
+                    // }}
                   >
                     {/* Biomarker Name */}
                     <div className="flex items-center  gap-1">
-                      <TooltipTextAuto maxWidth="250px">
-                        {biomarker.biomarker}
-                      </TooltipTextAuto>
-                      {errorForRow && (
+                      <EllipsedTooltip
+                        text={biomarker.biomarker}
+                      ></EllipsedTooltip>
+                      {/* {errorForRow && (
                         <>
                           <img
                             data-tooltip-id={`tooltip-${index}`}
@@ -296,12 +329,12 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                             {errorForRow}
                           </Tooltip>
                         </>
-                      )}
+                      )} */}
                     </div>
 
                     {/* Value */}
                     <div className="text-center text-[#888888]">
-                      {biomarker.value}
+                      <EllipsedTooltip text={biomarker.value} />
                     </div>
 
                     {/* Unit */}
@@ -310,9 +343,9 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                     </div>
 
                     {/* Action */}
-                    <div className="flex justify-end">
+                    <div className="flex justify-end ">
                       {deleteIndex === index ? (
-                        <div className="flex items-center justify-end w-full gap-1">
+                        <div className="flex items-center justify-end  w-full gap-1">
                           <div className="text-Text-Quadruple text-[10px]">
                             Sure?
                           </div>
@@ -330,7 +363,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                           />
                         </div>
                       ) : (
-                        <div className="w-[47px] pl-5">
+                        <div className=" w-[40px] sm:w-[47px] pl-5">
                           <img
                             src="/icons/trash-blue.svg"
                             alt="Delete"
@@ -340,12 +373,17 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
                         </div>
                       )}
                     </div>
+                    {errorForRow && (
+                      <div className="text-Red col-span-4 leading-tight font-normal text-[10px] text-nowrap mt-1">
+                        {errorForRow}
+                      </div>
+                    )}
                   </div>
                 );
               })}
 
               {biomarkers.length === 0 && (
-                <div className="flex flex-col h-full pt-10 min-h-[100px] items-center justify-center gap-4">
+                <div className="flex flex-col h-full pt-10 min-h-[200px] md:min-h-[100px] items-center justify-start sm:justify-center gap-4">
                   <img src="/icons/table-empty.svg" alt="" />
                   <div className="text-xs -mt-10 font-medium text-Text-Primary">
                     No biomarker added yet.

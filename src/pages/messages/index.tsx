@@ -4,10 +4,8 @@ import {
   MessageList,
   MessagesChatBox,
 } from '../../Components/DashBoardComponents';
-import SearchBox from '../../Components/SearchBox';
 
 const Messages = () => {
-  const [search, setSearch] = useState('');
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   // Clear unread badge when a chat is opened
@@ -45,17 +43,17 @@ const Messages = () => {
     });
   };
   return (
-    <div className="h-[calc(100%-41px)] relative ">
+    <div className="h-[calc(90%-41px)] md:h-[calc(100%-41px)] relative ">
       <div className="w-full fixed md:static top-[40px] h-[67px] md:h-auto z-20 bg-bg-color left-0 right-0  flex justify-between items-center  mt-6 px-6 ">
         <div className="text-Text-Primary font-medium opacity-[87%]">
           Messages
         </div>
-        <SearchBox
+        {/* <SearchBox
           ClassName="rounded-xl !h-6 !py-[0px] !px-3 !shadow-200"
           placeHolder="Search messages or clients…"
           onSearch={(e) => setSearch(e)}
           value={search}
-        />
+        /> */}
       </div>
       <div className="w-full mt-[51px] md:mt-0 h-fit md:h-[90%]  flex justify-between px-3  md:px-6 md:pb-8 pt-4  gap-5 ">
         <div
@@ -64,7 +62,6 @@ const Messages = () => {
           <MessageList
             messages={messages}
             setMessages={setMessages}
-            search={search}
             onSelectMessage={setSelectedMessage}
           />
         </div>
@@ -72,6 +69,7 @@ const Messages = () => {
           className={`w-full   ${selectedMessage ? 'block ' : 'hidden md:block '}`}
         >
           <MessagesChatBox
+            selectMessages={selectedMessage}
             onMessageSent={handleMessageSent}
             onBack={() => setSelectedMessage(null)}
           />

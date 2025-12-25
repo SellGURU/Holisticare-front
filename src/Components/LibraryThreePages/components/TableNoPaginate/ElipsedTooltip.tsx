@@ -34,7 +34,7 @@ export default function EllipsedTooltip({ text }: { text: string }) {
         <Tooltip
           id={tooltipId}
           place="top"
-          className="!bg-white !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+          className="!bg-white !bg-opacity-100  !opacity-100 !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
         >
           {text}
         </Tooltip>

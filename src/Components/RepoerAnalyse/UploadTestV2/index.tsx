@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useRef, useState, useEffect } from 'react';
-import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 import { uploadToAzure } from '../../../help';
 import { publish, subscribe } from '../../../utils/event';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
 // import SpinnerLoader from '../../SpinnerLoader';
@@ -28,6 +28,7 @@ interface UploadTestProps {
   showReport: boolean;
   onDiscard: () => void;
   questionnaires: any[];
+  has_wearable_data: boolean;
   isLoadingQuestionnaires: boolean;
 }
 
@@ -38,6 +39,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   showReport,
   onDiscard,
   questionnaires,
+  has_wearable_data,
   isLoadingQuestionnaires,
 }) => {
   const fileInputRef = useRef<any>(null);
@@ -50,7 +52,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [extractedBiomarkers, setExtractedBiomarkers] = useState<any[]>([]);
   const [fileType, setfileType] = useState('more_info');
   const [polling, setPolling] = useState(true); // ✅ control polling
-  const [deleteLoading, setdeleteLoading] = useState(false);
+  const [deleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
   console.log(uploadedFile);
   // console.log(extractedBiomarkers);
@@ -100,8 +102,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           res.data.extracted_biomarkers &&
           res.data.extracted_biomarkers.length > 0
         ) {
-          setPolling(false);
-          setbiomarkerLoading(false);
+          onValidate(sorted);
         }
       } catch (err) {
         console.error('Error checking lab step one:', err);
@@ -128,26 +129,33 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     return `${kb.toFixed(1)} KB`;
   };
 
-  const handleDeleteFile = () => {
-    setdeleteLoading(true);
-    setUploadedFile(null);
+  const [, forceReRender] = useState(0);
+
+  const handleDeleteFile = (fileId?: string) => {
     setExtractedBiomarkers([]);
+    console.log(fileId);
     setfileType('more_info');
     setPolling(true);
-    Application.deleteLapReport({
-      file_id: uploadedFile?.file_id,
+    setUploadedFile(null);
+    setRowErrors({});
+    setAddedRowErrors({});
+    publish('RESET_MAPPING_ROWS', {});
+    setbiomarkerLoading(false);
+    setModifiedDateOfTest(new Date());
+    forceReRender((x) => x + 1);
+    Application.deleteFileHistory({
+      file_id: fileId,
       member_id: memberId,
-    }) // adjust if backend expects id
-      .then(() => {
-        setUploadedFile(null);
-        setRowErrors({});
-        setAddedRowErrors({});
-        setdeleteLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error deleting the file:', err);
-      });
+    }).catch(() => {});
   };
+  useEffect(() => {
+    subscribe('DELETE_FILE_TRIGGER', () => {
+      // alert('delete file trigger');
+      handleDeleteFile();
+    });
+  }, []);
+
+  console.log(uploadedFile);
 
   const sendToBackend = async (file: File, azureUrl: string) => {
     await Application.addLabReport(
@@ -388,7 +396,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
     setBtnLoading(true);
-
+    const modifiedTimestamp = modifiedDateOfTest
+      ? Date.UTC(
+          modifiedDateOfTest.getFullYear(),
+          modifiedDateOfTest.getMonth(),
+          modifiedDateOfTest.getDate(),
+        ).toString()
+      : null;
+    const addedTimestamp = addedDateOfTest
+      ? Date.UTC(
+          addedDateOfTest.getFullYear(),
+          addedDateOfTest.getMonth(),
+          addedDateOfTest.getDate(),
+        ).toString()
+      : null;
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
@@ -399,8 +420,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     Application.validateBiomarkers({
       modified_biomarkers_list: mappedExtractedBiomarkers,
       added_biomarkers_list: addedBiomarkers,
+      modified_biomarkers_date_of_test: modifiedTimestamp,
+      added_biomarkers_date_of_test: addedTimestamp,
       modified_lab_type: fileType,
       modified_file_id: uploadedFile?.file_id ?? '',
+      member_id: memberId,
     })
       .then(() => {
         // 200 response
@@ -452,11 +476,95 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setBtnLoading(false);
       });
   };
+  const onValidate = (extractedBiomarkersTest: any) => {
+    // setBtnLoading(true);
+    const modifiedTimestamp = modifiedDateOfTest
+      ? Date.UTC(
+          modifiedDateOfTest.getFullYear(),
+          modifiedDateOfTest.getMonth(),
+          modifiedDateOfTest.getDate(),
+        ).toString()
+      : null;
+    const addedTimestamp = addedDateOfTest
+      ? Date.UTC(
+          addedDateOfTest.getFullYear(),
+          addedDateOfTest.getMonth(),
+          addedDateOfTest.getDate(),
+        ).toString()
+      : null;
+    const mappedExtractedBiomarkers = extractedBiomarkersTest.map((b: any) => ({
+      biomarker_id: b.biomarker_id,
+      biomarker: b.biomarker,
+      value: b.original_value,
+      unit: b.original_unit,
+    }));
 
+    Application.validateBiomarkers({
+      modified_biomarkers_list: mappedExtractedBiomarkers,
+      added_biomarkers_list: [],
+      modified_biomarkers_date_of_test: modifiedTimestamp,
+      added_biomarkers_date_of_test: addedTimestamp,
+      modified_lab_type: fileType,
+      modified_file_id: uploadedFile?.file_id ?? '',
+      member_id: memberId,
+    })
+      .then(() => {
+        // 200 response
+        setPolling(false);
+        setbiomarkerLoading(false);
+      })
+      .catch((err: any) => {
+        console.log(err);
+
+        const detail = err.detail;
+
+        if (detail) {
+          let parsedDetail: any = {};
+
+          if (typeof detail === 'string') {
+            try {
+              parsedDetail = JSON.parse(detail);
+            } catch (e) {
+              console.error('Failed to parse error detail:', detail, e);
+              parsedDetail = {};
+            }
+          } else {
+            parsedDetail = detail; // already an object
+          }
+
+          const modifiedErrors: Record<number, string> = {};
+          const addedErrors: Record<number, string> = {};
+
+          parsedDetail.modified_biomarkers_list?.forEach((item: any) => {
+            modifiedErrors[item.index] = item.detail;
+          });
+
+          parsedDetail.added_biomarkers_list?.forEach((item: any) => {
+            addedErrors[item.index] = item.detail;
+          });
+
+          setRowErrors(modifiedErrors);
+          setAddedRowErrors(addedErrors);
+
+          console.log('🔎 modifiedErrors:', modifiedErrors);
+          console.log('🔎 addedErrors:', addedErrors);
+        } else {
+          console.error('API error:', err);
+        }
+      })
+      .finally(() => {
+        setBtnLoading(false);
+        setPolling(false);
+        setbiomarkerLoading(false);
+      });
+  };
   console.log(rowErrors);
 
   const resolveActiveButtonReportAnalyse = () => {
     if (showReport) {
+      return true;
+    }
+    if (has_wearable_data) {
       return true;
     }
     if (uploadedFile != null) {
@@ -473,6 +581,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
     return false;
   };
+
   return (
     <>
       {deleteLoading && (
@@ -553,9 +662,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                             .catch((err) => {
                               console.log(err);
                             });
-                          onGenderate(
-                            uploadedFile?.file_id || 'customBiomarker',
-                          );
+                          onGenderate('customBiomarker');
                         } else {
                           onGenderate(undefined);
                         }
@@ -569,7 +676,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               </div>
             </>
           ) : (
-            <div className="w-full rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
+            <div className="w-full rounded-[16px]  md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
               <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
               <div
                 style={{ height: window.innerHeight - 60 + 'px' }}
@@ -577,14 +684,17 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               >
                 <div className="flex flex-col gap-6 w-full">
                   <div className="flex items-center flex-col gap-4">
-                    <div className="text-base font-medium text-Text-Primary">
+                    <div
+                      style={{ textAlignLast: 'center' }}
+                      className=" text-center text-base font-medium text-Text-Primary"
+                    >
                       Provide Data to Generate Health Plan
                     </div>
                     <div className="text-xs text-Text-Primary text-center">
                       Choose one methods below to provide a personalized plan.
                     </div>
                   </div>
-                  <div className="flex w-full items-center gap-6">
+                  <div className="flex  w-full items-center gap-2 xs:gap-6">
                     <div
                       onClick={() => {
                         setstep(1);
@@ -606,11 +716,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           </div>
                         )}
 
-                      <div className="text-[#000000] text-[10px] md:text-xs font-medium mt-3">
+                      <div
+                        style={{ textAlignLast: 'center' }}
+                        className="text-[#000000] text-[10px] md:text-xs font-medium mt-3"
+                      >
                         Upload Lab Report or Add Biomarkers
                       </div>
                       <img
-                        className="mt-3"
+                        className="mt-3 size-10 xs:size-[57px]"
                         src="/icons/document-upload-new.svg"
                         alt=""
                       />
@@ -621,7 +734,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         Upload your client's lab test file and edit or add
                         biomarkers manually.
                       </div>
-                      <div className="text-[10px] md:text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
+                      <div
+                        className={` text-[8px]  xs:text-[10px]  md:text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute ${
+                          isSaveClicked &&
+                          extractedBiomarkers.length + addedBiomarkers.length
+                            ? 'bottom-4 lg:bottom-6'
+                            : 'bottom-6'
+                        } `}
+                      >
                         Enter or Upload Biomarkers
                       </div>
                     </div>
@@ -654,11 +774,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           Questionnaire filled out!
                         </div>
                       )}
-                      <div className="text-[#000000] text-[10px] md:text-xs font-medium mt-3">
+                      <div className="text-[#000000] text-center text-[10px] md:text-xs font-medium mt-3">
                         Fill Health Questionnaire
                       </div>
                       <img
-                        className="mt-5"
+                        className=" mt-3 xs:mt-5 size-[37px] xs:size-[49px]"
                         src="/icons/task-square-new.svg"
                         alt=""
                       />
@@ -669,7 +789,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         Provide data (lifestyle, medical history, ...) for a
                         more accurate plan.
                       </div>
-                      <div className=" text-[10px] md:text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
+                      <div className="text-[8px]  xs:text-[10px]  md:text-xs font-medium underline text-Primary-DeepTeal cursor-pointer absolute bottom-6">
                         Fill Questionnaire
                       </div>
                     </div>
@@ -715,7 +835,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       }}
                     >
                       <img src="/icons/tick-square.svg" alt="" />
-                      Develop Health Plan
+                      Save & Continue to Health Plan
                     </ButtonSecondary>
                   </div>
                 </div>
@@ -734,6 +854,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             }
             setstep(0);
             setUploadedFile(null);
+            setModifiedDateOfTest(new Date());
+            setAddedDateOfTest(new Date());
             setPolling(true);
             setbiomarkerLoading(false);
             setExtractedBiomarkers([]);

@@ -13,12 +13,25 @@ export const BotMsg = ({
   const [isDone, setIsDone] = useState(false);
 
   useEffect(() => {
+    // Reset displayed text when msg changes
+    setDisplayedText('');
+    setIsDone(false);
+
+    // Ensure msg is a valid string
+    if (!msg || typeof msg !== 'string') {
+      setIsDone(true);
+      return;
+    }
+
     // Split by words but keep punctuation spacing natural
     const words = msg.split(/(\s+)/);
     let index = 0;
 
     const interval = setInterval(() => {
-      setDisplayedText((prev) => prev + words[index]);
+      const currentWord = words[index];
+      if (currentWord !== undefined && currentWord !== null) {
+        setDisplayedText((prev) => prev + currentWord);
+      }
       index++;
       if (index >= words.length) {
         clearInterval(interval);

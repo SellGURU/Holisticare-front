@@ -5,7 +5,9 @@ interface SvgIconProps {
   color: string;
   width?: string; // Optional width prop
   height?: string; // Optional height prop
+  stroke?: string;
   onClick?: () => void; // Optional onClick prop
+  className?: string; // Optional className prop
 }
 
 const SvgIcon: React.FC<SvgIconProps> = ({
@@ -13,7 +15,9 @@ const SvgIcon: React.FC<SvgIconProps> = ({
   color,
   width,
   height,
+  stroke,
   onClick,
+  className,
 }) => {
   const svgRef = useRef<HTMLDivElement>(null);
 
@@ -31,13 +35,20 @@ const SvgIcon: React.FC<SvgIconProps> = ({
           const svgPaths = svgRef.current.querySelectorAll('path');
           svgPaths.forEach((path) => {
             path.setAttribute('fill', color);
+            if (stroke) path.setAttribute('stroke', stroke);
           });
         }
       })
       .catch((error) => console.error('Error loading SVG:', error));
   }, [src, color, width, height]);
 
-  return <div className="cursor-pointer" ref={svgRef} onClick={onClick}></div>;
+  return (
+    <div
+      className={`cursor-pointer ${className || ''}`}
+      ref={svgRef}
+      onClick={onClick}
+    ></div>
+  );
 };
 
 export default SvgIcon;

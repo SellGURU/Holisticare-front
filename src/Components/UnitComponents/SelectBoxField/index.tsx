@@ -11,6 +11,7 @@ interface SelectBoxFieldProps {
   disabled?: boolean;
   showDisabled?: boolean;
   placeholder: string;
+  top?: string;
 }
 
 const SelectBoxField: FC<SelectBoxFieldProps> = ({
@@ -24,6 +25,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
   disabled,
   placeholder,
   showDisabled,
+  top,
 }) => {
   const [showSelect, setShowSelect] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -68,7 +70,9 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
             {value.length > 28 ? value.slice(0, 28) + '...' : value}
           </div>
         ) : (
-          <div className="text-[12px] text-Text-Fivefold">{placeholder}</div>
+          <div className="text-[10px] md:text-[12px] text-Text-Fivefold">
+            {placeholder}
+          </div>
         )}
         <div>
           <img
@@ -83,7 +87,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
       )}
       {showSelect && (
         <div
-          className={`w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 ${label ? 'top-[56px] max-h-[250px]' : 'top-[32px] max-h-[200px]'} overflow-y-auto`}
+          className={`w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 ${label ? 'top-[56px] max-h-[250px]' : 'top-[32px] max-h-[200px]'} ${top ? top : 'top-[56px]'} overflow-y-auto`}
         >
           {options.map((option, index) => {
             return (

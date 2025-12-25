@@ -17,6 +17,8 @@ interface SetOrdersProps {
   data: any;
   treatMentPlanData: any;
   setData: (values: any) => void;
+  setLookingForwards: (values: any) => void;
+  lookingForwardsData: any;
   storeChecked: (data: any) => void;
   // checkeds: Array<any>;
   reset: () => void;
@@ -28,12 +30,15 @@ interface SetOrdersProps {
   setActiveCategory: (value: string) => void;
   progress: number; // from 0 to 100
   details: Record<string, boolean>[];
+  setDetails: (value: Record<string, boolean>[]) => void;
 }
 
 export const SetOrders: FC<SetOrdersProps> = ({
   data,
   // treatMentPlanData,
   setData,
+  setLookingForwards,
+  lookingForwardsData,
   storeChecked,
   // checkeds,
   // reset,
@@ -44,6 +49,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
   setVisibleCategorieys,
   progress,
   details,
+  setDetails,
 }) => {
   // const [activeCategory, setActiveCategory] = useState<string>(
   //   visibleCategoriy[visibleCategoriy.length - 1].name || 'Activity',
@@ -290,13 +296,57 @@ export const SetOrders: FC<SetOrdersProps> = ({
       activityContainer.current.scrollTop = 0;
     }
   }, [activeCategory]);
+
+  const handleAddLookingForwards = (text: string) => {
+    setLookingForwards([
+      ...lookingForwardsData,
+      'Issue ' + (lookingForwardsData.length + 1) + ': ' + text,
+    ]);
+  };
+  const handleRemoveLookingForwards = (text: string) => {
+    setLookingForwards(lookingForwardsData.filter((el: any) => el !== text));
+  };
+
+  const handleUpdateIssueListByKeys = (
+    category: string,
+    recommendation: string,
+    newIssueList: string[],
+    text?: string,
+  ) => {
+    setData(
+      data.map((item: any) => {
+        if (
+          item.Category === category &&
+          item.Recommendation === recommendation
+        ) {
+          return { ...item, issue_list: newIssueList };
+        }
+        return item;
+      }),
+    );
+    if (text) {
+      handleAddLookingForwards(text);
+    }
+  };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const handleRemoveIssueFromList = (name: string) => {
+    setData(
+      data.map((item: any) => ({
+        ...item,
+        issue_list: item.issue_list.filter((issue: string) => issue !== name),
+      })),
+    );
+    handleRemoveLookingForwards(name);
+    setRefreshKey((k) => k + 1);
+  };
+
   return (
     <>
       <MainModal
         isOpen={showchangeOrders}
         onClose={() => setshowchangeOrders(false)}
       >
-        <div className=" w-[90vw] md:w-full relative h-[380px] p-4 rounded-2xl bg-white">
+        <div className=" w-[90vw] md:w-full relative h-[420px] p-4 rounded-2xl bg-white">
           <div className="flex items-center w-full gap-2 border-b border-Gray-50 py-2 text-base font-medium text-Text-Primary">
             <img src="/icons/danger.svg" alt="" />
             Change Order
@@ -323,7 +373,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
                           ? '/icons/diet.svg'
                           : category.name === 'Lifestyle'
                             ? '/icons/LifeStyle2.svg'
-                            : '/icons/Supplement.svg'
+                            : category.name == 'Supplement'
+                              ? '/icons/Supplement.svg'
+                              : '/icons/others.svg'
                     }
                     alt=""
                   />
@@ -377,10 +429,20 @@ export const SetOrders: FC<SetOrdersProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="bg-white rounded-2xl h-[65vh] shadow-100 p-4 md:p-6 border border-Gray-50">
-        <CoverageCard progress={progress} details={details} />
-        <div className="flex mt-4 w-full flex-wrap ss:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
-          <div className="flex w-[80%]   md:w-[50%] gap-8 md:gap-[80px]">
+      <div className="bg-white rounded-2xl  md:h-[65vh] shadow-100 p-4 md:p-6 border border-Gray-50">
+        <CoverageCard
+          progress={progress}
+          details={details}
+          setDetails={setDetails}
+          setLookingForwards={setLookingForwards}
+          lookingForwardsData={lookingForwardsData}
+          handleRemoveIssueFromList={handleRemoveIssueFromList}
+        />
+        <div className="flex mt-4 w-full flex-wrap sm:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
+          <div
+            className="flex w-full flex-wrap gap-8   
+          xl:gap-[80px] "
+          >
             {categories.map(
               ({ name, visible }) =>
                 visible && (
@@ -393,7 +455,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                     }}
                   >
                     <img
-                      className="size-4"
+                      className="size-5"
                       src={
                         name === 'Activity'
                           ? '/icons/weight.svg'
@@ -401,7 +463,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
                             ? '/icons/diet.svg'
                             : name === 'Lifestyle'
                               ? '/icons/LifeStyle2.svg'
-                              : '/icons/Supplement.svg'
+                              : name == 'Supplement'
+                                ? '/icons/Supplement.svg'
+                                : '/icons/others.svg'
                       }
                       alt=""
                     />
@@ -410,7 +474,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                 ),
             )}
           </div>
-          <div className="gap-2 text-[12px] w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
+          <div className="gap-2 text-[12px] w-full sm:w-[20%] text-nowrap flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
             {/* {activeCategory != categories.filter((el) => el.visible)[0].name &&
               visibleCategoriy.filter((el) => el.visible).length > 1 && (
                 <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
@@ -454,11 +518,16 @@ export const SetOrders: FC<SetOrdersProps> = ({
             .map((item: any, index: number) => {
               return (
                 <ActivityCard
-                  key={index}
+                  key={`${index}-${refreshKey}`}
                   item={item}
                   index={index}
                   activeCategory={activeCategory}
                   handleCheckboxChange={handleCheckboxChange}
+                  issuesData={details}
+                  setIssuesData={setDetails}
+                  handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
+                  handleRemoveLookingForwards={handleRemoveLookingForwards}
+                  handleRemoveIssueFromList={handleRemoveIssueFromList}
                 />
               );
             })}

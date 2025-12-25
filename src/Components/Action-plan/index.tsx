@@ -9,6 +9,7 @@ import { publish } from '../../utils/event';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 import ProgressCalenderView from './ProgressCalendarView';
+import { Tooltip } from 'react-tooltip';
 
 // type CardData = {
 //   cardID: number;
@@ -24,6 +25,7 @@ interface ActionPlanProps {
   isShare?: boolean;
   isHolisticPlanEmpty: boolean;
   setCalendarPrintData: (data: any) => void;
+  disableGenerate: boolean;
 }
 
 export const ActionPlan: FC<ActionPlanProps> = ({
@@ -32,6 +34,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
   calenderDataUper,
   isHolisticPlanEmpty,
   setCalendarPrintData,
+  disableGenerate,
 }) => {
   const { id } = useParams<{ id: string }>();
   const [actionPlanData, setActionPlanData] = useState<any>(calenderDataUper);
@@ -119,7 +122,18 @@ export const ActionPlan: FC<ActionPlanProps> = ({
     getActionPlan();
   }, []);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
+  const canCreateNewActionPlan = () => {
+    if (isHolisticPlanEmpty) {
+      return false;
+    }
+    if (disableGenerate) {
+      return false;
+    }
+    if (CardData.length > 0) {
+      return CardData[CardData.length - 1].state !== 'Draft';
+    }
+    return true;
+  };
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -186,20 +200,36 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                             setActiveAction(el);
                           }}
                           onDelete={() => {
-                            Application.deleteActionCard({ id: el.id });
-                            setTimeout(() => {
-                              getActionPlan();
-                              publish('syncReport', { part: 'treatmentPlan' });
-                            }, 3000);
+                            Application.deleteActionPlan({
+                              member_id: id,
+                              id: el.id,
+                            }).catch(() => {});
+                            // setTimeout(() => {
+                            //   getActionPlan();
+                            //   publish('syncReport', { part: 'treatmentPlan' });
+                            // }, 3000);
+                            const isDeletingActivePlan =
+                              activeAction?.id === el.id;
                             setCardData((prevCardData) => {
                               const newCardData = prevCardData.filter(
                                 (card) => card.id !== el.id,
                               );
+                              // اگر پلن فعلی حذف شد و پلن قبلی وجود دارد، state آن را On Going کن
+                              if (
+                                isDeletingActivePlan &&
+                                newCardData.length > 0
+                              ) {
+                                const lastCard =
+                                  newCardData[newCardData.length - 1];
+                                lastCard.state = 'On Going';
+                                setActiveAction(lastCard);
+                              } else if (newCardData.length > 0) {
+                                setActiveAction(
+                                  newCardData[newCardData.length - 1],
+                                );
+                              }
                               return newCardData;
                             });
-                            if (CardData.length > 0) {
-                              setActiveAction(CardData[CardData.length - 1]);
-                            }
                           }}
                           key={i}
                           el={el}
@@ -208,9 +238,25 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       ))}
                       <div
                         onClick={() => {
-                          navigate('/report/Generate-Action-Plan/' + id);
+                          if (canCreateNewActionPlan() && id) {
+                            Application.checkClientRefresh(id).then((res) => {
+                              if (res.data.need_of_refresh == true) {
+                                publish('openRefreshModal', {});
+                              } else {
+                                navigate('/report/Generate-Action-Plan/' + id);
+                              }
+                            });
+                          }
                         }}
-                        className=" min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
+                        data-tooltip-id={
+                          disableGenerate ? 'generate-new-tooltip2' : ''
+                        }
+                        data-tooltip-content={
+                          disableGenerate
+                            ? 'Data sync in progress — please wait until it’s complete'
+                            : ''
+                        }
+                        className={` min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal c ${!canCreateNewActionPlan() ? 'opacity-40 cursor-not-allowed' : 'cursor-default'}`}
                       >
                         <div className="flex flex-col  TextStyle-Subtitle-2 items-center justify-center ">
                           <img
@@ -221,6 +267,13 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                           Add New
                         </div>
                       </div>
+                      {disableGenerate && (
+                        <Tooltip
+                          id="generate-new-tooltip2"
+                          place="top"
+                          className="!bg-white !w-[200px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !z-[99999]"
+                        />
+                      )}
                     </>
                   </div>
                   <div className="mt-2 w-full">
@@ -306,8 +359,19 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       <div className="mt-6 flex w-full justify-center">
                         <ButtonSecondary
                           ClassName="py-[6px] px-6"
+                          disabled={!canCreateNewActionPlan()}
                           onClick={() => {
-                            navigate('/report/Generate-Action-Plan/' + id);
+                            if (canCreateNewActionPlan() && id) {
+                              Application.checkClientRefresh(id).then((res) => {
+                                if (res.data.need_of_refresh == true) {
+                                  publish('openRefreshModal', {});
+                                } else {
+                                  navigate(
+                                    '/report/Generate-Action-Plan/' + id,
+                                  );
+                                }
+                              });
+                            }
                           }}
                         >
                           <img src="/icons/tick.svg" alt="" />

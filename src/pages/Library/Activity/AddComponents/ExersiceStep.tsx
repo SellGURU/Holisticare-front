@@ -62,7 +62,16 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isMobilePage, setIsMobilePage] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobilePage(window.innerWidth < 768);
+    };
 
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const validateExercise = (exercise: ExerciseGroup) => {
     const newErrors: { [key: string]: string } = {};
 
@@ -130,9 +139,13 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   }, [exercises, onValidationChange]);
 
   useEffect(() => {
-    Application.getExercisesList({}).then((res) => {
-      setExerciseList(res.data);
-    });
+    Application.getExercisesList({})
+      .then((res) => {
+        setExerciseList(res.data);
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
   }, []);
 
   const addExercise = (exercise: Exercise) => {
@@ -422,17 +435,24 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
 
   return (
     <>
-      <div className="w-full mt-6">
+      <div
+        className="w-full mt-6 overflow-y-auto md:overflow-hidden h-[80vh] md:h-[unset]"
+        style={{
+          ...(isMobilePage
+            ? { scrollbarWidth: 'thin', scrollbarColor: '#E9EDF5 #E9EDF5' }
+            : {}),
+        }}
+      >
         <TabNavigation
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           orderList={orderList}
           handleChangeSetOrder={handleChangeSetOrder}
         />
-        <div className="flex w-full items-center justify-between">
+        <div className="flex w-full items-center justify-between flex-col-reverse md:flex-row gap-4 md:gap-0">
           <div>
             <div
-              className={`w-[530px] h-[432px] border  border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
+              className={`w-[80vw] md:w-[530px] h-[432px] border ${showValidation && exercises.length === 0 && 'border-Red'} border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
@@ -502,13 +522,13 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                   })}
               </div>
             </div>
-            {/* {showValidation && exercises.length === 0 && (
+            {showValidation && exercises.length === 0 && (
               <div className="text-Red text-xs mt-2">
                 Add exercise to continue.
               </div>
-            )} */}
+            )}
           </div>
-          <div className="w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
+          <div className="w-[80vw] md:w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
             <div className="flex w-full items-center justify-between mt-1">
               <div className="font-medium text-sm text-Text-Primary">
                 Exercise

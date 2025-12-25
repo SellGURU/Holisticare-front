@@ -18,13 +18,17 @@ export const DeleteQuestionnaireTrackingProgressModal = () => {
     setIsinProgress(false);
   });
 
+  subscribe('closeDeleteQuestionnaireTrackingProgressModal', () => {
+    setshowProgressModal(false);
+  });
+
   return (
     <>
       <div
         style={{ zIndex: 1000 }}
         className={`
-          fixed top-[48px] right-6
-          w-[320px] h-[212px]
+          fixed top-[48px] right-[86px]
+          w-[320px]
           rounded-2xl border-2 border-r-0 border-Gray-50 
           shadow-200 p-4 bg-white
           transition-all duration-[1000] ease-[cubic-bezier(0.4,0,0.2,1)]
@@ -52,7 +56,7 @@ export const DeleteQuestionnaireTrackingProgressModal = () => {
                 background:
                   'linear-gradient(to right, rgba(0,95,115,0.4), rgba(108,194,74,0.4))',
               }}
-              className="flex size-5   rounded-full items-center justify-center gap-[3px]"
+              className="flex size-5 rounded-full items-center justify-center gap-[3px]"
             >
               <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot1"></div>
               <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot2"></div>

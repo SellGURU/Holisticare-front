@@ -58,6 +58,10 @@ const TableForm: FC<TableProps> = ({
           <div className="w-full mt-4">
             <div
               className={`flex flex-col justify-between overflow-x-auto bg-white rounded-[16px] text-Text-Primary mt-[-12px] border border-Boarder shadow-200`}
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#E9EDF5 #E9EDF5',
+              }}
             >
               {table.getRowModel().rows.length > 0 ? (
                 <table

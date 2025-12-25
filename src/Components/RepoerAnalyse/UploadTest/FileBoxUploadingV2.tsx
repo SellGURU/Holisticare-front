@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface FileBoxProps {
   el: any;
@@ -42,6 +41,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
   useEffect(() => {
     setIsUploded(el.status == 'completed' ? true : false);
   }, [el.status]);
+
   const getFileIcon = (fileName: string) => {
     const ext = fileName.split('.').pop()?.toLowerCase();
 
@@ -58,6 +58,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
 
   const fileName = el.file_name || el.file.name;
   const fileIcon = getFileIcon(fileName);
+
   return (
     <>
       <div
