@@ -5,6 +5,7 @@ interface QuestionItemProps {
   index?: number;
   onRemove: () => void;
   onEdit: () => void;
+  onCopy: () => void;
   moveItem?: (direction: 'up' | 'down') => void;
   length: number;
 }
@@ -14,6 +15,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   index,
   onRemove,
   onEdit,
+  onCopy,
   moveItem,
   length,
 }) => {
@@ -67,9 +69,15 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
               ) : (
                 <>
                   <img
-                    src="./icons/edit-blue.svg"
+                    src="./icons/copy-blue.svg"
                     alt=""
                     className="w-[16px] h-[16px] cursor-pointer"
+                    onClick={() => onCopy()}
+                  />
+                  <img
+                    src="./icons/edit-blue.svg"
+                    alt=""
+                    className="w-[16px] h-[16px] ml-2 cursor-pointer"
                     onClick={() => onEdit()}
                   />
                   <img
