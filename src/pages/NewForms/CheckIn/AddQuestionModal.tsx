@@ -44,6 +44,34 @@ const conditions = [
   'less than',
   'greater than or equal',
   'less than or equal',
+  'between',
+  'not between',
+  'contains',
+  'not contains',
+  'starts with',
+  'ends with',
+  'matches regex',
+  'not matches regex',
+  'is empty',
+  'not empty',
+  'is null',
+  'not null',
+  'in array',
+  'not in array',
+  'all in array',
+  'any in array',
+  'length equals',
+  'length greater',
+  'length less',
+  'length between',
+  'date after',
+  'date before',
+  'date between',
+  'date equals',
+  'file uploaded',
+  'file not uploaded',
+  'file size greater',
+  'file size less',
 ];
 
 const actions = ['show this question', 'hide this question'];
@@ -75,17 +103,36 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
       : ['', ''],
   );
   const [conditionalDisplay, setConditionalDisplay] = useState(false);
-  const [ifQuestion, setIfQuestion] = useState('');
-  const [condition, setCondition] = useState('');
-  const [value, setValue] = useState('');
-  const [action, setAction] = useState('');
+  const [ifQuestion, setIfQuestion] = useState({
+    question_order: 0,
+    question: '',
+  });
+  const [condition, setCondition] = useState(
+    editQUestion?.conditions?.[0]?.rules?.[0]?.operator || '',
+  );
+  const [value, setValue] = useState(
+    editQUestion?.conditions?.[0]?.rules?.[0]?.value || '',
+  );
+  const [action, setAction] = useState(
+    editQUestion?.conditions?.[0]?.actions?.[0]?.type || '',
+  );
   const [advancedSettings, setAdvancedSettings] = useState(false);
-  const [biomarker, setBiomarker] = useState(false);
-  const [clientInsights, setClientInsights] = useState(false);
-  const [clientGoals, setClientGoals] = useState(false);
-  const [medication, setMedication] = useState(false);
-  const [medicalCondition, setMedicalCondition] = useState(false);
-  const [allergy, setAllergy] = useState(false);
+  const [biomarker, setBiomarker] = useState(
+    editQUestion?.is_biomarker || false,
+  );
+  const [clientInsights, setClientInsights] = useState(
+    editQUestion?.use_in_insights || false,
+  );
+  const [clientGoals, setClientGoals] = useState(
+    editQUestion?.is_goal || false,
+  );
+  const [medication, setMedication] = useState(
+    editQUestion?.is_medication || false,
+  );
+  const [medicalCondition, setMedicalCondition] = useState(
+    editQUestion?.is_condition || false,
+  );
+  const [allergy, setAllergy] = useState(editQUestion?.is_allergy || false);
   const clear = () => {
     setQuestion('');
     setRequired(false);
@@ -113,6 +160,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
     }
     return false;
   };
+  const toSnakeCase = (text: string) => text.toLowerCase().replace(/\s+/g, '_');
 
   const submit = () => {
     setShowValidation(true);
@@ -128,6 +176,30 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             : type == 'multiple_choice'
               ? multiChoiceOptions
               : undefined,
+        is_biomarker: biomarker,
+        use_in_insights: clientInsights,
+        is_goal: clientGoals,
+        is_medication: medication,
+        is_condition: medicalCondition,
+        is_allergy: allergy,
+        conditions: [
+          {
+            priority: 1,
+            logic: 'and',
+            rules: [
+              {
+                question_order: ifQuestion.question_order,
+                operator: toSnakeCase(condition),
+                value: value,
+              },
+            ],
+            actions: [
+              {
+                type: action.split(' ')[1],
+              },
+            ],
+          },
+        ],
       };
       onSubmit(resolvedQuestion);
       setQuestionStep(2);
@@ -339,9 +411,13 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                       (question, index) =>
                         `Q${index + 1}: ${question.question}`,
                     )}
-                    value={ifQuestion}
+                    value={ifQuestion.question}
                     onChange={(value) => {
-                      setIfQuestion(value);
+                      setIfQuestion({
+                        question: value,
+                        question_order:
+                          questions.findIndex((q) => q.question === value) + 1,
+                      });
                     }}
                     placeholder="Select a question"
                     margin="mb-1 mt-0"
