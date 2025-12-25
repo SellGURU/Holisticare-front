@@ -21,7 +21,10 @@ input[type='number']::-webkit-outer-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
-
+.no-select, .no-select * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
 /* icons */
 .report-sidemenu-layer-icon {
   mask-image: url(/icons/layer.svg);
