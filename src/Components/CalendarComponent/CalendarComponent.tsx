@@ -199,31 +199,42 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
   //   return days;
   // };
 
-const getCurrentMonthWithBuffer = (baseDate: Date) => {
-  const today = new Date(baseDate);
+  const getCurrentMonthWithBuffer = (baseDate: Date) => {
+    const today = new Date(baseDate);
 
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastDayOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0,
+    );
 
-  const startDate = new Date(firstDayOfMonth);
-  while (startDate.getDay() !== 1) startDate.setDate(startDate.getDate() - 1);
+    const startDate = new Date(firstDayOfMonth);
+    while (startDate.getDay() !== 1) startDate.setDate(startDate.getDate() - 1);
 
-  const endDate = new Date(lastDayOfMonth);
-  while ((((endDate.getTime() - startDate.getTime()) / 86400000) + 1) % 7 !== 0) {
-    endDate.setDate(endDate.getDate() + 1);
-  }
+    const endDate = new Date(lastDayOfMonth);
+    while (
+      ((endDate.getTime() - startDate.getTime()) / 86400000 + 1) % 7 !==
+      0
+    ) {
+      endDate.setDate(endDate.getDate() + 1);
+    }
 
-  const days = [];
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    days.push({
-      dayNumber: d.getDate(),
-      dayName: d.toLocaleString('en-US', { weekday: 'long' }),
-      monthName: d.toLocaleString('en-US', { month: 'long' }),
-      dateObject: new Date(d),
-    });
-  }
-  return days;
-};
+    const days = [];
+    for (
+      let d = new Date(startDate);
+      d <= endDate;
+      d.setDate(d.getDate() + 1)
+    ) {
+      days.push({
+        dayNumber: d.getDate(),
+        dayName: d.toLocaleString('en-US', { weekday: 'long' }),
+        monthName: d.toLocaleString('en-US', { month: 'long' }),
+        dateObject: new Date(d),
+      });
+    }
+    return days;
+  };
 
   const [currenDay, setCurrentDay] = useState(0);
   const [currenMonth, setCurrentMonth] = useState('');
@@ -288,43 +299,43 @@ const getCurrentMonthWithBuffer = (baseDate: Date) => {
   //         `}
   // `;
   const getLastTaskDate = (data: any[]) => {
-  if (!data?.length) return null;
-  return data.reduce<Date>((max, item) => {
-    const d = new Date(item.date);
-    d.setHours(0, 0, 0, 0);
-    return d > max ? d : max;
-  }, new Date(data[0].date));
-};
-const buildMonthsRange = (lastDate: Date) => {
-  const today = new Date();
-  const start = new Date(today.getFullYear(), today.getMonth(), 1);
-  const end = new Date(lastDate.getFullYear(), lastDate.getMonth(), 1);
+    if (!data?.length) return null;
+    return data.reduce<Date>((max, item) => {
+      const d = new Date(item.date);
+      d.setHours(0, 0, 0, 0);
+      return d > max ? d : max;
+    }, new Date(data[0].date));
+  };
+  const buildMonthsRange = (lastDate: Date) => {
+    const today = new Date();
+    const start = new Date(today.getFullYear(), today.getMonth(), 1);
+    const end = new Date(lastDate.getFullYear(), lastDate.getMonth(), 1);
 
-  if (end < start) {
-    const monthName = start.toLocaleString('en-US', { month: 'long' });
-    return [`${monthName}, ${start.getFullYear()}`];
-  }
+    if (end < start) {
+      const monthName = start.toLocaleString('en-US', { month: 'long' });
+      return [`${monthName}, ${start.getFullYear()}`];
+    }
 
-  const months: string[] = [];
-  const cursor = new Date(start);
+    const months: string[] = [];
+    const cursor = new Date(start);
 
-  while (cursor <= end) {
-    const monthName = cursor.toLocaleString('en-US', { month: 'long' });
-    const year = cursor.getFullYear();
-    months.push(`${monthName}, ${year}`);
-    cursor.setMonth(cursor.getMonth() + 1);
-  }
+    while (cursor <= end) {
+      const monthName = cursor.toLocaleString('en-US', { month: 'long' });
+      const year = cursor.getFullYear();
+      months.push(`${monthName}, ${year}`);
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
 
-  return months;
-};
-const lastTaskDate = getLastTaskDate(data);
-const monthOptions = lastTaskDate ? buildMonthsRange(lastTaskDate) : [];
-useEffect(() => {
-  if (!monthOptions.length) return;
-  if (!monthOptions.includes(selectedMonth)) {
-    setSelectedMonth(monthOptions[0]);
-  }
-}, [monthOptions]);
+    return months;
+  };
+  const lastTaskDate = getLastTaskDate(data);
+  const monthOptions = lastTaskDate ? buildMonthsRange(lastTaskDate) : [];
+  useEffect(() => {
+    if (!monthOptions.length) return;
+    if (!monthOptions.includes(selectedMonth)) {
+      setSelectedMonth(monthOptions[0]);
+    }
+  }, [monthOptions]);
   return (
     <>
       {isTwoView && (
@@ -337,7 +348,7 @@ useEffect(() => {
               <div className="flex items-center gap-2">
                 Time frame:
                 <Select
-                value={selectedMonth}
+                  value={selectedMonth}
                   onChange={(value) => setSelectedMonth(value)}
                   options={monthOptions}
                 />
