@@ -15,6 +15,24 @@ declare global {
     required: boolean;
     response: string;
     options?: Array<string>;
+    is_biomarker?: boolean;
+    use_in_insights?: boolean;
+    is_goal?: boolean;
+    is_medication?: boolean;
+    is_condition?: boolean;
+    is_allergy?: boolean;
+    conditions?: {
+      priority?: number;
+      logic?: string;
+      rules?: Array<{
+        question_order?: number;
+        operator?: string;
+        value?: string;
+      }>;
+      actions?: Array<{
+        type?: string;
+      }>;
+    }[];
   };
 
   type CheckinFormType = {
