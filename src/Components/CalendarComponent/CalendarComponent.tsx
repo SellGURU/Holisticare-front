@@ -46,21 +46,21 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
     }
   }, [selectedMonth]);
 
-  const getNextThreeMonths = () => {
-    const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
+  // const getNextThreeMonths = () => {
+  //   const today = new Date();
+  //   const currentMonth = today.getMonth();
+  //   const currentYear = today.getFullYear();
 
-    const months = [];
-    for (let i = 0; i < 3; i++) {
-      const date = new Date(currentYear, currentMonth + i, 1);
-      const monthName = date.toLocaleString('en-US', { month: 'long' });
-      const year = date.getFullYear();
-      months.push(`${monthName}, ${year}`);
-    }
+  //   const months = [];
+  //   for (let i = 0; i < 3; i++) {
+  //     const date = new Date(currentYear, currentMonth + i, 1);
+  //     const monthName = date.toLocaleString('en-US', { month: 'long' });
+  //     const year = date.getFullYear();
+  //     months.push(`${monthName}, ${year}`);
+  //   }
 
-    return months;
-  };
+  //   return months;
+  // };
 
   // const theme = useSelector((state: any) => state.theme.value.name);
   // const getNext30Days = () => {
@@ -199,11 +199,9 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
   //   return days;
   // };
 
-  const getCurrentMonthWithBuffer = (todaydat: any) => {
-    const dateToUse = selectedMonth ? currentDate : new Date(todaydat);
-    const today = new Date(dateToUse);
+  const getCurrentMonthWithBuffer = (baseDate: Date) => {
+    const today = new Date(baseDate);
 
-    // Get the first day and last day of the current month
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     const lastDayOfMonth = new Date(
       today.getFullYear(),
@@ -211,48 +209,30 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
       0,
     );
 
-    // Calculate the start date (3 days before the first day of the month)
-    const startDate: any = new Date(firstDayOfMonth);
-    // startDate.setDate(firstDayOfMonth.getDate() - 3);
+    const startDate = new Date(firstDayOfMonth);
+    while (startDate.getDay() !== 1) startDate.setDate(startDate.getDate() - 1);
 
-    // Adjust the startDate to the nearest previous Sunday
-    while (startDate.getDay() !== 1) {
-      startDate.setDate(startDate.getDate() - 1);
-    }
-
-    // Calculate the end date (3 days after the last day of the month)
-    const endDate: any = new Date(lastDayOfMonth);
-    // endDate.setDate(lastDayOfMonth.getDate() + 3);
-
-    // Adjust the endDate to ensure the total number of days is a multiple of 7
+    const endDate = new Date(lastDayOfMonth);
     while (
-      ((endDate - startDate + 1000 * 60 * 60 * 24) / (1000 * 60 * 60 * 24)) %
-        7 !==
+      ((endDate.getTime() - startDate.getTime()) / 86400000 + 1) % 7 !==
       0
     ) {
       endDate.setDate(endDate.getDate() + 1);
     }
 
     const days = [];
-
-    // Loop through the dates from startDate to endDate
     for (
-      let date = new Date(startDate);
-      date <= endDate;
-      date.setDate(date.getDate() + 1)
+      let d = new Date(startDate);
+      d <= endDate;
+      d.setDate(d.getDate() + 1)
     ) {
-      const dayNumber = date.getDate();
-      const dayName = date.toLocaleString('en-US', { weekday: 'long' });
-      const monthName = date.toLocaleString('en-US', { month: 'long' });
-
       days.push({
-        dayNumber,
-        dayName,
-        monthName,
-        dateObject: new Date(date), // Create a new Date object to avoid mutation
+        dayNumber: d.getDate(),
+        dayName: d.toLocaleString('en-US', { weekday: 'long' }),
+        monthName: d.toLocaleString('en-US', { month: 'long' }),
+        dateObject: new Date(d),
       });
     }
-
     return days;
   };
 
@@ -318,7 +298,44 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
   //         border: 1px solid #D0DDEC;
   //         `}
   // `;
+  const getLastTaskDate = (data: any[]) => {
+    if (!data?.length) return null;
+    return data.reduce<Date>((max, item) => {
+      const d = new Date(item.date);
+      d.setHours(0, 0, 0, 0);
+      return d > max ? d : max;
+    }, new Date(data[0].date));
+  };
+  const buildMonthsRange = (lastDate: Date) => {
+    const today = new Date();
+    const start = new Date(today.getFullYear(), today.getMonth(), 1);
+    const end = new Date(lastDate.getFullYear(), lastDate.getMonth(), 1);
 
+    if (end < start) {
+      const monthName = start.toLocaleString('en-US', { month: 'long' });
+      return [`${monthName}, ${start.getFullYear()}`];
+    }
+
+    const months: string[] = [];
+    const cursor = new Date(start);
+
+    while (cursor <= end) {
+      const monthName = cursor.toLocaleString('en-US', { month: 'long' });
+      const year = cursor.getFullYear();
+      months.push(`${monthName}, ${year}`);
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+
+    return months;
+  };
+  const lastTaskDate = getLastTaskDate(data);
+  const monthOptions = lastTaskDate ? buildMonthsRange(lastTaskDate) : [];
+  useEffect(() => {
+    if (!monthOptions.length) return;
+    if (!monthOptions.includes(selectedMonth)) {
+      setSelectedMonth(monthOptions[0]);
+    }
+  }, [monthOptions]);
   return (
     <>
       {isTwoView && (
@@ -331,9 +348,9 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
               <div className="flex items-center gap-2">
                 Time frame:
                 <Select
-                  value={getNextThreeMonths()[0]}
+                  value={selectedMonth}
                   onChange={(value) => setSelectedMonth(value)}
-                  options={getNextThreeMonths()}
+                  options={monthOptions}
                 />
               </div>
             )}
@@ -363,7 +380,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
           )} */}
 
           <div className="grid grid-cols-7 w-full lg:gap-2 min-w-[980px] lg:min-w-full  mt-1  py-3">
-            {getCurrentMonthWithBuffer(data[0].date)
+            {getCurrentMonthWithBuffer(currentDate)
               .slice(0, 7)
               .map((day, index) => (
                 <div
@@ -375,7 +392,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
               ))}
           </div>
           <div className="grid grid-cols-7 gap-[1px] w-full  min-w-[980px] lg:min-w-full">
-            {getCurrentMonthWithBuffer(data[0].date).map((day, index) => {
+            {getCurrentMonthWithBuffer(currentDate).map((day, index) => {
               const activitiesForTheDay = data.filter(
                 (el: any) =>
                   new Date(el.date).toDateString() ===
