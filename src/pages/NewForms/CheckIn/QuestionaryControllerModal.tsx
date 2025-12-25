@@ -19,6 +19,7 @@ interface QuestionaryControllerModalProps {
   templateData?: any;
   error: string;
   isQuestionary?: boolean;
+  defaultQuestionnaire?: boolean;
 }
 
 const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
@@ -29,6 +30,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   templateData,
   error,
   isQuestionary,
+  defaultQuestionnaire,
 }) => {
   const [isError, setIsError] = useState(false);
   const [step, setStep] = useState(0);
@@ -169,7 +171,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     templateData?.consent_text || '',
   );
   const [requireClientConsent, setRequireClientConsent] = useState(
-    templateData?.require_client_consent || false,
+    templateData?.show_consent || false,
   );
   const isDisable = () => {
     // if (templateData == null) {
@@ -194,6 +196,10 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       questions: questions,
       share_with_client: checked,
       time: getTimeInMilliseconds(),
+      default_questionnaire: defaultQuestionnaire,
+      consent_text: consentText,
+      show_consent: requireClientConsent,
+      description: descriptionForm,
     });
     // FormsApi.addCheckin({
     //   title: titleForm,
@@ -481,6 +487,13 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                           }}
                           moveItem={(item: any) => {
                             moveItem(index, item);
+                          }}
+                          onCopy={() => {
+                            setQuestions((pre) => {
+                              const newItems = [...pre];
+                              newItems.splice(index + 1, 0, item);
+                              return newItems;
+                            });
                           }}
                           onRemove={() => {
                             setQuestions((pre) => {

@@ -28,6 +28,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [errorCheckIn, setErrorCheckIn] = useState('');
   const [errorQuestionary, setErrorQuestionary] = useState('');
+  const [defaultQuestionnaire, setDefaultQuestionnaire] = useState(false);
   const getChechins = () => {
     setLoading(true);
     FormsApi.getCheckinList().then((res) => {
@@ -199,10 +200,10 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
                 setShowPreview(true);
                 setEditFormId(id);
               }}
-              onReposition={(id) => {
-                setShowReposition(true);
-                setEditFormId(id);
-              }}
+              // onReposition={(id) => {
+              //   setShowReposition(true);
+              //   setEditFormId(id);
+              // }}
             />
           </div>
         </>
@@ -289,10 +290,11 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         }}
       >
         <TemplateQuestinary
-          onselect={(values) => {
+          onselect={(values, default_questionnaire) => {
             setShowTemplates(false);
             setSelectedTemplate(values);
             setShowFeedBack(true);
+            setDefaultQuestionnaire(default_questionnaire);
           }}
         ></TemplateQuestinary>
       </MainModal>
@@ -323,6 +325,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           error={errorQuestionary}
           mode={resolveMode()}
           isQuestionary={true}
+          defaultQuestionnaire={defaultQuestionnaire}
         ></QuestionaryControllerModal>
       </MainModal>
     </>
