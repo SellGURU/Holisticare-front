@@ -65,7 +65,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   const [DeleteConfirm, setDeleteConfirm] = useState(false);
   // const [showConfirmModal, setshowConfirmModal] = useState(false);
 
-  const isDisabled = el.state === 'Completed';
+  const isDisabled = el.state === 'Completed' || el.state === 'Paused';
   const textRef = useRef<HTMLHeadingElement | null>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
 
