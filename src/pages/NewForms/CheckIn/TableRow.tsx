@@ -9,7 +9,7 @@ interface TableRowProps {
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
-  onReposition: (id: string) => void;
+  // onReposition: (id: string) => void;
   index: number;
 }
 
@@ -18,7 +18,7 @@ const TableRow: FC<TableRowProps> = ({
   onDelete,
   onEdit,
   onPreview,
-  onReposition,
+  // onReposition,
   index,
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -69,10 +69,10 @@ const TableRow: FC<TableRowProps> = ({
     onEdit(id);
   };
 
-  const handleReposition = (id: string) => {
-    setShowModal(false);
-    onReposition(id);
-  };
+  // const handleReposition = (id: string) => {
+  //   setShowModal(false);
+  //   onReposition(id);
+  // };
 
   return (
     <>
@@ -109,13 +109,13 @@ const TableRow: FC<TableRowProps> = ({
           }}
           className="z-20 w-[188px] rounded-[16px] px-4 py-2 bg-white shadow-800 flex flex-col gap-3"
         >
-          <div
+          {/* <div
             className="flex items-center gap-2 TextStyle-Body-2 text-Text-Primary pb-2 border-b border-Secondary-SelverGray cursor-pointer"
             onClick={() => handleReposition(row.original.id)}
           >
             <img src="/icons/setting-4-green.svg" alt="" className="w-4 h-4" />
             Reposition
-          </div>
+          </div> */}
           {/* <div
             className="flex items-center cursor-not-allowed border-b opacity-50 border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 "
           >
