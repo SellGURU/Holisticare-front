@@ -1403,13 +1403,15 @@ export function PublicSurveyForm({
                   <div className=" ml-2 flex items-center gap-1">
                     <SvgIcon
                       stroke="#FFFFFF"
-                      width={window.innerWidth < 768 ? "12px" : "16px"}
-                      height={window.innerWidth < 768 ? "12px" : "16px"}
+                      width={window.innerWidth < 768 ? '12px' : '16px'}
+                      height={window.innerWidth < 768 ? '12px' : '16px'}
                       src="/icons/refresh-2.svg"
                       color={''}
                       className="animate-spin"
                     ></SvgIcon>
-                    <div className="text-[8px] md:text-xs">Saving response…</div>
+                    <div className="text-[8px] md:text-xs">
+                      Saving response…
+                    </div>
                   </div>
                 </>
               )}
@@ -1418,12 +1420,14 @@ export function PublicSurveyForm({
                   <div className=" ml-2 flex items-center gap-1">
                     <SvgIcon
                       stroke="#FFFFFF"
-                      width={window.innerWidth < 768 ? "12px" : "16px"}
-                      height={window.innerWidth < 768 ? "12px" : "16px"}
+                      width={window.innerWidth < 768 ? '12px' : '16px'}
+                      height={window.innerWidth < 768 ? '12px' : '16px'}
                       src="/icons/tick-circle2.svg"
                       color={''}
                     ></SvgIcon>
-                    <span className="text-[8px] md:text-xs">Response saved</span>
+                    <span className="text-[8px] md:text-xs">
+                      Response saved
+                    </span>
                   </div>
                 </>
               )}
