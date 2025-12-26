@@ -514,7 +514,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [location, loading]); // Add 'loading' to dependencies
   const [showUploadTest, setShowUploadTest] = useState(false);
   useEffect(() => {
-    if(isActive){
+    if (isActive) {
       if (showUploadTest) {
         publish('reportStatus', {
           isHaveReport: false,
@@ -527,7 +527,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         });
       }
     }
-  }, [showUploadTest, resolvedMemberID,isActive]);
+  }, [showUploadTest, resolvedMemberID, isActive]);
 
   const isInViewport = (element: HTMLElement): boolean => {
     const rect = element.getBoundingClientRect();
