@@ -162,7 +162,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
         <div className="flex gap-1 mb-4">
           <div
             onClick={() => {
-              if (isReportAvailable || showReport) {
                 setSearchParams({
                   ['type']: 'Health',
                   ['section']: 'Client Summary',
@@ -171,7 +170,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                 setactiveMenu('Client Summary');
                 setactiveImg(1);
                 // publish('activeTabChange', { tab: 'Health' });
-              }
             }}
             className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
               activeReportSection === 'Health'
@@ -193,7 +191,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
           </div>
           <div
             onClick={() => {
-              if (isReportAvailable || showReport) {
                 setSearchParams({
                   ['type']: 'Progress',
                   ['section']: 'Wellness Data',
@@ -202,7 +199,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                 setactiveMenu('Wellness Data');
                 setactiveImg(1);
                 // publish('activeTabChange', { tab: 'Progress' });
-              }
             }}
             className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors ${
               activeReportSection === 'Progress'
@@ -226,10 +222,15 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       )}
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
-          onClick={() =>
-            !disableClicks &&
-            (isReportAvailable || showReport) &&
-            setActiveLayer('menu')
+          onClick={() =>{
+            if(activeReportSection == 'Progress'){
+              setActiveLayer('menu')
+            }else{
+              if(!disableClicks &&(isReportAvailable || showReport) ){
+              setActiveLayer('menu')
+              }
+            }
+          }
           }
           className={`flex ${ActiveLayer === 'menu' && 'bg-white '} items-center justify-center px-2 py-[2px] rounded-md cursor-pointer `}
         >
@@ -238,10 +239,15 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
           />
         </div>
         <div
-          onClick={() =>
-            !disableClicks &&
-            (isReportAvailable || showReport) &&
-            setActiveLayer('layer')
+          onClick={() =>{
+            if(activeReportSection == 'Progress'){
+              setActiveLayer('layer')
+            }else{
+              if(!disableClicks &&(isReportAvailable || showReport) ){
+              setActiveLayer('layer')
+              }
+            }
+          }
           }
           className={`flex ${ActiveLayer === 'layer' && 'bg-white '} items-center justify-center px-2 py-[2px] rounded-md cursor-pointer `}
         >
@@ -266,8 +272,12 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             resolveSteps().map((item, index) => (
               <div
                 onClick={() => {
-                  if (!disableClicks && (isReportAvailable || showReport)) {
+                  if(activeReportSection == 'Progress'){
                     onchangeMenu(item);
+                  }else{
+                    if(!disableClicks &&(isReportAvailable || showReport) ){
+                      onchangeMenu(item);
+                    }
                   }
                 }}
                 key={index}
@@ -291,11 +301,18 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
               {resolveSteps().map((item, index) => (
                 <div
                   onClick={() => {
-                    if (!disableClicks && (isReportAvailable || showReport)) {
+                    if(activeReportSection == 'Progress'){
                       setactiveImg(index + 1);
                       document.getElementById(item)?.scrollIntoView({
                         behavior: 'smooth',
                       });
+                    }else{
+                      if(!disableClicks &&(isReportAvailable || showReport) ){
+                        setactiveImg(index + 1);
+                        document.getElementById(item)?.scrollIntoView({
+                          behavior: 'smooth',
+                        });
+                      }
                     }
                   }}
                   key={index}
