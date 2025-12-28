@@ -230,6 +230,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
         setDescriptionForm(res.data.description || '');
         setConsentText(res.data.consent_text || '');
         setRequireClientConsent(res.data.consent_text?.length > 0);
+        setAutoAssign(res.data.default_questionnaire);
+        setGenderRestriction(res.data.gender_target != 'both');
+        setGender(res.data.gender_target);
         const totalMs = res.data.time;
         const mins = Math.floor(totalMs / 60000);
         const secs = Math.floor((totalMs % 60000) / 1000);
@@ -247,7 +250,13 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="flex flex-col justify-between bg-white w-[90vw] md:w-[664px] rounded-[20px] p-4">
+      <div
+        className="flex flex-col justify-between bg-white w-[90vw] md:w-[664px] rounded-[20px] p-4 max-h-[650px] overflow-y-auto"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#E5E5E5 transparent',
+        }}
+      >
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
             <div className="text-Text-Primary font-medium">
