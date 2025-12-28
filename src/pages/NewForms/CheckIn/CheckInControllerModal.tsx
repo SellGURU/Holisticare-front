@@ -327,6 +327,27 @@ const AddCheckIn: FC<AddCheckInProps> = ({
     setSeconds(upSeconds);
   }, [upQuestions, upChecked, upMinutes, upSeconds]);
 
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    setQuestions((prevList: any) => {
+      const newList = [...prevList];
+      if (direction === 'up' && index > 0) {
+        [newList[index], newList[index - 1]] = [
+          newList[index - 1],
+          newList[index],
+        ];
+      } else if (direction === 'down' && index < newList.length - 1) {
+        [newList[index], newList[index + 1]] = [
+          newList[index + 1],
+          newList[index],
+        ];
+      }
+      return newList;
+    });
+  };
+  useEffect(() => {
+    onChange(questions);
+  }, [questions]);
+
   return (
     <>
       {step == 0 || mode == 'Reposition' ? (
@@ -367,6 +388,9 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                               newItems.splice(index + 1, 0, item);
                               return newItems;
                             });
+                          }}
+                          moveItem={(item: any) => {
+                            moveItem(index, item);
                           }}
                         />
                       </>
