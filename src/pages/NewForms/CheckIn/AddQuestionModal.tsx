@@ -49,8 +49,8 @@ const conditions = [
   'less than',
   'greater than or equal',
   'less than or equal',
-  'between',
-  'not between',
+  // 'between',
+  // 'not between',
   'contains',
   'not contains',
   'starts with',
@@ -61,22 +61,22 @@ const conditions = [
   'not empty',
   'is null',
   'not null',
-  'in array',
-  'not in array',
-  'all in array',
-  'any in array',
+  // 'in array',
+  // 'not in array',
+  // 'all in array',
+  // 'any in array',
   'length equals',
   'length greater',
   'length less',
-  'length between',
+  // 'length between',
   'date after',
   'date before',
-  'date between',
+  // 'date between',
   'date equals',
   'file uploaded',
   'file not uploaded',
-  'file size greater',
-  'file size less',
+  // 'file size greater',
+  // 'file size less',
 ];
 
 const actions = ['show this question', 'hide this question'];
@@ -426,6 +426,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     }}
                     placeholder="Select a question"
                     margin="mb-1 mt-0"
+                    top="top-[32px]"
                   />
                 </div>
                 <div className="w-full md:w-[29.3%] flex items-center gap-2">
@@ -440,6 +441,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     }}
                     placeholder="Select condition"
                     margin="mb-1 mt-0"
+                    top="top-[32px]"
                   />
                 </div>
                 <div className="w-full md:w-[28%] flex items-center gap-2">
@@ -470,6 +472,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     }}
                     placeholder="Select action"
                     margin="mb-1 mt-0"
+                    top="top-[32px]"
                   />
                 </div>
               </div>
