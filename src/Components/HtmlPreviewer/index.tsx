@@ -4,6 +4,7 @@ import StyleModal, { ElementStyles } from './StyleModal';
 import { useNavigate, useBlocker } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
 import ConfirmModal from '../confitmModal';
+import { Edit } from 'lucide-react';
 
 type Props = {
   html: string;
@@ -207,9 +208,14 @@ export default function HtmlEditor({
           (element as HTMLElement).removeAttribute('contenteditable');
         });
 
-        // Remove all edit icons
-        const existingIcons = doc.querySelectorAll('.edit-icon');
-        existingIcons.forEach((icon) => icon.remove());
+        // Remove all edit icons - do this multiple times to ensure all are removed
+        const removeAllIcons = () => {
+          const existingIcons = doc.querySelectorAll('.edit-icon');
+          existingIcons.forEach((icon) => icon.remove());
+        };
+        
+        // Remove icons immediately
+        removeAllIcons();
 
         // Reset to original HTML only if not saving
         if (!skipReset) {
@@ -217,12 +223,32 @@ export default function HtmlEditor({
           doc.write(originalHtmlRef.current);
           doc.close();
 
+          // Remove icons again after HTML reset (in case reset added any)
+          setTimeout(() => {
+            removeAllIcons();
+            // Also remove from any newly created elements
+            const newEditableElements = doc.querySelectorAll('.editable');
+            newEditableElements.forEach((element) => {
+              (element as HTMLElement).removeAttribute('contenteditable');
+              const icon = (element as HTMLElement).querySelector('.edit-icon');
+              if (icon) icon.remove();
+            });
+          }, 0);
+
+          // Additional cleanup after DOM updates
+          setTimeout(removeAllIcons, 50);
+          setTimeout(removeAllIcons, 200);
+
           // Reset StyleModal states
           setSelectedElement(null);
           setCurrentStyles(null);
           setPreviewText('');
           setIsStyleModalOpen(false);
           setShowReset(false);
+        } else {
+          // Even when saving, ensure icons are removed after a delay
+          setTimeout(removeAllIcons, 50);
+          setTimeout(removeAllIcons, 200);
         }
       }
     }
@@ -297,7 +323,14 @@ export default function HtmlEditor({
         // Create edit icon
         const editIcon = doc.createElement('div');
         editIcon.className = 'edit-icon';
-        editIcon.innerHTML = '✏️';
+        editIcon.innerHTML = `
+        <svg viewBox="0 0 24 24" width="16" height="16"
+            fill="none" stroke="#f0001c" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+        </svg>
+        `;
         editIcon.contentEditable = 'false';
         editIcon.style.cssText = `
         position: absolute;
@@ -305,9 +338,9 @@ export default function HtmlEditor({
         top: -12px;
         width: 24px;
         height: 24px;
-        background: #3b82f6;
+        background: #cccbca;
         color: white;
-        border-radius: 50%;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -318,6 +351,10 @@ export default function HtmlEditor({
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         border: 2px solid white;
         user-select: none;
+        &:hover {
+          background: #2563EB;
+          color: white;
+        }
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
@@ -511,7 +548,7 @@ export default function HtmlEditor({
       console.log('Icons added:', iconsAddedCount);
       setIconsAdded(true);
     },
-    [isEditMode],
+    [],
   );
 
   // درج HTML یک بار و فعال کردن ویرایشگر
@@ -612,8 +649,30 @@ export default function HtmlEditor({
       loadedRef.current = true;
     };
 
+    // Handle edit mode changes when iframe is already loaded
+    const handleEditModeChange = () => {
+      if (!loadedRef.current) return;
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!doc) return;
+
+      if (!isEditMode) {
+        // Remove all icons and contenteditable when exiting edit mode
+        const editableElements = doc.querySelectorAll('.editable');
+        editableElements.forEach((element) => {
+          (element as HTMLElement).removeAttribute('contenteditable');
+        });
+        const existingIcons = doc.querySelectorAll('.edit-icon');
+        existingIcons.forEach((icon) => icon.remove());
+      }
+    };
+
     if (iframe.contentDocument?.readyState === 'complete') {
-      handleLoad();
+      if (!loadedRef.current) {
+        handleLoad();
+      } else {
+        // If already loaded, just handle edit mode changes
+        handleEditModeChange();
+      }
     } else {
       iframe.addEventListener('load', handleLoad);
       return () => iframe.removeEventListener('load', handleLoad);
@@ -649,6 +708,35 @@ export default function HtmlEditor({
     setTimeout(tryAddIcons, 500);
     setTimeout(tryAddIcons, 1000);
   }, [html, editable, addEditIcons, isEditMode]);
+
+  // Dedicated useEffect to remove icons when exiting edit mode
+  useEffect(() => {
+    if (!iframeRef.current || isEditMode) return;
+
+    const iframe = iframeRef.current;
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
+
+    // Remove all edit icons when not in edit mode
+    const removeIcons = () => {
+      const existingIcons = doc.querySelectorAll('.edit-icon');
+      existingIcons.forEach((icon) => icon.remove());
+      
+      // Also remove contenteditable attributes
+      const editableElements = doc.querySelectorAll('.editable');
+      editableElements.forEach((element) => {
+        (element as HTMLElement).removeAttribute('contenteditable');
+      });
+    };
+
+    // Remove icons immediately
+    removeIcons();
+
+    // Also remove after a short delay to catch any icons added asynchronously
+    setTimeout(removeIcons, 50);
+    setTimeout(removeIcons, 200);
+    setTimeout(removeIcons, 500);
+  }, [isEditMode]);
 
   // Function to apply styles to selected element
   const applyStyles = (styles: ElementStyles) => {
@@ -844,9 +932,10 @@ export default function HtmlEditor({
                 onClick={() => {
                   toggleEditMode(false);
                 }}
-                ClassName={`${isEditMode ? 'bg-purple-500 text-white hover:bg-purple-600' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                ClassName={`${isEditMode ? 'bg-gray-200 !text-Primary-DeepTeal hover:bg-gray-300' : 'bg-[#2563EB] text-white hover:bg-[#3B82F6]'}`}
               >
-                {isEditMode ? '✏️ Exit Editing' : '✏️ Edit'}
+                <Edit size={16} />
+                {isEditMode ? ' Exit Editing' : ' Edit'}
               </ButtonSecondary>
               {showReset && isEditMode && (
                 <ButtonSecondary
