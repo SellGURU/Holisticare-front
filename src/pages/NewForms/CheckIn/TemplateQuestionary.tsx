@@ -4,7 +4,7 @@ import FormsApi from '../../../api/Forms';
 import Circleloader from '../../../Components/CircleLoader';
 
 interface TemplateQuestinaryProps {
-  onselect: (data: any, default_questionnaire: boolean) => void;
+  onselect: (data: any) => void;
 }
 
 const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
@@ -66,7 +66,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                     <div
                       className="flex flex-col items-center  w-full md:w-[193px] cursor-pointer"
                       onClick={() => {
-                        onselect(el, true);
+                        onselect(el);
                       }}
                     >
                       <img src={resolveStapImage(el.title)} alt="" />
@@ -93,7 +93,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
               <div
                 className="flex flex-col items-center w-full md:w-[193px] cursor-pointer"
                 onClick={() => {
-                  onselect(null, false);
+                  onselect(null);
                 }}
               >
                 <div className="flex flex-col justify-center items-center w-[193px] h-[140px] border-dashed border-2 border-[#005F73] rounded-[8px]">
