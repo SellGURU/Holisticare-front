@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CheckBoxSelection from './CheckBoxSelection';
 import MultiChoceSelection from './MultichoiceSelection';
 import Toggle from '../../../Components/RepoerAnalyse/Boxs/Toggle';
@@ -107,10 +107,21 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
       ? editQUestion.options
       : ['', ''],
   );
-  const [conditionalDisplay, setConditionalDisplay] = useState(false);
+  const [conditionalDisplay, setConditionalDisplay] = useState(
+    editQUestion?.conditions?.length && editQUestion.conditions.length > 0
+      ? true
+      : false,
+  );
   const [ifQuestion, setIfQuestion] = useState({
-    question_order: 0,
-    question: '',
+    question_order:
+      editQUestion?.conditions?.[0]?.rules?.[0]?.question_order || 0,
+    question: editQUestion?.conditions?.[0]?.rules?.[0]?.question_order
+      ? questions.find(
+          (q) =>
+            q.order ===
+            editQUestion?.conditions?.[0]?.rules?.[0]?.question_order,
+        )?.question
+      : '',
   });
   const [condition, setCondition] = useState(
     editQUestion?.conditions?.[0]?.rules?.[0]?.operator || '',
@@ -138,6 +149,17 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
     editQUestion?.is_condition || false,
   );
   const [allergy, setAllergy] = useState(editQUestion?.is_allergy || false);
+  useEffect(() => {
+    if (conditionalDisplay === false) {
+      setIfQuestion({
+        question_order: 0,
+        question: '',
+      });
+      setCondition('');
+      setValue('');
+      setAction('');
+    }
+  }, [conditionalDisplay]);
   const clear = () => {
     setQuestion('');
     setRequired(false);
@@ -171,6 +193,12 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
     setShowValidation(true);
     if (!isDisabled() && !hasValidationErrors()) {
       const resolvedQuestion: checkinType = {
+        order: editQUestion?.order || 0,
+        map_to_biomarker: editQUestion?.map_to_biomarker || '',
+        hide: editQUestion?.hide || false,
+        use_function_calculation:
+          editQUestion?.use_function_calculation || false,
+        unit: editQUestion?.unit || '',
         question: qustion,
         required: required,
         response: '',
@@ -200,7 +228,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             ],
             actions: [
               {
-                type: action.split(' ')[1],
+                type: action.split(' ')[0],
               },
             ],
           },
@@ -416,12 +444,18 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                       (question, index) =>
                         `Q${index + 1}: ${question.question}`,
                     )}
-                    value={ifQuestion.question}
+                    value={
+                      'Q' +
+                        (ifQuestion.question_order || 0) +
+                        ': ' +
+                        ifQuestion.question || ''
+                    }
                     onChange={(value) => {
                       setIfQuestion({
-                        question: value,
+                        question: value.slice(4),
                         question_order:
-                          questions.findIndex((q) => q.question === value) + 1,
+                          questions.find((q) => q.question === value.slice(4))
+                            ?.order || 0,
                       });
                     }}
                     placeholder="Select a question"
