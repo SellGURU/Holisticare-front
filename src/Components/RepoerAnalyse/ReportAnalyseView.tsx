@@ -41,6 +41,7 @@ import PrintReportV2 from './PrintReportV2';
 import { UploadTestV2 } from './UploadTestV2';
 // import HolisticShare from './components/HolisticShare';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
+import MarkdownText from '../markdownText';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -513,18 +514,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [location, loading]); // Add 'loading' to dependencies
   const [showUploadTest, setShowUploadTest] = useState(false);
   useEffect(() => {
-    if (showUploadTest) {
-      publish('reportStatus', {
-        isHaveReport: false,
-        memberId: resolvedMemberID,
-      });
-    } else {
-      publish('reportStatus', {
-        isHaveReport: true,
-        memberId: resolvedMemberID,
-      });
+    if (isActive) {
+      if (showUploadTest) {
+        publish('reportStatus', {
+          isHaveReport: false,
+          memberId: resolvedMemberID,
+        });
+      } else {
+        publish('reportStatus', {
+          isHaveReport: true,
+          memberId: resolvedMemberID,
+        });
+      }
     }
-  }, [showUploadTest, resolvedMemberID]);
+  }, [showUploadTest, resolvedMemberID, isActive]);
 
   const isInViewport = (element: HTMLElement): boolean => {
     const rect = element.getBoundingClientRect();
@@ -864,7 +867,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
                     style={{ lineHeight: '24px' }}
                   >
-                    {ClientSummaryBoxs?.client_summary}
+                    <MarkdownText text={ClientSummaryBoxs?.client_summary} />
+                    {/* {ClientSummaryBoxs?.client_summary} */}
                   </div>
                   <div className="w-full mt-4 grid gap-4 grid-cols-1 xl:grid-cols-2">
                     {resolveCategories().map((el: any) => {
