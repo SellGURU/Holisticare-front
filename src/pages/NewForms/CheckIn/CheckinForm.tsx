@@ -73,6 +73,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         getChechins();
         setShowAddModal(false);
         setShowReposition(false);
+        setEditFormId('');
       });
     } else if (editFormId != '') {
       FormsApi.editCheckIn({
@@ -81,6 +82,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
       }).then(() => {
         getChechins();
         setShowAddModal(false);
+        setEditFormId('');
       });
     } else {
       FormsApi.addCheckin(values)
@@ -88,6 +90,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           getChechins();
           setShowAddModal(false);
           setErrorCheckIn('');
+          setEditFormId('');
         })
         .catch((err) => {
           setErrorCheckIn(err.detail);
@@ -110,6 +113,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         setShowReposition(false);
         setEditFormId('');
         setSelectedTemplate(null);
+        setEditFormId('');
       });
     } else if (editFormId != '') {
       FormsApi.editQuestionary({
@@ -118,6 +122,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
       }).then(() => {
         getQuestionary();
         setShowFeedBack(false);
+        setEditFormId('');
       });
     } else {
       setErrorQuestionary('');
@@ -128,6 +133,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           setErrorQuestionary('');
           setEditFormId('');
           setSelectedTemplate(null);
+          setEditFormId('');
         })
         .catch((err) => {
           setErrorQuestionary(err.detail);
