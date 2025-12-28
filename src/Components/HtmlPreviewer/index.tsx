@@ -213,7 +213,7 @@ export default function HtmlEditor({
           const existingIcons = doc.querySelectorAll('.edit-icon');
           existingIcons.forEach((icon) => icon.remove());
         };
-        
+
         // Remove icons immediately
         removeAllIcons();
 
@@ -299,31 +299,30 @@ export default function HtmlEditor({
   };
 
   // Function to add edit icons to editable elements
-  const addEditIcons = useCallback(
-    (doc: Document) => {
-      const editableElements = doc.querySelectorAll('.editable');
-      console.log('Found editable elements:', editableElements.length); // Debug log
+  const addEditIcons = useCallback((doc: Document) => {
+    const editableElements = doc.querySelectorAll('.editable');
+    console.log('Found editable elements:', editableElements.length); // Debug log
 
-      if (editableElements.length === 0) {
-        console.log('No editable elements found, retrying...');
-        return;
+    if (editableElements.length === 0) {
+      console.log('No editable elements found, retrying...');
+      return;
+    }
+
+    let iconsAddedCount = 0;
+
+    editableElements.forEach((element) => {
+      const htmlElement = element as HTMLElement;
+
+      // Remove existing edit icon if any
+      const existingIcon = htmlElement.querySelector('.edit-icon');
+      if (existingIcon) {
+        existingIcon.remove();
       }
 
-      let iconsAddedCount = 0;
-
-      editableElements.forEach((element) => {
-        const htmlElement = element as HTMLElement;
-
-        // Remove existing edit icon if any
-        const existingIcon = htmlElement.querySelector('.edit-icon');
-        if (existingIcon) {
-          existingIcon.remove();
-        }
-
-        // Create edit icon
-        const editIcon = doc.createElement('div');
-        editIcon.className = 'edit-icon';
-        editIcon.innerHTML = `
+      // Create edit icon
+      const editIcon = doc.createElement('div');
+      editIcon.className = 'edit-icon';
+      editIcon.innerHTML = `
         <svg viewBox="0 0 24 24" width="16" height="16"
             fill="none" stroke="#f0001c" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
@@ -331,8 +330,8 @@ export default function HtmlEditor({
           <path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
         </svg>
         `;
-        editIcon.contentEditable = 'false';
-        editIcon.style.cssText = `
+      editIcon.contentEditable = 'false';
+      editIcon.style.cssText = `
         position: absolute;
         right: -12px;
         top: -12px;
@@ -364,192 +363,189 @@ export default function HtmlEditor({
         -khtml-user-select: none;
       `;
 
-        // Make the editable element itself relatively positioned and inline-block
-        htmlElement.style.position = 'relative';
-        htmlElement.style.display = 'inline-block';
-        htmlElement.appendChild(editIcon);
+      // Make the editable element itself relatively positioned and inline-block
+      htmlElement.style.position = 'relative';
+      htmlElement.style.display = 'inline-block';
+      htmlElement.appendChild(editIcon);
 
-        // Add selection event listeners to the element itself
-        // htmlElement.addEventListener('mouseup', () => {
-        //   if (isEditMode) {
-        //     setTimeout(() => {
-        //       handleTextSelection(doc);
-        //     }, 10);
-        //   }
-        // });
+      // Add selection event listeners to the element itself
+      // htmlElement.addEventListener('mouseup', () => {
+      //   if (isEditMode) {
+      //     setTimeout(() => {
+      //       handleTextSelection(doc);
+      //     }, 10);
+      //   }
+      // });
 
-        // htmlElement.addEventListener('keyup', () => {
-        //   if (isEditMode) {
-        //     setTimeout(() => {
-        //       handleTextSelection(doc);
-        //     }, 10);
-        //   }
-        // });
+      // htmlElement.addEventListener('keyup', () => {
+      //   if (isEditMode) {
+      //     setTimeout(() => {
+      //       handleTextSelection(doc);
+      //     }, 10);
+      //   }
+      // });
 
-        // Add click event to edit icon
-        editIcon.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
+      // Add click event to edit icon
+      editIcon.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-          // Temporarily hide icon to avoid detecting its blue background
-          const iconDisplay = editIcon.style.display;
-          editIcon.style.display = 'none';
+        // Temporarily hide icon to avoid detecting its blue background
+        const iconDisplay = editIcon.style.display;
+        editIcon.style.display = 'none';
 
-          // Small delay to ensure icon is hidden before reading styles
-          setTimeout(() => {
-            setSelectedElement(htmlElement);
+        // Small delay to ensure icon is hidden before reading styles
+        setTimeout(() => {
+          setSelectedElement(htmlElement);
 
-            // Get current styles from the element in iframe
-            const computedStyle =
-              doc.defaultView?.getComputedStyle(htmlElement);
-            if (computedStyle) {
-              // Parse font size to get numeric value
-              const fontSize = computedStyle.fontSize;
-              const fontSizeNum = parseFloat(fontSize);
+          // Get current styles from the element in iframe
+          const computedStyle = doc.defaultView?.getComputedStyle(htmlElement);
+          if (computedStyle) {
+            // Parse font size to get numeric value
+            const fontSize = computedStyle.fontSize;
+            const fontSizeNum = parseFloat(fontSize);
 
-              // Parse color to hex format
-              const colorToHex = (color: string) => {
-                if (color.startsWith('rgb')) {
-                  const rgb = color.match(/\d+/g);
-                  if (rgb && rgb.length >= 3) {
-                    const r = parseInt(rgb[0]);
-                    const g = parseInt(rgb[1]);
-                    const b = parseInt(rgb[2]);
-                    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-                  }
+            // Parse color to hex format
+            const colorToHex = (color: string) => {
+              if (color.startsWith('rgb')) {
+                const rgb = color.match(/\d+/g);
+                if (rgb && rgb.length >= 3) {
+                  const r = parseInt(rgb[0]);
+                  const g = parseInt(rgb[1]);
+                  const b = parseInt(rgb[2]);
+                  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
                 }
-                return color;
-              };
+              }
+              return color;
+            };
 
-              // Check for inline styles first, then fall back to computed styles
-              const inlineStyle = htmlElement.style;
-              const hasInlineStyles = inlineStyle.cssText.length > 0;
+            // Check for inline styles first, then fall back to computed styles
+            const inlineStyle = htmlElement.style;
+            const hasInlineStyles = inlineStyle.cssText.length > 0;
 
-              const currentStyles: ElementStyles = {
-                fontWeight:
-                  hasInlineStyles && inlineStyle.fontWeight
-                    ? (inlineStyle.fontWeight as 'bold' | 'normal')
-                    : (getTailwindStyleValue(htmlElement, 'fontWeight') as
-                        | 'bold'
-                        | 'normal') ||
-                      (computedStyle.fontWeight === 'bold' ||
-                      parseInt(computedStyle.fontWeight) >= 700
-                        ? 'bold'
-                        : 'normal'),
-                fontStyle:
-                  hasInlineStyles && inlineStyle.fontStyle
-                    ? (inlineStyle.fontStyle as 'normal' | 'italic')
-                    : (getTailwindStyleValue(htmlElement, 'fontStyle') as
-                        | 'normal'
-                        | 'italic') ||
-                      (computedStyle.fontStyle === 'italic'
-                        ? 'italic'
-                        : 'normal'),
-                textDecoration:
-                  hasInlineStyles && inlineStyle.textDecoration
-                    ? (inlineStyle.textDecoration as
-                        | 'none'
-                        | 'underline'
-                        | 'line-through')
-                    : (getTailwindStyleValue(htmlElement, 'textDecoration') as
-                        | 'none'
-                        | 'underline'
-                        | 'line-through') ||
-                      (computedStyle.textDecoration.includes('underline')
-                        ? 'underline'
-                        : computedStyle.textDecoration.includes('line-through')
-                          ? 'line-through'
-                          : 'none'),
-                color:
-                  hasInlineStyles && inlineStyle.color
-                    ? inlineStyle.color
-                    : colorToHex(computedStyle.color),
-                backgroundColor: 'transparent', // Always set to transparent, don't read or apply background color
-                fontSize:
-                  hasInlineStyles && inlineStyle.fontSize
-                    ? inlineStyle.fontSize
-                    : `${fontSizeNum}px`,
-                textAlign:
-                  hasInlineStyles && inlineStyle.textAlign
-                    ? (inlineStyle.textAlign as
-                        | 'left'
-                        | 'center'
-                        | 'right'
-                        | 'justify')
-                    : (getTailwindStyleValue(htmlElement, 'textAlign') as
-                        | 'left'
-                        | 'center'
-                        | 'right'
-                        | 'justify') ||
-                      (computedStyle.textAlign as
-                        | 'left'
-                        | 'center'
-                        | 'right'
-                        | 'justify'),
-              };
-              setCurrentStyles(currentStyles);
-            }
+            const currentStyles: ElementStyles = {
+              fontWeight:
+                hasInlineStyles && inlineStyle.fontWeight
+                  ? (inlineStyle.fontWeight as 'bold' | 'normal')
+                  : (getTailwindStyleValue(htmlElement, 'fontWeight') as
+                      | 'bold'
+                      | 'normal') ||
+                    (computedStyle.fontWeight === 'bold' ||
+                    parseInt(computedStyle.fontWeight) >= 700
+                      ? 'bold'
+                      : 'normal'),
+              fontStyle:
+                hasInlineStyles && inlineStyle.fontStyle
+                  ? (inlineStyle.fontStyle as 'normal' | 'italic')
+                  : (getTailwindStyleValue(htmlElement, 'fontStyle') as
+                      | 'normal'
+                      | 'italic') ||
+                    (computedStyle.fontStyle === 'italic'
+                      ? 'italic'
+                      : 'normal'),
+              textDecoration:
+                hasInlineStyles && inlineStyle.textDecoration
+                  ? (inlineStyle.textDecoration as
+                      | 'none'
+                      | 'underline'
+                      | 'line-through')
+                  : (getTailwindStyleValue(htmlElement, 'textDecoration') as
+                      | 'none'
+                      | 'underline'
+                      | 'line-through') ||
+                    (computedStyle.textDecoration.includes('underline')
+                      ? 'underline'
+                      : computedStyle.textDecoration.includes('line-through')
+                        ? 'line-through'
+                        : 'none'),
+              color:
+                hasInlineStyles && inlineStyle.color
+                  ? inlineStyle.color
+                  : colorToHex(computedStyle.color),
+              backgroundColor: 'transparent', // Always set to transparent, don't read or apply background color
+              fontSize:
+                hasInlineStyles && inlineStyle.fontSize
+                  ? inlineStyle.fontSize
+                  : `${fontSizeNum}px`,
+              textAlign:
+                hasInlineStyles && inlineStyle.textAlign
+                  ? (inlineStyle.textAlign as
+                      | 'left'
+                      | 'center'
+                      | 'right'
+                      | 'justify')
+                  : (getTailwindStyleValue(htmlElement, 'textAlign') as
+                      | 'left'
+                      | 'center'
+                      | 'right'
+                      | 'justify') ||
+                    (computedStyle.textAlign as
+                      | 'left'
+                      | 'center'
+                      | 'right'
+                      | 'justify'),
+            };
+            setCurrentStyles(currentStyles);
+          }
 
-            // Restore icon display
-            editIcon.style.display = iconDisplay || '';
-            setIsStyleModalOpen(true);
+          // Restore icon display
+          editIcon.style.display = iconDisplay || '';
+          setIsStyleModalOpen(true);
 
-            // Get HTML content to preserve formatting (bold, italic, etc.)
-            let htmlContent = htmlElement?.innerHTML || '';
-            // Remove edit icon from HTML if present
-            htmlContent = htmlContent.replace(
-              /<div[^>]*class="edit-icon"[^>]*>.*?<\/div>/gi,
-              '',
-            );
-            htmlContent = htmlContent.replace(/✏️/g, '');
+          // Get HTML content to preserve formatting (bold, italic, etc.)
+          let htmlContent = htmlElement?.innerHTML || '';
+          // Remove edit icon from HTML if present
+          htmlContent = htmlContent.replace(
+            /<div[^>]*class="edit-icon"[^>]*>.*?<\/div>/gi,
+            '',
+          );
+          htmlContent = htmlContent.replace(/✏️/g, '');
 
-            // Also get plain text for fallback
-            const plainText =
-              htmlElement?.innerText.replace(/✏️/g, '').trim() || '';
+          // Also get plain text for fallback
+          const plainText =
+            htmlElement?.innerText.replace(/✏️/g, '').trim() || '';
 
-            // Use HTML if it contains formatting tags, otherwise use plain text
-            const contentToSet = /<[^>]+>/g.test(htmlContent)
-              ? htmlContent
-              : plainText;
-            setPreviewText(contentToSet);
-          }, 50); // Small delay to ensure icon is hidden before reading styles
-        });
-
-        // Add hover effects
-        // editIcon.addEventListener('mouseenter', () => {
-        //   editIcon.style.transform = 'scale(1.1)';
-        //   editIcon.style.background = '#2563eb';
-        // });
-
-        // editIcon.addEventListener('mouseleave', () => {
-        //   editIcon.style.transform = 'scale(1)';
-        //   editIcon.style.background = '#3b82f6';
-        // });
-
-        // Prevent text selection on the icon
-        // editIcon.addEventListener('mousedown', (e) => {
-        //   e.preventDefault();
-        //   e.stopPropagation();
-        // });
-
-        // editIcon.addEventListener('selectstart', (e) => {
-        //   e.preventDefault();
-        //   e.stopPropagation();
-        // });
-
-        // editIcon.addEventListener('dragstart', (e) => {
-        //   e.preventDefault();
-        //   e.stopPropagation();
-        // });
-
-        iconsAddedCount++;
+          // Use HTML if it contains formatting tags, otherwise use plain text
+          const contentToSet = /<[^>]+>/g.test(htmlContent)
+            ? htmlContent
+            : plainText;
+          setPreviewText(contentToSet);
+        }, 50); // Small delay to ensure icon is hidden before reading styles
       });
 
-      console.log('Icons added:', iconsAddedCount);
-      setIconsAdded(true);
-    },
-    [],
-  );
+      // Add hover effects
+      // editIcon.addEventListener('mouseenter', () => {
+      //   editIcon.style.transform = 'scale(1.1)';
+      //   editIcon.style.background = '#2563eb';
+      // });
+
+      // editIcon.addEventListener('mouseleave', () => {
+      //   editIcon.style.transform = 'scale(1)';
+      //   editIcon.style.background = '#3b82f6';
+      // });
+
+      // Prevent text selection on the icon
+      // editIcon.addEventListener('mousedown', (e) => {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      // });
+
+      // editIcon.addEventListener('selectstart', (e) => {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      // });
+
+      // editIcon.addEventListener('dragstart', (e) => {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      // });
+
+      iconsAddedCount++;
+    });
+
+    console.log('Icons added:', iconsAddedCount);
+    setIconsAdded(true);
+  }, []);
 
   // درج HTML یک بار و فعال کردن ویرایشگر
   useEffect(() => {
@@ -721,7 +717,7 @@ export default function HtmlEditor({
     const removeIcons = () => {
       const existingIcons = doc.querySelectorAll('.edit-icon');
       existingIcons.forEach((icon) => icon.remove());
-      
+
       // Also remove contenteditable attributes
       const editableElements = doc.querySelectorAll('.editable');
       editableElements.forEach((element) => {
