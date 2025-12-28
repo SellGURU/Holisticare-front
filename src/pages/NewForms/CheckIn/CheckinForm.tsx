@@ -28,7 +28,6 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [errorCheckIn, setErrorCheckIn] = useState('');
   const [errorQuestionary, setErrorQuestionary] = useState('');
-  const [defaultQuestionnaire, setDefaultQuestionnaire] = useState(false);
   const getChechins = () => {
     setLoading(true);
     FormsApi.getCheckinList().then((res) => {
@@ -291,11 +290,10 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         }}
       >
         <TemplateQuestinary
-          onselect={(values, default_questionnaire) => {
+          onselect={(values) => {
             setShowTemplates(false);
             setSelectedTemplate(values);
             setShowFeedBack(true);
-            setDefaultQuestionnaire(default_questionnaire);
           }}
         ></TemplateQuestinary>
       </MainModal>
@@ -326,7 +324,6 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           error={errorQuestionary}
           mode={resolveMode()}
           isQuestionary={true}
-          defaultQuestionnaire={defaultQuestionnaire}
         ></QuestionaryControllerModal>
       </MainModal>
     </>
