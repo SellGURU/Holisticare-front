@@ -87,7 +87,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
       )}
       {showSelect && (
         <div
-          className={`w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 ${label ? 'top-[56px] max-h-[250px]' : 'top-[32px] max-h-[200px]'} ${top ? top : 'top-[56px]'} overflow-y-auto`}
+          className={`w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 ${label ? 'max-h-[250px]' : 'max-h-[200px]'} ${top ? top : 'top-[56px]'} overflow-y-auto`}
         >
           {options.map((option, index) => {
             return (
@@ -97,7 +97,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
                   onChange(option);
                   setShowSelect(false);
                 }}
-                className="text-[12px] text-Text-Primary my-1 cursor-pointer"
+                className="text-[12px] text-Text-Primary my-1 cursor-pointer hover:bg-Gray-100 rounded-lg py-1 px-2 text-ellipsis overflow-hidden text-nowrap"
               >
                 {option}
               </div>
