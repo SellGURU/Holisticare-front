@@ -19,7 +19,6 @@ interface QuestionaryControllerModalProps {
   templateData?: any;
   error: string;
   isQuestionary?: boolean;
-  defaultQuestionnaire?: boolean;
 }
 
 const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
@@ -30,7 +29,6 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   templateData,
   error,
   isQuestionary,
-  defaultQuestionnaire,
 }) => {
   const [isError, setIsError] = useState(false);
   const [step, setStep] = useState(0);
@@ -42,7 +40,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   );
   const [AddquestionStep, setAddquestionStep] = useState(0);
   const [showTitleRequired, setShowTitleRequired] = useState(false);
-
+  const [autoAssign, setAutoAssign] = useState(false);
+  const [genderRestriction, setGenderRestriction] = useState(false);
+  const [gender, setGender] = useState('female');
   useEffect(() => {
     if (error && error == 'A form with the same title already exists.') {
       setTitleForm(templateData?.title || '');
@@ -119,6 +119,12 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             step={step}
             mode={mode}
             isQuestionary={isQuestionary}
+            autoAssign={autoAssign}
+            setAutoAssign={setAutoAssign}
+            genderRestriction={genderRestriction}
+            setGenderRestriction={setGenderRestriction}
+            gender={gender}
+            setGender={setGender}
           />
         );
       // case 'Reposition':
@@ -159,6 +165,12 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             step={step}
             mode={mode}
             isQuestionary={isQuestionary}
+            autoAssign={autoAssign}
+            setAutoAssign={setAutoAssign}
+            genderRestriction={genderRestriction}
+            setGenderRestriction={setGenderRestriction}
+            gender={gender}
+            setGender={setGender}
           />
         );
     }
@@ -196,10 +208,11 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       questions: questions,
       share_with_client: checked,
       time: getTimeInMilliseconds(),
-      default_questionnaire: defaultQuestionnaire,
       consent_text: consentText,
       show_consent: requireClientConsent,
       description: descriptionForm,
+      default_questionnaire: autoAssign,
+      gender_target: genderRestriction ? gender : 'both',
     });
     // FormsApi.addCheckin({
     //   title: titleForm,
@@ -401,6 +414,12 @@ interface AddCheckInProps {
   setQuestionStep: (value: number) => void;
   onAddQuestion: () => boolean;
   isQuestionary?: boolean;
+  autoAssign: boolean;
+  setAutoAssign: (value: boolean) => void;
+  genderRestriction: boolean;
+  setGenderRestriction: (value: boolean) => void;
+  gender: string;
+  setGender: (value: string) => void;
 }
 
 const AddCheckIn: FC<AddCheckInProps> = ({
@@ -418,6 +437,12 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   setQuestionStep,
   onAddQuestion,
   isQuestionary,
+  autoAssign,
+  setAutoAssign,
+  genderRestriction,
+  setGenderRestriction,
+  gender,
+  setGender,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
@@ -617,6 +642,78 @@ const AddCheckIn: FC<AddCheckInProps> = ({
               setSeconds={setSeconds}
             />
           </div>
+          <div className="text-xs text-Text-Primary font-medium">
+            Automatic Assignment
+          </div>
+          <div className="w-full mt-3 mb-2 flex items-center gap-2">
+            <Toggle checked={autoAssign} setChecked={setAutoAssign} />
+            <div className="text-xs text-Text-Primary font-normal">
+              Automatically assign this questionnaire to new clients.
+            </div>
+          </div>
+          {autoAssign && (
+            <div className="text-xs text-Text-Quadruple font-normal mt-3 ml-12">
+              Clients will receive this questionnaire immediately after being
+              added.
+            </div>
+          )}
+          <div className="text-xs text-Text-Primary font-medium mt-8">
+            Gender Restriction
+          </div>
+          <div
+            className={`w-full mt-3 ${genderRestriction ? 'mb-2' : 'mb-5'} flex items-center gap-2`}
+          >
+            <Toggle
+              checked={genderRestriction}
+              setChecked={setGenderRestriction}
+            />
+            <div className="text-xs text-Text-Primary font-normal">
+              Only assign this questionnaire to clients of the selected gender.
+            </div>
+          </div>
+          {genderRestriction && (
+            <div className="flex items-center gap-6 mt-4 ml-12 mb-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <span
+                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center
+            ${gender === 'female' ? 'border-Primary-DeepTeal' : 'border-gray-400'}`}
+                >
+                  {gender === 'female' && (
+                    <span className="w-2 h-2 rounded-full bg-Primary-DeepTeal" />
+                  )}
+                </span>
+                <input
+                  type="radio"
+                  name="gender"
+                  value="female"
+                  checked={gender === 'female'}
+                  onChange={() => setGender('female')}
+                  className="hidden"
+                />
+                <span className="text-xs text-Text-Primary">Female</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <span
+                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center
+            ${gender === 'male' ? 'border-Primary-DeepTeal' : 'border-gray-400'}`}
+                >
+                  {gender === 'male' && (
+                    <span className="w-2 h-2 rounded-full bg-Primary-DeepTeal" />
+                  )}
+                </span>
+                <input
+                  type="radio"
+                  name="gender"
+                  value="male"
+                  checked={gender === 'male'}
+                  onChange={() => setGender('male')}
+                  className="hidden"
+                />
+                <span className="text-xs text-Text-Primary">Male</span>
+              </label>
+            </div>
+          )}
         </div>
       )}
     </>
