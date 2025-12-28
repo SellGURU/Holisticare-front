@@ -20,6 +20,10 @@ declare global {
     is_goal?: boolean;
     is_medication?: boolean;
     is_condition?: boolean;
+    map_to_biomarker?: string;
+    hide?: boolean;
+    use_function_calculation?: boolean;
+    unit?: string;
     is_allergy?: boolean;
     conditions?: {
       priority?: number;
