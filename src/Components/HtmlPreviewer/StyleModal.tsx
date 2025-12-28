@@ -134,7 +134,8 @@ export default function StyleModal({
       tempIframe.style.height = '1px';
       document.body.appendChild(tempIframe);
 
-      const tempIframeDoc = tempIframe.contentDocument || tempIframe.contentWindow?.document;
+      const tempIframeDoc =
+        tempIframe.contentDocument || tempIframe.contentWindow?.document;
       if (!tempIframeDoc) {
         document.body.removeChild(tempIframe);
         return;
@@ -183,23 +184,48 @@ export default function StyleModal({
           if (targetElement) {
             // Find the parent container that has border or shadow using computed styles
             let parent = targetElement.parentElement;
-            const containerTags = ['section', 'div', 'article', 'aside', 'main', 'header', 'footer', 'nav'];
+            const containerTags = [
+              'section',
+              'div',
+              'article',
+              'aside',
+              'main',
+              'header',
+              'footer',
+              'nav',
+            ];
 
-            while (parent && parent !== tempIframeDoc.body && parent !== tempIframeDoc.documentElement) {
+            while (
+              parent &&
+              parent !== tempIframeDoc.body &&
+              parent !== tempIframeDoc.documentElement
+            ) {
               if (containerTags.includes(parent.tagName.toLowerCase())) {
-                const computedStyle = tempIframeDoc.defaultView?.getComputedStyle(parent as HTMLElement);
-                
+                const computedStyle =
+                  tempIframeDoc.defaultView?.getComputedStyle(
+                    parent as HTMLElement,
+                  );
+
                 if (computedStyle) {
-                  const border = computedStyle.border || computedStyle.borderWidth;
+                  const border =
+                    computedStyle.border || computedStyle.borderWidth;
                   const boxShadow = computedStyle.boxShadow;
                   const borderWidth = computedStyle.borderWidth;
-                  
+
                   // Check if element has border or shadow
-                  const hasBorder = 
-                    (border && border !== 'none' && border !== '0px' && border !== 'medium none') ||
-                    (borderWidth && borderWidth !== '0px' && parseFloat(borderWidth) > 0);
-                  
-                  const hasShadow = boxShadow && boxShadow !== 'none' && boxShadow !== 'rgba(0, 0, 0, 0)';
+                  const hasBorder =
+                    (border &&
+                      border !== 'none' &&
+                      border !== '0px' &&
+                      border !== 'medium none') ||
+                    (borderWidth &&
+                      borderWidth !== '0px' &&
+                      parseFloat(borderWidth) > 0);
+
+                  const hasShadow =
+                    boxShadow &&
+                    boxShadow !== 'none' &&
+                    boxShadow !== 'rgba(0, 0, 0, 0)';
 
                   if (hasBorder || hasShadow) {
                     containerElement = parent as HTMLElement;
@@ -211,8 +237,11 @@ export default function StyleModal({
             }
 
             // If no container found with border/shadow, use the direct parent
-            if (!containerElement && targetElement.parentElement && 
-                targetElement.parentElement !== tempIframeDoc.body) {
+            if (
+              !containerElement &&
+              targetElement.parentElement &&
+              targetElement.parentElement !== tempIframeDoc.body
+            ) {
               containerElement = targetElement.parentElement as HTMLElement;
             }
           }
@@ -228,7 +257,9 @@ export default function StyleModal({
           const clonedElement = elementToShow.cloneNode(true) as HTMLElement;
 
           // Find the editable element inside the cloned element and update it
-          const clonedEditable = clonedElement.querySelector('.editable') as HTMLElement;
+          const clonedEditable = clonedElement.querySelector(
+            '.editable',
+          ) as HTMLElement;
           if (clonedEditable) {
             const hasHtml = /<[^>]+>/g.test(previewHtml);
             if (hasHtml) {
@@ -252,8 +283,10 @@ export default function StyleModal({
 
           // Extract all styles and links from the temp iframe (which has loaded all CSS)
           const styleTags = tempIframeDoc.querySelectorAll('style');
-          const linkTags = tempIframeDoc.querySelectorAll('link[rel="stylesheet"]');
-          
+          const linkTags = tempIframeDoc.querySelectorAll(
+            'link[rel="stylesheet"]',
+          );
+
           let extractedStyles = '';
           styleTags.forEach((style) => {
             extractedStyles += style.innerHTML + '\n';
@@ -265,35 +298,40 @@ export default function StyleModal({
             const integrity = link.getAttribute('integrity');
             const crossorigin = link.getAttribute('crossorigin');
             const media = link.getAttribute('media');
-            
+
             if (href) {
               // Convert relative URLs to absolute if needed
               let absoluteHref = href;
               if (href.startsWith('/')) {
                 // If it's an absolute path, use it as is
                 absoluteHref = href;
-              } else if (!href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('//')) {
+              } else if (
+                !href.startsWith('http://') &&
+                !href.startsWith('https://') &&
+                !href.startsWith('//')
+              ) {
                 // Relative URL - try to make it absolute based on current location
                 const baseUrl = window.location.origin;
                 absoluteHref = new URL(href, baseUrl).href;
               }
-              
+
               let linkTag = `<link rel="stylesheet" href="${absoluteHref}"`;
               if (integrity) linkTag += ` integrity="${integrity}"`;
               if (crossorigin) linkTag += ` crossorigin="${crossorigin}"`;
               if (media) linkTag += ` media="${media}"`;
               linkTag += `>\n`;
-              
+
               extractedLinks += linkTag;
             }
           });
-          
+
           // Also get any @import statements from style tags
           styleTags.forEach((style) => {
             const styleContent = style.innerHTML;
             const importMatches = styleContent.match(/@import[^;]+;/g);
             if (importMatches) {
-              extractedStyles = importMatches.join('\n') + '\n' + extractedStyles;
+              extractedStyles =
+                importMatches.join('\n') + '\n' + extractedStyles;
             }
           });
 
@@ -350,10 +388,13 @@ export default function StyleModal({
           };
 
           // If all links are already loaded, proceed immediately
-          if (linkTags.length === 0 || Array.from(linkTags).every((link) => {
-            const sheet = (link as HTMLLinkElement).sheet;
-            return sheet !== null;
-          })) {
+          if (
+            linkTags.length === 0 ||
+            Array.from(linkTags).every((link) => {
+              const sheet = (link as HTMLLinkElement).sheet;
+              return sheet !== null;
+            })
+          ) {
             waitForCSS();
           } else {
             // Wait for stylesheets to load
@@ -380,7 +421,7 @@ export default function StyleModal({
                 });
               }
             });
-            
+
             // Fallback timeout
             setTimeout(waitForCSS, 1000);
           }
@@ -496,7 +537,11 @@ export default function StyleModal({
       >
         {/* html preview */}
         <div>
-          <iframe sandbox='allow-scripts allow-same-origin' ref={iframeRef} className="w-[500px] h-full" />
+          <iframe
+            sandbox="allow-scripts allow-same-origin"
+            ref={iframeRef}
+            className="w-[500px] h-full"
+          />
         </div>
         {/* Preview Panel */}
         <div className="w-1/2 bg-gray-50 border-r border-gray-200 p-4 flex flex-col">
