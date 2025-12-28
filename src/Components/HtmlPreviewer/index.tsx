@@ -889,6 +889,7 @@ export default function HtmlEditor({
 
       <StyleModal
         isOpen={isStyleModalOpen}
+        lastHtml={html}
         onClose={() => setIsStyleModalOpen(false)}
         onApplyStyle={applyStyles}
         currentStyles={currentStyles || undefined}

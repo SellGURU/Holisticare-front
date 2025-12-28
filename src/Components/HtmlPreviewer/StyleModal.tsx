@@ -8,6 +8,7 @@ interface StyleModalProps {
   selectedText: string;
   onUpdatePreviewText: (text: string) => void;
   setShowReset: () => void;
+  lastHtml: string;
 }
 
 export interface ElementStyles {
@@ -38,7 +39,10 @@ export default function StyleModal({
   selectedText,
   onUpdatePreviewText,
   setShowReset,
+  lastHtml,
 }: StyleModalProps) {
+  console.log('lastHtml', lastHtml);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [styles, setStyles] = useState<ElementStyles>(currentStyles);
   const [, setPreviewText] = useState(selectedText);
   const [previewHtml, setPreviewHtml] = useState(selectedText);
@@ -103,6 +107,314 @@ export default function StyleModal({
       }
     }
   }, [isOpen, selectedText]);
+
+  // Update iframe with live preview - only show the selected element
+  useEffect(() => {
+    if (!iframeRef.current || !isOpen || !lastHtml) return;
+
+    const iframe = iframeRef.current;
+    let timeoutId: NodeJS.Timeout;
+
+    const updatePreview = () => {
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!doc) return;
+
+      // Clean the original content for comparison
+      const originalContent = originalHtmlRef.current
+        .replace(/<div[^>]*class="edit-icon"[^>]*>.*?<\/div>/gi, '')
+        .replace(/✏️/g, '')
+        .trim();
+      const originalText = originalTextRef.current.trim();
+
+      // Create a temporary iframe to get computed styles
+      const tempIframe = document.createElement('iframe');
+      tempIframe.style.position = 'absolute';
+      tempIframe.style.left = '-9999px';
+      tempIframe.style.width = '1px';
+      tempIframe.style.height = '1px';
+      document.body.appendChild(tempIframe);
+
+      const tempIframeDoc = tempIframe.contentDocument || tempIframe.contentWindow?.document;
+      if (!tempIframeDoc) {
+        document.body.removeChild(tempIframe);
+        return;
+      }
+
+      tempIframeDoc.open();
+      tempIframeDoc.write(lastHtml);
+      tempIframeDoc.close();
+
+      // Wait for styles to load
+      setTimeout(() => {
+        try {
+          // Find all editable elements in the temp iframe
+          const editableElements = tempIframeDoc.querySelectorAll('.editable');
+          let targetElement: HTMLElement | null = null;
+
+          // Find the element that matches the original content
+          for (const element of Array.from(editableElements)) {
+            const htmlElement = element as HTMLElement;
+            const cleanInnerHTML = htmlElement.innerHTML
+              .replace(/<div[^>]*class="edit-icon"[^>]*>.*?<\/div>/gi, '')
+              .replace(/✏️/g, '')
+              .trim();
+            const cleanInnerText = htmlElement.innerText
+              .replace(/✏️/g, '')
+              .trim();
+
+            if (
+              cleanInnerHTML === originalContent ||
+              cleanInnerText === originalText ||
+              (originalContent && cleanInnerHTML.includes(originalContent)) ||
+              (originalText && cleanInnerText.includes(originalText))
+            ) {
+              targetElement = htmlElement;
+              break;
+            }
+          }
+
+          // If not found, use the first editable element
+          if (!targetElement && editableElements.length > 0) {
+            targetElement = editableElements[0] as HTMLElement;
+          }
+
+          let containerElement: HTMLElement | null = null;
+
+          if (targetElement) {
+            // Find the parent container that has border or shadow using computed styles
+            let parent = targetElement.parentElement;
+            const containerTags = ['section', 'div', 'article', 'aside', 'main', 'header', 'footer', 'nav'];
+
+            while (parent && parent !== tempIframeDoc.body && parent !== tempIframeDoc.documentElement) {
+              if (containerTags.includes(parent.tagName.toLowerCase())) {
+                const computedStyle = tempIframeDoc.defaultView?.getComputedStyle(parent as HTMLElement);
+                
+                if (computedStyle) {
+                  const border = computedStyle.border || computedStyle.borderWidth;
+                  const boxShadow = computedStyle.boxShadow;
+                  const borderWidth = computedStyle.borderWidth;
+                  
+                  // Check if element has border or shadow
+                  const hasBorder = 
+                    (border && border !== 'none' && border !== '0px' && border !== 'medium none') ||
+                    (borderWidth && borderWidth !== '0px' && parseFloat(borderWidth) > 0);
+                  
+                  const hasShadow = boxShadow && boxShadow !== 'none' && boxShadow !== 'rgba(0, 0, 0, 0)';
+
+                  if (hasBorder || hasShadow) {
+                    containerElement = parent as HTMLElement;
+                    break;
+                  }
+                }
+              }
+              parent = parent.parentElement;
+            }
+
+            // If no container found with border/shadow, use the direct parent
+            if (!containerElement && targetElement.parentElement && 
+                targetElement.parentElement !== tempIframeDoc.body) {
+              containerElement = targetElement.parentElement as HTMLElement;
+            }
+          }
+
+          // Get the container HTML
+          const elementToShow = containerElement || targetElement;
+          if (!elementToShow) {
+            document.body.removeChild(tempIframe);
+            return;
+          }
+
+          // Clone the element
+          const clonedElement = elementToShow.cloneNode(true) as HTMLElement;
+
+          // Find the editable element inside the cloned element and update it
+          const clonedEditable = clonedElement.querySelector('.editable') as HTMLElement;
+          if (clonedEditable) {
+            const hasHtml = /<[^>]+>/g.test(previewHtml);
+            if (hasHtml) {
+              clonedEditable.innerHTML = previewHtml;
+            } else {
+              clonedEditable.textContent = previewHtml;
+            }
+
+            // Apply current styles to the editable element
+            clonedEditable.style.fontWeight = styles.fontWeight;
+            clonedEditable.style.fontStyle = styles.fontStyle;
+            clonedEditable.style.textDecoration = styles.textDecoration;
+            clonedEditable.style.color = styles.color;
+            clonedEditable.style.fontSize = styles.fontSize;
+            clonedEditable.style.textAlign = styles.textAlign;
+
+            // Remove edit icons if any
+            const editIcons = clonedElement.querySelectorAll('.edit-icon');
+            editIcons.forEach((icon) => icon.remove());
+          }
+
+          // Extract all styles and links from the temp iframe (which has loaded all CSS)
+          const styleTags = tempIframeDoc.querySelectorAll('style');
+          const linkTags = tempIframeDoc.querySelectorAll('link[rel="stylesheet"]');
+          
+          let extractedStyles = '';
+          styleTags.forEach((style) => {
+            extractedStyles += style.innerHTML + '\n';
+          });
+
+          let extractedLinks = '';
+          linkTags.forEach((link) => {
+            const href = link.getAttribute('href');
+            const integrity = link.getAttribute('integrity');
+            const crossorigin = link.getAttribute('crossorigin');
+            const media = link.getAttribute('media');
+            
+            if (href) {
+              // Convert relative URLs to absolute if needed
+              let absoluteHref = href;
+              if (href.startsWith('/')) {
+                // If it's an absolute path, use it as is
+                absoluteHref = href;
+              } else if (!href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('//')) {
+                // Relative URL - try to make it absolute based on current location
+                const baseUrl = window.location.origin;
+                absoluteHref = new URL(href, baseUrl).href;
+              }
+              
+              let linkTag = `<link rel="stylesheet" href="${absoluteHref}"`;
+              if (integrity) linkTag += ` integrity="${integrity}"`;
+              if (crossorigin) linkTag += ` crossorigin="${crossorigin}"`;
+              if (media) linkTag += ` media="${media}"`;
+              linkTag += `>\n`;
+              
+              extractedLinks += linkTag;
+            }
+          });
+          
+          // Also get any @import statements from style tags
+          styleTags.forEach((style) => {
+            const styleContent = style.innerHTML;
+            const importMatches = styleContent.match(/@import[^;]+;/g);
+            if (importMatches) {
+              extractedStyles = importMatches.join('\n') + '\n' + extractedStyles;
+            }
+          });
+
+          // Wait for CSS to load in temp iframe before creating preview
+          const waitForCSS = () => {
+            // Create HTML document with extracted styles
+            const htmlContent = `
+              <!DOCTYPE html>
+              <html>
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  ${extractedLinks}
+                  <style>
+                    * {
+                      margin: 0;
+                      padding: 0;
+                      box-sizing: border-box;
+                    }
+                    body {
+                      padding: 20px;
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      min-height: 100vh;
+                    }
+                    .preview-container {
+                      width: 100%;
+                      max-width: 100%;
+                    }
+                    ${extractedStyles}
+                  </style>
+                </head>
+                <body>
+                  <div class="preview-container">
+                    ${clonedElement.outerHTML}
+                  </div>
+                </body>
+              </html>
+            `;
+
+            doc.open();
+            doc.write(htmlContent);
+            doc.close();
+
+            // Wait a bit for styles to apply in the preview iframe
+            setTimeout(() => {
+              // Force a reflow to ensure styles are applied
+              if (doc.body) {
+                void doc.body.offsetHeight; // Force reflow
+              }
+            }, 100);
+          };
+
+          // If all links are already loaded, proceed immediately
+          if (linkTags.length === 0 || Array.from(linkTags).every((link) => {
+            const sheet = (link as HTMLLinkElement).sheet;
+            return sheet !== null;
+          })) {
+            waitForCSS();
+          } else {
+            // Wait for stylesheets to load
+            let loadedCount = 0;
+            linkTags.forEach((link) => {
+              const linkEl = link as HTMLLinkElement;
+              if (linkEl.sheet) {
+                loadedCount++;
+                if (loadedCount === linkTags.length) {
+                  waitForCSS();
+                }
+              } else {
+                linkEl.addEventListener('load', () => {
+                  loadedCount++;
+                  if (loadedCount === linkTags.length) {
+                    waitForCSS();
+                  }
+                });
+                linkEl.addEventListener('error', () => {
+                  loadedCount++;
+                  if (loadedCount === linkTags.length) {
+                    waitForCSS();
+                  }
+                });
+              }
+            });
+            
+            // Fallback timeout
+            setTimeout(waitForCSS, 1000);
+          }
+        } catch (error) {
+          console.error('Error updating preview:', error);
+        } finally {
+          // Clean up temporary iframe
+          if (document.body.contains(tempIframe)) {
+            document.body.removeChild(tempIframe);
+          }
+        }
+      }, 200); // Wait a bit longer for styles to load
+    };
+
+    // Debounce updates to prevent lag
+    const debouncedUpdate = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updatePreview, 150);
+    };
+
+    // Initial load
+    if (iframe.contentDocument?.readyState === 'complete') {
+      debouncedUpdate();
+    } else {
+      iframe.addEventListener('load', debouncedUpdate, { once: true });
+    }
+
+    // Update on changes
+    debouncedUpdate();
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [previewHtml, styles, isOpen, lastHtml, selectedText]);
 
   const handleStyleChange = (property: keyof ElementStyles, value: string) => {
     setStyles((prev) => ({
@@ -177,11 +489,15 @@ export default function StyleModal({
       }}
     >
       <div
-        className={`bg-white rounded-l-lg w-[800px] h-full max-h-screen transform transition-transform duration-300 ease-in-out flex ${
+        className={`bg-white rounded-l-lg w-[85%] h-full max-h-screen transform transition-transform duration-300 ease-in-out flex ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* html preview */}
+        <div>
+          <iframe sandbox='allow-scripts allow-same-origin' ref={iframeRef} className="w-[500px] h-full" />
+        </div>
         {/* Preview Panel */}
         <div className="w-1/2 bg-gray-50 border-r border-gray-200 p-4 flex flex-col">
           <h4 className="text-lg font-semibold mb-4 text-gray-700">Preview</h4>
@@ -326,9 +642,9 @@ export default function StyleModal({
         </div>
 
         {/* Style Controls Panel */}
-        <div className="w-1/2 p-6 overflow-y-auto flex flex-col justify-between">
+        <div className="w-1/3 p-6 pt-4 overflow-y-auto flex flex-col justify-between">
           <div className="space-y-4">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center ">
               <h3 className="text-lg font-semibold">Edit Style</h3>
               <button
                 onClick={onClose}
