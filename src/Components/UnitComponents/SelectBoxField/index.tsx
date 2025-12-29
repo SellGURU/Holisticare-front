@@ -12,6 +12,8 @@ interface SelectBoxFieldProps {
   showDisabled?: boolean;
   placeholder: string;
   top?: string;
+  position?: 'top' | 'bottom';
+  bottom?: string;
 }
 
 const SelectBoxField: FC<SelectBoxFieldProps> = ({
@@ -26,6 +28,8 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
   placeholder,
   showDisabled,
   top,
+  position = 'top',
+  bottom,
 }) => {
   const [showSelect, setShowSelect] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -87,7 +91,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
       )}
       {showSelect && (
         <div
-          className={`w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 ${label ? 'max-h-[250px]' : 'max-h-[200px]'} ${top ? top : 'top-[56px]'} overflow-y-auto`}
+          className={`w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 ${label ? 'max-h-[250px]' : 'max-h-[200px]'} ${position === 'top' ? (top ? top : 'top-[56px]') : bottom ? bottom : 'bottom-[56px]'} overflow-y-auto`}
         >
           {options.map((option, index) => {
             return (
