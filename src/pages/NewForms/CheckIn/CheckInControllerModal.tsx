@@ -90,17 +90,17 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
             mode={mode}
           />
         );
-      case 'Reposition':
-        return (
-          <>
-            <RepositionCheckIn
-              onChange={(values) => {
-                setQuestions(values);
-              }}
-              upQuestions={questions}
-            />
-          </>
-        );
+      // case 'Reposition':
+      //   return (
+      //     <>
+      //       <RepositionCheckIn
+      //         onChange={(values) => {
+      //           setQuestions(values);
+      //         }}
+      //         upQuestions={questions}
+      //       />
+      //     </>
+      //   );
       case 'Edit':
         return (
           <AddCheckIn
@@ -172,8 +172,6 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
     }
   }, [editId]);
   const [AddquestionStep, setAddquestionStep] = useState(0);
-  console.log(AddquestionStep);
-  console.log(step);
 
   return (
     <>
@@ -182,7 +180,13 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="flex flex-col justify-between max-h-[500px] bg-white w-[90vw] md:w-[664px] rounded-[20px] p-4">
+      <div
+        className="flex flex-col justify-between max-h-[650px] overflow-y-auto bg-white w-[90vw] md:w-[664px] rounded-[20px] p-4"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#E5E5E5 transparent',
+        }}
+      >
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
             <div className="text-Text-Primary font-medium">
@@ -309,13 +313,13 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   onAddQuestion,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
-  console.log(questions);
 
   const [addMore, setAddMore] = useState(false);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState(-1);
   const [checked, setChecked] = useState(false);
   const [mintues, setMintues] = useState(5);
   const [seconds, setSeconds] = useState(15);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   useEffect(() => {
     onChangeMinutes(mintues);
     onChangeSeconds(seconds);
@@ -329,7 +333,27 @@ const AddCheckIn: FC<AddCheckInProps> = ({
     setMintues(upMinutes);
     setSeconds(upSeconds);
   }, [upQuestions, upChecked, upMinutes, upSeconds]);
-  console.log(questionStep);
+
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    setQuestions((prevList: any) => {
+      const newList = [...prevList];
+      if (direction === 'up' && index > 0) {
+        [newList[index], newList[index - 1]] = [
+          newList[index - 1],
+          newList[index],
+        ];
+      } else if (direction === 'down' && index < newList.length - 1) {
+        [newList[index], newList[index + 1]] = [
+          newList[index + 1],
+          newList[index],
+        ];
+      }
+      return newList;
+    });
+  };
+  useEffect(() => {
+    onChange(questions);
+  }, [questions]);
 
   return (
     <>
@@ -365,6 +389,23 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                           }}
                           index={index}
                           question={item}
+                          onCopy={() => {
+                            setQuestions((pre) => {
+                              const newItems = [...pre];
+                              newItems.splice(index + 1, 0, item);
+                              return newItems;
+                            });
+                            const newIndex = index + 1;
+                            setCopiedIndex(newIndex);
+
+                            setTimeout(() => {
+                              setCopiedIndex(null);
+                            }, 1200);
+                          }}
+                          moveItem={(item: any) => {
+                            moveItem(index, item);
+                          }}
+                          copiedIndex={copiedIndex === index}
                         />
                       </>
                     );
@@ -463,7 +504,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
               borderColor="border-Text-Quadruple"
               width="w-3.5"
               height="h-3.5"
-              label="Share with client"
+              label="Share time estimate with client"
             />
           </div>
           <div className="w-full flex items-center justify-center mt-4 mb-5">
@@ -480,79 +521,78 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   );
 };
 
-interface RepositionCheckInProps {
-  onChange: (questions: Array<checkinType>) => void;
-  upQuestions: Array<checkinType>;
-}
+// interface RepositionCheckInProps {
+//   onChange: (questions: Array<checkinType>) => void;
+//   upQuestions: Array<checkinType>;
+// }
 
-const RepositionCheckIn: FC<RepositionCheckInProps> = ({
-  upQuestions,
-  onChange,
-}) => {
-  const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
-  useEffect(() => {
-    setQuestions(upQuestions);
-  }, [upQuestions]);
-  const moveItem = (index: number, direction: 'up' | 'down') => {
-    setQuestions((prevList: any) => {
-      const newList = [...prevList];
-      if (direction === 'up' && index > 0) {
-        [newList[index], newList[index - 1]] = [
-          newList[index - 1],
-          newList[index],
-        ];
-      } else if (direction === 'down' && index < newList.length - 1) {
-        [newList[index], newList[index + 1]] = [
-          newList[index + 1],
-          newList[index],
-        ];
-      }
-      return newList;
-    });
-  };
-  useEffect(() => {
-    onChange(questions);
-  }, [questions]);
-  return (
-    <>
-      {questions.length > 0 && (
-        <>
-          <div
-            className={`max-h-[200px] min-h-[60px] overflow-y-auto w-full mb-3`}
-          >
-            <div className="flex flex-col items-center justify-center gap-1 w-full">
-              {questions.map((item: any, index: number) => {
-                return (
-                  <>
-                    <QuestionItem
-                      length={questions.length}
-                      onEdit={() => {
-                        // setEditingQuestionIndex(index);
-                        // setAddMore(true);
-                      }}
-                      moveItem={(item: any) => {
-                        moveItem(index, item);
-                      }}
-                      isReposition
-                      onRemove={() => {
-                        setQuestions((pre) => {
-                          const newQuestions = pre.filter(
-                            (_el, ind) => ind != index,
-                          );
-                          return newQuestions;
-                        });
-                      }}
-                      index={index}
-                      question={item}
-                    ></QuestionItem>
-                  </>
-                );
-              })}
-            </div>
-          </div>
-        </>
-      )}
-    </>
-  );
-};
+// const RepositionCheckIn: FC<RepositionCheckInProps> = ({
+//   upQuestions,
+//   onChange,
+// }) => {
+//   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
+//   useEffect(() => {
+//     setQuestions(upQuestions);
+//   }, [upQuestions]);
+//   const moveItem = (index: number, direction: 'up' | 'down') => {
+//     setQuestions((prevList: any) => {
+//       const newList = [...prevList];
+//       if (direction === 'up' && index > 0) {
+//         [newList[index], newList[index - 1]] = [
+//           newList[index - 1],
+//           newList[index],
+//         ];
+//       } else if (direction === 'down' && index < newList.length - 1) {
+//         [newList[index], newList[index + 1]] = [
+//           newList[index + 1],
+//           newList[index],
+//         ];
+//       }
+//       return newList;
+//     });
+//   };
+//   useEffect(() => {
+//     onChange(questions);
+//   }, [questions]);
+//   return (
+//     <>
+//       {questions.length > 0 && (
+//         <>
+//           <div
+//             className={`max-h-[200px] min-h-[60px] overflow-y-auto w-full mb-3`}
+//           >
+//             <div className="flex flex-col items-center justify-center gap-1 w-full">
+//               {questions.map((item: any, index: number) => {
+//                 return (
+//                   <>
+//                     <QuestionItem
+//                       length={questions.length}
+//                       onEdit={() => {
+//                         // setEditingQuestionIndex(index);
+//                         // setAddMore(true);
+//                       }}
+//                       moveItem={(item: any) => {
+//                         moveItem(index, item);
+//                       }}
+//                       onRemove={() => {
+//                         setQuestions((pre) => {
+//                           const newQuestions = pre.filter(
+//                             (_el, ind) => ind != index,
+//                           );
+//                           return newQuestions;
+//                         });
+//                       }}
+//                       index={index}
+//                       question={item}
+//                     ></QuestionItem>
+//                   </>
+//                 );
+//               })}
+//             </div>
+//           </div>
+//         </>
+//       )}
+//     </>
+//   );
+// };
 export default CheckInControllerModal;

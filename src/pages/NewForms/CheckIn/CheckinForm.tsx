@@ -28,6 +28,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [errorCheckIn, setErrorCheckIn] = useState('');
   const [errorQuestionary, setErrorQuestionary] = useState('');
+  const [textErrorMessage, setTextErrorMessage] = useState('');
   const getChechins = () => {
     setLoading(true);
     FormsApi.getCheckinList().then((res) => {
@@ -60,34 +61,42 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
     return 'Edit';
   };
   const onsave = (values: any) => {
-    if (showReposition) {
-      FormsApi.checkInReposition({
-        unique_id: editFormId,
-        questions: values.questions.map((el: any, index: number) => {
-          return {
-            ...el,
-            order: index + 1,
-          };
-        }),
-      }).then(() => {
-        getChechins();
-        setShowAddModal(false);
-        setShowReposition(false);
-      });
-    } else if (editFormId != '') {
+    // if (showReposition) {
+    //   FormsApi.checkInReposition({
+    //     unique_id: editFormId,
+    //     questions: values.questions.map((el: any, index: number) => {
+    //       return {
+    //         ...el,
+    //         order: index + 1,
+    //       };
+    //     }),
+    //   }).then(() => {
+    //     getChechins();
+    //     setShowAddModal(false);
+    //     setShowReposition(false);
+    //     setEditFormId('');
+    //   });
+    // } else
+    if (editFormId != '') {
       FormsApi.editCheckIn({
         unique_id: editFormId,
         ...values,
-      }).then(() => {
-        getChechins();
-        setShowAddModal(false);
-      });
+      })
+        .then(() => {
+          getChechins();
+          setShowAddModal(false);
+          setEditFormId('');
+        })
+        .catch((err) => {
+          setErrorCheckIn(err.detail);
+        });
     } else {
       FormsApi.addCheckin(values)
         .then(() => {
           getChechins();
           setShowAddModal(false);
           setErrorCheckIn('');
+          setEditFormId('');
         })
         .catch((err) => {
           setErrorCheckIn(err.detail);
@@ -95,30 +104,43 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
     }
   };
   const onsaveQuestionary = (values: any) => {
-    if (showReposition) {
-      FormsApi.QuestionaryReposition({
-        unique_id: editFormId,
-        questions: values.questions.map((el: any, index: number) => {
-          return {
-            ...el,
-            order: index + 1,
-          };
-        }),
-      }).then(() => {
-        getQuestionary();
-        setShowFeedBack(false);
-        setShowReposition(false);
-        setEditFormId('');
-        setSelectedTemplate(null);
-      });
-    } else if (editFormId != '') {
+    // if (showReposition) {
+    //   FormsApi.QuestionaryReposition({
+    //     unique_id: editFormId,
+    //     questions: values.questions.map((el: any, index: number) => {
+    //       return {
+    //         ...el,
+    //         order: index + 1,
+    //       };
+    //     }),
+    //   })
+    //     .then(() => {
+    //       getQuestionary();
+    //       setShowFeedBack(false);
+    //       setShowReposition(false);
+    //       setEditFormId('');
+    //       setSelectedTemplate(null);
+    //       setEditFormId('');
+    //     })
+    // } else
+    if (editFormId != '') {
       FormsApi.editQuestionary({
         unique_id: editFormId,
         ...values,
-      }).then(() => {
-        getQuestionary();
-        setShowFeedBack(false);
-      });
+      })
+        .then(() => {
+          getQuestionary();
+          setShowFeedBack(false);
+          setEditFormId('');
+          setTextErrorMessage('');
+        })
+        .catch((err) => {
+          if (err.detail === 'A form with the same title already exists.') {
+            setErrorQuestionary(err.detail);
+          } else {
+            setTextErrorMessage(err.detail);
+          }
+        });
     } else {
       setErrorQuestionary('');
       FormsApi.addQuestionary(values)
@@ -128,9 +150,15 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           setErrorQuestionary('');
           setEditFormId('');
           setSelectedTemplate(null);
+          setEditFormId('');
+          setTextErrorMessage('');
         })
         .catch((err) => {
-          setErrorQuestionary(err.detail);
+          if (err.detail === 'A form with the same title already exists.') {
+            setErrorQuestionary(err.detail);
+          } else {
+            setTextErrorMessage(err.detail);
+          }
         });
     }
   };
@@ -200,10 +228,10 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
                 setShowPreview(true);
                 setEditFormId(id);
               }}
-              onReposition={(id) => {
-                setShowReposition(true);
-                setEditFormId(id);
-              }}
+              // onReposition={(id) => {
+              //   setShowReposition(true);
+              //   setEditFormId(id);
+              // }}
             />
           </div>
         </>
@@ -306,6 +334,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           setEditFormId('');
           setSelectedTemplate(null);
           setShowReposition(false);
+          setTextErrorMessage('');
         }}
       >
         <QuestionaryControllerModal
@@ -316,13 +345,17 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             setSelectedTemplate(null);
             setShowReposition(false);
             setErrorQuestionary('');
+            setTextErrorMessage('');
           }}
           onSave={(values) => {
+            setTextErrorMessage('');
             onsaveQuestionary(values);
           }}
           editId={editFormId}
           error={errorQuestionary}
           mode={resolveMode()}
+          isQuestionary={true}
+          textErrorMessage={textErrorMessage}
         ></QuestionaryControllerModal>
       </MainModal>
     </>
