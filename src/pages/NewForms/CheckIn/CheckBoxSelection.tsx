@@ -62,7 +62,7 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
         </div>
         {isActive && (
           <div className="w-full mt-2 max-h-[150px] overflow-y-auto pr-2">
-            <div className=" gap-1  grid md:grid-cols-2  w-full">
+            <div className=" gap-1 grid grid-cols-1 md:grid-cols-2 w-full">
               {options.map((option, index) => {
                 return (
                   <div
@@ -77,7 +77,7 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
                         handleOptionChange(index, e.target.value)
                       }
                       className={`bg-backgroundColor-Card border 
-                       rounded-2xl py-1 px-2 text-[8px] w-full md:w-[130px]`}
+                       rounded-2xl py-1 px-2 text-[8px] w-full`}
                     />
                   </div>
                 );
