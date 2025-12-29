@@ -180,7 +180,13 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="flex flex-col justify-between max-h-[500px] bg-white w-[90vw] md:w-[664px] rounded-[20px] p-4">
+      <div
+        className="flex flex-col justify-between max-h-[650px] overflow-y-auto bg-white w-[90vw] md:w-[664px] rounded-[20px] p-4"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#E5E5E5 transparent',
+        }}
+      >
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
             <div className="text-Text-Primary font-medium">
