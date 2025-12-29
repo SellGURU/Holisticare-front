@@ -313,6 +313,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   const [checked, setChecked] = useState(false);
   const [mintues, setMintues] = useState(5);
   const [seconds, setSeconds] = useState(15);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   useEffect(() => {
     onChangeMinutes(mintues);
     onChangeSeconds(seconds);
@@ -388,10 +389,17 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                               newItems.splice(index + 1, 0, item);
                               return newItems;
                             });
+                            const newIndex = index + 1;
+                            setCopiedIndex(newIndex);
+
+                            setTimeout(() => {
+                              setCopiedIndex(null);
+                            }, 1200);
                           }}
                           moveItem={(item: any) => {
                             moveItem(index, item);
                           }}
+                          copiedIndex={copiedIndex === index}
                         />
                       </>
                     );
