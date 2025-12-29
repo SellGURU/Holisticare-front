@@ -8,6 +8,7 @@ interface QuestionItemProps {
   onCopy: () => void;
   moveItem?: (direction: 'up' | 'down') => void;
   length: number;
+  copiedIndex?: boolean;
 }
 
 const QuestionItem: React.FC<QuestionItemProps> = ({
@@ -18,11 +19,18 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   onCopy,
   moveItem,
   length,
+  copiedIndex,
 }) => {
   const [sureRemove, setSureRemove] = useState(false);
   return (
     <>
-      <div className="flex items-center justify-between w-full h-[36px] py-2 px-4 bg-backgroundColor-Card rounded-xl border border-Gray-50">
+      <div
+        className={`flex items-center justify-between w-full h-[36px] py-2 px-4 bg-backgroundColor-Card rounded-xl border ${
+          copiedIndex
+            ? 'border-Primary-DeepTeal shadow-[0_0_0_3px_rgba(59,130,246,0.3)] animate-copyFlash'
+            : 'border-Gray-50'
+        }`}
+      >
         <div className="text-Text-Quadruple text-ellipsis overflow-hidden text-nowrap text-[10px] w-[40%]">
           {index != undefined ? index + 1 + '.' : ''}
           {'  '}
