@@ -34,7 +34,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
     <>
       <div
         id={data.name}
-        className="w-full h-[208px] md:h-[188px] pt-3 px-2 md:px-4 border bg-white border-gray-50 shadow-100 rounded-[6px]"
+        className="w-full h-[208px] md:h-[188px] pt-3 px-2  md:px-4 border bg-white border-gray-50 shadow-100 rounded-[6px]"
       >
         <div className="flex justify-between items-center">
           <div className="text-Text-Primary text-xs md:text-sm font-medium  md:items-center cursor-default gap-4 md:gap-2 flex flex-col md:flex-row justify-start  ">
@@ -147,7 +147,8 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
         </div>
         {isCheced ? (
           <>
-            <div className="mt-1 relative">
+            <div className={`mt-1 relative ${[...data.values].length > 20 ? 'overflow-auto' : ''}`}>
+          
               <HistoricalChart
                 unit={data?.unit}
                 chartId={data.name}

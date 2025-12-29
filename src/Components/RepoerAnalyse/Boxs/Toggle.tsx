@@ -5,18 +5,22 @@ interface ToggleProps {
 
 const Toggle: React.FC<ToggleProps> = ({ checked, setChecked }) => {
   return (
-    <div
+    <button
+      type="button"
       onClick={() => setChecked(!checked)}
-      className={`relative cursor-pointer w-7 xs:w-10 bg-white border border-[#E9EDF5] h-4 flex items-center rounded-full transition-colors duration-300 
-       
+      className={`relative w-7 xs:w-10 h-4 xs:h-6 rounded-full border border-[#E9EDF5]
+        transition-colors duration-300 ease-in-out
+        ${checked ? "bg-Primary-EmeraldGreen/20" : "bg-white"}
       `}
+      aria-pressed={checked}
     >
-      <div
-        className={` w-4 xs:w-6 border border-[#E9EDF5]   h-4 xs:h-6  rounded-full shadow-md transform transition-transform duration-300
-          ${checked ? ' translate-x-3 xs:translate-x-5 bg-Primary-EmeraldGreen' : 'translate-x-0 bg-[#F4F4F4]'}
+      <span
+        className={`absolute top-0 left-0 w-4 h-4 xs:w-6 xs:h-6 rounded-full border border-[#E9EDF5] shadow-sm
+          transition-transform duration-300 ease-in-out will-change-transform
+          ${checked ? "translate-x-3 xs:translate-x-4 bg-Primary-EmeraldGreen" : "translate-x-0 bg-[#F4F4F4]"}
         `}
-      ></div>
-    </div>
+      />
+    </button>
   );
 };
 

@@ -125,6 +125,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
       return a.name.localeCompare(b.name);
     });
   }, [refrences]);
+ 
 
   return (
     <>
@@ -401,7 +402,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                     </div>
                   ) : (
                     <div className="w-full">
-                      <div className=" w-full border border-Gray-50 p-4 h-[159px] bg-white  rounded-[6px]">
+                      <div className=" w-full border border-Gray-50 p-4 h-[159px] bg-white max-w-[1150px]  rounded-[6px]">
                         <div className="TextStyle-Headline-6 flex justify-between text-nowrap items-center gap-2 text-Text-Primary mb-5">
                           Historical Data
                           <div className="flex justify-end w-full items-center  mt-[-8px]  gap-2">
@@ -434,17 +435,32 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                             </div>
                           </div>
                         </div>
-                        <div className="mt-0 relative">
+                        <div className="mt-0 relative w-full">
                           {active && (
-                            <HistoricalChart
-                              chartId={data.subcategory}
-                              statusBar={active?.chart_bounds}
-                              sources={active?.historical_sources}
-                              dataStatus={active.status}
-                              dataPoints={[...active.values]}
-                              labels={[...active.date]}
-                              unit={active?.unit}
-                            ></HistoricalChart>
+                            <div className={`w-full ${[...active.values].length >20 ? 'overflow-x-auto overflow-y-hidden' : ''}   `}>
+                            <div className=" w-full min-w-full">
+                              
+
+                              <HistoricalChart
+                                chartId={data.subcategory}
+                                statusBar={active?.chart_bounds}
+                                sources={active?.historical_sources}
+                                dataStatus={active.status}
+                                dataPoints={[...active.values]}
+                                labels={[...active.date]}
+                                unit={active?.unit}
+                              ></HistoricalChart>
+                              </div>
+                            </div>
+                            // <HistoricalChart
+                            //   chartId={data.subcategory}
+                            //   statusBar={active?.chart_bounds}
+                            //   sources={active?.historical_sources}
+                            //   dataStatus={active.status}
+                            //   dataPoints={[...active.values]}
+                            //   labels={[...active.date]}
+                            //   unit={active?.unit}
+                            // ></HistoricalChart>
                             // <StatusChart
                             //   isStringValues={isChartDataEmpty}
                             //   mode={

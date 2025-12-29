@@ -146,9 +146,12 @@ const HistoricalChart = ({
     return 'none';
   };
 
+
   return (
     <>
-      <div className="w-full h-full relative pr-4">
+      <div
+        style={{ minWidth: dataPoints.length * 43  }}
+        className=" w-full h-full relative pr-4">
         {/* SVG for connecting points across different status categories */}
         <svg
           className="absolute w-full h-full top-0 left-3"
