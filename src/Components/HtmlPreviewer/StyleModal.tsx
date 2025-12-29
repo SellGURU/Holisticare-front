@@ -562,7 +562,9 @@ export default function StyleModal({
         </div>
         {/* Preview Panel */}
         <div className="w-1/2 bg-gray-50 border-r border-gray-200 p-4 flex flex-col">
-          <h4 className="text-lg font-semibold mb-4 text-gray-700">Edit Text</h4>
+          <h4 className="text-lg font-semibold mb-4 text-gray-700">
+            Edit Text
+          </h4>
 
           {/* Preview Text Input */}
           {/* <div className="mb-4">
@@ -707,7 +709,9 @@ export default function StyleModal({
         <div className="w-1/3 p-6 pt-4 overflow-y-auto flex flex-col justify-between">
           <div className="space-y-4">
             <div className="flex justify-between items-center ">
-              <h3 className="text-lg font-semibold  text-gray-700">Edit Style</h3>
+              <h3 className="text-lg font-semibold  text-gray-700">
+                Edit Style
+              </h3>
               <button
                 onClick={onClose}
                 className="text-gray-500 hover:text-gray-700 text-2xl"
