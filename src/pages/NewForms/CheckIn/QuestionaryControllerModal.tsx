@@ -19,6 +19,7 @@ interface QuestionaryControllerModalProps {
   templateData?: any;
   error: string;
   isQuestionary?: boolean;
+  textErrorMessage: string;
 }
 
 const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
@@ -29,6 +30,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   templateData,
   error,
   isQuestionary,
+  textErrorMessage,
 }) => {
   const [isError, setIsError] = useState(false);
   const [step, setStep] = useState(0);
@@ -94,7 +96,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     switch (mode) {
       case 'Add':
         return (
-          <AddCheckIn
+          <AddQuestionary
             onAddQuestion={onAddQuestion}
             questionStep={AddquestionStep}
             setQuestionStep={(value) => {
@@ -125,6 +127,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             setGenderRestriction={setGenderRestriction}
             gender={gender}
             setGender={setGender}
+            textErrorMessage={textErrorMessage}
           />
         );
       // case 'Reposition':
@@ -140,7 +143,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       //   );
       case 'Edit':
         return (
-          <AddCheckIn
+          <AddQuestionary
             onAddQuestion={onAddQuestion}
             questionStep={AddquestionStep}
             setQuestionStep={(value) => {
@@ -171,6 +174,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             setGenderRestriction={setGenderRestriction}
             gender={gender}
             setGender={setGender}
+            textErrorMessage={textErrorMessage}
           />
         );
     }
@@ -408,7 +412,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   );
 };
 
-interface AddCheckInProps {
+interface AddQuestionaryProps {
   onChange: (questions: Array<checkinType>) => void;
   upQuestions: Array<checkinType>;
   step: number;
@@ -429,9 +433,10 @@ interface AddCheckInProps {
   setGenderRestriction: (value: boolean) => void;
   gender: string;
   setGender: (value: string) => void;
+  textErrorMessage: string;
 }
 
-const AddCheckIn: FC<AddCheckInProps> = ({
+const AddQuestionary: FC<AddQuestionaryProps> = ({
   onChange,
   upQuestions,
   step,
@@ -452,6 +457,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   setGenderRestriction,
   gender,
   setGender,
+  textErrorMessage,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
@@ -634,6 +640,9 @@ const AddCheckIn: FC<AddCheckInProps> = ({
         </>
       ) : (
         <div className="w-full">
+          {textErrorMessage && (
+            <div className="text-xs text-Red">{textErrorMessage}</div>
+          )}
           <div className="text-Text-Quadruple text-xs mt-4">
             The estimated time to complete this form is shown below. If you
             wish, you can edit this and provide your own estimate.
