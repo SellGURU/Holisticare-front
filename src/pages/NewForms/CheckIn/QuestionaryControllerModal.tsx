@@ -202,13 +202,18 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     return false;
   };
   const [isSaveLoding, setIsSaveLoading] = useState(false);
+  useEffect(() => {
+    if (textErrorMessage) {
+      setIsSaveLoading(false);
+    }
+  }, [textErrorMessage]);
   const addCheckinForm = () => {
     setIsSaveLoading(true);
     const getTimeInMilliseconds = () => {
       return minutes * 60000 + seconds * 1000;
     };
     onSave({
-      title: templateData != null && !error ? templateData.title : titleForm,
+      title: titleForm.length > 0 ? titleForm : templateData.title,
       questions: questions,
       share_with_client: checked,
       time: getTimeInMilliseconds(),
