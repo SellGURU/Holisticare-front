@@ -13,16 +13,6 @@ export default {
       '2xl': '1536px',
     },
     extend: {
-      keyframes: {
-        copyFlash: {
-          '0%': { boxShadow: '0 0 0 0 rgba(59,130,246,0.0)' },
-          '30%': { boxShadow: '0 0 0 4px rgba(59,130,246,0.4)' },
-          '100%': { boxShadow: '0 0 0 0 rgba(59,130,246,0.0)' },
-        },
-      },
-      animation: {
-        copyFlash: 'copyFlash 1.2s ease-out',
-      },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
       },
