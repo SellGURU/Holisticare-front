@@ -68,7 +68,7 @@ const Employes: React.FC = () => {
   return (
     <div className="w-full overflow-hidden bg-white  rounded-2xl shadow-200 p-4 employees-container">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-sm text-Text-Primary font-medium">Staffs</h2>
+        <h2 className="text-sm text-Text-Primary font-medium">Staff</h2>
 
         {/* <ButtonPrimary
           style={{ backgroundColor: '#fff', color: '#005F73' }}
