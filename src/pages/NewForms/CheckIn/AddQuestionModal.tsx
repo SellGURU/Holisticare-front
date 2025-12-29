@@ -215,7 +215,10 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
         is_medication: medication,
         is_condition: medicalCondition,
         is_allergy: allergy,
-        conditions: [
+        conditions: [],
+      };
+      if (conditionalDisplay) {
+        resolvedQuestion.conditions = [
           {
             priority: 1,
             logic: 'and',
@@ -232,8 +235,8 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
               },
             ],
           },
-        ],
-      };
+        ];
+      }
       onSubmit(resolvedQuestion);
       setQuestionStep(2);
       clear();
@@ -445,10 +448,12 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                         `Q${index + 1}: ${question.question}`,
                     )}
                     value={
-                      'Q' +
-                        (ifQuestion.question_order || 0) +
-                        ': ' +
-                        ifQuestion.question || ''
+                      ifQuestion.question_order
+                        ? 'Q' +
+                            (ifQuestion.question_order || 0) +
+                            ': ' +
+                            ifQuestion.question || ''
+                        : ''
                     }
                     onChange={(value) => {
                       setIfQuestion({
@@ -460,7 +465,8 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     }}
                     placeholder="Select a question"
                     margin="mb-1 mt-0"
-                    top="top-[32px]"
+                    position="bottom"
+                    bottom="bottom-[29px]"
                   />
                 </div>
                 <div className="w-full md:w-[29.3%] flex items-center gap-2">
@@ -475,7 +481,8 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     }}
                     placeholder="Select condition"
                     margin="mb-1 mt-0"
-                    top="top-[32px]"
+                    position="bottom"
+                    bottom="bottom-[29px]"
                   />
                 </div>
                 <div className="w-full md:w-[28%] flex items-center gap-2">
@@ -506,7 +513,8 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     }}
                     placeholder="Select action"
                     margin="mb-1 mt-0"
-                    top="top-[32px]"
+                    position="bottom"
+                    bottom="bottom-[29px]"
                   />
                 </div>
               </div>
