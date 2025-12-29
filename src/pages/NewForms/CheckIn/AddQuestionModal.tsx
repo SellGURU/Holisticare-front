@@ -469,7 +469,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     bottom="bottom-[29px]"
                   />
                 </div>
-                <div className="w-full md:w-[29.3%] flex items-center gap-2">
+                <div className="w-full md:w-[40%] flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     is
                   </div>
@@ -485,7 +485,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     bottom="bottom-[29px]"
                   />
                 </div>
-                <div className="w-full md:w-[28%] flex items-center gap-2">
+                <div className="w-full md:w-[40%] flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     to
                   </div>
