@@ -3,6 +3,7 @@
 import { FC, useState } from 'react';
 import BioMarkerRowOldSuggestions from '../../generateTreatmentPlan/components/BiomarkerRowOld';
 import { CoverageCard } from '../../../Components/coverageCard';
+import SearchBox from '../../../Components/SearchBox';
 type CategoryState = {
   name: string;
   visible: boolean;
@@ -99,7 +100,23 @@ export const Overview: FC<OverviewProps> = ({
     handleRemoveLookingForwards(name);
     setRefreshKey((k) => k + 1);
   };
+  const [searchQuery, setSearchQuery] = useState('');
 
+  const norm = (v: any) =>
+    String(v ?? '')
+      .toLowerCase()
+      .trim();
+
+  const matchesSearch = (item: any, q: string) => {
+    const query = norm(q);
+    if (!query) return true;
+
+    const title = norm(item.title ?? item.Title ?? item.Recommendation ?? '');
+    // label can be direct or nested, keep both just in case
+    const label = norm(item.label ?? item.tag?.label ?? '');
+
+    return title.includes(query) || label.includes(query);
+  };
   return (
     <>
       <div className=" w-full relative  p-4 rounded-2xl bg-white">
@@ -167,6 +184,16 @@ export const Overview: FC<OverviewProps> = ({
             handleRemoveIssueFromList={handleRemoveIssueFromList}
           />
         </div>
+        <div className="w-full xl:w-[440px]">
+          <SearchBox
+            isHaveBorder
+            isGrayIcon
+            placeHolder="search interventions"
+            value={searchQuery}
+            onSearch={setSearchQuery}
+            ClassName="w-full"
+          />
+        </div>
 
         {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
           return (
@@ -189,12 +216,13 @@ export const Overview: FC<OverviewProps> = ({
         {treatmentPlanData['suggestion_tab']
           .filter(
             (el: any) =>
-              el.checked == true &&
+              el.checked === true &&
               visibleCategoriy
-                .filter((el) => el.visible)
-                .map((el) => el.name)
+                .filter((c) => c.visible)
+                .map((c) => c.name)
                 .includes(el.Category),
           )
+          .filter((el: any) => matchesSearch(el, searchQuery))
           .map((el: any, suggestionIndex: number) => {
             return (
               <>
