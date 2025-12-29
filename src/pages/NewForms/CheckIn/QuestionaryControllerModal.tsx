@@ -241,7 +241,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
         setRequireClientConsent(res.data.consent_text?.length > 0);
         setAutoAssign(res.data.default_questionnaire);
         setGenderRestriction(res.data.gender_target != 'both');
-        setGender(res.data.gender_target);
+        setGender(
+          res.data.gender_target == 'both' ? 'female' : res.data.gender_target,
+        );
         const totalMs = res.data.time;
         const mins = Math.floor(totalMs / 60000);
         const secs = Math.floor((totalMs % 60000) / 1000);
