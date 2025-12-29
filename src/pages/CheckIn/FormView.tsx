@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-// import Checkin from '.';
 import Mobile from '../../api/mobile';
-// import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
-// import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import Circleloader from '../../Components/CircleLoader';
 import { PublicSurveyForm } from '../../Components/survey/public-survey-form';
-// import Checkin from '.';
-
+// import mokQuestionary from './mokQuestionary.json';
 interface FormViewProps {
   mode?: 'questionary' | 'checkin';
 }
@@ -17,9 +13,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id, 'f-id': fId } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
   const [isComplete] = useState(false);
-
   const [data, setData] = useState<any>(null);
-  // const [resolvedData, ] = useState<any>(null);
   useEffect(() => {
     setIsLaoding(true);
     if (mode == 'questionary') {
@@ -33,6 +27,8 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
           setIsLaoding(false);
         })
         .catch(() => {});
+      // setData(mokQuestionary);
+      // setIsLaoding(false);
     } else {
       Mobile.getCheckInEmpty({
         encoded_mi: encode as string,
@@ -136,22 +132,6 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
                 <PublicSurveyForm
                   onSubmitClient={(e) => {
                     submit(e);
-                    // Mobile.fillQuestionary({
-                    //   encoded_mi: encode,
-                    //   unique_id: id,
-                    //   respond: e,
-                    // }).finally(() => {
-                    //   if (window.flutter_inappwebview) {
-                    //     window.flutter_inappwebview.callHandler(
-                    //       'closeWebView',
-                    //     );
-                    //   } else {
-                    //     console.warn('Flutter WebView bridge not available');
-                    //   }
-                    //   setIsComplete(true);
-                    //   // window.flutter_inappwebview.callHandler('closeWebView')
-                    //   // setIsLaoding(false)
-                    // });
                   }}
                   isClient={true}
                   isQuestionary={mode === 'questionary'}
@@ -160,25 +140,6 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
                     autoSave(e);
                   }}
                 />
-                {/* <Checkin
-                      upData={data?.questions}
-                      onChange={(questions) => {
-                        console.log(questions);
-                        setResolvedData({
-                          ...data,
-                          questions: questions,
-                        });
-                      }}
-                    ></Checkin>
-                    <div className="w-full flex justify-center fixed bottom-0 bg-white h-[50px] left-0 my-2">
-                      <div className="w-full px-6">
-                        <ButtonPrimary ClassName="w-full" onClick={submit}>
-                          save
-                        </ButtonPrimary>
-                      </div>
-                    </div> */}
-                {/* </> */}
-                {/* )} */}
               </>
             )}
           </>
