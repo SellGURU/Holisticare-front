@@ -49,12 +49,12 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
   return (
     <>
       <Card
-        style={{ height: window.innerHeight - 200 + 'px' }}
+        style={{ height: window.innerHeight - 180 + 'px' }}
         className="bg-white shadow-xl   border-0 flex flex-col relative"
       >
         <CardHeader>
           <div
-            className={`px-3 py-1 rounded-full items-center flex text-sm font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
+            className={`px-3 py-1 text-xs md:text-sm rounded-full items-center flex  font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
           >
             Question {currentStep} of {visibleQuestions.length}
             {showSaveIndicator == 'saving' && (
@@ -62,13 +62,13 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
                 <div className=" ml-2 flex items-center gap-1">
                   <SvgIcon
                     stroke="#FFFFFF"
-                    width="16px"
-                    height="16px"
+                    width={window.innerWidth < 768 ? '12px' : '16px'}
+                    height={window.innerWidth < 768 ? '12px' : '16px'}
                     src="/icons/refresh-2.svg"
                     color={''}
                     className="animate-spin"
                   ></SvgIcon>
-                  <div className="text-xs">Saving response…</div>
+                  <div className="text-[8px] md:text-xs">Saving response…</div>
                 </div>
               </>
             )}
@@ -77,12 +77,12 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
                 <div className=" ml-2 flex items-center gap-1">
                   <SvgIcon
                     stroke="#FFFFFF"
-                    width="16px"
-                    height="16px"
+                    width={window.innerWidth < 768 ? '12px' : '16px'}
+                    height={window.innerWidth < 768 ? '12px' : '16px'}
                     src="/icons/tick-circle2.svg"
                     color={''}
                   ></SvgIcon>
-                  <span>Response saved</span>
+                  <span className="text-[8px] md:text-xs">Response saved</span>
                 </div>
               </>
             )}
