@@ -155,8 +155,8 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
   );
 
   return (
-    <div className="bg-[#FCFCFC] p-3 w-full h-full rounded-[12px] border border-gray-50">
-      <div className="bg-white mt-2 w-full rounded-[20px] py-3 px-2">
+    <div className="bg-[#FCFCFC] dark:bg-slate-900 p-3 w-full h-full rounded-[12px] border border-gray-50 dark:border-slate-700">
+      <div className="bg-white dark:bg-slate-950 mt-2 w-full rounded-[20px] py-3 px-2 border border-transparent dark:border-slate-800">
         <div
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -170,7 +170,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
               <div key={itemIndex}>
                 {emojiToDisplay ? (
                   emojiToDisplay.order === active.order ? (
-                    <div className="w-[60px] h-[60px] min-w-[40px] min-h-[40px] bg-[#FFD64F] flex justify-center items-center rounded-full">
+                    <div className="w-[60px] h-[60px] min-w-[40px] min-h-[40px] bg-[#FFD64F] dark:bg-amber-400 flex justify-center items-center rounded-full">
                       <img
                         className="w-[48px]"
                         src={active.icon}
@@ -193,7 +193,9 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
           })}
         </div>
         <div className="w-full mt-4 flex justify-center">
-          <div className="text-[14px] text-[#005F73]">{active.name}</div>
+          <div className="text-[14px] text-[#005F73] dark:text-teal-300">
+            {active.name}
+          </div>
         </div>
       </div>
     </div>
@@ -785,7 +787,7 @@ export function PublicSurveyForm({
               type="button"
               onClick={() => onChange((index + 1).toString())}
               className={`p-1 rounded-full transition-all ${
-                index < currentValue ? 'text-yellow-400' : 'text-gray-300'
+                index < currentValue ? 'text-yellow-400' : 'text-gray-300 dark:text-slate-600'
               } hover:scale-110`}
             >
               <Star className="h-8 w-8 fill-current" />
@@ -793,7 +795,7 @@ export function PublicSurveyForm({
           ))}
         </div>
         {currentValue > 0 && (
-          <span className="text-green-600 font-medium">
+          <span className="text-green-600 dark:text-emerald-400 font-medium">
             You selected: {currentValue} star{currentValue !== 1 ? 's' : ''}
           </span>
         )}
@@ -821,11 +823,15 @@ export function PublicSurveyForm({
           className="w-full"
         />
         <div className="flex justify-between">
-          <span className="text-sm text-gray-500">Low ({min})</span>
-          <span className="text-green-600 font-bold text-xl">
+          <span className="text-sm text-gray-500 dark:text-slate-400">
+            Low ({min})
+          </span>
+          <span className="text-green-600 dark:text-emerald-400 font-bold text-xl">
             {currentValue}
           </span>
-          <span className="text-sm text-gray-500">High ({max})</span>
+          <span className="text-sm text-gray-500 dark:text-slate-400">
+            High ({max})
+          </span>
         </div>
       </div>
     );
@@ -844,7 +850,7 @@ export function PublicSurveyForm({
           className={`px-8 py-4 rounded-lg text-lg font-medium transition-all ${
             value === 'Yes'
               ? 'bg-green-600 text-white shadow-lg'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700'
           }`}
         >
           Yes
@@ -855,7 +861,7 @@ export function PublicSurveyForm({
           className={`px-8 py-4 rounded-lg text-lg font-medium transition-all ${
             value === 'No'
               ? 'bg-red-600 text-white shadow-lg'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700'
           }`}
         >
           No
@@ -922,7 +928,7 @@ export function PublicSurveyForm({
             value={(response as string) || ''}
             onChange={(e) => handleResponseChange(e.target.value)}
             placeholder="Type your answer here..."
-            className={`min-h-[120px] mt-2 text-base ${
+            className={`min-h-[120px] mt-2 text-base bg-white dark:bg-slate-950 text-gray-900 dark:text-slate-100 border-gray-200 dark:border-slate-700 placeholder:text-gray-400 dark:placeholder:text-slate-500 ${
               validationError ? 'border-red-500 focus-visible:ring-red-500' : ''
             } ${response ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
           />
@@ -934,7 +940,7 @@ export function PublicSurveyForm({
             value={(response as string) || ''}
             onChange={(e) => handleResponseChange(e.target.value)}
             placeholder="Type your answer here..."
-            className={` 'flex  w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-2  ${
+            className={` 'flex  w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-2 dark:bg-slate-950 dark:text-slate-100 dark:border-slate-700 dark:placeholder:text-slate-500  ${
               validationError ? 'border-red-500 focus-visible:ring-red-500' : ''
             } ${response ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
           />
@@ -950,11 +956,11 @@ export function PublicSurveyForm({
             {questionOptions.map((option, index) => (
               <div
                 key={index}
-                className={`flex items-center space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
+                className={`flex items-center space-x-3 rounded-lg border p-4 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors bg-white dark:bg-slate-950 border-gray-200 dark:border-slate-700 ${
                   validationError ? 'border-red-500' : ''
                 } ${
                   (response as string) === option.toString()
-                    ? 'border-green-500 bg-green-50'
+                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                     : ''
                 }`}
                 onClick={() => handleResponseChange(option.toString())} // Make the div clickable
@@ -966,7 +972,7 @@ export function PublicSurveyForm({
                 />
                 <Label
                   htmlFor={`option-${questionIndex}-${index}`}
-                  className="flex-grow cursor-pointer font-medium"
+                  className="flex-grow cursor-pointer font-medium text-gray-900 dark:text-slate-100"
                 >
                   {option.toString()}
                 </Label>
@@ -988,9 +994,9 @@ export function PublicSurveyForm({
                   role="checkbox"
                   aria-checked={isChecked}
                   tabIndex={0}
-                  className={`cursor-pointer flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
+                  className={`cursor-pointer flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors bg-white dark:bg-slate-950 border-gray-200 dark:border-slate-700 ${
                     validationError ? 'border-red-500' : ''
-                  } ${isChecked ? 'border-green-500 bg-green-50' : ''}`}
+                  } ${isChecked ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : ''}`}
                   onClick={() => {
                     const currentValue = Array.isArray(response)
                       ? response
@@ -1010,7 +1016,9 @@ export function PublicSurveyForm({
                     onCheckedChange={() => {}}
                     className="mt-1 text-green-600 border-green-600 pointer-events-none"
                   />
-                  <Label>{option}</Label>
+                  <Label className="text-gray-900 dark:text-slate-100">
+                    {option}
+                  </Label>
                 </div>
               );
             })}
@@ -1050,9 +1058,9 @@ export function PublicSurveyForm({
           currentFileResponse.side;
 
         return (
-          <div className="bg-[#FCFCFC] p-3 w-full rounded-[12px] border border-gray-50">
+          <div className="bg-[#FCFCFC] dark:bg-slate-900 p-3 w-full rounded-[12px] border border-gray-50 dark:border-slate-700">
             <div className="flex justify-between items-center gap-2">
-              <div className="text-[12px] text-Text-Primary break-words flex-1 min-w-0 max-w-full">
+              <div className="text-[12px] text-Text-Primary dark:text-slate-100 break-words flex-1 min-w-0 max-w-full">
                 {questionIndex + 1}. {getQuestionText(question)}
               </div>
               {!isMultiUploadMode && (
@@ -1060,8 +1068,8 @@ export function PublicSurveyForm({
                   onClick={() => setIsMultiUploadMode(true)}
                   className="cursor-pointer flex justify-end items-center gap-1"
                 >
-                  <UploadCloud className="w-4 h-4 text-Primary-EmeraldGreen" />
-                  <span className="text-Primary-EmeraldGreen text-[10px] font-medium">
+                  <UploadCloud className="w-4 h-4 text-Primary-EmeraldGreen dark:text-emerald-400" />
+                  <span className="text-Primary-EmeraldGreen dark:text-emerald-400 text-[10px] font-medium">
                     {hasExistingFiles ? 'Re-upload' : 'Upload'}
                   </span>
                 </div>
@@ -1070,9 +1078,9 @@ export function PublicSurveyForm({
 
             {isMultiUploadMode ? (
               <>
-                <div className="w-full bg-white rounded-[8px] p-2 mt-4">
+                <div className="w-full bg-white dark:bg-slate-950 rounded-[8px] p-2 mt-4 border border-transparent dark:border-slate-800">
                   <div className="flex justify-between items-center">
-                    <div className="text-[12px] text-[#B0B0B0]">
+                    <div className="text-[12px] text-[#B0B0B0] dark:text-slate-400">
                       {new Date().toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
@@ -1084,15 +1092,15 @@ export function PublicSurveyForm({
                         variant="outline"
                         size="icon"
                         onClick={handleMultiFileUploadCancel}
-                        className="w-6 h-6 border-[1.6px] border-[#FC5474] rounded-[8px] p-0 flex items-center justify-center"
+                        className="w-6 h-6 border-[1.6px] border-[#FC5474] dark:border-rose-500/70 rounded-[8px] p-0 flex items-center justify-center dark:bg-transparent"
                       >
-                        <X className="w-4 h-4 text-[#FC5474]" />
+                        <X className="w-4 h-4 text-[#FC5474] dark:text-rose-400" />
                       </Button>
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={handleMultiFileUploadSave}
-                        className="w-6 h-6 border-[1.6px] border-Primary-EmeraldGreen bg-Primary-EmeraldGreen rounded-[8px] p-0 flex items-center justify-center"
+                        className="w-6 h-6 border-[1.6px] border-Primary-EmeraldGreen bg-Primary-EmeraldGreen dark:border-emerald-500 dark:bg-emerald-600 rounded-[8px] p-0 flex items-center justify-center"
                       >
                         <Check className="w-4 h-4 text-[#FFFFFF]" />
                       </Button>
@@ -1103,7 +1111,7 @@ export function PublicSurveyForm({
                     <div className="flex flex-col items-center w-full sm:max-w-[112px]">
                       <label
                         htmlFor={`frontal-upload-${questionIndex}`}
-                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center  size-52 sm:size-28  overflow-hidden bg-white"
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 dark:border-slate-700 rounded-md flex flex-col items-center justify-center  size-52 sm:size-28  overflow-hidden bg-white dark:bg-slate-950"
                       >
                         {tempFrontal?.base64 ? (
                           <img
@@ -1113,8 +1121,8 @@ export function PublicSurveyForm({
                           />
                         ) : (
                           <>
-                            <UploadCloud className="w-8 h-8 text-gray-400" />
-                            <span className="text-gray-500 text-xs mt-1">
+                            <UploadCloud className="w-8 h-8 text-gray-400 dark:text-slate-500" />
+                            <span className="text-gray-500 dark:text-slate-400 text-xs mt-1">
                               Frontal
                             </span>
                           </>
@@ -1133,7 +1141,7 @@ export function PublicSurveyForm({
                         <button
                           type="button"
                           onClick={() => setTempFrontal(null)}
-                          className="text-red-500 text-xs mt-1"
+                          className="text-red-500 dark:text-rose-400 text-xs mt-1"
                         >
                           Clear
                         </button>
@@ -1144,7 +1152,7 @@ export function PublicSurveyForm({
                     <div className="flex flex-col items-center w-full sm:max-w-[112px]">
                       <label
                         htmlFor={`back-upload-${questionIndex}`}
-                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center   size-52 sm:size-28 overflow-hidden bg-white"
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 dark:border-slate-700 rounded-md flex flex-col items-center justify-center   size-52 sm:size-28 overflow-hidden bg-white dark:bg-slate-950"
                       >
                         {tempBack?.base64 ? (
                           <img
@@ -1154,8 +1162,8 @@ export function PublicSurveyForm({
                           />
                         ) : (
                           <>
-                            <UploadCloud className="w-8 h-8 text-gray-400" />
-                            <span className="text-gray-500 text-xs mt-1">
+                            <UploadCloud className="w-8 h-8 text-gray-400 dark:text-slate-500" />
+                            <span className="text-gray-500 dark:text-slate-400 text-xs mt-1">
                               Back
                             </span>
                           </>
@@ -1174,7 +1182,7 @@ export function PublicSurveyForm({
                         <button
                           type="button"
                           onClick={() => setTempBack(null)}
-                          className="text-red-500 text-xs mt-1"
+                          className="text-red-500 dark:text-rose-400 text-xs mt-1"
                         >
                           Clear
                         </button>
@@ -1185,7 +1193,7 @@ export function PublicSurveyForm({
                     <div className="flex flex-col items-center w-full sm:max-w-[112px]">
                       <label
                         htmlFor={`side-upload-${questionIndex}`}
-                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center size-52 sm:size-28 overflow-hidden bg-white"
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 dark:border-slate-700 rounded-md flex flex-col items-center justify-center size-52 sm:size-28 overflow-hidden bg-white dark:bg-slate-950"
                       >
                         {tempSide?.base64 ? (
                           <img
@@ -1195,8 +1203,8 @@ export function PublicSurveyForm({
                           />
                         ) : (
                           <>
-                            <UploadCloud className="w-8 h-8 text-gray-400" />
-                            <span className="text-gray-500 text-xs mt-1">
+                            <UploadCloud className="w-8 h-8 text-gray-400 dark:text-slate-500" />
+                            <span className="text-gray-500 dark:text-slate-400 text-xs mt-1">
                               Side
                             </span>
                           </>
@@ -1215,7 +1223,7 @@ export function PublicSurveyForm({
                         <button
                           type="button"
                           onClick={() => setTempSide(null)}
-                          className="text-red-500 text-xs mt-1"
+                          className="text-red-500 dark:text-rose-400 text-xs mt-1"
                         >
                           Clear
                         </button>
@@ -1228,10 +1236,10 @@ export function PublicSurveyForm({
               <div className="mt-2 grid grid-cols-3 gap-4 justify-items-center">
                 {currentFileResponse.frontal && (
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] text-gray-600 mb-1">
+                    <span className="text-[10px] text-gray-600 dark:text-slate-400 mb-1">
                       Frontal
                     </span>
-                    <div className="w-28 h-28 border border-gray-200 rounded-md overflow-hidden bg-white">
+                    <div className="w-28 h-28 border border-gray-200 dark:border-slate-700 rounded-md overflow-hidden bg-white dark:bg-slate-950">
                       <img
                         src={currentFileResponse.frontal}
                         alt="Frontal"
@@ -1242,8 +1250,10 @@ export function PublicSurveyForm({
                 )}
                 {currentFileResponse.back && (
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] text-gray-600 mb-1">Back</span>
-                    <div className="w-28 h-28 border border-gray-200 rounded-md overflow-hidden bg-white">
+                    <span className="text-[10px] text-gray-600 dark:text-slate-400 mb-1">
+                      Back
+                    </span>
+                    <div className="w-28 h-28 border border-gray-200 dark:border-slate-700 rounded-md overflow-hidden bg-white dark:bg-slate-950">
                       <img
                         src={currentFileResponse.back}
                         alt="Back"
@@ -1254,8 +1264,10 @@ export function PublicSurveyForm({
                 )}
                 {currentFileResponse.side && (
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] text-gray-600 mb-1">Side</span>
-                    <div className="w-28 h-28 border border-gray-200 rounded-md overflow-hidden bg-white">
+                    <span className="text-[10px] text-gray-600 dark:text-slate-400 mb-1">
+                      Side
+                    </span>
+                    <div className="w-28 h-28 border border-gray-200 dark:border-slate-700 rounded-md overflow-hidden bg-white dark:bg-slate-950">
                       <img
                         src={currentFileResponse.side}
                         alt="Side"
@@ -1266,12 +1278,12 @@ export function PublicSurveyForm({
                 )}
               </div>
             ) : (
-              <div className="mt-4 text-[#B0B0B0] text-[10px]">
+              <div className="mt-4 text-[#B0B0B0] dark:text-slate-400 text-[10px]">
                 No files yet.
               </div>
             )}
             {validationError && (
-              <div className="flex items-center space-x-2 text-red-500 text-sm mt-2">
+              <div className="flex items-center space-x-2 text-red-500 dark:text-rose-400 text-sm mt-2">
                 <AlertCircle className="h-4 w-4" />
                 <span>{validationError}</span>
               </div>
@@ -1290,8 +1302,8 @@ export function PublicSurveyForm({
 
       default:
         return (
-          <div className="p-4 border border-yellow-300 bg-yellow-50 rounded-md">
-            <p className="text-yellow-800">
+          <div className="p-4 border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20 rounded-md">
+            <p className="text-yellow-800 dark:text-yellow-200">
               Question type "{questionType}" is not supported in this preview.
             </p>
           </div>
@@ -1305,7 +1317,7 @@ export function PublicSurveyForm({
 
   return (
     <div className="container max-w-4xl mx-auto px-1 xl:px-4 py-10">
-      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-8">
+      <div className="w-full h-2 bg-gray-200 dark:bg-slate-800 rounded-full overflow-hidden mb-8">
         <div
           className={`h-2 rounded-full transition-all duration-500 bg-gradient-to-r ${gradientClass}`}
           style={{ width: `${calculateProgress()}%` }}
@@ -1341,10 +1353,10 @@ export function PublicSurveyForm({
         <>
           <Card
             style={{ height: window.innerHeight - 200 + 'px' }}
-            className="bg-white shadow-xl  border-0 flex flex-col relative"
+            className="bg-white dark:bg-slate-950 shadow-xl  border-0 flex flex-col relative"
           >
             <CardHeader>
-              <CardTitle className="text-base 2xl:text-2xl text-justify font-bold">
+              <CardTitle className="text-base 2xl:text-2xl text-justify font-bold text-gray-900 dark:text-slate-100">
                 I confirm that I have read and understood the Medical
                 Disclaimer. I understand that The 100 Club is a lifestyle and
                 longevity programme, not a substitute for my own GP or
@@ -1354,7 +1366,7 @@ export function PublicSurveyForm({
             </CardHeader>
             <CardContent className="space-y-6 h-[60%] relative  pb-20 overflow-auto">
               {showConfirmError && (
-                <div className="flex items-center space-x-2 text-red-500 text-sm absolute z-30 bottom-10 mt-2">
+                <div className="flex items-center space-x-2 text-red-500 dark:text-rose-400 text-sm absolute z-30 bottom-10 mt-2">
                   <AlertCircle className="h-4 w-4" />
                   <span>
                     To proceed and submit the form, you must confirm that you
@@ -1363,9 +1375,9 @@ export function PublicSurveyForm({
                 </div>
               )}
             </CardContent>
-            <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full bg-white">
+            <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full bg-white dark:bg-slate-950">
               <Button
-                className={`${currentStep > 1 ? 'visible' : 'invisible'}`}
+                className={`${currentStep > 1 ? 'visible' : 'invisible'} dark:border-slate-700 dark:text-slate-100`}
                 type="button"
                 variant="outline"
                 onClick={() => setShowConfirmError(true)}
@@ -1387,21 +1399,21 @@ export function PublicSurveyForm({
         </>
       )}
       {currentStep > sortedQuestions.length && !isNeedConfirm && (
-        <Card className="bg-white shadow-xl border-0 text-center">
+        <Card className="bg-white dark:bg-slate-950 shadow-xl border-0 text-center">
           <CardHeader>
-            <div className="mx-auto mb-4 w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
-              <CheckCircle2 className="w-10 h-10 text-green-600" />
+            <div className="mx-auto mb-4 w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+              <CheckCircle2 className="w-10 h-10 text-green-600 dark:text-emerald-400" />
             </div>
-            <CardTitle className="text-3xl font-bold text-green-600">
+            <CardTitle className="text-3xl font-bold text-green-600 dark:text-emerald-400">
               Thank You!
             </CardTitle>
-            <CardDescription className="text-lg mt-2">
+            <CardDescription className="text-lg mt-2 text-slate-600 dark:text-slate-300">
               Your response to "{survey.title || 'this survey'}" has been
               submitted successfully.
             </CardDescription>
           </CardHeader>
           <CardContent className="pb-8">
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-slate-300 mb-6">
               We appreciate your time and feedback. Your responses will help us
               improve our services.
             </p>

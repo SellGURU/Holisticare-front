@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import Mobile from '../../api/mobile';
 import Circleloader from '../../Components/CircleLoader';
 import { PublicSurveyForm } from '../../Components/survey/public-survey-form';
@@ -10,6 +10,26 @@ interface FormViewProps {
 }
 
 const FormView: React.FC<FormViewProps> = ({ mode }) => {
+  const [searchParams] = useSearchParams();
+
+  const darkParam = (searchParams.get("dark") ?? "").replace(/"/g, "").toLowerCase();
+  const isDarkFromRoute = darkParam === "true" || darkParam === "1";
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const wasDark = root.classList.contains("dark");
+
+    // apply based on route
+    if (isDarkFromRoute) root.classList.add("dark");
+    else root.classList.remove("dark");
+
+    // restore whatever it was before when leaving this view
+    return () => {
+      if (wasDark) root.classList.add("dark");
+      else root.classList.remove("dark");
+    };
+  }, [isDarkFromRoute])
+
   const { encode, id, 'f-id': fId } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
   const [isComplete] = useState(false);
@@ -108,12 +128,13 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   return (
     <>
       <div
-        className="w-full py-3 px-4 h-svh pb-[150px] overflow-y-scroll"
+        className="w-full py-3 px-4 h-svh pb-[150px]     bg-white text-gray-900
+          dark:bg-gray-950 dark:text-gray-100 overflow-y-scroll"
         ref={scrollRef}
       >
         {isComplete ? (
           <div className="py-4">
-            <div className="text-[12px] text-Text-Secondary text-center">
+            <div className="text-[12px] text-Text-Secondary dark:text-gray-400 text-center">
               {mode == 'questionary'
                 ? 'This Questionary is already answered.'
                 : 'This Checkin is already answered.'}
