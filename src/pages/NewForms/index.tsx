@@ -2,25 +2,12 @@ import { useState } from 'react';
 import SearchBox from '../../Components/SearchBox';
 import Toggle from '../../Components/Toggle';
 import CheckInForm from './CheckIn/CheckinForm';
-import { showError, showSuccess } from '../../Components/GlobalToast/toast';
 
 const NewForms = () => {
   const [active, setActive] = useState('Check-in');
   const [search, setSearch] = useState('');
   return (
     <>
-      <button
-        onClick={() => {
-          showError(
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
-          );
-          showSuccess(
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
-          );
-        }}
-      >
-        Click me
-      </button>
       <div className="fixed w-full z-30 bg-bg-color px-2 md:px-6 pt-8 pb-2 md:pr-[200px]">
         <div className="w-full flex justify-between items-center pr-2 md:pr-0">
           <div className="text-Text-Primary font-medium opacity-[87%] text-nowrap">
