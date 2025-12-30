@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CheckBoxSelection from './CheckBoxSelection';
 import MultiChoceSelection from './MultichoiceSelection';
+import Toggle from '../../../Components/RepoerAnalyse/Boxs/Toggle';
+import { SelectBoxField, TextField } from '../../../Components/UnitComponents';
 
 interface AddQuestionsModalProps {
   onCancel: () => void;
   onSubmit: (value: checkinType) => void;
   editQUestion?: checkinType;
+  isQuestionary?: boolean;
   setQuestionStep: (value: number) => void;
+  questions?: Array<checkinType>;
 }
 
 const checkInTypes = [
@@ -38,12 +42,52 @@ const checkInTypes = [
     desc: 'Like Test result or photo',
   },
 ];
+const conditions = [
+  'equals',
+  'not equals',
+  'greater than',
+  'less than',
+  'greater than or equal',
+  'less than or equal',
+  // 'between',
+  // 'not between',
+  'contains',
+  'not contains',
+  'starts with',
+  'ends with',
+  'matches regex',
+  'not matches regex',
+  'is empty',
+  'not empty',
+  'is null',
+  'not null',
+  // 'in array',
+  // 'not in array',
+  // 'all in array',
+  // 'any in array',
+  'length equals',
+  'length greater',
+  'length less',
+  // 'length between',
+  'date after',
+  'date before',
+  // 'date between',
+  'date equals',
+  'file uploaded',
+  'file not uploaded',
+  // 'file size greater',
+  // 'file size less',
+];
+
+const actions = ['show this question', 'hide this question'];
 
 const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
   onCancel,
   onSubmit,
   editQUestion,
+  isQuestionary,
   setQuestionStep,
+  questions = [],
 }) => {
   const [qustion, setQuestion] = useState(
     editQUestion ? editQUestion?.question : '',
@@ -63,6 +107,59 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
       ? editQUestion.options
       : ['', ''],
   );
+  const [conditionalDisplay, setConditionalDisplay] = useState(
+    editQUestion?.conditions?.length && editQUestion.conditions.length > 0
+      ? true
+      : false,
+  );
+  const [ifQuestion, setIfQuestion] = useState({
+    question_order:
+      editQUestion?.conditions?.[0]?.rules?.[0]?.question_order || 0,
+    question: editQUestion?.conditions?.[0]?.rules?.[0]?.question_order
+      ? questions.find(
+          (q) =>
+            q.order ===
+            editQUestion?.conditions?.[0]?.rules?.[0]?.question_order,
+        )?.question
+      : '',
+  });
+  const [condition, setCondition] = useState(
+    editQUestion?.conditions?.[0]?.rules?.[0]?.operator || '',
+  );
+  const [value, setValue] = useState(
+    editQUestion?.conditions?.[0]?.rules?.[0]?.value || '',
+  );
+  const [action, setAction] = useState(
+    editQUestion?.conditions?.[0]?.actions?.[0]?.type || '',
+  );
+  const [advancedSettings, setAdvancedSettings] = useState(false);
+  const [biomarker, setBiomarker] = useState(
+    editQUestion?.is_biomarker || false,
+  );
+  const [clientInsights, setClientInsights] = useState(
+    editQUestion?.use_in_insights || false,
+  );
+  const [clientGoals, setClientGoals] = useState(
+    editQUestion?.is_goal || false,
+  );
+  const [medication, setMedication] = useState(
+    editQUestion?.is_medication || false,
+  );
+  const [medicalCondition, setMedicalCondition] = useState(
+    editQUestion?.is_condition || false,
+  );
+  const [allergy, setAllergy] = useState(editQUestion?.is_allergy || false);
+  useEffect(() => {
+    if (conditionalDisplay === false) {
+      setIfQuestion({
+        question_order: 0,
+        question: '',
+      });
+      setCondition('');
+      setValue('');
+      setAction('');
+    }
+  }, [conditionalDisplay]);
   const clear = () => {
     setQuestion('');
     setRequired(false);
@@ -90,11 +187,18 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
     }
     return false;
   };
+  const toSnakeCase = (text: string) => text.toLowerCase().replace(/\s+/g, '_');
 
   const submit = () => {
     setShowValidation(true);
     if (!isDisabled() && !hasValidationErrors()) {
       const resolvedQuestion: checkinType = {
+        order: editQUestion?.order || 0,
+        map_to_biomarker: editQUestion?.map_to_biomarker || '',
+        hide: editQUestion?.hide || false,
+        use_function_calculation:
+          editQUestion?.use_function_calculation || false,
+        unit: editQUestion?.unit || '',
         question: qustion,
         required: required,
         response: '',
@@ -105,7 +209,34 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             : type == 'multiple_choice'
               ? multiChoiceOptions
               : undefined,
+        is_biomarker: biomarker,
+        use_in_insights: clientInsights,
+        is_goal: clientGoals,
+        is_medication: medication,
+        is_condition: medicalCondition,
+        is_allergy: allergy,
+        conditions: [],
       };
+      if (conditionalDisplay) {
+        resolvedQuestion.conditions = [
+          {
+            priority: 1,
+            logic: 'and',
+            rules: [
+              {
+                question_order: ifQuestion.question_order,
+                operator: toSnakeCase(condition),
+                value: value,
+              },
+            ],
+            actions: [
+              {
+                type: action.split(' ')[0],
+              },
+            ],
+          },
+        ];
+      }
       onSubmit(resolvedQuestion);
       setQuestionStep(2);
       clear();
@@ -299,6 +430,344 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             {' '}
             Please select an answer type.
           </div>
+        )}
+        {isQuestionary && (
+          <>
+            <div className="text-xs font-medium text-Text-Primary mt-4">
+              Conditional Display
+            </div>
+            {conditionalDisplay && (
+              <div className="mt-2 flex items-center gap-y-0 gap-x-2 flex-wrap">
+                <div className="w-full md:w-[40%] flex items-center gap-2">
+                  <div className="text-xs font-medium text-Text-Primary">
+                    If
+                  </div>
+                  <SelectBoxField
+                    options={questions.map(
+                      (question, index) =>
+                        `Q${index + 1}: ${question.question}`,
+                    )}
+                    value={
+                      ifQuestion.question_order
+                        ? 'Q' +
+                            (ifQuestion.question_order || 0) +
+                            ': ' +
+                            ifQuestion.question || ''
+                        : ''
+                    }
+                    onChange={(value) => {
+                      setIfQuestion({
+                        question: value.slice(4),
+                        question_order:
+                          questions.find((q) => q.question === value.slice(4))
+                            ?.order || 0,
+                      });
+                    }}
+                    placeholder="Select a question"
+                    margin="mb-1 mt-0"
+                    position="bottom"
+                    bottom="bottom-[29px]"
+                  />
+                </div>
+                <div className="w-full md:w-[40%] flex items-center gap-2">
+                  <div className="text-xs font-medium text-Text-Primary">
+                    is
+                  </div>
+                  <SelectBoxField
+                    options={conditions}
+                    value={condition}
+                    onChange={(value) => {
+                      setCondition(value);
+                    }}
+                    placeholder="Select condition"
+                    margin="mb-1 mt-0"
+                    position="bottom"
+                    bottom="bottom-[29px]"
+                  />
+                </div>
+                <div className="w-full md:w-[40%] flex items-center gap-2">
+                  <div className="text-xs font-medium text-Text-Primary">
+                    to
+                  </div>
+                  <TextField
+                    value={value}
+                    onChange={(e) => {
+                      setValue(e.target.value);
+                    }}
+                    placeholder="Enter a value"
+                    margin="mb-1 mt-0"
+                    label=""
+                    isValid={true}
+                    validationText=""
+                  />
+                </div>
+                <div className="w-full md:w-[40%] flex items-center gap-2">
+                  <div className="text-xs font-medium text-Text-Primary">
+                    ,then
+                  </div>
+                  <SelectBoxField
+                    options={actions}
+                    value={action}
+                    onChange={(value) => {
+                      setAction(value);
+                    }}
+                    placeholder="Select action"
+                    margin="mb-1 mt-0"
+                    position="bottom"
+                    bottom="bottom-[29px]"
+                  />
+                </div>
+              </div>
+            )}
+            <div className="w-full mt-2.5 mb-2 flex items-center gap-2">
+              <Toggle
+                checked={conditionalDisplay}
+                setChecked={setConditionalDisplay}
+              />
+              <div className="text-xs text-Text-Primary font-normal">
+                Show this question only under specific conditions
+              </div>
+            </div>
+            <div
+              className="flex items-center gap-2 mt-6 cursor-pointer"
+              onClick={() => setAdvancedSettings(!advancedSettings)}
+            >
+              <div className="text-xs font-medium text-Text-Primary">
+                Advanced Settings
+              </div>
+              <img
+                src="/icons/arrow-down-blue.svg"
+                alt=""
+                className={`${advancedSettings ? 'rotate-180' : ''}`}
+              />
+            </div>
+            {advancedSettings && (
+              <div className="grid grid-cols-1 md:grid-cols-2 mt-2 flex-wrap">
+                <label
+                  htmlFor="biomarker"
+                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
+                >
+                  <input
+                    id="biomarker"
+                    type="checkbox"
+                    checked={biomarker}
+                    onChange={() => setBiomarker(!biomarker)}
+                    className="hidden"
+                  />
+                  <div
+                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
+                      biomarker ? 'bg-Primary-DeepTeal' : ' bg-white '
+                    }`}
+                  >
+                    {biomarker && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3 w-3 text-white"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <div
+                    className={`text-xs leading-6 ${biomarker ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
+                  >
+                    This question measures a biomarker.
+                  </div>
+                </label>
+                <label
+                  htmlFor="client-insights"
+                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
+                >
+                  <input
+                    id="client-insights"
+                    type="checkbox"
+                    checked={clientInsights}
+                    onChange={() => setClientInsights(!clientInsights)}
+                    className="hidden"
+                  />
+                  <div
+                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
+                      clientInsights ? 'bg-Primary-DeepTeal' : ' bg-white '
+                    }`}
+                  >
+                    {clientInsights && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3 w-3 text-white"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <div
+                    className={`text-xs leading-6 ${clientInsights ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
+                  >
+                    Response used for Client Insights.
+                  </div>
+                </label>
+                <label
+                  htmlFor="client-goals"
+                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
+                >
+                  <input
+                    id="client-goals"
+                    type="checkbox"
+                    checked={clientGoals}
+                    onChange={() => setClientGoals(!clientGoals)}
+                    className="hidden"
+                  />
+                  <div
+                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
+                      clientGoals ? 'bg-Primary-DeepTeal' : ' bg-white '
+                    }`}
+                  >
+                    {clientGoals && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3 w-3 text-white"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <div
+                    className={`text-xs leading-6 ${clientGoals ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
+                  >
+                    Response used for Client Goals.
+                  </div>
+                </label>
+                <label
+                  htmlFor="medication"
+                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
+                >
+                  <input
+                    id="medication"
+                    type="checkbox"
+                    checked={medication}
+                    onChange={() => setMedication(!medication)}
+                    className="hidden"
+                  />
+                  <div
+                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
+                      medication ? 'bg-Primary-DeepTeal' : ' bg-white '
+                    }`}
+                  >
+                    {medication && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3 w-3 text-white"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <div
+                    className={`text-xs leading-6 ${medication ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
+                  >
+                    Response used for Medication.
+                  </div>
+                </label>
+                <label
+                  htmlFor="medical-condition"
+                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
+                >
+                  <input
+                    id="medical-condition"
+                    type="checkbox"
+                    checked={medicalCondition}
+                    onChange={() => setMedicalCondition(!medicalCondition)}
+                    className="hidden"
+                  />
+                  <div
+                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
+                      medicalCondition ? 'bg-Primary-DeepTeal' : ' bg-white '
+                    }`}
+                  >
+                    {medicalCondition && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3 w-3 text-white"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <div
+                    className={`text-xs leading-6 ${medicalCondition ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
+                  >
+                    Response used for Medical Condition.
+                  </div>
+                </label>
+                <label
+                  htmlFor="allergy"
+                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
+                >
+                  <input
+                    id="allergy"
+                    type="checkbox"
+                    checked={allergy}
+                    onChange={() => setAllergy(!allergy)}
+                    className="hidden"
+                  />
+                  <div
+                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
+                      allergy ? 'bg-Primary-DeepTeal' : ' bg-white '
+                    }`}
+                  >
+                    {allergy && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3 w-3 text-white"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <div
+                    className={`text-xs leading-6 ${allergy ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
+                  >
+                    Response used for Allergy.
+                  </div>
+                </label>
+              </div>
+            )}
+          </>
         )}
       </div>
     </>

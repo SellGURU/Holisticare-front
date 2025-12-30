@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
 interface SelectBoxFieldProps {
-  label: string;
+  label?: string;
   options: string[];
   value: string;
   onChange: (value: string) => void;
@@ -12,6 +12,8 @@ interface SelectBoxFieldProps {
   showDisabled?: boolean;
   placeholder: string;
   top?: string;
+  position?: 'top' | 'bottom';
+  bottom?: string;
 }
 
 const SelectBoxField: FC<SelectBoxFieldProps> = ({
@@ -26,6 +28,8 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
   placeholder,
   showDisabled,
   top,
+  position = 'top',
+  bottom,
 }) => {
   const [showSelect, setShowSelect] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -49,13 +53,15 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
       ref={wrapperRef}
       className={`w-full relative overflow-visible ${margin ? margin : 'mt-1 mb-4'}`}
     >
-      <label
-        className={`text-xs font-medium text-Text-Primary ${showDisabled ? 'opacity-50' : 'opacity-100'}`}
-        htmlFor="select-box-field"
-        onClick={() => setShowSelect(false)}
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          className={`text-xs font-medium text-Text-Primary ${showDisabled ? 'opacity-50' : 'opacity-100'}`}
+          htmlFor="select-box-field"
+          onClick={() => setShowSelect(false)}
+        >
+          {label}
+        </label>
+      )}
       <div
         onClick={() => !disabled && setShowSelect(!showSelect)}
         id="select-box-field"
@@ -64,7 +70,9 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
         } ${showDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer'}`}
       >
         {value ? (
-          <div className="text-[12px] text-Text-Primary">{value}</div>
+          <div className="text-[12px] text-Text-Primary">
+            {value.length > 28 ? value.slice(0, 28) + '...' : value}
+          </div>
         ) : (
           <div className="text-[10px] md:text-[12px] text-Text-Fivefold">
             {placeholder}
@@ -83,7 +91,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
       )}
       {showSelect && (
         <div
-          className={`w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 ${top ? top : 'top-[56px]'} max-h-[250px] overflow-y-auto`}
+          className={`w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 ${label ? 'max-h-[250px]' : 'max-h-[200px]'} ${position === 'top' ? (top ? top : 'top-[56px]') : bottom ? bottom : 'bottom-[56px]'} overflow-y-auto`}
         >
           {options.map((option, index) => {
             return (
@@ -93,7 +101,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
                   onChange(option);
                   setShowSelect(false);
                 }}
-                className="text-[12px] text-Text-Primary my-1 cursor-pointer"
+                className="text-[12px] text-Text-Primary my-1 cursor-pointer hover:bg-Gray-100 rounded-lg py-1 px-2 text-ellipsis overflow-hidden text-nowrap"
               >
                 {option}
               </div>
