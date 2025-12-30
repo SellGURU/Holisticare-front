@@ -2,13 +2,12 @@
 import { FC, useEffect, useState } from 'react';
 // import { useNavigate } from "react-router-dom";
 import { BeatLoader } from 'react-spinners';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import Circleloader from '../../Components/CircleLoader';
 import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
 import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import Application from '../../api/app';
+import { showSuccess } from '../../Components/GlobalToast/toast';
 interface ActionProps {
   memberID: number | null;
 }
@@ -351,7 +350,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
                   block_id: blockID, // changed key name
                   plan: data, // changed key name
                 })
-                  .then(() => toast.success('Tasks saved successfully!'))
+                  .then(() => showSuccess('Tasks saved successfully!'))
                   .catch(() => {})
                   .finally(() => setbuttonLoading(false));
               }}

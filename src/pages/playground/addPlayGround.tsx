@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
-import MainModal from '../../Components/MainModal';
 import Application from '../../api/app'; // مسیر درستشو بزن
-import { SelectBoxField, TextField } from '../../Components/UnitComponents';
-import SpinnerLoader from '../../Components/SpinnerLoader';
-import { toast } from 'react-toastify';
 import Circleloader from '../../Components/CircleLoader';
+import MainModal from '../../Components/MainModal';
+import SpinnerLoader from '../../Components/SpinnerLoader';
+import { SelectBoxField, TextField } from '../../Components/UnitComponents';
 // import Select from "../../Components/Select";
 
 type AddPlayGroundProps = {
@@ -70,9 +69,8 @@ const AddPlayGround: FC<AddPlayGroundProps> = ({
         onSubmited();
         onClose();
       })
-      .catch((e: any) => {
-        // console.log(e);
-        toast.error(e.detail);
+      .catch((err) => {
+        console.error('Error submitting playground:', err);
         setLoadingCall(false);
       });
   };

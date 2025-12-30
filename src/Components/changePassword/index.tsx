@@ -5,7 +5,7 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { Tooltip } from 'react-tooltip';
 import Application from '../../api/app';
 import SpinnerLoader from '../SpinnerLoader';
-import { toast } from 'react-toastify';
+import { showSuccess } from '../GlobalToast/toast';
 
 export const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -95,7 +95,7 @@ export const ChangePassword = () => {
       });
       setbtnLoading(false);
       resetForm(); // all good, clear the form
-      toast.success('Password changed successfully.');
+      showSuccess('Password changed successfully.');
     } catch (err: any) {
       const apiError = err?.detail;
       console.log(err);
