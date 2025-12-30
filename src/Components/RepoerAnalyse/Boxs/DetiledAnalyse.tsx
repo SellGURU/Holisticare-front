@@ -103,27 +103,27 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   // const isChartDataEmpty = !active?.values.some(
   //   (value: string) => !isNaN(parseFloat(value)),
   // );
-  const NEED_FOCUS_STATUSES = [
-    'CriticalRange',
-    'DiseaseRange',
-    'BorderlineRange',
-  ];
-  const isNeedFocus = (item: any) =>
-    item?.status && NEED_FOCUS_STATUSES.includes(item.status[0]);
+  // const NEED_FOCUS_STATUSES = [
+  //   'CriticalRange',
+  //   'DiseaseRange',
+  //   'BorderlineRange',
+  // ];
+  // const isNeedFocus = (item: any) =>
+  //   item?.status && NEED_FOCUS_STATUSES.includes(item.status[0]);
   const sortedReferences = useMemo(() => {
     if (!refrences || refrences.length === 0) return [];
+    return [...refrences];
+    // return [...refrences].sort((a, b) => {
+    //   const aNeedFocus = isNeedFocus(a);
+    //   const bNeedFocus = isNeedFocus(b);
 
-    return [...refrences].sort((a, b) => {
-      const aNeedFocus = isNeedFocus(a);
-      const bNeedFocus = isNeedFocus(b);
+    //   // Needs Focus first
+    //   if (aNeedFocus && !bNeedFocus) return -1;
+    //   if (!aNeedFocus && bNeedFocus) return 1;
 
-      // Needs Focus first
-      if (aNeedFocus && !bNeedFocus) return -1;
-      if (!aNeedFocus && bNeedFocus) return 1;
-
-      // Optional: secondary sort (alphabetical)
-      return a.name.localeCompare(b.name);
-    });
+    //   // Optional: secondary sort (alphabetical)
+    //   return a.name.localeCompare(b.name);
+    // });
   }, [refrences]);
 
   return (

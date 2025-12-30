@@ -321,10 +321,10 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                         Historical Chart
                                       </div>
                                       <Toggle
-                                        setChecked={(value) => {
-                                          setIsCheced(value);
+                                        setChecked={() => {
+                                          // handleBiomarkerChecked(index)
                                         }}
-                                        checked={isCheced}
+                                        checked={false}
                                       ></Toggle>
                                     </div>
                                   </div>
@@ -340,13 +340,13 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                 <div className="w-full">
                                   {active && (
                                     <HistoricalChart
-                                      unit={active?.unit}
-                                      chartId={active.name}
-                                      sources={active?.historical_sources}
-                                      statusBar={active?.chart_bounds}
-                                      dataStatus={active.status}
-                                      dataPoints={[...active.values]}
-                                      labels={[...active.date]}
+                                      unit={biomarker?.unit}
+                                      chartId={biomarker.name}
+                                      sources={biomarker?.historical_sources}
+                                      statusBar={biomarker?.chart_bounds}
+                                      dataStatus={biomarker.status}
+                                      dataPoints={[...biomarker.values]}
+                                      labels={[...biomarker.date]}
                                     ></HistoricalChart>
                                   )}
                                 </div>
