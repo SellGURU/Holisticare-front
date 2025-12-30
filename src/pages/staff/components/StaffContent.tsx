@@ -53,22 +53,33 @@ const StaffContent = () => {
   >([]);
   const [roles, setRoles] = useState([]);
   useEffect(() => {
-    Application.getStaffRoles({}).then((res) => {
-      setRoles(res.data.member_role);
-    });
+    Application.getStaffRoles({})
+      .then((res) => {
+        setRoles(res.data.member_role);
+      })
+      .catch((err) => {
+        console.error('Error getting staff roles:', err);
+      });
   }, []);
   const getStaffs = () => {
     setLoading(true);
-    Application.getStaffList().then((res) => {
-      const clinicUser = res.data.find(
-        (user: StaffMember) => user.you_tag === true,
-      );
-      const otherUsers = res.data.filter((user: StaffMember) => !user.you_tag);
-      setMembers(otherUsers);
-      setFilteredMembers(otherUsers);
-      setClinicInfo(clinicUser);
-      setLoading(false);
-    });
+    Application.getStaffList()
+      .then((res) => {
+        const clinicUser = res.data.find(
+          (user: StaffMember) => user.you_tag === true,
+        );
+        const otherUsers = res.data.filter(
+          (user: StaffMember) => !user.you_tag,
+        );
+        setMembers(otherUsers);
+        setFilteredMembers(otherUsers);
+        setClinicInfo(clinicUser);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting staff list:', err);
+        setLoading(false);
+      });
   };
   useEffect(() => {
     getStaffs();

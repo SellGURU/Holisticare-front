@@ -57,15 +57,16 @@ export const SwitchClient: FC<SwitchClientProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       setisLoading(true);
-      try {
-        const response = await Application.getPatients();
-        setPatients(response.data.patients_list_data);
-        // setActiveMemberID(response.data.patients_list_data[0].member_id);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setisLoading(false);
-      }
+      Application.getPatients()
+        .then((res) => {
+          setPatients(res.data.patients_list_data);
+        })
+        .catch((err) => {
+          console.error('Error getting patients', err);
+        })
+        .finally(() => {
+          setisLoading(false);
+        });
     };
     fetchData();
   }, []);

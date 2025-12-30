@@ -387,6 +387,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         lab_type: 'more_info',
         // file_id: uploadedFile?.file_id || '',
       },
+    }).catch((err) => {
+      console.error('Error saving lab report:', err);
     });
   };
   const [rowErrors, setRowErrors] = React.useState<Record<number, string>>({});
