@@ -1063,11 +1063,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           //   data={el}
                           //   key={index}
                           // ></DetiledAcordin>
-                          <NewDetailedAcordin refrences={
-                            resolveBioMarkers().filter(
+                          <NewDetailedAcordin
+                            refrences={resolveBioMarkers().filter(
                               (val: any) => val.subcategory == el.subcategory,
-                            )
-                          } data={el} key={index}></NewDetailedAcordin>
+                            )}
+                            data={el}
+                            key={index}
+                          ></NewDetailedAcordin>
                         );
                       })}
                     </div>
