@@ -67,4 +67,13 @@ declare global {
     warning?: boolean;
     showReport?: boolean;
   };
+  type ApiQuestion = {
+    id?: string;
+    text?: string;
+    question?: string;
+    type?: string;
+    options?: string[] | null;
+    required?: boolean;
+    [key: string]: unknown;
+  };
 }
