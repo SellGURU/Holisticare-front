@@ -221,7 +221,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
         resolvedQuestion.conditions = [
           {
             priority: 1,
-            logic: 'and',
+            logic: 'AND',
             rules: [
               {
                 question_order: ifQuestion.question_order,
