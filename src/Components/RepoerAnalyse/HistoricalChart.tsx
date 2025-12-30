@@ -25,27 +25,27 @@ const HistoricalChart = ({
   unit,
   chartId,
 }: HistoricalChartProps) => {
-const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(10);
-const [page, setPage] = useState(0);
+  const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(10);
+  const [page, setPage] = useState(0);
 
-// اصلاح: فقط یک بار هنگام mount
-useEffect(() => {
-  const svg = document.getElementById('historical-chart-svg');
-  if (svg) {
-    setITEMS_PER_PAGE(Math.floor(svg.clientWidth / 50)); // تبدیل به عدد صحیح
-  }
-}, []);
+  // اصلاح: فقط یک بار هنگام mount
+  useEffect(() => {
+    const svg = document.getElementById('historical-chart-svg');
+    if (svg) {
+      setITEMS_PER_PAGE(Math.floor(svg.clientWidth / 50)); // تبدیل به عدد صحیح
+    }
+  }, []);
 
-const totalPages = Math.ceil(dataPoints.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(dataPoints.length / ITEMS_PER_PAGE);
 
-// محاسبه start و end درست با Math.min برای جلوگیری از overflow
-const start = page * ITEMS_PER_PAGE;
-const end = Math.min(start + ITEMS_PER_PAGE, dataPoints.length);
+  // محاسبه start و end درست با Math.min برای جلوگیری از overflow
+  const start = page * ITEMS_PER_PAGE;
+  const end = Math.min(start + ITEMS_PER_PAGE, dataPoints.length);
 
-const visibleDataPoints = dataPoints.slice(start, end);
-const visibleLabels = labels.slice(start, end);
-// const visibleStatus = dataStatus.slice(start, end);
- 
+  const visibleDataPoints = dataPoints.slice(start, end);
+  const visibleLabels = labels.slice(start, end);
+  // const visibleStatus = dataStatus.slice(start, end);
+
   const resolveColor = (key: string, color?: string) => {
     if (color && color != '') {
       return color;
@@ -217,100 +217,103 @@ const visibleLabels = labels.slice(start, end);
             );
           })}
         </svg>
-          {sortedStatusBars.map((el: any, inde: number) => {
-            return (
+        {sortedStatusBars.map((el: any, inde: number) => {
+          return (
+            <div
+              key={`status-${inde}`}
+              className="w-full relative"
+              style={{
+                height: 70 / sortedStatusBars.length + 'px',
+              }}
+            >
               <div
-                key={`status-${inde}`}
-                className="w-full relative"
-                style={{
-                  height: 70 / sortedStatusBars.length + 'px',
-                }}
-              >
-                <div
-                  className="w-full h-full opacity-15"
-                  style={{ backgroundColor: resolveColor(el.status, el.color) }}
-                ></div>
+                className="w-full h-full opacity-15"
+                style={{ backgroundColor: resolveColor(el.status, el.color) }}
+              ></div>
 
-                <div
-                  className="w-full h-full absolute border-r-[5px] pl-2 top-0 items-center flex justify-start"
-                  style={{ borderColor: resolveColor(el.status, el.color) }}
-                >
-                  {visibleDataPoints.map((point, index) => {
-                    const realIndex = start + index;
-                    const tooltipId = `point-${chartId}-${realIndex}`;
-                    const markerMode = getStatusMarkerMode(
-                      el,
-                      dataStatus[realIndex],
-                      point,
-                      statusBar,
-                    );
-                    return (
+              <div
+                className="w-full h-full absolute border-r-[5px] pl-2 top-0 items-center flex justify-start"
+                style={{ borderColor: resolveColor(el.status, el.color) }}
+              >
+                {visibleDataPoints.map((point, index) => {
+                  const realIndex = start + index;
+                  const tooltipId = `point-${chartId}-${realIndex}`;
+                  const markerMode = getStatusMarkerMode(
+                    el,
+                    dataStatus[realIndex],
+                    point,
+                    statusBar,
+                  );
+                  return (
+                    <div
+                      key={`point-${realIndex}`}
+                      className="w-[40px] ml-1 relative"
+                    >
                       <div
-                        key={`point-${realIndex}`}
-                        className="w-[40px] ml-1 relative"
+                        data-tooltip-id={tooltipId}
+                        style={{
+                          backgroundColor: resolveColor(el.status, el.color),
+                          opacity:
+                            markerMode === 'unique' || markerMode === 'inRange'
+                              ? 1
+                              : 0,
+                          visibility:
+                            markerMode === 'unique' || markerMode === 'inRange'
+                              ? 'visible'
+                              : 'hidden',
+                        }}
+                        className="w-2 h-2 border border-gray-50 rounded-full relative"
                       >
-                        <div
-                          data-tooltip-id={tooltipId}
-                          style={{
-                            backgroundColor: resolveColor(el.status, el.color),
-                            opacity:
-                              markerMode === 'unique' || markerMode === 'inRange'
-                                ? 1
-                                : 0,
-                            visibility:
-                              markerMode === 'unique' || markerMode === 'inRange'
-                                ? 'visible'
-                                : 'hidden',
-                          }}
-                          className="w-2 h-2 border border-gray-50 rounded-full relative"
+                        <Tooltip
+                          id={tooltipId}
+                          place="top"
+                          className="!bg-Red !w-fit !leading-5 !text-nowrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                         >
-                          <Tooltip
-                            id={tooltipId}
-                            place="top"
-                            className="!bg-Red !w-fit !leading-5 !text-nowrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                          >
-                            <div className="flex items-center gap-2">
-                              {sources?.[realIndex] && (
-                                <SourceTag source={sources?.[realIndex]} isSmall />
-                              )}
-                              value: {point} {unit}
-                            </div>
-                          </Tooltip>
-                          {/* <div className="absolute -top-4 left-1/2 max-w-[40px] text-ellipsis overflow-hidden transform text-[8px] text-Text-Primary -translate-x-1/2 py-1 rounded whitespace-nowrap z-10">
+                          <div className="flex items-center gap-2">
+                            {sources?.[realIndex] && (
+                              <SourceTag
+                                source={sources?.[realIndex]}
+                                isSmall
+                              />
+                            )}
+                            value: {point} {unit}
+                          </div>
+                        </Tooltip>
+                        {/* <div className="absolute -top-4 left-1/2 max-w-[40px] text-ellipsis overflow-hidden transform text-[8px] text-Text-Primary -translate-x-1/2 py-1 rounded whitespace-nowrap z-10">
                             {point}
                           </div> */}
-                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-
-                {el.high ? (
-                  <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[2px] opacity-35 text-center">
-                    {el.high && el.low != null && <>{el.low + '-' + el.high}</>}
-                    {el.low == null && <>{el.high + '>'}</>}
-                  </div>
-                ) : (
-                  <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[4px] opacity-35 text-center">
-                    {el.low + '<'}
-                  </div>
-                )}
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
 
-          <div>
-            <div className="flex relative justify-start items-center w-full ml-2 mt-1">
-              {visibleLabels.map((label, index) =>{
-                return (
-                  <div key={index} className="text-[8px] w-[45px]">
-                    <div className="flex justify-start text-[#888888] font-medium  items-center">
-                      <div>{label.split('-')[2]}.</div>
-                      <div>{label.split('-')[1]}.</div>
-                    </div>
-                    <div className="text-[#B0B0B0] mt-[-2px] ml-[2px]">
-                      {label.split('-')[0]}
-                    </div>
+              {el.high ? (
+                <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[2px] opacity-35 text-center">
+                  {el.high && el.low != null && <>{el.low + '-' + el.high}</>}
+                  {el.low == null && <>{el.high + '>'}</>}
+                </div>
+              ) : (
+                <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[4px] opacity-35 text-center">
+                  {el.low + '<'}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        <div>
+          <div className="flex relative justify-start items-center w-full ml-2 mt-1">
+            {visibleLabels.map((label, index) => {
+              return (
+                <div key={index} className="text-[8px] w-[45px]">
+                  <div className="flex justify-start text-[#888888] font-medium  items-center">
+                    <div>{label.split('-')[2]}.</div>
+                    <div>{label.split('-')[1]}.</div>
+                  </div>
+                  <div className="text-[#B0B0B0] mt-[-2px] ml-[2px]">
+                    {label.split('-')[0]}
+                  </div>
                   {index === visibleLabels.length - 1 && totalPages > 1 && (
                     <div className="absolute top-0 right-[24px] transform translate-x-[20px] flex gap-2 z-10">
                       <button
@@ -322,18 +325,20 @@ const visibleLabels = labels.slice(start, end);
                       </button>
                       <button
                         disabled={page + 1 >= totalPages}
-                        onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
+                        onClick={() =>
+                          setPage((p) => Math.min(p + 1, totalPages - 1))
+                        }
                         className="px-2 py-1 text-[10px] border rounded hover:bg-gray-200 disabled:opacity-30"
                       >
                         Next
                       </button>
                     </div>
-                  )}                    
-                  </div>
-                )
-              })}
-            </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
+        </div>
       </div>
     </>
   );
