@@ -531,8 +531,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
         >
           {data
             ?.filter((el: any) => el.Category == activeCategory)
-            .filter((item: any) => matchesSearch(item, searchQuery))
             .map((item: any, index: number) => {
+              if (!matchesSearch(item, searchQuery)) return null;
+
               return (
                 <ActivityCard
                   key={`${index}-${refreshKey}`}
@@ -550,8 +551,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
             })}
           {data
             ?.filter((el: any) => el.Category == activeCategory)
-            .filter((item: any) => matchesSearch(item, searchQuery)).length ===
-            0 && (
+            .every((item: any) => !matchesSearch(item, searchQuery)) && (
             <div className="w-full h-[350px] flex flex-col justify-center items-center">
               <img src="/icons/document-text-rectangle.svg" alt="" />
               <div className="text-base text-Text-Primary font-medium -mt-2">
