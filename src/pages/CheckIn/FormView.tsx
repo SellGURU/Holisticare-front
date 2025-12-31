@@ -12,23 +12,25 @@ interface FormViewProps {
 const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const [searchParams] = useSearchParams();
 
-  const darkParam = (searchParams.get("dark") ?? "").replace(/"/g, "").toLowerCase();
-  const isDarkFromRoute = darkParam === "true" || darkParam === "1";
+  const darkParam = (searchParams.get('dark') ?? '')
+    .replace(/"/g, '')
+    .toLowerCase();
+  const isDarkFromRoute = darkParam === 'true' || darkParam === '1';
 
   useEffect(() => {
     const root = document.documentElement;
-    const wasDark = root.classList.contains("dark");
+    const wasDark = root.classList.contains('dark');
 
     // apply based on route
-    if (isDarkFromRoute) root.classList.add("dark");
-    else root.classList.remove("dark");
+    if (isDarkFromRoute) root.classList.add('dark');
+    else root.classList.remove('dark');
 
     // restore whatever it was before when leaving this view
     return () => {
-      if (wasDark) root.classList.add("dark");
-      else root.classList.remove("dark");
+      if (wasDark) root.classList.add('dark');
+      else root.classList.remove('dark');
     };
-  }, [isDarkFromRoute])
+  }, [isDarkFromRoute]);
 
   const { encode, id, 'f-id': fId } = useParams();
   const [isLoading, setIsLaoding] = useState(false);

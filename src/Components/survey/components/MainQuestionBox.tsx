@@ -50,57 +50,62 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
     <>
       <Card
         style={{ height: window.innerHeight - 180 + 'px' }}
-        className="bg-white shadow-xl   border-0 flex flex-col relative"
+        className="bg-white dark:bg-slate-900 shadow-xl border-0 flex flex-col relative"
       >
         <CardHeader>
           <div
-            className={`px-3 py-1 text-xs md:text-sm rounded-full items-center flex  font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
+            className={`px-3 py-1 text-xs md:text-sm rounded-full items-center flex font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
           >
             Question {currentStep} of {visibleQuestions.length}
-            {showSaveIndicator == 'saving' && (
-              <>
-                <div className=" ml-2 flex items-center gap-1">
-                  <SvgIcon
-                    stroke="#FFFFFF"
-                    width={window.innerWidth < 768 ? '12px' : '16px'}
-                    height={window.innerWidth < 768 ? '12px' : '16px'}
-                    src="/icons/refresh-2.svg"
-                    color={''}
-                    className="animate-spin"
-                  ></SvgIcon>
-                  <div className="text-[8px] md:text-xs">Saving response…</div>
+
+            {showSaveIndicator === 'saving' && (
+              <div className="ml-2 flex items-center gap-1">
+                <SvgIcon
+                  stroke="#FFFFFF"
+                  width={window.innerWidth < 768 ? '12px' : '16px'}
+                  height={window.innerWidth < 768 ? '12px' : '16px'}
+                  src="/icons/refresh-2.svg"
+                  color=""
+                  className="animate-spin"
+                />
+                <div className="text-[8px] md:text-xs">
+                  Saving response…
                 </div>
-              </>
+              </div>
             )}
-            {showSaveIndicator == 'saved' && (
-              <>
-                <div className=" ml-2 flex items-center gap-1">
-                  <SvgIcon
-                    stroke="#FFFFFF"
-                    width={window.innerWidth < 768 ? '12px' : '16px'}
-                    height={window.innerWidth < 768 ? '12px' : '16px'}
-                    src="/icons/tick-circle2.svg"
-                    color={''}
-                  ></SvgIcon>
-                  <span className="text-[8px] md:text-xs">Response saved</span>
-                </div>
-              </>
+
+            {showSaveIndicator === 'saved' && (
+              <div className="ml-2 flex items-center gap-1">
+                <SvgIcon
+                  stroke="#FFFFFF"
+                  width={window.innerWidth < 768 ? '12px' : '16px'}
+                  height={window.innerWidth < 768 ? '12px' : '16px'}
+                  src="/icons/tick-circle2.svg"
+                  color=""
+                />
+                <span className="text-[8px] md:text-xs">
+                  Response saved
+                </span>
+              </div>
             )}
           </div>
-          <CardTitle className="text-[14px] 2xl:text-base max-h-[120px] overflow-y-scroll font-bold break-words pr-4 max-w-full">
+
+          <CardTitle className="text-[14px] 2xl:text-base max-h-[120px] overflow-y-scroll font-bold break-words pr-4 max-w-full text-gray-900 dark:text-slate-100">
             {getQuestionText(currentQuestion)}
             {currentQuestion.required && (
-              <span className="text-red-500 ml-1">*</span>
+              <span className="text-red-500 dark:text-red-400 ml-1">*</span>
             )}
           </CardTitle>
+
           {currentQuestion.required && (
-            <CardDescription className="text-sm text-gray-500 mt-1">
+            <CardDescription className="text-sm text-gray-500 dark:text-slate-400 mt-1">
               Required
             </CardDescription>
           )}
         </CardHeader>
+
         <CardContent
-          className="space-y-6   pb-20 overflow-y-scroll"
+          className="space-y-6 pb-20 overflow-y-scroll text-gray-900 dark:text-slate-100"
           style={{ height: window.innerHeight - 400 + 'px' }}
         >
           {renderQuestion(
@@ -111,7 +116,7 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
           {validationErrors[
             getOriginalIndexForVisibleIndex(currentStep - 1)
           ] && (
-            <div className="flex items-center space-x-2 text-red-500 text-sm mt-2">
+            <div className="flex items-center space-x-2 text-red-500 dark:text-red-400 text-sm mt-2">
               <AlertCircle className="h-4 w-4" />
               <span>
                 {
@@ -124,13 +129,14 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
           )}
 
           {error && (
-            <div className="flex items-center space-x-2 text-red-500 text-sm mt-2">
+            <div className="flex items-center space-x-2 text-red-500 dark:text-red-400 text-sm mt-2">
               <AlertCircle className="h-4 w-4" />
               <span>{error}</span>
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full bg-white">
+
+        <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full bg-white dark:bg-slate-900">
           <Button
             className={`${currentStep > 1 ? 'visible' : 'invisible'}`}
             type="button"
@@ -145,7 +151,7 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
             onClick={handleNext}
             disabled={submitting}
             data-testid="survey-next-button"
-            className={`bg-gradient-to-r ${gradientClass} -end hover:brightness-105 transition-all text-white`}
+            className={`bg-gradient-to-r ${gradientClass} hover:brightness-105 transition-all text-white`}
           >
             {currentStep === visibleQuestions.length
               ? submitting

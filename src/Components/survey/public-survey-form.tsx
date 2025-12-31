@@ -787,7 +787,9 @@ export function PublicSurveyForm({
               type="button"
               onClick={() => onChange((index + 1).toString())}
               className={`p-1 rounded-full transition-all ${
-                index < currentValue ? 'text-yellow-400' : 'text-gray-300 dark:text-slate-600'
+                index < currentValue
+                  ? 'text-yellow-400'
+                  : 'text-gray-300 dark:text-slate-600'
               } hover:scale-110`}
             >
               <Star className="h-8 w-8 fill-current" />
