@@ -216,6 +216,8 @@ const ForgetPassword = () => {
               onClick={() => {
                 Application.SendVerification({
                   email: formik.values.email,
+                }).catch((err) => {
+                  console.error('Error sending verification:', err);
                 });
                 setIsCompleteCode(false);
                 setCodeValue('');
@@ -383,6 +385,9 @@ const ForgetPassword = () => {
                     })
                       .then(() => {
                         setPasswordChanged(true);
+                      })
+                      .catch((err) => {
+                        console.error('Error verifying code:', err);
                       })
                       .finally(() => {
                         setIsLoading(false);

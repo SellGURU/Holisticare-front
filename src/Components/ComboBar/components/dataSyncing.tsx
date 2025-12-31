@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';

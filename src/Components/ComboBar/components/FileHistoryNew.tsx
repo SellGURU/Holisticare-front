@@ -266,9 +266,13 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
   }, [id]);
 
   subscribe('syncReport', () => {
-    Application.getFilleList({ member_id: id }).then((res) => {
-      setUploadedFiles(res.data);
-    });
+    Application.getFilleList({ member_id: id })
+      .then((res) => {
+        setUploadedFiles(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting file list:', err);
+      });
   });
 
   const handleFileDeleteSuccess = () => {

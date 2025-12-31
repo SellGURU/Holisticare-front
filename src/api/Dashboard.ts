@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Api from './api';
 
 class DashboardApi extends Api {

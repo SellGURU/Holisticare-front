@@ -39,6 +39,9 @@ const CustomBiomarkers = () => {
         setBiomarkers(res.data);
         // setBiomarkers(mackData);
       })
+      .catch((err) => {
+        console.error('Error getting biomarkers:', err);
+      })
       .finally(() => {
         // setBiomarkers(mackData);
         setIsLoading(false);

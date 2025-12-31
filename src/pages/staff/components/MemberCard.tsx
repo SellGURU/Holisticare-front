@@ -47,10 +47,15 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
   const [assignedClients, setAssignedClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const getStaffAssignedClients = (userId: string) => {
-    Application.getStaffAssignedClients({ user_id: userId }).then((res) => {
-      setAssignedClients(res.data);
-      setLoading(false);
-    });
+    Application.getStaffAssignedClients({ user_id: userId })
+      .then((res) => {
+        setAssignedClients(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting staff assigned clients:', err);
+        setLoading(false);
+      });
   };
   const [userId] = useState('');
   // const handleChangeUserId = (value: string) => {
@@ -65,20 +70,28 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const handleRemoveMember = (userId: string) => {
     setSubmitLoading(true);
-    Application.RemoveUserStaff({ user_id: userId }).then(() => {
-      setSuccessRemove(true);
-      setSubmitLoading(false);
-    });
+    Application.RemoveUserStaff({ user_id: userId })
+      .then(() => {
+        setSuccessRemove(true);
+        setSubmitLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error removing staff:', err);
+        setSubmitLoading(false);
+      });
   };
   const handleChangeRole = (userId: string, role: string) => {
     setSubmitLoading(true);
-    Application.ChangeRoleUserStaff({ user_id: userId, role: role }).then(
-      () => {
+    Application.ChangeRoleUserStaff({ user_id: userId, role: role })
+      .then(() => {
         setChangeRollSuccess(true);
         setSubmitLoading(false);
         getStaffs();
-      },
-    );
+      })
+      .catch((err) => {
+        console.error('Error changing role staff:', err);
+        setSubmitLoading(false);
+      });
   };
   return (
     <>

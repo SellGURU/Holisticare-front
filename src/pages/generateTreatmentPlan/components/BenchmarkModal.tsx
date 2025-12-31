@@ -24,15 +24,15 @@ const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ isOpen, onClose }) => {
   const [data, setData] = useState<BenchmarkArea[]>([]);
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await Application.getTreatmentPlanModalData({
-          member_id: Number(id),
+      Application.getTreatmentPlanModalData({
+        member_id: Number(id),
+      })
+        .then((res) => {
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.error('Error getting treatment plan modal data:', err);
         });
-        console.log(response);
-        setData(response.data);
-      } catch (err) {
-        console.log(err);
-      }
     };
     fetchData();
   }, [id]);

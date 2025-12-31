@@ -14,10 +14,15 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     setIsLoading(true);
-    FormsApi.getCheckinTemplates().then((res) => {
-      setTemplates(res.data);
-      setIsLoading(false);
-    });
+    FormsApi.getCheckinTemplates()
+      .then((res) => {
+        setTemplates(res.data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting checkin templates:', err);
+        setIsLoading(false);
+      });
   }, []);
   const resolveStapImage = (ste: string) => {
     // ""
