@@ -340,23 +340,68 @@ export const SetOrders: FC<SetOrdersProps> = ({
     handleRemoveLookingForwards(name);
     setRefreshKey((k) => k + 1);
   };
-  const [searchQuery, setSearchQuery] = useState('');
+  // 1) one query per category (tab)
+  const [searchQueries, setSearchQueries] = useState<Record<string, string>>(
+    {},
+  );
 
-  const matchesSearch = (item: any, query: string) => {
-    const q = String(query ?? '')
+  // current query for the active tab
+  const searchQuery = searchQueries[activeCategory] ?? '';
+
+  const setActiveCategoryQuery = (value: string) => {
+    setSearchQueries((prev) => ({
+      ...prev,
+      [activeCategory]: value,
+    }));
+  };
+
+  // 2) category-specific search logic (customize per tab)
+  const SEARCH_FIELDS_BY_CATEGORY: Record<string, string[]> = {
+    Activity: ['Recommendation', 'label'],
+    Diet: ['Recommendation', 'label'],
+    Lifestyle: ['Recommendation', 'label'],
+    Supplement: ['Recommendation', 'label'],
+    Others: ['Recommendation', 'label'],
+  };
+
+  // normalize text for consistent matching
+  const norm = (v: any) =>
+    String(v ?? '')
       .toLowerCase()
-      .trim();
+      .trim()
+      .normalize('NFKD'); // helps with accents/diacritics
+
+  const matchesSearch = (item: any, category: string, query: string) => {
+    const q = norm(query);
     if (!q) return true;
 
-    const title = String(item.title ?? item.Title ?? item.Recommendation ?? '')
-      .toLowerCase()
-      .trim();
+    const fields = SEARCH_FIELDS_BY_CATEGORY[category] ?? [
+      'title',
+      'Title',
+      'Recommendation',
+      'label',
+      'tag',
+    ];
 
-    const tagLabel = String(item.label ?? item.tag ?? '')
-      .toLowerCase()
-      .trim();
+    // Build a single searchable string from the fields for this category
+    const haystack = norm(
+      fields
+        .map((k) => item?.[k])
+        .filter(Boolean)
+        .join(' '),
+    );
 
-    return title.includes(q) || tagLabel.includes(q);
+    if (!haystack) return false;
+
+    // Standard substring match
+    if (haystack.includes(q)) return true;
+
+    // 3) Better single-letter / prefix matching (word-start)
+    // Example: "b" matches "Blood Pressure" even if "b" isn’t a substring you expect
+    const words = haystack.split(/\s+/).filter(Boolean);
+
+    // for 1+ characters, check word-start too (helps "bp" / "bl" style searching)
+    return words.some((w) => w.startsWith(q));
   };
 
   return (
@@ -495,15 +540,32 @@ export const SetOrders: FC<SetOrdersProps> = ({
           </div>
           <div className="w-full sm:w-auto flex flex-wrap sm:flex-nowrap items-center justify-end gap-2 sm:gap-16">
             {/* Search */}
-            <div className="w-full sm:w-[260px]">
+            <div className="w-full flex items-center gap-2 ">
               <SearchBox
                 isHaveBorder
                 isGrayIcon
-                placeHolder="search interventions"
+                placeHolder={`search ${activeCategory.toLowerCase()} interventions`}
                 value={searchQuery}
-                onSearch={setSearchQuery}
+                onSearch={setActiveCategoryQuery}
                 ClassName="w-full"
               />
+              {searchQuery.length > 0 && (
+                <div
+                  onClick={() =>
+                    setSearchQueries((prev) => ({
+                      ...prev,
+                      [activeCategory]: '',
+                    }))
+                  }
+                  className="rounded-2xl border border-gray-50 bg-backgroundColor-Main w-9 h-8 flex items-center justify-center cursor-pointer"
+                >
+                  <img
+                    src="
+                /icons/close.svg"
+                    alt=""
+                  />
+                </div>
+              )}
             </div>
 
             {/* Change Order */}
@@ -532,7 +594,8 @@ export const SetOrders: FC<SetOrdersProps> = ({
           {data
             ?.filter((el: any) => el.Category == activeCategory)
             .map((item: any, index: number) => {
-              if (!matchesSearch(item, searchQuery)) return null;
+              if (!matchesSearch(item, activeCategory, searchQuery))
+                return null;
 
               return (
                 <ActivityCard
@@ -551,7 +614,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
             })}
           {data
             ?.filter((el: any) => el.Category == activeCategory)
-            .every((item: any) => !matchesSearch(item, searchQuery)) && (
+            .every(
+              (item: any) => !matchesSearch(item, activeCategory, searchQuery),
+            ) && (
             <div className="w-full h-[350px] flex flex-col justify-center items-center">
               <img src="/icons/document-text-rectangle.svg" alt="" />
               <div className="text-base text-Text-Primary font-medium -mt-2">
