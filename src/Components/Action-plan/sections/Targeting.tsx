@@ -54,7 +54,11 @@ export const Targeting = () => {
     Application.ActionPlanGenerateTask({
       member_id: id,
       blocks_id: blackId,
-    }).then(() => {});
+    })
+      .then(() => {})
+      .catch((err) => {
+        console.error('Error generating action plan tasks:', err);
+      });
   }, []);
   const handleCheckboxChange = (id: number) => {
     setCategories((prevCategories) =>

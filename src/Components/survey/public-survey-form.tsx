@@ -653,50 +653,58 @@ export function PublicSurveyForm({
             q_unique_id: qId,
             f_unique_id: fId,
             respond,
-          }).finally(() => {
-            // setTimeout(() => {
-            // publish('closeFullscreenModal', {});
-            parent.postMessage(
-              {
-                type: 'closeFullscreenModal',
-                data: {
-                  isFill: true,
-                  isUpdate: false,
-                  member_id: memberId as string,
-                  q_unique_id: qId as string,
-                  f_unique_id: fId as string,
+          })
+            .catch((err) => {
+              console.error('Error saving questionary:', err);
+            })
+            .finally(() => {
+              // setTimeout(() => {
+              // publish('closeFullscreenModal', {});
+              parent.postMessage(
+                {
+                  type: 'closeFullscreenModal',
+                  data: {
+                    isFill: true,
+                    isUpdate: false,
+                    member_id: memberId as string,
+                    q_unique_id: qId as string,
+                    f_unique_id: fId as string,
+                  },
                 },
-              },
-              '*',
-            );
-            // navigate('/report/' + memberId + '/' + 'N');
-            // }, 2000);
-          });
+                '*',
+              );
+              // navigate('/report/' + memberId + '/' + 'N');
+              // }, 2000);
+            });
         } else if (action === 'edit') {
           await Application.EditQuestionary({
             member_id: memberId,
             q_unique_id: qId,
             f_unique_id: fId,
             respond,
-          }).finally(() => {
-            // setTimeout(() => {
-            // publish('closeFullscreenModal',{});
-            parent.postMessage(
-              {
-                type: 'closeFullscreenModal',
-                data: {
-                  isUpdate: true,
-                  isFill: false,
-                  member_id: memberId as string,
-                  q_unique_id: qId as string,
-                  f_unique_id: fId as string,
+          })
+            .catch((err) => {
+              console.error('Error editing questionary:', err);
+            })
+            .finally(() => {
+              // setTimeout(() => {
+              // publish('closeFullscreenModal',{});
+              parent.postMessage(
+                {
+                  type: 'closeFullscreenModal',
+                  data: {
+                    isUpdate: true,
+                    isFill: false,
+                    member_id: memberId as string,
+                    q_unique_id: qId as string,
+                    f_unique_id: fId as string,
+                  },
                 },
-              },
-              '*',
-            );
-            // navigate('/report/' + memberId + '/' + 'N');
-            // }, 2000);
-          });
+                '*',
+              );
+              // navigate('/report/' + memberId + '/' + 'N');
+              // }, 2000);
+            });
         }
       }
 

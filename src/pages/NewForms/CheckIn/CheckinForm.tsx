@@ -30,17 +30,27 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [errorQuestionary, setErrorQuestionary] = useState('');
   const getChechins = () => {
     setLoading(true);
-    FormsApi.getCheckinList().then((res) => {
-      setCheckInList(res.data);
-      setLoading(false);
-    });
+    FormsApi.getCheckinList()
+      .then((res) => {
+        setCheckInList(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting checkin list:', err);
+        setLoading(false);
+      });
   };
   const getQuestionary = () => {
     setLoading(true);
-    FormsApi.getQuestionaryList().then((res) => {
-      setCheckInList(res.data);
-      setLoading(false);
-    });
+    FormsApi.getQuestionaryList()
+      .then((res) => {
+        setCheckInList(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting questionary list:', err);
+        setLoading(false);
+      });
   };
   useEffect(() => {
     if (isQuestionary) {
@@ -69,19 +79,29 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             order: index + 1,
           };
         }),
-      }).then(() => {
-        getChechins();
-        setShowAddModal(false);
-        setShowReposition(false);
-      });
+      })
+        .then(() => {
+          getChechins();
+          setShowAddModal(false);
+          setShowReposition(false);
+        })
+        .catch((err) => {
+          console.error('Error checking in reposition:', err);
+          setLoading(false);
+        });
     } else if (editFormId != '') {
       FormsApi.editCheckIn({
         unique_id: editFormId,
         ...values,
-      }).then(() => {
-        getChechins();
-        setShowAddModal(false);
-      });
+      })
+        .then(() => {
+          getChechins();
+          setShowAddModal(false);
+        })
+        .catch((err) => {
+          console.error('Error editing checkin:', err);
+          setLoading(false);
+        });
     } else {
       FormsApi.addCheckin(values)
         .then(() => {
@@ -104,21 +124,31 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             order: index + 1,
           };
         }),
-      }).then(() => {
-        getQuestionary();
-        setShowFeedBack(false);
-        setShowReposition(false);
-        setEditFormId('');
-        setSelectedTemplate(null);
-      });
+      })
+        .then(() => {
+          getQuestionary();
+          setShowFeedBack(false);
+          setShowReposition(false);
+          setEditFormId('');
+          setSelectedTemplate(null);
+        })
+        .catch((err) => {
+          console.error('Error checking questionary reposition:', err);
+          setLoading(false);
+        });
     } else if (editFormId != '') {
       FormsApi.editQuestionary({
         unique_id: editFormId,
         ...values,
-      }).then(() => {
-        getQuestionary();
-        setShowFeedBack(false);
-      });
+      })
+        .then(() => {
+          getQuestionary();
+          setShowFeedBack(false);
+        })
+        .catch((err) => {
+          console.error('Error editing questionary:', err);
+          setLoading(false);
+        });
     } else {
       setErrorQuestionary('');
       FormsApi.addQuestionary(values)
@@ -179,13 +209,21 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
               )}
               onDelete={(id) => {
                 if (isQuestionary) {
-                  FormsApi.deleteQuestionary(id).then(() => {
-                    getQuestionary();
-                  });
+                  FormsApi.deleteQuestionary(id)
+                    .then(() => {
+                      getQuestionary();
+                    })
+                    .catch((err) => {
+                      console.error('Error deleting questionary:', err);
+                    });
                 } else {
-                  FormsApi.deleteCheckin(id).then(() => {
-                    getChechins();
-                  });
+                  FormsApi.deleteCheckin(id)
+                    .then(() => {
+                      getChechins();
+                    })
+                    .catch((err) => {
+                      console.error('Error deleting checkin:', err);
+                    });
                 }
               }}
               onEdit={(id) => {

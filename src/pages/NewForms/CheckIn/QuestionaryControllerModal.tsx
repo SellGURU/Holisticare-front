@@ -180,17 +180,22 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   useEffect(() => {
     if (editId != '' && editId) {
       setLoading(true);
-      FormsApi.showQuestinary(editId).then((res) => {
-        setQuestions(res.data.questions);
-        setTitleForm(res.data.title);
-        const totalMs = res.data.time;
-        const mins = Math.floor(totalMs / 60000);
-        const secs = Math.floor((totalMs % 60000) / 1000);
-        setMinutes(mins);
-        setSeconds(secs);
-        setChecked(res.data.share_with_client);
-        setLoading(false);
-      });
+      FormsApi.showQuestinary(editId)
+        .then((res) => {
+          setQuestions(res.data.questions);
+          setTitleForm(res.data.title);
+          const totalMs = res.data.time;
+          const mins = Math.floor(totalMs / 60000);
+          const secs = Math.floor((totalMs % 60000) / 1000);
+          setMinutes(mins);
+          setSeconds(secs);
+          setChecked(res.data.share_with_client);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error showing questionary:', err);
+          setLoading(false);
+        });
     }
   }, [editId]);
   return (

@@ -23,18 +23,30 @@ const Activity = () => {
 
   const getExercisesList = () => {
     setLoading(true);
-    Application.getExercisesList({}).then((res) => {
-      setExcercisesList(res.data);
-      setLoading(false);
-    });
+    Application.getExercisesList({})
+      .then((res) => {
+        setExcercisesList(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting exercises list:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const getActivityList = () => {
     setLoading(true);
-    Application.activityList().then((res) => {
-      setDataList(res.data);
-      setLoading(false);
-    });
+    Application.activityList()
+      .then((res) => {
+        setDataList(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting activity list:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {

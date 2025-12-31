@@ -163,6 +163,12 @@ const Stadio: FC<StadioProps> = ({
           category: res.data,
         }));
       })
+      .catch((err) => {
+        console.error(
+          'Error getting action plan generate action plan task:',
+          err,
+        );
+      })
       .finally(() => {
         setIsAutoGenerate(false);
         setIsAutoGenerateComplete(true);
@@ -188,14 +194,18 @@ const Stadio: FC<StadioProps> = ({
         member_id: id,
         tasks: flattenedActions,
         percents: plans,
-      }).then((res) => {
-        if (res.data.conflicts.length > 0) {
-          setHaveConflic(true);
-          setHaveConflicText(res.data.conflicts);
-        } else {
-          setHaveConflic(false);
-        }
-      });
+      })
+        .then((res) => {
+          if (res.data.conflicts.length > 0) {
+            setHaveConflic(true);
+            setHaveConflicText(res.data.conflicts);
+          } else {
+            setHaveConflic(false);
+          }
+        })
+        .catch((err) => {
+          console.error('Error checking conflic action plan:', err);
+        });
     }
   };
   useEffect(() => {
@@ -344,6 +354,9 @@ const Stadio: FC<StadioProps> = ({
       })
         .then((res) => {
           setHolisticPlan(res.data.details);
+        })
+        .catch((err) => {
+          console.error('Error getting holistic plan review:', err);
         })
         .finally(() => {
           setIsLoading(false);

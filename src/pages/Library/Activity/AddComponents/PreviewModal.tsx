@@ -74,14 +74,18 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
         ) {
           return Application.showExerciseFille({
             file_id: file.Content.file_id,
-          }).then((res) => ({
-            Title: res.data.file_name,
-            Type: res.data.file_type,
-            Content: {
-              file_id: file.Content.file_id,
-              url: res.data.base_64_data,
-            },
-          }));
+          })
+            .then((res) => ({
+              Title: res.data.file_name,
+              Type: res.data.file_type,
+              Content: {
+                file_id: file.Content.file_id,
+                url: res.data.base_64_data,
+              },
+            }))
+            .catch((err) => {
+              console.error('Error showing exercise file:', err);
+            });
         } else if (file.Type === 'link') {
           return Promise.resolve({
             Content: {
@@ -105,15 +109,19 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
   const [Sections, setSections] = useState<any[]>([]);
   useEffect(() => {
     if (isActivty && isOpen) {
-      Application.getActivity(exercise.Act_Id).then((res) => {
-        setSections(res.data.Sections);
-        setData({
-          title: res.data.Title,
-          score: res.data.Base_Score,
-          instruction: res.data.Instruction,
-          Parent_Title: res.data.Parent_Title,
+      Application.getActivity(exercise.Act_Id)
+        .then((res) => {
+          setSections(res.data.Sections);
+          setData({
+            title: res.data.Title,
+            score: res.data.Base_Score,
+            instruction: res.data.Instruction,
+            Parent_Title: res.data.Parent_Title,
+          });
+        })
+        .catch((err) => {
+          console.error('Error getting activity:', err);
         });
-      });
     }
   }, [isOpen, exercise]);
   const [indexImage, setIndexImage] = useState(0);
