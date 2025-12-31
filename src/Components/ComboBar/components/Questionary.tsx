@@ -117,7 +117,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
         }
       })
       .catch((err) => {
-        console.error(err);
+        console.error('Error getting questionnaires:', err);
         // setError("Failed to fetch client data");
       })
       .finally(() => {
@@ -539,10 +539,14 @@ export const Questionary: React.FC<QuestionaryProps> = ({
       <div
         onClick={() => {
           if (!tryComplete) {
-            Application.AddQuestionaryList({ member_id: id }).then((res) => {
-              setAddForms(res.data);
-              setTryAdd(true);
-            });
+            Application.AddQuestionaryList({ member_id: id })
+              .then((res) => {
+                setAddForms(res.data);
+                setTryAdd(true);
+              })
+              .catch((err) => {
+                console.error('Error adding questionnaires:', err);
+              });
           }
 
           // Application.getGoogleFormEmty()
@@ -673,6 +677,9 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                           setTimeout(() => {
                             setTryComplete(false);
                           }, 300);
+                        })
+                        .catch((err) => {
+                          console.error('Error saving questionary:', err);
                         })
                         .finally(() => {
                           setData((prevData: any) => {

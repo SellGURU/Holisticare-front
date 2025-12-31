@@ -36,9 +36,13 @@ const Actions: React.FC = () => {
   useEffect(() => {
     DashboardApi.getActionsList({
       time_filter: selectedOption,
-    }).then((res) => {
-      setActions(res.data);
-    });
+    })
+      .then((res) => {
+        setActions(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting actions list:', err);
+      });
   }, [selectedOption]);
   const [filter, setFilter] = useState<'All' | 'Resolved' | 'Pending'>('All');
   const [isLoading] = useState<boolean>(false);

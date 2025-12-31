@@ -49,10 +49,16 @@ const AddPlayGround: FC<AddPlayGroundProps> = ({
           );
           setFormValues(initialValues);
         })
+        .catch((err) => {
+          console.error('Error getting input playground:', err);
+        })
         .finally(() => setLoading(false));
       Application.getInputPlayGroundVariables()
         .then((res) => {
           setVariables(res.data.map((item: any) => item.name));
+        })
+        .catch((err) => {
+          console.error('Error getting input playground variables:', err);
         })
         .finally(() => setLoading(false));
     }

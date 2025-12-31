@@ -36,9 +36,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   isAdd,
 }) => {
   useEffect(() => {
-    Application.HolisticPlanCategories({}).then((res) => {
-      setGroups(res.data);
-    });
+    Application.HolisticPlanCategories({})
+      .then((res) => {
+        setGroups(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting holistic plan categories:', err);
+      });
   }, []);
 
   const [selectedDays, setSelectedDays] = useState<string[]>([]);

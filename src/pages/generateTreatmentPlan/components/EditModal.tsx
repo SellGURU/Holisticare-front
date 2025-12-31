@@ -188,19 +188,23 @@ const EditModal: FC<EditModalProps> = ({
   //   onSubmit: (values) => ,
   // });
   useEffect(() => {
-    Application.HolisticPlanCategories({}).then((res) => {
-      setGroups(res.data);
+    Application.HolisticPlanCategories({})
+      .then((res) => {
+        setGroups(res.data);
 
-      // If there's a default category, set the initial dose value
-      if (defalts?.Category) {
-        const selectedGroupData = res.data.find(
-          (g: any) => Object.keys(g)[0] === defalts.Category,
-        );
-        if (selectedGroupData) {
-          setSelectedGroupDose(selectedGroupData[defalts.Category].Dose);
+        // If there's a default category, set the initial dose value
+        if (defalts?.Category) {
+          const selectedGroupData = res.data.find(
+            (g: any) => Object.keys(g)[0] === defalts.Category,
+          );
+          if (selectedGroupData) {
+            setSelectedGroupDose(selectedGroupData[defalts.Category].Dose);
+          }
         }
-      }
-    });
+      })
+      .catch((err) => {
+        console.error('Error getting holistic plan categories:', err);
+      });
   }, []);
 
   useEffect(() => {

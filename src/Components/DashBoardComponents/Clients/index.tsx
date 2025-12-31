@@ -17,9 +17,13 @@ const RecentCheckIns: React.FC = () => {
   const [Clients, setClients] = useState<client[]>([]);
 
   useEffect(() => {
-    DashboardApi.getCLientsList({}).then((res) => {
-      setClients(res.data.client_list);
-    });
+    DashboardApi.getCLientsList({})
+      .then((res) => {
+        setClients(res.data.client_list);
+      })
+      .catch((err) => {
+        console.error('Error getting clients list:', err);
+      });
   }, []);
 
   const formatDate = (dateString: string) => {

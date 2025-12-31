@@ -115,15 +115,19 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   }, [isOpen, exerciseId, isEdit]);
   useEffect(() => {
     if (isOpen) {
-      Application.getExerciseFilters({}).then((res) => {
-        setConditionsOptions(res.data.Conditions);
-        setEquipmentOptions(res.data.Equipment);
-        setMuscleOptions(res.data.Muscle);
-        setLevelOptions(res.data.Level);
-        setTermsOptions(res.data.Terms);
-        setTypeOptions(res.data.Type);
-        setLocationBoxs(res.data.Location);
-      });
+      Application.getExerciseFilters({})
+        .then((res) => {
+          setConditionsOptions(res.data.Conditions);
+          setEquipmentOptions(res.data.Equipment);
+          setMuscleOptions(res.data.Muscle);
+          setLevelOptions(res.data.Level);
+          setTermsOptions(res.data.Terms);
+          setTypeOptions(res.data.Type);
+          setLocationBoxs(res.data.Location);
+        })
+        .catch((err) => {
+          console.error('Error getting exercise filters:', err);
+        });
     }
   }, [isOpen]);
   useEffect(() => {
@@ -143,14 +147,18 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         ) {
           return Application.showExerciseFille({
             file_id: file.Content.file_id,
-          }).then((res) => ({
-            Title: res.data.file_name,
-            Type: res.data.file_type,
-            Content: {
-              file_id: file.Content.file_id,
-              url: res.data.base_64_data,
-            },
-          }));
+          })
+            .then((res) => ({
+              Title: res.data.file_name,
+              Type: res.data.file_type,
+              Content: {
+                file_id: file.Content.file_id,
+                url: res.data.base_64_data,
+              },
+            }))
+            .catch((err) => {
+              console.error('Error showing exercise file:', err);
+            });
         } else if (file.Type === 'link') {
           return Promise.resolve({
             Content: {

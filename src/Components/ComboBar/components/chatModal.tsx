@@ -39,9 +39,13 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
     Application.getListChats({
       member_id: member_id,
       chatting_with: 'client',
-    }).then((res) => {
-      setMessageData(res.data.messages.reverse());
-    });
+    })
+      .then((res) => {
+        setMessageData(res.data.messages.reverse());
+      })
+      .catch((err) => {
+        console.error('Error getting list chats:', err);
+      });
   };
   useEffect(() => {
     if (memberId) {

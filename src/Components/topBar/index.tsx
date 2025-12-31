@@ -179,37 +179,41 @@ export const TopBar: FC<TopBarProps> = ({
   const [hasShareInRoute, setHasShareInRoute] = useState(false);
 
   const getShowBrandInfo = () => {
-    Application.getShowBrandInfo().then((res) => {
-      if (
-        res.data.brand_elements.name === null ||
-        res.data.brand_elements.name === '' ||
-        res.data.brand_elements.logo === null
-      ) {
-        navigate('/register-profile');
-        return;
-      }
-      setCustomTheme({
-        headLine: res.data.brand_elements.headline,
-        name: res.data.brand_elements.name,
-        selectedImage: res.data.brand_elements.logo,
-      });
-      localStorage.setItem(
-        'brandInfoData',
-        JSON.stringify({
+    Application.getShowBrandInfo()
+      .then((res) => {
+        if (
+          res.data.brand_elements.name === null ||
+          res.data.brand_elements.name === '' ||
+          res.data.brand_elements.logo === null
+        ) {
+          navigate('/register-profile');
+          return;
+        }
+        setCustomTheme({
           headLine: res.data.brand_elements.headline,
           name: res.data.brand_elements.name,
           selectedImage: res.data.brand_elements.logo,
-        }),
-      );
-      // alert(res.data.brand_elements.knowledge_playground);
-      if (res.data.brand_elements.knowledge_playground == true) {
-        publish(
-          'knowledge_playground-Show',
-          res.data.brand_elements.knowledge_playground,
+        });
+        localStorage.setItem(
+          'brandInfoData',
+          JSON.stringify({
+            headLine: res.data.brand_elements.headline,
+            name: res.data.brand_elements.name,
+            selectedImage: res.data.brand_elements.logo,
+          }),
         );
-      }
-      // localStorage.setItem("knowledge_playground", JSON.stringify(res.data.knowledge_playground))
-    });
+        // alert(res.data.brand_elements.knowledge_playground);
+        if (res.data.brand_elements.knowledge_playground == true) {
+          publish(
+            'knowledge_playground-Show',
+            res.data.brand_elements.knowledge_playground,
+          );
+        }
+        // localStorage.setItem("knowledge_playground", JSON.stringify(res.data.knowledge_playground))
+      })
+      .catch((err) => {
+        console.error('Error getting show brand info:', err);
+      });
   };
 
   useEffect(() => {
@@ -468,16 +472,16 @@ export const TopBar: FC<TopBarProps> = ({
                     } catch (error) {
                       console.error('Error sharing:', error);
                     }
-                  } else {
-                    alert('Sharing not supported in this browser.');
-                  }
-                  // window.open(
-                  //   '/share/' +
-                  //     res.data.unique_key +
-                  //     '/' +
-                  //     resolveAccesssUser(settingsData),
-                  // );
-                });
+                    // window.open(
+                    //   '/share/' +
+                    //     res.data.unique_key +
+                    //     '/' +
+                    //     resolveAccesssUser(settingsData),
+                    // );
+                  }})
+                  .catch((err) => {
+                    console.error('Error getting patient info', err);
+                  });
               }
             }}
             onclose={() => {

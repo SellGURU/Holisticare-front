@@ -220,12 +220,16 @@ const Report = () => {
             <div
               onClick={() => {
                 if (id) {
-                  Application.refreshData(id, false).then(() => {
-                    setshowRefreshModal(false);
-                    publish('SyncRefresh', {});
-                    publish('disableGenerate', {});
-                    publish('checkProgress', {});
-                  });
+                  Application.refreshData(id, false)
+                    .then(() => {
+                      setshowRefreshModal(false);
+                      publish('SyncRefresh', {});
+                      publish('disableGenerate', {});
+                      publish('checkProgress', {});
+                    })
+                    .catch((err) => {
+                      console.error('Error refreshing data:', err);
+                    });
                 }
               }}
               className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm"

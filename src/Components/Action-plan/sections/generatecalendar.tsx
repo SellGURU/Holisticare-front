@@ -226,6 +226,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   .then((res: any) => {
                     handleApiResponse(res.data);
                   })
+                  .catch((err) => {
+                    console.error('Error generating AI:', err);
+                  })
                   .finally(() => setIsLoadingAi(false));
               }}
             />
@@ -261,10 +264,16 @@ const GenerateCalendar: React.FC = () => {
     Application.ActionPlanGenerateTask({
       member_id: id,
       blocks_id: blackId,
-    }).then((res) => {
-      setData(res.data);
-      setisLoading(false);
-    });
+    })
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.error('Error generating action plan tasks:', err);
+      })
+      .finally(() => {
+        setisLoading(false);
+      });
   }, []);
   const [data, setData] = useState<any>({});
   useEffect(() => {
@@ -323,6 +332,9 @@ const GenerateCalendar: React.FC = () => {
                   ai_generation_mode: val,
                 })
                   .then((res) => setData({ ...res.data }))
+                  .catch((err) => {
+                    console.error('Error generating AI:', err);
+                  })
                   .finally(() => setisAiLoading(false));
               }}
               text="Generate by AI"
@@ -353,6 +365,9 @@ const GenerateCalendar: React.FC = () => {
                   ai_generation_mode: val,
                 })
                   .then((res) => setData({ ...res.data }))
+                  .catch((err) => {
+                    console.error('Error generating AI:', err);
+                  })
                   .finally(() => setisAiLoading(false));
               }}
               text="Generate by AI"
@@ -417,6 +432,9 @@ const GenerateCalendar: React.FC = () => {
                 })
                   .then(() => {
                     navigate(-1);
+                  })
+                  .catch((err) => {
+                    console.error('Error saving action plan tasks:', err);
                   })
                   .finally(() => {
                     setisLoading(false);

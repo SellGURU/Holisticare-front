@@ -56,9 +56,13 @@ const GenerateNewActionPlan = () => {
   useEffect(() => {
     Application.getActionPlanMethods({
       member_id: id,
-    }).then((res) => {
-      setPlan(res.data);
-    });
+    })
+      .then((res) => {
+        setPlan(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting action plan methods:', err);
+      });
   }, []);
   const [isEditMode, setisEditMode] = useState(false);
   // const [Priorities] = useState<PrioritiesType>(Data);
@@ -69,12 +73,16 @@ const GenerateNewActionPlan = () => {
       member_id: id,
       method: method,
       method_name: name,
-    }).finally(() => {
-      setisLoading(false);
-      navigate('/report/' + id + '/a?section=Action Plan');
-    });
-    // setTimeout(()=>{
-    // },3000)
+    })
+      .then(() => {
+        navigate('/report/' + id + '/a?section=Action Plan');
+      })
+      .catch((err) => {
+        console.error('Error generating action plan:', err);
+      })
+      .finally(() => {
+        setisLoading(false);
+      });
   };
 
   return (
