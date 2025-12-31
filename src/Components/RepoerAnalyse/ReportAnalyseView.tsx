@@ -115,7 +115,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         member_id: resolvedMemberID,
       })
         .then((res) => {
-          if(setFirst_time_view) {
+          if (setFirst_time_view) {
             setFirst_time_view?.(res.data.first_time_view);
           }
 
