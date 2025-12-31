@@ -35,13 +35,14 @@ import InfoToltip from '../InfoToltip';
 // import SpinnerLoader from '../SpinnerLoader';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
-import DetiledAcordin from './Boxs/detailedAcordin';
+// import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
 // import { ShareModal } from './ShareModal';
 import { UploadTestV2 } from './UploadTestV2';
 // import HolisticShare from './components/HolisticShare';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
 import MarkdownText from '../markdownText';
+import NewDetailedAcordin from './Boxs/newDetailedAcordin';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -1058,13 +1059,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     <div className="mt-6 block xl:hidden">
                       {resolveCategories().map((el: any, index: number) => {
                         return (
-                          <DetiledAcordin
+                          // <DetiledAcordin
+                          //   refrences={resolveBioMarkers().filter(
+                          //     (val: any) => val.subcategory == el.subcategory,
+                          //   )}
+                          //   data={el}
+                          //   key={index}
+                          // ></DetiledAcordin>
+                          <NewDetailedAcordin
                             refrences={resolveBioMarkers().filter(
                               (val: any) => val.subcategory == el.subcategory,
                             )}
                             data={el}
                             key={index}
-                          ></DetiledAcordin>
+                          ></NewDetailedAcordin>
                         );
                       })}
                     </div>
