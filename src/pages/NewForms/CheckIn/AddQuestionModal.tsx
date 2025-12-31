@@ -450,9 +450,12 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     value={
                       ifQuestion.question_order
                         ? 'Q' +
-                            (ifQuestion.question_order || 0) +
-                            ': ' +
-                            ifQuestion.question || ''
+                          (questions.findIndex(
+                            (q) => q.question === ifQuestion.question,
+                          ) +
+                            1) +
+                          ': ' +
+                          ifQuestion.question
                         : ''
                     }
                     onChange={(value) => {
