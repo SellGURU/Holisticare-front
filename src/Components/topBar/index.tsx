@@ -453,32 +453,34 @@ export const TopBar: FC<TopBarProps> = ({
               } else {
                 Application.getPatientsInfo({
                   member_id: routeData[2],
-                }).then(async (res) => {
-                  if (navigator.share) {
-                    try {
-                      await navigator
-                        .share({
-                          title: 'Holisticare',
-                          url:
-                            `https://holisticare-clinic.vercel.app` +
-                            '/share/' +
-                            res.data.unique_key +
-                            '/' +
-                            resolveAccesssUser(settingsData),
-                        })
-                        .finally(() => {
-                          setOpenShare(false);
-                        });
-                    } catch (error) {
-                      console.error('Error sharing:', error);
+                })
+                  .then(async (res) => {
+                    if (navigator.share) {
+                      try {
+                        await navigator
+                          .share({
+                            title: 'Holisticare',
+                            url:
+                              `https://holisticare-clinic.vercel.app` +
+                              '/share/' +
+                              res.data.unique_key +
+                              '/' +
+                              resolveAccesssUser(settingsData),
+                          })
+                          .finally(() => {
+                            setOpenShare(false);
+                          });
+                      } catch (error) {
+                        console.error('Error sharing:', error);
+                      }
+                      // window.open(
+                      //   '/share/' +
+                      //     res.data.unique_key +
+                      //     '/' +
+                      //     resolveAccesssUser(settingsData),
+                      // );
                     }
-                    // window.open(
-                    //   '/share/' +
-                    //     res.data.unique_key +
-                    //     '/' +
-                    //     resolveAccesssUser(settingsData),
-                    // );
-                  }})
+                  })
                   .catch((err) => {
                     console.error('Error getting patient info', err);
                   });
