@@ -50,6 +50,7 @@ interface ReportAnalyseViewprops {
   uniqKey?: string;
   isActive?: boolean;
   setActiveCheckProgress: (status: boolean) => void;
+  setFirst_time_view?: (status: boolean) => void;
 }
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
@@ -58,6 +59,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   isActive,
   setActiveCheckProgress,
   uniqKey,
+  setFirst_time_view,
 }) => {
   const { id, name } = useParams<{ id: string; name: string }>();
   const resolvedMemberID = id ? parseInt(id) : memberID;
@@ -113,6 +115,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         member_id: resolvedMemberID,
       })
         .then((res) => {
+          if(setFirst_time_view) {
+            setFirst_time_view?.(res.data.first_time_view);
+          }
+
           setUserInfoData(res.data);
           publish('userInfoData', res.data);
           setIsHaveReport(res.data.show_report);
