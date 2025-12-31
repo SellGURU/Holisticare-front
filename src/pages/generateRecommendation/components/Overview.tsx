@@ -213,39 +213,38 @@ export const Overview: FC<OverviewProps> = ({
             </>
           );
         })} */}
-      {treatmentPlanData["suggestion_tab"]
-  .filter(
-    (el: any) =>
-      el.checked === true &&
-      visibleCategoriy
-        .filter((c) => c.visible)
-        .map((c) => c.name)
-        .includes(el.Category),
-  )
-  .map((el: any, suggestionIndex: number) => {
-    if (!matchesSearch(el, searchQuery)) return null;
+        {treatmentPlanData['suggestion_tab']
+          .filter(
+            (el: any) =>
+              el.checked === true &&
+              visibleCategoriy
+                .filter((c) => c.visible)
+                .map((c) => c.name)
+                .includes(el.Category),
+          )
+          .map((el: any, suggestionIndex: number) => {
+            if (!matchesSearch(el, searchQuery)) return null;
 
-    return (
-      <div
-        className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
-        key={`${el.title}-${suggestionIndex}-${refreshKey}`}
-      >
-        <BioMarkerRowOldSuggestions
-          index={suggestionIndex} // stays stable now
-          value={el}
-          onEdit={() => {}}
-          onchange={() => {}}
-          onDelete={() => {}}
-          issuesData={details}
-          setIssuesData={setDetails}
-          handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
-          handleRemoveLookingForwards={handleRemoveLookingForwards}
-          handleRemoveIssueFromList={handleRemoveIssueFromList}
-        />
-      </div>
-    );
-  })}
-
+            return (
+              <div
+                className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
+                key={`${el.title}-${suggestionIndex}-${refreshKey}`}
+              >
+                <BioMarkerRowOldSuggestions
+                  index={suggestionIndex} // stays stable now
+                  value={el}
+                  onEdit={() => {}}
+                  onchange={() => {}}
+                  onDelete={() => {}}
+                  issuesData={details}
+                  setIssuesData={setDetails}
+                  handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
+                  handleRemoveLookingForwards={handleRemoveLookingForwards}
+                  handleRemoveIssueFromList={handleRemoveIssueFromList}
+                />
+              </div>
+            );
+          })}
       </div>
     </>
   );
