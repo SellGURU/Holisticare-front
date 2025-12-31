@@ -23,6 +23,7 @@ interface BiomarkersSectionProps {
   setrowErrors: any;
   showOnlyErrors: boolean;
   setShowOnlyErrors: (showOnlyErrors: boolean) => void;
+  progressBiomarkerUpload: number;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -39,6 +40,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   setIsScaling,
   showOnlyErrors,
   setShowOnlyErrors,
+  progressBiomarkerUpload,
 }) => {
   const [changedRows, setChangedRows] = useState<string[]>([]);
   const [mappedRows, setMappedRows] = useState<string[]>([]);
@@ -359,10 +361,29 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       {loading ? (
         <div
           style={{ height: window.innerHeight - 480 + 'px' }}
-          className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
+          className="flex items-center min-h-[200px] w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4"
         >
-          <Circleloader></Circleloader>
-          <div style={{ textAlignLast: 'center' }} className="text-center">
+          <Circleloader />
+          {/* Progress Bar */}
+          <div className="w-72">
+            <div className="flex justify-between mb-1 text-[11px] text-Text-Secondary">
+              <span>Processing biomarkers</span>
+              <span>{progressBiomarkerUpload}%</span>
+            </div>
+
+            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 rounded-full ${
+                  progressBiomarkerUpload < 100
+                    ? 'bg-Primary-DeepTeal'
+                    : 'bg-Primary-EmeraldGreen'
+                }`}
+                style={{ width: `${progressBiomarkerUpload}%` }}
+              />
+            </div>
+          </div>
+
+          <div className="text-center">
             Processing… We’ll show the detected biomarkers shortly.
           </div>
         </div>

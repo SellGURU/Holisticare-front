@@ -54,7 +54,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [polling, setPolling] = useState(true); // ✅ control polling
   const [deleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
-  console.log(uploadedFile);
   // console.log(extractedBiomarkers);
   const [isUploadFromComboBar, setIsUploadFromComboBar] = useState(false);
   useEffect(() => {
@@ -64,6 +63,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     });
   }, []);
   const [biomarkerLoading, setbiomarkerLoading] = useState(false);
+  const [progressBiomarkerUpload, setProgressBiomarkerUpload] = useState(0);
   useEffect(() => {
     if (!uploadedFile?.file_id) return;
 
@@ -71,11 +71,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
     const fetchData = async () => {
       setbiomarkerLoading(true);
+      setProgressBiomarkerUpload(
+        progressBiomarkerUpload !== 0 ? progressBiomarkerUpload : 0,
+      );
       try {
         const res = await Application.checkLabStepOne({
           file_id: uploadedFile.file_id,
         });
-
+        setProgressBiomarkerUpload(res.data.progress);
         setfileType(res.data.lab_type);
         const sorted = (res.data.extracted_biomarkers || [])
           .slice()
@@ -102,6 +105,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           res.data.extracted_biomarkers &&
           res.data.extracted_biomarkers.length > 0
         ) {
+          setProgressBiomarkerUpload(0);
           onValidate(sorted);
         }
       } catch (err) {
@@ -863,6 +867,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             setRowErrors([]);
           }}
           loading={biomarkerLoading}
+          progressBiomarkerUpload={progressBiomarkerUpload || 0}
           btnLoading={btnLoading}
           fileType={fileType}
           uploadedFile={uploadedFile}
