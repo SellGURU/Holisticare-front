@@ -40,6 +40,7 @@ import SurveyResponsesPage from '../pages/surveysView/page.tsx';
 import Playground from '../pages/playground/index.tsx';
 import HtmlViewer from '../pages/HtmlViewer/index.tsx';
 import MaintenancePage from '../pages/maintenance/index.tsx';
+import NotFound from '../pages/notFound/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -211,6 +212,10 @@ const router = createBrowserRouter([
   {
     path: '/maintenance',
     element: <MaintenancePage></MaintenancePage>,
+  },
+  {
+    path: '*',
+    element: <NotFound></NotFound>,
   },
 ]);
 
