@@ -185,17 +185,16 @@ export const Overview: FC<OverviewProps> = ({
           />
         </div>
         <div className="w-full flex justify-end">
-          <div className='xl:w-[440px]'>
-<SearchBox
-            isHaveBorder
-            isGrayIcon
-            placeHolder="search interventions"
-            value={searchQuery}
-            onSearch={setSearchQuery}
-            ClassName="w-full"
-          />
+          <div className="xl:w-[440px]">
+            <SearchBox
+              isHaveBorder
+              isGrayIcon
+              placeHolder="search interventions"
+              value={searchQuery}
+              onSearch={setSearchQuery}
+              ClassName="w-full"
+            />
           </div>
-          
         </div>
 
         {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
