@@ -512,21 +512,26 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             isStaff
                             isLarge
                             isSetting
-                            value={(errorForRow && errorForRow.includes("System Biomarker")?'...':b.biomarker)}
+                            value={
+                              errorForRow &&
+                              errorForRow.includes('System Biomarker')
+                                ? '...'
+                                : b.biomarker
+                            }
                             options={avalibaleBiomarkers || []}
                             onChange={(val: string) => {
                               updateAndStandardize(b.biomarker_id, {
                                 biomarker: val,
                               });
                               setMappedRows((prev) => {
-                                if(val == b.biomarker){
-                                  return [...prev]
-                                }else {
-                                 return prev.includes(b.biomarker_id)?
-                                   prev.filter((el) =>el!=b.biomarker_id) :
-                                   prev
+                                if (val == b.biomarker) {
+                                  return [...prev];
+                                } else {
+                                  return prev.includes(b.biomarker_id)
+                                    ? prev.filter((el) => el != b.biomarker_id)
+                                    : prev;
                                 }
-                              })
+                              });
                               setChangedRows((prev) =>
                                 prev.includes(b.biomarker_id)
                                   ? prev
@@ -553,12 +558,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               isLarge
                               isSetting
                               value={
-                                (errorForRow &&errorForRow.includes("Extracted Unit")) ? '...' :b.original_unit || b.possible_values.units[0]
+                                errorForRow &&
+                                errorForRow.includes('Extracted Unit')
+                                  ? '...'
+                                  : b.original_unit ||
+                                    b.possible_values.units[0]
                               }
                               options={unitOptions[index] || []}
                               onMenuOpen={() => {
                                 // if (!unitOptions[index]) {
-                                  fetchUnits(index, b.biomarker);
+                                fetchUnits(index, b.biomarker);
                                 // }
                               }}
                               onChange={(val: string) =>
