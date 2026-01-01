@@ -27,9 +27,13 @@ const NewGenerateActionPlan = () => {
   const [duration, setDuration] = useState(1);
   const [planObjective, setPlanObjective] = useState('');
   useEffect(() => {
-    Application.getActionPlanMethodsNew().then((res) => {
-      setPlans(res.data);
-    });
+    Application.getActionPlanMethodsNew()
+      .then((res) => {
+        setPlans(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting action plan methods:', err);
+      });
   }, []);
   const generateActionPlanTaskDirectory = () => {
     setisLoading(true);
@@ -39,6 +43,9 @@ const NewGenerateActionPlan = () => {
     })
       .then((res) => {
         setCategories(res.data.action_db);
+      })
+      .catch((err) => {
+        console.error('Error getting action plan task directory:', err);
       })
       .finally(() => {
         setisLoading(false);
@@ -53,6 +60,12 @@ const NewGenerateActionPlan = () => {
     })
       .then((res) => {
         setSelectedCategory(res.data);
+      })
+      .catch((err) => {
+        console.error(
+          'Error getting action plan generate action plan task:',
+          err,
+        );
       })
       .finally(() => {
         setisGenerate(false);
@@ -81,6 +94,9 @@ const NewGenerateActionPlan = () => {
     })
       .then(() => {
         navigate(-1);
+      })
+      .catch((err) => {
+        console.error('Error getting action plan block save tasks:', err);
       })
       .finally(() => {
         setLoadingButton(false);

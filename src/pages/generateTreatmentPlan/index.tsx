@@ -64,6 +64,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
     Application.saveTreatmentPaln({
       ...treatmentPlanData,
       member_id: id,
+    }).catch((err) => {
+      console.error('Error saving treatment plan:', err);
     });
 
     setisFinalLoading(true);
@@ -84,6 +86,9 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         setClientGools(res.data.client_goals);
         setTratmentPlanData(res.data);
         setGenereStep('Generate Plan');
+      })
+      .catch((err) => {
+        console.error('Error generating treatment plan:', err);
       })
       .finally(() => {
         setIsLoading(false);
@@ -573,10 +578,16 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 Application.medicalAnalyse({
                   member_id: id,
                   mode: 'quick',
-                }).then((res) => {
-                  setAnalysingQuik(false);
-                  updateClientConditionInsights(res.data);
-                });
+                })
+                  .then((res) => {
+                    updateClientConditionInsights(res.data);
+                  })
+                  .catch((err) => {
+                    console.error('Error analyzing quick:', err);
+                  })
+                  .finally(() => {
+                    setAnalysingQuik(false);
+                  });
               }}
               className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50"
             >
@@ -598,10 +609,16 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 Application.medicalAnalyse({
                   member_id: id,
                   mode: 'comprehensive',
-                }).then((res) => {
-                  setAnalysingCompar(false);
-                  updateClientConditionInsights(res.data);
-                });
+                })
+                  .then((res) => {
+                    updateClientConditionInsights(res.data);
+                  })
+                  .catch((err) => {
+                    console.error('Error analyzing comprehensive:', err);
+                  })
+                  .finally(() => {
+                    setAnalysingCompar(false);
+                  });
               }}
               className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50"
             >

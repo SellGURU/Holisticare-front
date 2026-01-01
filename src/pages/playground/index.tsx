@@ -15,17 +15,25 @@ const Playground = () => {
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [allTests, setAllTests] = useState<any[]>([]);
   const getPlaygroundList = () => {
-    Application.getPlaygroundList().then((res) => {
-      setAllTests(res.data);
-    });
+    Application.getPlaygroundList()
+      .then((res) => {
+        setAllTests(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting playground list:', err);
+      });
   };
   const navigate = useNavigate();
   const checkAcccessPlayGround = () => {
-    Application.getShowBrandInfo().then((res) => {
-      if (res.data.brand_elements.knowledge_playground == false) {
-        navigate('/');
-      }
-    });
+    Application.getShowBrandInfo()
+      .then((res) => {
+        if (res.data.brand_elements.knowledge_playground == false) {
+          navigate('/');
+        }
+      })
+      .catch((err) => {
+        console.error('Error getting show brand info:', err);
+      });
   };
   useEffect(() => {
     getPlaygroundList();

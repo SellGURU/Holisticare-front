@@ -13,13 +13,21 @@ const InfoToltip: React.FC<InfoToltipProps> = ({ mode, isShare }) => {
   useEffect(() => {
     if (!isShare) {
       if (mode == 'Treatment') {
-        Application.showPlanPriorty({}).then((res) => {
-          setItems(res.data);
-        });
+        Application.showPlanPriorty({})
+          .then((res) => {
+            setItems(res.data);
+          })
+          .catch((err) => {
+            console.error('Error showing plan priority:', err);
+          });
       } else {
-        Application.showCategory({}).then((res) => {
-          setItems(res.data.items);
-        });
+        Application.showCategory({})
+          .then((res) => {
+            setItems(res.data.items);
+          })
+          .catch((err) => {
+            console.error('Error showing category:', err);
+          });
       }
     }
   }, [isShare]);

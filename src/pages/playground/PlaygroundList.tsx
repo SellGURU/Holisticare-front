@@ -64,6 +64,9 @@ const MessageList: React.FC<MessageListProps> = ({
         setMessages(res.data);
         // setMessagesSearched(res.data);
       })
+      .catch((err) => {
+        console.error('Error getting messages users list:', err);
+      })
       .finally(() => {
         setIsLoading(false);
       });

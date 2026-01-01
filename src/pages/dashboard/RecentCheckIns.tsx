@@ -101,9 +101,13 @@ const RecentCheckIns = () => {
   useEffect(() => {
     DashboardApi.getCheckinList({
       time_filter: selectedOption,
-    }).then((res) => {
-      setCheckIns(res.data);
-    });
+    })
+      .then((res) => {
+        setCheckIns(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting checkin list:', err);
+      });
   }, [selectedOption]);
   // const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setHoursSlept(Number(event.target.value));
@@ -138,20 +142,28 @@ const RecentCheckIns = () => {
     setShowComparisonSelect(true);
     DashboardApi.compareCheckin({
       filled_checkin_id: currentCheckIn?.filled_checkin_id,
-    }).then((res) => {
-      setCompareCheckinsList(res.data);
-    });
+    })
+      .then((res) => {
+        setCompareCheckinsList(res.data);
+      })
+      .catch((err) => {
+        console.error('Error comparing checkin:', err);
+      });
   };
 
   const handleCheckInClick = (checkIn: CheckIn) => {
     if (checkIn.Status === 'Review Now') {
       DashboardApi.getFilledCheckin({
         filled_checkin_id: checkIn.filled_checkin_id,
-      }).then((res) => {
-        setQuestions(res.data);
-        setCurrentCheckIn(checkIn);
-        setCheckInModal(true);
-      });
+      })
+        .then((res) => {
+          setQuestions(res.data);
+          setCurrentCheckIn(checkIn);
+          setCheckInModal(true);
+        })
+        .catch((err) => {
+          console.error('Error getting filled checkin:', err);
+        });
     }
   };
 
@@ -159,17 +171,21 @@ const RecentCheckIns = () => {
     if (currentCheckIn) {
       DashboardApi.markAsReviewd({
         filled_checkin_id: currentCheckIn.filled_checkin_id,
-      }).then(() => {
-        setCheckIns((prevCheckIns) =>
-          prevCheckIns.map((ci) =>
-            ci.filled_checkin_id === currentCheckIn.filled_checkin_id
-              ? { ...ci, Status: 'Reviewed' }
-              : ci,
-          ),
-        );
-        setCheckInModal(false);
-        setshowCheckICommentnModal(true);
-      });
+      })
+        .then(() => {
+          setCheckIns((prevCheckIns) =>
+            prevCheckIns.map((ci) =>
+              ci.filled_checkin_id === currentCheckIn.filled_checkin_id
+                ? { ...ci, Status: 'Reviewed' }
+                : ci,
+            ),
+          );
+          setCheckInModal(false);
+          setshowCheckICommentnModal(true);
+        })
+        .catch((err) => {
+          console.error('Error marking as reviewed:', err);
+        });
 
       // resetModalStates();
     }
@@ -281,14 +297,21 @@ const RecentCheckIns = () => {
                             setShowComparisonSurvey(false);
                             DashboardApi.showCompareCheckin({
                               filled_checkin_id: checkIn.filled_checkin_id,
-                            }).then((res) => {
-                              setCompareCheckIn(checkIn.filled_checkin_name);
-                              setCompareQuestions(res.data);
-                              setShowComparisonSurvey(true);
-                              setShowSelect(false);
+                            })
+                              .then((res) => {
+                                setCompareCheckIn(checkIn.filled_checkin_name);
+                                setCompareQuestions(res.data);
+                                setShowComparisonSurvey(true);
+                                setShowSelect(false);
 
-                              setShowSelect(false);
-                            });
+                                setShowSelect(false);
+                              })
+                              .catch((err) => {
+                                console.error(
+                                  'Error showing compare checkin:',
+                                  err,
+                                );
+                              });
                           }}
                           className="text-[12px] cursor-pointer text-Text-Primary py-1"
                         >
@@ -374,10 +397,14 @@ const RecentCheckIns = () => {
                 DashboardApi.saveCoachComment({
                   filled_checkin_id: currentCheckIn?.filled_checkin_id,
                   coach_comment: checkInComment,
-                }).then(() => {
-                  setCheckInComment('');
-                  setshowCheckICommentnModal(false);
-                });
+                })
+                  .then(() => {
+                    setCheckInComment('');
+                    setshowCheckICommentnModal(false);
+                  })
+                  .catch((err) => {
+                    console.error('Error saving coach comment:', err);
+                  });
               }}
               className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
             >

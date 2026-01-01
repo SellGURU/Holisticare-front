@@ -90,6 +90,9 @@ const SignUpNameLogo = () => {
       .then(() => {
         navigate('/');
       })
+      .catch((err) => {
+        console.error('Error saving brand info:', err);
+      })
       .finally(() => {
         setIsLoading(false);
       });

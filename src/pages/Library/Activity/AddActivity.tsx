@@ -27,9 +27,13 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     { title: string; uid: string }[]
   >([]);
   useEffect(() => {
-    Application.getActivityLibrary().then((res) => {
-      setActivityLibrary(res.data);
-    });
+    Application.getActivityLibrary()
+      .then((res) => {
+        setActivityLibrary(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting activity library:', err);
+      });
   }, []);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
@@ -147,57 +151,62 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   };
   useEffect(() => {
     if (editid) {
-      Application.getActivity(editid).then((res) => {
-        setAddData({
-          title: res.data.Title,
-          // description: res.data.Description,
-          score: res.data.Base_Score,
-          instruction: res.data.Instruction,
-          type:
-            res.data.Activity_Filters.Type.length > 0
-              ? res.data.Activity_Filters.Type[0]
-              : '',
-          terms: res.data.Activity_Filters.Terms,
-          condition: res.data.Activity_Filters.Conditions,
-          muscle: res.data.Activity_Filters.Muscle,
-          equipment: res.data.Activity_Filters.Equipment,
-          level:
-            res.data.Activity_Filters.Level.length > 0
-              ? res.data.Activity_Filters.Level[0]
-              : '',
-          location: res.data.Activity_Location,
-          clinical_guidance: res.data.Ai_note,
-          Parent_Title: res.data.Parent_Title,
-          Set_Order:
-            res.data.Set_Order !== null
-              ? res.data.Set_Order
-              : [
-                  { name: 'Warm-Up', enabled: true, order: 1 },
-                  { name: 'Main work out', enabled: true, order: 2 },
-                  { name: 'Cool Down', enabled: true, order: 3 },
-                  { name: 'Recovery', enabled: true, order: 4 },
-                  { name: 'Finisher', enabled: true, order: 5 },
-                ],
+      Application.getActivity(editid)
+        .then((res) => {
+          setAddData({
+            title: res.data.Title,
+            // description: res.data.Description,
+            score: res.data.Base_Score,
+            instruction: res.data.Instruction,
+            type:
+              res.data.Activity_Filters.Type.length > 0
+                ? res.data.Activity_Filters.Type[0]
+                : '',
+            terms: res.data.Activity_Filters.Terms,
+            condition: res.data.Activity_Filters.Conditions,
+            muscle: res.data.Activity_Filters.Muscle,
+            equipment: res.data.Activity_Filters.Equipment,
+            level:
+              res.data.Activity_Filters.Level.length > 0
+                ? res.data.Activity_Filters.Level[0]
+                : '',
+            location: res.data.Activity_Location,
+            clinical_guidance: res.data.Ai_note,
+            Parent_Title: res.data.Parent_Title,
+            Set_Order:
+              res.data.Set_Order !== null
+                ? res.data.Set_Order
+                : [
+                    { name: 'Warm-Up', enabled: true, order: 1 },
+                    { name: 'Main work out', enabled: true, order: 2 },
+                    { name: 'Cool Down', enabled: true, order: 3 },
+                    { name: 'Recovery', enabled: true, order: 4 },
+                    { name: 'Finisher', enabled: true, order: 5 },
+                  ],
+          });
+          setSectionList(
+            res.data.Sections.map((item: any) => {
+              return {
+                ...item,
+                Exercises: item.Exercises.map((val: any) => {
+                  return {
+                    Reps: val.Reps,
+                    Rest: val.Rest,
+                    Weight: val.Weight,
+                    Exercise: {
+                      ...val,
+                    },
+                  };
+                }),
+              };
+            }),
+          );
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error getting activity:', err);
+          setLoading(false);
         });
-        setSectionList(
-          res.data.Sections.map((item: any) => {
-            return {
-              ...item,
-              Exercises: item.Exercises.map((val: any) => {
-                return {
-                  Reps: val.Reps,
-                  Rest: val.Rest,
-                  Weight: val.Weight,
-                  Exercise: {
-                    ...val,
-                  },
-                };
-              }),
-            };
-          }),
-        );
-        setLoading(false);
-      });
     }
   }, [editid]);
   const [addData, setAddData] = useState({

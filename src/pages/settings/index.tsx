@@ -12,9 +12,13 @@ const Setting: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState('Clinic Preferences');
   const [loginWithGoogle, setLoginWithGoogle] = useState(false);
   const getShowBrandInfo = () => {
-    Application.getShowBrandInfo().then((res) => {
-      setLoginWithGoogle(res.data.brand_elements.login_with_Google);
-    });
+    Application.getShowBrandInfo()
+      .then((res) => {
+        setLoginWithGoogle(res.data.brand_elements.login_with_Google);
+      })
+      .catch((err) => {
+        console.error('Error getting show brand info:', err);
+      });
   };
   useEffect(() => {
     getShowBrandInfo();

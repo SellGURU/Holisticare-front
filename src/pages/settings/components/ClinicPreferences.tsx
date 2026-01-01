@@ -33,9 +33,13 @@ export const ClinicPreferences = () => {
 
         settextValue(res.data.focus_area);
         setInitialTextValue(res.data.focus_area);
-        setloading(false);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error('Error getting setting data:', err);
+      })
+      .finally(() => {
+        setloading(false);
+      });
   };
   console.log(Preferences);
   console.log(initialPreferences);
@@ -123,12 +127,18 @@ export const ClinicPreferences = () => {
                   Application.updateSettingData({
                     tone: Preferences,
                     focus_area: textValue,
-                  }).then(() => {
-                    setBtnLoading(false);
-                    getSettingData();
-                    setChangesSaved(true);
-                    setTimeout(() => setChangesSaved(false), 2000);
-                  });
+                  })
+                    .then(() => {
+                      getSettingData();
+                      setChangesSaved(true);
+                      setTimeout(() => setChangesSaved(false), 2000);
+                    })
+                    .catch((err) => {
+                      console.error('Error updating setting data:', err);
+                    })
+                    .finally(() => {
+                      setBtnLoading(false);
+                    });
                 }
               }}
             >

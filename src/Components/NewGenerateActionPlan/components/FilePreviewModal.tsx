@@ -124,21 +124,25 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   };
 
   const handleVideoClick = (file: VideoData) => {
-    Application.showExerciseFille({ file_id: file.file_id }).then((res) => {
-      const base64Data = res.data.base_64_data;
-      const videoUrl = base64Data;
+    Application.showExerciseFille({ file_id: file.file_id })
+      .then((res) => {
+        const base64Data = res.data.base_64_data;
+        const videoUrl = base64Data;
 
-      // Create a temporary anchor element with download attribute
-      const downloadLink = document.createElement('a');
-      downloadLink.href = videoUrl;
-      downloadLink.download = `${file.title || 'video'}.mp4`;
-      downloadLink.style.display = 'none';
+        // Create a temporary anchor element with download attribute
+        const downloadLink = document.createElement('a');
+        downloadLink.href = videoUrl;
+        downloadLink.download = `${file.title || 'video'}.mp4`;
+        downloadLink.style.display = 'none';
 
-      // Add to document, click it, and remove it
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-    });
+        // Add to document, click it, and remove it
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      })
+      .catch((err) => {
+        console.error('Error showing exercise file:', err);
+      });
   };
 
   const handleUrlClick = (url: string) => {

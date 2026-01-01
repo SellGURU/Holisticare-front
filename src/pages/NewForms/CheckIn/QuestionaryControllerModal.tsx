@@ -233,25 +233,32 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   useEffect(() => {
     if (editId != '' && editId) {
       setLoading(true);
-      FormsApi.showQuestinary(editId).then((res) => {
-        setQuestions(res.data.questions);
-        setTitleForm(res.data.title);
-        setDescriptionForm(res.data.description || '');
-        setConsentText(res.data.consent_text || '');
-        setRequireClientConsent(res.data.consent_text?.length > 0);
-        setAutoAssign(res.data.default_questionnaire);
-        setGenderRestriction(res.data.gender_target != 'both');
-        setGender(
-          res.data.gender_target == 'both' ? 'female' : res.data.gender_target,
-        );
-        const totalMs = res.data.time;
-        const mins = Math.floor(totalMs / 60000);
-        const secs = Math.floor((totalMs % 60000) / 1000);
-        setMinutes(mins);
-        setSeconds(secs);
-        setChecked(res.data.share_with_client);
-        setLoading(false);
-      });
+      FormsApi.showQuestinary(editId)
+        .then((res) => {
+          setQuestions(res.data.questions);
+          setTitleForm(res.data.title);
+          setDescriptionForm(res.data.description || '');
+          setConsentText(res.data.consent_text || '');
+          setRequireClientConsent(res.data.consent_text?.length > 0);
+          setAutoAssign(res.data.default_questionnaire);
+          setGenderRestriction(res.data.gender_target != 'both');
+          setGender(
+            res.data.gender_target == 'both'
+              ? 'female'
+              : res.data.gender_target,
+          );
+          const totalMs = res.data.time;
+          const mins = Math.floor(totalMs / 60000);
+          const secs = Math.floor((totalMs % 60000) / 1000);
+          setMinutes(mins);
+          setSeconds(secs);
+          setChecked(res.data.share_with_client);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error showing questionary:', err);
+          setLoading(false);
+        });
     }
   }, [editId]);
   return (
