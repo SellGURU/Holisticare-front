@@ -187,13 +187,14 @@ export const Overview: FC<OverviewProps> = ({
         <div className="w-full flex justify-end">
           <div className='xl:w-[440px]'>
 <SearchBox
-            isHaveBorder
-            isGrayIcon
-            placeHolder="search interventions"
-            value={searchQuery}
-            onSearch={setSearchQuery}
-            ClassName="w-full"
-          />
+  isHaveBorder
+  isGrayIcon
+  placeHolder="search interventions"
+  value={searchQuery}
+  onSearch={setSearchQuery}
+  showClose={searchQuery.length > 0}
+  ClassName="w-full"
+/>
           </div>
           
         </div>
