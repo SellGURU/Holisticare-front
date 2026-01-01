@@ -192,6 +192,7 @@ export const Overview: FC<OverviewProps> = ({
               placeHolder="search interventions"
               value={searchQuery}
               onSearch={setSearchQuery}
+              showClose={searchQuery.length > 0}
               ClassName="w-full"
             />
           </div>
