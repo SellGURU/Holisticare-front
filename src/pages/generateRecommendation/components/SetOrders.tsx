@@ -544,28 +544,20 @@ export const SetOrders: FC<SetOrdersProps> = ({
               <SearchBox
                 isHaveBorder
                 isGrayIcon
+                showClose={searchQuery.length > 0}
                 placeHolder={`search ${activeCategory.toLowerCase()} interventions`}
                 value={searchQuery}
-                onSearch={setActiveCategoryQuery}
-                ClassName="w-full"
-              />
-              {searchQuery.length > 0 && (
-                <div
-                  onClick={() =>
+                onSearch={(val) => {
+                  setActiveCategoryQuery(val);
+                  if (val === '') {
                     setSearchQueries((prev) => ({
                       ...prev,
                       [activeCategory]: '',
-                    }))
+                    }));
                   }
-                  className="rounded-2xl border border-gray-50 bg-backgroundColor-Main w-9 h-8 flex items-center justify-center cursor-pointer"
-                >
-                  <img
-                    src="
-                /icons/close.svg"
-                    alt=""
-                  />
-                </div>
-              )}
+                }}
+                ClassName="w-full"
+              />
             </div>
 
             {/* Change Order */}

@@ -184,8 +184,9 @@ export const Overview: FC<OverviewProps> = ({
             handleRemoveIssueFromList={handleRemoveIssueFromList}
           />
         </div>
-        <div className="w-full xl:w-[440px]">
-          <SearchBox
+        <div className="w-full flex justify-end">
+          <div className='xl:w-[440px]'>
+<SearchBox
             isHaveBorder
             isGrayIcon
             placeHolder="search interventions"
@@ -193,6 +194,8 @@ export const Overview: FC<OverviewProps> = ({
             onSearch={setSearchQuery}
             ClassName="w-full"
           />
+          </div>
+          
         </div>
 
         {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
