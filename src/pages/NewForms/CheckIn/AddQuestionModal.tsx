@@ -438,7 +438,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             </div>
             {conditionalDisplay && (
               <div className="mt-2 flex items-center gap-y-0 gap-x-2 flex-wrap">
-                <div className="w-full md:w-[40%] flex items-center gap-2">
+                <div className="w-full md:w-[49%] flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     If
                   </div>
@@ -472,7 +472,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     bottom="bottom-[29px]"
                   />
                 </div>
-                <div className="w-full md:w-[40%] flex items-center gap-2">
+                <div className="w-full md:w-[49%] flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     is
                   </div>
@@ -488,7 +488,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     bottom="bottom-[29px]"
                   />
                 </div>
-                <div className="w-full md:w-[40%] flex items-center gap-2">
+                <div className="w-full md:w-[49%] flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     to
                   </div>
@@ -504,7 +504,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     validationText=""
                   />
                 </div>
-                <div className="w-full md:w-[40%] flex items-center gap-2">
+                <div className="w-full md:w-[49%] flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     ,then
                   </div>
