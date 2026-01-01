@@ -36,7 +36,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   handleRemoveIssueFromList: handleRemoveIssueFromListData,
 }) => {
   console.log(item);
-  
+
   const { positive, negative } = splitInstructions(item.Instruction);
   const [Conflicts] = useState<Array<any>>(item?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
