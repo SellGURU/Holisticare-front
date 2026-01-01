@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
-import Circleloader from '../../CircleLoader';
 import Select from '../../Select';
 import SimpleDatePicker from '../../SimpleDatePicker';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
@@ -363,12 +362,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           style={{ height: window.innerHeight - 480 + 'px' }}
           className="flex items-center min-h-[200px] w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4"
         >
-          <Circleloader />
+          {/* <Circleloader /> */}
           {/* Progress Bar */}
           <div className="w-72">
             <div className="flex justify-between mb-1 text-[11px] text-Text-Secondary">
               <span>Processing biomarkers</span>
-              <span>{progressBiomarkerUpload}%</span>
+              <span>{progressBiomarkerUpload.toFixed(2)}%</span>
             </div>
 
             <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
