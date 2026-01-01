@@ -54,7 +54,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [polling, setPolling] = useState(true); // ✅ control polling
   const [deleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
-  console.log(uploadedFile);
   // console.log(extractedBiomarkers);
   const [isUploadFromComboBar, setIsUploadFromComboBar] = useState(false);
   useEffect(() => {
@@ -64,6 +63,35 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     });
   }, []);
   const [biomarkerLoading, setbiomarkerLoading] = useState(false);
+  const [progressBiomarkerUpload, setProgressBiomarkerUpload] = useState(0);
+  const [progressBarLoad, setProgressBarLoad] = useState(0);
+  const [phaseOneDone, setPhaseOneDone] = useState(false);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgressBarLoad((prev) => {
+        if (!phaseOneDone) {
+          const next = prev + 0.3;
+          if (next >= 40) {
+            setPhaseOneDone(true);
+            return 40;
+          }
+          return next;
+        }
+
+        if (progressBiomarkerUpload >= 100) {
+          return 100;
+        }
+
+        if (progressBiomarkerUpload >= 40 && prev < 89) {
+          return prev + 0.15;
+        }
+
+        return prev;
+      });
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [progressBiomarkerUpload, phaseOneDone]);
   useEffect(() => {
     if (!uploadedFile?.file_id) return;
 
@@ -75,7 +103,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         const res = await Application.checkLabStepOne({
           file_id: uploadedFile.file_id,
         });
-
+        setProgressBiomarkerUpload(res.data.progress);
         setfileType(res.data.lab_type);
         const sorted = (res.data.extracted_biomarkers || [])
           .slice()
@@ -102,6 +130,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           res.data.extracted_biomarkers &&
           res.data.extracted_biomarkers.length > 0
         ) {
+          setTimeout(() => {
+            setProgressBiomarkerUpload(0);
+            setProgressBarLoad(0);
+            setPhaseOneDone(false);
+          }, 2000);
           onValidate(sorted);
         }
       } catch (err) {
@@ -863,6 +896,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             setRowErrors([]);
           }}
           loading={biomarkerLoading}
+          progressBiomarkerUpload={progressBarLoad}
           btnLoading={btnLoading}
           fileType={fileType}
           uploadedFile={uploadedFile}
