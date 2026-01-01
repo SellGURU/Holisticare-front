@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import ActivityLogger from '../utils/activty-logger';
+import { toast } from 'react-toastify';
+import { showError, showSuccess } from '../Components/GlobalToast/toast';
 
 const logger = ActivityLogger.getInstance();
 
@@ -36,9 +37,9 @@ axios.interceptors.response.use(
 
     if (response.data.detail && response.status !== 206) {
       if (response.data.detail.toLowerCase().includes('successfully')) {
-        toast.success(response.data.detail);
+        showSuccess(response.data.detail);
       } else {
-        toast.error(response.data.detail);
+        showError(response.data.detail);
       }
     }
 
@@ -54,7 +55,7 @@ axios.interceptors.response.use(
       response.data.detail !== 'Not Found' &&
       response.status !== 206
     ) {
-      toast.error(response.data.detail);
+      showError(response.data.detail);
     }
 
     if (response.data && response.data.detail && response.status !== 206) {
@@ -118,9 +119,9 @@ axios.interceptors.response.use(
       !error.response.data.detail.toLowerCase().includes('google')
     ) {
       if (error.response.data.detail.toLowerCase().includes('successfully')) {
-        toast.success(error.response.data.detail);
+        showSuccess(error.response.data.detail);
       } else {
-        toast.error(error.response.data.detail);
+        showError(error.response.data.detail);
       }
     }
 
