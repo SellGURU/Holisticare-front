@@ -85,7 +85,7 @@ const Report = () => {
   };
   const [isReportAvailable, setIsReportAvailable] = useState(true);
   const [first_time_view, setFirst_time_view] = useState<boolean | null>(null);
-  const [isHaveScore, ] = useState(false);
+  const [isHaveScore] = useState(false);
   const [activeReportSection, setActiveReportSection] = useState<
     'Health' | 'Progress'
   >('Health');
