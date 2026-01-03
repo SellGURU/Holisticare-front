@@ -40,13 +40,16 @@ const Report = () => {
     subscribe('openRefreshModal', () => {
       setshowRefreshModal(true);
     });
+    subscribe('uploadTestShow',() => {
+      setActiveReportSection('Health')
+    })
+    subscribe('openSideOut', () => {
+      setIsVisibleCombo(false);
+    });
+    subscribe('closeSideOut', () => {
+      setIsVisibleCombo(true);
+    });
   }, []);
-  subscribe('openSideOut', () => {
-    setIsVisibleCombo(false);
-  });
-  subscribe('closeSideOut', () => {
-    setIsVisibleCombo(true);
-  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1280);
   useEffect(() => {
