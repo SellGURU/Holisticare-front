@@ -40,9 +40,9 @@ const Report = () => {
     subscribe('openRefreshModal', () => {
       setshowRefreshModal(true);
     });
-    subscribe('uploadTestShow',() => {
-      setActiveReportSection('Health')
-    })
+    subscribe('uploadTestShow', () => {
+      setActiveReportSection('Health');
+    });
     subscribe('openSideOut', () => {
       setIsVisibleCombo(false);
     });
