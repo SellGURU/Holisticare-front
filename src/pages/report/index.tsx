@@ -40,13 +40,16 @@ const Report = () => {
     subscribe('openRefreshModal', () => {
       setshowRefreshModal(true);
     });
+    subscribe('uploadTestShow', () => {
+      setActiveReportSection('Health');
+    });
+    subscribe('openSideOut', () => {
+      setIsVisibleCombo(false);
+    });
+    subscribe('closeSideOut', () => {
+      setIsVisibleCombo(true);
+    });
   }, []);
-  subscribe('openSideOut', () => {
-    setIsVisibleCombo(false);
-  });
-  subscribe('closeSideOut', () => {
-    setIsVisibleCombo(true);
-  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1280);
   useEffect(() => {
@@ -81,6 +84,8 @@ const Report = () => {
     }
   };
   const [isReportAvailable, setIsReportAvailable] = useState(true);
+  const [first_time_view, setFirst_time_view] = useState<boolean | null>(null);
+  const [isHaveScore, ] = useState(false);
   const [activeReportSection, setActiveReportSection] = useState<
     'Health' | 'Progress'
   >('Health');
@@ -97,6 +102,18 @@ const Report = () => {
       unsubscribe('reportStatus', handleReportStatus);
     };
   }, []);
+  useEffect(() => {
+    if (first_time_view == true) {
+      setActiveReportSection('Health');
+    }
+    if (first_time_view == false) {
+      if (isHaveScore) {
+        setActiveReportSection('Progress');
+      } else {
+        setActiveReportSection('Health');
+      }
+    }
+  }, [isHaveScore, first_time_view]);
   return (
     <div className="w-full h-full">
       <FullScreenModal />
@@ -137,6 +154,7 @@ const Report = () => {
         className={`${activeReportSection === 'Health' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
       >
         <ReportAnalyseView
+          setFirst_time_view={setFirst_time_view}
           setActiveCheckProgress={setActiveCheckProgress}
           isActive={activeReportSection === 'Health'}
         ></ReportAnalyseView>
