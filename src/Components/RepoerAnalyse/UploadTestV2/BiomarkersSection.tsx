@@ -248,8 +248,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   //   Record<number, string[]>
   // >({});
 
-
-
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
   React.useEffect(() => {
@@ -464,18 +462,19 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     // const errorForRow = rowErrors[index];
 
                     return (
-                      <BiomarkerRow 
-                      refRenceEl={(el:any) =>(rowRefs.current[index] = el) }
-                      isHaveError={rowErrors[index]} 
-                      errorText={rowErrors[index]} 
-                      biomarker={b} index={index} 
-                      showOnlyErrors={showOnlyErrors}
-                      allAvilableBiomarkers={avalibaleBiomarkers}
-                      handleConfirmDelete={() => {
-                        handleConfirm(index)
-                      }}
-                      renderValueField={renderValueField}
-                      updateAndStandardize={updateAndStandardize}
+                      <BiomarkerRow
+                        refRenceEl={(el: any) => (rowRefs.current[index] = el)}
+                        isHaveError={rowErrors[index]}
+                        errorText={rowErrors[index]}
+                        biomarker={b}
+                        index={index}
+                        showOnlyErrors={showOnlyErrors}
+                        allAvilableBiomarkers={avalibaleBiomarkers}
+                        handleConfirmDelete={() => {
+                          handleConfirm(index);
+                        }}
+                        renderValueField={renderValueField}
+                        updateAndStandardize={updateAndStandardize}
                       ></BiomarkerRow>
                     );
                   })}

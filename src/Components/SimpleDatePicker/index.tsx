@@ -16,7 +16,7 @@ interface DatePickerProps {
   validation?: boolean;
   full?: boolean;
   isUploadFile?: boolean;
-  key?:string
+  key?: string;
 }
 
 export default function SimpleDatePicker({
