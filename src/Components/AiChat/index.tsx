@@ -127,26 +127,30 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
     Application.getListChats({
       member_id: memberId,
       chatting_with: 'ai',
-    }).then((res) => {
-      const resolve = res.data.messages.flatMap((mes: any, index: number) => {
-        const request: Message = {
-          id: 1,
-          sender: 'user',
-          text: mes.request,
-          time: mes.entrytime,
-        };
-        const response: Message = {
-          id: index,
-          sender: 'ai',
-          text: mes.response,
-          time: mes.entrytime,
-        };
-        return [request, response];
+    })
+      .then((res) => {
+        const resolve = res.data.messages.flatMap((mes: any, index: number) => {
+          const request: Message = {
+            id: 1,
+            sender: 'user',
+            text: mes.request,
+            time: mes.entrytime,
+          };
+          const response: Message = {
+            id: index,
+            sender: 'ai',
+            text: mes.response,
+            time: mes.entrytime,
+          };
+          return [request, response];
+        });
+        setConversationId(res.data.conversation_id);
+        setMessages(resolve);
+        // console.log(resolve)
+      })
+      .catch((err) => {
+        console.error('Error getting list chats:', err);
       });
-      setConversationId(res.data.conversation_id);
-      setMessages(resolve);
-      // console.log(resolve)
-    });
   }, [memberId]);
   console.log(messages);
   return (

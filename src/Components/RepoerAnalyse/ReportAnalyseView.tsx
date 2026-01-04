@@ -35,13 +35,14 @@ import InfoToltip from '../InfoToltip';
 // import SpinnerLoader from '../SpinnerLoader';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
-import DetiledAcordin from './Boxs/detailedAcordin';
+// import DetiledAcordin from './Boxs/detailedAcordin';
 import PrintReportV2 from './PrintReportV2';
 // import { ShareModal } from './ShareModal';
 import { UploadTestV2 } from './UploadTestV2';
 // import HolisticShare from './components/HolisticShare';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
 import MarkdownText from '../markdownText';
+import NewDetailedAcordin from './Boxs/newDetailedAcordin';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -49,6 +50,7 @@ interface ReportAnalyseViewprops {
   uniqKey?: string;
   isActive?: boolean;
   setActiveCheckProgress: (status: boolean) => void;
+  setFirst_time_view?: (status: boolean) => void;
 }
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
@@ -57,6 +59,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   isActive,
   setActiveCheckProgress,
   uniqKey,
+  setFirst_time_view,
 }) => {
   const { id, name } = useParams<{ id: string; name: string }>();
   const resolvedMemberID = id ? parseInt(id) : memberID;
@@ -94,46 +97,56 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           member_id: memberID,
         },
         uniqKey,
-      ).then((res) => {
-        setUserInfoData(res.data);
-        setIsHaveReport(true);
-        setShowUploadTest(false);
+      )
+        .then((res) => {
+          setUserInfoData(res.data);
+          setIsHaveReport(true);
+          setShowUploadTest(false);
 
-        setTimeout(() => {
-          // if (res.data.show_report == true) {
-          fetchShareData();
-          // }
-        }, 2000);
-      });
+          setTimeout(() => {
+            // if (res.data.show_report == true) {
+            fetchShareData();
+            // }
+          }, 2000);
+        })
+        .catch(() => {});
     } else {
       Application.getPatientsInfo({
         member_id: resolvedMemberID,
-      }).then((res) => {
-        setUserInfoData(res.data);
-        publish('userInfoData', res.data);
-        setIsHaveReport(res.data.show_report);
-        setHasWearableData(res.data.has_wearable_data);
-        setShowUploadTest(!res.data.first_time_view);
-        setQuestionnaires(res.data.questionnaires);
-        if (res.data.has_minimum_data == false) {
-          setDisableGenerate(true);
-        } else {
-          setDisableGenerate(false);
-        }
-        if (res.data.first_time_view == true) {
-          setActiveCheckProgress(true);
-        } else {
-          setActiveCheckProgress(false);
-        }
-        setTimeout(() => {
-          if (
-            res.data.show_report == true ||
-            res.data.first_time_view == true
-          ) {
-            fetchData();
+      })
+        .then((res) => {
+          if (setFirst_time_view) {
+            setFirst_time_view?.(res.data.first_time_view);
           }
-        }, 2000);
-      });
+
+          setUserInfoData(res.data);
+          publish('userInfoData', res.data);
+          setIsHaveReport(res.data.show_report);
+          setHasWearableData(res.data.has_wearable_data);
+          setShowUploadTest(!res.data.first_time_view);
+          setQuestionnaires(res.data.questionnaires);
+          if (res.data.has_minimum_data == false) {
+            setDisableGenerate(true);
+          } else {
+            setDisableGenerate(false);
+          }
+          if (res.data.first_time_view == true) {
+            setActiveCheckProgress(true);
+          } else {
+            setActiveCheckProgress(false);
+          }
+          setTimeout(() => {
+            if (
+              res.data.show_report == true ||
+              res.data.first_time_view == true
+            ) {
+              fetchData();
+            }
+          }, 2000);
+        })
+        .catch((err) => {
+          console.error('Error getting patient info', err);
+        });
     }
   };
   const [isLoadingQuestionnaires, setIsLoadingQuestionnaires] = useState(false);
@@ -148,6 +161,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setIsLoadingQuestionnaires(false);
           setIsHaveReport(res.data.show_report);
           setShowUploadTest(!res.data.first_time_view);
+        })
+        .catch((err) => {
+          console.error('Error getting patient info', err);
         })
         .finally(() => {
           setIsLoadingQuestionnaires(false);
@@ -167,32 +183,38 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           member_id: memberID,
         },
         uniqKey,
-      ).then((res) => {
-        setUserInfoData(res.data);
-        setIsHaveReport(true);
-        setShowUploadTest(false);
-        setTimeout(() => {
-          fetchShareData();
-          // }
-        }, 2000);
-      });
+      )
+        .then((res) => {
+          setUserInfoData(res.data);
+          setIsHaveReport(true);
+          setShowUploadTest(false);
+          setTimeout(() => {
+            fetchShareData();
+            // }
+          }, 2000);
+        })
+        .catch(() => {});
     } else {
       Application.getPatientsInfo({
         member_id: resolvedMemberID,
-      }).then((res) => {
-        setUserInfoData(res.data);
-        setIsHaveReport(res.data.show_report);
-        setShowUploadTest(!res.data.first_time_view);
-        if (res.data.first_time_view == true) {
-          setActiveCheckProgress(true);
-        }
-        setTimeout(() => {
-          if (res.data.show_report == true) {
-            setISGenerateLoading(false);
-            fetchData();
+      })
+        .then((res) => {
+          setUserInfoData(res.data);
+          setIsHaveReport(res.data.show_report);
+          setShowUploadTest(!res.data.first_time_view);
+          if (res.data.first_time_view == true) {
+            setActiveCheckProgress(true);
           }
-        }, 2000);
-      });
+          setTimeout(() => {
+            if (res.data.show_report == true) {
+              setISGenerateLoading(false);
+              fetchData();
+            }
+          }, 2000);
+        })
+        .catch((err) => {
+          console.error('Error getting patient info', err);
+        });
     }
   };
 
@@ -219,13 +241,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       .catch(() => {});
     Application.getClientSummaryCategories({
       member_id: resolvedMemberID,
-    }).then((res) => {
-      // setClientSummaryBoxs(mydata);
+    })
+      .then((res) => {
+        // setClientSummaryBoxs(mydata);
 
-      setISGenerateLoading(false);
-      // console.log(res.data);
-      setClientSummaryBoxs(res.data);
-    });
+        setISGenerateLoading(false);
+        // console.log(res.data);
+        setClientSummaryBoxs(res.data);
+      })
+      .catch(() => {})
+      .finally(() => {
+        setISGenerateLoading(false);
+      });
     Application.getConceringResults({ member_id: resolvedMemberID })
       .then((res) => {
         setConcerningResult(res.data.table);
@@ -243,8 +270,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     getTreatmentPlanData();
   };
   const getTreatmentPlanData = () => {
-    Application.getOverviewtplan({ member_id: resolvedMemberID }).then(
-      (res) => {
+    Application.getOverviewtplan({ member_id: resolvedMemberID })
+      .then((res) => {
         setTreatmentPlanData(res.data);
         if (res.data.length == 0) {
           publish('HolisticPlanStatus', { isempty: true });
@@ -252,8 +279,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           publish('HolisticPlanStatus', { isempty: false });
           pollHtmlReport();
         }
-      },
-    );
+      })
+      .catch((err) => {
+        console.error('Error getting treatment plan data:', err);
+      });
   };
   const fetchShareData = () => {
     Application.getClientSummaryOutofrefsShare(
@@ -261,76 +290,90 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         member_id: memberID,
       },
       uniqKey,
-    ).then((res) => {
-      setReferenceData(res.data);
-      if (res.data.biomarkers.length == 0) {
-        publish('DetailedAnalysisStatus', { isempty: true });
-      } else {
-        publish('DetailedAnalysisStatus', { isempty: false });
-      }
-      if (
-        res.data.biomarkers.filter((el: any) => el.outofref == true).length == 0
-      ) {
-        publish('NeedsFocusBiomarkerStatus', { isempty: true });
-      }
-      //  else {
-      //   publish('NeedsFocusBiomarkerStatus', { isempty: false });
-      // }
-      // setReferenceData(referencedataMoch);
-    });
+    )
+      .then((res) => {
+        setReferenceData(res.data);
+        if (res.data.biomarkers.length == 0) {
+          publish('DetailedAnalysisStatus', { isempty: true });
+        } else {
+          publish('DetailedAnalysisStatus', { isempty: false });
+        }
+        if (
+          res.data.biomarkers.filter((el: any) => el.outofref == true).length ==
+          0
+        ) {
+          publish('NeedsFocusBiomarkerStatus', { isempty: true });
+        }
+        //  else {
+        //   publish('NeedsFocusBiomarkerStatus', { isempty: false });
+        // }
+        // setReferenceData(referencedataMoch);
+      })
+      .catch(() => {});
     Application.getClientSummaryCategoriesShare(
       {
         member_id: memberID,
       },
       uniqKey,
-    ).then((res) => {
-      setClientSummaryBoxs(res.data);
-      // setClientSummaryBoxs(mydata);
+    )
+      .then((res) => {
+        setClientSummaryBoxs(res.data);
+        // setClientSummaryBoxs(mydata);
 
-      setISGenerateLoading(false);
-    });
+        setISGenerateLoading(false);
+      })
+      .catch(() => {})
+      .finally(() => {
+        setISGenerateLoading(false);
+      });
     Application.getConceringResultsShare(
       {
         member_id: memberID,
       },
       uniqKey,
-    ).then((res) => {
-      setConcerningResult(res.data.table);
-      setConcerningResultIsLoaded(true);
-      if (res.data.table.length == 0) {
-        publish('ConcerningResultStatus', { isempty: true });
-      } else {
-        publish('ConcerningResultStatus', { isempty: false });
-      }
-      // setConcerningResult(conceringResultData);
-    });
+    )
+      .then((res) => {
+        setConcerningResult(res.data.table);
+        setConcerningResultIsLoaded(true);
+        if (res.data.table.length == 0) {
+          publish('ConcerningResultStatus', { isempty: true });
+        } else {
+          publish('ConcerningResultStatus', { isempty: false });
+        }
+        // setConcerningResult(conceringResultData);
+      })
+      .catch(() => {});
     Application.getOverviewtplanShare(
       {
         member_id: memberID,
       },
       uniqKey,
-    ).then((res) => {
-      setTreatmentPlanData(res.data.details);
-      if (res.data.details.length == 0) {
-        publish('HolisticPlanStatus', { isempty: true });
-      } else {
-        publish('HolisticPlanStatus', { isempty: false });
-      }
-    });
+    )
+      .then((res) => {
+        setTreatmentPlanData(res.data.details);
+        if (res.data.details.length == 0) {
+          publish('HolisticPlanStatus', { isempty: true });
+        } else {
+          publish('HolisticPlanStatus', { isempty: false });
+        }
+      })
+      .catch(() => {});
     Application.getCaldenderdataShare(
       {
         member_id: memberID,
       },
       uniqKey,
-    ).then((res) => {
-      // Please don't touch.
-      setCalenderData(res.data);
-      if (res.data.length == 0) {
-        publish('ActionPlanStatus', { isempty: true });
-      } else {
-        publish('ActionPlanStatus', { isempty: false });
-      }
-    });
+    )
+      .then((res) => {
+        // Please don't touch.
+        setCalenderData(res.data);
+        if (res.data.length == 0) {
+          publish('ActionPlanStatus', { isempty: true });
+        } else {
+          publish('ActionPlanStatus', { isempty: false });
+        }
+      })
+      .catch(() => {});
   };
   const navigate = useNavigate();
   const [callSync, setCallSync] = useState(false);
@@ -1055,13 +1098,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     <div className="mt-6 block xl:hidden">
                       {resolveCategories().map((el: any, index: number) => {
                         return (
-                          <DetiledAcordin
+                          // <DetiledAcordin
+                          //   refrences={resolveBioMarkers().filter(
+                          //     (val: any) => val.subcategory == el.subcategory,
+                          //   )}
+                          //   data={el}
+                          //   key={index}
+                          // ></DetiledAcordin>
+                          <NewDetailedAcordin
                             refrences={resolveBioMarkers().filter(
                               (val: any) => val.subcategory == el.subcategory,
                             )}
                             data={el}
                             key={index}
-                          ></DetiledAcordin>
+                          ></NewDetailedAcordin>
                         );
                       })}
                     </div>
@@ -1233,11 +1283,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         return;
                       }
                       setISGenerateLoading(true);
-                      Application.first_view_report(resolvedMemberID).then(
-                        (res) => {
+                      Application.first_view_report(resolvedMemberID)
+                        .then((res) => {
                           console.log(res);
-                        },
-                      );
+                        })
+                        .catch((err) => {
+                          console.error('Error first view report:', err);
+                        });
                       setActiveCheckProgress(true);
                       console.log(file_id);
                       if (file_id) {

@@ -90,32 +90,36 @@ export const ActionPlan: FC<ActionPlanProps> = ({
   // const [isCalenDarGenerated,setISCalenderGenerated] = useState(false);
   const getActionPlan = () => {
     if (!isShare) {
-      Application.ActionPlanBlockList({ member_id: id }).then((res) => {
-        // console.log(res.data);
-        if (res.data.length == 0) {
-          publish('ActionPlanStatus', { isempty: true });
-        } else {
-          publish('ActionPlanStatus', { isempty: false });
-        }
-        if (res.data.length > 0) {
-          setCardData(res.data);
-          setActionPrintData(res.data);
-          setActiveAction(
-            res.data.length > 0 ? res.data[res.data.length - 1] : null,
-          );
+      Application.ActionPlanBlockList({ member_id: id })
+        .then((res) => {
+          // console.log(res.data);
+          if (res.data.length == 0) {
+            publish('ActionPlanStatus', { isempty: true });
+          } else {
+            publish('ActionPlanStatus', { isempty: false });
+          }
+          if (res.data.length > 0) {
+            setCardData(res.data);
+            setActionPrintData(res.data);
+            setActiveAction(
+              res.data.length > 0 ? res.data[res.data.length - 1] : null,
+            );
 
-          setCalendarPrintData(res.data[res.data.length - 1].overview);
-          setActiveAction(
-            res.data.length > 0 ? res.data[res.data.length - 1] : null,
-          );
-          setTimeout(() => {
-            const container: any = document.getElementById('actionList');
-            if (container) {
-              container.scrollLeft = container.scrollWidth; // Set scroll to the very end
-            }
-          }, 500);
-        }
-      });
+            setCalendarPrintData(res.data[res.data.length - 1].overview);
+            setActiveAction(
+              res.data.length > 0 ? res.data[res.data.length - 1] : null,
+            );
+            setTimeout(() => {
+              const container: any = document.getElementById('actionList');
+              if (container) {
+                container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+              }
+            }, 500);
+          }
+        })
+        .catch((err) => {
+          console.error('Error getting action plan list:', err);
+        });
     }
   };
   useEffect(() => {
@@ -239,13 +243,22 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       <div
                         onClick={() => {
                           if (canCreateNewActionPlan() && id) {
-                            Application.checkClientRefresh(id).then((res) => {
-                              if (res.data.need_of_refresh == true) {
-                                publish('openRefreshModal', {});
-                              } else {
-                                navigate('/report/Generate-Action-Plan/' + id);
-                              }
-                            });
+                            Application.checkClientRefresh(id)
+                              .then((res) => {
+                                if (res.data.need_of_refresh == true) {
+                                  publish('openRefreshModal', {});
+                                } else {
+                                  navigate(
+                                    '/report/Generate-Action-Plan/' + id,
+                                  );
+                                }
+                              })
+                              .catch((err) => {
+                                console.error(
+                                  'Error checking client refresh:',
+                                  err,
+                                );
+                              });
                           }
                         }}
                         data-tooltip-id={
@@ -362,15 +375,22 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                           disabled={!canCreateNewActionPlan()}
                           onClick={() => {
                             if (canCreateNewActionPlan() && id) {
-                              Application.checkClientRefresh(id).then((res) => {
-                                if (res.data.need_of_refresh == true) {
-                                  publish('openRefreshModal', {});
-                                } else {
-                                  navigate(
-                                    '/report/Generate-Action-Plan/' + id,
+                              Application.checkClientRefresh(id)
+                                .then((res) => {
+                                  if (res.data.need_of_refresh == true) {
+                                    publish('openRefreshModal', {});
+                                  } else {
+                                    navigate(
+                                      '/report/Generate-Action-Plan/' + id,
+                                    );
+                                  }
+                                })
+                                .catch((err) => {
+                                  console.error(
+                                    'Error checking client refresh:',
+                                    err,
                                   );
-                                }
-                              });
+                                });
                             }
                           }}
                         >

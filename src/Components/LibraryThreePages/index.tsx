@@ -44,24 +44,39 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const getSupplements = () => {
     setLoading(true);
-    Application.getSupplementList().then((res) => {
-      setTableData(res.data);
-      setLoading(false);
-    });
+    Application.getSupplementList()
+      .then((res) => {
+        setTableData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting supplement list:', err);
+        setLoading(false);
+      });
   };
   const getLifestyles = () => {
     setLoading(true);
-    Application.getLifestyleList().then((res) => {
-      setTableData(res.data);
-      setLoading(false);
-    });
+    Application.getLifestyleList()
+      .then((res) => {
+        setTableData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting lifestyle list:', err);
+        setLoading(false);
+      });
   };
   const getDiets = () => {
     setLoading(true);
-    Application.getDietList().then((res) => {
-      setTableData(res.data);
-      setLoading(false);
-    });
+    Application.getDietList()
+      .then((res) => {
+        setTableData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting diet list:', err);
+        setLoading(false);
+      });
   };
   useEffect(() => {
     if (pageType === 'Supplement') {

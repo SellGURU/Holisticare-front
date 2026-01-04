@@ -12,9 +12,13 @@ const Share = () => {
   const { id } = useParams<{ id: string }>();
   const [memberId, setMemberId] = useState<string>('123');
   useEffect(() => {
-    Application.getMemberId(id as string).then((res) => {
-      setMemberId(res.data.member_id);
-    });
+    Application.getMemberId(id as string)
+      .then((res) => {
+        setMemberId(res.data.member_id);
+      })
+      .catch((err) => {
+        console.error('Error getting member ID:', err);
+      });
   }, []);
   const [isDragging, setIsDragging] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

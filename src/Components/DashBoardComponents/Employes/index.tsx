@@ -68,7 +68,7 @@ const Employes: React.FC = () => {
   return (
     <div className="w-full overflow-hidden bg-white  rounded-2xl shadow-200 p-4 employees-container">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-sm text-Text-Primary font-medium">Staffs</h2>
+        <h2 className="text-sm text-Text-Primary font-medium">Staff</h2>
 
         {/* <ButtonPrimary
           style={{ backgroundColor: '#fff', color: '#005F73' }}
@@ -177,9 +177,13 @@ const EmployeeRow: React.FC<{
                 onClick={() => {
                   Application.RemoveUserStaff({
                     user_id: employee.user_id,
-                  }).then(() => {
-                    setisConfirm(true);
-                  });
+                  })
+                    .then(() => {
+                      setisConfirm(true);
+                    })
+                    .catch((err) => {
+                      console.error('Error removing staff:', err);
+                    });
                 }}
                 className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
               >
@@ -374,10 +378,17 @@ const EmployeeRow: React.FC<{
                 if (employee['clients assigned'] > 0) {
                   Application.getStaffAssignedClients({
                     user_id: employee.user_id,
-                  }).then((res) => {
-                    setAssignedClients(res.data);
-                    setshowAssignListModal(true);
-                  });
+                  })
+                    .then((res) => {
+                      setAssignedClients(res.data);
+                      setshowAssignListModal(true);
+                    })
+                    .catch((err) => {
+                      console.error(
+                        'Error getting staff assigned clients:',
+                        err,
+                      );
+                    });
                 }
               }}
               className={`flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer ${employee['clients assigned'] < 1 ? 'opacity-40' : ''}`}

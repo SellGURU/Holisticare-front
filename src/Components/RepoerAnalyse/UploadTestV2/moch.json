@@ -1,0 +1,294 @@
+{
+  "detail": "Warning: The uploaded file is not one of the clinic's Templates.",
+  "file_id": "5104ca6e50",
+  "lab_type": "more_info",
+  "extracted_biomarkers": [
+    {
+      "unit": "µg/dL",
+      "value": "50.00",
+      "biomarker": "Vitamin A (Retinol)",
+      "biomarker_id": "faa81fb6",
+      "original_unit": "mg/L",
+      "original_value": "0.5",
+      "possible_values": {
+        "names": ["Vitamin A (Retinol)"],
+        "units": ["µg/dL"]
+      },
+      "original_biomarker_name": "Vitamin A (Retinol)"
+    },
+    {
+      "unit": "nmol/L",
+      "value": "215.53",
+      "biomarker": "VITAMIN B1 (THIAMIN)",
+      "biomarker_id": "a4dad09d",
+      "original_unit": "ug/L",
+      "original_value": "72.69",
+      "possible_values": {
+        "names": ["VITAMIN B1 (THIAMIN)"],
+        "units": ["nmol/L"]
+      },
+      "original_biomarker_name": "Vitamin B1 (Thiamin)"
+    },
+    {
+      "unit": "nmol/L",
+      "value": "267.04",
+      "biomarker": "Vitamin B6 (Pyridoxal Phosphate)",
+      "biomarker_id": "18fb8b01",
+      "original_unit": "ng/mL",
+      "original_value": "66.00",
+      "possible_values": {
+        "names": ["Vitamin B6 (Pyridoxal Phosphate)"],
+        "units": ["nmol/L"]
+      },
+      "original_biomarker_name": "Vitamin B6 (Pyridoxal Phosphate)"
+    },
+    {
+      "unit": "pmol/L",
+      "value": "107.90",
+      "biomarker": "Vitamin B12, active Holo Transcobalamin",
+      "biomarker_id": "8f2dda75",
+      "original_unit": "pmol/L",
+      "original_value": "107.90",
+      "possible_values": {
+        "names": ["Vitamin B12, active Holo Transcobalamin"],
+        "units": ["pmol/L"]
+      },
+      "original_biomarker_name": "Vitamin B12, active Holo Transcobalamin"
+    },
+    {
+      "unit": "µmol/L",
+      "value": "39.61",
+      "biomarker": "Vitamin E",
+      "biomarker_id": "113d8749",
+      "original_unit": "mg/L",
+      "original_value": "17.06",
+      "possible_values": {
+        "names": ["Vitamin E"],
+        "units": ["µmol/L"]
+      },
+      "original_biomarker_name": "Vitamin E"
+    },
+    {
+      "unit": "mmol/L",
+      "value": "9.20",
+      "biomarker": "CHLORIDE",
+      "biomarker_id": "7bb6b11a",
+      "original_unit": "mg/dL",
+      "original_value": "9.2",
+      "possible_values": {
+        "names": ["Chloride"],
+        "units": ["mmol/L"]
+      },
+      "original_biomarker_name": "Calcium"
+    },
+    {
+      "unit": "mg/L",
+      "value": "0.40",
+      "biomarker": "Calcium corr",
+      "biomarker_id": "7b929e48",
+      "original_unit": "ng/mL",
+      "original_value": "0.4",
+      "possible_values": {
+        "names": ["Calcium corr"],
+        "units": ["mg/L"]
+      },
+      "original_biomarker_name": "Biotin (Vitamin H)"
+    },
+    {
+      "unit": "ug/dL",
+      "value": "130.21",
+      "biomarker": "Copper",
+      "biomarker_id": "e3262fd9",
+      "original_unit": "ug/dL",
+      "original_value": "130.21",
+      "possible_values": {
+        "names": ["Copper"],
+        "units": ["µg/dL"]
+      },
+      "original_biomarker_name": "Copper"
+    },
+    {
+      "unit": "ug/L",
+      "value": "0.86",
+      "biomarker": "Manganese (Serum)",
+      "biomarker_id": "2eca947d",
+      "original_unit": "ug/L",
+      "original_value": "0.86",
+      "possible_values": {
+        "names": ["Manganese (Serum)"],
+        "units": ["µg/L"]
+      },
+      "original_biomarker_name": "Manganese (Serum)"
+    },
+    {
+      "unit": "ug/L",
+      "value": "95.67",
+      "biomarker": "Selenium (Serum)",
+      "biomarker_id": "0dbe4340",
+      "original_unit": "ug/L",
+      "original_value": "95.67",
+      "possible_values": {
+        "names": ["Selenium (Serum)"],
+        "units": ["µg/L"]
+      },
+      "original_biomarker_name": "Selenium (Serum)"
+    },
+    {
+      "unit": "nmol/L",
+      "value": "2.38",
+      "biomarker": "VITAMIN K1",
+      "biomarker_id": "1ac60767",
+      "original_unit": "ng/mL",
+      "original_value": "1.07",
+      "possible_values": {
+        "names": ["VITAMIN K1"],
+        "units": ["nmol/L"]
+      },
+      "original_biomarker_name": "Vitamin K1"
+    },
+    {
+      "unit": "mmol/L",
+      "value": "102",
+      "biomarker": "CHLORIDE",
+      "biomarker_id": "f581bd6d",
+      "original_unit": "mmol/L",
+      "original_value": "102",
+      "possible_values": {
+        "names": ["Chloride"],
+        "units": ["mmol/L"]
+      },
+      "original_biomarker_name": "Chloride (Cl)"
+    },
+    {
+      "unit": "ng/mL",
+      "value": "11.4",
+      "biomarker": "Folate",
+      "biomarker_id": "30d6e47d",
+      "original_unit": "ng/mL",
+      "original_value": "11.4",
+      "possible_values": {
+        "names": ["Folate"],
+        "units": ["ng/mL"]
+      },
+      "original_biomarker_name": "Folic Acid"
+    },
+    {
+      "unit": "mg/dL",
+      "value": "2.5",
+      "biomarker": "Magnesium",
+      "biomarker_id": "b69c79da",
+      "original_unit": "mg/dL",
+      "original_value": "2.5",
+      "possible_values": {
+        "names": ["Magnesium"],
+        "units": ["mg/dL"]
+      },
+      "original_biomarker_name": "Magnesium"
+    },
+    {
+      "unit": "mmol/L",
+      "value": "4.3",
+      "biomarker": "Potassium",
+      "biomarker_id": "c456d56d",
+      "original_unit": "mmol/L",
+      "original_value": "4.3",
+      "possible_values": {
+        "names": ["Potassium"],
+        "units": ["mmol/L"]
+      },
+      "original_biomarker_name": "Potassium (K)"
+    },
+    {
+      "unit": "mmol/L",
+      "value": "138",
+      "biomarker": "Sodium",
+      "biomarker_id": "c2c67b2a",
+      "original_unit": "mmol/L",
+      "original_value": "138",
+      "possible_values": {
+        "names": ["Sodium"],
+        "units": ["mmol/L"]
+      },
+      "original_biomarker_name": "Sodium (Na)"
+    },
+    {
+      "unit": "ug/dL",
+      "value": "121",
+      "biomarker": "Zinc in Serum",
+      "biomarker_id": "2cc08f39",
+      "original_unit": "ug/dL",
+      "original_value": "121",
+      "possible_values": {
+        "names": ["Zinc in Serum"],
+        "units": ["µg/dL"]
+      },
+      "original_biomarker_name": "Zinc (Serum)"
+    },
+    {
+      "unit": "mg/L",
+      "value": "25.00",
+      "biomarker": "Calcium corr",
+      "biomarker_id": "82b76d41",
+      "original_unit": "ng/mL",
+      "original_value": "25",
+      "possible_values": {
+        "names": ["Calcium corr"],
+        "units": ["mg/L"]
+      },
+      "original_biomarker_name": "Vitamin D, 25-OH (Total)"
+    },
+    {
+      "unit": "ug/dL",
+      "value": "227.8",
+      "biomarker": "Calcium corr",
+      "biomarker_id": "50226704",
+      "original_unit": "ug/dL",
+      "original_value": "227.8",
+      "possible_values": {
+        "names": ["Calcium corr"],
+        "units": ["mg/L"]
+      },
+      "original_biomarker_name": "Beta Carotene"
+    },
+    {
+      "unit": "ug/L",
+      "value": "2.85",
+      "biomarker": "Chromium",
+      "biomarker_id": "b6852486",
+      "original_unit": "ug/L",
+      "original_value": "2.85",
+      "possible_values": {
+        "names": ["Chromium"],
+        "units": ["µg/L"]
+      },
+      "original_biomarker_name": "Chromium"
+    },
+    {
+      "unit": "nmol/L",
+      "value": "719.38",
+      "biomarker": "VITAMIN B2 (RIBOFLAVIN)",
+      "biomarker_id": "dbd4b763",
+      "original_unit": "ug/L",
+      "original_value": "270.85",
+      "possible_values": {
+        "names": ["VITAMIN B2 (RIBOFLAVIN)"],
+        "units": ["nmol/L"]
+      },
+      "original_biomarker_name": "Vitamin B2 (Riboflavin)"
+    },
+    {
+      "unit": "mg/l",
+      "value": "0.05",
+      "biomarker": "Fluoride (Serum)",
+      "biomarker_id": "5cb2ba21",
+      "original_unit": "mg/l",
+      "original_value": "<0.05",
+      "possible_values": {
+        "names": ["Fluoride (Serum)"],
+        "units": ["mg/L"]
+      },
+      "original_biomarker_name": "Fluoride (serum)"
+    }
+  ],
+  "progress": 100
+}

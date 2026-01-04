@@ -36,13 +36,15 @@ const FileBox: React.FC<FileBoxProps> = ({
       member_id: memberId,
     })
       .then(() => {
-        setLoadingDelete(false);
         setisDeleted(true);
 
         onDeleteSuccess();
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
+        setLoadingDelete(false);
       });
 
     const checkDelete = async () => {
