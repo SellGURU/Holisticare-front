@@ -8,7 +8,7 @@ import Circleloader from '../../../Components/CircleLoader';
 import Toggle from '../../../Components/RepoerAnalyse/Boxs/Toggle';
 import TextField from '../../../Components/TextField';
 import { TextAreaField } from '../../../Components/UnitComponents';
-import AddQuestionsModal from './AddQuestionModal';
+import AddQuestionsModal from './AddQuestionaryQuestionModal';
 import QuestionItem from './QuestionItem';
 import TimerPicker from './TimerPicker';
 interface QuestionaryControllerModalProps {
@@ -37,7 +37,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   const [checked, setChecked] = useState(false);
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(15);
-  const [questions, setQuestions] = useState<Array<checkinType>>(
+  const [questions, setQuestions] = useState<Array<QuestionaryType>>(
     templateData ? templateData.questions : [],
   );
   const [AddquestionStep, setAddquestionStep] = useState(0);
@@ -427,8 +427,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
 };
 
 interface AddQuestionaryProps {
-  onChange: (questions: Array<checkinType>) => void;
-  upQuestions: Array<checkinType>;
+  onChange: (questions: Array<QuestionaryType>) => void;
+  upQuestions: Array<QuestionaryType>;
   step: number;
   onChangeChecked: (value: boolean) => void;
   onChangeMinutes: (value: number) => void;
@@ -473,7 +473,8 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
   setGender,
   textErrorMessage,
 }) => {
-  const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
+  const [questions, setQuestions] =
+    useState<Array<QuestionaryType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState(-1);
   const [checked, setChecked] = useState(false);

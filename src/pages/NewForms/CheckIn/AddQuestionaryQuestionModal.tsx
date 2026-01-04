@@ -6,11 +6,11 @@ import { SelectBoxField, TextField } from '../../../Components/UnitComponents';
 
 interface AddQuestionsModalProps {
   onCancel: () => void;
-  onSubmit: (value: checkinType) => void;
-  editQUestion?: checkinType;
+  onSubmit: (value: QuestionaryType) => void;
+  editQUestion?: QuestionaryType;
   isQuestionary?: boolean;
   setQuestionStep: (value: number) => void;
-  questions?: Array<checkinType>;
+  questions?: Array<QuestionaryType>;
 }
 
 const checkInTypes = [
@@ -192,7 +192,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
   const submit = () => {
     setShowValidation(true);
     if (!isDisabled() && !hasValidationErrors()) {
-      const resolvedQuestion: checkinType = {
+      const resolvedQuestion: QuestionaryType = {
         order: editQUestion?.order || 0,
         map_to_biomarker: editQUestion?.map_to_biomarker || '',
         hide: editQUestion?.hide || false,

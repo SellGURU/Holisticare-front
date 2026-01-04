@@ -5,7 +5,7 @@ import FormsApi from '../../../api/Forms';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Checkbox from '../../../Components/checkbox';
 import TextField from '../../../Components/TextField';
-import AddQuestionsModal from './AddQuestionModal';
+import AddQuestionsModal from './AddCheckInQuestionModal';
 import QuestionItem from './QuestionItem';
 import TimerPicker from './TimerPicker';
 import Circleloader from '../../../Components/CircleLoader';
@@ -482,7 +482,9 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                       return resolved;
                     });
                   }
+                  setEditingQuestionIndex(-1);
                   setAddMore(false);
+                  setQuestionStep(0);
                 }}
                 onCancel={() => {
                   setEditingQuestionIndex(-1);
