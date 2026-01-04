@@ -44,6 +44,9 @@ const TextBoxAi: React.FC<TextBoxAiProps> = ({
           setLocalVal(res.data);
           setIsLoading(false);
         })
+        .catch((err) => {
+          console.error('Error generating treatment plan by knowledge:', err);
+        })
         .finally(() => {
           setIsLoading(false);
         });
@@ -55,10 +58,17 @@ const TextBoxAi: React.FC<TextBoxAiProps> = ({
           : localVal.includes(',')
             ? localVal.split(',')
             : [localVal],
-      }).then((res) => {
-        setLocalVal(res.data.map((e: any) => e));
-        setIsLoading(false);
-      });
+      })
+        .then((res) => {
+          setLocalVal(res.data.map((e: any) => e));
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error updating treatment plan with AI:', err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   };
   useEffect(() => {

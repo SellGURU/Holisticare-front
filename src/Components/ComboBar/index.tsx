@@ -81,9 +81,13 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   useEffect(() => {
     Application.getPatientsInfo({
       member_id: id,
-    }).then((res) => {
-      setPatientInfo(res.data);
-    });
+    })
+      .then((res) => {
+        setPatientInfo(res.data);
+      })
+      .catch(() => {
+        console.error('Error getting patient info');
+      });
   }, [id]);
   useEffect(() => {
     const handleCompletedProgress = () => {

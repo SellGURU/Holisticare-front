@@ -158,17 +158,22 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
   useEffect(() => {
     if (editId != '' && editId) {
       setLoading(true);
-      FormsApi.showCheckIn(editId).then((res) => {
-        setQuestions(res.data.questions);
-        setTitleForm(res.data.title);
-        const totalMs = res.data.time;
-        const mins = Math.floor(totalMs / 60000);
-        const secs = Math.floor((totalMs % 60000) / 1000);
-        setMinutes(mins);
-        setSeconds(secs);
-        setChecked(res.data.share_with_client);
-        setLoading(false);
-      });
+      FormsApi.showCheckIn(editId)
+        .then((res) => {
+          setQuestions(res.data.questions);
+          setTitleForm(res.data.title);
+          const totalMs = res.data.time;
+          const mins = Math.floor(totalMs / 60000);
+          const secs = Math.floor((totalMs % 60000) / 1000);
+          setMinutes(mins);
+          setSeconds(secs);
+          setChecked(res.data.share_with_client);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error showing checkin:', err);
+          setLoading(false);
+        });
     }
   }, [editId]);
   const [AddquestionStep, setAddquestionStep] = useState(0);

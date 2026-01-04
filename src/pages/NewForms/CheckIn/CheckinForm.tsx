@@ -31,17 +31,27 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [textErrorMessage, setTextErrorMessage] = useState('');
   const getChechins = () => {
     setLoading(true);
-    FormsApi.getCheckinList().then((res) => {
-      setCheckInList(res.data);
-      setLoading(false);
-    });
+    FormsApi.getCheckinList()
+      .then((res) => {
+        setCheckInList(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting checkin list:', err);
+        setLoading(false);
+      });
   };
   const getQuestionary = () => {
     setLoading(true);
-    FormsApi.getQuestionaryList().then((res) => {
-      setCheckInList(res.data);
-      setLoading(false);
-    });
+    FormsApi.getQuestionaryList()
+      .then((res) => {
+        setCheckInList(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting questionary list:', err);
+        setLoading(false);
+      });
   };
   useEffect(() => {
     if (isQuestionary) {
@@ -207,13 +217,21 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
               )}
               onDelete={(id) => {
                 if (isQuestionary) {
-                  FormsApi.deleteQuestionary(id).then(() => {
-                    getQuestionary();
-                  });
+                  FormsApi.deleteQuestionary(id)
+                    .then(() => {
+                      getQuestionary();
+                    })
+                    .catch((err) => {
+                      console.error('Error deleting questionary:', err);
+                    });
                 } else {
-                  FormsApi.deleteCheckin(id).then(() => {
-                    getChechins();
-                  });
+                  FormsApi.deleteCheckin(id)
+                    .then(() => {
+                      getChechins();
+                    })
+                    .catch((err) => {
+                      console.error('Error deleting checkin:', err);
+                    });
                 }
               }}
               onEdit={(id) => {

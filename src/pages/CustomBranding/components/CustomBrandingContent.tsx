@@ -50,25 +50,30 @@ const CustomBrandingContent = () => {
     }));
   };
   const getShowBrandInfo = () => {
-    Application.getShowBrandInfo().then((res) => {
-      setCustomTheme({
-        headLine: res.data.brand_elements.headline,
-        primaryColor:
-          res.data.brand_elements.primary_color || defaultPrimaryColor,
-        secondaryColor:
-          res.data.brand_elements.secondary_color || defaultSecondaryColor,
-        name: res.data.brand_elements.name,
-        selectedImage: res.data.brand_elements.logo,
-        lastUpdate: res.data.brand_elements.last_update,
+    Application.getShowBrandInfo()
+      .then((res) => {
+        setCustomTheme({
+          headLine: res.data.brand_elements.headline,
+          primaryColor:
+            res.data.brand_elements.primary_color || defaultPrimaryColor,
+          secondaryColor:
+            res.data.brand_elements.secondary_color || defaultSecondaryColor,
+          name: res.data.brand_elements.name,
+          selectedImage: res.data.brand_elements.logo,
+          lastUpdate: res.data.brand_elements.last_update,
+        });
+        setDefaultLogo(res.data.brand_elements.logo);
+        setDefaultHeadLine(res.data.brand_elements.headline);
+        setDefaultName(res.data.brand_elements.name);
+        setDefaultPrimaryColor(res.data.brand_elements.primary_color);
+        setDefaultSecondaryColor(res.data.brand_elements.secondary_color);
+        // setDefaultHeadLine()
+        setPageLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting show brand info:', err);
+        setPageLoading(false);
       });
-      setDefaultLogo(res.data.brand_elements.logo);
-      setDefaultHeadLine(res.data.brand_elements.headline);
-      setDefaultName(res.data.brand_elements.name);
-      setDefaultPrimaryColor(res.data.brand_elements.primary_color);
-      setDefaultSecondaryColor(res.data.brand_elements.secondary_color);
-      // setDefaultHeadLine()
-      setPageLoading(false);
-    });
   };
   useEffect(() => {
     getShowBrandInfo();

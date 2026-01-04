@@ -248,6 +248,9 @@ const GenerateActionPlan = () => {
         .then((res) => {
           setCalendarViewData(res.data);
         })
+        .catch((err) => {
+          console.error('Error getting action plan block calendar view:', err);
+        })
         .finally(() => {
           setIsLoadingCalendarView(false);
         });

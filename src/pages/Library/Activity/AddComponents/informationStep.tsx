@@ -68,15 +68,19 @@ const InformationStep: FC<InformationStepProps> = ({
   const [locationBoxs, setLocationBoxs] = useState([]);
 
   useEffect(() => {
-    Application.getExerciseFilters({}).then((res) => {
-      setConditionsOptions(res.data.Conditions);
-      setEquipmentOptions(res.data.Equipment);
-      setMuscleOptions(res.data.Muscle);
-      setLevelOptions(res.data.Level);
-      setTermsOptions(res.data.Terms);
-      setTypeOptions(res.data.Type);
-      setLocationBoxs(res.data.Location);
-    });
+    Application.getExerciseFilters({})
+      .then((res) => {
+        setConditionsOptions(res.data.Conditions);
+        setEquipmentOptions(res.data.Equipment);
+        setMuscleOptions(res.data.Muscle);
+        setLevelOptions(res.data.Level);
+        setTermsOptions(res.data.Terms);
+        setTypeOptions(res.data.Type);
+        setLocationBoxs(res.data.Location);
+      })
+      .catch((err) => {
+        console.error('Error getting exercise filters:', err);
+      });
   }, []);
 
   const handleCheckboxChange = (value: string) => {

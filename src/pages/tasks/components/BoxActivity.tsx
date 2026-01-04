@@ -58,14 +58,18 @@ const BoxActivity: FC<Tasks> = ({ activities, encoded_mi }) => {
           return Mobile.getExerciseFile({
             file_id: file.Content.file_id,
             encoded_mi: encoded_mi,
-          }).then((res) => ({
-            Title: res.data.file_name,
-            Type: res.data.file_type,
-            Content: {
-              file_id: file.Content.file_id,
-              url: res.data.base_64_data,
-            },
-          }));
+          })
+            .then((res) => ({
+              Title: res.data.file_name,
+              Type: res.data.file_type,
+              Content: {
+                file_id: file.Content.file_id,
+                url: res.data.base_64_data,
+              },
+            }))
+            .catch((err) => {
+              console.error('Error getting exercise file:', err);
+            });
         } else if (file.Type === 'link') {
           return Promise.resolve({
             Content: {

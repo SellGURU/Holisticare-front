@@ -404,15 +404,19 @@ const AiKnowledge = () => {
   // ];
   const fetchGraphData = async () => {
     try {
-      await Application.getgraphData().then((res) => {
-        if (res.data.nodes) {
-          setGraphData(res.data);
-          // setisLoading(false);
-          setActiveFilters([
-            ...new Set(res.data?.nodes.map((e: any) => e.category2)),
-          ] as Array<string>);
-        }
-      });
+      await Application.getgraphData()
+        .then((res) => {
+          if (res.data.nodes) {
+            setGraphData(res.data);
+            // setisLoading(false);
+            setActiveFilters([
+              ...new Set(res.data?.nodes.map((e: any) => e.category2)),
+            ] as Array<string>);
+          }
+        })
+        .catch((err) => {
+          console.error('Error fetching graph data:', err);
+        });
     } catch (error) {
       console.error('Error fetching graph data:', error);
     }
@@ -677,10 +681,14 @@ const AiKnowledge = () => {
       .then(() => {
         fetchGraphData();
         setConfirmDeleteId(null);
-        setisLoading(false);
-        setIsLoadingCallApi(false);
       })
-      .finally(() => {});
+      .catch((err) => {
+        console.error('Error deleting user upload document:', err);
+      })
+      .finally(() => {
+        setIsLoadingCallApi(false);
+        setisLoading(false);
+      });
   };
 
   const handleDownloadFileUserUpload = (filename: string) => {
@@ -718,7 +726,7 @@ const AiKnowledge = () => {
         document.body.removeChild(link);
       })
       .catch((e: any) => {
-        console.log(e);
+        console.error('Error downloading system document:', e);
       });
   };
 

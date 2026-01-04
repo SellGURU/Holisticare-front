@@ -26,9 +26,13 @@ const DashBoard = () => {
 
   // End Add Task Section
   useEffect(() => {
-    DashboardApi.getClientsStats({}).then((res) => {
-      setReports(res.data);
-    });
+    DashboardApi.getClientsStats({})
+      .then((res) => {
+        setReports(res.data);
+      })
+      .catch((err) => {
+        console.error('Error getting clients stats:', err);
+      });
   }, []);
   return (
     <>
