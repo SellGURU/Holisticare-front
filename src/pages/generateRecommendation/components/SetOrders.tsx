@@ -357,11 +357,11 @@ export const SetOrders: FC<SetOrdersProps> = ({
 
   // 2) category-specific search logic (customize per tab)
   const SEARCH_FIELDS_BY_CATEGORY: Record<string, string[]> = {
-    Activity: ['Recommendation', 'label'],
-    Diet: ['Recommendation', 'label'],
-    Lifestyle: ['Recommendation', 'label'],
-    Supplement: ['Recommendation', 'label'],
-    Others: ['Recommendation', 'label'],
+    Activity: ['Recommendation'],
+    Diet: ['Recommendation'],
+    Lifestyle: ['Recommendation'],
+    Supplement: ['Recommendation'],
+    Others: ['Recommendation'],
   };
 
   // normalize text for consistent matching
@@ -493,7 +493,29 @@ export const SetOrders: FC<SetOrdersProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="bg-white rounded-2xl  md:h-[65vh] shadow-100 p-4 md:p-6 border border-Gray-50">
+      <div className="bg-white rounded-2xl  md:h-[72vh] shadow-100 p-4 md:p-6 border border-Gray-50">
+        <div className=" w-full flex items-center gap-2 justify-end mb-4 ">
+          <div className="w-[360px]">
+            <SearchBox
+              isHaveBorder
+              isGrayIcon
+              showClose={searchQuery.length > 0}
+              placeHolder={`search ${activeCategory.toLowerCase()} interventions`}
+              value={searchQuery}
+              onSearch={(val) => {
+                setActiveCategoryQuery(val);
+                if (val === '') {
+                  setSearchQueries((prev) => ({
+                    ...prev,
+                    [activeCategory]: '',
+                  }));
+                }
+              }}
+              ClassName="w-full"
+            />
+          </div>
+        </div>
+
         <CoverageCard
           progress={progress}
           details={details}
@@ -540,25 +562,6 @@ export const SetOrders: FC<SetOrdersProps> = ({
           </div>
           <div className="w-full sm:w-auto flex flex-wrap sm:flex-nowrap items-center justify-end gap-2 sm:gap-16">
             {/* Search */}
-            <div className="w-full flex items-center gap-2 ">
-              <SearchBox
-                isHaveBorder
-                isGrayIcon
-                showClose={searchQuery.length > 0}
-                placeHolder={`search ${activeCategory.toLowerCase()} interventions`}
-                value={searchQuery}
-                onSearch={(val) => {
-                  setActiveCategoryQuery(val);
-                  if (val === '') {
-                    setSearchQueries((prev) => ({
-                      ...prev,
-                      [activeCategory]: '',
-                    }));
-                  }
-                }}
-                ClassName="w-full"
-              />
-            </div>
 
             {/* Change Order */}
             <button

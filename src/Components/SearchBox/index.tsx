@@ -66,7 +66,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
         placeholder={placeHolder}
         onChange={handleChange}
         value={inputValue}
-        className="w-full flex justify-center pl-3 bg-inherit rounded-lg focus:outline-none text-Text-Secondary text-[10px] font-light"
+        className="w-full flex justify-center pl-3 bg-inherit rounded-lg focus:outline-none text-Text-Primary font-normal placeholder:font-ight placeholder:text-Text-Secondary text-[10px]"
         {...props}
       />
 
