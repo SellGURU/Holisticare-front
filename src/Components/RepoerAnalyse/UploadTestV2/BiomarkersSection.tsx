@@ -353,7 +353,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         >
           {/* <Circleloader /> */}
           {/* Progress Bar */}
-          <ProgressLoading maxProgress={progressBiomarkerUpload}></ProgressLoading>
+          <ProgressLoading
+            maxProgress={progressBiomarkerUpload}
+          ></ProgressLoading>
         </div>
       ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <div

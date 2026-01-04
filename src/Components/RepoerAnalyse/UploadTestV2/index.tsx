@@ -70,7 +70,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     let intervalId: NodeJS.Timeout;
 
     const fetchData = async () => {
-      setProgressBiomarkerUpload(0)
+      setProgressBiomarkerUpload(0);
       setbiomarkerLoading(true);
       try {
         const res = await Application.checkLabStepOne({
