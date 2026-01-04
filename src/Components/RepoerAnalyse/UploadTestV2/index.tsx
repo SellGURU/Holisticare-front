@@ -64,40 +64,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   }, []);
   const [biomarkerLoading, setbiomarkerLoading] = useState(false);
   const [progressBiomarkerUpload, setProgressBiomarkerUpload] = useState(0);
-  const [progressBarLoad, setProgressBarLoad] = useState(0);
-  const [phaseOneDone, setPhaseOneDone] = useState(false);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgressBarLoad((prev) => {
-        if (!phaseOneDone) {
-          const next = prev + 0.3;
-          if (next >= 40) {
-            setPhaseOneDone(true);
-            return 40;
-          }
-          return next;
-        }
-
-        if (progressBiomarkerUpload >= 100) {
-          return 100;
-        }
-
-        if (progressBiomarkerUpload >= 40 && prev < 89) {
-          return prev + 0.15;
-        }
-
-        return prev;
-      });
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [progressBiomarkerUpload, phaseOneDone]);
   useEffect(() => {
     if (!uploadedFile?.file_id) return;
 
     let intervalId: NodeJS.Timeout;
 
     const fetchData = async () => {
+      setProgressBiomarkerUpload(0)
       setbiomarkerLoading(true);
       try {
         const res = await Application.checkLabStepOne({
@@ -130,11 +103,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           res.data.extracted_biomarkers &&
           res.data.extracted_biomarkers.length > 0
         ) {
-          setTimeout(() => {
-            setProgressBiomarkerUpload(0);
-            setProgressBarLoad(0);
-            setPhaseOneDone(false);
-          }, 2000);
           onValidate(sorted);
         }
       } catch (err) {
@@ -544,7 +512,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       .then(() => {
         // 200 response
         setPolling(false);
-        setbiomarkerLoading(false);
+        // setbiomarkerLoading(false);
       })
       .catch((err: any) => {
         console.log(err);
@@ -896,7 +864,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             setRowErrors([]);
           }}
           loading={biomarkerLoading}
-          progressBiomarkerUpload={progressBarLoad}
+          progressBiomarkerUpload={progressBiomarkerUpload}
           btnLoading={btnLoading}
           fileType={fileType}
           uploadedFile={uploadedFile}

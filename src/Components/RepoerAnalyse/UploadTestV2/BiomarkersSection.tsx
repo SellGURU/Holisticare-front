@@ -9,6 +9,7 @@ import { publish, subscribe, unsubscribe } from '../../../utils/event';
 // import SearchSelect from '../../searchableSelect';
 import Toggle from '../Boxs/Toggle';
 import BiomarkerRow from './BiomarkerRow';
+import ProgressLoading from './ProgressLoading';
 interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
@@ -352,27 +353,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         >
           {/* <Circleloader /> */}
           {/* Progress Bar */}
-          <div className="w-72">
-            <div className="flex justify-between mb-1 text-[11px] text-Text-Secondary">
-              <span>Processing biomarkers</span>
-              <span>{progressBiomarkerUpload.toFixed(2)}%</span>
-            </div>
-
-            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className={`h-full transition-all duration-500 rounded-full ${
-                  progressBiomarkerUpload < 100
-                    ? 'bg-Primary-DeepTeal'
-                    : 'bg-Primary-EmeraldGreen'
-                }`}
-                style={{ width: `${progressBiomarkerUpload}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="text-center">
-            Processing… We’ll show the detected biomarkers shortly.
-          </div>
+          <ProgressLoading maxProgress={progressBiomarkerUpload}></ProgressLoading>
         </div>
       ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <div
