@@ -73,8 +73,8 @@ const conditions = [
   'date before',
   // 'date between',
   'date equals',
-  'file uploaded',
-  'file not uploaded',
+  // 'file uploaded',
+  // 'file not uploaded',
   // 'file size greater',
   // 'file size less',
 ];
