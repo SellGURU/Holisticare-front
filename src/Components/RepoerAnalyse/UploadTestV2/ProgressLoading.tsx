@@ -29,7 +29,7 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({ maxProgress }) => {
     <>
       <div className="w-72">
         <div className="flex justify-between mb-1 text-[11px] text-Text-Secondary">
-          <span>Processing biomarkers</span>
+          <span>Analyzing biomarkers</span>
           <span>{progress.toFixed(0)}%</span>
         </div>
 
@@ -44,7 +44,7 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({ maxProgress }) => {
       </div>
 
       <div className="text-center">
-        Processing… We’ll show the detected biomarkers shortly.
+        Results will appear automatically.
       </div>
     </>
   );
