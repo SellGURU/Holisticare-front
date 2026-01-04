@@ -43,9 +43,7 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({ maxProgress }) => {
         </div>
       </div>
 
-      <div className="text-center">
-        Results will appear automatically.
-      </div>
+      <div className="text-center">Results will appear automatically.</div>
     </>
   );
 };
