@@ -98,9 +98,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   >([]);
   useEffect(() => {
     if (pageType === 'Diet') {
-      Application.getDietLibrary().then((res) => {
-        setDietLibrary(res.data);
-      });
+      Application.getDietLibrary()
+        .then((res) => {
+          setDietLibrary(res.data);
+        })
+        .catch((err) => {
+          console.error('Error getting diet library:', err);
+        });
     }
   }, [pageType]);
 

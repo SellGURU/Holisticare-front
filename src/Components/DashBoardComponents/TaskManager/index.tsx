@@ -101,13 +101,17 @@ const TaskManager = () => {
         checked: false,
       };
 
-      DashboardApi.AddTask(newTask).then(() => {
-        DashboardApi.getTasksList({}).then((response) => {
-          setTasks(response.data);
-          setshowAddTaskModal(false);
-          formik.resetForm();
+      DashboardApi.AddTask(newTask)
+        .then(() => {
+          DashboardApi.getTasksList({}).then((response) => {
+            setTasks(response.data);
+            setshowAddTaskModal(false);
+            formik.resetForm();
+          });
+        })
+        .catch((err) => {
+          console.error('Error adding task:', err);
         });
-      });
     },
   });
 

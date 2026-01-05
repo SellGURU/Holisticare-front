@@ -224,7 +224,9 @@ export const GenerateRecommendation = () => {
         .then((res) => {
           handlePlan(res.data, retryForSuggestions);
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.error('Error getting generated treatment plan:', err);
+        });
     } else {
       Application.generateTreatmentPlan({
         member_id: id,
@@ -351,6 +353,9 @@ export const GenerateRecommendation = () => {
     })
       .then(() => {
         setTreatmentId(treatmentPlanData.treatment_id);
+      })
+      .catch((err) => {
+        console.error('Error saving holistic plan:', err);
       })
       .finally(() => {
         setisButtonLoading(false);

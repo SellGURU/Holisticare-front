@@ -84,10 +84,10 @@ const ClientList = () => {
         );
         setPatientsList(patientsForContext);
       })
-      .finally(() => {
+      .catch(() => {
         setIsLoading(false);
       })
-      .catch(() => {
+      .finally(() => {
         setIsLoading(false);
       });
   };
@@ -703,7 +703,11 @@ const ClientList = () => {
         onDelete={() => {
           Application.deleteClinic({
             member_id: removeId,
-          }).then(() => {});
+          })
+            .then(() => {})
+            .catch((err) => {
+              console.error('Error deleting clinic:', err);
+            });
         }}
         onConfirm={() => {
           setClientList((prevList) =>

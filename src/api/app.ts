@@ -490,91 +490,48 @@ class Application extends Api {
     return response;
   };
   static getDataSyncing = (data: any) => {
-    const response = this.post(
-      `/summary/data_syncing_devices
-    `,
-      data,
-    );
+    const response = this.post(`/summary/data_syncing_devices`, data);
     return response;
   };
   static getQuestionary_tracking = (data: any) => {
     const response = this.post(
-      `/questionary_tracking/selected_questionarries
-
-
-    `,
+      `/questionary_tracking/selected_questionarries`,
       data,
     );
     return response;
   };
   static Questionary_tracking_action = (data: any) => {
     const response = this.post(
-      `/health_profile/questionary_tracking/action
-
-
-    `,
+      `/health_profile/questionary_tracking/action`,
       data,
     );
     return response;
   };
   static AddQuestionaryList = (data: any) => {
-    const response = this.post(
-      `/questionary_tracking/clinic_q_list
-
-
-
-    `,
-      data,
-    );
+    const response = this.post(`/questionary_tracking/clinic_q_list`, data);
     return response;
   };
   static AddQuestionary = (data: any) => {
     const response = this.post(
-      `/questionary_tracking/add_questionary_for_client
-
-
-
-
-
-    `,
+      `/questionary_tracking/add_questionary_for_client`,
       data,
     );
     return response;
   };
   static SaveQuestionary = (data: any) => {
     const response = this.post(
-      `
-/questionary_tracking/save_filled_questionary
-
-
-
-    `,
+      `/questionary_tracking/save_filled_questionary`,
       data,
     );
     return response;
   };
   static PreviewQuestionary = (data: any) => {
-    const response = this.post(
-      `
-/questionary_tracking/action_preview
-
-
-
-    `,
-      data,
-    );
+    const response = this.post(`/questionary_tracking/action_preview`, data);
     return response;
   };
   static QuestionaryAction = (data: any) => {
     const response = this.post(
-      `/questionary_tracking/action_assign_or_fill
-
-
-
-
-
-
-    `,
+      `/questionary_tracking/action_assign_or_fill`,
       data,
     );
     return response;
@@ -597,41 +554,19 @@ class Application extends Api {
     return response;
   };
   static getFilleList = (data: any) => {
-    const response = this.post(
-      `/patients/get_list_lab_report
-      `,
-      data,
-    );
+    const response = this.post(`/patients/get_list_lab_report`, data);
     return response;
   };
   static downloadFille = (data: any) => {
-    const response = this.post(
-      `/patients/download_lab_report
-
-      `,
-      data,
-    );
+    const response = this.post(`/patients/download_lab_report`, data);
     return response;
   };
   static addFavorite = (data: any) => {
-    const response = this.post(
-      `/patients/add_to_fav_list
-
-
-      `,
-      data,
-    );
+    const response = this.post(`/patients/add_to_fav_list`, data);
     return response;
   };
   static deleteActionCard = (data: any) => {
-    const response = this.post(
-      `/delete_block
-
-
-
-      `,
-      data,
-    );
+    const response = this.post(`/delete_block`, data);
     return response;
   };
   static deleteHolisticPlan = (data: any) => {

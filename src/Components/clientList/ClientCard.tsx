@@ -209,10 +209,14 @@ const ClientCard: FC<ClientCardProps> = ({
   const [CoachList, setCoachList] = useState<Array<any>>([]);
 
   const handleAssignClick = () => {
-    Application.getCoachList({ member_id: client.member_id }).then((res) => {
-      setCoachList(res.data);
-      setshowAssign(!showAssign);
-    });
+    Application.getCoachList({ member_id: client.member_id })
+      .then((res) => {
+        setCoachList(res.data);
+        setshowAssign(!showAssign);
+      })
+      .catch((err) => {
+        console.error('Error getting coach list:', err);
+      });
   };
   const handleCoachSelection = (selectedCoach: Coach) => {
     // Toggle the assigned state for the selected coach
@@ -231,12 +235,16 @@ const ClientCard: FC<ClientCardProps> = ({
     Application.assignCoach({
       member_id: client.member_id,
       coach_usernames: newAssignedState ? [selectedCoach.username] : [],
-    }).then(() => {
-      onAssign(
-        client.member_id,
-        newAssignedState ? selectedCoach.username : '',
-      );
-    });
+    })
+      .then(() => {
+        onAssign(
+          client.member_id,
+          newAssignedState ? selectedCoach.username : '',
+        );
+      })
+      .catch((err) => {
+        console.error('Error assigning coach:', err);
+      });
   };
   //  handleAssignCoach = (index: number) => {
   //   // Get all coaches that have assigned = true (including previously assigned coaches)
@@ -316,6 +324,7 @@ const ClientCard: FC<ClientCardProps> = ({
     Application.refreshData(client.member_id)
       .then(() => {
         handleRefreshProgress();
+        setRefresh(false);
       })
       .catch(() => {
         setRefresh(false);
@@ -520,15 +529,23 @@ const ClientCard: FC<ClientCardProps> = ({
           if (client.archived) {
             Application.unArchivePatient({
               member_id: client.member_id,
-            }).then(() => {
-              onarchive(client.member_id);
-            });
+            })
+              .then(() => {
+                onarchive(client.member_id);
+              })
+              .catch((err) => {
+                console.error('Error unarchiving patient:', err);
+              });
           } else {
             Application.archivePatient({
               member_id: client.member_id,
-            }).then(() => {
-              onarchive(client.member_id);
-            });
+            })
+              .then(() => {
+                onarchive(client.member_id);
+              })
+              .catch((err) => {
+                console.error('Error archiving patient:', err);
+              });
           }
         }}
         name={client.name}
@@ -545,9 +562,13 @@ const ClientCard: FC<ClientCardProps> = ({
         onDelete={() => {
           Application.deletePatient({
             member_id: client.member_id,
-          }).then(() => {
-            // setshowModal(false);
-          });
+          })
+            .then(() => {
+              // setshowModal(false);
+            })
+            .catch((err) => {
+              console.error('Error deleting patient:', err);
+            });
           // onarchive(client.member_id)
         }}
         onConfirm={() => {

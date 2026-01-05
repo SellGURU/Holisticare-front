@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { InputHTMLAttributes, useEffect, useState } from "react";
-import SvgIcon from "../../utils/svgIcon";
+import React, { InputHTMLAttributes, useEffect, useState } from 'react';
+import SvgIcon from '../../utils/svgIcon';
 
 interface SearchBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   onSearch: (searchTerm: any) => void;
@@ -25,29 +25,29 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   showClose = false,
   ...props
 }) => {
-  const [inputValue, setInputValue] = useState(value || "");
+  const [inputValue, setInputValue] = useState(value || '');
 
   useEffect(() => {
-    setInputValue(value || "");
+    setInputValue(value || '');
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const next = e.target.value.replace(/^\s+/, "");
+    const next = e.target.value.replace(/^\s+/, '');
     setInputValue(next);
     onSearch(next);
   };
 
   const handleClear = () => {
-    setInputValue("");
-    onSearch("");
+    setInputValue('');
+    onSearch('');
   };
 
   return (
     <div
       className={`relative flex justify-start items-center ${
-        !isMessages && "md:min-w-[300px]"
+        !isMessages && 'md:min-w-[300px]'
       } h-8 rounded-2xl bg-backgroundColor-Secondary py-[10px] px-4 ${
-        isHaveBorder ? "border border-Gray-50" : "shadow-200"
+        isHaveBorder ? 'border border-Gray-50' : 'shadow-200'
       } ${ClassName}`}
     >
       {isGrayIcon ? (
@@ -70,7 +70,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
         {...props}
       />
 
-      {showClose &&  (
+      {showClose && (
         <button
           type="button"
           onClick={handleClear}

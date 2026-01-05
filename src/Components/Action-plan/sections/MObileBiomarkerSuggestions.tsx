@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import MiniAnallyseButton from '../../MiniAnalyseButton';
 import Application from '../../../api/app';
@@ -161,6 +162,9 @@ const MobileActivityComponent: React.FC<MobileActivityComponentProps> = ({
               })
                 .then((res: any) => {
                   handleApiResponse(res.data[selectedCategory]);
+                })
+                .catch((err) => {
+                  console.error('Error generating AI:', err);
                 })
                 .finally(() => setIsLoadingAi(false));
             }}
