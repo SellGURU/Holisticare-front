@@ -8,7 +8,17 @@ declare global {
       callHandler: (handlerName: string, ...args: any[]) => void;
     };
   }
+
   type checkinType = {
+    order?: number;
+    question: string;
+    type: string;
+    required: boolean;
+    response: string;
+    options?: Array<string>;
+  };
+
+  type QuestionaryType = {
     order?: number;
     question: string;
     type: string;
@@ -37,6 +47,16 @@ declare global {
         type?: string;
       }>;
     }[];
+  };
+
+  type QuestoinaryFormType = {
+    title: string;
+    questions: Array<QuestionaryType>;
+  };
+
+  type QuestoinaryEditFormType = {
+    title: string;
+    questions: Array<QuestionaryType>;
   };
 
   type CheckinFormType = {

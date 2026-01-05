@@ -95,10 +95,11 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         .then(() => {
           getChechins();
           setShowAddModal(false);
-          setEditFormId('');
         })
         .catch((err) => {
           setErrorCheckIn(err.detail);
+          console.error('Error editing checkin:', err);
+          setLoading(false);
         });
     } else {
       FormsApi.addCheckin(values)

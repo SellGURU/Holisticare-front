@@ -8,7 +8,7 @@ import Circleloader from '../../../Components/CircleLoader';
 import Toggle from '../../../Components/RepoerAnalyse/Boxs/Toggle';
 import TextField from '../../../Components/TextField';
 import { TextAreaField } from '../../../Components/UnitComponents';
-import AddQuestionsModal from './AddQuestionModal';
+import AddQuestionsModal from './AddQuestionaryQuestionModal';
 import QuestionItem from './QuestionItem';
 import TimerPicker from './TimerPicker';
 interface QuestionaryControllerModalProps {
@@ -37,7 +37,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   const [checked, setChecked] = useState(false);
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(15);
-  const [questions, setQuestions] = useState<Array<checkinType>>(
+  const [questions, setQuestions] = useState<Array<QuestionaryType>>(
     templateData ? templateData.questions : [],
   );
   const [AddquestionStep, setAddquestionStep] = useState(0);
@@ -237,6 +237,16 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
         .then((res) => {
           setQuestions(res.data.questions);
           setTitleForm(res.data.title);
+          setDescriptionForm(res.data.description || '');
+          setConsentText(res.data.consent_text || '');
+          setRequireClientConsent(res.data.consent_text?.length > 0);
+          setAutoAssign(res.data.default_questionnaire);
+          setGenderRestriction(res.data.gender_target != 'both');
+          setGender(
+            res.data.gender_target == 'both'
+              ? 'female'
+              : res.data.gender_target,
+          );
           const totalMs = res.data.time;
           const mins = Math.floor(totalMs / 60000);
           const secs = Math.floor((totalMs % 60000) / 1000);
@@ -417,8 +427,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
 };
 
 interface AddQuestionaryProps {
-  onChange: (questions: Array<checkinType>) => void;
-  upQuestions: Array<checkinType>;
+  onChange: (questions: Array<QuestionaryType>) => void;
+  upQuestions: Array<QuestionaryType>;
   step: number;
   onChangeChecked: (value: boolean) => void;
   onChangeMinutes: (value: number) => void;
@@ -463,7 +473,8 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
   setGender,
   textErrorMessage,
 }) => {
-  const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
+  const [questions, setQuestions] =
+    useState<Array<QuestionaryType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState(-1);
   const [checked, setChecked] = useState(false);

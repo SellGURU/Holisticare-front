@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useState } from 'react';
 import CheckBoxSelection from './CheckBoxSelection';
 import MultiChoceSelection from './MultichoiceSelection';
 import Toggle from '../../../Components/RepoerAnalyse/Boxs/Toggle';
@@ -6,11 +6,11 @@ import { SelectBoxField, TextField } from '../../../Components/UnitComponents';
 
 interface AddQuestionsModalProps {
   onCancel: () => void;
-  onSubmit: (value: checkinType) => void;
-  editQUestion?: checkinType;
+  onSubmit: (value: QuestionaryType) => void;
+  editQUestion?: QuestionaryType;
   isQuestionary?: boolean;
   setQuestionStep: (value: number) => void;
-  questions?: Array<checkinType>;
+  questions?: Array<QuestionaryType>;
 }
 
 const checkInTypes = [
@@ -73,8 +73,8 @@ const conditions = [
   'date before',
   // 'date between',
   'date equals',
-  'file uploaded',
-  'file not uploaded',
+  // 'file uploaded',
+  // 'file not uploaded',
   // 'file size greater',
   // 'file size less',
 ];
@@ -192,7 +192,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
   const submit = () => {
     setShowValidation(true);
     if (!isDisabled() && !hasValidationErrors()) {
-      const resolvedQuestion: checkinType = {
+      const resolvedQuestion: QuestionaryType = {
         order: editQUestion?.order || 0,
         map_to_biomarker: editQUestion?.map_to_biomarker || '',
         hide: editQUestion?.hide || false,
@@ -221,7 +221,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
         resolvedQuestion.conditions = [
           {
             priority: 1,
-            logic: 'and',
+            logic: 'AND',
             rules: [
               {
                 question_order: ifQuestion.question_order,
@@ -267,44 +267,6 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             {' '}
             {editQUestion ? 'Update Question ' : 'Save Question'}{' '}
           </div>
-          {/* <div className="flex items-center">
-            <img
-              src="/icons/close-square.svg"
-              alt=""
-              className="w-[18px] h-[18px] cursor-pointer"
-              onClick={() => {
-                clear();
-                onCancel();
-                // if (editIndex !== null) {
-                //     handleCancelEdit();
-                // } else {
-                //     setItemSelected('');
-                //     setTitle('');
-                //     setCheckboxChecked(false);
-                //     setAddMode(false);
-                // }
-              }}
-            />
-            <img
-              src={
-                isDisabled()
-                  ? `/icons/tick-square-background.svg`
-                  : `/icons/tick-square-background-green.svg`
-              }
-              alt=""
-              className={`${isDisabled() ? 'cursor-not-allowed' : 'cursor-pointer'} w-[18px] h-[18px]  ml-2`}
-              onClick={() => {
-                if (!isDisabled()) {
-                  submit();
-                }
-                // if (editIndex !== null) {
-                //     handleSaveEdit(editIndex);
-                // } else {
-                //     addToCheckInList();
-                // }
-              }}
-            />
-          </div> */}
         </div>
         <div className="flex flex-col items-start w-full mt-4">
           <div className="text-xs font-medium text-Text-Primary mb-1">
@@ -438,7 +400,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             </div>
             {conditionalDisplay && (
               <div className="mt-2 flex items-center gap-y-0 gap-x-2 flex-wrap">
-                <div className="w-full md:w-[40%] flex items-center gap-2">
+                <div className="w-full md:w-[49%] flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     If
                   </div>
@@ -450,9 +412,12 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     value={
                       ifQuestion.question_order
                         ? 'Q' +
-                            (ifQuestion.question_order || 0) +
-                            ': ' +
-                            ifQuestion.question || ''
+                          (questions.findIndex(
+                            (q) => q.question === ifQuestion.question,
+                          ) +
+                            1) +
+                          ': ' +
+                          ifQuestion.question
                         : ''
                     }
                     onChange={(value) => {
@@ -469,7 +434,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     bottom="bottom-[29px]"
                   />
                 </div>
-                <div className="w-full md:w-[40%] flex items-center gap-2">
+                <div className="w-full md:w-[49%] flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     is
                   </div>
@@ -485,7 +450,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     bottom="bottom-[29px]"
                   />
                 </div>
-                <div className="w-full md:w-[40%] flex items-center gap-2">
+                <div className="w-full md:w-[49%] flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     to
                   </div>
@@ -501,7 +466,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     validationText=""
                   />
                 </div>
-                <div className="w-full md:w-[40%] flex items-center gap-2">
+                <div className="w-full md:w-[49%] flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     ,then
                   </div>
@@ -543,228 +508,42 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             </div>
             {advancedSettings && (
               <div className="grid grid-cols-1 md:grid-cols-2 mt-2 flex-wrap">
-                <label
-                  htmlFor="biomarker"
-                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
-                >
-                  <input
-                    id="biomarker"
-                    type="checkbox"
-                    checked={biomarker}
-                    onChange={() => setBiomarker(!biomarker)}
-                    className="hidden"
-                  />
-                  <div
-                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
-                      biomarker ? 'bg-Primary-DeepTeal' : ' bg-white '
-                    }`}
-                  >
-                    {biomarker && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3 w-3 text-white"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                  <div
-                    className={`text-xs leading-6 ${biomarker ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
-                  >
-                    This question measures a biomarker.
-                  </div>
-                </label>
-                <label
-                  htmlFor="client-insights"
-                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
-                >
-                  <input
-                    id="client-insights"
-                    type="checkbox"
-                    checked={clientInsights}
-                    onChange={() => setClientInsights(!clientInsights)}
-                    className="hidden"
-                  />
-                  <div
-                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
-                      clientInsights ? 'bg-Primary-DeepTeal' : ' bg-white '
-                    }`}
-                  >
-                    {clientInsights && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3 w-3 text-white"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                  <div
-                    className={`text-xs leading-6 ${clientInsights ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
-                  >
-                    Response used for Client Insights.
-                  </div>
-                </label>
-                <label
-                  htmlFor="client-goals"
-                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
-                >
-                  <input
-                    id="client-goals"
-                    type="checkbox"
-                    checked={clientGoals}
-                    onChange={() => setClientGoals(!clientGoals)}
-                    className="hidden"
-                  />
-                  <div
-                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
-                      clientGoals ? 'bg-Primary-DeepTeal' : ' bg-white '
-                    }`}
-                  >
-                    {clientGoals && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3 w-3 text-white"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                  <div
-                    className={`text-xs leading-6 ${clientGoals ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
-                  >
-                    Response used for Client Goals.
-                  </div>
-                </label>
-                <label
-                  htmlFor="medication"
-                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
-                >
-                  <input
-                    id="medication"
-                    type="checkbox"
-                    checked={medication}
-                    onChange={() => setMedication(!medication)}
-                    className="hidden"
-                  />
-                  <div
-                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
-                      medication ? 'bg-Primary-DeepTeal' : ' bg-white '
-                    }`}
-                  >
-                    {medication && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3 w-3 text-white"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                  <div
-                    className={`text-xs leading-6 ${medication ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
-                  >
-                    Response used for Medication.
-                  </div>
-                </label>
-                <label
-                  htmlFor="medical-condition"
-                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
-                >
-                  <input
-                    id="medical-condition"
-                    type="checkbox"
-                    checked={medicalCondition}
-                    onChange={() => setMedicalCondition(!medicalCondition)}
-                    className="hidden"
-                  />
-                  <div
-                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
-                      medicalCondition ? 'bg-Primary-DeepTeal' : ' bg-white '
-                    }`}
-                  >
-                    {medicalCondition && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3 w-3 text-white"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                  <div
-                    className={`text-xs leading-6 ${medicalCondition ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
-                  >
-                    Response used for Medical Condition.
-                  </div>
-                </label>
-                <label
-                  htmlFor="allergy"
-                  className="flex items-center space-x-1 cursor-pointer mt-1.5"
-                >
-                  <input
-                    id="allergy"
-                    type="checkbox"
-                    checked={allergy}
-                    onChange={() => setAllergy(!allergy)}
-                    className="hidden"
-                  />
-                  <div
-                    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
-                      allergy ? 'bg-Primary-DeepTeal' : ' bg-white '
-                    }`}
-                  >
-                    {allergy && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3 w-3 text-white"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </div>
-                  <div
-                    className={`text-xs leading-6 ${allergy ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
-                  >
-                    Response used for Allergy.
-                  </div>
-                </label>
+                <AdvancedItems
+                  checked={biomarker}
+                  onChange={(e) => setBiomarker(e.target.checked)}
+                  label="biomarker"
+                  description="This question measures a biomarker."
+                />
+                <AdvancedItems
+                  checked={clientInsights}
+                  onChange={(e) => setClientInsights(e.target.checked)}
+                  label="client-insights"
+                  description="Response used for Client Insights."
+                />
+                <AdvancedItems
+                  checked={clientGoals}
+                  onChange={(e) => setClientGoals(e.target.checked)}
+                  label="client-goals"
+                  description="Response used for Client Goals."
+                />
+                <AdvancedItems
+                  checked={medication}
+                  onChange={(e) => setMedication(e.target.checked)}
+                  label="medication"
+                  description="Response used for Medication."
+                />
+                <AdvancedItems
+                  checked={medicalCondition}
+                  onChange={(e) => setMedicalCondition(e.target.checked)}
+                  label="medical-condition"
+                  description="Response used for Medical Condition."
+                />
+                <AdvancedItems
+                  checked={allergy}
+                  onChange={(e) => setAllergy(e.target.checked)}
+                  label="allergy"
+                  description="Response used for Allergy."
+                />
               </div>
             )}
           </>
@@ -775,3 +554,57 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
 };
 
 export default AddQuestionsModal;
+
+interface AdvancedItemsProps {
+  checked: boolean;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  label: string;
+  description: string;
+}
+
+const AdvancedItems: FC<AdvancedItemsProps> = ({
+  checked,
+  onChange,
+  label,
+  description,
+}) => {
+  return (
+    <label
+      htmlFor={label}
+      className="flex items-center space-x-1 cursor-pointer mt-1.5"
+    >
+      <input
+        id={label}
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e)}
+        className="hidden"
+      />
+      <div
+        className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Text-Fivefold ${
+          checked ? 'bg-Primary-DeepTeal' : ' bg-white '
+        }`}
+      >
+        {checked && (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-3 w-3 text-white"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+        )}
+      </div>
+      <div
+        className={`text-xs leading-6 ${checked ? 'text-Primary-DeepTeal' : 'text-Text-Primary'} select-none`}
+      >
+        {description}
+      </div>
+    </label>
+  );
+};
