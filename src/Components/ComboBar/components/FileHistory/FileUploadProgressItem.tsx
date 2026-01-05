@@ -23,6 +23,11 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
         setFileStatus('uploading');
       }
     }
+    if (file.action_type == 'deleted') {
+      if (file.process_done == false) {
+        setFileStatus('deleting');
+      }
+    }
   }, [file.action_type, file.process_done]);
   return (
     <>
