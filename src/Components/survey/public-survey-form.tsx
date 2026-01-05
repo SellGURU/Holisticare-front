@@ -573,7 +573,7 @@ export function PublicSurveyForm({
 
     // Get the current question and its index in the VISIBLE array
     const currentVisibleQuestion = visibleQuestions[currentStep - 1];
-    
+
     // If current question is undefined, it means we've gone past all visible questions
     if (!currentVisibleQuestion) {
       // All visible questions have been answered, proceed to submit
@@ -647,7 +647,7 @@ export function PublicSurveyForm({
   const [showSaveIndicator, setShowSaveIndicator] = useState<
     'idle' | 'saving' | 'saved'
   >('idle');
-  
+
   useEffect(() => {
     if (showSaveIndicator == 'saved') {
       setTimeout(() => {
@@ -655,7 +655,7 @@ export function PublicSurveyForm({
       }, 1000);
     }
   }, [showSaveIndicator]);
-  
+
   useEffect(() => {
     if (currentStep <= 1) return;
     if (isQuestionary) {
@@ -679,8 +679,17 @@ export function PublicSurveyForm({
           .catch(() => {});
       }
     }
-  }, [currentStep, isQuestionary, isClient, onAutoSaveClient, memberId, qId, fId, resolveRespond]);
-  
+  }, [
+    currentStep,
+    isQuestionary,
+    isClient,
+    onAutoSaveClient,
+    memberId,
+    qId,
+    fId,
+    resolveRespond,
+  ]);
+
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
