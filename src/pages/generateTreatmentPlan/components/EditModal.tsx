@@ -59,6 +59,20 @@ const EditModal: FC<EditModalProps> = ({
   const [showValidation, setShowValidation] = useState(false);
 
   const modalRef = useRef(null);
+  const scrollableContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Refs for fields that can have validation errors
+  const categoryRef = useRef<HTMLDivElement>(null);
+  const recommendationRef = useRef<HTMLDivElement>(null);
+  const basedOnRef = useRef<HTMLDivElement>(null);
+  const doseRef = useRef<HTMLDivElement>(null);
+  const interventionContentRef = useRef<HTMLDivElement>(null);
+  const keyBenefitsRef = useRef<HTMLDivElement>(null);
+  const foodsToEatRef = useRef<HTMLDivElement>(null);
+  const foodsToAvoidRef = useRef<HTMLDivElement>(null);
+  const exercisesToDoRef = useRef<HTMLDivElement>(null);
+  const exercisesToAvoidRef = useRef<HTMLDivElement>(null);
+  const clientNotesRef = useRef<HTMLDivElement>(null);
 
   interface FormValues {
     'Based on': string;
@@ -409,6 +423,77 @@ const EditModal: FC<EditModalProps> = ({
   //       .Dose
   //   : false;
 
+  const scrollToFirstError = () => {
+    // Check fields in order of appearance, matching handleSaveClick validation logic
+    if (!formData.Category) {
+      categoryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (!formData.Recommendation) {
+      recommendationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (!formData['Based on']) {
+      basedOnRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (
+      formData.Category === 'Supplement' &&
+      selectedGroupDose &&
+      !ValidationForms.IsvalidField('Dose', formData.Dose)
+    ) {
+      doseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (!formData.Intervnetion_content) {
+      interventionContentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (
+      formData.key_benefits.length === 0 &&
+      !ValidationForms.IsvalidField('KeyBenefits', keyBenefitValue)
+    ) {
+      keyBenefitsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (
+      formData.Category === 'Diet' &&
+      formData.foods_to_eat.length === 0 &&
+      !ValidationForms.IsvalidField('FoodsToEat', foodsToEatValue)
+    ) {
+      foodsToEatRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (
+      formData.Category === 'Diet' &&
+      formData.foods_to_avoid.length === 0 &&
+      !ValidationForms.IsvalidField('FoodsToAvoid', foodsToAvoidValue)
+    ) {
+      foodsToAvoidRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (
+      formData.Category === 'Activity' &&
+      formData.exercises_to_do.length === 0 &&
+      !ValidationForms.IsvalidField('ExercisesToDo', exercisesToDoValue)
+    ) {
+      exercisesToDoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (
+      formData.Category === 'Activity' &&
+      formData.exercises_to_avoid.length === 0 &&
+      !ValidationForms.IsvalidField('ExercisesToAvoid', exercisesToAvoidValue)
+    ) {
+      exercisesToAvoidRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (newNote.length > 400 || !ValidationForms.IsvalidField('Note', newNote)) {
+      clientNotesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+  };
+
   const handleSaveClick = () => {
     setShowValidation(true);
 
@@ -420,18 +505,21 @@ const EditModal: FC<EditModalProps> = ({
       !formData.Intervnetion_content ||
       !formData['Based on']
     ) {
+      scrollToFirstError();
       return;
     }
     if (
       formData.key_benefits.length === 0 &&
       !ValidationForms.IsvalidField('KeyBenefits', keyBenefitValue)
     ) {
+      scrollToFirstError();
       return;
     }
     if (
       formData.Category === 'Supplement' &&
       !ValidationForms.IsvalidField('Dose', formData.Dose)
     ) {
+      scrollToFirstError();
       return;
     }
     if (
@@ -439,6 +527,7 @@ const EditModal: FC<EditModalProps> = ({
       !ValidationForms.IsvalidField('FoodsToEat', formData.foods_to_eat) &&
       !ValidationForms.IsvalidField('FoodsToEat', foodsToEatValue)
     ) {
+      scrollToFirstError();
       return;
     }
     if (
@@ -446,6 +535,7 @@ const EditModal: FC<EditModalProps> = ({
       !ValidationForms.IsvalidField('FoodsToAvoid', formData.foods_to_avoid) &&
       !ValidationForms.IsvalidField('FoodsToAvoid', foodsToAvoidValue)
     ) {
+      scrollToFirstError();
       return;
     }
     if (
@@ -456,6 +546,7 @@ const EditModal: FC<EditModalProps> = ({
       ) &&
       !ValidationForms.IsvalidField('ExercisesToDo', exercisesToDoValue)
     ) {
+      scrollToFirstError();
       return;
     }
     if (
@@ -466,10 +557,12 @@ const EditModal: FC<EditModalProps> = ({
       ) &&
       !ValidationForms.IsvalidField('ExercisesToAvoid', exercisesToAvoidValue)
     ) {
+      scrollToFirstError();
       return;
     }
     // Validate notes length
     if (newNote.length > 400) {
+      scrollToFirstError();
       return;
     }
     // if (
@@ -493,6 +586,7 @@ const EditModal: FC<EditModalProps> = ({
           </div>
         </h2>
         <div
+          ref={scrollableContainerRef}
           className="max-h-[460px] overflow-y-auto pr-1 mt-[6px]"
           style={{
             scrollbarWidth: 'thin',
@@ -500,7 +594,8 @@ const EditModal: FC<EditModalProps> = ({
           }}
         >
           {/* Category Field */}
-          <SelectBoxField
+          <div ref={categoryRef}>
+            <SelectBoxField
             label="Category"
             options={groups.map((group) => Object.keys(group)[0])}
             value={formData.Category}
@@ -520,7 +615,9 @@ const EditModal: FC<EditModalProps> = ({
             }
             placeholder="Select Group"
           />
-          <TextField
+          </div>
+          <div ref={recommendationRef}>
+            <TextField
             label="Title"
             placeholder="Enter recommendation title (e.g., Vitamin D3)"
             value={formData.Recommendation}
@@ -542,8 +639,10 @@ const EditModal: FC<EditModalProps> = ({
             }
             margin="mb-4"
           />
-          <TextField
-            label="Scientific Basis"
+          </div>
+          <div ref={basedOnRef}>
+            <TextField
+              label="Scientific Basis"
             placeholder="Enter a related biomarker or health concern  (e.g., LDL Cholesterol )"
             value={formData['Based on']}
             onChange={(e) => {
@@ -564,8 +663,10 @@ const EditModal: FC<EditModalProps> = ({
             }
             margin="mb-4"
           />
+          </div>
           {selectedGroupDose && (
-            <TextField
+            <div ref={doseRef}>
+              <TextField
               label="Recommended Dosage"
               value={formData.Dose}
               onChange={(e) => {
@@ -588,8 +689,10 @@ const EditModal: FC<EditModalProps> = ({
               }
               // InfoText={DoseInfoText}
             />
+            </div>
           )}
-          <TextAreaField
+          <div ref={interventionContentRef}>
+            <TextAreaField
             label="Guidelines"
             placeholder="Enter a detailed, client-facing explanation of the intervention (e.g., Focuses on fresh fruits, vegetables, whole grains, nuts, and healthy fats.)"
             value={formData.Intervnetion_content}
@@ -616,9 +719,11 @@ const EditModal: FC<EditModalProps> = ({
             height="h-[140px]"
             margin="mb-4"
           />
+          </div>
 
-          <TextAreaField
-            label="Expected Benefits"
+          <div ref={keyBenefitsRef}>
+            <TextAreaField
+              label="Expected Benefits"
             placeholder="List expected benefits (e.g., Improves sleep quality, boosts energy)"
             value={keyBenefitValue}
             onChange={(e) => {
@@ -638,6 +743,7 @@ const EditModal: FC<EditModalProps> = ({
             InfoText={KeyBenefitsInfoText}
             margin={`${formData.key_benefits.length > 0 ? 'mb-4' : 'mb-0'}`}
           />
+          </div>
 
           {/* Notes List */}
           <div className="mb-4 flex flex-col gap-2">
@@ -663,8 +769,9 @@ const EditModal: FC<EditModalProps> = ({
 
           {formData.Category === 'Diet' ? (
             <>
-              <TextAreaField
-                label="Recommended Foods"
+              <div ref={foodsToEatRef}>
+                <TextAreaField
+                  label="Recommended Foods"
                 placeholder="Suggest foods to include (e.g., Leafy greens, lean proteins)"
                 value={foodsToEatValue}
                 onChange={(e) => {
@@ -690,6 +797,7 @@ const EditModal: FC<EditModalProps> = ({
                 InfoText={RecommendedFoodsInfoText}
                 margin={`${formData.foods_to_eat.length > 0 ? 'mb-4' : 'mb-0'}`}
               />
+              </div>
 
               <div className="mb-4 flex flex-col gap-2">
                 {formData.foods_to_eat.map((foodsToEat, index) => (
@@ -712,8 +820,9 @@ const EditModal: FC<EditModalProps> = ({
                 ))}
               </div>
 
-              <TextAreaField
-                label="Foods to Limit"
+              <div ref={foodsToAvoidRef}>
+                <TextAreaField
+                  label="Foods to Limit"
                 placeholder="Mention foods to limit (e.g., Avoid dairy, fried foods)"
                 value={foodsToAvoidValue}
                 onChange={(e) => {
@@ -739,6 +848,7 @@ const EditModal: FC<EditModalProps> = ({
                 InfoText={FoodsToAvoidInfoText}
                 margin={`${formData.foods_to_avoid.length > 0 ? 'mb-4' : 'mb-0'}`}
               />
+              </div>
 
               <div className="mb-4 flex flex-col gap-2">
                 {formData.foods_to_avoid.map((foodsToAvoid, index) => (
@@ -766,8 +876,9 @@ const EditModal: FC<EditModalProps> = ({
           )}
           {formData.Category === 'Activity' ? (
             <>
-              <TextAreaField
-                label="Recommended Exercises"
+              <div ref={exercisesToDoRef}>
+                <TextAreaField
+                  label="Recommended Exercises"
                 placeholder="Suggest suitable exercises (e.g., Light yoga, daily walks)"
                 value={exercisesToDoValue}
                 onChange={(e) => {
@@ -793,6 +904,7 @@ const EditModal: FC<EditModalProps> = ({
                 InfoText={ExercisesToDoInfoText}
                 margin={`${formData.exercises_to_do.length > 0 ? 'mb-4' : 'mb-0'}`}
               />
+              </div>
 
               {/* Notes List */}
               <div className="mb-4 flex flex-col gap-2">
@@ -816,8 +928,9 @@ const EditModal: FC<EditModalProps> = ({
                 ))}
               </div>
 
-              <TextAreaField
-                label="Exercises to Limit"
+              <div ref={exercisesToAvoidRef}>
+                <TextAreaField
+                  label="Exercises to Limit"
                 placeholder="Mention any exercises to limit (e.g., Avoid intense cardio)"
                 value={exercisesToAvoidValue}
                 onChange={(e) => {
@@ -843,6 +956,7 @@ const EditModal: FC<EditModalProps> = ({
                 InfoText={ExercisesToAvoidInfoText}
                 margin={`${formData.exercises_to_avoid.length > 0 ? 'mb-4' : 'mb-0'}`}
               />
+              </div>
 
               {/* Notes List */}
               <div className="mb-4 flex flex-col gap-2">
@@ -939,8 +1053,9 @@ const EditModal: FC<EditModalProps> = ({
             </div> */}
 
           {/* Client Notes */}
-          <TextAreaField
-            label="Client Notes"
+          <div ref={clientNotesRef}>
+            <TextAreaField
+              label="Client Notes"
             placeholder="Write personalized notes for your client"
             value={newNote}
             onChange={(e) => {
@@ -960,6 +1075,7 @@ const EditModal: FC<EditModalProps> = ({
             InfoText={NotesInfoText}
             margin="mb-4"
           />
+          </div>
 
           {/* Notes List */}
           <div className="mb-4 flex flex-col gap-2">

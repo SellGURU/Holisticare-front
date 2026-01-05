@@ -598,7 +598,7 @@ const NewGenerateHolisticPlan = () => {
                         treatment_id == 'a' && (
                           <ButtonSecondary
                             onClick={() => {
-                              navigate(`/report/Generate-Recommendation/${id}`);
+                              navigate(`/report/Generate-Recommendation/${id}/A`);
                             }}
                             ClassName="w-full md:w-fit rounded-full"
                           >
