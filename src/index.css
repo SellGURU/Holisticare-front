@@ -862,3 +862,9 @@ input:-webkit-autofill:active {
   animation: wellnessCardFadeIn 0.6s ease-out forwards;
   opacity: 0;
 }
+
+.Toastify__toast {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
