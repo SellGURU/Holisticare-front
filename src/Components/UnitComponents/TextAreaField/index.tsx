@@ -1,54 +1,52 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FC, useEffect, useMemo } from 'react';
 import { Tooltip } from 'react-tooltip';
 
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
+
+import TurndownService from 'turndown';
+import { marked } from 'marked';
 
 interface TextAreaFieldProps {
   label: string;
   placeholder: string;
+
+  /**
+   * For textarea: plain string
+   * For tiptap: MARKDOWN string (we store markdown, not HTML)
+   */
   value: string;
+
+  /** textarea mode ONLY (keep old behavior) */
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+
+  /** tiptap mode ONLY */
+  onMarkdownChange?: (value: string) => void;
+
+  /** tiptap mode ONLY: what happens when user presses Enter (submit note) */
+  onEnterSubmit?: () => void;
+
   isValid?: boolean;
   validationText?: string;
-
-  // ✅ keep EXACT same signature for normal textarea usage
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-
-  // ✅ TipTap-only: string output
-  onValueChange?: (value: string) => void;
-
   margin?: string;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void; // textarea-only
+
+  /** textarea mode ONLY (keep old behavior) */
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+
   InfoText?: string;
   height?: string;
   as?: 'textarea' | 'tiptap';
-
-  // ✅ TipTap-only: when user presses Enter
-  onEnterSubmit?: () => void;
 }
-
-const isEmptyTiptapHtml = (html: string) => {
-  const cleaned = (html || '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  return (
-    cleaned === '' ||
-    cleaned === '<p></p>' ||
-    cleaned === '<p><br></p>' ||
-    cleaned === '<p><br/></p>' ||
-    cleaned === '<ul><li><p></p></li></ul>' ||
-    cleaned === '<ol><li><p></p></li></ol>'
-  );
-};
 
 const TextAreaField: FC<TextAreaFieldProps> = ({
   label,
   placeholder,
   value,
   onChange,
-  onValueChange,
+  onMarkdownChange,
+  onEnterSubmit,
   isValid = true,
   validationText,
   margin,
@@ -56,47 +54,68 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
   InfoText,
   height,
   as = 'textarea',
-  onEnterSubmit,
 }) => {
   const tooltipId = `info-text-${label.toLowerCase().replace(/\s+/g, '-')}`;
   const isTipTap = as === 'tiptap';
 
-  const contentClass = useMemo(() => {
+  // --- Markdown <-> HTML helpers ---
+  const turndown = useMemo(() => {
+    const td = new TurndownService({
+      bulletListMarker: '-',
+      emDelimiter: '*',
+      strongDelimiter: '**',
+    });
+    td.keep(['br']);
+    return td;
+  }, []);
+
+  const markdownToHtml = useMemo(() => {
+    return (md: string) => {
+      const html = marked.parse(md || '');
+      return typeof html === 'string' ? html : '';
+    };
+  }, []);
+
+  // ✅ Build class safely (no tokens with spaces)
+  const editorAreaClass = useMemo(() => {
     return [
       'w-full',
       height ? height : 'h-[98px]',
+      'text-justify',
+      'rounded-[16px]',
+      'py-1',
       'px-3',
-      'py-2',
+      'outline-none',
+      'bg-backgroundColor-Card',
       'text-xs',
       'font-normal',
       'text-Text-Primary',
-      'outline-none',
-      'text-justify',
-      // show bullets nicely
-      'prose',
-      'prose-sm',
-      'max-w-none',
-      'dark:prose-invert',
-      '[&_ul]:list-disc',
-      '[&_ul]:pl-5',
-      '[&_ul]:my-1',
-      '[&_ol]:list-decimal',
-      '[&_ol]:pl-5',
-      '[&_ol]:my-1',
-      '[&_li]:my-0.5',
+      // 👇 makes bullets visible inside the editor
+      '[&_ul]:list-disc [&_ul]:pl-5',
+      '[&_ol]:list-decimal [&_ol]:pl-5',
       '[&_p]:my-0',
     ].join(' ');
   }, [height]);
 
   const editor = useEditor({
     extensions: [
-      StarterKit
+      StarterKit.configure({
+        bulletList: {},
+        orderedList: {},
+      }),
+      Placeholder.configure({
+        placeholder,
+        emptyEditorClass:
+          'before:content-[attr(data-placeholder)] before:text-Text-Fivefold before:float-left before:pointer-events-none before:h-0',
+      }),
     ],
-    content: value || '',
+    content: markdownToHtml(value),
     editorProps: {
-      attributes: { class: contentClass },
+      attributes: {
+        class: editorAreaClass,
+      },
       handleKeyDown: (_view, event) => {
-        // ✅ Enter submits, does NOT insert new line
+        // Enter submits (no newline)
         if (event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();
           onEnterSubmit?.();
@@ -106,30 +125,30 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
       },
     },
     onUpdate: ({ editor }) => {
+      if (!isTipTap) return;
       const html = editor.getHTML();
-      // ✅ TipTap emits string through onValueChange
-      onValueChange?.(html);
+      const md = turndown.turndown(html);
+      onMarkdownChange?.(md);
     },
   });
 
-  // Keep TipTap synced when parent changes `value`
+  // Keep editor in sync when external value changes (markdown -> html)
   useEffect(() => {
-    if (!isTipTap) return;
     if (!editor) return;
+    if (!isTipTap) return;
 
-    const current = editor.getHTML();
-    const next = value || '';
+    const nextHtml = markdownToHtml(value || '');
+    const currentHtml = editor.getHTML();
 
-    if (current !== next) {
-      editor.commands.setContent(next, { emitUpdate: false });
+    if (currentHtml !== nextHtml) {
+      editor.commands.setContent(nextHtml, { emitUpdate: false });
     }
-  }, [value, editor, isTipTap]);
+  }, [value, editor, isTipTap, markdownToHtml]);
 
-  const isEditorEmpty = useMemo(() => {
-    if (!isTipTap) return (value || '').trim().length === 0;
-    if (!editor) return isEmptyTiptapHtml(value || '');
-    return editor.state.doc.textContent.trim().length === 0;
-  }, [editor, value, isTipTap]);
+  // Active toolbar styles
+  const btnBase = 'px-2 py-1 rounded text-xs border transition select-none';
+  const btnActive = 'bg-[#005f73] text-white border-[#005f73]';
+  const btnInactive = 'bg-backgroundColor-Card text-Text-Primary border-Gray-50';
 
   return (
     <div className={`flex flex-col w-full gap-2 ${margin ? margin : 'mt-4'}`}>
@@ -140,35 +159,55 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         )}
       </div>
 
-      {/* ✅ NORMAL TEXTAREA (UNCHANGED) */}
+      {/* TEXTAREA (unchanged) */}
       {!isTipTap && (
         <textarea
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className={`w-full ${height ? height : 'h-[98px]'} text-justify rounded-[16px] py-1 px-3 border ${
-            !isValid ? 'border-Red' : 'border-Gray-50'
-          } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold resize-none focus-visible:outline-none md:focus-visible:border-black`}
+          className={[
+            'w-full',
+            height ? height : 'h-[98px]',
+            'text-justify',
+            'rounded-[16px]',
+            'py-1',
+            'px-3',
+            'border',
+            !isValid ? 'border-Red' : 'border-Gray-50',
+            'bg-backgroundColor-Card',
+            'text-xs',
+            'font-normal',
+            'placeholder:text-Text-Fivefold',
+            'resize-none',
+            'focus-visible:outline-none',
+            'md:focus-visible:border-black',
+          ].join(' ')}
           onKeyDown={onKeyDown}
         />
       )}
 
-      {/* ✅ TIPTAP */}
+      {/* TIPTAP */}
       {isTipTap && (
         <div
-          className={`w-full rounded-[16px] border ${
-            !isValid ? 'border-Red' : 'border-Gray-50'
-          } bg-backgroundColor-Card text-xs font-normal focus-within:border-black`}
+          className={[
+            'w-full',
+            'rounded-[16px]',
+            'border',
+            !isValid ? 'border-Red' : 'border-Gray-50',
+            'bg-backgroundColor-Card',
+            'text-xs',
+            'font-normal',
+            'focus-within:border-black',
+          ].join(' ')}
         >
-          <div className="flex items-center gap-2 px-3 py-2 border-b border-Gray-50">
+          {/* Toolbar */}
+          <div className="flex items-center gap-2 px-3 pt-2 pb-2 border-b border-Gray-50">
             <button
               type="button"
               onClick={() => editor?.chain().focus().toggleBold().run()}
               className={[
-                'px-2 py-1 rounded text-xs border transition',
-                editor?.isActive('bold')
-                  ? 'bg-[#005f73] text-white'
-                  : 'bg-backgroundColor-Card text-Text-Primary',
+                btnBase,
+                editor?.isActive('bold') ? btnActive : btnInactive,
               ].join(' ')}
             >
               Bold
@@ -178,22 +217,15 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
               type="button"
               onClick={() => editor?.chain().focus().toggleBulletList().run()}
               className={[
-                'px-2 py-1 rounded text-xs border transition',
-                editor?.isActive('bulletList')
-                  ? 'bg-[#005f73] text-white'
-                  : 'bg-backgroundColor-Card text-Text-Primary',
+                btnBase,
+                editor?.isActive('bulletList') ? btnActive : btnInactive,
               ].join(' ')}
             >
               • Bullet
             </button>
           </div>
 
-          {isEditorEmpty && (
-            <div className="px-3 pt-2 text-xs font-normal text-Text-Fivefold pointer-events-none select-none">
-              {placeholder}
-            </div>
-          )}
-
+          {/* Editor (placeholder handled by extension, no extra div) */}
           <EditorContent editor={editor} />
         </div>
       )}

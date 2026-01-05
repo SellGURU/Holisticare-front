@@ -17,7 +17,8 @@ import MainModal from '../../MainModal';
 import { MultiTextField, TextField } from '../../UnitComponents';
 import SelectBoxField from '../../UnitComponents/SelectBoxField';
 import TextAreaField from '../../UnitComponents/TextAreaField';
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 interface ActionEditModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -285,15 +286,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleNoteKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (newNote.trim() && newNote.slice(0, 400)) {
-        setNotes([...notes, newNote]);
-        setNewNote('');
-      }
-    }
-  };
+  // const handleNoteKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  //   if (e.key === 'Enter' && !e.shiftKey) {
+  //     e.preventDefault();
+  //     if (newNote.trim() && newNote.slice(0, 400)) {
+  //       setNotes([...notes, newNote]);
+  //       setNewNote('');
+  //     }
+  //   }
+  // };
 
   // const handleCommentKeyDown = (
   //   e: React.KeyboardEvent<HTMLTextAreaElement>,
@@ -1312,7 +1313,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 ) : (
                   ''
                 )}
-                <TextAreaField
+                {/* <TextAreaField
                   label="Client Notes"
                   placeholder="Write notes ..."
                   value={newNote}
@@ -1320,6 +1321,31 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     setNewNote(e.target.value);
                   }}
                   onKeyDown={handleNoteKeyDown}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField('Note', newNote)
+                      : true
+                  }
+                  validationText={
+                    showValidation
+                      ? ValidationForms.ValidationText('Note', newNote)
+                      : ''
+                  }
+                  InfoText={NotesInfoText}
+                  margin="mb-4"
+                /> */}
+                <TextAreaField
+                  as="tiptap"
+                  label="Client Notes"
+                  placeholder="Write personalized notes for your client"
+                  value={newNote} // ✅ MARKDOWN string stored
+                  onMarkdownChange={setNewNote} // ✅ tiptap output (markdown)
+                  onEnterSubmit={() => {
+                    if (!newNote.trim()) return;
+                    if (newNote.length > 400) return; // keep your validation rule
+                    setNotes([...notes, newNote]);
+                    setNewNote('');
+                  }}
                   isValid={
                     showValidation
                       ? ValidationForms.IsvalidField('Note', newNote)
@@ -1343,7 +1369,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       key={index}
                       className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
                     >
-                      <span className="break-all">{note}</span>
+                      <div className='break-all'>
+
+                  
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                         {note}
+                       </ReactMarkdown>
+                           </div>
                       <div
                         onClick={() => handleDeleteNote(index)}
                         className="cursor-pointer"

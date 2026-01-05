@@ -1344,6 +1344,11 @@
   resolved "https://registry.npmjs.org/@kurkle/color/-/color-0.3.4.tgz"
   integrity sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==
 
+"@mixmark-io/domino@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@mixmark-io/domino/-/domino-2.2.0.tgz#4e8ec69bf1afeb7a14f0628b7e2c0f35bdb336c3"
+  integrity sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
@@ -2354,6 +2359,11 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-paragraph/-/extension-paragraph-3.14.0.tgz#f29ae67d1f28c676bce5e0654e0cce1cad02ff3b"
   integrity sha512-NFxk2yNo3Cvh9g8evea+yTLNV48se7MbMcVizTnVhobqtBKv793qsb5FM5Hu30Y72FQPNfH+LRoap4XZyBPfVw==
 
+"@tiptap/extension-placeholder@^3.14.0":
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-placeholder/-/extension-placeholder-3.14.0.tgz#2e492eab8eed46de2a9497bdbd9d7824ae5bc229"
+  integrity sha512-sBiAs1gumdSZXO0ezMSmOkHnlzZNZ1fttm6GriAMIp5xfCvo/0LD6bHPXtvOAbT9ovLQX8mH5+iPZh2jKta7oQ==
+
 "@tiptap/extension-strike@^3.14.0":
   version "3.14.0"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-strike/-/extension-strike-3.14.0.tgz#650487246bb5ae8f3d33b45065f577d759fedbbd"
@@ -2613,6 +2623,11 @@
   version "2.0.7"
   resolved "https://registry.npmjs.org/@types/trusted-types/-/trusted-types-2.0.7.tgz"
   integrity sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==
+
+"@types/turndown@^5.0.6":
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/@types/turndown/-/turndown-5.0.6.tgz#42a27397298a312d6088f29c0ff4819c518c1ecb"
+  integrity sha512-ru00MoyeeouE5BX4gRL+6m/BsDfbRayOskWqUvh7CLGW+UXxHQItqALa38kKnOiZPqJrtzJUgAC2+F0rL1S4Pg==
 
 "@types/unist@*", "@types/unist@^3.0.0":
   version "3.0.3"
@@ -4936,6 +4951,11 @@ markdown-table@^3.0.0:
   resolved "https://registry.yarnpkg.com/markdown-table/-/markdown-table-3.0.4.tgz#fe44d6d410ff9d6f2ea1797a3f60aa4d2b631c2a"
   integrity sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==
 
+marked@^17.0.1:
+  version "17.0.1"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-17.0.1.tgz#9db34197ac145e5929572ee49ef701e37ee9b2e6"
+  integrity sha512-boeBdiS0ghpWcSwoNm/jJBwdpFaMnZWRzjA6SkUMYb40SVaN1x7mmfGKp0jvexGcx+7y2La5zRZsYFZI6Qpypg==
+
 math-intrinsics@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/math-intrinsics/-/math-intrinsics-1.0.0.tgz"
@@ -7103,6 +7123,13 @@ turbo-stream@2.4.0:
   version "2.4.0"
   resolved "https://registry.npmjs.org/turbo-stream/-/turbo-stream-2.4.0.tgz"
   integrity sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==
+
+turndown@^7.2.2:
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/turndown/-/turndown-7.2.2.tgz#9557642b54046c5912b3d433f34dd588de455a43"
+  integrity sha512-1F7db8BiExOKxjSMU2b7if62D/XOyQyZbPKq/nUwopfgnHlqXHqQ0lvfUTeUIr1lZJzOPFn43dODyMSIfvWRKQ==
+  dependencies:
+    "@mixmark-io/domino" "^2.2.0"
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"

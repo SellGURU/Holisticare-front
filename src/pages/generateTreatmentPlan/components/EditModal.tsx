@@ -17,7 +17,8 @@ import {
 } from '../../../utils/library-unification';
 import SvgIcon from '../../../utils/svgIcon';
 import ValidationForms from '../../../utils/ValidationForms';
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 // import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
@@ -48,6 +49,8 @@ const EditModal: FC<EditModalProps> = ({
   const [notes, setNotes] = useState<string[]>(
     defalts ? defalts['Client Notes'] : [],
   );
+  console.log(notes);
+  
   const [client_versions, setclient_versions] = useState<string[]>(
     defalts && Array.isArray(defalts['client_version'])
       ? defalts['client_version']
@@ -250,7 +253,6 @@ const EditModal: FC<EditModalProps> = ({
   });
 
   if (!isOpen) return null;
-
 
   const handleKeyBenefitKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -597,7 +599,7 @@ const EditModal: FC<EditModalProps> = ({
     // }
     handleSubmit();
   };
-    // const handleNoteKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  // const handleNoteKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
   //   if (e.key === 'Enter' && !e.shiftKey) {
   //     e.preventDefault();
   //     if (newNote.trim()) {
@@ -608,23 +610,8 @@ const EditModal: FC<EditModalProps> = ({
   //     }
   //   }
   // };
-const isEmptyTiptapHtml = (html: string) => {
-  const cleaned = (html || '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
-  return (
-    cleaned === '' ||
-    cleaned === '<p></p>' ||
-    cleaned === '<p><br></p>' ||
-    cleaned === '<p><br/></p>' ||
-    cleaned === '<ul><li><p></p></li></ul>'
-  );
-};
 
-const handleAddNote = () => {
-  if (isEmptyTiptapHtml(newNote)) return;
-  if (newNote.length > 400) return; // keep your validation
-  setNotes((prev) => [...prev, newNote]);
-  setNewNote(''); // ✅ this clears the editor via controlled value
-};
+
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -1116,36 +1103,35 @@ const handleAddNote = () => {
             </div> */}
 
           {/* Client Notes */}
-      <TextAreaField
+     <TextAreaField
   as="tiptap"
   label="Client Notes"
   placeholder="Write personalized notes for your client"
-  value={newNote}
-  onChange={() => {}}              // required by props, but not used in tiptap
-  onValueChange={setNewNote}       // ✅ tiptap updates here
-  onEnterSubmit={handleAddNote}    // ✅ Enter adds note (no new line)
+  value={newNote}                 // ✅ MARKDOWN string stored
+  onMarkdownChange={setNewNote}   // ✅ tiptap output (markdown)
+  onEnterSubmit={() => {
+    if (!newNote.trim()) return;
+    if (newNote.length > 400) return; // keep your validation rule
+    setNotes([...notes, newNote]);
+    setNewNote('');
+  }}
   isValid={showValidation ? ValidationForms.IsvalidField('Note', newNote) : true}
   validationText={showValidation ? ValidationForms.ValidationText('Note', newNote) : ''}
-     InfoText={NotesInfoText}
+  InfoText={NotesInfoText}
+  margin="mb-4"
 />
-
 
           {/* Notes List */}
           <div className="mb-4 flex flex-col gap-2">
             {notes.map((note, index) => (
               <div key={index} className="w-full flex gap-1 items-start">
                 <div className="flex w-full justify-between items-start border border-Gray-50 py-2 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
-                  <div
-                    className="
-    prose prose-sm max-w-none dark:prose-invert
-    [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-1
-    [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-1
-    [&_li]:my-0.5
-    [&_p]:my-0
-  "
-                    dangerouslySetInnerHTML={{ __html: note }}
-                  />
-                </div>
+<div className="prose prose-sm max-w-none dark:prose-invert [&_ul]:!list-disc [&_ul]:!pl-5 [&_ol]:!list-decimal [&_ol]:!pl-5">
+  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+    {note}
+  </ReactMarkdown>
+</div>
+
 
                 <div
                   onClick={() => handleDeleteNote(index)}
@@ -1158,6 +1144,7 @@ const handleAddNote = () => {
                     height="24px"
                   />
                 </div>
+              </div>
               </div>
             ))}
           </div>
