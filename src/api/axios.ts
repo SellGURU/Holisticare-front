@@ -2,7 +2,7 @@
 import axios from 'axios';
 import ActivityLogger from '../utils/activty-logger';
 import { toast } from 'react-toastify';
-import { showError, showSuccess } from '../Components/GlobalToast/toast';
+import { showError, showSuccess } from '../Components/GlobalToast';
 
 const logger = ActivityLogger.getInstance();
 

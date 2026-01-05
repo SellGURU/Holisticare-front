@@ -5,7 +5,7 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { Tooltip } from 'react-tooltip';
 import Application from '../../api/app';
 import SpinnerLoader from '../SpinnerLoader';
-import { showSuccess } from '../GlobalToast/toast';
+import { showSuccess } from '../GlobalToast';
 
 export const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');

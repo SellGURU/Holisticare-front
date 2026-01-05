@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
-import { showSuccess } from '../../Components/GlobalToast/toast';
+import { showSuccess } from '../../Components/GlobalToast';
 import HtmlPreviewer from '../../Components/HtmlPreviewer';
 // import htmlMoch from './moch';
 // import htmlMoch from './moch';

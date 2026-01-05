@@ -7,7 +7,7 @@ import Circleloader from '../../Components/CircleLoader';
 import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
 import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import Application from '../../api/app';
-import { showSuccess } from '../../Components/GlobalToast/toast';
+import { showSuccess } from '../../Components/GlobalToast';
 interface ActionProps {
   memberID: number | null;
 }
