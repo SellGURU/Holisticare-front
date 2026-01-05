@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import './styles/index.css';
 :root {
   font-family: Inter;
   overflow: hidden;
