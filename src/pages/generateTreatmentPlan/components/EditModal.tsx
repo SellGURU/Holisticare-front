@@ -17,6 +17,7 @@ import {
 } from '../../../utils/library-unification';
 import SvgIcon from '../../../utils/svgIcon';
 import ValidationForms from '../../../utils/ValidationForms';
+
 // import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
@@ -236,17 +237,7 @@ const EditModal: FC<EditModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleNoteKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (newNote.trim()) {
-        if (newNote.length <= 400) {
-          setNotes([...notes, newNote]);
-          setNewNote('');
-        }
-      }
-    }
-  };
+
   const handleKeyBenefitKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -480,7 +471,34 @@ const EditModal: FC<EditModalProps> = ({
     // }
     handleSubmit();
   };
+    // const handleNoteKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  //   if (e.key === 'Enter' && !e.shiftKey) {
+  //     e.preventDefault();
+  //     if (newNote.trim()) {
+  //       if (newNote.length <= 400) {
+  //         setNotes([...notes, newNote]);
+  //         setNewNote('');
+  //       }
+  //     }
+  //   }
+  // };
+const isEmptyTiptapHtml = (html: string) => {
+  const cleaned = (html || '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+  return (
+    cleaned === '' ||
+    cleaned === '<p></p>' ||
+    cleaned === '<p><br></p>' ||
+    cleaned === '<p><br/></p>' ||
+    cleaned === '<ul><li><p></p></li></ul>'
+  );
+};
 
+const handleAddNote = () => {
+  if (isEmptyTiptapHtml(newNote)) return;
+  if (newNote.length > 400) return; // keep your validation
+  setNotes((prev) => [...prev, newNote]);
+  setNewNote(''); // ✅ this clears the editor via controlled value
+};
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -617,7 +635,7 @@ const EditModal: FC<EditModalProps> = ({
             margin="mb-4"
           />
 
-          <TextAreaField
+    <TextAreaField
             label="Expected Benefits"
             placeholder="List expected benefits (e.g., Improves sleep quality, boosts energy)"
             value={keyBenefitValue}
@@ -939,35 +957,37 @@ const EditModal: FC<EditModalProps> = ({
             </div> */}
 
           {/* Client Notes */}
-          <TextAreaField
-            label="Client Notes"
-            placeholder="Write personalized notes for your client"
-            value={newNote}
-            onChange={(e) => {
-              setNewNote(e.target.value);
-            }}
-            onKeyDown={handleNoteKeyDown}
-            isValid={
-              showValidation
-                ? ValidationForms.IsvalidField('Note', newNote)
-                : true
-            }
-            validationText={
-              showValidation
-                ? ValidationForms.ValidationText('Note', newNote)
-                : ''
-            }
-            InfoText={NotesInfoText}
-            margin="mb-4"
-          />
+      <TextAreaField
+  as="tiptap"
+  label="Client Notes"
+  placeholder="Write personalized notes for your client"
+  value={newNote}
+  onChange={() => {}}              // required by props, but not used in tiptap
+  onValueChange={setNewNote}       // ✅ tiptap updates here
+  onEnterSubmit={handleAddNote}    // ✅ Enter adds note (no new line)
+  isValid={showValidation ? ValidationForms.IsvalidField('Note', newNote) : true}
+  validationText={showValidation ? ValidationForms.ValidationText('Note', newNote) : ''}
+     InfoText={NotesInfoText}
+/>
+
 
           {/* Notes List */}
           <div className="mb-4 flex flex-col gap-2">
             {notes.map((note, index) => (
               <div key={index} className="w-full flex gap-1 items-start">
-                <div className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
-                  <span>{note}</span>
+                <div className="flex w-full justify-between items-start border border-Gray-50 py-2 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
+                  <div
+                    className="
+    prose prose-sm max-w-none dark:prose-invert
+    [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-1
+    [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-1
+    [&_li]:my-0.5
+    [&_p]:my-0
+  "
+                    dangerouslySetInnerHTML={{ __html: note }}
+                  />
                 </div>
+
                 <div
                   onClick={() => handleDeleteNote(index)}
                   className="cursor-pointer"
