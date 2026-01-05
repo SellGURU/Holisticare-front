@@ -792,7 +792,9 @@ export default function HtmlEditor({
     if (!doc) return;
 
     // Add or update style tag in iframe document
-    let styleTag = doc.getElementById('hide-edit-icons-style') as HTMLStyleElement;
+    let styleTag = doc.getElementById(
+      'hide-edit-icons-style',
+    ) as HTMLStyleElement;
     if (!styleTag) {
       styleTag = doc.createElement('style');
       styleTag.id = 'hide-edit-icons-style';

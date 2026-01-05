@@ -560,7 +560,7 @@ export default function StyleModal({
             className="w-[400px] h-full"
           />
         </div>
-        
+
         {/* Combined Editor & Style Panel */}
         <div className="flex-1 bg-gray-50 border-r border-gray-200 p-4 flex flex-col">
           <div className="flex justify-between items-center mb-3">
@@ -722,7 +722,9 @@ export default function StyleModal({
                       <input
                         type="color"
                         value={styles.color}
-                        onChange={(e) => handleStyleChange('color', e.target.value)}
+                        onChange={(e) =>
+                          handleStyleChange('color', e.target.value)
+                        }
                         className="w-8 h-8 border-2 border-gray-300 rounded cursor-pointer shadow-sm"
                       />
                       <input
@@ -840,7 +842,9 @@ export default function StyleModal({
                         <AlignRight size={14} />
                       </button>
                       <button
-                        onClick={() => handleStyleChange('textAlign', 'justify')}
+                        onClick={() =>
+                          handleStyleChange('textAlign', 'justify')
+                        }
                         className={`flex-1 px-1.5 py-1.5 rounded text-xs transition-colors flex items-center justify-center ${
                           styles.textAlign === 'justify'
                             ? 'bg-blue-500 text-white shadow-sm'
