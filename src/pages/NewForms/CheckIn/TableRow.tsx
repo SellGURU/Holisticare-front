@@ -38,13 +38,13 @@ const TableRow: FC<TableRowProps> = ({
 
   const handleOpenModal = (e: React.MouseEvent<HTMLImageElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const modalHeight = 160;
+    const modalHeight = 118;
     const windowHeight = window.innerHeight;
     const scrollY = window.scrollY || window.pageYOffset;
 
     // Calculate position relative to the viewport
     let topPosition = rect.top + scrollY;
-    const leftPosition = rect.right - 188; // 188px is the modal width
+    const leftPosition = rect.right - 170; // 188px is the modal width
 
     // Adjust position if modal would go off screen
     if (topPosition + modalHeight > windowHeight + scrollY) {
