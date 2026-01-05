@@ -357,11 +357,11 @@ export const SetOrders: FC<SetOrdersProps> = ({
 
   // 2) category-specific search logic (customize per tab)
   const SEARCH_FIELDS_BY_CATEGORY: Record<string, string[]> = {
-    Activity: ['Recommendation', 'label'],
-    Diet: ['Recommendation', 'label'],
-    Lifestyle: ['Recommendation', 'label'],
-    Supplement: ['Recommendation', 'label'],
-    Others: ['Recommendation', 'label'],
+    Activity: ['Recommendation'],
+    Diet: ['Recommendation'],
+    Lifestyle: ['Recommendation'],
+    Supplement: ['Recommendation'],
+    Others: ['Recommendation'],
   };
 
   // normalize text for consistent matching

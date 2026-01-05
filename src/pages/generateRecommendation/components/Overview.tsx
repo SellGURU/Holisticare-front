@@ -3,7 +3,6 @@
 import { FC, useState } from 'react';
 import BioMarkerRowOldSuggestions from '../../generateTreatmentPlan/components/BiomarkerRowOld';
 import { CoverageCard } from '../../../Components/coverageCard';
-import SearchBox from '../../../Components/SearchBox';
 type CategoryState = {
   name: string;
   visible: boolean;
@@ -113,13 +112,13 @@ export const Overview: FC<OverviewProps> = ({
 
     const title = norm(item.title ?? item.Title ?? item.Recommendation ?? '');
     // label can be direct or nested, keep both just in case
-    const label = norm(item.label ?? item.tag?.label ?? '');
+    // const label = norm(item.label ?? item.tag?.label ?? '');
 
-    return title.includes(query) || label.includes(query);
+    return title.includes(query);
   };
   return (
     <>
-      <div className=" w-full relative  p-4 rounded-2xl bg-white">
+      <div className=" w-full relative  p-6 rounded-2xl bg-white">
         {Conflicts.length > 0 && showConflict && (
           <div className="w-full rounded-2xl px-2 md:px-4 py-3 bg-[#F9DEDC]">
             <div className="flex w-full justify-between items-center">
@@ -174,29 +173,23 @@ export const Overview: FC<OverviewProps> = ({
             </div>
           </div>
         )}
+        <div className="w-full flex justify-end mb-4">
+      
+        </div>
         <div className="w-full my-4">
           <CoverageCard
-            progress={progress}
-            details={details}
-            setDetails={setDetails}
-            setLookingForwards={setLookingForwards}
-            lookingForwardsData={lookingForwardsData}
-            handleRemoveIssueFromList={handleRemoveIssueFromList}
-          />
+  progress={progress}
+  details={details}
+  setDetails={setDetails}
+  setLookingForwards={setLookingForwards}
+  lookingForwardsData={lookingForwardsData}
+  handleRemoveIssueFromList={handleRemoveIssueFromList}
+  showSearch 
+  searchQuery={searchQuery}
+  onSearch={setSearchQuery}
+/>
         </div>
-        <div className="w-full flex justify-end">
-          <div className="xl:w-[440px]">
-            <SearchBox
-              isHaveBorder
-              isGrayIcon
-              placeHolder="search interventions"
-              value={searchQuery}
-              onSearch={setSearchQuery}
-              showClose={searchQuery.length > 0}
-              ClassName="w-full"
-            />
-          </div>
-        </div>
+        <div className="w-full flex justify-end"></div>
 
         {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
           return (
