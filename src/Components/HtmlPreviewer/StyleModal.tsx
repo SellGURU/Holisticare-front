@@ -539,7 +539,7 @@ export default function StyleModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-end z-50"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-end z-[9999]"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
@@ -547,7 +547,7 @@ export default function StyleModal({
       }}
     >
       <div
-        className={`bg-white rounded-l-lg w-[85%] h-full max-h-screen transform transition-transform duration-300 ease-in-out flex ${
+        className={`bg-white rounded-l-lg w-[70%] h-full max-h-screen transform transition-transform duration-300 ease-in-out flex ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -557,414 +557,360 @@ export default function StyleModal({
           <iframe
             sandbox="allow-scripts allow-same-origin"
             ref={iframeRef}
-            className="w-[500px] h-full"
+            className="w-[400px] h-full"
           />
         </div>
-        {/* Preview Panel */}
-        <div className="w-1/2 bg-gray-50 border-r border-gray-200 p-4 flex flex-col">
-          <h4 className="text-lg font-semibold mb-4 text-gray-700">
-            Edit Text
-          </h4>
 
-          {/* Preview Text Input */}
-          {/* <div className="mb-4">
-            <label className="block text-sm font-medium mb-2 text-gray-600">
-              Preview Text
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={previewText}
-                onChange={(e) => setPreviewText(e.target.value)}
-                className="flex-1 p-2 border rounded text-sm"
-                placeholder="Enter preview text..."
-              />
-              <button
-                onClick={() => setPreviewText('Lorem ipsum dolor sit amet')}
-                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm"
-                title="Sample text"
-              >
-                Sample
-              </button>
-            </div>
-          </div> */}
-
-          {/* Live Preview */}
-          <div className="border rounded bg-white p-4 flex flex-col overflow-hidden">
-            <div className="text-sm text-gray-500 mb-2">Your Text:</div>
-
-            {/* Rich Text Editor Toolbar */}
-            <div className="flex gap-1 mb-2 p-2 bg-gray-100 rounded border-b flex-wrap">
-              <button
-                type="button"
-                onClick={() => applyFormat('bold')}
-                className={`px-2 py-1 rounded text-sm ${
-                  isFormatActive('bold')
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white hover:bg-gray-200'
-                }`}
-                title="Bold"
-              >
-                <strong>B</strong>
-              </button>
-              <button
-                type="button"
-                onClick={() => applyFormat('italic')}
-                className={`px-2 py-1 rounded text-sm ${
-                  isFormatActive('italic')
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white hover:bg-gray-200'
-                }`}
-                title="Italic"
-              >
-                <em>I</em>
-              </button>
-              <button
-                type="button"
-                onClick={() => applyFormat('underline')}
-                className={`px-2 py-1 rounded text-sm ${
-                  isFormatActive('underline')
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white hover:bg-gray-200'
-                }`}
-                title="Underline"
-              >
-                <u>U</u>
-              </button>
-              <div className="w-px bg-gray-300 mx-1"></div>
-              <button
-                type="button"
-                onClick={() => applyFormat('justifyLeft')}
-                className="px-2 py-1 rounded text-sm bg-white hover:bg-gray-200"
-                title="Align Left"
-              >
-                ⬅
-              </button>
-              <button
-                type="button"
-                onClick={() => applyFormat('justifyCenter')}
-                className="px-2 py-1 rounded text-sm bg-white hover:bg-gray-200"
-                title="Align Center"
-              >
-                ⬌
-              </button>
-              <button
-                type="button"
-                onClick={() => applyFormat('justifyRight')}
-                className="px-2 py-1 rounded text-sm bg-white hover:bg-gray-200"
-                title="Align Right"
-              >
-                ➡
-              </button>
-            </div>
-
-            {/* Rich Text Editor */}
-            <div
-              ref={editorRef}
-              contentEditable
-              onInput={handleHtmlChange}
-              onBlur={handleHtmlChange}
-              className="w-full p-2 border rounded resize-none min-h-[350px] max-h-[500px] focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto"
-              style={{
-                fontWeight: styles.fontWeight,
-                fontStyle: styles.fontStyle,
-                textDecoration: styles.textDecoration,
-                color: styles.color,
-                fontSize: styles.fontSize,
-                textAlign: styles.textAlign,
-              }}
-              suppressContentEditableWarning
-            />
-            {/* <div
-              className="min-h-[200px] p-4 border rounded"
-              style={{
-                fontWeight: styles.fontWeight,
-                fontStyle: styles.fontStyle,
-                textDecoration: styles.textDecoration,
-                color: styles.color,
-                fontSize: styles.fontSize,
-                textAlign: styles.textAlign,
-              }}
+        {/* Combined Editor & Style Panel */}
+        <div className="flex-1 bg-gray-50 border-r border-gray-200 p-4 flex flex-col">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-semibold text-gray-700">
+              Edit Text & Style
+            </h3>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
             >
-              {previewText || 'Preview Text'}
-            </div> */}
+              ×
+            </button>
           </div>
 
-          {/* Style Summary */}
-          {/* <div className="mt-4 p-3 bg-blue-50 rounded text-sm">
-            <div className="font-medium text-blue-800 mb-2">
-              Current Styles:
-            </div>
-            <div className="space-y-1 text-blue-700">
-              <div>Weight: {styles.fontWeight}</div>
-              <div>Style: {styles.fontStyle}</div>
-              <div>Decoration: {styles.textDecoration}</div>
-              <div>Size: {styles.fontSize}</div>
-              <div>Align: {styles.textAlign}</div>
-            </div>
-          </div> */}
-        </div>
-
-        {/* Style Controls Panel */}
-        <div className="w-1/3 p-6 pt-4 overflow-y-auto flex flex-col justify-between">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center ">
-              <h3 className="text-lg font-semibold  text-gray-700">
-                Edit Style
-              </h3>
-              <button
-                onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
-              >
-                ×
-              </button>
-            </div>
-            {/* Text */}
-            {/* <div>
-              <label className="block text-sm font-medium mb-2">Text</label>
-              <textarea
-                value={previewText}
-                onChange={(e) => setPreviewText(e.target.value)}
-                className="w-full p-2 border rounded min-h-[100px] resize-none text-sm"
-                placeholder="Enter text..."
-              />
-            </div> */}
-
-            {/* Font Weight & Style */}
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Font Style
+          <div className="flex-1 flex flex-col space-y-3 overflow-hidden">
+            {/* Text Editor - First in the list */}
+            <div className="flex-shrink-0">
+              <label className="block text-xs font-semibold mb-1.5 text-gray-700">
+                Text Editor
               </label>
-              <div className="flex gap-1 border border-gray-300 rounded p-1 bg-gray-50">
-                <button
-                  onClick={() =>
-                    handleStyleChange(
-                      'fontWeight',
-                      styles.fontWeight === 'bold' ? 'normal' : 'bold',
-                    )
-                  }
-                  className={`px-2 py-1 rounded text-sm flex items-center justify-center ${
-                    styles.fontWeight === 'bold'
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-white hover:bg-gray-200'
-                  }`}
-                  title="Bold"
-                >
-                  <Bold size={16} />
-                </button>
-                <button
-                  onClick={() =>
-                    handleStyleChange(
-                      'fontStyle',
-                      styles.fontStyle === 'italic' ? 'normal' : 'italic',
-                    )
-                  }
-                  className={`px-2 py-1 rounded text-sm flex items-center justify-center ${
-                    styles.fontStyle === 'italic'
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-white hover:bg-gray-200'
-                  }`}
-                  title="Italic"
-                >
-                  <Italic size={16} />
-                </button>
-              </div>
-            </div>
-
-            {/* Text Color */}
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Text Color
-              </label>
-              <div className="flex gap-2 items-center">
-                <div className="relative">
-                  <input
-                    type="color"
-                    value={styles.color}
-                    onChange={(e) => handleStyleChange('color', e.target.value)}
-                    className="w-10 h-8 border rounded cursor-pointer"
-                  />
-                </div>
-                <div className="flex items-center gap-2 flex-1">
-                  <div
-                    className="w-8 h-8 border-2 border-gray-300 rounded"
-                    style={{ backgroundColor: styles.color }}
-                  />
-                  <input
-                    type="text"
-                    value={styles.color}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^#[0-9A-Fa-f]{0,6}$/.test(value)) {
-                        handleStyleChange('color', value);
-                      }
-                    }}
-                    onBlur={(e) => {
-                      const value = e.target.value;
-                      if (!/^#[0-9A-Fa-f]{6}$/.test(value)) {
-                        handleStyleChange('color', '#000000');
-                      }
-                    }}
-                    className="flex-1 px-2 py-1.5 border rounded text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 h-8"
-                    placeholder="#000000"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Font Size */}
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Font Size
-              </label>
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min="8"
-                    max="72"
-                    value={parseInt(styles.fontSize)}
-                    onChange={(e) =>
-                      handleStyleChange('fontSize', `${e.target.value}px`)
-                    }
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  />
-                  <div className="flex items-center gap-2 min-w-[100px]">
-                    <input
-                      type="number"
-                      min="8"
-                      max="72"
-                      value={fontSizeInput}
-                      onChange={(e) => {
-                        const inputValue = e.target.value;
-                        setFontSizeInput(inputValue);
-                        const value = parseInt(inputValue);
-                        if (!isNaN(value) && value >= 8 && value <= 72) {
-                          handleStyleChange('fontSize', `${value}px`);
-                        }
-                      }}
-                      onBlur={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (isNaN(value) || value < 8) {
-                          handleStyleChange('fontSize', '8px');
-                          setFontSizeInput('8');
-                        } else if (value > 72) {
-                          handleStyleChange('fontSize', '72px');
-                          setFontSizeInput('72');
-                        } else {
-                          handleStyleChange('fontSize', `${value}px`);
-                          setFontSizeInput(value.toString());
-                        }
-                      }}
-                      className="w-16 px-2 py-1 border rounded text-sm text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-600">px</span>
-                  </div>
-                </div>
-                <div className="text-xs text-gray-500 text-center">
-                  {styles.fontSize}
-                </div>
-              </div>
-            </div>
-
-            {/* Text Align & Decoration */}
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Alignment & Decoration
-              </label>
-              <div className="space-y-2">
-                <div className="flex gap-1 border border-gray-300 rounded p-1 bg-gray-50">
+              <div className="border rounded-lg bg-white shadow-sm overflow-hidden">
+                {/* Rich Text Editor Toolbar */}
+                <div className="flex gap-1 p-1 bg-gray-50 border-b flex-wrap">
                   <button
-                    onClick={() => handleStyleChange('textAlign', 'left')}
-                    className={`px-2 py-1 rounded text-sm flex items-center justify-center ${
-                      styles.textAlign === 'left'
+                    type="button"
+                    onClick={() => applyFormat('bold')}
+                    className={`px-2 py-0.5 rounded text-xs transition-colors ${
+                      isFormatActive('bold')
                         ? 'bg-blue-500 text-white'
                         : 'bg-white hover:bg-gray-200'
                     }`}
-                    title="Align Left"
+                    title="Bold"
                   >
-                    <AlignLeft size={16} />
+                    <strong>B</strong>
                   </button>
                   <button
-                    onClick={() => handleStyleChange('textAlign', 'center')}
-                    className={`px-2 py-1 rounded text-sm flex items-center justify-center ${
-                      styles.textAlign === 'center'
+                    type="button"
+                    onClick={() => applyFormat('italic')}
+                    className={`px-2 py-0.5 rounded text-xs transition-colors ${
+                      isFormatActive('italic')
                         ? 'bg-blue-500 text-white'
                         : 'bg-white hover:bg-gray-200'
                     }`}
-                    title="Align Center"
+                    title="Italic"
                   >
-                    <AlignCenter size={16} />
+                    <em>I</em>
                   </button>
                   <button
-                    onClick={() => handleStyleChange('textAlign', 'right')}
-                    className={`px-2 py-1 rounded text-sm flex items-center justify-center ${
-                      styles.textAlign === 'right'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white hover:bg-gray-200'
-                    }`}
-                    title="Align Right"
-                  >
-                    <AlignRight size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleStyleChange('textAlign', 'justify')}
-                    className={`px-2 py-1 rounded text-sm flex items-center justify-center ${
-                      styles.textAlign === 'justify'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white hover:bg-gray-200'
-                    }`}
-                    title="Justify"
-                  >
-                    <AlignJustify size={16} />
-                  </button>
-                </div>
-                <div className="flex gap-1 border border-gray-300 rounded p-1 bg-gray-50">
-                  <button
-                    onClick={() =>
-                      handleStyleChange(
-                        'textDecoration',
-                        styles.textDecoration === 'underline'
-                          ? 'none'
-                          : 'underline',
-                      )
-                    }
-                    className={`px-2 py-1 rounded text-sm flex items-center justify-center ${
-                      styles.textDecoration === 'underline'
+                    type="button"
+                    onClick={() => applyFormat('underline')}
+                    className={`px-2 py-0.5 rounded text-xs transition-colors ${
+                      isFormatActive('underline')
                         ? 'bg-blue-500 text-white'
                         : 'bg-white hover:bg-gray-200'
                     }`}
                     title="Underline"
                   >
-                    <Underline size={16} />
+                    <u>U</u>
+                  </button>
+                  <div className="w-px bg-gray-300 mx-1"></div>
+                  <button
+                    type="button"
+                    onClick={() => applyFormat('justifyLeft')}
+                    className="px-2 py-0.5 rounded text-xs bg-white hover:bg-gray-200 transition-colors"
+                    title="Align Left"
+                  >
+                    ⬅
                   </button>
                   <button
-                    onClick={() =>
-                      handleStyleChange(
-                        'textDecoration',
-                        styles.textDecoration === 'line-through'
-                          ? 'none'
-                          : 'line-through',
-                      )
-                    }
-                    className={`px-2 py-1 rounded text-sm flex items-center justify-center ${
-                      styles.textDecoration === 'line-through'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white hover:bg-gray-200'
-                    }`}
-                    title="Strikethrough"
+                    type="button"
+                    onClick={() => applyFormat('justifyCenter')}
+                    className="px-2 py-0.5 rounded text-xs bg-white hover:bg-gray-200 transition-colors"
+                    title="Align Center"
                   >
-                    <Strikethrough size={16} />
+                    ⬌
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => applyFormat('justifyRight')}
+                    className="px-2 py-0.5 rounded text-xs bg-white hover:bg-gray-200 transition-colors"
+                    title="Align Right"
+                  >
+                    ➡
+                  </button>
+                </div>
+
+                {/* Rich Text Editor */}
+                <div
+                  ref={editorRef}
+                  contentEditable
+                  onInput={handleHtmlChange}
+                  onBlur={handleHtmlChange}
+                  className="w-full p-2 border-0 resize-none h-[140px] focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto"
+                  style={{
+                    fontWeight: styles.fontWeight,
+                    fontStyle: styles.fontStyle,
+                    textDecoration: styles.textDecoration,
+                    color: styles.color,
+                    fontSize: styles.fontSize,
+                    textAlign: styles.textAlign,
+                  }}
+                  suppressContentEditableWarning
+                />
+              </div>
+            </div>
+
+            {/* Style Controls */}
+            <div className="flex-1 flex flex-col space-y-2 overflow-y-auto">
+              {/* Combined: Font Style, Text Color, Font Size */}
+              <div className="bg-white p-2.5 rounded-lg border shadow-sm">
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Font Style */}
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5 text-gray-600">
+                      Font Style
+                    </label>
+                    <div className="flex gap-1.5">
+                      <button
+                        onClick={() =>
+                          handleStyleChange(
+                            'fontWeight',
+                            styles.fontWeight === 'bold' ? 'normal' : 'bold',
+                          )
+                        }
+                        className={`flex-1 px-2 py-1.5 rounded text-xs font-medium transition-colors flex items-center justify-center ${
+                          styles.fontWeight === 'bold'
+                            ? 'bg-blue-500 text-white shadow-sm'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                        title="Bold"
+                      >
+                        <Bold size={14} />
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleStyleChange(
+                            'fontStyle',
+                            styles.fontStyle === 'italic' ? 'normal' : 'italic',
+                          )
+                        }
+                        className={`flex-1 px-2 py-1.5 rounded text-xs font-medium transition-colors flex items-center justify-center ${
+                          styles.fontStyle === 'italic'
+                            ? 'bg-blue-500 text-white shadow-sm'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                        title="Italic"
+                      >
+                        <Italic size={14} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Text Color */}
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5 text-gray-600">
+                      Text Color
+                    </label>
+                    <div className="flex gap-1.5 items-center">
+                      <input
+                        type="color"
+                        value={styles.color}
+                        onChange={(e) =>
+                          handleStyleChange('color', e.target.value)
+                        }
+                        className="w-8 h-8 border-2 border-gray-300 rounded cursor-pointer shadow-sm"
+                      />
+                      <input
+                        type="text"
+                        value={styles.color}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^#[0-9A-Fa-f]{0,6}$/.test(value)) {
+                            handleStyleChange('color', value);
+                          }
+                        }}
+                        onBlur={(e) => {
+                          const value = e.target.value;
+                          if (!/^#[0-9A-Fa-f]{6}$/.test(value)) {
+                            handleStyleChange('color', '#000000');
+                          }
+                        }}
+                        className="flex-1 px-1.5 py-1 border-2 border-gray-300 rounded text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="#000"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Font Size */}
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5 text-gray-600">
+                      Font Size
+                    </label>
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="range"
+                        min="8"
+                        max="72"
+                        value={parseInt(styles.fontSize)}
+                        onChange={(e) =>
+                          handleStyleChange('fontSize', `${e.target.value}px`)
+                        }
+                        className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                      />
+                      <div className="flex items-center gap-1 min-w-[60px]">
+                        <input
+                          type="number"
+                          min="8"
+                          max="72"
+                          value={fontSizeInput}
+                          onChange={(e) => {
+                            const inputValue = e.target.value;
+                            setFontSizeInput(inputValue);
+                            const value = parseInt(inputValue);
+                            if (!isNaN(value) && value >= 8 && value <= 72) {
+                              handleStyleChange('fontSize', `${value}px`);
+                            }
+                          }}
+                          onBlur={(e) => {
+                            const value = parseInt(e.target.value);
+                            if (isNaN(value) || value < 8) {
+                              handleStyleChange('fontSize', '8px');
+                              setFontSizeInput('8');
+                            } else if (value > 72) {
+                              handleStyleChange('fontSize', '72px');
+                              setFontSizeInput('72');
+                            } else {
+                              handleStyleChange('fontSize', `${value}px`);
+                              setFontSizeInput(value.toString());
+                            }
+                          }}
+                          className="w-12 px-1 py-1 border-2 border-gray-300 rounded text-xs text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <span className="text-xs text-gray-600">px</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Text Align & Decoration */}
+              <div className="bg-white p-2.5 rounded-lg border shadow-sm">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5 text-gray-600">
+                      Alignment
+                    </label>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => handleStyleChange('textAlign', 'left')}
+                        className={`flex-1 px-1.5 py-1.5 rounded text-xs transition-colors flex items-center justify-center ${
+                          styles.textAlign === 'left'
+                            ? 'bg-blue-500 text-white shadow-sm'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                        title="Align Left"
+                      >
+                        <AlignLeft size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleStyleChange('textAlign', 'center')}
+                        className={`flex-1 px-1.5 py-1.5 rounded text-xs transition-colors flex items-center justify-center ${
+                          styles.textAlign === 'center'
+                            ? 'bg-blue-500 text-white shadow-sm'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                        title="Align Center"
+                      >
+                        <AlignCenter size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleStyleChange('textAlign', 'right')}
+                        className={`flex-1 px-1.5 py-1.5 rounded text-xs transition-colors flex items-center justify-center ${
+                          styles.textAlign === 'right'
+                            ? 'bg-blue-500 text-white shadow-sm'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                        title="Align Right"
+                      >
+                        <AlignRight size={14} />
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleStyleChange('textAlign', 'justify')
+                        }
+                        className={`flex-1 px-1.5 py-1.5 rounded text-xs transition-colors flex items-center justify-center ${
+                          styles.textAlign === 'justify'
+                            ? 'bg-blue-500 text-white shadow-sm'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                        title="Justify"
+                      >
+                        <AlignJustify size={14} />
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium mb-1.5 text-gray-600">
+                      Decoration
+                    </label>
+                    <div className="flex gap-1.5">
+                      <button
+                        onClick={() =>
+                          handleStyleChange(
+                            'textDecoration',
+                            styles.textDecoration === 'underline'
+                              ? 'none'
+                              : 'underline',
+                          )
+                        }
+                        className={`flex-1 px-2 py-1.5 rounded text-xs font-medium transition-colors flex items-center justify-center gap-1 ${
+                          styles.textDecoration === 'underline'
+                            ? 'bg-blue-500 text-white shadow-sm'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                        title="Underline"
+                      >
+                        <Underline size={14} />
+                        <span className="text-xs">U</span>
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleStyleChange(
+                            'textDecoration',
+                            styles.textDecoration === 'line-through'
+                              ? 'none'
+                              : 'line-through',
+                          )
+                        }
+                        className={`flex-1 px-2 py-1.5 rounded text-xs font-medium transition-colors flex items-center justify-center gap-1 ${
+                          styles.textDecoration === 'line-through'
+                            ? 'bg-blue-500 text-white shadow-sm'
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
+                        title="Strikethrough"
+                      >
+                        <Strikethrough size={14} />
+                        <span className="text-xs">S</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-2 mt-6">
+          {/* Action Buttons */}
+          <div className="flex gap-2 mt-3 pt-3 border-t border-gray-200 flex-shrink-0">
             <button
               onClick={handleApply}
-              className="flex-1 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              className="flex-1 bg-blue-500 text-white py-1.5 px-3 rounded-lg hover:bg-blue-600 font-medium transition-colors shadow-sm text-xs"
             >
               Apply
             </button>
@@ -983,7 +929,7 @@ export default function StyleModal({
                     editorRef.current.innerHTML = originalHtmlRef.current;
                   }
                 }}
-                className="px-3 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                className="px-3 py-1.5 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium transition-colors shadow-sm text-xs"
                 title="Reset to original"
               >
                 Reset
@@ -991,7 +937,7 @@ export default function StyleModal({
             )}
             <button
               onClick={onClose}
-              className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"
+              className="flex-1 bg-gray-300 text-gray-700 py-1.5 px-3 rounded-lg hover:bg-gray-400 font-medium transition-colors shadow-sm text-xs"
             >
               Cancel
             </button>

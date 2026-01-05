@@ -324,7 +324,7 @@ export default function HtmlEditor({
       editIcon.className = 'edit-icon';
       editIcon.innerHTML = `
         <svg viewBox="0 0 24 24" width="16" height="16"
-            fill="none" stroke="#f0001c" stroke-width="2"
+            fill="none" stroke="#22C55E" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 20h9"/>
           <path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
@@ -337,7 +337,7 @@ export default function HtmlEditor({
         top: -12px;
         width: 24px;
         height: 24px;
-        background: #cccbca;
+        background: #BBF7D0;
         color: white;
         border-radius: 8px;
         display: flex;
@@ -363,9 +363,8 @@ export default function HtmlEditor({
         -khtml-user-select: none;
       `;
 
-      // Make the editable element itself relatively positioned and inline-block
-      htmlElement.style.position = 'relative';
-      htmlElement.style.display = 'inline-block';
+      // Only add the icon, don't modify any element styles
+      // The icon uses absolute positioning and will position relative to nearest positioned ancestor
       htmlElement.appendChild(editIcon);
 
       // Add selection event listeners to the element itself
@@ -391,7 +390,6 @@ export default function HtmlEditor({
         e.stopPropagation();
 
         // Temporarily hide icon to avoid detecting its blue background
-        const iconDisplay = editIcon.style.display;
         editIcon.style.display = 'none';
 
         // Small delay to ensure icon is hidden before reading styles
@@ -488,8 +486,8 @@ export default function HtmlEditor({
             setCurrentStyles(currentStyles);
           }
 
-          // Restore icon display
-          editIcon.style.display = iconDisplay || '';
+          // Don't restore icon display - keep it hidden when modal opens
+          // The useEffect will handle showing/hiding icons based on modal state
           setIsStyleModalOpen(true);
 
           // Get HTML content to preserve formatting (bold, italic, etc.)
@@ -560,6 +558,57 @@ export default function HtmlEditor({
       doc.open();
       doc.write(html);
       doc.close();
+
+      // Add CSS to prevent outline/border/background changes on editable elements
+      if (!doc.getElementById('editable-styles')) {
+        const styleTag = doc.createElement('style');
+        styleTag.id = 'editable-styles';
+        styleTag.textContent = `
+          .editable {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+          .editable:focus {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+          .editable:hover {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+          .editable[contenteditable="true"] {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+          .editable[contenteditable="true"]:focus {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+          .editable[contenteditable="true"]:hover {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+        `;
+        doc.head.appendChild(styleTag);
+      }
 
       if (editable && doc.body && isEditMode) {
         // Make only elements with 'editable' class editable
@@ -733,6 +782,74 @@ export default function HtmlEditor({
     setTimeout(removeIcons, 200);
     setTimeout(removeIcons, 500);
   }, [isEditMode]);
+
+  // Hide/show edit icons when modal opens/closes
+  useEffect(() => {
+    if (!iframeRef.current || !isEditMode) return;
+
+    const iframe = iframeRef.current;
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
+
+    // Add or update style tag in iframe document
+    let styleTag = doc.getElementById(
+      'hide-edit-icons-style',
+    ) as HTMLStyleElement;
+    if (!styleTag) {
+      styleTag = doc.createElement('style');
+      styleTag.id = 'hide-edit-icons-style';
+      doc.head.appendChild(styleTag);
+    }
+
+    if (isStyleModalOpen) {
+      // Add CSS rule to hide all edit icons
+      styleTag.textContent = `
+        .edit-icon {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          z-index: -1 !important;
+        }
+      `;
+    } else {
+      // Remove the style to show icons again
+      styleTag.textContent = '';
+    }
+
+    // Also directly hide/show icons as backup
+    const hideShowIcons = () => {
+      const editIcons = doc.querySelectorAll('.edit-icon');
+      editIcons.forEach((icon) => {
+        const htmlIcon = icon as HTMLElement;
+        if (isStyleModalOpen) {
+          // Completely hide icons when modal is open
+          htmlIcon.style.setProperty('display', 'none', 'important');
+          htmlIcon.style.setProperty('visibility', 'hidden', 'important');
+          htmlIcon.style.setProperty('opacity', '0', 'important');
+          htmlIcon.style.setProperty('pointer-events', 'none', 'important');
+          htmlIcon.style.setProperty('z-index', '-1', 'important');
+        } else {
+          // Show icons when modal is closed
+          htmlIcon.style.removeProperty('display');
+          htmlIcon.style.removeProperty('visibility');
+          htmlIcon.style.removeProperty('opacity');
+          htmlIcon.style.removeProperty('pointer-events');
+          htmlIcon.style.removeProperty('z-index');
+        }
+      });
+    };
+
+    // Apply immediately
+    hideShowIcons();
+
+    // Also apply after a short delay to catch any icons added asynchronously
+    if (isStyleModalOpen) {
+      setTimeout(hideShowIcons, 50);
+      setTimeout(hideShowIcons, 200);
+      setTimeout(hideShowIcons, 500);
+    }
+  }, [isStyleModalOpen, isEditMode]);
 
   // Function to apply styles to selected element
   const applyStyles = (styles: ElementStyles) => {
