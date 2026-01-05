@@ -280,7 +280,7 @@ export default function HtmlEditor({
         const htmlElement = element as HTMLElement;
         // Remove contenteditable attribute
         htmlElement.removeAttribute('contenteditable');
-        
+
         // Remove any edit-icon from innerHTML if present
         if (htmlElement.innerHTML.includes('edit-icon')) {
           const tempDiv = doc.createElement('div');
@@ -310,7 +310,7 @@ export default function HtmlEditor({
         /<div[^>]*class\s*=\s*["']?edit-icon["']?[^>]*>[\s\S]*?<\/div>/gi,
         '',
       );
-      
+
       // Remove any SVG elements that might be part of icons
       currentHtml = currentHtml.replace(
         /<svg[^>]*viewBox\s*=\s*["']0\s+0\s+24\s+24["'][^>]*>[\s\S]*?<\/svg>/gi,
@@ -324,7 +324,10 @@ export default function HtmlEditor({
       );
 
       // Remove any remaining edit-icon class references
-      currentHtml = currentHtml.replace(/class\s*=\s*["']?edit-icon["']?/gi, '');
+      currentHtml = currentHtml.replace(
+        /class\s*=\s*["']?edit-icon["']?/gi,
+        '',
+      );
       currentHtml = currentHtml.replace(
         /class\s*=\s*["']([^"']*)\s*edit-icon\s*([^"']*)["']/gi,
         (_match, before, after) => {
