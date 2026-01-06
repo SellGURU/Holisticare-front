@@ -25,8 +25,19 @@ interface TextAreaFieldProps {
   /** tiptap mode ONLY */
   onMarkdownChange?: (value: string) => void;
 
-  /** tiptap mode ONLY: what happens when user presses Enter (submit note) */
+  /**
+   * tiptap mode ONLY:
+   * Optional handler used by other screens (previous "add note on enter").
+   * In your new "single note" usage, you won't use this.
+   */
   onEnterSubmit?: () => void;
+
+  /**
+   * tiptap mode ONLY:
+   * If true, Enter triggers onEnterSubmit (and prevents newline).
+   * Default false so Enter inserts newline (what you want now).
+   */
+  submitOnEnter?: boolean;
 
   isValid?: boolean;
   validationText?: string;
@@ -47,6 +58,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
   onChange,
   onMarkdownChange,
   onEnterSubmit,
+  submitOnEnter = false, // ✅ default: allow newline
   isValid = true,
   validationText,
   margin,
@@ -115,8 +127,9 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         class: editorAreaClass,
       },
       handleKeyDown: (_view, event) => {
-        // Enter submits (no newline)
-        if (event.key === 'Enter' && !event.shiftKey) {
+        // ✅ Default: allow Enter to insert newline/paragraph
+        // ✅ Only intercept Enter if submitOnEnter is enabled (legacy behavior)
+        if (submitOnEnter && event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();
           onEnterSubmit?.();
           return true;
@@ -148,19 +161,14 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
   // Active toolbar styles
   const btnBase = 'px-2 py-1 rounded text-xs border transition select-none';
   const btnActive = 'bg-[#005f73] text-white border-[#005f73]';
-  const btnInactive =
-    'bg-backgroundColor-Card text-Text-Primary border-Gray-50';
+  const btnInactive = 'bg-backgroundColor-Card text-Text-Primary border-Gray-50';
 
   return (
     <div className={`flex flex-col w-full gap-2 ${margin ? margin : 'mt-4'}`}>
       <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">
         {label}
         {InfoText && (
-          <img
-            data-tooltip-id={tooltipId}
-            src="/icons/info-circle.svg"
-            alt=""
-          />
+          <img data-tooltip-id={tooltipId} src="/icons/info-circle.svg" alt="" />
         )}
       </div>
 
@@ -230,14 +238,11 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
             </button>
           </div>
 
-          {/* Editor (placeholder handled by extension, no extra div) */}
           <EditorContent editor={editor} />
         </div>
       )}
 
-      {validationText && (
-        <div className="text-Red text-[10px]">{validationText}</div>
-      )}
+      {validationText && <div className="text-Red text-[10px]">{validationText}</div>}
 
       {InfoText && (
         <Tooltip
