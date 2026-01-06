@@ -71,7 +71,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [questionnaires, setQuestionnaires] = useState([]);
   // const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-
+  useEffect(() => {
+    if(!isActive){
+      setShowUploadTest(false)
+    }
+  },[isActive])
   // const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
   // const [dateShare, setDateShare] = useState<string | null>(null);
   // useEffect(() => {
