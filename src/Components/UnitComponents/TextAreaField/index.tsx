@@ -148,14 +148,19 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
   // Active toolbar styles
   const btnBase = 'px-2 py-1 rounded text-xs border transition select-none';
   const btnActive = 'bg-[#005f73] text-white border-[#005f73]';
-  const btnInactive = 'bg-backgroundColor-Card text-Text-Primary border-Gray-50';
+  const btnInactive =
+    'bg-backgroundColor-Card text-Text-Primary border-Gray-50';
 
   return (
     <div className={`flex flex-col w-full gap-2 ${margin ? margin : 'mt-4'}`}>
       <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">
         {label}
         {InfoText && (
-          <img data-tooltip-id={tooltipId} src="/icons/info-circle.svg" alt="" />
+          <img
+            data-tooltip-id={tooltipId}
+            src="/icons/info-circle.svg"
+            alt=""
+          />
         )}
       </div>
 
@@ -230,7 +235,9 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         </div>
       )}
 
-      {validationText && <div className="text-Red text-[10px]">{validationText}</div>}
+      {validationText && (
+        <div className="text-Red text-[10px]">{validationText}</div>
+      )}
 
       {InfoText && (
         <Tooltip

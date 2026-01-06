@@ -333,12 +333,13 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                             className="text-[10px]"
                                             style={{ color: '#888888' }}
                                           >
-                                              <div className="prose prose-sm max-w-none dark:prose-invert [&_ul]:!list-disc [&_ul]:!pl-5 [&_ol]:!list-decimal [&_ol]:!pl-5">
-                                                                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                                     {item.client_notes[0]}
-                                                                      </ReactMarkdown>
-                                                                    </div>
-                                          
+                                            <div className="prose prose-sm max-w-none dark:prose-invert [&_ul]:!list-disc [&_ul]:!pl-5 [&_ol]:!list-decimal [&_ol]:!pl-5">
+                                              <ReactMarkdown
+                                                remarkPlugins={[remarkGfm]}
+                                              >
+                                                {item.client_notes[0]}
+                                              </ReactMarkdown>
+                                            </div>
                                           </div>
                                         </div>
                                       </td>

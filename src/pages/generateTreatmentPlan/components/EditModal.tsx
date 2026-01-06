@@ -50,7 +50,7 @@ const EditModal: FC<EditModalProps> = ({
     defalts ? defalts['Client Notes'] : [],
   );
   console.log(notes);
-  
+
   const [client_versions, setclient_versions] = useState<string[]>(
     defalts && Array.isArray(defalts['client_version'])
       ? defalts['client_version']
@@ -611,7 +611,6 @@ const EditModal: FC<EditModalProps> = ({
   //   }
   // };
 
-
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -1103,48 +1102,55 @@ const EditModal: FC<EditModalProps> = ({
             </div> */}
 
           {/* Client Notes */}
-     <TextAreaField
-  as="tiptap"
-  label="Client Notes"
-  placeholder="Write personalized notes for your client"
-  value={newNote}                 // ✅ MARKDOWN string stored
-  onMarkdownChange={setNewNote}   // ✅ tiptap output (markdown)
-  onEnterSubmit={() => {
-    if (!newNote.trim()) return;
-    if (newNote.length > 400) return; // keep your validation rule
-    setNotes([...notes, newNote]);
-    setNewNote('');
-  }}
-  isValid={showValidation ? ValidationForms.IsvalidField('Note', newNote) : true}
-  validationText={showValidation ? ValidationForms.ValidationText('Note', newNote) : ''}
-  InfoText={NotesInfoText}
-  margin="mb-4"
-/>
+          <TextAreaField
+            as="tiptap"
+            label="Client Notes"
+            placeholder="Write personalized notes for your client"
+            value={newNote} // ✅ MARKDOWN string stored
+            onMarkdownChange={setNewNote} // ✅ tiptap output (markdown)
+            onEnterSubmit={() => {
+              if (!newNote.trim()) return;
+              if (newNote.length > 400) return; // keep your validation rule
+              setNotes([...notes, newNote]);
+              setNewNote('');
+            }}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField('Note', newNote)
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText('Note', newNote)
+                : ''
+            }
+            InfoText={NotesInfoText}
+            margin="mb-4"
+          />
 
           {/* Notes List */}
           <div className="mb-4 flex flex-col gap-2">
             {notes.map((note, index) => (
               <div key={index} className="w-full flex gap-1 items-start">
                 <div className="flex w-full justify-between items-start border border-Gray-50 py-2 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
-<div className="prose prose-sm max-w-none dark:prose-invert [&_ul]:!list-disc [&_ul]:!pl-5 [&_ol]:!list-decimal [&_ol]:!pl-5">
-  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-    {note}
-  </ReactMarkdown>
-</div>
+                  <div className="prose prose-sm max-w-none dark:prose-invert [&_ul]:!list-disc [&_ul]:!pl-5 [&_ol]:!list-decimal [&_ol]:!pl-5">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {note}
+                    </ReactMarkdown>
+                  </div>
 
-
-                <div
-                  onClick={() => handleDeleteNote(index)}
-                  className="cursor-pointer"
-                >
-                  <SvgIcon
-                    src="/icons/delete.svg"
-                    color="#FC5474"
-                    width="24px"
-                    height="24px"
-                  />
+                  <div
+                    onClick={() => handleDeleteNote(index)}
+                    className="cursor-pointer"
+                  >
+                    <SvgIcon
+                      src="/icons/delete.svg"
+                      color="#FC5474"
+                      width="24px"
+                      height="24px"
+                    />
+                  </div>
                 </div>
-              </div>
               </div>
             ))}
           </div>

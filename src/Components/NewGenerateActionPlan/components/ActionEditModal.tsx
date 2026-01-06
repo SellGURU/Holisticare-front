@@ -1369,13 +1369,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       key={index}
                       className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
                     >
-                      <div className='break-all'>
-
-                  
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                         {note}
-                       </ReactMarkdown>
-                           </div>
+                      <div className="break-all">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {note}
+                        </ReactMarkdown>
+                      </div>
                       <div
                         onClick={() => handleDeleteNote(index)}
                         className="cursor-pointer"
