@@ -225,8 +225,12 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                               ) {
                                 const lastCard =
                                   newCardData[newCardData.length - 1];
-                                lastCard.state = 'On Going';
+                                lastCard.state = 'Pending';
                                 setActiveAction(lastCard);
+                                setTimeout(() => {
+                                  getActionPlan();
+                                  
+                                }, 100);
                               } else if (newCardData.length > 0) {
                                 setActiveAction(
                                   newCardData[newCardData.length - 1],

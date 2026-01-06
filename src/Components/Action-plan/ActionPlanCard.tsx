@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
+import SpinnerLoader from '../SpinnerLoader';
 // import ConfirmModal from "./sections/ConfirmModal";
 
 // type CardData = {
@@ -45,6 +46,8 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         return '#FFC123';
       case 'Draft':
         return '#FFC123';
+      case 'Pending':
+        return '#888888'
       default:
         return '#3C79D6'; // Fallback color
     }
@@ -65,7 +68,8 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   const [DeleteConfirm, setDeleteConfirm] = useState(false);
   // const [showConfirmModal, setshowConfirmModal] = useState(false);
 
-  const isDisabled = el.state === 'Completed' || el.state === 'Paused';
+  const isDisabled = el.state === 'Completed' || el.state === 'Paused' 
+  const isPending = el.state == 'Pending';
   const textRef = useRef<HTMLHeadingElement | null>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
 
@@ -97,17 +101,39 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
           onClick();
         }
       }}
-      className={` min-w-[218px] relative min-h-[238px] w-[218px] h-[238px] flex flex-col justify-between  rounded-[40px] bg-white  border-2 shadow-100  px-3 pt-2 cursor-pointer pb-3 select-none ${isActive ? resolveBorderColorActive() : 'border-Gray-50  '}  ${
-        isDisabled ? 'opacity-45 cursor-not-allowed' : ''
+      className={` min-w-[218px] relative min-h-[238px] w-[218px] h-[238px] flex flex-col justify-between  rounded-[40px] bg-white  border-2 shadow-100  px-3 pt-2  pb-3 select-none ${isActive ? resolveBorderColorActive() : 'border-Gray-50  '}  ${
+        isDisabled ? 'opacity-45 cursor-not-allowed' : 'cursor-pointer'
       }`}
     >
       <div className="flex w-full items-start start-0  px-2 justify-between">
-        <div className="flex items mt-2 gap-1 TextStyle-Body-3  text-Text-Primary">
-          <div
-            style={{ backgroundColor: resolveStatusColor() }}
-            className={`w-2 h-2 rounded-full mt-1`}
-          ></div>
+        <div data-tooltip-id={'tag' +el.id}  className="flex items mt-2 gap-1 TextStyle-Body-3  text-Text-Primary">
+          {isPending ?
+          <>
+            <div>
+              <SpinnerLoader color='#005F73'></SpinnerLoader>
+            </div>
+          </>
+          :
+          <>
+            <div
+              style={{ backgroundColor: resolveStatusColor() }}
+              className={`w-2 h-2 rounded-full mt-1`}
+            ></div>
+          </>
+          }
           {el.state ? el.state : 'On Going'}
+          <Tooltip
+            id={'tag' +el.id }
+            place="top"
+            className="!bg-white !opacity-100 !bg-opacity-100 !w-[162px]  !text-wrap 
+                   !text-[#888888] text-justify !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+            style={{
+              zIndex: 9999,
+              pointerEvents: 'none',
+            }}
+          >
+          This plan’s status is being determined by the system.
+          </Tooltip>
         </div>
         <div
           // style={{ borderColor: resolveStatusColor() }}
@@ -119,7 +145,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         <div
           onClick={(e) => {
             e.stopPropagation();
-            if (!isDisabled) {
+            if (!isDisabled && !isPending ) {
               setshowModal(!showModal);
             }
           }}
@@ -127,7 +153,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         >
           <img
             ref={showModalButtonRefrence}
-            className=" cursor-pointer"
+            className={(isDisabled ||isPending)?'cursor-not-allowed':" cursor-pointer"}
             src="/icons/dots.svg"
             alt=""
           />
