@@ -34,14 +34,14 @@ const MonthShows: React.FC<MonthShowsProps> = ({ days, className = '' }) => {
     >
       {sortedDays.map((day) => {
         const dayNumber = day.split('T')[0].split('-')[2];
-        
+
         return (
           <div
             key={day}
             className="flex items-center justify-center w-6 h-6 rounded-[4px] bg-gradient-to-br from-[#F0F9FF] to-[#E0F2FE] border border-Gray-50 text-Text-Primary text-[10px]"
-            style={{ 
+            style={{
               minWidth: '24px',
-              minHeight: '24px'
+              minHeight: '24px',
             }}
           >
             {dayNumber}
