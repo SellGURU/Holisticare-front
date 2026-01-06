@@ -10,7 +10,8 @@ import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import Checkbox from '../../../Components/checkbox';
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 interface BioMarkerRowSuggestionsProps {
   value: any;
   onchange: (value: string) => void;
@@ -189,6 +190,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
     handleRemoveLookingForwards(name);
     setIsDeleting(null);
   };
+  console.log(notes);
 
   return (
     <>
@@ -695,7 +697,11 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                   className="bg-transparent flex gap-1 items-start text-[12px]"
                 >
                   <span className="text-[10px]">Note:</span>{' '}
-                  <div className="text-Text-Secondary text-[10px]">{note}</div>
+                  <div className="prose prose-sm max-w-none dark:prose-invert [&_ul]:!list-disc [&_ul]:!pl-5 [&_ol]:!list-decimal [&_ol]:!pl-5">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {note}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               ))}
             </div>

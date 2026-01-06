@@ -11,12 +11,21 @@ import {
   ValueInfoText,
   ValueValidation,
 } from '../../../utils/library-unification';
-import SvgIcon from '../../../utils/svgIcon';
 import ValidationForms from '../../../utils/ValidationForms';
 import MainModal from '../../MainModal';
 import { MultiTextField, TextField } from '../../UnitComponents';
 import SelectBoxField from '../../UnitComponents/SelectBoxField';
 import TextAreaField from '../../UnitComponents/TextAreaField';
+
+const mergeNotesToSingleString = (input: any): string => {
+  if (!Array.isArray(input)) return input ? String(input) : '';
+  return input.filter(Boolean).join('\n\n');
+};
+
+const singleStringToNotesArray = (text: string): string[] => {
+  const trimmed = (text || '').trim();
+  return trimmed ? [trimmed] : [];
+};
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -98,7 +107,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   };
   const [groups, setGroups] = useState<any[]>([]);
 
-  const [newNote, setNewNote] = useState('');
+  const [newNote, setNewNote] = useState<string>(() =>
+    mergeNotesToSingleString(defalts?.['Client Notes']),
+  );
 
   const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
     setTotalMacros((prevTheme) => ({
@@ -111,9 +122,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [selectedLocations, setSelectedLocations] = useState<string[]>(
     defalts ? defalts?.Activity_Location : [],
   );
-  const [notes, setNotes] = useState<string[]>(
-    defalts ? defalts['Client Notes'] : [],
-  );
+
   // const [showSelect, setShowSelect] = useState(false);
   // const [practitionerComment, setPractitionerComment] = useState('');
   // const [description, setDescription] = useState('');
@@ -182,7 +191,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       });
       setInstructions(defalts.Instruction || '');
       // setSelectedTimes(defalts.Times || []);
-      setNotes(defalts['Client Notes'] || []);
+      setNewNote(mergeNotesToSingleString(defalts?.['Client Notes']));
       // setDescription(defalts.Description || '');
       // setBaseScore(defalts.Base_Score === 0 ? defalts.Base_Score : 5);
       setFrequencyType(defalts?.Frequency_Type || null);
@@ -243,7 +252,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Instruction: instructions,
       Activity_Location: selectedLocations,
       // Times: selectedTimes,
-      'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+      'Client Notes': singleStringToNotesArray(newNote),
       // frequencyType: frequencyType,
       frequencyDates:
         frequencyType == 'weekly'
@@ -285,15 +294,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleNoteKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (newNote.trim() && newNote.slice(0, 400)) {
-        setNotes([...notes, newNote]);
-        setNewNote('');
-      }
-    }
-  };
+  // const handleNoteKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  //   if (e.key === 'Enter' && !e.shiftKey) {
+  //     e.preventDefault();
+  //     if (newNote.trim() && newNote.slice(0, 400)) {
+  //       setNotes([...notes, newNote]);
+  //       setNewNote('');
+  //     }
+  //   }
+  // };
 
   // const handleCommentKeyDown = (
   //   e: React.KeyboardEvent<HTMLTextAreaElement>,
@@ -306,10 +315,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   //     }
   //   }
   // };
-  const handleDeleteNote = (index: number) => {
-    const updatedNotes = notes.filter((_, i) => i !== index);
-    setNotes(updatedNotes);
-  };
+
   const onReset = () => {
     setSelectedDays([]);
     setSelectedDaysMonth([]);
@@ -321,7 +327,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     });
     setInstructions('');
     // setSelectedTimes([]);
-    setNotes([]);
+    // setNotes([]);
     // setDescription('');
     // setBaseScore(5);
     setFrequencyType(null);
@@ -395,7 +401,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Title: title,
         Instruction: instructions,
         Dose: dose,
-        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+        'Client Notes': singleStringToNotesArray(newNote),
         frequencyDates:
           frequencyType === 'weekly'
             ? selectedDays
@@ -411,7 +417,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Title: title,
         Instruction: instructions,
         Value: Number(value),
-        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+        'Client Notes': singleStringToNotesArray(newNote),
         frequencyDates:
           frequencyType === 'weekly'
             ? selectedDays
@@ -433,7 +439,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Title: title,
         Instruction: instructions,
         'Total Macros': numberMacros,
-        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+        'Client Notes': singleStringToNotesArray(newNote),
         frequencyDates:
           frequencyType === 'weekly'
             ? selectedDays
@@ -448,7 +454,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Category: selectedGroup,
         Title: title,
         Instruction: instructions,
-        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+        'Client Notes': singleStringToNotesArray(newNote),
         frequencyDates:
           frequencyType === 'weekly'
             ? selectedDays
@@ -710,6 +716,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       saveActivity();
     }
   };
+
   return (
     <MainModal
       onClose={() => {
@@ -1312,7 +1319,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 ) : (
                   ''
                 )}
-                <TextAreaField
+                {/* <TextAreaField
                   label="Client Notes"
                   placeholder="Write notes ..."
                   value={newNote}
@@ -1332,8 +1339,29 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   }
                   InfoText={NotesInfoText}
                   margin="mb-4"
+                /> */}
+                <TextAreaField
+                  as="tiptap"
+                  label="Client Notes"
+                  placeholder="Write personalized notes for your client"
+                  value={newNote}
+                  onMarkdownChange={setNewNote}
+                 
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField('Note', newNote)
+                      : true
+                  }
+                  validationText={
+                    showValidation
+                      ? ValidationForms.ValidationText('Note', newNote)
+                      : ''
+                  }
+                  InfoText={NotesInfoText}
+                  margin="mb-4"
                 />
-                <div
+
+                {/* <div
                   className={`${
                     notes.length > 0 ? 'mb-4' : ''
                   } flex flex-col gap-2`}
@@ -1343,7 +1371,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       key={index}
                       className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
                     >
-                      <span className="break-all">{note}</span>
+                      <div className="break-all">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {note}
+                        </ReactMarkdown>
+                      </div>
                       <div
                         onClick={() => handleDeleteNote(index)}
                         className="cursor-pointer"
@@ -1357,7 +1389,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       </div>
                     </div>
                   ))}
-                </div>
+                </div> */}
                 {/* <div className="mb-4">
                   <label className="block text-xs font-medium">
                     Practitioner Comments

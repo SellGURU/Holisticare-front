@@ -173,7 +173,7 @@ export const Overview: FC<OverviewProps> = ({
             </div>
           </div>
         )}
-        <div className="w-full flex justify-end mb-4"></div>
+        
         <div className="w-full my-4">
           <CoverageCard
             progress={progress}

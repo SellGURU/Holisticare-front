@@ -17,6 +17,8 @@ import {
 } from '../../../utils/library-unification';
 import SvgIcon from '../../../utils/svgIcon';
 import ValidationForms from '../../../utils/ValidationForms';
+// import ReactMarkdown from 'react-markdown';
+// import remarkGfm from 'remark-gfm';
 // import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
@@ -26,6 +28,16 @@ interface EditModalProps {
   defalts?: any;
   onSubmit: (data: any) => void;
 }
+const notesArrayToSingleString = (arr: any): string => {
+  if (!Array.isArray(arr) || arr.length === 0) return '';
+  // join with blank line to keep markdown readable
+  return arr.filter(Boolean).join('\n\n');
+};
+
+const singleStringToNotesArray = (text: string): string[] => {
+  const trimmed = (text || '').trim();
+  return trimmed ? [trimmed] : [];
+};
 
 const EditModal: FC<EditModalProps> = ({
   isOpen,
@@ -38,15 +50,18 @@ const EditModal: FC<EditModalProps> = ({
   const [selectedGroupDose, setSelectedGroupDose] = useState(false);
 
   const [groups, setGroups] = useState<any[]>([]);
-  const [newNote, setNewNote] = useState('');
-  const [keyBenefitValue, setKeyBenefitValue] = useState('');
+const [newNote, setNewNote] = useState<string>(() =>
+  notesArrayToSingleString(defalts?.['Client Notes']),
+);  const [keyBenefitValue, setKeyBenefitValue] = useState('');
   const [foodsToEatValue, setFoodsToEatValue] = useState('');
   const [foodsToAvoidValue, setFoodsToAvoidValue] = useState('');
   const [exercisesToDoValue, setExercisesToDoValue] = useState('');
   const [exercisesToAvoidValue, setExercisesToAvoidValue] = useState('');
-  const [notes, setNotes] = useState<string[]>(
-    defalts ? defalts['Client Notes'] : [],
-  );
+  // const [notes, setNotes] = useState<string[]>(
+  //   defalts ? defalts['Client Notes'] : [],
+  // );
+
+
   const [client_versions, setclient_versions] = useState<string[]>(
     defalts && Array.isArray(defalts['client_version'])
       ? defalts['client_version']
@@ -102,7 +117,7 @@ const EditModal: FC<EditModalProps> = ({
     exercises_to_do: defalts?.exercises_to_do || [],
     exercises_to_avoid: defalts?.exercises_to_avoid || [],
     Instruction: '',
-    Notes: defalts?.['Client Notes'] || notes,
+    Notes: defalts?.['Client Notes'] || [],
     PractitionerComments:
       defalts?.['Practitioner Comments'] || practitionerComments,
     issue_list: defalts?.issue_list || [],
@@ -131,7 +146,7 @@ const EditModal: FC<EditModalProps> = ({
       issue_list: [],
     });
     setNewNote('');
-    setNotes([]);
+    
     setSelectedGroupDose(false);
     setclient_versions([]);
     setShowValidation(false);
@@ -180,7 +195,7 @@ const EditModal: FC<EditModalProps> = ({
         exercisesToDoValue.trim() !== ''
           ? [...formData.exercises_to_do, exercisesToDoValue]
           : formData.exercises_to_do,
-      'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+'Client Notes': singleStringToNotesArray(newNote),
       issue_list: formData.issue_list.length > 0 ? formData.issue_list : [],
     });
     onClose();
@@ -250,17 +265,6 @@ const EditModal: FC<EditModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleNoteKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (newNote.trim()) {
-        if (newNote.length <= 400) {
-          setNotes([...notes, newNote]);
-          setNewNote('');
-        }
-      }
-    }
-  };
   const handleKeyBenefitKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -369,10 +373,10 @@ const EditModal: FC<EditModalProps> = ({
   //     }
   //   }
   // };
-  const handleDeleteNote = (index: number) => {
-    const updatedNotes = notes.filter((_, i) => i !== index);
-    setNotes(updatedNotes);
-  };
+  // const handleDeleteNote = (index: number) => {
+  //   const updatedNotes = notes.filter((_, i) => i !== index);
+  //   setNotes(updatedNotes);
+  // };
 
   const handleDeleteKeyBenefit = (index: number) => {
     const updatedKeyBenefits = formData.key_benefits.filter(
@@ -606,6 +610,17 @@ const EditModal: FC<EditModalProps> = ({
     // }
     handleSubmit();
   };
+  // const handleNoteKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  //   if (e.key === 'Enter' && !e.shiftKey) {
+  //     e.preventDefault();
+  //     if (newNote.trim()) {
+  //       if (newNote.length <= 400) {
+  //         setNotes([...notes, newNote]);
+  //         setNewNote('');
+  //       }
+  //     }
+  //   }
+  // };
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
@@ -1098,51 +1113,47 @@ const EditModal: FC<EditModalProps> = ({
             </div> */}
 
           {/* Client Notes */}
-          <div ref={clientNotesRef}>
-            <TextAreaField
-              label="Client Notes"
-              placeholder="Write personalized notes for your client"
-              value={newNote}
-              onChange={(e) => {
-                setNewNote(e.target.value);
-              }}
-              onKeyDown={handleNoteKeyDown}
-              isValid={
-                showValidation
-                  ? ValidationForms.IsvalidField('Note', newNote)
-                  : true
-              }
-              validationText={
-                showValidation
-                  ? ValidationForms.ValidationText('Note', newNote)
-                  : ''
-              }
-              InfoText={NotesInfoText}
-              margin="mb-4"
-            />
-          </div>
+ <TextAreaField
+  as="tiptap"
+  label="Client Notes"
+  placeholder="Write personalized notes for your client"
+  value={newNote}
+  onMarkdownChange={setNewNote}
+  isValid={showValidation ? ValidationForms.IsvalidField('Note', newNote) : true}
+  validationText={
+    showValidation ? ValidationForms.ValidationText('Note', newNote) : ''
+  }
+  InfoText={NotesInfoText}
+  margin="mb-4"
+/>
+
 
           {/* Notes List */}
-          <div className="mb-4 flex flex-col gap-2">
+          {/* <div className="mb-4 flex flex-col gap-2">
             {notes.map((note, index) => (
               <div key={index} className="w-full flex gap-1 items-start">
-                <div className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
-                  <span>{note}</span>
-                </div>
-                <div
-                  onClick={() => handleDeleteNote(index)}
-                  className="cursor-pointer"
-                >
-                  <SvgIcon
-                    src="/icons/delete.svg"
-                    color="#FC5474"
-                    width="24px"
-                    height="24px"
-                  />
+                <div className="flex w-full justify-between items-start border border-Gray-50 py-2 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
+                  <div className="prose prose-sm max-w-none dark:prose-invert [&_ul]:!list-disc [&_ul]:!pl-5 [&_ol]:!list-decimal [&_ol]:!pl-5">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {note}
+                    </ReactMarkdown>
+                  </div>
+
+                  <div
+                    onClick={() => handleDeleteNote(index)}
+                    className="cursor-pointer"
+                  >
+                    <SvgIcon
+                      src="/icons/delete.svg"
+                      color="#FC5474"
+                      width="24px"
+                      height="24px"
+                    />
+                  </div>
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
 
           {/* Practitioner Comments */}
           {/* <div className="mb-4">

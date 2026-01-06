@@ -7,7 +7,8 @@ import ChoosingDaysWeek from './components/ChoosingDaysWeek';
 import ConflictsModal from './components/ConflictsModal';
 import FilePreviewModal from './components/FilePreviewModal';
 import MonthShows from './components/MonthShows';
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 interface BioMarkerRowSuggestionsProps {
   value: any;
   setValues: (data: any) => void;
@@ -724,7 +725,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       Note{' '}
                       {value['Client Notes'].length > 1 && <>{index + 1}</>}:{' '}
                       <div className="text-Text-Quadruple text-[10px] ml-1">
-                        {note}
+                        <div className="prose prose-sm max-w-none dark:prose-invert [&_ul]:!list-disc [&_ul]:!pl-5 [&_ol]:!list-decimal [&_ol]:!pl-5">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {note}
+                          </ReactMarkdown>
+                        </div>
                       </div>
                     </div>
                   );
