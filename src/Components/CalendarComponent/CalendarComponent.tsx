@@ -310,10 +310,10 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
     const firstDate = getFirstTaskDate(data);
     const lastDate = getLastTaskDate(data);
     if (!firstDate || !lastDate) return false;
-    
+
     const checkDate = new Date(date);
     checkDate.setHours(0, 0, 0, 0);
-    
+
     return checkDate >= firstDate && checkDate <= lastDate;
   };
   const buildMonthsRange = (lastDate: Date) => {
@@ -393,12 +393,20 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
             const monthDays = getCurrentMonthWithBuffer(currentDate);
             const firstDayOfMonth = monthDays[0]?.dateObject.getDay() || 0;
             // Get day names starting from the first day of the month
-            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const dayNames = [
+              'Sunday',
+              'Monday',
+              'Tuesday',
+              'Wednesday',
+              'Thursday',
+              'Friday',
+              'Saturday',
+            ];
             const weekDays = [];
             for (let i = 0; i < 7; i++) {
               weekDays.push(dayNames[(firstDayOfMonth + i) % 7]);
             }
-            
+
             return (
               <>
                 <div className="grid grid-cols-7 w-full lg:gap-2 min-w-[980px] lg:min-w-full mt-1 py-3">
@@ -413,201 +421,208 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                 </div>
                 <div className="grid grid-cols-7 gap-[1px] w-full min-w-[980px] lg:min-w-full">
                   {monthDays.map((day, index) => {
-              // Since header starts from first day of month, first cell should start at column 1
-              const gridColumnStart = index === 0 ? 1 : undefined;
-              const activitiesForTheDay = data.filter(
-                (el: any) =>
-                  new Date(el.date).toDateString() ===
-                  day.dateObject.toDateString(),
-              );
+                    // Since header starts from first day of month, first cell should start at column 1
+                    const gridColumnStart = index === 0 ? 1 : undefined;
+                    const activitiesForTheDay = data.filter(
+                      (el: any) =>
+                        new Date(el.date).toDateString() ===
+                        day.dateObject.toDateString(),
+                    );
 
-              const categories = Array.from(
-                new Set(activitiesForTheDay.map((a: any) => a.category)),
-              );
+                    const categories = Array.from(
+                      new Set(activitiesForTheDay.map((a: any) => a.category)),
+                    );
 
-              const isOutOfRange = !isDateInPlanRange(day.dateObject, data);
+                    const isOutOfRange = !isDateInPlanRange(
+                      day.dateObject,
+                      data,
+                    );
 
-              return (
-                // <CalendarCell
-                //   key={index}
-                //   isCurrentDay={
-                //     day.dayNumber === currenDay && day.monthName === currenMonth
-                //   }
-                //   isCurrentMonth={currenMonth === day.monthName}
-                //   className="px-1 lg:px-4 py-1"
-                // >
-                //   <div
-                //     className={`${
-                //       day.dayNumber === currenDay &&
-                //       day.monthName === currenMonth
-                //         ? 'text-Text-Primary'
-                //         : currenMonth !== day.monthName
-                //           ? 'text-Text-Secondary'
-                //           : 'text-Text-Primary'
-                //     } text-xs`}
-                //   >
-                //     {day.dayNumber}
-                //   </div>
-                //   <ul>
-                //     {categories.map((category: any) => (
-                //       <li className="mt-2" key={category}>
-                //         <div className="font-semibold text-[10px] text-[#383838] flex items-center gap-1">
-                //           <img
-                //             className="w-3"
-                //             src={resolveIcon(category)}
-                //             alt=""
-                //           />
-                //           {category || 'Check-In'}
-                //         </div>
-                //         {activitiesForTheDay
-                //           .filter(
-                //             (activity: any) => activity.category === category,
-                //           )
-                //           .map((activity: any, i: number) => {
-                //             const activityDate = new Date(activity.date);
-                //             const isPastDate = activityDate < today;
-                //             const opacityClass =
-                //               !activity.status && isPastDate
-                //                 ? 'opacity-70'
-                //                 : 'opacity-100';
+                    return (
+                      // <CalendarCell
+                      //   key={index}
+                      //   isCurrentDay={
+                      //     day.dayNumber === currenDay && day.monthName === currenMonth
+                      //   }
+                      //   isCurrentMonth={currenMonth === day.monthName}
+                      //   className="px-1 lg:px-4 py-1"
+                      // >
+                      //   <div
+                      //     className={`${
+                      //       day.dayNumber === currenDay &&
+                      //       day.monthName === currenMonth
+                      //         ? 'text-Text-Primary'
+                      //         : currenMonth !== day.monthName
+                      //           ? 'text-Text-Secondary'
+                      //           : 'text-Text-Primary'
+                      //     } text-xs`}
+                      //   >
+                      //     {day.dayNumber}
+                      //   </div>
+                      //   <ul>
+                      //     {categories.map((category: any) => (
+                      //       <li className="mt-2" key={category}>
+                      //         <div className="font-semibold text-[10px] text-[#383838] flex items-center gap-1">
+                      //           <img
+                      //             className="w-3"
+                      //             src={resolveIcon(category)}
+                      //             alt=""
+                      //           />
+                      //           {category || 'Check-In'}
+                      //         </div>
+                      //         {activitiesForTheDay
+                      //           .filter(
+                      //             (activity: any) => activity.category === category,
+                      //           )
+                      //           .map((activity: any, i: number) => {
+                      //             const activityDate = new Date(activity.date);
+                      //             const isPastDate = activityDate < today;
+                      //             const opacityClass =
+                      //               !activity.status && isPastDate
+                      //                 ? 'opacity-70'
+                      //                 : 'opacity-100';
 
-                //             return (
-                //               <div
-                //                 key={i}
-                //                 className={`flex gap-1 mt-1 ${opacityClass}`}
-                //               >
-                //                 {activity.status ? (
-                //                   <img
-                //                     className="w-3 h-3"
-                //                     src="/icons/activity-circle-done.svg"
-                //                     alt=""
-                //                   />
-                //                 ) : (
-                //                   <img
-                //                     className="w-3 h-3"
-                //                     src="/icons/acitivty-circle.svg"
-                //                     alt=""
-                //                   />
-                //                 )}
-                //                 <span className="text-[6px] lg:text-[10px] text-Text-Primary flex-grow">
-                //                   {activity.name}
-                //                 </span>
-                //               </div>
-                //             );
-                //           })}
-                //       </li>
-                //     ))}
-                //   </ul>
-                // </CalendarCell>
-                <div
-                  key={index}
-                  className={`px-1 relative lg:px-4 py-1 min-h-[59px] min-w-[141px] border rounded-lg ${
-                    day.dayNumber === currenDay && day.monthName === currenMonth
-                      ? 'gradient-border text-black-primary'
-                      : isOutOfRange
-                        ? 'bg-gray-50 border-gray-200 border-dashed opacity-75'
-                        : 'bg-backgroundColor-Card'
-                  }`}
-                  style={{
-                    gridColumnStart: gridColumnStart,
-                    background:
-                      day.dayNumber === currenDay &&
-                      day.monthName === currenMonth
-                        ? 'linear-gradient(white, white) padding-box, linear-gradient(to right, #005F73, #6CC24A) border-box'
-                        : undefined,
-                    border:
-                      day.dayNumber === currenDay &&
-                      day.monthName === currenMonth
-                        ? '2px solid transparent'
-                        : isOutOfRange
-                          ? '1px dashed #CBD5E1'
-                          : '1px solid #D0DDEC',
-                  }}
-                >
-                  <div
-                    className={`${
-                      day.dayNumber === currenDay &&
-                      day.monthName === currenMonth
-                        ? 'text-Text-Primary'
-                        : currenMonth !== day.monthName
-                          ? 'text-Text-Secondary'
-                          : 'text-Text-Primary'
-                    } text-xs`}
-                  >
-                    {day.dayNumber}
-                  </div>
-                  {categories.length === 0 ? (
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center h-full min-h-[30px] gap-1.5">
-                      {isOutOfRange ? (
-                        <div className="flex items-start gap-1">
-                          <CalendarOff className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
-                          <span className="text-[10px] text-gray-500 font-normal">
-                            Out of plan range
-                          </span>
+                      //             return (
+                      //               <div
+                      //                 key={i}
+                      //                 className={`flex gap-1 mt-1 ${opacityClass}`}
+                      //               >
+                      //                 {activity.status ? (
+                      //                   <img
+                      //                     className="w-3 h-3"
+                      //                     src="/icons/activity-circle-done.svg"
+                      //                     alt=""
+                      //                   />
+                      //                 ) : (
+                      //                   <img
+                      //                     className="w-3 h-3"
+                      //                     src="/icons/acitivty-circle.svg"
+                      //                     alt=""
+                      //                   />
+                      //                 )}
+                      //                 <span className="text-[6px] lg:text-[10px] text-Text-Primary flex-grow">
+                      //                   {activity.name}
+                      //                 </span>
+                      //               </div>
+                      //             );
+                      //           })}
+                      //       </li>
+                      //     ))}
+                      //   </ul>
+                      // </CalendarCell>
+                      <div
+                        key={index}
+                        className={`px-1 relative lg:px-4 py-1 min-h-[59px] min-w-[141px] border rounded-lg ${
+                          day.dayNumber === currenDay &&
+                          day.monthName === currenMonth
+                            ? 'gradient-border text-black-primary'
+                            : isOutOfRange
+                              ? 'bg-gray-50 border-gray-200 border-dashed opacity-75'
+                              : 'bg-backgroundColor-Card'
+                        }`}
+                        style={{
+                          gridColumnStart: gridColumnStart,
+                          background:
+                            day.dayNumber === currenDay &&
+                            day.monthName === currenMonth
+                              ? 'linear-gradient(white, white) padding-box, linear-gradient(to right, #005F73, #6CC24A) border-box'
+                              : undefined,
+                          border:
+                            day.dayNumber === currenDay &&
+                            day.monthName === currenMonth
+                              ? '2px solid transparent'
+                              : isOutOfRange
+                                ? '1px dashed #CBD5E1'
+                                : '1px solid #D0DDEC',
+                        }}
+                      >
+                        <div
+                          className={`${
+                            day.dayNumber === currenDay &&
+                            day.monthName === currenMonth
+                              ? 'text-Text-Primary'
+                              : currenMonth !== day.monthName
+                                ? 'text-Text-Secondary'
+                                : 'text-Text-Primary'
+                          } text-xs`}
+                        >
+                          {day.dayNumber}
                         </div>
-                      ) : (
-                        <>
-                          <CalendarX className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
-                          <span className="text-[10px] text-gray-500 font-normal">
-                            No events
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  ) : (
-                    <ul>
-                      {categories.map((category: any) => (
-                        <li className="mt-2" key={category}>
-                          <div className="font-semibold text-[10px] text-[#383838] flex  gap-1">
-                            <img
-                              className="w-3"
-                              src={resolveIcon(category)}
-                              alt=""
-                            />
-                            {category == '' ? 'Check-in' : category}
+                        {categories.length === 0 ? (
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center h-full min-h-[30px] gap-1.5">
+                            {isOutOfRange ? (
+                              <div className="flex items-start gap-1">
+                                <CalendarOff className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
+                                <span className="text-[10px] text-gray-500 font-normal">
+                                  Out of plan range
+                                </span>
+                              </div>
+                            ) : (
+                              <>
+                                <CalendarX className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
+                                <span className="text-[10px] text-gray-500 font-normal">
+                                  No events
+                                </span>
+                              </>
+                            )}
                           </div>
-                          {activitiesForTheDay
-                            .filter(
-                              (activity: any) => activity.category === category,
-                            )
-                            .map((activity: any, i: number) => {
-                              const activityDate = new Date(activity.date);
-                              const isPastDate = activityDate < today;
-                              const opacityClass =
-                                !activity.status && isPastDate
-                                  ? 'opacity-70'
-                                  : 'opacity-100';
-
-                              return (
-                                <div
-                                  key={i}
-                                  className={`flex  gap-1 mt-1 ${opacityClass}`}
-                                >
-                                  {activity.status ? (
-                                    <img
-                                      className="w-3 h-3"
-                                      src="/icons/activity-circle-done.svg"
-                                      alt=""
-                                    />
-                                  ) : (
-                                    <img
-                                      className="w-3 h-3"
-                                      src="/icons/acitivty-circle.svg"
-                                      alt=""
-                                    />
-                                  )}
-                                  <span className="text-[6px] lg:text-[10px] text-Text-Primary   flex-grow">
-                                    {activity.name}
-                                  </span>
+                        ) : (
+                          <ul>
+                            {categories.map((category: any) => (
+                              <li className="mt-2" key={category}>
+                                <div className="font-semibold text-[10px] text-[#383838] flex  gap-1">
+                                  <img
+                                    className="w-3"
+                                    src={resolveIcon(category)}
+                                    alt=""
+                                  />
+                                  {category == '' ? 'Check-in' : category}
                                 </div>
-                              );
-                            })}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                  );
+                                {activitiesForTheDay
+                                  .filter(
+                                    (activity: any) =>
+                                      activity.category === category,
+                                  )
+                                  .map((activity: any, i: number) => {
+                                    const activityDate = new Date(
+                                      activity.date,
+                                    );
+                                    const isPastDate = activityDate < today;
+                                    const opacityClass =
+                                      !activity.status && isPastDate
+                                        ? 'opacity-70'
+                                        : 'opacity-100';
+
+                                    return (
+                                      <div
+                                        key={i}
+                                        className={`flex  gap-1 mt-1 ${opacityClass}`}
+                                      >
+                                        {activity.status ? (
+                                          <img
+                                            className="w-3 h-3"
+                                            src="/icons/activity-circle-done.svg"
+                                            alt=""
+                                          />
+                                        ) : (
+                                          <img
+                                            className="w-3 h-3"
+                                            src="/icons/acitivty-circle.svg"
+                                            alt=""
+                                          />
+                                        )}
+                                        <span className="text-[6px] lg:text-[10px] text-Text-Primary   flex-grow">
+                                          {activity.name}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    );
                   })}
                 </div>
               </>
