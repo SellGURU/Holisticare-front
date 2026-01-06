@@ -7,6 +7,7 @@ import Circleloader from '../../../Components/CircleLoader';
 import { publish, subscribe } from '../../../utils/event';
 import { ActivityCard } from './ActivityCard';
 import { CoverageCard } from '../../../Components/coverageCard';
+import SearchBox from '../../../Components/SearchBox';
 
 type CategoryState = {
   name: string;
@@ -339,6 +340,69 @@ export const SetOrders: FC<SetOrdersProps> = ({
     handleRemoveLookingForwards(name);
     setRefreshKey((k) => k + 1);
   };
+  // 1) one query per category (tab)
+  const [searchQueries, setSearchQueries] = useState<Record<string, string>>(
+    {},
+  );
+
+  // current query for the active tab
+  const searchQuery = searchQueries[activeCategory] ?? '';
+
+  const setActiveCategoryQuery = (value: string) => {
+    setSearchQueries((prev) => ({
+      ...prev,
+      [activeCategory]: value,
+    }));
+  };
+
+  // 2) category-specific search logic (customize per tab)
+  const SEARCH_FIELDS_BY_CATEGORY: Record<string, string[]> = {
+    Activity: ['Recommendation'],
+    Diet: ['Recommendation'],
+    Lifestyle: ['Recommendation'],
+    Supplement: ['Recommendation'],
+    Others: ['Recommendation'],
+  };
+
+  // normalize text for consistent matching
+  const norm = (v: any) =>
+    String(v ?? '')
+      .toLowerCase()
+      .trim()
+      .normalize('NFKD'); // helps with accents/diacritics
+
+  const matchesSearch = (item: any, category: string, query: string) => {
+    const q = norm(query);
+    if (!q) return true;
+
+    const fields = SEARCH_FIELDS_BY_CATEGORY[category] ?? [
+      'title',
+      'Title',
+      'Recommendation',
+      'label',
+      'tag',
+    ];
+
+    // Build a single searchable string from the fields for this category
+    const haystack = norm(
+      fields
+        .map((k) => item?.[k])
+        .filter(Boolean)
+        .join(' '),
+    );
+
+    if (!haystack) return false;
+
+    // Standard substring match
+    if (haystack.includes(q)) return true;
+
+    // 3) Better single-letter / prefix matching (word-start)
+    // Example: "b" matches "Blood Pressure" even if "b" isn’t a substring you expect
+    const words = haystack.split(/\s+/).filter(Boolean);
+
+    // for 1+ characters, check word-start too (helps "bp" / "bl" style searching)
+    return words.some((w) => w.startsWith(q));
+  };
 
   return (
     <>
@@ -474,35 +538,41 @@ export const SetOrders: FC<SetOrdersProps> = ({
                 ),
             )}
           </div>
-          <div className="gap-2 text-[12px] w-full sm:w-[20%] text-nowrap flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
-            {/* {activeCategory != categories.filter((el) => el.visible)[0].name &&
-              visibleCategoriy.filter((el) => el.visible).length > 1 && (
-                <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
-                  <div onClick={handleReset}>Reset</div>
-                </div>
-              )}
-            {activeCategory !=
-              categories.filter((el) => el.visible)[
-                categories.filter((el) => el.visible).length - 1
-              ].name &&
-              visibleCategoriy.filter((el) => el.visible).length > 1 && (
-                <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
-                  <div onClick={handleContinue}>Continue</div>
-                </div>
-              )} */}
-            <div
-              className={`justify-end ml-4 flex items-center gap-1`}
+          <div className="w-full sm:w-auto flex flex-wrap sm:flex-nowrap items-center justify-end gap-2 sm:gap-16">
+            {/* Search */}
+            <div className="w-full flex items-center gap-2 ">
+              <SearchBox
+                isHaveBorder
+                isGrayIcon
+                showClose={searchQuery.length > 0}
+                placeHolder={`search ${activeCategory.toLowerCase()} interventions`}
+                value={searchQuery}
+                onSearch={(val) => {
+                  setActiveCategoryQuery(val);
+                  if (val === '') {
+                    setSearchQueries((prev) => ({
+                      ...prev,
+                      [activeCategory]: '',
+                    }));
+                  }
+                }}
+                ClassName="w-full"
+              />
+            </div>
+
+            {/* Change Order */}
+            <button
+              type="button"
               onClick={() => setshowchangeOrders(true)}
+              className="w-full sm:w-auto flex items-center justify-end sm:justify-center gap-1 text-Primary-DeepTeal font-medium cursor-pointer select-none text-nowrap"
             >
               <img
-                className="cursor-pointer md:w-5 md:h-5 w-4 h-4"
+                className="md:w-5 md:h-5 w-4 h-4"
                 src="/icons/setting-4.svg"
                 alt=""
               />
-              <div className="text-Primary-DeepTeal text-[10px] md:text-xs font-medium">
-                Change Order
-              </div>
-            </div>
+              <span className="text-[10px] md:text-xs">Change Order</span>
+            </button>
           </div>
         </div>
 
@@ -516,6 +586,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
           {data
             ?.filter((el: any) => el.Category == activeCategory)
             .map((item: any, index: number) => {
+              if (!matchesSearch(item, activeCategory, searchQuery))
+                return null;
+
               return (
                 <ActivityCard
                   key={`${index}-${refreshKey}`}
@@ -531,8 +604,11 @@ export const SetOrders: FC<SetOrdersProps> = ({
                 />
               );
             })}
-          {data?.filter((el: any) => el.Category == activeCategory).length ===
-            0 && (
+          {data
+            ?.filter((el: any) => el.Category == activeCategory)
+            .every(
+              (item: any) => !matchesSearch(item, activeCategory, searchQuery),
+            ) && (
             <div className="w-full h-[350px] flex flex-col justify-center items-center">
               <img src="/icons/document-text-rectangle.svg" alt="" />
               <div className="text-base text-Text-Primary font-medium -mt-2">
