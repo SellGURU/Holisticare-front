@@ -262,19 +262,105 @@ export default function HtmlEditor({
         iframeRef.current?.contentWindow?.document;
       if (!doc) return;
 
-      // Add contenteditable="true" to all elements with 'editable' class
-      const editableElements = doc.querySelectorAll('.editable');
-      editableElements.forEach((element) => {
-        (element as HTMLElement).setAttribute('contenteditable', 'true');
+      // Remove all edit icons from the document before saving
+      // First pass: remove all icons directly
+      const editIcons = doc.querySelectorAll('.edit-icon');
+      editIcons.forEach((icon) => icon.remove());
+
+      // Second pass: remove any icons that might be nested inside elements
+      const allElements = doc.querySelectorAll('*');
+      allElements.forEach((element) => {
+        const nestedIcons = element.querySelectorAll('.edit-icon');
+        nestedIcons.forEach((icon) => icon.remove());
       });
 
-      // Get the HTML with contenteditable attributes
-      const currentHtml = doc.documentElement.outerHTML;
+      // Third pass: remove icons by checking innerHTML of all elements
+      const editableElements = doc.querySelectorAll('.editable');
+      editableElements.forEach((element) => {
+        const htmlElement = element as HTMLElement;
+        // Remove contenteditable attribute
+        htmlElement.removeAttribute('contenteditable');
+
+        // Remove any edit-icon from innerHTML if present
+        if (htmlElement.innerHTML.includes('edit-icon')) {
+          const tempDiv = doc.createElement('div');
+          tempDiv.innerHTML = htmlElement.innerHTML;
+          const iconsInContent = tempDiv.querySelectorAll('.edit-icon');
+          iconsInContent.forEach((icon) => icon.remove());
+          htmlElement.innerHTML = tempDiv.innerHTML;
+        }
+      });
+
+      // Remove contenteditable attributes from all elements (including non-editable)
+      const allEditableElements = doc.querySelectorAll('[contenteditable]');
+      allEditableElements.forEach((element) => {
+        (element as HTMLElement).removeAttribute('contenteditable');
+      });
+
+      // Get the HTML after DOM cleanup
+      let currentHtml = doc.documentElement.outerHTML;
+
+      // Clean the HTML string to remove any remaining icon references
+      // Remove edit-icon divs from HTML string (multiple patterns)
+      currentHtml = currentHtml.replace(
+        /<div[^>]*class\s*=\s*["']?[^"']*edit-icon[^"']*["']?[^>]*>[\s\S]*?<\/div>/gi,
+        '',
+      );
+      currentHtml = currentHtml.replace(
+        /<div[^>]*class\s*=\s*["']?edit-icon["']?[^>]*>[\s\S]*?<\/div>/gi,
+        '',
+      );
+
+      // Remove any SVG elements that might be part of icons
+      currentHtml = currentHtml.replace(
+        /<svg[^>]*viewBox\s*=\s*["']0\s+0\s+24\s+24["'][^>]*>[\s\S]*?<\/svg>/gi,
+        (match) => {
+          // Only remove if it's likely an edit icon (has specific paths)
+          if (match.includes('M12 20h9') || match.includes('M16.5 3.5')) {
+            return '';
+          }
+          return match;
+        },
+      );
+
+      // Remove any remaining edit-icon class references
+      currentHtml = currentHtml.replace(
+        /class\s*=\s*["']?edit-icon["']?/gi,
+        '',
+      );
+      currentHtml = currentHtml.replace(
+        /class\s*=\s*["']([^"']*)\s*edit-icon\s*([^"']*)["']/gi,
+        (_match, before, after) => {
+          const newClass = (before + ' ' + after).trim().replace(/\s+/g, ' ');
+          return newClass ? `class="${newClass}"` : '';
+        },
+      );
+      currentHtml = currentHtml.replace(
+        /class\s*=\s*["']([^"']*)\s*edit-icon\s*([^"']*)["']/gi,
+        (_match, before, after) => {
+          const newClass = (before + ' ' + after).trim().replace(/\s+/g, ' ');
+          return newClass ? `class="${newClass}"` : '';
+        },
+      );
+
+      // Remove empty class attributes
+      currentHtml = currentHtml.replace(/class\s*=\s*["']\s*["']/gi, '');
+      currentHtml = currentHtml.replace(/class\s*=\s*["']\s*["']/gi, '');
+
+      // Remove any style attributes that might contain icon-related styles
+      // (This is more aggressive, but ensures clean HTML)
+      currentHtml = currentHtml.replace(
+        /style\s*=\s*["'][^"']*position\s*:\s*absolute[^"']*right\s*:\s*-12px[^"']*["']/gi,
+        '',
+      );
+
+      // Final cleanup: remove any empty divs that might be left
+      currentHtml = currentHtml.replace(/<div[^>]*>\s*<\/div>/gi, '');
 
       // Toggle edit mode without resetting (skipReset = true)
       await toggleEditMode(true);
 
-      // Save the HTML that was captured before toggle
+      // Save the cleaned HTML
       try {
         await onSave(currentHtml);
 

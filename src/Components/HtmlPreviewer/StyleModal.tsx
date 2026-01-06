@@ -547,13 +547,13 @@ export default function StyleModal({
       }}
     >
       <div
-        className={`bg-white rounded-l-lg w-[70%] h-full max-h-screen transform transition-transform duration-300 ease-in-out flex ${
+        className={`bg-white rounded-l-lg w-[40%] h-full max-h-screen transform transition-transform duration-300 ease-in-out flex ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* html preview */}
-        <div>
+        <div className="hidden">
           <iframe
             sandbox="allow-scripts allow-same-origin"
             ref={iframeRef}
@@ -929,7 +929,7 @@ export default function StyleModal({
                     editorRef.current.innerHTML = originalHtmlRef.current;
                   }
                 }}
-                className="px-3 py-1.5 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium transition-colors shadow-sm text-xs"
+                className="px-3 py-1.5 min-w-[150px] bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium transition-colors shadow-sm text-xs"
                 title="Reset to original"
               >
                 Reset
