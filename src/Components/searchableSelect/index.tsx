@@ -1,6 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
-import { computePosition, flip, shift, autoUpdate, size } from '@floating-ui/dom';
+import {
+  computePosition,
+  flip,
+  shift,
+  autoUpdate,
+  size,
+} from '@floating-ui/dom';
 
 type SelectProps = {
   onChange: (value: string) => void;
@@ -40,7 +46,9 @@ const SearchSelect: React.FC<SelectProps> = ({
   const buttonRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
-  const [openDirection, setOpenDirection] = useState<'top' | 'bottom'>('bottom');
+  const [openDirection, setOpenDirection] = useState<'top' | 'bottom'>(
+    'bottom',
+  );
   useEffect(() => {
     if (!isOpen || !buttonRef.current || !dropdownRef.current) return;
 
@@ -70,7 +78,7 @@ const SearchSelect: React.FC<SelectProps> = ({
           // 👇 تشخیص جهت باز شدن
           setOpenDirection(placement.startsWith('top') ? 'top' : 'bottom');
         });
-      }
+      },
     );
 
     return () => {
@@ -196,7 +204,7 @@ const SearchSelect: React.FC<SelectProps> = ({
         <div
           ref={dropdownRef}
           style={{
-            position:'fixed',
+            position: 'fixed',
             width: buttonRef.current?.offsetWidth,
           }}
           className={`absolute flex flex-col z-[9999]  ${
@@ -207,19 +215,21 @@ const SearchSelect: React.FC<SelectProps> = ({
         >
           {/* Search input */}
 
-            <div className={`${openDirection == 'bottom'?'top-0 order-first':'bottom-0 order-last'} sticky  bg-inherit p-2 `}>
-              <input
-                type="text"
-                ref={inputRef}
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full border border-Gray-50 rounded-md px-2 py-1 text-[10px] text-Text-Primary focus:outline-none bg-white"
-              />
-            </div>
+          <div
+            className={`${openDirection == 'bottom' ? 'top-0 order-first' : 'bottom-0 order-last'} sticky  bg-inherit p-2 `}
+          >
+            <input
+              type="text"
+              ref={inputRef}
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full border border-Gray-50 rounded-md px-2 py-1 text-[10px] text-Text-Primary focus:outline-none bg-white"
+            />
+          </div>
 
           {/* Filtered options */}
-          <ul role="listbox" className='order-1'>
+          <ul role="listbox" className="order-1">
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <li
@@ -239,7 +249,7 @@ const SearchSelect: React.FC<SelectProps> = ({
                 No results found
               </li>
             )}
-          </ul>    
+          </ul>
         </div>
       )}
     </div>
