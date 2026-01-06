@@ -229,7 +229,6 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                                 setActiveAction(lastCard);
                                 setTimeout(() => {
                                   getActionPlan();
-                                  
                                 }, 100);
                               } else if (newCardData.length > 0) {
                                 setActiveAction(
