@@ -388,7 +388,14 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
               </div>
             </div>
           )} */}
-
+            <div className="flex w-full justify-end items-center gap-2">
+              Time frame:
+              <Select
+                value={selectedMonth}
+                onChange={(value) => setSelectedMonth(value)}
+                options={monthOptions}
+              />
+            </div>
           {(() => {
             const monthDays = getCurrentMonthWithBuffer(currentDate);
             const firstDayOfMonth = monthDays[0]?.dateObject.getDay() || 0;
@@ -561,7 +568,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                               <>
                                 <CalendarX className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
                                 <span className="text-[10px] text-gray-500 font-normal">
-                                  No events
+                                  No tasks
                                 </span>
                               </>
                             )}
