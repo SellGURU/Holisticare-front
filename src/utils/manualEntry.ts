@@ -86,7 +86,7 @@ export const downloadManualEntryPdfFromApi = (
     },
 
     // 👇 THIS FIXES HEADER ALIGNMENT PER COLUMN
-    didParseCell: (data) => {
+    didParseCell: (data:any) => {
       if (data.section === 'head') {
         if (data.column.index === 0) {
           data.cell.styles.halign = 'left'; // Biomarker header
