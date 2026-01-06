@@ -51,10 +51,17 @@ const GenerateActionPlan = () => {
             const seen = new Map();
             return arr.filter((el: any) => {
               // Try to find a unique identifier (check common id field names)
-              const uniqueKey = el.id || el.task_id || el.Task_Id || el.taskId || el.TaskId || 
-                               (el.Task_Type && el.title ? `${el.Task_Type}_${el.title}` : null) ||
-                               JSON.stringify(el);
-              
+              const uniqueKey =
+                el.id ||
+                el.task_id ||
+                el.Task_Id ||
+                el.taskId ||
+                el.TaskId ||
+                (el.Task_Type && el.title
+                  ? `${el.Task_Type}_${el.title}`
+                  : null) ||
+                JSON.stringify(el);
+
               if (seen.has(uniqueKey)) {
                 return false; // Duplicate found, filter it out
               }
@@ -63,8 +70,12 @@ const GenerateActionPlan = () => {
             });
           };
 
-          const checkInItems = res.data.filter((el: any) => el.Task_Type == 'Checkin');
-          const categoryItems = res.data.filter((el: any) => el.Task_Type != 'Checkin');
+          const checkInItems = res.data.filter(
+            (el: any) => el.Task_Type == 'Checkin',
+          );
+          const categoryItems = res.data.filter(
+            (el: any) => el.Task_Type != 'Checkin',
+          );
 
           setCategories({
             checkIn: removeDuplicates(checkInItems),

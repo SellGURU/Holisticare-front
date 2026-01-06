@@ -137,11 +137,11 @@ const Stadio: FC<StadioProps> = ({
         const itemExists = prevCategories.checkIn.some(
           (el: any) => el.Check_in_id === item.Check_in_id,
         );
-        
+
         if (itemExists) {
           return prevCategories;
         }
-        
+
         return {
           ...prevCategories,
           checkIn: [item, ...prevCategories.checkIn],
@@ -159,11 +159,11 @@ const Stadio: FC<StadioProps> = ({
         const itemExists = prevCategories.category.some(
           (el: any) => JSON.stringify(el) === JSON.stringify(item),
         );
-        
+
         if (itemExists) {
           return prevCategories;
         }
-        
+
         return {
           ...prevCategories,
           category: [item, ...prevCategories.category],
