@@ -195,6 +195,9 @@ export const Overview: FC<OverviewProps> = ({
             setLookingForwards={setLookingForwards}
             lookingForwardsData={lookingForwardsData}
             handleRemoveIssueFromList={handleRemoveIssueFromList}
+            showSearch
+            searchQuery={searchQuery}
+            onSearch={setSearchQuery}
           />
         </div>
         <div className="w-full flex justify-end"></div>

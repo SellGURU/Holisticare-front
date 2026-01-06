@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
-import Circleloader from '../../CircleLoader';
 import Select from '../../Select';
 import SimpleDatePicker from '../../SimpleDatePicker';
 // import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
@@ -10,6 +9,7 @@ import { publish, subscribe, unsubscribe } from '../../../utils/event';
 // import SearchSelect from '../../searchableSelect';
 import Toggle from '../Boxs/Toggle';
 import BiomarkerRow from './BiomarkerRow';
+import ProgressLoading from './ProgressLoading';
 interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
@@ -24,6 +24,7 @@ interface BiomarkersSectionProps {
   setrowErrors: any;
   showOnlyErrors: boolean;
   setShowOnlyErrors: (showOnlyErrors: boolean) => void;
+  progressBiomarkerUpload: number;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -40,6 +41,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   setIsScaling,
   showOnlyErrors,
   setShowOnlyErrors,
+  progressBiomarkerUpload,
 }) => {
   // const [changedRows, setChangedRows] = useState<string[]>([]);
   // const [mappedRows, setMappedRows] = useState<string[]>([]);
@@ -347,12 +349,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       {loading ? (
         <div
           style={{ height: window.innerHeight - 480 + 'px' }}
-          className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
+          className="flex items-center min-h-[200px] w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4"
         >
-          <Circleloader></Circleloader>
-          <div style={{ textAlignLast: 'center' }} className="text-center">
-            Processing… We’ll show the detected biomarkers shortly.
-          </div>
+          {/* <Circleloader /> */}
+          {/* Progress Bar */}
+          <ProgressLoading
+            maxProgress={progressBiomarkerUpload}
+          ></ProgressLoading>
         </div>
       ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <div

@@ -36,6 +36,7 @@ interface UploadPModalProps {
   AddedRowErrors?: any;
   btnLoading: boolean;
   setrowErrors: any;
+  progressBiomarkerUpload: number;
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -67,6 +68,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   rowErrors,
   AddedRowErrors,
   setrowErrors,
+  progressBiomarkerUpload,
 }) => {
   const [activeMenu, setactiveMenu] = useState('Upload File');
   const [showOnlyErrors, setShowOnlyErrors] = useState(false);
@@ -219,6 +221,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               setIsScaling={setIsScaling}
               setrowErrors={setrowErrors}
               loading={loading}
+              progressBiomarkerUpload={progressBiomarkerUpload}
               fileType={fileType}
               dateOfTest={modifiedDateOfTest}
               setDateOfTest={handleModifiedDateOfTestChange}
