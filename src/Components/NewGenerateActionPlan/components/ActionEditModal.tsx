@@ -509,13 +509,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     const dayB = parseInt(b.split('-')[2], 10);
     return dayA - dayB;
   });
-  
+
   // Remove duplicates based on day number
   const getDayNumber = (dateStr: string): number => {
     const datePart = dateStr.split('T')[0]; // Get date part before T if ISO format
     return parseInt(datePart.split('-')[2], 10);
   };
-  
+
   const uniqueDaysMap = new Map<number, string>();
   sortedSelectedDaysMonth.forEach((date) => {
     const dayNum = getDayNumber(date);
@@ -523,10 +523,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       uniqueDaysMap.set(dayNum, date);
     }
   });
-  
-  const uniqueSortedSelectedDaysMonth = Array.from(uniqueDaysMap.values()).sort((a, b) => {
-    return getDayNumber(a) - getDayNumber(b);
-  });
+
+  const uniqueSortedSelectedDaysMonth = Array.from(uniqueDaysMap.values()).sort(
+    (a, b) => {
+      return getDayNumber(a) - getDayNumber(b);
+    },
+  );
   const addDaySuffix = (dayStr: string) => {
     const day = parseInt(dayStr, 10);
     if (isNaN(day)) return dayStr;
@@ -1302,7 +1304,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                                   {uniqueSortedSelectedDaysMonth
                                     .slice(0, -1)
                                     .map((date) =>
-                                      addDaySuffix(date.split('T')[0].split('-')[2]),
+                                      addDaySuffix(
+                                        date.split('T')[0].split('-')[2],
+                                      ),
                                     )
                                     .join(', ')}
                                 </span>
@@ -1320,7 +1324,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                               <span className="ml-1">
                                 {uniqueSortedSelectedDaysMonth[0]
                                   ? addDaySuffix(
-                                      uniqueSortedSelectedDaysMonth[0].split('T')[0].split('-')[2],
+                                      uniqueSortedSelectedDaysMonth[0]
+                                        .split('T')[0]
+                                        .split('-')[2],
                                     )
                                   : ''}
                               </span>
@@ -1449,10 +1455,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               <button
                 onClick={handleApplyClick}
                 className={`${
-                  selectedGroup &&
-                  title &&
-                  frequencyType &&
-                  instructions
+                  selectedGroup && title && frequencyType && instructions
                     ? 'text-Primary-DeepTeal'
                     : 'text-Primary-DeepTeal'
                 } text-sm font-medium cursor-pointer`}
