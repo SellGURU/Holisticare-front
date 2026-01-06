@@ -99,10 +99,26 @@ export const Overview: FC<OverviewProps> = ({
     handleRemoveLookingForwards(name);
     setRefreshKey((k) => k + 1);
   };
+  const [searchQuery, setSearchQuery] = useState('');
 
+  const norm = (v: any) =>
+    String(v ?? '')
+      .toLowerCase()
+      .trim();
+
+  const matchesSearch = (item: any, q: string) => {
+    const query = norm(q);
+    if (!query) return true;
+
+    const title = norm(item.title ?? item.Title ?? item.Recommendation ?? '');
+    // label can be direct or nested, keep both just in case
+    // const label = norm(item.label ?? item.tag?.label ?? '');
+
+    return title.includes(query);
+  };
   return (
     <>
-      <div className=" w-full relative  p-4 rounded-2xl bg-white">
+      <div className=" w-full relative  p-6 rounded-2xl bg-white">
         {Conflicts.length > 0 && showConflict && (
           <div className="w-full rounded-2xl px-2 md:px-4 py-3 bg-[#F9DEDC]">
             <div className="flex w-full justify-between items-center">
@@ -157,6 +173,7 @@ export const Overview: FC<OverviewProps> = ({
             </div>
           </div>
         )}
+        <div className="w-full flex justify-end mb-4"></div>
         <div className="w-full my-4">
           <CoverageCard
             progress={progress}
@@ -165,8 +182,12 @@ export const Overview: FC<OverviewProps> = ({
             setLookingForwards={setLookingForwards}
             lookingForwardsData={lookingForwardsData}
             handleRemoveIssueFromList={handleRemoveIssueFromList}
+            showSearch
+            searchQuery={searchQuery}
+            onSearch={setSearchQuery}
           />
         </div>
+        <div className="w-full flex justify-end"></div>
 
         {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
           return (
@@ -189,34 +210,33 @@ export const Overview: FC<OverviewProps> = ({
         {treatmentPlanData['suggestion_tab']
           .filter(
             (el: any) =>
-              el.checked == true &&
+              el.checked === true &&
               visibleCategoriy
-                .filter((el) => el.visible)
-                .map((el) => el.name)
+                .filter((c) => c.visible)
+                .map((c) => c.name)
                 .includes(el.Category),
           )
           .map((el: any, suggestionIndex: number) => {
+            if (!matchesSearch(el, searchQuery)) return null;
+
             return (
-              <>
-                <div
-                  className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
-                  key={`${el.title}-${suggestionIndex}-${refreshKey}`}
-                >
-                  <BioMarkerRowOldSuggestions
-                    index={suggestionIndex}
-                    // isOverview
-                    value={el}
-                    onEdit={() => {}}
-                    onchange={() => {}}
-                    onDelete={() => {}}
-                    issuesData={details}
-                    setIssuesData={setDetails}
-                    handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
-                    handleRemoveLookingForwards={handleRemoveLookingForwards}
-                    handleRemoveIssueFromList={handleRemoveIssueFromList}
-                  ></BioMarkerRowOldSuggestions>
-                </div>
-              </>
+              <div
+                className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
+                key={`${el.title}-${suggestionIndex}-${refreshKey}`}
+              >
+                <BioMarkerRowOldSuggestions
+                  index={suggestionIndex} // stays stable now
+                  value={el}
+                  onEdit={() => {}}
+                  onchange={() => {}}
+                  onDelete={() => {}}
+                  issuesData={details}
+                  setIssuesData={setDetails}
+                  handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
+                  handleRemoveLookingForwards={handleRemoveLookingForwards}
+                  handleRemoveIssueFromList={handleRemoveIssueFromList}
+                />
+              </div>
             );
           })}
       </div>
