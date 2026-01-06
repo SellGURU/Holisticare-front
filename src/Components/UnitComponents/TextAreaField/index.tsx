@@ -93,8 +93,12 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
     return [
       'w-full',
       height ? height : 'h-[98px]',
+      'overflow-y-auto',
+      'break-words',
+      'whitespace-pre-wrap',
       'text-justify',
       'rounded-[16px]',
+
       'py-1',
       'px-3',
       'outline-none',
@@ -126,16 +130,32 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
       attributes: {
         class: editorAreaClass,
       },
-      handleKeyDown: (_view, event) => {
-        // ✅ Default: allow Enter to insert newline/paragraph
-        // ✅ Only intercept Enter if submitOnEnter is enabled (legacy behavior)
-        if (submitOnEnter && event.key === 'Enter' && !event.shiftKey) {
-          event.preventDefault();
-          onEnterSubmit?.();
-          return true;
-        }
-        return false;
-      },
+handleKeyDown: (view, event) => {
+  const isEnter = event.key === 'Enter';
+  const isShiftEnter = event.shiftKey;
+
+  // ✅ Legacy "submit on enter" behavior
+  if (submitOnEnter && isEnter && !isShiftEnter) {
+    event.preventDefault();
+    onEnterSubmit?.();
+    return true;
+  }
+
+  // ✅ New behavior: if editor is empty, don't allow Enter to create blank new lines
+  if (!submitOnEnter && isEnter) {
+    const isEmpty =
+      view.state.doc.textContent.trim() === '' &&
+      view.state.doc.childCount === 1; // usually a single empty paragraph
+
+    if (isEmpty) {
+      event.preventDefault();
+      return true;
+    }
+  }
+
+  return false;
+},
+
     },
     onUpdate: ({ editor }) => {
       if (!isTipTap) return;
@@ -161,14 +181,19 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
   // Active toolbar styles
   const btnBase = 'px-2 py-1 rounded text-xs border transition select-none';
   const btnActive = 'bg-[#005f73] text-white border-[#005f73]';
-  const btnInactive = 'bg-backgroundColor-Card text-Text-Primary border-Gray-50';
+  const btnInactive =
+    'bg-backgroundColor-Card text-Text-Primary border-Gray-50';
 
   return (
     <div className={`flex flex-col w-full gap-2 ${margin ? margin : 'mt-4'}`}>
       <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">
         {label}
         {InfoText && (
-          <img data-tooltip-id={tooltipId} src="/icons/info-circle.svg" alt="" />
+          <img
+            data-tooltip-id={tooltipId}
+            src="/icons/info-circle.svg"
+            alt=""
+          />
         )}
       </div>
 
@@ -205,6 +230,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
           className={[
             'w-full',
             'rounded-[16px]',
+            'pr-2',
             'border',
             !isValid ? 'border-Red' : 'border-Gray-50',
             'bg-backgroundColor-Card',
@@ -242,7 +268,9 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         </div>
       )}
 
-      {validationText && <div className="text-Red text-[10px]">{validationText}</div>}
+      {validationText && (
+        <div className="text-Red text-[10px]">{validationText}</div>
+      )}
 
       {InfoText && (
         <Tooltip

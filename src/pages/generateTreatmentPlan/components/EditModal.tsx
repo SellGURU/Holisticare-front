@@ -50,9 +50,10 @@ const EditModal: FC<EditModalProps> = ({
   const [selectedGroupDose, setSelectedGroupDose] = useState(false);
 
   const [groups, setGroups] = useState<any[]>([]);
-const [newNote, setNewNote] = useState<string>(() =>
-  notesArrayToSingleString(defalts?.['Client Notes']),
-);  const [keyBenefitValue, setKeyBenefitValue] = useState('');
+  const [newNote, setNewNote] = useState<string>(() =>
+    notesArrayToSingleString(defalts?.['Client Notes']),
+  );
+  const [keyBenefitValue, setKeyBenefitValue] = useState('');
   const [foodsToEatValue, setFoodsToEatValue] = useState('');
   const [foodsToAvoidValue, setFoodsToAvoidValue] = useState('');
   const [exercisesToDoValue, setExercisesToDoValue] = useState('');
@@ -60,7 +61,6 @@ const [newNote, setNewNote] = useState<string>(() =>
   // const [notes, setNotes] = useState<string[]>(
   //   defalts ? defalts['Client Notes'] : [],
   // );
-
 
   const [client_versions, setclient_versions] = useState<string[]>(
     defalts && Array.isArray(defalts['client_version'])
@@ -146,7 +146,7 @@ const [newNote, setNewNote] = useState<string>(() =>
       issue_list: [],
     });
     setNewNote('');
-    
+
     setSelectedGroupDose(false);
     setclient_versions([]);
     setShowValidation(false);
@@ -195,7 +195,7 @@ const [newNote, setNewNote] = useState<string>(() =>
         exercisesToDoValue.trim() !== ''
           ? [...formData.exercises_to_do, exercisesToDoValue]
           : formData.exercises_to_do,
-'Client Notes': singleStringToNotesArray(newNote),
+      'Client Notes': singleStringToNotesArray(newNote),
       issue_list: formData.issue_list.length > 0 ? formData.issue_list : [],
     });
     onClose();
@@ -1113,20 +1113,25 @@ const [newNote, setNewNote] = useState<string>(() =>
             </div> */}
 
           {/* Client Notes */}
- <TextAreaField
-  as="tiptap"
-  label="Client Notes"
-  placeholder="Write personalized notes for your client"
-  value={newNote}
-  onMarkdownChange={setNewNote}
-  isValid={showValidation ? ValidationForms.IsvalidField('Note', newNote) : true}
-  validationText={
-    showValidation ? ValidationForms.ValidationText('Note', newNote) : ''
-  }
-  InfoText={NotesInfoText}
-  margin="mb-4"
-/>
-
+          <TextAreaField
+            as="tiptap"
+            label="Client Notes"
+            placeholder="Write personalized notes for your client"
+            value={newNote}
+            onMarkdownChange={setNewNote}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField('Note', newNote)
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText('Note', newNote)
+                : ''
+            }
+            InfoText={NotesInfoText}
+            margin="mb-4"
+          />
 
           {/* Notes List */}
           {/* <div className="mb-4 flex flex-col gap-2">
