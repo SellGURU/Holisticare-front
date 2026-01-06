@@ -509,6 +509,26 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     const dayB = parseInt(b.split('-')[2], 10);
     return dayA - dayB;
   });
+
+  // Remove duplicates based on day number
+  const getDayNumber = (dateStr: string): number => {
+    const datePart = dateStr.split('T')[0]; // Get date part before T if ISO format
+    return parseInt(datePart.split('-')[2], 10);
+  };
+
+  const uniqueDaysMap = new Map<number, string>();
+  sortedSelectedDaysMonth.forEach((date) => {
+    const dayNum = getDayNumber(date);
+    if (!uniqueDaysMap.has(dayNum)) {
+      uniqueDaysMap.set(dayNum, date);
+    }
+  });
+
+  const uniqueSortedSelectedDaysMonth = Array.from(uniqueDaysMap.values()).sort(
+    (a, b) => {
+      return getDayNumber(a) - getDayNumber(b);
+    },
+  );
   const addDaySuffix = (dayStr: string) => {
     const day = parseInt(dayStr, 10);
     if (isNaN(day)) return dayStr;
@@ -721,16 +741,19 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       isOpen={isOpen}
     >
       <div
-        className={`bg-white p-2 pb-6 rounded-2xl shadow-800 relative pt-10 ${selectedGroup == 'Activity' && step == 1 ? ' w-[90vw] lg:w-[920px]' : ' w-[90vw] lg:w-[530px]'}  text-Text-Primary`}
+        className={`bg-white rounded-2xl shadow-800 relative flex flex-col ${selectedGroup == 'Activity' && step == 1 ? ' w-[90vw] lg:w-[920px]' : ' w-[90vw] lg:w-[530px]'} max-h-[90vh] text-Text-Primary`}
       >
-        <div className=" overflow-x-hidden overflow-auto max-h-[560px]  md:max-h-[620px] p-4 pt-0">
-          <h2
-            className={`${selectedGroup == 'Activity' ? 'w-[95%]' : 'w-[90%]'} border-b border-Gray-50 pb-2 pt-4 text-sm font-medium text-Text-Primary absolute top-0 bg-white z-10`}
-          >
+        {/* Fixed Header */}
+        <div className="border-b border-Gray-50 px-4 py-3 flex-shrink-0">
+          <h2 className="text-sm font-medium text-Text-Primary">
             <div className="flex gap-[6px] items-center">
               {isAdd ? 'Add Action ' : 'Edit Action'}
             </div>
           </h2>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="overflow-x-hidden overflow-y-auto flex-1 p-4 pb-6">
           {step == 0 && (
             <div className={`grid `}>
               <div className="">
@@ -1274,31 +1297,36 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                                 <span>{selectedTimes.join(' and ')}</span>
                               </>
                             )}
-                            {sortedSelectedDaysMonth.length > 1 ? (
+                            {uniqueSortedSelectedDaysMonth.length > 1 ? (
                               <>
                                 <span className="mr-1">&nbsp;of</span>
                                 <span>
-                                  {sortedSelectedDaysMonth
+                                  {uniqueSortedSelectedDaysMonth
                                     .slice(0, -1)
                                     .map((date) =>
-                                      addDaySuffix(date.split('-')[2]),
+                                      addDaySuffix(
+                                        date.split('T')[0].split('-')[2],
+                                      ),
                                     )
                                     .join(', ')}
                                 </span>
                                 <span className="mr-1">&nbsp;and</span>
                                 <span>
                                   {addDaySuffix(
-                                    sortedSelectedDaysMonth
+                                    uniqueSortedSelectedDaysMonth
                                       .slice(-1)[0]
+                                      .split('T')[0]
                                       .split('-')[2],
                                   )}
                                 </span>
                               </>
                             ) : (
                               <span className="ml-1">
-                                {sortedSelectedDaysMonth[0]
+                                {uniqueSortedSelectedDaysMonth[0]
                                   ? addDaySuffix(
-                                      sortedSelectedDaysMonth[0].split('-')[2],
+                                      uniqueSortedSelectedDaysMonth[0]
+                                        .split('T')[0]
+                                        .split('-')[2],
                                     )
                                   : ''}
                               </span>
@@ -1392,35 +1420,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </div>
                   ))}
                 </div> */}
-                <div className="flex justify-end gap-3">
-                  {selectedGroup !== 'Activity' && (
-                    <>
-                      <button
-                        onClick={() => {
-                          onClose();
-                          setStep(0);
-                          onReset();
-                        }}
-                        className="text-sm font-medium text-Disable cursor-pointer"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={handleApplyClick}
-                        className={`${
-                          selectedGroup &&
-                          title &&
-                          frequencyType &&
-                          instructions
-                            ? 'text-Primary-DeepTeal'
-                            : 'text-Primary-DeepTeal'
-                        } text-sm font-medium cursor-pointer`}
-                      >
-                        {isAdd ? 'Add' : 'Update'}
-                      </button>
-                    </>
-                  )}
-                </div>
               </div>
             </div>
           )}
@@ -1437,10 +1436,38 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               onValidationChange={setIsExerciseStepValid}
             />
           )}
+        </div>
+
+        {/* Fixed Footer with Buttons */}
+        <div className="border-t border-Gray-50 px-4 py-3 flex-shrink-0 bg-white rounded-b-2xl">
+          {selectedGroup !== 'Activity' && (
+            <div className="flex justify-end gap-3 items-center">
+              <button
+                onClick={() => {
+                  onClose();
+                  setStep(0);
+                  onReset();
+                }}
+                className="text-sm font-medium text-Disable cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleApplyClick}
+                className={`${
+                  selectedGroup && title && frequencyType && instructions
+                    ? 'text-Primary-DeepTeal'
+                    : 'text-Primary-DeepTeal'
+                } text-sm font-medium cursor-pointer`}
+              >
+                {isAdd ? 'Add' : 'Update'}
+              </button>
+            </div>
+          )}
 
           {selectedGroup === 'Activity' && (
             <div
-              className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} items-center mb-1 mt-4`}
+              className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} items-center`}
             >
               {step !== 0 && (
                 <div
