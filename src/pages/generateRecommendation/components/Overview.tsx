@@ -3,7 +3,6 @@
 import { FC, useState } from 'react';
 import BioMarkerRowOldSuggestions from '../../generateTreatmentPlan/components/BiomarkerRowOld';
 import { CoverageCard } from '../../../Components/coverageCard';
-import SearchBox from '../../../Components/SearchBox';
 type CategoryState = {
   name: string;
   visible: boolean;
@@ -174,19 +173,7 @@ export const Overview: FC<OverviewProps> = ({
             </div>
           </div>
         )}
-        <div className="w-full flex justify-end mb-4">
-          <div className="w-[360px]">
-            <SearchBox
-              isHaveBorder
-              isGrayIcon
-              placeHolder="search interventions"
-              value={searchQuery}
-              onSearch={setSearchQuery}
-              showClose={searchQuery.length > 0}
-              ClassName="w-full"
-            />
-          </div>
-        </div>
+        
         <div className="w-full my-4">
           <CoverageCard
             progress={progress}
