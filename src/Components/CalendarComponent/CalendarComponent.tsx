@@ -2,6 +2,7 @@
 // import { useSelector } from "react-redux";
 
 import { useEffect, useState } from 'react';
+import { CalendarX, CalendarOff } from 'lucide-react';
 import TableNoPaginateForActionPlan from '../Action-plan/TableNoPaginate';
 import Toggle from '../RepoerAnalyse/Boxs/Toggle';
 import Select from '../Select';
@@ -209,21 +210,11 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
       0,
     );
 
-    const startDate = new Date(firstDayOfMonth);
-    while (startDate.getDay() !== 1) startDate.setDate(startDate.getDate() - 1);
-
-    const endDate = new Date(lastDayOfMonth);
-    while (
-      ((endDate.getTime() - startDate.getTime()) / 86400000 + 1) % 7 !==
-      0
-    ) {
-      endDate.setDate(endDate.getDate() + 1);
-    }
-
+    // Only return days of the current month
     const days = [];
     for (
-      let d = new Date(startDate);
-      d <= endDate;
+      let d = new Date(firstDayOfMonth);
+      d <= lastDayOfMonth;
       d.setDate(d.getDate() + 1)
     ) {
       days.push({
@@ -306,6 +297,25 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
       return d > max ? d : max;
     }, new Date(data[0].date));
   };
+  const getFirstTaskDate = (data: any[]) => {
+    if (!data?.length) return null;
+    return data.reduce<Date>((min, item) => {
+      const d = new Date(item.date);
+      d.setHours(0, 0, 0, 0);
+      return d < min ? d : min;
+    }, new Date(data[0].date));
+  };
+  const isDateInPlanRange = (date: Date, data: any[]) => {
+    if (!data?.length) return false;
+    const firstDate = getFirstTaskDate(data);
+    const lastDate = getLastTaskDate(data);
+    if (!firstDate || !lastDate) return false;
+    
+    const checkDate = new Date(date);
+    checkDate.setHours(0, 0, 0, 0);
+    
+    return checkDate >= firstDate && checkDate <= lastDate;
+  };
   const buildMonthsRange = (lastDate: Date) => {
     const today = new Date();
     const start = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -379,20 +389,32 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
             </div>
           )} */}
 
-          <div className="grid grid-cols-7 w-full lg:gap-2 min-w-[980px] lg:min-w-full  mt-1  py-3">
-            {getCurrentMonthWithBuffer(currentDate)
-              .slice(0, 7)
-              .map((day, index) => (
-                <div
-                  key={index}
-                  className="text-xs w-[140px] font-medium text-center text-Text-Primary"
-                >
-                  {day.dayName.slice(0, 3)}
+          {(() => {
+            const monthDays = getCurrentMonthWithBuffer(currentDate);
+            const firstDayOfMonth = monthDays[0]?.dateObject.getDay() || 0;
+            // Get day names starting from the first day of the month
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const weekDays = [];
+            for (let i = 0; i < 7; i++) {
+              weekDays.push(dayNames[(firstDayOfMonth + i) % 7]);
+            }
+            
+            return (
+              <>
+                <div className="grid grid-cols-7 w-full lg:gap-2 min-w-[980px] lg:min-w-full mt-1 py-3">
+                  {weekDays.map((dayName, index) => (
+                    <div
+                      key={index}
+                      className="text-xs font-medium text-center text-Text-Primary"
+                    >
+                      {dayName.slice(0, 3)}
+                    </div>
+                  ))}
                 </div>
-              ))}
-          </div>
-          <div className="grid grid-cols-7 gap-[1px] w-full  min-w-[980px] lg:min-w-full">
-            {getCurrentMonthWithBuffer(currentDate).map((day, index) => {
+                <div className="grid grid-cols-7 gap-[1px] w-full min-w-[980px] lg:min-w-full">
+                  {monthDays.map((day, index) => {
+              // Since header starts from first day of month, first cell should start at column 1
+              const gridColumnStart = index === 0 ? 1 : undefined;
               const activitiesForTheDay = data.filter(
                 (el: any) =>
                   new Date(el.date).toDateString() ===
@@ -402,6 +424,8 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
               const categories = Array.from(
                 new Set(activitiesForTheDay.map((a: any) => a.category)),
               );
+
+              const isOutOfRange = !isDateInPlanRange(day.dateObject, data);
 
               return (
                 // <CalendarCell
@@ -477,14 +501,15 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                 // </CalendarCell>
                 <div
                   key={index}
-                  className={`px-1 lg:px-4 py-1 min-h-[59px] min-w-[141px] border rounded-lg ${
+                  className={`px-1 relative lg:px-4 py-1 min-h-[59px] min-w-[141px] border rounded-lg ${
                     day.dayNumber === currenDay && day.monthName === currenMonth
                       ? 'gradient-border text-black-primary'
-                      : currenMonth === day.monthName
-                        ? 'bg-backgroundColor-Card'
-                        : 'bg-backgroundColor-Main'
+                      : isOutOfRange
+                        ? 'bg-gray-50 border-gray-200 border-dashed opacity-75'
+                        : 'bg-backgroundColor-Card'
                   }`}
                   style={{
+                    gridColumnStart: gridColumnStart,
                     background:
                       day.dayNumber === currenDay &&
                       day.monthName === currenMonth
@@ -494,7 +519,9 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                       day.dayNumber === currenDay &&
                       day.monthName === currenMonth
                         ? '2px solid transparent'
-                        : '1px solid #D0DDEC',
+                        : isOutOfRange
+                          ? '1px dashed #CBD5E1'
+                          : '1px solid #D0DDEC',
                   }}
                 >
                   <div
@@ -509,60 +536,83 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                   >
                     {day.dayNumber}
                   </div>
-                  <ul>
-                    {categories.map((category: any) => (
-                      <li className="mt-2" key={category}>
-                        <div className="font-semibold text-[10px] text-[#383838] flex  gap-1">
-                          <img
-                            className="w-3"
-                            src={resolveIcon(category)}
-                            alt=""
-                          />
-                          {category == '' ? 'Check-in' : category}
+                  {categories.length === 0 ? (
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center h-full min-h-[30px] gap-1.5">
+                      {isOutOfRange ? (
+                        <div className="flex items-start gap-1">
+                          <CalendarOff className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
+                          <span className="text-[10px] text-gray-500 font-normal">
+                            Out of plan range
+                          </span>
                         </div>
-                        {activitiesForTheDay
-                          .filter(
-                            (activity: any) => activity.category === category,
-                          )
-                          .map((activity: any, i: number) => {
-                            const activityDate = new Date(activity.date);
-                            const isPastDate = activityDate < today;
-                            const opacityClass =
-                              !activity.status && isPastDate
-                                ? 'opacity-70'
-                                : 'opacity-100';
+                      ) : (
+                        <>
+                          <CalendarX className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
+                          <span className="text-[10px] text-gray-500 font-normal">
+                            No events
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <ul>
+                      {categories.map((category: any) => (
+                        <li className="mt-2" key={category}>
+                          <div className="font-semibold text-[10px] text-[#383838] flex  gap-1">
+                            <img
+                              className="w-3"
+                              src={resolveIcon(category)}
+                              alt=""
+                            />
+                            {category == '' ? 'Check-in' : category}
+                          </div>
+                          {activitiesForTheDay
+                            .filter(
+                              (activity: any) => activity.category === category,
+                            )
+                            .map((activity: any, i: number) => {
+                              const activityDate = new Date(activity.date);
+                              const isPastDate = activityDate < today;
+                              const opacityClass =
+                                !activity.status && isPastDate
+                                  ? 'opacity-70'
+                                  : 'opacity-100';
 
-                            return (
-                              <div
-                                key={i}
-                                className={`flex  gap-1 mt-1 ${opacityClass}`}
-                              >
-                                {activity.status ? (
-                                  <img
-                                    className="w-3 h-3"
-                                    src="/icons/activity-circle-done.svg"
-                                    alt=""
-                                  />
-                                ) : (
-                                  <img
-                                    className="w-3 h-3"
-                                    src="/icons/acitivty-circle.svg"
-                                    alt=""
-                                  />
-                                )}
-                                <span className="text-[6px] lg:text-[10px] text-Text-Primary   flex-grow">
-                                  {activity.name}
-                                </span>
-                              </div>
-                            );
-                          })}
-                      </li>
-                    ))}
-                  </ul>
+                              return (
+                                <div
+                                  key={i}
+                                  className={`flex  gap-1 mt-1 ${opacityClass}`}
+                                >
+                                  {activity.status ? (
+                                    <img
+                                      className="w-3 h-3"
+                                      src="/icons/activity-circle-done.svg"
+                                      alt=""
+                                    />
+                                  ) : (
+                                    <img
+                                      className="w-3 h-3"
+                                      src="/icons/acitivty-circle.svg"
+                                      alt=""
+                                    />
+                                  )}
+                                  <span className="text-[6px] lg:text-[10px] text-Text-Primary   flex-grow">
+                                    {activity.name}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-              );
-            })}
-          </div>
+                  );
+                  })}
+                </div>
+              </>
+            );
+          })()}
         </div>
       ) : (
         <TableNoPaginateForActionPlan classData={overview} />
