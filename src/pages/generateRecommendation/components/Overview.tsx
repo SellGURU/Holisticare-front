@@ -173,21 +173,19 @@ export const Overview: FC<OverviewProps> = ({
             </div>
           </div>
         )}
-        <div className="w-full flex justify-end mb-4">
-      
-        </div>
+        <div className="w-full flex justify-end mb-4"></div>
         <div className="w-full my-4">
           <CoverageCard
-  progress={progress}
-  details={details}
-  setDetails={setDetails}
-  setLookingForwards={setLookingForwards}
-  lookingForwardsData={lookingForwardsData}
-  handleRemoveIssueFromList={handleRemoveIssueFromList}
-  showSearch 
-  searchQuery={searchQuery}
-  onSearch={setSearchQuery}
-/>
+            progress={progress}
+            details={details}
+            setDetails={setDetails}
+            setLookingForwards={setLookingForwards}
+            lookingForwardsData={lookingForwardsData}
+            handleRemoveIssueFromList={handleRemoveIssueFromList}
+            showSearch
+            searchQuery={searchQuery}
+            onSearch={setSearchQuery}
+          />
         </div>
         <div className="w-full flex justify-end"></div>
 

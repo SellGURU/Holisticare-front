@@ -11,7 +11,7 @@ interface CoverageCardProps {
   setLookingForwards: (values: any) => void;
   lookingForwardsData: any;
   handleRemoveIssueFromList: (name: string) => void;
-    showSearch?: boolean;
+  showSearch?: boolean;
   searchQuery?: string;
   onSearch?: (value: string) => void;
 }
@@ -225,19 +225,17 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
           </div>
           {showSearch && (
             <div className="w-full hidden xl:flex items-start justify-end">
-              <div className='w-[300px] mr-4'>
-
-            
-              <SearchBox
-                isHaveBorder
-                isGrayIcon
-                placeHolder="search interventions"
-                value={searchQuery}
-                onSearch={(v) => onSearch?.(v)}
-                showClose={searchQuery.length > 0}
-                ClassName="w-full"
-              />
-                </div>
+              <div className="w-[300px] mr-4">
+                <SearchBox
+                  isHaveBorder
+                  isGrayIcon
+                  placeHolder="search interventions"
+                  value={searchQuery}
+                  onSearch={(v) => onSearch?.(v)}
+                  showClose={searchQuery.length > 0}
+                  ClassName="w-full"
+                />
+              </div>
             </div>
           )}
           {/* View details */}
