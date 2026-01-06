@@ -39,9 +39,10 @@ export const downloadManualEntryPdfFromApi = (
   doc.setFontSize(10);
   doc.setTextColor(90, 90, 90);
   doc.text(
-    [`Type: ${payload.type}`, `Exported At: ${new Date().toLocaleString()}`].join(
-      '\n',
-    ),
+    [
+      `Type: ${payload.type}`,
+      `Exported At: ${new Date().toLocaleString()}`,
+    ].join('\n'),
     marginX + 18,
     topY + 48,
   );
@@ -52,51 +53,49 @@ export const downloadManualEntryPdfFromApi = (
     topY + 48,
   );
 
-autoTable(doc, {
-  startY: topY + 90,
-  theme: 'grid',
-  head: [['Biomarker', 'Value', 'Unit']],
-  body: payload.data.map((row) => [
-    row.biomarker ?? '—',
-    row.value ?? '—',
-    row.unit ?? '—',
-  ]),
-  styles: {
-    font: 'helvetica',
-    fontSize: 10,
-    cellPadding: 8,
-    valign: 'middle',
-    textColor: [25, 25, 25],
-    lineColor: [220, 220, 220],
-    lineWidth: 0.6,
-  },
-  headStyles: {
-    fillColor: [233, 240, 242],
-    textColor: [20, 20, 20],
-    fontStyle: 'bold',
-  },
-  alternateRowStyles: { fillColor: [250, 250, 250] },
+  autoTable(doc, {
+    startY: topY + 90,
+    theme: 'grid',
+    head: [['Biomarker', 'Value', 'Unit']],
+    body: payload.data.map((row) => [
+      row.biomarker ?? '—',
+      row.value ?? '—',
+      row.unit ?? '—',
+    ]),
+    styles: {
+      font: 'helvetica',
+      fontSize: 10,
+      cellPadding: 8,
+      valign: 'middle',
+      textColor: [25, 25, 25],
+      lineColor: [220, 220, 220],
+      lineWidth: 0.6,
+    },
+    headStyles: {
+      fillColor: [233, 240, 242],
+      textColor: [20, 20, 20],
+      fontStyle: 'bold',
+    },
+    alternateRowStyles: { fillColor: [250, 250, 250] },
 
-  // Body alignment
-  columnStyles: {
-    0: { halign: 'left', cellWidth: 280 },   // Biomarker
-    1: { halign: 'center', cellWidth: 120 }, // Value
-    2: { halign: 'center', cellWidth: 120 }, // Unit
-  },
+    // Body alignment
+    columnStyles: {
+      0: { halign: 'left', cellWidth: 280 }, // Biomarker
+      1: { halign: 'center', cellWidth: 120 }, // Value
+      2: { halign: 'center', cellWidth: 120 }, // Unit
+    },
 
-  // 👇 THIS FIXES HEADER ALIGNMENT PER COLUMN
-  didParseCell: (data) => {
-    if (data.section === 'head') {
-      if (data.column.index === 0) {
-        data.cell.styles.halign = 'left';   // Biomarker header
-      } else {
-        data.cell.styles.halign = 'center'; // Value + Unit headers
+    // 👇 THIS FIXES HEADER ALIGNMENT PER COLUMN
+    didParseCell: (data) => {
+      if (data.section === 'head') {
+        if (data.column.index === 0) {
+          data.cell.styles.halign = 'left'; // Biomarker header
+        } else {
+          data.cell.styles.halign = 'center'; // Value + Unit headers
+        }
       }
-    }
-  },
-});
-
-
+    },
+  });
 
   doc.save(fileName);
 };
