@@ -17,6 +17,7 @@ interface DatePickerProps {
   full?: boolean;
   isUploadFile?: boolean;
   key?: string;
+  right?:number
 }
 
 export default function SimpleDatePicker({
@@ -34,6 +35,7 @@ export default function SimpleDatePicker({
   full,
   key,
   isUploadFile,
+  right
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -94,6 +96,7 @@ export default function SimpleDatePicker({
       {open && (
         <div
           className={`absolute w-full  top-full mt-2 ${isUploadFile ? 'right-[120px]' : 'right-0'}  z-[9999] `}
+          style={{right:right}}
         >
           <Calendar
             key={key}

@@ -681,9 +681,10 @@ const FilterModal: React.FC<FilterModalProps> = ({
               />
               <SimpleDatePicker
                 date={enrollDate.to}
+                right={100}
                 setDate={handleToChange}
-                placeholder="End date"
-                ClassName="  md:!w-[173px]"
+                placeholder="End date"         
+                ClassName="  md:!w-[173px] "
               />
             </div>
           </div>

@@ -42,6 +42,12 @@ const Table: React.FC<TableProps> = ({ classData, search }) => {
     setData(classData);
   }, [classData]);
 
+  // Reset to first page when search changes
+  useEffect(() => {
+    setGlobalFilter(search);
+    setCurrentPage(0);
+  }, [search]);
+
   const table = useReactTable({
     data,
     columns: columns(data.length),
@@ -183,7 +189,7 @@ const Table: React.FC<TableProps> = ({ classData, search }) => {
           )}
         </div>
       </div>
-      <div className="mt-4">
+      <div className="mt-0">
         <Pagination
           currentPage={currentPage + 1}
           totalPages={Math.ceil(data.length / pageSize)}
