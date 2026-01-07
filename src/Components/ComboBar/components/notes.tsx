@@ -36,9 +36,16 @@ export const Notes = () => {
   }, [id]);
   const handleNoteDelete = (noteId: string) => {
     setLoading(true);
-    Application.deleteNote(noteId).then(() => {
-      getNotes(id);
-    });
+    Application.deleteNote(noteId)
+      .then(() => {
+        getNotes(id);
+      })
+      .catch((err) => {
+        console.error('Error deleting note:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
   const handleNoteUpdate = (noteId: string) => {
     setLoading(true);
@@ -46,9 +53,16 @@ export const Notes = () => {
       note_unique_id: noteId,
       updated_note: editText,
     };
-    Application.updateNote(data).then(() => {
-      getNotes(id);
-    });
+    Application.updateNote(data)
+      .then(() => {
+        getNotes(id);
+      })
+      .catch((err) => {
+        console.error('Error updating note:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -142,6 +156,9 @@ export const Notes = () => {
                     })
                     .catch((error) => {
                       console.error('Error adding note:', error);
+                    })
+                    .finally(() => {
+                      setLoading(false);
                     });
                 }}
                 style={{ height: '24px' }}

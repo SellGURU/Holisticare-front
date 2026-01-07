@@ -54,19 +54,23 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
     Application.driftAnalysisApporve({
       member_id: memberID,
       description: Description,
-    }).then(() => {
-      setMessagesData((prevData) =>
-        prevData.map((message) =>
-          message.id === id ? { ...message, isDone: true } : message,
-        ),
-      );
-
-      setTimeout(() => {
-        setMessagesData(
-          (prevData) => prevData.filter((message) => message.id !== id), // remove after success
+    })
+      .then(() => {
+        setMessagesData((prevData) =>
+          prevData.map((message) =>
+            message.id === id ? { ...message, isDone: true } : message,
+          ),
         );
-      }, 3000);
-    });
+
+        setTimeout(() => {
+          setMessagesData(
+            (prevData) => prevData.filter((message) => message.id !== id), // remove after success
+          );
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error('Error approving message:', err);
+      });
   };
 
   const handleDelete = (id: string) => {

@@ -4,7 +4,7 @@ import Toggle from '../../Components/Toggle';
 import CheckInForm from './CheckIn/CheckinForm';
 
 const NewForms = () => {
-  const [active, setActive] = useState('Check-in');
+  const [active, setActive] = useState('Questionnaire');
   const [search, setSearch] = useState('');
   return (
     <>
@@ -23,7 +23,7 @@ const NewForms = () => {
           <Toggle
             active={active}
             setActive={setActive}
-            value={['Check-in', 'Questionnaire']}
+            value={['Questionnaire', 'Check-in']}
           />
         </div>
       </div>

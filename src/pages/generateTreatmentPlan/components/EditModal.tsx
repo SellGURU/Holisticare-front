@@ -59,6 +59,20 @@ const EditModal: FC<EditModalProps> = ({
   const [showValidation, setShowValidation] = useState(false);
 
   const modalRef = useRef(null);
+  const scrollableContainerRef = useRef<HTMLDivElement>(null);
+
+  // Refs for fields that can have validation errors
+  const categoryRef = useRef<HTMLDivElement>(null);
+  const recommendationRef = useRef<HTMLDivElement>(null);
+  const basedOnRef = useRef<HTMLDivElement>(null);
+  const doseRef = useRef<HTMLDivElement>(null);
+  const interventionContentRef = useRef<HTMLDivElement>(null);
+  const keyBenefitsRef = useRef<HTMLDivElement>(null);
+  const foodsToEatRef = useRef<HTMLDivElement>(null);
+  const foodsToAvoidRef = useRef<HTMLDivElement>(null);
+  const exercisesToDoRef = useRef<HTMLDivElement>(null);
+  const exercisesToAvoidRef = useRef<HTMLDivElement>(null);
+  const clientNotesRef = useRef<HTMLDivElement>(null);
 
   interface FormValues {
     'Based on': string;
@@ -188,19 +202,23 @@ const EditModal: FC<EditModalProps> = ({
   //   onSubmit: (values) => ,
   // });
   useEffect(() => {
-    Application.HolisticPlanCategories({}).then((res) => {
-      setGroups(res.data);
+    Application.HolisticPlanCategories({})
+      .then((res) => {
+        setGroups(res.data);
 
-      // If there's a default category, set the initial dose value
-      if (defalts?.Category) {
-        const selectedGroupData = res.data.find(
-          (g: any) => Object.keys(g)[0] === defalts.Category,
-        );
-        if (selectedGroupData) {
-          setSelectedGroupDose(selectedGroupData[defalts.Category].Dose);
+        // If there's a default category, set the initial dose value
+        if (defalts?.Category) {
+          const selectedGroupData = res.data.find(
+            (g: any) => Object.keys(g)[0] === defalts.Category,
+          );
+          if (selectedGroupData) {
+            setSelectedGroupDose(selectedGroupData[defalts.Category].Dose);
+          }
         }
-      }
-    });
+      })
+      .catch((err) => {
+        console.error('Error getting holistic plan categories:', err);
+      });
   }, []);
 
   useEffect(() => {
@@ -405,6 +423,110 @@ const EditModal: FC<EditModalProps> = ({
   //       .Dose
   //   : false;
 
+  const scrollToFirstError = () => {
+    // Check fields in order of appearance, matching handleSaveClick validation logic
+    if (!formData.Category) {
+      categoryRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    if (!formData.Recommendation) {
+      recommendationRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    if (!formData['Based on']) {
+      basedOnRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    if (
+      formData.Category === 'Supplement' &&
+      selectedGroupDose &&
+      !ValidationForms.IsvalidField('Dose', formData.Dose)
+    ) {
+      doseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (!formData.Intervnetion_content) {
+      interventionContentRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    if (
+      formData.key_benefits.length === 0 &&
+      !ValidationForms.IsvalidField('KeyBenefits', keyBenefitValue)
+    ) {
+      keyBenefitsRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    if (
+      formData.Category === 'Diet' &&
+      formData.foods_to_eat.length === 0 &&
+      !ValidationForms.IsvalidField('FoodsToEat', foodsToEatValue)
+    ) {
+      foodsToEatRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    if (
+      formData.Category === 'Diet' &&
+      formData.foods_to_avoid.length === 0 &&
+      !ValidationForms.IsvalidField('FoodsToAvoid', foodsToAvoidValue)
+    ) {
+      foodsToAvoidRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    if (
+      formData.Category === 'Activity' &&
+      formData.exercises_to_do.length === 0 &&
+      !ValidationForms.IsvalidField('ExercisesToDo', exercisesToDoValue)
+    ) {
+      exercisesToDoRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    if (
+      formData.Category === 'Activity' &&
+      formData.exercises_to_avoid.length === 0 &&
+      !ValidationForms.IsvalidField('ExercisesToAvoid', exercisesToAvoidValue)
+    ) {
+      exercisesToAvoidRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+    if (
+      newNote.length > 400 ||
+      !ValidationForms.IsvalidField('Note', newNote)
+    ) {
+      clientNotesRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
+  };
+
   const handleSaveClick = () => {
     setShowValidation(true);
 
@@ -416,18 +538,21 @@ const EditModal: FC<EditModalProps> = ({
       !formData.Intervnetion_content ||
       !formData['Based on']
     ) {
+      scrollToFirstError();
       return;
     }
     if (
       formData.key_benefits.length === 0 &&
       !ValidationForms.IsvalidField('KeyBenefits', keyBenefitValue)
     ) {
+      scrollToFirstError();
       return;
     }
     if (
       formData.Category === 'Supplement' &&
       !ValidationForms.IsvalidField('Dose', formData.Dose)
     ) {
+      scrollToFirstError();
       return;
     }
     if (
@@ -435,6 +560,7 @@ const EditModal: FC<EditModalProps> = ({
       !ValidationForms.IsvalidField('FoodsToEat', formData.foods_to_eat) &&
       !ValidationForms.IsvalidField('FoodsToEat', foodsToEatValue)
     ) {
+      scrollToFirstError();
       return;
     }
     if (
@@ -442,6 +568,7 @@ const EditModal: FC<EditModalProps> = ({
       !ValidationForms.IsvalidField('FoodsToAvoid', formData.foods_to_avoid) &&
       !ValidationForms.IsvalidField('FoodsToAvoid', foodsToAvoidValue)
     ) {
+      scrollToFirstError();
       return;
     }
     if (
@@ -452,6 +579,7 @@ const EditModal: FC<EditModalProps> = ({
       ) &&
       !ValidationForms.IsvalidField('ExercisesToDo', exercisesToDoValue)
     ) {
+      scrollToFirstError();
       return;
     }
     if (
@@ -462,10 +590,12 @@ const EditModal: FC<EditModalProps> = ({
       ) &&
       !ValidationForms.IsvalidField('ExercisesToAvoid', exercisesToAvoidValue)
     ) {
+      scrollToFirstError();
       return;
     }
     // Validate notes length
     if (newNote.length > 400) {
+      scrollToFirstError();
       return;
     }
     // if (
@@ -489,6 +619,7 @@ const EditModal: FC<EditModalProps> = ({
           </div>
         </h2>
         <div
+          ref={scrollableContainerRef}
           className="max-h-[460px] overflow-y-auto pr-1 mt-[6px]"
           style={{
             scrollbarWidth: 'thin',
@@ -496,144 +627,168 @@ const EditModal: FC<EditModalProps> = ({
           }}
         >
           {/* Category Field */}
-          <SelectBoxField
-            label="Category"
-            options={groups.map((group) => Object.keys(group)[0])}
-            value={formData.Category}
-            onChange={(value) => {
-              updateFormData('Category', value);
-              updateFormData('Dose', '');
-            }}
-            isValid={
-              showValidation
-                ? ValidationForms.IsvalidField('Category', formData.Category)
-                : true
-            }
-            validationText={
-              showValidation
-                ? ValidationForms.ValidationText('Category', formData.Category)
-                : ''
-            }
-            placeholder="Select Group"
-          />
-          <TextField
-            label="Title"
-            placeholder="Enter recommendation title (e.g., Vitamin D3)"
-            value={formData.Recommendation}
-            onChange={(e) => {
-              updateFormData('Recommendation', e.target.value);
-            }}
-            isValid={
-              showValidation
-                ? ValidationForms.IsvalidField('Title', formData.Recommendation)
-                : true
-            }
-            validationText={
-              showValidation
-                ? ValidationForms.ValidationText(
-                    'Title',
-                    formData.Recommendation,
-                  )
-                : ''
-            }
-            margin="mb-4"
-          />
-          <TextField
-            label="Scientific Basis"
-            placeholder="Enter a related biomarker or health concern  (e.g., LDL Cholesterol )"
-            value={formData['Based on']}
-            onChange={(e) => {
-              updateFormData('Based on', e.target.value);
-            }}
-            isValid={
-              showValidation
-                ? ValidationForms.IsvalidField('Based on', formData['Based on'])
-                : true
-            }
-            validationText={
-              showValidation
-                ? ValidationForms.ValidationText(
-                    'Based on',
-                    formData['Based on'],
-                  )
-                : ''
-            }
-            margin="mb-4"
-          />
-          {selectedGroupDose && (
-            <TextField
-              label="Recommended Dosage"
-              value={formData.Dose}
-              onChange={(e) => {
-                const value = e.target.value;
-                const englishOnly = DoseValidationEnglish(value);
-                updateFormData('Dose', englishOnly);
+          <div ref={categoryRef}>
+            <SelectBoxField
+              label="Category"
+              options={groups.map((group) => Object.keys(group)[0])}
+              value={formData.Category}
+              onChange={(value) => {
+                updateFormData('Category', value);
+                updateFormData('Dose', '');
               }}
-              disabled={!selectedGroupDose}
-              placeholder="Enter dose amount"
-              margin={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
               isValid={
-                showValidation && selectedGroupDose
-                  ? ValidationForms.IsvalidField('Dose', formData.Dose)
+                showValidation
+                  ? ValidationForms.IsvalidField('Category', formData.Category)
                   : true
               }
               validationText={
-                showValidation && selectedGroupDose
-                  ? ValidationForms.ValidationText('Dose', formData.Dose)
+                showValidation
+                  ? ValidationForms.ValidationText(
+                      'Category',
+                      formData.Category,
+                    )
                   : ''
               }
-              // InfoText={DoseInfoText}
+              placeholder="Select Group"
             />
+          </div>
+          <div ref={recommendationRef}>
+            <TextField
+              label="Title"
+              placeholder="Enter recommendation title (e.g., Vitamin D3)"
+              value={formData.Recommendation}
+              onChange={(e) => {
+                updateFormData('Recommendation', e.target.value);
+              }}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField(
+                      'Title',
+                      formData.Recommendation,
+                    )
+                  : true
+              }
+              validationText={
+                showValidation
+                  ? ValidationForms.ValidationText(
+                      'Title',
+                      formData.Recommendation,
+                    )
+                  : ''
+              }
+              margin="mb-4"
+            />
+          </div>
+          <div ref={basedOnRef}>
+            <TextField
+              label="Scientific Basis"
+              placeholder="Enter a related biomarker or health concern  (e.g., LDL Cholesterol )"
+              value={formData['Based on']}
+              onChange={(e) => {
+                updateFormData('Based on', e.target.value);
+              }}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField(
+                      'Based on',
+                      formData['Based on'],
+                    )
+                  : true
+              }
+              validationText={
+                showValidation
+                  ? ValidationForms.ValidationText(
+                      'Based on',
+                      formData['Based on'],
+                    )
+                  : ''
+              }
+              margin="mb-4"
+            />
+          </div>
+          {selectedGroupDose && (
+            <div ref={doseRef}>
+              <TextField
+                label="Recommended Dosage"
+                value={formData.Dose}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const englishOnly = DoseValidationEnglish(value);
+                  updateFormData('Dose', englishOnly);
+                }}
+                disabled={!selectedGroupDose}
+                placeholder="Enter dose amount"
+                margin={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
+                isValid={
+                  showValidation && selectedGroupDose
+                    ? ValidationForms.IsvalidField('Dose', formData.Dose)
+                    : true
+                }
+                validationText={
+                  showValidation && selectedGroupDose
+                    ? ValidationForms.ValidationText('Dose', formData.Dose)
+                    : ''
+                }
+                // InfoText={DoseInfoText}
+              />
+            </div>
           )}
-          <TextAreaField
-            label="Guidelines"
-            placeholder="Enter a detailed, client-facing explanation of the intervention (e.g., Focuses on fresh fruits, vegetables, whole grains, nuts, and healthy fats.)"
-            value={formData.Intervnetion_content}
-            onChange={(e) => {
-              updateFormData('Intervnetion_content', e.target.value);
-            }}
-            onKeyDown={handleInstructionKeyDown}
-            isValid={
-              showValidation
-                ? ValidationForms.IsvalidField(
-                    'Intervnetion_content',
-                    formData.Intervnetion_content,
-                  )
-                : true
-            }
-            validationText={
-              showValidation
-                ? ValidationForms.ValidationText(
-                    'Intervnetion_content',
-                    formData.Intervnetion_content,
-                  )
-                : ''
-            }
-            height="h-[140px]"
-            margin="mb-4"
-          />
+          <div ref={interventionContentRef}>
+            <TextAreaField
+              label="Guidelines"
+              placeholder="Enter a detailed, client-facing explanation of the intervention (e.g., Focuses on fresh fruits, vegetables, whole grains, nuts, and healthy fats.)"
+              value={formData.Intervnetion_content}
+              onChange={(e) => {
+                updateFormData('Intervnetion_content', e.target.value);
+              }}
+              onKeyDown={handleInstructionKeyDown}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField(
+                      'Intervnetion_content',
+                      formData.Intervnetion_content,
+                    )
+                  : true
+              }
+              validationText={
+                showValidation
+                  ? ValidationForms.ValidationText(
+                      'Intervnetion_content',
+                      formData.Intervnetion_content,
+                    )
+                  : ''
+              }
+              height="h-[140px]"
+              margin="mb-4"
+            />
+          </div>
 
-          <TextAreaField
-            label="Expected Benefits"
-            placeholder="List expected benefits (e.g., Improves sleep quality, boosts energy)"
-            value={keyBenefitValue}
-            onChange={(e) => {
-              setKeyBenefitValue(e.target.value);
-            }}
-            onKeyDown={handleKeyBenefitKeyDown}
-            isValid={
-              showValidation && formData.key_benefits.length === 0
-                ? ValidationForms.IsvalidField('KeyBenefits', keyBenefitValue)
-                : true
-            }
-            validationText={
-              showValidation && formData.key_benefits.length === 0
-                ? ValidationForms.ValidationText('KeyBenefits', keyBenefitValue)
-                : ''
-            }
-            InfoText={KeyBenefitsInfoText}
-            margin={`${formData.key_benefits.length > 0 ? 'mb-4' : 'mb-0'}`}
-          />
+          <div ref={keyBenefitsRef}>
+            <TextAreaField
+              label="Expected Benefits"
+              placeholder="List expected benefits (e.g., Improves sleep quality, boosts energy)"
+              value={keyBenefitValue}
+              onChange={(e) => {
+                setKeyBenefitValue(e.target.value);
+              }}
+              onKeyDown={handleKeyBenefitKeyDown}
+              isValid={
+                showValidation && formData.key_benefits.length === 0
+                  ? ValidationForms.IsvalidField('KeyBenefits', keyBenefitValue)
+                  : true
+              }
+              validationText={
+                showValidation && formData.key_benefits.length === 0
+                  ? ValidationForms.ValidationText(
+                      'KeyBenefits',
+                      keyBenefitValue,
+                    )
+                  : ''
+              }
+              InfoText={KeyBenefitsInfoText}
+              margin={`${formData.key_benefits.length > 0 ? 'mb-4' : 'mb-0'}`}
+            />
+          </div>
 
           {/* Notes List */}
           <div className="mb-4 flex flex-col gap-2">
@@ -659,33 +814,35 @@ const EditModal: FC<EditModalProps> = ({
 
           {formData.Category === 'Diet' ? (
             <>
-              <TextAreaField
-                label="Recommended Foods"
-                placeholder="Suggest foods to include (e.g., Leafy greens, lean proteins)"
-                value={foodsToEatValue}
-                onChange={(e) => {
-                  setFoodsToEatValue(e.target.value);
-                }}
-                onKeyDown={handleFoodsToEatKeyDown}
-                isValid={
-                  showValidation && formData.foods_to_eat.length === 0
-                    ? ValidationForms.IsvalidField(
-                        'FoodsToEat',
-                        foodsToEatValue,
-                      )
-                    : true
-                }
-                validationText={
-                  showValidation && formData.foods_to_eat.length === 0
-                    ? ValidationForms.ValidationText(
-                        'FoodsToEat',
-                        foodsToEatValue,
-                      )
-                    : ''
-                }
-                InfoText={RecommendedFoodsInfoText}
-                margin={`${formData.foods_to_eat.length > 0 ? 'mb-4' : 'mb-0'}`}
-              />
+              <div ref={foodsToEatRef}>
+                <TextAreaField
+                  label="Recommended Foods"
+                  placeholder="Suggest foods to include (e.g., Leafy greens, lean proteins)"
+                  value={foodsToEatValue}
+                  onChange={(e) => {
+                    setFoodsToEatValue(e.target.value);
+                  }}
+                  onKeyDown={handleFoodsToEatKeyDown}
+                  isValid={
+                    showValidation && formData.foods_to_eat.length === 0
+                      ? ValidationForms.IsvalidField(
+                          'FoodsToEat',
+                          foodsToEatValue,
+                        )
+                      : true
+                  }
+                  validationText={
+                    showValidation && formData.foods_to_eat.length === 0
+                      ? ValidationForms.ValidationText(
+                          'FoodsToEat',
+                          foodsToEatValue,
+                        )
+                      : ''
+                  }
+                  InfoText={RecommendedFoodsInfoText}
+                  margin={`${formData.foods_to_eat.length > 0 ? 'mb-4' : 'mb-0'}`}
+                />
+              </div>
 
               <div className="mb-4 flex flex-col gap-2">
                 {formData.foods_to_eat.map((foodsToEat, index) => (
@@ -708,33 +865,35 @@ const EditModal: FC<EditModalProps> = ({
                 ))}
               </div>
 
-              <TextAreaField
-                label="Foods to Limit"
-                placeholder="Mention foods to limit (e.g., Avoid dairy, fried foods)"
-                value={foodsToAvoidValue}
-                onChange={(e) => {
-                  setFoodsToAvoidValue(e.target.value);
-                }}
-                onKeyDown={handleFoodsToAvoidKeyDown}
-                isValid={
-                  showValidation && formData.foods_to_avoid.length === 0
-                    ? ValidationForms.IsvalidField(
-                        'FoodsToAvoid',
-                        foodsToAvoidValue,
-                      )
-                    : true
-                }
-                validationText={
-                  showValidation && formData.foods_to_avoid.length === 0
-                    ? ValidationForms.ValidationText(
-                        'FoodsToAvoid',
-                        foodsToAvoidValue,
-                      )
-                    : ''
-                }
-                InfoText={FoodsToAvoidInfoText}
-                margin={`${formData.foods_to_avoid.length > 0 ? 'mb-4' : 'mb-0'}`}
-              />
+              <div ref={foodsToAvoidRef}>
+                <TextAreaField
+                  label="Foods to Limit"
+                  placeholder="Mention foods to limit (e.g., Avoid dairy, fried foods)"
+                  value={foodsToAvoidValue}
+                  onChange={(e) => {
+                    setFoodsToAvoidValue(e.target.value);
+                  }}
+                  onKeyDown={handleFoodsToAvoidKeyDown}
+                  isValid={
+                    showValidation && formData.foods_to_avoid.length === 0
+                      ? ValidationForms.IsvalidField(
+                          'FoodsToAvoid',
+                          foodsToAvoidValue,
+                        )
+                      : true
+                  }
+                  validationText={
+                    showValidation && formData.foods_to_avoid.length === 0
+                      ? ValidationForms.ValidationText(
+                          'FoodsToAvoid',
+                          foodsToAvoidValue,
+                        )
+                      : ''
+                  }
+                  InfoText={FoodsToAvoidInfoText}
+                  margin={`${formData.foods_to_avoid.length > 0 ? 'mb-4' : 'mb-0'}`}
+                />
+              </div>
 
               <div className="mb-4 flex flex-col gap-2">
                 {formData.foods_to_avoid.map((foodsToAvoid, index) => (
@@ -762,33 +921,35 @@ const EditModal: FC<EditModalProps> = ({
           )}
           {formData.Category === 'Activity' ? (
             <>
-              <TextAreaField
-                label="Recommended Exercises"
-                placeholder="Suggest suitable exercises (e.g., Light yoga, daily walks)"
-                value={exercisesToDoValue}
-                onChange={(e) => {
-                  setExercisesToDoValue(e.target.value);
-                }}
-                onKeyDown={handleExercisesToDoKeyDown}
-                isValid={
-                  showValidation && formData.exercises_to_do.length === 0
-                    ? ValidationForms.IsvalidField(
-                        'ExercisesToDo',
-                        exercisesToDoValue,
-                      )
-                    : true
-                }
-                validationText={
-                  showValidation && formData.exercises_to_do.length === 0
-                    ? ValidationForms.ValidationText(
-                        'ExercisesToDo',
-                        exercisesToDoValue,
-                      )
-                    : ''
-                }
-                InfoText={ExercisesToDoInfoText}
-                margin={`${formData.exercises_to_do.length > 0 ? 'mb-4' : 'mb-0'}`}
-              />
+              <div ref={exercisesToDoRef}>
+                <TextAreaField
+                  label="Recommended Exercises"
+                  placeholder="Suggest suitable exercises (e.g., Light yoga, daily walks)"
+                  value={exercisesToDoValue}
+                  onChange={(e) => {
+                    setExercisesToDoValue(e.target.value);
+                  }}
+                  onKeyDown={handleExercisesToDoKeyDown}
+                  isValid={
+                    showValidation && formData.exercises_to_do.length === 0
+                      ? ValidationForms.IsvalidField(
+                          'ExercisesToDo',
+                          exercisesToDoValue,
+                        )
+                      : true
+                  }
+                  validationText={
+                    showValidation && formData.exercises_to_do.length === 0
+                      ? ValidationForms.ValidationText(
+                          'ExercisesToDo',
+                          exercisesToDoValue,
+                        )
+                      : ''
+                  }
+                  InfoText={ExercisesToDoInfoText}
+                  margin={`${formData.exercises_to_do.length > 0 ? 'mb-4' : 'mb-0'}`}
+                />
+              </div>
 
               {/* Notes List */}
               <div className="mb-4 flex flex-col gap-2">
@@ -812,33 +973,35 @@ const EditModal: FC<EditModalProps> = ({
                 ))}
               </div>
 
-              <TextAreaField
-                label="Exercises to Limit"
-                placeholder="Mention any exercises to limit (e.g., Avoid intense cardio)"
-                value={exercisesToAvoidValue}
-                onChange={(e) => {
-                  setExercisesToAvoidValue(e.target.value);
-                }}
-                onKeyDown={handleExercisesToAvoidKeyDown}
-                isValid={
-                  showValidation && formData.exercises_to_avoid.length === 0
-                    ? ValidationForms.IsvalidField(
-                        'ExercisesToAvoid',
-                        exercisesToAvoidValue,
-                      )
-                    : true
-                }
-                validationText={
-                  showValidation && formData.exercises_to_avoid.length === 0
-                    ? ValidationForms.ValidationText(
-                        'ExercisesToAvoid',
-                        exercisesToAvoidValue,
-                      )
-                    : ''
-                }
-                InfoText={ExercisesToAvoidInfoText}
-                margin={`${formData.exercises_to_avoid.length > 0 ? 'mb-4' : 'mb-0'}`}
-              />
+              <div ref={exercisesToAvoidRef}>
+                <TextAreaField
+                  label="Exercises to Limit"
+                  placeholder="Mention any exercises to limit (e.g., Avoid intense cardio)"
+                  value={exercisesToAvoidValue}
+                  onChange={(e) => {
+                    setExercisesToAvoidValue(e.target.value);
+                  }}
+                  onKeyDown={handleExercisesToAvoidKeyDown}
+                  isValid={
+                    showValidation && formData.exercises_to_avoid.length === 0
+                      ? ValidationForms.IsvalidField(
+                          'ExercisesToAvoid',
+                          exercisesToAvoidValue,
+                        )
+                      : true
+                  }
+                  validationText={
+                    showValidation && formData.exercises_to_avoid.length === 0
+                      ? ValidationForms.ValidationText(
+                          'ExercisesToAvoid',
+                          exercisesToAvoidValue,
+                        )
+                      : ''
+                  }
+                  InfoText={ExercisesToAvoidInfoText}
+                  margin={`${formData.exercises_to_avoid.length > 0 ? 'mb-4' : 'mb-0'}`}
+                />
+              </div>
 
               {/* Notes List */}
               <div className="mb-4 flex flex-col gap-2">
@@ -935,27 +1098,29 @@ const EditModal: FC<EditModalProps> = ({
             </div> */}
 
           {/* Client Notes */}
-          <TextAreaField
-            label="Client Notes"
-            placeholder="Write personalized notes for your client"
-            value={newNote}
-            onChange={(e) => {
-              setNewNote(e.target.value);
-            }}
-            onKeyDown={handleNoteKeyDown}
-            isValid={
-              showValidation
-                ? ValidationForms.IsvalidField('Note', newNote)
-                : true
-            }
-            validationText={
-              showValidation
-                ? ValidationForms.ValidationText('Note', newNote)
-                : ''
-            }
-            InfoText={NotesInfoText}
-            margin="mb-4"
-          />
+          <div ref={clientNotesRef}>
+            <TextAreaField
+              label="Client Notes"
+              placeholder="Write personalized notes for your client"
+              value={newNote}
+              onChange={(e) => {
+                setNewNote(e.target.value);
+              }}
+              onKeyDown={handleNoteKeyDown}
+              isValid={
+                showValidation
+                  ? ValidationForms.IsvalidField('Note', newNote)
+                  : true
+              }
+              validationText={
+                showValidation
+                  ? ValidationForms.ValidationText('Note', newNote)
+                  : ''
+              }
+              InfoText={NotesInfoText}
+              margin="mb-4"
+            />
+          </div>
 
           {/* Notes List */}
           <div className="mb-4 flex flex-col gap-2">

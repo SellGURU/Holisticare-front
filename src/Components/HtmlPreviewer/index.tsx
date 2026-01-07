@@ -4,6 +4,7 @@ import StyleModal, { ElementStyles } from './StyleModal';
 import { useNavigate, useBlocker } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
 import ConfirmModal from '../confitmModal';
+import { Edit } from 'lucide-react';
 
 type Props = {
   html: string;
@@ -207,9 +208,14 @@ export default function HtmlEditor({
           (element as HTMLElement).removeAttribute('contenteditable');
         });
 
-        // Remove all edit icons
-        const existingIcons = doc.querySelectorAll('.edit-icon');
-        existingIcons.forEach((icon) => icon.remove());
+        // Remove all edit icons - do this multiple times to ensure all are removed
+        const removeAllIcons = () => {
+          const existingIcons = doc.querySelectorAll('.edit-icon');
+          existingIcons.forEach((icon) => icon.remove());
+        };
+
+        // Remove icons immediately
+        removeAllIcons();
 
         // Reset to original HTML only if not saving
         if (!skipReset) {
@@ -217,12 +223,32 @@ export default function HtmlEditor({
           doc.write(originalHtmlRef.current);
           doc.close();
 
+          // Remove icons again after HTML reset (in case reset added any)
+          setTimeout(() => {
+            removeAllIcons();
+            // Also remove from any newly created elements
+            const newEditableElements = doc.querySelectorAll('.editable');
+            newEditableElements.forEach((element) => {
+              (element as HTMLElement).removeAttribute('contenteditable');
+              const icon = (element as HTMLElement).querySelector('.edit-icon');
+              if (icon) icon.remove();
+            });
+          }, 0);
+
+          // Additional cleanup after DOM updates
+          setTimeout(removeAllIcons, 50);
+          setTimeout(removeAllIcons, 200);
+
           // Reset StyleModal states
           setSelectedElement(null);
           setCurrentStyles(null);
           setPreviewText('');
           setIsStyleModalOpen(false);
           setShowReset(false);
+        } else {
+          // Even when saving, ensure icons are removed after a delay
+          setTimeout(removeAllIcons, 50);
+          setTimeout(removeAllIcons, 200);
         }
       }
     }
@@ -236,19 +262,105 @@ export default function HtmlEditor({
         iframeRef.current?.contentWindow?.document;
       if (!doc) return;
 
-      // Add contenteditable="true" to all elements with 'editable' class
-      const editableElements = doc.querySelectorAll('.editable');
-      editableElements.forEach((element) => {
-        (element as HTMLElement).setAttribute('contenteditable', 'true');
+      // Remove all edit icons from the document before saving
+      // First pass: remove all icons directly
+      const editIcons = doc.querySelectorAll('.edit-icon');
+      editIcons.forEach((icon) => icon.remove());
+
+      // Second pass: remove any icons that might be nested inside elements
+      const allElements = doc.querySelectorAll('*');
+      allElements.forEach((element) => {
+        const nestedIcons = element.querySelectorAll('.edit-icon');
+        nestedIcons.forEach((icon) => icon.remove());
       });
 
-      // Get the HTML with contenteditable attributes
-      const currentHtml = doc.documentElement.outerHTML;
+      // Third pass: remove icons by checking innerHTML of all elements
+      const editableElements = doc.querySelectorAll('.editable');
+      editableElements.forEach((element) => {
+        const htmlElement = element as HTMLElement;
+        // Remove contenteditable attribute
+        htmlElement.removeAttribute('contenteditable');
+
+        // Remove any edit-icon from innerHTML if present
+        if (htmlElement.innerHTML.includes('edit-icon')) {
+          const tempDiv = doc.createElement('div');
+          tempDiv.innerHTML = htmlElement.innerHTML;
+          const iconsInContent = tempDiv.querySelectorAll('.edit-icon');
+          iconsInContent.forEach((icon) => icon.remove());
+          htmlElement.innerHTML = tempDiv.innerHTML;
+        }
+      });
+
+      // Remove contenteditable attributes from all elements (including non-editable)
+      const allEditableElements = doc.querySelectorAll('[contenteditable]');
+      allEditableElements.forEach((element) => {
+        (element as HTMLElement).removeAttribute('contenteditable');
+      });
+
+      // Get the HTML after DOM cleanup
+      let currentHtml = doc.documentElement.outerHTML;
+
+      // Clean the HTML string to remove any remaining icon references
+      // Remove edit-icon divs from HTML string (multiple patterns)
+      currentHtml = currentHtml.replace(
+        /<div[^>]*class\s*=\s*["']?[^"']*edit-icon[^"']*["']?[^>]*>[\s\S]*?<\/div>/gi,
+        '',
+      );
+      currentHtml = currentHtml.replace(
+        /<div[^>]*class\s*=\s*["']?edit-icon["']?[^>]*>[\s\S]*?<\/div>/gi,
+        '',
+      );
+
+      // Remove any SVG elements that might be part of icons
+      currentHtml = currentHtml.replace(
+        /<svg[^>]*viewBox\s*=\s*["']0\s+0\s+24\s+24["'][^>]*>[\s\S]*?<\/svg>/gi,
+        (match) => {
+          // Only remove if it's likely an edit icon (has specific paths)
+          if (match.includes('M12 20h9') || match.includes('M16.5 3.5')) {
+            return '';
+          }
+          return match;
+        },
+      );
+
+      // Remove any remaining edit-icon class references
+      currentHtml = currentHtml.replace(
+        /class\s*=\s*["']?edit-icon["']?/gi,
+        '',
+      );
+      currentHtml = currentHtml.replace(
+        /class\s*=\s*["']([^"']*)\s*edit-icon\s*([^"']*)["']/gi,
+        (_match, before, after) => {
+          const newClass = (before + ' ' + after).trim().replace(/\s+/g, ' ');
+          return newClass ? `class="${newClass}"` : '';
+        },
+      );
+      currentHtml = currentHtml.replace(
+        /class\s*=\s*["']([^"']*)\s*edit-icon\s*([^"']*)["']/gi,
+        (_match, before, after) => {
+          const newClass = (before + ' ' + after).trim().replace(/\s+/g, ' ');
+          return newClass ? `class="${newClass}"` : '';
+        },
+      );
+
+      // Remove empty class attributes
+      currentHtml = currentHtml.replace(/class\s*=\s*["']\s*["']/gi, '');
+      currentHtml = currentHtml.replace(/class\s*=\s*["']\s*["']/gi, '');
+
+      // Remove any style attributes that might contain icon-related styles
+      // (This is more aggressive, but ensures clean HTML)
+      currentHtml = currentHtml.replace(
+        /style\s*=\s*["'][^"']*position\s*:\s*absolute[^"']*right\s*:\s*-12px[^"']*["']/gi,
+        '',
+      );
+
+      // Final cleanup: remove any empty divs that might be left
+      currentHtml = currentHtml.replace(/<div[^>]*>\s*<\/div>/gi, '');
 
       // Toggle edit mode without resetting (skipReset = true)
       await toggleEditMode(true);
 
-      // Save the HTML that was captured before toggle
+      // Save the cleaned HTML
       try {
         await onSave(currentHtml);
 
@@ -273,41 +385,47 @@ export default function HtmlEditor({
   };
 
   // Function to add edit icons to editable elements
-  const addEditIcons = useCallback(
-    (doc: Document) => {
-      const editableElements = doc.querySelectorAll('.editable');
-      console.log('Found editable elements:', editableElements.length); // Debug log
+  const addEditIcons = useCallback((doc: Document) => {
+    const editableElements = doc.querySelectorAll('.editable');
+    console.log('Found editable elements:', editableElements.length); // Debug log
 
-      if (editableElements.length === 0) {
-        console.log('No editable elements found, retrying...');
-        return;
+    if (editableElements.length === 0) {
+      console.log('No editable elements found, retrying...');
+      return;
+    }
+
+    let iconsAddedCount = 0;
+
+    editableElements.forEach((element) => {
+      const htmlElement = element as HTMLElement;
+
+      // Remove existing edit icon if any
+      const existingIcon = htmlElement.querySelector('.edit-icon');
+      if (existingIcon) {
+        existingIcon.remove();
       }
 
-      let iconsAddedCount = 0;
-
-      editableElements.forEach((element) => {
-        const htmlElement = element as HTMLElement;
-
-        // Remove existing edit icon if any
-        const existingIcon = htmlElement.querySelector('.edit-icon');
-        if (existingIcon) {
-          existingIcon.remove();
-        }
-
-        // Create edit icon
-        const editIcon = doc.createElement('div');
-        editIcon.className = 'edit-icon';
-        editIcon.innerHTML = '✏️';
-        editIcon.contentEditable = 'false';
-        editIcon.style.cssText = `
+      // Create edit icon
+      const editIcon = doc.createElement('div');
+      editIcon.className = 'edit-icon';
+      editIcon.innerHTML = `
+        <svg viewBox="0 0 24 24" width="16" height="16"
+            fill="none" stroke="#22C55E" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+        </svg>
+        `;
+      editIcon.contentEditable = 'false';
+      editIcon.style.cssText = `
         position: absolute;
         right: -12px;
         top: -12px;
         width: 24px;
         height: 24px;
-        background: #3b82f6;
+        background: #BBF7D0;
         color: white;
-        border-radius: 50%;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -318,6 +436,10 @@ export default function HtmlEditor({
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         border: 2px solid white;
         user-select: none;
+        &:hover {
+          background: #2563EB;
+          color: white;
+        }
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
@@ -327,192 +449,187 @@ export default function HtmlEditor({
         -khtml-user-select: none;
       `;
 
-        // Make the editable element itself relatively positioned and inline-block
-        htmlElement.style.position = 'relative';
-        htmlElement.style.display = 'inline-block';
-        htmlElement.appendChild(editIcon);
+      // Only add the icon, don't modify any element styles
+      // The icon uses absolute positioning and will position relative to nearest positioned ancestor
+      htmlElement.appendChild(editIcon);
 
-        // Add selection event listeners to the element itself
-        // htmlElement.addEventListener('mouseup', () => {
-        //   if (isEditMode) {
-        //     setTimeout(() => {
-        //       handleTextSelection(doc);
-        //     }, 10);
-        //   }
-        // });
+      // Add selection event listeners to the element itself
+      // htmlElement.addEventListener('mouseup', () => {
+      //   if (isEditMode) {
+      //     setTimeout(() => {
+      //       handleTextSelection(doc);
+      //     }, 10);
+      //   }
+      // });
 
-        // htmlElement.addEventListener('keyup', () => {
-        //   if (isEditMode) {
-        //     setTimeout(() => {
-        //       handleTextSelection(doc);
-        //     }, 10);
-        //   }
-        // });
+      // htmlElement.addEventListener('keyup', () => {
+      //   if (isEditMode) {
+      //     setTimeout(() => {
+      //       handleTextSelection(doc);
+      //     }, 10);
+      //   }
+      // });
 
-        // Add click event to edit icon
-        editIcon.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
+      // Add click event to edit icon
+      editIcon.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-          // Temporarily hide icon to avoid detecting its blue background
-          const iconDisplay = editIcon.style.display;
-          editIcon.style.display = 'none';
+        // Temporarily hide icon to avoid detecting its blue background
+        editIcon.style.display = 'none';
 
-          // Small delay to ensure icon is hidden before reading styles
-          setTimeout(() => {
-            setSelectedElement(htmlElement);
+        // Small delay to ensure icon is hidden before reading styles
+        setTimeout(() => {
+          setSelectedElement(htmlElement);
 
-            // Get current styles from the element in iframe
-            const computedStyle =
-              doc.defaultView?.getComputedStyle(htmlElement);
-            if (computedStyle) {
-              // Parse font size to get numeric value
-              const fontSize = computedStyle.fontSize;
-              const fontSizeNum = parseFloat(fontSize);
+          // Get current styles from the element in iframe
+          const computedStyle = doc.defaultView?.getComputedStyle(htmlElement);
+          if (computedStyle) {
+            // Parse font size to get numeric value
+            const fontSize = computedStyle.fontSize;
+            const fontSizeNum = parseFloat(fontSize);
 
-              // Parse color to hex format
-              const colorToHex = (color: string) => {
-                if (color.startsWith('rgb')) {
-                  const rgb = color.match(/\d+/g);
-                  if (rgb && rgb.length >= 3) {
-                    const r = parseInt(rgb[0]);
-                    const g = parseInt(rgb[1]);
-                    const b = parseInt(rgb[2]);
-                    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-                  }
+            // Parse color to hex format
+            const colorToHex = (color: string) => {
+              if (color.startsWith('rgb')) {
+                const rgb = color.match(/\d+/g);
+                if (rgb && rgb.length >= 3) {
+                  const r = parseInt(rgb[0]);
+                  const g = parseInt(rgb[1]);
+                  const b = parseInt(rgb[2]);
+                  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
                 }
-                return color;
-              };
+              }
+              return color;
+            };
 
-              // Check for inline styles first, then fall back to computed styles
-              const inlineStyle = htmlElement.style;
-              const hasInlineStyles = inlineStyle.cssText.length > 0;
+            // Check for inline styles first, then fall back to computed styles
+            const inlineStyle = htmlElement.style;
+            const hasInlineStyles = inlineStyle.cssText.length > 0;
 
-              const currentStyles: ElementStyles = {
-                fontWeight:
-                  hasInlineStyles && inlineStyle.fontWeight
-                    ? (inlineStyle.fontWeight as 'bold' | 'normal')
-                    : (getTailwindStyleValue(htmlElement, 'fontWeight') as
-                        | 'bold'
-                        | 'normal') ||
-                      (computedStyle.fontWeight === 'bold' ||
-                      parseInt(computedStyle.fontWeight) >= 700
-                        ? 'bold'
-                        : 'normal'),
-                fontStyle:
-                  hasInlineStyles && inlineStyle.fontStyle
-                    ? (inlineStyle.fontStyle as 'normal' | 'italic')
-                    : (getTailwindStyleValue(htmlElement, 'fontStyle') as
-                        | 'normal'
-                        | 'italic') ||
-                      (computedStyle.fontStyle === 'italic'
-                        ? 'italic'
-                        : 'normal'),
-                textDecoration:
-                  hasInlineStyles && inlineStyle.textDecoration
-                    ? (inlineStyle.textDecoration as
-                        | 'none'
-                        | 'underline'
-                        | 'line-through')
-                    : (getTailwindStyleValue(htmlElement, 'textDecoration') as
-                        | 'none'
-                        | 'underline'
-                        | 'line-through') ||
-                      (computedStyle.textDecoration.includes('underline')
-                        ? 'underline'
-                        : computedStyle.textDecoration.includes('line-through')
-                          ? 'line-through'
-                          : 'none'),
-                color:
-                  hasInlineStyles && inlineStyle.color
-                    ? inlineStyle.color
-                    : colorToHex(computedStyle.color),
-                backgroundColor: 'transparent', // Always set to transparent, don't read or apply background color
-                fontSize:
-                  hasInlineStyles && inlineStyle.fontSize
-                    ? inlineStyle.fontSize
-                    : `${fontSizeNum}px`,
-                textAlign:
-                  hasInlineStyles && inlineStyle.textAlign
-                    ? (inlineStyle.textAlign as
-                        | 'left'
-                        | 'center'
-                        | 'right'
-                        | 'justify')
-                    : (getTailwindStyleValue(htmlElement, 'textAlign') as
-                        | 'left'
-                        | 'center'
-                        | 'right'
-                        | 'justify') ||
-                      (computedStyle.textAlign as
-                        | 'left'
-                        | 'center'
-                        | 'right'
-                        | 'justify'),
-              };
-              setCurrentStyles(currentStyles);
-            }
+            const currentStyles: ElementStyles = {
+              fontWeight:
+                hasInlineStyles && inlineStyle.fontWeight
+                  ? (inlineStyle.fontWeight as 'bold' | 'normal')
+                  : (getTailwindStyleValue(htmlElement, 'fontWeight') as
+                      | 'bold'
+                      | 'normal') ||
+                    (computedStyle.fontWeight === 'bold' ||
+                    parseInt(computedStyle.fontWeight) >= 700
+                      ? 'bold'
+                      : 'normal'),
+              fontStyle:
+                hasInlineStyles && inlineStyle.fontStyle
+                  ? (inlineStyle.fontStyle as 'normal' | 'italic')
+                  : (getTailwindStyleValue(htmlElement, 'fontStyle') as
+                      | 'normal'
+                      | 'italic') ||
+                    (computedStyle.fontStyle === 'italic'
+                      ? 'italic'
+                      : 'normal'),
+              textDecoration:
+                hasInlineStyles && inlineStyle.textDecoration
+                  ? (inlineStyle.textDecoration as
+                      | 'none'
+                      | 'underline'
+                      | 'line-through')
+                  : (getTailwindStyleValue(htmlElement, 'textDecoration') as
+                      | 'none'
+                      | 'underline'
+                      | 'line-through') ||
+                    (computedStyle.textDecoration.includes('underline')
+                      ? 'underline'
+                      : computedStyle.textDecoration.includes('line-through')
+                        ? 'line-through'
+                        : 'none'),
+              color:
+                hasInlineStyles && inlineStyle.color
+                  ? inlineStyle.color
+                  : colorToHex(computedStyle.color),
+              backgroundColor: 'transparent', // Always set to transparent, don't read or apply background color
+              fontSize:
+                hasInlineStyles && inlineStyle.fontSize
+                  ? inlineStyle.fontSize
+                  : `${fontSizeNum}px`,
+              textAlign:
+                hasInlineStyles && inlineStyle.textAlign
+                  ? (inlineStyle.textAlign as
+                      | 'left'
+                      | 'center'
+                      | 'right'
+                      | 'justify')
+                  : (getTailwindStyleValue(htmlElement, 'textAlign') as
+                      | 'left'
+                      | 'center'
+                      | 'right'
+                      | 'justify') ||
+                    (computedStyle.textAlign as
+                      | 'left'
+                      | 'center'
+                      | 'right'
+                      | 'justify'),
+            };
+            setCurrentStyles(currentStyles);
+          }
 
-            // Restore icon display
-            editIcon.style.display = iconDisplay || '';
-            setIsStyleModalOpen(true);
+          // Don't restore icon display - keep it hidden when modal opens
+          // The useEffect will handle showing/hiding icons based on modal state
+          setIsStyleModalOpen(true);
 
-            // Get HTML content to preserve formatting (bold, italic, etc.)
-            let htmlContent = htmlElement?.innerHTML || '';
-            // Remove edit icon from HTML if present
-            htmlContent = htmlContent.replace(
-              /<div[^>]*class="edit-icon"[^>]*>.*?<\/div>/gi,
-              '',
-            );
-            htmlContent = htmlContent.replace(/✏️/g, '');
+          // Get HTML content to preserve formatting (bold, italic, etc.)
+          let htmlContent = htmlElement?.innerHTML || '';
+          // Remove edit icon from HTML if present
+          htmlContent = htmlContent.replace(
+            /<div[^>]*class="edit-icon"[^>]*>.*?<\/div>/gi,
+            '',
+          );
+          htmlContent = htmlContent.replace(/✏️/g, '');
 
-            // Also get plain text for fallback
-            const plainText =
-              htmlElement?.innerText.replace(/✏️/g, '').trim() || '';
+          // Also get plain text for fallback
+          const plainText =
+            htmlElement?.innerText.replace(/✏️/g, '').trim() || '';
 
-            // Use HTML if it contains formatting tags, otherwise use plain text
-            const contentToSet = /<[^>]+>/g.test(htmlContent)
-              ? htmlContent
-              : plainText;
-            setPreviewText(contentToSet);
-          }, 50); // Small delay to ensure icon is hidden before reading styles
-        });
-
-        // Add hover effects
-        // editIcon.addEventListener('mouseenter', () => {
-        //   editIcon.style.transform = 'scale(1.1)';
-        //   editIcon.style.background = '#2563eb';
-        // });
-
-        // editIcon.addEventListener('mouseleave', () => {
-        //   editIcon.style.transform = 'scale(1)';
-        //   editIcon.style.background = '#3b82f6';
-        // });
-
-        // Prevent text selection on the icon
-        // editIcon.addEventListener('mousedown', (e) => {
-        //   e.preventDefault();
-        //   e.stopPropagation();
-        // });
-
-        // editIcon.addEventListener('selectstart', (e) => {
-        //   e.preventDefault();
-        //   e.stopPropagation();
-        // });
-
-        // editIcon.addEventListener('dragstart', (e) => {
-        //   e.preventDefault();
-        //   e.stopPropagation();
-        // });
-
-        iconsAddedCount++;
+          // Use HTML if it contains formatting tags, otherwise use plain text
+          const contentToSet = /<[^>]+>/g.test(htmlContent)
+            ? htmlContent
+            : plainText;
+          setPreviewText(contentToSet);
+        }, 50); // Small delay to ensure icon is hidden before reading styles
       });
 
-      console.log('Icons added:', iconsAddedCount);
-      setIconsAdded(true);
-    },
-    [isEditMode],
-  );
+      // Add hover effects
+      // editIcon.addEventListener('mouseenter', () => {
+      //   editIcon.style.transform = 'scale(1.1)';
+      //   editIcon.style.background = '#2563eb';
+      // });
+
+      // editIcon.addEventListener('mouseleave', () => {
+      //   editIcon.style.transform = 'scale(1)';
+      //   editIcon.style.background = '#3b82f6';
+      // });
+
+      // Prevent text selection on the icon
+      // editIcon.addEventListener('mousedown', (e) => {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      // });
+
+      // editIcon.addEventListener('selectstart', (e) => {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      // });
+
+      // editIcon.addEventListener('dragstart', (e) => {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      // });
+
+      iconsAddedCount++;
+    });
+
+    console.log('Icons added:', iconsAddedCount);
+    setIconsAdded(true);
+  }, []);
 
   // درج HTML یک بار و فعال کردن ویرایشگر
   useEffect(() => {
@@ -527,6 +644,57 @@ export default function HtmlEditor({
       doc.open();
       doc.write(html);
       doc.close();
+
+      // Add CSS to prevent outline/border/background changes on editable elements
+      if (!doc.getElementById('editable-styles')) {
+        const styleTag = doc.createElement('style');
+        styleTag.id = 'editable-styles';
+        styleTag.textContent = `
+          .editable {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+          .editable:focus {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+          .editable:hover {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+          .editable[contenteditable="true"] {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+          .editable[contenteditable="true"]:focus {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+          .editable[contenteditable="true"]:hover {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: inherit !important;
+            background: inherit !important;
+          }
+        `;
+        doc.head.appendChild(styleTag);
+      }
 
       if (editable && doc.body && isEditMode) {
         // Make only elements with 'editable' class editable
@@ -612,8 +780,30 @@ export default function HtmlEditor({
       loadedRef.current = true;
     };
 
+    // Handle edit mode changes when iframe is already loaded
+    const handleEditModeChange = () => {
+      if (!loadedRef.current) return;
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!doc) return;
+
+      if (!isEditMode) {
+        // Remove all icons and contenteditable when exiting edit mode
+        const editableElements = doc.querySelectorAll('.editable');
+        editableElements.forEach((element) => {
+          (element as HTMLElement).removeAttribute('contenteditable');
+        });
+        const existingIcons = doc.querySelectorAll('.edit-icon');
+        existingIcons.forEach((icon) => icon.remove());
+      }
+    };
+
     if (iframe.contentDocument?.readyState === 'complete') {
-      handleLoad();
+      if (!loadedRef.current) {
+        handleLoad();
+      } else {
+        // If already loaded, just handle edit mode changes
+        handleEditModeChange();
+      }
     } else {
       iframe.addEventListener('load', handleLoad);
       return () => iframe.removeEventListener('load', handleLoad);
@@ -649,6 +839,103 @@ export default function HtmlEditor({
     setTimeout(tryAddIcons, 500);
     setTimeout(tryAddIcons, 1000);
   }, [html, editable, addEditIcons, isEditMode]);
+
+  // Dedicated useEffect to remove icons when exiting edit mode
+  useEffect(() => {
+    if (!iframeRef.current || isEditMode) return;
+
+    const iframe = iframeRef.current;
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
+
+    // Remove all edit icons when not in edit mode
+    const removeIcons = () => {
+      const existingIcons = doc.querySelectorAll('.edit-icon');
+      existingIcons.forEach((icon) => icon.remove());
+
+      // Also remove contenteditable attributes
+      const editableElements = doc.querySelectorAll('.editable');
+      editableElements.forEach((element) => {
+        (element as HTMLElement).removeAttribute('contenteditable');
+      });
+    };
+
+    // Remove icons immediately
+    removeIcons();
+
+    // Also remove after a short delay to catch any icons added asynchronously
+    setTimeout(removeIcons, 50);
+    setTimeout(removeIcons, 200);
+    setTimeout(removeIcons, 500);
+  }, [isEditMode]);
+
+  // Hide/show edit icons when modal opens/closes
+  useEffect(() => {
+    if (!iframeRef.current || !isEditMode) return;
+
+    const iframe = iframeRef.current;
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
+
+    // Add or update style tag in iframe document
+    let styleTag = doc.getElementById(
+      'hide-edit-icons-style',
+    ) as HTMLStyleElement;
+    if (!styleTag) {
+      styleTag = doc.createElement('style');
+      styleTag.id = 'hide-edit-icons-style';
+      doc.head.appendChild(styleTag);
+    }
+
+    if (isStyleModalOpen) {
+      // Add CSS rule to hide all edit icons
+      styleTag.textContent = `
+        .edit-icon {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          z-index: -1 !important;
+        }
+      `;
+    } else {
+      // Remove the style to show icons again
+      styleTag.textContent = '';
+    }
+
+    // Also directly hide/show icons as backup
+    const hideShowIcons = () => {
+      const editIcons = doc.querySelectorAll('.edit-icon');
+      editIcons.forEach((icon) => {
+        const htmlIcon = icon as HTMLElement;
+        if (isStyleModalOpen) {
+          // Completely hide icons when modal is open
+          htmlIcon.style.setProperty('display', 'none', 'important');
+          htmlIcon.style.setProperty('visibility', 'hidden', 'important');
+          htmlIcon.style.setProperty('opacity', '0', 'important');
+          htmlIcon.style.setProperty('pointer-events', 'none', 'important');
+          htmlIcon.style.setProperty('z-index', '-1', 'important');
+        } else {
+          // Show icons when modal is closed
+          htmlIcon.style.removeProperty('display');
+          htmlIcon.style.removeProperty('visibility');
+          htmlIcon.style.removeProperty('opacity');
+          htmlIcon.style.removeProperty('pointer-events');
+          htmlIcon.style.removeProperty('z-index');
+        }
+      });
+    };
+
+    // Apply immediately
+    hideShowIcons();
+
+    // Also apply after a short delay to catch any icons added asynchronously
+    if (isStyleModalOpen) {
+      setTimeout(hideShowIcons, 50);
+      setTimeout(hideShowIcons, 200);
+      setTimeout(hideShowIcons, 500);
+    }
+  }, [isStyleModalOpen, isEditMode]);
 
   // Function to apply styles to selected element
   const applyStyles = (styles: ElementStyles) => {
@@ -844,9 +1131,10 @@ export default function HtmlEditor({
                 onClick={() => {
                   toggleEditMode(false);
                 }}
-                ClassName={`${isEditMode ? 'bg-purple-500 text-white hover:bg-purple-600' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                ClassName={`${isEditMode ? 'bg-gray-200 !text-Primary-DeepTeal hover:bg-gray-300' : 'bg-[#2563EB] text-white hover:bg-[#3B82F6]'}`}
               >
-                {isEditMode ? '✏️ Exit Editing' : '✏️ Edit'}
+                <Edit size={16} />
+                {isEditMode ? ' Exit Editing' : ' Edit'}
               </ButtonSecondary>
               {showReset && isEditMode && (
                 <ButtonSecondary
@@ -889,6 +1177,7 @@ export default function HtmlEditor({
 
       <StyleModal
         isOpen={isStyleModalOpen}
+        lastHtml={html}
         onClose={() => setIsStyleModalOpen(false)}
         onApplyStyle={applyStyles}
         currentStyles={currentStyles || undefined}

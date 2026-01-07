@@ -168,12 +168,16 @@ const NewGenerateHolisticPlan = () => {
   );
   const [resultTabData, setResultTabData] = useState<any>(null);
   useEffect(() => {
-    Application.getResultTab({ member_id: id }).then((res) => {
-      setResultTabData(res.data.result_tab);
-      if (res.data.result_tab && res.data.result_tab.length > 0) {
-        setActiveEl(res.data.result_tab[0]);
-      }
-    });
+    Application.getResultTab({ member_id: id })
+      .then((res) => {
+        setResultTabData(res.data.result_tab);
+        if (res.data.result_tab && res.data.result_tab.length > 0) {
+          setActiveEl(res.data.result_tab[0]);
+        }
+      })
+      .catch((err) => {
+        console.error('Error getting result tab:', err);
+      });
   }, [id]);
 
   // const resoveSubctegoriesSubs = () => {
@@ -220,6 +224,9 @@ const NewGenerateHolisticPlan = () => {
           setClientGools({ ...res.data.client_goals });
           setActiveEl(res.data.result_tab[0]);
         })
+        .catch((err) => {
+          console.error('Error showing holistic plan:', err);
+        })
         .finally(() => {
           setisFirstLoading(false);
         });
@@ -248,7 +255,9 @@ const NewGenerateHolisticPlan = () => {
             console.log('Missing essential data');
           }
         })
-        .catch(() => {})
+        .catch((err) => {
+          console.error('Error generating treatment plan:', err);
+        })
         .finally(() => {
           setisFirstLoading(false);
         });
@@ -589,7 +598,9 @@ const NewGenerateHolisticPlan = () => {
                         treatment_id == 'a' && (
                           <ButtonSecondary
                             onClick={() => {
-                              navigate(`/report/Generate-Recommendation/${id}`);
+                              navigate(
+                                `/report/Generate-Recommendation/${id}/A`,
+                              );
                             }}
                             ClassName="w-full md:w-fit rounded-full"
                           >
@@ -1162,10 +1173,16 @@ const NewGenerateHolisticPlan = () => {
                   Application.medicalAnalyse({
                     member_id: id,
                     mode: 'quick',
-                  }).then((res) => {
-                    setAnalysingQuik(false);
-                    updateClientConditionInsights(res.data);
-                  });
+                  })
+                    .then((res) => {
+                      updateClientConditionInsights(res.data);
+                    })
+                    .catch((err) => {
+                      console.error('Error analyzing quick:', err);
+                    })
+                    .finally(() => {
+                      setAnalysingQuik(false);
+                    });
                 }}
                 className="bg-Primary-EmeraldGreen cursor-pointer flex justify-center gap-2 items-center text-white w-[140px] text-[11px] px-3 py-1 rounded-[36px] border border-Gray-50"
               >
@@ -1187,10 +1204,16 @@ const NewGenerateHolisticPlan = () => {
                   Application.medicalAnalyse({
                     member_id: id,
                     mode: 'comprehensive',
-                  }).then((res) => {
-                    setAnalysingCompar(false);
-                    updateClientConditionInsights(res.data);
-                  });
+                  })
+                    .then((res) => {
+                      updateClientConditionInsights(res.data);
+                    })
+                    .catch((err) => {
+                      console.error('Error analyzing comprehensive:', err);
+                    })
+                    .finally(() => {
+                      setAnalysingCompar(false);
+                    });
                 }}
                 className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[11px] px-3 py-1 rounded-[36px] border border-Gray-50"
               >

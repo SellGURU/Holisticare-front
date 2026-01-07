@@ -26,15 +26,20 @@ const ActionSection: FC<ActionSectionProps> = ({
       })
         .then((res) => {
           try {
-            const blobUrl = res.data;
+            // const blobUrl = res.data;
+            window.open(res.data.data, '_blank');
+            // const blob = new Blob([res.data]);
+            // const blobUrl = URL.createObjectURL(blob);
 
+            // window.open(blobUrl, '_blank');
             // Create a direct download link for the blob URL
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = file.file_name;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // const link = document.createElement('a');
+            // link.href = blobUrl;
+            // link.download = file.file_name;
+            // // link.target = '_blank';
+            // document.body.appendChild(link);
+            // link.click();
+            // document.body.removeChild(link);
           } catch (error: any) {
             console.error('Error downloading file:', error);
             console.error('Error details:', {

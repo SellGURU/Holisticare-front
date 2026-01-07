@@ -103,39 +103,43 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     if (!isShare) {
       Application.showHistory({
         member_id: id,
-      }).then((res) => {
-        if (res.data.length == 0) {
-          setIsHolisticPlanEmpty(true);
-        } else {
-          if (
-            res.data[res.data.length - 1].state == 'Draft' &&
-            res.data.length == 1
-          ) {
+      })
+        .then((res) => {
+          if (res.data.length == 0) {
             setIsHolisticPlanEmpty(true);
+          } else {
+            if (
+              res.data[res.data.length - 1].state == 'Draft' &&
+              res.data.length == 1
+            ) {
+              setIsHolisticPlanEmpty(true);
+            }
+            setIsHolisticPlanEmpty(false);
           }
-          setIsHolisticPlanEmpty(false);
-        }
-        setCardData(res.data);
-        setPrintActionPlan(res.data);
-        if (res.data.length > 0) {
-          setActiveTreatmnet(res.data[res.data.length - 1].t_plan_id);
-          publish('holisticPlanactiveChange', {
-            data: res.data[res.data.length - 1],
-          });
-          setIsShareModalSuccess(
-            res.data[res.data.length - 1].shared_report_with_client,
-          );
-          setDateShare(
-            res.data[res.data.length - 1].shared_report_with_client_date,
-          );
-        }
-        setTimeout(() => {
-          const container: any = document.getElementById('scrollContainer');
-          if (container) {
-            container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+          setCardData(res.data);
+          setPrintActionPlan(res.data);
+          if (res.data.length > 0) {
+            setActiveTreatmnet(res.data[res.data.length - 1].t_plan_id);
+            publish('holisticPlanactiveChange', {
+              data: res.data[res.data.length - 1],
+            });
+            setIsShareModalSuccess(
+              res.data[res.data.length - 1].shared_report_with_client,
+            );
+            setDateShare(
+              res.data[res.data.length - 1].shared_report_with_client_date,
+            );
           }
-        }, 500);
-      });
+          setTimeout(() => {
+            const container: any = document.getElementById('scrollContainer');
+            if (container) {
+              container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+            }
+          }, 500);
+        })
+        .catch((err) => {
+          console.error('Error getting treatment plan list:', err);
+        });
     }
   }, []);
   useEffect(() => {
@@ -168,14 +172,18 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       Application.getTreatmentPlanDetail({
         treatment_id: activeTreatment,
         member_id: id,
-      }).then((res) => {
-        setTreatmentPlanData(res.data.details);
-        if (res.data.client_goals != null) {
-          setClientGools(res.data.client_goals);
-        }
-        setNeedFocusData(res.data.need_focus_benchmarks);
-        setclientSummary(res.data.medical_summary);
-      });
+      })
+        .then((res) => {
+          setTreatmentPlanData(res.data.details);
+          if (res.data.client_goals != null) {
+            setClientGools(res.data.client_goals);
+          }
+          setNeedFocusData(res.data.need_focus_benchmarks);
+          setclientSummary(res.data.medical_summary);
+        })
+        .catch((err) => {
+          console.error('Error getting treatment plan detail:', err);
+        });
     }
   }, [activeTreatment]);
   const resolveCardBorderColor = (state: string) => {
@@ -392,14 +400,18 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   disabled={!resolveCanGenerateNew()}
                   onClick={() => {
                     if (resolveCanGenerateNew() && id) {
-                      Application.checkClientRefresh(id).then((res) => {
-                        if (res.data.need_of_refresh == true) {
-                          publish('openRefreshModal', {});
-                        } else {
-                          setTreatmentId('');
-                          navigate(`/report/Generate-Holistic-Plan/${id}/a`);
-                        }
-                      });
+                      Application.checkClientRefresh(id)
+                        .then((res) => {
+                          if (res.data.need_of_refresh == true) {
+                            publish('openRefreshModal', {});
+                          } else {
+                            setTreatmentId('');
+                            navigate(`/report/Generate-Holistic-Plan/${id}/a`);
+                          }
+                        })
+                        .catch((err) => {
+                          console.error('Error checking client refresh:', err);
+                        });
                     }
 
                     // navigate(`/report/Generate-Recommendation/${id}`);
@@ -562,14 +574,18 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <div
                   onClick={() => {
                     if (resolveCanGenerateNew() && id) {
-                      Application.checkClientRefresh(id).then((res) => {
-                        if (res.data.need_of_refresh == true) {
-                          publish('openRefreshModal', {});
-                        } else {
-                          setTreatmentId('');
-                          navigate(`/report/Generate-Holistic-Plan/${id}/a`);
-                        }
-                      });
+                      Application.checkClientRefresh(id)
+                        .then((res) => {
+                          if (res.data.need_of_refresh == true) {
+                            publish('openRefreshModal', {});
+                          } else {
+                            setTreatmentId('');
+                            navigate(`/report/Generate-Holistic-Plan/${id}/a`);
+                          }
+                        })
+                        .catch((err) => {
+                          console.error('Error checking client refresh:', err);
+                        });
 
                       // navigate(`/report/Generate-Recommendation/${id}`);
                       // navigate(`/report/Generate-Holistic-Plan/${id}/a`);

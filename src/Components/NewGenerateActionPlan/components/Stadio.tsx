@@ -133,10 +133,20 @@ const Stadio: FC<StadioProps> = ({
         category: prevActions.category,
       }));
 
-      setData((prevCategories: any) => ({
-        ...prevCategories,
-        checkIn: [item, ...prevCategories.checkIn],
-      }));
+      setData((prevCategories: any) => {
+        const itemExists = prevCategories.checkIn.some(
+          (el: any) => el.Check_in_id === item.Check_in_id,
+        );
+
+        if (itemExists) {
+          return prevCategories;
+        }
+
+        return {
+          ...prevCategories,
+          checkIn: [item, ...prevCategories.checkIn],
+        };
+      });
     } else {
       setActions((prevActions: any) => ({
         checkIn: prevActions.checkIn,
@@ -145,10 +155,20 @@ const Stadio: FC<StadioProps> = ({
         ),
       }));
 
-      setData((prevCategories: any) => ({
-        ...prevCategories,
-        category: [item, ...prevCategories.category],
-      }));
+      setData((prevCategories: any) => {
+        const itemExists = prevCategories.category.some(
+          (el: any) => JSON.stringify(el) === JSON.stringify(item),
+        );
+
+        if (itemExists) {
+          return prevCategories;
+        }
+
+        return {
+          ...prevCategories,
+          category: [item, ...prevCategories.category],
+        };
+      });
     }
   };
   const { id } = useParams<{ id: string }>();
@@ -162,6 +182,12 @@ const Stadio: FC<StadioProps> = ({
           ...prevCategories,
           category: res.data,
         }));
+      })
+      .catch((err) => {
+        console.error(
+          'Error getting action plan generate action plan task:',
+          err,
+        );
       })
       .finally(() => {
         setIsAutoGenerate(false);
@@ -188,14 +214,18 @@ const Stadio: FC<StadioProps> = ({
         member_id: id,
         tasks: flattenedActions,
         percents: plans,
-      }).then((res) => {
-        if (res.data.conflicts.length > 0) {
-          setHaveConflic(true);
-          setHaveConflicText(res.data.conflicts);
-        } else {
-          setHaveConflic(false);
-        }
-      });
+      })
+        .then((res) => {
+          if (res.data.conflicts.length > 0) {
+            setHaveConflic(true);
+            setHaveConflicText(res.data.conflicts);
+          } else {
+            setHaveConflic(false);
+          }
+        })
+        .catch((err) => {
+          console.error('Error checking conflic action plan:', err);
+        });
     }
   };
   useEffect(() => {
@@ -344,6 +374,9 @@ const Stadio: FC<StadioProps> = ({
       })
         .then((res) => {
           setHolisticPlan(res.data.details);
+        })
+        .catch((err) => {
+          console.error('Error getting holistic plan review:', err);
         })
         .finally(() => {
           setIsLoading(false);

@@ -41,10 +41,14 @@ export const PopUpChat = ({
     Application.getListChats({
       member_id: memberId,
       chatting_with: 'ai',
-    }).then((res) => {
-      setMessageData(res.data.messages);
-      setConversationIdData(res.data.conversation_id);
-    });
+    })
+      .then((res) => {
+        setMessageData(res.data.messages);
+        setConversationIdData(res.data.conversation_id);
+      })
+      .catch((err) => {
+        console.error('Error getting list chats:', err);
+      });
   }, []);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
