@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 
 import { EditorContent, useEditor } from '@tiptap/react';
@@ -183,6 +183,35 @@ handleKeyDown: (view, event) => {
   const btnActive = 'bg-[#005f73] text-white border-[#005f73]';
   const btnInactive =
     'bg-backgroundColor-Card text-Text-Primary border-Gray-50';
+const [toolbar, setToolbar] = useState({
+  bold: false,
+  bulletList: false,
+});
+const syncToolbar = () => {
+  if (!editor) return;
+
+  const stored = editor.state.storedMarks ?? [];
+  const storedBold = stored.some((m) => m.type.name === 'bold');
+
+  setToolbar({
+    bold: editor.isActive('bold') || storedBold,
+    bulletList: editor.isActive('bulletList'),
+  });
+};
+useEffect(() => {
+  if (!editor) return;
+
+  // initial
+  syncToolbar();
+
+  editor.on('selectionUpdate', syncToolbar);
+  editor.on('transaction', syncToolbar); // catches storedMarks toggles, etc.
+
+  return () => {
+    editor.off('selectionUpdate', syncToolbar);
+    editor.off('transaction', syncToolbar);
+  };
+}, [editor]);
 
   return (
     <div className={`flex flex-col w-full gap-2 ${margin ? margin : 'mt-4'}`}>
@@ -241,27 +270,22 @@ handleKeyDown: (view, event) => {
         >
           {/* Toolbar */}
           <div className="flex items-center gap-2 px-3 pt-2 pb-2 border-b border-Gray-50">
-            <button
-              type="button"
-              onClick={() => editor?.chain().focus().toggleBold().run()}
-              className={[
-                btnBase,
-                editor?.isActive('bold') ? btnActive : btnInactive,
-              ].join(' ')}
-            >
-              Bold
-            </button>
+          <button
+  type="button"
+  onClick={() => editor?.chain().focus().toggleBold().run()}
+  className={[btnBase, toolbar.bold ? btnActive : btnInactive].join(' ')}
+>
+  Bold
+</button>
 
-            <button
-              type="button"
-              onClick={() => editor?.chain().focus().toggleBulletList().run()}
-              className={[
-                btnBase,
-                editor?.isActive('bulletList') ? btnActive : btnInactive,
-              ].join(' ')}
-            >
-              • Bullet
-            </button>
+<button
+  type="button"
+  onClick={() => editor?.chain().focus().toggleBulletList().run()}
+  className={[btnBase, toolbar.bulletList ? btnActive : btnInactive].join(' ')}
+>
+  • Bullet
+</button>
+
           </div>
 
           <EditorContent editor={editor} />
