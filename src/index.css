@@ -868,3 +868,11 @@ input:-webkit-autofill:active {
   box-shadow: none !important;
   padding: 0 !important;
 }
+
+.Toastify__toast-container--top-right {
+  top: 3rem !important;
+  right: 2rem !important;
+}
+.Toastify__toast {
+  width: auto;
+}
