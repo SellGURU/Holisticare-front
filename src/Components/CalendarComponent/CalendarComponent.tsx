@@ -339,10 +339,10 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
   };
   const isDateInPlanRange = (date: Date) => {
     if (!start_date || !end_date) return false;
-    
+
     const firstDate = new Date(start_date);
     firstDate.setHours(0, 0, 0, 0);
-    
+
     const lastDate = new Date(end_date);
     lastDate.setHours(0, 0, 0, 0);
 
@@ -473,9 +473,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                       new Set(activitiesForTheDay.map((a: any) => a.category)),
                     );
 
-                    const isOutOfRange = !isDateInPlanRange(
-                      day.dateObject,
-                    );
+                    const isOutOfRange = !isDateInPlanRange(day.dateObject);
 
                     return (
                       <div
