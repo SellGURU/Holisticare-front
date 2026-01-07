@@ -388,7 +388,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
               </div>
             </div>
           )} */}
-          {isActionPlan && 
+          {isActionPlan && (
             <div className="flex w-full justify-end items-center gap-2">
               Time frame:
               <Select
@@ -397,7 +397,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                 options={monthOptions}
               />
             </div>
-          }
+          )}
           {(() => {
             const monthDays = getCurrentMonthWithBuffer(currentDate);
             const firstDayOfMonth = monthDays[0]?.dateObject.getDay() || 0;
