@@ -1374,7 +1374,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   placeholder="Write personalized notes for your client"
                   value={newNote}
                   onMarkdownChange={setNewNote}
-                 
                   isValid={
                     showValidation
                       ? ValidationForms.IsvalidField('Note', newNote)
