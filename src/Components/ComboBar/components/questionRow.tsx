@@ -4,7 +4,6 @@ import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import { useNavigate } from 'react-router-dom';
 import { publish, subscribe } from '../../../utils/event';
-import { toast } from 'react-toastify';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import { BeatLoader } from 'react-spinners';
 // import questionsDataMoch from './questions/data.json';
@@ -179,9 +178,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                       q_unique_id: el.unique_id,
                       f_unique_id: el.forms_unique_id,
                     })
-                      .then((res) => {
-                        console.log(res);
-
+                      .then(() => {
                         // setViewQuestienry(res.data);
                         // setIsView(true);
                         setshowModal(false);
@@ -193,8 +190,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         // navigate(`/surveys/${id}/${el.unique_id}`)
                       })
                       .catch((err) => {
-                        console.log(err);
-                        toast.error(err.detail);
+                        console.error(err);
                       });
                     // Application.Questionary_tracking_action({
                     //   form_name: el.title,
