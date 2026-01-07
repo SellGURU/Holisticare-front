@@ -388,14 +388,16 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
               </div>
             </div>
           )} */}
-          <div className="flex w-full justify-end items-center gap-2">
-            Time frame:
-            <Select
-              value={selectedMonth}
-              onChange={(value) => setSelectedMonth(value)}
-              options={monthOptions}
-            />
-          </div>
+          {isActionPlan && (
+            <div className="flex w-full justify-end items-center gap-2">
+              Time frame:
+              <Select
+                value={selectedMonth}
+                onChange={(value) => setSelectedMonth(value)}
+                options={monthOptions}
+              />
+            </div>
+          )}
           {(() => {
             const monthDays = getCurrentMonthWithBuffer(currentDate);
             const firstDayOfMonth = monthDays[0]?.dateObject.getDay() || 0;
