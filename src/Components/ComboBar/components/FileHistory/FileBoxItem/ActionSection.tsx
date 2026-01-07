@@ -27,7 +27,7 @@ const ActionSection: FC<ActionSectionProps> = ({
         .then((res) => {
           try {
             // const blobUrl = res.data;
-            window.open(res.data.data, '_blank');
+            window.open(res.data, '_blank');
             // const blob = new Blob([res.data]);
             // const blobUrl = URL.createObjectURL(blob);
 
