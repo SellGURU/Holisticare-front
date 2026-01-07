@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import HtmlPreviewer from '../../Components/HtmlPreviewer';
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
-import { toast } from 'react-toastify';
+import { showSuccess } from '../../Components/GlobalToast';
+import HtmlPreviewer from '../../Components/HtmlPreviewer';
 // import htmlMoch from './moch';
 // import htmlMoch from './moch';
 
@@ -41,7 +41,7 @@ const HtmlViewer = () => {
     try {
       await Application.updateHtmlReport({ member_id: id, html_report: html });
       setHtml(html);
-      toast.success('Your changes have been saved successfully.');
+      showSuccess('Your changes have been saved successfully.');
       setTimeout(() => {
         navigate(-1);
       }, 4000);

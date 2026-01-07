@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useRef, useState } from 'react';
 import { MainModal } from '../../Components';
-import Application from '../../api/app';
-import { toast } from 'react-toastify';
 import SpinnerLoader from '../../Components/SpinnerLoader';
-import { uploadToAzure } from '../../help';
 import TextField from '../../Components/TextField';
+import Application from '../../api/app';
+import { uploadToAzure } from '../../help';
 
 interface AddNewDocumentProps {
   AddFileModal: boolean;
@@ -187,7 +186,7 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
         })
         .catch((err) => {
           setLoadingButton(false);
-          toast.error(err.detail);
+          console.error('Upload failed:', err);
         });
     } catch (error) {
       console.error('Upload failed:', error);
