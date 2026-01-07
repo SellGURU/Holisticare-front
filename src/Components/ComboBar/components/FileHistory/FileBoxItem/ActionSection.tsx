@@ -9,12 +9,14 @@ interface ActionSectionProps {
   isDeleted: boolean;
   memberId: string;
   onDelete: () => void;
+  date?: string;
 }
 const ActionSection: FC<ActionSectionProps> = ({
   file,
   isDeleted,
   memberId,
   onDelete,
+  date
 }) => {
   const [isSureRemove, setIsSureRemove] = useState(false);
   const [loadingDelete] = useState<boolean>(false);
@@ -33,10 +35,11 @@ const ActionSection: FC<ActionSectionProps> = ({
 
             // ✅ Manual entry → build PDF from payload
             if (payload?.type === 'manual' && Array.isArray(payload?.data)) {
-              downloadManualEntryPdfFromApi(
-                payload,
-                `${file.file_name || 'manual-entry'}.pdf`,
-              );
+           downloadManualEntryPdfFromApi(
+  payload,
+  `${file.file_name || 'manual-entry'}.pdf`,
+  date,
+);
               return;
             }
 
