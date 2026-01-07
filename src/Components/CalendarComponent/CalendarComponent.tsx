@@ -473,7 +473,8 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                       new Set(activitiesForTheDay.map((a: any) => a.category)),
                     );
 
-                    const isOutOfRange = !isDateInPlanRange(day.dateObject) && !isActionPlan;
+                    const isOutOfRange =
+                      !isDateInPlanRange(day.dateObject) && !isActionPlan;
 
                     return (
                       <div
