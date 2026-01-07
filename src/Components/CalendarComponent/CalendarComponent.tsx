@@ -212,43 +212,46 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
 
     // Get the day of the week for the first day (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
     const firstDayWeekday = firstDayOfMonth.getDay();
-    
+
     // Convert to Monday-based week (Monday = 0, Tuesday = 1, ..., Sunday = 6)
     const mondayBasedWeekday = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
-    
+
     // Calculate how many days to add from previous month to start from Monday
     const daysToAddFromPrevMonth = mondayBasedWeekday;
-    
+
     // Start from the Monday of the week containing the first day of the month
     const startDate = new Date(firstDayOfMonth);
     startDate.setDate(firstDayOfMonth.getDate() - daysToAddFromPrevMonth);
-    
+
     // Get the day of the week for the last day (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
     const lastDayWeekday = lastDayOfMonth.getDay();
-    
+
     // Convert to Monday-based week (Monday = 0, Tuesday = 1, ..., Sunday = 6)
     const lastDayMondayBased = lastDayWeekday === 0 ? 6 : lastDayWeekday - 1;
-    
+
     // Calculate how many days to add after last day to reach Sunday (end of week)
     const daysToAddAfterLastDay = 6 - lastDayMondayBased;
-    
+
     // End date is the Sunday of the week containing the last day of the month
     const endDate = new Date(lastDayOfMonth);
     endDate.setDate(lastDayOfMonth.getDate() + daysToAddAfterLastDay);
-    
+
     // Calculate total days to show
-    const totalDaysToShow = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-    
+    const totalDaysToShow =
+      Math.ceil(
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+      ) + 1;
+
     const days = [];
     const currentMonthName = today.toLocaleString('en-US', { month: 'long' });
-    
+
     for (let i = 0; i < totalDaysToShow; i++) {
       const d = new Date(startDate);
       d.setDate(startDate.getDate() + i);
-      
+
       const dayMonthName = d.toLocaleString('en-US', { month: 'long' });
       const isCurrentMonth = dayMonthName === currentMonthName;
-      
+
       days.push({
         dayNumber: d.getDate(),
         dayName: d.toLocaleString('en-US', { weekday: 'long' }),
@@ -520,7 +523,8 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                             {day.dayNumber}
                           </div>
                         )}
-                        {!day.isCurrentMonth ? null : categories.length === 0 ? (
+                        {!day.isCurrentMonth ? null : categories.length ===
+                          0 ? (
                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center h-full min-h-[30px] gap-1.5">
                             {isOutOfRange ? (
                               <div className="flex items-start gap-1">
