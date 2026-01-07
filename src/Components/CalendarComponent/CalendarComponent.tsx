@@ -210,18 +210,54 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
       0,
     );
 
-    // Only return days of the current month
+    // Get the day of the week for the first day (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+    const firstDayWeekday = firstDayOfMonth.getDay();
+
+    // Convert to Monday-based week (Monday = 0, Tuesday = 1, ..., Sunday = 6)
+    const mondayBasedWeekday = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+
+    // Calculate how many days to add from previous month to start from Monday
+    const daysToAddFromPrevMonth = mondayBasedWeekday;
+
+    // Start from the Monday of the week containing the first day of the month
+    const startDate = new Date(firstDayOfMonth);
+    startDate.setDate(firstDayOfMonth.getDate() - daysToAddFromPrevMonth);
+
+    // Get the day of the week for the last day (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+    const lastDayWeekday = lastDayOfMonth.getDay();
+
+    // Convert to Monday-based week (Monday = 0, Tuesday = 1, ..., Sunday = 6)
+    const lastDayMondayBased = lastDayWeekday === 0 ? 6 : lastDayWeekday - 1;
+
+    // Calculate how many days to add after last day to reach Sunday (end of week)
+    const daysToAddAfterLastDay = 6 - lastDayMondayBased;
+
+    // End date is the Sunday of the week containing the last day of the month
+    const endDate = new Date(lastDayOfMonth);
+    endDate.setDate(lastDayOfMonth.getDate() + daysToAddAfterLastDay);
+
+    // Calculate total days to show
+    const totalDaysToShow =
+      Math.ceil(
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+      ) + 1;
+
     const days = [];
-    for (
-      let d = new Date(firstDayOfMonth);
-      d <= lastDayOfMonth;
-      d.setDate(d.getDate() + 1)
-    ) {
+    const currentMonthName = today.toLocaleString('en-US', { month: 'long' });
+
+    for (let i = 0; i < totalDaysToShow; i++) {
+      const d = new Date(startDate);
+      d.setDate(startDate.getDate() + i);
+
+      const dayMonthName = d.toLocaleString('en-US', { month: 'long' });
+      const isCurrentMonth = dayMonthName === currentMonthName;
+
       days.push({
         dayNumber: d.getDate(),
         dayName: d.toLocaleString('en-US', { weekday: 'long' }),
-        monthName: d.toLocaleString('en-US', { month: 'long' }),
+        monthName: dayMonthName,
         dateObject: new Date(d),
+        isCurrentMonth: isCurrentMonth,
       });
     }
     return days;
@@ -400,26 +436,21 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
           )}
           {(() => {
             const monthDays = getCurrentMonthWithBuffer(currentDate);
-            const firstDayOfMonth = monthDays[0]?.dateObject.getDay() || 0;
-            // Get day names starting from the first day of the month
+            // Always show week days starting from Monday
             const dayNames = [
-              'Sunday',
               'Monday',
               'Tuesday',
               'Wednesday',
               'Thursday',
               'Friday',
               'Saturday',
+              'Sunday',
             ];
-            const weekDays = [];
-            for (let i = 0; i < 7; i++) {
-              weekDays.push(dayNames[(firstDayOfMonth + i) % 7]);
-            }
 
             return (
               <>
                 <div className="grid grid-cols-7 w-full lg:gap-2 min-w-[980px] lg:min-w-full mt-1 py-3">
-                  {weekDays.map((dayName, index) => (
+                  {dayNames.map((dayName, index) => (
                     <div
                       key={index}
                       className="text-xs font-medium text-center text-Text-Primary"
@@ -430,13 +461,14 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                 </div>
                 <div className="grid grid-cols-7 gap-[1px] w-full min-w-[980px] lg:min-w-full">
                   {monthDays.map((day, index) => {
-                    // Since header starts from first day of month, first cell should start at column 1
-                    const gridColumnStart = index === 0 ? 1 : undefined;
-                    const activitiesForTheDay = data.filter(
-                      (el: any) =>
-                        new Date(el.date).toDateString() ===
-                        day.dateObject.toDateString(),
-                    );
+                    // Only show activities for days in the current month
+                    const activitiesForTheDay = day.isCurrentMonth
+                      ? data.filter(
+                          (el: any) =>
+                            new Date(el.date).toDateString() ===
+                            day.dateObject.toDateString(),
+                        )
+                      : [];
 
                     const categories = Array.from(
                       new Set(activitiesForTheDay.map((a: any) => a.category)),
@@ -448,89 +480,19 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                     );
 
                     return (
-                      // <CalendarCell
-                      //   key={index}
-                      //   isCurrentDay={
-                      //     day.dayNumber === currenDay && day.monthName === currenMonth
-                      //   }
-                      //   isCurrentMonth={currenMonth === day.monthName}
-                      //   className="px-1 lg:px-4 py-1"
-                      // >
-                      //   <div
-                      //     className={`${
-                      //       day.dayNumber === currenDay &&
-                      //       day.monthName === currenMonth
-                      //         ? 'text-Text-Primary'
-                      //         : currenMonth !== day.monthName
-                      //           ? 'text-Text-Secondary'
-                      //           : 'text-Text-Primary'
-                      //     } text-xs`}
-                      //   >
-                      //     {day.dayNumber}
-                      //   </div>
-                      //   <ul>
-                      //     {categories.map((category: any) => (
-                      //       <li className="mt-2" key={category}>
-                      //         <div className="font-semibold text-[10px] text-[#383838] flex items-center gap-1">
-                      //           <img
-                      //             className="w-3"
-                      //             src={resolveIcon(category)}
-                      //             alt=""
-                      //           />
-                      //           {category || 'Check-In'}
-                      //         </div>
-                      //         {activitiesForTheDay
-                      //           .filter(
-                      //             (activity: any) => activity.category === category,
-                      //           )
-                      //           .map((activity: any, i: number) => {
-                      //             const activityDate = new Date(activity.date);
-                      //             const isPastDate = activityDate < today;
-                      //             const opacityClass =
-                      //               !activity.status && isPastDate
-                      //                 ? 'opacity-70'
-                      //                 : 'opacity-100';
-
-                      //             return (
-                      //               <div
-                      //                 key={i}
-                      //                 className={`flex gap-1 mt-1 ${opacityClass}`}
-                      //               >
-                      //                 {activity.status ? (
-                      //                   <img
-                      //                     className="w-3 h-3"
-                      //                     src="/icons/activity-circle-done.svg"
-                      //                     alt=""
-                      //                   />
-                      //                 ) : (
-                      //                   <img
-                      //                     className="w-3 h-3"
-                      //                     src="/icons/acitivty-circle.svg"
-                      //                     alt=""
-                      //                   />
-                      //                 )}
-                      //                 <span className="text-[6px] lg:text-[10px] text-Text-Primary flex-grow">
-                      //                   {activity.name}
-                      //                 </span>
-                      //               </div>
-                      //             );
-                      //           })}
-                      //       </li>
-                      //     ))}
-                      //   </ul>
-                      // </CalendarCell>
                       <div
                         key={index}
                         className={`px-1 relative lg:px-4 py-1 min-h-[59px] min-w-[141px] border rounded-lg ${
                           day.dayNumber === currenDay &&
                           day.monthName === currenMonth
                             ? 'gradient-border text-black-primary'
-                            : isOutOfRange
-                              ? 'bg-gray-50 border-gray-200 border-dashed opacity-75'
-                              : 'bg-backgroundColor-Card'
+                            : !day.isCurrentMonth
+                              ? 'bg-gray-50/30 border-gray-100 pointer-events-none'
+                              : isOutOfRange
+                                ? 'bg-gray-50 border-gray-200 border-dashed opacity-75'
+                                : 'bg-backgroundColor-Card'
                         }`}
                         style={{
-                          gridColumnStart: gridColumnStart,
                           background:
                             day.dayNumber === currenDay &&
                             day.monthName === currenMonth
@@ -540,24 +502,29 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                             day.dayNumber === currenDay &&
                             day.monthName === currenMonth
                               ? '2px solid transparent'
-                              : isOutOfRange
-                                ? '1px dashed #CBD5E1'
-                                : '1px solid #D0DDEC',
+                              : !day.isCurrentMonth
+                                ? '1px solid #E5E7EB'
+                                : isOutOfRange
+                                  ? '1px dashed #CBD5E1'
+                                  : '1px solid #D0DDEC',
                         }}
                       >
-                        <div
-                          className={`${
-                            day.dayNumber === currenDay &&
-                            day.monthName === currenMonth
-                              ? 'text-Text-Primary'
-                              : currenMonth !== day.monthName
-                                ? 'text-Text-Secondary'
-                                : 'text-Text-Primary'
-                          } text-xs`}
-                        >
-                          {day.dayNumber}
-                        </div>
-                        {categories.length === 0 ? (
+                        {day.isCurrentMonth && (
+                          <div
+                            className={`${
+                              day.dayNumber === currenDay &&
+                              day.monthName === currenMonth
+                                ? 'text-Text-Primary'
+                                : currenMonth !== day.monthName
+                                  ? 'text-Text-Secondary'
+                                  : 'text-Text-Primary'
+                            } text-xs`}
+                          >
+                            {day.dayNumber}
+                          </div>
+                        )}
+                        {!day.isCurrentMonth ? null : categories.length ===
+                          0 ? (
                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center h-full min-h-[30px] gap-1.5">
                             {isOutOfRange ? (
                               <div className="flex items-start gap-1">

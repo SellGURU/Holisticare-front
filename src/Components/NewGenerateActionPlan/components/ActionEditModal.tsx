@@ -741,7 +741,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       isOpen={isOpen}
     >
       <div
-        className={`bg-white rounded-2xl shadow-800 relative flex flex-col ${selectedGroup == 'Activity' && step == 1 ? ' w-[90vw] lg:w-[920px]' : ' w-[90vw] lg:w-[530px]'} max-h-[90vh] text-Text-Primary`}
+        className={`bg-white rounded-2xl shadow-800 relative flex flex-col ${selectedGroup == 'Activity' && step == 1 ? ' w-[90vw] lg:w-[920px]' : ' w-[90vw] lg:w-[530px]'} max-h-[90vh] text-Text-Primary pr-1 `}
       >
         {/* Fixed Header */}
         <div className="border-b border-Gray-50 px-4 py-3 flex-shrink-0">
@@ -1237,11 +1237,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 </div> */}
                 {showAlert() ? (
                   <div className="mb-4">
-                    <div className="w-full rounded-2xl px-3 py-[7px] gap-2.5 bg-bg-color border border-Gray-50 flex items-center text-justify">
+                    <div className="w-full rounded-2xl px-3 py-[7px] gap-2.5 bg-bg-color border border-Gray-50 flex items-start text-justify">
                       <img
                         src="/icons/info-circle-blue.svg"
                         alt=""
-                        className="w-4 h-4"
+                        className="w-4 h-4 mt-[2px]"
                       />
                       <div className="text-xs text-Primary-DeepTeal flex flex-wrap leading-relaxed ">
                         <span>
@@ -1371,10 +1371,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       key={index}
                       className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
                     >
-                      <span className="break-all">{note}</span>
+                      <span className="break-all py-1">{note}</span>
+
                       <div
                         onClick={() => handleDeleteNote(index)}
-                        className="cursor-pointer"
+                        className="cursor-pointer ml-2"
                       >
                         <SvgIcon
                           src="/icons/delete.svg"
