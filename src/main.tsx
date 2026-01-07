@@ -22,12 +22,12 @@ createRoot(document.getElementById('root')!).render(
         <App />
       </GoogleOAuthProvider>
     </AppContextProvider>
-    <ToastContainer 
+    <ToastContainer
       position="top-right"
-      hideProgressBar 
-      closeOnClick 
-      draggable 
-      pauseOnHover 
+      hideProgressBar
+      closeOnClick
+      draggable
+      pauseOnHover
     />
     <UploaderTooltipContainer />
     <DeletedTooltipContainer />
