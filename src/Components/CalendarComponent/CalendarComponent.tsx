@@ -15,6 +15,8 @@ interface CalenderComponentProps {
   isTwoView?: boolean;
   isActionPlan?: boolean;
   selectedMonthProp?: string;
+  start_date?: string | Date;
+  end_date?: string | Date;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -24,6 +26,8 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
   isTwoView,
   isActionPlan,
   selectedMonthProp,
+  start_date,
+  end_date,
 }) => {
   const [selectedMonth, setSelectedMonth] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -333,19 +337,14 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
       return d > max ? d : max;
     }, new Date(data[0].date));
   };
-  const getFirstTaskDate = (data: any[]) => {
-    if (!data?.length) return null;
-    return data.reduce<Date>((min, item) => {
-      const d = new Date(item.date);
-      d.setHours(0, 0, 0, 0);
-      return d < min ? d : min;
-    }, new Date(data[0].date));
-  };
-  const isDateInPlanRange = (date: Date, data: any[]) => {
-    if (!data?.length) return false;
-    const firstDate = getFirstTaskDate(data);
-    const lastDate = getLastTaskDate(data);
-    if (!firstDate || !lastDate) return false;
+  const isDateInPlanRange = (date: Date) => {
+    if (!start_date || !end_date) return false;
+    
+    const firstDate = new Date(start_date);
+    firstDate.setHours(0, 0, 0, 0);
+    
+    const lastDate = new Date(end_date);
+    lastDate.setHours(0, 0, 0, 0);
 
     const checkDate = new Date(date);
     checkDate.setHours(0, 0, 0, 0);
@@ -374,14 +373,14 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
 
     return months;
   };
-  const lastTaskDate = getLastTaskDate(data);
+  const lastTaskDate = end_date ? new Date(end_date) : getLastTaskDate(data);
   const monthOptions = lastTaskDate ? buildMonthsRange(lastTaskDate) : [];
   useEffect(() => {
     if (!monthOptions.length) return;
     if (!monthOptions.includes(selectedMonth)) {
       setSelectedMonth(monthOptions[0]);
     }
-  }, [monthOptions]);
+  }, [monthOptions, selectedMonth]);
   return (
     <>
       {isTwoView && (
@@ -476,7 +475,6 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
 
                     const isOutOfRange = !isDateInPlanRange(
                       day.dateObject,
-                      data,
                     );
 
                     return (
