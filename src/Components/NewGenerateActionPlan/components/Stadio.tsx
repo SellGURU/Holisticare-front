@@ -113,7 +113,7 @@ const Stadio: FC<StadioProps> = ({
 
       setData((prevCategories: any) => {
         const updatedCategory = prevCategories.category.filter(
-          (el: any) => JSON.stringify(el) !== JSON.stringify(item),
+          (el: any) => el.task_directory_id !== item.task_directory_id,
         );
 
         return {
@@ -151,13 +151,13 @@ const Stadio: FC<StadioProps> = ({
       setActions((prevActions: any) => ({
         checkIn: prevActions.checkIn,
         category: prevActions.category.filter(
-          (el: any) => JSON.stringify(el) !== JSON.stringify(item),
+          (el: any) => el.task_directory_id !== item.task_directory_id,
         ),
       }));
 
       setData((prevCategories: any) => {
         const itemExists = prevCategories.category.some(
-          (el: any) => JSON.stringify(el) === JSON.stringify(item),
+          (el: any) => el.task_directory_id === item.task_directory_id,
         );
 
         if (itemExists) {
