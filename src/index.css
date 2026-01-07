@@ -876,3 +876,7 @@ input:-webkit-autofill:active {
 .Toastify__toast {
   width: auto;
 }
+
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
