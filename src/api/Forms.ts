@@ -42,7 +42,7 @@ class FormsApi extends Api {
     return this.post('/forms/questionary/show_defaults', {});
   };
 
-  static addQuestionary = (data: CheckinFormType) => {
+  static addQuestionary = (data: QuestoinaryFormType) => {
     return this.post('/forms/questionary/add_questionary_form', data);
   };
   static showQuestinary = (id: string) => {
@@ -51,7 +51,7 @@ class FormsApi extends Api {
     });
   };
 
-  static editQuestionary = (data: CheckinEditFormType) => {
+  static editQuestionary = (data: QuestoinaryEditFormType) => {
     return this.post('/forms/questionary/edit_questionary_form', data);
   };
 

@@ -136,44 +136,6 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             {' '}
             {editQUestion ? 'Update Question ' : 'Save Question'}{' '}
           </div>
-          {/* <div className="flex items-center">
-            <img
-              src="/icons/close-square.svg"
-              alt=""
-              className="w-[18px] h-[18px] cursor-pointer"
-              onClick={() => {
-                clear();
-                onCancel();
-                // if (editIndex !== null) {
-                //     handleCancelEdit();
-                // } else {
-                //     setItemSelected('');
-                //     setTitle('');
-                //     setCheckboxChecked(false);
-                //     setAddMode(false);
-                // }
-              }}
-            />
-            <img
-              src={
-                isDisabled()
-                  ? `/icons/tick-square-background.svg`
-                  : `/icons/tick-square-background-green.svg`
-              }
-              alt=""
-              className={`${isDisabled() ? 'cursor-not-allowed' : 'cursor-pointer'} w-[18px] h-[18px]  ml-2`}
-              onClick={() => {
-                if (!isDisabled()) {
-                  submit();
-                }
-                // if (editIndex !== null) {
-                //     handleSaveEdit(editIndex);
-                // } else {
-                //     addToCheckInList();
-                // }
-              }}
-            />
-          </div> */}
         </div>
         <div className="flex flex-col items-start w-full mt-4">
           <div className="text-xs font-medium text-Text-Primary mb-1">
