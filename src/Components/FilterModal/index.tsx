@@ -683,7 +683,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 date={enrollDate.to}
                 right={100}
                 setDate={handleToChange}
-                placeholder="End date"         
+                placeholder="End date"
                 ClassName="  md:!w-[173px] "
               />
             </div>
