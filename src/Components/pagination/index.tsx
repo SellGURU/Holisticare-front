@@ -32,48 +32,99 @@ const Pagination: React.FC<PaginationProps> = ({
   // If there's no data or only one page, show just the current page
   if (isEmpty || totalPages <= 1) {
     return (
-      <div className="mt-2 flex space- bg-white px-2 rounded-md">
+      <div className="mt-2 flex items-center justify-center gap-0.5 bg-white px-2 py-1 rounded-md shadow-sm border border-gray-200">
         <button
           disabled={true}
-          className="text-[#005F73] opacity-50 px-3 cursor-not-allowed"
+          className="flex items-center justify-center w-6 h-6 text-[#005F73] opacity-40 cursor-not-allowed rounded transition-all duration-200"
         >
-          &lt;
+          <svg
+            className="w-3 h-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
         </button>
-        <button className="px-3 h-[24px] w-[31px] text-Text-Primary rounded-sm  bg-backgroundColor-Main border-x border-Gray-50 flex items-center justify-center text-[12px] py-1 bg-backgroundColor-Main">
+        <button
+          disabled={true}
+          className="flex items-center justify-center min-w-[24px] h-6 px-2 text-xs font-medium text-Text-Primary rounded bg-backgroundColor-Main border border-gray-200 cursor-default"
+        >
           1
         </button>
         <button
           disabled={true}
-          className="text-[#005F73] opacity-50 px-3 cursor-not-allowed"
+          className="flex items-center justify-center w-6 h-6 text-[#005F73] opacity-40 cursor-not-allowed rounded transition-all duration-200"
         >
-          &gt;
+          <svg
+            className="w-3 h-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
         </button>
       </div>
     );
   }
 
   return (
-    <div className="mt-2 flex space- bg-white px-2 rounded-md">
+    <div className="mt-2 flex items-center justify-center gap-0.5 bg-white px-2 py-1 rounded-md shadow-sm border border-gray-200">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="text-[#005F73] disabled:opacity-50 px-3"
+        className={`flex items-center justify-center w-6 h-6 text-[#005F73] rounded transition-all duration-200 ${
+          currentPage === 1
+            ? 'opacity-40 cursor-not-allowed'
+            : 'hover:bg-gray-100 hover:text-[#005F73] active:bg-gray-200'
+        }`}
+        aria-label="صفحه قبلی"
       >
-        &lt;
+        <svg
+          className="w-3 h-3"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
       </button>
       {getPages().map((page, index) =>
         typeof page === 'number' ? (
           <button
             key={index}
             onClick={() => onPageChange(page)}
-            className={`px-3 h-[24px] w-[31px] text-Text-Primary rounded-sm border-x border-Gray-50 flex items-center justify-center text-[12px] py-1 ${
-              page === currentPage ? 'bg-backgroundColor-Main' : 'bg-white'
+            className={`flex items-center justify-center min-w-[24px] h-6 px-2 text-xs font-medium rounded transition-all duration-200 ${
+              page === currentPage
+                ? 'bg-[#005F73] text-white shadow-md scale-105 border border-[#005F73]'
+                : 'bg-white text-Text-Primary border border-gray-200 hover:bg-gray-50 hover:border-gray-300 active:bg-gray-100'
             }`}
+            aria-label={`صفحه ${page}`}
+            aria-current={page === currentPage ? 'page' : undefined}
           >
             {page}
           </button>
         ) : (
-          <span key={index} className="px-3 w-[26px] h-[26px] py-1">
+          <span
+            key={index}
+            className="flex items-center justify-center w-6 h-6 px-1 text-xs text-gray-400"
+          >
             {page}
           </span>
         ),
@@ -81,9 +132,26 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="text-[#005F73] disabled:opacity-50 px-3"
+        className={`flex items-center justify-center w-6 h-6 text-[#005F73] rounded transition-all duration-200 ${
+          currentPage === totalPages
+            ? 'opacity-40 cursor-not-allowed'
+            : 'hover:bg-gray-100 hover:text-[#005F73] active:bg-gray-200'
+        }`}
+        aria-label="صفحه بعدی"
       >
-        &gt;
+        <svg
+          className="w-3 h-3"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
       </button>
     </div>
   );

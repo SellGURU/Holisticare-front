@@ -3,22 +3,25 @@ import { FC, useState } from 'react';
 import Application from '../../../../../api/app';
 import { BeatLoader } from 'react-spinners';
 import { publish } from '../../../../../utils/event';
-
+import { downloadManualEntryPdfFromApi } from '../../../../../utils/manualEntry';
 interface ActionSectionProps {
   file: any;
   isDeleted: boolean;
   memberId: string;
   onDelete: () => void;
+  date?: string;
 }
 const ActionSection: FC<ActionSectionProps> = ({
   file,
   isDeleted,
   memberId,
   onDelete,
+  date,
 }) => {
   const [isSureRemove, setIsSureRemove] = useState(false);
   const [loadingDelete] = useState<boolean>(false);
   const downloadFile = () => {
+    // If file_id exists, we fetch from API (covers both normal + manual)
     if (file.file_id) {
       Application.downloadFille({
         file_id: file.file_id,
@@ -27,52 +30,59 @@ const ActionSection: FC<ActionSectionProps> = ({
         .then((res) => {
           try {
             // const blobUrl = res.data;
-            window.open(res.data, '_blank');
+
             // const blob = new Blob([res.data]);
             // const blobUrl = URL.createObjectURL(blob);
+            // Your API response wrapper seems to be: res.data.data
+            const payload = res?.data;
+            console.log(payload);
 
-            // window.open(blobUrl, '_blank');
-            // Create a direct download link for the blob URL
-            // const link = document.createElement('a');
-            // link.href = blobUrl;
-            // link.download = file.file_name;
-            // // link.target = '_blank';
-            // document.body.appendChild(link);
-            // link.click();
-            // document.body.removeChild(link);
+            // ✅ Manual entry → build PDF from payload
+            if (payload?.type === 'manual' && Array.isArray(payload?.data)) {
+              downloadManualEntryPdfFromApi(
+                payload,
+                `${file.file_name || 'manual-entry'}.pdf`,
+                date,
+              );
+              return;
+            }
+
+            // ✅ Normal → open the url
+            if (typeof payload === 'string') {
+              window.open(payload, '_blank');
+              return;
+            }
+
+            // Fallback if backend sends { data: "url" }
+            const maybeUrl = payload?.data;
+            if (typeof maybeUrl === 'string') {
+              window.open(maybeUrl, '_blank');
+              return;
+            }
+
+            console.error('Unexpected download response shape:', payload);
           } catch (error: any) {
             console.error('Error downloading file:', error);
-            console.error('Error details:', {
-              errorName: error?.name,
-              errorMessage: error?.message,
-              errorStack: error?.stack,
-            });
           }
         })
         .catch((error: any) => {
           console.error('Error downloading file:', error);
-          console.error('Error details:', {
-            errorName: error?.name,
-            errorMessage: error?.message,
-            errorStack: error?.stack,
-          });
         });
-    } else {
-      // For direct file object, create a blob URL
-      const blobUrl = URL.createObjectURL(file.file);
 
-      // Create a direct download link for the blob URL
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = file.file_name || file.file.name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      // Clean up the blob URL
-      URL.revokeObjectURL(blobUrl);
+      return;
     }
+
+    // No file_id: local file blob download
+    const blobUrl = URL.createObjectURL(file.file);
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = file.file_name || file.file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
   };
+
   const handleDelete = () => {
     // setLoadingDelete(true);
     setIsSureRemove(false);
@@ -131,18 +141,18 @@ const ActionSection: FC<ActionSectionProps> = ({
               </div>
             ) : (
               <div className="flex items-center justify-start gap-1 confirm-animation">
-                {file.file_name !== 'Manual Entry' && (
-                  <img
-                    onClick={() => {
-                      if (!isDeleted) {
-                        downloadFile();
-                      }
-                    }}
-                    className="cursor-pointer"
-                    src="/icons/import.svg"
-                    alt=""
-                  />
-                )}
+                {/* {file.file_name !== 'Manual Entry' && ( */}
+                <img
+                  onClick={() => {
+                    if (!isDeleted) {
+                      downloadFile();
+                    }
+                  }}
+                  className="cursor-pointer"
+                  src="/icons/import.svg"
+                  alt=""
+                />
+                {/* )} */}
                 <img
                   onClick={() => {
                     if (!isDeleted) {
