@@ -70,12 +70,18 @@ const SignUp = () => {
           navigate('/register-profile');
         })
         .catch((error) => {
-          if (error.detail.includes('email')) {
+          if (error.detail.includes('email') || error.detail.includes('account') ) {
             formik.setErrors({
               email: error.detail,
             });
             formik.setFieldTouched('email', true, false);
           }
+          if (error.detail.includes('password')  ) {
+            formik.setErrors({
+              password: error.detail,
+            });
+            formik.setFieldTouched('password', true, false);
+          }          
         })
         .finally(() => {
           setIsLoading(false);
