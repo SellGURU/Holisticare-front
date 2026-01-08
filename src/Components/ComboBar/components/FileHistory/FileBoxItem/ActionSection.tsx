@@ -16,7 +16,7 @@ const ActionSection: FC<ActionSectionProps> = ({
   isDeleted,
   memberId,
   onDelete,
-  date
+  date,
 }) => {
   const [isSureRemove, setIsSureRemove] = useState(false);
   const [loadingDelete] = useState<boolean>(false);
@@ -30,7 +30,7 @@ const ActionSection: FC<ActionSectionProps> = ({
         .then((res) => {
           try {
             // const blobUrl = res.data;
-            
+
             // const blob = new Blob([res.data]);
             // const blobUrl = URL.createObjectURL(blob);
             // Your API response wrapper seems to be: res.data.data
@@ -39,7 +39,7 @@ const ActionSection: FC<ActionSectionProps> = ({
 
             // ✅ Manual entry → build PDF from payload
             if (payload?.type === 'manual' && Array.isArray(payload?.data)) {
-           downloadManualEntryPdfFromApi(
+              downloadManualEntryPdfFromApi(
                 payload,
                 `${file.file_name || 'manual-entry'}.pdf`,
                 date,
