@@ -4,6 +4,7 @@ import router from './router';
 import { useEffect } from 'react';
 import ActivityLogger from './utils/activty-logger';
 import { useServiceWorker } from './hooks/useServiceWorker';
+import useAppConfig from './hooks/useAppConfig';
 
 function App() {
   useEffect(() => {
@@ -14,8 +15,8 @@ function App() {
     };
   }, []);
 
+  useAppConfig();
   useServiceWorker();
-
   return (
     <>
       <RouterProvider router={router} />
