@@ -39,7 +39,7 @@ const GenerateActionPlan = () => {
     category: [],
   });
   const checkSelectedTaskConflict = useCallback(
-    (newPlans: any) => {
+    (newPlans: any,isshowPlan?:boolean) => {
       setIsLoadingPlans(true);
       const tasksIdis = newPlans.map((el: any) => el.task_directory_id);
       Application.checkSelectedTaskConflict({
@@ -52,16 +52,26 @@ const GenerateActionPlan = () => {
           const checkInItems = res.data.filter(
             (el: any) => el.Task_Type == 'Checkin',
           );
-          const categoryItems = res.data.filter(
-            (el: any) =>
-              el.Task_Type != 'Checkin' &&
-              !tasksIdis.includes(el.task_directory_id),
-          );
-
-          setCategories({
-            checkIn: checkInItems,
-            category: categoryItems,
-          });
+          if (isshowPlan) {
+            const categoryItems = res.data.filter(
+              (el: any) =>
+                el.Task_Type != 'Checkin' &&
+                !tasksIdis.includes(el.task_directory_id),
+            );
+            setActions({
+              checkIn: checkInItems,
+              category: categoryItems,
+            });
+          }else {
+            const categoryItems = res.data.filter(
+              (el: any) =>
+                el.Task_Type != 'Checkin',
+            );
+            setCategories({
+              checkIn: checkInItems,
+              category: categoryItems,
+            });
+          }
         })
         .finally(() => {
           setIsLoadingPlans(false);
