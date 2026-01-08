@@ -66,5 +66,5 @@ declare global {
     allowed_containers: AllowedContainer[];
     sas_ttl_seconds_default: number;
     sas_ttl_seconds_max: number;
-  }  
+  };
 }
