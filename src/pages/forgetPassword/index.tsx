@@ -129,7 +129,7 @@ const ForgetPassword = () => {
                         if (res.detail) {
                           formik.setFieldError(
                             'email',
-                            'This email address is not registered in our system.',
+                            res.detail,
                           );
                         }
                       })

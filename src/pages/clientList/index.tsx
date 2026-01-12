@@ -2,18 +2,18 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import { useNavigate } from 'react-router-dom';
-import Application from '../../api/app';
+import Application from '../../api/app.ts';
 import { subscribe } from '../../utils/event.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
-import FilterModal from '../FilterModal/index.tsx';
-import SearchBox from '../SearchBox';
-import SelectBox from '../SelectBox';
-import Table from '../table.tsx/index.tsx';
-import ClientCard from './ClientCard';
+import FilterModal from '../../Components/FilterModal/index.tsx';
+import SearchBox from '../../Components/SearchBox/index.tsx';
+import SelectBox from '../../Components/SelectBox/index.tsx';
+import Table from '../../Components/table.tsx/index.tsx';
+import ClientCard from './ClientCard.tsx';
 // import ConfirmModal from './ConfirmModal.tsx';
-import { ButtonSecondary } from '../Button/ButtosSecondary.tsx';
-import Circleloader from '../CircleLoader/index.tsx';
-import Toggle from '../Toggle/index.tsx';
+import { ButtonSecondary } from '../../Components/Button/ButtosSecondary.tsx';
+import Circleloader from '../../Components/CircleLoader/index.tsx';
+import Toggle from '../../Components/Toggle/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';
 import { AppContext } from '../../store/app.tsx';
 type ClientData = {

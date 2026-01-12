@@ -2,16 +2,16 @@ import { useNavigate } from 'react-router-dom';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import { FC, useEffect, useRef, useState } from 'react';
 import Application from '../../api/app.ts';
-import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
-import { ButtonPrimary } from '../Button/ButtonPrimary.tsx';
+import { ButtonPrimary } from '../../Components/Button/ButtonPrimary.tsx';
 import { ArchiveModal } from './ArchiveModal.tsx';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Tooltip } from 'react-tooltip';
-import MainModal from '../MainModal/index.tsx';
-import Checkbox from '../checkbox/index.tsx';
+import MainModal from '../../Components/MainModal/index.tsx';
+import Checkbox from '../../Components/checkbox/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';
-import EllipsedTooltip from '../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip.tsx';
+import EllipsedTooltip from '../../Components/LibraryThreePages/components/TableNoPaginate/ElipsedTooltip.tsx';
 interface ClientCardProps {
   client: any;
   indexItem: number;

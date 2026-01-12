@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { DashBoard, Home, Report, Share, Tasks } from '../pages';
+import { DashBoard, Home, Report, Share, Tasks,ClientList } from '../pages';
 import ProtectedRoute from './protected';
 import Layout from '../layout';
 // import GenerateNewActionPlan from '../Components/Action-plan/GenerateNewPlan';
@@ -7,7 +7,6 @@ import Layout from '../layout';
 import Login from '../pages/login/index2';
 import { Targeting } from '../Components/Action-plan/sections/Targeting';
 import GenerateCalendar from '../Components/Action-plan/sections/generatecalendar';
-import { ClientList } from '../Components';
 import AddClient from '../pages/addClient';
 // import GenerateNewPlan from '../pages/generateTreatmentPlan';
 import { DriftAnaysis } from '../pages/driftAnaysis';
