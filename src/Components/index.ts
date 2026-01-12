@@ -4,10 +4,4 @@ import MainTopBar from './MainTopBar';
 import MainModal from './MainModal';
 import { ComboBar } from './ComboBar';
 
-export {
-  ReportSideMenu,
-  SideMenu,
-  ComboBar,
-  MainTopBar,
-  MainModal,
-};
+export { ReportSideMenu, SideMenu, ComboBar, MainTopBar, MainModal };

@@ -127,10 +127,7 @@ const ForgetPassword = () => {
                       })
                       .catch((res) => {
                         if (res.detail) {
-                          formik.setFieldError(
-                            'email',
-                            res.detail,
-                          );
+                          formik.setFieldError('email', res.detail);
                         }
                       })
                       .finally(() => {

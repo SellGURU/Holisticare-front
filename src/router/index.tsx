@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { DashBoard, Home, Report, Share, Tasks,ClientList } from '../pages';
+import { DashBoard, Home, Report, Share, Tasks, ClientList } from '../pages';
 import ProtectedRoute from './protected';
 import Layout from '../layout';
 // import GenerateNewActionPlan from '../Components/Action-plan/GenerateNewPlan';
