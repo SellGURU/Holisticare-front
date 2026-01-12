@@ -34,7 +34,7 @@ interface Patient {
   age: number;
 }
 
-export const DriftAnaysis = () => {
+const DriftAnaysis = () => {
   // const theme = useSelector((state: any) => state.theme.value.name);
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeMenu, setActiveMenu] = useState('Action');
@@ -432,3 +432,5 @@ export const DriftAnaysis = () => {
     </div>
   );
 };
+
+export default  DriftAnaysis
