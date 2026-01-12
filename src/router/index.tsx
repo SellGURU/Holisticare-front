@@ -1,5 +1,24 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { AddClient,AiKnowledge,SignUp,HtmlViewer,Playground,Messages,Setting,DashBoard,ForgetPassword,DriftAnaysis, Home, Report,Login, Share, Tasks, ClientList,MaintenancePage,NotFound } from '../pages';
+import {
+  AddClient,
+  AiKnowledge,
+  SignUp,
+  HtmlViewer,
+  Playground,
+  Messages,
+  Setting,
+  DashBoard,
+  ForgetPassword,
+  DriftAnaysis,
+  Home,
+  Report,
+  Login,
+  Share,
+  Tasks,
+  ClientList,
+  MaintenancePage,
+  NotFound,
+} from '../pages';
 import ProtectedRoute from './protected';
 import Layout from '../layout';
 import { Client } from '../pages/driftAnaysis/Client.tsx';
@@ -21,7 +40,6 @@ import Diet from '../pages/diet/index.tsx';
 import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
-
 
 const router = createBrowserRouter([
   {

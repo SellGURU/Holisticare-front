@@ -433,4 +433,4 @@ const DriftAnaysis = () => {
   );
 };
 
-export default  DriftAnaysis
+export default DriftAnaysis;
