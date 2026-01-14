@@ -580,7 +580,7 @@ const ClientCard: FC<ClientCardProps> = ({
           // e.stopPropagation();
           // navigate(`/report/${client.member_id}/${client.name}`);
         }}
-        className="sm:min-w-[315px] lg:min-h-[292px] w-full xs:w-[344px] ss:w-full md:w-[333px] p-2 sm:p-4 bg-white shadow-200 xl:w-[24%] rounded-[16px] relative"
+        className="sm:min-w-[315px] lg:min-h-[280px] w-full xs:w-[344px] ss:w-full md:w-[333px] p-2 sm:p-4 bg-white shadow-200 xl:w-[24%] rounded-[16px] relative"
       >
         {showModal && (
           <div
@@ -934,8 +934,8 @@ const ClientCard: FC<ClientCardProps> = ({
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
-                    <div className="flex text-nowrap truncate max-w-[110px] cursor-default">
-                      {client.assigned_to[0] || '-'}
+                    <div className='w-[100px]'>
+                      <EllipsedTooltip text={client.assigned_to[0] || '-'} />
                     </div>
                   </div>
                   <div className="flex gap-2 w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -974,19 +974,10 @@ const ClientCard: FC<ClientCardProps> = ({
                       Check-in
                     </div>
                     <div
-                      className="text-nowrap max-w-[110px] truncate cursor-default"
-                      data-tooltip-id={`${client.member_id}-${client['Check-in']}`}
+                      className="max-w-[100px] truncate cursor-default"
+                      
                     >
-                      {client['Check-in']}
-                      {client['Check-in'].length > 15 && (
-                        <Tooltip
-                          place="top"
-                          id={`${client.member_id}-${client['Check-in']}`}
-                          className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                        >
-                          {client['Check-in']}
-                        </Tooltip>
-                      )}
+                        <EllipsedTooltip text={client['Check-in'] || '-'} />
                     </div>
                   </div>
                   <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -995,28 +986,11 @@ const ClientCard: FC<ClientCardProps> = ({
                       Questionnaire
                     </div>
                     <div
-                      className="text-nowrap max-w-[100px] truncate cursor-default"
-                      data-tooltip-id={`${client.member_id}-questionary`}
-                      data-tooltip-content={client.Questionary}
+                      className=" max-w-[100px] truncate cursor-default"
+                      
                     >
-                      {client.Questionary}
+                      <EllipsedTooltip text={client.Questionary} />
                     </div>
-                    {client.Questionary.length > 15 && (
-                      <Tooltip
-                        place="top"
-                        id={`${client.member_id}-questionary`}
-                        className="bg-white z-50 w-fit bg-opacity-100 opacity-100 text-wrap text-[#888888] text-[8px] rounded-[6px] border border-Gray-50 p-2 max-w-xs"
-                        style={{
-                          backgroundColor: 'white',
-                          zIndex: 50,
-                          opacity: 1,
-                          wordWrap: 'break-word',
-                          maxWidth: '300px',
-                        }}
-                        delayShow={300}
-                        delayHide={100}
-                      />
-                    )}
                   </div>
                 </div>
               </div>
@@ -1039,7 +1013,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 </div> */}
                 {client.has_minimum_data == true && (
                   <div
-                    className="flex w-full items-center justify-start gap-2 cursor-pointer"
+                    className="flex w-full items-center h-0 overflow-visible justify-start gap-2 cursor-pointer"
                     onClick={handleRefreshData}
                   >
                     <img
@@ -1057,7 +1031,7 @@ const ClientCard: FC<ClientCardProps> = ({
                           Sync with Latest Data
                         </div>
                         {client['Latest Sync'] != 'No Data' && (
-                          <div className="text-Text-Quadruple text-[8px]">
+                          <div className="text-Text-Quadruple text-[9px]">
                             Last sync:{' '}
                             {/* {lastRefreshTime
                             ? formatLastRefresh()
