@@ -213,7 +213,7 @@ const ForgetPassword = () => {
               onClick={() => {
                 Application.SendVerification({
                   email: formik.values.email,
-                }).catch(() => {               
+                }).catch(() => {
                   // console.error('Error sending verification:', err);
                 });
                 setIsCompleteCode(false);
@@ -257,9 +257,7 @@ const ForgetPassword = () => {
                       })
                       .catch((error) => {
                         if (error.detail) {
-                          setCodeError(
-                            error.detail,
-                          );
+                          setCodeError(error.detail);
                         }
                       })
                       .finally(() => {
@@ -384,7 +382,7 @@ const ForgetPassword = () => {
                         setPasswordChanged(true);
                       })
                       .catch((err) => {
-                        formik2.setFieldError('password',err.detail)
+                        formik2.setFieldError('password', err.detail);
                         console.error('Error verifying code:', err);
                       })
                       .finally(() => {

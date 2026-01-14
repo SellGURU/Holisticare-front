@@ -15,7 +15,7 @@ function App() {
     };
   }, []);
   useServiceWorker();
-  useMoch()
+  useMoch();
   return (
     <>
       <RouterProvider router={router} />

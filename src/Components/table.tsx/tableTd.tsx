@@ -42,9 +42,8 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
                 // data-tooltip-id={row.original?.name}
                 className="font-meidum text-[10px] 2xl:text-xs   text-Text-Primary text-nowrap flex items-center gap-3"
               >
-                <div className='max-w-[100px]'>
+                <div className="max-w-[100px]">
                   <EllipsedTooltip text={row.original?.name || 'No Data'} />
-
                 </div>
                 {/* <div className="truncate  max-w-[120px]">
                   <TooltipTextAuto maxWidth="120px">
@@ -193,7 +192,6 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
           className="text-xs max-w-[100px] text-Text-Secondary text-center select-none"
         >
           <EllipsedTooltip text={check_in} />
-
         </div>
       );
     },

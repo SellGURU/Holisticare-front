@@ -934,7 +934,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
-                    <div className='w-[100px]'>
+                    <div className="w-[100px]">
                       <EllipsedTooltip text={client.assigned_to[0] || '-'} />
                     </div>
                   </div>
@@ -973,11 +973,8 @@ const ClientCard: FC<ClientCardProps> = ({
                       <img src="/icons/sms-edit-2.svg" alt="" />
                       Check-in
                     </div>
-                    <div
-                      className="max-w-[100px] truncate cursor-default"
-                      
-                    >
-                        <EllipsedTooltip text={client['Check-in'] || '-'} />
+                    <div className="max-w-[100px] truncate cursor-default">
+                      <EllipsedTooltip text={client['Check-in'] || '-'} />
                     </div>
                   </div>
                   <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -985,10 +982,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       <img src="/icons/note-2.svg" alt="" />
                       Questionnaire
                     </div>
-                    <div
-                      className=" max-w-[100px] truncate cursor-default"
-                      
-                    >
+                    <div className=" max-w-[100px] truncate cursor-default">
                       <EllipsedTooltip text={client.Questionary} />
                     </div>
                   </div>
