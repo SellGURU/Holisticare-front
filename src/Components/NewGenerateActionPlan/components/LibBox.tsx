@@ -34,6 +34,9 @@ const LibBox: FC<LibBoxProps> = ({
       case 'Activity':
         setValueData('File');
         break;
+      case 'Medical Peptide Therapy':
+        setValueData('Dose');
+        break;
     }
   }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
