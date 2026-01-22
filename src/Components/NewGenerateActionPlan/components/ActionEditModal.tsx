@@ -57,6 +57,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     Protein: defalts?.['Total Macros']?.Protein || '',
     Carbs: defalts?.['Total Macros']?.Carbs || '',
   });
+  const [doseSchedules] = useState(defalts?.Dose_Schedules || []);
+  const [fdaStatus] = useState(defalts?.fda_status || '');
   const [showValidation, setShowValidation] = useState(false);
 
   const adjustDateToNextMonthIfPast = (day: string): string => {
@@ -433,6 +435,24 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Title: title,
         Instruction: instructions,
         'Total Macros': numberMacros,
+        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+        frequencyDates:
+          frequencyType === 'weekly'
+            ? selectedDays
+            : frequencyType === 'monthly'
+              ? selectedDaysMonth
+              : null,
+        frequencyType: frequencyType,
+        Task_Type: 'Action',
+      });
+    } else if (selectedGroup === 'Medical Peptide Therapy') {
+      onSubmit({
+        Category: selectedGroup,
+        Title: title,
+        Instruction: instructions,
+        Dose: dose,
+        Dose_Schedules: doseSchedules,
+        fda_status: fdaStatus,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType === 'weekly'
@@ -845,6 +865,81 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     // InfoText={DoseInfoText}
                     margin="mb-4"
                   />
+                )}
+                {selectedGroup === 'Medical Peptide Therapy' && (
+                  <>
+                    <TextField
+                      label="Dose"
+                      placeholder="Enter dose amount"
+                      value={dose}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const englishOnly = DoseValidationEnglish(value);
+                        setDose(englishOnly);
+                      }}
+                      isValid={
+                        showValidation
+                          ? ValidationForms.IsvalidField('Dose', dose)
+                          : true
+                      }
+                      validationText={
+                        showValidation
+                          ? ValidationForms.ValidationText('Dose', dose)
+                          : ''
+                      }
+                      margin="mb-4"
+                    />
+                    {doseSchedules && Array.isArray(doseSchedules) && doseSchedules.length > 0 && (
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Dose Schedules
+                        </label>
+                        <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md space-y-2">
+                          {doseSchedules.map((schedule: any, index: number) => {
+                            const formatFrequency = () => {
+                              if (!schedule.Frequency_Type) return '';
+                              const type = schedule.Frequency_Type;
+                              const days = schedule.Frequency_Days || [];
+                              
+                              if (type === 'daily') return 'Daily';
+                              if (type === 'weekly') {
+                                if (days.length === 0) return 'Weekly';
+                                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                                return `Weekly: ${days.map((d: number) => dayNames[d % 7]).join(', ')}`;
+                              }
+                              if (type === 'monthly') {
+                                if (days.length === 0) return 'Monthly';
+                                return `Monthly: Days ${days.join(', ')}`;
+                              }
+                              return type;
+                            };
+                            
+                            return (
+                              <div key={index} className="border-b border-gray-200 pb-2 last:border-b-0 last:pb-0">
+                                <div className="font-medium">{schedule.Title || 'Schedule'}</div>
+                                <div className="text-xs text-gray-500 mt-1">
+                                  <span>Dose: {schedule.Dose || '-'}</span>
+                                  {schedule.Frequency_Type && (
+                                    <span className="ml-2">• {formatFrequency()}</span>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                    {fdaStatus && (
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          FDA Status
+                        </label>
+                        <div className="text-sm text-orange-600 font-semibold bg-orange-50 p-3 rounded-md">
+                          {fdaStatus}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
                 {selectedGroup === 'Lifestyle' && (
                   <MultiTextField
