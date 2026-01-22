@@ -854,24 +854,7 @@ class Application extends Api {
       Schedule_Id: id,
     });
   };
-  // Peptide Schedule Link APIs (Linking schedules to peptides)
-  static linkPeptideSchedules = (peptideId: string, scheduleIds: string[]) => {
-    return this.post('/peptide_library/link_schedules', {
-      Peptide_Id: peptideId,
-      Schedule_Ids: scheduleIds,
-    });
-  };
-  static unlinkPeptideSchedule = (peptideId: string, scheduleId: string) => {
-    return this.post('/peptide_library/unlink_schedule', {
-      Peptide_Id: peptideId,
-      Schedule_Id: scheduleId,
-    });
-  };
-  static getPeptideLinkedSchedules = (peptideId: string) => {
-    return this.post('/peptide_library/get_linked_schedules', {
-      Peptide_Id: peptideId,
-    });
-  };
+
   // Check-in Forms API
   static getCheckinFormsList = () => {
     return this.post('/forms/check_in/list_checkin_forms', {});

@@ -204,41 +204,63 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       fda_status: editData?.Fda_status || '',
     });
     
-    // For peptides, load linked schedules and connected check-ins
+    // For peptides, load linked schedules and connected check-ins from showPeptideDetails
     if (pageType === 'Peptide' && editData?.Peptide_Id) {
-      // Load linked schedules from editData or fetch them
-      if (editData?.Linked_Schedules) {
+      // Use showPeptideDetails to get all peptide data including Linked_Schedules and Connected_Checkins
+      if (editData?.Linked_Schedules && editData?.Connected_Checkins) {
+        // If data is already in editData, use it
         setSelectedSchedules(editData.Linked_Schedules);
+        
+        // Load connected check-ins from editData
+        if (editData.Connected_Checkins.length > 0) {
+          Application.getCheckinFormsList()
+            .then((res) => {
+              const allCheckins = res.data || [];
+              const selectedIds = editData.Connected_Checkins;
+              const selected = allCheckins.filter((c: any) => 
+                selectedIds.includes(c.id) || selectedIds.includes(c.checkin_form_id)
+              );
+              setSelectedCheckins(selected);
+            })
+            .catch((err) => {
+              console.error('Error fetching check-ins for selection:', err);
+              setSelectedCheckins([]);
+            });
+        } else {
+          setSelectedCheckins([]);
+        }
       } else {
-        // Fetch linked schedules if not in editData
-        Application.getPeptideLinkedSchedules(editData.Peptide_Id)
+        // Fetch full peptide details if not in editData
+        Application.showPeptideDetails(editData.Peptide_Id)
           .then((res) => {
-            setSelectedSchedules(res.data || []);
+            const peptideData = res.data || {};
+            // Set linked schedules
+            setSelectedSchedules(peptideData.Linked_Schedules || []);
+            
+            // Load connected check-ins
+            if (peptideData.Connected_Checkins && peptideData.Connected_Checkins.length > 0) {
+              Application.getCheckinFormsList()
+                .then((checkinRes) => {
+                  const allCheckins = checkinRes.data || [];
+                  const selectedIds = peptideData.Connected_Checkins;
+                  const selected = allCheckins.filter((c: any) => 
+                    selectedIds.includes(c.id) || selectedIds.includes(c.checkin_form_id)
+                  );
+                  setSelectedCheckins(selected);
+                })
+                .catch((err) => {
+                  console.error('Error fetching check-ins for selection:', err);
+                  setSelectedCheckins([]);
+                });
+            } else {
+              setSelectedCheckins([]);
+            }
           })
           .catch((err) => {
-            console.error('Error fetching linked schedules:', err);
+            console.error('Error fetching peptide details:', err);
             setSelectedSchedules([]);
-          });
-      }
-      
-      // Load connected check-ins from editData
-      if (editData?.Connected_Checkins && editData.Connected_Checkins.length > 0) {
-        // We need to fetch the full checkin objects to display them properly
-        Application.getCheckinFormsList()
-          .then((res) => {
-            const allCheckins = res.data || [];
-            const selectedIds = editData.Connected_Checkins;
-            const selected = allCheckins.filter((c: any) => 
-              selectedIds.includes(c.id) || selectedIds.includes(c.checkin_form_id)
-            );
-            setSelectedCheckins(selected);
-          })
-          .catch((err) => {
-            console.error('Error fetching check-ins for selection:', err);
             setSelectedCheckins([]);
           });
-      } else {
-        setSelectedCheckins([]);
       }
     }
   }, [editData, pageType]);
