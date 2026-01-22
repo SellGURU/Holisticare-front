@@ -174,6 +174,18 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       Holistic Plan Recommended
                     </div>
                   )}
+                  {(value?.fda_status || value?.FDA_Status) && value.Category === 'Medical Peptide Therapy' && (
+                    <div
+                      className={`select-none ml-2 rounded-full px-2  text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
+                      style={{ backgroundColor: '#FFF4E6', color: '#F97316' }}
+                    >
+                      <div
+                        className={`size-[8px] select-none rounded-full`}
+                        style={{ backgroundColor: '#F97316' }}
+                      ></div>
+                      FDA: {value?.FDA_Status || value?.fda_status}
+                    </div>
+                  )}
                 </div>
                 {value.flag && value.flag.conflicts.length > 0 && (
                   <button
@@ -452,9 +464,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         return value?.Dose || '-';
                       })()}
                     </div>
-                    {value?.fda_status && (
+                    {(value?.fda_status || value?.FDA_Status) && (
                       <div className="text-orange-500 text-xs font-semibold">
-                        FDA: {value.fda_status}
+                        FDA: {value?.FDA_Status || value?.fda_status}
                       </div>
                     )}
                   </div>

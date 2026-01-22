@@ -180,6 +180,18 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 ></div>
                 {item?.label || '-'}
               </div>
+              {(item?.fda_status || item?.FDA_Status) && item.Category === 'Medical Peptide Therapy' && (
+                <div
+                  className={`select-none rounded-full text-nowrap px-2 py-[2px] h-[20px] md:h-auto flex items-center gap-1 text-[8px] text-Text-Primary`}
+                  style={{ backgroundColor: '#FFF4E6', color: '#F97316' }}
+                >
+                  <div
+                    className={`size-[8px] select-none rounded-full`}
+                    style={{ backgroundColor: '#F97316' }}
+                  ></div>
+                  FDA: {item?.FDA_Status || item?.fda_status}
+                </div>
+              )}
               <div className="flex flex-wrap items-center gap-1 ">
                 {selectedIssues.map((issue: string, index: number) => (
                   <div

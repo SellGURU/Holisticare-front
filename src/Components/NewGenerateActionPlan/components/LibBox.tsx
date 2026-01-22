@@ -127,6 +127,18 @@ const LibBox: FC<LibBoxProps> = ({
                   Holistic Plan Recommended
                 </div>
               )}
+              {(data?.fda_status || data?.FDA_Status) && data.Category === 'Medical Peptide Therapy' && (
+                <div
+                  className={`select-none rounded-full px-2 py-[2px] text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
+                  style={{ backgroundColor: '#FFF4E6', color: '#F97316' }}
+                >
+                  <div
+                    className={`size-[8px] select-none rounded-full`}
+                    style={{ backgroundColor: '#F97316' }}
+                  ></div>
+                  FDA: {data?.FDA_Status || data?.fda_status}
+                </div>
+              )}
               {/* <div
                 className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                 data-tooltip-id={`tooltip-system-score-${index}`}
@@ -268,9 +280,9 @@ const LibBox: FC<LibBoxProps> = ({
                         return data['Dose'] || '-';
                       })()}
                     </div>
-                    {data['fda_status'] && (
+                    {(data['fda_status'] || data['FDA_Status']) && (
                       <div className="text-orange-500 text-[9px] font-semibold mt-1">
-                        FDA: {data['fda_status']}
+                        FDA: {data['FDA_Status'] || data['fda_status']}
                       </div>
                     )}
                   </div>
