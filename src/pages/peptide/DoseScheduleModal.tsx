@@ -36,11 +36,9 @@ const DoseScheduleModal: React.FC<DoseScheduleModalProps> = ({
     connected_checkins: [] as number[],
   });
 
-  const [checkinsList, setCheckinsList] = useState<Array<{ checkin_form_id: number; title: string }>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
 
-  const frequencyTypes = ['daily', 'weekly', 'monthly', 'biweekly', 'quarterly'];
   const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const weekDaysValues = [1, 2, 3, 4, 5, 6, 7]; // Map to numeric values
   const monthDays = Array.from({ length: 31 }, (_, i) => i + 1); // 1-31
@@ -336,6 +334,8 @@ const DoseScheduleModal: React.FC<DoseScheduleModalProps> = ({
               placeholder="Enter dose (e.g., 0.5-1.0 mg)"
               value={formData.dose}
               onChange={(e) => updateFormData('dose', e.target.value)}
+              isValid={true}
+              validationText=""
               margin="mt-4"
             />
 
