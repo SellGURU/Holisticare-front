@@ -45,13 +45,17 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
         ? 'Dose'
         : pageType === 'Lifestyle'
           ? 'Value'
-          : 'Macros Goal',
+          : pageType === 'Peptide'
+            ? 'FDA Status'
+            : 'Macros Goal',
     header:
       pageType === 'Supplement'
         ? 'Dose'
         : pageType === 'Lifestyle'
           ? 'Value'
-          : 'Macros Goal',
+          : pageType === 'Peptide'
+            ? 'FDA Status'
+            : 'Macros Goal',
     enableSorting: false,
     cell: ({ row }) => {
       return (
@@ -65,20 +69,22 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
                   text={row.original?.Value + ' ' + (row.original?.Unit || '')}
                 />
               </div>
+            ) : pageType === 'Peptide' ? (
+              <EllipsedTooltip text={row.original?.Fda_status || '-'} />
             ) : (
               <div className="flex items-center justify-center gap-4">
                 <EllipsedTooltip
                   text={
                     'Carb: ' +
-                    row.original?.['Total Macros'].Carbs +
+                    (row.original?.['Total Macros']?.Carbs || '-') +
                     ' gr' +
                     ', ' +
                     'Pr:' +
-                    row.original?.['Total Macros'].Protein +
+                    (row.original?.['Total Macros']?.Protein || '-') +
                     ' gr' +
                     ',  ' +
                     'Fat:' +
-                    row.original?.['Total Macros'].Fats +
+                    (row.original?.['Total Macros']?.Fats || '-') +
                     ' gr'
                   }
                 />

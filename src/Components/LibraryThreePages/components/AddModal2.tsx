@@ -19,6 +19,7 @@ import {
   TextField,
 } from '../../UnitComponents';
 import RangeCardLibraryThreePages from './RangeCard';
+import PeptideDoseScheduleStep from './PeptideDoseScheduleStep';
 
 interface AddModalLibraryTreePagesProps {
   isOpen: boolean;
@@ -45,6 +46,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     if (pageType === 'Lifestyle')
       return 'Enter lifestyle title (e.g., Sleep enough)';
     if (pageType === 'Diet') return 'Enter diet title (e.g., Low-Carb Plan)';
+    if (pageType === 'Peptide')
+      return 'Enter peptide title (e.g., GLP-1 Agonists)';
     return '';
   };
   const [formData, setFormData] = useState({
@@ -61,9 +64,16 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     },
     clinical_guidance: '',
     Parent_Title: '',
+    fda_status: '',
   });
+  const [step, setStep] = useState(0);
+  const [selectedSchedules, setSelectedSchedules] = useState<any[]>([]);
+  const [selectedCheckins, setSelectedCheckins] = useState<any[]>([]);
   const onClear = () => {
     setShowValidation(false);
+    setStep(0);
+    setSelectedSchedules([]);
+    setSelectedCheckins([]);
     setFormData({
       title: '',
       score: 0,
@@ -78,6 +88,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       unit: '',
       dose: '',
       Parent_Title: '',
+      fda_status: '',
     });
   };
   useEffect(() => {
@@ -130,6 +141,16 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     }
     return false;
   };
+  const validatePeptideForm = () => {
+    if (
+      ValidationForms.IsvalidField('Title', formData.title) &&
+      ValidationForms.IsvalidField('Instruction', formData.instruction) &&
+      ValidationForms.IsvalidField('Score', formData.score)
+    ) {
+      return true;
+    }
+    return false;
+  };
   const validateDietForm = () => {
     if (
       ValidationForms.IsvalidField('Title', formData.title) &&
@@ -160,6 +181,9 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     if (validateDietForm() && pageType === 'Diet') {
       return true;
     }
+    if (validatePeptideForm() && pageType === 'Peptide') {
+      return true;
+    }
     return false;
   };
   useEffect(() => {
@@ -177,8 +201,69 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Carbs: editData?.['Total Macros']?.Carbs || '',
       },
       Parent_Title: editData?.Parent_Title || '',
+      fda_status: editData?.Fda_status || '',
     });
-  }, [editData]);
+    
+    // For peptides, load linked schedules and connected check-ins from showPeptideDetails
+    if (pageType === 'Peptide' && editData?.Peptide_Id) {
+      // Use showPeptideDetails to get all peptide data including Linked_Schedules and Connected_Checkins
+      if (editData?.Linked_Schedules && editData?.Connected_Checkins) {
+        // If data is already in editData, use it
+        setSelectedSchedules(editData.Linked_Schedules);
+        
+        // Load connected check-ins from editData
+        if (editData.Connected_Checkins.length > 0) {
+          Application.getCheckinFormsList()
+            .then((res) => {
+              const allCheckins = res.data || [];
+              const selectedIds = editData.Connected_Checkins;
+              const selected = allCheckins.filter((c: any) => 
+                selectedIds.includes(c.id) || selectedIds.includes(c.checkin_form_id)
+              );
+              setSelectedCheckins(selected);
+            })
+            .catch((err) => {
+              console.error('Error fetching check-ins for selection:', err);
+              setSelectedCheckins([]);
+            });
+        } else {
+          setSelectedCheckins([]);
+        }
+      } else {
+        // Fetch full peptide details if not in editData
+        Application.showPeptideDetails(editData.Peptide_Id)
+          .then((res) => {
+            const peptideData = res.data || {};
+            // Set linked schedules
+            setSelectedSchedules(peptideData.Linked_Schedules || []);
+            
+            // Load connected check-ins
+            if (peptideData.Connected_Checkins && peptideData.Connected_Checkins.length > 0) {
+              Application.getCheckinFormsList()
+                .then((checkinRes) => {
+                  const allCheckins = checkinRes.data || [];
+                  const selectedIds = peptideData.Connected_Checkins;
+                  const selected = allCheckins.filter((c: any) => 
+                    selectedIds.includes(c.id) || selectedIds.includes(c.checkin_form_id)
+                  );
+                  setSelectedCheckins(selected);
+                })
+                .catch((err) => {
+                  console.error('Error fetching check-ins for selection:', err);
+                  setSelectedCheckins([]);
+                });
+            } else {
+              setSelectedCheckins([]);
+            }
+          })
+          .catch((err) => {
+            console.error('Error fetching peptide details:', err);
+            setSelectedSchedules([]);
+            setSelectedCheckins([]);
+          });
+      }
+    }
+  }, [editData, pageType]);
 
   const submit = () => {
     if (pageType === 'Supplement') {
@@ -222,6 +307,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           )?.uid || '',
       };
       onSubmit(data);
+      return;
+    }
+    if (pageType === 'Peptide') {
+      const data: any = {
+        Title: formData.title,
+        Instruction: formData.instruction,
+        Base_Score: formData.score,
+        Ai_note: formData.clinical_guidance,
+        Fda_status: formData.fda_status || null,
+      };
+      onSubmit(data);
+      return;
     }
     return;
   };
@@ -238,9 +335,20 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           <div className="w-full  h-full border-b border-Boarder pb-3 mb-3">
             <div className="flex  justify-start items-center font-medium text-sm text-Text-Primary">
               {mode === 'add' ? 'Add' : 'Edit'} {pageType}
+              {pageType === 'Peptide' && ` - Step ${step + 1} of 2`}
             </div>
           </div>
           <div className="overflow-y-auto h-[70%] pr-2">
+            {pageType === 'Peptide' && step === 1 ? (
+              <PeptideDoseScheduleStep
+                selectedSchedules={selectedSchedules}
+                selectedCheckins={selectedCheckins}
+                onSchedulesChange={setSelectedSchedules}
+                onCheckinsChange={setSelectedCheckins}
+                showValidation={showValidation}
+              />
+            ) : (
+              <>
             <TextField
               label="Title"
               placeholder={placeHolderTitle()}
@@ -294,7 +402,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 
             <TextAreaField
               label="Instruction"
-              placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}`}
+              placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : pageType === 'Peptide' ? 'Enter instructions (e.g., Subcutaneous injection)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}`}
               value={formData.instruction}
               onChange={(e) => {
                 updateAddData('instruction', e.target.value);
@@ -479,8 +587,38 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 updateAddData('clinical_guidance', e.target.value);
               }}
             />
+
+            {pageType === 'Peptide' && (
+              <SelectBoxField
+                label="FDA Status"
+                options={[
+                  'FULLY_APPROVED',
+                  'RESEARCH_USE_ONLY',
+                  'NOT_FDA_APPROVED',
+                  'INVESTIGATIONAL_ONLY',
+                ]}
+                value={formData.fda_status}
+                onChange={(value) => {
+                  updateAddData('fda_status', value);
+                }}
+                placeholder="Select FDA status (optional)"
+                margin="mt-4"
+              />
+            )}
+            </>
+            )}
           </div>
-          <div className="w-full flex justify-end items-center p-2 mt-5">
+          <div className="w-full flex justify-between items-center p-2 mt-5">
+            {pageType === 'Peptide' && step === 1 && (
+              <div
+                className="text-Disable text-sm font-medium cursor-pointer flex items-center gap-1"
+                onClick={() => setStep(0)}
+              >
+                <img src="/icons/arrow-left.svg" alt="" className="w-5 h-5" />
+                Back
+              </div>
+            )}
+            <div className="flex-1"></div>
             <div
               className="text-Disable text-sm font-medium mr-4 cursor-pointer"
               onClick={() => {
@@ -494,13 +632,43 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               className="text-Primary-DeepTeal text-sm font-medium cursor-pointer"
               onClick={() => {
                 setShowValidation(true);
-                if (validateFields()) {
-                  submit();
+                if (pageType === 'Peptide' && step === 0) {
+                  // For peptide step 1, validate and go to next step
+                  if (validateFields()) {
+                    setStep(1);
+                    setShowValidation(false);
+                  }
+                } else if (pageType === 'Peptide' && step === 1) {
+                  // For peptide step 2, validate schedules (required) and submit
+                  if (selectedSchedules.length === 0) {
+                    // Show validation error - schedules required
+                    return;
+                  }
+                  // Submit with schedules and check-ins
+                  const scheduleIds = selectedSchedules.map((s: any) => s.Schedule_Id || s.Pds_Id);
+                  const checkinIds = selectedCheckins.map((c: any) => c.id || c.checkin_form_id);
+                  const data: any = {
+                    Title: formData.title,
+                    Instruction: formData.instruction,
+                    Base_Score: formData.score,
+                    Ai_note: formData.clinical_guidance,
+                    Fda_status: formData.fda_status || null,
+                    Schedule_Ids: scheduleIds,
+                    Connected_Checkins: checkinIds,
+                  };
+                  onSubmit(data);
+                } else {
+                  // For all other page types, submit normally
+                  if (validateFields()) {
+                    submit();
+                  }
                 }
               }}
             >
               {!loadingCall ? (
-                mode === 'edit' ? (
+                pageType === 'Peptide' && step === 0 ? (
+                  'Next'
+                ) : mode === 'edit' ? (
                   'Update'
                 ) : (
                   'Add'

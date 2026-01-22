@@ -8,10 +8,14 @@ const baseTestUrl = 'https://holisticare-develop.vercel.app';
 let env: 'test' | 'production' = 'test';
 
 const resolveBaseEndPoint = () => {
-  if (env == 'test') {
-    return baseTestEndPoint;
-  }
-  return baseProductEndPoint;
+  // For local development, uncomment the line below:
+  return 'http://localhost:8000';
+  
+  // Production/test endpoints (commented for local dev):
+  // if (env == 'test') {
+  //   return baseTestEndPoint;
+  // }
+  // return baseProductEndPoint;
 };
 const resolveBaseUrl = () => {
   if (env === 'test') {

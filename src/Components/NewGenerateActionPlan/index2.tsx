@@ -39,48 +39,38 @@ const GenerateActionPlan = () => {
     category: [],
   });
   const checkSelectedTaskConflict = useCallback(
-    (newPlans: any) => {
+    (newPlans: any, isshowPlan?: boolean) => {
       setIsLoadingPlans(true);
+      const tasksIdis = newPlans.map((el: any) => el.task_directory_id);
       Application.checkSelectedTaskConflict({
         member_id: id,
         tasks: newPlans,
       })
         .then((res) => {
           // Helper function to remove duplicates based on unique identifier
-          const removeDuplicates = (arr: any[]) => {
-            const seen = new Map();
-            return arr.filter((el: any) => {
-              // Try to find a unique identifier (check common id field names)
-              const uniqueKey =
-                el.id ||
-                el.task_id ||
-                el.Task_Id ||
-                el.taskId ||
-                el.TaskId ||
-                (el.Task_Type && el.title
-                  ? `${el.Task_Type}_${el.title}`
-                  : null) ||
-                JSON.stringify(el);
-
-              if (seen.has(uniqueKey)) {
-                return false; // Duplicate found, filter it out
-              }
-              seen.set(uniqueKey, true);
-              return true; // Keep this item
-            });
-          };
 
           const checkInItems = res.data.filter(
             (el: any) => el.Task_Type == 'Checkin',
           );
-          const categoryItems = res.data.filter(
-            (el: any) => el.Task_Type != 'Checkin',
-          );
-
-          setCategories({
-            checkIn: removeDuplicates(checkInItems),
-            category: removeDuplicates(categoryItems),
-          });
+          if (isshowPlan) {
+            const categoryItems = res.data.filter(
+              (el: any) =>
+                el.Task_Type != 'Checkin' &&
+                !tasksIdis.includes(el.task_directory_id),
+            );
+            setActions({
+              checkIn: checkInItems,
+              category: categoryItems,
+            });
+          } else {
+            const categoryItems = res.data.filter(
+              (el: any) => el.Task_Type != 'Checkin',
+            );
+            setCategories({
+              checkIn: checkInItems,
+              category: categoryItems,
+            });
+          }
         })
         .finally(() => {
           setIsLoadingPlans(false);

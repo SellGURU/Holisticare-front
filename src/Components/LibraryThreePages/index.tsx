@@ -78,11 +78,25 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         setLoading(false);
       });
   };
+  const getPeptides = () => {
+    setLoading(true);
+    Application.getPeptideList()
+      .then((res) => {
+        setTableData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting peptide list:', err);
+        setLoading(false);
+      });
+  };
   useEffect(() => {
     if (pageType === 'Supplement') {
       getSupplements();
     } else if (pageType === 'Lifestyle') {
       getLifestyles();
+    } else if (pageType === 'Peptide') {
+      getPeptides();
     } else {
       getDiets();
     }
@@ -118,6 +132,22 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             setAddShowModal(false);
             setSelectedRow(null);
             // setClearData(true);
+          })
+          .catch((err) => {
+            console.error(err);
+            setLoadingCall(false);
+          });
+      } else if (pageType === 'Peptide') {
+        // Backend now handles schedule linking internally
+        Application.editPeptide({
+          Peptide_Id: selectedRow.Peptide_Id,
+          ...values,
+        })
+          .then(() => {
+            getPeptides();
+            setLoadingCall(false);
+            setAddShowModal(false);
+            setSelectedRow(null);
           })
           .catch((err) => {
             console.error(err);
@@ -169,6 +199,19 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             console.error(err);
             setLoadingCall(false);
           });
+      } else if (pageType === 'Peptide') {
+        // Backend now handles schedule linking internally
+        Application.addPeptide(values)
+          .then(() => {
+            getPeptides();
+            setLoadingCall(false);
+            setAddShowModal(false);
+            setSelectedRow(null);
+          })
+          .catch((err) => {
+            console.error(err);
+            setLoadingCall(false);
+          });
       } else {
         Application.addDiet(values)
           .then(() => {
@@ -203,6 +246,18 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
       Application.deleteLifestyle(id)
         .then(() => {
           getLifestyles();
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else if (pageType === 'Peptide') {
+      setLoading(true);
+      Application.deletePeptide(id)
+        .then(() => {
+          getPeptides();
         })
         .catch((err) => {
           console.error(err);
@@ -326,7 +381,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
           className={`w-full flex justify-center items-center flex-col mt-16`}
         >
           <img
-            src={`/icons/${pageType === 'Supplement' ? 'supplement-empty' : pageType === 'Lifestyle' ? 'lifestyle-empty' : 'diet-empty'}.svg`}
+            src={`/icons/${pageType === 'Supplement' ? 'supplement-empty' : pageType === 'Lifestyle' ? 'lifestyle-empty' : pageType === 'Peptide' ? 'supplement-empty' : 'diet-empty'}.svg`}
             alt=""
             className="mt-16"
           />
@@ -336,7 +391,9 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
               ? 'supplement'
               : pageType === 'Lifestyle'
                 ? 'lifestyle'
-                : 'diet'}{' '}
+                : pageType === 'Peptide'
+                  ? 'peptide'
+                  : 'diet'}{' '}
             found.
           </div>
           <ButtonSecondary

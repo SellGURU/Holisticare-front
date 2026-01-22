@@ -361,6 +361,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
     Diet: ['Recommendation'],
     Lifestyle: ['Recommendation'],
     Supplement: ['Recommendation'],
+    'Medical Peptide Therapy': ['Recommendation'],
     Others: ['Recommendation'],
   };
 
@@ -439,7 +440,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
                             ? '/icons/LifeStyle2.svg'
                             : category.name == 'Supplement'
                               ? '/icons/Supplement.svg'
-                              : '/icons/others.svg'
+                              : category.name === 'Medical Peptide Therapy'
+                                ? '/icons/Supplement.svg'
+                                : '/icons/others.svg'
                     }
                     alt=""
                   />
@@ -529,7 +532,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
                               ? '/icons/LifeStyle2.svg'
                               : name == 'Supplement'
                                 ? '/icons/Supplement.svg'
-                                : '/icons/others.svg'
+                                : name === 'Medical Peptide Therapy'
+                                  ? '/icons/Supplement.svg'
+                                  : '/icons/others.svg'
                       }
                       alt=""
                     />

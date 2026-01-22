@@ -66,6 +66,7 @@ const Stadio: FC<StadioProps> = ({
     'Activity',
     'Supplement',
     'Lifestyle',
+    'Medical Peptide Therapy',
     'Checkin',
   ];
   console.log(actions);
@@ -113,7 +114,7 @@ const Stadio: FC<StadioProps> = ({
 
       setData((prevCategories: any) => {
         const updatedCategory = prevCategories.category.filter(
-          (el: any) => JSON.stringify(el) !== JSON.stringify(item),
+          (el: any) => el.task_directory_id !== item.task_directory_id,
         );
 
         return {
@@ -151,13 +152,13 @@ const Stadio: FC<StadioProps> = ({
       setActions((prevActions: any) => ({
         checkIn: prevActions.checkIn,
         category: prevActions.category.filter(
-          (el: any) => JSON.stringify(el) !== JSON.stringify(item),
+          (el: any) => el.task_directory_id !== item.task_directory_id,
         ),
       }));
 
       setData((prevCategories: any) => {
         const itemExists = prevCategories.category.some(
-          (el: any) => JSON.stringify(el) === JSON.stringify(item),
+          (el: any) => el.task_directory_id === item.task_directory_id,
         );
 
         if (itemExists) {
@@ -355,6 +356,7 @@ const Stadio: FC<StadioProps> = ({
     { value: 'Activity', icon: 'activity-shapes.svg' },
     { value: 'Supplement', icon: 'supplement-shapes.svg' },
     { value: 'Lifestyle', icon: 'lifestyle-shapes.svg' },
+    { value: 'Medical Peptide Therapy', icon: 'supplement-shapes.svg' },
     { value: 'Other', icon: 'other-shapes.svg' },
   ];
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);

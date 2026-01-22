@@ -1248,7 +1248,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           {selectedGroup === 'Supplement' ||
                           selectedGroup === 'Lifestyle' ||
                           selectedGroup === 'Diet' ||
-                          selectedGroup === 'Activity'
+                          selectedGroup === 'Activity' ||
+                          selectedGroup === 'Medical Peptide Therapy'
                             ? selectedGroup
                             : 'Other'}{' '}
                           scheduled

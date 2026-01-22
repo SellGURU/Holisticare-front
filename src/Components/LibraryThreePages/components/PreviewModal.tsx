@@ -133,6 +133,15 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                       : selectedRow?.Value + ' ' + (selectedRow?.Unit || '')}
                   </div>
                 </div>
+              ) : pageType === 'Peptide' ? (
+                <div className="flex md:gap-16 gap-2 items-center">
+                  <div className="font-medium text-Text-Primary text-xs">
+                    FDA Status
+                  </div>
+                  <div className="text-xs md:ml-9 ml-0 text-Text-Quadruple leading-5">
+                    {selectedRow?.Fda_status || '-'}
+                  </div>
+                </div>
               ) : (
                 <div
                   className={`flex flex-col md:flex-row md:items-center ${selectedRow?.Category === 'Diet' ? 'md:gap-[74.5px] gap-1' : 'md:gap-8 gap-1'} text-justify w-full`}
@@ -143,17 +152,17 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                   <div className="flex items-center flex-grow-[1] justify-between pr-2 flex-wrap gap-2">
                     {renderNutrient(
                       'Carbs',
-                      selectedRow?.['Total Macros'].Carbs ?? 0,
+                      selectedRow?.['Total Macros']?.Carbs ?? 0,
                       '/icons/carbs-preview.svg',
                     )}
                     {renderNutrient(
                       'Proteins',
-                      selectedRow?.['Total Macros'].Protein ?? 0,
+                      selectedRow?.['Total Macros']?.Protein ?? 0,
                       '/icons/proteins-preview.svg',
                     )}
                     {renderNutrient(
                       'Fats',
-                      selectedRow?.['Total Macros'].Fats ?? 0,
+                      selectedRow?.['Total Macros']?.Fats ?? 0,
                       '/icons/fats-preview.svg',
                     )}
                     {/* <div className="flex items-center gap-1">

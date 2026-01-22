@@ -58,7 +58,7 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
           <div className="flex items-center gap-3 md:gap-5 flex-wrap relative">
             <SearchBox
               ClassName="rounded-2xl !min-w-full !h-8 md:!min-w-[283px] !py-[0px] !px-3 !shadow-[unset]"
-              placeHolder={`Search ${pageType === 'Supplement' ? 'supplements' : pageType === 'Lifestyle' ? 'lifestyles' : 'diets'}...`}
+              placeHolder={`Search ${pageType === 'Supplement' ? 'supplements' : pageType === 'Lifestyle' ? 'lifestyles' : pageType === 'Peptide' ? 'peptides' : 'diets'}...`}
               onSearch={handleChangeSearch}
             />
 

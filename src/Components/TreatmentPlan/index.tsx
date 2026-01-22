@@ -326,6 +326,21 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             </div>
             <div
               onClick={() => {
+                setActiveTreatmentplan('Medical Peptide Therapy');
+              }}
+              className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                aciveTreatmentPlan == 'Medical Peptide Therapy'
+                  ? ' border-Primary-EmeraldGreen'
+                  : ''
+              } w-full flex items-center px-4`}
+            >
+              <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
+                <img src="/icons/Supplement.svg" alt="" />
+              </div>
+              Medical Peptide Therapy
+            </div>
+            <div
+              onClick={() => {
                 setActiveTreatmentplan('Other');
               }}
               className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
@@ -700,6 +715,21 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                     <img src="/icons/Supplement.svg" alt="" />
                   </div>
                   Supplement
+                </div>
+                <div
+                  onClick={() => {
+                    setActiveTreatmentplan('Medical Peptide Therapy');
+                  }}
+                  className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                    aciveTreatmentPlan == 'Medical Peptide Therapy'
+                      ? ' border-Primary-EmeraldGreen'
+                      : ''
+                  } w-full flex items-center px-4`}
+                >
+                  <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
+                    <img src="/icons/Supplement.svg" alt="" />
+                  </div>
+                  Medical Peptide Therapy
                 </div>
                 <div
                   onClick={() => {

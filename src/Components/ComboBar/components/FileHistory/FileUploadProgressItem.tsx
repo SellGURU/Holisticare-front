@@ -54,6 +54,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
             )}
           </div>
           <ActionSection
+            date={file.date_uploaded}
             memberId={id || ''}
             isDeleted={fileStatus != 'upload'}
             file={file}
