@@ -1353,9 +1353,11 @@ export function PublicSurveyForm({
           >
             <CardHeader>
               <CardTitle className="text-base 2xl:text-2xl text-justify font-bold">
-              I confirm that I have read and understood the Medical Disclaimer.
-              I understand that this service provider offers lifestyle and longevity support and does not replace my GP or specialist medical care.
-              I accept full responsibility for my health decisions while participating.
+                I confirm that I have read and understood the Medical
+                Disclaimer. I understand that this service provider offers
+                lifestyle and longevity support and does not replace my GP or
+                specialist medical care. I accept full responsibility for my
+                health decisions while participating.
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 h-[60%] relative  pb-20 overflow-auto">
