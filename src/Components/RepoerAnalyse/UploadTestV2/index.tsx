@@ -370,8 +370,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
-      value: b.original_value,
-      unit: b.original_unit,
+      value: b.value,
+      unit: b.unit,
     }));
 
     return Application.SaveLabReport({
@@ -414,8 +414,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
-      value: b.original_value,
-      unit: b.original_unit,
+      value: b.value,
+      unit: b.unit,
     }));
 
     Application.validateBiomarkers({

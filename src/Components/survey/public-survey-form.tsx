@@ -1354,8 +1354,8 @@ export function PublicSurveyForm({
             <CardHeader>
               <CardTitle className="text-base 2xl:text-2xl text-justify font-bold">
                 I confirm that I have read and understood the Medical
-                Disclaimer. I understand that The 100 Club is a lifestyle and
-                longevity programme, not a substitute for my own GP or
+                Disclaimer. I understand that this service provider offers
+                lifestyle and longevity support and does not replace my GP or
                 specialist medical care. I accept full responsibility for my
                 health decisions while participating.
               </CardTitle>

@@ -45,7 +45,11 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         biomarker_name: biomarker.biomarker,
       });
       if (res && Array.isArray(res.data.units)) {
-        setUnitOptions(res.data.units);
+        // Transform empty string to "(no unit)" for display
+        const transformedUnits = res.data.units.map((u: string) =>
+          u === '' ? '(no unit)' : u,
+        );
+        setUnitOptions(transformedUnits);
       }
     } catch (err) {
       console.log(err);
@@ -117,18 +121,20 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
               value={
                 isHaveError && errorText.includes('Extracted Unit')
                   ? '...'
-                  : biomarker.original_unit ||
-                    biomarker.possible_values.units[0]
+                  : biomarker.original_unit === ''
+                    ? '(no unit)'
+                    : biomarker.original_unit ||
+                      biomarker.possible_values?.units?.[0]
               }
               options={unitOptions}
               onMenuOpen={() => {
-                // // if (!unitOptions[index]) {
                 fetchUnits();
-                // // }
               }}
               onChange={(val: string) => {
+                // Convert "(no unit)" display back to empty string
+                const actualUnit = val === '(no unit)' ? '' : val;
                 updateAndStandardize(biomarker.biomarker_id, {
-                  original_unit: val,
+                  original_unit: actualUnit,
                 });
               }}
             />
