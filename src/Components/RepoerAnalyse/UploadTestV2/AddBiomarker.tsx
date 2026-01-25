@@ -51,7 +51,9 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   const handleAdd = () => {
     if (!biomarkerName || !value) return; // only biomarker + value are required
     if (unitsList.length > 0 && !unit) return; // if units exist, user must select one
-    onAddBiomarker({ biomarker: biomarkerName, value, unit });
+    // Convert "(no unit)" back to empty string for backend
+    const actualUnit = unit === '(no unit)' ? '' : unit;
+    onAddBiomarker({ biomarker: biomarkerName, value, unit: actualUnit });
     setBiomarkerName('');
     setValue('');
     setUnit('');
@@ -76,10 +78,11 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         biomarker_name: biomarkerName,
       })
         .then((res) => {
-          const cleanedUnits = (res.data.units || []).filter(
-            (u: string) => u.trim() !== '',
+          // Transform empty string to "(no unit)" for display
+          const transformedUnits = (res.data.units || []).map((u: string) =>
+            u === '' ? '(no unit)' : u,
           );
-          setUnitsList(cleanedUnits);
+          setUnitsList(transformedUnits);
           setloading(false);
         })
         .catch(() => {});
