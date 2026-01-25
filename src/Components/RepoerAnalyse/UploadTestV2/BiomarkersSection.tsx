@@ -207,7 +207,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     value: string;
     unit: string;
     bio_type: string;
-  }): Promise<{ success: true; data: any } | { success: false; error: string }> => {
+  }): Promise<
+    { success: true; data: any } | { success: false; error: string }
+  > => {
     try {
       const res = await Application.standardizeBiomarkers(payload);
       return { success: true, data: res.data };
