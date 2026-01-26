@@ -1,4 +1,5 @@
 import { FC, useEffect, useRef, useState } from 'react';
+import { resolveCategoryName } from '../../../help';
 
 interface SelectBoxFieldProps {
   label: string;
@@ -64,7 +65,9 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
         } ${showDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer'}`}
       >
         {value ? (
-          <div className="text-[12px] text-Text-Primary">{value}</div>
+          <div className="text-[12px] text-Text-Primary">
+            {resolveCategoryName(value)}
+          </div>
         ) : (
           <div className="text-[10px] md:text-[12px] text-Text-Fivefold">
             {placeholder}
@@ -95,7 +98,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
                 }}
                 className="text-[12px] text-Text-Primary my-1 cursor-pointer"
               >
-                {option}
+                {resolveCategoryName(option)}
               </div>
             );
           })}
