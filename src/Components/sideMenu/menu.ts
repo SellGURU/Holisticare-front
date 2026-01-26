@@ -91,6 +91,12 @@ export const menus = [
         icon: 'sidemenu-menu-icon-Lifestyle',
         active: true,
       },
+      {
+        name: 'Peptide',
+        url: '/peptide',
+        icon: 'sidemenu-menu-icon-pil',
+        active: true,
+      },
     ],
   },
   {

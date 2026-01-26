@@ -137,10 +137,17 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
               ))}
             </thead>
             <tbody>
-              {table.getRowModel().rows.map((row, index) => (
+              {table.getRowModel().rows.map((row, index) => {
+                const getRowKey = () => {
+                  if (pageType === 'Supplement') return row.original.Sup_Id;
+                  if (pageType === 'Lifestyle') return row.original.Life_Id;
+                  if (pageType === 'Peptide') return row.original.Peptide_Id;
+                  return row.original.Diet_Id;
+                };
+                return (
                 <tr
                   className={`text-Text-Primary space-y-7 ${index % 2 === 1 ? 'bg-backgroundColor-Main' : 'bg-white'}`}
-                  key={row.original.Sup_Id}
+                  key={getRowKey()}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td
@@ -166,6 +173,8 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                               removeItemByNo(row.original.Sup_Id);
                             } else if (pageType === 'Lifestyle') {
                               removeItemByNo(row.original.Life_Id);
+                            } else if (pageType === 'Peptide') {
+                              removeItemByNo(row.original.Peptide_Id);
                             } else {
                               removeItemByNo(row.original.Diet_Id);
                             }
@@ -202,7 +211,8 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                     )}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         ) : (

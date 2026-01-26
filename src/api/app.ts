@@ -809,6 +809,56 @@ class Application extends Api {
   static getSupplementList = () => {
     return this.post('/supplement_library/supplements_list', {});
   };
+  // Peptide Library APIs (Layer 1 - Base Peptides)
+  static addPeptide = (data: any) => {
+    return this.post('/peptide_library/add_peptide', data);
+  };
+  static editPeptide = (data: any) => {
+    return this.post('/peptide_library/edit_peptide', data);
+  };
+  static deletePeptide = (id: string) => {
+    return this.post('/peptide_library/delete_peptide', {
+      Peptide_Id: id,
+    });
+  };
+  static getPeptideList = () => {
+    return this.post('/peptide_library/peptides_list', {});
+  };
+  static showPeptideDetails = (id: string) => {
+    return this.post('/peptide_library/show_peptide_details', {
+      Peptide_Id: id,
+    });
+  };
+  // Peptide Dose Schedule APIs (Layer 2 - Dose Schedules)
+  static addPeptideDoseSchedule = (data: any) => {
+    return this.post('/peptide_dose_schedule/add_schedule', data);
+  };
+  static editPeptideDoseSchedule = (data: any) => {
+    return this.post('/peptide_dose_schedule/edit_schedule', data);
+  };
+  static deletePeptideDoseSchedule = (id: string) => {
+    return this.post('/peptide_dose_schedule/delete_schedule', {
+      Schedule_Id: id,
+    });
+  };
+  static getPeptideDoseSchedules = (peptideId?: string) => {
+    return this.post('/peptide_dose_schedule/list_schedules', 
+      peptideId ? { Peptide_Id: peptideId } : {}
+    );
+  };
+  static getAllDoseSchedules = () => {
+    return this.post('/peptide_dose_schedule/list_schedules', {});
+  };
+  static showPeptideDoseScheduleDetails = (id: string) => {
+    return this.post('/peptide_dose_schedule/show_schedule_details', {
+      Schedule_Id: id,
+    });
+  };
+
+  // Check-in Forms API
+  static getCheckinFormsList = () => {
+    return this.post('/forms/check_in/list_checkin_forms', {});
+  };
   static addLifestyle = (data: any) => {
     return this.post('/lifestyle_library/add_lifestyle', data);
   };
