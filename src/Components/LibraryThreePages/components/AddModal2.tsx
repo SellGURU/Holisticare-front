@@ -204,22 +204,24 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       Parent_Title: editData?.Parent_Title || '',
       fda_status: editData?.Fda_status || '',
     });
-    
+
     // For peptides, load linked schedules and connected check-ins from showPeptideDetails
     if (pageType === 'Peptide' && editData?.Peptide_Id) {
       // Use showPeptideDetails to get all peptide data including Linked_Schedules and Connected_Checkins
       if (editData?.Linked_Schedules && editData?.Connected_Checkins) {
         // If data is already in editData, use it
         setSelectedSchedules(editData.Linked_Schedules);
-        
+
         // Load connected check-ins from editData
         if (editData.Connected_Checkins.length > 0) {
           Application.getCheckinFormsList()
             .then((res) => {
               const allCheckins = res.data || [];
               const selectedIds = editData.Connected_Checkins;
-              const selected = allCheckins.filter((c: any) => 
-                selectedIds.includes(c.id) || selectedIds.includes(c.checkin_form_id)
+              const selected = allCheckins.filter(
+                (c: any) =>
+                  selectedIds.includes(c.id) ||
+                  selectedIds.includes(c.checkin_form_id),
               );
               setSelectedCheckins(selected);
             })
@@ -237,15 +239,20 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
             const peptideData = res.data || {};
             // Set linked schedules
             setSelectedSchedules(peptideData.Linked_Schedules || []);
-            
+
             // Load connected check-ins
-            if (peptideData.Connected_Checkins && peptideData.Connected_Checkins.length > 0) {
+            if (
+              peptideData.Connected_Checkins &&
+              peptideData.Connected_Checkins.length > 0
+            ) {
               Application.getCheckinFormsList()
                 .then((checkinRes) => {
                   const allCheckins = checkinRes.data || [];
                   const selectedIds = peptideData.Connected_Checkins;
-                  const selected = allCheckins.filter((c: any) => 
-                    selectedIds.includes(c.id) || selectedIds.includes(c.checkin_form_id)
+                  const selected = allCheckins.filter(
+                    (c: any) =>
+                      selectedIds.includes(c.id) ||
+                      selectedIds.includes(c.checkin_form_id),
                   );
                   setSelectedCheckins(selected);
                 })
@@ -350,263 +357,275 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               />
             ) : (
               <>
-            <TextField
-              label="Title"
-              placeholder={placeHolderTitle()}
-              value={formData.title}
-              onChange={(e) => {
-                updateAddData('title', e.target.value);
-              }}
-              isValid={
-                showValidation
-                  ? ValidationForms.IsvalidField('Title', formData.title)
-                  : true
-              }
-              validationText={
-                showValidation
-                  ? ValidationForms.ValidationText('Title', formData.title)
-                  : ''
-              }
-              margin="mt-0"
-            />
-
-            {pageType === 'Diet' && (
-              <SelectBoxField
-                label="Associated Intervention"
-                options={dietLibrary.map((value: any) => value.title)}
-                value={formData.Parent_Title}
-                onChange={(value) => {
-                  updateAddData('Parent_Title', value);
-                }}
-                disabled={mode === 'edit'}
-                showDisabled={mode === 'edit'}
-                isValid={
-                  mode === 'add' && showValidation
-                    ? ValidationForms.IsvalidField(
-                        'Parent_Title',
-                        formData.Parent_Title,
-                      )
-                    : true
-                }
-                validationText={
-                  mode === 'add' && showValidation
-                    ? ValidationForms.ValidationText(
-                        'Parent_Title',
-                        formData.Parent_Title,
-                      )
-                    : ''
-                }
-                placeholder={AssociatedInterventionInfoTextDiet}
-                margin="mb-0 mt-2"
-              />
-            )}
-
-            <TextAreaField
-              label="Instruction"
-              placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : pageType === 'Peptide' ? 'Enter instructions (e.g., Subcutaneous injection)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}`}
-              value={formData.instruction}
-              onChange={(e) => {
-                updateAddData('instruction', e.target.value);
-              }}
-              isValid={
-                showValidation
-                  ? ValidationForms.IsvalidField(
-                      'Instruction',
-                      formData.instruction,
-                    )
-                  : true
-              }
-              validationText={
-                showValidation
-                  ? ValidationForms.ValidationText(
-                      'Instruction',
-                      formData.instruction,
-                    )
-                  : ''
-              }
-            />
-
-            {pageType === 'Supplement' && (
-              <TextField
-                label="Dose"
-                placeholder="Enter dose amount"
-                value={formData.dose}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  const englishOnly = DoseValidationEnglish(value);
-                  updateAddData('dose', englishOnly);
-                }}
-                isValid={
-                  showValidation
-                    ? ValidationForms.IsvalidField('Dose', formData.dose)
-                    : true
-                }
-                validationText={
-                  showValidation
-                    ? ValidationForms.ValidationText('Dose', formData.dose)
-                    : ''
-                }
-                // InfoText={DoseInfoText}
-              />
-            )}
-
-            {pageType === 'Lifestyle' && (
-              <MultiTextField
-                label="Value"
-                inputs={[
-                  {
-                    mode: 'numeric',
-                    pattern: '[0-9]*',
-                    placeholder: 'Enter value amount',
-                    value: formData.value,
-                    isValid: showValidation
-                      ? ValidationForms.IsvalidField('Value', formData.value)
-                      : true,
-                  },
-                  {
-                    mode: 'text',
-                    pattern: '*',
-                    placeholder: 'Enter unit',
-                    value: formData.unit,
-                    isValid: true,
-                  },
-                ]}
-                onchanges={(vales: Array<any>) => {
-                  if (ValueValidation(vales[0].value)) {
-                    updateAddData('value', vales[0].value);
+                <TextField
+                  label="Title"
+                  placeholder={placeHolderTitle()}
+                  value={formData.title}
+                  onChange={(e) => {
+                    updateAddData('title', e.target.value);
+                  }}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField('Title', formData.title)
+                      : true
                   }
-                  const onlyLettersAndSpaces = vales[1].value.replace(
-                    /[^a-zA-Z\s]/g,
-                    '',
-                  );
-                  updateAddData('unit', onlyLettersAndSpaces);
-                }}
-                InfoText={ValueInfoText}
-                validationText={
-                  showValidation
-                    ? ValidationForms.ValidationText('Value', formData.value)
-                    : ''
-                }
-              />
-            )}
+                  validationText={
+                    showValidation
+                      ? ValidationForms.ValidationText('Title', formData.title)
+                      : ''
+                  }
+                  margin="mt-0"
+                />
 
-            {pageType === 'Diet' && (
-              <MultiTextField
-                label="Macros Goal"
-                inputs={[
-                  {
-                    mode: 'numeric',
-                    pattern: '[0-9]*',
-                    placeholder: 'Carb amount',
-                    value: formData.macros.Carbs,
-                    label: 'Carbs',
-                    unit: '(gr)',
-                    isValid: showValidation
+                {pageType === 'Diet' && (
+                  <SelectBoxField
+                    label="Associated Intervention"
+                    options={dietLibrary.map((value: any) => value.title)}
+                    value={formData.Parent_Title}
+                    onChange={(value) => {
+                      updateAddData('Parent_Title', value);
+                    }}
+                    disabled={mode === 'edit'}
+                    showDisabled={mode === 'edit'}
+                    isValid={
+                      mode === 'add' && showValidation
+                        ? ValidationForms.IsvalidField(
+                            'Parent_Title',
+                            formData.Parent_Title,
+                          )
+                        : true
+                    }
+                    validationText={
+                      mode === 'add' && showValidation
+                        ? ValidationForms.ValidationText(
+                            'Parent_Title',
+                            formData.Parent_Title,
+                          )
+                        : ''
+                    }
+                    placeholder={AssociatedInterventionInfoTextDiet}
+                    margin="mb-0 mt-2"
+                  />
+                )}
+
+                <TextAreaField
+                  label="Instruction"
+                  placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : pageType === 'Peptide' ? 'Enter instructions (e.g., Subcutaneous injection)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}`}
+                  value={formData.instruction}
+                  onChange={(e) => {
+                    updateAddData('instruction', e.target.value);
+                  }}
+                  isValid={
+                    showValidation
                       ? ValidationForms.IsvalidField(
-                          'MacrosSeparately',
-                          formData.macros.Carbs,
+                          'Instruction',
+                          formData.instruction,
                         )
-                      : true,
-                  },
-                  {
-                    mode: 'numeric',
-                    pattern: '[0-9]*',
-                    placeholder: 'Protein amount',
-                    value: formData.macros.Protein,
-                    label: 'Proteins',
-                    unit: '(gr)',
-                    isValid: showValidation
-                      ? ValidationForms.IsvalidField(
-                          'MacrosSeparately',
-                          formData.macros.Protein,
+                      : true
+                  }
+                  validationText={
+                    showValidation
+                      ? ValidationForms.ValidationText(
+                          'Instruction',
+                          formData.instruction,
                         )
-                      : true,
-                  },
-                  {
-                    mode: 'numeric',
-                    pattern: '[0-9]*',
-                    placeholder: 'Fat amount',
-                    value: formData.macros.Fats,
-                    label: 'Fats',
-                    unit: '(gr)',
-                    isValid: showValidation
-                      ? ValidationForms.IsvalidField(
-                          'MacrosSeparately',
-                          formData.macros.Fats,
-                        )
-                      : true,
-                  },
-                ]}
-                onchanges={(vales: Array<any>) => {
-                  updateAddData('macros', {
-                    Fats: MacrosValidationNumber(vales[2].value)
-                      ? vales[2].value
-                      : formData.macros.Fats,
-                    Protein: MacrosValidationNumber(vales[1].value)
-                      ? vales[1].value
-                      : formData.macros.Protein,
-                    Carbs: MacrosValidationNumber(vales[0].value)
-                      ? vales[0].value
-                      : formData.macros.Carbs,
-                  });
-                }}
-                validationText={
-                  showValidation
-                    ? ValidationForms.ValidationText('Macros', formData.macros)
-                    : ''
-                }
-              />
-            )}
+                      : ''
+                  }
+                />
 
-            <div className="flex flex-col mt-4 w-full">
-              <div className="text-xs font-medium text-Text-Primary">
-                Priority Weight
-              </div>
-              <RangeCardLibraryThreePages
-                value={formData.score}
-                onChange={(value) => {
-                  updateAddData('score', value);
-                }}
-                isValid={
-                  showValidation
-                    ? ValidationForms.IsvalidField('Score', formData.score)
-                    : true
-                }
-                validationText={
-                  showValidation
-                    ? ValidationForms.ValidationText('Score', formData.score)
-                    : ''
-                }
-              />
-            </div>
+                {pageType === 'Supplement' && (
+                  <TextField
+                    label="Dose"
+                    placeholder="Enter dose amount"
+                    value={formData.dose}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const englishOnly = DoseValidationEnglish(value);
+                      updateAddData('dose', englishOnly);
+                    }}
+                    isValid={
+                      showValidation
+                        ? ValidationForms.IsvalidField('Dose', formData.dose)
+                        : true
+                    }
+                    validationText={
+                      showValidation
+                        ? ValidationForms.ValidationText('Dose', formData.dose)
+                        : ''
+                    }
+                    // InfoText={DoseInfoText}
+                  />
+                )}
 
-            <TextAreaField
-              label="Clinical Guidance"
-              placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
-              value={formData.clinical_guidance}
-              onChange={(e) => {
-                updateAddData('clinical_guidance', e.target.value);
-              }}
-            />
+                {pageType === 'Lifestyle' && (
+                  <MultiTextField
+                    label="Value"
+                    inputs={[
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Enter value amount',
+                        value: formData.value,
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField(
+                              'Value',
+                              formData.value,
+                            )
+                          : true,
+                      },
+                      {
+                        mode: 'text',
+                        pattern: '*',
+                        placeholder: 'Enter unit',
+                        value: formData.unit,
+                        isValid: true,
+                      },
+                    ]}
+                    onchanges={(vales: Array<any>) => {
+                      if (ValueValidation(vales[0].value)) {
+                        updateAddData('value', vales[0].value);
+                      }
+                      const onlyLettersAndSpaces = vales[1].value.replace(
+                        /[^a-zA-Z\s]/g,
+                        '',
+                      );
+                      updateAddData('unit', onlyLettersAndSpaces);
+                    }}
+                    InfoText={ValueInfoText}
+                    validationText={
+                      showValidation
+                        ? ValidationForms.ValidationText(
+                            'Value',
+                            formData.value,
+                          )
+                        : ''
+                    }
+                  />
+                )}
 
-            {pageType === 'Peptide' && (
-              <SelectBoxFieldAuto
-                label="FDA Status"
-                options={[
-                  'FULLY_APPROVED',
-                  'RESEARCH_USE_ONLY',
-                  'NOT_FDA_APPROVED',
-                  'INVESTIGATIONAL_ONLY',
-                ]}
-                value={formData.fda_status}
-                onChange={(value) => {
-                  updateAddData('fda_status', value);
-                }}
-                placeholder="Select FDA status (optional)"
-                margin="mt-4"
-              />
-            )}
-            </>
+                {pageType === 'Diet' && (
+                  <MultiTextField
+                    label="Macros Goal"
+                    inputs={[
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Carb amount',
+                        value: formData.macros.Carbs,
+                        label: 'Carbs',
+                        unit: '(gr)',
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField(
+                              'MacrosSeparately',
+                              formData.macros.Carbs,
+                            )
+                          : true,
+                      },
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Protein amount',
+                        value: formData.macros.Protein,
+                        label: 'Proteins',
+                        unit: '(gr)',
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField(
+                              'MacrosSeparately',
+                              formData.macros.Protein,
+                            )
+                          : true,
+                      },
+                      {
+                        mode: 'numeric',
+                        pattern: '[0-9]*',
+                        placeholder: 'Fat amount',
+                        value: formData.macros.Fats,
+                        label: 'Fats',
+                        unit: '(gr)',
+                        isValid: showValidation
+                          ? ValidationForms.IsvalidField(
+                              'MacrosSeparately',
+                              formData.macros.Fats,
+                            )
+                          : true,
+                      },
+                    ]}
+                    onchanges={(vales: Array<any>) => {
+                      updateAddData('macros', {
+                        Fats: MacrosValidationNumber(vales[2].value)
+                          ? vales[2].value
+                          : formData.macros.Fats,
+                        Protein: MacrosValidationNumber(vales[1].value)
+                          ? vales[1].value
+                          : formData.macros.Protein,
+                        Carbs: MacrosValidationNumber(vales[0].value)
+                          ? vales[0].value
+                          : formData.macros.Carbs,
+                      });
+                    }}
+                    validationText={
+                      showValidation
+                        ? ValidationForms.ValidationText(
+                            'Macros',
+                            formData.macros,
+                          )
+                        : ''
+                    }
+                  />
+                )}
+
+                <div className="flex flex-col mt-4 w-full">
+                  <div className="text-xs font-medium text-Text-Primary">
+                    Priority Weight
+                  </div>
+                  <RangeCardLibraryThreePages
+                    value={formData.score}
+                    onChange={(value) => {
+                      updateAddData('score', value);
+                    }}
+                    isValid={
+                      showValidation
+                        ? ValidationForms.IsvalidField('Score', formData.score)
+                        : true
+                    }
+                    validationText={
+                      showValidation
+                        ? ValidationForms.ValidationText(
+                            'Score',
+                            formData.score,
+                          )
+                        : ''
+                    }
+                  />
+                </div>
+
+                <TextAreaField
+                  label="Clinical Guidance"
+                  placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
+                  value={formData.clinical_guidance}
+                  onChange={(e) => {
+                    updateAddData('clinical_guidance', e.target.value);
+                  }}
+                />
+
+                {pageType === 'Peptide' && (
+                  <SelectBoxFieldAuto
+                    label="FDA Status"
+                    options={[
+                      'FULLY_APPROVED',
+                      'RESEARCH_USE_ONLY',
+                      'NOT_FDA_APPROVED',
+                      'INVESTIGATIONAL_ONLY',
+                    ]}
+                    value={formData.fda_status}
+                    onChange={(value) => {
+                      updateAddData('fda_status', value);
+                    }}
+                    placeholder="Select FDA status (optional)"
+                    margin="mt-4"
+                  />
+                )}
+              </>
             )}
           </div>
           <div className="w-full flex justify-between items-center p-2 mt-5">
@@ -646,8 +665,12 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     return;
                   }
                   // Submit with schedules and check-ins
-                  const scheduleIds = selectedSchedules.map((s: any) => s.Schedule_Id || s.Pds_Id);
-                  const checkinIds = selectedCheckins.map((c: any) => c.id || c.checkin_form_id);
+                  const scheduleIds = selectedSchedules.map(
+                    (s: any) => s.Schedule_Id || s.Pds_Id,
+                  );
+                  const checkinIds = selectedCheckins.map(
+                    (c: any) => c.id || c.checkin_form_id,
+                  );
                   const data: any = {
                     Title: formData.title,
                     Instruction: formData.instruction,

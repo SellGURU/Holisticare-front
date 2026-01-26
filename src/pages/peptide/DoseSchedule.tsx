@@ -170,7 +170,9 @@ const DoseSchedule: React.FC<DoseScheduleHandlerProps> = ({
                       index={index}
                       key={index}
                       onDelete={() =>
-                        handleDeleteDoseSchedule(schedule.Pds_Id || schedule.Schedule_Id)
+                        handleDeleteDoseSchedule(
+                          schedule.Pds_Id || schedule.Schedule_Id,
+                        )
                       }
                       onEdit={() => {
                         setScheduleId(schedule.Pds_Id || schedule.Schedule_Id);

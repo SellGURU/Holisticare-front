@@ -842,8 +842,9 @@ class Application extends Api {
     });
   };
   static getPeptideDoseSchedules = (peptideId?: string) => {
-    return this.post('/peptide_dose_schedule/list_schedules', 
-      peptideId ? { Peptide_Id: peptideId } : {}
+    return this.post(
+      '/peptide_dose_schedule/list_schedules',
+      peptideId ? { Peptide_Id: peptideId } : {},
     );
   };
   static getAllDoseSchedules = () => {

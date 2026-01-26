@@ -74,8 +74,12 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
     if (scheduleSearchValue) {
       const filtered = allSchedules.filter(
         (schedule) =>
-          schedule.Title?.toLowerCase().includes(scheduleSearchValue.toLowerCase()) ||
-          schedule.Dose?.toLowerCase().includes(scheduleSearchValue.toLowerCase())
+          schedule.Title?.toLowerCase().includes(
+            scheduleSearchValue.toLowerCase(),
+          ) ||
+          schedule.Dose?.toLowerCase().includes(
+            scheduleSearchValue.toLowerCase(),
+          ),
       );
       setFilteredSchedules(filtered);
     } else {
@@ -86,9 +90,8 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
   // Filter check-ins
   useEffect(() => {
     if (checkinSearchValue) {
-      const filtered = allCheckins.filter(
-        (checkin) =>
-          checkin.title?.toLowerCase().includes(checkinSearchValue.toLowerCase())
+      const filtered = allCheckins.filter((checkin) =>
+        checkin.title?.toLowerCase().includes(checkinSearchValue.toLowerCase()),
       );
       setFilteredCheckins(filtered);
     } else {
@@ -99,12 +102,14 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
   const toggleSchedule = (schedule: any) => {
     const scheduleId = schedule.Schedule_Id || schedule.Pds_Id;
     const isSelected = selectedSchedules.some(
-      (s) => (s.Schedule_Id || s.Pds_Id) === scheduleId
+      (s) => (s.Schedule_Id || s.Pds_Id) === scheduleId,
     );
     if (isSelected) {
-      onSchedulesChange(selectedSchedules.filter((s) => 
-        (s.Schedule_Id || s.Pds_Id) !== scheduleId
-      ));
+      onSchedulesChange(
+        selectedSchedules.filter(
+          (s) => (s.Schedule_Id || s.Pds_Id) !== scheduleId,
+        ),
+      );
     } else {
       onSchedulesChange([...selectedSchedules, schedule]);
     }
@@ -113,12 +118,14 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
   const toggleCheckin = (checkin: any) => {
     const checkinId = checkin.id || checkin.checkin_form_id;
     const isSelected = selectedCheckins.some(
-      (c) => (c.id || c.checkin_form_id) === checkinId
+      (c) => (c.id || c.checkin_form_id) === checkinId,
     );
     if (isSelected) {
-      onCheckinsChange(selectedCheckins.filter((c) => 
-        (c.id || c.checkin_form_id) !== checkinId
-      ));
+      onCheckinsChange(
+        selectedCheckins.filter(
+          (c) => (c.id || c.checkin_form_id) !== checkinId,
+        ),
+      );
     } else {
       onCheckinsChange([...selectedCheckins, checkin]);
     }
@@ -128,7 +135,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
     if (!schedule.Frequency_Type) return '-';
     const type = schedule.Frequency_Type;
     const days = schedule.Frequency_Days || [];
-    
+
     if (type === 'daily') return 'Daily';
     if (type === 'weekly') {
       if (days.length === 0) return 'Weekly';
@@ -172,7 +179,9 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
             <SpinnerLoader />
           </div>
         ) : filteredSchedules.length === 0 ? (
-          <div className={`text-center py-4 text-xs ${showValidation && !isScheduleValid ? 'text-Red' : 'text-Text-Quadruple'}`}>
+          <div
+            className={`text-center py-4 text-xs ${showValidation && !isScheduleValid ? 'text-Red' : 'text-Text-Quadruple'}`}
+          >
             {allSchedules.length === 0
               ? 'No dose schedules found. Create dose schedules first in the "Dose Schedule" tab.'
               : 'No schedules match your search.'}
@@ -182,7 +191,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
             {filteredSchedules.map((schedule) => {
               const scheduleId = schedule.Schedule_Id || schedule.Pds_Id;
               const isSelected = selectedSchedules.some(
-                (s) => (s.Schedule_Id || s.Pds_Id) === scheduleId
+                (s) => (s.Schedule_Id || s.Pds_Id) === scheduleId,
               );
               return (
                 <div
@@ -266,7 +275,8 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
       <div>
         <div className="flex items-center justify-between mb-2">
           <div className="text-xs font-medium text-Text-Primary">
-            Select Connected Check-ins <span className="text-Text-Quadruple">(Optional)</span>
+            Select Connected Check-ins{' '}
+            <span className="text-Text-Quadruple">(Optional)</span>
           </div>
           {allCheckins.length > 0 && (
             <SearchBox
@@ -292,7 +302,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
             {filteredCheckins.map((checkin) => {
               const checkinId = checkin.id || checkin.checkin_form_id;
               const isSelected = selectedCheckins.some(
-                (c) => (c.id || c.checkin_form_id) === checkinId
+                (c) => (c.id || c.checkin_form_id) === checkinId,
               );
               return (
                 <div

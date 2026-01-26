@@ -76,9 +76,10 @@ const Peptide = () => {
     const base = doseSchedulesList;
 
     // filter first
-    const result = base.filter((item) =>
-      item.Title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.Dose?.toLowerCase().includes(searchQuery.toLowerCase())
+    const result = base.filter(
+      (item) =>
+        item.Title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.Dose?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
     const getAddedDate = (item: any) =>
@@ -145,7 +146,7 @@ const Peptide = () => {
       setIsSortOpen(false);
     },
   });
-  
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobilePage(window.innerWidth < 982);
@@ -193,99 +194,99 @@ const Peptide = () => {
                       placeHolder="Search in dose schedules..."
                       onSearch={(query) => setSearchQuery(query)}
                     />
-                  
-                  <div
-                    className={`flex items-center gap-6 w-full ${
-                      isMobilePage ? 'w-full' : 'w-fit'
-                    }`}
-                  >
-                    <div className="flex gap-1 items-center text-nowrap text-xs text-Primary-DeepTeal">
-                      <img src="/icons/sort.svg" alt="" />
-                      Sort by:
-                    </div>
+
                     <div
-                      ref={btnRef}
-                      className={`relative w-full ${
-                        isMobilePage ? 'w-full pl-2' : 'w-fit pl-0'
+                      className={`flex items-center gap-6 w-full ${
+                        isMobilePage ? 'w-full' : 'w-fit'
                       }`}
                     >
-                      <button
-                        type="button"
-                        onClick={() => setIsSortOpen((v) => !v)}
-                        className={`h-8 rounded-[20px] border w-full ${
-                          isMobilePage ? 'w-full' : 'min-w-[183px]'
-                        } border-[#E2F1F8] px-[12px] py-[10px] bg-white text-xs text-Text-Primary text-nowrap flex items-center justify-between gap-2 shadow-100 ${
-                          isSortOpen ? 'rounded-b-none' : ''
+                      <div className="flex gap-1 items-center text-nowrap text-xs text-Primary-DeepTeal">
+                        <img src="/icons/sort.svg" alt="" />
+                        Sort by:
+                      </div>
+                      <div
+                        ref={btnRef}
+                        className={`relative w-full ${
+                          isMobilePage ? 'w-full pl-2' : 'w-fit pl-0'
                         }`}
                       >
-                        {currentSortLabel}
-                        <div
-                          className={` transition-transform ${isSortOpen ? 'rotate-180' : ''}`}
-                        >
-                          <SvgIcon
-                            color="#005F73"
-                            width="16px"
-                            height="16px"
-                            src="/icons/arrow-down.svg"
-                          />
-                        </div>
-                      </button>
-
-                      {isSortOpen && (
-                        <div
-                          ref={modalRef}
-                          className={`absolute ${isMobilePage ? 'w-[97%]' : 'w-full'} top-8 z-20 right-0 bg-white rounded-[20px] px-2 py-3 shadow-md ${
-                            isSortOpen ? 'rounded-t-none' : ''
+                        <button
+                          type="button"
+                          onClick={() => setIsSortOpen((v) => !v)}
+                          className={`h-8 rounded-[20px] border w-full ${
+                            isMobilePage ? 'w-full' : 'min-w-[183px]'
+                          } border-[#E2F1F8] px-[12px] py-[10px] bg-white text-xs text-Text-Primary text-nowrap flex items-center justify-between gap-2 shadow-100 ${
+                            isSortOpen ? 'rounded-b-none' : ''
                           }`}
                         >
-                          <div className="flex flex-col gap-4">
-                            {sortOptions.map((opt) => (
-                              <button
-                                key={opt.id}
-                                type="button"
-                                onClick={() => {
-                                  setSortId(opt.id ?? 'title_asc');
-                                  setIsSortOpen(false);
-                                }}
-                                className="w-full text-left text-[#888888] text-[10px] flex items-center gap-2"
-                              >
-                                <span
-                                  className={`inline-block w-4 h-4 rounded-full border-Primary-DeepTeal ${
-                                    currentSortLabel === opt.label
-                                      ? 'border-[3.5px]'
-                                      : 'border-[.5px]'
-                                  }`}
-                                ></span>
-                                <span>{opt.label}</span>
-                              </button>
-                            ))}
+                          {currentSortLabel}
+                          <div
+                            className={` transition-transform ${isSortOpen ? 'rotate-180' : ''}`}
+                          >
+                            <SvgIcon
+                              color="#005F73"
+                              width="16px"
+                              height="16px"
+                              src="/icons/arrow-down.svg"
+                            />
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                        </button>
 
-                  {/* Add button */}
-                  <ButtonSecondary
-                    onClick={() => setShowAdd(true)}
-                    ClassName={`rounded-full w-full text-nowrap ${
-                      isMobilePage ? 'w-full' : 'w-[180px]'
-                    }`}
-                  >
-                    <img src="./icons/add-square.svg" alt="" />
-                    Add Dose Schedule
-                  </ButtonSecondary>
-                  
+                        {isSortOpen && (
+                          <div
+                            ref={modalRef}
+                            className={`absolute ${isMobilePage ? 'w-[97%]' : 'w-full'} top-8 z-20 right-0 bg-white rounded-[20px] px-2 py-3 shadow-md ${
+                              isSortOpen ? 'rounded-t-none' : ''
+                            }`}
+                          >
+                            <div className="flex flex-col gap-4">
+                              {sortOptions.map((opt) => (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => {
+                                    setSortId(opt.id ?? 'title_asc');
+                                    setIsSortOpen(false);
+                                  }}
+                                  className="w-full text-left text-[#888888] text-[10px] flex items-center gap-2"
+                                >
+                                  <span
+                                    className={`inline-block w-4 h-4 rounded-full border-Primary-DeepTeal ${
+                                      currentSortLabel === opt.label
+                                        ? 'border-[3.5px]'
+                                        : 'border-[.5px]'
+                                    }`}
+                                  ></span>
+                                  <span>{opt.label}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Add button */}
+                    <ButtonSecondary
+                      onClick={() => setShowAdd(true)}
+                      ClassName={`rounded-full w-full text-nowrap ${
+                        isMobilePage ? 'w-full' : 'w-[180px]'
+                      }`}
+                    >
+                      <img src="./icons/add-square.svg" alt="" />
+                      Add Dose Schedule
+                    </ButtonSecondary>
                   </>
                 )}
-
               </div>
             </div>
           )}
         </div>
 
         {/* Data rendering */}
-        <div className={`${active === 'Peptide' ? 'px-3 md:px-6 pt-8' : 'px-6'} ${isMobilePage ? 'mb-20' : 'mb-14'}`}>
+        <div
+          className={`${active === 'Peptide' ? 'px-3 md:px-6 pt-8' : 'px-6'} ${isMobilePage ? 'mb-20' : 'mb-14'}`}
+        >
           {active === 'Peptide' ? (
             <LibraryThreePages pageType="Peptide" />
           ) : (

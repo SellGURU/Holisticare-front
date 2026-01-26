@@ -33,9 +33,7 @@ const SelectBoxFieldAuto: FC<SelectBoxFieldAutoProps> = ({
   showDisabled,
 }) => {
   const [showSelect, setShowSelect] = useState(false);
-  const [openDirection, setOpenDirection] = useState<'top' | 'bottom'>(
-    'top',
-  );
+  const [openDirection, setOpenDirection] = useState<'top' | 'bottom'>('top');
   const wrapperRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);

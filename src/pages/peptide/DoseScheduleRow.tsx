@@ -28,7 +28,7 @@ export const DoseScheduleRow: React.FC<DoseScheduleRowProps> = ({
     if (!schedule.Frequency_Type) return '-';
     const type = schedule.Frequency_Type;
     const days = schedule.Frequency_Days || [];
-    
+
     if (type === 'daily') return 'Daily';
     if (type === 'weekly') {
       if (days.length === 0) return 'Weekly';
@@ -74,7 +74,9 @@ export const DoseScheduleRow: React.FC<DoseScheduleRowProps> = ({
           className="py-3 text-xs text-[#888888] w-[150px] text-center "
         >
           <div className=" text-ellipsis select-none">
-            {frequency.length > 20 ? frequency.substring(0, 20) + '...' : frequency}
+            {frequency.length > 20
+              ? frequency.substring(0, 20) + '...'
+              : frequency}
           </div>
           {frequency.length > 20 && (
             <Tooltip

@@ -145,72 +145,74 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                   return row.original.Diet_Id;
                 };
                 return (
-                <tr
-                  className={`text-Text-Primary space-y-7 ${index % 2 === 1 ? 'bg-backgroundColor-Main' : 'bg-white'}`}
-                  key={getRowKey()}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      className="px-3 py-3 text-center text-nowrap overflow-hidden text-xs"
-                      key={cell.id}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
+                  <tr
+                    className={`text-Text-Primary space-y-7 ${index % 2 === 1 ? 'bg-backgroundColor-Main' : 'bg-white'}`}
+                    key={getRowKey()}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td
+                        className="px-3 py-3 text-center text-nowrap overflow-hidden text-xs"
+                        key={cell.id}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    ))}
+                    <td className="px-3 py-3 text-center text-nowrap text-xs flex items-center justify-center !mt-0">
+                      {sureRemoveIndex === index ? (
+                        <div className="flex items-center justify-center w-full gap-1">
+                          <div className="text-Text-Quadruple text-xs">
+                            Sure?
+                          </div>
+                          <img
+                            src="/icons/tick-circle-green.svg"
+                            alt=""
+                            className="w-[20px] h-[20px] cursor-pointer"
+                            onClick={() => {
+                              if (pageType === 'Supplement') {
+                                removeItemByNo(row.original.Sup_Id);
+                              } else if (pageType === 'Lifestyle') {
+                                removeItemByNo(row.original.Life_Id);
+                              } else if (pageType === 'Peptide') {
+                                removeItemByNo(row.original.Peptide_Id);
+                              } else {
+                                removeItemByNo(row.original.Diet_Id);
+                              }
+                            }}
+                          />
+                          <img
+                            src="/icons/close-circle-red.svg"
+                            alt=""
+                            className="w-[20px] h-[20px] cursor-pointer"
+                            onClick={() => setSureRemoveIndex(null)}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center w-ful gap-2 w-[80px]">
+                          <img
+                            onClick={() => handlePreview(row.original)}
+                            className="cursor-pointer"
+                            src="/icons/eye-blue.svg"
+                            alt=""
+                          />
+                          <img
+                            onClick={() => handleEdit(row.original)}
+                            src="/icons/edit-blue.svg"
+                            alt=""
+                            className="cursor-pointer"
+                          />
+                          <img
+                            onClick={() => setSureRemoveIndex(index)}
+                            src="/icons/trash-blue.svg"
+                            alt=""
+                            className="cursor-pointer"
+                          />
+                        </div>
                       )}
                     </td>
-                  ))}
-                  <td className="px-3 py-3 text-center text-nowrap text-xs flex items-center justify-center !mt-0">
-                    {sureRemoveIndex === index ? (
-                      <div className="flex items-center justify-center w-full gap-1">
-                        <div className="text-Text-Quadruple text-xs">Sure?</div>
-                        <img
-                          src="/icons/tick-circle-green.svg"
-                          alt=""
-                          className="w-[20px] h-[20px] cursor-pointer"
-                          onClick={() => {
-                            if (pageType === 'Supplement') {
-                              removeItemByNo(row.original.Sup_Id);
-                            } else if (pageType === 'Lifestyle') {
-                              removeItemByNo(row.original.Life_Id);
-                            } else if (pageType === 'Peptide') {
-                              removeItemByNo(row.original.Peptide_Id);
-                            } else {
-                              removeItemByNo(row.original.Diet_Id);
-                            }
-                          }}
-                        />
-                        <img
-                          src="/icons/close-circle-red.svg"
-                          alt=""
-                          className="w-[20px] h-[20px] cursor-pointer"
-                          onClick={() => setSureRemoveIndex(null)}
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center w-ful gap-2 w-[80px]">
-                        <img
-                          onClick={() => handlePreview(row.original)}
-                          className="cursor-pointer"
-                          src="/icons/eye-blue.svg"
-                          alt=""
-                        />
-                        <img
-                          onClick={() => handleEdit(row.original)}
-                          src="/icons/edit-blue.svg"
-                          alt=""
-                          className="cursor-pointer"
-                        />
-                        <img
-                          onClick={() => setSureRemoveIndex(index)}
-                          src="/icons/trash-blue.svg"
-                          alt=""
-                          className="cursor-pointer"
-                        />
-                      </div>
-                    )}
-                  </td>
-                </tr>
+                  </tr>
                 );
               })}
             </tbody>
