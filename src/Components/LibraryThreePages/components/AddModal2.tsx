@@ -592,10 +592,12 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               <SelectBoxField
                 label="FDA Status"
                 options={[
-                  'FULLY_APPROVED',
-                  'RESEARCH_USE_ONLY',
-                  'NOT_FDA_APPROVED',
-                  'INVESTIGATIONAL_ONLY',
+                  'FDA Approved',
+                  'Over the Counter',
+                  'Investigational',
+                  'Compounded',
+                  'Research Use Only'
+
                 ]}
                 value={formData.fda_status}
                 onChange={(value) => {
