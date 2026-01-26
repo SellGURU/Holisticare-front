@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Application from '../../../api/app';
 import SearchBox from '../../SearchBox';
 import SpinnerLoader from '../../SpinnerLoader';
+import Checkbox from '../../checkbox';
 
 interface PeptideDoseScheduleStepProps {
   selectedSchedules: any[];
@@ -156,7 +157,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
       {/* Dose Schedules Section - REQUIRED */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <div className="text-xs font-medium text-Text-Primary">
+          <div className="text-xs font-semibold text-Text-Primary">
             Select Dose Schedules <span className="text-Red">*</span>
           </div>
           {allSchedules.length > 0 && (
@@ -187,7 +188,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
               : 'No schedules match your search.'}
           </div>
         ) : (
-          <div className="flex flex-col gap-2 max-h-[180px] overflow-y-auto">
+          <div className="flex flex-col gap-2 max-h-[180px] pr-1 overflow-y-auto">
             {filteredSchedules.map((schedule) => {
               const scheduleId = schedule.Schedule_Id || schedule.Pds_Id;
               const isSelected = selectedSchedules.some(
@@ -196,8 +197,8 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
               return (
                 <div
                   key={scheduleId}
-                  onClick={() => toggleSchedule(schedule)}
-                  className={`p-2 rounded-lg border cursor-pointer transition-all ${
+                  // onClick={() => toggleSchedule(schedule)}
+                  className={` rounded-lg border cursor-pointer transition-all ${
                     isSelected
                       ? 'border-Primary-DeepTeal bg-[#E2F1F8]'
                       : showValidation && !isScheduleValid
@@ -206,7 +207,12 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex-1">
+                    <div
+                      onClick={() => {
+                        toggleSchedule(schedule);
+                      }}
+                      className="flex-1 p-2"
+                    >
                       <div className="text-xs font-medium text-Text-Primary">
                         {schedule.Title || 'Unnamed Schedule'}
                       </div>
@@ -215,7 +221,13 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
                         {schedule.Dose && ` • Dose: ${schedule.Dose}`}
                       </div>
                     </div>
-                    <div
+                    <Checkbox
+                      checked={isSelected}
+                      onChange={() => {
+                        toggleSchedule(schedule);
+                      }}
+                    />
+                    {/* <div
                       className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                         isSelected
                           ? 'border-Primary-DeepTeal bg-Primary-DeepTeal'
@@ -229,7 +241,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
                           className="w-2.5 h-2.5 filter brightness-0 invert"
                         />
                       )}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               );
@@ -237,7 +249,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
           </div>
         )}
 
-        {selectedSchedules.length > 0 && (
+        {/* {selectedSchedules.length > 0 && (
           <div className="mt-2 p-2 bg-[#F4F4F4] rounded-lg">
             <div className="text-[10px] font-medium text-Text-Primary mb-1">
               Selected ({selectedSchedules.length})
@@ -265,7 +277,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
               })}
             </div>
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Divider */}
@@ -274,9 +286,9 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
       {/* Check-ins Section - OPTIONAL */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <div className="text-xs font-medium text-Text-Primary">
+          <div className="text-xs font-semibold text-Text-Primary">
             Select Connected Check-ins{' '}
-            <span className="text-Text-Quadruple">(Optional)</span>
+            {/* <span className="text-Text-Quadruple">(Optional)</span> */}
           </div>
           {allCheckins.length > 0 && (
             <SearchBox
@@ -298,7 +310,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
               : 'No check-ins match your search.'}
           </div>
         ) : (
-          <div className="flex flex-col gap-2 max-h-[180px] overflow-y-auto">
+          <div className="flex flex-col gap-2 max-h-[160px] pr-1 overflow-y-auto">
             {filteredCheckins.map((checkin) => {
               const checkinId = checkin.id || checkin.checkin_form_id;
               const isSelected = selectedCheckins.some(
@@ -307,15 +319,20 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
               return (
                 <div
                   key={checkinId}
-                  onClick={() => toggleCheckin(checkin)}
-                  className={`p-2 rounded-lg border cursor-pointer transition-all ${
+                  // onClick={() => toggleCheckin(checkin)}
+                  className={` rounded-lg border cursor-pointer transition-all ${
                     isSelected
                       ? 'border-Primary-DeepTeal bg-[#E2F1F8]'
                       : 'border-Gray-50 bg-white hover:border-Primary-DeepTeal'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex-1">
+                    <div
+                      onClick={() => {
+                        toggleCheckin(checkin);
+                      }}
+                      className="flex-1 p-2"
+                    >
                       <div className="text-xs font-medium text-Text-Primary">
                         {checkin.title || 'Unnamed Check-in'}
                       </div>
@@ -323,21 +340,12 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
                         {checkin.questions || 0} questions
                       </div>
                     </div>
-                    <div
-                      className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                        isSelected
-                          ? 'border-Primary-DeepTeal bg-Primary-DeepTeal'
-                          : 'border-Gray-50'
-                      }`}
-                    >
-                      {isSelected && (
-                        <img
-                          src="/icons/tick-circle.svg"
-                          alt=""
-                          className="w-2.5 h-2.5 filter brightness-0 invert"
-                        />
-                      )}
-                    </div>
+                    <Checkbox
+                      checked={isSelected}
+                      onChange={() => {
+                        toggleCheckin(checkin);
+                      }}
+                    ></Checkbox>
                   </div>
                 </div>
               );
@@ -345,7 +353,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
           </div>
         )}
 
-        {selectedCheckins.length > 0 && (
+        {/* {selectedCheckins.length > 0 && (
           <div className="mt-2 p-2 bg-[#F4F4F4] rounded-lg">
             <div className="text-[10px] font-medium text-Text-Primary mb-1">
               Selected ({selectedCheckins.length})
@@ -373,7 +381,7 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
               })}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
