@@ -191,7 +191,7 @@ const PeptideDoseScheduleStepAction: React.FC<
           </div>
         )}
 
-        {/* {selectedSchedules.length > 0 && (
+        {selectedSchedules.length > 0 && (
           <div className="mt-2 p-2 bg-[#F4F4F4] rounded-lg">
             <div className="text-[10px] font-medium text-Text-Primary mb-1">
               Selected ({selectedSchedules.length})
@@ -219,7 +219,7 @@ const PeptideDoseScheduleStepAction: React.FC<
               })}
             </div>
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );
