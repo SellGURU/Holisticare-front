@@ -82,7 +82,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       case 'Activity':
         return '/icons/weight.svg';
       case 'Medical Peptide Therapy':
-        return '/icons/Supplement.svg'
+        return '/icons/Supplement.svg';
       default:
         return '/icons/others.svg';
     }

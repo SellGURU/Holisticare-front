@@ -243,7 +243,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       defalts.Dose_Schedules.length > 0
     ) {
       setDoseSchedules(defalts.Dose_Schedules);
-    }    
+    }
   }, [defalts, isOpen]);
   const [, setIsExerciseStepValid] = useState(false);
   const rsolveSectionListforSendToApi = () => {

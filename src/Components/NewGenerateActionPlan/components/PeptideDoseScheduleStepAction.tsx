@@ -15,7 +15,7 @@ const PeptideDoseScheduleStepAction: React.FC<
   PeptideDoseScheduleStepActionProps
 > = ({ selectedSchedules, onSchedulesChange, showValidation }) => {
   // Dose Schedules state
-  console.log(selectedSchedules)
+  console.log(selectedSchedules);
   const [allSchedules, setAllSchedules] = useState<any[]>([]);
   const [filteredSchedules, setFilteredSchedules] = useState<any[]>([]);
   const [scheduleSearchValue, setScheduleSearchValue] = useState('');
@@ -149,9 +149,12 @@ const PeptideDoseScheduleStepAction: React.FC<
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div onClick={() => {
-                      toggleSchedule(schedule)
-                    }} className="flex-1 p-2">
+                    <div
+                      onClick={() => {
+                        toggleSchedule(schedule);
+                      }}
+                      className="flex-1 p-2"
+                    >
                       <div className="text-xs font-medium text-Text-Primary">
                         {schedule.Title || 'Unnamed Schedule'}
                       </div>
@@ -159,10 +162,13 @@ const PeptideDoseScheduleStepAction: React.FC<
                         {formatFrequency(schedule)}
                         {schedule.Dose && ` • Dose: ${schedule.Dose}`}
                       </div>
-                    </div> 
-                    <Checkbox checked={isSelected} onChange={() => {
-                      toggleSchedule(schedule)
-                    }}></Checkbox>
+                    </div>
+                    <Checkbox
+                      checked={isSelected}
+                      onChange={() => {
+                        toggleSchedule(schedule);
+                      }}
+                    ></Checkbox>
                     {/* <div
                       className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                         isSelected

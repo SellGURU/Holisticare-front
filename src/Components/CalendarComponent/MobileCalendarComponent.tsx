@@ -83,7 +83,7 @@ const MobileCalendarComponent: React.FC<CalenderComponentProps> = ({
     if (category == '') {
       return '/icons/check-in.svg';
     }
-    return '/icons/check-in.svg'
+    return '/icons/check-in.svg';
   };
 
   const today = new Date();
