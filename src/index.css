@@ -515,7 +515,7 @@ input[type='range'] {
 /* For Firefox */
 .custom-scrollbar {
   scrollbar-width: thin; /* Make the scrollbar thin */
-  scrollbar-color: #ffffff #ffffff; /* Scrollbar thumb and track color */
+  scrollbar-color: #e8e3e3 #ffffff; /* Scrollbar thumb and track color */
 }
 .chat-shadow-box {
   box-shadow: 4px 0px 12px 0px rgba(202, 202, 215, 0.25);

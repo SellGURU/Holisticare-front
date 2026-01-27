@@ -77,9 +77,13 @@ const MobileCalendarComponent: React.FC<CalenderComponentProps> = ({
     if (category == 'Lifestyle') {
       return '/icons/LifeStyle2.svg';
     }
+    if (category == 'Medical Peptide Therapy') {
+      return '/icons/Supplement.svg';
+    }
     if (category == '') {
       return '/icons/check-in.svg';
     }
+    return '/icons/check-in.svg'
   };
 
   const today = new Date();

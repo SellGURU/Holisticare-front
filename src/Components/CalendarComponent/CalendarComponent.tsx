@@ -6,6 +6,7 @@ import { CalendarX, CalendarOff } from 'lucide-react';
 import TableNoPaginateForActionPlan from '../Action-plan/TableNoPaginate';
 import Toggle from '../RepoerAnalyse/Boxs/Toggle';
 import Select from '../Select';
+import { resolveCategoryName } from '../../help';
 
 // const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -293,9 +294,13 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
     if (category == 'Lifestyle') {
       return '/icons/LifeStyle2.svg';
     }
+    if (category == 'Medical Peptide Therapy') {
+      return '/icons/Supplement.svg';
+    }
     if (category == '') {
       return '/icons/check-in.svg';
     }
+    return '/icons/check-in.svg'
   };
   const today = new Date(); // Current date at the component level
   today.setHours(0, 0, 0, 0); // Ensure time is not considered in comparison
@@ -549,7 +554,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                                     src={resolveIcon(category)}
                                     alt=""
                                   />
-                                  {category == '' ? 'Check-in' : category}
+                                  {category == '' ? 'Check-in' : resolveCategoryName(category)}
                                 </div>
                                 {activitiesForTheDay
                                   .filter(

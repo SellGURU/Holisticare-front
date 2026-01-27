@@ -210,6 +210,23 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                           gr
                                         </div>
                                       </div>
+                                    ) : item.dose_schedules ? (
+                                      <div className="flex flex-col mt-3">
+                                        <div
+                                          className="text-[10px]"
+                                          style={{ color: '#B0B0B0' }}
+                                        >
+                                          Schedule: {item.dose_schedules}
+                                        </div>
+                                        {item.fda_status && (
+                                          <div
+                                            className="text-[10px] font-semibold mt-1"
+                                            style={{ color: '#F97316' }}
+                                          >
+                                            FDA: {item.fda_status}
+                                          </div>
+                                        )}
+                                      </div>
                                     ) : (
                                       <div className="flex items-center mt-3">
                                         {item.sections?.flatMap(
