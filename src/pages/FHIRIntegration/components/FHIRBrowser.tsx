@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import FHIRApi, {
   FHIRServer,
@@ -77,7 +77,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
   const [searchName, setSearchName] = useState('');
   const [searchIdentifier, setSearchIdentifier] = useState('');
   const [patients, setPatients] = useState<FHIRPatient[]>([]);
-  const [selectedPatient, setSelectedPatient] = useState<FHIRPatient | null>(null);
+  const [, setSelectedPatient] = useState<FHIRPatient | null>(null);
   const [patientCounts, setPatientCounts] = useState<Record<string, { observations: number; conditions: number }>>({});
   const [loadingCounts, setLoadingCounts] = useState(false);
   const [filterHasData, setFilterHasData] = useState(false);
@@ -94,7 +94,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
   const [isScaling, setIsScaling] = useState(true);
   const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
   const [showOnlyErrors, setShowOnlyErrors] = useState(false);
-  const [biomarkersLoading, setBiomarkersLoading] = useState(false);
+  const [biomarkersLoading] = useState(false);
   
   // Created patient info (after step 2 confirmation)
   const [createdPatientId, setCreatedPatientId] = useState<number | null>(null);
