@@ -164,6 +164,8 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       ) : (
                         <>
                           <CalenderComponent
+                            start_date={actionPlanData[0]?.start_date}
+                            end_date={actionPlanData[0]?.end_date}
                             data={actionPlanData[0]?.calendar}
                             isTwoView={false}
                           />
@@ -225,8 +227,11 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                               ) {
                                 const lastCard =
                                   newCardData[newCardData.length - 1];
-                                lastCard.state = 'On Going';
+                                lastCard.state = 'Pending';
                                 setActiveAction(lastCard);
+                                setTimeout(() => {
+                                  getActionPlan();
+                                }, 100);
                               } else if (newCardData.length > 0) {
                                 setActiveAction(
                                   newCardData[newCardData.length - 1],
@@ -304,6 +309,8 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                               data={activeAction.calendar}
                               overview={activeAction.overview}
                               isTwoView={true}
+                              end_date={activeAction.end_date}
+                              start_date={activeAction.start_date}
                             />
                           </>
                         )}

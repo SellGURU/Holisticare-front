@@ -81,6 +81,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         return '/icons/LifeStyle2.svg';
       case 'Activity':
         return '/icons/weight.svg';
+      case 'Medical Peptide Therapy':
+        return '/icons/Supplement.svg';
       default:
         return '/icons/others.svg';
     }
@@ -174,6 +176,19 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       Holistic Plan Recommended
                     </div>
                   )}
+                  {(value?.fda_status || value?.FDA_Status) &&
+                    value.Category === 'Medical Peptide Therapy' && (
+                      <div
+                        className={`select-none ml-2 rounded-full px-2  text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
+                        style={{ backgroundColor: '#FFF4E6', color: '#F97316' }}
+                      >
+                        <div
+                          className={`size-[8px] select-none rounded-full`}
+                          style={{ backgroundColor: '#F97316' }}
+                        ></div>
+                        FDA: {value?.FDA_Status || value?.fda_status}
+                      </div>
+                    )}
                 </div>
                 {value.flag && value.flag.conflicts.length > 0 && (
                   <button
@@ -408,6 +423,81 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         ? 'Youtube Link / Video / Image'
                         : 'No Link / Video / Image'}
                     </div>
+                  </div>
+                )}
+                {value.Category === 'Medical Peptide Therapy' && (
+                  <div className="flex flex-col gap-1 ml-2 mb-1.5">
+                    <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
+                      <img
+                        src="/icons/ruler-new.svg"
+                        alt=""
+                        className="ml-[-2px]"
+                      />
+                      Schedule
+                    </div>
+                    <div className="text-[#666666] text-xs leading-5">
+                      {(() => {
+                        if (
+                          value?.Dose_Schedules &&
+                          Array.isArray(value.Dose_Schedules) &&
+                          value.Dose_Schedules.length > 0
+                        ) {
+                          return value.Dose_Schedules.map(
+                            (schedule: any, idx: number) => {
+                              const formatFreq = () => {
+                                if (!schedule.Frequency_Type) return '';
+                                const type = schedule.Frequency_Type;
+                                const days = schedule.Frequency_Days || [];
+                                if (type === 'daily') return 'Daily';
+                                if (type === 'weekly') {
+                                  if (days.length === 0) return 'Weekly';
+                                  const dayNames = [
+                                    'Sun',
+                                    'Mon',
+                                    'Tue',
+                                    'Wed',
+                                    'Thu',
+                                    'Fri',
+                                    'Sat',
+                                  ];
+                                  return `Weekly: ${days.map((d: number) => dayNames[d % 7]).join(', ')}`;
+                                }
+                                if (type === 'monthly') {
+                                  if (days.length === 0) return 'Monthly';
+                                  return `Monthly: Days ${days.join(', ')}`;
+                                }
+                                return type;
+                              };
+                              return (
+                                <div
+                                  key={idx}
+                                  className={idx > 0 ? 'mt-1' : ''}
+                                >
+                                  {schedule.Title && (
+                                    <span className="font-medium">
+                                      {schedule.Title}:{' '}
+                                    </span>
+                                  )}
+                                  {schedule.Dose || '-'}
+                                  {schedule.Frequency_Type && (
+                                    <span className="text-gray-500">
+                                      {' '}
+                                      • {formatFreq()}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            },
+                          );
+                        }
+                        return value?.Dose || '-';
+                      })()}
+                    </div>
+                    {(value?.fda_status || value?.FDA_Status) && (
+                      <div className="text-orange-500 text-xs font-semibold">
+                        FDA: {value?.FDA_Status || value?.fda_status}
+                      </div>
+                    )}
                   </div>
                 )}
                 <div className="flex flex-col gap-1 ml-2">
@@ -790,6 +880,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 Frequency_Type: editedData.frequencyType ?? '',
                 Frequency_Dates: editedData.frequencyDates ?? [],
                 Sections: editedData.Sections ?? [],
+                Dose_Schedules: editedData.Dose_Schedules,
               };
 
               updatedData.category[categoryIndex] = updatedItem;

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
-import Circleloader from '../../CircleLoader';
 import Select from '../../Select';
 import SimpleDatePicker from '../../SimpleDatePicker';
 // import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
@@ -10,6 +9,7 @@ import { publish, subscribe, unsubscribe } from '../../../utils/event';
 // import SearchSelect from '../../searchableSelect';
 import Toggle from '../Boxs/Toggle';
 import BiomarkerRow from './BiomarkerRow';
+import ProgressLoading from './ProgressLoading';
 interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
@@ -24,6 +24,7 @@ interface BiomarkersSectionProps {
   setrowErrors: any;
   showOnlyErrors: boolean;
   setShowOnlyErrors: (showOnlyErrors: boolean) => void;
+  progressBiomarkerUpload: number;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -40,6 +41,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   setIsScaling,
   showOnlyErrors,
   setShowOnlyErrors,
+  progressBiomarkerUpload,
 }) => {
   // const [changedRows, setChangedRows] = useState<string[]>([]);
   // const [mappedRows, setMappedRows] = useState<string[]>([]);
@@ -176,7 +178,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     } else {
       return (
         <input
-          type="number"
+          type="text"
           value={b.original_value}
           className="text-center border border-Gray-50 w-[70px] md:w-[95px] outline-none rounded-md text-[8px] md:text-[12px] text-Text-Primary px-2 md:py-1"
           onChange={(e) => handleValueChange(b.biomarker_id, e.target.value)}
@@ -205,15 +207,27 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     value: string;
     unit: string;
     bio_type: string;
-  }) => {
+  }): Promise<
+    { success: true; data: any } | { success: false; error: string }
+  > => {
     try {
       const res = await Application.standardizeBiomarkers(payload);
-      console.log(res);
-
-      return res.data;
-    } catch (err) {
-      console.error('standardizeBiomarkers error:', err);
-      return null;
+      return { success: true, data: res.data };
+    } catch (err: any) {
+      // Axios interceptor rejects with error.response.data directly, so err is {detail: "..."}
+      // Handle multiple possible error structures
+      let errorMessage = 'Standardization failed';
+      if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err?.detail) {
+        errorMessage = err.detail;
+      } else if (err?.response?.data?.detail) {
+        errorMessage = err.response.data.detail;
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
+      console.error('standardizeBiomarkers error:', errorMessage);
+      return { success: false, error: errorMessage };
     }
   };
 
@@ -222,12 +236,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     updatedField: Partial<any>,
   ) => {
     // update local state immediately
-    // console.log(updatedField);
     let updated = biomarkers.map((b) =>
       b.biomarker_id === id ? { ...b, ...updatedField } : b,
     );
 
-    const current = updated.filter((b) => b.biomarker_id === id)[0];
+    // Find the index for this biomarker (needed for rowErrors)
+    const index = updated.findIndex((b) => b.biomarker_id === id);
+
+    const current = updated.find((b) => b.biomarker_id === id);
     const payload = {
       biomarker: current.biomarker,
       value: current.original_value?.toString() || '',
@@ -235,13 +251,31 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       bio_type: 'more_info',
     };
 
-    const standardized = await standardizeBiomarkers(payload);
+    const result = await standardizeBiomarkers(payload);
 
-    if (standardized) {
+    if (result.success) {
       updated = updated.map((b) =>
-        b.biomarker_id === id ? { ...b, ...standardized } : b,
+        b.biomarker_id === id ? { ...b, ...result.data } : b,
       );
+      // Clear error for this specific row only
+      if (index !== -1) {
+        setrowErrors((prev: any) => {
+          if (!prev || !prev[index]) return prev;
+          const newErrors = { ...prev };
+          delete newErrors[index];
+          return newErrors;
+        });
+      }
+    } else {
+      // Set error for this specific row only
+      if (index !== -1) {
+        setrowErrors((prev: any) => ({
+          ...prev,
+          [index]: result.error,
+        }));
+      }
     }
+
     onChange(updated);
   };
   // const [unitOptions, setUnitOptions] = React.useState<
@@ -347,12 +381,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       {loading ? (
         <div
           style={{ height: window.innerHeight - 480 + 'px' }}
-          className="flex items-center min-h-[200px]  w-full justify-center flex-col text-xs font-medium text-Text-Primary"
+          className="flex items-center min-h-[200px] w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4"
         >
-          <Circleloader></Circleloader>
-          <div style={{ textAlignLast: 'center' }} className="text-center">
-            Processing… We’ll show the detected biomarkers shortly.
-          </div>
+          {/* <Circleloader /> */}
+          {/* Progress Bar */}
+          <ProgressLoading
+            maxProgress={progressBiomarkerUpload}
+          ></ProgressLoading>
         </div>
       ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
         <div

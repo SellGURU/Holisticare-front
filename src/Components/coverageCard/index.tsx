@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import MainModal from '../MainModal';
 import Checkbox from '../checkbox';
+import SearchBox from '../SearchBox';
 
 interface CoverageCardProps {
   progress: number;
@@ -10,6 +11,9 @@ interface CoverageCardProps {
   setLookingForwards: (values: any) => void;
   lookingForwardsData: any;
   handleRemoveIssueFromList: (name: string) => void;
+  showSearch?: boolean;
+  searchQuery?: string;
+  onSearch?: (value: string) => void;
 }
 
 export const CoverageCard: React.FC<CoverageCardProps> = ({
@@ -19,6 +23,11 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
   setLookingForwards,
   lookingForwardsData,
   handleRemoveIssueFromList,
+
+  // ✅ defaults
+  showSearch = false,
+  searchQuery = '',
+  onSearch,
 }) => {
   const safeProgress = Math.min(100, Math.max(0, progress));
   const [addIssue, setAddIssue] = useState(false);
@@ -214,13 +223,27 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
               />
             </div>
           </div>
-
+          {showSearch && (
+            <div className="w-full hidden xl:flex items-start justify-end">
+              <div className="w-[300px] mr-4">
+                <SearchBox
+                  isHaveBorder
+                  isGrayIcon
+                  placeHolder="search interventions"
+                  value={searchQuery}
+                  onSearch={(v) => onSearch?.(v)}
+                  showClose={searchQuery.length > 0}
+                  ClassName="w-full"
+                />
+              </div>
+            </div>
+          )}
           {/* View details */}
           <div
             onClick={() => {
               if (details.length > 0) setShowDetail(true);
             }}
-            className={`text-[8px] md:text-xs pr-3 xs:pr-2 md:pr-0 mb-4 xl:mb-0 text-nowrap text-Primary-DeepTeal flex items-center gap-1 ${
+            className={`text-[8px] md:text-xs pr-3 xs:pr-2 md:pr-0 mb-4 xl:mb-0 text-nowrap text-Primary-DeepTeal flex items-center gap-1 mr-3 ${
               details.length > 0
                 ? 'cursor-pointer opacity-100'
                 : 'cursor-not-allowed opacity-50'

@@ -5,7 +5,7 @@ import { Tooltip } from 'react-tooltip';
 import { MainModal } from '../../../Components';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
 import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
-import { splitInstructions } from '../../../help';
+import { resolveCategoryName, splitInstructions } from '../../../help';
 import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
 import Checkbox from '../../../Components/checkbox';
@@ -56,6 +56,8 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
       case 'Activity':
         return '/icons/weight.svg';
       case 'Supplement':
+        return '/icons/Supplement.svg';
+      case 'Medical Peptide Therapy':
         return '/icons/Supplement.svg';
       case 'Lifestyle':
         return '/icons/LifeStyle2.svg';
@@ -206,7 +208,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
           </div>
           <div className="text-Text-Primary mt-1 text-[10px] font-[500] text-center">
             <TooltipTextAuto maxWidth="800px" tooltipPlace="top">
-              {value.Category}
+              {resolveCategoryName(value.Category)}
             </TooltipTextAuto>
           </div>
         </div>

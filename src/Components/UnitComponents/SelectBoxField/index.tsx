@@ -1,4 +1,5 @@
 import { FC, useEffect, useRef, useState } from 'react';
+import { resolveCategoryName } from '../../../help';
 
 interface SelectBoxFieldProps {
   label?: string;
@@ -71,7 +72,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
       >
         {value ? (
           <div className="text-[12px] text-Text-Primary">
-            {value.length > 28 ? value.slice(0, 28) + '...' : value}
+            {resolveCategoryName(value)}
           </div>
         ) : (
           <div className="text-[10px] md:text-[12px] text-Text-Fivefold">
@@ -103,7 +104,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
                 }}
                 className="text-[12px] text-Text-Primary my-1 cursor-pointer hover:bg-Gray-100 rounded-lg py-1 px-2 text-ellipsis overflow-hidden text-nowrap"
               >
-                {option}
+                {resolveCategoryName(option)}
               </div>
             );
           })}

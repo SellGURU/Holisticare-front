@@ -261,6 +261,17 @@ input[type='number'] {
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
 }
+.sidemenu-menu-icon-pil {
+  mask-image: url(/icons/pill.svg);
+  -webkit-mask-image: url(/icons/pill.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
 .sidemenu-menu-icon-home {
   mask-image: url(/icons/side-menu/home-2.svg);
   -webkit-mask-image: url(/icons/side-menu/home-2.svg);
@@ -504,7 +515,7 @@ input[type='range'] {
 /* For Firefox */
 .custom-scrollbar {
   scrollbar-width: thin; /* Make the scrollbar thin */
-  scrollbar-color: #ffffff #ffffff; /* Scrollbar thumb and track color */
+  scrollbar-color: #e8e3e3 #ffffff; /* Scrollbar thumb and track color */
 }
 .chat-shadow-box {
   box-shadow: 4px 0px 12px 0px rgba(202, 202, 215, 0.25);
@@ -861,4 +872,22 @@ input:-webkit-autofill:active {
 .wellness-card-animate {
   animation: wellnessCardFadeIn 0.6s ease-out forwards;
   opacity: 0;
+}
+
+.Toastify__toast {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.Toastify__toast-container--top-right {
+  top: 3rem !important;
+  right: 2rem !important;
+}
+.Toastify__toast {
+  width: auto;
+}
+
+textarea::-webkit-scrollbar {
+  width: 6px;
 }

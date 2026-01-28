@@ -39,17 +39,38 @@ const GenerateActionPlan = () => {
     category: [],
   });
   const checkSelectedTaskConflict = useCallback(
-    (newPlans: any) => {
+    (newPlans: any, isshowPlan?: boolean) => {
       setIsLoadingPlans(true);
+      const tasksIdis = newPlans.map((el: any) => el.task_directory_id);
       Application.checkSelectedTaskConflict({
         member_id: id,
         tasks: newPlans,
       })
         .then((res) => {
-          setCategories((prevCategories: any) => ({
-            ...prevCategories,
-            category: res.data,
-          }));
+          // Helper function to remove duplicates based on unique identifier
+
+          const checkInItems = res.data.filter(
+            (el: any) => el.Task_Type == 'Checkin',
+          );
+          if (isshowPlan) {
+            const categoryItems = res.data.filter(
+              (el: any) =>
+                el.Task_Type != 'Checkin' &&
+                !tasksIdis.includes(el.task_directory_id),
+            );
+            setActions({
+              checkIn: checkInItems,
+              category: categoryItems,
+            });
+          } else {
+            const categoryItems = res.data.filter(
+              (el: any) => el.Task_Type != 'Checkin',
+            );
+            setCategories({
+              checkIn: checkInItems,
+              category: categoryItems,
+            });
+          }
         })
         .finally(() => {
           setIsLoadingPlans(false);

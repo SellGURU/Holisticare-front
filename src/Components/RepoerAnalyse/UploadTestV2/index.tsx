@@ -54,7 +54,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [polling, setPolling] = useState(true); // ✅ control polling
   const [deleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
-  console.log(uploadedFile);
   // console.log(extractedBiomarkers);
   const [isUploadFromComboBar, setIsUploadFromComboBar] = useState(false);
   useEffect(() => {
@@ -64,18 +63,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     });
   }, []);
   const [biomarkerLoading, setbiomarkerLoading] = useState(false);
+  const [progressBiomarkerUpload, setProgressBiomarkerUpload] = useState(0);
   useEffect(() => {
     if (!uploadedFile?.file_id) return;
 
     let intervalId: NodeJS.Timeout;
 
     const fetchData = async () => {
+      setProgressBiomarkerUpload(0);
       setbiomarkerLoading(true);
       try {
         const res = await Application.checkLabStepOne({
           file_id: uploadedFile.file_id,
         });
-
+        setProgressBiomarkerUpload(res.data.progress);
         setfileType(res.data.lab_type);
         const sorted = (res.data.extracted_biomarkers || [])
           .slice()
@@ -369,8 +370,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
-      value: b.original_value,
-      unit: b.original_unit,
+      value: b.value,
+      unit: b.unit,
     }));
 
     return Application.SaveLabReport({
@@ -413,8 +414,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
-      value: b.original_value,
-      unit: b.original_unit,
+      value: b.value,
+      unit: b.unit,
     }));
 
     Application.validateBiomarkers({
@@ -495,8 +496,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const mappedExtractedBiomarkers = extractedBiomarkersTest.map((b: any) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
-      value: b.original_value,
-      unit: b.original_unit,
+      value: b.value,
+      unit: b.unit,
     }));
 
     Application.validateBiomarkers({
@@ -511,7 +512,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       .then(() => {
         // 200 response
         setPolling(false);
-        setbiomarkerLoading(false);
+        // setbiomarkerLoading(false);
       })
       .catch((err: any) => {
         console.log(err);
@@ -863,6 +864,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             setRowErrors([]);
           }}
           loading={biomarkerLoading}
+          progressBiomarkerUpload={progressBiomarkerUpload}
           btnLoading={btnLoading}
           fileType={fileType}
           uploadedFile={uploadedFile}

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { InputHTMLAttributes, useState, useEffect } from 'react';
+import React, { InputHTMLAttributes, useEffect, useState } from 'react';
 import SvgIcon from '../../utils/svgIcon';
 
 interface SearchBoxProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -9,6 +9,9 @@ interface SearchBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   isHaveBorder?: boolean;
   isGrayIcon?: boolean;
   isMessages?: boolean;
+
+  // NEW
+  showClose?: boolean;
 }
 
 const SearchBox: React.FC<SearchBoxProps> = ({
@@ -19,26 +22,33 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   isGrayIcon,
   value,
   isMessages,
+  showClose = false,
   ...props
 }) => {
   const [inputValue, setInputValue] = useState(value || '');
 
-  // Update internal state when external value changes
   useEffect(() => {
     setInputValue(value || '');
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Remove leading spaces but keep spaces between words
-    const trimmedValue = value.replace(/^\s+/, '');
-    setInputValue(trimmedValue);
-    onSearch(trimmedValue);
+    const next = e.target.value.replace(/^\s+/, '');
+    setInputValue(next);
+    onSearch(next);
+  };
+
+  const handleClear = () => {
+    setInputValue('');
+    onSearch('');
   };
 
   return (
     <div
-      className={`relative flex justify-start items-center   ${!isMessages && 'md:min-w-[300px] '} h-8 rounded-2xl bg-backgroundColor-Secondary  py-[10px] px-4 ${isHaveBorder ? 'border border-Gray-50' : 'shadow-200'}   ${ClassName}`}
+      className={`relative flex justify-start items-center ${
+        !isMessages && 'md:min-w-[300px]'
+      } h-8 rounded-2xl bg-backgroundColor-Secondary py-[10px] px-4 ${
+        isHaveBorder ? 'border border-Gray-50' : 'shadow-200'
+      } ${ClassName}`}
     >
       {isGrayIcon ? (
         <SvgIcon
@@ -51,15 +61,25 @@ const SearchBox: React.FC<SearchBoxProps> = ({
         <img src="/icons/search-normal.svg" alt="Search" className="w-4 h-4" />
       )}
 
-      {/* <img src="/icons/search-normal.svg" alt="Search" className="w-4 h-4" /> */}
       <input
         type="text"
         placeholder={placeHolder}
         onChange={handleChange}
         value={inputValue}
-        className="w-full flex justify-center pl-3 bg-inherit  rounded-lg focus:outline-none text-Text-Secondary text-[10px] font-light"
+        className="w-full flex justify-center pl-3 bg-inherit rounded-lg focus:outline-none text-Text-Primary font-normal placeholder:font-ight placeholder:text-Text-Secondary text-[10px]"
         {...props}
       />
+
+      {showClose && (
+        <button
+          type="button"
+          onClick={handleClear}
+          className=" flex items-center justify-center cursor-pointer"
+          aria-label="Clear search"
+        >
+          <img src="/icons/close.svg" alt="" />
+        </button>
+      )}
     </div>
   );
 };

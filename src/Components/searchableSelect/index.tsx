@@ -1,5 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
+import {
+  computePosition,
+  flip,
+  shift,
+  autoUpdate,
+  size,
+} from '@floating-ui/dom';
 
 type SelectProps = {
   onChange: (value: string) => void;
@@ -36,6 +43,57 @@ const SearchSelect: React.FC<SelectProps> = ({
   const selectWrapperRef = useRef<HTMLDivElement>(null);
   const [filteredOptions, setFilteredOptions] = useState(options);
 
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
+  const [openDirection, setOpenDirection] = useState<'top' | 'bottom'>(
+    'bottom',
+  );
+  useEffect(() => {
+    if (!isOpen || !buttonRef.current || !dropdownRef.current) return;
+
+    cleanupRef.current = autoUpdate(
+      buttonRef.current,
+      dropdownRef.current,
+      () => {
+        computePosition(buttonRef.current!, dropdownRef.current!, {
+          placement: 'bottom-start',
+          middleware: [
+            flip(),
+            shift({ padding: 8 }),
+            size({
+              apply({ rects, elements }) {
+                Object.assign(elements.floating.style, {
+                  width: `${rects.reference.width}px`,
+                });
+              },
+            }),
+          ],
+        }).then(({ x, y, placement }) => {
+          Object.assign(dropdownRef.current!.style, {
+            left: `${x}px`,
+            top: `${y}px`,
+          });
+
+          // 👇 تشخیص جهت باز شدن
+          setOpenDirection(placement.startsWith('top') ? 'top' : 'bottom');
+        });
+      },
+    );
+
+    return () => {
+      cleanupRef.current?.();
+      cleanupRef.current = null;
+    };
+  }, [isOpen]);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
   // Filtered options based on search
   useEffect(() => {
     if (searchTerm !== '') {
@@ -111,6 +169,7 @@ const SearchSelect: React.FC<SelectProps> = ({
             : 'bg-backgroundColor-Secondary border-none py-[10px] px-3 shadow-100 rounded-[8px]'
         } cursor-pointer w-full ${isOpen && 'rounded-b-none'} pr-8 leading-tight focus:outline-none text-[8px] md:text-[10px] ${displayedValueColorClass}`}
         onClick={handleSelectClick}
+        ref={buttonRef}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         tabIndex={0}
@@ -143,16 +202,25 @@ const SearchSelect: React.FC<SelectProps> = ({
       {/* Dropdown menu */}
       {isOpen && (
         <div
-          className={`absolute z-[9] w-full ${
+          ref={dropdownRef}
+          style={{
+            position: 'fixed',
+            width: buttonRef.current?.offsetWidth,
+          }}
+          className={`absolute flex flex-col z-[9999]  ${
             isSetting
               ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
               : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
           } overflow-auto n max-h-[190px] md:max-h-60`}
         >
           {/* Search input */}
-          <div className="sticky top-0 bg-inherit p-2 ">
+
+          <div
+            className={`${openDirection == 'bottom' ? 'top-0 order-first' : 'bottom-0 order-last'} sticky  bg-inherit p-2 `}
+          >
             <input
               type="text"
+              ref={inputRef}
               placeholder="Search..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -161,7 +229,7 @@ const SearchSelect: React.FC<SelectProps> = ({
           </div>
 
           {/* Filtered options */}
-          <ul role="listbox">
+          <ul role="listbox" className="order-1">
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <li

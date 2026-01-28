@@ -34,6 +34,9 @@ const LibBox: FC<LibBoxProps> = ({
       case 'Activity':
         setValueData('File');
         break;
+      case 'Medical Peptide Therapy':
+        setValueData('Dose_Schedules');
+        break;
     }
   }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
@@ -124,6 +127,19 @@ const LibBox: FC<LibBoxProps> = ({
                   Holistic Plan Recommended
                 </div>
               )}
+              {(data?.fda_status || data?.FDA_Status) &&
+                data.Category === 'Medical Peptide Therapy' && (
+                  <div
+                    className={`select-none rounded-full px-2 py-[2px] text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
+                    style={{ backgroundColor: '#FFF4E6', color: '#F97316' }}
+                  >
+                    <div
+                      className={`size-[8px] select-none rounded-full`}
+                      style={{ backgroundColor: '#F97316' }}
+                    ></div>
+                    FDA: {data?.FDA_Status || data?.fda_status}
+                  </div>
+                )}
               {/* <div
                 className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                 data-tooltip-id={`tooltip-system-score-${index}`}
@@ -230,6 +246,72 @@ const LibBox: FC<LibBoxProps> = ({
                       Fat: {data['Total Macros']?.Fats}
                       <div className="text-Text-Quadruple">gr</div>
                     </div>
+                  </div>
+                ) : valueData === 'Dose_Schedules' ? (
+                  <div className="flex flex-col ml-3.5">
+                    <div className="text-Text-Primary text-xs">
+                      {(() => {
+                        if (
+                          data['Dose_Schedules'] &&
+                          Array.isArray(data['Dose_Schedules']) &&
+                          data['Dose_Schedules'].length > 0
+                        ) {
+                          return data['Dose_Schedules'].map(
+                            (schedule: any, idx: number) => {
+                              const formatFreq = () => {
+                                if (!schedule.Frequency_Type) return '';
+                                const type = schedule.Frequency_Type;
+                                const days = schedule.Frequency_Days || [];
+                                if (type === 'daily') return 'Daily';
+                                if (type === 'weekly') {
+                                  if (days.length === 0) return 'Weekly';
+                                  const dayNames = [
+                                    'Sun',
+                                    'Mon',
+                                    'Tue',
+                                    'Wed',
+                                    'Thu',
+                                    'Fri',
+                                    'Sat',
+                                  ];
+                                  return `Weekly: ${days.map((d: number) => dayNames[d % 7]).join(', ')}`;
+                                }
+                                if (type === 'monthly') {
+                                  if (days.length === 0) return 'Monthly';
+                                  return `Monthly: Days ${days.join(', ')}`;
+                                }
+                                return type;
+                              };
+                              return (
+                                <div
+                                  key={idx}
+                                  className={idx > 0 ? 'mt-1' : ''}
+                                >
+                                  {schedule.Title && (
+                                    <span className="font-medium">
+                                      {schedule.Title}:{' '}
+                                    </span>
+                                  )}
+                                  {schedule.Dose || '-'}
+                                  {schedule.Frequency_Type && (
+                                    <span className="text-gray-500">
+                                      {' '}
+                                      • {formatFreq()}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            },
+                          );
+                        }
+                        return data['Dose'] || '-';
+                      })()}
+                    </div>
+                    {(data['fda_status'] || data['FDA_Status']) && (
+                      <div className="text-orange-500 text-[9px] font-semibold mt-1">
+                        FDA: {data['FDA_Status'] || data['fda_status']}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   data[valueData]

@@ -5,7 +5,7 @@ import { Tooltip } from 'react-tooltip';
 import { MainModal } from '../../../Components';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
 import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
-import { splitInstructions } from '../../../help';
+import { resolveCategoryName, splitInstructions } from '../../../help';
 import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
@@ -58,7 +58,8 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
         return '/icons/Supplement.svg';
       case 'Lifestyle':
         return '/icons/LifeStyle2.svg';
-
+      case 'Medical Peptide Therapy':
+        return '/icons/Supplement.svg';
       default:
         return '/icons/others.svg';
     }
@@ -206,7 +207,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
           </div>
           <div className="text-Text-Primary mt-1 text-[10px] font-[500] text-center">
             <TooltipTextAuto maxWidth="800px" tooltipPlace="top">
-              {value.Category}
+              {resolveCategoryName(value.Category)}
             </TooltipTextAuto>
           </div>
         </div>

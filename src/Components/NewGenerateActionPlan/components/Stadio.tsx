@@ -14,7 +14,7 @@ import LibBox from './LibBox';
 import { SlideOutPanel } from '../../SlideOutPanel';
 import Circleloader from '../../CircleLoader';
 import { Tooltip } from 'react-tooltip';
-import { splitInstructions } from '../../../help';
+import { resolveCategoryName, splitInstructions } from '../../../help';
 import Sort from './Sort';
 import { Box } from 'lucide-react';
 
@@ -66,6 +66,7 @@ const Stadio: FC<StadioProps> = ({
     'Activity',
     'Supplement',
     'Lifestyle',
+    'Medical Peptide Therapy',
     'Checkin',
   ];
   console.log(actions);
@@ -113,7 +114,7 @@ const Stadio: FC<StadioProps> = ({
 
       setData((prevCategories: any) => {
         const updatedCategory = prevCategories.category.filter(
-          (el: any) => JSON.stringify(el) !== JSON.stringify(item),
+          (el: any) => el.task_directory_id !== item.task_directory_id,
         );
 
         return {
@@ -133,22 +134,42 @@ const Stadio: FC<StadioProps> = ({
         category: prevActions.category,
       }));
 
-      setData((prevCategories: any) => ({
-        ...prevCategories,
-        checkIn: [item, ...prevCategories.checkIn],
-      }));
+      setData((prevCategories: any) => {
+        const itemExists = prevCategories.checkIn.some(
+          (el: any) => el.Check_in_id === item.Check_in_id,
+        );
+
+        if (itemExists) {
+          return prevCategories;
+        }
+
+        return {
+          ...prevCategories,
+          checkIn: [item, ...prevCategories.checkIn],
+        };
+      });
     } else {
       setActions((prevActions: any) => ({
         checkIn: prevActions.checkIn,
         category: prevActions.category.filter(
-          (el: any) => JSON.stringify(el) !== JSON.stringify(item),
+          (el: any) => el.task_directory_id !== item.task_directory_id,
         ),
       }));
 
-      setData((prevCategories: any) => ({
-        ...prevCategories,
-        category: [item, ...prevCategories.category],
-      }));
+      setData((prevCategories: any) => {
+        const itemExists = prevCategories.category.some(
+          (el: any) => el.task_directory_id === item.task_directory_id,
+        );
+
+        if (itemExists) {
+          return prevCategories;
+        }
+
+        return {
+          ...prevCategories,
+          category: [item, ...prevCategories.category],
+        };
+      });
     }
   };
   const { id } = useParams<{ id: string }>();
@@ -335,6 +356,7 @@ const Stadio: FC<StadioProps> = ({
     { value: 'Activity', icon: 'activity-shapes.svg' },
     { value: 'Supplement', icon: 'supplement-shapes.svg' },
     { value: 'Lifestyle', icon: 'lifestyle-shapes.svg' },
+    { value: 'Medical Peptide Therapy', icon: 'supplement-shapes.svg' },
     { value: 'Other', icon: 'other-shapes.svg' },
   ];
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
@@ -400,7 +422,7 @@ const Stadio: FC<StadioProps> = ({
                       >
                         <div className="flex items-center gap-2 font-medium text-xs text-Text-Quadruple">
                           <img src={`/icons/${item.icon}`} alt="" />
-                          {item.value}
+                          {resolveCategoryName(item.value)}
                         </div>
                         <img
                           src="/icons/arrow-down-blue.svg"
@@ -530,6 +552,8 @@ const Stadio: FC<StadioProps> = ({
             Activity_Location: addData.Activity_Location ?? '',
             Frequency_Dates: addData.frequencyDates ?? [],
             Unit: addData.Unit ?? '',
+            Dose_Schedules: addData.Dose_Schedules ?? '',
+            fda_status: addData.fda_status ?? '',
           };
 
           setActions((prevData: any) => ({
@@ -762,7 +786,7 @@ const Stadio: FC<StadioProps> = ({
             />
 
             <div>
-              <div className="flex w-full gap-2 text-center items-center justify-between mt-2 flex-wrap">
+              <div className="flex w-full gap-2 text-center items-center justify-between mt-2 custom-scrollbar  overflow-x-scroll">
                 {AllCategories.map((cat) => {
                   return (
                     <>
@@ -770,7 +794,7 @@ const Stadio: FC<StadioProps> = ({
                         className={`${selectCategory === cat ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-2 py-2 rounded-2xl text-[10px] flex-grow cursor-pointer`}
                         onClick={() => setSelectedCategory(cat)}
                       >
-                        {cat}
+                        {resolveCategoryName(cat)}
                       </button>
                     </>
                   );
@@ -886,7 +910,7 @@ const Stadio: FC<StadioProps> = ({
                         className={`${selectCategory === cat ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-2 py-2 rounded-2xl text-[10px] flex-grow cursor-pointer`}
                         onClick={() => setSelectedCategory(cat)}
                       >
-                        {cat}
+                        {resolveCategoryName(cat)}
                       </button>
                     </>
                   );
