@@ -60,12 +60,9 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
       <div
         ref={refRenceEl}
         key={biomarker.biomarker_id}
-        className={`${showOnlyErrors && !isHaveError ? 'hidden' : ''} ${isHaveError ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-backgroundColor-Main'} grid    biomarker-grid-desktop biomarker-grid-mobile py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
+        className={`${showOnlyErrors && !isHaveError ? 'hidden' : ''} ${isHaveError ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFB]'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
         style={{
-          gridTemplateColumns:
-            window.innerWidth > 640
-              ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
-              : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
+          gridTemplateColumns: 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
         }}
       >
         <div className="text-left text-Text-Primary flex gap-1">

@@ -72,9 +72,11 @@ const EditableTagList: React.FC<{
     <div className="space-y-3">
       <label className="block text-sm font-medium text-gray-700">
         {label}
-        <span className="text-gray-400 font-normal ml-2">({items.length} items)</span>
+        <span className="text-gray-400 font-normal ml-2">
+          ({items.length} items)
+        </span>
       </label>
-      
+
       {/* Tags display */}
       {items.length > 0 && (
         <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg max-h-40 overflow-y-auto">
@@ -89,15 +91,24 @@ const EditableTagList: React.FC<{
                 onClick={() => handleRemove(index)}
                 className="flex-shrink-0 hover:opacity-70 transition-opacity"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </button>
             </span>
           ))}
         </div>
       )}
-      
+
       {/* Input row */}
       <div className="flex gap-2">
         <input
@@ -135,9 +146,13 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
   const [firstName, setFirstName] = useState(initialData.first_name || '');
   const [lastName, setLastName] = useState(initialData.last_name || '');
   const [email, setEmail] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(initialData.date_of_birth || '');
+  const [dateOfBirth, setDateOfBirth] = useState(
+    initialData.date_of_birth || '',
+  );
   const [gender, setGender] = useState(initialData.gender || '');
-  const [phoneNumber, setPhoneNumber] = useState(initialData.phone_number || '');
+  const [phoneNumber, setPhoneNumber] = useState(
+    initialData.phone_number || '',
+  );
   const [address, setAddress] = useState(initialData.address || '');
   const [timezone, setTimezone] = useState('Europe/London');
   const [goals, setGoals] = useState('');
@@ -152,7 +167,7 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
     console.log('Initial conditions from FHIR:', initialConditions);
     console.log('Initial medications from FHIR:', initialMedications);
     console.log('Initial allergies from FHIR:', initialAllergies);
-    
+
     if (initialConditions && Array.isArray(initialConditions)) {
       setConditions([...initialConditions]);
     }
@@ -173,7 +188,8 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
     if (!firstName.trim()) newErrors.firstName = 'First name is required';
     if (!lastName.trim()) newErrors.lastName = 'Last name is required';
     if (!email.trim()) newErrors.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = 'Invalid email format';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      newErrors.email = 'Invalid email format';
     if (!dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
     if (!gender || gender === 'unset') newErrors.gender = 'Gender is required';
 
@@ -181,8 +197,11 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
     if (dateOfBirth) {
       const dob = new Date(dateOfBirth);
       const today = new Date();
-      const age = Math.floor((today.getTime() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
-      if (age < 18) newErrors.dateOfBirth = 'Patient must be at least 18 years old';
+      const age = Math.floor(
+        (today.getTime() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000),
+      );
+      if (age < 18)
+        newErrors.dateOfBirth = 'Patient must be at least 18 years old';
     }
 
     setErrors(newErrors);
@@ -216,16 +235,31 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-gray-800">Review Patient Information</h2>
-          <p className="text-sm text-gray-500">Review and edit the patient data before importing</p>
+          <h2 className="text-xl font-semibold text-gray-800">
+            Review Patient Information
+          </h2>
+          <p className="text-sm text-gray-500">
+            Review and edit the patient data before importing
+          </p>
         </div>
       </div>
 
       {/* Patient Details Section */}
       <div className="bg-white rounded-lg border p-6">
         <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 text-blue-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
           </svg>
           Patient Details
         </h3>
@@ -242,7 +276,9 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
               onChange={(e) => setFirstName(e.target.value)}
               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.firstName ? 'border-red-500' : ''}`}
             />
-            {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+            {errors.firstName && (
+              <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+            )}
           </div>
 
           {/* Last Name */}
@@ -256,7 +292,9 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
               onChange={(e) => setLastName(e.target.value)}
               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.lastName ? 'border-red-500' : ''}`}
             />
-            {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+            {errors.lastName && (
+              <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -271,8 +309,12 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
               placeholder="patient@example.com"
               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : ''}`}
             />
-            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-            <p className="text-xs text-gray-500 mt-1">Required for patient account login</p>
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            )}
+            <p className="text-xs text-gray-500 mt-1">
+              Required for patient account login
+            </p>
           </div>
 
           {/* Date of Birth */}
@@ -286,7 +328,9 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
               onChange={(e) => setDateOfBirth(e.target.value)}
               className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.dateOfBirth ? 'border-red-500' : ''}`}
             />
-            {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
+            {errors.dateOfBirth && (
+              <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>
+            )}
           </div>
 
           {/* Gender */}
@@ -303,12 +347,16 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
-            {errors.gender && <p className="text-red-500 text-xs mt-1">{errors.gender}</p>}
+            {errors.gender && (
+              <p className="text-red-500 text-xs mt-1">{errors.gender}</p>
+            )}
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number
+            </label>
             <PhoneInput
               country={'gb'}
               value={phoneNumber}
@@ -320,7 +368,9 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
 
           {/* Timezone */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Timezone
+            </label>
             <CustomTimezoneField
               value={timezone}
               onChange={(tz: string) => setTimezone(tz)}
@@ -329,7 +379,9 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
 
           {/* Address */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Address
+            </label>
             <textarea
               value={address}
               onChange={(e) => setAddress(e.target.value)}
@@ -344,8 +396,19 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
       {/* Medical Information Section */}
       <div className="bg-white rounded-lg border p-6">
         <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 text-purple-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
           </svg>
           Medical Information (from FHIR)
         </h3>
@@ -380,7 +443,9 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
 
           {/* Goals */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Client Goals</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Client Goals
+            </label>
             <textarea
               value={goals}
               onChange={(e) => setGoals(e.target.value)}
@@ -410,17 +475,42 @@ const FHIRPatientForm: React.FC<FHIRPatientFormProps> = ({
         >
           {loading ? (
             <>
-              <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                className="animate-spin h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
               Processing...
             </>
           ) : (
             <>
               Continue to Biomarkers
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
               </svg>
             </>
           )}
