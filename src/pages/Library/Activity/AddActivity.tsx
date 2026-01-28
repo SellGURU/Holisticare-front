@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
 import InformationStep from './AddComponents/informationStep';
-import ExersiceStep from './AddComponents/ExersiceStep';
+// import ExersiceStep from './AddComponents/ExersiceStep';
+import ExersiceStep from './AddComponents/excercieModal2/ExersiceStep2';
 import Application from '../../../api/app';
 import Circleloader from '../../../Components/CircleLoader';
 import SpinnerLoader from '../../../Components/SpinnerLoader';
