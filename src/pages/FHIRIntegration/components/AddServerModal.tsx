@@ -9,7 +9,9 @@ interface AddServerModalProps {
 const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
   const [name, setName] = useState('');
   const [baseUrl, setBaseUrl] = useState('');
-  const [authType, setAuthType] = useState<'none' | 'basic' | 'bearer' | 'api_key'>('none');
+  const [authType, setAuthType] = useState<
+    'none' | 'basic' | 'bearer' | 'api_key'
+  >('none');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [token, setToken] = useState('');
@@ -19,7 +21,7 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name.trim() || !baseUrl.trim()) {
       return;
     }
@@ -57,13 +59,26 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
       <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">Add FHIR Server</h2>
+          <h2 className="text-xl font-semibold text-gray-800">
+            Add FHIR Server
+          </h2>
           <button
             onClick={onClose}
             className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -72,7 +87,9 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Quick Presets */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Quick Presets</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Quick Presets
+            </label>
             <div className="flex flex-wrap gap-2">
               {presetServers.map((preset) => (
                 <button
@@ -123,7 +140,9 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
 
           {/* Authentication Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Authentication</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Authentication
+            </label>
             <select
               value={authType}
               onChange={(e) => setAuthType(e.target.value as any)}
@@ -140,7 +159,9 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
           {authType === 'basic' && (
             <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Username
+                </label>
                 <input
                   type="text"
                   value={username}
@@ -149,7 +170,9 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password
+                </label>
                 <input
                   type="password"
                   value={password}
@@ -163,7 +186,9 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
           {/* Bearer Token Field */}
           {authType === 'bearer' && (
             <div className="p-3 bg-gray-50 rounded-lg">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Bearer Token</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Bearer Token
+              </label>
               <input
                 type="password"
                 value={token}
@@ -178,7 +203,9 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
           {authType === 'api_key' && (
             <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Header Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Header Name
+                </label>
                 <input
                   type="text"
                   value={headerName}
@@ -188,7 +215,9 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  API Key
+                </label>
                 <input
                   type="password"
                   value={apiKey}

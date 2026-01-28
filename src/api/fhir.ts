@@ -127,7 +127,7 @@ export interface ImportHistoryEntry {
 
 class FHIRApi extends Api {
   // Server Management
-  
+
   /**
    * Get all configured FHIR servers for the clinic
    */
@@ -145,7 +145,10 @@ class FHIRApi extends Api {
   /**
    * Update an existing FHIR server configuration
    */
-  static updateServer(serverId: number, updates: Partial<FHIRServerConfig> & { is_active?: boolean }) {
+  static updateServer(
+    serverId: number,
+    updates: Partial<FHIRServerConfig> & { is_active?: boolean },
+  ) {
     return this.post(`/fhir/servers/${serverId}`, updates);
   }
 
@@ -310,7 +313,7 @@ class FHIRApi extends Api {
   }) {
     let url = '/fhir/import/history';
     const queryParams: string[] = [];
-    
+
     if (params?.patient_id) {
       queryParams.push(`patient_id=${params.patient_id}`);
     }
@@ -320,11 +323,11 @@ class FHIRApi extends Api {
     if (params?.limit) {
       queryParams.push(`limit=${params.limit}`);
     }
-    
+
     if (queryParams.length > 0) {
       url += '?' + queryParams.join('&');
     }
-    
+
     return this.get(url);
   }
 
@@ -403,6 +406,22 @@ class FHIRApi extends Api {
     goals?: string;
   }) {
     return this.post('/fhir/create-patient', params);
+  }
+
+  /**
+   * Validate FHIR biomarkers - doesn't require file_id like regular validate_biomarkers
+   */
+  static validateBiomarkers(params: {
+    member_id: number;
+    biomarkers: Array<{
+      biomarker_id: string;
+      biomarker: string;
+      value: string;
+      unit: string;
+    }>;
+    date_of_test?: string;
+  }) {
+    return this.post('/fhir/validate-biomarkers', params);
   }
 
   /**
