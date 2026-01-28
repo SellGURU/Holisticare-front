@@ -144,7 +144,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             <ButtonPrimary
               disabled={
                 (extractedBiomarkers.length == 0 &&
-                  addedBiomarkers.length == 0) ||
+                  addedBiomarkers.length == 0 &&
+                  fileType !== 'ultrasound') ||
                 btnLoading
               }
               onClick={() => {
@@ -215,22 +216,44 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               fileInputRef={fileInputRef}
               onClose={onClose}
             />
-            <BiomarkersSection
-              rowErrors={rowErrors}
-              isScaling={isScaling}
-              setIsScaling={setIsScaling}
-              setrowErrors={setrowErrors}
-              loading={loading}
-              progressBiomarkerUpload={progressBiomarkerUpload}
-              fileType={fileType}
-              dateOfTest={modifiedDateOfTest}
-              setDateOfTest={handleModifiedDateOfTestChange}
-              uploadedFile={uploadedFile}
-              biomarkers={extractedBiomarkers}
-              onChange={(updated) => setExtractedBiomarkers(updated)}
-              showOnlyErrors={showOnlyErrors}
-              setShowOnlyErrors={setShowOnlyErrors}
-            />
+            {/* Show empty state for ultrasound reports */}
+            {fileType === 'ultrasound' ? (
+              <div className="w-full h-full flex flex-col items-center justify-center py-12 px-4">
+                <img
+                  src="/icons/document-upload-new.svg"
+                  alt="Ultrasound Report"
+                  className="size-16 mb-4 opacity-60"
+                />
+                <div className="text-lg font-medium text-Text-Primary mb-2">
+                  Ultrasound Report Uploaded
+                </div>
+                <div className="text-sm text-gray-500 text-center max-w-md">
+                  This is an ultrasound/imaging report. Biomarker extraction is
+                  not applicable for this type of report. The report content
+                  will be included in your health plan.
+                </div>
+                <div className="mt-4 px-4 py-2 bg-Primary-DeepTeal/10 rounded-full text-sm text-Primary-DeepTeal font-medium">
+                  Click "Continue" to proceed to Health Plan
+                </div>
+              </div>
+            ) : (
+              <BiomarkersSection
+                rowErrors={rowErrors}
+                isScaling={isScaling}
+                setIsScaling={setIsScaling}
+                setrowErrors={setrowErrors}
+                loading={loading}
+                progressBiomarkerUpload={progressBiomarkerUpload}
+                fileType={fileType}
+                dateOfTest={modifiedDateOfTest}
+                setDateOfTest={handleModifiedDateOfTestChange}
+                uploadedFile={uploadedFile}
+                biomarkers={extractedBiomarkers}
+                onChange={(updated) => setExtractedBiomarkers(updated)}
+                showOnlyErrors={showOnlyErrors}
+                setShowOnlyErrors={setShowOnlyErrors}
+              />
+            )}
           </div>
           <div className={activeMenu !== 'Add Biomarker' ? 'hidden' : ''}>
             <AddBiomarker

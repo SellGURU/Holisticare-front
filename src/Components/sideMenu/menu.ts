@@ -100,6 +100,17 @@ export const menus = [
     ],
   },
   {
+    category: 'INTEGRATIONS',
+    items: [
+      {
+        name: 'FHIR Import',
+        url: '/fhir-integration',
+        icon: 'sidemenu-menu-icon-fhir',
+        active: true,
+      },
+    ],
+  },
+  {
     category: 'MANAGE',
     items: [
       {

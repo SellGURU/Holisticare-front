@@ -78,6 +78,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         });
         setProgressBiomarkerUpload(res.data.progress);
         setfileType(res.data.lab_type);
+
+        // ✅ Handle ultrasound reports - skip biomarkers table
+        if (res.data.lab_type === 'ultrasound') {
+          setPolling(false);
+          setbiomarkerLoading(false);
+          setisSaveClicked(true); // Allow proceeding to health plan
+          setExtractedBiomarkers([]); // No biomarkers to display
+          return;
+        }
+
         const sorted = (res.data.extracted_biomarkers || [])
           .slice()
           .sort((a: any, b: any) => {
@@ -351,6 +361,32 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const handleSaveLabReport = () => {
+    // ✅ For ultrasound reports, call API with empty lists
+    if (fileType === 'ultrasound') {
+      const modifiedTimestamp = modifiedDateOfTest
+        ? Date.UTC(
+            modifiedDateOfTest.getFullYear(),
+            modifiedDateOfTest.getMonth(),
+            modifiedDateOfTest.getDate(),
+          ).toString()
+        : null;
+
+      return Application.SaveLabReport({
+        member_id: memberId,
+        modified_biomarkers: {
+          biomarkers_list: [], // Empty list for ultrasound
+          date_of_test: modifiedTimestamp,
+          lab_type: 'ultrasound',
+          file_id: uploadedFile?.file_id || '',
+        },
+        added_biomarkers: {
+          biomarkers_list: [],
+          date_of_test: modifiedTimestamp,
+          lab_type: 'more_info',
+        },
+      });
+    }
+
     const modifiedTimestamp = modifiedDateOfTest
       ? Date.UTC(
           modifiedDateOfTest.getFullYear(),
@@ -396,6 +432,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   >({});
   const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
+    // ✅ For ultrasound reports, just close the modal and go to step 0
+    // The API call will happen when clicking "Save & Continue to Health Plan"
+    if (fileType === 'ultrasound') {
+      setisSaveClicked(true);
+      setstep(0);
+      setRowErrors({});
+      setAddedRowErrors({});
+      return;
+    }
+
     setBtnLoading(true);
     const modifiedTimestamp = modifiedDateOfTest
       ? Date.UTC(

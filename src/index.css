@@ -305,6 +305,17 @@ input[type='number'] {
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
 }
+.sidemenu-menu-icon-fhir {
+  mask-image: url(/icons/side-menu/fhir-import.svg);
+  -webkit-mask-image: url(/icons/side-menu/fhir-import.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
 /* .report-side-menu-layer-icon{
   mask-image: url('/public//icons//menu.svg');
   mask-size: 100%;
