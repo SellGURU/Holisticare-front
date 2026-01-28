@@ -119,6 +119,15 @@ const CalenderPrint: React.FC<CalenderPrint> = ({ data }) => {
     if (category == 'Mind') {
       return '/icons/mind.svg';
     }
+    if (category == 'Lifestyle') {
+      return '/icons/LifeStyle2.svg';
+    }
+    if (category == 'Medical Peptide Therapy') {
+      return '/icons/Supplement.svg';
+    }
+    if (category == '') {
+      return '/icons/check-in.svg';
+    }
   };
   const today = new Date(); // Current date at the component level
   today.setHours(0, 0, 0, 0); // Ensure time is not considered in comparison

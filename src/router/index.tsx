@@ -34,6 +34,7 @@ import Activity from '../pages/Library/Activity/index.tsx';
 import Supplement from '../pages/supplement/index.tsx';
 import Lifestyle from '../pages/lifestyle/index.tsx';
 import Diet from '../pages/diet/index.tsx';
+import Peptide from '../pages/peptide/index.tsx';
 import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
@@ -119,6 +120,10 @@ const router = createBrowserRouter([
           {
             path: '/diet',
             element: <Diet></Diet>,
+          },
+          {
+            path: '/peptide',
+            element: <Peptide></Peptide>,
           },
           {
             path: 'playground',

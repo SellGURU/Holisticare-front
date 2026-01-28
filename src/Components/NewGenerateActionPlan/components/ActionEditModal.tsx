@@ -17,6 +17,7 @@ import MainModal from '../../MainModal';
 import { MultiTextField, TextField } from '../../UnitComponents';
 import SelectBoxField from '../../UnitComponents/SelectBoxField';
 import TextAreaField from '../../UnitComponents/TextAreaField';
+import PeptideDoseScheduleStepAction from './PeptideDoseScheduleStepAction';
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -45,6 +46,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       });
   }, []);
 
+  // Initialize dose schedules from defaults when editing
+  // useEffect(() => {
+  //   if (
+  //     defalts?.Dose_Schedules &&
+  //     Array.isArray(defalts.Dose_Schedules) &&
+  //     defalts.Dose_Schedules.length > 0
+  //   ) {
+  //     setDoseSchedules(defalts.Dose_Schedules);
+  //   }
+  // }, [defalts]);
+
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>([]);
   const [selectedGroup, setSelectedGroup] = useState(defalts?.Category || '');
@@ -57,7 +69,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     Protein: defalts?.['Total Macros']?.Protein || '',
     Carbs: defalts?.['Total Macros']?.Carbs || '',
   });
+  const [doseSchedules, setDoseSchedules] = useState<any[]>(
+    defalts?.Dose_Schedules || [],
+  );
+  const [fdaStatus] = useState(
+    defalts?.fda_status || defalts?.FDA_Status || '',
+  );
   const [showValidation, setShowValidation] = useState(false);
+  const [showPeptideScheduleValidation, setShowPeptideScheduleValidation] =
+    useState(false);
 
   const adjustDateToNextMonthIfPast = (day: string): string => {
     // Parse the date string (format: YYYY-MM-DD)
@@ -217,6 +237,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         };
       }) || [],
     );
+    if (
+      defalts?.Dose_Schedules &&
+      Array.isArray(defalts.Dose_Schedules) &&
+      defalts.Dose_Schedules.length > 0
+    ) {
+      setDoseSchedules(defalts.Dose_Schedules);
+    }
   }, [defalts, isOpen]);
   const [, setIsExerciseStepValid] = useState(false);
   const rsolveSectionListforSendToApi = () => {
@@ -256,6 +283,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       // Description: description,
       // Base_Score: baseScore,
       Activity_Filters: addData,
+      Dose_Schedules: doseSchedules,
       Sections: rsolveSectionListforSendToApi() || [],
       Task_Type: 'Action',
     });
@@ -343,6 +371,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setSectionList([]);
     setShowValidation(false);
     setShowExerciseValidation(false);
+    setDoseSchedules([]);
+    setShowPeptideScheduleValidation(false);
   };
 
   const handleApplyClick = () => {
@@ -433,6 +463,33 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Title: title,
         Instruction: instructions,
         'Total Macros': numberMacros,
+        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+        frequencyDates:
+          frequencyType === 'weekly'
+            ? selectedDays
+            : frequencyType === 'monthly'
+              ? selectedDaysMonth
+              : null,
+        frequencyType: frequencyType,
+        Task_Type: 'Action',
+      });
+    } else if (selectedGroup === 'Medical Peptide Therapy') {
+      // Map selected schedules to the format expected by backend
+      const schedulesToSubmit = doseSchedules.map((schedule: any) => ({
+        Schedule_Id: schedule.Schedule_Id || schedule.Pds_Id,
+        Title: schedule.Title,
+        Frequency_Type: schedule.Frequency_Type,
+        Frequency_Days: schedule.Frequency_Days || [],
+        Dose: schedule.Dose,
+      }));
+
+      onSubmit({
+        Category: selectedGroup,
+        Title: title,
+        Instruction: instructions,
+        Dose_Schedules: schedulesToSubmit,
+        fda_status: fdaStatus,
+        FDA_Status: fdaStatus,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType === 'weekly'
@@ -604,6 +661,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         return true;
       }
     }
+    if (selectedGroup === 'Medical Peptide Therapy' && step === 1) {
+      // At step 1, require at least one dose schedule
+      return doseSchedules.length === 0;
+    }
     return false;
   };
 
@@ -698,35 +759,61 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const handleNextClick = () => {
     setShowValidation(true);
     if (validateForm()) {
+      if (selectedGroup === 'Medical Peptide Therapy') {
+        setShowPeptideScheduleValidation(false);
+      }
       setStep(step + 1);
     }
   };
 
   const handleSaveClick = () => {
     setShowValidation(true);
-    setShowExerciseValidation(true);
+
+    if (selectedGroup === 'Activity') {
+      setShowExerciseValidation(true);
+    } else if (selectedGroup === 'Medical Peptide Therapy') {
+      setShowPeptideScheduleValidation(true);
+    }
 
     // First validate the form
     const isFormValid = validateForm();
 
-    // Check if there are any exercises
-    // const hasExercises = sectionList.length > 0;
+    if (selectedGroup === 'Activity') {
+      // Check if there are any exercises
+      // const hasExercises = sectionList.length > 0;
 
-    // Check if there are any empty reps fields
-    const emptySetSections = sectionList.filter(
-      (section: any) => section.Sets === '',
-    );
-    const emptyRepsSections = sectionList.filter((section: any) =>
-      section.Exercises.some((exercise: any) => exercise.Reps === ''),
-    );
+      // Check if there are any empty reps fields
+      const emptySetSections = sectionList.filter(
+        (section: any) => section.Sets === '',
+      );
+      const emptyRepsSections = sectionList.filter((section: any) =>
+        section.Exercises.some((exercise: any) => exercise.Reps === ''),
+      );
 
-    // Only proceed if form is valid, there are exercises, and no empty reps
-    if (
-      isFormValid &&
-      // hasExercises &&
-      emptySetSections.length == 0 &&
-      emptyRepsSections.length == 0
-    ) {
+      // Only proceed if form is valid, there are exercises, and no empty reps
+      if (
+        isFormValid &&
+        // hasExercises &&
+        emptySetSections.length == 0 &&
+        emptyRepsSections.length == 0
+      ) {
+        handleApply();
+        setStep(0);
+        onReset();
+      }
+      return;
+    } else if (selectedGroup === 'Medical Peptide Therapy') {
+      // Validate that at least one dose schedule is selected
+      if (isFormValid && doseSchedules.length > 0) {
+        handleApply();
+        setStep(0);
+        onReset();
+      }
+      return;
+    }
+
+    // For other categories, just validate and apply
+    if (isFormValid) {
       saveActivity();
     }
   };
@@ -748,6 +835,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
           <h2 className="text-sm font-medium text-Text-Primary">
             <div className="flex gap-[6px] items-center">
               {isAdd ? 'Add Action ' : 'Edit Action'}
+              {selectedGroup === 'Medical Peptide Therapy' &&
+                ` - Step ${step + 1} of 2`}
             </div>
           </h2>
         </div>
@@ -846,6 +935,18 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     margin="mb-4"
                   />
                 )}
+                {selectedGroup === 'Medical Peptide Therapy' &&
+                  step === 0 &&
+                  fdaStatus && (
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        FDA Status
+                      </label>
+                      <div className="text-sm text-orange-600 font-semibold bg-orange-50 p-3 rounded-md">
+                        {fdaStatus}
+                      </div>
+                    </div>
+                  )}
                 {selectedGroup === 'Lifestyle' && (
                   <MultiTextField
                     label="Value"
@@ -1248,7 +1349,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           {selectedGroup === 'Supplement' ||
                           selectedGroup === 'Lifestyle' ||
                           selectedGroup === 'Diet' ||
-                          selectedGroup === 'Activity'
+                          selectedGroup === 'Activity' ||
+                          selectedGroup === 'Medical Peptide Therapy'
                             ? selectedGroup
                             : 'Other'}{' '}
                           scheduled
@@ -1424,7 +1526,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               </div>
             </div>
           )}
-          {step === 1 && (
+          {step === 1 && selectedGroup === 'Activity' && (
             <ExersiceStep
               sectionList={sectionList}
               onChange={(values: any) => {
@@ -1437,36 +1539,45 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               onValidationChange={setIsExerciseStepValid}
             />
           )}
+          {step === 1 && selectedGroup === 'Medical Peptide Therapy' && (
+            <PeptideDoseScheduleStepAction
+              selectedSchedules={doseSchedules}
+              onSchedulesChange={setDoseSchedules}
+              showValidation={showPeptideScheduleValidation}
+            />
+          )}
         </div>
 
         {/* Fixed Footer with Buttons */}
         <div className="border-t border-Gray-50 px-4 py-3 flex-shrink-0 bg-white rounded-b-2xl">
-          {selectedGroup !== 'Activity' && (
-            <div className="flex justify-end gap-3 items-center">
-              <button
-                onClick={() => {
-                  onClose();
-                  setStep(0);
-                  onReset();
-                }}
-                className="text-sm font-medium text-Disable cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleApplyClick}
-                className={`${
-                  selectedGroup && title && frequencyType && instructions
-                    ? 'text-Primary-DeepTeal'
-                    : 'text-Primary-DeepTeal'
-                } text-sm font-medium cursor-pointer`}
-              >
-                {isAdd ? 'Add' : 'Update'}
-              </button>
-            </div>
-          )}
+          {selectedGroup !== 'Activity' &&
+            selectedGroup !== 'Medical Peptide Therapy' && (
+              <div className="flex justify-end gap-3 items-center">
+                <button
+                  onClick={() => {
+                    onClose();
+                    setStep(0);
+                    onReset();
+                  }}
+                  className="text-sm font-medium text-Disable cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleApplyClick}
+                  className={`${
+                    selectedGroup && title && frequencyType && instructions
+                      ? 'text-Primary-DeepTeal'
+                      : 'text-Primary-DeepTeal'
+                  } text-sm font-medium cursor-pointer`}
+                >
+                  {isAdd ? 'Add' : 'Update'}
+                </button>
+              </div>
+            )}
 
-          {selectedGroup === 'Activity' && (
+          {(selectedGroup === 'Activity' ||
+            selectedGroup === 'Medical Peptide Therapy') && (
             <div
               className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} items-center`}
             >
@@ -1474,6 +1585,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 <div
                   onClick={() => {
                     setStep(0);
+                    if (selectedGroup === 'Medical Peptide Therapy') {
+                      setShowPeptideScheduleValidation(false);
+                    }
                   }}
                   className="text-Disable text-[14px] cursor-pointer font-medium flex items-center gap-1"
                 >
@@ -1488,6 +1602,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     onClose();
                     onReset();
                     setStep(0);
+                    if (selectedGroup === 'Medical Peptide Therapy') {
+                      setShowPeptideScheduleValidation(false);
+                    }
                   }}
                   className="text-Disable text-[14px] cursor-pointer font-medium"
                 >

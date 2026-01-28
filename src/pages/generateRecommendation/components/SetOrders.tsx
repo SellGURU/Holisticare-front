@@ -8,6 +8,7 @@ import { publish, subscribe } from '../../../utils/event';
 import { ActivityCard } from './ActivityCard';
 import { CoverageCard } from '../../../Components/coverageCard';
 import SearchBox from '../../../Components/SearchBox';
+import { resolveCategoryName } from '../../../help';
 
 type CategoryState = {
   name: string;
@@ -361,6 +362,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
     Diet: ['Recommendation'],
     Lifestyle: ['Recommendation'],
     Supplement: ['Recommendation'],
+    'Medical Peptide Therapy': ['Recommendation'],
     Others: ['Recommendation'],
   };
 
@@ -410,7 +412,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
         isOpen={showchangeOrders}
         onClose={() => setshowchangeOrders(false)}
       >
-        <div className=" w-[90vw] md:w-full relative h-[420px] p-4 rounded-2xl bg-white">
+        <div className=" w-[95vw] md:w-full relative h-[450px] p-4 rounded-2xl bg-white">
           <div className="flex items-center w-full gap-2 border-b border-Gray-50 py-2 text-base font-medium text-Text-Primary">
             <img src="/icons/danger.svg" alt="" />
             Change Order
@@ -439,11 +441,13 @@ export const SetOrders: FC<SetOrdersProps> = ({
                             ? '/icons/LifeStyle2.svg'
                             : category.name == 'Supplement'
                               ? '/icons/Supplement.svg'
-                              : '/icons/others.svg'
+                              : category.name === 'Medical Peptide Therapy'
+                                ? '/icons/Supplement.svg'
+                                : '/icons/others.svg'
                     }
                     alt=""
                   />
-                  {category.name}
+                  {resolveCategoryName(category.name)}
                 </div>
                 <div className="flex items-center gap-3">
                   <img
@@ -505,7 +509,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
         <div className="flex mt-4 w-full flex-wrap sm:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
           <div
             className="flex w-full flex-wrap gap-8   
-          xl:gap-[80px] "
+          2xl:gap-[80px] "
           >
             {categories.map(
               ({ name, visible }) =>
@@ -529,11 +533,13 @@ export const SetOrders: FC<SetOrdersProps> = ({
                               ? '/icons/LifeStyle2.svg'
                               : name == 'Supplement'
                                 ? '/icons/Supplement.svg'
-                                : '/icons/others.svg'
+                                : name === 'Medical Peptide Therapy'
+                                  ? '/icons/Supplement.svg'
+                                  : '/icons/others.svg'
                       }
                       alt=""
                     />
-                    {name}
+                    {resolveCategoryName(name)}
                   </div>
                 ),
             )}

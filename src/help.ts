@@ -160,6 +160,12 @@ const uploadToAzure = async (
   }
 };
 
+const resolveCategoryName = (name: string) => {
+  if (name == 'Medical Peptide Therapy') {
+    return 'Peptide';
+  }
+  return name;
+};
 export {
   useConstructor,
   resolveKeyStatus,
@@ -168,6 +174,7 @@ export {
   resolveAccesssUser,
   decodeAccessUser,
   convertToBase64,
+  resolveCategoryName,
   splitInstructions,
   uploadToAzure,
 };
