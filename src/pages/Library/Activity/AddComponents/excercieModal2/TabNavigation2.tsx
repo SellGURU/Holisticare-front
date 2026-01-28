@@ -62,31 +62,32 @@ const TabNavigation2 = ({
             />
           </>
         ) : (
-        <div className="flex gap-2 overflow-x-auto pb-1">
-  {tabs
-    .filter(t => t.enabled)
-    .sort((a, b) => a.order - b.order)
-    .map(tab => {
-      const active = activeTab === tab.name;
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {tabs
+              .filter((t) => t.enabled)
+              .sort((a, b) => a.order - b.order)
+              .map((tab) => {
+                const active = activeTab === tab.name;
 
-      return (
-        <button
-          key={tab.name}
-          onClick={() => setActiveTab(tab.name)}
-          className={`
+                return (
+                  <button
+                    key={tab.name}
+                    onClick={() => setActiveTab(tab.name)}
+                    className={`
             px-3 py-1 rounded-full text-xs whitespace-nowrap
             transition-all
-            ${active
-              ? 'bg-Primary-DeepTeal text-white shadow-sm'
-              : 'bg-white border border-Gray-50 text-Text-Secondary hover:bg-gray-50'}
+            ${
+              active
+                ? 'bg-Primary-DeepTeal text-white shadow-sm'
+                : 'bg-white border border-Gray-50 text-Text-Secondary hover:bg-gray-50'
+            }
           `}
-        >
-          {tab.name}
-        </button>
-      );
-    })}
-</div>
-
+                  >
+                    {tab.name}
+                  </button>
+                );
+              })}
+          </div>
         )}
         <img
           src="/icons/setting-4.svg"

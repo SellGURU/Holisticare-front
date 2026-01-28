@@ -149,10 +149,9 @@ const ExerciseItem2 = ({
         <div className="flex items-center gap-2">
           {index > 0 && !isSuperSet && (
             <button
-            data-tooltip-id={`${exercise}-addSuperSet`}
+              data-tooltip-id={`${exercise}-addSuperSet`}
               onClick={toSuperSet}
               className="p-2 rounded-lg hover:bg-gray-100"
-            
             >
               <SvgIcon
                 color="#6CC24A"
@@ -160,16 +159,17 @@ const ExerciseItem2 = ({
                 width="16"
                 height="16"
               />
-              <Tooltip id={`${exercise}-addSuperSet`}>Superset with above</Tooltip>
+              <Tooltip id={`${exercise}-addSuperSet`}>
+                Superset with above
+              </Tooltip>
             </button>
           )}
 
           {isSuperSet && removeFromSuperSet && (
             <button
-            data-tooltip-id={`${exercise}-reomveSuperSet`}
+              data-tooltip-id={`${exercise}-reomveSuperSet`}
               onClick={removeFromSuperSet}
               className="p-2 rounded-lg hover:bg-gray-100"
-           
             >
               <SvgIcon
                 color="#6CC24A"
@@ -177,15 +177,15 @@ const ExerciseItem2 = ({
                 width="16"
                 height="16"
               />
-                            <Tooltip id={`${exercise}-reomveSuperSet`}>Remove from superset</Tooltip>
-
+              <Tooltip id={`${exercise}-reomveSuperSet`}>
+                Remove from superset
+              </Tooltip>
             </button>
           )}
 
           <button
             onClick={() => onDelete(exesiseIndex)}
             className="p-2 rounded-lg hover:bg-red-50"
-        
             data-tooltip-id={`${exercise}-Delete`}
           >
             <SvgIcon
@@ -194,8 +194,7 @@ const ExerciseItem2 = ({
               width="16"
               height="16"
             />
-                            <Tooltip id={`${exercise}-Delete`}>Delete</Tooltip>
-
+            <Tooltip id={`${exercise}-Delete`}>Delete</Tooltip>
           </button>
         </div>
       </div>

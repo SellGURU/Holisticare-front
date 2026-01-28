@@ -462,11 +462,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                   <img src="/icons/amico.svg" alt="" />
                   <div className="font-medium text-xs text-Text-Primary mt-8">
                     No exercise found.
-                
                   </div>
                   <div className="text-xs text-Text-Secondary mt-2">
-  Drag or click exercises from the right →
-</div>
+                    Drag or click exercises from the right →
+                  </div>
                 </>
               )}
               <div className="grid gap-2 w-full">
@@ -539,13 +538,12 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
               </div>
             </div>
             <div className="sticky top-0 bg-backgroundColor-Main pt-2 z-10">
-
-            <SearchBox
-              ClassName="rounded-2xl !h-8 !min-w-full border border-Gray-50 !px-3 !py-[10px] !shadow-[unset] !bg-white mt-3"
-              placeHolder="Search exercises..."
-              value={searchValue}
-              onSearch={(value: any) => setSearchValue(value)}
-            />
+              <SearchBox
+                ClassName="rounded-2xl !h-8 !min-w-full border border-Gray-50 !px-3 !py-[10px] !shadow-[unset] !bg-white mt-3"
+                placeHolder="Search exercises..."
+                value={searchValue}
+                onSearch={(value: any) => setSearchValue(value)}
+              />
             </div>
             <div className="flex flex-col overflow-y-auto w-full min-h-[300px] gap-1 mt-2">
               {filteredExerciseList.length === 0 && (
