@@ -43,7 +43,7 @@ const TabNavigation2 = ({
   }, []);
   return (
     <>
-      <div className="flex items-center justify-between border-b border-Gray-50 mb-4 gap-3 md:gap-0 pr-2 md:pr-0">
+      <div className="flex items-center justify-between pb-2 border-b border-Gray-50 mb-6 gap-3 md:gap-0 pr-2 md:pr-0">
         {isMobilePage ? (
           <>
             <SelectBoxField

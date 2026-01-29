@@ -44,7 +44,7 @@ interface ExersiceStepProps {
   handleChangeSetOrder?: (value: any) => void;
   orderList?: { name: string; enabled: boolean; order: number }[];
 }
-const ExersiceStep: React.FC<ExersiceStepProps> = ({
+const ExersiceStep2: React.FC<ExersiceStepProps> = ({
   onChange,
   sectionList,
   onValidationChange,
@@ -611,4 +611,4 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   );
 };
 
-export default ExersiceStep;
+export default ExersiceStep2;

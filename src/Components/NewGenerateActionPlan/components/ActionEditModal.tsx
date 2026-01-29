@@ -2,7 +2,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
-import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
+// import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
+import ExersiceStep2 from '../../../pages/Library/Activity/AddComponents/excercieModal2/ExersiceStep2';
 import {
   // DoseInfoText,
   DoseValidationEnglish,
@@ -1425,7 +1426,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             </div>
           )}
           {step === 1 && (
-            <ExersiceStep
+            <ExersiceStep2
               sectionList={sectionList}
               onChange={(values: any) => {
                 setSectionList(values);

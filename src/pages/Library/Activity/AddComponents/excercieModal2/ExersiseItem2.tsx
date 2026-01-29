@@ -56,7 +56,18 @@ const Field = ({
     </span>
 
     {error && (
-      <span className="absolute right-2 top-2 text-red-500 text-xs">!</span>
+      <>
+        <span
+          data-tooltip-id={`${label}-error`}
+          className="absolute right-2 top-2 text-Red text-xs"
+        >
+          !
+        </span>
+        <Tooltip id={`${label}-error`}>
+          {' '}
+          <div className="">This field is required.</div>
+        </Tooltip>
+      </>
     )}
   </div>
 );
@@ -194,7 +205,7 @@ const ExerciseItem2 = ({
               width="16"
               height="16"
             />
-            <Tooltip id={`${exercise}-Delete`}>Delete</Tooltip>
+            <Tooltip className='z-10' id={`${exercise}-Delete`}>Delete</Tooltip>
           </button>
         </div>
       </div>
