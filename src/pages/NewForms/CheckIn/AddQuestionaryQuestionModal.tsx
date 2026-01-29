@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, FC, useEffect, useState } from 'react';
 import CheckBoxSelection from './CheckBoxSelection';
 import MultiChoceSelection from './MultichoiceSelection';
@@ -133,7 +134,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
     editQUestion?.conditions?.[0]?.actions?.[0]?.type || '',
   );
   const [advancedSettings, setAdvancedSettings] = useState(false);
-  const [biomarker, setBiomarker] = useState(
+  const [biomarker, ] = useState(
     editQUestion?.is_biomarker || false,
   );
   const [clientInsights, setClientInsights] = useState(
@@ -399,42 +400,31 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
               Conditional Display
             </div>
             {conditionalDisplay && (
-              <div className="mt-2 flex items-center gap-y-0 gap-x-2 flex-wrap">
-                <div className="w-full md:w-[49%] flex items-center gap-2">
+              <div className="mt-2 grid grid-cols-4 items-center gap-y-0 gap-x-2 flex-wrap">
+                <div className="w-full col-span-2 flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     If
                   </div>
                   <SelectBoxField
-                    options={questions.map(
-                      (question, index) =>
-                        `Q${index + 1}: ${question.question}`,
-                    )}
-                    value={
-                      ifQuestion.question_order
-                        ? 'Q' +
-                          (questions.findIndex(
-                            (q) => q.question === ifQuestion.question,
-                          ) +
-                            1) +
-                          ': ' +
-                          ifQuestion.question
-                        : ''
-                    }
+                    prefix='Q'
+                    options={questions.map((q) =>q.question)}
+                    value={ifQuestion?.question&& ifQuestion?.question?.length > 38?ifQuestion.question?.substring(0,35)+"...":ifQuestion.question+""}
                     onChange={(value) => {
                       setIfQuestion({
-                        question: value.slice(4),
+                        question: value,
                         question_order:
-                          questions.find((q) => q.question === value.slice(4))
+                          questions.find((q) => q.question === value)
                             ?.order || 0,
                       });
                     }}
+                    disabledIndexs={[questions.findIndex((q) =>q.order == editQUestion?.order)]}
                     placeholder="Select a question"
                     margin="mb-1 mt-0"
                     position="bottom"
                     bottom="bottom-[29px]"
                   />
                 </div>
-                <div className="w-full md:w-[49%] flex items-center gap-2">
+                <div className="w-full  col-span-2  flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     is
                   </div>
@@ -450,7 +440,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     bottom="bottom-[29px]"
                   />
                 </div>
-                <div className="w-full md:w-[49%] flex items-center gap-2">
+                <div className="w-full col-span-2  flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     to
                   </div>
@@ -466,7 +456,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     validationText=""
                   />
                 </div>
-                <div className="w-full md:w-[49%] flex items-center gap-2">
+                <div className="w-full col-span-2 flex items-center gap-2">
                   <div className="text-xs font-medium text-Text-Primary">
                     ,then
                   </div>
@@ -508,12 +498,12 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             </div>
             {advancedSettings && (
               <div className="grid grid-cols-1 md:grid-cols-2 mt-2 flex-wrap">
-                <AdvancedItems
+                {/* <AdvancedItems
                   checked={biomarker}
                   onChange={(e) => setBiomarker(e.target.checked)}
                   label="biomarker"
                   description="This question measures a biomarker."
-                />
+                /> */}
                 <AdvancedItems
                   checked={clientInsights}
                   onChange={(e) => setClientInsights(e.target.checked)}
