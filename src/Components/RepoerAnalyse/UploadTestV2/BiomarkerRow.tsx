@@ -62,7 +62,8 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         key={biomarker.biomarker_id}
         className={`${showOnlyErrors && !isHaveError ? 'hidden' : ''} ${isHaveError ? 'bg-[#FFD8E480]' : index % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFB]'} grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
         style={{
-          gridTemplateColumns: 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
+          gridTemplateColumns:
+            'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
         }}
       >
         <div className="text-left text-Text-Primary flex gap-1">

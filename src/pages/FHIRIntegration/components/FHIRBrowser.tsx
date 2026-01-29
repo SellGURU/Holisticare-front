@@ -78,7 +78,9 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
   const [searchIdentifier, setSearchIdentifier] = useState('');
   const [patients, setPatients] = useState<FHIRPatient[]>([]);
   const [, setSelectedPatient] = useState<FHIRPatient | null>(null);
-  const [patientCounts, setPatientCounts] = useState<Record<string, { observations: number; conditions: number }>>({});
+  const [patientCounts, setPatientCounts] = useState<
+    Record<string, { observations: number; conditions: number }>
+  >({});
   const [loadingCounts, setLoadingCounts] = useState(false);
   const [filterHasData, setFilterHasData] = useState(false);
 
@@ -251,15 +253,15 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
     }
 
     setBtnLoading(true);
-    
+
     try {
       // Format date for FHIR validate endpoint
-      const formattedDate = dateOfTest 
-        ? dateOfTest.toISOString().split('T')[0] 
+      const formattedDate = dateOfTest
+        ? dateOfTest.toISOString().split('T')[0]
         : new Date().toISOString().split('T')[0];
-      
+
       // Map biomarkers for validation
-      const mappedBiomarkers = biomarkers.map(b => ({
+      const mappedBiomarkers = biomarkers.map((b) => ({
         biomarker_id: b.biomarker_id,
         biomarker: b.biomarker,
         value: b.value || b.original_value || '',
@@ -277,10 +279,9 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
       setRowErrors({});
       toast.success('Biomarkers validated successfully!');
       setStep('confirm');
-
     } catch (error: any) {
       console.error('Validation failed:', error);
-      
+
       // Parse validation errors
       const detail = error?.detail || error?.response?.data?.detail;
       if (detail) {
@@ -305,12 +306,16 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
         if (Object.keys(validationErrors).length > 0) {
           setRowErrors(validationErrors);
-          toast.error('Validation errors found. Please fix them before continuing.');
+          toast.error(
+            'Validation errors found. Please fix them before continuing.',
+          );
         } else {
           toast.error(error.message || 'Validation failed');
         }
       } else {
-        toast.error(error.response?.data?.detail || error.message || 'Validation failed');
+        toast.error(
+          error.response?.data?.detail || error.message || 'Validation failed',
+        );
       }
     } finally {
       setBtnLoading(false);
@@ -371,14 +376,23 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
         conditions_count: patientFormData?.conditions.length || 0,
         medications_count: patientFormData?.medications.length || 0,
         allergies_count: patientFormData?.allergies.length || 0,
-        biomarkers: { 
+        biomarkers: {
           imported: mappedBiomarkers.length,
-          file_id: response.data?.added_biomarkers_file_id || null
+          file_id: response.data?.added_biomarkers_file_id || null,
         },
       });
 
       setRowErrors({});
       toast.success('Biomarkers saved successfully!');
+
+      // Call first_view_report after successful save
+      Application.first_view_report(createdMemberId)
+        .then((res) => {
+          console.log('first_view_report:', res);
+        })
+        .catch((err) => {
+          console.error('Error first view report:', err);
+        });
     } catch (error: any) {
       console.error('Save failed:', error);
       toast.error(
@@ -846,7 +860,9 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <p className="font-medium text-gray-700">No biomarkers found from FHIR</p>
+            <p className="font-medium text-gray-700">
+              No biomarkers found from FHIR
+            </p>
             <p className="text-sm mt-1">
               This patient doesn't have any observations in the FHIR server
             </p>
@@ -873,9 +889,25 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
         >
           {btnLoading ? (
             <>
-              <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                className="animate-spin h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
               Validating...
             </>
@@ -1181,7 +1213,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto pb-24">
+    <div className="max-w-4xl mx-auto pb-8">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <button
