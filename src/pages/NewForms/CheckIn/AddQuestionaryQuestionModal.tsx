@@ -134,9 +134,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
     editQUestion?.conditions?.[0]?.actions?.[0]?.type || '',
   );
   const [advancedSettings, setAdvancedSettings] = useState(false);
-  const [biomarker, ] = useState(
-    editQUestion?.is_biomarker || false,
-  );
+  const [biomarker] = useState(editQUestion?.is_biomarker || false);
   const [clientInsights, setClientInsights] = useState(
     editQUestion?.use_in_insights || false,
   );
@@ -406,18 +404,26 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                     If
                   </div>
                   <SelectBoxField
-                    prefix='Q'
-                    options={questions.map((q) =>q.question)}
-                    value={ifQuestion?.question&& ifQuestion?.question?.length > 38?ifQuestion.question?.substring(0,35)+"...":ifQuestion.question+""}
+                    prefix="Q"
+                    options={questions.map((q) => q.question)}
+                    value={
+                      ifQuestion?.question && ifQuestion?.question?.length > 38
+                        ? ifQuestion.question?.substring(0, 35) + '...'
+                        : ifQuestion.question + ''
+                    }
                     onChange={(value) => {
                       setIfQuestion({
                         question: value,
                         question_order:
-                          questions.find((q) => q.question === value)
-                            ?.order || 0,
+                          questions.find((q) => q.question === value)?.order ||
+                          0,
                       });
                     }}
-                    disabledIndexs={[questions.findIndex((q) =>q.order == editQUestion?.order)]}
+                    disabledIndexs={[
+                      questions.findIndex(
+                        (q) => q.order == editQUestion?.order,
+                      ),
+                    ]}
                     placeholder="Select a question"
                     margin="mb-1 mt-0"
                     position="bottom"

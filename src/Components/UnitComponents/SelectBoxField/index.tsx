@@ -9,7 +9,7 @@ interface SelectBoxFieldProps {
   onChange: (value: string) => void;
   isValid?: boolean;
   validationText?: string;
-  disabledIndexs?:Array<number>
+  disabledIndexs?: Array<number>;
   margin?: string;
   disabled?: boolean;
   showDisabled?: boolean;
@@ -17,7 +17,7 @@ interface SelectBoxFieldProps {
   top?: string;
   position?: 'top' | 'bottom';
   bottom?: string;
-  prefix?:string
+  prefix?: string;
 }
 
 const SelectBoxField: FC<SelectBoxFieldProps> = ({
@@ -35,7 +35,7 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
   disabledIndexs,
   position = 'top',
   bottom,
-  prefix
+  prefix,
 }) => {
   const [showSelect, setShowSelect] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -106,15 +106,14 @@ const SelectBoxField: FC<SelectBoxFieldProps> = ({
               <div
                 key={index}
                 onClick={() => {
-                  if(!disabledIndexs?.includes(index)){
+                  if (!disabledIndexs?.includes(index)) {
                     onChange(option);
                     setShowSelect(false);
-
                   }
                 }}
-                className={`${disabledIndexs?.includes(index)?'opacity-50':'opacity-100 hover:bg-Gray-100 '} text-[12px] text-Text-Primary  my-1 cursor-pointer rounded-lg py-1 px-2 text-ellipsis overflow-hidden text-nowrap`}
+                className={`${disabledIndexs?.includes(index) ? 'opacity-50' : 'opacity-100 hover:bg-Gray-100 '} text-[12px] text-Text-Primary  my-1 cursor-pointer rounded-lg py-1 px-2 text-ellipsis overflow-hidden text-nowrap`}
               >
-                {prefix && prefix+ (index+1)+' :'}
+                {prefix && prefix + (index + 1) + ' :'}
                 {resolveCategoryName(option)}
                 {/* <EllipsedTooltip text={resolveCategoryName(option)}></EllipsedTooltip> */}
               </div>
