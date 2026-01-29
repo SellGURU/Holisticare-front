@@ -456,7 +456,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             </div>
           </div>
 
-          <div 
+          <div
             ref={tableRef}
             className="relative w-full text-xs border border-Gray-50 rounded-[12px] overflow-auto"
             style={{
@@ -471,7 +471,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               <div
                 className="grid w-full py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b border-Gray-50 sticky top-0 z-10"
                 style={{
-                  gridTemplateColumns: 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
+                  gridTemplateColumns:
+                    'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
                 }}
               >
                 <div className="text-left">Extracted Biomarker</div>
