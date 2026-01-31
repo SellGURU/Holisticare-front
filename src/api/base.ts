@@ -8,7 +8,7 @@ const baseTestUrl = 'https://holisticare-develop.vercel.app';
 let env: 'test' | 'production' = 'production';
 
 const resolveBaseEndPoint = () => {
-  if (env == 'test') {
+  if (env == 'production') {
     return baseTestEndPoint;
   }
   return baseProductEndPoint;
