@@ -116,6 +116,8 @@ const getScoreConfig = (
     lowerName.includes('composition')
   )
     return { icon: '🧍', color: '#4FC3F7', label: 'Body Composition' };
+  if (lowerName.includes('readiness'))
+    return { icon: '🎯', color: '#06C78D', label: 'Readiness' };
   if (
     lowerName.includes('global') ||
     lowerName.includes('wellness') ||
