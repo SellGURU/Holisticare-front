@@ -7,6 +7,7 @@ import ChoosingDaysWeek from './components/ChoosingDaysWeek';
 import ConflictsModal from './components/ConflictsModal';
 import FilePreviewModal from './components/FilePreviewModal';
 import MonthShows from './components/MonthShows';
+import { resolveCategoryIcon } from '../../help';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -71,22 +72,22 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   //   }
   // }, [value.Category]);
   const [showConflicts, setShowConflicts] = useState(false);
-  const resolvePillarIcon = () => {
-    switch (value.Category) {
-      case 'Diet':
-        return '/icons/diet.svg';
-      case 'Supplement':
-        return '/icons/Supplement.svg';
-      case 'Lifestyle':
-        return '/icons/LifeStyle2.svg';
-      case 'Activity':
-        return '/icons/weight.svg';
-      case 'Medical Peptide Therapy':
-        return '/icons/Supplement.svg';
-      default:
-        return '/icons/others.svg';
-    }
-  };
+  // const resolvePillarIcon = () => {
+  //   switch (value.Category) {
+  //     case 'Diet':
+  //       return '/icons/diet.svg';
+  //     case 'Supplement':
+  //       return '/icons/Supplement.svg';
+  //     case 'Lifestyle':
+  //       return '/icons/LifeStyle2.svg';
+  //     case 'Activity':
+  //       return '/icons/weight.svg';
+  //     case 'Medical Peptide Therapy':
+  //       return '/icons/Supplement.svg';
+  //     default:
+  //       return '/icons/others.svg';
+  //   }
+  // };
   const isinvalid = () => {
     if (
       (!value.Frequency_Type || value.Frequency_Type.length === 0) &&
@@ -148,7 +149,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             <div className="flex items-center flex-wrap gap-4 text-nowrap  justify-between  w-full">
               <div className="text-Text-Primary flex flex-wrap   justify-start items-center sm:text-sm text-xs font-medium">
                 <div className="w-8 h-8 bg-backgroundColor-Card border border-Gray-50 flex justify-center items-center rounded-[8px] mr-2">
-                  <img className="w-4" src={resolvePillarIcon()} alt="" />
+                  <img
+                    className="w-4"
+                    src={resolveCategoryIcon(value.Category)}
+                    alt=""
+                  />
                 </div>
                 {value.Title}
                 <div className="flex mt-2 lg:mt-0">
