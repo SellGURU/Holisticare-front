@@ -272,7 +272,7 @@ export function PublicSurveyForm({
         response: responseValue,
       };
     });
-    return respond;
+    return ResolveConditions(respond);
   }, [sortedQuestions, responses]);
 
   const getQuestionText = useCallback(
@@ -293,7 +293,9 @@ export function PublicSurveyForm({
   const visibleQuestions = useMemo(() => {
     const resolve = resolveRespond().filter((q: any) => !q.hide);
     // console.log(resolveRespond());
-    return ResolveConditions(resolve);
+    const resolvedAll = ResolveConditions(resolve);
+    console.log(resolvedAll);
+    return resolvedAll.filter((el) => el.skip_validation == false);
   }, [resolveRespond]);
 
   // Build mapping from visible index to original index

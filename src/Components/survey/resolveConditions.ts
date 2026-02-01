@@ -1,16 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ResolveConditions = (questions: Array<any>) => {
   let resolvedQuestions = [];
-  resolvedQuestions = questions.filter((q: any) => {
+  resolvedQuestions = questions.map((q: any) => {
     if (q.conditions && q.conditions.length > 0) {
       const resolve = mainCondition(q, questions);
       if (resolve) {
-        return q;
+        return {
+          ...q,
+          skip_validation: false,
+        };
       } else {
-        return null;
+        return {
+          ...q,
+          skip_validation: true,
+        };
       }
     } else {
-      return q;
+      return {
+        ...q,
+        skip_validation: false,
+      };
     }
   });
   return resolvedQuestions;
