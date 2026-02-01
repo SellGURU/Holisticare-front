@@ -16,7 +16,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   index,
   onRemove,
   onEdit,
-  onCopy,
+  // onCopy,
   moveItem,
   length,
   copiedIndex,
@@ -74,12 +74,12 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
                 </div>
               ) : (
                 <>
-                  <img
+                  {/* <img
                     src="./icons/copy-blue.svg"
                     alt=""
                     className="w-[16px] h-[16px] cursor-pointer"
                     onClick={() => onCopy()}
-                  />
+                  /> */}
                   <img
                     src="./icons/edit-blue.svg"
                     alt=""

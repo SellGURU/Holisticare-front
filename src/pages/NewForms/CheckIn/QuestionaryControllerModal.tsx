@@ -548,6 +548,7 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
                             setQuestions((pre) => {
                               const newItems = [...pre];
                               newItems.splice(index + 1, 0, item);
+                              console.log(newItems);
                               return newItems;
                             });
                             const newIndex = index + 1;
