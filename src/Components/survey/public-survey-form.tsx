@@ -63,6 +63,7 @@ interface ApiSurvey {
   description?: string;
   questions?: ApiQuestion[];
   [key: string]: unknown;
+  consent_text?: string;
 }
 
 interface PublicSurveyFormProps {
@@ -220,8 +221,16 @@ export function PublicSurveyForm({
   const [responses, setResponses] = useState<
     Record<number, string | string[] | MultiFileResponse | null | number>
   >({});
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const resolveRespond = () => {
+  const [sortedQuestions, setSortedQuestions] = useState<ApiQuestion[]>([]);
+  const [loading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<
+    Record<number, string>
+  >({});
+
+  const resolveRespond = useCallback(() => {
     const respond = sortedQuestions.map((q, idx) => {
       if (q.hide) {
         return {
@@ -263,47 +272,8 @@ export function PublicSurveyForm({
         response: responseValue,
       };
     });
-    return respond;
-  };
-  useEffect(() => {
-    if (showSaveIndicator == 'saved') {
-      setTimeout(() => {
-        setShowSaveIndicator('idle');
-      }, 1000);
-    }
-  });
-  useEffect(() => {
-    if (currentStep <= 1) return;
-    if (isQuestionary) {
-      if (isClient) {
-        setShowSaveIndicator('saving');
-        onAutoSaveClient?.(resolveRespond());
-        setTimeout(() => {
-          setShowSaveIndicator('saved');
-        }, 1000);
-      } else {
-        setShowSaveIndicator('saving');
-        Application.autoSaveQuestionary({
-          member_id: memberId,
-          q_unique_id: qId,
-          f_unique_id: fId,
-          respond: resolveRespond(),
-        })
-          .finally(() => {
-            setShowSaveIndicator('saved');
-          })
-          .catch(() => {});
-      }
-    }
-  }, [currentStep]);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const [sortedQuestions, setSortedQuestions] = useState<ApiQuestion[]>([]);
-  const [loading] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<
-    Record<number, string>
-  >({});
+    return ResolveConditions(respond);
+  }, [sortedQuestions, responses]);
 
   const getQuestionText = useCallback(
     (question: ApiQuestion): string | null => {
@@ -323,8 +293,10 @@ export function PublicSurveyForm({
   const visibleQuestions = useMemo(() => {
     const resolve = resolveRespond().filter((q: any) => !q.hide);
     // console.log(resolveRespond());
-    return ResolveConditions(resolve);
-  }, [sortedQuestions, currentStep]);
+    const resolvedAll = ResolveConditions(resolve);
+    console.log(resolvedAll);
+    return resolvedAll.filter((el) => el.skip_validation == false);
+  }, [resolveRespond]);
 
   // Build mapping from visible index to original index
   const visibleToOriginalIndex = useMemo(() => {
@@ -576,9 +548,58 @@ export function PublicSurveyForm({
       return;
     }
 
+    // Check if currentStep is beyond visible questions (happens when a question becomes hidden)
+    if (currentStep > visibleQuestions.length) {
+      // All visible questions have been answered, proceed to submit
+      let allValid = true;
+      for (let i = 0; i < visibleQuestions.length; i++) {
+        const originalIndex = getOriginalIndexForVisibleIndex(i);
+        if (!validateQuestion(originalIndex)) {
+          allValid = false;
+          setCurrentStep(i + 1); // Go back to the first invalid visible question
+          break;
+        }
+      }
+
+      if (allValid) {
+        if (isNeedConfirm) {
+          setCurrentStep(sortedQuestions.length + 1);
+        } else {
+          handleSubmit();
+        }
+      } else {
+        setError('Please answer all required questions before submitting');
+      }
+      return;
+    }
+
     // Get the current question and its index in the VISIBLE array
     const currentVisibleQuestion = visibleQuestions[currentStep - 1];
-    // const currentVisibleIndex = currentStep - 1;
+
+    // If current question is undefined, it means we've gone past all visible questions
+    if (!currentVisibleQuestion) {
+      // All visible questions have been answered, proceed to submit
+      let allValid = true;
+      for (let i = 0; i < visibleQuestions.length; i++) {
+        const originalIndex = getOriginalIndexForVisibleIndex(i);
+        if (!validateQuestion(originalIndex)) {
+          allValid = false;
+          setCurrentStep(i + 1); // Go back to the first invalid visible question
+          break;
+        }
+      }
+
+      if (allValid) {
+        if (isNeedConfirm) {
+          setCurrentStep(sortedQuestions.length + 1);
+        } else {
+          handleSubmit();
+        }
+      } else {
+        setError('Please answer all required questions before submitting');
+      }
+      return;
+    }
 
     // Find the original index for validation
     const originalQuestionIndex = getOriginalIndexForVisibleIndex(
@@ -628,6 +649,49 @@ export function PublicSurveyForm({
   const [showSaveIndicator, setShowSaveIndicator] = useState<
     'idle' | 'saving' | 'saved'
   >('idle');
+
+  useEffect(() => {
+    if (showSaveIndicator == 'saved') {
+      setTimeout(() => {
+        setShowSaveIndicator('idle');
+      }, 1000);
+    }
+  }, [showSaveIndicator]);
+
+  useEffect(() => {
+    if (currentStep <= 1) return;
+    if (isQuestionary) {
+      if (isClient) {
+        setShowSaveIndicator('saving');
+        onAutoSaveClient?.(resolveRespond());
+        setTimeout(() => {
+          setShowSaveIndicator('saved');
+        }, 1000);
+      } else {
+        setShowSaveIndicator('saving');
+        Application.autoSaveQuestionary({
+          member_id: memberId,
+          q_unique_id: qId,
+          f_unique_id: fId,
+          respond: resolveRespond(),
+        })
+          .finally(() => {
+            setShowSaveIndicator('saved');
+          })
+          .catch(() => {});
+      }
+    }
+  }, [
+    currentStep,
+    isQuestionary,
+    isClient,
+    onAutoSaveClient,
+    memberId,
+    qId,
+    fId,
+    resolveRespond,
+  ]);
+
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
@@ -1353,11 +1417,7 @@ export function PublicSurveyForm({
           >
             <CardHeader>
               <CardTitle className="text-base 2xl:text-2xl text-justify font-bold">
-                I confirm that I have read and understood the Medical
-                Disclaimer. I understand that this service provider offers
-                lifestyle and longevity support and does not replace my GP or
-                specialist medical care. I accept full responsibility for my
-                health decisions while participating.
+                {survey.consent_text || ''}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 h-[60%] relative  pb-20 overflow-auto">
