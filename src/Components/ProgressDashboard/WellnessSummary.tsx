@@ -116,6 +116,8 @@ const getScoreConfig = (
     lowerName.includes('composition')
   )
     return { icon: '🧍', color: '#4FC3F7', label: 'Body Composition' };
+  if (lowerName.includes('readiness'))
+    return { icon: '🎯', color: '#06C78D', label: 'Readiness' };
   if (
     lowerName.includes('global') ||
     lowerName.includes('wellness') ||
@@ -137,10 +139,22 @@ const resolveIcon = (name: string) => {
   if (name == 'Heart Health Score')
     return '/icons/biomarkers/heart_rate_01.svg';
   if (name == 'Stress Score') return '/icons/biomarkers/stress-icon.svg';
-  if (name == 'Calories / Metabolic Score')
+  if (name == 'Calories / Metabolic')
     return '/icons/biomarkers/metabolism 1.svg';
   if (name == 'Body Composition Score')
     return '/icons/biomarkers/chest (1).svg';
+  if (name == 'Body Score') {
+    return '/icons/biomarkers/chest (1).svg';
+  }
+  if (name == 'Calories Score') {
+    return '/icons/biomarkers/metabolism 1.svg';
+  }
+  if (name == 'Heart Score') {
+    return '/icons/biomarkers/heart_rate_01.svg';
+  }
+  if (name == 'Readiness Score') {
+    return '/icons/biomarkers/mood-icon.svg';
+  }
 };
 
 const WellnessSummary: React.FC<WellnessSummaryProps> = ({
@@ -310,6 +324,7 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
               const score = scores[scoreName] || 0;
               const scoreData = scoresData?.[scoreName];
               const config = getScoreConfig(scoreName);
+              // alert(scoreName)
               const tooltipText =
                 formatTooltip(scoreData) ||
                 `Information about ${config.label} score`;

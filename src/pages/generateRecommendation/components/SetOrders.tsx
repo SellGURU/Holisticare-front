@@ -8,7 +8,7 @@ import { publish, subscribe } from '../../../utils/event';
 import { ActivityCard } from './ActivityCard';
 import { CoverageCard } from '../../../Components/coverageCard';
 import SearchBox from '../../../Components/SearchBox';
-import { resolveCategoryName } from '../../../help';
+import { resolveCategoryIcon, resolveCategoryName } from '../../../help';
 
 type CategoryState = {
   name: string;
@@ -432,19 +432,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                 >
                   <img
                     className="size-4"
-                    src={
-                      category.name === 'Activity'
-                        ? '/icons/weight.svg'
-                        : category.name === 'Diet'
-                          ? '/icons/diet.svg'
-                          : category.name === 'Lifestyle'
-                            ? '/icons/LifeStyle2.svg'
-                            : category.name == 'Supplement'
-                              ? '/icons/Supplement.svg'
-                              : category.name === 'Medical Peptide Therapy'
-                                ? '/icons/Supplement.svg'
-                                : '/icons/others.svg'
-                    }
+                    src={resolveCategoryIcon(category.name)}
                     alt=""
                   />
                   {resolveCategoryName(category.name)}
@@ -524,19 +512,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                   >
                     <img
                       className="size-5"
-                      src={
-                        name === 'Activity'
-                          ? '/icons/weight.svg'
-                          : name === 'Diet'
-                            ? '/icons/diet.svg'
-                            : name === 'Lifestyle'
-                              ? '/icons/LifeStyle2.svg'
-                              : name == 'Supplement'
-                                ? '/icons/Supplement.svg'
-                                : name === 'Medical Peptide Therapy'
-                                  ? '/icons/Supplement.svg'
-                                  : '/icons/others.svg'
-                      }
+                      src={resolveCategoryIcon(name)}
                       alt=""
                     />
                     {resolveCategoryName(name)}

@@ -166,10 +166,32 @@ const resolveCategoryName = (name: string) => {
   }
   return name;
 };
+
+const resolveCategoryIcon = (category: string) => {
+  switch (category) {
+    case 'Diet':
+      return '/icons/diet.svg';
+    case 'Mind':
+      return '/icons/mind.svg';
+    case 'Activity':
+      return '/icons/weight.svg';
+    case 'Supplement':
+      return '/icons/Supplement.svg';
+    case 'Medical Peptide Therapy':
+      return '/icons/peptidescolor.svg';
+    case 'Lifestyle':
+      return '/icons/LifeStyle2.svg';
+
+    default:
+      return '/icons/others.svg';
+  }
+};
+
 export {
   useConstructor,
   resolveKeyStatus,
   resolveStatusColor,
+  resolveCategoryIcon,
   blobToBase64,
   resolveAccesssUser,
   decodeAccessUser,

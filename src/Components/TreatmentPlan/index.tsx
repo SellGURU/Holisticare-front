@@ -727,7 +727,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   } w-full flex items-center px-4`}
                 >
                   <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
-                    <img src="/icons/Supplement.svg" alt="" />
+                    <img src="/icons/peptidescolor.svg" alt="" />
                   </div>
                   Peptide
                 </div>
