@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
 import InformationStep from './AddComponents/informationStep';
-// import ExersiceStep from './AddComponents/ExersiceStep';
 import ExersiceStep2 from './AddComponents/excercieModal2/ExersiceStep2';
 import Application from '../../../api/app';
 import Circleloader from '../../../Components/CircleLoader';
 import SpinnerLoader from '../../../Components/SpinnerLoader';
-// import SectionOrderModal from './AddComponents/SectionOrder';
 
 interface AddActivityProps {
   onClose: () => void;
@@ -14,205 +12,37 @@ interface AddActivityProps {
   onSave: () => void;
 }
 
+type Step = 'info' | 'groups' | 'exercises';
+
 const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
-  const [step, setStep] = useState(0);
-  // const [showSectionOrder, setShowSectionOrder] = useState(false);
-  const [loading, setLoading] = useState(editid ? true : false);
+  const [step, setStep] = useState<Step>('info');
+
+  const [loading, setLoading] = useState(!!editid);
   const [loadingCall, setLoadingCall] = useState(false);
-  const [sectionList, setSectionList] = useState([]);
+
+  const [sectionList, setSectionList] = useState<any[]>([]);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isExerciseStepValid, setIsExerciseStepValid] = useState(false);
+
   const [showValidation, setShowValidation] = useState(false);
   const [showExerciseValidation, setShowExerciseValidation] = useState(false);
+
   const [activityLibrary, setActivityLibrary] = useState<
     { title: string; uid: string }[]
   >([]);
-  useEffect(() => {
-    Application.getActivityLibrary()
-      .then((res) => {
-        setActivityLibrary(res.data);
-      })
-      .catch((err) => {
-        console.error('Error getting activity library:', err);
-      });
-  }, []);
-  const rsolveSectionListforSendToApi = () => {
-    return sectionList.map((item: any) => {
-      return {
-        ...item,
-        Exercises: item.Exercises.map((val: any) => {
-          return {
-            Exercise_Id: val.Exercise.Exercise_Id,
-            Weight: val.Weight,
-            Reps: val.Reps,
-            Rest: val.Rest,
-          };
-        }),
-      };
-    });
-  };
-  const nextStep = () => {
-    if (step === 0) {
-      setShowValidation(true);
-      // Validate required fields before proceeding
-      if (!isFormValid) {
-        // Show validation errors
-        return;
-      }
-      setStep(1);
-      setShowValidation(false);
-    } else {
-      setShowExerciseValidation(true);
-      // Validate that there's at least one section before saving
-      if (!isExerciseStepValid) {
-        // Show validation error
-        return;
-      }
 
-      if (editid) {
-        setLoadingCall(true);
-        Application.editActivity({
-          Title: addData.title,
-          set_order: addData.Set_Order,
-          // Description: addData.description,
-          Base_Score: addData.score,
-          Instruction: addData.instruction,
-          Ai_note: addData.clinical_guidance,
-          Sections: rsolveSectionListforSendToApi(),
-          Activity_Filters: {
-            Conditions: addData.condition,
-            Equipment: addData.equipment,
-            Type: addData.type ? [addData.type] : [],
-            Level: addData.level ? [addData.level] : [],
-            Muscle: addData.muscle,
-            Terms: addData.terms,
-          },
-          Activity_Location: addData.location,
-          Act_Id: editid,
-          Parent_Id:
-            activityLibrary.find(
-              (value: any) => value.title === addData.Parent_Title,
-            )?.uid || '',
-        })
-          .then(() => {
-            onSave();
-            setShowExerciseValidation(false);
-            setShowValidation(false);
-          })
-          .catch((err) => {
-            console.error(err);
-          })
-          .finally(() => {
-            setLoadingCall(false);
-          });
-      } else {
-        setLoadingCall(true);
-        Application.addActivity({
-          Title: addData.title,
-          set_order: addData.Set_Order,
-          // Description: addData.description,
-          Base_Score: addData.score,
-          Instruction: addData.instruction,
-          Ai_note: addData.clinical_guidance,
-          Sections: rsolveSectionListforSendToApi(),
-          Activity_Filters: {
-            Conditions: addData.condition,
-            Equipment: addData.equipment,
-            Type: addData.type ? [addData.type] : [],
-            Level: addData.level ? [addData.level] : [],
-            Muscle: addData.muscle,
-            Terms: addData.terms,
-          },
-          Activity_Location: addData.location,
-          Parent_Id:
-            activityLibrary.find(
-              (value: any) => value.title === addData.Parent_Title,
-            )?.uid || '',
-        })
-          .then(() => {
-            onSave();
-            setShowExerciseValidation(false);
-            setShowValidation(false);
-          })
-          .catch((err) => {
-            console.error(err);
-          })
-          .finally(() => {
-            setLoadingCall(false);
-          });
-      }
-    }
-  };
-  const backStep = () => {
-    if (step === 1) {
-      setStep(0);
-      setShowExerciseValidation(false);
-      setShowValidation(false);
-    }
-  };
+  /* ---------------- API ---------------- */
+
   useEffect(() => {
-    if (editid) {
-      Application.getActivity(editid)
-        .then((res) => {
-          setAddData({
-            title: res.data.Title,
-            // description: res.data.Description,
-            score: res.data.Base_Score,
-            instruction: res.data.Instruction,
-            type:
-              res.data.Activity_Filters.Type.length > 0
-                ? res.data.Activity_Filters.Type[0]
-                : '',
-            terms: res.data.Activity_Filters.Terms,
-            condition: res.data.Activity_Filters.Conditions,
-            muscle: res.data.Activity_Filters.Muscle,
-            equipment: res.data.Activity_Filters.Equipment,
-            level:
-              res.data.Activity_Filters.Level.length > 0
-                ? res.data.Activity_Filters.Level[0]
-                : '',
-            location: res.data.Activity_Location,
-            clinical_guidance: res.data.Ai_note,
-            Parent_Title: res.data.Parent_Title,
-            Set_Order:
-              res.data.Set_Order !== null
-                ? res.data.Set_Order
-                : [
-                    { name: 'Warm-Up', enabled: true, order: 1 },
-                    { name: 'Main work out', enabled: true, order: 2 },
-                    { name: 'Cool Down', enabled: true, order: 3 },
-                    { name: 'Recovery', enabled: true, order: 4 },
-                    { name: 'Finisher', enabled: true, order: 5 },
-                  ],
-          });
-          setSectionList(
-            res.data.Sections.map((item: any) => {
-              return {
-                ...item,
-                Exercises: item.Exercises.map((val: any) => {
-                  return {
-                    Reps: val.Reps,
-                    Rest: val.Rest,
-                    Weight: val.Weight,
-                    Exercise: {
-                      ...val,
-                    },
-                  };
-                }),
-              };
-            }),
-          );
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error('Error getting activity:', err);
-          setLoading(false);
-        });
-    }
-  }, [editid]);
+    Application.getActivityLibrary().then((res) => {
+      setActivityLibrary(res.data);
+    });
+  }, []);
+
+  /* ---------------- ADD DATA ---------------- */
+
   const [addData, setAddData] = useState({
     title: '',
-    // description: '',
     score: 0,
     instruction: '',
     type: '',
@@ -232,61 +62,168 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       { name: 'Finisher', enabled: true, order: 5 },
     ],
   });
-  const handleChangeSetOrder = (value: typeof addData.Set_Order) => {
-    setAddData((prevTheme) => ({
-      ...prevTheme,
-      Set_Order: value,
-    }));
-  };
+
   const updateAddData = (key: keyof typeof addData, value: any) => {
-    setAddData((prevTheme) => ({
-      ...prevTheme,
-      [key]: value,
-    }));
+    setAddData((prev) => ({ ...prev, [key]: value }));
   };
-  // Check if form is valid whenever addData changes
+
+  const handleChangeSetOrder = (value: typeof addData.Set_Order) => {
+    setAddData((prev) => ({ ...prev, Set_Order: value }));
+  };
+
+  /* ---------------- VALIDATION ---------------- */
+
   useEffect(() => {
     setIsFormValid(
       addData.title.trim() !== '' &&
         addData.instruction.trim() !== '' &&
         addData.score > 0 &&
-        (addData?.Parent_Title?.trim() !== '' || editid !== null),
+        (addData.Parent_Title.trim() !== '' || editid !== null),
     );
-  }, [addData.title, addData.instruction, addData.score, addData.Parent_Title]);
+  }, [addData, editid]);
 
-  // Check if exercise step is valid whenever sectionList changes
   useEffect(() => {
-    const emptySetSections = sectionList.filter(
-      (section: any) => section.Sets === '',
-    );
-    const emptyRepsSections = sectionList.filter((section: any) =>
-      section.Exercises.some((exercise: any) => exercise.Reps === ''),
-    );
-    setIsExerciseStepValid(
-      sectionList.length > 0 &&
-        emptySetSections.length == 0 &&
-        emptyRepsSections.length == 0,
-    );
+    const invalid =
+      sectionList.length === 0 ||
+      sectionList.some(
+        (s: any) =>
+          s.Sets === '' ||
+          s.Exercises.some((e: any) => e.Reps === ''),
+      );
+
+    setIsExerciseStepValid(!invalid);
   }, [sectionList]);
+
+  /* ---------------- STEP NAVIGATION ---------------- */
+
+  const nextStep = () => {
+    if (step === 'info') {
+      setShowValidation(true);
+      if (!isFormValid) return;
+      setShowValidation(false);
+      setStep('groups');
+      return;
+    }
+
+    if (step === 'groups') {
+      if (!sectionList.length) return;
+      setStep('exercises');
+      return;
+    }
+
+    if (step === 'exercises') {
+      setShowExerciseValidation(true);
+      if (!isExerciseStepValid) return;
+      saveActivity();
+    }
+  };
+
+  const backStep = () => {
+    if (step === 'groups') setStep('info');
+    if (step === 'exercises') setStep('groups');
+  };
+
+  /* ---------------- SAVE ---------------- */
+
+  const resolveSectionsForApi = () =>
+    sectionList.map((item: any) => ({
+      ...item,
+      Exercises: item.Exercises.map((val: any) => ({
+        Exercise_Id: val.Exercise.Exercise_Id,
+        Weight: val.Weight,
+        Reps: val.Reps,
+        Rest: val.Rest,
+      })),
+    }));
+
+  const saveActivity = () => {
+    setLoadingCall(true);
+
+    const payload = {
+      Title: addData.title,
+      set_order: addData.Set_Order,
+      Base_Score: addData.score,
+      Instruction: addData.instruction,
+      Ai_note: addData.clinical_guidance,
+      Sections: resolveSectionsForApi(),
+      Activity_Filters: {
+        Conditions: addData.condition,
+        Equipment: addData.equipment,
+        Type: addData.type ? [addData.type] : [],
+        Level: addData.level ? [addData.level] : [],
+        Muscle: addData.muscle,
+        Terms: addData.terms,
+      },
+      Activity_Location: addData.location,
+      Parent_Id:
+        activityLibrary.find(
+          (v) => v.title === addData.Parent_Title,
+        )?.uid || '',
+      ...(editid && { Act_Id: editid }),
+    };
+
+    const request = editid
+      ? Application.editActivity(payload)
+      : Application.addActivity(payload);
+
+    request
+      .then(onSave)
+      .finally(() => setLoadingCall(false));
+  };
+
+  /* ---------------- EDIT LOAD ---------------- */
+
+  useEffect(() => {
+    if (!editid) return;
+
+    Application.getActivity(editid).then((res) => {
+      setAddData({
+        ...addData,
+        title: res.data.Title,
+        score: res.data.Base_Score,
+        instruction: res.data.Instruction,
+        clinical_guidance: res.data.Ai_note,
+        Parent_Title: res.data.Parent_Title,
+        Set_Order: res.data.Set_Order,
+      });
+
+      setSectionList(
+        res.data.Sections.map((s: any) => ({
+          ...s,
+          Exercises: s.Exercises.map((e: any) => ({
+            Reps: e.Reps,
+            Rest: e.Rest,
+            Weight: e.Weight,
+            Exercise: { ...e },
+          })),
+        })),
+      );
+
+      setLoading(false);
+    });
+  }, [editid]);
+
+  /* ---------------- UI ---------------- */
 
   return (
     <>
       {loading && (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-[50]">
-          <Circleloader></Circleloader>
+        <div className="fixed inset-0 flex items-center justify-center bg-white/80 z-50">
+          <Circleloader />
         </div>
       )}
-      <div
-        className={`bg-white ${step === 0 ? 'w-[90vw] md:w-[800px]' : 'w-[90vw] md:w-[884px]'} p-4 rounded-[16px] h-full`}
+
+  <div
+        className={`bg-white ${step === 'info' ? 'w-[90vw] md:w-[800px]' : 'w-[90vw] md:w-[884px]'} p-4 rounded-[16px] h-full`}
       >
-        <div className="flex w-full  justify-start">
-          <div className="text-[14px] font-medium text-Text-Primary">
-            {editid ? 'Edit Activity' : 'Add Activity'}
-          </div>
+        <div className="text-sm font-medium">
+          {editid ? 'Edit Activity' : 'Add Activity'}
         </div>
-        <div className="w-full h-[1px] bg-Boarder my-3"></div>
-        <div className="md:min-h-[300px]">
-          {step === 0 ? (
+
+        <div className="h-px bg-Boarder my-3" />
+
+        <div className="min-h-[300px]">
+          {step === 'info' && (
             <InformationStep
               showValidation={showValidation}
               addData={addData}
@@ -294,69 +231,53 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
               activityLibrary={activityLibrary}
               mode={editid ? 'edit' : 'add'}
             />
-          ) : (
+          )}
+
+          {step !== 'info' && (
             <ExersiceStep2
-              showValidation={showExerciseValidation}
-              setShowValidation={(val: any) => {
-                setShowExerciseValidation(val);
-              }}
+             
+              sectionList={sectionList}
               orderList={addData.Set_Order}
               handleChangeSetOrder={handleChangeSetOrder}
-              sectionList={sectionList}
-              onChange={(values: any) => {
-                setSectionList(values);
-              }}
+              onChange={setSectionList}
+              showValidation={showExerciseValidation}
               onValidationChange={setIsExerciseStepValid}
             />
           )}
         </div>
-        <div
-          className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} items-center mb-1 mt-4`}
-        >
-          {step !== 0 && (
+
+        {/* FOOTER */}
+        <div className="flex justify-between mt-4">
+          {step !== 'info' ? (
             <div
               onClick={backStep}
-              className="text-Disable text-[14px] cursor-pointer font-medium flex items-center gap-1"
+              className="cursor-pointer text-sm text-gray-400 flex items-center gap-1"
             >
-              <img src="/icons/arrow-left.svg" alt="" className="w-5 h-5" />
-              Back
+              ← Back
             </div>
+          ) : (
+            <div />
           )}
 
           <div className="flex items-center gap-3">
-            <div
-              onClick={onClose}
-              className="text-Disable text-[14px] cursor-pointer font-medium"
-            >
+            <span onClick={onClose} className="cursor-pointer text-gray-400">
               Cancel
-            </div>
-            <div
+            </span>
+
+            <span
               onClick={nextStep}
-              className={`text-Primary-DeepTeal text-[14px] cursor-pointer font-medium`}
+              className="cursor-pointer text-Primary-DeepTeal font-medium"
             >
               {!loadingCall ? (
-                step === 0 ? (
-                  'Next'
-                ) : editid ? (
-                  'Update'
-                ) : (
-                  'Save'
-                )
+                step === 'exercises'
+                  ? editid
+                    ? 'Update'
+                    : 'Save'
+                  : 'Next'
               ) : (
                 <SpinnerLoader color="#005F73" />
               )}
-            </div>
-            {/* <div
-              onClick={step === 0 && !isFormValid ? undefined : nextStep}
-              className={`text-Primary-DeepTeal text-[14px] ${
-                (step === 0) ||
-                (step === 1 && !isExerciseStepValid)
-                  ? 'opacity-50 cursor-not-allowed pointer-events-none'
-                  : 'cursor-pointer font-medium'
-              }`}
-            >
-              {step === 0 ? 'Next' : editid ? 'Update' : 'Save'}
-            </div> */}
+            </span>
           </div>
         </div>
       </div>
