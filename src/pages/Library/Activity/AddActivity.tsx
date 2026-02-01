@@ -87,8 +87,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       sectionList.length === 0 ||
       sectionList.some(
         (s: any) =>
-          s.Sets === '' ||
-          s.Exercises.some((e: any) => e.Reps === ''),
+          s.Sets === '' || s.Exercises.some((e: any) => e.Reps === ''),
       );
 
     setIsExerciseStepValid(!invalid);
@@ -156,9 +155,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       },
       Activity_Location: addData.location,
       Parent_Id:
-        activityLibrary.find(
-          (v) => v.title === addData.Parent_Title,
-        )?.uid || '',
+        activityLibrary.find((v) => v.title === addData.Parent_Title)?.uid ||
+        '',
       ...(editid && { Act_Id: editid }),
     };
 
@@ -166,9 +164,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       ? Application.editActivity(payload)
       : Application.addActivity(payload);
 
-    request
-      .then(onSave)
-      .finally(() => setLoadingCall(false));
+    request.then(onSave).finally(() => setLoadingCall(false));
   };
 
   /* ---------------- EDIT LOAD ---------------- */
@@ -213,7 +209,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         </div>
       )}
 
-  <div
+      <div
         className={`bg-white ${step === 'info' ? 'w-[90vw] md:w-[800px]' : 'w-[90vw] md:w-[884px]'} p-4 rounded-[16px] h-full`}
       >
         <div className="text-sm font-medium">
@@ -235,7 +231,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
 
           {step !== 'info' && (
             <ExersiceStep2
-             
+                mode={step === 'groups' ? 'groups' : 'exercises'}
+
               sectionList={sectionList}
               orderList={addData.Set_Order}
               handleChangeSetOrder={handleChangeSetOrder}
@@ -269,11 +266,15 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
               className="cursor-pointer text-Primary-DeepTeal font-medium"
             >
               {!loadingCall ? (
-                step === 'exercises'
-                  ? editid
-                    ? 'Update'
-                    : 'Save'
-                  : 'Next'
+                step === 'exercises' ? (
+                  editid ? (
+                    'Update'
+                  ) : (
+                    'Save'
+                  )
+                ) : (
+                  'Next'
+                )
               ) : (
                 <SpinnerLoader color="#005F73" />
               )}

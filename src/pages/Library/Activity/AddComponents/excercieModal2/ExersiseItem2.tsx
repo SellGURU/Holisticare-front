@@ -205,7 +205,9 @@ const ExerciseItem2 = ({
               width="16"
               height="16"
             />
-            <Tooltip className='z-10' id={`${exercise}-Delete`}>Delete</Tooltip>
+            <Tooltip className="z-10" id={`${exercise}-Delete`}>
+              Delete
+            </Tooltip>
           </button>
         </div>
       </div>

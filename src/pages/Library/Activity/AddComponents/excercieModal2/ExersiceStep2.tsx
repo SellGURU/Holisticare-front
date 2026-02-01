@@ -38,6 +38,7 @@ interface ExerciseGroup {
 }
 
 interface ExersiceStepProps {
+    mode: 'groups' | 'exercises';
   onChange: (data: Array<ExerciseGroup>) => void;
   sectionList: Array<ExerciseGroup>;
   showValidation?: boolean;
@@ -62,6 +63,7 @@ type ExerciseGroupType = (typeof EXERCISE_GROUPS)[number];
 /* ------------------------------ COMPONENT ------------------------------ */
 
 const ExersiceStep2: React.FC<ExersiceStepProps> = ({
+  mode,
   onChange,
   showValidation,
   setShowValidation,
@@ -70,7 +72,6 @@ const ExersiceStep2: React.FC<ExersiceStepProps> = ({
 }) => {
   /* ------------------------------- STEPS ------------------------------- */
 
-  const [step, setStep] = useState<1 | 2>(1);
   const [selectedGroups, setSelectedGroups] = useState<ExerciseGroupType[]>([]);
 
   /* ------------------------------- STATE ------------------------------- */
@@ -106,6 +107,18 @@ const ExersiceStep2: React.FC<ExersiceStepProps> = ({
       .catch(console.error)
       .finally(() => setLoadingExercises(false));
   }, []);
+useEffect(() => {
+  if (mode !== 'groups') return;
+
+  const sections = selectedGroups.map((g) => ({
+    Type: 'Normalset',
+    Section: g,
+    Sets: '',
+    Exercises: [],
+  }));
+
+  onChange(sections);
+}, [selectedGroups, mode]);
 
   useEffect(() => {
     setFilteredExerciseList(
@@ -134,18 +147,18 @@ const ExersiceStep2: React.FC<ExersiceStepProps> = ({
   }, [exercises]);
 
   useEffect(() => {
-    if (step === 2) {
+    if (mode === 'exercises') {
       onChange(exercises);
     }
-  }, [exercises, step, onChange]);
+  }, [exercises, mode, onChange]);
 
   /* ----------------------------- VALIDATION ---------------------------- */
 
-const validateExercise = (exercise: ExerciseGroup, index: number) => {
+  const validateExercise = (exercise: ExerciseGroup, index: number) => {
     if (!exercise.Exercises.length) return {};
 
     const e = exercise.Exercises[0];
-const key = `${exercise.Section}-${index}`;
+    const key = `${exercise.Section}-${index}`;
     const errs: any = {};
 
     if (!exercise.Sets || !/^\d+$/.test(exercise.Sets)) {
@@ -162,7 +175,7 @@ const key = `${exercise.Section}-${index}`;
   };
 
   useEffect(() => {
-    if (step !== 2) return;
+    if (mode !== 'exercises') return;
 
     const filledSections = new Set(
       exercises.filter((e) => e.Exercises.length).map((e) => e.Section),
@@ -173,14 +186,14 @@ const key = `${exercise.Section}-${index}`;
       return;
     }
 
-  const allErrors = exercises.reduce(
-  (acc, e, i) => ({ ...acc, ...validateExercise(e, i) }),
-  {},
-);
+    const allErrors = exercises.reduce(
+      (acc, e, i) => ({ ...acc, ...validateExercise(e, i) }),
+      {},
+    );
 
     setErrors(allErrors);
     onValidationChange?.(Object.keys(allErrors).length === 0);
-  }, [exercises, selectedGroups, step]);
+  }, [exercises, selectedGroups, mode]);
 
   /* --------------------------- EXERCISE LOGIC -------------------------- */
 
@@ -209,7 +222,7 @@ const key = `${exercise.Section}-${index}`;
 
   /* -------------------------- GROUP STEP UI ---------------------------- */
 
-  if (step === 1) {
+  if (mode === 'groups') {
     return (
       <div className="w-full mt-6 flex flex-col gap-6">
         <div className="text-lg font-medium">Select workout sections</div>
@@ -229,7 +242,7 @@ const key = `${exercise.Section}-${index}`;
                 }
                 className={`h-12 rounded-xl border text-sm font-medium transition ${
                   active
-                    ? 'bg-blue-500 text-white border-blue-500'
+                    ? 'bg-Primary-DeepTeal text-white border-blue-500'
                     : 'bg-white border-Gray-50'
                 }`}
               >
@@ -239,25 +252,7 @@ const key = `${exercise.Section}-${index}`;
           })}
         </div>
 
-        <div className="flex justify-end">
-          <button
-            disabled={!selectedGroups.length}
-            onClick={() => {
-              const initial = selectedGroups.map((g) => ({
-                Type: 'Normalset',
-                Section: g,
-                Sets: '',
-                Exercises: [],
-              }));
-              setExercises(initial);
-              setActiveTab(initial[0].Section);
-              setStep(2);
-            }}
-            className="px-6 py-2 rounded-xl bg-black text-white disabled:opacity-40"
-          >
-            Continue
-          </button>
-        </div>
+        
       </div>
     );
   }
@@ -323,10 +318,10 @@ const key = `${exercise.Section}-${index}`;
       }
 
       // Validate the updated exercise
-const newErrors = validateExercise(
-  updatedExercises[originalIndex],
-  originalIndex,
-);
+      const newErrors = validateExercise(
+        updatedExercises[originalIndex],
+        originalIndex,
+      );
       setErrors((prev) => ({
         ...prev,
         ...newErrors,
@@ -527,7 +522,7 @@ const newErrors = validateExercise(
       }
     >
       <TabNavigation2
-        activeTab={activeTab}
+        activeTab={activeTab || selectedGroups[0]}
         setActiveTab={setActiveTab}
         orderList={selectedGroups.map((g, i) => ({
           name: g,
@@ -545,9 +540,7 @@ const newErrors = validateExercise(
             onDrop={handleDrop}
           >
             {activeTabExercises.length === 0 && (
-             <div className='flex flex-col h-[300px] items-center justify-center'>
-
-          
+              <div className="flex flex-col h-[300px] items-center justify-center">
                 <img src="/icons/amico.svg" alt="" />
                 <div className="font-medium text-xs text-Text-Primary mt-8">
                   No exercise found.
