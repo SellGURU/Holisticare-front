@@ -82,21 +82,20 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     );
   }, [addData, editid]);
 
-useEffect(() => {
-  const setsWithExercises = sectionList.filter(
-    (s: any) => Array.isArray(s.Exercises) && s.Exercises.length > 0,
-  );
-
-  const invalid =
-    setsWithExercises.length === 0 ||
-    setsWithExercises.some(
-      (s: any) =>
-        s.Sets === '' || s.Exercises.some((e: any) => e.Reps === ''),
+  useEffect(() => {
+    const setsWithExercises = sectionList.filter(
+      (s: any) => Array.isArray(s.Exercises) && s.Exercises.length > 0,
     );
 
-  setIsExerciseStepValid(!invalid);
-}, [sectionList]);
+    const invalid =
+      setsWithExercises.length === 0 ||
+      setsWithExercises.some(
+        (s: any) =>
+          s.Sets === '' || s.Exercises.some((e: any) => e.Reps === ''),
+      );
 
+    setIsExerciseStepValid(!invalid);
+  }, [sectionList]);
 
   /* ---------------- STEP NAVIGATION ---------------- */
 
@@ -110,9 +109,9 @@ useEffect(() => {
     }
 
     if (step === 'groups') {
-    const hasAnyGroup = sectionList.some((s) => !!s.Section);
-if (!hasAnyGroup) return;
-        setShowExerciseValidation(false);
+      const hasAnyGroup = sectionList.some((s) => !!s.Section);
+      if (!hasAnyGroup) return;
+      setShowExerciseValidation(false);
 
       setStep('exercises');
       return;
@@ -132,19 +131,21 @@ if (!hasAnyGroup) return;
 
   /* ---------------- SAVE ---------------- */
 
-const resolveSectionsForApi = () =>
-  sectionList
-    .filter((item: any) => Array.isArray(item.Exercises) && item.Exercises.length > 0)
-    .map((item: any) => ({
-      ...item,
-      Exercises: item.Exercises.map((val: any) => ({
-        Exercise_Id: val.Exercise.Exercise_Id,
-        Weight: val.Weight,
-        Reps: val.Reps,
-        Rest: val.Rest,
-      })),
-    }));
-
+  const resolveSectionsForApi = () =>
+    sectionList
+      .filter(
+        (item: any) =>
+          Array.isArray(item.Exercises) && item.Exercises.length > 0,
+      )
+      .map((item: any) => ({
+        ...item,
+        Exercises: item.Exercises.map((val: any) => ({
+          Exercise_Id: val.Exercise.Exercise_Id,
+          Weight: val.Weight,
+          Reps: val.Reps,
+          Rest: val.Rest,
+        })),
+      }));
 
   const saveActivity = () => {
     setLoadingCall(true);
@@ -242,14 +243,13 @@ const resolveSectionsForApi = () =>
 
           {step !== 'info' && (
             <ExersiceStep2
-                mode={step === 'groups' ? 'groups' : 'exercises'}
-
+              mode={step === 'groups' ? 'groups' : 'exercises'}
               sectionList={sectionList}
               orderList={addData.Set_Order}
               handleChangeSetOrder={handleChangeSetOrder}
               onChange={setSectionList}
               showValidation={showExerciseValidation}
-                setShowValidation={setShowExerciseValidation}  
+              setShowValidation={setShowExerciseValidation}
               onValidationChange={setIsExerciseStepValid}
             />
           )}

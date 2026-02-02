@@ -697,7 +697,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     return !Object.values(newErrors).some((error) => error !== '');
   };
 
-
   const handleSaveClick = () => {
     setShowValidation(true);
     setShowExerciseValidation(true);
@@ -709,16 +708,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     // const hasExercises = sectionList.length > 0;
 
     // Check if there are any empty reps fields
-const setsWithExercises = sectionList.filter(
-  (s: any) => Array.isArray(s.Exercises) && s.Exercises.length > 0,
-);
+    const setsWithExercises = sectionList.filter(
+      (s: any) => Array.isArray(s.Exercises) && s.Exercises.length > 0,
+    );
 
-const emptySetSections = setsWithExercises.filter((s: any) => s.Sets === '');
+    const emptySetSections = setsWithExercises.filter(
+      (s: any) => s.Sets === '',
+    );
 
-const emptyRepsSections = setsWithExercises.filter((s: any) =>
-  s.Exercises.some((ex: any) => ex.Reps === ''),
-);
-
+    const emptyRepsSections = setsWithExercises.filter((s: any) =>
+      s.Exercises.some((ex: any) => ex.Reps === ''),
+    );
 
     // Only proceed if form is valid, there are exercises, and no empty reps
     if (
@@ -755,14 +755,13 @@ const emptyRepsSections = setsWithExercises.filter((s: any) =>
     // STEP 1 + EXERCISES -> Save
     if (step === 1 && ActMode === 'exercises') {
       console.log('aa');
-      
+
       handleSaveClick();
     }
   };
   console.log(step);
   console.log(ActMode);
-  
-  
+
   const handleBack = () => {
     // if inside exercise picking, go back to group picking
     if (step === 1 && ActMode === 'exercises') {
@@ -1519,8 +1518,7 @@ const emptyRepsSections = setsWithExercises.filter((s: any) =>
             >
               {step !== 0 && (
                 <div
-                onClick={handleBack}
-
+                  onClick={handleBack}
                   className="text-Disable text-[14px] cursor-pointer font-medium flex items-center gap-1"
                 >
                   <img src="/icons/arrow-left.svg" alt="" className="w-5 h-5" />

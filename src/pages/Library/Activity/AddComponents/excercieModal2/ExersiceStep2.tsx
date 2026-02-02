@@ -76,7 +76,9 @@ const ExersiceStep2: React.FC<ExersiceStepProps> = ({
 
   // helper that lets you keep your "setExercises(prev => ...)" style,
   // but actually updates parent
-  const setExercises = (updater: (prev: ExerciseGroup[]) => ExerciseGroup[]) => {
+  const setExercises = (
+    updater: (prev: ExerciseGroup[]) => ExerciseGroup[],
+  ) => {
     onChange(updater(exercises));
   };
 
@@ -97,35 +99,35 @@ const ExersiceStep2: React.FC<ExersiceStepProps> = ({
   const [, setIsDragging] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isMobilePage, setIsMobilePage] = useState(window.innerWidth < 768);
-const [validatedKeys, setValidatedKeys] = useState<Set<string>>(new Set());
-const prevShowValidationRef = React.useRef<boolean>(false);
+  const [validatedKeys, setValidatedKeys] = useState<Set<string>>(new Set());
+  const prevShowValidationRef = React.useRef<boolean>(false);
 
-// helper: same key used by your validateExercise()
-const makeKey = (section: string, index: number) => `${section}-${index}`;
+  // helper: same key used by your validateExercise()
+  const makeKey = (section: string, index: number) => `${section}-${index}`;
 
   /* ------------------------------ EFFECTS ------------------------------ */
-useEffect(() => {
-  const prev = prevShowValidationRef.current;
-  const now = !!showValidation;
+  useEffect(() => {
+    const prev = prevShowValidationRef.current;
+    const now = !!showValidation;
 
-  // when parent toggles false -> true (Save attempted)
-  if (!prev && now) {
-    setValidatedKeys((prevSet) => {
-      const next = new Set(prevSet);
+    // when parent toggles false -> true (Save attempted)
+    if (!prev && now) {
+      setValidatedKeys((prevSet) => {
+        const next = new Set(prevSet);
 
-      // validate only cards that currently exist (and have exercises)
-      exercises.forEach((ex, originalIndex) => {
-        if (Array.isArray(ex.Exercises) && ex.Exercises.length > 0) {
-          next.add(makeKey(ex.Section, originalIndex));
-        }
+        // validate only cards that currently exist (and have exercises)
+        exercises.forEach((ex, originalIndex) => {
+          if (Array.isArray(ex.Exercises) && ex.Exercises.length > 0) {
+            next.add(makeKey(ex.Section, originalIndex));
+          }
+        });
+
+        return next;
       });
+    }
 
-      return next;
-    });
-  }
-
-  prevShowValidationRef.current = now;
-}, [showValidation, exercises]);
+    prevShowValidationRef.current = now;
+  }, [showValidation, exercises]);
 
   useEffect(() => {
     const handleResize = () => setIsMobilePage(window.innerWidth < 768);
@@ -262,154 +264,160 @@ useEffect(() => {
       },
     ]);
   };
-const handleDelete = (originalIndex: number) => {
-  setExercises((prev) => prev.filter((_, i) => i !== originalIndex));
-};
+  const handleDelete = (originalIndex: number) => {
+    setExercises((prev) => prev.filter((_, i) => i !== originalIndex));
+  };
 
-const handleExerciseChange = (
-  originalIndex: number,
-  field: string,
-  value: string,
-  exersiseIndex: number,
-) => {
-  setExercises((prev) => {
-    const updated = [...prev];
-    const target = updated[originalIndex];
-    if (!target) return prev;
+  const handleExerciseChange = (
+    originalIndex: number,
+    field: string,
+    value: string,
+    exersiseIndex: number,
+  ) => {
+    setExercises((prev) => {
+      const updated = [...prev];
+      const target = updated[originalIndex];
+      if (!target) return prev;
 
-    if (field === 'Sets') {
-      updated[originalIndex] = { ...target, Sets: value };
-    } else if (field === 'Reps' || field === 'Weight' || field === 'Rest') {
-      updated[originalIndex] = {
-        ...target,
-        Exercises: target.Exercises.map((ex, i) => {
-          if (i !== exersiseIndex) return ex;
-          return {
-            ...ex,
-            [field]: value,
-            Exercise: { ...ex.Exercise, [field]: value },
-          };
-        }),
-      };
-    } else {
-      updated[originalIndex] = {
-        ...target,
-        Exercises: target.Exercises.map((ex, i) =>
-          i === exersiseIndex ? { ...ex, [field]: value } : ex,
-        ),
-      };
-    }
+      if (field === 'Sets') {
+        updated[originalIndex] = { ...target, Sets: value };
+      } else if (field === 'Reps' || field === 'Weight' || field === 'Rest') {
+        updated[originalIndex] = {
+          ...target,
+          Exercises: target.Exercises.map((ex, i) => {
+            if (i !== exersiseIndex) return ex;
+            return {
+              ...ex,
+              [field]: value,
+              Exercise: { ...ex.Exercise, [field]: value },
+            };
+          }),
+        };
+      } else {
+        updated[originalIndex] = {
+          ...target,
+          Exercises: target.Exercises.map((ex, i) =>
+            i === exersiseIndex ? { ...ex, [field]: value } : ex,
+          ),
+        };
+      }
 
-    // validate this exact row
-    const newErrors = validateExercise(updated[originalIndex], originalIndex);
-    setErrors((prevErr) => ({ ...prevErr, ...newErrors }));
+      // validate this exact row
+      const newErrors = validateExercise(updated[originalIndex], originalIndex);
+      setErrors((prevErr) => ({ ...prevErr, ...newErrors }));
 
-    return updated;
-  });
-};
-
-
-const handleSuperSet = (currentOriginalIndex: number) => {
-  setExercises((prev) => {
-    const updated = [...prev];
-
-    // find previous visible in same section
-    const prevVisibleIndex = [...updated]
-      .map((e, i) => ({ e, i }))
-      .filter(({ e }) => e.Section === activeTab && e.Exercises?.length > 0)
-      .map(({ i }) => i)
-      .filter((i) => i < currentOriginalIndex)
-      .pop();
-
-    if (prevVisibleIndex == null) return prev;
-
-    const previousExercise = updated[prevVisibleIndex];
-    const currentExercise = updated[currentOriginalIndex];
-
-    const superSet = {
-      ...previousExercise,
-      Type: 'Superset',
-      Exercises: [...previousExercise.Exercises, ...currentExercise.Exercises],
-    };
-
-    const resolved = updated.filter(
-      (_, i) => i !== currentOriginalIndex && i !== prevVisibleIndex,
-    );
-    resolved.splice(prevVisibleIndex, 0, superSet);
-
-    return resolved;
-  });
-};
-
-
-const handleRemoveFromSuperSet = (originalIndex: number, exersiseIndex: number) => {
-  setExercises((prev) => {
-    const updated = [...prev];
-    const group = updated[originalIndex];
-    if (!group) return prev;
-
-    const removed = group.Exercises?.[exersiseIndex];
-    if (!removed) return prev;
-
-    const remaining = group.Exercises.filter((_, i) => i !== exersiseIndex);
-
-    // update the original group
-    if (remaining.length === 1) {
-      updated[originalIndex] = {
-        ...group,
-        Type: 'Normalset',
-        Exercises: remaining,
-      };
-    } else {
-      updated[originalIndex] = {
-        ...group,
-        Exercises: remaining,
-      };
-    }
-
-    // insert removed as a new normal set right after
-    updated.splice(originalIndex + 1, 0, {
-      Type: 'Normalset',
-      Section: group.Section,
-      Sets: group.Sets,
-      Exercises: [removed],
-    });
-
-    return updated;
-  });
-};
-
-const handleSuperSetDelete = (originalIndex: number, exersiseIndex: number) => {
-  setExercises((prev) => {
-    const updated = [...prev];
-    const group = updated[originalIndex];
-    if (!group) return prev;
-
-    const remaining = group.Exercises.filter((_, i) => i !== exersiseIndex);
-
-    if (remaining.length === 0) {
-      // remove whole card if nothing left
-      updated.splice(originalIndex, 1);
       return updated;
-    }
+    });
+  };
 
-    if (remaining.length === 1) {
-      updated[originalIndex] = {
-        ...group,
+  const handleSuperSet = (currentOriginalIndex: number) => {
+    setExercises((prev) => {
+      const updated = [...prev];
+
+      // find previous visible in same section
+      const prevVisibleIndex = [...updated]
+        .map((e, i) => ({ e, i }))
+        .filter(({ e }) => e.Section === activeTab && e.Exercises?.length > 0)
+        .map(({ i }) => i)
+        .filter((i) => i < currentOriginalIndex)
+        .pop();
+
+      if (prevVisibleIndex == null) return prev;
+
+      const previousExercise = updated[prevVisibleIndex];
+      const currentExercise = updated[currentOriginalIndex];
+
+      const superSet = {
+        ...previousExercise,
+        Type: 'Superset',
+        Exercises: [
+          ...previousExercise.Exercises,
+          ...currentExercise.Exercises,
+        ],
+      };
+
+      const resolved = updated.filter(
+        (_, i) => i !== currentOriginalIndex && i !== prevVisibleIndex,
+      );
+      resolved.splice(prevVisibleIndex, 0, superSet);
+
+      return resolved;
+    });
+  };
+
+  const handleRemoveFromSuperSet = (
+    originalIndex: number,
+    exersiseIndex: number,
+  ) => {
+    setExercises((prev) => {
+      const updated = [...prev];
+      const group = updated[originalIndex];
+      if (!group) return prev;
+
+      const removed = group.Exercises?.[exersiseIndex];
+      if (!removed) return prev;
+
+      const remaining = group.Exercises.filter((_, i) => i !== exersiseIndex);
+
+      // update the original group
+      if (remaining.length === 1) {
+        updated[originalIndex] = {
+          ...group,
+          Type: 'Normalset',
+          Exercises: remaining,
+        };
+      } else {
+        updated[originalIndex] = {
+          ...group,
+          Exercises: remaining,
+        };
+      }
+
+      // insert removed as a new normal set right after
+      updated.splice(originalIndex + 1, 0, {
         Type: 'Normalset',
-        Exercises: remaining,
-      };
-    } else {
-      updated[originalIndex] = {
-        ...group,
-        Exercises: remaining,
-      };
-    }
+        Section: group.Section,
+        Sets: group.Sets,
+        Exercises: [removed],
+      });
 
-    return updated;
-  });
-};
+      return updated;
+    });
+  };
 
+  const handleSuperSetDelete = (
+    originalIndex: number,
+    exersiseIndex: number,
+  ) => {
+    setExercises((prev) => {
+      const updated = [...prev];
+      const group = updated[originalIndex];
+      if (!group) return prev;
+
+      const remaining = group.Exercises.filter((_, i) => i !== exersiseIndex);
+
+      if (remaining.length === 0) {
+        // remove whole card if nothing left
+        updated.splice(originalIndex, 1);
+        return updated;
+      }
+
+      if (remaining.length === 1) {
+        updated[originalIndex] = {
+          ...group,
+          Type: 'Normalset',
+          Exercises: remaining,
+        };
+      } else {
+        updated[originalIndex] = {
+          ...group,
+          Exercises: remaining,
+        };
+      }
+
+      return updated;
+    });
+  };
 
   /* ------------------------------ DND ---------------------------------- */
 
@@ -491,12 +499,14 @@ const handleSuperSetDelete = (originalIndex: number, exersiseIndex: number) => {
   const activeTabExercises = exercises.filter(
     (e) => e.Section === activeTab && e.Exercises && e.Exercises.length > 0,
   );
-const visibleExercises = exercises
-  .map((e, originalIndex) => ({ e, originalIndex }))
-  .filter(
-    ({ e }) =>
-      e.Section === activeTab && Array.isArray(e.Exercises) && e.Exercises.length > 0,
-  );
+  const visibleExercises = exercises
+    .map((e, originalIndex) => ({ e, originalIndex }))
+    .filter(
+      ({ e }) =>
+        e.Section === activeTab &&
+        Array.isArray(e.Exercises) &&
+        e.Exercises.length > 0,
+    );
   return (
     <div
       className="w-full mt-6 overflow-y-auto md:overflow-hidden h-[80vh] md:h-[unset]"
@@ -541,61 +551,84 @@ const visibleExercises = exercises
               </div>
             )}
 
-       <div className="grid gap-2 w-full">
-{visibleExercises.map(({ e: exercise, originalIndex }) => {
-  const key = makeKey(exercise.Section, originalIndex);
-  const cardShowValidation = !!showValidation && validatedKeys.has(key);
+            <div className="grid gap-2 w-full">
+              {visibleExercises.map(({ e: exercise, originalIndex }) => {
+                const key = makeKey(exercise.Section, originalIndex);
+                const cardShowValidation =
+                  !!showValidation && validatedKeys.has(key);
 
-  return (
-    <React.Fragment key={`${exercise.Section}-${originalIndex}`}>
-      {exercise.Type === 'Superset' ? (
-        <SuperSetExersiseItem2
-          index={originalIndex} // IMPORTANT: use originalIndex, not uiIndex
-          exercise={exercise}
-          onChange={(idx: number, field: string, value: string, exIdx: number) =>
-            handleExerciseChange(originalIndex, field, value, exIdx)
-          }
-          onDelete={(exersiseIndex: number) =>
-            handleSuperSetDelete(originalIndex, exersiseIndex)
-          }
-          removeFromSuperSet={(exersiseIndex: number) =>
-            handleRemoveFromSuperSet(originalIndex, exersiseIndex)
-          }
-          toSuperSet={() => {}}
-          errors={errors}
-          showValidation={cardShowValidation}   // ✅ per card
-        />
-      ) : (
-        <ExerciseItem2
-          index={originalIndex} // IMPORTANT: originalIndex
-          showValidation={cardShowValidation}   // ✅ per card
-          exesiseIndex={0}
-          sets={exercise.Sets}
-          exercise={exercise.Exercises[0]}
-          onChange={(idx: number, field: string, value: string, exIdx: number) =>
-            handleExerciseChange(originalIndex, field, value, exIdx)
-          }
-          toSuperSet={() => handleSuperSet(originalIndex)}
-          errors={errors}
-          onDelete={() => handleDelete(originalIndex)}
-        />
-      )}
-    </React.Fragment>
-  );
-})}
-
-</div>
-
+                return (
+                  <React.Fragment key={`${exercise.Section}-${originalIndex}`}>
+                    {exercise.Type === 'Superset' ? (
+                      <SuperSetExersiseItem2
+                        index={originalIndex} // IMPORTANT: use originalIndex, not uiIndex
+                        exercise={exercise}
+                        onChange={(
+                          idx: number,
+                          field: string,
+                          value: string,
+                          exIdx: number,
+                        ) =>
+                          handleExerciseChange(
+                            originalIndex,
+                            field,
+                            value,
+                            exIdx,
+                          )
+                        }
+                        onDelete={(exersiseIndex: number) =>
+                          handleSuperSetDelete(originalIndex, exersiseIndex)
+                        }
+                        removeFromSuperSet={(exersiseIndex: number) =>
+                          handleRemoveFromSuperSet(originalIndex, exersiseIndex)
+                        }
+                        toSuperSet={() => {}}
+                        errors={errors}
+                        showValidation={cardShowValidation} // ✅ per card
+                      />
+                    ) : (
+                      <ExerciseItem2
+                        index={originalIndex} // IMPORTANT: originalIndex
+                        showValidation={cardShowValidation} // ✅ per card
+                        exesiseIndex={0}
+                        sets={exercise.Sets}
+                        exercise={exercise.Exercises[0]}
+                        onChange={(
+                          idx: number,
+                          field: string,
+                          value: string,
+                          exIdx: number,
+                        ) =>
+                          handleExerciseChange(
+                            originalIndex,
+                            field,
+                            value,
+                            exIdx,
+                          )
+                        }
+                        toSuperSet={() => handleSuperSet(originalIndex)}
+                        errors={errors}
+                        onDelete={() => handleDelete(originalIndex)}
+                      />
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
           </div>
 
           {showValidation && exercises.length === 0 && (
-            <div className="text-Red text-xs mt-2">Add exercise to continue.</div>
+            <div className="text-Red text-xs mt-2">
+              Add exercise to continue.
+            </div>
           )}
         </div>
 
         <div className="w-[80vw] md:w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
           <div className="flex w-full items-center justify-between mt-1">
-            <div className="font-medium text-sm text-Text-Primary">Exercise</div>
+            <div className="font-medium text-sm text-Text-Primary">
+              Exercise
+            </div>
           </div>
 
           <div className="sticky top-0 bg-backgroundColor-Main pt-2 z-10">
