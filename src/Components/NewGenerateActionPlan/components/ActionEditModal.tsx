@@ -121,6 +121,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   // const [practitionerComments, setPractitionerComments] = useState<string[]>(
   //   defalts ? defalts['Practitioner Comments'] : [],
   // );
+  const [ActMode, setActMode] = useState<'groups' | 'exercises'>('groups');
   const [sectionList, setSectionList] = useState([]);
   const [addData, setAddData] = useState({
     Type: defalts?.Activity_Filters?.Type || [],
@@ -696,12 +697,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     return !Object.values(newErrors).some((error) => error !== '');
   };
 
-  const handleNextClick = () => {
-    setShowValidation(true);
-    if (validateForm()) {
-      setStep(step + 1);
-    }
-  };
 
   const handleSaveClick = () => {
     setShowValidation(true);
@@ -714,12 +709,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     // const hasExercises = sectionList.length > 0;
 
     // Check if there are any empty reps fields
-    const emptySetSections = sectionList.filter(
-      (section: any) => section.Sets === '',
-    );
-    const emptyRepsSections = sectionList.filter((section: any) =>
-      section.Exercises.some((exercise: any) => exercise.Reps === ''),
-    );
+const setsWithExercises = sectionList.filter(
+  (s: any) => Array.isArray(s.Exercises) && s.Exercises.length > 0,
+);
+
+const emptySetSections = setsWithExercises.filter((s: any) => s.Sets === '');
+
+const emptyRepsSections = setsWithExercises.filter((s: any) =>
+  s.Exercises.some((ex: any) => ex.Reps === ''),
+);
+
 
     // Only proceed if form is valid, there are exercises, and no empty reps
     if (
@@ -731,12 +730,58 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       saveActivity();
     }
   };
+  // NEW: single handler for footer primary button (Next / Save / Update)
+  const handlePrimaryClick = () => {
+    // STEP 0 -> move to step 1
+    if (step === 0) {
+      setShowValidation(true);
+      if (!validateForm()) return;
+      setStep(1);
+      setActMode('groups');
+      return;
+    }
+
+    // STEP 1 + GROUPS -> switch to exercises (don't change step!)
+    if (step === 1 && ActMode === 'groups') {
+      setShowExerciseValidation(true);
+
+      // must have at least 1 group selected
+      if (!sectionList || sectionList.length === 0) return;
+
+      setActMode('exercises');
+      return;
+    }
+
+    // STEP 1 + EXERCISES -> Save
+    if (step === 1 && ActMode === 'exercises') {
+      console.log('aa');
+      
+      handleSaveClick();
+    }
+  };
+  console.log(step);
+  console.log(ActMode);
+  
+  
+  const handleBack = () => {
+    // if inside exercise picking, go back to group picking
+    if (step === 1 && ActMode === 'exercises') {
+      setActMode('groups');
+      return;
+    }
+
+    // otherwise go back to form
+    setStep(0);
+    setActMode('groups');
+  };
+
   return (
     <MainModal
       onClose={() => {
         onClose();
         onReset();
         setStep(0);
+        setActMode('groups');
         setShowValidation(false);
       }}
       isOpen={isOpen}
@@ -1427,6 +1472,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
           )}
           {step === 1 && (
             <ExersiceStep2
+              mode={ActMode}
               sectionList={sectionList}
               onChange={(values: any) => {
                 setSectionList(values);
@@ -1473,9 +1519,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             >
               {step !== 0 && (
                 <div
-                  onClick={() => {
-                    setStep(0);
-                  }}
+                onClick={handleBack}
+
                   className="text-Disable text-[14px] cursor-pointer font-medium flex items-center gap-1"
                 >
                   <img src="/icons/arrow-left.svg" alt="" className="w-5 h-5" />
@@ -1495,14 +1540,18 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   Cancel
                 </div>
                 <div
-                  onClick={step === 0 ? handleNextClick : handleSaveClick}
+                  onClick={handlePrimaryClick}
                   className={`${
                     isNextDisabled()
                       ? 'text-Primary-DeepTeal'
                       : 'text-Primary-DeepTeal'
                   } text-[14px] cursor-pointer font-medium`}
                 >
-                  {step === 0 ? 'Next' : !isAdd ? 'Update' : 'Save'}
+                  {step === 0 || ActMode == 'groups'
+                    ? 'Next'
+                    : !isAdd
+                      ? 'Update'
+                      : 'Save'}
                 </div>
               </div>
             </div>

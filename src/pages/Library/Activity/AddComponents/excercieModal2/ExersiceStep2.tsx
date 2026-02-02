@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Application from '../../../../../api/app';
 import SearchBox from '../../../../../Components/SearchBox';
 import ExerciseItem2 from './ExersiseItem2';
@@ -31,14 +31,14 @@ interface ExerciseSet {
 }
 
 interface ExerciseGroup {
-  Type: string;
-  Section: string;
+  Type: string; // 'Normalset' | 'Superset' (your code uses strings)
+  Section: string; // group name
   Sets: string;
   Exercises: ExerciseSet[];
 }
 
 interface ExersiceStepProps {
-    mode: 'groups' | 'exercises';
+  mode: 'groups' | 'exercises';
   onChange: (data: Array<ExerciseGroup>) => void;
   sectionList: Array<ExerciseGroup>;
   showValidation?: boolean;
@@ -65,36 +65,70 @@ type ExerciseGroupType = (typeof EXERCISE_GROUPS)[number];
 const ExersiceStep2: React.FC<ExersiceStepProps> = ({
   mode,
   onChange,
+  sectionList,
   showValidation,
   setShowValidation,
   onValidationChange,
   handleChangeSetOrder,
 }) => {
-  /* ------------------------------- STEPS ------------------------------- */
+  /* -------------------------- CONTROLLED STATE -------------------------- */
+  const exercises = sectionList ?? [];
 
-  const [selectedGroups, setSelectedGroups] = useState<ExerciseGroupType[]>([]);
+  // helper that lets you keep your "setExercises(prev => ...)" style,
+  // but actually updates parent
+  const setExercises = (updater: (prev: ExerciseGroup[]) => ExerciseGroup[]) => {
+    onChange(updater(exercises));
+  };
 
-  /* ------------------------------- STATE ------------------------------- */
+  const selectedGroups = useMemo(
+    () => exercises.map((s) => s.Section as ExerciseGroupType),
+    [exercises],
+  );
 
-  const [exercises, setExercises] = useState<ExerciseGroup[]>([]);
+  /* ------------------------------- STATE -------------------------------- */
   const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
   const [filteredExerciseList, setFilteredExerciseList] = useState<Exercise[]>(
     [],
   );
   const [loadingExercises, setLoadingExercises] = useState(true);
 
-  const [activeTab, setActiveTab] = useState('');
+  const [activeTab, setActiveTab] = useState<string>('');
   const [searchValue, setSearchValue] = useState('');
   const [, setIsDragging] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isMobilePage, setIsMobilePage] = useState(window.innerWidth < 768);
+const [validatedKeys, setValidatedKeys] = useState<Set<string>>(new Set());
+const prevShowValidationRef = React.useRef<boolean>(false);
+
+// helper: same key used by your validateExercise()
+const makeKey = (section: string, index: number) => `${section}-${index}`;
 
   /* ------------------------------ EFFECTS ------------------------------ */
+useEffect(() => {
+  const prev = prevShowValidationRef.current;
+  const now = !!showValidation;
+
+  // when parent toggles false -> true (Save attempted)
+  if (!prev && now) {
+    setValidatedKeys((prevSet) => {
+      const next = new Set(prevSet);
+
+      // validate only cards that currently exist (and have exercises)
+      exercises.forEach((ex, originalIndex) => {
+        if (Array.isArray(ex.Exercises) && ex.Exercises.length > 0) {
+          next.add(makeKey(ex.Section, originalIndex));
+        }
+      });
+
+      return next;
+    });
+  }
+
+  prevShowValidationRef.current = now;
+}, [showValidation, exercises]);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobilePage(window.innerWidth < 768);
-    };
+    const handleResize = () => setIsMobilePage(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -107,56 +141,34 @@ const ExersiceStep2: React.FC<ExersiceStepProps> = ({
       .catch(console.error)
       .finally(() => setLoadingExercises(false));
   }, []);
-useEffect(() => {
-  if (mode !== 'groups') return;
-
-  const sections = selectedGroups.map((g) => ({
-    Type: 'Normalset',
-    Section: g,
-    Sets: '',
-    Exercises: [],
-  }));
-
-  onChange(sections);
-}, [selectedGroups, mode]);
 
   useEffect(() => {
+    const q = (searchValue ?? '').toLowerCase();
     setFilteredExerciseList(
-      exerciseList.filter((exercise) =>
-        exercise.Title.toLowerCase().includes(searchValue.toLowerCase()),
+      (exerciseList ?? []).filter((exercise) =>
+        (exercise?.Title ?? '').toLowerCase().includes(q),
       ),
     );
   }, [exerciseList, searchValue]);
-  useEffect(() => {
-    onChange(exercises);
-  }, [exercises, onChange]);
 
+  // keep activeTab valid
   useEffect(() => {
-    setFilteredExerciseList(
-      exerciseList.filter((exercise) =>
-        (exercise?.Title ?? '')
-          .toLowerCase()
-          .includes((searchValue ?? '').toLowerCase()),
-      ),
-    );
-  }, [exerciseList, searchValue]);
-  useEffect(() => {
-    if (!exercises.find((e) => e.Section === activeTab)) {
+    if (!exercises.length) {
+      setActiveTab('');
+      return;
+    }
+    if (!activeTab || !exercises.some((e) => e.Section === activeTab)) {
       setActiveTab(exercises[0]?.Section ?? '');
     }
-  }, [exercises]);
-
-  useEffect(() => {
-    if (mode === 'exercises') {
-      onChange(exercises);
-    }
-  }, [exercises, mode, onChange]);
+  }, [exercises, activeTab]);
 
   /* ----------------------------- VALIDATION ---------------------------- */
 
   const validateExercise = (exercise: ExerciseGroup, index: number) => {
-    if (!exercise.Exercises.length) return {};
+    if (!exercise?.Exercises?.length) return {};
 
+    // NOTE: your current validation checks only the first exercise in a set,
+    // keeping same behavior for compatibility.
     const e = exercise.Exercises[0];
     const key = `${exercise.Section}-${index}`;
     const errs: any = {};
@@ -177,11 +189,13 @@ useEffect(() => {
   useEffect(() => {
     if (mode !== 'exercises') return;
 
-    const filledSections = new Set(
-      exercises.filter((e) => e.Exercises.length).map((e) => e.Section),
+    // require every selected group to have at least one exercise
+    const groups = new Set(exercises.map((e) => e.Section));
+    const filledGroups = new Set(
+      exercises.filter((e) => e?.Exercises?.length).map((e) => e.Section),
     );
 
-    if (filledSections.size !== selectedGroups.length) {
+    if (filledGroups.size !== groups.size) {
       onValidationChange?.(false);
       return;
     }
@@ -193,7 +207,36 @@ useEffect(() => {
 
     setErrors(allErrors);
     onValidationChange?.(Object.keys(allErrors).length === 0);
-  }, [exercises, selectedGroups, mode]);
+  }, [exercises, mode, onValidationChange]);
+
+  /* --------------------------- GROUPS LOGIC ---------------------------- */
+
+  const toggleGroup = (group: ExerciseGroupType) => {
+    setShowValidation?.(false);
+
+    setExercises((prev) => {
+      const exists = prev.some((s) => s.Section === group);
+
+      if (exists) {
+        const next = prev.filter((s) => s.Section !== group);
+
+        if (activeTab === group) {
+          setActiveTab(next[0]?.Section ?? '');
+        }
+
+        return next;
+      }
+
+      const next = [
+        ...prev,
+        { Type: 'Normalset', Section: group, Sets: '', Exercises: [] },
+      ];
+
+      if (!activeTab) setActiveTab(group);
+
+      return next;
+    });
+  };
 
   /* --------------------------- EXERCISE LOGIC -------------------------- */
 
@@ -219,250 +262,157 @@ useEffect(() => {
       },
     ]);
   };
+const handleDelete = (originalIndex: number) => {
+  setExercises((prev) => prev.filter((_, i) => i !== originalIndex));
+};
 
-  /* -------------------------- GROUP STEP UI ---------------------------- */
+const handleExerciseChange = (
+  originalIndex: number,
+  field: string,
+  value: string,
+  exersiseIndex: number,
+) => {
+  setExercises((prev) => {
+    const updated = [...prev];
+    const target = updated[originalIndex];
+    if (!target) return prev;
 
-  if (mode === 'groups') {
-    return (
-      <div className="w-full mt-6 flex flex-col gap-6">
-        <div className="text-lg font-medium">Select workout sections</div>
+    if (field === 'Sets') {
+      updated[originalIndex] = { ...target, Sets: value };
+    } else if (field === 'Reps' || field === 'Weight' || field === 'Rest') {
+      updated[originalIndex] = {
+        ...target,
+        Exercises: target.Exercises.map((ex, i) => {
+          if (i !== exersiseIndex) return ex;
+          return {
+            ...ex,
+            [field]: value,
+            Exercise: { ...ex.Exercise, [field]: value },
+          };
+        }),
+      };
+    } else {
+      updated[originalIndex] = {
+        ...target,
+        Exercises: target.Exercises.map((ex, i) =>
+          i === exersiseIndex ? { ...ex, [field]: value } : ex,
+        ),
+      };
+    }
 
-        <div className="grid grid-cols-2 gap-3">
-          {EXERCISE_GROUPS.map((group) => {
-            const active = selectedGroups.includes(group);
-            return (
-              <button
-                key={group}
-                onClick={() =>
-                  setSelectedGroups((prev) =>
-                    prev.includes(group)
-                      ? prev.filter((g) => g !== group)
-                      : [...prev, group],
-                  )
-                }
-                className={`h-12 rounded-xl border text-sm font-medium transition ${
-                  active
-                    ? 'bg-Primary-DeepTeal text-white border-blue-500'
-                    : 'bg-white border-Gray-50'
-                }`}
-              >
-                {group}
-              </button>
-            );
-          })}
-        </div>
+    // validate this exact row
+    const newErrors = validateExercise(updated[originalIndex], originalIndex);
+    setErrors((prevErr) => ({ ...prevErr, ...newErrors }));
 
-        
-      </div>
+    return updated;
+  });
+};
+
+
+const handleSuperSet = (currentOriginalIndex: number) => {
+  setExercises((prev) => {
+    const updated = [...prev];
+
+    // find previous visible in same section
+    const prevVisibleIndex = [...updated]
+      .map((e, i) => ({ e, i }))
+      .filter(({ e }) => e.Section === activeTab && e.Exercises?.length > 0)
+      .map(({ i }) => i)
+      .filter((i) => i < currentOriginalIndex)
+      .pop();
+
+    if (prevVisibleIndex == null) return prev;
+
+    const previousExercise = updated[prevVisibleIndex];
+    const currentExercise = updated[currentOriginalIndex];
+
+    const superSet = {
+      ...previousExercise,
+      Type: 'Superset',
+      Exercises: [...previousExercise.Exercises, ...currentExercise.Exercises],
+    };
+
+    const resolved = updated.filter(
+      (_, i) => i !== currentOriginalIndex && i !== prevVisibleIndex,
     );
-  }
+    resolved.splice(prevVisibleIndex, 0, superSet);
 
-  const handleExerciseChange = (
-    index: number,
-    field: string,
-    value: string,
-    exersiseIndex: number,
-  ) => {
-    setExercises((prevExercises) => {
-      const updatedExercises = [...prevExercises];
-      const activeTabExercises = updatedExercises.filter(
-        (el: any) => el.Section === activeTab,
-      );
-      const exerciseToUpdate = activeTabExercises[index];
+    return resolved;
+  });
+};
 
-      if (!exerciseToUpdate) return prevExercises;
 
-      const originalIndex = updatedExercises.findIndex(
-        (el: any) => el === exerciseToUpdate,
-      );
+const handleRemoveFromSuperSet = (originalIndex: number, exersiseIndex: number) => {
+  setExercises((prev) => {
+    const updated = [...prev];
+    const group = updated[originalIndex];
+    if (!group) return prev;
 
-      if (field === 'Sets') {
-        updatedExercises[originalIndex] = {
-          ...updatedExercises[originalIndex],
-          Sets: value,
-        };
-      } else if (field === 'Reps' || field === 'Weight' || field === 'Rest') {
-        updatedExercises[originalIndex] = {
-          ...updatedExercises[originalIndex],
-          Exercises: updatedExercises[originalIndex].Exercises.map(
-            (exercise, ind) => {
-              if (ind === exersiseIndex) {
-                return {
-                  ...exercise,
-                  [field]: value,
-                  Exercise: {
-                    ...exercise.Exercise,
-                    [field]: value,
-                  },
-                };
-              }
-              return exercise;
-            },
-          ),
-        };
-      } else {
-        updatedExercises[originalIndex] = {
-          ...updatedExercises[originalIndex],
-          Exercises: updatedExercises[originalIndex].Exercises.map(
-            (exercise, ind) => {
-              if (exersiseIndex == ind) {
-                return {
-                  ...exercise,
-                  [field]: value,
-                };
-              }
-              return exercise;
-            },
-          ),
-        };
-      }
+    const removed = group.Exercises?.[exersiseIndex];
+    if (!removed) return prev;
 
-      // Validate the updated exercise
-      const newErrors = validateExercise(
-        updatedExercises[originalIndex],
-        originalIndex,
-      );
-      setErrors((prev) => ({
-        ...prev,
-        ...newErrors,
-      }));
+    const remaining = group.Exercises.filter((_, i) => i !== exersiseIndex);
 
-      return updatedExercises;
-    });
-  };
-
-  const handleSuperSet = (index: number, exercise: ExerciseGroup) => {
-    setExercises((prevExercises) => {
-      const updatedExercises = [...prevExercises];
-
-      // Find the exercises in the current active tab
-      const activeTabExercises = updatedExercises.filter(
-        (el: any) => el.Section === activeTab,
-      );
-
-      // Get the previous exercise from the active tab
-      const previousExercise = activeTabExercises[index - 1];
-      if (!previousExercise) return prevExercises;
-
-      // Find the original indices in the full array
-      const previousIndex = updatedExercises.findIndex(
-        (el) => el === previousExercise,
-      );
-      const currentIndex = updatedExercises.findIndex((el) => el === exercise);
-
-      const resolveSuperSet = {
-        ...previousExercise,
-        Type: 'Superset',
-        Exercises: [...previousExercise.Exercises, ...exercise.Exercises],
-      };
-
-      // Remove both exercises and insert the superset at the correct position
-      const resolved = updatedExercises.filter(
-        (_, i) => i !== currentIndex && i !== previousIndex,
-      );
-      resolved.splice(previousIndex, 0, resolveSuperSet);
-
-      return resolved;
-    });
-  };
-
-  const handleRemoveFromSuperSet = (index: number, exersiseIndex: number) => {
-    setExercises((prevExercises) => {
-      const updatedExercises = [...prevExercises];
-      // Find the exercise in the current active tab
-      const activeTabExercises = updatedExercises.filter(
-        (el: any) => el.Section === activeTab,
-      );
-      const exerciseToUpdate = activeTabExercises[index];
-
-      // Find the original index in the full array
-      const originalIndex = updatedExercises.findIndex(
-        (el: any) => el === exerciseToUpdate,
-      );
-
-      // Get the exercise to be removed from superset
-      const exerciseToRemove =
-        updatedExercises[originalIndex].Exercises[exersiseIndex];
-
-      // Create a new normal set with the removed exercise
-      const newNormalSet = {
+    // update the original group
+    if (remaining.length === 1) {
+      updated[originalIndex] = {
+        ...group,
         Type: 'Normalset',
-        Section: exerciseToUpdate.Section,
-        Sets: exerciseToUpdate.Sets,
-        Exercises: [exerciseToRemove],
+        Exercises: remaining,
       };
+    } else {
+      updated[originalIndex] = {
+        ...group,
+        Exercises: remaining,
+      };
+    }
 
-      // Remove the exercise from the superset
-      const remainingExercises = updatedExercises[
-        originalIndex
-      ].Exercises.filter((_, i) => i !== exersiseIndex);
-
-      // If only one exercise remains in the superset, convert it to a normal set
-      if (remainingExercises.length === 1) {
-        updatedExercises[originalIndex] = {
-          ...updatedExercises[originalIndex],
-          Type: 'Normalset',
-          Exercises: remainingExercises,
-        };
-      } else {
-        // Keep as superset with remaining exercises
-        updatedExercises[originalIndex] = {
-          ...updatedExercises[originalIndex],
-          Exercises: remainingExercises,
-        };
-      }
-
-      // Insert the new normal set after the superset
-      updatedExercises.splice(originalIndex + 1, 0, newNormalSet);
-
-      return updatedExercises;
+    // insert removed as a new normal set right after
+    updated.splice(originalIndex + 1, 0, {
+      Type: 'Normalset',
+      Section: group.Section,
+      Sets: group.Sets,
+      Exercises: [removed],
     });
-  };
 
-  const handleSuperSetDelete = (index: number, exersiseIndex: number) => {
-    setExercises((prevExercises) => {
-      const updatedExercises = [...prevExercises];
-      // Find the exercise in the current active tab
-      const activeTabExercises = updatedExercises.filter(
-        (el: any) => el.Section === activeTab,
-      );
-      const exerciseToUpdate = activeTabExercises[index];
+    return updated;
+  });
+};
 
-      // Find the original index in the full array
-      const originalIndex = updatedExercises.findIndex(
-        (el: any) => el === exerciseToUpdate,
-      );
+const handleSuperSetDelete = (originalIndex: number, exersiseIndex: number) => {
+  setExercises((prev) => {
+    const updated = [...prev];
+    const group = updated[originalIndex];
+    if (!group) return prev;
 
-      if (exerciseToUpdate.Exercises.length > 1) {
-        // If there are multiple exercises, remove the specific one
-        const remainingExercises = updatedExercises[
-          originalIndex
-        ].Exercises.filter((_, i) => i !== exersiseIndex);
+    const remaining = group.Exercises.filter((_, i) => i !== exersiseIndex);
 
-        // If only one exercise remains, convert to normal set
-        if (remainingExercises.length === 1) {
-          updatedExercises[originalIndex] = {
-            ...updatedExercises[originalIndex],
-            Type: 'Normalset',
-            Exercises: remainingExercises,
-          };
-        } else {
-          // Keep as superset with remaining exercises
-          updatedExercises[originalIndex] = {
-            ...updatedExercises[originalIndex],
-            Exercises: remainingExercises,
-          };
-        }
-      } else {
-        // If this is the last exercise, convert to normal set instead of removing
-        updatedExercises[originalIndex] = {
-          ...updatedExercises[originalIndex],
-          Type: 'Normalset',
-        };
-      }
-      return updatedExercises;
-    });
-  };
+    if (remaining.length === 0) {
+      // remove whole card if nothing left
+      updated.splice(originalIndex, 1);
+      return updated;
+    }
+
+    if (remaining.length === 1) {
+      updated[originalIndex] = {
+        ...group,
+        Type: 'Normalset',
+        Exercises: remaining,
+      };
+    } else {
+      updated[originalIndex] = {
+        ...group,
+        Exercises: remaining,
+      };
+    }
+
+    return updated;
+  });
+};
+
+
+  /* ------------------------------ DND ---------------------------------- */
+
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     exercise: Exercise,
@@ -474,9 +424,7 @@ useEffect(() => {
     setIsDragging(true);
   };
 
-  const handleDragEnd = () => {
-    setIsDragging(false);
-  };
+  const handleDragEnd = () => setIsDragging(false);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -508,10 +456,47 @@ useEffect(() => {
       console.error('Error parsing dragged exercise data:', error);
     }
   };
-  const activeTabExercises = exercises.filter(
-    (e) => e.Section === activeTab && e.Exercises.length > 0,
-  );
 
+  /* -------------------------- GROUP STEP UI ---------------------------- */
+
+  if (mode === 'groups') {
+    return (
+      <div className="w-full mt-6 flex flex-col gap-6">
+        <div className="text-lg font-medium">Select workout sections</div>
+
+        <div className="grid grid-cols-2 gap-3">
+          {EXERCISE_GROUPS.map((group) => {
+            const active = selectedGroups.includes(group);
+            return (
+              <button
+                key={group}
+                onClick={() => toggleGroup(group)}
+                className={`h-12 rounded-xl border text-sm font-medium transition ${
+                  active
+                    ? 'bg-Primary-DeepTeal text-white border-blue-500'
+                    : 'bg-white border-Gray-50'
+                }`}
+              >
+                {group}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  /* ------------------------- EXERCISES STEP UI ------------------------- */
+
+  const activeTabExercises = exercises.filter(
+    (e) => e.Section === activeTab && e.Exercises && e.Exercises.length > 0,
+  );
+const visibleExercises = exercises
+  .map((e, originalIndex) => ({ e, originalIndex }))
+  .filter(
+    ({ e }) =>
+      e.Section === activeTab && Array.isArray(e.Exercises) && e.Exercises.length > 0,
+  );
   return (
     <div
       className="w-full mt-6 overflow-y-auto md:overflow-hidden h-[80vh] md:h-[unset]"
@@ -531,10 +516,15 @@ useEffect(() => {
         }))}
         handleChangeSetOrder={handleChangeSetOrder}
       />
+
       <div className="flex w-full items-center justify-between flex-col-reverse md:flex-row gap-4 md:gap-0">
         <div>
           <div
-            className={`w-[80vw] md:w-[530px] h-[432px] border ${showValidation && exercises.length === 0 && 'border-Red'} border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
+            className={`w-[80vw] md:w-[530px] h-[432px] border ${
+              showValidation && exercises.length === 0 ? 'border-Red' : ''
+            } border-Gray-50 rounded-xl flex flex-col items-center ${
+              !exercises.length ? 'justify-center' : ''
+            } p-3 overflow-y-auto`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -550,79 +540,64 @@ useEffect(() => {
                 </div>
               </div>
             )}
-            <div className="grid gap-2 w-full">
-              {exercises
-                .filter(
-                  (el: any) =>
-                    el.Section === activeTab &&
-                    el.Exercises &&
-                    el.Exercises.length > 0,
-                )
-                .map((exercise: any, index: number) => {
-                  return (
-                    <>
-                      {exercise.Type === 'Superset' ? (
-                        <SuperSetExersiseItem2
-                          onDelete={(exersiseIndex: number) =>
-                            handleSuperSetDelete(index, exersiseIndex)
-                          }
-                          key={index}
-                          index={index}
-                          exercise={exercise}
-                          onChange={handleExerciseChange}
-                          toSuperSet={() => {}}
-                          removeFromSuperSet={(exersiseIndex: number) =>
-                            handleRemoveFromSuperSet(index, exersiseIndex)
-                          }
-                          errors={errors}
-                          showValidation={showValidation}
-                        />
-                      ) : (
-                        <ExerciseItem2
-                          showValidation={showValidation}
-                          exesiseIndex={0}
-                          sets={exercise.Sets}
-                          onDelete={() => {
-                            setExercises((prevExercises) => {
-                              const updatedExercises = [...prevExercises];
-                              const activeTabExercises =
-                                updatedExercises.filter(
-                                  (el: any) => el.Section === activeTab,
-                                );
-                              const exerciseToDelete =
-                                activeTabExercises[index];
-                              const originalIndex = updatedExercises.findIndex(
-                                (el: any) => el === exerciseToDelete,
-                              );
-                              updatedExercises.splice(originalIndex, 1);
-                              return updatedExercises;
-                            });
-                          }}
-                          key={index}
-                          index={index}
-                          exercise={exercise.Exercises[0]}
-                          onChange={handleExerciseChange}
-                          toSuperSet={() => handleSuperSet(index, exercise)}
-                          errors={errors}
-                        />
-                      )}
-                    </>
-                  );
-                })}
-            </div>
+
+       <div className="grid gap-2 w-full">
+{visibleExercises.map(({ e: exercise, originalIndex }) => {
+  const key = makeKey(exercise.Section, originalIndex);
+  const cardShowValidation = !!showValidation && validatedKeys.has(key);
+
+  return (
+    <React.Fragment key={`${exercise.Section}-${originalIndex}`}>
+      {exercise.Type === 'Superset' ? (
+        <SuperSetExersiseItem2
+          index={originalIndex} // IMPORTANT: use originalIndex, not uiIndex
+          exercise={exercise}
+          onChange={(idx: number, field: string, value: string, exIdx: number) =>
+            handleExerciseChange(originalIndex, field, value, exIdx)
+          }
+          onDelete={(exersiseIndex: number) =>
+            handleSuperSetDelete(originalIndex, exersiseIndex)
+          }
+          removeFromSuperSet={(exersiseIndex: number) =>
+            handleRemoveFromSuperSet(originalIndex, exersiseIndex)
+          }
+          toSuperSet={() => {}}
+          errors={errors}
+          showValidation={cardShowValidation}   // ✅ per card
+        />
+      ) : (
+        <ExerciseItem2
+          index={originalIndex} // IMPORTANT: originalIndex
+          showValidation={cardShowValidation}   // ✅ per card
+          exesiseIndex={0}
+          sets={exercise.Sets}
+          exercise={exercise.Exercises[0]}
+          onChange={(idx: number, field: string, value: string, exIdx: number) =>
+            handleExerciseChange(originalIndex, field, value, exIdx)
+          }
+          toSuperSet={() => handleSuperSet(originalIndex)}
+          errors={errors}
+          onDelete={() => handleDelete(originalIndex)}
+        />
+      )}
+    </React.Fragment>
+  );
+})}
+
+</div>
+
           </div>
+
           {showValidation && exercises.length === 0 && (
-            <div className="text-Red text-xs mt-2">
-              Add exercise to continue.
-            </div>
+            <div className="text-Red text-xs mt-2">Add exercise to continue.</div>
           )}
         </div>
+
         <div className="w-[80vw] md:w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
           <div className="flex w-full items-center justify-between mt-1">
-            <div className="font-medium text-sm text-Text-Primary">
-              Exercise
-            </div>
+            <div className="font-medium text-sm text-Text-Primary">Exercise</div>
           </div>
+
           <div className="sticky top-0 bg-backgroundColor-Main pt-2 z-10">
             <SearchBox
               ClassName="rounded-2xl !h-8 !min-w-full border border-Gray-50 !px-3 !py-[10px] !shadow-[unset] !bg-white mt-3"
@@ -631,12 +606,14 @@ useEffect(() => {
               onSearch={(value: any) => setSearchValue(value)}
             />
           </div>
+
           <div className="flex flex-col overflow-y-auto w-full min-h-[300px] gap-1 mt-2">
             {loadingExercises && (
               <div className="flex items-center justify-center h-full text-xs text-Text-Secondary">
                 Loading exercises...
               </div>
             )}
+
             {!loadingExercises && filteredExerciseList.length === 0 && (
               <div className="flex flex-col items-center justify-center w-full h-full bg-white rounded-2xl pb-4">
                 <img src="/icons/empty-messages-coach.svg" alt="" />
@@ -648,6 +625,7 @@ useEffect(() => {
                 </div>
               </div>
             )}
+
             {filteredExerciseList.map((el: any, index: number) => {
               return (
                 <div
@@ -657,14 +635,14 @@ useEffect(() => {
                   onDragStart={(e) => handleDragStart(e, el)}
                   onDragEnd={handleDragEnd}
                   className={`
-  w-full min-h-[56px]
-  bg-white rounded-xl
-  px-3 py-2
-  flex items-center justify-between
-  hover:shadow-sm hover:bg-gray-50
-  transition
-  cursor-pointer
-`}
+                    w-full min-h-[56px]
+                    bg-white rounded-xl
+                    px-3 py-2
+                    flex items-center justify-between
+                    hover:shadow-sm hover:bg-gray-50
+                    transition
+                    cursor-pointer
+                  `}
                 >
                   <div className="flex items-center justify-center gap-[5px]">
                     <div className="relative">

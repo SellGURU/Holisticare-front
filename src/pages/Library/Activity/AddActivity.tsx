@@ -82,16 +82,21 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     );
   }, [addData, editid]);
 
-  useEffect(() => {
-    const invalid =
-      sectionList.length === 0 ||
-      sectionList.some(
-        (s: any) =>
-          s.Sets === '' || s.Exercises.some((e: any) => e.Reps === ''),
-      );
+useEffect(() => {
+  const setsWithExercises = sectionList.filter(
+    (s: any) => Array.isArray(s.Exercises) && s.Exercises.length > 0,
+  );
 
-    setIsExerciseStepValid(!invalid);
-  }, [sectionList]);
+  const invalid =
+    setsWithExercises.length === 0 ||
+    setsWithExercises.some(
+      (s: any) =>
+        s.Sets === '' || s.Exercises.some((e: any) => e.Reps === ''),
+    );
+
+  setIsExerciseStepValid(!invalid);
+}, [sectionList]);
+
 
   /* ---------------- STEP NAVIGATION ---------------- */
 
@@ -105,7 +110,10 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     }
 
     if (step === 'groups') {
-      if (!sectionList.length) return;
+    const hasAnyGroup = sectionList.some((s) => !!s.Section);
+if (!hasAnyGroup) return;
+        setShowExerciseValidation(false);
+
       setStep('exercises');
       return;
     }
@@ -124,8 +132,10 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
 
   /* ---------------- SAVE ---------------- */
 
-  const resolveSectionsForApi = () =>
-    sectionList.map((item: any) => ({
+const resolveSectionsForApi = () =>
+  sectionList
+    .filter((item: any) => Array.isArray(item.Exercises) && item.Exercises.length > 0)
+    .map((item: any) => ({
       ...item,
       Exercises: item.Exercises.map((val: any) => ({
         Exercise_Id: val.Exercise.Exercise_Id,
@@ -134,6 +144,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         Rest: val.Rest,
       })),
     }));
+
 
   const saveActivity = () => {
     setLoadingCall(true);
@@ -238,6 +249,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
               handleChangeSetOrder={handleChangeSetOrder}
               onChange={setSectionList}
               showValidation={showExerciseValidation}
+                setShowValidation={setShowExerciseValidation}  
               onValidationChange={setIsExerciseStepValid}
             />
           )}
