@@ -2,11 +2,12 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
-import { uploadToAzure } from '../../../help';
+// import { uploadToAzure } from '../../../help';
 import { publish, subscribe } from '../../../utils/event';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
+import { uploadBlobToAzure } from '../../../services/uploadBlobService';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -257,17 +258,28 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
       try {
         // Step 1: Upload to Azure
-        const azureUrl = await uploadToAzure(file, (progress) => {
-          const uploadedBytes = Math.floor((progress / 100) * file.size);
-          setUploadedFile((prev) =>
-            prev
-              ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes }
-              : prev,
-          );
+        // const azureUrl = await uploadToAzure(file, (progress) => {
+        //   const uploadedBytes = Math.floor((progress / 100) * file.size);
+        //   setUploadedFile((prev) =>
+        //     prev
+        //       ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes }
+        //       : prev,
+        //   );
+        // });
+        uploadBlobToAzure({
+          containerKey:'reports',
+          file:file,
+          name:fileName,
+          onProgress:(progressEvent) => {
+            console.log(progressEvent);
+          }
+        }).then((azureUrl) => {
+          sendToBackend(file, azureUrl);
+        }).catch(() => {
         });
 
         // Step 2: Send to backend
-        await sendToBackend(file, azureUrl);
+        // await sendToBackend(file, azureUrl);
       } catch (error: any) {
         setUploadedFile((prev) =>
           prev
