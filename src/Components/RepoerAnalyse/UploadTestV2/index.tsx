@@ -270,8 +270,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           containerKey: 'reports',
           file: file,
           name: fileName,
-          onProgress: (progressEvent) => {
-            console.log(progressEvent);
+          onProgress: (progress) => {
+            const uploadedBytes = Math.floor((progress / 100) * file.size);
+            setUploadedFile((prev) =>
+              prev
+                ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes }
+                : prev,
+            );
           },
         })
           .then((azureUrl) => {
