@@ -267,16 +267,17 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         //   );
         // });
         uploadBlobToAzure({
-          containerKey:'reports',
-          file:file,
-          name:fileName,
-          onProgress:(progressEvent) => {
+          containerKey: 'reports',
+          file: file,
+          name: fileName,
+          onProgress: (progressEvent) => {
             console.log(progressEvent);
-          }
-        }).then((azureUrl) => {
-          sendToBackend(file, azureUrl);
-        }).catch(() => {
-        });
+          },
+        })
+          .then((azureUrl) => {
+            sendToBackend(file, azureUrl);
+          })
+          .catch(() => {});
 
         // Step 2: Send to backend
         // await sendToBackend(file, azureUrl);

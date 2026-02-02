@@ -38,7 +38,7 @@ class Api {
     return response;
   }
 
-  protected static put(url: string,data:any,config?: any){
+  protected static put(url: string, data: any, config?: any) {
     const response = axios.put(url, data, {
       headers: {
         // Authorization: 'Bearer ' + getTokenFromLocalStorage(),
@@ -49,7 +49,7 @@ class Api {
         if (config?.onUploadProgress) {
           config.onUploadProgress(progressEvent);
         }
-      },      
+      },
       // timeout:15000
     });
     return response;
