@@ -4,7 +4,7 @@ import router from './router';
 import { useEffect } from 'react';
 import ActivityLogger from './utils/activty-logger';
 import { useServiceWorker } from './hooks/useServiceWorker';
-import useMoch from './hooks/useMoch';
+// import useMoch from './hooks/useMoch';
 
 function App() {
   useEffect(() => {
@@ -15,7 +15,7 @@ function App() {
     };
   }, []);
   useServiceWorker();
-  useMoch();
+  // useMoch();
   return (
     <>
       <RouterProvider router={router} />
