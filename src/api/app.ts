@@ -1194,6 +1194,9 @@ class Application extends Api {
   static autoSaveQuestionary = (data: any) => {
     return this.post(`/questionary_tracking/autosave`, data);
   };
+  static getPublicConfig = () => {
+    return this.get(`/config/public`, {});
+  };
 }
 
 export default Application;

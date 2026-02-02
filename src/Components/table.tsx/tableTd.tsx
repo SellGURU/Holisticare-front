@@ -8,7 +8,8 @@ import Badge from '../badge';
 // import { Application } from "@/api";
 import { publish } from '../../utils/event';
 import { Tooltip } from 'react-tooltip';
-import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
+// import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
+import EllipsedTooltip from '../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip';
 // import SvgIcon from '../../utils/svgIcon';
 // import CircularProgressBar from '../charts/CircularProgressBar';
 
@@ -38,14 +39,17 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
                 alt={`${row.original?.name} image`}
               />
               <div
-                data-tooltip-id={row.original?.name}
+                // data-tooltip-id={row.original?.name}
                 className="font-meidum text-[10px] 2xl:text-xs   text-Text-Primary text-nowrap flex items-center gap-3"
               >
-                <div className="truncate  max-w-[120px]">
+                <div className="max-w-[100px]">
+                  <EllipsedTooltip text={row.original?.name || 'No Data'} />
+                </div>
+                {/* <div className="truncate  max-w-[120px]">
                   <TooltipTextAuto maxWidth="120px">
                     {row.original?.name || 'No Data'}
                   </TooltipTextAuto>
-                </div>
+                </div> */}
                 <FiExternalLink />
               </div>
             </div>
@@ -169,8 +173,9 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     enableSorting: false,
     cell: ({ row }) => {
       return (
-        <div className="text-xs text-Text-Secondary ">
-          {row.original.assigned_to[0] || 'No Data'}
+        <div className="text-xs max-w-[100px] text-Text-Secondary ">
+          <EllipsedTooltip text={row.original.assigned_to[0] || 'No Data'} />
+          {/* {row.original.assigned_to[0] || 'No Data'} */}
         </div>
       );
     },
@@ -183,19 +188,10 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
       const check_in = row.original['Check-in'] || 'NO Data';
       return (
         <div
-          data-tooltip-id={check_in}
-          className="text-xs text-Text-Secondary text-center select-none"
+          // data-tooltip-id={check_in}
+          className="text-xs max-w-[100px] text-Text-Secondary text-center select-none"
         >
-          {check_in.length > 40 ? check_in.substring(0, 40) + '...' : check_in}
-          {check_in.length > 40 && (
-            <Tooltip
-              place="top"
-              id={check_in}
-              className="!bg-white !w-[200px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-            >
-              {check_in}
-            </Tooltip>
-          )}
+          <EllipsedTooltip text={check_in} />
         </div>
       );
     },

@@ -1,7 +1,7 @@
 import { FC, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
-import { ButtonPrimary } from '../Button/ButtonPrimary';
+import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 interface ArchiveModalProps {
   isOpen?: boolean;
   onClose: () => void;

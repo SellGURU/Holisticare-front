@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
-import { ButtonPrimary } from '../Button/ButtonPrimary';
-import MainModal from '../MainModal';
+import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
+import MainModal from '../../Components/MainModal';
 import { Tooltip } from 'react-tooltip';
 
 interface ArchiveModalProps {
