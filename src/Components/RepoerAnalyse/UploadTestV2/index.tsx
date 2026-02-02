@@ -274,7 +274,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             const uploadedBytes = Math.floor((progress / 100) * file.size);
             setUploadedFile((prev) =>
               prev
-                ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes }
+                ? {
+                    ...prev,
+                    progress: progress / 2,
+                    uploadedSize: uploadedBytes,
+                  }
                 : prev,
             );
           },
