@@ -12,6 +12,7 @@ import { SlideOutPanel } from '../SlideOutPanel';
 // import SpinnerLoader from '../SpinnerLoader';
 import DownloadModal from './downloadModal';
 import { resolveBaseUrl } from '../../api/base';
+import CompileButton from './CimpleButton';
 // import { CircleLoader } from 'react-spinners';
 // import { useEffect } from "react";
 
@@ -340,9 +341,12 @@ export const TopBar: FC<TopBarProps> = ({
           )}
         </div>
       )}
-      <div className="hidden xl:flex gap-10">
+      <div className="hidden xl:flex gap-3">
+        <div>
+          <CompileButton></CompileButton>
+        </div>        
         {canDownload && (hasReportInRoute || hasShareInRoute) && (
-          <div className="flex gap-3">
+          <div className="flex ">
             {/* <ButtonPrimary
               disabled={shouldEnableActions}
               size="small"
@@ -424,6 +428,7 @@ export const TopBar: FC<TopBarProps> = ({
           </div>
         )}
       </div>
+
       <SlideOutPanel
         isOpen={openDownload || openShare}
         headline={
