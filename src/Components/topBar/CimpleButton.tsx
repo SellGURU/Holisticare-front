@@ -5,6 +5,7 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 // import TooltipText from '../TooltipText';
 import { Tooltip } from 'react-tooltip';
 import SpinnerLoader from '../SpinnerLoader';
+import { GitPullRequest, Merge } from 'lucide-react';
 // import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 // import Tooltip from '../../../'; // فرضی
 interface CompileButtonProps {
@@ -229,6 +230,7 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
     }
     if (state !== 'READY_TO_COMPILE') return;
     setIsSyncing(true);
+    setshowProgressModal(false);
     publish('syncReport', {});
   };
 
@@ -241,11 +243,21 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
         <ButtonPrimary
           size="small"
           isSoftDisabled={ui.disabled}
-          //   disabled={ui.disabled}
+          disabled={state == 'IDLE'}
           onClick={handleClick}
         >
           {(state === 'COMPILING' || state === 'SYNCING') && (
             <SpinnerLoader></SpinnerLoader>
+          )}
+          {state == 'READY_TO_COMPILE' && (
+            <>
+              <GitPullRequest width={14} height={14}></GitPullRequest>
+            </>
+          )}
+          {state == 'IDLE' && (
+            <>
+              <Merge width={14} height={14}></Merge>
+            </>
           )}
           <div
             data-tooltip-id={'tooltipcompile'}
