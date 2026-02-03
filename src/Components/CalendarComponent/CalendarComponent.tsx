@@ -6,7 +6,7 @@ import { CalendarX, CalendarOff } from 'lucide-react';
 import TableNoPaginateForActionPlan from '../Action-plan/TableNoPaginate';
 import Toggle from '../RepoerAnalyse/Boxs/Toggle';
 import Select from '../Select';
-import { resolveCategoryName } from '../../help';
+import { resolveCategoryIcon, resolveCategoryName } from '../../help';
 
 // const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -278,30 +278,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
     setCurrentDay(monthName);
     setCurrentMonth(currentMonth);
   }, []); // Empty dependency array ensures this runs only once
-  const resolveIcon = (category: any) => {
-    if (category == 'Diet') {
-      return '/icons/diet.svg';
-    }
-    if (category == 'Activity') {
-      return '/icons/weight.svg';
-    }
-    if (category == 'Supplement') {
-      return '/icons/Supplement.svg';
-    }
-    if (category == 'Mind') {
-      return '/icons/mind.svg';
-    }
-    if (category == 'Lifestyle') {
-      return '/icons/LifeStyle2.svg';
-    }
-    if (category == 'Medical Peptide Therapy') {
-      return '/icons/Supplement.svg';
-    }
-    if (category == '') {
-      return '/icons/check-in.svg';
-    }
-    return '/icons/check-in.svg';
-  };
+
   const today = new Date(); // Current date at the component level
   today.setHours(0, 0, 0, 0); // Ensure time is not considered in comparison
   const [isCheced, setIsCheced] = useState(false);
@@ -551,7 +528,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                                 <div className="font-semibold text-[10px] text-[#383838] flex  gap-1">
                                   <img
                                     className="w-3"
-                                    src={resolveIcon(category)}
+                                    src={resolveCategoryIcon(category)}
                                     alt=""
                                   />
                                   {category == ''

@@ -5,7 +5,11 @@ import { Tooltip } from 'react-tooltip';
 import { MainModal } from '../../../Components';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
 import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
-import { resolveCategoryName, splitInstructions } from '../../../help';
+import {
+  resolveCategoryIcon,
+  resolveCategoryName,
+  splitInstructions,
+} from '../../../help';
 import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
 import Checkbox from '../../../Components/checkbox';
@@ -47,26 +51,6 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
   handleRemoveLookingForwards,
   handleRemoveIssueFromList: handleRemoveIssueFromListData,
 }) => {
-  const resolveIcon = () => {
-    switch (value.Category) {
-      case 'Diet':
-        return '/icons/diet.svg';
-      case 'Mind':
-        return '/icons/mind.svg';
-      case 'Activity':
-        return '/icons/weight.svg';
-      case 'Supplement':
-        return '/icons/Supplement.svg';
-      case 'Medical Peptide Therapy':
-        return '/icons/Supplement.svg';
-      case 'Lifestyle':
-        return '/icons/LifeStyle2.svg';
-
-      default:
-        return '/icons/others.svg';
-    }
-  };
-
   const [showModal, setShowModal] = useState(false);
   const [editableValue, setEditAbleValue] = useState(value.Instruction);
   const [notes, setNotes] = useState<string[]>(value['Client Notes'] || []);
@@ -203,7 +187,11 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
         <div className="w-[60px] mt-3">
           <div className="w-full flex justify-center">
             <div className="w-[32px] flex justify-center items-center h-[32px] bg-backgroundColor-Main border border-gray-50 rounded-[8px]">
-              <img className="w-[24px]" src={resolveIcon()} alt="" />
+              <img
+                className="w-[24px]"
+                src={resolveCategoryIcon(value.Category)}
+                alt=""
+              />
             </div>
           </div>
           <div className="text-Text-Primary mt-1 text-[10px] font-[500] text-center">

@@ -8,6 +8,7 @@ interface Question {
   order: number;
   question: string;
   required: boolean;
+  skip_validation?: boolean;
   options?: string[];
   response?: string | string[];
   hide?: boolean;
@@ -45,7 +46,7 @@ export default function SurveyResponsesPage() {
     })
       .then((res: { data: SurveyAPIResponse }) => {
         const visibleQuestions = (res.data.questions || []).filter(
-          (q) => !q.hide,
+          (q) => !q.hide && !q.skip_validation,
         );
         setQuestions(visibleQuestions);
         setFilledBy(res.data.filled_by);
