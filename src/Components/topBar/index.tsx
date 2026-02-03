@@ -178,6 +178,7 @@ export const TopBar: FC<TopBarProps> = ({
   );
   const [hasReportInRoute, setHasReportInRoute] = useState(false);
   const [hasShareInRoute, setHasShareInRoute] = useState(false);
+  const [userInfoData, setUserInfoData] = useState(null);
 
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo()
@@ -235,13 +236,18 @@ export const TopBar: FC<TopBarProps> = ({
     const handleDownloadReport = () => {
       setOpenDownload(true);
     };
+    const handleUserInfoData = (data: any) => {
+      setUserInfoData(data.detail);
+    };
     subscribe('reportStatus', handleReportStatus);
     subscribe('showReport', handleShowReport);
     subscribe('downloadReport', handleDownloadReport);
+    subscribe('userInfoData', handleUserInfoData);
     return () => {
       unsubscribe('reportStatus', handleReportStatus);
       unsubscribe('showReport', handleShowReport);
       unsubscribe('downloadReport', handleDownloadReport);
+      unsubscribe('userInfoData', handleUserInfoData);
     };
   }, []);
 
@@ -343,7 +349,7 @@ export const TopBar: FC<TopBarProps> = ({
       )}
       <div className="hidden xl:flex gap-3">
         <div>
-          <CompileButton></CompileButton>
+          <CompileButton userInfoData={userInfoData}></CompileButton>
         </div>
         {canDownload && (hasReportInRoute || hasShareInRoute) && (
           <div className="flex ">
