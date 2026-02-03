@@ -203,7 +203,7 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
     },
     COMPILING: {
       label: 'Compiling...',
-      disabled: true,
+      disabled: false,
       tooltip:
         'Your changes are being compiled. You can continue working while this completes.',
     },
@@ -257,7 +257,7 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
       </div>
       <Tooltip
         place="bottom-start"
-        className="!opacity-100 !bg-opacity-100"
+        className="!opacity-100 !z-[100005] !bg-opacity-100"
         id="tooltipcompile"
       ></Tooltip>
       <div>
