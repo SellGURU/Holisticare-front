@@ -6,6 +6,7 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { Tooltip } from 'react-tooltip';
 import SpinnerLoader from '../SpinnerLoader';
 import { GitPullRequest, Merge } from 'lucide-react';
+import { SlideOutPanel } from '../SlideOutPanel';
 // import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 // import Tooltip from '../../../'; // فرضی
 interface CompileButtonProps {
@@ -16,9 +17,9 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
   const [progressData, setProgressData] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showProgressModal, setshowProgressModal] = useState(false);
-  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+  // const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
-  const [isClosed, setIsClosed] = useState(false);
+
   /* ---------- derive state ---------- */
 
   const state = useMemo(() => {
@@ -131,18 +132,7 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
       description: 'The processing completed.',
     };
   };
-  const isVisibleModal = () => {
-    if (
-      progressData.length > 0 &&
-      showProgressModal &&
-      !isClosed &&
-      !isSideMenuOpen
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+
   /* ---------- effects ---------- */
 
   useEffect(() => {
@@ -169,18 +159,16 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
         });
         return updated;
       });
-      setIsClosed(false);
     });
 
     subscribe('allProgressCompleted', () => {
       setProgressData((prev) =>
         prev.map((item) => ({ ...item, process_status: true })),
       );
-      setIsClosed(false);
     });
-    subscribe('openSideMenu', (status: any) => {
-      setIsSideMenuOpen(status.detail.status);
-    });
+    // subscribe('openSideMenu', (status: any) => {
+    //   setIsSideMenuOpen(status.detail.status);
+    // });
     subscribe('syncReport', () => {
       setIsSyncing(false);
       setProgressData([]);
@@ -226,7 +214,6 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
   const handleClick = () => {
     if (state == 'COMPILING') {
       setshowProgressModal(true);
-      setIsClosed(false);
     }
     if (state !== 'READY_TO_COMPILE') return;
     setIsSyncing(true);
@@ -273,37 +260,19 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
         id="tooltipcompile"
       ></Tooltip>
       <div>
-        <div
-          style={{ zIndex: 1000 }}
-          className={`
-                fixed top-[48px] right-[85px]
-                w-[320px]
-                max-h-[calc(100vh-100px)]
-                overflow-y-auto
-                rounded-2xl border-2 border-r-0 border-Gray-50 
-                shadow-200 p-4 bg-white
-                transition-all duration-[1000] ease-[cubic-bezier(0.4,0,0.2,1)]
-                ${
-                  isVisibleModal()
-                    ? 'opacity-100 translate-x-0 scale-100 shadow-xl'
-                    : 'opacity-0 translate-x-[120%] scale-95 pointer-events-none shadow-none'
-                }
-                `}
+        <SlideOutPanel
+          isOpen={showProgressModal}
+          headline={'Progress'}
+          onClose={() => {
+            setshowProgressModal(false);
+          }}
         >
-          <div className="relative w-full">
-            <img
-              onClick={() => setIsClosed(true)}
-              src="/icons/close.svg"
-              alt="close"
-              className="cursor-pointer absolute right-0 top-[-2px] transition-transform hover:rotate-90 duration-300"
-            />
-          </div>
-          <div>
+          <div className="max-h-[calc(100vh-180px)] overflow-y-auto pr-2">
             {progressData.map((el) => {
               return (
                 <>
                   <div>
-                    <div className="text-Primary-DeepTeal TextStyle-Headline-6">
+                    <div className="text-Primary-DeepTeal  TextStyle-Headline-6 ">
                       {' '}
                       {resolveSectionName(el).title}
                     </div>
@@ -335,20 +304,82 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
               );
             })}
           </div>
-          <>
-            <div className=" w-full overflow-hidden text-Text-Secondary TextStyle-Body-3">
-              <div className="">
-                Feel free to continue working while the system completes
-                <br></br>
-                the process.
-              </div>
-            </div>
-          </>
-        </div>
+        </SlideOutPanel>
       </div>
     </>
     // </Tooltip>
   );
 };
+// <div
+//   style={{ zIndex: 1000 }}
+//   className={`
+//         fixed top-[48px] right-[85px]
+//         w-[320px]
+//         max-h-[calc(100vh-100px)]
+//         overflow-y-auto
+//         rounded-2xl border-2 border-r-0 border-Gray-50
+//         shadow-200 p-4 bg-white
+//         transition-all duration-[1000] ease-[cubic-bezier(0.4,0,0.2,1)]
+//         ${
+//           isVisibleModal()
+//             ? 'opacity-100 translate-x-0 scale-100 shadow-xl'
+//             : 'opacity-0 translate-x-[120%] scale-95 pointer-events-none shadow-none'
+//         }
+//         `}
+// >
+//   <div className="relative w-full">
+//     <img
+//       onClick={() => setIsClosed(true)}
+//       src="/icons/close.svg"
+//       alt="close"
+//       className="cursor-pointer absolute right-0 top-[-2px] transition-transform hover:rotate-90 duration-300"
+//     />
+//   </div>
+//   <div>
+//     {progressData.map((el) => {
+//       return (
+//         <>
+//           <div>
+//             <div className="text-Primary-DeepTeal TextStyle-Headline-6">
+//               {' '}
+//               {resolveSectionName(el).title}
+//             </div>
+//             <div className="mt-1 w-full flex items-center gap-1 p-3 rounded-[12px] border border-Gray-50 text-[10px] text-Primary-DeepTeal transition-colors">
+//               {el.process_status == false ? (
+//                 <div
+//                   style={{
+//                     background:
+//                       'linear-gradient(to right, rgba(0,95,115,0.4), rgba(108,194,74,0.4))',
+//                   }}
+//                   className="flex size-5   rounded-full items-center justify-center gap-[3px]"
+//                 >
+//                   <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot1"></div>
+//                   <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot2"></div>
+//                   <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot3"></div>
+//                 </div>
+//               ) : (
+//                 // <img src="/icons/more-circle.svg" alt="" />
+//                 <img src="/icons/tick-circle-upload.svg" alt="" />
+//               )}
+//               {resolveSectionName(el).description}
+//             </div>
+//           </div>
 
+//           <div
+//             className={`${progressData.length > 1 ? 'visible my-4' : 'invisible mt-4'} w-full  border-t bg-Gray-50 `}
+//           ></div>
+//         </>
+//       );
+//     })}
+//   </div>
+//   <>
+//     <div className=" w-full overflow-hidden text-Text-Secondary TextStyle-Body-3">
+//       <div className="">
+//         Feel free to continue working while the system completes
+//         <br></br>
+//         the process.
+//       </div>
+//     </div>
+//   </>
+// </div>
 export default CompileButton;
