@@ -6,10 +6,10 @@ import Application from '../../api/app';
 import { resolveAccesssUser } from '../../help';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
-import { ButtonPrimary } from '../Button/ButtonPrimary';
+// import { ButtonPrimary } from '../Button/ButtonPrimary';
 import LogOutModal from '../LogOutModal';
 import { SlideOutPanel } from '../SlideOutPanel';
-import SpinnerLoader from '../SpinnerLoader';
+// import SpinnerLoader from '../SpinnerLoader';
 import DownloadModal from './downloadModal';
 import { resolveBaseUrl } from '../../api/base';
 // import { CircleLoader } from 'react-spinners';
@@ -163,9 +163,9 @@ export const TopBar: FC<TopBarProps> = ({
   };
   const [openDownload, setOpenDownload] = useState(false);
   const [openShare, setOpenShare] = useState(false);
-  const [downloadingState, setDownloadingState] = useState('download');
-  const [isReportAvailable, setIsReportAvailable] = useState(true);
-  const [showReport, setShowReport] = useState(false);
+  const [, setDownloadingState] = useState('download');
+  const [, setIsReportAvailable] = useState(true);
+  const [, setShowReport] = useState(false);
   const [customTheme, setCustomTheme] = useState(
     localStorage.getItem('brandInfoData')
       ? JSON.parse(localStorage.getItem('brandInfoData') || '{}')
@@ -231,11 +231,16 @@ export const TopBar: FC<TopBarProps> = ({
       const eventData = message as CustomEvent<{ showReport: boolean }>;
       setShowReport(eventData.detail.showReport);
     };
+    const handleDownloadReport = () => {
+      setOpenDownload(true)
+    }
     subscribe('reportStatus', handleReportStatus);
     subscribe('showReport', handleShowReport);
+    subscribe('downloadReport',handleDownloadReport )
     return () => {
       unsubscribe('reportStatus', handleReportStatus);
       unsubscribe('showReport', handleShowReport);
+      unsubscribe('downloadReport',handleDownloadReport)
     };
   }, []);
 
@@ -265,7 +270,7 @@ export const TopBar: FC<TopBarProps> = ({
     );
   }, [window.location.pathname]);
 
-  const shouldEnableActions = !isReportAvailable && !showReport;
+  // const shouldEnableActions = !isReportAvailable && !showReport;
 
   return (
     <div className="w-full flex items-center text-nowrap justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">
@@ -304,7 +309,7 @@ export const TopBar: FC<TopBarProps> = ({
       )}
       {(hasReportInRoute || hasShareInRoute) && (
         <div className="flex xl:hidden items-center gap-2 xs:gap-4">
-          <img
+          {/* <img
             className={`xl:block ${shouldEnableActions && 'opacity-40'} `}
             onClick={() => {
               if (!shouldEnableActions) {
@@ -325,7 +330,7 @@ export const TopBar: FC<TopBarProps> = ({
               src="/icons/link-2.svg"
               alt=""
             />
-          )}
+          )} */}
           {!hasShareInRoute && (
             <img
               onClick={setShowCombo}
@@ -336,9 +341,10 @@ export const TopBar: FC<TopBarProps> = ({
         </div>
       )}
       <div className="hidden xl:flex gap-10">
+      
         {canDownload && (hasReportInRoute || hasShareInRoute) && (
           <div className="flex gap-3">
-            <ButtonPrimary
+            {/* <ButtonPrimary
               disabled={shouldEnableActions}
               size="small"
               onClick={() => {
@@ -363,8 +369,8 @@ export const TopBar: FC<TopBarProps> = ({
                   Downloaded
                 </>
               )}
-            </ButtonPrimary>
-            {!hasShareInRoute && (
+            </ButtonPrimary> */}
+            {/* {!hasShareInRoute && (
               <div
                 onClick={() => {
                   if (shouldEnableActions) return;
@@ -379,7 +385,7 @@ export const TopBar: FC<TopBarProps> = ({
                 <img src="/icons/share.svg" alt="" />
                 Share
               </div>
-            )}
+            )} */}
           </div>
         )}
         {!isShare && (

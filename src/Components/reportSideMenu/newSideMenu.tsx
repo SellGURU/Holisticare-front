@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
-import { subscribe, unsubscribe } from '../../utils/event'; // Adjust the import path as needed
+import { publish, subscribe, unsubscribe } from '../../utils/event'; // Adjust the import path as needed
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import SvgIcon from '../../utils/svgIcon';
 import { decodeAccessUser } from '../../help';
@@ -44,7 +44,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   };
 
   const [activeMenu, setactiveMenu] = useState('Client Summary');
-  const [ActiveLayer, setActiveLayer] = useState('menu');
+  const [ActiveLayer, ] = useState('menu');
   const [activeImg, setactiveImg] = useState(1);
   const [disableClicks, setDisableClicks] = useState(false);
   const location = useLocation();
@@ -220,7 +220,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
           </div>
         </div>
       )}
-      <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
+      {/* <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() => {
             if (activeReportSection == 'Progress') {
@@ -253,7 +253,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             className={`report-sidemenu-layer-icon ${ActiveLayer === 'layer' ? 'text-[#6CC24A]' : 'text-[#E5E5E5]'}`}
           />
         </div>
-      </div>
+      </div> */}
       <div
         onClick={() => onClose()}
         className="size-8 rounded-md  py-2 px-4 flex items-center justify-center xl:hidden absolute right-[-10px] top-[-10px] cursor-pointer"
@@ -332,6 +332,20 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
               ))}
             </div>
           )}
+        </div>
+        <div className=' flex justify-center  items-center absolute bottom-4 w-full left-0'>
+          <div onClick={() => {
+            if(!disableClicks && (isReportAvailable || showReport)){
+              publish('downloadReport',{})
+
+            }
+          }} className={`flex justify-center ${(!disableClicks && (isReportAvailable || showReport))?'cursor-pointer opacity-100':'cursor-not-allowed opacity-50'}  items-center gap-1`}>
+            <SvgIcon color='#005F73' src='/icons/export.svg' width='12'></SvgIcon>
+            <div className='text-[12px] text-Primary-DeepTeal'>
+              Export
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
