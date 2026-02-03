@@ -44,7 +44,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   };
 
   const [activeMenu, setactiveMenu] = useState('Client Summary');
-  const [ActiveLayer, ] = useState('menu');
+  const [ActiveLayer] = useState('menu');
   const [activeImg, setactiveImg] = useState(1);
   const [disableClicks, setDisableClicks] = useState(false);
   const location = useLocation();
@@ -333,18 +333,21 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             </div>
           )}
         </div>
-        <div className=' flex justify-center  items-center absolute bottom-4 w-full left-0'>
-          <div onClick={() => {
-            if(!disableClicks && (isReportAvailable || showReport)){
-              publish('downloadReport',{})
-
-            }
-          }} className={`flex justify-center ${(!disableClicks && (isReportAvailable || showReport))?'cursor-pointer opacity-100':'cursor-not-allowed opacity-50'}  items-center gap-1`}>
-            <SvgIcon color='#005F73' src='/icons/export.svg' width='12'></SvgIcon>
-            <div className='text-[12px] text-Primary-DeepTeal'>
-              Export
-            </div>
-
+        <div className=" flex justify-center  items-center absolute bottom-4 w-full left-0">
+          <div
+            onClick={() => {
+              if (!disableClicks && (isReportAvailable || showReport)) {
+                publish('downloadReport', {});
+              }
+            }}
+            className={`flex justify-center ${!disableClicks && (isReportAvailable || showReport) ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-50'}  items-center gap-1`}
+          >
+            <SvgIcon
+              color="#005F73"
+              src="/icons/export.svg"
+              width="12"
+            ></SvgIcon>
+            <div className="text-[12px] text-Primary-DeepTeal">Export</div>
           </div>
         </div>
       </div>

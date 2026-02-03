@@ -232,15 +232,15 @@ export const TopBar: FC<TopBarProps> = ({
       setShowReport(eventData.detail.showReport);
     };
     const handleDownloadReport = () => {
-      setOpenDownload(true)
-    }
+      setOpenDownload(true);
+    };
     subscribe('reportStatus', handleReportStatus);
     subscribe('showReport', handleShowReport);
-    subscribe('downloadReport',handleDownloadReport )
+    subscribe('downloadReport', handleDownloadReport);
     return () => {
       unsubscribe('reportStatus', handleReportStatus);
       unsubscribe('showReport', handleShowReport);
-      unsubscribe('downloadReport',handleDownloadReport)
+      unsubscribe('downloadReport', handleDownloadReport);
     };
   }, []);
 
@@ -341,7 +341,6 @@ export const TopBar: FC<TopBarProps> = ({
         </div>
       )}
       <div className="hidden xl:flex gap-10">
-      
         {canDownload && (hasReportInRoute || hasShareInRoute) && (
           <div className="flex gap-3">
             {/* <ButtonPrimary
