@@ -344,7 +344,7 @@ export const TopBar: FC<TopBarProps> = ({
       <div className="hidden xl:flex gap-3">
         <div>
           <CompileButton></CompileButton>
-        </div>        
+        </div>
         {canDownload && (hasReportInRoute || hasShareInRoute) && (
           <div className="flex ">
             {/* <ButtonPrimary

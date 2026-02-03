@@ -19,7 +19,7 @@ const CompileButton: FC = () => {
     if (progressData.length === 0) return 'IDLE';
 
     const isCompiling = progressData.some(
-      (item) => item.process_status === false
+      (item) => item.process_status === false,
     );
 
     if (isCompiling) return 'COMPILING';
@@ -57,7 +57,7 @@ const CompileButton: FC = () => {
 
     subscribe('allProgressCompleted', () => {
       setProgressData((prev) =>
-        prev.map((item) => ({ ...item, process_status: true }))
+        prev.map((item) => ({ ...item, process_status: true })),
       );
     });
 
@@ -85,12 +85,14 @@ const CompileButton: FC = () => {
     COMPILING: {
       label: 'Compiling...',
       disabled: true,
-      tooltip: 'Your changes are being compiled. You can continue working while this completes.',
+      tooltip:
+        'Your changes are being compiled. You can continue working while this completes.',
     },
     READY_TO_COMPILE: {
       label: 'Compile',
       disabled: false,
-      tooltip: 'Compilation is ready. Click to compile and apply your latest changes.',
+      tooltip:
+        'Compilation is ready. Click to compile and apply your latest changes.',
     },
     SYNCING: {
       label: 'Compiling...',
@@ -121,15 +123,18 @@ const CompileButton: FC = () => {
           {(state === 'COMPILING' || state === 'SYNCING') && (
             <SpinnerLoader></SpinnerLoader>
           )}
-          <div  data-tooltip-id={'tooltipcompile'} data-tooltip-content={ui.tooltip}>
-          {ui.label}
+          <div
+            data-tooltip-id={'tooltipcompile'}
+            data-tooltip-content={ui.tooltip}
+          >
+            {ui.label}
           </div>
         </ButtonPrimary>
       </div>
-      <Tooltip 
-            place='bottom-start'
-          className="!opacity-100 !bg-opacity-100"
-          id="tooltipcompile"      
+      <Tooltip
+        place="bottom-start"
+        className="!opacity-100 !bg-opacity-100"
+        id="tooltipcompile"
       ></Tooltip>
     </>
     // </Tooltip>
