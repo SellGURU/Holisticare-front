@@ -10,6 +10,52 @@ import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import Toggle from '../Boxs/Toggle';
 import BiomarkerRow from './BiomarkerRow';
 import ProgressLoading from './ProgressLoading';
+import Joyride, { CallBackProps, Step } from 'react-joyride';
+import { TutorialReminderToast } from './showTutorialReminderToast';
+
+const biomarkersSteps: Step[] = [
+  {
+    target: '[data-tour="biomarker-table"]',
+    content:
+      'This table shows all biomarkers automatically extracted from the uploaded lab report.',
+    placement: 'left-start',
+  },
+  {
+    target: '[data-tour="extracted-biomarker"]',
+    content:
+      'This column displays the biomarker name detected from the uploaded document.',
+  },
+  {
+    target: '[data-tour="system-biomarker"]',
+    content:
+      'Select the correct system biomarker to properly map and validate the extracted data.',
+  },
+  {
+    target: '[data-tour="extracted-value"]',
+    content:
+      'This is the value extracted from the lab report. Please verify its accuracy.',
+  },
+  {
+    target: '[data-tour="extracted-unit"]',
+    content:
+      'Ensure the unit matches the original lab report before proceeding.',
+  },
+  {
+    target: '[data-tour="system-value"]',
+    content:
+      'This is the normalized value used internally by the system for analysis.',
+  },
+  {
+    target: '[data-tour="system-unit"]',
+    content:
+      'This is the normalized unit used internally by the system for analysis.',
+  },
+  {
+    target: '[data-tour="delete-biomarker"]',
+    content: 'Use this action to remove an incorrect or unnecessary biomarker.',
+  },
+];
+
 interface BiomarkersSectionProps {
   biomarkers: any[];
   onChange: (updated: any[]) => void; // callback to update parent state
@@ -373,154 +419,250 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     return () => unsubscribe('RESET_MAPPING_ROWS', listener);
   }, []);
+  const [run, setRun] = useState(false);
+  const [showReminder, setShowReminder] = useState(false);
+  useEffect(() => {
+    if (biomarkers.length > 0) {
+      const seen = localStorage.getItem('biomarkersTourSeen');
+      if (!seen) {
+        setTimeout(() => {
+          setRun(true);
+        }, 3000);
+        localStorage.setItem('biomarkersTourSeen', 'true');
+      }
+    }
+  }, [biomarkers.length]);
+  useEffect(() => {
+    if (biomarkers.length > 0) {
+      const tutorialSeen = localStorage.getItem('tutorialSeen');
+      if (tutorialSeen === 'true') {
+        return;
+      }
+      const hasSeenTour = localStorage.getItem('biomarkersTourSeen');
+
+      if (hasSeenTour === 'true') {
+        setShowReminder(true);
+      }
+    }
+  }, [biomarkers.length]);
+  const handleRestartTutorial = () => {
+    localStorage.removeItem('biomarkersTourSeen');
+    setShowReminder(false);
+    setRun(true);
+  };
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { status } = data;
+
+    if (status === 'finished' || status === 'skipped') {
+      localStorage.setItem('biomarkersTourSeen', 'true');
+      setRun(false);
+    }
+  };
   return (
-    <div
-      // style={{ height: window.innerHeight - 400 + 'px' }}
-      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary overflow-hidden`}
-      data-tour="biomarkers-section"
-    >
-      {loading ? (
-        <div
-          style={{ height: window.innerHeight - 480 + 'px' }}
-          className="flex items-center min-h-[200px] w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4"
-        >
-          {/* <Circleloader /> */}
-          {/* Progress Bar */}
-          <ProgressLoading
-            maxProgress={progressBiomarkerUpload}
-          ></ProgressLoading>
-        </div>
-      ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
-        <div
-          style={{ height: window.innerHeight - 480 + 'px' }}
-          className="flex items-center  justify-center flex-col text-xs font-medium text-Text-Primary"
-        >
-          <img src="/icons/EmptyState-biomarkers.svg" alt="" />
-          <div className="-mt-5">No data provided yet.</div>
-        </div>
-      ) : (
-        <div className=" relative ">
-          <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
-            <div className="flex text-nowrap overflow-x-auto hidden-scrollbar w-full gap-6 justify-between">
-              <div className="flex items-center gap-2">
-                <div className=" text-[8px] xs:text-[10px] md:text-sm font-medium">
-                  List of Biomarkers{' '}
-                  <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
-                    ({biomarkers.length})
-                  </span>
-                </div>
-                <img
-                  onClick={() => setIsScaling(!isScaling)}
-                  className="xs:w-4 xs:h-4 w-3 h-3 cursor-pointer opacity-70"
-                  src={
-                    isScaling
-                      ? '/icons/biomarkers/import.svg'
-                      : '/icons/biomarkers/export.svg'
-                  }
-                  alt=""
-                />
-                {/* <Scaling
+    <>
+      {run && (
+        <Joyride
+          steps={biomarkersSteps}
+          run={run}
+          continuous
+          scrollToFirstStep
+          showSkipButton
+          disableOverlayClose
+          styles={{
+            options: {
+              arrowColor: '#fff',
+              backgroundColor: '#fff',
+              primaryColor: '#0f766e',
+              textColor: '#1f2937',
+              zIndex: 10000,
+            },
+            tooltip: {
+              borderRadius: '12px',
+              padding: '16px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+            },
+          }}
+          callback={handleJoyrideCallback}
+        />
+      )}
+      <TutorialReminderToast
+        visible={showReminder}
+        onRestart={handleRestartTutorial}
+        onClose={() => {
+          setShowReminder(false);
+          localStorage.setItem('tutorialSeen', 'true');
+        }}
+      />
+      <div
+        // style={{ height: window.innerHeight - 400 + 'px' }}
+        className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary overflow-hidden`}
+        data-tour="biomarkers-section"
+      >
+        {loading ? (
+          <div
+            style={{ height: window.innerHeight - 480 + 'px' }}
+            className="flex items-center min-h-[200px] w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4"
+          >
+            {/* <Circleloader /> */}
+            {/* Progress Bar */}
+            <ProgressLoading
+              maxProgress={progressBiomarkerUpload}
+            ></ProgressLoading>
+          </div>
+        ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
+          <div
+            style={{ height: window.innerHeight - 480 + 'px' }}
+            className="flex items-center  justify-center flex-col text-xs font-medium text-Text-Primary"
+          >
+            <img src="/icons/EmptyState-biomarkers.svg" alt="" />
+            <div className="-mt-5">No data provided yet.</div>
+          </div>
+        ) : (
+          <div className=" relative ">
+            <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
+              <div className="flex text-nowrap overflow-x-auto hidden-scrollbar w-full gap-6 justify-between">
+                <div className="flex items-center gap-2">
+                  <div className=" text-[8px] xs:text-[10px] md:text-sm font-medium">
+                    List of Biomarkers{' '}
+                    <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
+                      ({biomarkers.length})
+                    </span>
+                  </div>
+                  <img
+                    onClick={() => setIsScaling(!isScaling)}
+                    className="xs:w-4 xs:h-4 w-3 h-3 cursor-pointer opacity-70"
+                    src={
+                      isScaling
+                        ? '/icons/biomarkers/import.svg'
+                        : '/icons/biomarkers/export.svg'
+                    }
+                    alt=""
+                  />
+                  {/* <Scaling
                 onClick={() => setIsScaling(!isScaling)}
                 className="w-4 h-4 cursor-pointer text-Text-Secondary"
               /> */}
-              </div>
+                </div>
 
-              <div className="flex items-center absolute right-0 top-[-2px] gap-6">
-                <div className=" hidden sm:flex items-center gap-3">
-                  <Toggle
-                    checked={showOnlyErrors}
-                    setChecked={setShowOnlyErrors}
-                  />
-                  <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
-                    Show Only Errors
+                <div className="flex items-center absolute right-0 top-[-2px] gap-6">
+                  <div className=" hidden sm:flex items-center gap-3">
+                    <Toggle
+                      checked={showOnlyErrors}
+                      setChecked={setShowOnlyErrors}
+                    />
+                    <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+                      Show Only Errors
+                    </div>
+                  </div>
+                  <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
+                    Date of Test:
+                    <SimpleDatePicker
+                      key={'biomarkerUpload'}
+                      textStyle
+                      isUploadFile
+                      date={dateOfTest}
+                      setDate={setDateOfTest}
+                      placeholder="Select Date"
+                      ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
+                    />
                   </div>
                 </div>
-                <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
-                  Date of Test:
-                  <SimpleDatePicker
-                    key={'biomarkerUpload'}
-                    textStyle
-                    isUploadFile
-                    date={dateOfTest}
-                    setDate={setDateOfTest}
-                    placeholder="Select Date"
-                    ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
-                  />
+              </div>
+              <div className=" flex sm:hidden items-center gap-3">
+                <Toggle
+                  checked={showOnlyErrors}
+                  setChecked={setShowOnlyErrors}
+                />
+                <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+                  Show Only Errors
                 </div>
               </div>
             </div>
-            <div className=" flex sm:hidden items-center gap-3">
-              <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
-              <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
-                Show Only Errors
+
+            <div
+              className="  relative w-full text-xs h-full"
+              data-tour="biomarker-table"
+            >
+              <div className="w-full hidden-scrollbar p overflow-x-auto md:overflow-x-visible">
+                <div className=" w-full  min-w-[800px] ">
+                  {/* Table Header */}
+                  <div
+                    className="grid    biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                    // style={{
+                    //   gridTemplateColumns:
+                    //     window.innerWidth > 640
+                    //       ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
+                    //       : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
+                    // }}
+                  >
+                    <div className="text-left" data-tour="extracted-biomarker">
+                      Extracted Biomarker
+                    </div>
+                    <div className="text-center" data-tour="system-biomarker">
+                      System Biomarker
+                    </div>
+                    <div className="text-center" data-tour="extracted-value">
+                      Extracted Value
+                    </div>
+                    <div className="text-center" data-tour="extracted-unit">
+                      Extracted Unit
+                    </div>
+                    <div className="text-center" data-tour="system-value">
+                      System Value
+                    </div>
+                    <div className="text-center" data-tour="system-unit">
+                      System Unit
+                    </div>
+                    <div className="text-center" data-tour="delete-biomarker">
+                      Action
+                    </div>
+                  </div>
+
+                  {/* Table Rows */}
+                  <div
+                    ref={tableRef}
+                    className=" overflow-y-auto pb-[40px] sm:pb-0 w-[100%]"
+                    style={{
+                      minHeight: isScaling
+                        ? window.innerHeight - 330 + 'px'
+                        : window.innerHeight - 500 + 'px',
+                      maxHeight: isScaling
+                        ? window.innerHeight - 330 + 'px'
+                        : window.innerWidth > 640
+                          ? window.innerHeight - 500 + 'px'
+                          : window.innerHeight - 700 + 'px',
+                    }}
+                  >
+                    {biomarkers.map((b, index) => {
+                      // const errorForRow = rowErrors[index];
+
+                      return (
+                        <BiomarkerRow
+                          refRenceEl={(el: any) =>
+                            (rowRefs.current[index] = el)
+                          }
+                          isHaveError={rowErrors[index]}
+                          errorText={rowErrors[index]}
+                          biomarker={b}
+                          index={index}
+                          showOnlyErrors={showOnlyErrors}
+                          allAvilableBiomarkers={avalibaleBiomarkers}
+                          handleConfirmDelete={() => {
+                            handleConfirm(index);
+                          }}
+                          renderValueField={renderValueField}
+                          updateAndStandardize={updateAndStandardize}
+                        ></BiomarkerRow>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="  relative w-full text-xs h-full">
-            <div className="w-full hidden-scrollbar p overflow-x-auto md:overflow-x-visible">
-              <div className=" w-full  min-w-[800px] ">
-                {/* Table Header */}
-                <div
-                  className="grid    biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-                  // style={{
-                  //   gridTemplateColumns:
-                  //     window.innerWidth > 640
-                  //       ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
-                  //       : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
-                  // }}
-                >
-                  <div className="text-left">Extracted Biomarker</div>
-                  <div className="text-center">System Biomarker</div>
-                  <div className="text-center">Extracted Value</div>
-                  <div className="text-center">Extracted Unit</div>
-                  <div className="text-center">System Value</div>
-                  <div className="text-center">System Unit</div>
-                  <div className="text-center">Action</div>
-                </div>
-
-                {/* Table Rows */}
-                <div
-                  ref={tableRef}
-                  className=" overflow-y-auto pb-[40px] sm:pb-0 w-[100%]"
-                  style={{
-                    minHeight: isScaling
-                      ? window.innerHeight - 330 + 'px'
-                      : window.innerHeight - 500 + 'px',
-                    maxHeight: isScaling
-                      ? window.innerHeight - 330 + 'px'
-                      : window.innerWidth > 640
-                        ? window.innerHeight - 500 + 'px'
-                        : window.innerHeight - 700 + 'px',
-                  }}
-                >
-                  {biomarkers.map((b, index) => {
-                    // const errorForRow = rowErrors[index];
-
-                    return (
-                      <BiomarkerRow
-                        refRenceEl={(el: any) => (rowRefs.current[index] = el)}
-                        isHaveError={rowErrors[index]}
-                        errorText={rowErrors[index]}
-                        biomarker={b}
-                        index={index}
-                        showOnlyErrors={showOnlyErrors}
-                        allAvilableBiomarkers={avalibaleBiomarkers}
-                        handleConfirmDelete={() => {
-                          handleConfirm(index);
-                        }}
-                        renderValueField={renderValueField}
-                        updateAndStandardize={updateAndStandardize}
-                      ></BiomarkerRow>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 
