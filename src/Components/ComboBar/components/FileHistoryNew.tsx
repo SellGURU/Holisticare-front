@@ -218,7 +218,6 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
           //     ),
           //   );
           // });
-
           // Step 2: Send to backend
           // await sendToBackend(fileUpload.file, azureUrl);
         } catch (error: any) {

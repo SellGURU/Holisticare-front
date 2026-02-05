@@ -154,14 +154,14 @@ const AddNewDocument: FC<AddNewDocumentProps> = ({
         setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
         setUploadComplete((prev) => ({ ...prev, [file.name]: false }));
 
-        const url  = await uploadBlobToAzure({
-          file:file,
-          containerKey:'reports',
-          name:file.name,
-          onProgress:(progress) => {
+        const url = await uploadBlobToAzure({
+          file: file,
+          containerKey: 'reports',
+          name: file.name,
+          onProgress: (progress) => {
             setUploadProgress((prev) => ({ ...prev, [file.name]: progress }));
-          }
-        })
+          },
+        });
         // const url = await uploadToAzure(file, (progress) => {
         //   setUploadProgress((prev) => ({ ...prev, [file.name]: progress }));
         // });

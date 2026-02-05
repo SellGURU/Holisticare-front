@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { sortKeysWithValues } from './Components/RepoerAnalyse/Boxs/Help';
 
-
 const useConstructor = (callBack = () => {}) => {
   const [hasBeenCalled, setHasBeenCalled] = useState(false);
   if (hasBeenCalled) {
@@ -131,7 +130,6 @@ const splitInstructions = (instruction: string) => {
     negative: negativeMatch ? negativeMatch[1].trim() : '',
   };
 };
-
 
 const resolveCategoryName = (name: string) => {
   if (name == 'Medical Peptide Therapy') {
