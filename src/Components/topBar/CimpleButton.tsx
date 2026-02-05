@@ -5,8 +5,10 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 // import TooltipText from '../TooltipText';
 import { Tooltip } from 'react-tooltip';
 import SpinnerLoader from '../SpinnerLoader';
-import { GitPullRequest, Merge } from 'lucide-react';
+import { GitPullRequest, Merge, RefreshCcw } from 'lucide-react';
 import { SlideOutPanel } from '../SlideOutPanel';
+import Application from '../../api/app';
+import { useParams } from 'react-router-dom';
 // import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 // import Tooltip from '../../../'; // فرضی
 interface CompileButtonProps {
@@ -14,26 +16,43 @@ interface CompileButtonProps {
 }
 
 const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
+  const { id } = useParams<{ id: string; name: string }>();
   const [progressData, setProgressData] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showProgressModal, setshowProgressModal] = useState(false);
+  const [isLoading, setIsLaoding] = useState(true);
+  const [needCompile, setNeedCompile] = useState(false);
+  const [isCompiling, setIsCompiling] = useState(false);
+  const [beRecompile, setBeRecompile] = useState(false);
   // const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
 
   /* ---------- derive state ---------- */
 
   const state = useMemo(() => {
+    if (isLoading) return 'LOADING';
+
+    const isProgressing = progressData
+      .filter((el) => el.category != 'refresh')
+      .some((item) => item.process_status === false);
+    const isCompilingprogress = progressData
+      .filter((el) => el.category === 'refresh')
+      .some((item) => item.process_status === false);
+    if (isProgressing) return 'PROGRESSING';
+    if (isCompilingprogress || isCompiling) return 'COMPILING';
+    if (needCompile) return 'READY_TO_COMPILE';
     if (isSyncing) return 'SYNCING';
+    if (beRecompile) return 'RECOMPILE';
     if (progressData.length === 0) return 'IDLE';
-
-    const isCompiling = progressData.some(
-      (item) => item.process_status === false,
-    );
-
-    if (isCompiling) return 'COMPILING';
-
     return 'READY_TO_COMPILE';
-  }, [progressData, isSyncing]);
+  }, [
+    progressData,
+    isSyncing,
+    isLoading,
+    needCompile,
+    isCompiling,
+    beRecompile,
+  ]);
   const resolveSectionName = (item: any) => {
     if (item.category === 'file') {
       if (item.action_type === 'deleted') {
@@ -134,7 +153,21 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
   };
 
   /* ---------- effects ---------- */
+  const checkRefrashData = () => {
+    setIsLaoding(true);
+    Application.checkClientRefresh(id as string)
+      .then((res) => {
+        setNeedCompile(res.data.need_of_refresh);
+      })
+      .catch(() => {})
+      .finally(() => {
+        setIsLaoding(false);
+      });
+  };
 
+  useEffect(() => {
+    checkRefrashData();
+  }, []);
   useEffect(() => {
     subscribe('openProgressModal', (data?: any) => {
       if (!data?.detail?.data) return;
@@ -184,11 +217,26 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
   /* ---------- UI config ---------- */
 
   const ui = {
+    RECOMPILE: {
+      label: 'Recompile',
+      disabled: false,
+      tooltip: 'Click to recompile and apply your latest changes.',
+    },
+    LOADING: {
+      label: 'Loading ...',
+      disabled: true,
+      tooltip: '',
+    },
+    PROGRESSING: {
+      label: 'Progressing...',
+      disabled: false,
+      tooltip:
+        'Your changes are being Progressed. You can continue working while this completes.',
+    },
     IDLE: {
       label: 'Compiled',
       disabled: true,
-      tooltip:
-        'Your system is fully compiled. You can now use the Holistic Plan and Action Plan.',
+      tooltip: 'Click to recompile and apply your latest changes.',
     },
     COMPILING: {
       label: 'Compiling...',
@@ -209,16 +257,36 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
     },
   }[state];
 
+  useEffect(() => {
+    if (progressData.length > 0) {
+      if (progressData.every((item) => item.process_status === true)) {
+        setIsCompiling(false);
+        setshowProgressModal(false);
+        publish('syncReport', {});
+      }
+    }
+  }, [progressData]);
   /* ---------- handlers ---------- */
 
   const handleClick = () => {
-    if (state == 'COMPILING') {
+    if (state == 'READY_TO_COMPILE' || state == 'RECOMPILE') {
+      setIsCompiling(true);
+      setNeedCompile(false);
+      Application.refreshData(id as string)
+        .then(() => {
+          publish('SyncRefresh', {});
+          publish('disableGenerate', {});
+        })
+        .catch(() => {});
+      return;
+    }
+    if (state == 'COMPILING' || state == 'PROGRESSING') {
       setshowProgressModal(true);
     }
-    if (state !== 'READY_TO_COMPILE') return;
-    setIsSyncing(true);
-    setshowProgressModal(false);
-    publish('syncReport', {});
+    // if (state !== 'READY_TO_COMPILE') return;
+    // setIsSyncing(true);
+    // setshowProgressModal(false);
+    // publish('syncReport', {});
   };
 
   /* ---------- render ---------- */
@@ -230,12 +298,21 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
         <ButtonPrimary
           size="small"
           isSoftDisabled={ui.disabled}
-          disabled={state == 'IDLE'}
+          // disabled={state == 'IDLE'}
+          onMouseEnter={() => {
+            if (state === 'IDLE') {
+              setBeRecompile(true);
+            }
+          }}
+          onMouseLeave={() => {
+            setBeRecompile(false);
+          }}
           onClick={handleClick}
         >
-          {(state === 'COMPILING' || state === 'SYNCING') && (
-            <SpinnerLoader></SpinnerLoader>
-          )}
+          {(state === 'COMPILING' ||
+            state === 'SYNCING' ||
+            state == 'LOADING' ||
+            state == 'PROGRESSING') && <SpinnerLoader></SpinnerLoader>}
           {state == 'READY_TO_COMPILE' && (
             <>
               <GitPullRequest width={14} height={14}></GitPullRequest>
@@ -244,6 +321,11 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
           {state == 'IDLE' && (
             <>
               <Merge width={14} height={14}></Merge>
+            </>
+          )}
+          {state == 'RECOMPILE' && (
+            <>
+              <RefreshCcw width={14} height={14}></RefreshCcw>
             </>
           )}
           <div

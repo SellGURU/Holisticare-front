@@ -35,7 +35,7 @@ const ClientCard: FC<ClientCardProps> = ({
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
-  const [refresh, setRefresh] = useState(client.refresh_in_progress);
+  const [, setRefresh] = useState(client.refresh_in_progress);
   useEffect(() => {
     setRefresh(client.refresh_in_progress);
   }, [client.refresh_in_progress]);
@@ -271,7 +271,7 @@ const ClientCard: FC<ClientCardProps> = ({
       .catch(() => null);
   };
 
-  const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
+  const [, setLastRefreshTime] = useState<Date | null>(null);
   const [, forceUpdate] = useState(0);
 
   useEffect(() => {
@@ -280,24 +280,24 @@ const ClientCard: FC<ClientCardProps> = ({
     }, 30000);
     return () => clearInterval(interval);
   }, []);
-  const formatLastRefresh = (date: string) => {
-    if (date == 'No Data') return '';
-    const lastTime = lastRefreshTime == null ? new Date(date) : lastRefreshTime;
-    // if (!lastRefreshTime) return '';
-    const now = new Date();
-    const diffMs = now.getTime() - lastTime.getTime();
-    const diffMinutes = diffMs / 60000;
+  // const formatLastRefresh = (date: string) => {
+  //   if (date == 'No Data') return '';
+  //   const lastTime = lastRefreshTime == null ? new Date(date) : lastRefreshTime;
+  //   // if (!lastRefreshTime) return '';
+  //   const now = new Date();
+  //   const diffMs = now.getTime() - lastTime.getTime();
+  //   const diffMinutes = diffMs / 60000;
 
-    if (diffMinutes < 1) return 'Just now';
-    if (diffMinutes < 5) return '1 min ago';
-    if (diffMinutes < 10) return '5 min ago';
+  //   if (diffMinutes < 1) return 'Just now';
+  //   if (diffMinutes < 5) return '1 min ago';
+  //   if (diffMinutes < 10) return '5 min ago';
 
-    return lastTime.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
+  //   return lastTime.toLocaleDateString('en-US', {
+  //     month: 'short',
+  //     day: 'numeric',
+  //     year: 'numeric',
+  //   });
+  // };
   const handleRefreshProgress = async () => {
     refreshIntervalRef.current = setInterval(async () => {
       const result = await handleCheckRefreshProgress();
@@ -317,19 +317,19 @@ const ClientCard: FC<ClientCardProps> = ({
       handleRefreshProgress();
     }
   }, [client.refresh_in_progress]);
-  const handleRefreshData = () => {
-    if (refreshIntervalRef.current) return;
-    setRefresh(true);
+  // const handleRefreshData = () => {
+  //   if (refreshIntervalRef.current) return;
+  //   setRefresh(true);
 
-    Application.refreshData(client.member_id)
-      .then(() => {
-        handleRefreshProgress();
-        setRefresh(false);
-      })
-      .catch(() => {
-        setRefresh(false);
-      });
-  };
+  //   Application.refreshData(client.member_id)
+  //     .then(() => {
+  //       handleRefreshProgress();
+  //       setRefresh(false);
+  //     })
+  //     .catch(() => {
+  //       setRefresh(false);
+  //     });
+  // };
 
   return (
     <>
@@ -1005,38 +1005,6 @@ const ClientCard: FC<ClientCardProps> = ({
                   />
                   Drift Analyzed
                 </div> */}
-                {client.has_minimum_data == true && (
-                  <div
-                    className="flex w-full items-center h-0 overflow-visible justify-start gap-2 cursor-pointer"
-                    onClick={handleRefreshData}
-                  >
-                    <img
-                      src="/icons/refresh-circle.svg"
-                      alt=""
-                      className={refresh ? 'animate-spin-slow' : ''}
-                    />
-                    {refresh ? (
-                      <div className="text-Primary-DeepTeal text-xs font-medium">
-                        Syncing...
-                      </div>
-                    ) : (
-                      <div className="flex flex-col">
-                        <div className="text-Primary-DeepTeal text-nowrap font-medium text-xs">
-                          Sync with Latest Data
-                        </div>
-                        {client['Latest Sync'] != 'No Data' && (
-                          <div className="text-Text-Quadruple text-[9px]">
-                            Last sync:{' '}
-                            {/* {lastRefreshTime
-                            ? formatLastRefresh()
-                            : client['Latest Sync']} */}
-                            {formatLastRefresh(client['Latest Sync'])}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
 
                 <div className="hidden w-full md:flex justify-end items-center">
                   <ButtonPrimary
