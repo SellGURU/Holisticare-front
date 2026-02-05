@@ -38,6 +38,23 @@ class Api {
     return response;
   }
 
+  protected static put(url: string, data: any, config?: any) {
+    const response = axios.put(url, data, {
+      headers: {
+        // Authorization: 'Bearer ' + getTokenFromLocalStorage(),
+        'Content-Type': 'application/octet-stream',
+        'x-ms-blob-type': 'BlockBlob',
+      },
+      onUploadProgress: (progressEvent: any) => {
+        if (config?.onUploadProgress) {
+          config.onUploadProgress(progressEvent);
+        }
+      },
+      // timeout:15000
+    });
+    return response;
+  }
+
   protected static getCheck(value: string) {
     const response = axios.get(value, {
       method: 'GET',

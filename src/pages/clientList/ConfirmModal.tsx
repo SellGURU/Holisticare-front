@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { ButtonPrimary } from '../Button/ButtonPrimary';
+import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 
 interface ConfirmModalProps {
   isOpen: boolean;

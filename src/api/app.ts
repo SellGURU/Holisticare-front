@@ -1194,6 +1194,28 @@ class Application extends Api {
   static autoSaveQuestionary = (data: any) => {
     return this.post(`/questionary_tracking/autosave`, data);
   };
+  static getPublicConfig = () => {
+    return this.get(`/config/public`, {});
+  };
+  static requestUploadUrl = (
+    container_key: string,
+    name?: string,
+    type?: string,
+  ) => {
+    return this.post('/storage/sas/upload', {
+      container_key: container_key,
+      filename: name,
+      content_type: type,
+    });
+  };
+
+  static azureUploadUrl = (
+    url: string,
+    file: any,
+    onUploadProgress: (progressEvent: any) => void,
+  ) => {
+    return this.put(url, file, { onUploadProgress: onUploadProgress });
+  };
 }
 
 export default Application;

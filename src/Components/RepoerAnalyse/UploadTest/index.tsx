@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 // import Uploading from './uploading';
 import Application from '../../../api/app';
-import { uploadToAzure } from '../../../help';
+// import { uploadToAzure } from '../../../help';
 import { publish, subscribe } from '../../../utils/event';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 // import FileBox from '../../ComboBar/components/FileBox';
@@ -26,7 +26,7 @@ interface UploadTestProps {
 }
 
 const UploadTest: React.FC<UploadTestProps> = ({
-  memberId,
+  // memberId,
   onGenderate,
   isShare,
   showReport,
@@ -80,80 +80,80 @@ const UploadTest: React.FC<UploadTestProps> = ({
 
   //   return null; // No error
   // };
-  const sendToBackend = async (file: File, azureUrl: string) => {
-    await Application.addLabReport(
-      {
-        member_id: memberId,
-        report: {
-          'file name': file.name,
-          blob_url: azureUrl,
-        },
-      },
-      (progressEvent: any) => {
-        const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total,
-        );
-        // Calculate progress from 50-100%
-        const backendProgress = 50 + percentCompleted / 2;
-        setUploadedFiles((prev) =>
-          prev.map((f) =>
-            f.file === file
-              ? {
-                  ...f,
-                  progress: backendProgress,
-                  uploadedSize: progressEvent.loaded,
-                }
-              : f,
-          ),
-        );
-      },
-    )
-      .then((res) => {
-        setUploadedFiles((prev) =>
-          prev.map((f) =>
-            f.file === file
-              ? {
-                  ...f,
-                  status: 'completed',
-                  azureUrl,
-                  warning: res.status == 206,
-                }
-              : f,
-          ),
-        );
-      })
-      .catch((err) => {
-        // console.log('err', err);
-        if (err == 'Network Error') {
-          setUploadedFiles((prev) =>
-            prev.map((f) =>
-              f.file === file
-                ? {
-                    ...f,
-                    status: 'completed',
-                    // errorMessage: 'File already exists.',
-                  }
-                : f,
-            ),
-          );
-        } else {
-          setUploadedFiles((prev) =>
-            prev.map((f) =>
-              f.file === file
-                ? {
-                    ...f,
-                    status: 'error',
-                    errorMessage:
-                      err?.response?.data?.message ||
-                      err?.detail ||
-                      'Failed to upload file. Please try again.',
-                  }
-                : f,
-            ),
-          );
-        }
-      });
-  };
+  // const sendToBackend = async (file: File, azureUrl: string) => {
+  //   await Application.addLabReport(
+  //     {
+  //       member_id: memberId,
+  //       report: {
+  //         'file name': file.name,
+  //         blob_url: azureUrl,
+  //       },
+  //     },
+  //     (progressEvent: any) => {
+  //       const percentCompleted = Math.round(
+  //         (progressEvent.loaded * 100) / progressEvent.total,
+  //       );
+  //       // Calculate progress from 50-100%
+  //       const backendProgress = 50 + percentCompleted / 2;
+  //       setUploadedFiles((prev) =>
+  //         prev.map((f) =>
+  //           f.file === file
+  //             ? {
+  //                 ...f,
+  //                 progress: backendProgress,
+  //                 uploadedSize: progressEvent.loaded,
+  //               }
+  //             : f,
+  //         ),
+  //       );
+  //     },
+  //   )
+  //     .then((res) => {
+  //       setUploadedFiles((prev) =>
+  //         prev.map((f) =>
+  //           f.file === file
+  //             ? {
+  //                 ...f,
+  //                 status: 'completed',
+  //                 azureUrl,
+  //                 warning: res.status == 206,
+  //               }
+  //             : f,
+  //         ),
+  //       );
+  //     })
+  //     .catch((err) => {
+  //       // console.log('err', err);
+  //       if (err == 'Network Error') {
+  //         setUploadedFiles((prev) =>
+  //           prev.map((f) =>
+  //             f.file === file
+  //               ? {
+  //                   ...f,
+  //                   status: 'completed',
+  //                   // errorMessage: 'File already exists.',
+  //                 }
+  //               : f,
+  //           ),
+  //         );
+  //       } else {
+  //         setUploadedFiles((prev) =>
+  //           prev.map((f) =>
+  //             f.file === file
+  //               ? {
+  //                   ...f,
+  //                   status: 'error',
+  //                   errorMessage:
+  //                     err?.response?.data?.message ||
+  //                     err?.detail ||
+  //                     'Failed to upload file. Please try again.',
+  //                 }
+  //               : f,
+  //           ),
+  //         );
+  //       }
+  //     });
+  // };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -167,45 +167,45 @@ const UploadTest: React.FC<UploadTestProps> = ({
       setUploadedFiles((prev) => [...newFiles, ...prev]);
 
       // Process each file
-      for (const fileUpload of newFiles) {
-        try {
-          // Step 1: Upload to Azure
-          const azureUrl = await uploadToAzure(fileUpload.file, (progress) => {
-            const uploadedBytes = Math.floor(
-              (progress / 100) * fileUpload.file.size,
-            );
-            setUploadedFiles((prev) =>
-              prev.map((f) =>
-                f.file === fileUpload.file
-                  ? {
-                      ...f,
-                      progress: progress / 2,
-                      uploadedSize: uploadedBytes,
-                    }
-                  : f,
-              ),
-            );
-          });
+      // for (const fileUpload of newFiles) {
+      //   try {
+      //     // Step 1: Upload to Azure
+      //     const azureUrl = await uploadToAzure(fileUpload.file, (progress) => {
+      //       const uploadedBytes = Math.floor(
+      //         (progress / 100) * fileUpload.file.size,
+      //       );
+      //       setUploadedFiles((prev) =>
+      //         prev.map((f) =>
+      //           f.file === fileUpload.file
+      //             ? {
+      //                 ...f,
+      //                 progress: progress / 2,
+      //                 uploadedSize: uploadedBytes,
+      //               }
+      //             : f,
+      //         ),
+      //       );
+      //     });
 
-          // Step 2: Send to backend
-          await sendToBackend(fileUpload.file, azureUrl);
-        } catch (error: any) {
-          setUploadedFiles((prev) =>
-            prev.map((f) =>
-              f.file === fileUpload.file
-                ? {
-                    ...f,
-                    status: 'error',
-                    errorMessage:
-                      error?.response?.data?.message ||
-                      error?.message ||
-                      'Failed to upload file. Please try again.',
-                  }
-                : f,
-            ),
-          );
-        }
-      }
+      //     // Step 2: Send to backend
+      //     await sendToBackend(fileUpload.file, azureUrl);
+      //   } catch (error: any) {
+      //     setUploadedFiles((prev) =>
+      //       prev.map((f) =>
+      //         f.file === fileUpload.file
+      //           ? {
+      //               ...f,
+      //               status: 'error',
+      //               errorMessage:
+      //                 error?.response?.data?.message ||
+      //                 error?.message ||
+      //                 'Failed to upload file. Please try again.',
+      //             }
+      //           : f,
+      //       ),
+      //     );
+      //   }
+      // }
     }
     fileInputRef.current.value = '';
   };
