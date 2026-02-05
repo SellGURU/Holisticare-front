@@ -7,7 +7,8 @@ import { publish, subscribe } from '../../../utils/event';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
-import Joyride, { Step } from 'react-joyride';
+import Joyride, { CallBackProps, Step } from 'react-joyride';
+import { TutorialReminderToast } from './showTutorialReminderToast';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -602,6 +603,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const [run, setRun] = useState(false);
+  const [showReminder, setShowReminder] = useState(false);
 
   useEffect(() => {
     const seen = localStorage.getItem('healthPlanTutorialSeen');
@@ -610,6 +612,30 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       localStorage.setItem('healthPlanTutorialSeen', 'true');
     }
   }, []);
+  useEffect(() => {
+    const tutorialSeen = localStorage.getItem('tutorialSeen');
+    if (tutorialSeen === 'true') {
+      return;
+    }
+    const hasSeenTour = localStorage.getItem('healthPlanTutorialSeen');
+
+    if (hasSeenTour === 'true') {
+      setShowReminder(true);
+    }
+  }, []);
+  const handleRestartTutorial = () => {
+    localStorage.removeItem('healthPlanTutorialSeen');
+    setShowReminder(false);
+    setRun(true);
+  };
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { status } = data;
+
+    if (status === 'finished' || status === 'skipped') {
+      localStorage.setItem('healthPlanTutorialSeen', 'true');
+      setRun(false);
+    }
+  };
 
   return (
     <>
@@ -632,6 +658,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             padding: '16px',
             boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
           },
+        }}
+        callback={handleJoyrideCallback}
+      />
+
+      <TutorialReminderToast
+        visible={showReminder}
+        onRestart={handleRestartTutorial}
+        onClose={() => {
+          setShowReminder(false);
+          localStorage.setItem('tutorialSeen', 'true');
         }}
       />
 
