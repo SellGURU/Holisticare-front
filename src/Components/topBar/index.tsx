@@ -165,8 +165,8 @@ export const TopBar: FC<TopBarProps> = ({
   const [openDownload, setOpenDownload] = useState(false);
   const [openShare, setOpenShare] = useState(false);
   const [, setDownloadingState] = useState('download');
-  const [, setIsReportAvailable] = useState(true);
-  const [, setShowReport] = useState(false);
+  const [isReportAvailable, setIsReportAvailable] = useState(true);
+  const [showReport, setShowReport] = useState(false);
   const [customTheme, setCustomTheme] = useState(
     localStorage.getItem('brandInfoData')
       ? JSON.parse(localStorage.getItem('brandInfoData') || '{}')
@@ -277,7 +277,7 @@ export const TopBar: FC<TopBarProps> = ({
     );
   }, [window.location.pathname]);
 
-  // const shouldEnableActions = !isReportAvailable && !showReport;
+  const shouldEnableActions = !isReportAvailable && !showReport;
 
   return (
     <div className="w-full flex items-center text-nowrap justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">
@@ -348,9 +348,11 @@ export const TopBar: FC<TopBarProps> = ({
         </div>
       )}
       <div className="hidden xl:flex gap-3">
-        <div>
-          <CompileButton userInfoData={userInfoData}></CompileButton>
-        </div>
+        {hasReportInRoute && !shouldEnableActions && (
+          <div>
+            <CompileButton userInfoData={userInfoData}></CompileButton>
+          </div>
+        )}
         {canDownload && (hasReportInRoute || hasShareInRoute) && (
           <div className="flex ">
             {/* <ButtonPrimary
