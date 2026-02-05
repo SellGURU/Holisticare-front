@@ -1,6 +1,6 @@
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import App from './App';
-import useSecurity from './hooks/usesecurity';
+import useSecurity from './hooks/useSecurity.tsx';
 
 const MainWrapper = () => {
   const googleClientId = useSecurity();

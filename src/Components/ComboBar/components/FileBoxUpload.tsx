@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
 import { useEffect, useRef, useState } from 'react';
-import AzureBlobService from '../../../services/azureBlobService';
-import {
-  AZURE_STORAGE_CONNECTION_STRING,
-  AZURE_STORAGE_CONTAINER_NAME,
-} from '../../../config/azure';
+// import AzureBlobService from '../../../services/azureBlobService';
+// import {
+//   AZURE_STORAGE_CONNECTION_STRING,
+//   AZURE_STORAGE_CONTAINER_NAME,
+// } from '../../../config/azure';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface FileBoxUploadProps {
@@ -17,15 +17,15 @@ interface FileBoxUploadProps {
 
 const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
   file,
-  onSuccess,
+  // onSuccess,
   onCancel,
   isFileExists = false,
 }) => {
   const { id } = useParams<{ id: string }>();
   const [isCompleted, setIsCompleted] = useState(false);
-  const [isFailed, setIsFailed] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isFailed, ] = useState(false);
+  const [progress, ] = useState(0);
+  const [errorMessage, ] = useState<string>('');
   const controller = useRef<AbortController | null>(null);
   const startTime = useRef<number>(Date.now());
   const [timeRemaining, setTimeRemaining] = useState<string>('');
@@ -82,73 +82,73 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
     }
 
     controller.current = new AbortController();
-    let isCancelled = false;
+    // let isCancelled = false;
 
-    const uploadToAzure = async () => {
-      try {
-        AzureBlobService.initialize(
-          AZURE_STORAGE_CONNECTION_STRING,
-          AZURE_STORAGE_CONTAINER_NAME,
-        );
+    // const uploadToAzure = async () => {
+    //   try {
+    //     AzureBlobService.initialize(
+    //       AZURE_STORAGE_CONNECTION_STRING,
+    //       AZURE_STORAGE_CONTAINER_NAME,
+    //     );
 
-        const blobUrl = await AzureBlobService.uploadFile(file, (progress) => {
-          if (isCancelled) return;
-          setProgress(progress);
-        });
+    //     const blobUrl = await AzureBlobService.uploadFile(file, (progress) => {
+    //       if (isCancelled) return;
+    //       setProgress(progress);
+    //     });
 
-        if (isCancelled) return;
+    //     if (isCancelled) return;
 
-        const response = await Application.addLabReport(
-          {
-            member_id: id,
-            report: {
-              'file name': file.name,
-              blob_url: blobUrl,
-            },
-          },
-          (progressEvent: any) => {
-            if (isCancelled) return;
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total,
-            );
-            setProgress(percentCompleted);
-          },
-          controller.current?.signal,
-        );
+    //     const response = await Application.addLabReport(
+    //       {
+    //         member_id: id,
+    //         report: {
+    //           'file name': file.name,
+    //           blob_url: blobUrl,
+    //         },
+    //       },
+    //       (progressEvent: any) => {
+    //         if (isCancelled) return;
+    //         const percentCompleted = Math.round(
+    //           (progressEvent.loaded * 100) / progressEvent.total,
+    //         );
+    //         setProgress(percentCompleted);
+    //       },
+    //       controller.current?.signal,
+    //     );
 
-        if (isCancelled) return;
+    //     if (isCancelled) return;
 
-        const fileWithId = {
-          file_id: response.data,
-          file_name: file.name,
-          date_uploaded: new Date().toString(),
-          blob_url: blobUrl,
-          isUploded: true,
-        };
+    //     const fileWithId = {
+    //       file_id: response.data,
+    //       file_name: file.name,
+    //       date_uploaded: new Date().toString(),
+    //       blob_url: blobUrl,
+    //       isUploded: true,
+    //     };
 
-        onSuccess(fileWithId);
-        setIsCompleted(true);
-      } catch (error: any) {
-        if (error.name === 'CanceledError' || error.name === 'AbortError') {
-          // console.warn('آپلود لغو شد.');
-        } else {
-          console.error('Upload error:', error);
-          setIsFailed(true);
-          // Show the API error message if available
-          if (error?.detail) {
-            setErrorMessage(error?.detail);
-          } else {
-            setErrorMessage('Failed to upload file. Please try again.');
-          }
-        }
-        if (!isCancelled) setIsCompleted(true);
-      }
-    };
+    //     onSuccess(fileWithId);
+    //     setIsCompleted(true);
+    //   } catch (error: any) {
+    //     if (error.name === 'CanceledError' || error.name === 'AbortError') {
+    //       // console.warn('آپلود لغو شد.');
+    //     } else {
+    //       console.error('Upload error:', error);
+    //       setIsFailed(true);
+    //       // Show the API error message if available
+    //       if (error?.detail) {
+    //         setErrorMessage(error?.detail);
+    //       } else {
+    //         setErrorMessage('Failed to upload file. Please try again.');
+    //       }
+    //     }
+    //     if (!isCancelled) setIsCompleted(true);
+    //   }
+    // };
 
-    uploadToAzure();
+    // uploadToAzure();
 
     return () => {
-      isCancelled = true;
+      // isCancelled = true;
       controller.current?.abort();
     };
   }, [file, id, isFileExists]);
