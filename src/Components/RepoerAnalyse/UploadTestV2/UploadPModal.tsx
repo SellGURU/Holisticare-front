@@ -6,6 +6,40 @@ import Toggle from '../../Toggle';
 import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
+import Joyride, { Step } from 'react-joyride';
+
+const labBiomarkerSteps: Step[] = [
+  {
+    target: '[data-tour="lab-title"]',
+    content: 'Here you can upload lab reports or manually add biomarkers.',
+    placement: 'bottom',
+  },
+  {
+    target: '[data-tour="upload-switch"]',
+    content:
+      'Switch between uploading a lab report or adding biomarkers manually.',
+  },
+  {
+    target: '[data-tour="file-uploader"]',
+    content:
+      'Upload your client’s lab report here. Supported formats are PDF and DOCX.',
+  },
+  {
+    target: '[data-tour="uploaded-file"]',
+    content:
+      'Once uploaded, your file will appear here for review and processing.',
+  },
+  {
+    target: '[data-tour="biomarkers-section"]',
+    content:
+      'Detected or manually added biomarkers will be shown in this section.',
+  },
+  {
+    target: '[data-tour="continue-btn"]',
+    content:
+      'When everything looks good, continue to generate the health plan.',
+  },
+];
 
 interface UploadPModalProps {
   OnBack: () => void;
@@ -120,8 +154,39 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   useEffect(() => {
     setShowOnlyErrors(false);
   }, [activeMenu]);
+  const [run, setRun] = useState(false);
+
+  useEffect(() => {
+    const seen = localStorage.getItem('labTourSeen');
+    if (!seen) {
+      setRun(true);
+      localStorage.setItem('labTourSeen', 'true');
+    }
+  }, []);
   return (
     <>
+      <Joyride
+        steps={labBiomarkerSteps}
+        run={run}
+        continuous
+        scrollToFirstStep
+        showSkipButton
+        disableOverlayClose
+        styles={{
+          options: {
+            arrowColor: '#fff',
+            backgroundColor: '#fff',
+            primaryColor: '#0f766e',
+            textColor: '#1f2937',
+            zIndex: 10000,
+          },
+          tooltip: {
+            borderRadius: '12px',
+            padding: '16px',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+          },
+        }}
+      />
       <div
         // style={{ height: window.innerHeight - 40 + 'px' }}
         className="w-full  h-[calc(100vh-40px)] rounded-[16px] y md:h-[89vh] top-4 flex justify-center absolute  left-0 text-Text-Primary px-2 md:px-6 xl:px-0 xl:pr-[95px]"
@@ -132,7 +197,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
           className="bg-white p-2 md:p-6 h-[calc(100vh-80px)] rounded-md pb-[80px] sm:pb-0 w-full overflow-auto md:overflow-hidden   z-[99]"
         >
           <div className="w-full flex items-center justify-between">
-            <div className="flex gap-2 items-center text-[10px] xs:text-xs text-Text-Primary font-medium">
+            <div
+              className="flex gap-2 items-center text-[10px] xs:text-xs text-Text-Primary font-medium"
+              data-tour="lab-title"
+            >
               <div
                 onClick={() => OnBack()}
                 className="cursor-pointer size-6 md:size-8 rounded-md p-1 bg-white border border-Gray-50 shadow-100 flex items-center justify-center"
@@ -160,7 +228,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   Continue
                 </>
               ) : (
-                <div className="flex gap-2 justify-center text-[10px] xs:text-xs">
+                <div
+                  className="flex gap-2 justify-center text-[10px] xs:text-xs"
+                  data-tour="continue-btn"
+                >
                   <img
                     className="size-4"
                     src="/icons/arrow-right-white.svg"

@@ -20,6 +20,7 @@ const Toggle: React.FC<ToggleProps> = ({
     <>
       <div
         className={` bg-backgroundColor-Main h-7 w-[280px] md:w-[315px] ${isClientList && 'h-8 w-[324px]'} ${isMessages && 'h-8 w-[282px]'} ${isNotif && 'h-8 w-[368px]'} ${widthFull && '!w-full'} px-2 flex justify-between items-center rounded-[24px] gap-1`}
+        data-tour="upload-switch"
       >
         <div
           onClick={() => {

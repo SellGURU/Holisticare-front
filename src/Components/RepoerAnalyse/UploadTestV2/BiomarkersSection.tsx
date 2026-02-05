@@ -377,6 +377,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     <div
       // style={{ height: window.innerHeight - 400 + 'px' }}
       className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary overflow-hidden`}
+      data-tour="biomarkers-section"
     >
       {loading ? (
         <div
