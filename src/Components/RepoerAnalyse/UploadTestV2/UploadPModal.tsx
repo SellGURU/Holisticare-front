@@ -6,7 +6,8 @@ import Toggle from '../../Toggle';
 import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
-import Joyride, { Step } from 'react-joyride';
+import Joyride, { CallBackProps, Step } from 'react-joyride';
+import { TutorialReminderToast } from './showTutorialReminderToast';
 
 const labBiomarkerSteps: Step[] = [
   {
@@ -155,6 +156,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
     setShowOnlyErrors(false);
   }, [activeMenu]);
   const [run, setRun] = useState(false);
+  const [showReminder, setShowReminder] = useState(false);
 
   useEffect(() => {
     const seen = localStorage.getItem('labTourSeen');
@@ -163,6 +165,30 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
       localStorage.setItem('labTourSeen', 'true');
     }
   }, []);
+  useEffect(() => {
+    const tutorialSeen = localStorage.getItem('tutorialSeen');
+    if (tutorialSeen === 'true') {
+      return;
+    }
+    const hasSeenTour = localStorage.getItem('labTourSeen');
+
+    if (hasSeenTour === 'true') {
+      setShowReminder(true);
+    }
+  }, []);
+  const handleRestartTutorial = () => {
+    localStorage.removeItem('labTourSeen');
+    setShowReminder(false);
+    setRun(true);
+  };
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { status } = data;
+
+    if (status === 'finished' || status === 'skipped') {
+      localStorage.setItem('labTourSeen', 'true');
+      setRun(false);
+    }
+  };
   return (
     <>
       <Joyride
@@ -185,6 +211,15 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             padding: '16px',
             boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
           },
+        }}
+        callback={handleJoyrideCallback}
+      />
+      <TutorialReminderToast
+        visible={showReminder}
+        onRestart={handleRestartTutorial}
+        onClose={() => {
+          setShowReminder(false);
+          localStorage.setItem('tutorialSeen', 'true');
         }}
       />
       <div
