@@ -1074,6 +1074,18 @@ class Application extends Api {
   static getCoverage = (data: any) => {
     return this.post('/holistic_plan_coverage/calculate_progress', data);
   };
+  static uploadMore_info = (data: any) => {
+    return this.post('/holisticare_test/upload/more_info', data);
+  };
+  static uploadCategories = (data: any) => {
+    return this.post('/holisticare_test/upload/categories', data);
+  };
+  static uploadUnit_mapping = (data: any) => {
+    return this.post('/holisticare_test/upload/unit_mapping', data);
+  };
+  static uploadBiomarker_mapping = (data: any) => {
+    return this.post('/holisticare_test/upload/biomarker_mapping', data);
+  };
 }
 
 export default Application;
