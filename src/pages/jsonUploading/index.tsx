@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import JsonUploadApi from '../../api/jsonUpload';
+import ThresholdsEditor from './ThresholdsEditor';
 
 type JsonType =
   | 'more_info'
@@ -255,34 +256,87 @@ function ArrayOfObjectsTableEditor({
 }) {
   const rows = value ?? [];
 
-  function normalizeCell(v: any) {
-    if (v === null || v === undefined) return '';
-    if (
-      typeof v === 'string' ||
-      typeof v === 'number' ||
-      typeof v === 'boolean'
-    )
-      return String(v);
-    return prettyJson(v);
+  // Pick which columns show in the table (compact view)
+  const previewColumns = useMemo(() => {
+    // Prefer common “summary” columns if they exist
+    const preferred = [
+      'name',
+      'Benchmark areas',
+      'Biomarker',
+      'unit',
+      'position',
+    ];
+    const picked = preferred.filter((c) => columns.includes(c));
+    // Fill up to 5 columns total
+    const rest = columns.filter((c) => !picked.includes(c));
+    return [...picked, ...rest].slice(0, 5);
+  }, [columns]);
+
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [draft, setDraft] = useState<Record<string, any> | null>(null);
+  const [draftErrors, setDraftErrors] = useState<Record<string, string>>({});
+
+  function openEditor(idx: number) {
+    setEditIndex(idx);
+    setDraft(JSON.parse(JSON.stringify(rows[idx] ?? {})));
+    setDraftErrors({});
   }
 
-  function parseCell(oldValue: any, input: string) {
-    if (Array.isArray(oldValue) || isPlainObject(oldValue)) {
-      try {
-        return JSON.parse(input);
-      } catch {
-        return input;
+  function closeEditor() {
+    setEditIndex(null);
+    setDraft(null);
+    setDraftErrors({});
+  }
+
+  function saveEditor() {
+    if (editIndex === null || !draft) return;
+
+    // validate JSON fields: any field whose value is object/array in original OR looks like JSON in draft
+    const errors: Record<string, string> = {};
+
+    for (const k of columns) {
+      const v = draft[k];
+      // if user is editing as string but it should be JSON, we parse in the field handler below
+      // here we just ensure it isn't an invalid JSON sentinel
+      if (v === '__INVALID_JSON__') {
+        errors[k] = 'Invalid JSON';
       }
     }
-    if (typeof oldValue === 'number') {
-      const n = Number(input);
-      return Number.isFinite(n) ? n : input;
-    }
-    if (typeof oldValue === 'boolean') {
-      return input === 'true';
-    }
-    return input;
+
+    setDraftErrors(errors);
+    if (Object.keys(errors).length) return;
+
+    const next = rows.slice();
+    next[editIndex] = draft;
+    onChange(next);
+
+    closeEditor();
   }
+
+  function addRow() {
+    const blankRow: Record<string, any> = {};
+    columns.forEach((c) => (blankRow[c] = ''));
+    onChange([...rows, blankRow]);
+  }
+
+  function removeRow(idx: number) {
+    const next = rows.slice();
+    next.splice(idx, 1);
+    onChange(next);
+  }
+
+  function cellPreview(v: any) {
+    if (v === null || v === undefined) return '';
+    if (typeof v === 'boolean') return v ? 'true' : 'false';
+    if (typeof v === 'number') return String(v);
+    if (typeof v === 'string') {
+      const t = v.trim();
+      return t.length > 40 ? t.slice(0, 40) + '…' : t;
+    }
+    // object/array
+    return '{…}';
+  }
+  const hiddenCount = Math.max(0, columns.length - previewColumns.length);
 
   return (
     <div className="space-y-3">
@@ -290,95 +344,268 @@ function ArrayOfObjectsTableEditor({
         <div className="text-sm text-slate-700">
           Rows: <span className="font-semibold">{rows.length}</span>
         </div>
+
         <button
           type="button"
           className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800"
-          onClick={() => {
-            const blankRow: Record<string, any> = {};
-            columns.forEach((c) => (blankRow[c] = ''));
-            onChange([...rows, blankRow]);
-          }}
+          onClick={addRow}
         >
           + Add row
         </button>
       </div>
 
-      <div className="rounded-2xl max-h-[400px] overflow-auto border border-slate-200 bg-white">
-        <table className="min-w-[900px] w-full text-left text-sm">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="p-3 text-xs font-semibold text-slate-700">#</th>
-              {columns.map((c) => (
-                <th
-                  key={c}
-                  className="p-3 text-xs font-semibold text-slate-700"
-                >
-                  {c}
-                </th>
-              ))}
-              <th className="p-3 text-xs font-semibold text-slate-700">
-                Actions
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {rows.map((row, rIdx) => (
-              <tr key={rIdx} className="border-t border-slate-100">
-                <td className="p-3 text-xs text-slate-500">{rIdx + 1}</td>
-
-                {columns.map((c) => (
-                  <td key={`${rIdx}-${c}`} className="p-2 align-top">
-                    <textarea
-                      className="h-20 w-full resize-none rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-slate-400"
-                      value={normalizeCell(row?.[c])}
-                      onChange={(e) => {
-                        const next = rows.slice();
-                        const oldVal = next[rIdx]?.[c];
-                        next[rIdx] = {
-                          ...(next[rIdx] ?? {}),
-                          [c]: parseCell(oldVal, e.target.value),
-                        };
-                        onChange(next);
-                      }}
-                    />
-                  </td>
-                ))}
-
-                <td className="p-3 align-top">
-                  <button
-                    type="button"
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs hover:bg-slate-50"
-                    onClick={() => {
-                      const next = rows.slice();
-                      next.splice(rIdx, 1);
-                      onChange(next);
-                    }}
-                  >
-                    Remove
-                  </button>
-                </td>
-              </tr>
-            ))}
-
-            {rows.length === 0 && (
+      {/* Compact table */}
+      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+        <div className="max-h-[420px] overflow-auto">
+          <table className="min-w-[900px] w-full text-left text-sm">
+            <thead className="sticky top-0 bg-slate-50 z-10">
               <tr>
-                <td
-                  colSpan={columns.length + 2}
-                  className="p-6 text-center text-sm text-slate-500"
-                >
-                  No rows yet. Click “Add row”.
-                </td>
+                <th className="p-3 text-xs font-semibold text-slate-700 w-[60px]">
+                  #
+                </th>
+                {previewColumns.map((c) => (
+                  <th
+                    key={c}
+                    className={` ${c == 'Definition' && 'text-center'} p-3 text-xs font-semibold text-slate-700`}
+                  >
+                    {c}
+                  </th>
+                ))}
+                {
+                    hiddenCount > 0 && ( <th className="p-3 text-xs text-center font-semibold text-slate-700">
+                  More
+                </th>)
+
+                }
+               
+                <th className="p-3 text-xs text-center font-semibold text-slate-700 w-[120px]">
+                  Actions
+                </th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {rows.map((row, rIdx) => {
+                return (
+                  <tr
+                    key={rIdx}
+                    className="border-t border-slate-100 hover:bg-slate-50/40"
+                  >
+                    <td className="p-3 text-xs text-slate-500">{rIdx + 1}</td>
+
+                    {previewColumns.map((c) => (
+                      <td key={`${rIdx}-${c}`} className="p-3 align-top">
+                        <div className="text-xs text-slate-800">
+                          {cellPreview(row?.[c])}
+                        </div>
+                      </td>
+                    ))}
+                    {hiddenCount > 0 && (
+                      <td className="p-3 text-xs text-center text-slate-500">
+                        {hiddenCount > 0 ? `${hiddenCount} more…` : '—'}
+                      </td>
+                    )}
+
+                    <td className="p-3">
+                      <div className="flex w-[120px] justify-center gap-2">
+                        <button
+                          type="button"
+                          className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800"
+                          onClick={() => openEditor(rIdx)}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs hover:bg-slate-50"
+                          onClick={() => removeRow(rIdx)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+
+              {rows.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={previewColumns.length + 3}
+                    className="p-6 text-center text-sm text-slate-500"
+                  >
+                    No rows yet. Click “Add row”.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <p className="text-xs text-slate-500">
-        Tip: for nested fields (objects/arrays), you can paste valid JSON inside
-        a cell.
-      </p>
+      {/* Fullscreen Modal Editor */}
+      {editIndex !== null && draft && (
+        <div className="w-full h-screen flex justify-center fixed z-[120] top-0 left-0 items-center ">
+          <div
+            className="absolute inset-0 bg-black/40 -mt-4"
+            onClick={closeEditor}
+          />
+
+          <div className="absolute inset-x-0 bottom-0 top-0 md:inset-12 -mt-4 md:rounded-2xl bg-white shadow-xl flex flex-col overflow-hidden ">
+            <div className="border-b border-slate-200 p-4 flex items-center justify-between">
+              <div>
+                <div className="text-sm font-semibold text-slate-900">
+                  Edit row #{editIndex + 1}
+                </div>
+                <div className="text-xs text-slate-500">
+                  Edit all fields with enough space.
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-auto p-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {columns.map((k) => {
+                  const v = draft[k];
+
+                  const isComplex = typeof v === 'object' && v !== null;
+                  const isLong = typeof v === 'string' && v.length > 80;
+
+                  return (
+                    <div
+                      key={k}
+                      className="rounded-xl border border-slate-200 bg-white p-3"
+                    >
+                      <div className="text-xs font-semibold text-slate-700 mb-2">
+                        {k}
+                      </div>
+
+                      {k === 'thresholds' ? (
+                        <ThresholdsEditor
+                          value={draft[k]}
+                          onChange={(nextThresholds) => {
+                            setDraft((d) => ({
+                              ...(d as any),
+                              thresholds: nextThresholds,
+                            }));
+                          }}
+                        />
+                      ) : isComplex ? (
+                        <div>
+                          <textarea
+                            className="h-44 w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-xs outline-none focus:border-slate-400"
+                            value={JSON.stringify(v, null, 2)}
+                            onChange={(e) => {
+                              const text = e.target.value;
+                              try {
+                                const parsed = JSON.parse(text);
+                                setDraftErrors((prev) => {
+                                  const next = { ...prev };
+                                  delete next[k];
+                                  return next;
+                                });
+                                setDraft((d) => ({
+                                  ...(d as any),
+                                  [k]: parsed,
+                                }));
+                              } catch {
+                                setDraftErrors((prev) => ({
+                                  ...prev,
+                                  [k]: 'Invalid JSON',
+                                }));
+                                // keep marker so save blocks
+                                setDraft((d) => ({
+                                  ...(d as any),
+                                  [k]: '__INVALID_JSON__',
+                                }));
+                              }
+                            }}
+                          />
+                          {draftErrors[k] && (
+                            <div className="mt-1 text-xs text-red-600">
+                              {draftErrors[k]}
+                            </div>
+                          )}
+                        </div>
+                      ) : isLong ? (
+                        <textarea
+                          className="h-28 w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-slate-400"
+                          value={String(v ?? '')}
+                          onChange={(e) =>
+                            setDraft((d) => ({
+                              ...(d as any),
+                              [k]: e.target.value,
+                            }))
+                          }
+                        />
+                      ) : (
+                        <input
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-slate-400"
+                          value={
+                            typeof v === 'boolean'
+                              ? v
+                                ? 'true'
+                                : 'false'
+                              : String(v ?? '')
+                          }
+                          onChange={(e) => {
+                            const raw = e.target.value;
+
+                            // keep boolean nice
+                            if (typeof v === 'boolean') {
+                              setDraft((d) => ({
+                                ...(d as any),
+                                [k]: raw === 'true',
+                              }));
+                              return;
+                            }
+
+                            // keep numbers nice
+                            if (typeof v === 'number') {
+                              const n = Number(raw);
+                              setDraft((d) => ({
+                                ...(d as any),
+                                [k]: Number.isFinite(n) ? n : raw,
+                              }));
+                              return;
+                            }
+
+                            setDraft((d) => ({ ...(d as any), [k]: raw }));
+                          }}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="border-t border-slate-200 p-4 flex items-center justify-between">
+              <div className="text-xs text-slate-500">
+                Tip: object fields are edited as JSON. Use valid JSON (quotes,
+                commas, etc.).
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs hover:bg-slate-50"
+                  onClick={closeEditor}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800"
+                  onClick={saveEditor}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -481,46 +708,55 @@ export const JsonUploading: React.FC = () => {
     a.click();
     URL.revokeObjectURL(url);
   }
-  const [baseFile, ] = useState<boolean>(true);
-  const [clinicEmails, ] = useState<string[]>([
-    'demo@gmail.com',
-    'test2@clinic.com',
-  ]);
+  function getClinicEmailFromLocalStorage(): string {
+  const email = localStorage.getItem('email') ?? '';
+  return email.trim();
+}
 
-  async function submit() {
-    setLoading(true);
-    setError(null);
-    setSuccessMsg(null);
+  const [baseFile] = useState<boolean>(true);
+const clinicEmail = useMemo(() => {
+  return getClinicEmailFromLocalStorage();
+}, []);
 
-    try {
-      // ✅ REAL uploads via the self-contained class
-      const meta = {
-        base_file: baseFile,
-        include_clinics_emails: clinicEmails,
-      };
 
-      switch (jsonType) {
-        case 'more_info':
-          await JsonUploadApi.uploadMore_info(data, meta);
-          break;
-        case 'categories':
-          await JsonUploadApi.uploadCategories(data, meta);
-          break;
-        case 'unit_mapping':
-          await JsonUploadApi.uploadUnit_mapping(data, meta);
-          break;
-        case 'biomarker_mapping':
-          await JsonUploadApi.uploadBiomarker_mapping(data, meta);
-          break;
-      }
+async function submit() {
+  setLoading(true);
+  setError(null);
+  setSuccessMsg(null);
 
-      setSuccessMsg(`Uploaded successfully using "${jsonType}" endpoint.`);
-    } catch (e: any) {
-      setError(e?.message ?? 'Upload failed.');
-    } finally {
-      setLoading(false);
+  try {
+    if (!clinicEmail) {
+      throw new Error('Clinic email not found in localStorage');
     }
+
+    const meta = {
+      base_file: baseFile,
+      include_clinics_emails: [clinicEmail],
+    };
+
+    switch (jsonType) {
+      case 'more_info':
+        await JsonUploadApi.uploadMore_info(data, meta);
+        break;
+      case 'categories':
+        await JsonUploadApi.uploadCategories(data, meta);
+        break;
+      case 'unit_mapping':
+        await JsonUploadApi.uploadUnit_mapping(data, meta);
+        break;
+      case 'biomarker_mapping':
+        await JsonUploadApi.uploadBiomarker_mapping(data, meta);
+        break;
+    }
+
+    setSuccessMsg(`Uploaded successfully using "${jsonType}" endpoint.`);
+  } catch (e: any) {
+    setError(e?.message ?? 'Upload failed.');
+  } finally {
+    setLoading(false);
   }
+}
+
 
   return (
     <div className="w-full h-[calc(100vh-60px)] overflow-auto p-4">
