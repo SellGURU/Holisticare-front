@@ -16,6 +16,7 @@ import { publish, subscribe } from '../../utils/event';
 import {
   toType2,
   type2ToFlatList,
+  type2ToFlatListInIssueOrder,
   forApiPayload,
 } from '../../utils/lookingForwards';
 
@@ -77,12 +78,17 @@ export const GenerateRecommendation = () => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
   const remapLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastKeyAreasUpdateFromRemapRef = useRef(false);
   const [coverageProgess, setcoverageProgess] = useState(0);
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
 
   const keyAreasType2 = treatmentPlanData?.key_areas_to_address;
   const lookingForwardsFlat = keyAreasType2
     ? type2ToFlatList(toType2(keyAreasType2))
+    : (treatmentPlanData?.looking_forwards ?? []);
+  /** Health Planning Issues list in issue number order (1, 2, 3, ...), not sorted by category */
+  const lookingForwardsInIssueOrder = keyAreasType2
+    ? type2ToFlatListInIssueOrder(toType2(keyAreasType2))
     : (treatmentPlanData?.looking_forwards ?? []);
 
   const resolveCoverage = () => {
@@ -133,6 +139,7 @@ export const GenerateRecommendation = () => {
       key_areas_to_address: payload,
     })
       .then((res: any) => {
+        lastKeyAreasUpdateFromRemapRef.current = true;
         setTratmentPlanData((pre: any) => ({
           ...pre,
           suggestion_tab: res.data.suggestion_tab,
@@ -161,6 +168,20 @@ export const GenerateRecommendation = () => {
   useEffect(() => {
     resolveCoverage();
   }, [treatmentPlanData?.suggestion_tab, id]);
+
+  /** When key_areas change from Set Orders (add/remove issue), call remap so backend stays in sync. Skip initial load (handlePlan already calls remap). */
+  const keyAreasChangeCountRef = useRef(0);
+  useEffect(() => {
+    if (!treatmentPlanData || !id) return;
+    keyAreasChangeCountRef.current += 1;
+    if (keyAreasChangeCountRef.current === 1) return;
+    if (lastKeyAreasUpdateFromRemapRef.current) {
+      lastKeyAreasUpdateFromRemapRef.current = false;
+      return;
+    }
+    remapIssues(treatmentPlanData);
+  }, [treatmentPlanData?.key_areas_to_address, id]);
+
   const hasEssentialData = (data: any) => {
     return (
       // data?.client_insight &&
@@ -547,7 +568,7 @@ export const GenerateRecommendation = () => {
                 biomarkers: treatmentPlanData?.biomarker_insight,
                 clientInsights: treatmentPlanData?.client_insight,
                 completionSuggestions: treatmentPlanData?.completion_suggestion,
-                lookingForwards: lookingForwardsFlat,
+                lookingForwards: lookingForwardsInIssueOrder,
               }}
               setData={setTratmentPlanData}
               isClosed={isClosed}

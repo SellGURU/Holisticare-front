@@ -70,7 +70,7 @@ export function toType2(data: unknown): KeyAreasType2 {
   };
 }
 
-/** Flatten type2 to list of "Issue N: text" for display/coverage. */
+/** Flatten type2 to list of "Issue N: text" in category order (for coverage/API). */
 export function type2ToFlatList(type2: KeyAreasType2): string[] {
   const keyAreas = type2['Key areas to address'] || {};
   const flat: string[] = [];
@@ -80,6 +80,16 @@ export function type2ToFlatList(type2: KeyAreasType2): string[] {
       flat.push(...arr.filter((x) => typeof x === 'string'));
   }
   return flat;
+}
+
+/** Flatten type2 to list in issue number order (Issue 1, 2, 3, ...) for display, not sorted by category. */
+export function type2ToFlatListInIssueOrder(type2: KeyAreasType2): string[] {
+  const flat = type2ToFlatList(type2);
+  return flat.slice().sort((a, b) => {
+    const numA = parseInt(a.replace(/^Issue\s*(\d+)/i, '$1'), 10) || 0;
+    const numB = parseInt(b.replace(/^Issue\s*(\d+)/i, '$1'), 10) || 0;
+    return numA - numB;
+  });
 }
 
 /** For API payload: ensure we send type2. Backend accepts both. */

@@ -93,8 +93,16 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   const lastSentIssueListRef = useRef<string[]>([]);
 
   useEffect(() => {
-    const result = item.issue_list.filter((issue: string) =>
-      issuesData.some((obj) => Object.keys(obj)[0] === issue),
+    // Build set of all key area issue strings (from type2) so we show issue_list from backend/remap even if coverage keys differ
+    const keyAreasSet = new Set<string>();
+    const keyAreas = keyAreasType2?.['Key areas to address'];
+    if (keyAreas && typeof keyAreas === 'object') {
+      for (const arr of Object.values(keyAreas)) {
+        if (Array.isArray(arr)) arr.forEach((s: string) => keyAreasSet.add(s));
+      }
+    }
+    const result = (item.issue_list || []).filter((issue: string) =>
+      issuesData.some((obj) => Object.keys(obj)[0] === issue) || keyAreasSet.has(issue),
     );
     if (lastSentIssueListRef.current.length > 0) {
       if (
@@ -109,7 +117,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
     } else {
       setSelectedIssues(result);
     }
-  }, [issuesData, item]);
+  }, [issuesData, item, keyAreasType2]);
 
   const handleRemoveIssueCard = (issue: string) => {
     const newIssueList = selectedIssues.filter((r: string) => r !== issue);
@@ -330,30 +338,31 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                       );
 
                       if (hasCategories) {
-                        // Build issue name -> category map from type2 (so we can group coverage issues)
-                        const issueToCategory: Record<string, string> = {};
-                        for (const catKey of CATEGORY_ORDER) {
-                          const list = keyAreas[catKey];
-                          if (Array.isArray(list)) {
-                            for (const issueName of list) {
-                              if (typeof issueName === 'string')
-                                issueToCategory[issueName] = catKey;
-                            }
-                          }
+                        // Coverage state from API: issue string -> boolean
+                        const coverageMap: Record<string, boolean> = {};
+                        for (const entry of issuesDataFlat) {
+                          const k = Object.keys(entry)[0];
+                          if (k) coverageMap[k] = entry[k];
                         }
-                        // Group all issues from coverage (issuesData) by category; show every issue
+                        // List all issues from type2 by category (so dropdown shows all key areas, not only coverage keys)
                         const byCategory: Record<
                           string,
                           { entry: Record<string, boolean> }[]
                         > = {};
                         for (const catKey of CATEGORY_ORDER)
                           byCategory[catKey] = [];
-                        for (const entry of issuesDataFlat) {
-                          const issueName = Object.keys(entry)[0];
-                          const catKey =
-                            issueToCategory[issueName] ?? CATEGORY_ORDER[0];
-                          if (byCategory[catKey])
-                            byCategory[catKey].push({ entry });
+                        for (const catKey of CATEGORY_ORDER) {
+                          const list = keyAreas[catKey];
+                          if (Array.isArray(list)) {
+                            for (const issueName of list) {
+                              if (typeof issueName === 'string')
+                                byCategory[catKey].push({
+                                  entry: {
+                                    [issueName]: coverageMap[issueName] ?? false,
+                                  },
+                                });
+                            }
+                          }
                         }
                         let globalIndex = 0;
                         return CATEGORY_ORDER.map((catKey) => {
