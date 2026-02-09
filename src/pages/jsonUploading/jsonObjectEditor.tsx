@@ -39,7 +39,7 @@ export default function JsonObjectEditor({ value, onChange, path = '' }: Props) 
   // Array
   if (Array.isArray(value)) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-2 max-h-[500px] overflow-auto">
         <div className="flex items-center justify-between">
           <span className="text-xs text-slate-500">Array ({value.length})</span>
           <button
@@ -51,11 +51,11 @@ export default function JsonObjectEditor({ value, onChange, path = '' }: Props) 
           </button>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3  ">
           {value.map((item, idx) => (
             <div
               key={`${path}[${idx}]`}
-              className="rounded-xl border border-slate-200 bg-white p-3"
+              className="rounded-xl border border-slate-200 bg-white p-3 "
             >
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-xs font-medium text-slate-700">
@@ -94,7 +94,7 @@ export default function JsonObjectEditor({ value, onChange, path = '' }: Props) 
   const keys = Object.keys(value);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 ">
       {keys.map((k) => (
         <div
           key={`${path}.${k}`}

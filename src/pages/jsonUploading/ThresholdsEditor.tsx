@@ -115,7 +115,8 @@ export default function ThresholdsEditor({
               </div>
               <button
                 type="button"
-                className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800"
+                className="rounded-lg hover:bg-[#5fb43f]
+ bg-Primary-EmeraldGreen px-3 py-2 text-xs font-medium text-white "
                 onClick={() => addRange(gender)}
               >
                 + Add range
@@ -149,7 +150,7 @@ export default function ThresholdsEditor({
                           </button>
                           <button
                             type="button"
-                            className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs text-red-700 hover:bg-red-50"
+                             className="rounded-lg border border-red-200 bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100 hover:border-red-300 transition"
                             onClick={() => removeGenderRange(gender, rangeKey)}
                           >
                             Remove range

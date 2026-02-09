@@ -14,6 +14,7 @@ import {
 import { LeftPanel } from './LeftPanel';
 import JsonObjectEditor from './jsonObjectEditor';
 import ArrayOfObjectsTableEditor from './table';
+import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 
 export const JsonUploading: React.FC = () => {
   // state
@@ -180,14 +181,14 @@ export const JsonUploading: React.FC = () => {
                 Download current JSON
               </button>
 
-              <button
-                type="button"
-                className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
+              <ButtonPrimary
+               
+              
                 onClick={submit}
                 disabled={loading}
               >
                 {loading ? 'Uploading...' : 'Submit'}
-              </button>
+              </ButtonPrimary>
 
               <input
                 ref={fileInputRef}
@@ -248,7 +249,7 @@ export const JsonUploading: React.FC = () => {
             </div>
 
             <div className="md:col-span-2">
-              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="rounded-2xl border border-slate-200  p-4">
                 {!rawMode ? (
                   <>
                     <div className="mb-3 flex items-center justify-between">

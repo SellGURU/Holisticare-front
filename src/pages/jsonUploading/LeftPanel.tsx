@@ -29,7 +29,9 @@ export const LeftPanel: React.FC<Props> = ({
         className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
       >
         {Object.entries(JSON_TYPE_LABELS).map(([k, v]) => (
-          <option key={k} value={k}>{v}</option>
+          <option key={k} value={k}>
+            {v}
+          </option>
         ))}
       </select>
 
@@ -38,8 +40,8 @@ export const LeftPanel: React.FC<Props> = ({
         <div className="flex justify-between">
           <span className="text-xs font-semibold">include_clinics_emails</span>
           <button
-            className="text-xs bg-slate-900 text-white px-3 py-1 rounded"
-            onClick={() => setClinicEmails(e => [...e, ''])}
+            className="text-xs bg-Primary-EmeraldGreen text-white px-[18px] py-2 rounded-lg border border-Gray-50"
+            onClick={() => setClinicEmails((e) => [...e, ''])}
           >
             + Add
           </button>
@@ -57,10 +59,13 @@ export const LeftPanel: React.FC<Props> = ({
               }}
             />
             <button
-              className="border px-2 rounded text-xs"
+              type="button"
+              className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-100 hover:border-red-300 transition"
               onClick={() =>
-                setClinicEmails(e =>
-                  e.filter((_, idx) => idx !== i).length ? e.filter((_, idx) => idx !== i) : ['']
+                setClinicEmails((e) =>
+                  e.filter((_, idx) => idx !== i).length
+                    ? e.filter((_, idx) => idx !== i)
+                    : [''],
                 )
               }
             >

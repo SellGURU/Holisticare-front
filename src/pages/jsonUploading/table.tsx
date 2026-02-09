@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import RowEditModal from './RowEditModal';
 
 function cn(...xs: Array<string | false | undefined | null>) {
@@ -11,7 +11,11 @@ type Props = {
   columns: string[];
 };
 
-export default function ArrayOfObjectsTableEditor({ value, onChange, columns }: Props) {
+export default function ArrayOfObjectsTableEditor({
+  value,
+  onChange,
+  columns,
+}: Props) {
   const rows = value ?? [];
 
   const previewColumns = useMemo(() => {
@@ -23,12 +27,14 @@ export default function ArrayOfObjectsTableEditor({ value, onChange, columns }: 
 
   const hiddenCount = Math.max(0, columns.length - previewColumns.length);
 
+  // modal state
   const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
-  function addRow() {
-    const blankRow: Record<string, any> = {};
-    columns.forEach((c) => (blankRow[c] = ''));
-    onChange([...rows, blankRow]);
+  function makeBlankRow() {
+    const blank: Record<string, any> = {};
+    columns.forEach((c) => (blank[c] = ''));
+    return blank;
   }
 
   function removeRow(idx: number) {
@@ -48,7 +54,15 @@ export default function ArrayOfObjectsTableEditor({ value, onChange, columns }: 
     return '{…}';
   }
 
-  const currentRow = editIndex === null ? null : rows[editIndex] ?? {};
+  // which row to show in modal
+  const modalValue = useMemo(() => {
+    if (isCreating) return makeBlankRow();
+    if (editIndex === null) return null;
+    return rows[editIndex] ?? makeBlankRow();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCreating, editIndex, rows]);
+
+  const modalOpen = isCreating || editIndex !== null;
 
   return (
     <div className="space-y-3">
@@ -59,8 +73,13 @@ export default function ArrayOfObjectsTableEditor({ value, onChange, columns }: 
 
         <button
           type="button"
-          className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800"
-          onClick={addRow}
+          className="rounded-lg hover:bg-[#5fb43f]
+ bg-Primary-EmeraldGreen px-3 py-2 text-xs font-medium text-white "
+          onClick={() => {
+            // ✅ open modal first (don’t add row yet)
+            setIsCreating(true);
+            setEditIndex(null);
+          }}
         >
           + Add row
         </button>
@@ -118,15 +137,19 @@ export default function ArrayOfObjectsTableEditor({ value, onChange, columns }: 
                     <div className="flex w-[120px] justify-center gap-2">
                       <button
                         type="button"
-                        className="rounded-lg bg-slate-900 px-3 py-1 text-xs font-medium text-white hover:bg-slate-800"
-                        onClick={() => setEditIndex(rIdx)}
+                        className="rounded-lg bg-Primary-DeepTeal px-3 py-1 text-xs font-medium text-white hover:bg-[#005160]
+"
+                        onClick={() => {
+                          setEditIndex(rIdx);
+                          setIsCreating(false);
+                        }}
                       >
                         Edit
                       </button>
 
                       <button
                         type="button"
-                        className="rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs hover:bg-slate-50"
+  className="rounded-lg border border-red-200 bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100 hover:border-red-300 transition"
                         onClick={() => removeRow(rIdx)}
                       >
                         Remove
@@ -149,13 +172,30 @@ export default function ArrayOfObjectsTableEditor({ value, onChange, columns }: 
       </div>
 
       <RowEditModal
-        open={editIndex !== null}
-        title={editIndex !== null ? `Edit row #${editIndex + 1}` : 'Edit row'}
+        open={modalOpen}
+        title={
+          isCreating
+            ? 'Add row'
+            : editIndex !== null
+              ? `Edit row #${editIndex + 1}`
+              : 'Edit row'
+        }
         columns={columns}
-        value={currentRow}
-        onClose={() => setEditIndex(null)}
+        value={modalValue}
+        onClose={() => {
+          setIsCreating(false);
+          setEditIndex(null);
+        }}
         onSave={(nextRow) => {
+          if (isCreating) {
+            // ✅ only now append
+            onChange([...rows, nextRow]);
+            setIsCreating(false);
+            return;
+          }
+
           if (editIndex === null) return;
+
           const next = rows.slice();
           next[editIndex] = nextRow;
           onChange(next);
