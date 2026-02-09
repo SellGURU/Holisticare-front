@@ -82,7 +82,7 @@ export function type2ToFlatList(type2: KeyAreasType2): string[] {
   return flat;
 }
 
-/** Flatten type2 to list in issue number order (Issue 1, 2, 3, ...) for display, not sorted by category. */
+/** Flatten type2 to list in issue number order (Issue 1, 2, 3, ...) for display; does not sort by category. */
 export function type2ToFlatListInIssueOrder(type2: KeyAreasType2): string[] {
   const flat = type2ToFlatList(type2);
   return flat.slice().sort((a, b) => {

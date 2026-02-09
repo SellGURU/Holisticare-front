@@ -86,7 +86,7 @@ export const GenerateRecommendation = () => {
   const lookingForwardsFlat = keyAreasType2
     ? type2ToFlatList(toType2(keyAreasType2))
     : (treatmentPlanData?.looking_forwards ?? []);
-  /** Health Planning Issues list in issue number order (1, 2, 3, ...), not sorted by category */
+  /** Health Planning Issues: always show in issue number order (1, 2, 3, …), not by category */
   const lookingForwardsInIssueOrder = keyAreasType2
     ? type2ToFlatListInIssueOrder(toType2(keyAreasType2))
     : (treatmentPlanData?.looking_forwards ?? []);

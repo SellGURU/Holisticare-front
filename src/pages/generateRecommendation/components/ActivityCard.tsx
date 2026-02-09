@@ -107,7 +107,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
     if (lastSentIssueListRef.current.length > 0) {
       if (
         result.length === lastSentIssueListRef.current.length &&
-        result.every((r, i) => r === lastSentIssueListRef.current[i])
+        result.every((r: string, i: number) => r === lastSentIssueListRef.current[i])
       ) {
         setSelectedIssues(result);
         lastSentIssueListRef.current = [];
@@ -275,7 +275,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                         keyAreas && typeof keyAreas === 'object';
 
                       const renderIssueRow = (
-                        issue: Record<string, boolean>,
+                        _issue: Record<string, boolean>,
                         index: number,
                         text: string,
                         issueLabel: string,
