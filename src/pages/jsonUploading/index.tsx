@@ -69,7 +69,9 @@ export const JsonUploading: React.FC = () => {
 
       const match = matchesTemplateShape(parsed, template);
       if (!match.ok) {
-        setError(`Uploaded JSON doesn't match "${JSON_TYPE_LABELS[jsonType]}". ${match.reason ?? ''}`);
+        setError(
+          `Uploaded JSON doesn't match "${JSON_TYPE_LABELS[jsonType]}". ${match.reason ?? ''}`,
+        );
         return;
       }
 
@@ -91,7 +93,9 @@ export const JsonUploading: React.FC = () => {
       const parsed = JSON.parse(rawText);
       const match = matchesTemplateShape(parsed, template);
       if (!match.ok) {
-        setError(`Raw JSON doesn't match "${JSON_TYPE_LABELS[jsonType]}". ${match.reason ?? ''}`);
+        setError(
+          `Raw JSON doesn't match "${JSON_TYPE_LABELS[jsonType]}". ${match.reason ?? ''}`,
+        );
         return;
       }
       setData(parsed);
@@ -102,7 +106,9 @@ export const JsonUploading: React.FC = () => {
   };
 
   const downloadJson = () => {
-    const blob = new Blob([prettyJson(data)], { type: 'application/json;charset=utf-8' });
+    const blob = new Blob([prettyJson(data)], {
+      type: 'application/json;charset=utf-8',
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -118,10 +124,12 @@ export const JsonUploading: React.FC = () => {
 
     try {
       const emails = normalizeEmails(clinicEmails);
-      if (!emails.length) throw new Error('Please enter at least one clinic email.');
+      if (!emails.length)
+        throw new Error('Please enter at least one clinic email.');
 
       const invalid = emails.filter((e) => !looksLikeEmail(e));
-      if (invalid.length) throw new Error(`Invalid email(s): ${invalid.join(', ')}`);
+      if (invalid.length)
+        throw new Error(`Invalid email(s): ${invalid.join(', ')}`);
 
       const meta = {
         base_file: baseFile,
@@ -158,9 +166,12 @@ export const JsonUploading: React.FC = () => {
           {/* Header */}
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-lg font-semibold text-slate-900">JSON Uploading</h1>
+              <h1 className="text-lg font-semibold text-slate-900">
+                JSON Uploading
+              </h1>
               <p className="text-sm text-slate-600">
-                Pick a JSON type, edit values (or upload a file), then submit to the correct API.
+                Pick a JSON type, edit values (or upload a file), then submit to
+                the correct API.
               </p>
             </div>
 
@@ -181,12 +192,7 @@ export const JsonUploading: React.FC = () => {
                 Download current JSON
               </button>
 
-              <ButtonPrimary
-               
-              
-                onClick={submit}
-                disabled={loading}
-              >
+              <ButtonPrimary onClick={submit} disabled={loading}>
                 {loading ? 'Uploading...' : 'Submit'}
               </ButtonPrimary>
 
@@ -231,7 +237,9 @@ export const JsonUploading: React.FC = () => {
               )}
 
               <div className="rounded-xl border border-slate-200 bg-white p-3">
-                <div className="text-xs font-semibold text-slate-700">Expected top-level keys</div>
+                <div className="text-xs font-semibold text-slate-700">
+                  Expected top-level keys
+                </div>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {columns.map((k) => (
                     <span
@@ -242,7 +250,9 @@ export const JsonUploading: React.FC = () => {
                     </span>
                   ))}
                   {columns.length === 0 && (
-                    <span className="text-xs text-slate-500">No strict keys</span>
+                    <span className="text-xs text-slate-500">
+                      No strict keys
+                    </span>
                   )}
                 </div>
               </div>
@@ -253,7 +263,9 @@ export const JsonUploading: React.FC = () => {
                 {!rawMode ? (
                   <>
                     <div className="mb-3 flex items-center justify-between">
-                      <h2 className="text-sm font-semibold text-slate-900">Structured editor</h2>
+                      <h2 className="text-sm font-semibold text-slate-900">
+                        Structured editor
+                      </h2>
                       <button
                         type="button"
                         className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs hover:bg-slate-50"
@@ -281,7 +293,9 @@ export const JsonUploading: React.FC = () => {
                 ) : (
                   <>
                     <div className="mb-3 flex items-center justify-between">
-                      <h2 className="text-sm font-semibold text-slate-900">Raw JSON</h2>
+                      <h2 className="text-sm font-semibold text-slate-900">
+                        Raw JSON
+                      </h2>
                       <div className="flex gap-2">
                         <button
                           type="button"
@@ -307,7 +321,8 @@ export const JsonUploading: React.FC = () => {
                       spellCheck={false}
                     />
                     <p className="mt-2 text-xs text-slate-500">
-                      Paste JSON here. Click <span className="font-semibold">Apply</span>.
+                      Paste JSON here. Click{' '}
+                      <span className="font-semibold">Apply</span>.
                     </p>
                   </>
                 )}
@@ -317,7 +332,9 @@ export const JsonUploading: React.FC = () => {
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="mb-2 text-sm font-semibold text-slate-900">Preview (current payload)</div>
+          <div className="mb-2 text-sm font-semibold text-slate-900">
+            Preview (current payload)
+          </div>
           <pre className="max-h-[320px] overflow-auto rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs">
             {prettyJson(data)}
           </pre>

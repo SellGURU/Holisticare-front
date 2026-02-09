@@ -19,7 +19,13 @@ export default function ArrayOfObjectsTableEditor({
   const rows = value ?? [];
 
   const previewColumns = useMemo(() => {
-    const preferred = ['name', 'Benchmark areas', 'Biomarker', 'unit', 'position'];
+    const preferred = [
+      'name',
+      'Benchmark areas',
+      'Biomarker',
+      'unit',
+      'position',
+    ];
     const picked = preferred.filter((c) => columns.includes(c));
     const rest = columns.filter((c) => !picked.includes(c));
     return [...picked, ...rest].slice(0, 5);
@@ -90,7 +96,9 @@ export default function ArrayOfObjectsTableEditor({
           <table className="min-w-[900px] w-full text-left text-sm">
             <thead className="sticky top-0 bg-slate-50 z-10">
               <tr>
-                <th className="px-3 py-2 text-xs font-semibold text-slate-700 w-[60px]">#</th>
+                <th className="px-3 py-2 text-xs font-semibold text-slate-700 w-[60px]">
+                  #
+                </th>
 
                 {previewColumns.map((c) => (
                   <th
@@ -118,12 +126,19 @@ export default function ArrayOfObjectsTableEditor({
 
             <tbody>
               {rows.map((row, rIdx) => (
-                <tr key={rIdx} className="border-t border-slate-100 hover:bg-slate-50/40">
-                  <td className="px-3 py-2 text-xs text-slate-500">{rIdx + 1}</td>
+                <tr
+                  key={rIdx}
+                  className="border-t border-slate-100 hover:bg-slate-50/40"
+                >
+                  <td className="px-3 py-2 text-xs text-slate-500">
+                    {rIdx + 1}
+                  </td>
 
                   {previewColumns.map((c) => (
                     <td key={`${rIdx}-${c}`} className="px-3 py-2 align-top">
-                      <div className="text-xs text-slate-800">{cellPreview(row?.[c])}</div>
+                      <div className="text-xs text-slate-800">
+                        {cellPreview(row?.[c])}
+                      </div>
                     </td>
                   ))}
 
@@ -149,7 +164,7 @@ export default function ArrayOfObjectsTableEditor({
 
                       <button
                         type="button"
-  className="rounded-lg border border-red-200 bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100 hover:border-red-300 transition"
+                        className="rounded-lg border border-red-200 bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100 hover:border-red-300 transition"
                         onClick={() => removeRow(rIdx)}
                       >
                         Remove
@@ -161,7 +176,10 @@ export default function ArrayOfObjectsTableEditor({
 
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={previewColumns.length + 3} className="p-6 text-center text-sm text-slate-500">
+                  <td
+                    colSpan={previewColumns.length + 3}
+                    className="p-6 text-center text-sm text-slate-500"
+                  >
                     No rows yet. Click “Add row”.
                   </td>
                 </tr>

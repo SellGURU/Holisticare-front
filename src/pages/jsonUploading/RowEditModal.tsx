@@ -39,7 +39,8 @@ export default function RowEditModal({
     const nextErrors: Record<string, string> = {};
 
     for (const k of columns) {
-      if ((draft as any)[k] === '__INVALID_JSON__') nextErrors[k] = 'Invalid JSON';
+      if ((draft as any)[k] === '__INVALID_JSON__')
+        nextErrors[k] = 'Invalid JSON';
     }
 
     setErrors(nextErrors);
@@ -56,7 +57,9 @@ export default function RowEditModal({
         <div className="border-b border-slate-200 p-4 flex items-center justify-between">
           <div>
             <div className="text-sm font-semibold text-slate-900">{title}</div>
-            <div className="text-xs text-slate-500">Edit all fields with enough space.</div>
+            <div className="text-xs text-slate-500">
+              Edit all fields with enough space.
+            </div>
           </div>
         </div>
 
@@ -76,13 +79,18 @@ export default function RowEditModal({
                     fullWidth && 'md:col-span-2',
                   )}
                 >
-                  <div className="text-xs font-semibold text-slate-700 mb-2">{k}</div>
+                  <div className="text-xs font-semibold text-slate-700 mb-2">
+                    {k}
+                  </div>
 
                   {k === 'thresholds' ? (
                     <ThresholdsEditor
                       value={(draft as any)[k]}
                       onChange={(nextThresholds) => {
-                        setDraft((d) => ({ ...(d as any), thresholds: nextThresholds }));
+                        setDraft((d) => ({
+                          ...(d as any),
+                          thresholds: nextThresholds,
+                        }));
                       }}
                     />
                   ) : isComplex ? (
@@ -101,18 +109,33 @@ export default function RowEditModal({
                             });
                             setDraft((d) => ({ ...(d as any), [k]: parsed }));
                           } catch {
-                            setErrors((prev) => ({ ...prev, [k]: 'Invalid JSON' }));
-                            setDraft((d) => ({ ...(d as any), [k]: '__INVALID_JSON__' }));
+                            setErrors((prev) => ({
+                              ...prev,
+                              [k]: 'Invalid JSON',
+                            }));
+                            setDraft((d) => ({
+                              ...(d as any),
+                              [k]: '__INVALID_JSON__',
+                            }));
                           }
                         }}
                       />
-                      {errors[k] && <div className="mt-1 text-xs text-red-600">{errors[k]}</div>}
+                      {errors[k] && (
+                        <div className="mt-1 text-xs text-red-600">
+                          {errors[k]}
+                        </div>
+                      )}
                     </>
                   ) : isLong ? (
                     <textarea
                       className="h-28 w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-slate-400"
                       value={String(v ?? '')}
-                      onChange={(e) => setDraft((d) => ({ ...(d as any), [k]: e.target.value }))}
+                      onChange={(e) =>
+                        setDraft((d) => ({
+                          ...(d as any),
+                          [k]: e.target.value,
+                        }))
+                      }
                     />
                   ) : (
                     <input
@@ -128,12 +151,18 @@ export default function RowEditModal({
                         const raw = e.target.value;
 
                         if (typeof v === 'boolean') {
-                          setDraft((d) => ({ ...(d as any), [k]: raw === 'true' }));
+                          setDraft((d) => ({
+                            ...(d as any),
+                            [k]: raw === 'true',
+                          }));
                           return;
                         }
                         if (typeof v === 'number') {
                           const n = Number(raw);
-                          setDraft((d) => ({ ...(d as any), [k]: Number.isFinite(n) ? n : raw }));
+                          setDraft((d) => ({
+                            ...(d as any),
+                            [k]: Number.isFinite(n) ? n : raw,
+                          }));
                           return;
                         }
                         setDraft((d) => ({ ...(d as any), [k]: raw }));
@@ -148,7 +177,8 @@ export default function RowEditModal({
 
         <div className="border-t border-slate-200 p-4 flex items-center justify-between">
           <div className="text-xs text-slate-500">
-            Tip: object fields are edited as JSON. Use valid JSON (quotes, commas, etc.).
+            Tip: object fields are edited as JSON. Use valid JSON (quotes,
+            commas, etc.).
           </div>
           <div className="flex gap-2">
             <button

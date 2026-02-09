@@ -51,7 +51,7 @@ class JsonUploadApi {
     const form = new FormData();
 
     // ✅ match Postman keys:
-   meta.include_clinics_emails.forEach((email) => {
+    meta.include_clinics_emails.forEach((email) => {
       form.append('include_clinics_emails', email);
     });
     form.append('file', file);

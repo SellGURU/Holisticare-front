@@ -6,7 +6,11 @@ type Props = {
   path?: string;
 };
 
-export default function JsonObjectEditor({ value, onChange, path = '' }: Props) {
+export default function JsonObjectEditor({
+  value,
+  onChange,
+  path = '',
+}: Props) {
   // Primitive
   if (!isPlainObject(value) && !Array.isArray(value)) {
     const type = typeof value;
