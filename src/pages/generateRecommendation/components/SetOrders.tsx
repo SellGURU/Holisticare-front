@@ -9,6 +9,7 @@ import { ActivityCard } from './ActivityCard';
 import { CoverageCard } from '../../../Components/coverageCard';
 import SearchBox from '../../../Components/SearchBox';
 import { resolveCategoryIcon, resolveCategoryName } from '../../../help';
+import { CATEGORY_ORDER, DEFAULT_CATEGORY_LABELS } from '../../../utils/lookingForwards';
 
 type CategoryState = {
   name: string;
@@ -21,6 +22,7 @@ interface SetOrdersProps {
   setData: (values: any) => void;
   setLookingForwards: (values: any) => void;
   lookingForwardsData: any;
+  keyAreasType2?: { 'Key areas to address': Record<string, string[]>; category_labels?: Record<string, string> };
   storeChecked: (data: any) => void;
   // checkeds: Array<any>;
   reset: () => void;
@@ -41,6 +43,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
   setData,
   setLookingForwards,
   lookingForwardsData,
+  keyAreasType2,
   storeChecked,
   // checkeds,
   // reset,
@@ -299,14 +302,40 @@ export const SetOrders: FC<SetOrdersProps> = ({
     }
   }, [activeCategory]);
 
-  const handleAddLookingForwards = (text: string) => {
-    setLookingForwards([
-      ...lookingForwardsData,
-      'Issue ' + (lookingForwardsData.length + 1) + ': ' + text,
-    ]);
+  const handleAddLookingForwards = (text: string, categoryKey?: string) => {
+    const flatList = Array.isArray(lookingForwardsData) ? lookingForwardsData : [];
+    const newIssueName = 'Issue ' + (flatList.length + 1) + ': ' + text;
+    if (categoryKey) {
+      const keyAreas = keyAreasType2?.['Key areas to address'];
+      if (keyAreas && typeof keyAreas === 'object') {
+        const nextKeyAreas = { ...keyAreas };
+        const catList = nextKeyAreas[categoryKey];
+        nextKeyAreas[categoryKey] = Array.isArray(catList) ? [...catList, newIssueName] : [newIssueName];
+        setLookingForwards({
+          ...keyAreasType2,
+          'Key areas to address': nextKeyAreas,
+        });
+      } else {
+        const nextKeyAreas: Record<string, string[]> = {};
+        for (const k of CATEGORY_ORDER) nextKeyAreas[k] = [];
+        if (categoryKey === 'critical_urgent') {
+          nextKeyAreas.critical_urgent = [...flatList, newIssueName];
+        } else {
+          nextKeyAreas.critical_urgent = [...flatList];
+          nextKeyAreas[categoryKey] = [newIssueName];
+        }
+        setLookingForwards({
+          category_labels: DEFAULT_CATEGORY_LABELS,
+          'Key areas to address': nextKeyAreas,
+        });
+      }
+    } else {
+      setLookingForwards([...flatList, newIssueName]);
+    }
   };
   const handleRemoveLookingForwards = (text: string) => {
-    setLookingForwards(lookingForwardsData.filter((el: any) => el !== text));
+    const flatList = Array.isArray(lookingForwardsData) ? lookingForwardsData : [];
+    setLookingForwards(flatList.filter((el: any) => el !== text));
   };
 
   const handleUpdateIssueListByKeys = (
@@ -314,6 +343,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
     recommendation: string,
     newIssueList: string[],
     text?: string,
+    newIssueCategoryKey?: string,
   ) => {
     setData(
       data.map((item: any) => {
@@ -327,7 +357,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
       }),
     );
     if (text) {
-      handleAddLookingForwards(text);
+      handleAddLookingForwards(text, newIssueCategoryKey);
     }
   };
   const [refreshKey, setRefreshKey] = useState(0);
@@ -580,6 +610,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
                   handleCheckboxChange={handleCheckboxChange}
                   issuesData={details}
                   setIssuesData={setDetails}
+                  keyAreasType2={keyAreasType2}
                   handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
                   handleRemoveLookingForwards={handleRemoveLookingForwards}
                   handleRemoveIssueFromList={handleRemoveIssueFromList}

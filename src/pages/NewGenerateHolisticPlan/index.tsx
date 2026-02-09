@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../api/app';
@@ -26,6 +26,13 @@ import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
 import { CoverageCard } from '../../Components/coverageCard';
 import { SourceTag } from '../../Components/source-badge';
+import {
+  toType2,
+  type2ToFlatList,
+  forApiPayload,
+  type KeyAreasType2,
+} from '../../utils/lookingForwards';
+
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
@@ -44,64 +51,64 @@ const NewGenerateHolisticPlan = () => {
   const [isFinalLoading, setisFinalLoading] = useState(false);
   const [coverageProgess, setcoverageProgess] = useState(0);
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
-  // Function to check if essential data fields are present and not empty
-  useEffect(() => {
-    if (!treatmentPlanData) return;
 
-    // ✅ Only include checked items
+  /** Key areas in type2 format. */
+  const keyAreasType2 = treatmentPlanData?.key_areas_to_address as KeyAreasType2 | undefined;
+
+  /** Set when user adds/edits/removes issues so we call remap once (avoids endless loop). */
+  const userDidChangeIssuesRef = useRef(false);
+
+  // getCoverage: run when suggestion_tab or id changes. Send type2 to API.
+  useEffect(() => {
+    if (!treatmentPlanData || !id) return;
     const selectedInterventions = treatmentPlanData?.suggestion_tab || [];
-    const payload =
-      treatmentPlanData?.looking_forwards?.map((issue: string) => ({
-        [issue]: false,
-      })) || [];
+    const payload = forApiPayload(keyAreasType2 ?? treatmentPlanData?.looking_forwards ?? []);
 
     Application.getCoverage({
       member_id: id,
       selected_interventions: selectedInterventions,
-      key_areas_to_address:
-        coverageDetails.length > 0 ? coverageDetails : payload,
+      key_areas_to_address: payload,
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
-
-        // ✅ Convert object → array of single-key objects
         const detailsObj = res.data['key areas to address'] || {};
-        const detailsArray = Object.entries(detailsObj).map(([key, value]) => ({
-          [key]: value,
-        }));
-
+        const detailsArray = Object.entries(detailsObj).map(([key, value]) => ({ [key]: value }));
         setcoverageDetails(detailsArray);
       })
       .catch((err) => {
         console.error('getCoverage error:', err);
       });
   }, [treatmentPlanData?.suggestion_tab, id]);
-  const remapIssues = () => {
-    if (!treatmentPlanData) return;
 
-    // console.log('payload', payload);
-
+  /** Remap: call only once after plan load (no effect on key_areas to avoid endless calls). */
+  const remapIssues = (planData: any) => {
+    if (!planData || !id) return;
+    const payload = forApiPayload(planData.key_areas_to_address ?? planData.looking_forwards ?? []);
     Application.remapIssues({
       member_id: id,
-      suggestion_tab: treatmentPlanData?.suggestion_tab,
-      key_areas_to_address: treatmentPlanData?.looking_forwards,
+      suggestion_tab: planData.suggestion_tab ?? [],
+      key_areas_to_address: payload,
     })
       .then((res: any) => {
-        setTratmentPlanData((pre: any) => {
-          return {
-            ...pre,
-            suggestion_tab: res.data.suggestion_tab,
-            key_areas_to_address: res.data.key_areas_to_address,
-          };
-        });
+        setTratmentPlanData((pre: any) => ({
+          ...pre,
+          suggestion_tab: res.data.suggestion_tab,
+          key_areas_to_address: res.data.key_areas_to_address ?? toType2(pre.key_areas_to_address ?? pre.looking_forwards),
+          looking_forwards: type2ToFlatList(toType2(res.data.key_areas_to_address ?? pre.key_areas_to_address ?? [])),
+        }));
       })
       .catch((err) => {
-        console.error('getCoverage error:', err);
+        console.error('remapIssues error:', err);
       });
   };
+
+  // When user adds/edits/removes issues, call remap so backend and next step stay in sync (ref avoids loop).
   useEffect(() => {
-    remapIssues();
-  }, [treatmentPlanData?.looking_forwards, id]);
+    if (!treatmentPlanData || !id || !userDidChangeIssuesRef.current) return;
+    userDidChangeIssuesRef.current = false;
+    remapIssues(treatmentPlanData);
+  }, [treatmentPlanData?.key_areas_to_address, treatmentPlanData?.suggestion_tab, id]);
+
   const resolveNextStep = () => {
     setisFinalLoading(true);
     const continueSteps = () => {
@@ -202,13 +209,13 @@ const NewGenerateHolisticPlan = () => {
   };
   // const { treatmentId } = useContext(AppContext);
   const hasEssentialData = (data: any) => {
+    const hasKeyAreas = data?.looking_forwards?.length > 0 ||
+      (data?.key_areas_to_address && type2ToFlatList(toType2(data.key_areas_to_address)).length > 0);
     return (
       data?.client_insight &&
       data.client_insight.length > 0 &&
       data?.completion_suggestion &&
-      // data.completion_suggestion.length > 0 &&
-      data?.looking_forwards &&
-      data.looking_forwards.length > 0
+      hasKeyAreas
     );
   };
 
@@ -220,9 +227,16 @@ const NewGenerateHolisticPlan = () => {
         member_id: id,
       })
         .then((res) => {
-          setTratmentPlanData(res.data);
+          const data = res.data;
+          const keyAreas = toType2(data.key_areas_to_address ?? data.looking_forwards ?? []);
+          setTratmentPlanData({
+            ...data,
+            key_areas_to_address: keyAreas,
+            looking_forwards: type2ToFlatList(keyAreas),
+          });
           setClientGools({ ...res.data.client_goals });
           setActiveEl(res.data.result_tab[0]);
+          remapIssues({ ...data, key_areas_to_address: keyAreas, suggestion_tab: data.suggestion_tab ?? [] });
         })
         .catch((err) => {
           console.error('Error showing holistic plan:', err);
@@ -241,16 +255,16 @@ const NewGenerateHolisticPlan = () => {
           const essentialDataReady = hasEssentialData(data);
 
           if (essentialDataReady) {
-            setTratmentPlanData({
+            const keyAreas = toType2(data.looking_forwards ?? data.key_areas_to_address ?? []);
+            const payload = {
               ...data,
               member_id: id,
               suggestion_tab: [],
-              // result_tab: data.result_tab,
-              // treatment_id: data.treatment_id,
-              // need_focus_benchmarks_list: data.need_focus_benchmarks_list,
-              // medical_summary: data.medical_summary,
-              // client_goals: data.client_goals,
-            });
+              key_areas_to_address: keyAreas,
+              looking_forwards: type2ToFlatList(keyAreas),
+            };
+            setTratmentPlanData(payload);
+            remapIssues(payload);
           } else {
             console.log('Missing essential data');
           }
@@ -310,7 +324,9 @@ const NewGenerateHolisticPlan = () => {
     recommendation: string,
     newIssueList: string[],
     text?: string,
+    categoryKey?: string,
   ) => {
+    userDidChangeIssuesRef.current = true;
     setTratmentPlanData((pre: any) => {
       return {
         ...pre,
@@ -326,25 +342,40 @@ const NewGenerateHolisticPlan = () => {
       };
     });
     if (text) {
-      handleAddLookingForwards(text);
+      handleAddLookingForwards(text, categoryKey);
     }
   };
-  const handleAddLookingForwards = (text: string) => {
+  const handleAddLookingForwards = (text: string, categoryKey?: string) => {
+    userDidChangeIssuesRef.current = true;
     setTratmentPlanData((pre: any) => {
+      const type2 = toType2(pre.key_areas_to_address ?? pre.looking_forwards ?? []);
+      const keyAreas = { ...type2['Key areas to address'] };
+      const cat = categoryKey && keyAreas[categoryKey] ? categoryKey : 'critical_urgent';
+      if (!keyAreas[cat]) keyAreas[cat] = [];
+      const flat = type2ToFlatList(type2);
+      const num = flat.length + 1;
+      const issueLabel = text.replace(/^Issue \d+:\s*/i, '').trim() ? text : `Issue ${num}: ${text}`;
+      keyAreas[cat] = [...keyAreas[cat], issueLabel];
       return {
         ...pre,
-        looking_forwards: [
-          ...pre.looking_forwards,
-          'Issue ' + (pre.looking_forwards.length + 1) + ': ' + text,
-        ],
+        key_areas_to_address: { ...type2, 'Key areas to address': keyAreas },
+        looking_forwards: type2ToFlatList({ ...type2, 'Key areas to address': keyAreas }),
       };
     });
   };
   const handleRemoveLookingForwards = (text: string) => {
+    userDidChangeIssuesRef.current = true;
     setTratmentPlanData((pre: any) => {
+      const type2 = toType2(pre.key_areas_to_address ?? pre.looking_forwards ?? []);
+      const keyAreas = { ...type2['Key areas to address'] };
+      for (const k of Object.keys(keyAreas)) {
+        keyAreas[k] = (keyAreas[k] || []).filter((el: string) => el !== text);
+      }
+      const next = { ...type2, 'Key areas to address': keyAreas };
       return {
         ...pre,
-        looking_forwards: pre.looking_forwards.filter((el: any) => el !== text),
+        key_areas_to_address: next,
+        looking_forwards: type2ToFlatList(next),
       };
     });
   };
@@ -552,13 +583,13 @@ const NewGenerateHolisticPlan = () => {
                       setDetails={setcoverageDetails}
                       setLookingForwards={(newLookingForwards) => {
                         setTratmentPlanData((pre: any) => {
-                          return {
-                            ...pre,
-                            looking_forwards: newLookingForwards,
-                          };
+                          const next = typeof newLookingForwards === 'object' && newLookingForwards !== null && 'Key areas to address' in newLookingForwards
+                            ? toType2(newLookingForwards)
+                            : toType2(Array.isArray(newLookingForwards) ? newLookingForwards : []);
+                          return { ...pre, key_areas_to_address: next, looking_forwards: type2ToFlatList(next) };
                         });
                       }}
-                      lookingForwardsData={treatmentPlanData?.looking_forwards}
+                      lookingForwardsData={keyAreasType2 ?? treatmentPlanData?.looking_forwards}
                       handleRemoveIssueFromList={handleRemoveIssueFromList}
                     />
                   </div>
