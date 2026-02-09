@@ -2,6 +2,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import SvgIcon from '../../../utils/svgIcon';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
+import {
+  toType2,
+  buildType2FromListAndCategories,
+  CATEGORY_ORDER,
+  DEFAULT_CATEGORY_LABELS,
+} from '../../../utils/lookingForwards';
 
 // Define types for the data structure
 interface ConditionDataProps {
@@ -29,6 +35,10 @@ interface CardProps {
   onContentChange: (index: number, value: string) => void;
   onDelete: (index: number) => void;
   onAddNew: (value: string) => void;
+  onSaveWithCategories?: (
+    list: string[],
+    categories: Record<string, string>,
+  ) => void;
 }
 
 // Type for the section keys
@@ -61,6 +71,8 @@ interface GeneralConditionProps {
   showSuggestions: boolean;
   setIsClosed: React.Dispatch<React.SetStateAction<boolean>>;
   setShowSuggestions: React.Dispatch<React.SetStateAction<boolean>>;
+  /** Called after saving Health Planning Issues so parent can sync with backend (e.g. remap_issues). */
+  onSaveLookingForwardsSync?: (list: string[], keyAreas: any) => void;
 }
 export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   data,
@@ -69,6 +81,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   showSuggestions,
   setIsClosed,
   setShowSuggestions,
+  onSaveLookingForwardsSync,
 }) => {
   // const [data, setData] = useState<ConditionDataProps>(updata);
   const [editMode, setEditMode] = useState<EditModeState>({
@@ -113,14 +126,28 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
       });
     }
     if (section == 'lookingForwards') {
-      setData((prev: any) => {
-        return {
-          ...prev,
-          looking_forwards: tempData[section],
-        };
-      });
+      const list = tempData[section] ?? [];
+      const keyAreas = toType2(list);
+      setData((prev: any) => ({
+        ...prev,
+        looking_forwards: list,
+        key_areas_to_address: keyAreas,
+      }));
     }
     setEditMode((prev) => ({ ...prev, [section]: false }));
+  };
+  const handleSaveLookingForwardsWithCategories = (
+    list: string[],
+    categories: Record<string, string>,
+  ) => {
+    const keyAreas = buildType2FromListAndCategories(list, categories);
+    setData((prev: any) => ({
+      ...prev,
+      looking_forwards: list,
+      key_areas_to_address: keyAreas,
+    }));
+    setEditMode((prev) => ({ ...prev, lookingForwards: false }));
+    onSaveLookingForwardsSync?.(list, keyAreas);
   };
 
   const handleContentChange = (
@@ -273,6 +300,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           isEditing={editMode.lookingForwards}
           onEdit={() => handleEdit('lookingForwards')}
           onSave={() => handleSave('lookingForwards')}
+          onSaveWithCategories={handleSaveLookingForwardsWithCategories}
           onContentChange={(index, value) =>
             handleContentChange('lookingForwards', index, value)
           }
@@ -293,9 +321,24 @@ const Card: React.FC<CardProps> = ({
   onContentChange,
   onDelete,
   onAddNew,
+  onSaveWithCategories,
 }) => {
   const textareaRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
   const [currentIndex, setCurrentIndex] = useState<any>(null);
+  const isHealthPlanning = title === 'Health Planning Issues';
+  const [issueCategories, setIssueCategories] = useState<
+    Record<string, string>
+  >({});
+  useEffect(() => {
+    if (!isHealthPlanning || !content?.length) return;
+    setIssueCategories((prev) => {
+      const next = { ...prev };
+      (content as string[]).forEach((item) => {
+        if (item && !(item in next)) next[item] = 'critical_urgent';
+      });
+      return next;
+    });
+  }, [isHealthPlanning, content]);
   const adjustHeight = (element: HTMLTextAreaElement) => {
     element.style.height = 'auto';
     element.style.height = `${element.scrollHeight}px`;
@@ -329,15 +372,21 @@ const Card: React.FC<CardProps> = ({
               <div className="flex items-center gap-2 s">
                 <img
                   className="cursor-pointer size-6"
-                  src="/icons/cancel-edit.svg" // <-- pick your cancel icon
+                  src="/icons/cancel-edit.svg"
                   alt="Cancel Edit"
-                  onClick={onEdit} // toggles edit mode off
+                  onClick={onEdit}
                 />
                 <img
                   className="cursor-pointer size-6"
                   src="/icons/tick-square-background-green.svg"
                   alt=""
-                  onClick={onSave}
+                  onClick={() => {
+                    if (isHealthPlanning && onSaveWithCategories) {
+                      onSaveWithCategories(content ?? [], issueCategories);
+                    } else {
+                      onSave();
+                    }
+                  }}
                 />
               </div>
             ) : (
@@ -407,7 +456,7 @@ const Card: React.FC<CardProps> = ({
           {content?.map((item, index) => (
             <>
               {isEditing ? (
-                <div className="border border-Gray-50 rounded-xl py-3 pl-3 pr-2 w-full mb-2 flex items-center">
+                <div className="border border-Gray-50 rounded-xl py-3 pl-3 pr-2 w-full mb-2 flex items-center gap-2">
                   <textarea
                     ref={(el) => (textareaRefs.current[index] = el)}
                     value={item}
@@ -415,8 +464,46 @@ const Card: React.FC<CardProps> = ({
                       onContentChange(index, e.target.value);
                       adjustHeight(e.target);
                     }}
-                    className="w-[85%] px-4 text-justify resize-none text-sm outline-none overflow-hidden border-r border-Gray-50"
+                    className={`flex-1 min-w-0 px-4 text-justify resize-none text-sm outline-none overflow-hidden ${isHealthPlanning ? 'border-r border-Gray-50' : ''}`}
                   />
+                  {isHealthPlanning && (
+                    <div className="relative shrink-0">
+                      <select
+                        className="h-8 min-w-[140px] max-w-[180px] pl-3 pr-8 py-1.5 text-xs font-medium border border-Gray-50 rounded-xl bg-backgroundColor-Card text-Primary-DeepTeal outline-none focus:border-Primary-DeepTeal focus:ring-2 focus:ring-Primary-DeepTeal/20 cursor-pointer appearance-none shadow-100"
+                        value={issueCategories[item] ?? 'critical_urgent'}
+                        onChange={(e) =>
+                          setIssueCategories((prev) => ({
+                            ...prev,
+                            [item]: e.target.value,
+                          }))
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {CATEGORY_ORDER.map((key) => (
+                          <option key={key} value={key}>
+                            {DEFAULT_CATEGORY_LABELS[key]}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          className="text-Primary-DeepTeal"
+                        >
+                          <path
+                            d="M3 4.5L6 7.5L9 4.5"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  )}
                   {currentIndex === index ? (
                     <div className="flex flex-col justify-end items-center gap-2 ml-3">
                       <span className="text-xs  text-[#909090] ">Sure?</span>
@@ -447,18 +534,54 @@ const Card: React.FC<CardProps> = ({
                 </div>
               ) : (
                 <li
-                  className={` ${item.length > 1 && 'list-disc'} text-sm text-justify mt-2 ${
-                    title === 'Health Planning Issues'
-                      ? 'marker:text-gray-400'
-                      : ''
+                  className={`flex items-center gap-2 ${item.length > 1 && !isHealthPlanning ? 'list-disc' : ''} text-sm text-justify mt-2 ${
+                    isHealthPlanning ? 'marker:text-gray-400' : ''
                   }`}
                 >
-                  {title === 'Health Planning Issues' ? (
+                  {isHealthPlanning ? (
                     <>
-                      <span className="text-gray-500">
+                      <span className="text-Text-Secondary shrink-0">
                         {item.split(':')[0]}:
                       </span>{' '}
-                      {item.split(':')[1]?.trim()}
+                      <span className="min-w-0 flex-1">
+                        {item.split(':')[1]?.trim()}
+                      </span>
+                      <div className="relative shrink-0">
+                        <select
+                          disabled={!isEditing}
+                          className={`h-8 min-w-[140px] max-w-[180px] pl-3 pr-8 py-1.5 text-xs font-medium border border-Gray-50 rounded-xl bg-backgroundColor-Card text-Primary-DeepTeal outline-none appearance-none shadow-100 ${isEditing ? 'cursor-pointer focus:border-Primary-DeepTeal focus:ring-2 focus:ring-Primary-DeepTeal/20' : 'cursor-not-allowed opacity-75'}`}
+                          value={issueCategories[item] ?? 'critical_urgent'}
+                          onChange={(e) =>
+                            setIssueCategories((prev) => ({
+                              ...prev,
+                              [item]: e.target.value,
+                            }))
+                          }
+                        >
+                          {CATEGORY_ORDER.map((key) => (
+                            <option key={key} value={key}>
+                              {DEFAULT_CATEGORY_LABELS[key]}
+                            </option>
+                          ))}
+                        </select>
+                        <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 12 12"
+                            fill="none"
+                            className="text-Primary-DeepTeal"
+                          >
+                            <path
+                              d="M3 4.5L6 7.5L9 4.5"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      </div>
                     </>
                   ) : (
                     item
