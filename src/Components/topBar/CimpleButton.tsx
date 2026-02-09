@@ -24,11 +24,14 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
   const [needCompile, setNeedCompile] = useState(false);
   const [isCompiling, setIsCompiling] = useState(false);
   const [beRecompile, setBeRecompile] = useState(false);
+  const [latestRefresh, setLatestRefresh] = useState<string | null>(null);
   // const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
 
   /* ---------- derive state ---------- */
-
+  useEffect(() => {
+    setLatestRefresh(userInfoData?.latest_refresh)
+  },[userInfoData])
   const state = useMemo(() => {
     if (isLoading) return 'LOADING';
 
@@ -158,11 +161,34 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
     Application.checkClientRefresh(id as string)
       .then((res) => {
         setNeedCompile(res.data.need_of_refresh);
+        // const raw = res.data.latest_refresh;
+        // setLatestRefresh(
+        //   raw && String(raw).trim().toLowerCase() !== 'no data' ? raw : null,
+        // );
       })
       .catch(() => {})
       .finally(() => {
         setIsLaoding(false);
       });
+  };
+
+  const formatLatestRefreshLabel = (dateStr: string | null): string | null => {
+    if (!dateStr || String(dateStr).trim().toLowerCase() === 'no data')
+      return null;
+    const date = new Date(dateStr);
+    if (Number.isNaN(date.getTime())) return null;
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+    const inputStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    if (inputStart.getTime() === todayStart.getTime()) return 'today';
+    if (inputStart.getTime() === yesterdayStart.getTime()) return 'yesterday';
+    return date.toLocaleDateString(undefined, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
   };
 
   useEffect(() => {
@@ -274,6 +300,7 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
       setNeedCompile(false);
       Application.refreshData(id as string)
         .then(() => {
+          // setLatestRefresh(new Date().toISOString());
           publish('SyncRefresh', {});
           publish('disableGenerate', {});
         })
@@ -291,10 +318,12 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
 
   /* ---------- render ---------- */
 
+  const refreshLabel = formatLatestRefreshLabel(latestRefresh);
+
   return (
     // <Tooltip content={ui.tooltip}>
     <>
-      <div>
+      <div className="flex flex-col items-start gap-0.5 sm:flex-row sm:items-center sm:gap-2">
         <ButtonPrimary
           size="small"
           isSoftDisabled={ui.disabled}
@@ -335,6 +364,11 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
             {ui.label}
           </div>
         </ButtonPrimary>
+        {refreshLabel != null && (
+          <span className="text-Text-Secondary text-[10px] whitespace-nowrap">
+            Last compiled: {refreshLabel}
+          </span>
+        )}
       </div>
       <Tooltip
         place="bottom-start"
