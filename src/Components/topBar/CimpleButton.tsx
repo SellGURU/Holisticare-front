@@ -30,8 +30,8 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
 
   /* ---------- derive state ---------- */
   useEffect(() => {
-    setLatestRefresh(userInfoData?.latest_refresh)
-  },[userInfoData])
+    setLatestRefresh(userInfoData?.latest_refresh);
+  }, [userInfoData]);
   const state = useMemo(() => {
     if (isLoading) return 'LOADING';
 
@@ -178,10 +178,18 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
     const date = new Date(dateStr);
     if (Number.isNaN(date.getTime())) return null;
     const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    );
     const yesterdayStart = new Date(todayStart);
     yesterdayStart.setDate(yesterdayStart.getDate() - 1);
-    const inputStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const inputStart = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+    );
     if (inputStart.getTime() === todayStart.getTime()) return 'today';
     if (inputStart.getTime() === yesterdayStart.getTime()) return 'yesterday';
     return date.toLocaleDateString(undefined, {
