@@ -10,15 +10,15 @@ import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
 
 const labBiomarkerSteps: Step[] = [
-  {
-    target: '[data-tour="lab-title"]',
-    content: 'Here you can upload lab reports or manually add biomarkers.',
-    placement: 'bottom',
-  },
+  // {
+  //   target: '[data-tour="lab-title"]',
+  //   content: 'Here you can upload lab reports or manually add biomarkers.',
+  // },
   {
     target: '[data-tour="upload-switch"]',
     content:
       'Switch between uploading a lab report or adding biomarkers manually.',
+    placement: 'bottom',
   },
   {
     target: '[data-tour="file-uploader"]',
@@ -159,13 +159,6 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   const [showReminder, setShowReminder] = useState(false);
 
   useEffect(() => {
-    const seen = localStorage.getItem('labTourSeen');
-    if (!seen) {
-      setRun(true);
-      localStorage.setItem('labTourSeen', 'true');
-    }
-  }, []);
-  useEffect(() => {
     const tutorialSeen = localStorage.getItem('tutorialSeen');
     if (tutorialSeen === 'true') {
       return;
@@ -176,10 +169,24 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
       setShowReminder(true);
     }
   }, []);
-  const handleRestartTutorial = () => {
-    localStorage.removeItem('labTourSeen');
-    setShowReminder(false);
-    setRun(true);
+  useEffect(() => {
+    const showTutorialAgain = localStorage.getItem('showTutorialAgain');
+    if (showTutorialAgain === 'true') {
+      setRun(true);
+      return;
+    }
+    const seen = localStorage.getItem('labTourSeen');
+    if (!seen) {
+      setRun(true);
+      localStorage.setItem('labTourSeen', 'true');
+    }
+  }, []);
+  const handleViewTutorial = (value: boolean) => {
+    if (value) {
+      localStorage.setItem('showTutorialAgain', 'true');
+    } else {
+      localStorage.setItem('showTutorialAgain', 'false');
+    }
   };
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status } = data;
@@ -213,10 +220,17 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
           },
         }}
         callback={handleJoyrideCallback}
+        locale={{
+          last: 'Done',
+        }}
       />
       <TutorialReminderToast
         visible={showReminder}
-        onRestart={handleRestartTutorial}
+        onViewTutorial={(value) => {
+          handleViewTutorial(value);
+          setRun(value);
+        }}
+        setRun={setRun}
         onClose={() => {
           setShowReminder(false);
           localStorage.setItem('tutorialSeen', 'true');
