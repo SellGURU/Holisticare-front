@@ -6,7 +6,10 @@ import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
 import { splitInstructions } from '../../../help';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import ExpandableText from '../../../Components/expandableText';
-import { CATEGORY_ORDER, DEFAULT_CATEGORY_LABELS } from '../../../utils/lookingForwards';
+import {
+  CATEGORY_ORDER,
+  DEFAULT_CATEGORY_LABELS,
+} from '../../../utils/lookingForwards';
 
 interface ActivityCardProps {
   item: any;
@@ -15,7 +18,10 @@ interface ActivityCardProps {
   handleCheckboxChange: (category: string, itemId: number) => void;
   issuesData: Record<string, boolean>[];
   setIssuesData: (value: any) => void;
-  keyAreasType2?: { 'Key areas to address': Record<string, string[]>; category_labels?: Record<string, string> };
+  keyAreasType2?: {
+    'Key areas to address': Record<string, string[]>;
+    category_labels?: Record<string, string>;
+  };
   handleUpdateIssueListByKey: (
     category: string,
     recommendation: string,
@@ -80,7 +86,9 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
   const [addIssue, setAddIssue] = useState(false);
   const [newIssue, setNewIssue] = useState('');
-  const [newIssueCategoryKey, setNewIssueCategoryKey] = useState<string>(CATEGORY_ORDER[0]);
+  const [newIssueCategoryKey, setNewIssueCategoryKey] = useState<string>(
+    CATEGORY_ORDER[0],
+  );
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
   const lastSentIssueListRef = useRef<string[]>([]);
 
@@ -132,7 +140,8 @@ export const ActivityCard: FC<ActivityCardProps> = ({
     setAddIssue(false);
   };
 
-  const categoryLabels = keyAreasType2?.category_labels ?? DEFAULT_CATEGORY_LABELS;
+  const categoryLabels =
+    keyAreasType2?.category_labels ?? DEFAULT_CATEGORY_LABELS;
 
   const handleRemoveIssueFromList = (name: string) => {
     handleRemoveIssueFromListData(name);
@@ -249,10 +258,13 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                     }}
                   >
                     {(() => {
-                      const labels = keyAreasType2?.category_labels ?? DEFAULT_CATEGORY_LABELS;
+                      const labels =
+                        keyAreasType2?.category_labels ??
+                        DEFAULT_CATEGORY_LABELS;
                       const keyAreas = keyAreasType2?.['Key areas to address'];
                       const issuesDataFlat = issuesData ?? [];
-                      const hasCategories = keyAreas && typeof keyAreas === 'object';
+                      const hasCategories =
+                        keyAreas && typeof keyAreas === 'object';
 
                       const renderIssueRow = (
                         issue: Record<string, boolean>,
@@ -324,17 +336,24 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                           const list = keyAreas[catKey];
                           if (Array.isArray(list)) {
                             for (const issueName of list) {
-                              if (typeof issueName === 'string') issueToCategory[issueName] = catKey;
+                              if (typeof issueName === 'string')
+                                issueToCategory[issueName] = catKey;
                             }
                           }
                         }
                         // Group all issues from coverage (issuesData) by category; show every issue
-                        const byCategory: Record<string, { entry: Record<string, boolean> }[]> = {};
-                        for (const catKey of CATEGORY_ORDER) byCategory[catKey] = [];
+                        const byCategory: Record<
+                          string,
+                          { entry: Record<string, boolean> }[]
+                        > = {};
+                        for (const catKey of CATEGORY_ORDER)
+                          byCategory[catKey] = [];
                         for (const entry of issuesDataFlat) {
                           const issueName = Object.keys(entry)[0];
-                          const catKey = issueToCategory[issueName] ?? CATEGORY_ORDER[0];
-                          if (byCategory[catKey]) byCategory[catKey].push({ entry });
+                          const catKey =
+                            issueToCategory[issueName] ?? CATEGORY_ORDER[0];
+                          if (byCategory[catKey])
+                            byCategory[catKey].push({ entry });
                         }
                         let globalIndex = 0;
                         return CATEGORY_ORDER.map((catKey) => {
@@ -350,12 +369,15 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                                 const [text] = Object.entries(entry)[0];
                                 const issueLabel = text.split(':')[0].trim();
                                 const isInSelected = selectedIssues.some(
-                                  (r: string) => r.split(':')[0].trim() === issueLabel,
+                                  (r: string) =>
+                                    r.split(':')[0].trim() === issueLabel,
                                 );
                                 const idx = globalIndex++;
                                 const handleToggle = () => {
                                   const newSelected = isInSelected
-                                    ? item.issue_list.filter((r: string) => r !== text)
+                                    ? item.issue_list.filter(
+                                        (r: string) => r !== text,
+                                      )
                                     : [...item.issue_list, text];
                                   lastSentIssueListRef.current = newSelected;
                                   handleUpdateIssueListByKey(
@@ -431,10 +453,14 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                       {addIssue ? (
                         <>
                           <div className="flex flex-col gap-1">
-                            <label className="text-[10px] text-Text-Secondary">Category</label>
+                            <label className="text-[10px] text-Text-Secondary">
+                              Category
+                            </label>
                             <select
                               value={newIssueCategoryKey}
-                              onChange={(e) => setNewIssueCategoryKey(e.target.value)}
+                              onChange={(e) =>
+                                setNewIssueCategoryKey(e.target.value)
+                              }
                               className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border border-Gray-50 rounded-lg text-Text-Primary text-[10px]"
                             >
                               {CATEGORY_ORDER.map((catKey) => (

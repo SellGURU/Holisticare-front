@@ -26,7 +26,11 @@ export type KeyAreasType2 = {
 function isType2(data: unknown): data is KeyAreasType2 {
   if (!data || typeof data !== 'object') return false;
   const keyAreas = (data as KeyAreasType2)['Key areas to address'];
-  return typeof keyAreas === 'object' && keyAreas !== null && CATEGORY_ORDER.some((k) => k in keyAreas);
+  return (
+    typeof keyAreas === 'object' &&
+    keyAreas !== null &&
+    CATEGORY_ORDER.some((k) => k in keyAreas)
+  );
 }
 
 /** Normalize to type2. Accepts type1 (string[]) or type2. Returns type2. */
@@ -36,7 +40,9 @@ export function toType2(data: unknown): KeyAreasType2 {
     const out: Record<string, string[]> = {};
     for (const k of CATEGORY_ORDER) {
       const arr = keyAreas[k];
-      out[k] = Array.isArray(arr) ? arr.filter((x) => typeof x === 'string') : [];
+      out[k] = Array.isArray(arr)
+        ? arr.filter((x) => typeof x === 'string')
+        : [];
     }
     return {
       'Key areas to address': out,
@@ -44,11 +50,15 @@ export function toType2(data: unknown): KeyAreasType2 {
     };
   }
   // type1: list of strings -> all in critical_urgent
-  const list = Array.isArray(data) ? data.filter((x): x is string => typeof x === 'string') : [];
-  const numbered = list.map((s, i) => {
-    const content = s.replace(/^Issue \d+:\s*/i, '').trim();
-    return content ? `Issue ${i + 1}: ${content}` : '';
-  }).filter(Boolean);
+  const list = Array.isArray(data)
+    ? data.filter((x): x is string => typeof x === 'string')
+    : [];
+  const numbered = list
+    .map((s, i) => {
+      const content = s.replace(/^Issue \d+:\s*/i, '').trim();
+      return content ? `Issue ${i + 1}: ${content}` : '';
+    })
+    .filter(Boolean);
   return {
     category_labels: DEFAULT_CATEGORY_LABELS,
     'Key areas to address': {
@@ -66,7 +76,8 @@ export function type2ToFlatList(type2: KeyAreasType2): string[] {
   const flat: string[] = [];
   for (const k of CATEGORY_ORDER) {
     const arr = keyAreas[k];
-    if (Array.isArray(arr)) flat.push(...arr.filter((x) => typeof x === 'string'));
+    if (Array.isArray(arr))
+      flat.push(...arr.filter((x) => typeof x === 'string'));
   }
   return flat;
 }
@@ -77,14 +88,16 @@ export function forApiPayload(data: unknown): KeyAreasType2 {
 }
 
 /** For coverage list: [{ "Issue 1: ...": false }, ...]. */
-export function toCoverageDetails(type2: KeyAreasType2): Record<string, boolean>[] {
+export function toCoverageDetails(
+  type2: KeyAreasType2,
+): Record<string, boolean>[] {
   return type2ToFlatList(type2).map((issue) => ({ [issue]: false }));
 }
 
 /** Build type2 from flat list and per-issue category. */
 export function buildType2FromListAndCategories(
   list: string[],
-  categories: Record<string, string>
+  categories: Record<string, string>,
 ): KeyAreasType2 {
   const keyAreas: Record<string, string[]> = {
     critical_urgent: [],
@@ -93,9 +106,10 @@ export function buildType2FromListAndCategories(
     optional_enhancements: [],
   };
   for (const issue of list) {
-    const cat = categories[issue] && CATEGORY_ORDER.includes(categories[issue] as any)
-      ? categories[issue]
-      : 'critical_urgent';
+    const cat =
+      categories[issue] && CATEGORY_ORDER.includes(categories[issue] as any)
+        ? categories[issue]
+        : 'critical_urgent';
     if (keyAreas[cat]) keyAreas[cat].push(issue);
   }
   return {

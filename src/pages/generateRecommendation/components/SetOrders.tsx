@@ -9,7 +9,10 @@ import { ActivityCard } from './ActivityCard';
 import { CoverageCard } from '../../../Components/coverageCard';
 import SearchBox from '../../../Components/SearchBox';
 import { resolveCategoryIcon, resolveCategoryName } from '../../../help';
-import { CATEGORY_ORDER, DEFAULT_CATEGORY_LABELS } from '../../../utils/lookingForwards';
+import {
+  CATEGORY_ORDER,
+  DEFAULT_CATEGORY_LABELS,
+} from '../../../utils/lookingForwards';
 
 type CategoryState = {
   name: string;
@@ -22,7 +25,10 @@ interface SetOrdersProps {
   setData: (values: any) => void;
   setLookingForwards: (values: any) => void;
   lookingForwardsData: any;
-  keyAreasType2?: { 'Key areas to address': Record<string, string[]>; category_labels?: Record<string, string> };
+  keyAreasType2?: {
+    'Key areas to address': Record<string, string[]>;
+    category_labels?: Record<string, string>;
+  };
   storeChecked: (data: any) => void;
   // checkeds: Array<any>;
   reset: () => void;
@@ -303,14 +309,18 @@ export const SetOrders: FC<SetOrdersProps> = ({
   }, [activeCategory]);
 
   const handleAddLookingForwards = (text: string, categoryKey?: string) => {
-    const flatList = Array.isArray(lookingForwardsData) ? lookingForwardsData : [];
+    const flatList = Array.isArray(lookingForwardsData)
+      ? lookingForwardsData
+      : [];
     const newIssueName = 'Issue ' + (flatList.length + 1) + ': ' + text;
     if (categoryKey) {
       const keyAreas = keyAreasType2?.['Key areas to address'];
       if (keyAreas && typeof keyAreas === 'object') {
         const nextKeyAreas = { ...keyAreas };
         const catList = nextKeyAreas[categoryKey];
-        nextKeyAreas[categoryKey] = Array.isArray(catList) ? [...catList, newIssueName] : [newIssueName];
+        nextKeyAreas[categoryKey] = Array.isArray(catList)
+          ? [...catList, newIssueName]
+          : [newIssueName];
         setLookingForwards({
           ...keyAreasType2,
           'Key areas to address': nextKeyAreas,
@@ -334,7 +344,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
     }
   };
   const handleRemoveLookingForwards = (text: string) => {
-    const flatList = Array.isArray(lookingForwardsData) ? lookingForwardsData : [];
+    const flatList = Array.isArray(lookingForwardsData)
+      ? lookingForwardsData
+      : [];
     setLookingForwards(flatList.filter((el: any) => el !== text));
   };
 

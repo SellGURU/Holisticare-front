@@ -2,7 +2,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import SvgIcon from '../../../utils/svgIcon';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
-import { toType2, buildType2FromListAndCategories, CATEGORY_ORDER, DEFAULT_CATEGORY_LABELS } from '../../../utils/lookingForwards';
+import {
+  toType2,
+  buildType2FromListAndCategories,
+  CATEGORY_ORDER,
+  DEFAULT_CATEGORY_LABELS,
+} from '../../../utils/lookingForwards';
 
 // Define types for the data structure
 interface ConditionDataProps {
@@ -30,7 +35,10 @@ interface CardProps {
   onContentChange: (index: number, value: string) => void;
   onDelete: (index: number) => void;
   onAddNew: (value: string) => void;
-  onSaveWithCategories?: (list: string[], categories: Record<string, string>) => void;
+  onSaveWithCategories?: (
+    list: string[],
+    categories: Record<string, string>,
+  ) => void;
 }
 
 // Type for the section keys
@@ -128,7 +136,10 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
     }
     setEditMode((prev) => ({ ...prev, [section]: false }));
   };
-  const handleSaveLookingForwardsWithCategories = (list: string[], categories: Record<string, string>) => {
+  const handleSaveLookingForwardsWithCategories = (
+    list: string[],
+    categories: Record<string, string>,
+  ) => {
     const keyAreas = buildType2FromListAndCategories(list, categories);
     setData((prev: any) => ({
       ...prev,
@@ -315,7 +326,9 @@ const Card: React.FC<CardProps> = ({
   const textareaRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
   const [currentIndex, setCurrentIndex] = useState<any>(null);
   const isHealthPlanning = title === 'Health Planning Issues';
-  const [issueCategories, setIssueCategories] = useState<Record<string, string>>({});
+  const [issueCategories, setIssueCategories] = useState<
+    Record<string, string>
+  >({});
   useEffect(() => {
     if (!isHealthPlanning || !content?.length) return;
     setIssueCategories((prev) => {
@@ -459,7 +472,10 @@ const Card: React.FC<CardProps> = ({
                         className="h-8 min-w-[140px] max-w-[180px] pl-3 pr-8 py-1.5 text-xs font-medium border border-Gray-50 rounded-xl bg-backgroundColor-Card text-Primary-DeepTeal outline-none focus:border-Primary-DeepTeal focus:ring-2 focus:ring-Primary-DeepTeal/20 cursor-pointer appearance-none shadow-100"
                         value={issueCategories[item] ?? 'critical_urgent'}
                         onChange={(e) =>
-                          setIssueCategories((prev) => ({ ...prev, [item]: e.target.value }))
+                          setIssueCategories((prev) => ({
+                            ...prev,
+                            [item]: e.target.value,
+                          }))
                         }
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -470,8 +486,20 @@ const Card: React.FC<CardProps> = ({
                         ))}
                       </select>
                       <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-Primary-DeepTeal">
-                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          className="text-Primary-DeepTeal"
+                        >
+                          <path
+                            d="M3 4.5L6 7.5L9 4.5"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
                         </svg>
                       </span>
                     </div>
@@ -515,14 +543,19 @@ const Card: React.FC<CardProps> = ({
                       <span className="text-Text-Secondary shrink-0">
                         {item.split(':')[0]}:
                       </span>{' '}
-                      <span className="min-w-0 flex-1">{item.split(':')[1]?.trim()}</span>
+                      <span className="min-w-0 flex-1">
+                        {item.split(':')[1]?.trim()}
+                      </span>
                       <div className="relative shrink-0">
                         <select
                           disabled={!isEditing}
                           className={`h-8 min-w-[140px] max-w-[180px] pl-3 pr-8 py-1.5 text-xs font-medium border border-Gray-50 rounded-xl bg-backgroundColor-Card text-Primary-DeepTeal outline-none appearance-none shadow-100 ${isEditing ? 'cursor-pointer focus:border-Primary-DeepTeal focus:ring-2 focus:ring-Primary-DeepTeal/20' : 'cursor-not-allowed opacity-75'}`}
                           value={issueCategories[item] ?? 'critical_urgent'}
                           onChange={(e) =>
-                            setIssueCategories((prev) => ({ ...prev, [item]: e.target.value }))
+                            setIssueCategories((prev) => ({
+                              ...prev,
+                              [item]: e.target.value,
+                            }))
                           }
                         >
                           {CATEGORY_ORDER.map((key) => (
@@ -532,8 +565,20 @@ const Card: React.FC<CardProps> = ({
                           ))}
                         </select>
                         <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-Primary-DeepTeal">
-                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 12 12"
+                            fill="none"
+                            className="text-Primary-DeepTeal"
+                          >
+                            <path
+                              d="M3 4.5L6 7.5L9 4.5"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
                           </svg>
                         </span>
                       </div>

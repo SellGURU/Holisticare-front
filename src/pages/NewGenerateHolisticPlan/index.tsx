@@ -53,7 +53,9 @@ const NewGenerateHolisticPlan = () => {
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
 
   /** Key areas in type2 format. */
-  const keyAreasType2 = treatmentPlanData?.key_areas_to_address as KeyAreasType2 | undefined;
+  const keyAreasType2 = treatmentPlanData?.key_areas_to_address as
+    | KeyAreasType2
+    | undefined;
 
   /** Set when user adds/edits/removes issues so we call remap once (avoids endless loop). */
   const userDidChangeIssuesRef = useRef(false);
@@ -62,7 +64,9 @@ const NewGenerateHolisticPlan = () => {
   useEffect(() => {
     if (!treatmentPlanData || !id) return;
     const selectedInterventions = treatmentPlanData?.suggestion_tab || [];
-    const payload = forApiPayload(keyAreasType2 ?? treatmentPlanData?.looking_forwards ?? []);
+    const payload = forApiPayload(
+      keyAreasType2 ?? treatmentPlanData?.looking_forwards ?? [],
+    );
 
     Application.getCoverage({
       member_id: id,
@@ -72,7 +76,9 @@ const NewGenerateHolisticPlan = () => {
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
         const detailsObj = res.data['key areas to address'] || {};
-        const detailsArray = Object.entries(detailsObj).map(([key, value]) => ({ [key]: value }));
+        const detailsArray = Object.entries(detailsObj).map(([key, value]) => ({
+          [key]: value,
+        }));
         setcoverageDetails(detailsArray);
       })
       .catch((err) => {
@@ -83,7 +89,9 @@ const NewGenerateHolisticPlan = () => {
   /** Remap: call only once after plan load (no effect on key_areas to avoid endless calls). */
   const remapIssues = (planData: any) => {
     if (!planData || !id) return;
-    const payload = forApiPayload(planData.key_areas_to_address ?? planData.looking_forwards ?? []);
+    const payload = forApiPayload(
+      planData.key_areas_to_address ?? planData.looking_forwards ?? [],
+    );
     Application.remapIssues({
       member_id: id,
       suggestion_tab: planData.suggestion_tab ?? [],
@@ -93,8 +101,14 @@ const NewGenerateHolisticPlan = () => {
         setTratmentPlanData((pre: any) => ({
           ...pre,
           suggestion_tab: res.data.suggestion_tab,
-          key_areas_to_address: res.data.key_areas_to_address ?? toType2(pre.key_areas_to_address ?? pre.looking_forwards),
-          looking_forwards: type2ToFlatList(toType2(res.data.key_areas_to_address ?? pre.key_areas_to_address ?? [])),
+          key_areas_to_address:
+            res.data.key_areas_to_address ??
+            toType2(pre.key_areas_to_address ?? pre.looking_forwards),
+          looking_forwards: type2ToFlatList(
+            toType2(
+              res.data.key_areas_to_address ?? pre.key_areas_to_address ?? [],
+            ),
+          ),
         }));
       })
       .catch((err) => {
@@ -107,7 +121,11 @@ const NewGenerateHolisticPlan = () => {
     if (!treatmentPlanData || !id || !userDidChangeIssuesRef.current) return;
     userDidChangeIssuesRef.current = false;
     remapIssues(treatmentPlanData);
-  }, [treatmentPlanData?.key_areas_to_address, treatmentPlanData?.suggestion_tab, id]);
+  }, [
+    treatmentPlanData?.key_areas_to_address,
+    treatmentPlanData?.suggestion_tab,
+    id,
+  ]);
 
   const resolveNextStep = () => {
     setisFinalLoading(true);
@@ -209,8 +227,10 @@ const NewGenerateHolisticPlan = () => {
   };
   // const { treatmentId } = useContext(AppContext);
   const hasEssentialData = (data: any) => {
-    const hasKeyAreas = data?.looking_forwards?.length > 0 ||
-      (data?.key_areas_to_address && type2ToFlatList(toType2(data.key_areas_to_address)).length > 0);
+    const hasKeyAreas =
+      data?.looking_forwards?.length > 0 ||
+      (data?.key_areas_to_address &&
+        type2ToFlatList(toType2(data.key_areas_to_address)).length > 0);
     return (
       data?.client_insight &&
       data.client_insight.length > 0 &&
@@ -228,7 +248,9 @@ const NewGenerateHolisticPlan = () => {
       })
         .then((res) => {
           const data = res.data;
-          const keyAreas = toType2(data.key_areas_to_address ?? data.looking_forwards ?? []);
+          const keyAreas = toType2(
+            data.key_areas_to_address ?? data.looking_forwards ?? [],
+          );
           setTratmentPlanData({
             ...data,
             key_areas_to_address: keyAreas,
@@ -236,7 +258,11 @@ const NewGenerateHolisticPlan = () => {
           });
           setClientGools({ ...res.data.client_goals });
           setActiveEl(res.data.result_tab[0]);
-          remapIssues({ ...data, key_areas_to_address: keyAreas, suggestion_tab: data.suggestion_tab ?? [] });
+          remapIssues({
+            ...data,
+            key_areas_to_address: keyAreas,
+            suggestion_tab: data.suggestion_tab ?? [],
+          });
         })
         .catch((err) => {
           console.error('Error showing holistic plan:', err);
@@ -255,7 +281,9 @@ const NewGenerateHolisticPlan = () => {
           const essentialDataReady = hasEssentialData(data);
 
           if (essentialDataReady) {
-            const keyAreas = toType2(data.looking_forwards ?? data.key_areas_to_address ?? []);
+            const keyAreas = toType2(
+              data.looking_forwards ?? data.key_areas_to_address ?? [],
+            );
             const payload = {
               ...data,
               member_id: id,
@@ -348,25 +376,35 @@ const NewGenerateHolisticPlan = () => {
   const handleAddLookingForwards = (text: string, categoryKey?: string) => {
     userDidChangeIssuesRef.current = true;
     setTratmentPlanData((pre: any) => {
-      const type2 = toType2(pre.key_areas_to_address ?? pre.looking_forwards ?? []);
+      const type2 = toType2(
+        pre.key_areas_to_address ?? pre.looking_forwards ?? [],
+      );
       const keyAreas = { ...type2['Key areas to address'] };
-      const cat = categoryKey && keyAreas[categoryKey] ? categoryKey : 'critical_urgent';
+      const cat =
+        categoryKey && keyAreas[categoryKey] ? categoryKey : 'critical_urgent';
       if (!keyAreas[cat]) keyAreas[cat] = [];
       const flat = type2ToFlatList(type2);
       const num = flat.length + 1;
-      const issueLabel = text.replace(/^Issue \d+:\s*/i, '').trim() ? text : `Issue ${num}: ${text}`;
+      const issueLabel = text.replace(/^Issue \d+:\s*/i, '').trim()
+        ? text
+        : `Issue ${num}: ${text}`;
       keyAreas[cat] = [...keyAreas[cat], issueLabel];
       return {
         ...pre,
         key_areas_to_address: { ...type2, 'Key areas to address': keyAreas },
-        looking_forwards: type2ToFlatList({ ...type2, 'Key areas to address': keyAreas }),
+        looking_forwards: type2ToFlatList({
+          ...type2,
+          'Key areas to address': keyAreas,
+        }),
       };
     });
   };
   const handleRemoveLookingForwards = (text: string) => {
     userDidChangeIssuesRef.current = true;
     setTratmentPlanData((pre: any) => {
-      const type2 = toType2(pre.key_areas_to_address ?? pre.looking_forwards ?? []);
+      const type2 = toType2(
+        pre.key_areas_to_address ?? pre.looking_forwards ?? [],
+      );
       const keyAreas = { ...type2['Key areas to address'] };
       for (const k of Object.keys(keyAreas)) {
         keyAreas[k] = (keyAreas[k] || []).filter((el: string) => el !== text);
@@ -583,13 +621,26 @@ const NewGenerateHolisticPlan = () => {
                       setDetails={setcoverageDetails}
                       setLookingForwards={(newLookingForwards) => {
                         setTratmentPlanData((pre: any) => {
-                          const next = typeof newLookingForwards === 'object' && newLookingForwards !== null && 'Key areas to address' in newLookingForwards
-                            ? toType2(newLookingForwards)
-                            : toType2(Array.isArray(newLookingForwards) ? newLookingForwards : []);
-                          return { ...pre, key_areas_to_address: next, looking_forwards: type2ToFlatList(next) };
+                          const next =
+                            typeof newLookingForwards === 'object' &&
+                            newLookingForwards !== null &&
+                            'Key areas to address' in newLookingForwards
+                              ? toType2(newLookingForwards)
+                              : toType2(
+                                  Array.isArray(newLookingForwards)
+                                    ? newLookingForwards
+                                    : [],
+                                );
+                          return {
+                            ...pre,
+                            key_areas_to_address: next,
+                            looking_forwards: type2ToFlatList(next),
+                          };
                         });
                       }}
-                      lookingForwardsData={keyAreasType2 ?? treatmentPlanData?.looking_forwards}
+                      lookingForwardsData={
+                        keyAreasType2 ?? treatmentPlanData?.looking_forwards
+                      }
                       handleRemoveIssueFromList={handleRemoveIssueFromList}
                     />
                   </div>

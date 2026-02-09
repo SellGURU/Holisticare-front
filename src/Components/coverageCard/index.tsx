@@ -55,11 +55,14 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
     if (issue.trim() === '') return;
     const type2 = toType2(lookingForwardsData);
     const keyAreas = { ...type2['Key areas to address'] };
-    const cat = categoryKey && keyAreas[categoryKey] ? categoryKey : 'critical_urgent';
+    const cat =
+      categoryKey && keyAreas[categoryKey] ? categoryKey : 'critical_urgent';
     if (!keyAreas[cat]) keyAreas[cat] = [];
     const flat = type2ToFlatList(type2);
     const num = flat.length + 1;
-    const name = issue.replace(/^Issue \d+:\s*/i, '').trim() ? issue : `Issue ${num}: ${issue}`;
+    const name = issue.replace(/^Issue \d+:\s*/i, '').trim()
+      ? issue
+      : `Issue ${num}: ${issue}`;
     keyAreas[cat] = [...keyAreas[cat], name];
     const nextType2 = { ...type2, 'Key areas to address': keyAreas };
     setDetails([...details, { [name]: false }]);

@@ -13,7 +13,11 @@ import SvgIcon from '../../utils/svgIcon';
 import { AppContext } from '../../store/app';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import { publish, subscribe } from '../../utils/event';
-import { toType2, type2ToFlatList, forApiPayload } from '../../utils/lookingForwards';
+import {
+  toType2,
+  type2ToFlatList,
+  forApiPayload,
+} from '../../utils/lookingForwards';
 
 type CategoryState = {
   name: string;
@@ -77,13 +81,18 @@ export const GenerateRecommendation = () => {
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
 
   const keyAreasType2 = treatmentPlanData?.key_areas_to_address;
-  const lookingForwardsFlat = keyAreasType2 ? type2ToFlatList(toType2(keyAreasType2)) : (treatmentPlanData?.looking_forwards ?? []);
+  const lookingForwardsFlat = keyAreasType2
+    ? type2ToFlatList(toType2(keyAreasType2))
+    : (treatmentPlanData?.looking_forwards ?? []);
 
   const resolveCoverage = () => {
     if (!treatmentPlanData || !id) return;
     const selectedInterventions =
-      treatmentPlanData?.suggestion_tab?.filter((item: any) => item.checked) || [];
-    const payload = forApiPayload(keyAreasType2 ?? treatmentPlanData?.looking_forwards ?? []);
+      treatmentPlanData?.suggestion_tab?.filter((item: any) => item.checked) ||
+      [];
+    const payload = forApiPayload(
+      keyAreasType2 ?? treatmentPlanData?.looking_forwards ?? [],
+    );
 
     Application.getCoverage({
       member_id: id,
@@ -93,7 +102,9 @@ export const GenerateRecommendation = () => {
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
         const detailsObj = res.data['key areas to address'] || {};
-        const detailsArray = Object.entries(detailsObj).map(([key, value]) => ({ [key]: value }));
+        const detailsArray = Object.entries(detailsObj).map(([key, value]) => ({
+          [key]: value,
+        }));
         setcoverageDetails(detailsArray);
       })
       .catch((err) => {
@@ -108,9 +119,14 @@ export const GenerateRecommendation = () => {
       clearTimeout(remapLoadingTimeoutRef.current);
       remapLoadingTimeoutRef.current = null;
     }
-    remapLoadingTimeoutRef.current = setTimeout(() => setIsRemapLoading(true), 2000);
+    remapLoadingTimeoutRef.current = setTimeout(
+      () => setIsRemapLoading(true),
+      2000,
+    );
 
-    const payload = forApiPayload(planData.key_areas_to_address ?? planData.looking_forwards ?? []);
+    const payload = forApiPayload(
+      planData.key_areas_to_address ?? planData.looking_forwards ?? [],
+    );
     Application.remapIssues({
       member_id: id,
       suggestion_tab: planData.suggestion_tab ?? [],
@@ -120,8 +136,14 @@ export const GenerateRecommendation = () => {
         setTratmentPlanData((pre: any) => ({
           ...pre,
           suggestion_tab: res.data.suggestion_tab,
-          key_areas_to_address: res.data.key_areas_to_address ?? toType2(pre.key_areas_to_address ?? pre.looking_forwards),
-          looking_forwards: type2ToFlatList(toType2(res.data.key_areas_to_address ?? pre.key_areas_to_address ?? [])),
+          key_areas_to_address:
+            res.data.key_areas_to_address ??
+            toType2(pre.key_areas_to_address ?? pre.looking_forwards),
+          looking_forwards: type2ToFlatList(
+            toType2(
+              res.data.key_areas_to_address ?? pre.key_areas_to_address ?? [],
+            ),
+          ),
         }));
       })
       .catch((err) => {
@@ -164,7 +186,9 @@ export const GenerateRecommendation = () => {
     const suggestionsDataReady = hasSuggestionsData(data);
 
     if (essentialDataReady) {
-      const keyAreas = toType2(data.key_areas_to_address ?? data.looking_forwards ?? []);
+      const keyAreas = toType2(
+        data.key_areas_to_address ?? data.looking_forwards ?? [],
+      );
       const payload = {
         ...data,
         client_insight: data.client_insight || [],
@@ -531,7 +555,11 @@ export const GenerateRecommendation = () => {
               setIsClosed={setisClosed}
               setShowSuggestions={setShowSuggestions}
               onSaveLookingForwardsSync={(list, keyAreas) => {
-                remapIssues({ ...treatmentPlanData, looking_forwards: list, key_areas_to_address: keyAreas });
+                remapIssues({
+                  ...treatmentPlanData,
+                  looking_forwards: list,
+                  key_areas_to_address: keyAreas,
+                });
               }}
             ></GeneralCondition>
           ) : currentStepIndex === 1 ? (
@@ -570,10 +598,21 @@ export const GenerateRecommendation = () => {
               }}
               setLookingForwards={(newLookingForwards) => {
                 setTratmentPlanData((pre: any) => {
-                  const next = typeof newLookingForwards === 'object' && newLookingForwards !== null && 'Key areas to address' in newLookingForwards
-                    ? toType2(newLookingForwards)
-                    : toType2(Array.isArray(newLookingForwards) ? newLookingForwards : []);
-                  return { ...pre, key_areas_to_address: next, looking_forwards: type2ToFlatList(next) };
+                  const next =
+                    typeof newLookingForwards === 'object' &&
+                    newLookingForwards !== null &&
+                    'Key areas to address' in newLookingForwards
+                      ? toType2(newLookingForwards)
+                      : toType2(
+                          Array.isArray(newLookingForwards)
+                            ? newLookingForwards
+                            : [],
+                        );
+                  return {
+                    ...pre,
+                    key_areas_to_address: next,
+                    looking_forwards: type2ToFlatList(next),
+                  };
                 });
               }}
               lookingForwardsData={lookingForwardsFlat}
@@ -600,13 +639,26 @@ export const GenerateRecommendation = () => {
               data={treatmentPlanData?.suggestion_tab}
               setLookingForwards={(newLookingForwards) => {
                 setTratmentPlanData((pre: any) => {
-                  const next = typeof newLookingForwards === 'object' && newLookingForwards !== null && 'Key areas to address' in newLookingForwards
-                    ? toType2(newLookingForwards)
-                    : toType2(Array.isArray(newLookingForwards) ? newLookingForwards : []);
-                  return { ...pre, key_areas_to_address: next, looking_forwards: type2ToFlatList(next) };
+                  const next =
+                    typeof newLookingForwards === 'object' &&
+                    newLookingForwards !== null &&
+                    'Key areas to address' in newLookingForwards
+                      ? toType2(newLookingForwards)
+                      : toType2(
+                          Array.isArray(newLookingForwards)
+                            ? newLookingForwards
+                            : [],
+                        );
+                  return {
+                    ...pre,
+                    key_areas_to_address: next,
+                    looking_forwards: type2ToFlatList(next),
+                  };
                 });
               }}
-              lookingForwardsData={keyAreasType2 ?? treatmentPlanData?.looking_forwards}
+              lookingForwardsData={
+                keyAreasType2 ?? treatmentPlanData?.looking_forwards
+              }
             ></Overview>
           )}
         </div>

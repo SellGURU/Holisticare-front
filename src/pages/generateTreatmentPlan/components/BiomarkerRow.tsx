@@ -14,7 +14,10 @@ import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import Checkbox from '../../../Components/checkbox';
-import { CATEGORY_ORDER, DEFAULT_CATEGORY_LABELS } from '../../../utils/lookingForwards';
+import {
+  CATEGORY_ORDER,
+  DEFAULT_CATEGORY_LABELS,
+} from '../../../utils/lookingForwards';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -133,7 +136,9 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
   const newIssueCategoryDropdown = (
     <div className="flex items-center gap-2 w-full">
-      <span className="text-Text-Secondary text-[10px] shrink-0">Category:</span>
+      <span className="text-Text-Secondary text-[10px] shrink-0">
+        Category:
+      </span>
       <div className="relative shrink-0">
         <select
           value={newIssueCategory}
@@ -148,7 +153,13 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
         </select>
         <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-Primary-DeepTeal">
           <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M3 4.5L6 7.5L9 4.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </span>
       </div>
