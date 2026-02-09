@@ -8,6 +8,7 @@ import PackagePage from './components/Package';
 import { ClinicPreferences } from './components/ClinicPreferences';
 import { ChangePassword } from '../../Components/changePassword';
 import Application from '../../api/app';
+import { ShowTutorial } from './components/ShowTutorial';
 const Setting: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState('Clinic Preferences');
   const [loginWithGoogle, setLoginWithGoogle] = useState(false);
@@ -28,15 +29,17 @@ const Setting: React.FC = () => {
       case 'Clinic Preferences':
         return <ClinicPreferences />;
       case 'Zapier':
-        return <Zappier></Zappier>;
+        return <Zappier />;
       case 'Update Your Profile':
         return <></>;
       // return <UpdateProfileContent />;
       case 'Change Password':
-        return <ChangePassword></ChangePassword>;
+        return <ChangePassword />;
 
+      case 'Show Tutorial':
+        return <ShowTutorial />;
       case 'Packages':
-        return <PackagePage></PackagePage>;
+        return <PackagePage />;
       // return <ChangePasswordContent />;
       // Add other cases as needed...
       default:
