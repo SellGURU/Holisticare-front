@@ -423,17 +423,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const [showReminder, setShowReminder] = useState(false);
   useEffect(() => {
     if (biomarkers.length > 0) {
-      const seen = localStorage.getItem('biomarkersTourSeen');
-      if (!seen) {
-        setTimeout(() => {
-          setRun(true);
-        }, 3000);
-        localStorage.setItem('biomarkersTourSeen', 'true');
-      }
-    }
-  }, [biomarkers.length]);
-  useEffect(() => {
-    if (biomarkers.length > 0) {
       const tutorialSeen = localStorage.getItem('tutorialSeen');
       if (tutorialSeen === 'true') {
         return;
@@ -445,10 +434,30 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       }
     }
   }, [biomarkers.length]);
-  const handleRestartTutorial = () => {
-    localStorage.removeItem('biomarkersTourSeen');
-    setShowReminder(false);
-    setRun(true);
+  useEffect(() => {
+    if (biomarkers.length > 0) {
+      const showTutorialAgain = localStorage.getItem('showTutorialAgain');
+      if (showTutorialAgain === 'true') {
+        setTimeout(() => {
+          setRun(true);
+        }, 3000);
+        return;
+      }
+      const seen = localStorage.getItem('biomarkersTourSeen');
+      if (!seen) {
+        setTimeout(() => {
+          setRun(true);
+        }, 3000);
+        localStorage.setItem('biomarkersTourSeen', 'true');
+      }
+    }
+  }, [biomarkers.length]);
+  const handleViewTutorial = (value: boolean) => {
+    if (value) {
+      localStorage.setItem('showTutorialAgain', 'true');
+    } else {
+      localStorage.setItem('showTutorialAgain', 'false');
+    }
   };
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status } = data;
@@ -483,11 +492,18 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             },
           }}
           callback={handleJoyrideCallback}
+          locale={{
+            last: 'Done',
+          }}
         />
       )}
       <TutorialReminderToast
         visible={showReminder}
-        onRestart={handleRestartTutorial}
+        onViewTutorial={(value) => {
+          handleViewTutorial(value);
+          setRun(value);
+        }}
+        setRun={setRun}
         onClose={() => {
           setShowReminder(false);
           localStorage.setItem('tutorialSeen', 'true');
