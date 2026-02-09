@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import RowEditModal from './RowEditModal';
 
 function cn(...xs: Array<string | false | undefined | null>) {
