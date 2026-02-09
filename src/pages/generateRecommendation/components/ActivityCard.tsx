@@ -101,13 +101,17 @@ export const ActivityCard: FC<ActivityCardProps> = ({
         if (Array.isArray(arr)) arr.forEach((s: string) => keyAreasSet.add(s));
       }
     }
-    const result = (item.issue_list || []).filter((issue: string) =>
-      issuesData.some((obj) => Object.keys(obj)[0] === issue) || keyAreasSet.has(issue),
+    const result = (item.issue_list || []).filter(
+      (issue: string) =>
+        issuesData.some((obj) => Object.keys(obj)[0] === issue) ||
+        keyAreasSet.has(issue),
     );
     if (lastSentIssueListRef.current.length > 0) {
       if (
         result.length === lastSentIssueListRef.current.length &&
-        result.every((r: string, i: number) => r === lastSentIssueListRef.current[i])
+        result.every(
+          (r: string, i: number) => r === lastSentIssueListRef.current[i],
+        )
       ) {
         setSelectedIssues(result);
         lastSentIssueListRef.current = [];
@@ -358,7 +362,8 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                               if (typeof issueName === 'string')
                                 byCategory[catKey].push({
                                   entry: {
-                                    [issueName]: coverageMap[issueName] ?? false,
+                                    [issueName]:
+                                      coverageMap[issueName] ?? false,
                                   },
                                 });
                             }
