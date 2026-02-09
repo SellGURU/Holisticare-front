@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 class Api {
   protected static base_url: string =
     // 'https://marketing-vercel-one.vercel.app/dashboard';
-  'https://marketing-vercel-one.vercel.app/test_dashboard';
+    'https://marketing-vercel-one.vercel.app/test_dashboard';
   // protected static base_url: string = "https://mock.app";
   protected static post(url: string, data?: any, config?: any) {
     if (!config?.noPending) {

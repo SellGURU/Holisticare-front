@@ -15,11 +15,11 @@ type Thresholds = Record<
 >;
 
 function ensureThresholds(v: any): Thresholds {
-  if (v && typeof v === "object" && !Array.isArray(v)) return v as Thresholds;
+  if (v && typeof v === 'object' && !Array.isArray(v)) return v as Thresholds;
   return { male: {}, female: {} };
 }
 
- export default function ThresholdsEditor({
+export default function ThresholdsEditor({
   value,
   onChange,
 }: {
@@ -28,9 +28,15 @@ function ensureThresholds(v: any): Thresholds {
 }) {
   const thresholds = ensureThresholds(value);
 
-  const genders = Object.keys(thresholds).length ? Object.keys(thresholds) : ["male", "female"];
+  const genders = Object.keys(thresholds).length
+    ? Object.keys(thresholds)
+    : ['male', 'female'];
 
-  function setGenderRange(gender: string, rangeKey: string, items: ThresholdItem[]) {
+  function setGenderRange(
+    gender: string,
+    rangeKey: string,
+    items: ThresholdItem[],
+  ) {
     const next: Thresholds = JSON.parse(JSON.stringify(thresholds));
     if (!next[gender]) next[gender] = {};
     next[gender][rangeKey] = items;
@@ -46,29 +52,30 @@ function ensureThresholds(v: any): Thresholds {
   }
 
   function addRange(gender: string) {
-    const rangeKey = prompt("Enter age range key (e.g. 18-100):", "18-100");
+    const rangeKey = prompt('Enter age range key (e.g. 18-100):', '18-100');
     if (!rangeKey) return;
 
     const next: Thresholds = JSON.parse(JSON.stringify(thresholds));
     if (!next[gender]) next[gender] = {};
     if (!next[gender][rangeKey]) {
-    next[gender][rangeKey] = [
-  {
-    label: "",
-    status: "",
-    low: "",
-    high: "",
-    color: "",
-  },
-];
-
+      next[gender][rangeKey] = [
+        {
+          label: '',
+          status: '',
+          low: '',
+          high: '',
+          color: '',
+        },
+      ];
     }
     onChange(next);
   }
 
   function addItem(gender: string, rangeKey: string) {
     const items = thresholds?.[gender]?.[rangeKey] ?? [];
-    const nextItems = items.concat([{ label: "", status: "", low: "", high: "", color: "" }]);
+    const nextItems = items.concat([
+      { label: '', status: '', low: '', high: '', color: '' },
+    ]);
     setGenderRange(gender, rangeKey, nextItems);
   }
 
@@ -83,7 +90,7 @@ function ensureThresholds(v: any): Thresholds {
     gender: string,
     rangeKey: string,
     idx: number,
-    patch: Partial<ThresholdItem>
+    patch: Partial<ThresholdItem>,
   ) {
     const items = thresholds?.[gender]?.[rangeKey] ?? [];
     const nextItems = items.slice();
@@ -98,9 +105,14 @@ function ensureThresholds(v: any): Thresholds {
         const rangeKeys = Object.keys(ranges);
 
         return (
-          <div key={gender} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <div
+            key={gender}
+            className="rounded-xl border border-slate-200 bg-slate-50 p-3"
+          >
             <div className="flex items-center justify-between">
-              <div className="text-sm font-semibold text-slate-800">{gender}</div>
+              <div className="text-sm font-semibold text-slate-800">
+                {gender}
+              </div>
               <button
                 type="button"
                 className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800"
@@ -117,10 +129,14 @@ function ensureThresholds(v: any): Thresholds {
                 {rangeKeys.map((rangeKey) => {
                   const items = ranges[rangeKey] ?? [];
                   return (
-                    <div key={`${gender}-${rangeKey}`} className="rounded-xl border border-slate-200 bg-white p-3">
+                    <div
+                      key={`${gender}-${rangeKey}`}
+                      className="rounded-xl border border-slate-200 bg-white p-3"
+                    >
                       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                         <div className="text-xs font-semibold text-slate-700">
-                          Age range: <span className="font-mono">{rangeKey}</span>
+                          Age range:{' '}
+                          <span className="font-mono">{rangeKey}</span>
                         </div>
 
                         <div className="flex gap-2">
@@ -143,13 +159,20 @@ function ensureThresholds(v: any): Thresholds {
 
                       <div className="mt-3 space-y-3">
                         {items.map((it, idx) => (
-                          <div key={idx} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                          <div
+                            key={idx}
+                            className="rounded-xl border border-slate-200 bg-slate-50 p-3"
+                          >
                             <div className="mb-2 flex items-center justify-between">
-                              <div className="text-xs font-semibold text-slate-700">Item #{idx + 1}</div>
+                              <div className="text-xs font-semibold text-slate-700">
+                                Item #{idx + 1}
+                              </div>
                               <button
                                 type="button"
                                 className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs hover:bg-slate-50"
-                                onClick={() => removeItem(gender, rangeKey, idx)}
+                                onClick={() =>
+                                  removeItem(gender, rangeKey, idx)
+                                }
                               >
                                 Remove
                               </button>
@@ -158,52 +181,76 @@ function ensureThresholds(v: any): Thresholds {
                             <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
                               <input
                                 className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-slate-400"
-  placeholder="e.g. Optimal"
-                                value={it?.label ?? ""}
-                                onChange={(e) => updateItem(gender, rangeKey, idx, { label: e.target.value })}
+                                placeholder="e.g. Optimal"
+                                value={it?.label ?? ''}
+                                onChange={(e) =>
+                                  updateItem(gender, rangeKey, idx, {
+                                    label: e.target.value,
+                                  })
+                                }
                               />
 
                               <input
                                 className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-slate-400"
-  placeholder="e.g. OptimalRange"
-                                value={it?.status ?? ""}
-                                onChange={(e) => updateItem(gender, rangeKey, idx, { status: e.target.value })}
+                                placeholder="e.g. OptimalRange"
+                                value={it?.status ?? ''}
+                                onChange={(e) =>
+                                  updateItem(gender, rangeKey, idx, {
+                                    status: e.target.value,
+                                  })
+                                }
                               />
 
                               <input
                                 className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-slate-400"
                                 placeholder="low"
-                                value={String(it?.low ?? "")}
+                                value={String(it?.low ?? '')}
                                 onChange={(e) => {
                                   const raw = e.target.value;
                                   const n = Number(raw);
-                                  updateItem(gender, rangeKey, idx, { low: Number.isFinite(n) && raw !== "" ? n : raw });
+                                  updateItem(gender, rangeKey, idx, {
+                                    low:
+                                      Number.isFinite(n) && raw !== ''
+                                        ? n
+                                        : raw,
+                                  });
                                 }}
                               />
 
                               <input
                                 className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-slate-400"
                                 placeholder="high"
-                                value={String(it?.high ?? "")}
+                                value={String(it?.high ?? '')}
                                 onChange={(e) => {
                                   const raw = e.target.value;
                                   const n = Number(raw);
-                                  updateItem(gender, rangeKey, idx, { high: Number.isFinite(n) && raw !== "" ? n : raw });
+                                  updateItem(gender, rangeKey, idx, {
+                                    high:
+                                      Number.isFinite(n) && raw !== ''
+                                        ? n
+                                        : raw,
+                                  });
                                 }}
                               />
 
                               <input
                                 className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-slate-400"
                                 placeholder="color"
-                                value={it?.color ?? ""}
-                                onChange={(e) => updateItem(gender, rangeKey, idx, { color: e.target.value })}
+                                value={it?.color ?? ''}
+                                onChange={(e) =>
+                                  updateItem(gender, rangeKey, idx, {
+                                    color: e.target.value,
+                                  })
+                                }
                               />
                             </div>
                           </div>
                         ))}
 
                         {items.length === 0 && (
-                          <div className="text-xs text-slate-500">No items. Click “Add item”.</div>
+                          <div className="text-xs text-slate-500">
+                            No items. Click “Add item”.
+                          </div>
                         )}
                       </div>
                     </div>

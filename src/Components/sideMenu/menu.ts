@@ -21,6 +21,12 @@ export const menus = [
         icon: 'sidemenu-menu-icon-lamp',
         active: true,
       },
+      {
+        name: 'Json Uploading',
+        url: 'json-uploading',
+        icon: 'sidemenu-menu-icon-dashboard',
+        active: true,
+      },
       // {
       //   name: 'Drift Analysis',
       //   url: '/drift-analysis',
