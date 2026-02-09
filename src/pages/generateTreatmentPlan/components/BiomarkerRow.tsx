@@ -14,6 +14,10 @@ import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import Checkbox from '../../../Components/checkbox';
+import {
+  CATEGORY_ORDER,
+  DEFAULT_CATEGORY_LABELS,
+} from '../../../utils/lookingForwards';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -30,6 +34,7 @@ interface BioMarkerRowSuggestionsProps {
     recommendation: string,
     newIssueList: string[],
     text?: string,
+    categoryKey?: string,
   ) => void;
   setIssuesData: (value: any) => void;
   handleRemoveLookingForwards: (text: string) => void;
@@ -127,7 +132,39 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
   const [addIssue, setAddIssue] = useState(false);
   const [newIssue, setNewIssue] = useState('');
+  const [newIssueCategory, setNewIssueCategory] = useState('critical_urgent');
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  const newIssueCategoryDropdown = (
+    <div className="flex items-center gap-2 w-full">
+      <span className="text-Text-Secondary text-[10px] shrink-0">
+        Category:
+      </span>
+      <div className="relative shrink-0">
+        <select
+          value={newIssueCategory}
+          onChange={(e) => setNewIssueCategory(e.target.value)}
+          className="h-7 min-w-[140px] pl-2 pr-6 py-1 text-[10px] font-medium border border-Gray-50 rounded-lg bg-backgroundColor-Card text-Primary-DeepTeal outline-none focus:border-Primary-DeepTeal cursor-pointer appearance-none"
+        >
+          {CATEGORY_ORDER.map((key) => (
+            <option key={key} value={key}>
+              {DEFAULT_CATEGORY_LABELS[key]}
+            </option>
+          ))}
+        </select>
+        <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-Primary-DeepTeal">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <path
+              d="M3 4.5L6 7.5L9 4.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+      </div>
+    </div>
+  );
   useEffect(() => {
     const result = value.issue_list.filter((issue: string) =>
       issuesData.some((obj) => Object.keys(obj)[0] === issue),
@@ -145,19 +182,21 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
     setSelectedIssues(newIssueList);
   };
 
-  const handleAddIssue = (issue: string) => {
+  const handleAddIssue = (issue: string, categoryKey?: string) => {
     if (issue.trim() === '') return;
-    const name = 'Issue ' + (issuesData.length + 1) + ': ' + issue;
-    const newIssueList = [...selectedIssues];
+    const name = 'Issue ' + (issuesData.length + 1) + ': ' + issue.trim();
+    const newIssueList = [...selectedIssues, name];
     handleUpdateIssueListByKey(
       value.Category,
       value.Recommendation,
       newIssueList,
-      issue,
+      issue.trim(),
+      categoryKey,
     );
-    setIssuesData((prev: any) => [...prev, { [name]: true }]);
+    setIssuesData((prev: any) => [...prev, { [name]: false }]);
     setSelectedIssues(newIssueList);
     setNewIssue('');
+    setAddIssue(false);
   };
 
   const handleRemoveIssueFromList = (name: string) => {
@@ -425,19 +464,20 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                         </div>
                       </div>
                     )}
-                    <div className="flex items-center justify-center text-Primary-DeepTeal text-xs font-medium gap-1 border-t border-Gray-50 rounded-md pt-3 mt-2">
+                    <div className="flex flex-col gap-2 text-Primary-DeepTeal text-xs font-medium border-t border-Gray-50 rounded-md pt-3 mt-2">
                       {addIssue ? (
                         <>
+                          {newIssueCategoryDropdown}
                           <input
                             type="text"
                             placeholder="Type new issue and press Enter..."
                             value={newIssue}
                             onChange={(e) => setNewIssue(e.target.value)}
-                            className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border-Gray-50 border rounded-2xl  text-Text-Primary placeholder:text-Text-Fivefold text-[10px]"
+                            className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border-Gray-50 border rounded-2xl text-Text-Primary placeholder:text-Text-Fivefold text-[10px]"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
-                                setAddIssue(false);
-                                handleAddIssue(newIssue);
+                                e.preventDefault();
+                                handleAddIssue(newIssue, newIssueCategory);
                               }
                             }}
                           />

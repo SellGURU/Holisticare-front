@@ -13,6 +13,12 @@ import SvgIcon from '../../utils/svgIcon';
 import { AppContext } from '../../store/app';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import { publish, subscribe } from '../../utils/event';
+import {
+  toType2,
+  type2ToFlatList,
+  type2ToFlatListInIssueOrder,
+  forApiPayload,
+} from '../../utils/lookingForwards';
 
 type CategoryState = {
   name: string;
@@ -71,23 +77,28 @@ export const GenerateRecommendation = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
-  const isFirstRemapRef = useRef(true);
   const remapLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastKeyAreasUpdateFromRemapRef = useRef(false);
   const [coverageProgess, setcoverageProgess] = useState(0);
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
-  // Function to check if essential data fields are present and not empty
-  const resolveCoverage = () => {
-    if (!treatmentPlanData) return;
 
-    // ✅ Only include checked items
+  const keyAreasType2 = treatmentPlanData?.key_areas_to_address;
+  const lookingForwardsFlat = keyAreasType2
+    ? type2ToFlatList(toType2(keyAreasType2))
+    : (treatmentPlanData?.looking_forwards ?? []);
+  /** Health Planning Issues: always show in issue number order (1, 2, 3, …), not by category */
+  const lookingForwardsInIssueOrder = keyAreasType2
+    ? type2ToFlatListInIssueOrder(toType2(keyAreasType2))
+    : (treatmentPlanData?.looking_forwards ?? []);
+
+  const resolveCoverage = () => {
+    if (!treatmentPlanData || !id) return;
     const selectedInterventions =
       treatmentPlanData?.suggestion_tab?.filter((item: any) => item.checked) ||
       [];
-    const payload =
-      treatmentPlanData?.looking_forwards?.map((issue: string) => ({
-        [issue]: false,
-      })) || [];
-    // console.log('payload', payload);
+    const payload = forApiPayload(
+      keyAreasType2 ?? treatmentPlanData?.looking_forwards ?? [],
+    );
 
     Application.getCoverage({
       member_id: id,
@@ -96,54 +107,56 @@ export const GenerateRecommendation = () => {
     })
       .then((res) => {
         setcoverageProgess(res.data.progress_percentage);
-
-        // ✅ Convert object → array of single-key objects
         const detailsObj = res.data['key areas to address'] || {};
         const detailsArray = Object.entries(detailsObj).map(([key, value]) => ({
           [key]: value,
         }));
-
         setcoverageDetails(detailsArray);
       })
       .catch((err) => {
         console.error('getCoverage error:', err);
       });
   };
-  const remapIssues = () => {
-    if (!treatmentPlanData) return;
 
-    // Clear any existing timeout
+  /** Remap: call only once with plan data (no effect on key_areas to avoid endless calls). */
+  const remapIssues = (planData: any) => {
+    if (!planData || !id) return;
     if (remapLoadingTimeoutRef.current) {
       clearTimeout(remapLoadingTimeoutRef.current);
       remapLoadingTimeoutRef.current = null;
     }
+    remapLoadingTimeoutRef.current = setTimeout(
+      () => setIsRemapLoading(true),
+      2000,
+    );
 
-    // Set timeout to show loading after 2 seconds
-    remapLoadingTimeoutRef.current = setTimeout(() => {
-      setIsRemapLoading(true);
-    }, 2000);
-
-    // console.log('payload', payload);
-
+    const payload = forApiPayload(
+      planData.key_areas_to_address ?? planData.looking_forwards ?? [],
+    );
     Application.remapIssues({
       member_id: id,
-      suggestion_tab: treatmentPlanData?.suggestion_tab,
-      key_areas_to_address: treatmentPlanData?.looking_forwards,
+      suggestion_tab: planData.suggestion_tab ?? [],
+      key_areas_to_address: payload,
     })
       .then((res: any) => {
-        setTratmentPlanData((pre: any) => {
-          return {
-            ...pre,
-            suggestion_tab: res.data.suggestion_tab,
-            key_areas_to_address: res.data.key_areas_to_address,
-          };
-        });
+        lastKeyAreasUpdateFromRemapRef.current = true;
+        setTratmentPlanData((pre: any) => ({
+          ...pre,
+          suggestion_tab: res.data.suggestion_tab,
+          key_areas_to_address:
+            res.data.key_areas_to_address ??
+            toType2(pre.key_areas_to_address ?? pre.looking_forwards),
+          looking_forwards: type2ToFlatList(
+            toType2(
+              res.data.key_areas_to_address ?? pre.key_areas_to_address ?? [],
+            ),
+          ),
+        }));
       })
       .catch((err) => {
-        console.error('getCoverage error:', err);
+        console.error('remapIssues error:', err);
       })
       .finally(() => {
-        // Clear timeout and hide loading
         if (remapLoadingTimeoutRef.current) {
           clearTimeout(remapLoadingTimeoutRef.current);
           remapLoadingTimeoutRef.current = null;
@@ -151,16 +164,24 @@ export const GenerateRecommendation = () => {
         setIsRemapLoading(false);
       });
   };
+
   useEffect(() => {
     resolveCoverage();
   }, [treatmentPlanData?.suggestion_tab, id]);
+
+  /** When key_areas change from Set Orders (add/remove issue), call remap so backend stays in sync. Skip initial load (handlePlan already calls remap). */
+  const keyAreasChangeCountRef = useRef(0);
   useEffect(() => {
-    if (isFirstRemapRef.current) {
-      isFirstRemapRef.current = false;
+    if (!treatmentPlanData || !id) return;
+    keyAreasChangeCountRef.current += 1;
+    if (keyAreasChangeCountRef.current === 1) return;
+    if (lastKeyAreasUpdateFromRemapRef.current) {
+      lastKeyAreasUpdateFromRemapRef.current = false;
       return;
     }
-    remapIssues();
-  }, [treatmentPlanData?.looking_forwards, id]);
+    remapIssues(treatmentPlanData);
+  }, [treatmentPlanData?.key_areas_to_address, id]);
+
   const hasEssentialData = (data: any) => {
     return (
       // data?.client_insight &&
@@ -186,14 +207,20 @@ export const GenerateRecommendation = () => {
     const suggestionsDataReady = hasSuggestionsData(data);
 
     if (essentialDataReady) {
-      setTratmentPlanData({
+      const keyAreas = toType2(
+        data.key_areas_to_address ?? data.looking_forwards ?? [],
+      );
+      const payload = {
         ...data,
         client_insight: data.client_insight || [],
         biomarker_insight: data.biomarker_insight || [],
-        looking_forwards: data.looking_forwards || [],
+        key_areas_to_address: keyAreas,
+        looking_forwards: type2ToFlatList(keyAreas),
         member_id: id,
-      });
+      };
+      setTratmentPlanData(payload);
       setSuggestionsDefualt(data.suggestion_tab);
+      remapIssues(payload);
       // If we are specifically waiting for suggestion_tab for Step 2
       if (retryForSuggestions && !suggestionsDataReady) {
         console.log('Suggestion tab data missing, retrying in 15 seconds...');
@@ -541,13 +568,20 @@ export const GenerateRecommendation = () => {
                 biomarkers: treatmentPlanData?.biomarker_insight,
                 clientInsights: treatmentPlanData?.client_insight,
                 completionSuggestions: treatmentPlanData?.completion_suggestion,
-                lookingForwards: treatmentPlanData?.looking_forwards,
+                lookingForwards: lookingForwardsInIssueOrder,
               }}
               setData={setTratmentPlanData}
               isClosed={isClosed}
               showSuggestions={showSuggestions}
               setIsClosed={setisClosed}
               setShowSuggestions={setShowSuggestions}
+              onSaveLookingForwardsSync={(list, keyAreas) => {
+                remapIssues({
+                  ...treatmentPlanData,
+                  looking_forwards: list,
+                  key_areas_to_address: keyAreas,
+                });
+              }}
             ></GeneralCondition>
           ) : currentStepIndex === 1 ? (
             <SetOrders
@@ -585,13 +619,25 @@ export const GenerateRecommendation = () => {
               }}
               setLookingForwards={(newLookingForwards) => {
                 setTratmentPlanData((pre: any) => {
+                  const next =
+                    typeof newLookingForwards === 'object' &&
+                    newLookingForwards !== null &&
+                    'Key areas to address' in newLookingForwards
+                      ? toType2(newLookingForwards)
+                      : toType2(
+                          Array.isArray(newLookingForwards)
+                            ? newLookingForwards
+                            : [],
+                        );
                   return {
                     ...pre,
-                    looking_forwards: newLookingForwards,
+                    key_areas_to_address: next,
+                    looking_forwards: type2ToFlatList(next),
                   };
                 });
               }}
-              lookingForwardsData={treatmentPlanData?.looking_forwards}
+              lookingForwardsData={lookingForwardsFlat}
+              keyAreasType2={keyAreasType2 ?? undefined}
               data={treatmentPlanData?.suggestion_tab}
             ></SetOrders>
           ) : (
@@ -614,13 +660,26 @@ export const GenerateRecommendation = () => {
               data={treatmentPlanData?.suggestion_tab}
               setLookingForwards={(newLookingForwards) => {
                 setTratmentPlanData((pre: any) => {
+                  const next =
+                    typeof newLookingForwards === 'object' &&
+                    newLookingForwards !== null &&
+                    'Key areas to address' in newLookingForwards
+                      ? toType2(newLookingForwards)
+                      : toType2(
+                          Array.isArray(newLookingForwards)
+                            ? newLookingForwards
+                            : [],
+                        );
                   return {
                     ...pre,
-                    looking_forwards: newLookingForwards,
+                    key_areas_to_address: next,
+                    looking_forwards: type2ToFlatList(next),
                   };
                 });
               }}
-              lookingForwardsData={treatmentPlanData?.looking_forwards}
+              lookingForwardsData={
+                keyAreasType2 ?? treatmentPlanData?.looking_forwards
+              }
             ></Overview>
           )}
         </div>
