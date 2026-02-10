@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { FHIRServerConfig } from '../../../api/fhir';
+import { MainModal } from '../../../Components';
+import SpinnerLoader from '../../../Components/SpinnerLoader';
 
 interface AddServerModalProps {
   onClose: () => void;
   onSave: (config: FHIRServerConfig) => void;
+  isOpen: boolean;
 }
 
-const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
+const AddServerModal: FC<AddServerModalProps> = ({
+  onClose,
+  onSave,
+  isOpen,
+}) => {
   const [name, setName] = useState('');
   const [baseUrl, setBaseUrl] = useState('');
   const [authType, setAuthType] = useState<
@@ -55,11 +62,11 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+    <MainModal isOpen={isOpen} onClose={onClose}>
+      <div className="bg-white rounded-2xl shadow-xl w-full overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-Boarder">
+          <h2 className="text-base font-medium text-Text-Primary">
             Add FHIR Server
           </h2>
           <button
@@ -145,7 +152,11 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
             </label>
             <select
               value={authType}
-              onChange={(e) => setAuthType(e.target.value as any)}
+              onChange={(e) =>
+                setAuthType(
+                  e.target.value as 'none' | 'basic' | 'bearer' | 'api_key',
+                )
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="none">No Authentication</option>
@@ -229,25 +240,24 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
           )}
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4">
-            <button
-              type="button"
+          <div className="w-full flex justify-end items-center p-2 mt-5">
+            <div
+              className="text-Disable text-sm font-medium mr-4 cursor-pointer"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
-            </button>
+            </div>
             <button
               type="submit"
               disabled={saving || !name.trim() || !baseUrl.trim()}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-Primary-DeepTeal text-sm font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {saving ? 'Adding...' : 'Add Server'}
+              {saving ? <SpinnerLoader color="#005F73" /> : 'Add'}
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </MainModal>
   );
 };
 
