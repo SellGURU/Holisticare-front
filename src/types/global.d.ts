@@ -96,4 +96,17 @@ declare global {
     required?: boolean;
     [key: string]: unknown;
   };
+  type AllowedContainer = {
+    key: string;
+    env_var: string;
+    configured: boolean;
+  };
+
+  type AppConfig = {
+    google_client_id: string;
+    azure_storage_account_url: string;
+    allowed_containers: AllowedContainer[];
+    sas_ttl_seconds_default: number;
+    sas_ttl_seconds_max: number;
+  };
 }

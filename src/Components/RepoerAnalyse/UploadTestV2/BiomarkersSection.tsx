@@ -456,64 +456,54 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             </div>
           </div>
 
-          <div className="  relative w-full text-xs h-full">
-            <div className="w-full hidden-scrollbar p overflow-x-auto md:overflow-x-visible">
-              <div className=" w-full  min-w-[800px] ">
-                {/* Table Header */}
-                <div
-                  className="grid    biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-                  // style={{
-                  //   gridTemplateColumns:
-                  //     window.innerWidth > 640
-                  //       ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
-                  //       : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
-                  // }}
-                >
-                  <div className="text-left">Extracted Biomarker</div>
-                  <div className="text-center">System Biomarker</div>
-                  <div className="text-center">Extracted Value</div>
-                  <div className="text-center">Extracted Unit</div>
-                  <div className="text-center">System Value</div>
-                  <div className="text-center">System Unit</div>
-                  <div className="text-center">Action</div>
-                </div>
+          <div
+            ref={tableRef}
+            className="relative w-full text-xs border border-Gray-50 rounded-[12px] overflow-auto"
+            style={{
+              maxHeight: isScaling
+                ? Math.min(window.innerHeight - 350, 450) + 'px'
+                : Math.min(window.innerHeight - 500, 350) + 'px',
+            }}
+          >
+            {/* Table with min-width to enable horizontal scroll */}
+            <div className="min-w-[900px]">
+              {/* Table Header - Sticky */}
+              <div
+                className="grid w-full py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b border-Gray-50 sticky top-0 z-10"
+                style={{
+                  gridTemplateColumns:
+                    'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
+                }}
+              >
+                <div className="text-left">Extracted Biomarker</div>
+                <div className="text-center">System Biomarker</div>
+                <div className="text-center">Extracted Value</div>
+                <div className="text-center">Extracted Unit</div>
+                <div className="text-center">System Value</div>
+                <div className="text-center">System Unit</div>
+                <div className="text-center">Action</div>
+              </div>
 
-                {/* Table Rows */}
-                <div
-                  ref={tableRef}
-                  className=" overflow-y-auto pb-[40px] sm:pb-0 w-[100%]"
-                  style={{
-                    minHeight: isScaling
-                      ? window.innerHeight - 330 + 'px'
-                      : window.innerHeight - 500 + 'px',
-                    maxHeight: isScaling
-                      ? window.innerHeight - 330 + 'px'
-                      : window.innerWidth > 640
-                        ? window.innerHeight - 500 + 'px'
-                        : window.innerHeight - 700 + 'px',
-                  }}
-                >
-                  {biomarkers.map((b, index) => {
-                    // const errorForRow = rowErrors[index];
-
-                    return (
-                      <BiomarkerRow
-                        refRenceEl={(el: any) => (rowRefs.current[index] = el)}
-                        isHaveError={rowErrors[index]}
-                        errorText={rowErrors[index]}
-                        biomarker={b}
-                        index={index}
-                        showOnlyErrors={showOnlyErrors}
-                        allAvilableBiomarkers={avalibaleBiomarkers}
-                        handleConfirmDelete={() => {
-                          handleConfirm(index);
-                        }}
-                        renderValueField={renderValueField}
-                        updateAndStandardize={updateAndStandardize}
-                      ></BiomarkerRow>
-                    );
-                  })}
-                </div>
+              {/* Table Rows */}
+              <div className="w-full">
+                {biomarkers.map((b, index) => {
+                  return (
+                    <BiomarkerRow
+                      refRenceEl={(el: any) => (rowRefs.current[index] = el)}
+                      isHaveError={rowErrors[index]}
+                      errorText={rowErrors[index]}
+                      biomarker={b}
+                      index={index}
+                      showOnlyErrors={showOnlyErrors}
+                      allAvilableBiomarkers={avalibaleBiomarkers}
+                      handleConfirmDelete={() => {
+                        handleConfirm(index);
+                      }}
+                      renderValueField={renderValueField}
+                      updateAndStandardize={updateAndStandardize}
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>

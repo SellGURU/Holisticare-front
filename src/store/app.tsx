@@ -13,6 +13,8 @@ interface AppContextProp {
   setTreatmentId: (id: string) => void;
   patientsList: any[];
   setPatientsList: (patients: any[]) => void;
+  appConfig: AppConfig;
+  setAppConfig: (config: AppConfig) => void;
 }
 
 export const AppContext = createContext<AppContextProp>({
@@ -21,6 +23,14 @@ export const AppContext = createContext<AppContextProp>({
   login: () => {},
   permisions: {},
   logout: () => {},
+  setAppConfig: () => {},
+  appConfig: {
+    google_client_id: '',
+    azure_storage_account_url: '',
+    allowed_containers: [],
+    sas_ttl_seconds_default: 600,
+    sas_ttl_seconds_max: 900,
+  },
   PackageManager: new PackageManager(),
   treatmentId: null,
   setTreatmentId: () => {},
@@ -32,6 +42,13 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
   const [token, setToken] = useState<string | null>(
     localStorage.getItem('token') || null,
   );
+  const [appConfig, setAppConfig] = useState<AppConfig>({
+    google_client_id: '',
+    azure_storage_account_url: '',
+    allowed_containers: [],
+    sas_ttl_seconds_default: 600,
+    sas_ttl_seconds_max: 900,
+  });
   const [treatmentId, setTreatmentId] = useState<string | null>(null);
 
   const [permisions, setPermisions] = useState(
@@ -62,6 +79,8 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     setTreatmentId: setTreatmentId,
     patientsList: patientsList,
     setPatientsList: setPatientsList,
+    appConfig: appConfig,
+    setAppConfig: setAppConfig,
   };
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

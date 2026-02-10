@@ -1,24 +1,27 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { DashBoard, Home, Report, Share, Tasks } from '../pages';
+import {
+  AddClient,
+  AiKnowledge,
+  SignUp,
+  HtmlViewer,
+  Playground,
+  Messages,
+  Setting,
+  DashBoard,
+  ForgetPassword,
+  DriftAnaysis,
+  Home,
+  Report,
+  Login,
+  Share,
+  Tasks,
+  ClientList,
+  MaintenancePage,
+  NotFound,
+} from '../pages';
 import ProtectedRoute from './protected';
 import Layout from '../layout';
-// import GenerateNewActionPlan from '../Components/Action-plan/GenerateNewPlan';
-// import PlanManagerModal from "../Components/Action-plan/sections/PLanManager";
-import Login from '../pages/login/index2';
-import { Targeting } from '../Components/Action-plan/sections/Targeting';
-import GenerateCalendar from '../Components/Action-plan/sections/generatecalendar';
-import { ClientList } from '../Components';
-import AddClient from '../pages/addClient';
-// import GenerateNewPlan from '../pages/generateTreatmentPlan';
-import { DriftAnaysis } from '../pages/driftAnaysis';
-import AiKnowledge from '../pages/ai-knowledge/AiKnowledge.tsx';
-import SignUp from '../pages/signUp/index2.tsx';
-import ForgetPassword from '../pages/forgetPassword/index.tsx';
-import Messages from '../pages/messages/index.tsx';
-import Setting from '../pages/settings/index.tsx';
-import Reports from '../pages/reports/index.tsx';
 import { Client } from '../pages/driftAnaysis/Client.tsx';
-import Forms from '../pages/forms/index.tsx';
 import { GenerateRecommendation } from '../pages/generateRecommendation/index.tsx';
 import NewGenerateHolisticPlan from '../pages/NewGenerateHolisticPlan/index.tsx';
 // import NewGenerateActionPlan from '../Components/NewGenerateActionPlan/index.tsx';
@@ -35,13 +38,11 @@ import Supplement from '../pages/supplement/index.tsx';
 import Lifestyle from '../pages/lifestyle/index.tsx';
 import Diet from '../pages/diet/index.tsx';
 import Peptide from '../pages/peptide/index.tsx';
+import FHIRIntegration from '../pages/FHIRIntegration/index.tsx';
 import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
-import Playground from '../pages/playground/index.tsx';
-import HtmlViewer from '../pages/HtmlViewer/index.tsx';
-import MaintenancePage from '../pages/maintenance/index.tsx';
-import NotFound from '../pages/notFound/index.tsx';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -81,14 +82,6 @@ const router = createBrowserRouter([
             element: <PackagePage></PackagePage>,
           },
           {
-            path: '/reports',
-            element: <Reports></Reports>,
-          },
-          {
-            path: '/forms2',
-            element: <Forms></Forms>,
-          },
-          {
             path: '/forms',
             element: <NewForms></NewForms>,
           },
@@ -126,6 +119,10 @@ const router = createBrowserRouter([
             element: <Peptide></Peptide>,
           },
           {
+            path: '/fhir-integration',
+            element: <FHIRIntegration></FHIRIntegration>,
+          },
+          {
             path: 'playground',
             element: <Playground></Playground>,
           },
@@ -151,18 +148,6 @@ const router = createBrowserRouter([
       {
         path: 'report/Generate-Recommendation/:id/:treatment_id',
         element: <GenerateRecommendation></GenerateRecommendation>,
-      },
-      // {
-      //   path: "action-plan/orders/:id",
-      //   element: <PlanManagerModal dataVal={}></PlanManagerModal>,
-      // },
-      {
-        path: 'action-plan/targeting/:id/:blackId',
-        element: <Targeting></Targeting>,
-      },
-      {
-        path: 'action-plan/edit/:id/:blackId',
-        element: <GenerateCalendar></GenerateCalendar>,
       },
       {
         path: 'addClient',
