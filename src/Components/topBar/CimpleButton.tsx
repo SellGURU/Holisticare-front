@@ -336,7 +336,7 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
           <span className="text-Text-Secondary text-[10px] whitespace-nowrap">
             Last compiled: {refreshLabel}
           </span>
-        )}        
+        )}
         <ButtonPrimary
           size="small"
           isSoftDisabled={ui.disabled}
@@ -377,7 +377,6 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
             {ui.label}
           </div>
         </ButtonPrimary>
-
       </div>
       <Tooltip
         place="bottom-start"
