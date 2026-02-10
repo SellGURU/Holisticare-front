@@ -35,6 +35,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
         className={` text-xs md:text-sm w-full  font-medium text-Text-Primary ${
           uploadedFile ? 'opacity-50 ' : ''
         }`}
+        data-tour="file-uploader"
       >
         File Uploader
         <div
@@ -71,7 +72,10 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
       </div>
 
       {/* Right side - Uploaded file display */}
-      <div className=" text-xs md:text-sm w-full   font-medium text-Text-Primary">
+      <div
+        className=" text-xs md:text-sm w-full   font-medium text-Text-Primary"
+        data-tour="uploaded-file"
+      >
         Uploaded File
         <div className="mt-1 rounded-2xl md:h-[100px] bg-white flex flex-col ">
           {!uploadedFile ? (

@@ -8,6 +8,8 @@ import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
 import { uploadBlobToAzure } from '../../../services/uploadBlobService';
+import Joyride, { CallBackProps, Step } from 'react-joyride';
+import { TutorialReminderToast } from './showTutorialReminderToast';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -21,6 +23,23 @@ import { uploadBlobToAzure } from '../../../services/uploadBlobService';
 //   warning?: boolean;
 //   showReport?: boolean;
 // }
+
+const steps: Step[] = [
+  {
+    target: '#health-plan-title',
+    content:
+      'Here you can generate a personalized health plan for your client.',
+    placement: 'bottom',
+  },
+  {
+    target: '#upload-biomarkers-card',
+    content: 'Upload lab reports or manually add biomarkers.',
+  },
+  {
+    target: '#questionnaire-card',
+    content: 'Fill lifestyle and medical information for better accuracy.',
+  },
+];
 
 interface UploadTestProps {
   memberId: any;
@@ -651,8 +670,89 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     return false;
   };
 
+  const [run, setRun] = useState(false);
+  const [showReminder, setShowReminder] = useState(false);
+
+  useEffect(() => {
+    const tutorialSeen = localStorage.getItem('tutorialSeen');
+    if (tutorialSeen === 'true') {
+      return;
+    }
+    const hasSeenTour = localStorage.getItem('healthPlanTutorialSeen');
+
+    if (hasSeenTour === 'true') {
+      setShowReminder(true);
+    }
+  }, []);
+  useEffect(() => {
+    const showTutorialAgain = localStorage.getItem('showTutorialAgain');
+    if (showTutorialAgain === 'true') {
+      setRun(true);
+      return;
+    }
+    const seen = localStorage.getItem('healthPlanTutorialSeen');
+    if (!seen) {
+      setRun(true);
+      localStorage.setItem('healthPlanTutorialSeen', 'true');
+    }
+  }, []);
+  const handleViewTutorial = (value: boolean) => {
+    if (value) {
+      localStorage.setItem('showTutorialAgain', 'true');
+    } else {
+      localStorage.setItem('showTutorialAgain', 'false');
+    }
+  };
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { status } = data;
+
+    if (status === 'finished' || status === 'skipped') {
+      localStorage.setItem('healthPlanTutorialSeen', 'true');
+      setRun(false);
+    }
+  };
+
   return (
     <>
+      <Joyride
+        steps={steps}
+        run={run}
+        continuous
+        showSkipButton
+        disableOverlayClose
+        styles={{
+          options: {
+            arrowColor: '#fff',
+            backgroundColor: '#fff',
+            primaryColor: '#0f766e',
+            textColor: '#1f2937',
+            zIndex: 10000,
+          },
+          tooltip: {
+            borderRadius: '12px',
+            padding: '16px',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+          },
+        }}
+        callback={handleJoyrideCallback}
+        locale={{
+          last: 'Done',
+        }}
+      />
+
+      <TutorialReminderToast
+        visible={showReminder}
+        onViewTutorial={(value) => {
+          handleViewTutorial(value);
+          setRun(value);
+        }}
+        setRun={setRun}
+        onClose={() => {
+          setShowReminder(false);
+          localStorage.setItem('tutorialSeen', 'true');
+        }}
+      />
+
       {deleteLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
@@ -756,6 +856,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                     <div
                       style={{ textAlignLast: 'center' }}
                       className=" text-center text-base font-medium text-Text-Primary"
+                      id="health-plan-title"
                     >
                       Provide Data to Generate Health Plan
                     </div>
@@ -788,6 +889,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       <div
                         style={{ textAlignLast: 'center' }}
                         className="text-[#000000] text-[10px] md:text-xs font-medium mt-3"
+                        id="upload-biomarkers-card"
                       >
                         Upload Lab Report or Add Biomarkers
                       </div>
@@ -843,7 +945,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           Questionnaire filled out!
                         </div>
                       )}
-                      <div className="text-[#000000] text-center text-[10px] md:text-xs font-medium mt-3">
+                      <div
+                        className="text-[#000000] text-center text-[10px] md:text-xs font-medium mt-3"
+                        id="questionnaire-card"
+                      >
                         Fill Health Questionnaire
                       </div>
                       <img
