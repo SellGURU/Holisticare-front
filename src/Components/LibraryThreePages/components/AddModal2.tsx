@@ -447,10 +447,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     }}
                     isValid={
                       showValidation
-                        ? ValidationForms.IsvalidField(
-                            'Type',
-                            formData.Type_Id,
-                          )
+                        ? ValidationForms.IsvalidField('Type', formData.Type_Id)
                         : true
                     }
                     validationText={

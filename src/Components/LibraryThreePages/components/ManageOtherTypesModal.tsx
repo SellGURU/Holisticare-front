@@ -127,7 +127,10 @@ const ManageOtherTypesModal: FC<ManageOtherTypesModalProps> = ({
               <SpinnerLoader color="#005F73" />
             </div>
           ) : (
-            <ul className="overflow-y-auto flex-1 space-y-2 pr-1 -mr-1" style={{ maxHeight: '280px' }}>
+            <ul
+              className="overflow-y-auto flex-1 space-y-2 pr-1 -mr-1"
+              style={{ maxHeight: '280px' }}
+            >
               {list.length === 0 ? (
                 <li className="flex items-center justify-center py-8 px-4 rounded-xl bg-[#F9FCFD] border border-[#E2F1F8]">
                   <span className="text-sm text-Text-Quadruple text-center">

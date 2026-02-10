@@ -438,7 +438,9 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         handleOpenModal={handleOpenModal}
         currentSortLabel={currentSortLabel}
         onChangeSort={(id: string) => setSortId(id ?? 'title_asc')}
-        onManageTypes={pageType === 'Other' ? () => setManageTypesModal(true) : undefined}
+        onManageTypes={
+          pageType === 'Other' ? () => setManageTypesModal(true) : undefined
+        }
       />
       {pageType === 'Other' && (
         <ManageOtherTypesModal
