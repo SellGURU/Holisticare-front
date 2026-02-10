@@ -17,13 +17,13 @@ export const menus = [
       },
       {
         name: 'Version Control',
-        url: 'version-control',
+        url: '/version-control',
         icon: 'sidemenu-menu-icon-lamp',
         active: true,
       },
       {
         name: 'Json Uploading',
-        url: 'json-uploading',
+        url: '/json-uploading',
         icon: 'sidemenu-menu-icon-dashboard',
         active: true,
       },
