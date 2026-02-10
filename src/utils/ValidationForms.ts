@@ -14,6 +14,7 @@ type ValidationField =
   | 'Macros'
   | 'MacrosSeparately'
   | 'Title'
+  | 'Type'
   | 'Category'
   | 'Note'
   | 'Score'
@@ -47,6 +48,8 @@ class ValidationForms {
         return this.validationMacrosSeparately(value);
       case 'Title':
         return this.validationTitle(value);
+      case 'Type':
+        return typeof value === 'string' && value.trim().length > 0;
       case 'Category':
         return this.validationCategory(value);
       case 'Note':
@@ -87,6 +90,10 @@ class ValidationForms {
         return this.validationMacrosText(value);
       case 'Title':
         return this.validationTitleText(value);
+      case 'Type':
+        return typeof value !== 'string' || value.trim().length === 0
+          ? 'Type is required'
+          : '';
       case 'Category':
         return this.validationCategoryText(value);
       case 'Note':

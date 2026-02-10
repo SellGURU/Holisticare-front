@@ -175,7 +175,9 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                               <div
                                 className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
                                   activeMenu.name === menu.name
-                                    ? 'text-Primary-DeepTeal'
+                                    ? menu.name === 'Other'
+                                      ? 'text-Primary-EmeraldGreen'
+                                      : 'text-Primary-DeepTeal'
                                     : 'text-Text-Primary'
                                 }`}
                               />

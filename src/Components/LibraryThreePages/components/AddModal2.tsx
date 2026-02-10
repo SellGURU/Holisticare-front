@@ -49,6 +49,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     if (pageType === 'Diet') return 'Enter diet title (e.g., Low-Carb Plan)';
     if (pageType === 'Peptide')
       return 'Enter peptide title (e.g., GLP-1 Agonists)';
+    if (pageType === 'Other')
+      return 'Enter title (e.g., Ozone Therapy session)';
     return '';
   };
   const [formData, setFormData] = useState({
@@ -66,6 +68,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     clinical_guidance: '',
     Parent_Title: '',
     fda_status: '',
+    Type_Id: '',
   });
   const [step, setStep] = useState(0);
   const [selectedSchedules, setSelectedSchedules] = useState<any[]>([]);
@@ -90,6 +93,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       dose: '',
       Parent_Title: '',
       fda_status: '',
+      Type_Id: '',
     });
   };
   useEffect(() => {
@@ -108,6 +112,9 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   const [dietLibrary, setDietLibrary] = useState<
     { title: string; uid: string }[]
   >([]);
+  const [otherTypeList, setOtherTypeList] = useState<
+    { Ot_Id: string; type_name: string }[]
+  >([]);
   useEffect(() => {
     if (pageType === 'Diet') {
       Application.getDietLibrary()
@@ -118,7 +125,27 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           console.error('Error getting diet library:', err);
         });
     }
+    if (pageType === 'Other') {
+      Application.getOtherTypeList()
+        .then((res) => {
+          setOtherTypeList(res.data || []);
+        })
+        .catch((err) => {
+          console.error('Error getting other types:', err);
+        });
+    }
   }, [pageType]);
+  useEffect(() => {
+    if (pageType === 'Other' && isOpen) {
+      Application.getOtherTypeList()
+        .then((res) => {
+          setOtherTypeList(res.data || []);
+        })
+        .catch((err) => {
+          console.error('Error getting other types:', err);
+        });
+    }
+  }, [pageType, isOpen]);
 
   const validateSupplementForm = () => {
     if (
@@ -147,6 +174,17 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       ValidationForms.IsvalidField('Title', formData.title) &&
       ValidationForms.IsvalidField('Instruction', formData.instruction) &&
       ValidationForms.IsvalidField('Score', formData.score)
+    ) {
+      return true;
+    }
+    return false;
+  };
+  const validateOtherForm = () => {
+    if (
+      ValidationForms.IsvalidField('Title', formData.title) &&
+      ValidationForms.IsvalidField('Instruction', formData.instruction) &&
+      ValidationForms.IsvalidField('Score', formData.score) &&
+      ValidationForms.IsvalidField('Type', formData.Type_Id)
     ) {
       return true;
     }
@@ -185,6 +223,9 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     if (validatePeptideForm() && pageType === 'Peptide') {
       return true;
     }
+    if (validateOtherForm() && pageType === 'Other') {
+      return true;
+    }
     return false;
   };
   useEffect(() => {
@@ -203,6 +244,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       },
       Parent_Title: editData?.Parent_Title || '',
       fda_status: editData?.Fda_status || '',
+      Type_Id: editData?.Type_Id || '',
     });
 
     // For peptides, load linked schedules and connected check-ins from showPeptideDetails
@@ -328,6 +370,17 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       onSubmit(data);
       return;
     }
+    if (pageType === 'Other') {
+      const data: any = {
+        Title: formData.title,
+        Instruction: formData.instruction,
+        Base_Score: formData.score,
+        Ai_note: formData.clinical_guidance,
+        Type_Id: formData.Type_Id,
+      };
+      onSubmit(data);
+      return;
+    }
     return;
   };
   return (
@@ -377,6 +430,42 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   margin="mt-0"
                 />
 
+                {pageType === 'Other' && (
+                  <SelectBoxField
+                    label="Type"
+                    options={otherTypeList.map((t: any) => t.type_name)}
+                    value={
+                      otherTypeList.find(
+                        (t: any) => t.Ot_Id === formData.Type_Id,
+                      )?.type_name ?? ''
+                    }
+                    onChange={(value) => {
+                      const selected = otherTypeList.find(
+                        (t: any) => t.type_name === value,
+                      );
+                      updateAddData('Type_Id', selected?.Ot_Id ?? '');
+                    }}
+                    isValid={
+                      showValidation
+                        ? ValidationForms.IsvalidField(
+                            'Type',
+                            formData.Type_Id,
+                          )
+                        : true
+                    }
+                    validationText={
+                      showValidation
+                        ? ValidationForms.ValidationText(
+                            'Type',
+                            formData.Type_Id,
+                          )
+                        : ''
+                    }
+                    placeholder="Select type (e.g. Ozone Therapy, Cryo Cabin)"
+                    margin="mb-0 mt-2"
+                  />
+                )}
+
                 {pageType === 'Diet' && (
                   <SelectBoxField
                     label="Associated Intervention"
@@ -410,7 +499,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 
                 <TextAreaField
                   label="Instruction"
-                  placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : pageType === 'Peptide' ? 'Enter instructions (e.g., Subcutaneous injection)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}`}
+                  placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : pageType === 'Peptide' ? 'Enter instructions (e.g., Subcutaneous injection)' : pageType === 'Other' ? 'Enter instructions (e.g., Session duration and frequency)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}`}
                   value={formData.instruction}
                   onChange={(e) => {
                     updateAddData('instruction', e.target.value);
