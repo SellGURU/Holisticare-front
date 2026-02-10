@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import ServerCard from './components/ServerCard';
 import AddServerModal from './components/AddServerModal';
 import FHIRBrowser from './components/FHIRBrowser';
+import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 
 const FHIRIntegration: React.FC = () => {
   const [servers, setServers] = useState<FHIRServer[]>([]);
@@ -16,67 +17,76 @@ const FHIRIntegration: React.FC = () => {
     loadServers();
   }, []);
 
-  const loadServers = async () => {
-    try {
-      setLoading(true);
-      const response = await FHIRApi.getServers();
-      if (response.data.success) {
-        setServers(response.data.servers || []);
-      }
-    } catch (error) {
-      console.error('Failed to load FHIR servers:', error);
-      toast.error('Failed to load FHIR servers');
-    } finally {
-      setLoading(false);
-    }
+  const loadServers = () => {
+    setLoading(true);
+    FHIRApi.getServers()
+      .then((response) => {
+        if (response.data.success) {
+          setServers(response.data.servers || []);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to load FHIR servers:', error);
+        toast.error('Failed to load FHIR servers');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
-  const handleAddServer = async (config: FHIRServerConfig) => {
-    try {
-      const response = await FHIRApi.addServer(config);
-      if (response.data.success) {
-        toast.success('FHIR server added successfully');
-        setShowAddModal(false);
-        loadServers();
-      } else {
-        toast.error(response.data.message || 'Failed to add server');
-      }
-    } catch (error: any) {
-      console.error('Failed to add FHIR server:', error);
-      toast.error(error.response?.data?.detail || 'Failed to add FHIR server');
-    }
+  const handleAddServer = (config: FHIRServerConfig) => {
+    FHIRApi.addServer(config)
+      .then((response) => {
+        if (response.data.success) {
+          toast.success('FHIR server added successfully');
+          setShowAddModal(false);
+          loadServers();
+        } else {
+          toast.error(response.data.message || 'Failed to add server');
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to add FHIR server:', error);
+        toast.error(error.response?.data?.detail || 'Failed to add server');
+      });
   };
 
-  const handleTestServer = async (serverId: number) => {
-    try {
-      toast.info('Testing connection...');
-      const response = await FHIRApi.testServer(serverId);
-      if (response.data.success) {
-        toast.success(`Connected! FHIR Version: ${response.data.fhir_version}`);
-      } else {
-        toast.error(`Connection failed: ${response.data.error}`);
-      }
-    } catch (error: any) {
-      console.error('Failed to test FHIR server:', error);
-      toast.error(error.response?.data?.detail || 'Connection test failed');
-    }
+  const handleTestServer = (serverId: number) => {
+    toast.info('Testing connection...');
+    FHIRApi.testServer(serverId)
+      .then((response) => {
+        if (response.data.success) {
+          toast.success(
+            `Connected! FHIR Version: ${response.data.fhir_version}`,
+          );
+        } else {
+          toast.error(`Connection failed: ${response.data.error}`);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to test FHIR server:', error);
+        toast.error(error.response?.data?.detail || 'Connection test failed');
+      });
   };
 
-  const handleDeleteServer = async (serverId: number) => {
+  const handleDeleteServer = (serverId: number) => {
     if (!confirm('Are you sure you want to remove this FHIR server?')) {
       return;
     }
 
-    try {
-      const response = await FHIRApi.deleteServer(serverId);
-      if (response.data.success) {
-        toast.success('FHIR server removed');
-        loadServers();
-      }
-    } catch (error: any) {
-      console.error('Failed to delete FHIR server:', error);
-      toast.error(error.response?.data?.detail || 'Failed to remove server');
-    }
+    FHIRApi.deleteServer(serverId)
+      .then((response) => {
+        if (response.data.success) {
+          toast.success('FHIR server removed');
+          loadServers();
+        } else {
+          toast.error(response.data.message || 'Failed to remove server');
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to delete FHIR server:', error);
+        toast.error(error.response?.data?.detail || 'Failed to remove server');
+      });
   };
 
   const handleBrowseServer = (server: FHIRServer) => {
@@ -97,20 +107,19 @@ const FHIRIntegration: React.FC = () => {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-6 mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">FHIR Integration</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-Text-Primary font-medium text-base">
+            FHIR Integration
+          </h1>
+          <p className="text-Text-Secondary text-xs mt-1">
             Connect to FHIR servers to import patient data, lab results, and
             conditions
           </p>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-        >
+        <ButtonSecondary onClick={() => setShowAddModal(true)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -124,15 +133,15 @@ const FHIRIntegration: React.FC = () => {
             />
           </svg>
           Add FHIR Server
-        </button>
+        </ButtonSecondary>
       </div>
 
       {/* Info Banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+      <div className="bg-backgroundColor-Secondary border rounded-2xl p-4 mb-6">
         <div className="flex items-start gap-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-blue-600 flex-shrink-0"
+            className="h-6 w-6 text-Text-Primary flex-shrink-0"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -145,10 +154,10 @@ const FHIRIntegration: React.FC = () => {
             />
           </svg>
           <div>
-            <h3 className="font-semibold text-blue-800">
+            <h3 className="font-medium text-Text-Primary text-base">
               About FHIR Integration
             </h3>
-            <p className="text-blue-700 text-sm mt-1">
+            <p className="text-Text-Secondary text-xs mt-1">
               FHIR (Fast Healthcare Interoperability Resources) is a standard
               for exchanging healthcare information electronically. Connect to
               FHIR servers like the{' '}
@@ -173,10 +182,10 @@ const FHIRIntegration: React.FC = () => {
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
         </div>
       ) : servers.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+        <div className="text-center py-12 bg-backgroundColor-Secondary border rounded-2xl border-dashed border-gray-300">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-12 w-12 text-gray-400 mx-auto mb-4"
+            className="h-12 w-12 text-Text-Secondary mx-auto mb-4"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -188,21 +197,12 @@ const FHIRIntegration: React.FC = () => {
               d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"
             />
           </svg>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-base font-medium text-Text-Primary">
             No FHIR servers configured
           </h3>
-          <p className="text-gray-500 mb-4">
-            Add a FHIR server to start importing patient data
-          </p>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Add Your First Server
-          </button>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="gap-4 flex items-center flex-wrap">
           {servers.map((server) => (
             <ServerCard
               key={server.id}
@@ -216,12 +216,11 @@ const FHIRIntegration: React.FC = () => {
       )}
 
       {/* Add Server Modal */}
-      {showAddModal && (
-        <AddServerModal
-          onClose={() => setShowAddModal(false)}
-          onSave={handleAddServer}
-        />
-      )}
+      <AddServerModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSave={handleAddServer}
+      />
     </div>
   );
 };
