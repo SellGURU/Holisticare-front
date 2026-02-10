@@ -7,7 +7,7 @@ function cn(...xs: Array<string | false | undefined | null>) {
 
 type Props = {
   value: Array<Record<string, any>>;
-  onChange: (next: Array<Record<string, any>>) => void;
+  onChange: (next: any) => void;
   columns: string[];
 };
 

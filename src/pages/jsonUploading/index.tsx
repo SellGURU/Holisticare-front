@@ -15,6 +15,7 @@ import { LeftPanel } from './LeftPanel';
 import JsonObjectEditor from './jsonObjectEditor';
 import ArrayOfObjectsTableEditor from './table';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
+import { UnitMappingEditor } from './unitMappingEditor';
 
 export const JsonUploading: React.FC = () => {
   // state
@@ -286,7 +287,9 @@ export const JsonUploading: React.FC = () => {
                         columns={columns}
                         onChange={setData}
                       />
-                    ) : (
+                    ) :  jsonType === 'unit_mapping' ? (
+  <UnitMappingEditor value={data} onChange={setData} />
+) :(
                       <JsonObjectEditor value={data} onChange={setData} />
                     )}
                   </>
