@@ -1,5 +1,7 @@
 import React from 'react';
 import { FHIRServer } from '../../../api/fhir';
+import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
 interface ServerCardProps {
   server: FHIRServer;
@@ -26,7 +28,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow md:w-[400px] w-full">
       <div className="p-4">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
@@ -48,7 +50,9 @@ const ServerCard: React.FC<ServerCardProps> = ({
               </svg>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800">{server.name}</h3>
+              <h3 className="font-medium text-base text-Text-Primary">
+                {server.name}
+              </h3>
               <span
                 className={`text-xs px-2 py-0.5 rounded-full ${
                   server.is_active
@@ -98,18 +102,12 @@ const ServerCard: React.FC<ServerCardProps> = ({
 
         {/* Actions */}
         <div className="flex gap-2">
-          <button
-            onClick={onTest}
-            className="flex-1 px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-          >
+          <ButtonSecondary onClick={onTest} ClassName="w-[48%] !rounded-3xl">
             Test Connection
-          </button>
-          <button
-            onClick={onBrowse}
-            className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
+          </ButtonSecondary>
+          <ButtonPrimary onClick={onBrowse} ClassName="w-[48%] !rounded-2xl">
             Browse Data
-          </button>
+          </ButtonPrimary>
         </div>
       </div>
     </div>
