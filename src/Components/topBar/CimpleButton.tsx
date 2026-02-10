@@ -332,6 +332,11 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
     // <Tooltip content={ui.tooltip}>
     <>
       <div className="flex flex-col items-start gap-0.5 sm:flex-row sm:items-center sm:gap-2">
+        {refreshLabel != null && (
+          <span className="text-Text-Secondary text-[10px] whitespace-nowrap">
+            Last compiled: {refreshLabel}
+          </span>
+        )}        
         <ButtonPrimary
           size="small"
           isSoftDisabled={ui.disabled}
@@ -372,11 +377,7 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
             {ui.label}
           </div>
         </ButtonPrimary>
-        {refreshLabel != null && (
-          <span className="text-Text-Secondary text-[10px] whitespace-nowrap">
-            Last compiled: {refreshLabel}
-          </span>
-        )}
+
       </div>
       <Tooltip
         place="bottom-start"
