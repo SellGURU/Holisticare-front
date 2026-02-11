@@ -251,9 +251,14 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     }
   };
   console.log(isSlideOutPanel);
+  const [chatSize, setChatSize] = useState<{ width: number; height: number }>({
+  width: 315,
+  height: 458,
+});
   return (
     <div className="h-full flex flex-col justify-between items-center">
       <SlideOutPanel
+        isResizable
         isOpen={isSlideOutPanel}
         isCombo={true}
         onClose={handleCloseSlideOutPanel}
@@ -455,6 +460,8 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
             isOpen={toogleOpenChat}
             info={patientInfo}
             memberId={id as string}
+              size={chatSize}
+  onSizeChange={setChatSize}
           />
         </div>
       </div>
