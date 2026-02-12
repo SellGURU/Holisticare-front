@@ -16,6 +16,7 @@ import JsonObjectEditor from './jsonObjectEditor';
 import ArrayOfObjectsTableEditor from './table';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import { UnitMappingEditor } from './unitMappingEditor';
+import { BiomarkerMappingEditor } from './biomarkerMappingEdiotpr';
 
 export const JsonUploading: React.FC = () => {
   // state
@@ -281,15 +282,17 @@ export const JsonUploading: React.FC = () => {
                       </button>
                     </div>
 
-                    {isArrayOfObjectsTemplate ? (
+                    {jsonType === 'biomarker_mapping' ? (
+                      <BiomarkerMappingEditor value={data} onChange={setData} />
+                    ) : isArrayOfObjectsTemplate ? (
                       <ArrayOfObjectsTableEditor
                         value={Array.isArray(data) ? data : []}
                         columns={columns}
                         onChange={setData}
                       />
-                    ) :  jsonType === 'unit_mapping' ? (
-  <UnitMappingEditor value={data} onChange={setData} />
-) :(
+                    ) : jsonType === 'unit_mapping' ? (
+                      <UnitMappingEditor value={data} onChange={setData} />
+                    ) : (
                       <JsonObjectEditor value={data} onChange={setData} />
                     )}
                   </>
