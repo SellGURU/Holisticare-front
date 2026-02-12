@@ -14,10 +14,13 @@ import { formatRelativeDate } from '../../utils/formatRelativeDate';
 // import Tooltip from '../../../'; // فرضی
 interface CompileButtonProps {
   userInfoData: any;
-  isAutoCompile:boolean;
+  isAutoCompile: boolean;
 }
 
-const CompileButton: FC<CompileButtonProps> = ({ userInfoData,isAutoCompile }) => {
+const CompileButton: FC<CompileButtonProps> = ({
+  userInfoData,
+  isAutoCompile,
+}) => {
   const { id } = useParams<{ id: string; name: string }>();
   const [progressData, setProgressData] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -284,12 +287,7 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData,isAutoCompile }) =
   }, [progressData]);
 
   useEffect(() => {
-    if (
-      !isAutoCompile ||
-      !id ||
-      state !== 'READY_TO_COMPILE' ||
-      isCompiling
-    )
+    if (!isAutoCompile || !id || state !== 'READY_TO_COMPILE' || isCompiling)
       return;
     setIsCompiling(true);
     setNeedCompile(false);
