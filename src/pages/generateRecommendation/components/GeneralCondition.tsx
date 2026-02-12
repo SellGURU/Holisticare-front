@@ -9,6 +9,16 @@ import {
   DEFAULT_CATEGORY_LABELS,
 } from '../../../utils/lookingForwards';
 
+/** Soft priority tag colors: red → softer red → yellow → green */
+const PRIORITY_TAG_STYLES: Record<string, string> = {
+  critical_urgent: 'bg-red-50 text-red-800 border-red-200',
+  important_strategic: 'bg-rose-50 text-rose-700 border-rose-200',
+  important_long_term: 'bg-amber-50 text-amber-800 border-amber-200',
+  optional_enhancements: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+};
+const getPriorityTagClass = (key: string) =>
+  PRIORITY_TAG_STYLES[key] || PRIORITY_TAG_STYLES.critical_urgent;
+
 // Define types for the data structure
 interface ConditionDataProps {
   biomarkers: string[];
@@ -325,6 +335,8 @@ const Card: React.FC<CardProps> = ({
 }) => {
   const textareaRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
   const [currentIndex, setCurrentIndex] = useState<any>(null);
+  const [openPriorityFor, setOpenPriorityFor] = useState<string | null>(null);
+  const priorityDropdownRef = useRef<HTMLDivElement>(null);
   const isHealthPlanning = title === 'Health Planning Issues';
   const [issueCategories, setIssueCategories] = useState<
     Record<string, string>
@@ -352,6 +364,21 @@ const Card: React.FC<CardProps> = ({
       });
     }
   }, [content, isEditing]);
+
+  useEffect(() => {
+    if (!openPriorityFor) return;
+    const close = (e: MouseEvent) => {
+      if (
+        priorityDropdownRef.current &&
+        !priorityDropdownRef.current.contains(e.target as Node)
+      ) {
+        setOpenPriorityFor(null);
+      }
+    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [openPriorityFor]);
+
   const [addNew, setAddNew] = useState<boolean>(false);
   const [newItem, setNewItem] = useState<string>('');
   return (
@@ -456,7 +483,7 @@ const Card: React.FC<CardProps> = ({
           {content?.map((item, index) => (
             <>
               {isEditing ? (
-                <div className="border border-Gray-50 rounded-xl py-3 pl-3 pr-2 w-full mb-2 flex items-center gap-2">
+                <div className="border border-Gray-50 rounded-xl py-3 pl-3 pr-3 w-full mb-3 flex flex-wrap items-start gap-3">
                   <textarea
                     ref={(el) => (textareaRefs.current[index] = el)}
                     value={item}
@@ -464,125 +491,138 @@ const Card: React.FC<CardProps> = ({
                       onContentChange(index, e.target.value);
                       adjustHeight(e.target);
                     }}
-                    className={`flex-1 min-w-0 px-4 text-justify resize-none text-sm outline-none overflow-hidden ${isHealthPlanning ? 'border-r border-Gray-50' : ''}`}
+                    className={`flex-1 min-w-[200px] px-4 resize-none text-sm outline-none overflow-hidden ${isHealthPlanning ? 'text-left' : 'text-justify'}`}
                   />
                   {isHealthPlanning && (
-                    <div className="relative shrink-0">
-                      <select
-                        className="h-8 min-w-[140px] max-w-[180px] pl-3 pr-8 py-1.5 text-xs font-medium border border-Gray-50 rounded-xl bg-backgroundColor-Card text-Primary-DeepTeal outline-none focus:border-Primary-DeepTeal focus:ring-2 focus:ring-Primary-DeepTeal/20 cursor-pointer appearance-none shadow-100"
-                        value={issueCategories[item] ?? 'critical_urgent'}
-                        onChange={(e) =>
-                          setIssueCategories((prev) => ({
-                            ...prev,
-                            [item]: e.target.value,
-                          }))
-                        }
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {CATEGORY_ORDER.map((key) => (
-                          <option key={key} value={key}>
-                            {DEFAULT_CATEGORY_LABELS[key]}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 12 12"
-                          fill="none"
-                          className="text-Primary-DeepTeal"
+                    <div
+                      className="flex items-center gap-3 shrink-0"
+                      ref={
+                        openPriorityFor === item
+                          ? priorityDropdownRef
+                          : undefined
+                      }
+                    >
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenPriorityFor((prev) =>
+                              prev === item ? null : item,
+                            );
+                          }}
+                          className={`inline-flex items-center justify-center min-h-6 px-2 py-1 rounded text-[10px] font-normal border text-left shadow-sm hover:opacity-90 ${getPriorityTagClass(issueCategories[item] ?? 'critical_urgent')}`}
+                          title={
+                            DEFAULT_CATEGORY_LABELS[
+                              issueCategories[item] ?? 'critical_urgent'
+                            ]
+                          }
                         >
-                          <path
-                            d="M3 4.5L6 7.5L9 4.5"
+                          {
+                            DEFAULT_CATEGORY_LABELS[
+                              issueCategories[item] ?? 'critical_urgent'
+                            ]
+                          }
+                          <svg
+                            className="ml-1 w-3 h-3 shrink-0 opacity-70"
+                            fill="none"
+                            viewBox="0 0 24 24"
                             stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </button>
+                        {openPriorityFor === item && (
+                          <div className="absolute top-full left-0 z-20 mt-1 py-1 min-w-[180px] rounded-lg border border-gray-200 bg-white shadow-lg">
+                            {CATEGORY_ORDER.map((key) => (
+                              <button
+                                key={key}
+                                type="button"
+                                onClick={() => {
+                                  setIssueCategories((prev) => ({
+                                    ...prev,
+                                    [item]: key,
+                                  }));
+                                  setOpenPriorityFor(null);
+                                }}
+                                className={`w-full text-left px-3 py-2 text-[10px] font-normal border-0 rounded-md first:rounded-t-md last:rounded-b-md hover:opacity-90 ${getPriorityTagClass(key)} ${(issueCategories[item] ?? 'critical_urgent') === key ? 'ring-1 ring-gray-300' : ''}`}
+                              >
+                                {DEFAULT_CATEGORY_LABELS[key]}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      {currentIndex === index ? (
+                        <div className="flex flex-col justify-center items-center gap-1">
+                          <span className="text-xs text-[#909090]">Sure?</span>
+                          <img
+                            className="size-5 cursor-pointer"
+                            src="/icons/confirm-tick-circle.svg"
+                            alt="Confirm"
+                            onClick={() => {
+                              onDelete(index);
+                              setCurrentIndex(null);
+                            }}
                           />
-                        </svg>
-                      </span>
+                          <img
+                            className="size-5 cursor-pointer"
+                            src="/icons/cansel-close-circle.svg"
+                            alt="Cancel"
+                            onClick={() => setCurrentIndex(null)}
+                          />
+                        </div>
+                      ) : (
+                        <img
+                          className="size-6 cursor-pointer"
+                          src="/icons/trash-red.svg"
+                          alt="Delete"
+                          onClick={() => setCurrentIndex(index)}
+                        />
+                      )}
                     </div>
-                  )}
-                  {currentIndex === index ? (
-                    <div className="flex flex-col justify-end items-center gap-2 ml-3">
-                      <span className="text-xs  text-[#909090] ">Sure?</span>
-                      <img
-                        className="size-5 cursor-pointer"
-                        src="/icons/confirm-tick-circle.svg"
-                        alt="Confirm"
-                        onClick={() => {
-                          onDelete(index);
-                          setCurrentIndex(null);
-                        }}
-                      />
-                      <img
-                        className="size-5 cursor-pointer"
-                        src="/icons/cansel-close-circle.svg"
-                        alt="Cancel"
-                        onClick={() => setCurrentIndex(null)}
-                      />
-                    </div>
-                  ) : (
-                    <img
-                      className="size-6 cursor-pointer ml-3"
-                      src="/icons/trash-red.svg"
-                      alt="Delete"
-                      onClick={() => setCurrentIndex(index)}
-                    />
                   )}
                 </div>
               ) : (
                 <li
-                  className={`flex items-center gap-2 ${item.length > 1 && !isHealthPlanning ? 'list-disc' : ''} text-sm text-justify mt-2 ${
-                    isHealthPlanning ? 'marker:text-gray-400' : ''
+                  className={`flex items-center gap-2 ${item.length > 1 && !isHealthPlanning ? 'list-disc' : ''} text-sm ${
+                    isHealthPlanning
+                      ? 'marker:text-gray-400 text-left pt-3 pb-3 border-b border-gray-100 last:border-b-0 first:pt-1'
+                      : 'mt-2 text-justify'
                   }`}
                 >
                   {isHealthPlanning ? (
-                    <>
-                      <span className="text-Text-Secondary shrink-0">
-                        {item.split(':')[0]}:
-                      </span>{' '}
-                      <span className="min-w-0 flex-1">
-                        {item.split(':')[1]?.trim()}
+                    <span className="flex flex-col gap-1.5 w-full">
+                      <span className="flex items-baseline gap-1 text-left">
+                        <span className="text-gray-500 shrink-0 text-sm font-normal">
+                          {item.split(':')[0]}:
+                        </span>
+                        <span className="min-w-0 flex-1 text-gray-700 font-normal text-sm">
+                          {item.split(':')[1]?.trim()}
+                        </span>
                       </span>
-                      <div className="relative shrink-0">
-                        <select
-                          disabled={!isEditing}
-                          className={`h-8 min-w-[140px] max-w-[180px] pl-3 pr-8 py-1.5 text-xs font-medium border border-Gray-50 rounded-xl bg-backgroundColor-Card text-Primary-DeepTeal outline-none appearance-none shadow-100 ${isEditing ? 'cursor-pointer focus:border-Primary-DeepTeal focus:ring-2 focus:ring-Primary-DeepTeal/20' : 'cursor-not-allowed opacity-75'}`}
-                          value={issueCategories[item] ?? 'critical_urgent'}
-                          onChange={(e) =>
-                            setIssueCategories((prev) => ({
-                              ...prev,
-                              [item]: e.target.value,
-                            }))
+                      <div className="flex items-center">
+                        <span
+                          className={`inline-flex items-center justify-center min-h-5 px-2 py-1 rounded text-[10px] font-normal border ${getPriorityTagClass(issueCategories[item] ?? 'critical_urgent')}`}
+                          title={
+                            DEFAULT_CATEGORY_LABELS[
+                              issueCategories[item] ?? 'critical_urgent'
+                            ]
                           }
                         >
-                          {CATEGORY_ORDER.map((key) => (
-                            <option key={key} value={key}>
-                              {DEFAULT_CATEGORY_LABELS[key]}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
-                          <svg
-                            width="12"
-                            height="12"
-                            viewBox="0 0 12 12"
-                            fill="none"
-                            className="text-Primary-DeepTeal"
-                          >
-                            <path
-                              d="M3 4.5L6 7.5L9 4.5"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
+                          {
+                            DEFAULT_CATEGORY_LABELS[
+                              issueCategories[item] ?? 'critical_urgent'
+                            ]
+                          }
                         </span>
                       </div>
-                    </>
+                    </span>
                   ) : (
                     item
                   )}
