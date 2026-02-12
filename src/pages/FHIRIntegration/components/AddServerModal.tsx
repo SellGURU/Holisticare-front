@@ -26,6 +26,16 @@ const AddServerModal: FC<AddServerModalProps> = ({
   const [headerName, setHeaderName] = useState('X-API-Key');
   const [saving, setSaving] = useState(false);
 
+  const onClear = () => {
+    setName('');
+    setBaseUrl('');
+    setAuthType('none');
+    setUsername('');
+    setPassword('');
+    setToken('');
+    setApiKey('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -53,6 +63,7 @@ const AddServerModal: FC<AddServerModalProps> = ({
       await onSave(config);
     } finally {
       setSaving(false);
+      onClear();
     }
   };
 
@@ -62,7 +73,13 @@ const AddServerModal: FC<AddServerModalProps> = ({
   ];
 
   return (
-    <MainModal isOpen={isOpen} onClose={onClose}>
+    <MainModal
+      isOpen={isOpen}
+      onClose={() => {
+        onClear();
+        onClose();
+      }}
+    >
       <div className="bg-white rounded-2xl shadow-xl w-full overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-Boarder">
@@ -70,7 +87,10 @@ const AddServerModal: FC<AddServerModalProps> = ({
             Add FHIR Server
           </h2>
           <button
-            onClick={onClose}
+            onClick={() => {
+              onClear();
+              onClose();
+            }}
             className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
           >
             <svg
@@ -243,7 +263,10 @@ const AddServerModal: FC<AddServerModalProps> = ({
           <div className="w-full flex justify-end items-center p-2 mt-5">
             <div
               className="text-Disable text-sm font-medium mr-4 cursor-pointer"
-              onClick={onClose}
+              onClick={() => {
+                onClear();
+                onClose();
+              }}
             >
               Cancel
             </div>
