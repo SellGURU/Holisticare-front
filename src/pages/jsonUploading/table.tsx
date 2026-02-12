@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // table.tsx
 import { useMemo, useState } from 'react';
 import RowEditModal from './RowEditModal';
@@ -78,7 +79,7 @@ export default function ArrayOfObjectsTableEditor<
     onChange(next);
   }
 
-  function defaultCellPreview(col: keyof T, v: any) {
+  function defaultCellPreview(_col: keyof T, v: any) {
     if (v === null || v === undefined) return '';
     if (typeof v === 'boolean') return v ? 'true' : 'false';
     if (typeof v === 'number') return String(v);

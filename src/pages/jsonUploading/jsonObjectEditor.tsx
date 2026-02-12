@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isPlainObject } from '../../utils/jsonUploading';
 
 type Props = {
