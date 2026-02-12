@@ -1,3 +1,4 @@
+// table.tsx
 import { useMemo, useState } from 'react';
 import RowEditModal from './RowEditModal';
 
@@ -5,42 +6,70 @@ function cn(...xs: Array<string | false | undefined | null>) {
   return xs.filter(Boolean).join(' ');
 }
 
-type Props = {
-  value: Array<Record<string, any>>;
-  onChange: (next: any) => void;
-  columns: string[];
+export type TableEditorProps<T extends Record<string, any>> = {
+  value: T[];
+  onChange: (next: T[]) => void;
+
+  // which keys exist in the row (and are editable)
+  columns: Array<keyof T>;
+
+  // optional columns shown in table
+  previewColumns?: Array<keyof T>;
+
+  // if true, "+ Add row" opens modal first (recommended UX)
+  addOpensModal?: boolean;
+
+  // how to create a new row draft (otherwise auto-blank)
+  createDraft?: () => T;
+
+  // custom cell preview for table
+  cellPreview?: (col: keyof T, value: any, row: T) => string;
+
+  // custom renderer for fields inside modal
+  renderField?: (
+    key: keyof T,
+    draft: T,
+    setDraft: (next: T) => void,
+  ) => React.ReactNode;
+
+  // custom validation (return errors by field key)
+  validateDraft?: (draft: T) => Partial<Record<keyof T, string>>;
 };
 
-export default function ArrayOfObjectsTableEditor({
-  value,
-  onChange,
-  columns,
-}: Props) {
+export default function ArrayOfObjectsTableEditor<T extends Record<string, any>>(
+  props: TableEditorProps<T>,
+) {
+  const {
+    value,
+    onChange,
+    columns,
+    previewColumns,
+    addOpensModal = true,
+    createDraft,
+    cellPreview,
+    renderField,
+    validateDraft,
+  } = props;
+
   const rows = value ?? [];
 
-  const previewColumns = useMemo(() => {
-    const preferred = [
-      'name',
-      'Benchmark areas',
-      'Biomarker',
-      'unit',
-      'position',
-    ];
-    const picked = preferred.filter((c) => columns.includes(c));
-    const rest = columns.filter((c) => !picked.includes(c));
-    return [...picked, ...rest].slice(0, 5);
-  }, [columns]);
+  const previewCols = useMemo(() => {
+    if (previewColumns?.length) return previewColumns;
+    // fallback: show up to 5 columns
+    return columns.slice(0, 5);
+  }, [columns, previewColumns]);
 
-  const hiddenCount = Math.max(0, columns.length - previewColumns.length);
+  const hiddenCount = Math.max(0, columns.length - previewCols.length);
 
   // modal state
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  function makeBlankRow() {
+  function makeBlankRow(): T {
+    if (createDraft) return createDraft();
     const blank: Record<string, any> = {};
-    columns.forEach((c) => (blank[c] = ''));
-    return blank;
+    columns.forEach((c) => (blank[String(c)] = ''));
+    return blank as T;
   }
 
   function removeRow(idx: number) {
@@ -49,7 +78,7 @@ export default function ArrayOfObjectsTableEditor({
     onChange(next);
   }
 
-  function cellPreview(v: any) {
+  function defaultCellPreview(col: keyof T, v: any) {
     if (v === null || v === undefined) return '';
     if (typeof v === 'boolean') return v ? 'true' : 'false';
     if (typeof v === 'number') return String(v);
@@ -57,14 +86,14 @@ export default function ArrayOfObjectsTableEditor({
       const t = v.trim();
       return t.length > 40 ? t.slice(0, 40) + '…' : t;
     }
+    if (Array.isArray(v)) return `[${v.length}]`;
     return '{…}';
   }
 
-  // which row to show in modal
   const modalValue = useMemo(() => {
     if (isCreating) return makeBlankRow();
     if (editIndex === null) return null;
-    return rows[editIndex] ?? makeBlankRow();
+    return (rows[editIndex] ?? makeBlankRow()) as T;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCreating, editIndex, rows]);
 
@@ -79,12 +108,14 @@ export default function ArrayOfObjectsTableEditor({
 
         <button
           type="button"
-          className="rounded-lg hover:bg-[#5fb43f]
- bg-Primary-EmeraldGreen px-3 py-2 text-xs font-medium text-white "
+          className="rounded-lg bg-Primary-EmeraldGreen px-3 py-2 text-xs font-medium text-white hover:bg-[#5fb43f]"
           onClick={() => {
-            // ✅ open modal first (don’t add row yet)
-            setIsCreating(true);
-            setEditIndex(null);
+            if (addOpensModal) {
+              setIsCreating(true);
+              setEditIndex(null);
+            } else {
+              onChange([...rows, makeBlankRow()]);
+            }
           }}
         >
           + Add row
@@ -100,15 +131,12 @@ export default function ArrayOfObjectsTableEditor({
                   #
                 </th>
 
-                {previewColumns.map((c) => (
+                {previewCols.map((c) => (
                   <th
-                    key={c}
-                    className={cn(
-                      'px-3 py-2 text-xs font-semibold text-slate-700',
-                      c === 'Definition' && 'text-center',
-                    )}
+                    key={String(c)}
+                    className={cn('px-3 py-2 text-xs font-semibold text-slate-700')}
                   >
-                    {c}
+                    {String(c)}
                   </th>
                 ))}
 
@@ -134,13 +162,18 @@ export default function ArrayOfObjectsTableEditor({
                     {rIdx + 1}
                   </td>
 
-                  {previewColumns.map((c) => (
-                    <td key={`${rIdx}-${c}`} className="px-3 py-2 align-top">
-                      <div className="text-xs text-slate-800">
-                        {cellPreview(row?.[c])}
-                      </div>
-                    </td>
-                  ))}
+                  {previewCols.map((c) => {
+                    const v = row?.[c];
+                    const text = cellPreview
+                      ? cellPreview(c, v, row)
+                      : defaultCellPreview(c, v);
+
+                    return (
+                      <td key={`${rIdx}-${String(c)}`} className="px-3 py-2 align-top">
+                        <div className="text-xs text-slate-800">{text}</div>
+                      </td>
+                    );
+                  })}
 
                   {hiddenCount > 0 && (
                     <td className="px-3 py-2 text-xs text-center text-slate-500">
@@ -152,8 +185,7 @@ export default function ArrayOfObjectsTableEditor({
                     <div className="flex w-[120px] justify-center gap-2">
                       <button
                         type="button"
-                        className="rounded-lg bg-Primary-DeepTeal px-3 py-1 text-xs font-medium text-white hover:bg-[#005160]
-"
+                        className="rounded-lg bg-Primary-DeepTeal px-3 py-1 text-xs font-medium text-white hover:bg-[#005160]"
                         onClick={() => {
                           setEditIndex(rIdx);
                           setIsCreating(false);
@@ -177,7 +209,7 @@ export default function ArrayOfObjectsTableEditor({
               {rows.length === 0 && (
                 <tr>
                   <td
-                    colSpan={previewColumns.length + 3}
+                    colSpan={previewCols.length + 3}
                     className="p-6 text-center text-sm text-slate-500"
                   >
                     No rows yet. Click “Add row”.
@@ -189,7 +221,7 @@ export default function ArrayOfObjectsTableEditor({
         </div>
       </div>
 
-      <RowEditModal
+      <RowEditModal<T>
         open={modalOpen}
         title={
           isCreating
@@ -206,12 +238,10 @@ export default function ArrayOfObjectsTableEditor({
         }}
         onSave={(nextRow) => {
           if (isCreating) {
-            // ✅ only now append
             onChange([...rows, nextRow]);
             setIsCreating(false);
             return;
           }
-
           if (editIndex === null) return;
 
           const next = rows.slice();
@@ -219,6 +249,8 @@ export default function ArrayOfObjectsTableEditor({
           onChange(next);
           setEditIndex(null);
         }}
+        renderField={renderField}
+        validateDraft={validateDraft}
       />
     </div>
   );

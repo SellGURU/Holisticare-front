@@ -34,6 +34,6 @@ export const TEMPLATES: Record<JsonType, any> = {
     biomarker_specific: [],
   },
   biomarker_mapping: {
-    mappings: [{ standard_name: '', variations: [''] }],
+    mappings: [], // ✅ empty by default
   },
 };
