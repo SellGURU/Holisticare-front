@@ -47,7 +47,9 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           ? 'Value'
           : pageType === 'Peptide'
             ? 'FDA Status'
-            : 'Macros Goal',
+            : pageType === 'Other'
+              ? 'Type'
+              : 'Macros Goal',
     header:
       pageType === 'Supplement'
         ? 'Dose'
@@ -55,7 +57,9 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           ? 'Value'
           : pageType === 'Peptide'
             ? 'FDA Status'
-            : 'Macros Goal',
+            : pageType === 'Other'
+              ? 'Type'
+              : 'Macros Goal',
     enableSorting: false,
     cell: ({ row }) => {
       return (
@@ -71,6 +75,8 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
               </div>
             ) : pageType === 'Peptide' ? (
               <EllipsedTooltip text={row.original?.Fda_status || '-'} />
+            ) : pageType === 'Other' ? (
+              <EllipsedTooltip text={row.original?.Type || '-'} />
             ) : (
               <div className="flex items-center justify-center gap-4">
                 <EllipsedTooltip
