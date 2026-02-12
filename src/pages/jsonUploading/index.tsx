@@ -287,9 +287,9 @@ export const JsonUploading: React.FC = () => {
                         columns={columns}
                         onChange={setData}
                       />
-                    ) :  jsonType === 'unit_mapping' ? (
-  <UnitMappingEditor value={data} onChange={setData} />
-) :(
+                    ) : jsonType === 'unit_mapping' ? (
+                      <UnitMappingEditor value={data} onChange={setData} />
+                    ) : (
                       <JsonObjectEditor value={data} onChange={setData} />
                     )}
                   </>

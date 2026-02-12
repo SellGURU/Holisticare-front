@@ -71,7 +71,7 @@ export function StringListEditor({
           </div>
         ))}
 
-        {!((value ?? []).length) && (
+        {!(value ?? []).length && (
           <div className="text-xs text-slate-500">No items yet.</div>
         )}
       </div>

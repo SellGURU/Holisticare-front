@@ -73,8 +73,12 @@ export function MapNumberEditor({
           <table className="w-full text-sm">
             <thead className="sticky top-0 bg-slate-50">
               <tr>
-                <th className="px-3 py-2 text-xs text-slate-700 text-left">Key</th>
-                <th className="px-3 py-2 text-xs text-slate-700 text-left">Value</th>
+                <th className="px-3 py-2 text-xs text-slate-700 text-left">
+                  Key
+                </th>
+                <th className="px-3 py-2 text-xs text-slate-700 text-left">
+                  Value
+                </th>
                 <th className="px-3 py-2 text-xs text-slate-700 text-center w-[120px]">
                   Actions
                 </th>

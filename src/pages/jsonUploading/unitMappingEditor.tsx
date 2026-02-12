@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MapNumberEditor } from './mapNumberEditor';
 import { StringListEditor } from './StringListEditor';
 import { MapStringArrayEditor } from './MapStringArrayEditor';
-import  ArrayOfObjectsTableEditor  from './table';
+import ArrayOfObjectsTableEditor from './table';
 
 type UnitMapping = {
   unit_conversions: Record<string, number>;
@@ -55,23 +55,31 @@ function hasAnyAliasMap(map?: Record<string, string[]>) {
 function hasAnyBiomarkerRows(
   rows?: Array<{ biomarker?: string; unit?: string; to_unit?: string }>,
 ) {
-  return Array.isArray(rows) && rows.some((r) => {
-    return (
-      String(r?.biomarker ?? '').trim() ||
-      String(r?.unit ?? '').trim() ||
-      String(r?.to_unit ?? '').trim()
-    );
-  });
+  return (
+    Array.isArray(rows) &&
+    rows.some((r) => {
+      return (
+        String(r?.biomarker ?? '').trim() ||
+        String(r?.unit ?? '').trim() ||
+        String(r?.to_unit ?? '').trim()
+      );
+    })
+  );
 }
 
 function sectionsWithContent(value: UnitMapping): SectionKey[] {
   const result: SectionKey[] = [];
 
-  if (hasAnyRecordEntries(value.unit_conversions)) result.push('unit_conversions');
-  if (hasAnyRecordEntries(value.common_prefixes)) result.push('common_prefixes');
-  if (hasAnyStringArray(value.case_sensitive_units)) result.push('case_sensitive_units');
-  if (hasAnyAliasMap(value.common_unit_aliases)) result.push('common_unit_aliases');
-  if (hasAnyBiomarkerRows(value.biomarker_specific)) result.push('biomarker_specific');
+  if (hasAnyRecordEntries(value.unit_conversions))
+    result.push('unit_conversions');
+  if (hasAnyRecordEntries(value.common_prefixes))
+    result.push('common_prefixes');
+  if (hasAnyStringArray(value.case_sensitive_units))
+    result.push('case_sensitive_units');
+  if (hasAnyAliasMap(value.common_unit_aliases))
+    result.push('common_unit_aliases');
+  if (hasAnyBiomarkerRows(value.biomarker_specific))
+    result.push('biomarker_specific');
 
   // if file is valid but empty, show all (or at least one)
   return result.length ? result : [...ALL_SECTIONS];
@@ -89,8 +97,12 @@ export function UnitMappingEditor({
   );
 
   // user decides what to show
-  const [visible, setVisible] = useState<SectionKey[]>(() => sectionsWithContent(value));
-  const [active, setActive] = useState<SectionKey>(() => sectionsWithContent(value)[0]);
+  const [visible, setVisible] = useState<SectionKey[]>(() =>
+    sectionsWithContent(value),
+  );
+  const [active, setActive] = useState<SectionKey>(
+    () => sectionsWithContent(value)[0],
+  );
 
   useEffect(() => {
     const nextVisible = sectionsWithContent(value);
@@ -101,7 +113,9 @@ export function UnitMappingEditor({
   }, [value]);
   function toggleVisible(k: SectionKey) {
     setVisible((prev) => {
-      const next = prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k];
+      const next = prev.includes(k)
+        ? prev.filter((x) => x !== k)
+        : [...prev, k];
       // keep at least one
       if (!next.length) return prev;
       // if you hide active, switch to first visible
@@ -168,7 +182,9 @@ export function UnitMappingEditor({
         <MapNumberEditor
           title="unit_conversions"
           value={value.unit_conversions}
-          onChange={(nextMap) => onChange({ ...value, unit_conversions: nextMap })}
+          onChange={(nextMap) =>
+            onChange({ ...value, unit_conversions: nextMap })
+          }
           numberStep="any"
         />
       )}
@@ -177,7 +193,9 @@ export function UnitMappingEditor({
         <MapNumberEditor
           title="common_prefixes"
           value={value.common_prefixes}
-          onChange={(nextMap) => onChange({ ...value, common_prefixes: nextMap })}
+          onChange={(nextMap) =>
+            onChange({ ...value, common_prefixes: nextMap })
+          }
           numberStep="any"
         />
       )}
@@ -186,7 +204,9 @@ export function UnitMappingEditor({
         <StringListEditor
           title="case_sensitive_units"
           value={value.case_sensitive_units}
-          onChange={(next) => onChange({ ...value, case_sensitive_units: next })}
+          onChange={(next) =>
+            onChange({ ...value, case_sensitive_units: next })
+          }
           placeholder="e.g. mg/dL"
         />
       )}
@@ -215,7 +235,9 @@ export function UnitMappingEditor({
           <ArrayOfObjectsTableEditor
             value={value.biomarker_specific}
             columns={['biomarker', 'to_unit', 'unit', 'conversion_factor']}
-            onChange={(next) => onChange({ ...value, biomarker_specific: next })}
+            onChange={(next) =>
+              onChange({ ...value, biomarker_specific: next })
+            }
             // optional: make "Add row" open modal first (see note below)
             // addOpensModal
           />
