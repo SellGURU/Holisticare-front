@@ -97,6 +97,12 @@ export const menus = [
         icon: 'sidemenu-menu-icon-peptide ',
         active: true,
       },
+      {
+        name: 'Other',
+        url: '/other',
+        icon: 'sidemenu-menu-icon-Other',
+        active: true,
+      },
     ],
   },
   {
