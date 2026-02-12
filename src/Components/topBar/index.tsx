@@ -179,7 +179,7 @@ export const TopBar: FC<TopBarProps> = ({
   const [hasReportInRoute, setHasReportInRoute] = useState(false);
   const [hasShareInRoute, setHasShareInRoute] = useState(false);
   const [userInfoData, setUserInfoData] = useState(null);
-
+  const [isAutoCompile,setIsAutoCompile] = useState(false);
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo()
       .then((res) => {
@@ -191,6 +191,7 @@ export const TopBar: FC<TopBarProps> = ({
           navigate('/register-profile');
           return;
         }
+        setIsAutoCompile(res.data.auto_copmile)
         setCustomTheme({
           headLine: res.data.brand_elements.headline,
           name: res.data.brand_elements.name,
@@ -350,7 +351,7 @@ export const TopBar: FC<TopBarProps> = ({
       <div className="hidden xl:flex gap-3">
         {hasReportInRoute && !shouldEnableActions && (
           <div>
-            <CompileButton userInfoData={userInfoData}></CompileButton>
+            <CompileButton isAutoCompile={isAutoCompile} userInfoData={userInfoData}></CompileButton>
           </div>
         )}
         {canDownload && (hasReportInRoute || hasShareInRoute) && (

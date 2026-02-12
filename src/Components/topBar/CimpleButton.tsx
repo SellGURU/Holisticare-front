@@ -9,13 +9,15 @@ import { GitPullRequest, Merge, RefreshCcw } from 'lucide-react';
 import { SlideOutPanel } from '../SlideOutPanel';
 import Application from '../../api/app';
 import { useParams } from 'react-router-dom';
+import { formatRelativeDate } from '../../utils/formatRelativeDate';
 // import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 // import Tooltip from '../../../'; // فرضی
 interface CompileButtonProps {
   userInfoData: any;
+  isAutoCompile:boolean;
 }
 
-const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
+const CompileButton: FC<CompileButtonProps> = ({ userInfoData,isAutoCompile }) => {
   const { id } = useParams<{ id: string; name: string }>();
   const [progressData, setProgressData] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -175,28 +177,8 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
   const formatLatestRefreshLabel = (dateStr: string | null): string | null => {
     if (!dateStr || String(dateStr).trim().toLowerCase() === 'no data')
       return null;
-    const date = new Date(dateStr);
-    if (Number.isNaN(date.getTime())) return null;
-    const now = new Date();
-    const todayStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
-    const yesterdayStart = new Date(todayStart);
-    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
-    const inputStart = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate(),
-    );
-    if (inputStart.getTime() === todayStart.getTime()) return 'today';
-    if (inputStart.getTime() === yesterdayStart.getTime()) return 'yesterday';
-    return date.toLocaleDateString(undefined, {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
+    const label = formatRelativeDate(dateStr);
+    return label || null;
   };
 
   useEffect(() => {
@@ -300,6 +282,25 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
       }
     }
   }, [progressData]);
+
+  useEffect(() => {
+    if (
+      !isAutoCompile ||
+      !id ||
+      state !== 'READY_TO_COMPILE' ||
+      isCompiling
+    )
+      return;
+    setIsCompiling(true);
+    setNeedCompile(false);
+    Application.refreshData(id)
+      .then(() => {
+        publish('SyncRefresh', {});
+        publish('disableGenerate', {});
+      })
+      .catch(() => {});
+  }, [isAutoCompile, state, isCompiling, id]);
+
   /* ---------- handlers ---------- */
 
   const handleClick = () => {
