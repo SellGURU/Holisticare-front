@@ -9,13 +9,18 @@ import { GitPullRequest, Merge, RefreshCcw } from 'lucide-react';
 import { SlideOutPanel } from '../SlideOutPanel';
 import Application from '../../api/app';
 import { useParams } from 'react-router-dom';
+import { formatRelativeDate } from '../../utils/formatRelativeDate';
 // import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 // import Tooltip from '../../../'; // فرضی
 interface CompileButtonProps {
   userInfoData: any;
+  isAutoCompile: boolean;
 }
 
-const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
+const CompileButton: FC<CompileButtonProps> = ({
+  userInfoData,
+  isAutoCompile,
+}) => {
   const { id } = useParams<{ id: string; name: string }>();
   const [progressData, setProgressData] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -24,11 +29,14 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
   const [needCompile, setNeedCompile] = useState(false);
   const [isCompiling, setIsCompiling] = useState(false);
   const [beRecompile, setBeRecompile] = useState(false);
+  const [latestRefresh, setLatestRefresh] = useState<string | null>(null);
   // const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
 
   /* ---------- derive state ---------- */
-
+  useEffect(() => {
+    setLatestRefresh(userInfoData?.latest_refresh);
+  }, [userInfoData]);
   const state = useMemo(() => {
     if (isLoading) return 'LOADING';
 
@@ -158,11 +166,22 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
     Application.checkClientRefresh(id as string)
       .then((res) => {
         setNeedCompile(res.data.need_of_refresh);
+        // const raw = res.data.latest_refresh;
+        // setLatestRefresh(
+        //   raw && String(raw).trim().toLowerCase() !== 'no data' ? raw : null,
+        // );
       })
       .catch(() => {})
       .finally(() => {
         setIsLaoding(false);
       });
+  };
+
+  const formatLatestRefreshLabel = (dateStr: string | null): string | null => {
+    if (!dateStr || String(dateStr).trim().toLowerCase() === 'no data')
+      return null;
+    const label = formatRelativeDate(dateStr);
+    return label || null;
   };
 
   useEffect(() => {
@@ -266,6 +285,20 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
       }
     }
   }, [progressData]);
+
+  useEffect(() => {
+    if (!isAutoCompile || !id || state !== 'READY_TO_COMPILE' || isCompiling)
+      return;
+    setIsCompiling(true);
+    setNeedCompile(false);
+    Application.refreshData(id)
+      .then(() => {
+        publish('SyncRefresh', {});
+        publish('disableGenerate', {});
+      })
+      .catch(() => {});
+  }, [isAutoCompile, state, isCompiling, id]);
+
   /* ---------- handlers ---------- */
 
   const handleClick = () => {
@@ -274,6 +307,7 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
       setNeedCompile(false);
       Application.refreshData(id as string)
         .then(() => {
+          // setLatestRefresh(new Date().toISOString());
           publish('SyncRefresh', {});
           publish('disableGenerate', {});
         })
@@ -291,10 +325,17 @@ const CompileButton: FC<CompileButtonProps> = ({ userInfoData }) => {
 
   /* ---------- render ---------- */
 
+  const refreshLabel = formatLatestRefreshLabel(latestRefresh);
+
   return (
     // <Tooltip content={ui.tooltip}>
     <>
-      <div>
+      <div className="flex flex-col items-start gap-0.5 sm:flex-row sm:items-center sm:gap-2">
+        {refreshLabel != null && (
+          <span className="text-Text-Secondary text-[10px] whitespace-nowrap">
+            Last compiled: {refreshLabel}
+          </span>
+        )}
         <ButtonPrimary
           size="small"
           isSoftDisabled={ui.disabled}
