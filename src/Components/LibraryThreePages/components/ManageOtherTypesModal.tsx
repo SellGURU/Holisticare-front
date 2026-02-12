@@ -54,7 +54,11 @@ const ManageOtherTypesModal: FC<ManageOtherTypesModalProps> = ({
         onTypesUpdated?.();
       })
       .catch((err: any) => {
-        const msg = err?.response?.data?.detail ?? err?.message ?? 'Failed to add type.';
+        const msg =
+          err?.response?.data?.detail ??
+          err?.detail ??
+          err?.message ??
+          'Failed to add type.';
         setInlineError(typeof msg === 'string' ? msg : 'Failed to add type.');
       })
       .finally(() => setAdding(false));
@@ -71,8 +75,14 @@ const ManageOtherTypesModal: FC<ManageOtherTypesModalProps> = ({
         onTypesUpdated?.();
       })
       .catch((err: any) => {
-        const msg = err?.response?.data?.detail ?? err?.message ?? 'Failed to delete type.';
-        setInlineError(typeof msg === 'string' ? msg : 'Failed to delete type.');
+        const msg =
+          err?.response?.data?.detail ??
+          err?.detail ??
+          err?.message ??
+          'Failed to delete type.';
+        setInlineError(
+          typeof msg === 'string' ? msg : 'Failed to delete type.',
+        );
       })
       .finally(() => setDeletingId(null));
   };
