@@ -12,9 +12,7 @@ export type BiomarkerMapping = {
 };
 
 function normalizeStringList(list: string[]) {
-  return Array.from(
-    new Set(list.map((s) => s.trim()).filter(Boolean))
-  );
+  return Array.from(new Set(list.map((s) => s.trim()).filter(Boolean)));
 }
 
 export function BiomarkerMappingEditor({
@@ -29,7 +27,9 @@ export function BiomarkerMappingEditor({
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4">
       <div className="mb-3">
-        <div className="text-sm font-semibold text-slate-900">Biomarker Mapping</div>
+        <div className="text-sm font-semibold text-slate-900">
+          Biomarker Mapping
+        </div>
         <div className="text-xs text-slate-500">
           Manage standard biomarker names and their possible variations.
         </div>
@@ -57,7 +57,9 @@ export function BiomarkerMappingEditor({
                 className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-slate-400"
                 placeholder="e.g. Vitamin D"
                 value={draft.standard_name}
-                onChange={(e) => setDraft({ ...draft, standard_name: e.target.value })}
+                onChange={(e) =>
+                  setDraft({ ...draft, standard_name: e.target.value })
+                }
               />
             );
           }
@@ -67,9 +69,7 @@ export function BiomarkerMappingEditor({
               <StringListEditor
                 title="Variations"
                 value={draft.variations ?? ['']}
-                onChange={(next) =>
-                  setDraft({ ...draft, variations: next })
-                }
+                onChange={(next) => setDraft({ ...draft, variations: next })}
                 placeholder="e.g. Vit D"
               />
             );

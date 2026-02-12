@@ -36,9 +36,9 @@ export type TableEditorProps<T extends Record<string, any>> = {
   validateDraft?: (draft: T) => Partial<Record<keyof T, string>>;
 };
 
-export default function ArrayOfObjectsTableEditor<T extends Record<string, any>>(
-  props: TableEditorProps<T>,
-) {
+export default function ArrayOfObjectsTableEditor<
+  T extends Record<string, any>,
+>(props: TableEditorProps<T>) {
   const {
     value,
     onChange,
@@ -134,7 +134,9 @@ export default function ArrayOfObjectsTableEditor<T extends Record<string, any>>
                 {previewCols.map((c) => (
                   <th
                     key={String(c)}
-                    className={cn('px-3 py-2 text-xs font-semibold text-slate-700')}
+                    className={cn(
+                      'px-3 py-2 text-xs font-semibold text-slate-700',
+                    )}
                   >
                     {String(c)}
                   </th>
@@ -169,7 +171,10 @@ export default function ArrayOfObjectsTableEditor<T extends Record<string, any>>
                       : defaultCellPreview(c, v);
 
                     return (
-                      <td key={`${rIdx}-${String(c)}`} className="px-3 py-2 align-top">
+                      <td
+                        key={`${rIdx}-${String(c)}`}
+                        className="px-3 py-2 align-top"
+                      >
                         <div className="text-xs text-slate-800">{text}</div>
                       </td>
                     );
