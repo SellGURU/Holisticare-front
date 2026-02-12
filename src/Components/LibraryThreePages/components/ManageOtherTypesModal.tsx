@@ -21,9 +21,11 @@ const ManageOtherTypesModal: FC<ManageOtherTypesModalProps> = ({
   const [newTypeName, setNewTypeName] = useState('');
   const [adding, setAdding] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [inlineError, setInlineError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
+      setInlineError(null);
       setLoading(true);
       Application.getOtherTypeList()
         .then((res) => {
@@ -39,29 +41,49 @@ const ManageOtherTypesModal: FC<ManageOtherTypesModalProps> = ({
   const handleAdd = () => {
     const name = newTypeName.trim();
     if (!name) return;
+    setInlineError(null);
     setAdding(true);
     Application.addOtherType({ type_name: name })
       .then(() => {
         setNewTypeName('');
+        setInlineError(null);
         return Application.getOtherTypeList();
       })
       .then((res) => {
         setList(res.data || []);
         onTypesUpdated?.();
       })
-      .catch((err) => console.error('Error adding type:', err))
+      .catch((err: any) => {
+        const msg =
+          err?.response?.data?.detail ??
+          err?.detail ??
+          err?.message ??
+          'Failed to add type.';
+        setInlineError(typeof msg === 'string' ? msg : 'Failed to add type.');
+      })
       .finally(() => setAdding(false));
   };
 
   const handleDelete = (Ot_Id: string) => {
+    setInlineError(null);
     setDeletingId(Ot_Id);
     Application.deleteOtherType(Ot_Id)
       .then(() => Application.getOtherTypeList())
       .then((res) => {
         setList(res.data || []);
+        setInlineError(null);
         onTypesUpdated?.();
       })
-      .catch((err) => console.error('Error deleting type:', err))
+      .catch((err: any) => {
+        const msg =
+          err?.response?.data?.detail ??
+          err?.detail ??
+          err?.message ??
+          'Failed to delete type.';
+        setInlineError(
+          typeof msg === 'string' ? msg : 'Failed to delete type.',
+        );
+      })
       .finally(() => setDeletingId(null));
   };
 
@@ -115,6 +137,11 @@ const ManageOtherTypesModal: FC<ManageOtherTypesModalProps> = ({
               )}
             </ButtonSecondary>
           </div>
+          {inlineError && (
+            <p className="text-Red text-xs mt-2" role="alert">
+              {inlineError}
+            </p>
+          )}
         </div>
 
         {/* List */}
