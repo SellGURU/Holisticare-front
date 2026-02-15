@@ -453,11 +453,19 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         <div
           className={`w-full flex justify-center items-center flex-col mt-16`}
         >
-          <img
-            src={`/icons/${pageType === 'Supplement' ? 'supplement-empty' : pageType === 'Lifestyle' ? 'lifestyle-empty' : pageType === 'Peptide' ? 'supplement-empty' : pageType === 'Other' ? 'empty-state-new' : 'diet-empty'}.svg`}
-            alt=""
-            className="mt-16"
-          />
+          {pageType === 'Other' ? (
+            <img
+              src="/icons/empty-state-new.svg"
+              alt=""
+              className="mt-16 w-52"
+            />
+          ) : (
+            <img
+              src={`/icons/${pageType === 'Supplement' ? 'supplement-empty' : pageType === 'Lifestyle' ? 'lifestyle-empty' : pageType === 'Peptide' ? 'supplement-empty' : 'diet-empty'}.svg`}
+              alt=""
+              className="mt-16"
+            />
+          )}
           <div className="font-medium text-base text-Text-Primary mt-8 text-center px-4">
             {pageType === 'Other' ? (
               'No items in this library yet. Add one to get started.'
