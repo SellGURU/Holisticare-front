@@ -298,7 +298,7 @@ class ValidationForms {
   }
   private static validateBasedOn(value: string) {
     if (value.length == 0) {
-      return false;
+      return true;
     }
     return true;
   }
