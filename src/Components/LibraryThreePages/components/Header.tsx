@@ -12,6 +12,7 @@ interface HeaderLibraryTreePagesProps {
   handleOpenModal: () => void;
   currentSortLabel: string;
   onChangeSort: (sortId: string) => void;
+  onManageTypes?: () => void;
 }
 
 const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
@@ -21,14 +22,19 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
   handleOpenModal,
   currentSortLabel,
   onChangeSort,
+  onManageTypes,
 }) => {
   const [isSortOpen, setIsSortOpen] = useState(false);
 
   const sortOptions = [
     { id: 'title_asc', label: 'Title (A → Z)' },
     { id: 'title_desc', label: 'Title (Z → A)' },
-    // { id: 'dose_asc', label: 'Dose (Low → High)' },
-    // { id: 'dose_desc', label: 'Dose (High → Low)' },
+    ...(pageType === 'Other'
+      ? [
+          { id: 'type_asc', label: 'Type (A → Z)' },
+          { id: 'type_desc', label: 'Type (Z → A)' },
+        ]
+      : []),
     { id: 'priority_asc', label: 'Priority Weight (Low → High)' },
     { id: 'priority_desc', label: 'Priority Weight (High → Low)' },
     { id: 'added_desc', label: 'Added on (Newest first)' },
@@ -58,7 +64,7 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
           <div className="flex items-center gap-3 md:gap-5 flex-wrap relative">
             <SearchBox
               ClassName="rounded-2xl !min-w-full !h-8 md:!min-w-[283px] !py-[0px] !px-3 !shadow-[unset]"
-              placeHolder={`Search ${pageType === 'Supplement' ? 'supplements' : pageType === 'Lifestyle' ? 'lifestyles' : pageType === 'Peptide' ? 'peptides' : 'diets'}...`}
+              placeHolder={`Search ${pageType === 'Supplement' ? 'supplements' : pageType === 'Lifestyle' ? 'lifestyles' : pageType === 'Peptide' ? 'peptides' : pageType === 'Other' ? 'other' : 'diets'}...`}
               onSearch={handleChangeSearch}
             />
 
@@ -116,6 +122,15 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
                 )}
               </div>
             </div>
+            {onManageTypes && (
+              <button
+                type="button"
+                className="text-sm font-medium text-Primary-DeepTeal cursor-pointer border border-Primary-DeepTeal rounded-[20px] px-4 py-2 h-[32px]"
+                onClick={onManageTypes}
+              >
+                Manage types
+              </button>
+            )}
             <ButtonSecondary
               ClassName="w-full md:w-[180px] h-[32px] rounded-[20px] shadow-Btn"
               onClick={handleOpenModal}

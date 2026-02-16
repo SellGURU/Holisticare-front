@@ -63,19 +63,28 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     if (name === 'Playground' && !showPlayground) {
       return true;
     }
-    if (name == 'Knowledge Graph' && permissions.ai_knowledge == false) {
+    if (name === 'Knowledge Graph' && permissions.ai_knowledge === false) {
       return true;
     }
-    if (name == 'Package' && permissions.packages == false) {
+    if (name === 'Package' && permissions.packages === false) {
       return true;
     }
-    if (name == 'Staff' && permissions.staff == false) {
+    if (name === 'Staff' && permissions.staff === false) {
       return true;
     }
-    if (name == 'Setting' && permissions.setting == false) {
+    if (name === 'Setting' && permissions.setting === false) {
       return true;
     }
-    if (name == 'Drift Analysis' && permissions.drift_analysis == false) {
+    if (name === 'Drift Analysis' && permissions.drift_analysis === false) {
+      return true;
+    }
+    if (name === 'Peptide' && permissions.peptide === false) {
+      return true;
+    }
+    if (name === 'FHIR Import' && permissions.fhir === false) {
+      return true;
+    }
+    if (name === 'Other' && permissions.other === false) {
       return true;
     }
     return false;
@@ -97,9 +106,12 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
             className="h-fit md:h-full overflow-y-auto hidden-scrollbar"
             style={{ height: `${height}px` }}
           >
-            {menus.map((menuCategory) => (
+            {menus.map((menuCategory) => {
+              const hasVisibleItem =
+                menuCategory.items?.some((menu) => !dontPermisionsToRender(menu.name)) ?? false;
+              return (
               <div className="mt-2" key={menuCategory.category}>
-                {menuCategory.items && menuCategory.items.length > 0 && (
+                {menuCategory.items && menuCategory.items.length > 0 && hasVisibleItem && (
                   <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">
                     <>{menuCategory.category}</>
                   </div>
@@ -175,7 +187,9 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                               <div
                                 className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
                                   activeMenu.name === menu.name
-                                    ? 'text-Primary-DeepTeal'
+                                    ? menu.name === 'Other'
+                                      ? 'text-Primary-EmeraldGreen'
+                                      : 'text-Primary-DeepTeal'
                                     : 'text-Text-Primary'
                                 }`}
                               />
@@ -196,7 +210,8 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                   </>
                 ))}
               </div>
-            ))}
+            );
+            })}
             <div className="md:hidden text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
               Powered by
               <img src="/images/sidebar-final.svg" alt="Powered by" />

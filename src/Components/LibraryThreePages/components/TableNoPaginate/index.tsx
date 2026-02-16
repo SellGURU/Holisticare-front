@@ -142,6 +142,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                   if (pageType === 'Supplement') return row.original.Sup_Id;
                   if (pageType === 'Lifestyle') return row.original.Life_Id;
                   if (pageType === 'Peptide') return row.original.Peptide_Id;
+                  if (pageType === 'Other') return row.original.O_Id;
                   return row.original.Diet_Id;
                 };
                 return (
@@ -177,6 +178,8 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                                 removeItemByNo(row.original.Life_Id);
                               } else if (pageType === 'Peptide') {
                                 removeItemByNo(row.original.Peptide_Id);
+                              } else if (pageType === 'Other') {
+                                removeItemByNo(row.original.O_Id);
                               } else {
                                 removeItemByNo(row.original.Diet_Id);
                               }

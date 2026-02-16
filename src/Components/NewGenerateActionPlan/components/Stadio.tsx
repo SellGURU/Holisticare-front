@@ -67,6 +67,7 @@ const Stadio: FC<StadioProps> = ({
     'Supplement',
     'Lifestyle',
     'Medical Peptide Therapy',
+    'Other',
     'Checkin',
   ];
   console.log(actions);
