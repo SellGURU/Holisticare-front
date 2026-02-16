@@ -33,7 +33,8 @@ class Api {
       ? config?.headers || {}
       : {
           Authorization: 'Bearer ' + getTokenFromLocalStorage(),
-          'Content-Type': config?.headers?.['Content-Type'] || 'application/json',
+          'Content-Type':
+            config?.headers?.['Content-Type'] || 'application/json',
         };
     const response = axios.get(this.base_url + url, {
       ...axiosConfig,
