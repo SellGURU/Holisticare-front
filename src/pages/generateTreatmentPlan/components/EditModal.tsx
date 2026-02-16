@@ -535,7 +535,7 @@ const EditModal: FC<EditModalProps> = ({
       !formData.Recommendation ||
       // ||
       // (formData.Instruction.length === 0 && client_versions.length === 0)
-      !formData.Intervnetion_content 
+      !formData.Intervnetion_content
       // !formData['Based on']
     ) {
       scrollToFirstError();
@@ -695,8 +695,7 @@ const EditModal: FC<EditModalProps> = ({
                     )
                   : true
               }
-              validationText={""
-              }
+              validationText={''}
               margin="mb-4"
             />
           </div>
