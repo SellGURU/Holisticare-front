@@ -28,12 +28,16 @@ class Api {
   }
 
   protected static get(url: string, config?: any) {
-    // toast.loading('pending ...')
+    const { noAuth, ...axiosConfig } = config || {};
+    const headers = noAuth
+      ? config?.headers || {}
+      : {
+          Authorization: 'Bearer ' + getTokenFromLocalStorage(),
+          'Content-Type': config?.headers?.['Content-Type'] || 'application/json',
+        };
     const response = axios.get(this.base_url + url, {
-      headers: {
-        Authorization: 'Bearer ' + getTokenFromLocalStorage(),
-        'Content-Type': config?.headers?.['Content-Type'] || 'application/json',
-      },
+      ...axiosConfig,
+      headers,
     });
     return response;
   }
