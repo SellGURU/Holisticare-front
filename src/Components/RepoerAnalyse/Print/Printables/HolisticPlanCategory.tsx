@@ -13,6 +13,9 @@ const resolveTreatmentPlanIcon = (category: string) => {
   if (category == 'Supplement') {
     return '/icons/TreatmentPlan/IconSupplement.svg';
   }
+  if (category == 'Other') {
+    return '/icons/TreatmentPlan/IconSupplement.svg';
+  }
   if (category == 'Mind') {
     return '/icons/TreatmentPlan/Iconmind.svg';
   }

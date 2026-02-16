@@ -38,6 +38,7 @@ import Supplement from '../pages/supplement/index.tsx';
 import Lifestyle from '../pages/lifestyle/index.tsx';
 import Diet from '../pages/diet/index.tsx';
 import Peptide from '../pages/peptide/index.tsx';
+import Other from '../pages/other/index.tsx';
 import FHIRIntegration from '../pages/FHIRIntegration/index.tsx';
 import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
@@ -117,6 +118,10 @@ const router = createBrowserRouter([
           {
             path: '/peptide',
             element: <Peptide></Peptide>,
+          },
+          {
+            path: '/other',
+            element: <Other></Other>,
           },
           {
             path: '/fhir-integration',

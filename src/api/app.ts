@@ -809,6 +809,34 @@ class Application extends Api {
   static getSupplementList = () => {
     return this.post('/supplement_library/supplements_list', {});
   };
+  // Other Library APIs (Type-based, like Supplement but with Type instead of Dose)
+  static getOtherTypeList = () => {
+    return this.post('/other_library/types_list', {});
+  };
+  static addOtherType = (data: { type_name: string }) => {
+    return this.post('/other_library/add_type', data);
+  };
+  static editOtherType = (data: { Ot_Id: string; type_name: string }) => {
+    return this.post('/other_library/edit_type', data);
+  };
+  static deleteOtherType = (Ot_Id: string) => {
+    return this.post('/other_library/delete_type', { Ot_Id });
+  };
+  static getOtherList = () => {
+    return this.post('/other_library/list', {});
+  };
+  static addOther = (data: any) => {
+    return this.post('/other_library/add', data);
+  };
+  static editOther = (data: any) => {
+    return this.post('/other_library/edit', data);
+  };
+  static deleteOther = (O_Id: string) => {
+    return this.post('/other_library/delete', { O_Id });
+  };
+  static showOtherDetails = (O_Id: string) => {
+    return this.post('/other_library/show_details', { O_Id });
+  };
   // Peptide Library APIs (Layer 1 - Base Peptides)
   static addPeptide = (data: any) => {
     return this.post('/peptide_library/add_peptide', data);

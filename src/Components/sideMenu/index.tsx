@@ -63,19 +63,28 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     if (name === 'Playground' && !showPlayground) {
       return true;
     }
-    if (name == 'Knowledge Graph' && permissions.ai_knowledge == false) {
+    if (name === 'Knowledge Graph' && permissions.ai_knowledge === false) {
       return true;
     }
-    if (name == 'Package' && permissions.packages == false) {
+    if (name === 'Package' && permissions.packages === false) {
       return true;
     }
-    if (name == 'Staff' && permissions.staff == false) {
+    if (name === 'Staff' && permissions.staff === false) {
       return true;
     }
-    if (name == 'Setting' && permissions.setting == false) {
+    if (name === 'Setting' && permissions.setting === false) {
       return true;
     }
-    if (name == 'Drift Analysis' && permissions.drift_analysis == false) {
+    if (name === 'Drift Analysis' && permissions.drift_analysis === false) {
+      return true;
+    }
+    if (name === 'Peptide' && permissions.peptide === false) {
+      return true;
+    }
+    if (name === 'FHIR Import' && permissions.fhir === false) {
+      return true;
+    }
+    if (name === 'Other' && permissions.other === false) {
       return true;
     }
     return false;
@@ -97,106 +106,116 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
             className="h-fit md:h-full overflow-y-auto hidden-scrollbar"
             style={{ height: `${height}px` }}
           >
-            {menus.map((menuCategory) => (
-              <div className="mt-2" key={menuCategory.category}>
-                {menuCategory.items && menuCategory.items.length > 0 && (
-                  <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">
-                    <>{menuCategory.category}</>
-                  </div>
-                )}
-                {menuCategory.items.map((menu) => (
-                  <>
-                    {menu.name === 'Knowledge Graph' &&
-                    !dontPermisionsToRender(menu.name) ? (
-                      <div className=" my-2  w-full flex pl-5  items-center">
-                        {' '}
-                        <div
-                          onClick={() => {
-                            changeMenu(menu);
-                          }}
-                          // style={{
-                          //   background: `
-                          //   linear-gradient(transparent, transparent) padding-box,
-                          //   linear-gradient(to right, #005F73, #6CC24A) border-box
-                          //   `,
-                          //   border: "1px solid transparent",
-                          //   borderRadius: "16px",
-                          // }}
-                          className={` cursor-pointer flex border rounded-[20px]  border-Primary-DeepTeal flex-row  items-center gap-x-2 w-[133px] justify-center text-center text-[8px] h-sm:text-[9px] text-white font-semibold py-[2px] px-3 ${
-                            activeMenu.name === menu.name
-                              ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]'
-                              : ''
-                          }`}
-                        >
-                          {activeMenu.name === menu.name ? (
-                            <img
-                              className="w-4 h-4 h-sm:w-4 h-sm:h-4"
-                              src="/icons/side-menu/command-square-active.svg"
-                              alt=""
-                            />
-                          ) : (
-                            <img
-                              className="w-4 h-4 h-sm:w-4 h-sm:h-4"
-                              src="/icons/side-menu/command-square.svg"
-                              alt=""
-                            />
-                          )}
+            {menus.map((menuCategory) => {
+              const hasVisibleItem =
+                menuCategory.items?.some(
+                  (menu) => !dontPermisionsToRender(menu.name),
+                ) ?? false;
+              return (
+                <div className="mt-2" key={menuCategory.category}>
+                  {menuCategory.items &&
+                    menuCategory.items.length > 0 &&
+                    hasVisibleItem && (
+                      <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">
+                        <>{menuCategory.category}</>
+                      </div>
+                    )}
+                  {menuCategory.items.map((menu) => (
+                    <>
+                      {menu.name === 'Knowledge Graph' &&
+                      !dontPermisionsToRender(menu.name) ? (
+                        <div className=" my-2  w-full flex pl-5  items-center">
+                          {' '}
                           <div
-                            className={` text-[8px] xs:text-[10px]  font-medium block text-nowrap  ${
+                            onClick={() => {
+                              changeMenu(menu);
+                            }}
+                            // style={{
+                            //   background: `
+                            //   linear-gradient(transparent, transparent) padding-box,
+                            //   linear-gradient(to right, #005F73, #6CC24A) border-box
+                            //   `,
+                            //   border: "1px solid transparent",
+                            //   borderRadius: "16px",
+                            // }}
+                            className={` cursor-pointer flex border rounded-[20px]  border-Primary-DeepTeal flex-row  items-center gap-x-2 w-[133px] justify-center text-center text-[8px] h-sm:text-[9px] text-white font-semibold py-[2px] px-3 ${
                               activeMenu.name === menu.name
-                                ? 'text-white'
-                                : ' bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent block '
+                                ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]'
+                                : ''
                             }`}
                           >
-                            {menu.name}
-                          </div>
-                          {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
-                          {/* { activeMenu.name === graph.name && graph.name} */}
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        {dontPermisionsToRender(menu.name) ? (
-                          <></>
-                        ) : (
-                          <div className="" key={menu.name}>
-                            <div
-                              onClick={() => {
-                                if (menu.active) {
-                                  changeMenu(menu);
-                                }
-                              }}
-                              className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
-                                activeMenu.name === menu.name
-                                  ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
-                                  : 'bg-white'
-                              } ${!menu.active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} text-[8px] h-sm:text-[10px] `}
-                            >
-                              <div
-                                className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
-                                  activeMenu.name === menu.name
-                                    ? 'text-Primary-DeepTeal'
-                                    : 'text-Text-Primary'
-                                }`}
+                            {activeMenu.name === menu.name ? (
+                              <img
+                                className="w-4 h-4 h-sm:w-4 h-sm:h-4"
+                                src="/icons/side-menu/command-square-active.svg"
+                                alt=""
                               />
+                            ) : (
+                              <img
+                                className="w-4 h-4 h-sm:w-4 h-sm:h-4"
+                                src="/icons/side-menu/command-square.svg"
+                                alt=""
+                              />
+                            )}
+                            <div
+                              className={` text-[8px] xs:text-[10px]  font-medium block text-nowrap  ${
+                                activeMenu.name === menu.name
+                                  ? 'text-white'
+                                  : ' bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent block '
+                              }`}
+                            >
+                              {menu.name}
+                            </div>
+                            {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
+                            {/* { activeMenu.name === graph.name && graph.name} */}
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {dontPermisionsToRender(menu.name) ? (
+                            <></>
+                          ) : (
+                            <div className="" key={menu.name}>
                               <div
-                                className={`${
+                                onClick={() => {
+                                  if (menu.active) {
+                                    changeMenu(menu);
+                                  }
+                                }}
+                                className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
                                   activeMenu.name === menu.name
-                                    ? 'text-Primary-DeepTeal'
-                                    : 'text-Text-Primary block '
-                                }`}
+                                    ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
+                                    : 'bg-white'
+                                } ${!menu.active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} text-[8px] h-sm:text-[10px] `}
                               >
-                                {menu.name}
+                                <div
+                                  className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
+                                    activeMenu.name === menu.name
+                                      ? menu.name === 'Other'
+                                        ? 'text-Primary-EmeraldGreen'
+                                        : 'text-Primary-DeepTeal'
+                                      : 'text-Text-Primary'
+                                  }`}
+                                />
+                                <div
+                                  className={`${
+                                    activeMenu.name === menu.name
+                                      ? 'text-Primary-DeepTeal'
+                                      : 'text-Text-Primary block '
+                                  }`}
+                                >
+                                  {menu.name}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </>
-                ))}
-              </div>
-            ))}
+                          )}
+                        </>
+                      )}
+                    </>
+                  ))}
+                </div>
+              );
+            })}
             <div className="md:hidden text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
               Powered by
               <img src="/images/sidebar-final.svg" alt="Powered by" />

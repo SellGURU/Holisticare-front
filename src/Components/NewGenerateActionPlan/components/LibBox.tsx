@@ -37,6 +37,9 @@ const LibBox: FC<LibBoxProps> = ({
       case 'Medical Peptide Therapy':
         setValueData('Dose_Schedules');
         break;
+      case 'Other':
+        setValueData('Type');
+        break;
     }
   }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
