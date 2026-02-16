@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
 import FHIRApi, {
   FHIRServer,
   FHIRPatient,
@@ -12,6 +11,12 @@ import FHIRPatientForm from './FHIRPatientForm';
 import BiomarkersSection from '../../../Components/RepoerAnalyse/UploadTestV2/BiomarkersSection';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import { BeatLoader } from 'react-spinners';
+import {
+  showError,
+  showInfo,
+  showSuccess,
+  showWarning,
+} from '../../../Components/GlobalToast';
 
 interface FHIRBrowserProps {
   server: FHIRServer;
@@ -114,7 +119,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
   const handleSearch = async () => {
     if (!searchName.trim() && !searchIdentifier.trim()) {
-      toast.warning('Please enter a name or identifier to search');
+      showWarning('Please enter a name or identifier to search');
       return;
     }
 
@@ -131,16 +136,16 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
         const foundPatients = response.data.patients || [];
         setPatients(foundPatients);
         if (foundPatients.length === 0) {
-          toast.info('No patients found');
+          showInfo('No patients found');
         } else {
           fetchPatientCounts(foundPatients.map((p: FHIRPatient) => p.id));
         }
       } else {
-        toast.error(response.data.error || 'Search failed');
+        showError(response.data.error || 'Search failed');
       }
     } catch (error: any) {
       console.error('Search failed:', error);
-      toast.error(error.response?.data?.detail || 'Search failed');
+      showError(error.response?.data?.detail || 'Search failed');
     } finally {
       setLoading(false);
     }
@@ -179,13 +184,11 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
         setBiomarkers(fhirBiomarkers);
         setStep('patient-form');
       } else {
-        toast.error('Failed to fetch patient data');
+        showError('Failed to fetch patient data');
       }
     } catch (error: any) {
       console.error('Failed to prepare import:', error);
-      toast.error(
-        error.response?.data?.detail || 'Failed to fetch patient data',
-      );
+      showError(error.response?.data?.detail || 'Failed to fetch patient data');
     } finally {
       setLoading(false);
     }
@@ -205,7 +208,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
     setShowCreateConfirm(false);
 
     try {
-      toast.info('Creating patient...');
+      showInfo('Creating patient...');
       const createResponse = await FHIRApi.createPatient({
         patient_data: patientFormData.patient_data,
         conditions: patientFormData.conditions,
@@ -224,7 +227,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
       setCreatedPatientId(createResponse.data.patients_id);
       setCreatedMemberId(createResponse.data.member_id);
 
-      toast.success(
+      showSuccess(
         `Patient "${patientFormData.patient_data.first_name} ${patientFormData.patient_data.last_name}" created successfully!`,
       );
 
@@ -232,7 +235,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
       setStep('biomarkers');
     } catch (error: any) {
       console.error('Failed to create patient:', error);
-      toast.error(
+      showError(
         error.response?.data?.detail ||
           error.message ||
           'Failed to create patient',
@@ -251,7 +254,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
     // Validate biomarkers before proceeding
     if (!createdMemberId) {
-      toast.error('Patient not created yet');
+      showError('Patient not created yet');
       return;
     }
 
@@ -280,7 +283,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
       // Validation passed - clear errors and proceed
       setRowErrors({});
-      toast.success('Biomarkers validated successfully!');
+      showSuccess('Biomarkers validated successfully!');
       setStep('confirm');
     } catch (error: any) {
       console.error('Validation failed:', error);
@@ -293,7 +296,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
           try {
             parsedDetail = JSON.parse(detail);
           } catch {
-            toast.error(detail);
+            showError(detail);
             setBtnLoading(false);
             return;
           }
@@ -309,14 +312,14 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
         if (Object.keys(validationErrors).length > 0) {
           setRowErrors(validationErrors);
-          toast.error(
+          showError(
             'Validation errors found. Please fix them before continuing.',
           );
         } else {
-          toast.error(error.message || 'Validation failed');
+          showError(error.message || 'Validation failed');
         }
       } else {
-        toast.error(
+        showError(
           error.response?.data?.detail || error.message || 'Validation failed',
         );
       }
@@ -328,7 +331,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
   // Step 4: Save biomarkers using SaveLabReport with added_biomarkers (same as index.tsx)
   const handleSaveBiomarkers = async () => {
     if (!createdMemberId) {
-      toast.error('Patient not created yet');
+      showError('Patient not created yet');
       return;
     }
 
@@ -386,7 +389,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
       });
 
       setRowErrors({});
-      toast.success('Biomarkers saved successfully!');
+      showSuccess('Biomarkers saved successfully!');
 
       // Call first_view_report after successful save
       Application.first_view_report(createdMemberId)
@@ -398,7 +401,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
         });
     } catch (error: any) {
       console.error('Save failed:', error);
-      toast.error(
+      showError(
         error.response?.data?.detail ||
           error.message ||
           'Failed to save biomarkers',
@@ -1150,7 +1153,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
                   allergies_count: patientFormData?.allergies.length || 0,
                   biomarkers: { imported: 0 },
                 });
-                toast.success('Patient import completed!');
+                showSuccess('Patient import completed!');
               }}
               ClassName="px-6 py-2.5 font-medium flex items-center gap-2 transition-colors"
             >
