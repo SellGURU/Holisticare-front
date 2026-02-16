@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import FHIRApi, { FHIRServer, FHIRServerConfig } from '../../api/fhir';
-import { toast } from 'react-toastify';
 import ServerCard from './components/ServerCard';
 import AddServerModal from './components/AddServerModal';
 import FHIRBrowser from './components/FHIRBrowser';
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
+import { showError, showInfo, showSuccess } from '../../Components/GlobalToast';
 
 const FHIRIntegration: React.FC = () => {
   const [servers, setServers] = useState<FHIRServer[]>([]);
@@ -27,7 +27,7 @@ const FHIRIntegration: React.FC = () => {
       })
       .catch((error) => {
         console.error('Failed to load FHIR servers:', error);
-        toast.error('Failed to load FHIR servers');
+        showError('Failed to load FHIR servers');
       })
       .finally(() => {
         setLoading(false);
@@ -38,34 +38,32 @@ const FHIRIntegration: React.FC = () => {
     FHIRApi.addServer(config)
       .then((response) => {
         if (response.data.success) {
-          toast.success('FHIR server added successfully');
+          showSuccess('FHIR server added successfully');
           setShowAddModal(false);
           loadServers();
         } else {
-          toast.error(response.data.message || 'Failed to add server');
+          showError(response.data.message || 'Failed to add server');
         }
       })
       .catch((error) => {
         console.error('Failed to add FHIR server:', error);
-        toast.error(error.response?.data?.detail || 'Failed to add server');
+        showError(error.response?.data?.detail || 'Failed to add server');
       });
   };
 
   const handleTestServer = (serverId: number) => {
-    toast.info('Testing connection...');
+    showInfo('Testing connection...');
     FHIRApi.testServer(serverId)
       .then((response) => {
         if (response.data.success) {
-          toast.success(
-            `Connected! FHIR Version: ${response.data.fhir_version}`,
-          );
+          showSuccess(`Connected! FHIR Version: ${response.data.fhir_version}`);
         } else {
-          toast.error(`Connection failed: ${response.data.error}`);
+          showError(`Connection failed: ${response.data.error}`);
         }
       })
       .catch((error) => {
         console.error('Failed to test FHIR server:', error);
-        toast.error(error.response?.data?.detail || 'Connection test failed');
+        showError(error.response?.data?.detail || 'Connection test failed');
       });
   };
 
@@ -77,15 +75,15 @@ const FHIRIntegration: React.FC = () => {
     FHIRApi.deleteServer(serverId)
       .then((response) => {
         if (response.data.success) {
-          toast.success('FHIR server removed');
+          showSuccess('FHIR server removed');
           loadServers();
         } else {
-          toast.error(response.data.message || 'Failed to remove server');
+          showError(response.data.message || 'Failed to remove server');
         }
       })
       .catch((error) => {
         console.error('Failed to delete FHIR server:', error);
-        toast.error(error.response?.data?.detail || 'Failed to remove server');
+        showError(error.response?.data?.detail || 'Failed to remove server');
       });
   };
 
