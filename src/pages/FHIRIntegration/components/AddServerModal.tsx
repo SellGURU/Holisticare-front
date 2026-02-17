@@ -64,7 +64,6 @@ const AddServerModal: FC<AddServerModalProps> = ({
       await onSave(config);
     } finally {
       setSaving(false);
-      onClear();
     }
   };
 
