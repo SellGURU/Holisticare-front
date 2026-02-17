@@ -19,6 +19,22 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortId, setSortId] = useState<string>('title_asc');
+  const [isTypeEmpty, setIsTypeEmpty] = useState(true);
+  const getOtherTypes = () => {
+    Application.getOtherTypeList()
+      .then((res) => {
+        setIsTypeEmpty(res.data.length > 0);
+      })
+      .catch((err) => {
+        console.error('Error getting other types:', err);
+        setIsTypeEmpty(true);
+      });
+  };
+  useEffect(() => {
+    if (pageType === 'Other') {
+      getOtherTypes();
+    }
+  }, [pageType]);
   // const [clearData, setClearData] = useState(false);
   // const handleClearData = (value: boolean) => {
   //   setClearData(value);
@@ -446,7 +462,9 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         <ManageOtherTypesModal
           isOpen={manageTypesModal}
           onClose={() => setManageTypesModal(false)}
-          onTypesUpdated={() => {}}
+          onTypesUpdated={() => {
+            getOtherTypes();
+          }}
         />
       )}
       {!tableData.length ? (
@@ -492,13 +510,15 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
                 Manage types
               </ButtonSecondary>
             )}
-            <ButtonSecondary
-              ClassName="w-[210px] rounded-[20px] shadow-Btn"
-              onClick={handleOpenModal}
-            >
-              <img src="/icons/add-square.svg" alt="" />
-              Add {pageType}
-            </ButtonSecondary>
+            {isTypeEmpty && (
+              <ButtonSecondary
+                ClassName="w-[210px] rounded-[20px] shadow-Btn"
+                onClick={handleOpenModal}
+              >
+                <img src="/icons/add-square.svg" alt="" />
+                Add {pageType}
+              </ButtonSecondary>
+            )}
           </div>
         </div>
       ) : (
