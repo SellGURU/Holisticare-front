@@ -740,13 +740,20 @@ input:-webkit-autofill:active {
 
 /* Make container match your rounded input look */
 .custom-phone-input .form-control {
-  width: 100%;
+  width: 100% !important;
+  max-width: 100% !important;
   height: 28px !important;
   border-radius: 16px !important;
   font-size: 12px;
   background-color: #fdfdfd !important;
   border: 1px solid #e9edf5 !important;
   padding-left: 78px !important; /* Space for flag */
+}
+@media (min-width: 768px) {
+  .custom-phone-input .form-control {
+    width: 220px !important;
+    max-width: 220px !important;
+  }
 }
 .custom-phone-input .form-control::placeholder {
   font-weight: 300; /* or bold / 700 */
@@ -779,6 +786,7 @@ input:-webkit-autofill:active {
   width: 10px;
   height: 10px;
   margin-left: 22px;
+  max-width: 220px !important;
   position: relative;
   top: -7px;
 }
