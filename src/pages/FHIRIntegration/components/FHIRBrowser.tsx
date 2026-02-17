@@ -17,6 +17,7 @@ import {
   showSuccess,
   showWarning,
 } from '../../../Components/GlobalToast';
+import { TextField } from '../../../Components/UnitComponents';
 
 interface FHIRBrowserProps {
   server: FHIRServer;
@@ -502,33 +503,25 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
         <h3 className="font-medium text-Text-Primary text-base mb-4">
           Search Patients
         </h3>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="block text-sm font-medium text-Text-Primary mb-1">
-              Patient Name
-            </label>
-            <input
-              type="text"
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-              placeholder="e.g., smart, Chalmers, example"
-              className="w-full px-3 py-2 border rounded-[16px] bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold focus-visible:outline-none md:focus-visible:border-black"
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-Text-Primary mb-1">
-              Identifier (MRN)
-            </label>
-            <input
-              type="text"
-              value={searchIdentifier}
-              onChange={(e) => setSearchIdentifier(e.target.value)}
-              placeholder="e.g., 12345"
-              className="w-full px-3 py-2 border rounded-[16px] bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold focus-visible:outline-none md:focus-visible:border-black"
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </div>
+        <div className="grid gap-4 md:grid-cols-2 mt-1">
+          <TextField
+            label="Patient Name"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            placeholder="e.g., smart, Chalmers, example"
+            isValid={true}
+            validationText={''}
+            margin="mt-0"
+          />
+          <TextField
+            label="Identifier (MRN)"
+            value={searchIdentifier}
+            onChange={(e) => setSearchIdentifier(e.target.value)}
+            placeholder="e.g., 12345"
+            isValid={true}
+            validationText={''}
+            margin="mt-0"
+          />
         </div>
         <ButtonSecondary
           onClick={handleSearch}
