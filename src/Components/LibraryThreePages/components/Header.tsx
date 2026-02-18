@@ -123,13 +123,12 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
               </div>
             </div>
             {onManageTypes && (
-              <button
-                type="button"
-                className="text-sm font-medium text-Primary-DeepTeal cursor-pointer border border-Primary-DeepTeal rounded-[20px] px-4 py-2 h-[32px]"
+              <ButtonSecondary
+                ClassName="w-full md:w-[180px] h-[32px] rounded-[20px] shadow-Btn"
                 onClick={onManageTypes}
               >
                 Manage types
-              </button>
+              </ButtonSecondary>
             )}
             <ButtonSecondary
               ClassName="w-full md:w-[180px] h-[32px] rounded-[20px] shadow-Btn"

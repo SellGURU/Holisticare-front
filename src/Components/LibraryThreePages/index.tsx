@@ -19,6 +19,22 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortId, setSortId] = useState<string>('title_asc');
+  const [isTypeEmpty, setIsTypeEmpty] = useState(true);
+  const getOtherTypes = () => {
+    Application.getOtherTypeList()
+      .then((res) => {
+        setIsTypeEmpty(res.data.length > 0);
+      })
+      .catch((err) => {
+        console.error('Error getting other types:', err);
+        setIsTypeEmpty(true);
+      });
+  };
+  useEffect(() => {
+    if (pageType === 'Other') {
+      getOtherTypes();
+    }
+  }, [pageType]);
   // const [clearData, setClearData] = useState(false);
   // const handleClearData = (value: boolean) => {
   //   setClearData(value);
@@ -446,18 +462,28 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         <ManageOtherTypesModal
           isOpen={manageTypesModal}
           onClose={() => setManageTypesModal(false)}
-          onTypesUpdated={() => {}}
+          onTypesUpdated={() => {
+            getOtherTypes();
+          }}
         />
       )}
       {!tableData.length ? (
         <div
           className={`w-full flex justify-center items-center flex-col mt-16`}
         >
-          <img
-            src={`/icons/${pageType === 'Supplement' ? 'supplement-empty' : pageType === 'Lifestyle' ? 'lifestyle-empty' : pageType === 'Peptide' ? 'supplement-empty' : pageType === 'Other' ? 'empty-state-new' : 'diet-empty'}.svg`}
-            alt=""
-            className="mt-16"
-          />
+          {pageType === 'Other' ? (
+            <img
+              src="/icons/empty-state-new.svg"
+              alt=""
+              className="mt-16 w-52"
+            />
+          ) : (
+            <img
+              src={`/icons/${pageType === 'Supplement' ? 'supplement-empty' : pageType === 'Lifestyle' ? 'lifestyle-empty' : pageType === 'Peptide' ? 'supplement-empty' : 'diet-empty'}.svg`}
+              alt=""
+              className="mt-16"
+            />
+          )}
           <div className="font-medium text-base text-Text-Primary mt-8 text-center px-4">
             {pageType === 'Other' ? (
               'No items in this library yet. Add one to get started.'
@@ -484,13 +510,15 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
                 Manage types
               </ButtonSecondary>
             )}
-            <ButtonSecondary
-              ClassName="w-[210px] rounded-[20px] shadow-Btn"
-              onClick={handleOpenModal}
-            >
-              <img src="/icons/add-square.svg" alt="" />
-              Add {pageType}
-            </ButtonSecondary>
+            {isTypeEmpty && (
+              <ButtonSecondary
+                ClassName="w-[210px] rounded-[20px] shadow-Btn"
+                onClick={handleOpenModal}
+              >
+                <img src="/icons/add-square.svg" alt="" />
+                Add {pageType}
+              </ButtonSecondary>
+            )}
           </div>
         </div>
       ) : (
