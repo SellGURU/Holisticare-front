@@ -43,6 +43,7 @@ import FHIRIntegration from '../pages/FHIRIntegration/index.tsx';
 import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
+import { JsonUploading } from '../pages/jsonUploading/index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -130,6 +131,22 @@ const router = createBrowserRouter([
           {
             path: 'playground',
             element: <Playground></Playground>,
+          },
+          {
+            path: '/json-uploading/more-info',
+            element: <JsonUploading type="more_info"></JsonUploading>,
+          },
+          {
+            path: '/json-uploading/categories',
+            element: <JsonUploading type="categories"></JsonUploading>,
+          },
+          {
+            path: '/json-uploading/biomarker-mapping',
+            element: <JsonUploading type="biomarker_mapping"></JsonUploading>,
+          },
+          {
+            path: '/json-uploading/unit-mapping',
+            element: <JsonUploading type="unit_mapping"></JsonUploading>,
           },
         ],
       },
