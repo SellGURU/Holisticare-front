@@ -2,7 +2,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
+
 import PublicReport from '../../api/publicReport';
+
 import { getTokenFromLocalStorage } from '../../store/token';
 import { showSuccess } from '../../Components/GlobalToast';
 import HtmlPreviewer from '../../Components/HtmlPreviewer';
@@ -42,6 +44,7 @@ const HtmlViewer = () => {
       })
       .catch(() => {
         PublicReport.getReportHtml(reportId)
+
           .then((res) => {
             setHtml(res.data ?? '');
             setIsPublicView(true);
