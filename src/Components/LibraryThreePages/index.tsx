@@ -484,7 +484,9 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
               className="mt-16"
             />
           )}
-          <div className="font-medium text-base text-Text-Primary mt-8 text-center px-4">
+          <div
+            className={`font-medium text-Text-Primary mt-8 text-center px-4 ${pageType === 'Other' ? 'text-sm' : 'text-base'}`}
+          >
             {pageType === 'Other' ? (
               'No items in this library yet. Add one to get started.'
             ) : (
