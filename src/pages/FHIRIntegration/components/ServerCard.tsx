@@ -1,5 +1,7 @@
 import React from 'react';
 import { FHIRServer } from '../../../api/fhir';
+import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
 interface ServerCardProps {
   server: FHIRServer;
@@ -26,7 +28,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow md:w-[400px] w-full">
       <div className="p-4">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
@@ -48,7 +50,9 @@ const ServerCard: React.FC<ServerCardProps> = ({
               </svg>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800">{server.name}</h3>
+              <h3 className="font-medium text-base text-Text-Primary">
+                {server.name}
+              </h3>
               <span
                 className={`text-xs px-2 py-0.5 rounded-full ${
                   server.is_active
@@ -60,24 +64,12 @@ const ServerCard: React.FC<ServerCardProps> = ({
               </span>
             </div>
           </div>
-          <button
+          <img
             onClick={onDelete}
-            className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-            title="Remove server"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
+            src="/icons/trash-blue.svg"
+            alt=""
+            className="cursor-pointer p-1 h-7 w-7"
+          />
         </div>
 
         {/* URL */}
@@ -98,18 +90,12 @@ const ServerCard: React.FC<ServerCardProps> = ({
 
         {/* Actions */}
         <div className="flex gap-2">
-          <button
-            onClick={onTest}
-            className="flex-1 px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-          >
+          <ButtonSecondary onClick={onTest} ClassName="w-[48%] !rounded-3xl">
             Test Connection
-          </button>
-          <button
-            onClick={onBrowse}
-            className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
+          </ButtonSecondary>
+          <ButtonPrimary onClick={onBrowse} ClassName="w-[48%] !rounded-2xl">
             Browse Data
-          </button>
+          </ButtonPrimary>
         </div>
       </div>
     </div>
