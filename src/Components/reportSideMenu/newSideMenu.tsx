@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { publish, subscribe, unsubscribe } from '../../utils/event'; // Adjust the import path as needed
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import SvgIcon from '../../utils/svgIcon';
@@ -25,14 +25,20 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   activeReportSection,
   setActiveReportSection,
 }) => {
-  const menuItems = [
+  const baseMenuItems = [
     'Client Summary',
+    'Health Risks',
     'Need Focus Biomarker',
     'Concerning Result',
     'Detailed Analysis',
     'Holistic Plan',
     'Action Plan',
   ];
+  const [parametricPermission, setParametricPermission] = useState(false);
+  const menuItems = useMemo(
+    () => (parametricPermission ? baseMenuItems : baseMenuItems.filter((x) => x !== 'Health Risks')),
+    [parametricPermission]
+  );
   const progressMenuItems = ['Wellness Summary', 'Score Progression'];
 
   const resolveActiveItems = () => {
@@ -49,14 +55,9 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   const [disableClicks, setDisableClicks] = useState(false);
   const location = useLocation();
   const [accessManager, setAccessManager] = useState<Array<any>>([
-    {
-      name: 'Client Summary',
-      checked: true,
-    },
-    {
-      name: 'Need Focus Biomarker',
-      checked: true,
-    },
+    { name: 'Client Summary', checked: true },
+    { name: 'Health Risks', checked: true },
+    { name: 'Need Focus Biomarker', checked: true },
     {
       name: 'Concerning Result',
       checked: true,
@@ -133,6 +134,13 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       setAccessManager(decodeAccessUser(name as string));
     }
   }, [name]);
+  useEffect(() => {
+    const handler = (e: CustomEvent<Record<string, boolean>>) => {
+      setParametricPermission(!!e?.detail?.parametric);
+    };
+    subscribe('permissions-show', handler as EventListener);
+    return () => unsubscribe('permissions-show', handler as EventListener);
+  }, []);
   const [isReportAvailable, setIsReportAvailable] = useState(true);
   const [showReport, setShowReport] = useState(false);
 

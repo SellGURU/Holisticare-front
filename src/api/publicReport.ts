@@ -1,15 +1,14 @@
-/**
- * Public HTML report - no authentication.
- * Used for /html-previewer/:id when the client is in the whitelist (JSON file).
- */
-import axios from 'axios';
-import { resolveBaseEndPoint } from './base';
 
-const baseUrl = resolveBaseEndPoint();
+import Api from './api';
 
-export function getPublicReportHtml(shareSlug: string) {
-  return axios.get(`${baseUrl}/public/report/${encodeURIComponent(shareSlug)}/html`, {
-    responseType: 'text',
-    headers: { Accept: 'text/html' },
-  });
+class PublicReport extends Api {
+  static getReportHtml(shareSlug: string) {
+    return this.get(`/public/report/${encodeURIComponent(shareSlug)}/html`, {
+      noAuth: true,
+      responseType: 'text',
+      headers: { Accept: 'text/html' },
+    });
+  }
 }
+
+export default PublicReport;

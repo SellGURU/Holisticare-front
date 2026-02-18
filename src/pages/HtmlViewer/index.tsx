@@ -2,7 +2,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
-import { getPublicReportHtml } from '../../api/publicReport';
+
+import PublicReport from '../../api/publicReport';
+
 import { getTokenFromLocalStorage } from '../../store/token';
 import { showSuccess } from '../../Components/GlobalToast';
 import HtmlPreviewer from '../../Components/HtmlPreviewer';
@@ -23,7 +25,7 @@ const HtmlViewer = () => {
     const token = getTokenFromLocalStorage();
     // When there's no token, skip auth request to avoid 401 → global interceptor reload loop
     if (!token || !token.trim()) {
-      getPublicReportHtml(reportId)
+      PublicReport.getReportHtml(reportId)
         .then((res) => {
           setHtml(res.data ?? '');
           setIsPublicView(true);
@@ -41,7 +43,8 @@ const HtmlViewer = () => {
         setLoading(false);
       })
       .catch(() => {
-        getPublicReportHtml(reportId)
+        PublicReport.getReportHtml(reportId)
+
           .then((res) => {
             setHtml(res.data ?? '');
             setIsPublicView(true);
