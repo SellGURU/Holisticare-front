@@ -4,6 +4,7 @@ import Application from '../../../api/app';
 import MainModal from '../../MainModal';
 import SpinnerLoader from '../../SpinnerLoader';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import { TextField } from '../../UnitComponents';
 
 interface ManageOtherTypesModalProps {
   isOpen: boolean;
@@ -106,20 +107,18 @@ const ManageOtherTypesModal: FC<ManageOtherTypesModalProps> = ({
 
         {/* Add new type */}
         <div className="px-6 py-4 border-b border-[#E2F1F8]">
-          <label className="block text-xs font-medium text-Text-Primary mb-2">
-            Add new type
-          </label>
-          <div className="flex gap-3">
-            <input
-              type="text"
-              className="flex-1 rounded-xl border border-[#E2F1F8] px-4 py-2.5 text-sm text-Text-Primary placeholder:text-Text-Quadruple focus:outline-none focus:ring-2 focus:ring-Primary-DeepTeal/20 focus:border-Primary-DeepTeal transition-shadow"
-              placeholder="e.g. Ozone Therapy (IV), Cryo Cabin"
+          <div className="flex gap-3 items-center">
+            <TextField
+              label="Add new type"
               value={newTypeName}
               onChange={(e) => setNewTypeName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+              placeholder="e.g. Ozone Therapy (IV), Cryo Cabin"
+              isValid={true}
+              validationText={''}
+              margin="mt-0"
             />
             <ButtonSecondary
-              ClassName="rounded-xl px-5 py-2.5 min-w-[88px] h-[42px] flex items-center justify-center shadow-100"
+              ClassName="!rounded-2xl min-w-[88px] flex items-center justify-center shadow-100 mt-5"
               onClick={handleAdd}
               disabled={adding || !newTypeName.trim()}
             >
@@ -168,19 +167,23 @@ const ManageOtherTypesModal: FC<ManageOtherTypesModalProps> = ({
                 list.map((t) => (
                   <li
                     key={t.Ot_Id}
-                    className="flex items-center justify-between gap-3 py-3 px-4 rounded-xl bg-white border border-[#E2F1F8] hover:border-Primary-DeepTeal/30 hover:bg-[#F9FCFD] transition-colors group"
+                    className="flex items-center justify-between gap-3 py-3 px-4 rounded-xl bg-white border border-[#E2F1F8] transition-colors group"
                   >
                     <span className="text-sm text-Text-Primary truncate flex-1 min-w-0">
                       {t.type_name}
                     </span>
                     <button
                       type="button"
-                      className="flex-shrink-0 text-xs font-medium text-Text-Quadruple hover:text-[#FC5474] disabled:opacity-50 transition-colors py-1 px-2 rounded-lg hover:bg-[#FFD8E4]/30"
+                      className=""
                       onClick={() => handleDelete(t.Ot_Id)}
                       disabled={deletingId === t.Ot_Id}
                       title="Delete type"
                     >
-                      {deletingId === t.Ot_Id ? 'Deleting…' : 'Delete'}
+                      {deletingId === t.Ot_Id ? (
+                        <SpinnerLoader color="#005F73" />
+                      ) : (
+                        <img src="/icons/trash-blue.svg" alt="" />
+                      )}
                     </button>
                   </li>
                 ))
@@ -191,13 +194,14 @@ const ManageOtherTypesModal: FC<ManageOtherTypesModalProps> = ({
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-[#E2F1F8] bg-[#F9FCFD] flex justify-end">
-          <button
-            type="button"
-            className="text-sm font-medium text-Primary-DeepTeal hover:text-Primary-DeepTeal/80 cursor-pointer py-2 px-4 rounded-xl border border-[#E2F1F8] bg-white hover:bg-white/90 transition-colors"
-            onClick={onClose}
+          <div
+            className="text-Disable text-sm font-medium mr-4 cursor-pointer"
+            onClick={() => {
+              onClose();
+            }}
           >
             Close
-          </button>
+          </div>
         </div>
       </div>
     </MainModal>

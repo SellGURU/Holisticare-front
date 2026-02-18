@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
 import FHIRApi, {
   FHIRServer,
   FHIRPatient,
@@ -9,6 +9,15 @@ import FHIRApi, {
 import Application from '../../../api/app';
 import FHIRPatientForm from './FHIRPatientForm';
 import BiomarkersSection from '../../../Components/RepoerAnalyse/UploadTestV2/BiomarkersSection';
+import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+import { BeatLoader } from 'react-spinners';
+import {
+  showError,
+  showInfo,
+  showSuccess,
+  showWarning,
+} from '../../../Components/GlobalToast';
+import { TextField } from '../../../Components/UnitComponents';
 
 interface FHIRBrowserProps {
   server: FHIRServer;
@@ -111,7 +120,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
   const handleSearch = async () => {
     if (!searchName.trim() && !searchIdentifier.trim()) {
-      toast.warning('Please enter a name or identifier to search');
+      showWarning('Please enter a name or identifier to search');
       return;
     }
 
@@ -128,16 +137,16 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
         const foundPatients = response.data.patients || [];
         setPatients(foundPatients);
         if (foundPatients.length === 0) {
-          toast.info('No patients found');
+          showInfo('No patients found');
         } else {
           fetchPatientCounts(foundPatients.map((p: FHIRPatient) => p.id));
         }
       } else {
-        toast.error(response.data.error || 'Search failed');
+        showError(response.data.error || 'Search failed');
       }
     } catch (error: any) {
       console.error('Search failed:', error);
-      toast.error(error.response?.data?.detail || 'Search failed');
+      showError(error.response?.data?.detail || 'Search failed');
     } finally {
       setLoading(false);
     }
@@ -176,13 +185,11 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
         setBiomarkers(fhirBiomarkers);
         setStep('patient-form');
       } else {
-        toast.error('Failed to fetch patient data');
+        showError('Failed to fetch patient data');
       }
     } catch (error: any) {
       console.error('Failed to prepare import:', error);
-      toast.error(
-        error.response?.data?.detail || 'Failed to fetch patient data',
-      );
+      showError(error.response?.data?.detail || 'Failed to fetch patient data');
     } finally {
       setLoading(false);
     }
@@ -202,7 +209,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
     setShowCreateConfirm(false);
 
     try {
-      toast.info('Creating patient...');
+      showInfo('Creating patient...');
       const createResponse = await FHIRApi.createPatient({
         patient_data: patientFormData.patient_data,
         conditions: patientFormData.conditions,
@@ -221,7 +228,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
       setCreatedPatientId(createResponse.data.patients_id);
       setCreatedMemberId(createResponse.data.member_id);
 
-      toast.success(
+      showSuccess(
         `Patient "${patientFormData.patient_data.first_name} ${patientFormData.patient_data.last_name}" created successfully!`,
       );
 
@@ -229,7 +236,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
       setStep('biomarkers');
     } catch (error: any) {
       console.error('Failed to create patient:', error);
-      toast.error(
+      showError(
         error.response?.data?.detail ||
           error.message ||
           'Failed to create patient',
@@ -248,7 +255,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
     // Validate biomarkers before proceeding
     if (!createdMemberId) {
-      toast.error('Patient not created yet');
+      showError('Patient not created yet');
       return;
     }
 
@@ -277,7 +284,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
       // Validation passed - clear errors and proceed
       setRowErrors({});
-      toast.success('Biomarkers validated successfully!');
+      showSuccess('Biomarkers validated successfully!');
       setStep('confirm');
     } catch (error: any) {
       console.error('Validation failed:', error);
@@ -290,7 +297,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
           try {
             parsedDetail = JSON.parse(detail);
           } catch {
-            toast.error(detail);
+            showError(detail);
             setBtnLoading(false);
             return;
           }
@@ -306,14 +313,14 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
         if (Object.keys(validationErrors).length > 0) {
           setRowErrors(validationErrors);
-          toast.error(
+          showError(
             'Validation errors found. Please fix them before continuing.',
           );
         } else {
-          toast.error(error.message || 'Validation failed');
+          showError(error.message || 'Validation failed');
         }
       } else {
-        toast.error(
+        showError(
           error.response?.data?.detail || error.message || 'Validation failed',
         );
       }
@@ -325,7 +332,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
   // Step 4: Save biomarkers using SaveLabReport with added_biomarkers (same as index.tsx)
   const handleSaveBiomarkers = async () => {
     if (!createdMemberId) {
-      toast.error('Patient not created yet');
+      showError('Patient not created yet');
       return;
     }
 
@@ -383,7 +390,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
       });
 
       setRowErrors({});
-      toast.success('Biomarkers saved successfully!');
+      showSuccess('Biomarkers saved successfully!');
 
       // Call first_view_report after successful save
       Application.first_view_report(createdMemberId)
@@ -395,7 +402,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
         });
     } catch (error: any) {
       console.error('Save failed:', error);
-      toast.error(
+      showError(
         error.response?.data?.detail ||
           error.message ||
           'Failed to save biomarkers',
@@ -465,11 +472,11 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
   const renderSearchStep = () => (
     <div className="space-y-6">
       {/* Tip for finding patients */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+      <div className="bg-backgroundColor-Secondary border rounded-2xl p-4">
         <div className="flex items-start gap-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5"
+            className="h-5 w-5 text-Text-Primary flex-shrink-0 mt-0.5"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -480,10 +487,10 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
             />
           </svg>
           <div>
-            <h4 className="font-medium text-amber-800">
+            <h4 className="font-medium text-Text-Primary text-base">
               Tip: Finding Patients with Data
             </h4>
-            <p className="text-sm text-amber-700 mt-1">
+            <p className="text-Text-Secondary text-xs mt-1">
               On HAPI FHIR test server, try: <strong>smart</strong>,{' '}
               <strong>Chalmers</strong>, or <strong>example</strong>
             </p>
@@ -492,43 +499,43 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
       </div>
 
       {/* Search Form */}
-      <div className="bg-white rounded-lg border p-4">
-        <h3 className="font-semibold text-gray-800 mb-4">Search Patients</h3>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Patient Name
-            </label>
-            <input
-              type="text"
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-              placeholder="e.g., smart, Chalmers, example"
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Identifier (MRN)
-            </label>
-            <input
-              type="text"
-              value={searchIdentifier}
-              onChange={(e) => setSearchIdentifier(e.target.value)}
-              placeholder="e.g., 12345"
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </div>
+      <div className="bg-backgroundColor-Secondary border rounded-2xl p-4">
+        <h3 className="font-medium text-Text-Primary text-base mb-4">
+          Search Patients
+        </h3>
+        <div className="grid gap-4 md:grid-cols-2 mt-1">
+          <TextField
+            label="Patient Name"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            placeholder="e.g., smart, Chalmers, example"
+            isValid={true}
+            validationText={''}
+            margin="mt-0"
+          />
+          <TextField
+            label="Identifier (MRN)"
+            value={searchIdentifier}
+            onChange={(e) => setSearchIdentifier(e.target.value)}
+            placeholder="e.g., 12345"
+            isValid={true}
+            validationText={''}
+            margin="mt-0"
+          />
         </div>
-        <button
+        <ButtonSecondary
           onClick={handleSearch}
           disabled={loading}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          ClassName="mt-4"
         >
-          {loading ? 'Searching...' : 'Search'}
-        </button>
+          {loading ? (
+            <div className="flex justify-center items-center w-full min-h-[18px]">
+              <BeatLoader size={8} color="white"></BeatLoader>
+            </div>
+          ) : (
+            'Search'
+          )}
+        </ButtonSecondary>
       </div>
 
       {/* Results */}
@@ -787,10 +794,10 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
     <div className="space-y-4">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-800">
+        <h2 className="font-medium text-Text-Primary text-base">
           Review Biomarkers
         </h2>
-        <p className="text-sm text-gray-500">
+        <p className="text-Text-Secondary text-xs mt-1">
           Edit biomarker names, values, and units before importing. Uses the
           same validation as Lab Data upload.
         </p>
@@ -875,17 +882,17 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
       {/* Navigation buttons */}
       <div className="flex justify-between items-center pt-6 mt-6 border-t">
-        <button
+        <ButtonSecondary
           onClick={() => setStep('patient-form')}
           disabled={btnLoading}
-          className="px-5 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors disabled:opacity-50"
+          ClassName="px-5 py-2.5 !text-Text-Primary bg-white border border-gray-300 hover:bg-gray-50 font-medium transition-colors disabled:opacity-50"
         >
           Back
-        </button>
-        <button
+        </ButtonSecondary>
+        <ButtonSecondary
           onClick={handleBiomarkersNext}
           disabled={btnLoading}
-          className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium flex items-center gap-2 transition-colors"
+          ClassName="px-6 py-2.5 font-medium flex items-center gap-2 transition-colors"
         >
           {btnLoading ? (
             <>
@@ -916,7 +923,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
               Continue to Import
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-4 w-4"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -928,7 +935,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
               </svg>
             </>
           )}
-        </button>
+        </ButtonSecondary>
       </div>
     </div>
   );
@@ -1025,11 +1032,11 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
         {/* No biomarkers info */}
         {biomarkers.length === 0 && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="bg-backgroundColor-Secondary border rounded-2xl p-4">
             <div className="flex items-center gap-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-yellow-600 flex-shrink-0"
+                className="h-6 w-6 text-Text-Primary flex-shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -1042,10 +1049,10 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
                 />
               </svg>
               <div>
-                <h4 className="font-medium text-yellow-800">
+                <h4 className="font-medium text-Text-Primary text-base">
                   No Biomarkers to Import
                 </h4>
-                <p className="text-sm text-yellow-700">
+                <p className="text-Text-Secondary text-xs mt-1">
                   This FHIR patient has no observations/biomarkers. You can
                   complete the import with just the patient information.
                 </p>
@@ -1119,16 +1126,16 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
 
         {/* Navigation buttons */}
         <div className="flex justify-between items-center py-4 mt-4 border-t">
-          <button
+          <ButtonSecondary
             onClick={() => setStep('biomarkers')}
-            className="px-5 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+            ClassName="px-5 py-2.5 !text-Text-Primary bg-white border border-gray-300 hover:bg-gray-50 font-medium transition-colors disabled:opacity-50"
           >
             Back
-          </button>
+          </ButtonSecondary>
 
           {biomarkers.length === 0 ? (
             // No biomarkers - show Done button
-            <button
+            <ButtonSecondary
               onClick={() => {
                 setImportResult({
                   success: true,
@@ -1139,9 +1146,9 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
                   allergies_count: patientFormData?.allergies.length || 0,
                   biomarkers: { imported: 0 },
                 });
-                toast.success('Patient import completed!');
+                showSuccess('Patient import completed!');
               }}
-              className="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium flex items-center gap-2 transition-colors"
+              ClassName="px-6 py-2.5 font-medium flex items-center gap-2 transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -1156,18 +1163,18 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
                 />
               </svg>
               Complete Import
-            </button>
+            </ButtonSecondary>
           ) : (
             // Has biomarkers - show Save Biomarkers button
-            <button
+            <ButtonSecondary
               onClick={handleSaveBiomarkers}
               disabled={btnLoading}
-              className="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center gap-2 transition-colors"
+              ClassName="px-6 py-2.5 font-medium flex items-center gap-2 transition-colors"
             >
               {btnLoading ? (
                 <>
                   <svg
-                    className="animate-spin h-5 w-5"
+                    className="animate-spin h-4 w-4"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -1192,7 +1199,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
                 <>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
+                    className="h-4 w-4"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -1205,7 +1212,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
                   Save Biomarkers
                 </>
               )}
-            </button>
+            </ButtonSecondary>
           )}
         </div>
       </div>
@@ -1213,7 +1220,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto pb-8">
+    <div className="p-6 mx-auto">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <button
@@ -1234,10 +1241,10 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
           </svg>
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-Text-Primary font-medium text-base">
             FHIR Data Browser
           </h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-Text-Secondary text-xs mt-1">
             {server.name} - {server.base_url}
           </p>
         </div>

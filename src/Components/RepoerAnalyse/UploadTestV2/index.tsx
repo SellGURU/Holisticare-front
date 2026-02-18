@@ -133,7 +133,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           res.data.extracted_biomarkers &&
           res.data.extracted_biomarkers.length > 0
         ) {
-          onValidate(sorted);
+          onValidate(sorted, res.data.lab_type);
         }
       } catch (err) {
         console.error('Error checking lab step one:', err);
@@ -449,6 +449,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       biomarker: b.biomarker,
       value: b.value,
       unit: b.unit,
+      'sub-value': b['sub-value'],
     }));
 
     return Application.SaveLabReport({
@@ -503,6 +504,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       biomarker: b.biomarker,
       value: b.value,
       unit: b.unit,
+      'sub-value': b['sub-value'],
     }));
 
     Application.validateBiomarkers({
@@ -564,7 +566,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setBtnLoading(false);
       });
   };
-  const onValidate = (extractedBiomarkersTest: any) => {
+  const onValidate = (extractedBiomarkersTest: any, fileTypeCall?: string) => {
     // setBtnLoading(true);
     const modifiedTimestamp = modifiedDateOfTest
       ? Date.UTC(
@@ -585,6 +587,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       biomarker: b.biomarker,
       value: b.value,
       unit: b.unit,
+      'sub-value': b['sub-value'],
     }));
 
     Application.validateBiomarkers({
@@ -592,7 +595,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       added_biomarkers_list: [],
       modified_biomarkers_date_of_test: modifiedTimestamp,
       added_biomarkers_date_of_test: addedTimestamp,
-      modified_lab_type: fileType,
+      modified_lab_type: fileTypeCall ? fileTypeCall : fileType,
       modified_file_id: uploadedFile?.file_id ?? '',
       member_id: memberId,
     })
