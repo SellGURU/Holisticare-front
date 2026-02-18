@@ -11,7 +11,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <>
-          <div className="flex justify-start text-xs text-Text-Primary cursor-default">
+          <div className="flex justify-start text-xs text-Text-Primary cursor-default text-left">
             <EllipsedTooltip text={row.original?.Title || '-'} />
           </div>
         </>
