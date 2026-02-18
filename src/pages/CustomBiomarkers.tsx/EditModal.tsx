@@ -1,4 +1,5 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   useForm,
   useFieldArray,
@@ -8,6 +9,7 @@ import {
 import SpinnerLoader from '../../Components/SpinnerLoader'; // Adjust path as needed
 import ThresholdRangesEditor from './ThresholdRangesEditor'; // Adjust path as needed
 import TextField from '../../Components/TextField'; // Import TextField
+import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
 
 // Import types from the shared file
 import {
@@ -33,7 +35,7 @@ const EditModal: FC<EditModalProps> = ({
   errorDetails,
   setErrorDetails,
 }) => {
-  console.log(data);
+  const navigate = useNavigate();
 
   const {
     control,
@@ -93,6 +95,18 @@ const EditModal: FC<EditModalProps> = ({
       },
     } as FormBiomarkerData);
   }, [data, reset]);
+
+  const [domainsUsingBiomarker, setDomainsUsingBiomarker] = useState<Array<{ name: string; display_name?: string; domain_type: string }>>([]);
+  useEffect(() => {
+    const name = data?.Biomarker?.trim();
+    if (!name) {
+      setDomainsUsingBiomarker([]);
+      return;
+    }
+    HealthRiskArchitectureApi.getDomainsUsingBiomarker(name)
+      .then((res) => setDomainsUsingBiomarker(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setDomainsUsingBiomarker([]));
+  }, [data?.Biomarker]);
 
   const {
     fields: maleAgeRangeFields,
@@ -279,6 +293,35 @@ const EditModal: FC<EditModalProps> = ({
             )}
           />
         </div>
+
+        {/* Used in Risk/Parametric domains */}
+        {domainsUsingBiomarker.length > 0 && (
+          <div className="mb-4 p-3 rounded-md bg-amber-50 border border-amber-200">
+            <h3 className="text-xs font-medium text-amber-900 mb-2">
+              Used in Custom Parametric
+            </h3>
+            <p className="text-[10px] text-amber-800 mb-2">
+              This biomarker is referenced in the following risk/aging/scoring domains. Threshold changes here will affect those calculations.
+            </p>
+            <ul className="text-xs text-amber-900 list-disc list-inside">
+              {domainsUsingBiomarker.map((d) => (
+                <li key={d.name}>
+                  {d.display_name || d.name} ({d.domain_type})
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              onClick={() => {
+                onCancel();
+                navigate('/custom-parametric/risk');
+              }}
+              className="text-xs font-medium text-amber-800 hover:text-amber-900 hover:underline mt-2"
+            >
+              Manage Risk Mappings →
+            </button>
+          </div>
+        )}
 
         {/* Thresholds Section */}
         <h3 className="text-xs font-medium text-gray-900 mb-4 border-b pb-2">
