@@ -65,6 +65,35 @@ export const menus = [
     ],
   },
   {
+    category: 'JSON UPLOADING',
+    items: [
+      {
+        name: 'More Info',
+        url: '/json-uploading/more-info',
+        icon: 'sidemenu-menu-icon-json-uploading',
+        active: true,
+      },
+      {
+        name: 'Categories',
+        url: '/json-uploading/categories',
+        icon: 'sidemenu-menu-icon-json-uploading',
+        active: true,
+      },
+      {
+        name: 'Unit Mapping',
+        url: '/json-uploading/unit-mapping',
+        icon: 'sidemenu-menu-icon-json-uploading',
+        active: true,
+      },
+      {
+        name: 'Biomarker Mapping',
+        url: '/json-uploading/biomarker-mapping',
+        icon: 'sidemenu-menu-icon-json-uploading',
+        active: true,
+      },
+    ],
+  },
+  {
     category: 'LIBRARY',
     items: [
       {
