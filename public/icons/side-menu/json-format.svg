@@ -1,0 +1,23 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- Document body -->
+    <path d="M28 10 H76 L100 34 V118 H28 Z"/>
+    
+    <!-- Folded corner -->
+    <path d="M76 10 V34 H100"/>
+    
+    <!-- Curly braces -->
+    <path d="M54 44 
+             C48 44 48 52 52 54
+             C48 56 48 64 54 64" />
+             
+    <path d="M74 44 
+             C80 44 80 52 76 54
+             C80 56 80 64 74 64" />
+    
+    <!-- Bottom label rectangle -->
+    <rect x="48" y="78" width="60" height="22"/>
+    
+  </g>
+</svg>
