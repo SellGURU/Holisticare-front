@@ -796,17 +796,19 @@ score * 100`;
                     }`}
                   >
                     {validationResult.syntax_valid
-                      ? 'Syntax valid.'
+                      ? 'Formula syntax is valid (structure and allowed names).'
                       : validationResult.error_message || 'Invalid syntax'}
                     {validationResult.biomarker_dependencies?.length
-                      ? ` Biomarkers: ${validationResult.biomarker_dependencies.join(', ')}`
+                      ? ` Referenced: ${validationResult.biomarker_dependencies.join(', ')}`
                       : ''}
                   </div>
                   {validationResult.biomarkers_not_in_clinic &&
                     validationResult.biomarkers_not_in_clinic.length > 0 && (
                       <div className="text-xs p-2 rounded-md bg-amber-50 text-amber-800">
-                        Not in clinic chart_bounds:{' '}
-                        {validationResult.biomarkers_not_in_clinic.join(', ')}
+                        <span className="font-medium">Clinic configuration:</span>{' '}
+                        These biomarkers are not in your clinic’s biomarker list (chart_bounds):{' '}
+                        {validationResult.biomarkers_not_in_clinic.join(', ')}.
+                        Add them in Custom Biomarker so zone detection works correctly at runtime.
                       </div>
                     )}
                 </>

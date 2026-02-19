@@ -10,10 +10,11 @@ import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import Toggle from '../Boxs/Toggle';
 import BiomarkerRow from './BiomarkerRow';
 import ProgressLoading from './ProgressLoading';
-import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
 
-const biomarkersSteps: Step[] = [
+type TourStep = { target: string; content: string; placement?: string };
+
+const biomarkersSteps: TourStep[] = [
   {
     target: '[data-tour="biomarker-table"]',
     content:
@@ -459,7 +460,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       localStorage.setItem('showTutorialAgain', 'false');
     }
   };
-  const handleJoyrideCallback = (data: CallBackProps) => {
+  const handleJoyrideCallback = (data: { status?: string }) => {
     const { status } = data;
 
     if (status === 'finished' || status === 'skipped') {
@@ -467,10 +468,18 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       setRun(false);
     }
   };
+
+  const [JoyrideComponent, setJoyrideComponent] = useState<React.ComponentType<any> | null>(null);
+  useEffect(() => {
+    import('react-joyride')
+      .then((mod) => setJoyrideComponent(() => mod.default))
+      .catch(() => setJoyrideComponent(null));
+  }, []);
+
   return (
     <>
-      {run && (
-        <Joyride
+      {run && JoyrideComponent && (
+        <JoyrideComponent
           steps={biomarkersSteps}
           run={run}
           continuous

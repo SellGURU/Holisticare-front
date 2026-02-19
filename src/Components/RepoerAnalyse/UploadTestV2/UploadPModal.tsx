@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import SpinnerLoader from '../../SpinnerLoader';
 import Toggle from '../../Toggle';
 import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
-import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
 
-const labBiomarkerSteps: Step[] = [
+type TourStep = { target: string; content: string; placement?: string };
+
+const labBiomarkerSteps: TourStep[] = [
   // {
   //   target: '[data-tour="lab-title"]',
   //   content: 'Here you can upload lab reports or manually add biomarkers.',
@@ -188,7 +189,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
       localStorage.setItem('showTutorialAgain', 'false');
     }
   };
-  const handleJoyrideCallback = (data: CallBackProps) => {
+  const handleJoyrideCallback = (data: { status?: string }) => {
     const { status } = data;
 
     if (status === 'finished' || status === 'skipped') {
@@ -196,34 +197,44 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
       setRun(false);
     }
   };
+
+  const [JoyrideComponent, setJoyrideComponent] = useState<React.ComponentType<any> | null>(null);
+  useEffect(() => {
+    import('react-joyride')
+      .then((mod) => setJoyrideComponent(() => mod.default))
+      .catch(() => setJoyrideComponent(null));
+  }, []);
+
   return (
     <>
-      <Joyride
-        steps={labBiomarkerSteps}
-        run={run}
-        continuous
-        scrollToFirstStep
-        showSkipButton
-        disableOverlayClose
-        styles={{
-          options: {
-            arrowColor: '#fff',
-            backgroundColor: '#fff',
-            primaryColor: '#0f766e',
-            textColor: '#1f2937',
-            zIndex: 10000,
-          },
-          tooltip: {
-            borderRadius: '12px',
-            padding: '16px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
-          },
-        }}
-        callback={handleJoyrideCallback}
-        locale={{
-          last: 'Done',
-        }}
-      />
+      {JoyrideComponent && (
+        <JoyrideComponent
+          steps={labBiomarkerSteps}
+          run={run}
+          continuous
+          scrollToFirstStep
+          showSkipButton
+          disableOverlayClose
+          styles={{
+            options: {
+              arrowColor: '#fff',
+              backgroundColor: '#fff',
+              primaryColor: '#0f766e',
+              textColor: '#1f2937',
+              zIndex: 10000,
+            },
+            tooltip: {
+              borderRadius: '12px',
+              padding: '16px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+            },
+          }}
+          callback={handleJoyrideCallback}
+          locale={{
+            last: 'Done',
+          }}
+        />
+      )}
       <TutorialReminderToast
         visible={showReminder}
         onViewTutorial={(value) => {

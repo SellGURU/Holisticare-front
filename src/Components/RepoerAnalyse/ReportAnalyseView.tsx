@@ -43,6 +43,7 @@ import { UploadTestV2 } from './UploadTestV2';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
 import MarkdownText from '../markdownText';
 import NewDetailedAcordin from './Boxs/newDetailedAcordin';
+import HealthRisksSection from './Boxs/HealthRisksSection';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -411,6 +412,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       checked: true,
     },
     {
+      name: 'Health Risks',
+      checked: true,
+    },
+    {
       name: 'Need Focus Biomarker',
       checked: true,
     },
@@ -453,6 +458,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setAccessManager(decodeAccessUser(name as string));
     }
   }, [name]);
+  useEffect(() => {
+    if (userInfoData != null) {
+      publish('permissions-show', { parametric: true } as Record<string, boolean>);
+    }
+  }, [userInfoData]);
   useEffect(() => {
     if (resolvedMemberID == 123 || !isHaveReport) {
       setReferenceData(referencedataMoch);
@@ -942,6 +952,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   )}
                 </div>
               </div>
+            )}
+            {accessManager.filter((el) => el.name == 'Health Risks')[0]
+              ?.checked === true && (
+              <HealthRisksSection
+                patientsId={
+                  userInfoData?.patients_id != null
+                    ? Number(userInfoData.patients_id)
+                    : null
+                }
+                reportId={undefined}
+              />
             )}
             {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
               .checked == true && (

@@ -294,14 +294,17 @@ const EditModal: FC<EditModalProps> = ({
           />
         </div>
 
-        {/* Used in Risk/Parametric domains */}
+        {/* Used in Risk/Parametric domains (Risk Domain Usage per spec 8.3) */}
         {domainsUsingBiomarker.length > 0 && (
           <div className="mb-4 p-3 rounded-md bg-amber-50 border border-amber-200">
             <h3 className="text-xs font-medium text-amber-900 mb-2">
-              Used in Custom Parametric
+              Risk Domain Usage
             </h3>
             <p className="text-[10px] text-amber-800 mb-2">
               This biomarker is referenced in the following risk/aging/scoring domains. Threshold changes here will affect those calculations.
+            </p>
+            <p className="text-[10px] text-amber-800 mb-2">
+              Before removing or renaming this biomarker, update or disable the domains below to avoid broken formulas.
             </p>
             <ul className="text-xs text-amber-900 list-disc list-inside">
               {domainsUsingBiomarker.map((d) => (

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from 'react-router-dom';
 import ProgressDashboard from '.';
+import ParametricScoreProgression from './ParametricScoreProgression';
 import Application from '../../api/app';
 import { useEffect, useState } from 'react';
 import { format, subDays } from 'date-fns';
@@ -504,7 +505,8 @@ const ProgressDashboardView = ({
             to_date: toDate || null,
           });
         }}
-      ></ProgressDashboard>
+      />
+      <ParametricScoreProgression memberId={id ? Number(id) : null} />
     </div>
   );
 };

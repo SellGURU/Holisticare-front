@@ -75,6 +75,13 @@ class HealthRiskArchitectureApi extends Api {
     });
   }
 
+  /** Get risk score history by member_id for longitudinal / Progress tab. */
+  static getRiskScoresByMember(memberId: number) {
+    return axios.get(resolveBaseEndPoint() + `/health_risk/scores/by_member/${memberId}`, {
+      headers: { Authorization: 'Bearer ' + getTokenFromLocalStorage() },
+    });
+  }
+
   /** Get risk scores with generic test data (male, 30yo). No patient required. */
   static getRiskScoresPreview() {
     return axios.get(resolveBaseEndPoint() + '/health_risk/scores/preview', {

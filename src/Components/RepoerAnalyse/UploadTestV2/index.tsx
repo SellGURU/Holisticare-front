@@ -8,23 +8,13 @@ import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
 import { uploadBlobToAzure } from '../../../services/uploadBlobService';
-import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
 // import SpinnerLoader from '../../SpinnerLoader';
 
-// interface FileUpload {
-//   file: File;
-//   file_id: string;
-//   progress: number;
-//   status: 'uploading' | 'completed' | 'error';
-//   azureUrl?: string;
-//   uploadedSize?: number;
-//   errorMessage?: string;
-//   warning?: boolean;
-//   showReport?: boolean;
-// }
+// Tour step type (compatible with react-joyride when installed)
+type TourStep = { target: string; content: string; placement?: string };
 
-const steps: Step[] = [
+const steps: TourStep[] = [
   {
     target: '#health-plan-title',
     content:
@@ -703,7 +693,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       localStorage.setItem('showTutorialAgain', 'false');
     }
   };
-  const handleJoyrideCallback = (data: CallBackProps) => {
+  const handleJoyrideCallback = (data: { status?: string }) => {
     const { status } = data;
 
     if (status === 'finished' || status === 'skipped') {
@@ -712,33 +702,43 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
   };
 
+  const [JoyrideComponent, setJoyrideComponent] = useState<React.ComponentType<any> | null>(null);
+
+  useEffect(() => {
+    import('react-joyride')
+      .then((mod) => setJoyrideComponent(() => mod.default))
+      .catch(() => setJoyrideComponent(null));
+  }, []);
+
   return (
     <>
-      <Joyride
-        steps={steps}
-        run={run}
-        continuous
-        showSkipButton
-        disableOverlayClose
-        styles={{
-          options: {
-            arrowColor: '#fff',
-            backgroundColor: '#fff',
-            primaryColor: '#0f766e',
-            textColor: '#1f2937',
-            zIndex: 10000,
-          },
-          tooltip: {
-            borderRadius: '12px',
-            padding: '16px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
-          },
-        }}
-        callback={handleJoyrideCallback}
-        locale={{
-          last: 'Done',
-        }}
-      />
+      {JoyrideComponent && (
+        <JoyrideComponent
+          steps={steps}
+          run={run}
+          continuous
+          showSkipButton
+          disableOverlayClose
+          styles={{
+            options: {
+              arrowColor: '#fff',
+              backgroundColor: '#fff',
+              primaryColor: '#0f766e',
+              textColor: '#1f2937',
+              zIndex: 10000,
+            },
+            tooltip: {
+              borderRadius: '12px',
+              padding: '16px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+            },
+          }}
+          callback={handleJoyrideCallback}
+          locale={{
+            last: 'Done',
+          }}
+        />
+      )}
 
       <TutorialReminderToast
         visible={showReminder}

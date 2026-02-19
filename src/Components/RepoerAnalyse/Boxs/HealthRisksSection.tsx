@@ -4,6 +4,9 @@ import HealthRiskArchitectureApi from '../../../api/HealthRiskArchitecture';
 import { ChevronDown, ChevronUp, ExternalLink, ListTodo } from 'lucide-react';
 import { publish } from '../../../utils/event';
 
+const SECTION_TITLE_CLASS = 'sectionScrollEl text-Text-Primary TextStyle-Headline-4 ';
+const SECTION_SUBTITLE_CLASS = 'text-Text-Secondary text-[12px]';
+
 interface ContributingBiomarker {
   value?: number;
   zone?: string;
@@ -63,7 +66,6 @@ export default function HealthRisksSection({
 }: HealthRisksSectionProps) {
   const [scores, setScores] = useState<RiskScoreRow[]>([]);
   const [loading, setLoading] = useState(false);
-  const [sectionCollapsed, setSectionCollapsed] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -110,39 +112,41 @@ export default function HealthRisksSection({
     });
   };
 
-  if (loading || scores.length === 0) return null;
-
   return (
-    <div className="my-8">
-      <div
-        className="border border-Gray-50 rounded-lg bg-white overflow-hidden"
-        style={{ borderCollapse: 'separate' }}
-      >
-        {/* SECTION A: Health Risks - Collapsible header (Spec 7.2.1) */}
-        <button
-          type="button"
-          onClick={() => setSectionCollapsed((c) => !c)}
-          className="w-full flex items-center justify-between px-4 py-3 text-left bg-Gray-50/50 hover:bg-Gray-50/70 transition-colors"
-        >
-          <span
-            id="Health Risks"
-            className="sectionScrollEl text-Text-Primary TextStyle-Headline-4"
-          >
-            SECTION A: Health Risks
-          </span>
-          <span className="text-Text-Secondary text-sm">
-            {sectionCollapsed ? (
-              <ChevronDown className="w-5 h-5 inline" />
-            ) : (
-              <ChevronUp className="w-5 h-5 inline" />
-            )}
-          </span>
-        </button>
-
-        {!sectionCollapsed && (
-          <div className="px-4 pb-4 space-y-4">
-            {/* Priority Actions - Top 3 (Spec 7.2.1) */}
-            {top3.length > 0 && (
+    <div className="my-10 min-h-[400px] text-light-primary-text dark:text-primary-text">
+      <div>
+        <div id="Health Risks" className={SECTION_TITLE_CLASS}>
+          Health Risks
+        </div>
+        <div className={SECTION_SUBTITLE_CLASS}>
+          {loading
+            ? 'Loading…'
+            : scores.length > 0
+              ? `${scores.length} risk domain${scores.length === 1 ? '' : 's'} calculated`
+              : 'Risk, aging, and health scores from Custom Parametric.'}
+        </div>
+      </div>
+      <div className="w-full mt-4 space-y-4">
+        {loading && (
+          <div className="py-6 text-center text-Text-Secondary text-sm">
+            Loading health risk scores…
+          </div>
+        )}
+        {!loading && scores.length === 0 && (
+          <div className="flex justify-center items-center mt-10 w-full">
+            <div className="flex flex-col items-center justify-center">
+              <img
+                src="/icons/Empty/needsfocusEmpty.svg"
+                alt=""
+                className="w-[219px]"
+              />
+              <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
+                No Health Risk Scores Yet!
+              </div>
+            </div>
+          </div>
+        )}
+        {!loading && top3.length > 0 && (
               <>
                 <div className="text-Text-Secondary text-sm font-medium pt-2">
                   Priority Actions – Top 3 Risks Require Attention:
@@ -225,7 +229,7 @@ export default function HealthRisksSection({
             )}
 
             {/* Lower Priority Risks (Monitoring) with Expand (Spec 7.2.1 + 7.2.2) */}
-            {lowerPriority.length > 0 && (
+            {!loading && lowerPriority.length > 0 && (
               <>
                 <div className="text-Text-Secondary text-sm font-medium pt-2">
                   Lower Priority Risks (Monitoring):
@@ -334,8 +338,6 @@ export default function HealthRisksSection({
                 </div>
               </>
             )}
-          </div>
-        )}
       </div>
     </div>
   );
