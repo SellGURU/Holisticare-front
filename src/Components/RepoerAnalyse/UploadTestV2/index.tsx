@@ -431,6 +431,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       value: b.value,
       unit: b.unit,
       'sub-value': b['sub-value'],
+      header_1: b['header_1'],
+      more_info: b['more_info'],
+      list_of_genes: b['list_of_genes'],
+      your_result: b['your_result'],
     }));
 
     return Application.SaveLabReport({
@@ -486,6 +490,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       value: b.value,
       unit: b.unit,
       'sub-value': b['sub-value'],
+      header_1: b['header_1'],
+      more_info: b['more_info'],
+      list_of_genes: b['list_of_genes'],
+      your_result: b['your_result'],
     }));
 
     Application.validateBiomarkers({
@@ -569,6 +577,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       value: b.value,
       unit: b.unit,
       'sub-value': b['sub-value'],
+      header_1: b['header_1'],
+      more_info: b['more_info'],
+      list_of_genes: b['list_of_genes'],
+      your_result: b['your_result'],
     }));
 
     Application.validateBiomarkers({
