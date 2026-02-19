@@ -470,51 +470,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     }
   };
   return (
-    <div
-      // style={{ height: window.innerHeight - 400 + 'px' }}
-      className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary overflow-hidden`}
-    >
-      {loading ? (
-        <div
-          style={{ height: window.innerHeight - 480 + 'px' }}
-          className="flex items-center min-h-[200px] w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4"
-        >
-          {/* <Circleloader /> */}
-          {/* Progress Bar */}
-          <ProgressLoading
-            maxProgress={progressBiomarkerUpload}
-          ></ProgressLoading>
-        </div>
-      ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
-        <div
-          style={{ height: window.innerHeight - 480 + 'px' }}
-          className="flex items-center  justify-center flex-col text-xs font-medium text-Text-Primary"
-        >
-          <img src="/icons/EmptyState-biomarkers.svg" alt="" />
-          <div className="-mt-5">No data provided yet.</div>
-        </div>
-      ) : (
-        <div className=" relative ">
-          <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
-            <div className="flex text-nowrap overflow-x-auto hidden-scrollbar w-full gap-6 justify-between items-center">
-              <div className="flex items-center gap-2 shrink-0">
-                <div className=" text-[8px] xs:text-[10px] md:text-sm font-medium">
-                  List of Biomarkers{' '}
-                  <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
-                    ({biomarkers.length})
-                  </span>
-                </div>
-                <img
-                  onClick={() => setIsScaling(!isScaling)}
-                  className="xs:w-4 xs:h-4 w-3 h-3 cursor-pointer opacity-70"
-                  src={
-                    isScaling
-                      ? '/icons/biomarkers/import.svg'
-                      : '/icons/biomarkers/export.svg'
-                  }
-                  alt=""
-                />
-                {/* <Scaling
     <>
       {run && (
         <Joyride
@@ -630,28 +585,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     errorMessage={dateOfTestError}
                     ClassName="border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
                   />
-                <div className="flex items-center absolute right-0 top-[-2px] gap-6">
-                  <div className=" hidden sm:flex items-center gap-3">
-                    <Toggle
-                      checked={showOnlyErrors}
-                      setChecked={setShowOnlyErrors}
-                    />
-                    <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
-                      Show Only Errors
-                    </div>
-                  </div>
-                  <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
-                    Date of Test:
-                    <SimpleDatePicker
-                      key={'biomarkerUpload'}
-                      textStyle
-                      isUploadFile
-                      date={dateOfTest}
-                      setDate={setDateOfTest}
-                      placeholder="Select Date"
-                      ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
-                    />
-                  </div>
                 </div>
               </div>
               <div className=" flex sm:hidden items-center gap-3">
@@ -745,6 +678,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 </div>
               </div>
             </div>
+          </div>
           </div>
         )}
       </div>
