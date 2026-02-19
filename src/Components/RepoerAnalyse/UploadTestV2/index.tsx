@@ -80,6 +80,21 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setProgressBiomarkerUpload(res.data.progress);
         setfileType(res.data.lab_type);
 
+        // Set date of test from OCR when returned by backend
+        let dateOverride: Date | null = null;
+        if (res.data.date_of_test) {
+          try {
+            const d = new Date(res.data.date_of_test);
+            if (!isNaN(d.getTime())) {
+              dateOverride = d;
+              setModifiedDateOfTest(d);
+              setAddedDateOfTest(d);
+            }
+          } catch {
+            // ignore parse errors
+          }
+        }
+
         // ✅ Handle ultrasound reports - skip biomarkers table
         if (res.data.lab_type === 'ultrasound') {
           setPolling(false);
@@ -109,12 +124,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
         setExtractedBiomarkers(sorted);
 
-        // ✅ stop polling if biomarkers found
+        // ✅ stop polling if biomarkers found; pass dateOverride so first validate uses OCR date (state not yet updated)
         if (
           res.data.extracted_biomarkers &&
           res.data.extracted_biomarkers.length > 0
         ) {
-          onValidate(sorted, res.data.lab_type);
+          onValidate(sorted, res.data.lab_type, dateOverride);
         }
       } catch (err) {
         console.error('Error checking lab step one:', err);
@@ -153,7 +168,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setAddedRowErrors({});
     publish('RESET_MAPPING_ROWS', {});
     setbiomarkerLoading(false);
-    setModifiedDateOfTest(new Date());
+    setModifiedDateOfTest(null);
+    setAddedDateOfTest(null);
+    setDateOfTestError('');
     forceReRender((x) => x + 1);
     Application.deleteFileHistory({
       file_id: fileId,
@@ -368,30 +385,39 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const [modifiedDateOfTest, setModifiedDateOfTest] = useState<Date | null>(
-    new Date(),
+    null,
   );
   const handleModifiedDateOfTestChange = (date: Date | null) => {
     setModifiedDateOfTest(date);
+    setDateOfTestError('');
   };
 
   // Date for the manually added biomarkers
-  const [addedDateOfTest, setAddedDateOfTest] = useState<Date | null>(
-    new Date(),
-  );
+  const [addedDateOfTest, setAddedDateOfTest] = useState<Date | null>(null);
+  const [dateOfTestError, setDateOfTestError] = useState('');
   const handleAddedDateOfTestChange = (date: Date | null) => {
     setAddedDateOfTest(date);
   };
 
   const handleSaveLabReport = () => {
+    // Validation: date of test is required for extracted/modified biomarkers
+    if (!modifiedDateOfTest) {
+      setDateOfTestError('Date of test is required');
+      return;
+    }
+    if (addedBiomarkers.length > 0 && !addedDateOfTest) {
+      setDateOfTestError('Date of test is required for added biomarkers');
+      return;
+    }
+    setDateOfTestError('');
+
     // ✅ For ultrasound reports, call API with empty lists
     if (fileType === 'ultrasound') {
-      const modifiedTimestamp = modifiedDateOfTest
-        ? Date.UTC(
-            modifiedDateOfTest.getFullYear(),
-            modifiedDateOfTest.getMonth(),
-            modifiedDateOfTest.getDate(),
-          ).toString()
-        : null;
+      const modifiedTimestamp = Date.UTC(
+        modifiedDateOfTest.getFullYear(),
+        modifiedDateOfTest.getMonth(),
+        modifiedDateOfTest.getDate(),
+      ).toString();
 
       return Application.SaveLabReport({
         member_id: memberId,
@@ -459,6 +485,17 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   >({});
   const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
+    // Validation: date of test cannot be empty
+    if (!modifiedDateOfTest) {
+      setDateOfTestError('Date of test is required');
+      return;
+    }
+    if (addedBiomarkers.length > 0 && !addedDateOfTest) {
+      setDateOfTestError('Date of test is required for added biomarkers');
+      return;
+    }
+    setDateOfTestError('');
+
     // ✅ For ultrasound reports, just close the modal and go to step 0
     // The API call will happen when clicking "Save & Continue to Health Plan"
     if (fileType === 'ultrasound') {
@@ -499,8 +536,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     Application.validateBiomarkers({
       modified_biomarkers_list: mappedExtractedBiomarkers,
       added_biomarkers_list: addedBiomarkers,
-      modified_biomarkers_date_of_test: modifiedTimestamp,
-      added_biomarkers_date_of_test: addedTimestamp,
+      modified_biomarkers_date_of_test: modifiedTimestamp ?? '',
+      added_biomarkers_date_of_test: addedTimestamp ?? '',
       modified_lab_type: fileType,
       modified_file_id: uploadedFile?.file_id ?? '',
       member_id: memberId,
@@ -515,9 +552,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       .catch((err: any) => {
         console.log(err);
 
-        const detail = err.detail;
+        const detail = err?.response?.data?.detail ?? err.detail;
 
         if (detail) {
+          if (typeof detail === 'string' && /date of test/i.test(detail)) {
+            setDateOfTestError(detail);
+            setRowErrors({});
+            setAddedRowErrors({});
+            return;
+          }
+
           let parsedDetail: any = {};
 
           if (typeof detail === 'string') {
@@ -544,6 +588,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
           setRowErrors(modifiedErrors);
           setAddedRowErrors(addedErrors);
+          setDateOfTestError('');
 
           console.log('🔎 modifiedErrors:', modifiedErrors);
           console.log('🔎 addedErrors:', addedErrors);
@@ -555,20 +600,26 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setBtnLoading(false);
       });
   };
-  const onValidate = (extractedBiomarkersTest: any, fileTypeCall?: string) => {
-    // setBtnLoading(true);
-    const modifiedTimestamp = modifiedDateOfTest
+  const onValidate = (
+    extractedBiomarkersTest: any,
+    fileTypeCall?: string,
+    dateOverride?: Date | null,
+  ) => {
+    // Use dateOverride when calling from polling (state not yet updated); otherwise use state
+    const modifiedDate = dateOverride ?? modifiedDateOfTest;
+    const addedDate = dateOverride ?? addedDateOfTest;
+    const modifiedTimestamp = modifiedDate
       ? Date.UTC(
-          modifiedDateOfTest.getFullYear(),
-          modifiedDateOfTest.getMonth(),
-          modifiedDateOfTest.getDate(),
+          modifiedDate.getFullYear(),
+          modifiedDate.getMonth(),
+          modifiedDate.getDate(),
         ).toString()
       : null;
-    const addedTimestamp = addedDateOfTest
+    const addedTimestamp = addedDate
       ? Date.UTC(
-          addedDateOfTest.getFullYear(),
-          addedDateOfTest.getMonth(),
-          addedDateOfTest.getDate(),
+          addedDate.getFullYear(),
+          addedDate.getMonth(),
+          addedDate.getDate(),
         ).toString()
       : null;
     const mappedExtractedBiomarkers = extractedBiomarkersTest.map((b: any) => ({
@@ -586,8 +637,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     Application.validateBiomarkers({
       modified_biomarkers_list: mappedExtractedBiomarkers,
       added_biomarkers_list: [],
-      modified_biomarkers_date_of_test: modifiedTimestamp,
-      added_biomarkers_date_of_test: addedTimestamp,
+      modified_biomarkers_date_of_test: modifiedTimestamp ?? '',
+      added_biomarkers_date_of_test: addedTimestamp ?? '',
       modified_lab_type: fileTypeCall ? fileTypeCall : fileType,
       modified_file_id: uploadedFile?.file_id ?? '',
       member_id: memberId,
@@ -600,9 +651,17 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       .catch((err: any) => {
         console.log(err);
 
-        const detail = err.detail;
+        const detail = err?.response?.data?.detail ?? err.detail;
 
         if (detail) {
+          // Backend may return a string for "Date of test is required"
+          if (typeof detail === 'string' && /date of test/i.test(detail)) {
+            setDateOfTestError(detail);
+            setRowErrors({});
+            setAddedRowErrors({});
+            return;
+          }
+
           let parsedDetail: any = {};
 
           if (typeof detail === 'string') {
@@ -629,6 +688,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
           setRowErrors(modifiedErrors);
           setAddedRowErrors(addedErrors);
+          setDateOfTestError('');
 
           console.log('🔎 modifiedErrors:', modifiedErrors);
           console.log('🔎 addedErrors:', addedErrors);
@@ -725,25 +785,24 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           addedBiomarkers.length != 0
                         ) {
                           handleSaveLabReport()
-                            .then((res) => {
-                              if (
-                                res.data.modified_biomarkers_file_id != null &&
+                            ?.then((res) => {
+                              if (res?.data?.modified_biomarkers_file_id != null &&
                                 res.data.modified_biomarkers_file_id != ''
                               ) {
                                 onGenderate(
                                   res.data.modified_biomarkers_file_id,
                                 );
                               } else if (
-                                res.data.added_biomarkers_file_id != null &&
+                                res?.data?.added_biomarkers_file_id != null &&
                                 res.data.added_biomarkers_file_id != ''
                               ) {
                                 onGenderate(res.data.added_biomarkers_file_id);
                               } else {
                                 onGenderate(undefined);
                               }
-                              console.log(res);
+                              if (res) console.log(res);
                             })
-                            .catch((err) => {
+                            ?.catch((err) => {
                               console.log(err);
                             });
                           onGenderate('customBiomarker');
@@ -891,25 +950,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           addedBiomarkers.length != 0
                         ) {
                           handleSaveLabReport()
-                            .then((res) => {
+                            ?.then((res) => {
                               if (
-                                res.data.modified_biomarkers_file_id != null &&
+                                res?.data?.modified_biomarkers_file_id != null &&
                                 res.data.modified_biomarkers_file_id != ''
                               ) {
                                 onGenderate(
                                   res.data.modified_biomarkers_file_id,
                                 );
                               } else if (
-                                res.data.added_biomarkers_file_id != null &&
-                                res.data.added_biomarkers_file_id != null
+                                res?.data?.added_biomarkers_file_id != null &&
+                                res.data.added_biomarkers_file_id != ''
                               ) {
                                 onGenderate(res.data.added_biomarkers_file_id);
                               } else {
                                 onGenderate(undefined);
                               }
-                              console.log(res);
+                              if (res) console.log(res);
                             })
-                            .catch((err) => {
+                            ?.catch((err) => {
                               console.log(err);
                             });
                           onGenderate('customBiomarker');
@@ -938,8 +997,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             }
             setstep(0);
             setUploadedFile(null);
-            setModifiedDateOfTest(new Date());
-            setAddedDateOfTest(new Date());
+            setModifiedDateOfTest(null);
+            setAddedDateOfTest(null);
+            setDateOfTestError('');
             setPolling(true);
             setbiomarkerLoading(false);
             setExtractedBiomarkers([]);
@@ -958,8 +1018,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           handleDeleteFile={handleDeleteFile}
           formatFileSize={formatFileSize}
           fileInputRef={fileInputRef}
-          modifiedDateOfTest={modifiedDateOfTest || new Date()}
+          modifiedDateOfTest={modifiedDateOfTest}
           handleModifiedDateOfTestChange={handleModifiedDateOfTestChange}
+          dateOfTestError={dateOfTestError}
           extractedBiomarkers={extractedBiomarkers}
           setExtractedBiomarkers={setExtractedBiomarkers}
           addedBiomarkers={addedBiomarkers}
