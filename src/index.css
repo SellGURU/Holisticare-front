@@ -217,6 +217,17 @@ input[type='number'] {
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
 }
+.sidemenu-menu-icon-HealthRisk {
+  mask-image: url(/icons/side-menu/backward-item.svg);
+  -webkit-mask-image: url(/icons/side-menu/backward-item.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
 .sidemenu-menu-icon-Diet {
   mask-image: url(/icons/side-menu/apple.svg);
   -webkit-mask-image: url(/icons/side-menu/apple.svg);
