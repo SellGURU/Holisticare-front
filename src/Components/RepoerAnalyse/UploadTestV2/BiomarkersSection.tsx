@@ -25,6 +25,7 @@ interface BiomarkersSectionProps {
   showOnlyErrors: boolean;
   setShowOnlyErrors: (showOnlyErrors: boolean) => void;
   progressBiomarkerUpload: number;
+  dateOfTestError?: string;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -42,6 +43,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   showOnlyErrors,
   setShowOnlyErrors,
   progressBiomarkerUpload,
+  dateOfTestError,
 }) => {
   // const [changedRows, setChangedRows] = useState<string[]>([]);
   // const [mappedRows, setMappedRows] = useState<string[]>([]);
@@ -400,8 +402,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       ) : (
         <div className=" relative ">
           <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
-            <div className="flex text-nowrap overflow-x-auto hidden-scrollbar w-full gap-6 justify-between">
-              <div className="flex items-center gap-2">
+            <div className="flex text-nowrap overflow-x-auto hidden-scrollbar w-full gap-6 justify-between items-center">
+              <div className="flex items-center gap-2 shrink-0">
                 <div className=" text-[8px] xs:text-[10px] md:text-sm font-medium">
                   List of Biomarkers{' '}
                   <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
@@ -424,7 +426,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               /> */}
               </div>
 
-              <div className="flex items-center absolute right-0 top-[-2px] gap-6">
+              <div className="flex items-center gap-6 shrink-0">
                 <div className=" hidden sm:flex items-center gap-3">
                   <Toggle
                     checked={showOnlyErrors}
@@ -434,16 +436,18 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     Show Only Errors
                   </div>
                 </div>
-                <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
-                  Date of Test:
+                <div className="flex items-center gap-2 text-[8px] md:text-xs text-Text-Quadruple">
+                  <span className="whitespace-nowrap">Date of Test:</span>
                   <SimpleDatePicker
                     key={'biomarkerUpload'}
                     textStyle
                     isUploadFile
                     date={dateOfTest}
                     setDate={setDateOfTest}
-                    placeholder="Select Date"
-                    ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
+                    placeholder="Select date (required)"
+                    inValid={!!dateOfTestError}
+                    errorMessage={dateOfTestError}
+                    ClassName="border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
                   />
                 </div>
               </div>
