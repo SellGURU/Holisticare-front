@@ -562,30 +562,29 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               /> */}
                 </div>
 
-                <div className="flex items-center gap-6 shrink-0">
-                  <div className=" hidden sm:flex items-center gap-3">
-                    <Toggle
-                      checked={showOnlyErrors}
-                      setChecked={setShowOnlyErrors}
-                    />
-                    <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
-                      Show Only Errors
-                    </div>
+              <div className="flex items-center gap-6 shrink-0">
+                <div className=" hidden sm:flex items-center gap-3">
+                  <Toggle
+                    checked={showOnlyErrors}
+                    setChecked={setShowOnlyErrors}
+                  />
+                  <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+                    Show Only Errors
                   </div>
-                  <div className="flex items-center gap-2 text-[8px] md:text-xs text-Text-Quadruple">
-                    <span className="whitespace-nowrap">Date of Test:</span>
-                    <SimpleDatePicker
-                      key={'biomarkerUpload'}
-                      textStyle
-                      isUploadFile
-                      date={dateOfTest}
-                      setDate={setDateOfTest}
-                      placeholder="Select date (required)"
-                      inValid={!!dateOfTestError}
-                      errorMessage={dateOfTestError}
-                      ClassName="border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
-                    />
-                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-[8px] md:text-xs text-Text-Quadruple">
+                  <span className="whitespace-nowrap">Date of Test:</span>
+                  <SimpleDatePicker
+                    key={'biomarkerUpload'}
+                    textStyle
+                    isUploadFile
+                    date={dateOfTest}
+                    setDate={setDateOfTest}
+                    placeholder="Select date (required)"
+                    inValid={!!dateOfTestError}
+                    errorMessage={dateOfTestError}
+                    ClassName="border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
+                  />
                 </div>
               </div>
               <div className=" flex sm:hidden items-center gap-3">
@@ -672,6 +671,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 </div>
               </div>
             </div>
+          </div>
           </div>
         )}
       </div>
