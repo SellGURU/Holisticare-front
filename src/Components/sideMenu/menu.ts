@@ -62,6 +62,12 @@ export const menus = [
         icon: 'sidemenu-menu-icon-Form',
         active: true,
       },
+      {
+        name: 'Custom Parametric',
+        url: '/custom-parametric/risk',
+        icon: 'sidemenu-menu-icon-HealthRisk',
+        active: true,
+      },
     ],
   },
   {
