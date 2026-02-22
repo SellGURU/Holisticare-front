@@ -10,7 +10,7 @@ type UploadMeta = {
 };
 
 class JsonUploadApi {
-  static BASE_URL = 'https://vercel-backend-one-roan.vercel.app'; // set this
+  static BASE_URL = 'https://vercel-backend-one-roan.vercel.app/holisticare'; // set this
 
   static getToken(): string | null {
     return null; // or localStorage.getItem("token")
@@ -63,19 +63,19 @@ class JsonUploadApi {
   static uploadMore_info(data: any, meta: UploadMeta) {
     const file = dataToJsonFile(data, 'more_info_rules.json');
     const form = this.buildForm(file, meta);
-    return this.postFormData('/holisticare_test/upload/more_info', form);
+    return this.postFormData('/upload/more_info', form);
   }
 
   static uploadCategories(data: any, meta: UploadMeta) {
     const file = dataToJsonFile(data, 'benchmark_areas.json');
     const form = this.buildForm(file, meta);
-    return this.postFormData('/holisticare_test/upload/categories', form);
+    return this.postFormData('/upload/categories', form);
   }
 
   static uploadUnit_mapping(data: any, meta: UploadMeta) {
     const file = dataToJsonFile(data, 'unit_mapping.json');
     const form = this.buildForm(file, meta);
-    return this.postFormData('/holisticare_test/upload/unit_mapping', form);
+    return this.postFormData('/upload/unit_mapping', form);
   }
 
   static uploadBiomarker_mapping(data: any, meta: UploadMeta) {
