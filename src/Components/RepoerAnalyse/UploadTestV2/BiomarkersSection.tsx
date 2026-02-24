@@ -650,9 +650,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     {biomarkers.map((b, index) => (
                       <BiomarkerRow
                         key={b.biomarker_id}
-                        refRenceEl={(el: any) =>
-                          (rowRefs.current[index] = el)
-                        }
+                        refRenceEl={(el: any) => (rowRefs.current[index] = el)}
                         isHaveError={rowErrors[index]}
                         errorText={rowErrors[index]}
                         biomarker={b}
@@ -670,7 +668,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 </div>
               </div>
             </div>
-            </div>
+          </div>
         )}
       </div>
     </>
