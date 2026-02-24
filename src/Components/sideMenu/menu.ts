@@ -94,7 +94,24 @@ export const menus = [
       {
         name: 'Peptide',
         url: '/peptide',
-        icon: 'sidemenu-menu-icon-peptide ',
+        icon: 'sidemenu-menu-icon-peptide',
+        active: true,
+      },
+      {
+        name: 'Other',
+        url: '/other',
+        icon: 'sidemenu-menu-icon-Other',
+        active: true,
+      },
+    ],
+  },
+  {
+    category: 'INTEGRATIONS',
+    items: [
+      {
+        name: 'FHIR Import',
+        url: '/fhir-integration',
+        icon: 'sidemenu-menu-icon-fhir',
         active: true,
       },
     ],

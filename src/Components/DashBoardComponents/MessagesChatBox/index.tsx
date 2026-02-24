@@ -193,12 +193,21 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
   };
 
   const formatText = (text: string) => {
+    // ابتدا بولدها رو جایگزین می‌کنیم
     const boldedText = text.replace(
       /\*(.*?)\*/g,
       (_match, p1) => `<strong>${p1}</strong>`,
     );
 
-    const lines = boldedText.split('\n');
+    // سپس لینک‌ها رو جایگزین می‌کنیم
+    const linkifiedText = boldedText.replace(
+      /(https?:\/\/[^\s]+)/g,
+      (url) =>
+        `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">${url}</a>`,
+    );
+
+    // متن رو به خطوط تقسیم می‌کنیم
+    const lines = linkifiedText.split('\n');
 
     return lines.map((line, index) => (
       <span key={index}>
@@ -207,6 +216,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       </span>
     ));
   };
+
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const scrollToBottom = () => {
     const objDiv: any = document.getElementById('userChat');

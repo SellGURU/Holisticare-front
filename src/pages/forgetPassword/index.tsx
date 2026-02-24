@@ -127,10 +127,7 @@ const ForgetPassword = () => {
                       })
                       .catch((res) => {
                         if (res.detail) {
-                          formik.setFieldError(
-                            'email',
-                            'This email address is not registered in our system.',
-                          );
+                          formik.setFieldError('email', res.detail);
                         }
                       })
                       .finally(() => {
@@ -216,8 +213,8 @@ const ForgetPassword = () => {
               onClick={() => {
                 Application.SendVerification({
                   email: formik.values.email,
-                }).catch((err) => {
-                  console.error('Error sending verification:', err);
+                }).catch(() => {
+                  // console.error('Error sending verification:', err);
                 });
                 setIsCompleteCode(false);
                 setCodeValue('');
@@ -260,9 +257,7 @@ const ForgetPassword = () => {
                       })
                       .catch((error) => {
                         if (error.detail) {
-                          setCodeError(
-                            'Invalid or expired code. Please try again.',
-                          );
+                          setCodeError(error.detail);
                         }
                       })
                       .finally(() => {
@@ -387,6 +382,7 @@ const ForgetPassword = () => {
                         setPasswordChanged(true);
                       })
                       .catch((err) => {
+                        formik2.setFieldError('password', err.detail);
                         console.error('Error verifying code:', err);
                       })
                       .finally(() => {

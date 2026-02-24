@@ -6,6 +6,7 @@ import AddModalLibraryTreePages from './components/AddModal2';
 import Application from '../../api/app';
 import TableNoPaginateForLibraryThreePages from './components/TableNoPaginate';
 import PreviewModalLibraryTreePages from './components/PreviewModal';
+import ManageOtherTypesModal from './components/ManageOtherTypesModal';
 import Circleloader from '../CircleLoader';
 
 interface LibraryThreePagesProps {
@@ -18,6 +19,22 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortId, setSortId] = useState<string>('title_asc');
+  const [isTypeEmpty, setIsTypeEmpty] = useState(true);
+  const getOtherTypes = () => {
+    Application.getOtherTypeList()
+      .then((res) => {
+        setIsTypeEmpty(res.data.length > 0);
+      })
+      .catch((err) => {
+        console.error('Error getting other types:', err);
+        setIsTypeEmpty(true);
+      });
+  };
+  useEffect(() => {
+    if (pageType === 'Other') {
+      getOtherTypes();
+    }
+  }, [pageType]);
   // const [clearData, setClearData] = useState(false);
   // const handleClearData = (value: boolean) => {
   //   setClearData(value);
@@ -34,6 +51,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
     setAddShowModal(true);
   };
   const [previewShowModal, setPreviewShowModal] = useState(false);
+  const [manageTypesModal, setManageTypesModal] = useState(false);
   const handlePreviewCloseModal = () => {
     setSelectedRow(null);
     setPreviewShowModal(false);
@@ -90,6 +108,18 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         setLoading(false);
       });
   };
+  const getOthers = () => {
+    setLoading(true);
+    Application.getOtherList()
+      .then((res) => {
+        setTableData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error getting other list:', err);
+        setLoading(false);
+      });
+  };
   useEffect(() => {
     if (pageType === 'Supplement') {
       getSupplements();
@@ -97,6 +127,8 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
       getLifestyles();
     } else if (pageType === 'Peptide') {
       getPeptides();
+    } else if (pageType === 'Other') {
+      getOthers();
     } else {
       getDiets();
     }
@@ -145,6 +177,21 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         })
           .then(() => {
             getPeptides();
+            setLoadingCall(false);
+            setAddShowModal(false);
+            setSelectedRow(null);
+          })
+          .catch((err) => {
+            console.error(err);
+            setLoadingCall(false);
+          });
+      } else if (pageType === 'Other') {
+        Application.editOther({
+          O_Id: selectedRow.O_Id,
+          ...values,
+        })
+          .then(() => {
+            getOthers();
             setLoadingCall(false);
             setAddShowModal(false);
             setSelectedRow(null);
@@ -212,6 +259,18 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             console.error(err);
             setLoadingCall(false);
           });
+      } else if (pageType === 'Other') {
+        Application.addOther(values)
+          .then(() => {
+            getOthers();
+            setLoadingCall(false);
+            setAddShowModal(false);
+            setSelectedRow(null);
+          })
+          .catch((err) => {
+            console.error(err);
+            setLoadingCall(false);
+          });
       } else {
         Application.addDiet(values)
           .then(() => {
@@ -258,6 +317,18 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
       Application.deletePeptide(id)
         .then(() => {
           getPeptides();
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else if (pageType === 'Other') {
+      setLoading(true);
+      Application.deleteOther(id)
+        .then(() => {
+          getOthers();
         })
         .catch((err) => {
           console.error(err);
@@ -331,6 +402,12 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
           (a, b) => getNum(b.Dose ?? b.Dosage) - getNum(a.Dose ?? a.Dosage),
         );
         break;
+      case 'type_asc':
+        data.sort((a, b) => (a.Type || '').localeCompare(b.Type || ''));
+        break;
+      case 'type_desc':
+        data.sort((a, b) => (b.Type || '').localeCompare(a.Type || ''));
+        break;
       case 'priority_asc':
         data.sort((a, b) => getPriorityValue(a) - getPriorityValue(b));
         break;
@@ -355,6 +432,8 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
     title_desc: 'Title (Z → A)',
     dose_asc: 'Dose (Low → High)',
     dose_desc: 'Dose (High → Low)',
+    type_asc: 'Type (A → Z)',
+    type_desc: 'Type (Z → A)',
     priority_asc: 'Priority Weight (Low → High)',
     priority_desc: 'Priority Weight (High → Low)',
     added_desc: 'Added on (Newest first)',
@@ -375,34 +454,72 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         handleOpenModal={handleOpenModal}
         currentSortLabel={currentSortLabel}
         onChangeSort={(id: string) => setSortId(id ?? 'title_asc')}
+        onManageTypes={
+          pageType === 'Other' ? () => setManageTypesModal(true) : undefined
+        }
       />
+      {pageType === 'Other' && (
+        <ManageOtherTypesModal
+          isOpen={manageTypesModal}
+          onClose={() => setManageTypesModal(false)}
+          onTypesUpdated={() => {
+            getOtherTypes();
+          }}
+        />
+      )}
       {!tableData.length ? (
         <div
           className={`w-full flex justify-center items-center flex-col mt-16`}
         >
-          <img
-            src={`/icons/${pageType === 'Supplement' ? 'supplement-empty' : pageType === 'Lifestyle' ? 'lifestyle-empty' : pageType === 'Peptide' ? 'supplement-empty' : 'diet-empty'}.svg`}
-            alt=""
-            className="mt-16"
-          />
-          <div className="font-medium text-base text-Text-Primary mt-8">
-            No{' '}
-            {pageType === 'Supplement'
-              ? 'supplement'
-              : pageType === 'Lifestyle'
-                ? 'lifestyle'
-                : pageType === 'Peptide'
-                  ? 'peptide'
-                  : 'diet'}{' '}
-            found.
+          {pageType === 'Other' ? (
+            <img
+              src="/icons/empty-state-new.svg"
+              alt=""
+              className="mt-16 w-52"
+            />
+          ) : (
+            <img
+              src={`/icons/${pageType === 'Supplement' ? 'supplement-empty' : pageType === 'Lifestyle' ? 'lifestyle-empty' : pageType === 'Peptide' ? 'supplement-empty' : 'diet-empty'}.svg`}
+              alt=""
+              className="mt-16"
+            />
+          )}
+          <div className="font-medium text-base text-Text-Primary mt-8 text-center px-4">
+            {pageType === 'Other' ? (
+              'No items in this library yet. Add one to get started.'
+            ) : (
+              <>
+                No{' '}
+                {pageType === 'Supplement'
+                  ? 'supplement'
+                  : pageType === 'Lifestyle'
+                    ? 'lifestyle'
+                    : pageType === 'Peptide'
+                      ? 'peptide'
+                      : 'diet'}{' '}
+                found.
+              </>
+            )}
           </div>
-          <ButtonSecondary
-            ClassName="w-[210px] rounded-[20px] shadow-Btn mt-4"
-            onClick={handleOpenModal}
-          >
-            <img src="/icons/add-square.svg" alt="" />
-            Add {pageType}
-          </ButtonSecondary>
+          <div className="flex flex-wrap gap-3 justify-center mt-4">
+            {pageType === 'Other' && (
+              <ButtonSecondary
+                ClassName="w-[210px] rounded-[20px] shadow-Btn"
+                onClick={() => setManageTypesModal(true)}
+              >
+                Manage types
+              </ButtonSecondary>
+            )}
+            {isTypeEmpty && (
+              <ButtonSecondary
+                ClassName="w-[210px] rounded-[20px] shadow-Btn"
+                onClick={handleOpenModal}
+              >
+                <img src="/icons/add-square.svg" alt="" />
+                Add {pageType}
+              </ButtonSecondary>
+            )}
+          </div>
         </div>
       ) : (
         <>

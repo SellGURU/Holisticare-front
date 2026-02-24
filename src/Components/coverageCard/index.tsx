@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import MainModal from '../MainModal';
 import Checkbox from '../checkbox';
 import SearchBox from '../SearchBox';
+import { toType2, type2ToFlatList } from '../../utils/lookingForwards';
 
 interface CoverageCardProps {
   progress: number;
@@ -50,15 +51,22 @@ export const CoverageCard: React.FC<CoverageCardProps> = ({
 
   const [showDetail, setShowDetail] = useState(false);
 
-  const handleAddIssue = (issue: string) => {
+  const handleAddIssue = (issue: string, categoryKey?: string) => {
     if (issue.trim() === '') return;
-    const name = 'Issue ' + (details.length + 1) + ': ' + issue;
-    const newIssueList = [...details, { [name]: false }];
-    setDetails(newIssueList);
-    setLookingForwards([
-      ...lookingForwardsData,
-      'Issue ' + (lookingForwardsData.length + 1) + ': ' + issue,
-    ]);
+    const type2 = toType2(lookingForwardsData);
+    const keyAreas = { ...type2['Key areas to address'] };
+    const cat =
+      categoryKey && keyAreas[categoryKey] ? categoryKey : 'critical_urgent';
+    if (!keyAreas[cat]) keyAreas[cat] = [];
+    const flat = type2ToFlatList(type2);
+    const num = flat.length + 1;
+    const name = issue.replace(/^Issue \d+:\s*/i, '').trim()
+      ? issue
+      : `Issue ${num}: ${issue}`;
+    keyAreas[cat] = [...keyAreas[cat], name];
+    const nextType2 = { ...type2, 'Key areas to address': keyAreas };
+    setDetails([...details, { [name]: false }]);
+    setLookingForwards(nextType2);
     setNewIssue('');
     setAddIssue(false);
   };

@@ -22,7 +22,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         {/* use mobile */}
         <div className="flex lg:hidden flex-grow justify-center items-center bg-[url('/images/loginImage.png')] bg-cover bg-center min-h-screen relative">
           <div className="absolute inset-0 bg-white/70"></div>
-          <div className="w-[300px] border-2 border-white p-[32px] rounded-[20px] bg-white/50 backdrop-blur-md shadow-loginBox max-h-[80vh] overflow-auto">
+          <div className="w-[95%] max-w-[450px] border-2 border-white p-[32px] rounded-[20px] bg-white/50 backdrop-blur-md shadow-loginBox max-h-[90vh] overflow-auto">
             {children}
           </div>
         </div>

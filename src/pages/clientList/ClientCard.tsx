@@ -2,16 +2,16 @@ import { useNavigate } from 'react-router-dom';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import { FC, useEffect, useRef, useState } from 'react';
 import Application from '../../api/app.ts';
-import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
-import { ButtonPrimary } from '../Button/ButtonPrimary.tsx';
+import { ButtonPrimary } from '../../Components/Button/ButtonPrimary.tsx';
 import { ArchiveModal } from './ArchiveModal.tsx';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Tooltip } from 'react-tooltip';
-import MainModal from '../MainModal/index.tsx';
-import Checkbox from '../checkbox/index.tsx';
+import MainModal from '../../Components/MainModal/index.tsx';
+import Checkbox from '../../Components/checkbox/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';
-import EllipsedTooltip from '../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip.tsx';
+import EllipsedTooltip from '../../Components/LibraryThreePages/components/TableNoPaginate/ElipsedTooltip.tsx';
 interface ClientCardProps {
   client: any;
   indexItem: number;
@@ -35,7 +35,7 @@ const ClientCard: FC<ClientCardProps> = ({
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
-  const [refresh, setRefresh] = useState(client.refresh_in_progress);
+  const [, setRefresh] = useState(client.refresh_in_progress);
   useEffect(() => {
     setRefresh(client.refresh_in_progress);
   }, [client.refresh_in_progress]);
@@ -271,7 +271,7 @@ const ClientCard: FC<ClientCardProps> = ({
       .catch(() => null);
   };
 
-  const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
+  const [, setLastRefreshTime] = useState<Date | null>(null);
   const [, forceUpdate] = useState(0);
 
   useEffect(() => {
@@ -280,24 +280,24 @@ const ClientCard: FC<ClientCardProps> = ({
     }, 30000);
     return () => clearInterval(interval);
   }, []);
-  const formatLastRefresh = (date: string) => {
-    if (date == 'No Data') return '';
-    const lastTime = lastRefreshTime == null ? new Date(date) : lastRefreshTime;
-    // if (!lastRefreshTime) return '';
-    const now = new Date();
-    const diffMs = now.getTime() - lastTime.getTime();
-    const diffMinutes = diffMs / 60000;
+  // const formatLastRefresh = (date: string) => {
+  //   if (date == 'No Data') return '';
+  //   const lastTime = lastRefreshTime == null ? new Date(date) : lastRefreshTime;
+  //   // if (!lastRefreshTime) return '';
+  //   const now = new Date();
+  //   const diffMs = now.getTime() - lastTime.getTime();
+  //   const diffMinutes = diffMs / 60000;
 
-    if (diffMinutes < 1) return 'Just now';
-    if (diffMinutes < 5) return '1 min ago';
-    if (diffMinutes < 10) return '5 min ago';
+  //   if (diffMinutes < 1) return 'Just now';
+  //   if (diffMinutes < 5) return '1 min ago';
+  //   if (diffMinutes < 10) return '5 min ago';
 
-    return lastTime.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
+  //   return lastTime.toLocaleDateString('en-US', {
+  //     month: 'short',
+  //     day: 'numeric',
+  //     year: 'numeric',
+  //   });
+  // };
   const handleRefreshProgress = async () => {
     refreshIntervalRef.current = setInterval(async () => {
       const result = await handleCheckRefreshProgress();
@@ -317,19 +317,19 @@ const ClientCard: FC<ClientCardProps> = ({
       handleRefreshProgress();
     }
   }, [client.refresh_in_progress]);
-  const handleRefreshData = () => {
-    if (refreshIntervalRef.current) return;
-    setRefresh(true);
+  // const handleRefreshData = () => {
+  //   if (refreshIntervalRef.current) return;
+  //   setRefresh(true);
 
-    Application.refreshData(client.member_id)
-      .then(() => {
-        handleRefreshProgress();
-        setRefresh(false);
-      })
-      .catch(() => {
-        setRefresh(false);
-      });
-  };
+  //   Application.refreshData(client.member_id)
+  //     .then(() => {
+  //       handleRefreshProgress();
+  //       setRefresh(false);
+  //     })
+  //     .catch(() => {
+  //       setRefresh(false);
+  //     });
+  // };
 
   return (
     <>
@@ -580,7 +580,7 @@ const ClientCard: FC<ClientCardProps> = ({
           // e.stopPropagation();
           // navigate(`/report/${client.member_id}/${client.name}`);
         }}
-        className="sm:min-w-[315px] lg:min-h-[292px] w-full xs:w-[344px] ss:w-full md:w-[333px] p-2 sm:p-4 bg-white shadow-200 xl:w-[24%] rounded-[16px] relative"
+        className="sm:min-w-[315px] lg:min-h-[280px] w-full xs:w-[344px] ss:w-full md:w-[333px] p-2 sm:p-4 bg-white shadow-200 xl:w-[24%] rounded-[16px] relative"
       >
         {showModal && (
           <div
@@ -934,8 +934,8 @@ const ClientCard: FC<ClientCardProps> = ({
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
-                    <div className="flex text-nowrap truncate max-w-[110px] cursor-default">
-                      {client.assigned_to[0] || '-'}
+                    <div className="w-[100px]">
+                      <EllipsedTooltip text={client.assigned_to[0] || '-'} />
                     </div>
                   </div>
                   <div className="flex gap-2 w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -973,20 +973,8 @@ const ClientCard: FC<ClientCardProps> = ({
                       <img src="/icons/sms-edit-2.svg" alt="" />
                       Check-in
                     </div>
-                    <div
-                      className="text-nowrap max-w-[110px] truncate cursor-default"
-                      data-tooltip-id={`${client.member_id}-${client['Check-in']}`}
-                    >
-                      {client['Check-in']}
-                      {client['Check-in'].length > 15 && (
-                        <Tooltip
-                          place="top"
-                          id={`${client.member_id}-${client['Check-in']}`}
-                          className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                        >
-                          {client['Check-in']}
-                        </Tooltip>
-                      )}
+                    <div className="max-w-[100px] truncate cursor-default">
+                      <EllipsedTooltip text={client['Check-in'] || '-'} />
                     </div>
                   </div>
                   <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -994,29 +982,9 @@ const ClientCard: FC<ClientCardProps> = ({
                       <img src="/icons/note-2.svg" alt="" />
                       Questionnaire
                     </div>
-                    <div
-                      className="text-nowrap max-w-[100px] truncate cursor-default"
-                      data-tooltip-id={`${client.member_id}-questionary`}
-                      data-tooltip-content={client.Questionary}
-                    >
-                      {client.Questionary}
+                    <div className=" max-w-[100px] truncate cursor-default">
+                      <EllipsedTooltip text={client.Questionary} />
                     </div>
-                    {client.Questionary.length > 15 && (
-                      <Tooltip
-                        place="top"
-                        id={`${client.member_id}-questionary`}
-                        className="bg-white z-50 w-fit bg-opacity-100 opacity-100 text-wrap text-[#888888] text-[8px] rounded-[6px] border border-Gray-50 p-2 max-w-xs"
-                        style={{
-                          backgroundColor: 'white',
-                          zIndex: 50,
-                          opacity: 1,
-                          wordWrap: 'break-word',
-                          maxWidth: '300px',
-                        }}
-                        delayShow={300}
-                        delayHide={100}
-                      />
-                    )}
                   </div>
                 </div>
               </div>
@@ -1037,38 +1005,6 @@ const ClientCard: FC<ClientCardProps> = ({
                   />
                   Drift Analyzed
                 </div> */}
-                {client.has_minimum_data == true && (
-                  <div
-                    className="flex w-full items-center justify-start gap-2 cursor-pointer"
-                    onClick={handleRefreshData}
-                  >
-                    <img
-                      src="/icons/refresh-circle.svg"
-                      alt=""
-                      className={refresh ? 'animate-spin-slow' : ''}
-                    />
-                    {refresh ? (
-                      <div className="text-Primary-DeepTeal text-xs font-medium">
-                        Syncing...
-                      </div>
-                    ) : (
-                      <div className="flex flex-col">
-                        <div className="text-Primary-DeepTeal text-nowrap font-medium text-xs">
-                          Sync with Latest Data
-                        </div>
-                        {client['Latest Sync'] != 'No Data' && (
-                          <div className="text-Text-Quadruple text-[8px]">
-                            Last sync:{' '}
-                            {/* {lastRefreshTime
-                            ? formatLastRefresh()
-                            : client['Latest Sync']} */}
-                            {formatLastRefresh(client['Latest Sync'])}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
 
                 <div className="hidden w-full md:flex justify-end items-center">
                   <ButtonPrimary

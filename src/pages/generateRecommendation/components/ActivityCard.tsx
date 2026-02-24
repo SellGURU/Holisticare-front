@@ -6,6 +6,10 @@ import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
 import { splitInstructions } from '../../../help';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import ExpandableText from '../../../Components/expandableText';
+import {
+  CATEGORY_ORDER,
+  DEFAULT_CATEGORY_LABELS,
+} from '../../../utils/lookingForwards';
 
 interface ActivityCardProps {
   item: any;
@@ -14,11 +18,16 @@ interface ActivityCardProps {
   handleCheckboxChange: (category: string, itemId: number) => void;
   issuesData: Record<string, boolean>[];
   setIssuesData: (value: any) => void;
+  keyAreasType2?: {
+    'Key areas to address': Record<string, string[]>;
+    category_labels?: Record<string, string>;
+  };
   handleUpdateIssueListByKey: (
     category: string,
     recommendation: string,
     newIssueList: string[],
     text?: string,
+    newIssueCategoryKey?: string,
   ) => void;
   handleRemoveLookingForwards: (text: string) => void;
   handleRemoveIssueFromList: (name: string) => void;
@@ -31,6 +40,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   handleCheckboxChange,
   issuesData,
   setIssuesData,
+  keyAreasType2,
   handleUpdateIssueListByKey,
   handleRemoveLookingForwards,
   handleRemoveIssueFromList: handleRemoveIssueFromListData,
@@ -76,17 +86,46 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
   const [addIssue, setAddIssue] = useState(false);
   const [newIssue, setNewIssue] = useState('');
+  const [newIssueCategoryKey, setNewIssueCategoryKey] = useState<string>(
+    CATEGORY_ORDER[0],
+  );
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  const lastSentIssueListRef = useRef<string[]>([]);
+
   useEffect(() => {
-    const result = item.issue_list.filter((issue: string) =>
-      issuesData.some((obj) => Object.keys(obj)[0] === issue),
+    // Build set of all key area issue strings (from type2) so we show issue_list from backend/remap even if coverage keys differ
+    const keyAreasSet = new Set<string>();
+    const keyAreas = keyAreasType2?.['Key areas to address'];
+    if (keyAreas && typeof keyAreas === 'object') {
+      for (const arr of Object.values(keyAreas)) {
+        if (Array.isArray(arr)) arr.forEach((s: string) => keyAreasSet.add(s));
+      }
+    }
+    const result = (item.issue_list || []).filter(
+      (issue: string) =>
+        issuesData.some((obj) => Object.keys(obj)[0] === issue) ||
+        keyAreasSet.has(issue),
     );
-    // .map((matched: string) => matched.split(':')[0].trim());
-    setSelectedIssues(result);
-  }, [issuesData, item]);
+    if (lastSentIssueListRef.current.length > 0) {
+      if (
+        result.length === lastSentIssueListRef.current.length &&
+        result.every(
+          (r: string, i: number) => r === lastSentIssueListRef.current[i],
+        )
+      ) {
+        setSelectedIssues(result);
+        lastSentIssueListRef.current = [];
+      } else {
+        setSelectedIssues(lastSentIssueListRef.current);
+      }
+    } else {
+      setSelectedIssues(result);
+    }
+  }, [issuesData, item, keyAreasType2]);
 
   const handleRemoveIssueCard = (issue: string) => {
     const newIssueList = selectedIssues.filter((r: string) => r !== issue);
+    lastSentIssueListRef.current = newIssueList;
     handleUpdateIssueListByKey(
       activeCategory,
       item.Recommendation,
@@ -98,17 +137,23 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   const handleAddIssue = (issue: string) => {
     if (issue.trim() === '') return;
     const name = 'Issue ' + (issuesData.length + 1) + ': ' + issue;
-    const newIssueList = [...selectedIssues];
+    const newIssueList = [...selectedIssues, name];
+    lastSentIssueListRef.current = newIssueList;
     handleUpdateIssueListByKey(
       activeCategory,
       item.Recommendation,
       newIssueList,
       issue,
+      newIssueCategoryKey,
     );
     setIssuesData((prev: any) => [...prev, { [name]: true }]);
     setSelectedIssues(newIssueList);
     setNewIssue('');
+    setAddIssue(false);
   };
+
+  const categoryLabels =
+    keyAreasType2?.category_labels ?? DEFAULT_CATEGORY_LABELS;
 
   const handleRemoveIssueFromList = (name: string) => {
     handleRemoveIssueFromListData(name);
@@ -224,36 +269,25 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                       scrollbarColor: '#E9EDF5 #FFFFFF',
                     }}
                   >
-                    {issuesData?.map((issue, index) => {
-                      const [text] = Object.entries(issue)[0];
-                      const issueLabel = text.split(':')[0].trim();
-                      const isInSelected = selectedIssues.some(
-                        (r: string) => r.split(':')[0].trim() === issueLabel,
-                      );
-                      const handleToggle = () => {
-                        const newSelected = isInSelected
-                          ? item.issue_list.filter((r: string) => r !== text)
-                          : [...item.issue_list, text];
+                    {(() => {
+                      const labels =
+                        keyAreasType2?.category_labels ??
+                        DEFAULT_CATEGORY_LABELS;
+                      const keyAreas = keyAreasType2?.['Key areas to address'];
+                      const issuesDataFlat = issuesData ?? [];
+                      const hasCategories =
+                        keyAreas && typeof keyAreas === 'object';
 
-                        handleUpdateIssueListByKey(
-                          activeCategory,
-                          item.Recommendation,
-                          newSelected,
-                        );
-
-                        const newIssueList = isInSelected
-                          ? selectedIssues.filter(
-                              (r: string) =>
-                                r.split(':')[0].trim() !== issueLabel,
-                            )
-                          : [...selectedIssues, text];
-
-                        setSelectedIssues(newIssueList);
-                      };
-
-                      return (
+                      const renderIssueRow = (
+                        _issue: Record<string, boolean>,
+                        index: number,
+                        text: string,
+                        issueLabel: string,
+                        isInSelected: boolean,
+                        handleToggle: () => void,
+                      ) => (
                         <div
-                          key={index}
+                          key={text}
                           className="flex select-none text-[10px] text-justify items-center break-all text-Text-Primary text-xs group relative pr-5 py-1"
                         >
                           <Checkbox
@@ -261,7 +295,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                             height="h-3"
                             checked={isInSelected}
                             onChange={handleToggle}
-                          ></Checkbox>
+                          />
                           <span className="text-Text-Secondary text-[10px] text-nowrap mr-1">
                             {issueLabel}:{' '}
                           </span>
@@ -270,9 +304,6 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                           </div>
                           {isDeleting === index + 1 ? (
                             <div className="flex flex-col items-center justify-center gap-[2px] absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                              {/* <div className="text-Text-Quadruple text-xs">
-                                Sure?
-                              </div> */}
                               <img
                                 src="/icons/tick-circle-green.svg"
                                 alt=""
@@ -283,6 +314,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                                     (r: string) =>
                                       r.split(':')[0].trim() !== issueLabel,
                                   );
+                                  lastSentIssueListRef.current = newSelected;
                                   setSelectedIssues(newSelected);
                                   handleUpdateIssueListByKey(
                                     activeCategory,
@@ -303,15 +335,127 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                               src="/icons/delete.svg"
                               alt=""
                               className="absolute -right-3 opacity-0 group-hover:opacity-100 transition-opacity w-5 h-5 cursor-pointer"
-                              onClick={() => {
-                                setIsDeleting(index + 1);
-                              }}
+                              onClick={() => setIsDeleting(index + 1)}
                             />
                           )}
                         </div>
                       );
-                    })}
-                    {issuesData?.length < 1 && (
+
+                      if (hasCategories) {
+                        // Coverage state from API: issue string -> boolean
+                        const coverageMap: Record<string, boolean> = {};
+                        for (const entry of issuesDataFlat) {
+                          const k = Object.keys(entry)[0];
+                          if (k) coverageMap[k] = entry[k];
+                        }
+                        // List all issues from type2 by category (so dropdown shows all key areas, not only coverage keys)
+                        const byCategory: Record<
+                          string,
+                          { entry: Record<string, boolean> }[]
+                        > = {};
+                        for (const catKey of CATEGORY_ORDER)
+                          byCategory[catKey] = [];
+                        for (const catKey of CATEGORY_ORDER) {
+                          const list = keyAreas[catKey];
+                          if (Array.isArray(list)) {
+                            for (const issueName of list) {
+                              if (typeof issueName === 'string')
+                                byCategory[catKey].push({
+                                  entry: {
+                                    [issueName]:
+                                      coverageMap[issueName] ?? false,
+                                  },
+                                });
+                            }
+                          }
+                        }
+                        let globalIndex = 0;
+                        return CATEGORY_ORDER.map((catKey) => {
+                          const categoryLabel = labels[catKey] ?? catKey;
+                          const arr = byCategory[catKey] ?? [];
+                          if (arr.length === 0) return null;
+                          return (
+                            <div key={catKey} className="mb-2">
+                              <div className="text-[10px] font-semibold text-Text-Primary mb-1 pt-1 first:pt-0 border-t border-Gray-50 first:border-t-0">
+                                {categoryLabel}
+                              </div>
+                              {arr.map(({ entry }) => {
+                                const [text] = Object.entries(entry)[0];
+                                const issueLabel = text.split(':')[0].trim();
+                                const isInSelected = selectedIssues.some(
+                                  (r: string) =>
+                                    r.split(':')[0].trim() === issueLabel,
+                                );
+                                const idx = globalIndex++;
+                                const handleToggle = () => {
+                                  const newSelected = isInSelected
+                                    ? item.issue_list.filter(
+                                        (r: string) => r !== text,
+                                      )
+                                    : [...item.issue_list, text];
+                                  lastSentIssueListRef.current = newSelected;
+                                  handleUpdateIssueListByKey(
+                                    activeCategory,
+                                    item.Recommendation,
+                                    newSelected,
+                                  );
+                                  const newIssueList = isInSelected
+                                    ? selectedIssues.filter(
+                                        (r: string) =>
+                                          r.split(':')[0].trim() !== issueLabel,
+                                      )
+                                    : [...selectedIssues, text];
+                                  setSelectedIssues(newIssueList);
+                                };
+                                return renderIssueRow(
+                                  entry,
+                                  idx,
+                                  text,
+                                  issueLabel,
+                                  isInSelected,
+                                  handleToggle,
+                                );
+                              })}
+                            </div>
+                          );
+                        });
+                      }
+
+                      return issuesDataFlat.map((issue, index) => {
+                        const [text] = Object.entries(issue)[0];
+                        const issueLabel = text.split(':')[0].trim();
+                        const isInSelected = selectedIssues.some(
+                          (r: string) => r.split(':')[0].trim() === issueLabel,
+                        );
+                        const handleToggle = () => {
+                          const newSelected = isInSelected
+                            ? item.issue_list.filter((r: string) => r !== text)
+                            : [...item.issue_list, text];
+                          lastSentIssueListRef.current = newSelected;
+                          handleUpdateIssueListByKey(
+                            activeCategory,
+                            item.Recommendation,
+                            newSelected,
+                          );
+                          const newIssueList = isInSelected
+                            ? selectedIssues.filter(
+                                (r: string) =>
+                                  r.split(':')[0].trim() !== issueLabel,
+                              )
+                            : [...selectedIssues, text];
+                          setSelectedIssues(newIssueList);
+                        };
+                        return renderIssueRow(
+                          issue,
+                          index,
+                          text,
+                          issueLabel,
+                          isInSelected,
+                          handleToggle,
+                        );
+                      });
+                    })()}
+                    {(!issuesData || issuesData.length < 1) && (
                       <div className="flex flex-col items-center justify-center mb-2">
                         <img src="/icons/empty-state-issue.svg" alt="" />
                         <div className="text-Text-Primary text-[10px] font-medium -mt-5">
@@ -319,18 +463,36 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                         </div>
                       </div>
                     )}
-                    <div className="flex items-center justify-center text-Primary-DeepTeal text-xs font-medium gap-1 border-t border-Gray-50 rounded-md pt-3 mt-2">
+                    <div className="flex flex-col gap-2 text-Primary-DeepTeal text-xs font-medium border-t border-Gray-50 rounded-md pt-3 mt-2">
                       {addIssue ? (
                         <>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] text-Text-Secondary">
+                              Category
+                            </label>
+                            <select
+                              value={newIssueCategoryKey}
+                              onChange={(e) =>
+                                setNewIssueCategoryKey(e.target.value)
+                              }
+                              className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border border-Gray-50 rounded-lg text-Text-Primary text-[10px]"
+                            >
+                              {CATEGORY_ORDER.map((catKey) => (
+                                <option key={catKey} value={catKey}>
+                                  {categoryLabels[catKey] ?? catKey}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                           <input
                             type="text"
                             placeholder="Type new issue and press Enter..."
                             value={newIssue}
                             onChange={(e) => setNewIssue(e.target.value)}
-                            className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border-Gray-50 border rounded-2xl  text-Text-Primary placeholder:text-Text-Fivefold text-[10px]"
+                            className="w-full h-[28px] px-2 outline-none bg-backgroundColor-Card border border-Gray-50 rounded-2xl text-Text-Primary placeholder:text-Text-Fivefold text-[10px]"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
-                                setAddIssue(false);
+                                e.preventDefault();
                                 handleAddIssue(newIssue);
                               }
                             }}

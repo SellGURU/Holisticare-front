@@ -200,7 +200,7 @@ const Report = () => {
         <div className="w-[500px] h-[208px] rounded-2xl relative py-6 px-8 bg-white shadow-800 text-Text-Primary">
           <div className="w-full flex items-center gap-2 border-b border-Gray-50 pb-2 font-medium text-sm">
             <img src="/icons/danger.svg" alt="" />
-            Data needs to be synced before generating a new plan
+            Data needs to be compiled before generating a new plan
           </div>
 
           <div
@@ -209,9 +209,9 @@ const Report = () => {
             }}
             className="font-medium mt-4 text-xs flex w-full justify-center leading-6 "
           >
-            Some of the client’s data has changed since the last update. <br />{' '}
-            Please sync the latest data to ensure the plan is generated
-            accurately.
+            Some of the client’s data has changed since the last update.
+            <br /> Please compile the latest data to ensure the plan is
+            generated accurately.
           </div>
           <div className="absolute bottom-6 right-8 flex gap-4">
             <div
@@ -239,7 +239,7 @@ const Report = () => {
               }}
               className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm"
             >
-              Sync Data
+              Compile
             </div>
           </div>
         </div>

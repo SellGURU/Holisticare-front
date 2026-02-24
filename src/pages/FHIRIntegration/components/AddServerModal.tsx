@@ -1,0 +1,250 @@
+import React, { FC, useState } from 'react';
+import { FHIRServerConfig } from '../../../api/fhir';
+import { MainModal } from '../../../Components';
+import SpinnerLoader from '../../../Components/SpinnerLoader';
+import { TextField } from '../../../Components/UnitComponents';
+
+interface AddServerModalProps {
+  onClose: () => void;
+  onSave: (config: FHIRServerConfig) => void;
+  isOpen: boolean;
+}
+
+const AddServerModal: FC<AddServerModalProps> = ({
+  onClose,
+  onSave,
+  isOpen,
+}) => {
+  const [name, setName] = useState('');
+  const [baseUrl, setBaseUrl] = useState('');
+  const [authType, setAuthType] = useState<
+    'none' | 'basic' | 'bearer' | 'api_key'
+  >('none');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [token, setToken] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [headerName, setHeaderName] = useState('X-API-Key');
+  const [saving, setSaving] = useState(false);
+
+  const onClear = () => {
+    setName('');
+    setBaseUrl('');
+    setAuthType('none');
+    setUsername('');
+    setPassword('');
+    setToken('');
+    setApiKey('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!name.trim() || !baseUrl.trim()) {
+      return;
+    }
+
+    const config: FHIRServerConfig = {
+      name: name.trim(),
+      base_url: baseUrl.trim(),
+      auth_type: authType,
+    };
+
+    // Add credentials based on auth type
+    if (authType === 'basic') {
+      config.credentials = { username, password };
+    } else if (authType === 'bearer') {
+      config.credentials = { token };
+    } else if (authType === 'api_key') {
+      config.credentials = { api_key: apiKey, header_name: headerName };
+    }
+
+    setSaving(true);
+    try {
+      await onSave(config);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const presetServers = [
+    { name: 'HAPI FHIR R4 (Public)', url: 'https://hapi.fhir.org/baseR4' },
+    { name: 'HAPI FHIR R5 (Public)', url: 'https://hapi.fhir.org/baseR5' },
+  ];
+
+  return (
+    <MainModal
+      isOpen={isOpen}
+      onClose={() => {
+        onClear();
+        onClose();
+      }}
+    >
+      <div className="bg-white rounded-2xl shadow-xl w-full overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-Boarder">
+          <h2 className="text-base font-medium text-Text-Primary">
+            Add FHIR Server
+          </h2>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Quick Presets */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Quick Presets
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {presetServers.map((preset) => (
+                <button
+                  key={preset.url}
+                  type="button"
+                  onClick={() => {
+                    setName(preset.name);
+                    setBaseUrl(preset.url);
+                    setAuthType('none');
+                  }}
+                  className="px-3 py-1.5 text-sm border border-blue-300 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                >
+                  {preset.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Server Name */}
+          <TextField
+            label="Server Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g., Hospital FHIR Server"
+            isValid={true}
+            validationText={''}
+          />
+
+          {/* Base URL */}
+          <TextField
+            label="Base URL"
+            value={baseUrl}
+            onChange={(e) => setBaseUrl(e.target.value)}
+            placeholder="https://fhir.example.com/baseR4"
+            isValid={true}
+            validationText={''}
+          />
+
+          {/* Authentication Type */}
+          <div>
+            <label className="text-xs font-medium text-Text-Primary mb-1 block">
+              Authentication
+            </label>
+            <select
+              value={authType}
+              onChange={(e) =>
+                setAuthType(
+                  e.target.value as 'none' | 'basic' | 'bearer' | 'api_key',
+                )
+              }
+              className="w-full h-[28px] rounded-[16px] py-1 px-3 border bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold focus-visible:outline-none md:focus-visible:border-black border-Gray-50"
+            >
+              <option value="none">No Authentication</option>
+              <option value="basic">Basic Auth (Username/Password)</option>
+              <option value="bearer">Bearer Token</option>
+              <option value="api_key">API Key</option>
+            </select>
+          </div>
+
+          {/* Basic Auth Fields */}
+          {authType === 'basic' && (
+            <div className="px-3 py-1 bg-gray-50 rounded-lg">
+              <TextField
+                label="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
+                isValid={true}
+                validationText={''}
+                margin="mt-1"
+              />
+              <TextField
+                label="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                isValid={true}
+                validationText={''}
+              />
+            </div>
+          )}
+
+          {/* Bearer Token Field */}
+          {authType === 'bearer' && (
+            <div className="p-3 bg-gray-50 rounded-lg">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Bearer Token
+              </label>
+              <input
+                type="password"
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                placeholder="Enter your access token"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          )}
+
+          {/* API Key Fields */}
+          {authType === 'api_key' && (
+            <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Header Name
+                </label>
+                <input
+                  type="text"
+                  value={headerName}
+                  onChange={(e) => setHeaderName(e.target.value)}
+                  placeholder="X-API-Key"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  API Key
+                </label>
+                <input
+                  type="password"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="w-full flex justify-end items-center p-2 mt-5">
+            <div
+              className="text-Disable text-sm font-medium mr-4 cursor-pointer"
+              onClick={() => {
+                onClear();
+                onClose();
+              }}
+            >
+              Cancel
+            </div>
+            <button
+              type="submit"
+              disabled={saving || !name.trim() || !baseUrl.trim()}
+              className="text-Primary-DeepTeal text-sm font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? <SpinnerLoader color="#005F73" /> : 'Add'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </MainModal>
+  );
+};
+
+export default AddServerModal;

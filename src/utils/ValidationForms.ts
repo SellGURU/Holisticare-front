@@ -14,6 +14,7 @@ type ValidationField =
   | 'Macros'
   | 'MacrosSeparately'
   | 'Title'
+  | 'Type'
   | 'Category'
   | 'Note'
   | 'Score'
@@ -47,6 +48,8 @@ class ValidationForms {
         return this.validationMacrosSeparately(value);
       case 'Title':
         return this.validationTitle(value);
+      case 'Type':
+        return this.validateType(value);
       case 'Category':
         return this.validationCategory(value);
       case 'Note':
@@ -87,6 +90,8 @@ class ValidationForms {
         return this.validationMacrosText(value);
       case 'Title':
         return this.validationTitleText(value);
+      case 'Type':
+        return this.validationTypeText(value);
       case 'Category':
         return this.validationCategoryText(value);
       case 'Note':
@@ -298,7 +303,7 @@ class ValidationForms {
   }
   private static validateBasedOn(value: string) {
     if (value.length == 0) {
-      return false;
+      return true;
     }
     return true;
   }
@@ -375,6 +380,18 @@ class ValidationForms {
     return true;
   }
   private static validationExercisesToAvoidText(value: string) {
+    if (value.length == 0) {
+      return 'This field is required.';
+    }
+    return '';
+  }
+  private static validateType(value: string) {
+    if (value.length == 0) {
+      return false;
+    }
+    return true;
+  }
+  private static validationTypeText(value: string) {
     if (value.length == 0) {
       return 'This field is required.';
     }

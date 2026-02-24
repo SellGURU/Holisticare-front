@@ -316,6 +316,28 @@ input[type='number'] {
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
 }
+.sidemenu-menu-icon-fhir {
+  mask-image: url(/icons/side-menu/fhir-import.svg);
+  -webkit-mask-image: url(/icons/side-menu/fhir-import.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
+.sidemenu-menu-icon-Other {
+  mask-image: url(/icons/side-menu/other-outline.svg);
+  -webkit-mask-image: url(/icons/side-menu/other-outline.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
 /* .report-side-menu-layer-icon{
   mask-image: url('/public//icons//menu.svg');
   mask-size: 100%;
@@ -718,13 +740,20 @@ input:-webkit-autofill:active {
 
 /* Make container match your rounded input look */
 .custom-phone-input .form-control {
-  width: 100%;
+  width: 100% !important;
+  max-width: 100% !important;
   height: 28px !important;
   border-radius: 16px !important;
   font-size: 12px;
   background-color: #fdfdfd !important;
   border: 1px solid #e9edf5 !important;
   padding-left: 78px !important; /* Space for flag */
+}
+@media (min-width: 768px) {
+  .custom-phone-input .form-control {
+    width: 220px !important;
+    max-width: 220px !important;
+  }
 }
 .custom-phone-input .form-control::placeholder {
   font-weight: 300; /* or bold / 700 */
@@ -757,6 +786,7 @@ input:-webkit-autofill:active {
   width: 10px;
   height: 10px;
   margin-left: 22px;
+  max-width: 220px !important;
   position: relative;
   top: -7px;
 }

@@ -2,13 +2,14 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
-import { uploadToAzure } from '../../../help';
+// import { uploadToAzure } from '../../../help';
 import { publish, subscribe } from '../../../utils/event';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
 import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
+import { uploadBlobToAzure } from '../../../services/uploadBlobService';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -97,6 +98,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         });
         setProgressBiomarkerUpload(res.data.progress);
         setfileType(res.data.lab_type);
+
+        // ✅ Handle ultrasound reports - skip biomarkers table
+        if (res.data.lab_type === 'ultrasound') {
+          setPolling(false);
+          setbiomarkerLoading(false);
+          setisSaveClicked(true); // Allow proceeding to health plan
+          setExtractedBiomarkers([]); // No biomarkers to display
+          return;
+        }
+
         const sorted = (res.data.extracted_biomarkers || [])
           .slice()
           .sort((a: any, b: any) => {
@@ -122,7 +133,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           res.data.extracted_biomarkers &&
           res.data.extracted_biomarkers.length > 0
         ) {
-          onValidate(sorted);
+          onValidate(sorted, res.data.lab_type);
         }
       } catch (err) {
         console.error('Error checking lab step one:', err);
@@ -276,17 +287,38 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
       try {
         // Step 1: Upload to Azure
-        const azureUrl = await uploadToAzure(file, (progress) => {
-          const uploadedBytes = Math.floor((progress / 100) * file.size);
-          setUploadedFile((prev) =>
-            prev
-              ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes }
-              : prev,
-          );
-        });
+        // const azureUrl = await uploadToAzure(file, (progress) => {
+        //   const uploadedBytes = Math.floor((progress / 100) * file.size);
+        //   setUploadedFile((prev) =>
+        //     prev
+        //       ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes }
+        //       : prev,
+        //   );
+        // });
+        uploadBlobToAzure({
+          containerKey: 'reports',
+          file: file,
+          name: fileName,
+          onProgress: (progress) => {
+            const uploadedBytes = Math.floor((progress / 100) * file.size);
+            setUploadedFile((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    progress: progress / 2,
+                    uploadedSize: uploadedBytes,
+                  }
+                : prev,
+            );
+          },
+        })
+          .then((azureUrl) => {
+            sendToBackend(file, azureUrl);
+          })
+          .catch(() => {});
 
         // Step 2: Send to backend
-        await sendToBackend(file, azureUrl);
+        // await sendToBackend(file, azureUrl);
       } catch (error: any) {
         setUploadedFile((prev) =>
           prev
@@ -370,6 +402,32 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const handleSaveLabReport = () => {
+    // ✅ For ultrasound reports, call API with empty lists
+    if (fileType === 'ultrasound') {
+      const modifiedTimestamp = modifiedDateOfTest
+        ? Date.UTC(
+            modifiedDateOfTest.getFullYear(),
+            modifiedDateOfTest.getMonth(),
+            modifiedDateOfTest.getDate(),
+          ).toString()
+        : null;
+
+      return Application.SaveLabReport({
+        member_id: memberId,
+        modified_biomarkers: {
+          biomarkers_list: [], // Empty list for ultrasound
+          date_of_test: modifiedTimestamp,
+          lab_type: 'ultrasound',
+          file_id: uploadedFile?.file_id || '',
+        },
+        added_biomarkers: {
+          biomarkers_list: [],
+          date_of_test: modifiedTimestamp,
+          lab_type: 'more_info',
+        },
+      });
+    }
+
     const modifiedTimestamp = modifiedDateOfTest
       ? Date.UTC(
           modifiedDateOfTest.getFullYear(),
@@ -391,6 +449,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       biomarker: b.biomarker,
       value: b.value,
       unit: b.unit,
+      'sub-value': b['sub-value'],
+      header_1: b['header_1'],
+      more_info: b['more_info'],
+      list_of_genes: b['list_of_genes'],
+      your_result: b['your_result'],
     }));
 
     return Application.SaveLabReport({
@@ -415,6 +478,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   >({});
   const [btnLoading, setBtnLoading] = useState(false);
   const onSave = () => {
+    // ✅ For ultrasound reports, just close the modal and go to step 0
+    // The API call will happen when clicking "Save & Continue to Health Plan"
+    if (fileType === 'ultrasound') {
+      setisSaveClicked(true);
+      setstep(0);
+      setRowErrors({});
+      setAddedRowErrors({});
+      return;
+    }
+
     setBtnLoading(true);
     const modifiedTimestamp = modifiedDateOfTest
       ? Date.UTC(
@@ -435,6 +508,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       biomarker: b.biomarker,
       value: b.value,
       unit: b.unit,
+      'sub-value': b['sub-value'],
+      header_1: b['header_1'],
+      more_info: b['more_info'],
+      list_of_genes: b['list_of_genes'],
+      your_result: b['your_result'],
     }));
 
     Application.validateBiomarkers({
@@ -496,7 +574,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setBtnLoading(false);
       });
   };
-  const onValidate = (extractedBiomarkersTest: any) => {
+  const onValidate = (extractedBiomarkersTest: any, fileTypeCall?: string) => {
     // setBtnLoading(true);
     const modifiedTimestamp = modifiedDateOfTest
       ? Date.UTC(
@@ -517,6 +595,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       biomarker: b.biomarker,
       value: b.value,
       unit: b.unit,
+      'sub-value': b['sub-value'],
+      header_1: b['header_1'],
+      more_info: b['more_info'],
+      list_of_genes: b['list_of_genes'],
+      your_result: b['your_result'],
     }));
 
     Application.validateBiomarkers({
@@ -524,7 +607,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       added_biomarkers_list: [],
       modified_biomarkers_date_of_test: modifiedTimestamp,
       added_biomarkers_date_of_test: addedTimestamp,
-      modified_lab_type: fileType,
+      modified_lab_type: fileTypeCall ? fileTypeCall : fileType,
       modified_file_id: uploadedFile?.file_id ?? '',
       member_id: memberId,
     })

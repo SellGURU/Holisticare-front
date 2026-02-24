@@ -28,12 +28,34 @@ class Api {
   }
 
   protected static get(url: string, config?: any) {
-    // toast.loading('pending ...')
+    const { noAuth, ...axiosConfig } = config || {};
+    const headers = noAuth
+      ? config?.headers || {}
+      : {
+          Authorization: 'Bearer ' + getTokenFromLocalStorage(),
+          'Content-Type':
+            config?.headers?.['Content-Type'] || 'application/json',
+        };
     const response = axios.get(this.base_url + url, {
+      ...axiosConfig,
+      headers,
+    });
+    return response;
+  }
+
+  protected static put(url: string, data: any, config?: any) {
+    const response = axios.put(url, data, {
       headers: {
-        Authorization: 'Bearer ' + getTokenFromLocalStorage(),
-        'Content-Type': config?.headers?.['Content-Type'] || 'application/json',
+        // Authorization: 'Bearer ' + getTokenFromLocalStorage(),
+        'Content-Type': 'application/octet-stream',
+        'x-ms-blob-type': 'BlockBlob',
       },
+      onUploadProgress: (progressEvent: any) => {
+        if (config?.onUploadProgress) {
+          config.onUploadProgress(progressEvent);
+        }
+      },
+      // timeout:15000
     });
     return response;
   }

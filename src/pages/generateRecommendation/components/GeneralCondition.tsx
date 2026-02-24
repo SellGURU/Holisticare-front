@@ -2,6 +2,22 @@
 import React, { useEffect, useState, useRef } from 'react';
 import SvgIcon from '../../../utils/svgIcon';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
+import {
+  toType2,
+  buildType2FromListAndCategories,
+  CATEGORY_ORDER,
+  DEFAULT_CATEGORY_LABELS,
+} from '../../../utils/lookingForwards';
+
+/** Soft priority tag colors: red → softer red → yellow → green */
+const PRIORITY_TAG_STYLES: Record<string, string> = {
+  critical_urgent: 'bg-red-50 text-red-800 border-red-200',
+  important_strategic: 'bg-rose-50 text-rose-700 border-rose-200',
+  important_long_term: 'bg-amber-50 text-amber-800 border-amber-200',
+  optional_enhancements: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+};
+const getPriorityTagClass = (key: string) =>
+  PRIORITY_TAG_STYLES[key] || PRIORITY_TAG_STYLES.critical_urgent;
 
 // Define types for the data structure
 interface ConditionDataProps {
@@ -29,6 +45,10 @@ interface CardProps {
   onContentChange: (index: number, value: string) => void;
   onDelete: (index: number) => void;
   onAddNew: (value: string) => void;
+  onSaveWithCategories?: (
+    list: string[],
+    categories: Record<string, string>,
+  ) => void;
 }
 
 // Type for the section keys
@@ -61,6 +81,8 @@ interface GeneralConditionProps {
   showSuggestions: boolean;
   setIsClosed: React.Dispatch<React.SetStateAction<boolean>>;
   setShowSuggestions: React.Dispatch<React.SetStateAction<boolean>>;
+  /** Called after saving Health Planning Issues so parent can sync with backend (e.g. remap_issues). */
+  onSaveLookingForwardsSync?: (list: string[], keyAreas: any) => void;
 }
 export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   data,
@@ -69,6 +91,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   showSuggestions,
   setIsClosed,
   setShowSuggestions,
+  onSaveLookingForwardsSync,
 }) => {
   // const [data, setData] = useState<ConditionDataProps>(updata);
   const [editMode, setEditMode] = useState<EditModeState>({
@@ -113,14 +136,28 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
       });
     }
     if (section == 'lookingForwards') {
-      setData((prev: any) => {
-        return {
-          ...prev,
-          looking_forwards: tempData[section],
-        };
-      });
+      const list = tempData[section] ?? [];
+      const keyAreas = toType2(list);
+      setData((prev: any) => ({
+        ...prev,
+        looking_forwards: list,
+        key_areas_to_address: keyAreas,
+      }));
     }
     setEditMode((prev) => ({ ...prev, [section]: false }));
+  };
+  const handleSaveLookingForwardsWithCategories = (
+    list: string[],
+    categories: Record<string, string>,
+  ) => {
+    const keyAreas = buildType2FromListAndCategories(list, categories);
+    setData((prev: any) => ({
+      ...prev,
+      looking_forwards: list,
+      key_areas_to_address: keyAreas,
+    }));
+    setEditMode((prev) => ({ ...prev, lookingForwards: false }));
+    onSaveLookingForwardsSync?.(list, keyAreas);
   };
 
   const handleContentChange = (
@@ -273,6 +310,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           isEditing={editMode.lookingForwards}
           onEdit={() => handleEdit('lookingForwards')}
           onSave={() => handleSave('lookingForwards')}
+          onSaveWithCategories={handleSaveLookingForwardsWithCategories}
           onContentChange={(index, value) =>
             handleContentChange('lookingForwards', index, value)
           }
@@ -293,9 +331,26 @@ const Card: React.FC<CardProps> = ({
   onContentChange,
   onDelete,
   onAddNew,
+  onSaveWithCategories,
 }) => {
   const textareaRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
   const [currentIndex, setCurrentIndex] = useState<any>(null);
+  const [openPriorityFor, setOpenPriorityFor] = useState<string | null>(null);
+  const priorityDropdownRef = useRef<HTMLDivElement>(null);
+  const isHealthPlanning = title === 'Health Planning Issues';
+  const [issueCategories, setIssueCategories] = useState<
+    Record<string, string>
+  >({});
+  useEffect(() => {
+    if (!isHealthPlanning || !content?.length) return;
+    setIssueCategories((prev) => {
+      const next = { ...prev };
+      (content as string[]).forEach((item) => {
+        if (item && !(item in next)) next[item] = 'critical_urgent';
+      });
+      return next;
+    });
+  }, [isHealthPlanning, content]);
   const adjustHeight = (element: HTMLTextAreaElement) => {
     element.style.height = 'auto';
     element.style.height = `${element.scrollHeight}px`;
@@ -309,6 +364,21 @@ const Card: React.FC<CardProps> = ({
       });
     }
   }, [content, isEditing]);
+
+  useEffect(() => {
+    if (!openPriorityFor) return;
+    const close = (e: MouseEvent) => {
+      if (
+        priorityDropdownRef.current &&
+        !priorityDropdownRef.current.contains(e.target as Node)
+      ) {
+        setOpenPriorityFor(null);
+      }
+    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [openPriorityFor]);
+
   const [addNew, setAddNew] = useState<boolean>(false);
   const [newItem, setNewItem] = useState<string>('');
   return (
@@ -329,15 +399,21 @@ const Card: React.FC<CardProps> = ({
               <div className="flex items-center gap-2 s">
                 <img
                   className="cursor-pointer size-6"
-                  src="/icons/cancel-edit.svg" // <-- pick your cancel icon
+                  src="/icons/cancel-edit.svg"
                   alt="Cancel Edit"
-                  onClick={onEdit} // toggles edit mode off
+                  onClick={onEdit}
                 />
                 <img
                   className="cursor-pointer size-6"
                   src="/icons/tick-square-background-green.svg"
                   alt=""
-                  onClick={onSave}
+                  onClick={() => {
+                    if (isHealthPlanning && onSaveWithCategories) {
+                      onSaveWithCategories(content ?? [], issueCategories);
+                    } else {
+                      onSave();
+                    }
+                  }}
                 />
               </div>
             ) : (
@@ -407,7 +483,7 @@ const Card: React.FC<CardProps> = ({
           {content?.map((item, index) => (
             <>
               {isEditing ? (
-                <div className="border border-Gray-50 rounded-xl py-3 pl-3 pr-2 w-full mb-2 flex items-center">
+                <div className="border border-Gray-50 rounded-xl py-3 pl-3 pr-3 w-full mb-3 flex flex-wrap items-start gap-3">
                   <textarea
                     ref={(el) => (textareaRefs.current[index] = el)}
                     value={item}
@@ -415,51 +491,138 @@ const Card: React.FC<CardProps> = ({
                       onContentChange(index, e.target.value);
                       adjustHeight(e.target);
                     }}
-                    className="w-[85%] px-4 text-justify resize-none text-sm outline-none overflow-hidden border-r border-Gray-50"
+                    className={`flex-1 min-w-[200px] px-4 resize-none text-sm outline-none overflow-hidden ${isHealthPlanning ? 'text-left' : 'text-justify'}`}
                   />
-                  {currentIndex === index ? (
-                    <div className="flex flex-col justify-end items-center gap-2 ml-3">
-                      <span className="text-xs  text-[#909090] ">Sure?</span>
-                      <img
-                        className="size-5 cursor-pointer"
-                        src="/icons/confirm-tick-circle.svg"
-                        alt="Confirm"
-                        onClick={() => {
-                          onDelete(index);
-                          setCurrentIndex(null);
-                        }}
-                      />
-                      <img
-                        className="size-5 cursor-pointer"
-                        src="/icons/cansel-close-circle.svg"
-                        alt="Cancel"
-                        onClick={() => setCurrentIndex(null)}
-                      />
+                  {isHealthPlanning && (
+                    <div
+                      className="flex items-center gap-3 shrink-0"
+                      ref={
+                        openPriorityFor === item
+                          ? priorityDropdownRef
+                          : undefined
+                      }
+                    >
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenPriorityFor((prev) =>
+                              prev === item ? null : item,
+                            );
+                          }}
+                          className={`inline-flex items-center justify-center min-h-6 px-2 py-1 rounded text-[10px] font-normal border text-left shadow-sm hover:opacity-90 ${getPriorityTagClass(issueCategories[item] ?? 'critical_urgent')}`}
+                          title={
+                            DEFAULT_CATEGORY_LABELS[
+                              issueCategories[item] ?? 'critical_urgent'
+                            ]
+                          }
+                        >
+                          {
+                            DEFAULT_CATEGORY_LABELS[
+                              issueCategories[item] ?? 'critical_urgent'
+                            ]
+                          }
+                          <svg
+                            className="ml-1 w-3 h-3 shrink-0 opacity-70"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </button>
+                        {openPriorityFor === item && (
+                          <div className="absolute top-full left-0 z-20 mt-1 py-1 min-w-[180px] rounded-lg border border-gray-200 bg-white shadow-lg">
+                            {CATEGORY_ORDER.map((key) => (
+                              <button
+                                key={key}
+                                type="button"
+                                onClick={() => {
+                                  setIssueCategories((prev) => ({
+                                    ...prev,
+                                    [item]: key,
+                                  }));
+                                  setOpenPriorityFor(null);
+                                }}
+                                className={`w-full text-left px-3 py-2 text-[10px] font-normal border-0 rounded-md first:rounded-t-md last:rounded-b-md hover:opacity-90 ${getPriorityTagClass(key)} ${(issueCategories[item] ?? 'critical_urgent') === key ? 'ring-1 ring-gray-300' : ''}`}
+                              >
+                                {DEFAULT_CATEGORY_LABELS[key]}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      {currentIndex === index ? (
+                        <div className="flex flex-col justify-center items-center gap-1">
+                          <span className="text-xs text-[#909090]">Sure?</span>
+                          <img
+                            className="size-5 cursor-pointer"
+                            src="/icons/confirm-tick-circle.svg"
+                            alt="Confirm"
+                            onClick={() => {
+                              onDelete(index);
+                              setCurrentIndex(null);
+                            }}
+                          />
+                          <img
+                            className="size-5 cursor-pointer"
+                            src="/icons/cansel-close-circle.svg"
+                            alt="Cancel"
+                            onClick={() => setCurrentIndex(null)}
+                          />
+                        </div>
+                      ) : (
+                        <img
+                          className="size-6 cursor-pointer"
+                          src="/icons/trash-red.svg"
+                          alt="Delete"
+                          onClick={() => setCurrentIndex(index)}
+                        />
+                      )}
                     </div>
-                  ) : (
-                    <img
-                      className="size-6 cursor-pointer ml-3"
-                      src="/icons/trash-red.svg"
-                      alt="Delete"
-                      onClick={() => setCurrentIndex(index)}
-                    />
                   )}
                 </div>
               ) : (
                 <li
-                  className={` ${item.length > 1 && 'list-disc'} text-sm text-justify mt-2 ${
-                    title === 'Health Planning Issues'
-                      ? 'marker:text-gray-400'
-                      : ''
+                  className={`flex items-center gap-2 ${item.length > 1 && !isHealthPlanning ? 'list-disc' : ''} text-sm ${
+                    isHealthPlanning
+                      ? 'marker:text-gray-400 text-left pt-3 pb-3 border-b border-gray-100 last:border-b-0 first:pt-1'
+                      : 'mt-2 text-justify'
                   }`}
                 >
-                  {title === 'Health Planning Issues' ? (
-                    <>
-                      <span className="text-gray-500">
-                        {item.split(':')[0]}:
-                      </span>{' '}
-                      {item.split(':')[1]?.trim()}
-                    </>
+                  {isHealthPlanning ? (
+                    <span className="flex flex-col gap-1.5 w-full">
+                      <span className="flex items-baseline gap-1 text-left">
+                        <span className="text-gray-500 shrink-0 text-sm font-normal">
+                          {item.split(':')[0]}:
+                        </span>
+                        <span className="min-w-0 flex-1 text-gray-700 font-normal text-sm">
+                          {item.split(':')[1]?.trim()}
+                        </span>
+                      </span>
+                      <div className="flex items-center">
+                        <span
+                          className={`inline-flex items-center justify-center min-h-5 px-2 py-1 rounded text-[10px] font-normal border ${getPriorityTagClass(issueCategories[item] ?? 'critical_urgent')}`}
+                          title={
+                            DEFAULT_CATEGORY_LABELS[
+                              issueCategories[item] ?? 'critical_urgent'
+                            ]
+                          }
+                        >
+                          {
+                            DEFAULT_CATEGORY_LABELS[
+                              issueCategories[item] ?? 'critical_urgent'
+                            ]
+                          }
+                        </span>
+                      </div>
+                    </span>
                   ) : (
                     item
                   )}

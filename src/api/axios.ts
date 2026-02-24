@@ -94,13 +94,14 @@ axios.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // 🔹 Handle invalid tokens
+    // 🔹 Handle invalid tokens (don't reload on html-previewer – public report may still load)
     if (
       (error.response?.status === 401 &&
         !window.location.href.includes('/login') &&
         !window.location.href.includes('/register') &&
         !window.location.href.includes('/share') &&
-        !window.location.href.includes('/forgetPassword')) ||
+        !window.location.href.includes('/forgetPassword') &&
+        !window.location.href.includes('/html-previewer')) ||
       error.response?.data?.detail === 'Invalid token.'
     ) {
       localStorage.clear();

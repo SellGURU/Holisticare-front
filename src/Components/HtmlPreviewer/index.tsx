@@ -18,7 +18,7 @@ type Props = {
 export default function HtmlEditor({
   html,
   editable = false,
-  sandbox = 'allow-scripts allow-same-origin',
+  sandbox = 'allow-scripts allow-same-origin allow-popups',
   className = '',
   onChange,
   onSave,

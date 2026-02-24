@@ -596,20 +596,18 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             </div>
 
             <div
-              className="  relative w-full text-xs h-full"
+              className="relative w-full text-xs h-full border border-Gray-50 rounded-[12px] overflow-hidden"
               data-tour="biomarker-table"
             >
               <div className="w-full hidden-scrollbar p overflow-x-auto md:overflow-x-visible">
-                <div className=" w-full  min-w-[800px] ">
+                <div className="w-full min-w-[900px]">
                   {/* Table Header */}
                   <div
-                    className="grid    biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-                    // style={{
-                    //   gridTemplateColumns:
-                    //     window.innerWidth > 640
-                    //       ? 'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px'
-                    //       : 'minmax(140px,1fr) minmax(190px,1fr) minmax(60px,1fr) minmax(90px,1fr) minmax(70px,1fr) minmax(70px,1fr) 60px',
-                    // }}
+                    className="grid biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                    style={{
+                      gridTemplateColumns:
+                        'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
+                    }}
                   >
                     <div className="text-left" data-tour="extracted-biomarker">
                       Extracted Biomarker
@@ -649,33 +647,30 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           : window.innerHeight - 700 + 'px',
                     }}
                   >
-                    {biomarkers.map((b, index) => {
-                      // const errorForRow = rowErrors[index];
-
-                      return (
-                        <BiomarkerRow
-                          refRenceEl={(el: any) =>
-                            (rowRefs.current[index] = el)
-                          }
-                          isHaveError={rowErrors[index]}
-                          errorText={rowErrors[index]}
-                          biomarker={b}
-                          index={index}
-                          showOnlyErrors={showOnlyErrors}
-                          allAvilableBiomarkers={avalibaleBiomarkers}
-                          handleConfirmDelete={() => {
-                            handleConfirm(index);
-                          }}
-                          renderValueField={renderValueField}
-                          updateAndStandardize={updateAndStandardize}
-                        ></BiomarkerRow>
-                      );
-                    })}
+                    {biomarkers.map((b, index) => (
+                      <BiomarkerRow
+                        key={b.biomarker_id}
+                        refRenceEl={(el: any) =>
+                          (rowRefs.current[index] = el)
+                        }
+                        isHaveError={rowErrors[index]}
+                        errorText={rowErrors[index]}
+                        biomarker={b}
+                        index={index}
+                        showOnlyErrors={showOnlyErrors}
+                        allAvilableBiomarkers={avalibaleBiomarkers}
+                        handleConfirmDelete={() => {
+                          handleConfirm(index);
+                        }}
+                        renderValueField={renderValueField}
+                        updateAndStandardize={updateAndStandardize}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+            </div>
         )}
       </div>
     </>
