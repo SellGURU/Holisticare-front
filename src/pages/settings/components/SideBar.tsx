@@ -46,6 +46,10 @@ const Sidebar: React.FC<SidebarProps> = ({
           title: 'Subscription',
           isActive: false,
         },
+        {
+          title: 'Show Tutorial',
+          isActive: true,
+        },
       ],
     }),
     [],

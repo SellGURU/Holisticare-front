@@ -50,6 +50,7 @@
     "react-draggable": "^4.4.6",
     "react-hook-form": "^7.60.0",
     "react-icons": "^5.4.0",
+    "react-joyride": "^2.9.3",
     "react-json-view": "^1.21.3",
     "react-markdown": "^10.1.0",
     "react-phone-input-2": "^2.15.1",
