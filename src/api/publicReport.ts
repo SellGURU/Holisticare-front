@@ -1,4 +1,3 @@
-
 import Api from './api';
 
 class PublicReport extends Api {

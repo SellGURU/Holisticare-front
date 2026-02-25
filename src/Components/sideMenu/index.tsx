@@ -17,7 +17,10 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     const exact = allItems.find((item) => item.url === path);
     if (exact) return exact;
     if (path.startsWith('/custom-parametric')) {
-      return allItems.find((item) => item.url?.startsWith('/custom-parametric')) || menus[0].items[0];
+      return (
+        allItems.find((item) => item.url?.startsWith('/custom-parametric')) ||
+        menus[0].items[0]
+      );
     }
     return null;
   };
@@ -34,7 +37,8 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     setPermissions(data.detail);
   });
   useEffect(() => {
-    const currentActiveItem = matchActiveMenu(location.pathname) || menus[0].items[0];
+    const currentActiveItem =
+      matchActiveMenu(location.pathname) || menus[0].items[0];
 
     if (currentActiveItem.name !== activeMenu.name) {
       setActiveMenu(currentActiveItem);

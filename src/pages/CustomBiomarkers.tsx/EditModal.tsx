@@ -96,7 +96,9 @@ const EditModal: FC<EditModalProps> = ({
     } as FormBiomarkerData);
   }, [data, reset]);
 
-  const [domainsUsingBiomarker, setDomainsUsingBiomarker] = useState<Array<{ name: string; display_name?: string; domain_type: string }>>([]);
+  const [domainsUsingBiomarker, setDomainsUsingBiomarker] = useState<
+    Array<{ name: string; display_name?: string; domain_type: string }>
+  >([]);
   useEffect(() => {
     const name = data?.Biomarker?.trim();
     if (!name) {
@@ -104,7 +106,9 @@ const EditModal: FC<EditModalProps> = ({
       return;
     }
     HealthRiskArchitectureApi.getDomainsUsingBiomarker(name)
-      .then((res) => setDomainsUsingBiomarker(Array.isArray(res.data) ? res.data : []))
+      .then((res) =>
+        setDomainsUsingBiomarker(Array.isArray(res.data) ? res.data : []),
+      )
       .catch(() => setDomainsUsingBiomarker([]));
   }, [data?.Biomarker]);
 
@@ -301,7 +305,8 @@ const EditModal: FC<EditModalProps> = ({
               Used in Custom Parametric
             </h3>
             <p className="text-[10px] text-amber-800 mb-2">
-              This biomarker is referenced in the following risk/aging/scoring domains. Threshold changes here will affect those calculations.
+              This biomarker is referenced in the following risk/aging/scoring
+              domains. Threshold changes here will affect those calculations.
             </p>
             <ul className="text-xs text-amber-900 list-disc list-inside">
               {domainsUsingBiomarker.map((d) => (

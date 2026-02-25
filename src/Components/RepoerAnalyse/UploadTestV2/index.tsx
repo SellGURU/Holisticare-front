@@ -886,7 +886,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         ) {
                           handleSaveLabReport()
                             ?.then((res) => {
-                              if (res?.data?.modified_biomarkers_file_id != null &&
+                              if (
+                                res?.data?.modified_biomarkers_file_id !=
+                                  null &&
                                 res.data.modified_biomarkers_file_id != ''
                               ) {
                                 onGenderate(
@@ -1057,7 +1059,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           handleSaveLabReport()
                             ?.then((res) => {
                               if (
-                                res?.data?.modified_biomarkers_file_id != null &&
+                                res?.data?.modified_biomarkers_file_id !=
+                                  null &&
                                 res.data.modified_biomarkers_file_id != ''
                               ) {
                                 onGenderate(

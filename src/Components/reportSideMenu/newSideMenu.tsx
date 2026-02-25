@@ -36,8 +36,11 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   ];
   const [parametricPermission, setParametricPermission] = useState(false);
   const menuItems = useMemo(
-    () => (parametricPermission ? baseMenuItems : baseMenuItems.filter((x) => x !== 'Health Risks')),
-    [parametricPermission]
+    () =>
+      parametricPermission
+        ? baseMenuItems
+        : baseMenuItems.filter((x) => x !== 'Health Risks'),
+    [parametricPermission],
   );
   const progressMenuItems = ['Wellness Summary', 'Score Progression'];
 
