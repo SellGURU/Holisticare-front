@@ -7,9 +7,9 @@ import { publish, subscribe } from '../../../utils/event';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
-import { uploadBlobToAzure } from '../../../services/uploadBlobService';
 import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
+import { uploadBlobToAzure } from '../../../services/uploadBlobService';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
