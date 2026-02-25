@@ -61,7 +61,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   }, [id]);
   const itemList = [
     { name: 'Client Info', url: '/images/sidbar-menu/info-circle.svg' },
-    { name: 'Data Syncing', url: '/icons/sidbar-menu/cloud-change.svg' },
+    { name: 'Wearable Hub', url: '/icons/sidbar-menu/cloud-change.svg' },
     { name: 'File History', url: '/icons/sidbar-menu/directbox-notif.svg' },
     {
       name: 'Questionnaire Tracking',
@@ -214,7 +214,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     switch (activeItem) {
       case 'Client Info':
         return <ClientInfo></ClientInfo>;
-      case 'Data Syncing':
+      case 'Wearable Hub':
         return <DataSyncing></DataSyncing>;
       case 'File History':
         return (
