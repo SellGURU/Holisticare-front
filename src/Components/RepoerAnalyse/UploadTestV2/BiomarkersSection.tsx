@@ -71,6 +71,7 @@ interface BiomarkersSectionProps {
   showOnlyErrors: boolean;
   setShowOnlyErrors: (showOnlyErrors: boolean) => void;
   progressBiomarkerUpload: number;
+  dateOfTestError?: string;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -88,6 +89,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   showOnlyErrors,
   setShowOnlyErrors,
   progressBiomarkerUpload,
+  dateOfTestError,
 }) => {
   // const [changedRows, setChangedRows] = useState<string[]>([]);
   // const [mappedRows, setMappedRows] = useState<string[]>([]);
@@ -536,8 +538,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         ) : (
           <div className=" relative ">
             <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
-              <div className="flex text-nowrap overflow-x-auto hidden-scrollbar w-full gap-6 justify-between">
-                <div className="flex items-center gap-2">
+              <div className="flex text-nowrap overflow-x-auto hidden-scrollbar w-full gap-6 justify-between items-center">
+                <div className="flex items-center gap-2 shrink-0">
                   <div className=" text-[8px] xs:text-[10px] md:text-sm font-medium">
                     List of Biomarkers{' '}
                     <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
@@ -560,7 +562,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               /> */}
                 </div>
 
-                <div className="flex items-center absolute right-0 top-[-2px] gap-6">
+                <div className="flex items-center gap-6 shrink-0">
                   <div className=" hidden sm:flex items-center gap-3">
                     <Toggle
                       checked={showOnlyErrors}
@@ -570,100 +572,107 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       Show Only Errors
                     </div>
                   </div>
-                  <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
-                    Date of Test:
+                  <div className="flex items-center gap-2 text-[8px] md:text-xs text-Text-Quadruple">
+                    <span className="whitespace-nowrap">Date of Test:</span>
                     <SimpleDatePicker
                       key={'biomarkerUpload'}
                       textStyle
                       isUploadFile
                       date={dateOfTest}
                       setDate={setDateOfTest}
-                      placeholder="Select Date"
-                      ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
+                      placeholder="Select date (required)"
+                      inValid={!!dateOfTestError}
+                      errorMessage={dateOfTestError}
+                      ClassName="border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
                     />
                   </div>
                 </div>
-              </div>
-              <div className=" flex sm:hidden items-center gap-3">
-                <Toggle
-                  checked={showOnlyErrors}
-                  setChecked={setShowOnlyErrors}
-                />
-                <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
-                  Show Only Errors
+                <div className=" flex sm:hidden items-center gap-3">
+                  <Toggle
+                    checked={showOnlyErrors}
+                    setChecked={setShowOnlyErrors}
+                  />
+                  <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
+                    Show Only Errors
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div
-              className="relative w-full text-xs h-full border border-Gray-50 rounded-[12px] overflow-hidden"
-              data-tour="biomarker-table"
-            >
-              <div className="w-full hidden-scrollbar p overflow-x-auto md:overflow-x-visible">
-                <div className="w-full min-w-[900px]">
-                  {/* Table Header */}
-                  <div
-                    className="grid biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-                    style={{
-                      gridTemplateColumns:
-                        'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
-                    }}
-                  >
-                    <div className="text-left" data-tour="extracted-biomarker">
-                      Extracted Biomarker
+              <div
+                className="relative w-full text-xs h-full border border-Gray-50 rounded-[12px] overflow-hidden"
+                data-tour="biomarker-table"
+              >
+                <div className="w-full hidden-scrollbar p overflow-x-auto md:overflow-x-visible">
+                  <div className="w-full min-w-[900px]">
+                    {/* Table Header */}
+                    <div
+                      className="grid biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                      style={{
+                        gridTemplateColumns:
+                          'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
+                      }}
+                    >
+                      <div
+                        className="text-left"
+                        data-tour="extracted-biomarker"
+                      >
+                        Extracted Biomarker
+                      </div>
+                      <div className="text-center" data-tour="system-biomarker">
+                        System Biomarker
+                      </div>
+                      <div className="text-center" data-tour="extracted-value">
+                        Extracted Value
+                      </div>
+                      <div className="text-center" data-tour="extracted-unit">
+                        Extracted Unit
+                      </div>
+                      <div className="text-center" data-tour="system-value">
+                        System Value
+                      </div>
+                      <div className="text-center" data-tour="system-unit">
+                        System Unit
+                      </div>
+                      <div className="text-center" data-tour="delete-biomarker">
+                        Action
+                      </div>
                     </div>
-                    <div className="text-center" data-tour="system-biomarker">
-                      System Biomarker
-                    </div>
-                    <div className="text-center" data-tour="extracted-value">
-                      Extracted Value
-                    </div>
-                    <div className="text-center" data-tour="extracted-unit">
-                      Extracted Unit
-                    </div>
-                    <div className="text-center" data-tour="system-value">
-                      System Value
-                    </div>
-                    <div className="text-center" data-tour="system-unit">
-                      System Unit
-                    </div>
-                    <div className="text-center" data-tour="delete-biomarker">
-                      Action
-                    </div>
-                  </div>
 
-                  {/* Table Rows */}
-                  <div
-                    ref={tableRef}
-                    className=" overflow-y-auto pb-[40px] sm:pb-0 w-[100%]"
-                    style={{
-                      minHeight: isScaling
-                        ? window.innerHeight - 330 + 'px'
-                        : window.innerHeight - 500 + 'px',
-                      maxHeight: isScaling
-                        ? window.innerHeight - 330 + 'px'
-                        : window.innerWidth > 640
-                          ? window.innerHeight - 500 + 'px'
-                          : window.innerHeight - 700 + 'px',
-                    }}
-                  >
-                    {biomarkers.map((b, index) => (
-                      <BiomarkerRow
-                        key={b.biomarker_id}
-                        refRenceEl={(el: any) => (rowRefs.current[index] = el)}
-                        isHaveError={rowErrors[index]}
-                        errorText={rowErrors[index]}
-                        biomarker={b}
-                        index={index}
-                        showOnlyErrors={showOnlyErrors}
-                        allAvilableBiomarkers={avalibaleBiomarkers}
-                        handleConfirmDelete={() => {
-                          handleConfirm(index);
-                        }}
-                        renderValueField={renderValueField}
-                        updateAndStandardize={updateAndStandardize}
-                      />
-                    ))}
+                    {/* Table Rows */}
+                    <div
+                      ref={tableRef}
+                      className=" overflow-y-auto pb-[40px] sm:pb-0 w-[100%]"
+                      style={{
+                        minHeight: isScaling
+                          ? window.innerHeight - 330 + 'px'
+                          : window.innerHeight - 500 + 'px',
+                        maxHeight: isScaling
+                          ? window.innerHeight - 330 + 'px'
+                          : window.innerWidth > 640
+                            ? window.innerHeight - 500 + 'px'
+                            : window.innerHeight - 700 + 'px',
+                      }}
+                    >
+                      {biomarkers.map((b, index) => (
+                        <BiomarkerRow
+                          key={b.biomarker_id}
+                          refRenceEl={(el: any) =>
+                            (rowRefs.current[index] = el)
+                          }
+                          isHaveError={rowErrors[index]}
+                          errorText={rowErrors[index]}
+                          biomarker={b}
+                          index={index}
+                          showOnlyErrors={showOnlyErrors}
+                          allAvilableBiomarkers={avalibaleBiomarkers}
+                          handleConfirmDelete={() => {
+                            handleConfirm(index);
+                          }}
+                          renderValueField={renderValueField}
+                          updateAndStandardize={updateAndStandardize}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

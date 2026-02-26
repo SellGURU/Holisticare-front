@@ -52,8 +52,9 @@ interface UploadPModalProps {
   handleDeleteFile: (file: any) => void;
   formatFileSize: (bytes: number) => string;
   fileInputRef: any;
-  modifiedDateOfTest: Date;
+  modifiedDateOfTest: Date | null;
   handleModifiedDateOfTestChange: (date: Date | null) => void;
+  dateOfTestError?: string;
   extractedBiomarkers: Array<any>;
   setExtractedBiomarkers: (updated: any) => void;
   addedBiomarkers: Array<any>;
@@ -87,6 +88,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   fileInputRef,
   modifiedDateOfTest,
   handleModifiedDateOfTestChange,
+  dateOfTestError,
   extractedBiomarkers,
   setExtractedBiomarkers,
   addedBiomarkers,
@@ -367,6 +369,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 fileType={fileType}
                 dateOfTest={modifiedDateOfTest}
                 setDateOfTest={handleModifiedDateOfTestChange}
+                dateOfTestError={dateOfTestError}
                 uploadedFile={uploadedFile}
                 biomarkers={extractedBiomarkers}
                 onChange={(updated) => setExtractedBiomarkers(updated)}
