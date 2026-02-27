@@ -317,6 +317,14 @@ export const TopBar: FC<TopBarProps> = ({
       )}
       {(hasReportInRoute || hasShareInRoute) && (
         <div className="flex xl:hidden items-center gap-2 xs:gap-4">
+          {hasReportInRoute && !shouldEnableActions && (
+            <div>
+              <CompileButton
+                isAutoCompile={isAutoCompile}
+                userInfoData={userInfoData}
+              ></CompileButton>
+            </div>
+          )}
           {/* <img
             className={`xl:block ${shouldEnableActions && 'opacity-40'} `}
             onClick={() => {
