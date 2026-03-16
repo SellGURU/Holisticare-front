@@ -757,6 +757,18 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                   >
                                     {activeEl.description}
                                   </div>
+                                  {activeEl.risk_flags && activeEl.risk_flags.length > 0 && (
+                                    <div className="mt-2">
+                                      <div className="text-[11px] font-medium text-red-600 mb-1">Risk Flags</div>
+                                      <div className="flex flex-wrap gap-1">
+                                        {activeEl.risk_flags.map((flag: string, idx: number) => (
+                                          <span key={idx} className="inline-block bg-red-50 text-red-700 text-[10px] px-2 py-0.5 rounded-full border border-red-200">
+                                            {flag}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="flex flex-col lg:flex-row w-full justify-center gap-4 mt-4">
                                   <div className="lg:w-[50%]">

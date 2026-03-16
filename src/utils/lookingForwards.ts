@@ -104,6 +104,21 @@ export function toCoverageDetails(
   return type2ToFlatList(type2).map((issue) => ({ [issue]: false }));
 }
 
+/** Extract a map of issue text → category key from a type2 structure. */
+export function extractCategoryMap(type2: KeyAreasType2): Record<string, string> {
+  const map: Record<string, string> = {};
+  const keyAreas = type2['Key areas to address'] || {};
+  for (const cat of CATEGORY_ORDER) {
+    const arr = keyAreas[cat];
+    if (Array.isArray(arr)) {
+      for (const item of arr) {
+        if (typeof item === 'string') map[item] = cat;
+      }
+    }
+  }
+  return map;
+}
+
 /** Build type2 from flat list and per-issue category. */
 export function buildType2FromListAndCategories(
   list: string[],

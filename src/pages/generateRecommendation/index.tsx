@@ -12,17 +12,29 @@ import Circleloader from '../../Components/CircleLoader';
 import SvgIcon from '../../utils/svgIcon';
 import { AppContext } from '../../store/app';
 import SpinnerLoader from '../../Components/SpinnerLoader';
-import { publish, subscribe } from '../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../utils/event';
 import {
   toType2,
   type2ToFlatList,
   type2ToFlatListInIssueOrder,
   forApiPayload,
+  extractCategoryMap,
 } from '../../utils/lookingForwards';
 
 type CategoryState = {
   name: string;
   visible: boolean;
+};
+
+const serializeKeyAreas = (value: any) => {
+  const type2 = toType2(value ?? []);
+  const keyAreas = type2['Key areas to address'] || {};
+  return JSON.stringify({
+    critical_urgent: keyAreas.critical_urgent ?? [],
+    important_strategic: keyAreas.important_strategic ?? [],
+    important_long_term: keyAreas.important_long_term ?? [],
+    optional_enhancements: keyAreas.optional_enhancements ?? [],
+  });
 };
 
 const initialCategoryState: CategoryState[] = [
@@ -33,6 +45,50 @@ const initialCategoryState: CategoryState[] = [
   { name: 'Medical Peptide Therapy', visible: true },
   { name: 'Other', visible: true },
 ];
+
+const mergeClientInterventionContent = (
+  suggestionTab: any[],
+  clientContent: any[],
+) => {
+  const updatedTab = [...(suggestionTab ?? [])];
+  clientContent.forEach((item: any) => {
+    const idx = item.index;
+    const checkedItems = updatedTab.filter((el: any) => el.checked === true);
+    if (idx >= 0 && idx < checkedItems.length) {
+      const globalIdx = updatedTab.indexOf(checkedItems[idx]);
+      if (globalIdx >= 0) {
+        updatedTab[globalIdx] = {
+          ...updatedTab[globalIdx],
+          Intervention_content:
+            item.Intervention_content ||
+            updatedTab[globalIdx].Intervention_content,
+          Intervnetion_content:
+            item.Intervention_content ||
+            updatedTab[globalIdx].Intervnetion_content,
+          key_benefits:
+            item.key_benefits || updatedTab[globalIdx].key_benefits,
+          client_version:
+            item.client_version || updatedTab[globalIdx].client_version,
+          foods_to_avoid:
+            item.foods_to_avoid || updatedTab[globalIdx].foods_to_avoid,
+          foods_to_eat: item.foods_to_eat || updatedTab[globalIdx].foods_to_eat,
+          exercises_to_avoid:
+            item.exercises_to_avoid ||
+            updatedTab[globalIdx].exercises_to_avoid,
+          exercises_to_do:
+            item.exercises_to_do || updatedTab[globalIdx].exercises_to_do,
+          how_to_do_it:
+            item.how_to_do_it || updatedTab[globalIdx].how_to_do_it,
+          // Preserve practitioner-edited dose when present.
+          Dose:
+            String(updatedTab[globalIdx].Dose ?? '').trim() ||
+            String(item.Dose ?? '').trim(),
+        };
+      }
+    }
+  });
+  return updatedTab;
+};
 
 export const GenerateRecommendation = () => {
   const navigate = useNavigate();
@@ -77,27 +133,45 @@ export const GenerateRecommendation = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
+  const planRequestInFlightRef = useRef(false);
+  const hasLoadedInitialPlanRef = useRef(false);
   const remapLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const biomarkerPollingRef = useRef<NodeJS.Timeout | null>(null);
   const lastKeyAreasUpdateFromRemapRef = useRef(false);
+  const lastScoredKeyAreasSignatureRef = useRef<string>('');
   const [coverageProgess, setcoverageProgess] = useState(0);
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
 
+  useEffect(() => {
+    const handleIsRescored = () => setIsRescore(true);
+    const handleIsNotRescored = () => setIsRescore(false);
+
+    subscribe('isRescored', handleIsRescored);
+    subscribe('isNotRescored', handleIsNotRescored);
+
+    return () => {
+      unsubscribe('isRescored', handleIsRescored);
+      unsubscribe('isNotRescored', handleIsNotRescored);
+    };
+  }, []);
+
   const keyAreasType2 = treatmentPlanData?.key_areas_to_address;
-  const lookingForwardsFlat = keyAreasType2
-    ? type2ToFlatList(toType2(keyAreasType2))
+  const resolvedType2 = keyAreasType2 ? toType2(keyAreasType2) : null;
+  const lookingForwardsFlat = resolvedType2
+    ? type2ToFlatList(resolvedType2)
     : (treatmentPlanData?.looking_forwards ?? []);
   /** Health Planning Issues: always show in issue number order (1, 2, 3, …), not by category */
-  const lookingForwardsInIssueOrder = keyAreasType2
-    ? type2ToFlatListInIssueOrder(toType2(keyAreasType2))
+  const lookingForwardsInIssueOrder = resolvedType2
+    ? type2ToFlatListInIssueOrder(resolvedType2)
     : (treatmentPlanData?.looking_forwards ?? []);
+  const issueCategoryMap = resolvedType2 ? extractCategoryMap(resolvedType2) : undefined;
 
-  const resolveCoverage = () => {
-    if (!treatmentPlanData || !id) return;
+  const resolveCoverage = (planData = treatmentPlanData) => {
+    if (!planData || !id) return;
     const selectedInterventions =
-      treatmentPlanData?.suggestion_tab?.filter((item: any) => item.checked) ||
-      [];
+      planData?.suggestion_tab?.filter((item: any) => item.checked) || [];
     const payload = forApiPayload(
-      keyAreasType2 ?? treatmentPlanData?.looking_forwards ?? [],
+      planData?.key_areas_to_address ?? planData?.looking_forwards ?? [],
     );
 
     Application.getCoverage({
@@ -133,28 +207,30 @@ export const GenerateRecommendation = () => {
     const payload = forApiPayload(
       planData.key_areas_to_address ?? planData.looking_forwards ?? [],
     );
-    Application.remapIssues({
+    return Application.remapIssues({
       member_id: id,
       suggestion_tab: planData.suggestion_tab ?? [],
       key_areas_to_address: payload,
     })
       .then((res: any) => {
+        const nextKeyAreas =
+          res.data.key_areas_to_address ??
+          toType2(planData.key_areas_to_address ?? planData.looking_forwards);
+        const nextPlan = {
+          ...planData,
+          suggestion_tab: res.data.suggestion_tab ?? planData.suggestion_tab ?? [],
+          key_areas_to_address: nextKeyAreas,
+          looking_forwards: type2ToFlatList(toType2(nextKeyAreas)),
+        };
         lastKeyAreasUpdateFromRemapRef.current = true;
-        setTratmentPlanData((pre: any) => ({
-          ...pre,
-          suggestion_tab: res.data.suggestion_tab,
-          key_areas_to_address:
-            res.data.key_areas_to_address ??
-            toType2(pre.key_areas_to_address ?? pre.looking_forwards),
-          looking_forwards: type2ToFlatList(
-            toType2(
-              res.data.key_areas_to_address ?? pre.key_areas_to_address ?? [],
-            ),
-          ),
-        }));
+        setTratmentPlanData((pre: any) =>
+          pre ? { ...pre, ...nextPlan } : nextPlan,
+        );
+        return nextPlan;
       })
       .catch((err) => {
         console.error('remapIssues error:', err);
+        throw err;
       })
       .finally(() => {
         if (remapLoadingTimeoutRef.current) {
@@ -165,9 +241,56 @@ export const GenerateRecommendation = () => {
       });
   };
 
+  const startBiomarkerPolling = () => {
+    if (biomarkerPollingRef.current) clearInterval(biomarkerPollingRef.current);
+    if (!id) return;
+
+    biomarkerPollingRef.current = setInterval(() => {
+      if (!isMountedRef.current) {
+        if (biomarkerPollingRef.current) clearInterval(biomarkerPollingRef.current);
+        return;
+      }
+      Application.pollPerBiomarkerStatus({ member_id: id })
+        .then((res) => {
+          if (res.data?.ready) {
+            if (biomarkerPollingRef.current) clearInterval(biomarkerPollingRef.current);
+            biomarkerPollingRef.current = null;
+            const moreInfos = res.data.more_infos;
+            const biomarkerInsights = res.data.biomarker_insights;
+            setTratmentPlanData((prev: any) => {
+              if (!prev) return prev;
+              const newMoreInfos = moreInfos && moreInfos.length > 0;
+              const newBiomarker = biomarkerInsights && biomarkerInsights.length > 0;
+              if (!newMoreInfos && !newBiomarker) return prev;
+              const moreInfosChanged =
+                newMoreInfos &&
+                JSON.stringify(prev.more_infos) !== JSON.stringify(moreInfos);
+              const shouldFillMissingBiomarkers =
+                newBiomarker &&
+                (!Array.isArray(prev.biomarker_insight) ||
+                  prev.biomarker_insight.length === 0);
+              const biomarkerChanged =
+                shouldFillMissingBiomarkers &&
+                JSON.stringify(prev.biomarker_insight) !==
+                  JSON.stringify(biomarkerInsights);
+              if (!moreInfosChanged && !biomarkerChanged) return prev;
+              return {
+                ...prev,
+                ...(moreInfosChanged ? { more_infos: moreInfos } : {}),
+                ...(biomarkerChanged ? { biomarker_insight: biomarkerInsights } : {}),
+              };
+            });
+          }
+        })
+        .catch((err) => {
+          console.error('pollPerBiomarkerStatus error:', err);
+        });
+    }, 5000);
+  };
+
   useEffect(() => {
     resolveCoverage();
-  }, [treatmentPlanData?.suggestion_tab, id]);
+  }, [treatmentPlanData?.suggestion_tab, treatmentPlanData?.key_areas_to_address, id]);
 
   /** When key_areas change from Set Orders (add/remove issue), call remap so backend stays in sync. Skip initial load (handlePlan already calls remap). */
   const keyAreasChangeCountRef = useRef(0);
@@ -199,14 +322,17 @@ export const GenerateRecommendation = () => {
   };
 
   const handlePlan = (data: any, retryForSuggestions: boolean) => {
-    if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، ادامه نده
+    if (!isMountedRef.current) return;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
 
-    // Check essential data fields (for initial load)
     const essentialDataReady = hasEssentialData(data);
-    // Check suggestion_tab data (for Step 2 and Next button)
     const suggestionsDataReady = hasSuggestionsData(data);
 
     if (essentialDataReady) {
+      const isFirstLoad = !hasLoadedInitialPlanRef.current;
       const keyAreas = toType2(
         data.key_areas_to_address ?? data.looking_forwards ?? [],
       );
@@ -218,17 +344,20 @@ export const GenerateRecommendation = () => {
         looking_forwards: type2ToFlatList(keyAreas),
         member_id: id,
       };
+      lastScoredKeyAreasSignatureRef.current = serializeKeyAreas(keyAreas);
       setTratmentPlanData(payload);
       setSuggestionsDefualt(data.suggestion_tab);
-      remapIssues(payload);
-      // If we are specifically waiting for suggestion_tab for Step 2
-      if (retryForSuggestions && !suggestionsDataReady) {
-        console.log('Suggestion tab data missing, retrying in 15 seconds...');
-        timeoutRef.current = setTimeout(() => generatePaln(true), 15000);
-      } else {
-        setIsLoading(false); // Hide full page loader
-        setisButtonLoading(false); // Hide button loader
+      hasLoadedInitialPlanRef.current = true;
+
+      if (isFirstLoad) {
+        startBiomarkerPolling();
       }
+
+      if (retryForSuggestions && !suggestionsDataReady) {
+        console.log('Suggestion tab still missing after retry.');
+      }
+      setIsLoading(false);
+      setisButtonLoading(false);
     } else {
       console.log('Missing essential data, retrying in 15 seconds...');
       timeoutRef.current = setTimeout(() => generatePaln(), 15000);
@@ -237,12 +366,24 @@ export const GenerateRecommendation = () => {
 
   const generatePaln = (retryForSuggestions = false) => {
     if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، اجرا نشود
+    if (planRequestInFlightRef.current) return;
+    if (
+      hasLoadedInitialPlanRef.current &&
+      (!retryForSuggestions || hasSuggestionsData(treatmentPlanData))
+    ) {
+      return;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
 
     // Only show full page loader if it's the initial load or a retry for essential data
     if (!retryForSuggestions) {
       setIsLoading(true);
     }
     setisButtonLoading(true); // Always show button loading when calling API
+    planRequestInFlightRef.current = true;
     // handlePlan(mocktemtment,retryForSuggestions)
     if (treatment_id && treatment_id?.length > 1) {
       Application.getGeneratedTreatmentPlan({
@@ -254,6 +395,9 @@ export const GenerateRecommendation = () => {
         })
         .catch((err) => {
           console.error('Error getting generated treatment plan:', err);
+        })
+        .finally(() => {
+          planRequestInFlightRef.current = false;
         });
     } else {
       Application.generateTreatmentPlan({
@@ -268,6 +412,9 @@ export const GenerateRecommendation = () => {
             () => generatePaln(retryForSuggestions),
             15000,
           ); // Pass the retryForSuggestions flag
+        })
+        .finally(() => {
+          planRequestInFlightRef.current = false;
         });
     }
   };
@@ -277,27 +424,70 @@ export const GenerateRecommendation = () => {
     generatePaln();
     return () => {
       isMountedRef.current = false;
+      planRequestInFlightRef.current = false;
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
       if (remapLoadingTimeoutRef.current) {
         clearTimeout(remapLoadingTimeoutRef.current);
       }
+      if (biomarkerPollingRef.current) {
+        clearInterval(biomarkerPollingRef.current);
+      }
     };
   }, []);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStepIndex === 0) {
-      resolveCoverage();
-      // Check if suggestion_tab is empty when moving from General Condition to Set Orders
-      if (treatmentPlanData && !hasSuggestionsData(treatmentPlanData)) {
-        setisButtonLoading(true); // Show loading on the button
-        console.log(
-          'suggestion_tab is empty for Step 2. Re-generating plan...',
+      if (treatmentPlanData) {
+        setisButtonLoading(true);
+        console.info(
+          'Step 1 -> Step 2: always rescoring using current Health Planning Issues',
         );
-        generatePaln(true); // Call generatePaln specifically to get suggestion_tab data
-        return; // Prevent proceeding to the next step immediately
+        try {
+          const remappedPlan = await remapIssues(treatmentPlanData);
+          const res = await Application.holisticPlanReScore({
+            member_id: id,
+            suggestion_tab: remappedPlan?.suggestion_tab ?? [],
+            key_areas_to_address: remappedPlan?.key_areas_to_address,
+          });
+          const rescoredKeyAreas = toType2(
+            res.data?.key_areas_to_address ??
+              remappedPlan?.key_areas_to_address ??
+              [],
+          );
+          const rescoredPlan = {
+            ...(remappedPlan ?? treatmentPlanData),
+            suggestion_tab:
+              res.data?.suggestion_tab ??
+              remappedPlan?.suggestion_tab ??
+              treatmentPlanData?.suggestion_tab ??
+              [],
+            key_areas_to_address: rescoredKeyAreas,
+            looking_forwards: type2ToFlatList(rescoredKeyAreas),
+          };
+          lastKeyAreasUpdateFromRemapRef.current = true;
+          setTratmentPlanData((prev: any) =>
+            prev ? { ...prev, ...rescoredPlan } : rescoredPlan,
+          );
+          setSuggestionsDefualt(rescoredPlan.suggestion_tab ?? []);
+          lastScoredKeyAreasSignatureRef.current =
+            serializeKeyAreas(rescoredKeyAreas);
+          resolveCoverage(rescoredPlan);
+          setCurrentStepIndex((prevIndex) => prevIndex + 1);
+        } catch (err) {
+          console.error(
+            'Step 1 -> Step 2 rescore failed:',
+            (err as any)?.response?.data ?? err,
+          );
+          // Advance to step 2 even if rescore fails so the user is not stuck
+          setCurrentStepIndex((prevIndex) => prevIndex + 1);
+        } finally {
+          setisButtonLoading(false);
+        }
+        return;
       }
+      resolveCoverage();
     }
 
     if (currentStepIndex === 1 && !isRescore) {
@@ -306,17 +496,20 @@ export const GenerateRecommendation = () => {
       if (currentStepIndex < steps.length - 1) {
         if (currentStepIndex === 1) {
           setisButtonLoading(true);
-          Application.tratmentPlanConflict({
+          const selectedInterventions = treatmentPlanData.suggestion_tab.filter(
+            (el: any) => el.checked === true,
+          );
+
+          const conflictPromise = Application.tratmentPlanConflict({
             member_id: id,
-            selected_interventions: treatmentPlanData.suggestion_tab.filter(
-              (el: any) => el.checked === true,
-            ),
+            selected_interventions: selectedInterventions,
             biomarker_insight: treatmentPlanData?.biomarker_insight,
             client_insight: treatmentPlanData?.client_insight,
             looking_forward: treatmentPlanData?.looking_forwards,
-          })
-            .then((res) => {
-              setConflicts(res.data.conflicts);
+          });
+          conflictPromise
+            .then((conflictRes) => {
+              setConflicts(conflictRes.data.conflicts);
               setCurrentStepIndex((prevIndex) => prevIndex + 1);
               setisButtonLoading(false);
             })
@@ -364,32 +557,63 @@ export const GenerateRecommendation = () => {
 
   const handleSave = () => {
     setisButtonLoading(true);
-    Application.saveHolisticPlan({
-      ...treatmentPlanData,
-      suggestion_tab: [
-        ...treatmentPlanData.suggestion_tab.filter(
-          (el: any) =>
-            el.checked === true &&
-            VisibleCategories.filter((el) => el.visible)
-              .map((el) => el.name)
-              .includes(el.Category),
-        ),
-      ],
-      is_update: treatment_id && treatment_id?.length > 1 ? true : false,
-      treatment_id: resolveTreatmentId(),
-      result_tab: treatment_id && treatment_id?.length > 1 ? [] : [],
+    const selectedSuggestions = treatmentPlanData.suggestion_tab.filter(
+      (el: any) =>
+        el.checked === true &&
+        VisibleCategories.filter((visible) => visible.visible)
+          .map((visible) => visible.name)
+          .includes(el.Category),
+    );
+
+    Application.clientInterventionGenerate({
+      member_id: id,
+      selected_interventions: selectedSuggestions,
+      client_insight: treatmentPlanData?.client_insight,
     })
+      .then((clientInterventionRes) => {
+        const clientContent = clientInterventionRes.data?.result;
+        const mergedSuggestionTab =
+          clientContent && Array.isArray(clientContent)
+            ? mergeClientInterventionContent(
+                treatmentPlanData.suggestion_tab,
+                clientContent,
+              )
+            : treatmentPlanData.suggestion_tab;
+
+        const savePayload = {
+          ...treatmentPlanData,
+          suggestion_tab: mergedSuggestionTab.filter(
+            (el: any) =>
+              el.checked === true &&
+              VisibleCategories.filter((visible) => visible.visible)
+                .map((visible) => visible.name)
+                .includes(el.Category),
+          ),
+          is_update: treatment_id && treatment_id?.length > 1 ? true : false,
+          treatment_id: resolveTreatmentId(),
+          result_tab: treatment_id && treatment_id?.length > 1 ? [] : [],
+        };
+
+        setTratmentPlanData((prev: any) =>
+          prev ? { ...prev, suggestion_tab: mergedSuggestionTab } : prev,
+        );
+
+        return Application.saveHolisticPlan(savePayload);
+      })
       .then(() => {
         setTreatmentId(treatmentPlanData.treatment_id);
-      })
-      .catch((err) => {
-        console.error('Error saving holistic plan:', err);
-      })
-      .finally(() => {
-        setisButtonLoading(false);
         navigate(
           `/report/Generate-Holistic-Plan/${id}/${resolveTreatmentId() + '?isUpdate=' + (treatment_id && treatment_id?.length > 1 ? 'true' : 'false')}`,
         );
+      })
+      .catch((err) => {
+        console.error(
+          'Error generating client intervention or saving holistic plan:',
+          err,
+        );
+      })
+      .finally(() => {
+        setisButtonLoading(false);
       });
   };
 
@@ -582,6 +806,7 @@ export const GenerateRecommendation = () => {
                   key_areas_to_address: keyAreas,
                 });
               }}
+              initialIssueCategories={issueCategoryMap}
             ></GeneralCondition>
           ) : currentStepIndex === 1 ? (
             <SetOrders

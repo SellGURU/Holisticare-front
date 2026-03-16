@@ -439,13 +439,13 @@ const EditModal: FC<EditModalProps> = ({
       });
       return;
     }
-    // if (!formData['Based on']) {
-    //   basedOnRef.current?.scrollIntoView({
-    //     behavior: 'smooth',
-    //     block: 'center',
-    //   });
-    //   return;
-    // }
+    if (!formData['Based on']) {
+      basedOnRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return;
+    }
     if (
       formData.Category === 'Supplement' &&
       selectedGroupDose &&
@@ -535,8 +535,8 @@ const EditModal: FC<EditModalProps> = ({
       !formData.Recommendation ||
       // ||
       // (formData.Instruction.length === 0 && client_versions.length === 0)
-      !formData.Intervnetion_content
-      // !formData['Based on']
+      !formData.Intervnetion_content ||
+      !formData['Based on']
     ) {
       scrollToFirstError();
       return;
@@ -695,7 +695,14 @@ const EditModal: FC<EditModalProps> = ({
                     )
                   : true
               }
-              validationText={''}
+              validationText={
+                showValidation
+                  ? ValidationForms.ValidationText(
+                      'Based on',
+                      formData['Based on'],
+                    )
+                  : ''
+              }
               margin="mb-4"
             />
           </div>

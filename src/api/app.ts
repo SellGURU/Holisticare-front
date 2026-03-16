@@ -791,6 +791,14 @@ class Application extends Api {
     const response = this.post('/patients/give_access/mobile_user_info', data);
     return response;
   };
+  static updateClientInfo = (data: any) => {
+    const response = this.post('/patients/update_client_info', data);
+    return response;
+  };
+  static regenerateClientAccessPassword = (data: any) => {
+    const response = this.post('/patients/give_access/regenerate_password', data);
+    return response;
+  };
   static shareClientAccess = (data: any) => {
     const response = this.post('/patients/give_access/share_with_email', data);
     return response;
@@ -988,6 +996,12 @@ class Application extends Api {
   };
   static tratmentPlanConflict = (data: any) => {
     return this.post('/treatment_plan/conflict_check', data);
+  };
+  static clientInterventionGenerate = (data: any) => {
+    return this.post('/treatment_plan/client_intervention', data);
+  };
+  static pollPerBiomarkerStatus = (data: any) => {
+    return this.post('/treatment_plan/per_biomarker_status', data);
   };
   static getCoachList = (data: any) => {
     return this.post('/patients/coaches_usernames', data);

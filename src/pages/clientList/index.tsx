@@ -638,6 +638,18 @@ const ClientList = () => {
                                 });
                               }}
                               onToggleHighPriority={toggleHighPriority}
+                              onClientUpdated={(memberId, updates) => {
+                                setFilteredClientList((prevList) =>
+                                  prevList.map((c) =>
+                                    c.member_id === memberId ? { ...c, ...updates } : c,
+                                  ),
+                                );
+                                setClientList((prevList) =>
+                                  prevList.map((c) =>
+                                    c.member_id === memberId ? { ...c, ...updates } : c,
+                                  ),
+                                );
+                              }}
                               client={client}
                             ></ClientCard>
                           );

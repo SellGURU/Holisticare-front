@@ -83,6 +83,11 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
   const [color, setColor] = useState<string>('');
   const [bgColor, setBgColor] = useState<string>('');
   const { positive, negative } = splitInstructions(editableValue);
+  const fallbackPositive = String(value?.Recommendations_positive || '').trim();
+  const fallbackNegative = String(value?.Recommendations_negative || '').trim();
+  const finalPositive = positive || fallbackPositive;
+  const finalNegative = negative || fallbackNegative;
+  const supplementDose = String(value?.Dose || '').trim();
 
   // console.log(value);
   const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
@@ -494,7 +499,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
               </>
             ) : (
               <>
-                {positive ? (
+                {finalPositive || finalNegative ? (
                   <>
                     <div className="w-full bg-bg-color h-[1px] mt-3"></div>
                     {value['Practitioner Comments'][0]?.length > 0 && (
@@ -509,19 +514,27 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                       </div>
                     )}
                     <div className="w-full bg-bg-color h-[1px] mt-1 mb-2"></div>
+                    {value?.Category === 'Supplement' && supplementDose && (
+                      <div className="text-Text-Primary mt-1.5 text-justify">
+                        <span className="text-Text-Secondary bullet-point">
+                          Dose:{' '}
+                        </span>
+                        {supplementDose}
+                      </div>
+                    )}
                     <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
                       <div className="text-Text-Primary text-justify">
                         {' '}
                         <span className="text-Text-Secondary bullet-point">
                           Key Benefits:{' '}
                         </span>
-                        {positive}
+                        {finalPositive}
                       </div>
                       <div className="text-Text-Primary mt-1.5 text-justify">
                         <span className="text-Text-Secondary bullet-point">
                           Key Risks:{' '}
                         </span>
-                        {negative}
+                        {finalNegative}
                       </div>{' '}
                     </div>
                   </>

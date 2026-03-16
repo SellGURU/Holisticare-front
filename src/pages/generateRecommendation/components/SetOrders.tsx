@@ -4,7 +4,7 @@ import { MainModal } from '../../../Components';
 // import Application from '../../../api/app';
 // import { useParams } from 'react-router-dom';
 import Circleloader from '../../../Components/CircleLoader';
-import { publish, subscribe } from '../../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import { ActivityCard } from './ActivityCard';
 import { CoverageCard } from '../../../Components/coverageCard';
 import SearchBox from '../../../Components/SearchBox';
@@ -13,6 +13,9 @@ import {
   CATEGORY_ORDER,
   DEFAULT_CATEGORY_LABELS,
 } from '../../../utils/lookingForwards';
+
+const categoryMatches = (a: any, b: any) =>
+  String(a || '').toLowerCase() === String(b || '').toLowerCase();
 
 type CategoryState = {
   name: string;
@@ -91,21 +94,12 @@ export const SetOrders: FC<SetOrdersProps> = ({
   //   setData([...data.filter((el: any) => el.Category != category), ...newData]);
   // };
 
-  const handleCheckboxChange = (category: string, itemId: number) => {
-    // console.log(data.filter((el:any) => el.Category == category)[itemId])
-    const newData = data
-      .filter((el: any) => el.Category == category)
-      .map((el: any, index: number) => {
-        if (index == itemId) {
-          return {
-            ...el,
-            checked: !el.checked,
-          };
-        } else {
-          return el;
-        }
-      });
-    setData([...data.filter((el: any) => el.Category != category), ...newData]);
+  const handleCheckboxChange = (_category: string, globalIndex: number) => {
+    setData(
+      data.map((el: any, idx: number) =>
+        idx === globalIndex ? { ...el, checked: !el.checked } : el,
+      ),
+    );
   };
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -178,12 +172,22 @@ export const SetOrders: FC<SetOrdersProps> = ({
 
     setActiveCategory(visibleCategories[backIndex]);
   };
-  subscribe('rescore', () => {
-    handleContinue();
-  });
-  subscribe('rescoreBack', () => {
-    handleBack();
-  });
+  useEffect(() => {
+    const handleRescore = () => {
+      handleContinue();
+    };
+    const handleRescoreBack = () => {
+      handleBack();
+    };
+
+    subscribe('rescore', handleRescore);
+    subscribe('rescoreBack', handleRescoreBack);
+
+    return () => {
+      unsubscribe('rescore', handleRescore);
+      unsubscribe('rescoreBack', handleRescoreBack);
+    };
+  }, [activeCategory, categories, data]);
   useEffect(() => {
     if (
       activeCategory !=
@@ -448,6 +452,16 @@ export const SetOrders: FC<SetOrdersProps> = ({
     return words.some((w) => w.startsWith(q));
   };
 
+  const scoreValue = (item: any) => {
+    const raw = item?.['System Score'] ?? item?.Score ?? 0;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  const activeItemsSorted = (data || [])
+    .filter((el: any) => categoryMatches(el.Category, activeCategory))
+    .sort((a: any, b: any) => scoreValue(b) - scoreValue(a));
+
   return (
     <>
       <MainModal
@@ -607,17 +621,19 @@ export const SetOrders: FC<SetOrdersProps> = ({
           ref={activityContainer}
           className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 md:pb-8 px-3 md:px-6 h-[80%] overflow-y-auto"
         >
-          {data
-            ?.filter((el: any) => el.Category == activeCategory)
-            .map((item: any, index: number) => {
+          {activeItemsSorted.map((item: any, index: number) => {
               if (!matchesSearch(item, activeCategory, searchQuery))
                 return null;
+              const globalIndex = (data || []).findIndex(
+                (el: any) => el === item,
+              );
+              if (globalIndex < 0) return null;
 
               return (
                 <ActivityCard
                   key={`${index}-${refreshKey}`}
                   item={item}
-                  index={index}
+                  index={globalIndex}
                   activeCategory={activeCategory}
                   handleCheckboxChange={handleCheckboxChange}
                   issuesData={details}
@@ -626,14 +642,26 @@ export const SetOrders: FC<SetOrdersProps> = ({
                   handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
                   handleRemoveLookingForwards={handleRemoveLookingForwards}
                   handleRemoveIssueFromList={handleRemoveIssueFromList}
+                  handleUpdateDoseByKey={(
+                    category: string,
+                    recommendation: string,
+                    newDose: string,
+                  ) => {
+                    setData(
+                      data.map((el: any) =>
+                        el.Category === category &&
+                        el.Recommendation === recommendation
+                          ? { ...el, Dose: newDose }
+                          : el,
+                      ),
+                    );
+                  }}
                 />
               );
             })}
-          {data
-            ?.filter((el: any) => el.Category == activeCategory)
-            .every(
-              (item: any) => !matchesSearch(item, activeCategory, searchQuery),
-            ) && (
+          {activeItemsSorted.every(
+            (item: any) => !matchesSearch(item, activeCategory, searchQuery),
+          ) && (
             <div className="w-full h-[350px] flex flex-col justify-center items-center">
               <img src="/icons/document-text-rectangle.svg" alt="" />
               <div className="text-base text-Text-Primary font-medium -mt-2">

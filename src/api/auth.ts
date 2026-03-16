@@ -41,12 +41,14 @@ class Auth extends Api {
     email?: string,
     password?: string,
     google_json?: any,
+    add_demo_user: boolean = true,
   ) {
     const data = {
       user_name: username,
       user_mail: email,
       password: password,
       google_json: google_json,
+      add_demo_user: add_demo_user,
       // clinic_membership_id: ""
     };
 

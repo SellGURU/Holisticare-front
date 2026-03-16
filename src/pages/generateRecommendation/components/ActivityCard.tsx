@@ -31,6 +31,11 @@ interface ActivityCardProps {
   ) => void;
   handleRemoveLookingForwards: (text: string) => void;
   handleRemoveIssueFromList: (name: string) => void;
+  handleUpdateDoseByKey: (
+    category: string,
+    recommendation: string,
+    newDose: string,
+  ) => void;
 }
 
 export const ActivityCard: FC<ActivityCardProps> = ({
@@ -44,6 +49,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   handleUpdateIssueListByKey,
   handleRemoveLookingForwards,
   handleRemoveIssueFromList: handleRemoveIssueFromListData,
+  handleUpdateDoseByKey,
 }) => {
   const { positive, negative } = splitInstructions(item.Instruction);
   const [Conflicts] = useState<Array<any>>(item?.flag?.conflicts);
@@ -602,14 +608,31 @@ export const ActivityCard: FC<ActivityCardProps> = ({
             </div>
           )}
           <div className="w-full bg-bg-color h-[1px] mt-1 mb-2"></div>
+          {item.Category === 'Supplement' && (
+            <div className="mb-2">
+              <div className="text-Text-Secondary text-[10px] mb-1">Dose</div>
+              <input
+                value={item.Dose || ''}
+                onChange={(e) =>
+                  handleUpdateDoseByKey(
+                    activeCategory,
+                    item.Recommendation,
+                    e.target.value,
+                  )
+                }
+                placeholder="Enter dose (e.g., 1000 mg daily)"
+                className="w-full h-8 px-2 outline-none bg-backgroundColor-Card border border-Gray-50 rounded-lg text-Text-Primary text-xs"
+              />
+            </div>
+          )}
           <li className="mb-1.5 text-justify">
             <span className="text-Text-Secondary bullet-point">
-              Key Benefits:
+              Practitioner Insight (Benefits):
             </span>{' '}
             {positive}
           </li>
           <li className=" text-justify">
-            <span className="text-Text-Secondary bullet-point">Key Risks:</span>{' '}
+            <span className="text-Text-Secondary bullet-point">Practitioner Insight (Risks):</span>{' '}
             {negative}
           </li>
         </ul>

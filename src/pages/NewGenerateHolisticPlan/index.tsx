@@ -925,6 +925,24 @@ const NewGenerateHolisticPlan = () => {
                                         >
                                           {resol.description}
                                         </div>
+                                        {resol.reasoning && (
+                                          <div className="mt-2 p-2 bg-blue-50 rounded-lg border border-blue-100">
+                                            <div className="text-[10px] font-medium text-blue-700 mb-0.5">Clinical Reasoning</div>
+                                            <div className="text-[10px] text-blue-600 leading-[16px]">{resol.reasoning}</div>
+                                          </div>
+                                        )}
+                                        {resol.risk_flags && resol.risk_flags.length > 0 && (
+                                          <div className="mt-2">
+                                            <div className="text-[10px] font-medium text-red-600 mb-1">Risk Flags</div>
+                                            <div className="flex flex-wrap gap-1">
+                                              {resol.risk_flags.map((flag: string, idx: number) => (
+                                                <span key={idx} className="inline-block bg-red-50 text-red-700 text-[9px] px-2 py-0.5 rounded-full border border-red-200">
+                                                  {flag}
+                                                </span>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
                                       </div>
                                       <div className="flex flex-col lg:flex-row w-full justify-center gap-2 md:gap-4 mt-2 md:mt-4">
                                         <div className="w-full lg:w-[50%]">
@@ -1026,6 +1044,24 @@ const NewGenerateHolisticPlan = () => {
                               >
                                 {activeEl.description}
                               </div>
+                              {activeEl.reasoning && (
+                                <div className="mt-2 p-2 bg-blue-50 rounded-lg border border-blue-100">
+                                  <div className="text-[10px] font-medium text-blue-700 mb-0.5">Clinical Reasoning</div>
+                                  <div className="text-[10px] text-blue-600 leading-[16px]">{activeEl.reasoning}</div>
+                                </div>
+                              )}
+                              {activeEl.risk_flags && activeEl.risk_flags.length > 0 && (
+                                <div className="mt-2">
+                                  <div className="text-[10px] font-medium text-red-600 mb-1">Risk Flags</div>
+                                  <div className="flex flex-wrap gap-1">
+                                    {activeEl.risk_flags.map((flag: string, idx: number) => (
+                                      <span key={idx} className="inline-block bg-red-50 text-red-700 text-[9px] px-2 py-0.5 rounded-full border border-red-200">
+                                        {flag}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                             <div className="flex flex-col lg:flex-row w-full justify-center gap-2 md:gap-4 mt-2 md:mt-4">
                               <div className="w-full lg:w-[50%]">

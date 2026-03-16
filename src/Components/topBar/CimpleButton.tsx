@@ -188,7 +188,7 @@ const CompileButton: FC<CompileButtonProps> = ({
     checkRefrashData();
   }, []);
   useEffect(() => {
-    subscribe('openProgressModal', (data?: any) => {
+    const handleOpenProgressModal = (data?: any) => {
       if (!data?.detail?.data) return;
 
       setProgressData((prev) => {
@@ -211,27 +211,57 @@ const CompileButton: FC<CompileButtonProps> = ({
         });
         return updated;
       });
-    });
+    };
 
-    subscribe('allProgressCompleted', () => {
+    const handleAllProgressCompleted = () => {
       setProgressData((prev) =>
         prev.map((item) => ({ ...item, process_status: true })),
       );
-    });
+    };
     // subscribe('openSideMenu', (status: any) => {
     //   setIsSideMenuOpen(status.detail.status);
     // });
-    subscribe('syncReport', () => {
+    const handleSyncReport = () => {
       setIsSyncing(false);
       setProgressData([]);
-    });
+    };
+
+    subscribe('openProgressModal', handleOpenProgressModal);
+    subscribe('allProgressCompleted', handleAllProgressCompleted);
+    subscribe('syncReport', handleSyncReport);
 
     return () => {
-      unsubscribe('openProgressModal', () => {});
-      unsubscribe('allProgressCompleted', () => {});
-      unsubscribe('syncReport', () => {});
+      unsubscribe('openProgressModal', handleOpenProgressModal);
+      unsubscribe('allProgressCompleted', handleAllProgressCompleted);
+      unsubscribe('syncReport', handleSyncReport);
     };
   }, []);
+
+  // Fallback polling to avoid stale "Compiling..." UI when event updates are delayed/missed.
+  useEffect(() => {
+    if (!isCompiling || !id) return;
+    const interval = setInterval(() => {
+      Application.checkRefreshProgress(id as string)
+        .then((res) => {
+          if (res?.data?.status) {
+            setIsCompiling(false);
+            setNeedCompile(false);
+            setshowProgressModal(false);
+            setProgressData((prev) =>
+              prev.map((item) =>
+                item.category === 'refresh'
+                  ? { ...item, process_status: true }
+                  : item,
+              ),
+            );
+            publish('syncReport', {});
+            checkRefrashData();
+          }
+        })
+        .catch(() => {});
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isCompiling, id]);
 
   /* ---------- UI config ---------- */
 
