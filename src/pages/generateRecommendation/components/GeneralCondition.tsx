@@ -10,16 +10,6 @@ import {
   DEFAULT_CATEGORY_LABELS,
 } from '../../../utils/lookingForwards';
 
-/** Soft priority tag colors: red → softer red → yellow → green */
-const PRIORITY_TAG_STYLES: Record<string, string> = {
-  critical_urgent: 'bg-red-50 text-red-800 border-red-200',
-  important_strategic: 'bg-rose-50 text-rose-700 border-rose-200',
-  important_long_term: 'bg-amber-50 text-amber-800 border-amber-200',
-  optional_enhancements: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-};
-const getPriorityTagClass = (key: string) =>
-  PRIORITY_TAG_STYLES[key] || PRIORITY_TAG_STYLES.critical_urgent;
-
 // Define types for the data structure
 interface ConditionDataProps {
   biomarkers: string[];
