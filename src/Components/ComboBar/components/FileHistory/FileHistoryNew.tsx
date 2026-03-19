@@ -100,6 +100,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         <div className="w-full text-[12px] px-2 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
           <div className="w-[70px] text-center text-nowrap">File Name</div>
           <div className="w-[80px]  text-nowrap">Upload Date</div>
+          <div className="w-[80px]  text-nowrap">Test Date</div>
           <div>Action</div>
         </div>
         <FileUploadProgressList uploadedFiles={uploadedFiles} />

@@ -311,6 +311,7 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
         <div className="w-full text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
           <div className="w-[70px] text-center text-nowrap">File Name</div>
           <div className="w-[80px]  text-nowrap">Upload Date</div>
+          <div className="w-[80px]  text-nowrap">Test Date</div>
           <div>Action</div>
         </div>
         {/* File Upload Progress List */}

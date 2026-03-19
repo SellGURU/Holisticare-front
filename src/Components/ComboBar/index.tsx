@@ -62,7 +62,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   const itemList = [
     { name: 'Client Info', url: '/images/sidbar-menu/info-circle.svg' },
     { name: 'Wearable Hub', url: '/icons/sidbar-menu/cloud-change.svg' },
-    { name: 'File History', url: '/icons/sidbar-menu/directbox-notif.svg' },
+    { name: 'Lab Data & Biomarkers', url: '/icons/sidbar-menu/directbox-notif.svg' },
     {
       name: 'Questionnaire Tracking',
       url: '/icons/sidbar-menu/task-square.svg',
@@ -216,12 +216,12 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         return <ClientInfo></ClientInfo>;
       case 'Wearable Hub':
         return <DataSyncing></DataSyncing>;
-      case 'File History':
+      case 'Lab Data & Biomarkers':
         return (
           <FileHistoryNew
             unsyncedIdes={unsyncedIdes}
             setUnsyncedIdes={setUnsyncedIdes}
-            isOpen={isSlideOutPanel && activeItem === 'File History'}
+            isOpen={isSlideOutPanel && activeItem === 'Lab Data & Biomarkers'}
             handleCloseSlideOutPanel={handleCloseSlideOutPanel}
             // handleCloseSlideOutPanel={handleCloseSlideOutPanel}
           ></FileHistoryNew>

@@ -77,9 +77,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   // console.log(extractedBiomarkers);
   const [isUploadFromComboBar, setIsUploadFromComboBar] = useState(false);
   useEffect(() => {
-    subscribe('uploadTestShow-stepTwo', () => {
+    subscribe('uploadTestShow-stepTwo', (data: any) => {
+      const editFileId = data?.detail?.file_id;
       setstep(1);
       setIsUploadFromComboBar(true);
+      // If editing an existing file, preload it so polling fetches its biomarkers
+      if (editFileId) {
+        setUploadedFile({
+          file_id: editFileId,
+          file: new File([], 'existing'),
+          progress: 1,
+          status: 'completed',
+        });
+        setPolling(true);
+      }
     });
   }, []);
   const [biomarkerLoading, setbiomarkerLoading] = useState(false);
@@ -98,6 +109,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         });
         setProgressBiomarkerUpload(res.data.progress);
         setfileType(res.data.lab_type);
+        if (res.data.date_of_test) {
+          setModifiedDateOfTest(new Date(res.data.date_of_test));
+        }
 
         // ✅ Handle ultrasound reports - skip biomarkers table
         if (res.data.lab_type === 'ultrasound') {

@@ -655,7 +655,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         behavior: 'instant',
       });
       setTimeout(() => {
-        publish('uploadTestShow-stepTwo', {});
+        publish('uploadTestShow-stepTwo', {
+          file_id: data?.detail?.file_id,
+        });
       }, 4);
       setShowUploadTest(data.detail.isShow);
     };

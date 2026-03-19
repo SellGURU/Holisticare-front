@@ -122,6 +122,11 @@ const FileBox: React.FC<FileBoxProps> = ({
               el.date_uploaded ? el.date_uploaded : new Date().toDateString(),
             )}
           </div>
+          <div
+            className={`w-[70px] text-center ${isDeleted ? 'opacity-50' : ''}`}
+          >
+            {el.date_of_test ? el.date_of_test : '—'}
+          </div>
           {el.status == 'error' ? (
             <>
               <div className="flex w-[55px] justify-center gap-1">
@@ -240,6 +245,23 @@ const FileBox: React.FC<FileBoxProps> = ({
                         className="cursor-pointer"
                         src="/icons/import.svg"
                         alt=""
+                      />
+                    )}
+                    {/* Edit button */}
+                    {el.file_id && el.process_done !== false && (
+                      <img
+                        onClick={() => {
+                          if (!isDeleted) {
+                            publish('uploadTestShow', {
+                              isShow: true,
+                              file_id: el.file_id,
+                            });
+                          }
+                        }}
+                        className="cursor-pointer w-5 h-5"
+                        src="/icons/edit.svg"
+                        alt="Edit"
+                        title="Edit biomarkers"
                       />
                     )}
                   </>

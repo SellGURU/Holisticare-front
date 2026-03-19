@@ -53,6 +53,11 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
                 : new Date().toDateString(),
             )}
           </div>
+          <div
+            className={`w-[70px] text-center ${fileStatus != 'upload' ? 'opacity-50' : ''}`}
+          >
+            {file.date_of_test ? formatDate(file.date_of_test) : '—'}
+          </div>
           <ActionSection
             date={file.date_uploaded}
             memberId={id || ''}

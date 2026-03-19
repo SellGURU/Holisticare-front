@@ -9,6 +9,7 @@ interface ActionSectionProps {
   isDeleted: boolean;
   memberId: string;
   onDelete: () => void;
+  onEdit?: () => void;
   date?: string;
 }
 const ActionSection: FC<ActionSectionProps> = ({
@@ -16,6 +17,7 @@ const ActionSection: FC<ActionSectionProps> = ({
   isDeleted,
   memberId,
   onDelete,
+  onEdit,
   date,
 }) => {
   const [isSureRemove, setIsSureRemove] = useState(false);
@@ -141,7 +143,7 @@ const ActionSection: FC<ActionSectionProps> = ({
               </div>
             ) : (
               <div className="flex items-center justify-start gap-1 confirm-animation">
-                {/* {file.file_name !== 'Manual Entry' && ( */}
+                {/* Download */}
                 <img
                   onClick={() => {
                     if (!isDeleted) {
@@ -152,7 +154,25 @@ const ActionSection: FC<ActionSectionProps> = ({
                   src="/icons/import.svg"
                   alt=""
                 />
-                {/* )} */}
+                {/* Edit */}
+                {file.file_id && file.process_done !== false && (
+                  <img
+                    onClick={() => {
+                      if (!isDeleted) {
+                        if (onEdit) onEdit();
+                        publish('uploadTestShow', {
+                          isShow: true,
+                          file_id: file.file_id,
+                        });
+                      }
+                    }}
+                    className="cursor-pointer w-5 h-5"
+                    src="/icons/edit.svg"
+                    alt="Edit"
+                    title="Edit biomarkers"
+                  />
+                )}
+                {/* Delete */}
                 <img
                   onClick={() => {
                     if (!isDeleted) {

@@ -67,7 +67,7 @@ export const DeleteFileProgressModal = () => {
         `}
       >
         <div className="flex items-center justify-between text-xs font-medium text-Primary-DeepTeal">
-          {IsinProgress ? 'Deletion in Progress' : 'File History'}
+          {IsinProgress ? 'Deletion in Progress' : 'Lab Data & Biomarkers'}
           <img
             onClick={() => setshowProgressModal(false)}
             src="/icons/close.svg"
