@@ -3,15 +3,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 import Select from '../../Select';
 import SimpleDatePicker from '../../SimpleDatePicker';
-// import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-// import { Scaling } from 'lucide-react';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
-// import SearchSelect from '../../searchableSelect';
 import Toggle from '../Boxs/Toggle';
 import BiomarkerRow from './BiomarkerRow';
 import ProgressLoading from './ProgressLoading';
 import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
+import CreateBiomarkerModal from './CreateBiomarkerModal';
+import CreateUnitModal from './CreateUnitModal';
+import type { BiomarkerSuggestion } from '../../searchableSelect/SearchSelectWithSuggestions';
 
 const biomarkersSteps: Step[] = [
   {
@@ -64,8 +64,6 @@ interface BiomarkersSectionProps {
   setDateOfTest: (date: Date | null) => void;
   fileType: string;
   loading: boolean;
-  isScaling: boolean;
-  setIsScaling: (isScaling: boolean) => void;
   rowErrors?: any;
   setrowErrors: any;
   showOnlyErrors: boolean;
@@ -83,8 +81,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   loading,
   rowErrors,
   setrowErrors,
-  isScaling,
-  setIsScaling,
   showOnlyErrors,
   setShowOnlyErrors,
   progressBiomarkerUpload,
@@ -195,6 +191,71 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       })
       .catch(() => {});
   }, []);
+
+  // ── Suggestions state (keyed by extracted biomarker name) ──────────────────
+  const [suggestions, setSuggestions] = useState<
+    Record<string, { matches: BiomarkerSuggestion[]; no_match_reason?: string | null }>
+  >({});
+  const suggestionsFetchedRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      !rowErrors ||
+      Object.keys(rowErrors).length === 0 ||
+      biomarkers.length === 0
+    ) {
+      return;
+    }
+
+    // Gather all unresolved rows (error rows)
+    const unresolvedRows = biomarkers
+      .filter((_b: any, idx: number) => rowErrors[idx])
+      .map((b: any) => ({
+        extracted_name: b.original_biomarker_name || b.biomarker || '',
+        extracted_value: String(b.original_value || b.value || ''),
+        extracted_unit: b.original_unit || b.unit || '',
+      }))
+      .filter((r: any) => r.extracted_name);
+
+    if (unresolvedRows.length === 0) return;
+    if (suggestionsFetchedRef.current) return;
+    suggestionsFetchedRef.current = true;
+
+    Application.suggestBiomarkerMappings({ biomarkers: unresolvedRows })
+      .then((res: any) => {
+        if (res?.data?.suggestions) {
+          setSuggestions(res.data.suggestions);
+        }
+      })
+      .catch(() => {
+        // Suggestions are non-critical; silently ignore failures
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowErrors]);
+
+  // Reset suggestion cache whenever biomarkers change (new upload)
+  useEffect(() => {
+    suggestionsFetchedRef.current = false;
+    setSuggestions({});
+  }, [biomarkers.length]);
+
+  // ── Modal state ────────────────────────────────────────────────────────────
+  const [createBiomarkerFor, setCreateBiomarkerFor] = useState<{
+    biomarkerId: string;
+    extractedName: string;
+    extractedValue: string;
+    extractedUnit: string;
+    suggestionMatches: BiomarkerSuggestion[];
+  } | null>(null);
+
+  const [createUnitFor, setCreateUnitFor] = useState<{
+    biomarkerId: string;
+    biomarkerName: string;
+    extractedUnit: string;
+    extractedValue: string;
+    systemUnit: string;
+    suggestionMatches: BiomarkerSuggestion[];
+  } | null>(null);
   const gutOptions = ['Good for GUT', 'Bad for GUT'];
   const renderValueField = (b: any) => {
     if (fileType.toLowerCase() === 'dna') {
@@ -511,7 +572,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       />
       <div
         // style={{ height: window.innerHeight - 400 + 'px' }}
-        className={`w-full  ${isScaling ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary overflow-hidden`}
+        className={`w-full  ${uploadedFile ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary overflow-hidden`}
         data-tour="biomarkers-section"
       >
         {loading ? (
@@ -544,20 +605,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       ({biomarkers.length})
                     </span>
                   </div>
-                  <img
-                    onClick={() => setIsScaling(!isScaling)}
-                    className="xs:w-4 xs:h-4 w-3 h-3 cursor-pointer opacity-70"
-                    src={
-                      isScaling
-                        ? '/icons/biomarkers/import.svg'
-                        : '/icons/biomarkers/export.svg'
-                    }
-                    alt=""
-                  />
-                  {/* <Scaling
-                onClick={() => setIsScaling(!isScaling)}
-                className="w-4 h-4 cursor-pointer text-Text-Secondary"
-              /> */}
                 </div>
 
                 <div className="flex items-center absolute right-0 top-[-2px] gap-6">
@@ -637,33 +684,57 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     ref={tableRef}
                     className=" overflow-y-auto pb-[40px] sm:pb-0 w-[100%]"
                     style={{
-                      minHeight: isScaling
+                      minHeight: uploadedFile
                         ? window.innerHeight - 330 + 'px'
                         : window.innerHeight - 500 + 'px',
-                      maxHeight: isScaling
+                      maxHeight: uploadedFile
                         ? window.innerHeight - 330 + 'px'
                         : window.innerWidth > 640
                           ? window.innerHeight - 500 + 'px'
                           : window.innerHeight - 700 + 'px',
                     }}
                   >
-                    {biomarkers.map((b, index) => (
-                      <BiomarkerRow
-                        key={b.biomarker_id}
-                        refRenceEl={(el: any) => (rowRefs.current[index] = el)}
-                        isHaveError={rowErrors[index]}
-                        errorText={rowErrors[index]}
-                        biomarker={b}
-                        index={index}
-                        showOnlyErrors={showOnlyErrors}
-                        allAvilableBiomarkers={avalibaleBiomarkers}
-                        handleConfirmDelete={() => {
-                          handleConfirm(index);
-                        }}
-                        renderValueField={renderValueField}
-                        updateAndStandardize={updateAndStandardize}
-                      />
-                    ))}
+                    {biomarkers.map((b, index) => {
+                      const rowSuggestions =
+                        suggestions[b.original_biomarker_name || b.biomarker || ''];
+                      return (
+                        <BiomarkerRow
+                          key={b.biomarker_id}
+                          refRenceEl={(el: any) => (rowRefs.current[index] = el)}
+                          isHaveError={rowErrors[index]}
+                          errorText={rowErrors[index]}
+                          biomarker={b}
+                          index={index}
+                          showOnlyErrors={showOnlyErrors}
+                          allAvilableBiomarkers={avalibaleBiomarkers}
+                          handleConfirmDelete={() => {
+                            handleConfirm(index);
+                          }}
+                          renderValueField={renderValueField}
+                          updateAndStandardize={updateAndStandardize}
+                          suggestionMatches={rowSuggestions?.matches || []}
+                          onCreateNewBiomarker={() => {
+                            setCreateBiomarkerFor({
+                              biomarkerId: b.biomarker_id,
+                              extractedName: b.original_biomarker_name || b.biomarker || '',
+                              extractedValue: String(b.original_value || b.value || ''),
+                              extractedUnit: b.original_unit || b.unit || '',
+                              suggestionMatches: rowSuggestions?.matches || [],
+                            });
+                          }}
+                          onCreateNewUnit={() => {
+                            setCreateUnitFor({
+                              biomarkerId: b.biomarker_id,
+                              biomarkerName: b.biomarker || b.original_biomarker_name || '',
+                              extractedUnit: b.original_unit || '',
+                              extractedValue: String(b.original_value || b.value || ''),
+                              systemUnit: b.unit || '',
+                              suggestionMatches: rowSuggestions?.matches || [],
+                            });
+                          }}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -671,6 +742,56 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           </div>
         )}
       </div>
+
+      {/* Create New Biomarker Modal */}
+      {createBiomarkerFor && (
+        <CreateBiomarkerModal
+          extractedName={createBiomarkerFor.extractedName}
+          extractedValue={createBiomarkerFor.extractedValue}
+          extractedUnit={createBiomarkerFor.extractedUnit}
+          suggestions={createBiomarkerFor.suggestionMatches}
+          onClose={() => setCreateBiomarkerFor(null)}
+          onCreated={(newName) => {
+            // Refresh the available biomarkers list
+            Application.getBiomarkerName({})
+              .then((res: any) => {
+                const sorted = [...res.data.biomarkers_list].sort((a: any, b: any) =>
+                  a.localeCompare(b),
+                );
+                setAvalibaleBiomarkers(sorted);
+              })
+              .catch(() => {});
+            // Auto-select the new biomarker on the triggering row
+            if (createBiomarkerFor.biomarkerId) {
+              updateAndStandardize(createBiomarkerFor.biomarkerId, {
+                biomarker: newName,
+              });
+            }
+            setCreateBiomarkerFor(null);
+          }}
+        />
+      )}
+
+      {/* Create New Unit Modal */}
+      {createUnitFor && (
+        <CreateUnitModal
+          biomarkerName={createUnitFor.biomarkerName}
+          extractedUnit={createUnitFor.extractedUnit}
+          extractedValue={createUnitFor.extractedValue}
+          systemUnit={createUnitFor.systemUnit}
+          suggestions={createUnitFor.suggestionMatches}
+          onClose={() => setCreateUnitFor(null)}
+          onCreated={(newUnit) => {
+            // Auto-select the new unit on the triggering row
+            if (createUnitFor.biomarkerId) {
+              updateAndStandardize(createUnitFor.biomarkerId, {
+                original_unit: newUnit,
+              });
+            }
+            setCreateUnitFor(null);
+          }}
+        />
+      )}
     </>
   );
 };

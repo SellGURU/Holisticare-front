@@ -5,12 +5,14 @@ interface FileBoxProps {
   el: any;
   onDelete?: () => void;
   onClose: () => void;
+  onDownload?: () => void;
 }
 
 const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
   el,
   onDelete,
   onClose,
+  onDownload,
 }) => {
   //   const formatDate = (dateString: string) => {
   //     const date = new Date(dateString);
@@ -50,9 +52,14 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
         return '/images/Pdf.png';
       case 'doc':
       case 'docx':
-        return '/icons/docx.png'; // <-- make sure you have this file in /public/images/
+        return '/icons/docx.png';
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+      case 'webp':
+        return '/icons/document-upload-new.svg';
       default:
-        return '/images/Pdf.png'; // fallback icon
+        return '/icons/document-upload-new.svg';
     }
   };
 
@@ -73,7 +80,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
                 src={fileIcon}
                 alt=""
               />
-              <div>
+              <div onClick={onDownload ? onDownload : undefined} className={onDownload ? "cursor-pointer" : ""}>
                 <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
                   <TooltipTextAuto maxWidth="400px">
                     {el.file_name || el.file.name}
@@ -81,7 +88,7 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
                 </div>
                 <div className="flex items-center gap-3">
                   <div className=" text-[10px] md:text-[12px] text-Text-Secondary">
-                    {(el.file.size / 1024).toFixed(2)} KB
+                    {el.file.size > 0 ? `${(el.file.size / 1024).toFixed(2)} KB` : 'Uploaded'}
                   </div>
                   {el.warning && (
                     <div className="text-[10px] md:text-[12px] text-Text-Quadruple flex items-center gap-1">
@@ -96,12 +103,14 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
                 </div>
               </div>
             </div>
-            <img
-              onClick={onDelete}
-              className="cursor-pointer w-6 h-6"
-              src="/icons/delete.svg"
-              alt=""
-            />
+            {onDelete && (
+              <img
+                onClick={onDelete}
+                className="cursor-pointer w-6 h-6"
+                src="/icons/delete.svg"
+                alt=""
+              />
+            )}
           </div>
         ) : (
           <>

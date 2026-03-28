@@ -1,23 +1,18 @@
-import { FC, useEffect } from 'react';
-import {
-  useForm,
-  useFieldArray,
-  SubmitHandler,
-  Controller,
-} from 'react-hook-form';
-import SpinnerLoader from '../../Components/SpinnerLoader'; // Adjust path as needed
-import ThresholdRangesEditor from './ThresholdRangesEditor'; // Adjust path as needed
-import TextField from '../../Components/TextField'; // Import TextField
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FC, useEffect, useState, useCallback } from 'react';
+import SpinnerLoader from '../../Components/SpinnerLoader';
+import { ApiBiomarkerData } from '../../types/biormarker';
 
-// Import types from the shared file
-import {
-  ApiBiomarkerData,
-  FormBiomarkerData,
-  ApiThresholdRange,
-} from '../../types/biormarker'; // Adjust path as needed
+const ALLOWED_STATUSES = [
+  { value: 'OptimalRange', label: 'Optimal Range', color: '#22C55E' },
+  { value: 'HealthyRange', label: 'Healthy Range', color: '#86EFAC' },
+  { value: 'BorderlineRange', label: 'Borderline Range', color: '#FDE68A' },
+  { value: 'DiseaseRange', label: 'Disease Range', color: '#F97316' },
+  { value: 'CriticalRange', label: 'Critical Range', color: '#EF4444' },
+];
 
 interface EditModalProps {
-  data: ApiBiomarkerData; // Data is expected to be complete for editing
+  data: ApiBiomarkerData;
   onCancel: () => void;
   onSave: (values: ApiBiomarkerData) => void;
   loading: boolean;
@@ -33,413 +28,382 @@ const EditModal: FC<EditModalProps> = ({
   errorDetails,
   setErrorDetails,
 }) => {
-  console.log(data);
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<FormBiomarkerData>({
-    defaultValues: {
-      'Benchmark areas': data['Benchmark areas'] || '',
-      Biomarker: data.Biomarker || '',
-      Definition: data.Definition || '',
-      unit: data.unit || '',
-      thresholds: {
-        male: Object.entries(data.thresholds?.male || {}).map(
-          ([ageRange, ranges]) => ({
-            ageRange,
-            ranges: (Array.isArray(ranges)
-              ? ranges
-              : []) as ApiThresholdRange[],
-          }),
-        ),
-        female: Object.entries(data.thresholds?.female || {}).map(
-          ([ageRange, ranges]) => ({
-            ageRange,
-            ranges: (Array.isArray(ranges)
-              ? ranges
-              : []) as ApiThresholdRange[],
-          }),
-        ),
-      },
-    } as FormBiomarkerData, // Explicitly cast for type safety
-  });
+  const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
+  const [draft, setDraft] = useState<any>({ ...data });
+  const [jsonText, setJsonText] = useState('');
+  const [jsonError, setJsonError] = useState('');
 
   useEffect(() => {
-    reset({
-      'Benchmark areas': data['Benchmark areas'] || '',
-      Biomarker: data.Biomarker || '',
-      Definition: data.Definition || '',
-      unit: data.unit || '',
-      thresholds: {
-        male: Object.entries(data.thresholds?.male || {}).map(
-          ([ageRange, ranges]) => ({
-            ageRange,
-            ranges: (Array.isArray(ranges)
-              ? ranges
-              : []) as ApiThresholdRange[],
-          }),
-        ),
-        female: Object.entries(data.thresholds?.female || {}).map(
-          ([ageRange, ranges]) => ({
-            ageRange,
-            ranges: (Array.isArray(ranges)
-              ? ranges
-              : []) as ApiThresholdRange[],
-          }),
-        ),
-      },
-    } as FormBiomarkerData);
-  }, [data, reset]);
+    setDraft({ ...data });
+    setJsonText(JSON.stringify(data, null, 2));
+  }, [data]);
 
-  const {
-    fields: maleAgeRangeFields,
-    append: appendMaleAgeRange,
-    remove: removeMaleAgeRange,
-  } = useFieldArray({
-    control,
-    name: 'thresholds.male',
-  });
+  const updateDraft = (field: string, value: any) => {
+    const updated = { ...draft, [field]: value };
+    setDraft(updated);
+    setJsonText(JSON.stringify(updated, null, 2));
+  };
 
-  const {
-    fields: femaleAgeRangeFields,
-    append: appendFemaleAgeRange,
-    remove: removeFemaleAgeRange,
-  } = useFieldArray({
-    control,
-    name: 'thresholds.female',
-  });
+  const handleJsonChange = (text: string) => {
+    setJsonText(text);
+    setJsonError('');
+    try {
+      const parsed = JSON.parse(text);
+      setDraft(parsed);
+    } catch {
+      setJsonError('Invalid JSON');
+    }
+  };
 
-  const onSubmit: SubmitHandler<FormBiomarkerData> = (formValues) => {
+  const updateThresholdRange = useCallback(
+    (gender: 'male' | 'female', ageKey: string, rangeIdx: number, field: string, value: any) => {
+      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
+      const genderData = { ...(thresholds[gender] || {}) };
+      const ranges = [...(genderData[ageKey] || [])];
+      ranges[rangeIdx] = { ...ranges[rangeIdx], [field]: value };
+      genderData[ageKey] = ranges;
+      thresholds[gender] = genderData;
+      updateDraft('thresholds', thresholds);
+    },
+    [draft],
+  );
+
+  const addThresholdRange = useCallback(
+    (gender: 'male' | 'female', ageKey: string) => {
+      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
+      const genderData = { ...(thresholds[gender] || {}) };
+      const ranges = [...(genderData[ageKey] || [])];
+      ranges.push({ label: '', status: 'OptimalRange', low: null, high: null, color: '#22C55E' });
+      genderData[ageKey] = ranges;
+      thresholds[gender] = genderData;
+      updateDraft('thresholds', thresholds);
+    },
+    [draft],
+  );
+
+  const removeThresholdRange = useCallback(
+    (gender: 'male' | 'female', ageKey: string, rangeIdx: number) => {
+      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
+      const genderData = { ...(thresholds[gender] || {}) };
+      const ranges = [...(genderData[ageKey] || [])];
+      ranges.splice(rangeIdx, 1);
+      genderData[ageKey] = ranges;
+      thresholds[gender] = genderData;
+      updateDraft('thresholds', thresholds);
+    },
+    [draft],
+  );
+
+  const addAgeGroup = useCallback(
+    (gender: 'male' | 'female') => {
+      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
+      const genderData = { ...(thresholds[gender] || {}) };
+      const existingKeys = Object.keys(genderData);
+      const newKey = existingKeys.length === 0 ? '18-100' : '';
+      genderData[newKey] = [
+        { label: 'Critical Low', status: 'CriticalRange', low: null, high: null, color: '#EF4444' },
+        { label: 'Optimal', status: 'OptimalRange', low: null, high: null, color: '#22C55E' },
+        { label: 'Critical High', status: 'CriticalRange', low: null, high: null, color: '#EF4444' },
+      ];
+      thresholds[gender] = genderData;
+      updateDraft('thresholds', thresholds);
+    },
+    [draft],
+  );
+
+  const removeAgeGroup = useCallback(
+    (gender: 'male' | 'female', ageKey: string) => {
+      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
+      const genderData = { ...(thresholds[gender] || {}) };
+      delete genderData[ageKey];
+      thresholds[gender] = genderData;
+      updateDraft('thresholds', thresholds);
+    },
+    [draft],
+  );
+
+  const renameAgeGroup = useCallback(
+    (gender: 'male' | 'female', oldKey: string, newKey: string) => {
+      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
+      const genderData = { ...(thresholds[gender] || {}) };
+      const ranges = genderData[oldKey];
+      delete genderData[oldKey];
+      genderData[newKey] = ranges;
+      thresholds[gender] = genderData;
+      updateDraft('thresholds', thresholds);
+    },
+    [draft],
+  );
+
+  const handleSave = () => {
     setErrorDetails('');
+    if (!draft.Biomarker?.trim()) {
+      setErrorDetails('Biomarker name is required.');
+      return;
+    }
+    if (!draft['Benchmark areas']?.trim()) {
+      setErrorDetails('Benchmark area is required.');
+      return;
+    }
+    if (viewMode === 'json' && jsonError) {
+      setErrorDetails('Please fix the JSON errors before saving.');
+      return;
+    }
+    onSave(draft);
+  };
 
-    const transformedValues: ApiBiomarkerData = {
-      'Benchmark areas': formValues['Benchmark areas'],
-      Biomarker: formValues.Biomarker,
-      Definition: formValues.Definition || undefined,
-      unit: formValues.unit || undefined,
-      thresholds: formValues.thresholds
-        ? {
-            male:
-              formValues.thresholds.male?.reduce(
-                (acc, current) => {
-                  if (current.ageRange) {
-                    acc[current.ageRange] =
-                      current.ranges as ApiThresholdRange[];
-                  }
-                  return acc;
-                },
-                {} as Record<string, ApiThresholdRange[]>,
-              ) || undefined,
-            female:
-              formValues.thresholds.female?.reduce(
-                (acc, current) => {
-                  if (current.ageRange) {
-                    acc[current.ageRange] =
-                      current.ranges as ApiThresholdRange[];
-                  }
-                  return acc;
-                },
-                {} as Record<string, ApiThresholdRange[]>,
-              ) || undefined,
-          }
-        : undefined,
-    };
-
-    onSave(transformedValues);
+  const renderThresholdGender = (gender: 'male' | 'female') => {
+    const genderData = draft.thresholds?.[gender] || {};
+    const ageKeys = Object.keys(genderData);
+    return (
+      <div className="mb-3 border border-Gray-50 rounded-xl p-3">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[11px] font-semibold text-Text-Primary capitalize">
+            {gender} Thresholds
+          </span>
+          <button
+            type="button"
+            className="text-[9px] text-Primary-DeepTeal hover:underline font-medium"
+            onClick={() => addAgeGroup(gender)}
+          >
+            + Add {gender} Age Group
+          </button>
+        </div>
+        {ageKeys.length === 0 && (
+          <div className="text-[9px] text-Text-Secondary italic py-2 text-center">
+            No age groups defined.
+          </div>
+        )}
+        {ageKeys.map((ageKey) => {
+          const ranges = genderData[ageKey];
+          if (!Array.isArray(ranges)) return null;
+          return (
+            <div key={ageKey} className="mb-3 bg-gray-50 rounded-lg p-2">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[9px] text-Text-Secondary shrink-0">Age Range:</span>
+                <input
+                  type="text"
+                  value={ageKey}
+                  onChange={(e) => renameAgeGroup(gender, ageKey, e.target.value)}
+                  placeholder="e.g. 18-100"
+                  className="w-[80px] border border-Gray-50 rounded-lg px-1.5 py-0.5 text-[10px] outline-none focus:border-Primary-DeepTeal bg-white"
+                />
+                <button
+                  type="button"
+                  className="text-red-400 hover:text-red-600 text-[9px] ml-auto shrink-0"
+                  onClick={() => removeAgeGroup(gender, ageKey)}
+                >
+                  Remove Age Group
+                </button>
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5 text-[9px] text-Text-Secondary mb-0.5 px-0.5">
+                  <span className="w-4" />
+                  <span className="w-[80px]">Label</span>
+                  <span className="w-[110px]">Status</span>
+                  <span className="w-[55px] text-center">Low</span>
+                  <span className="w-[55px] text-center">High</span>
+                  <span className="w-4" />
+                </div>
+                {ranges.map((range: any, rIdx: number) => {
+                  const statusInfo = ALLOWED_STATUSES.find((s) => s.value === range.status);
+                  return (
+                    <div key={rIdx} className="flex items-center gap-1.5 text-[10px]">
+                      <div
+                        className="w-4 h-4 rounded-full shrink-0 border border-gray-200"
+                        style={{ backgroundColor: statusInfo?.color || range.color || '#22C55E' }}
+                      />
+                      <input
+                        type="text"
+                        value={range.label || ''}
+                        onChange={(e) => updateThresholdRange(gender, ageKey, rIdx, 'label', e.target.value)}
+                        placeholder="e.g. Optimal"
+                        className="w-[80px] border border-Gray-50 rounded-lg px-1.5 py-0.5 text-[10px] outline-none focus:border-Primary-DeepTeal bg-white"
+                      />
+                      <select
+                        value={range.status || ''}
+                        onChange={(e) => {
+                          const found = ALLOWED_STATUSES.find((s) => s.value === e.target.value);
+                          updateThresholdRange(gender, ageKey, rIdx, 'status', e.target.value);
+                          if (found) updateThresholdRange(gender, ageKey, rIdx, 'color', found.color);
+                        }}
+                        className="w-[110px] border border-Gray-50 rounded-lg px-1 py-0.5 text-[10px] outline-none focus:border-Primary-DeepTeal bg-white"
+                      >
+                        <option value="">— select —</option>
+                        {ALLOWED_STATUSES.map((s) => (
+                          <option key={s.value} value={s.value}>{s.label}</option>
+                        ))}
+                      </select>
+                      <input
+                        type="number"
+                        step="any"
+                        value={range.low ?? ''}
+                        onChange={(e) => updateThresholdRange(gender, ageKey, rIdx, 'low', e.target.value === '' ? null : Number(e.target.value))}
+                        placeholder="null"
+                        className="w-[55px] border border-Gray-50 rounded-lg px-1.5 py-0.5 text-[10px] outline-none text-center focus:border-Primary-DeepTeal bg-white"
+                      />
+                      <input
+                        type="number"
+                        step="any"
+                        value={range.high ?? ''}
+                        onChange={(e) => updateThresholdRange(gender, ageKey, rIdx, 'high', e.target.value === '' ? null : Number(e.target.value))}
+                        placeholder="null"
+                        className="w-[55px] border border-Gray-50 rounded-lg px-1.5 py-0.5 text-[10px] outline-none text-center focus:border-Primary-DeepTeal bg-white"
+                      />
+                      <button
+                        type="button"
+                        className="text-red-400 hover:text-red-600 text-[12px] leading-none ml-0.5"
+                        onClick={() => removeThresholdRange(gender, ageKey, rIdx)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  );
+                })}
+                <button
+                  type="button"
+                  className="text-[9px] text-Primary-DeepTeal hover:underline mt-0.5 ml-5"
+                  onClick={() => addThresholdRange(gender, ageKey)}
+                >
+                  + Add range
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
-    <div className=" w-[90vw] md:w-[644px] p-2 md:p-4 max-w-[644px] relative bg-white min-h-[500px] h-[60%] rounded-[16px]">
-      {errorDetails && (
-        <div className="absolute top-2 right-2 z-10 flex max-w-[493px] items-start rounded-2xl bg-[#F9DEDC] pb-3 pt-2 px-4">
-          <img
-            src="/icons/info-circle-orange.svg"
-            alt=""
-            className="w-4 h-4 mt-[3px]"
-          />
-          <div className="text-Text-Primary text-[10px] leading-5 px-2 text-wrap">
-            {errorDetails}
+    <div className="w-[90vw] md:w-[620px] max-w-[620px] max-h-[85vh] relative bg-white rounded-[16px] flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-Gray-50">
+        <div>
+          <div className="TextStyle-Headline-5 text-Text-Primary">Edit Biomarker</div>
+          <div className="text-[10px] text-Text-Secondary mt-0.5">
+            {draft.Biomarker} · {draft.unit || 'No unit'}
           </div>
-          <img
-            src="/icons/close-black.svg"
-            alt=""
-            className="cursor-pointer w-5 h-5"
-            onClick={() => setErrorDetails('')}
-          />
         </div>
-      )}
-      <div className="mb-4">
-        <div className=" text-Text-Primary TextStyle-Headline-5">
-          Edit Biomarker
-        </div>{' '}
-        {/* Changed Title */}
-        <div className="w-full h-1 border-b-2 mt-2 border-gray-50"></div>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className={`text-[11px] px-3 py-1 rounded-full border transition-colors ${
+              viewMode === 'form'
+                ? 'bg-Primary-DeepTeal text-white border-Primary-DeepTeal'
+                : 'bg-white text-Text-Secondary border-Gray-50 hover:border-Primary-DeepTeal'
+            }`}
+            onClick={() => setViewMode('form')}
+          >
+            Form
+          </button>
+          <button
+            type="button"
+            className={`text-[11px] px-3 py-1 rounded-full border transition-colors ${
+              viewMode === 'json'
+                ? 'bg-Primary-DeepTeal text-white border-Primary-DeepTeal'
+                : 'bg-white text-Text-Secondary border-Gray-50 hover:border-Primary-DeepTeal'
+            }`}
+            onClick={() => {
+              setJsonText(JSON.stringify(draft, null, 2));
+              setViewMode('json');
+            }}
+          >
+            Raw JSON
+          </button>
+        </div>
       </div>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="h-[400px] overflow-y-auto pr-2"
-      >
-        {/* Basic Biomarker Details */}
-        <div className="mb-4">
-          <label
-            htmlFor="benchmarkArea"
-            className="block text-xs font-medium text-gray-700"
-          >
-            Benchmark Area
-          </label>
-          <Controller
-            control={control}
-            name="Benchmark areas"
-            rules={{ required: 'Benchmark area is required' }}
-            render={({ field, fieldState: { error } }) => (
-              <TextField
-                {...field}
-                id="benchmarkArea"
-                type="text"
-                newStyle
-                placeholder="Enter benchmark area"
-                inValid={!!error}
-                errorMessage={error?.message}
-              />
-            )}
-          />
+      {/* Error banner */}
+      {errorDetails && (
+        <div className="mx-6 mt-3 bg-[#F9DEDC] rounded-xl px-4 py-2 text-[10px] text-Text-Primary flex items-start gap-2">
+          <img src="/icons/info-circle-orange.svg" alt="" className="w-4 h-4 mt-0.5 shrink-0" />
+          <span className="flex-1">{errorDetails}</span>
+          <img src="/icons/close-black.svg" alt="" className="cursor-pointer w-4 h-4" onClick={() => setErrorDetails('')} />
         </div>
+      )}
 
-        <div className="mb-4">
-          <label
-            htmlFor="biomarkerName"
-            className="block text-xs font-medium text-gray-700"
-          >
-            Biomarker Name
-          </label>
-          <Controller
-            control={control}
-            name="Biomarker"
-            rules={{ required: 'Biomarker name is required' }}
-            render={({ field, fieldState: { error } }) => (
-              <TextField
-                {...field}
-                id="biomarkerName"
+      {/* Body */}
+      <div className="overflow-y-auto flex-1 px-6 py-4 space-y-4">
+        {viewMode === 'form' ? (
+          <>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Benchmark Area <span className="text-red-500">*</span></label>
+              <input
                 type="text"
-                newStyle
-                placeholder="Enter biomarker name"
-                inValid={!!error}
-                errorMessage={error?.message}
-                disabled={true} // Set to disabled as per original behavior
+                value={draft['Benchmark areas'] || ''}
+                onChange={(e) => updateDraft('Benchmark areas', e.target.value)}
+                placeholder="e.g. Vitamins"
+                className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none focus:border-Primary-DeepTeal"
               />
-            )}
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="definition"
-            className="block text-xs font-medium text-gray-700"
-          >
-            Definition
-          </label>
-          <Controller
-            control={control}
-            name="Definition"
-            render={({ field }) => (
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Biomarker Name <span className="text-red-500">*</span></label>
+              <input
+                type="text"
+                value={draft.Biomarker || ''}
+                onChange={(e) => updateDraft('Biomarker', e.target.value)}
+                disabled
+                className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none bg-gray-50 text-Text-Secondary"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Unit</label>
+              <input
+                type="text"
+                value={draft.unit || ''}
+                onChange={(e) => updateDraft('unit', e.target.value)}
+                placeholder="e.g. mmol/L"
+                className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none focus:border-Primary-DeepTeal"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Definition</label>
               <textarea
-                {...field}
-                value={field.value || ''}
-                id="definition"
-                placeholder="Enter definition"
-                className=" bg-[#FDFDFD] border border-Gray-50 w-full pt-2 min-h-[80px] resize-none rounded-[16px] mt-1 placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none"
-              />
-            )}
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="unit"
-            className="block text-xs font-medium text-gray-700"
-          >
-            Unit
-          </label>
-          <Controller
-            control={control}
-            name="unit"
-            render={({ field }) => (
-              <TextField
-                {...field}
-                id="unit"
-                type="text"
-                newStyle
-                placeholder="Enter unit"
-                value={field.value || ''}
-              />
-            )}
-          />
-        </div>
-
-        {/* Thresholds Section */}
-        <h3 className="text-xs font-medium text-gray-900 mb-4 border-b pb-2">
-          Thresholds
-        </h3>
-
-        {/* Male Thresholds */}
-        <div className="mb-6 border p-2 md:p-4 rounded-md bg-gray-50">
-          <h4 className="text-xs font-semibold text-gray-800 mb-3">
-            Male Thresholds
-          </h4>
-          {maleAgeRangeFields.map((field, ageRangeIndex) => (
-            <div
-              key={field.id}
-              className="border p-2 md:p-4 mb-3 rounded-md bg-white relative"
-            >
-              <button
-                type="button"
-                onClick={() => removeMaleAgeRange(ageRangeIndex)}
-                className="absolute top-3 right-3 md:top-4 md:right-4 text-red-500 hover:text-red-700 text-[10px] md:text-xs"
-              >
-                Remove Age Group
-              </button>
-              <div className="mb-3">
-                <label
-                  htmlFor={`maleAgeRange-${ageRangeIndex}`}
-                  className="block text-[10px] md:text-xs font-medium text-gray-700"
-                >
-                  Age Range (e.g., 18-100)
-                </label>
-                <Controller
-                  control={control}
-                  name={`thresholds.male.${ageRangeIndex}.ageRange`}
-                  rules={{ required: 'Age range is required' }}
-                  render={({ field, fieldState: { error } }) => (
-                    <TextField
-                      {...field}
-                      id={`maleAgeRange-${ageRangeIndex}`}
-                      type="text"
-                      newStyle
-                      placeholder="e.g., 18-40"
-                      inValid={!!error}
-                      errorMessage={error?.message}
-                    />
-                  )}
-                />
-              </div>
-
-              <h5 className="text-xs font-medium text-gray-700 mb-2">
-                Ranges for this Age Group:
-              </h5>
-              <ThresholdRangesEditor
-                nestIndex={ageRangeIndex}
-                gender="male"
-                control={control}
-                errors={errors}
+                value={draft.Definition || ''}
+                onChange={(e) => updateDraft('Definition', e.target.value)}
+                placeholder="Clinical description"
+                rows={3}
+                className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none resize-none focus:border-Primary-DeepTeal"
               />
             </div>
-          ))}
-          <button
-            type="button"
-            onClick={() =>
-              appendMaleAgeRange({
-                ageRange: '',
-                ranges: [
-                  { label: '', status: '', low: null, high: null, color: '' },
-                ],
-              })
-            }
-            className="mt-2 text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-3 py-1 rounded-md text-xs"
-          >
-            Add Male Age Group
-          </button>
-        </div>
-
-        {/* Female Thresholds */}
-        <div className="mb-6 borde p-2 md:p-4 rounded-md bg-gray-50">
-          <h4 className="text-xs font-semibold text-gray-800 mb-3">
-            Female Thresholds
-          </h4>
-          {femaleAgeRangeFields.map((field, ageRangeIndex) => (
-            <div
-              key={field.id}
-              className="border p-4 mb-3 rounded-md bg-white relative"
-            >
-              <button
-                type="button"
-                onClick={() => removeFemaleAgeRange(ageRangeIndex)}
-                className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-[10px] md:text-xs"
-              >
-                Remove Age Group
-              </button>
-              <div className="mb-3 mt-4 md:mt-0">
-                <label
-                  htmlFor={`femaleAgeRange-${ageRangeIndex}`}
-                  className="block text-xs font-medium text-gray-700"
-                >
-                  Age Range (e.g., 18-100)
-                </label>
-                <Controller
-                  control={control}
-                  name={`thresholds.female.${ageRangeIndex}.ageRange`}
-                  rules={{ required: 'Age range is required' }}
-                  render={({ field, fieldState: { error } }) => (
-                    <TextField
-                      {...field}
-                      id={`femaleAgeRange-${ageRangeIndex}`}
-                      type="text"
-                      newStyle
-                      placeholder="e.g., 18-40"
-                      inValid={!!error}
-                      errorMessage={error?.message}
-                    />
-                  )}
-                />
-              </div>
-
-              <h5 className="text-xs font-medium text-gray-700 mb-2">
-                Ranges for this Age Group:
-              </h5>
-              <ThresholdRangesEditor
-                nestIndex={ageRangeIndex}
-                gender="female"
-                control={control}
-                errors={errors}
-              />
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-2">Thresholds (Reference Ranges)</label>
+              {renderThresholdGender('male')}
+              {renderThresholdGender('female')}
             </div>
-          ))}
-          <button
-            type="button"
-            onClick={() =>
-              appendFemaleAgeRange({
-                ageRange: '',
-                ranges: [
-                  { label: '', status: '', low: null, high: null, color: '' },
-                ],
-              })
-            }
-            className="mt-2 text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-3 py-1 rounded-md text-sm"
-          >
-            Add Female Age Group
-          </button>
-        </div>
+          </>
+        ) : (
+          <>
+            <div className="text-[10px] text-Text-Secondary mb-1">
+              Edit the full JSON definition directly.
+            </div>
+            <textarea
+              value={jsonText}
+              onChange={(e) => handleJsonChange(e.target.value)}
+              rows={18}
+              spellCheck={false}
+              className={`w-full font-mono text-[11px] border rounded-xl px-3 py-2 outline-none resize-none ${
+                jsonError ? 'border-red-400 bg-red-50' : 'border-Gray-50 focus:border-Primary-DeepTeal'
+              }`}
+            />
+            {jsonError && <div className="text-[10px] text-red-500">{jsonError}</div>}
+          </>
+        )}
+      </div>
 
-        {/* Buttons */}
-        <div className=" w-full flex justify-end gap-4 items-center absolute bottom-4 right-4 ">
-          <div
-            onClick={onCancel}
-            className="TextStyle-Headline-5 cursor-pointer text-Disable"
-          >
-            Cancel
-          </div>
-          <button
-            type="submit"
-            className="TextStyle-Headline-5 cursor-pointer text-Primary-DeepTeal"
-            disabled={loading}
-          >
-            {loading ? <SpinnerLoader color="#005F73" /> : 'Save'}
-          </button>
-        </div>
-      </form>
+      {/* Footer */}
+      <div className="px-6 py-4 border-t border-Gray-50 flex items-center justify-end gap-4">
+        <div onClick={onCancel} className="TextStyle-Headline-5 cursor-pointer text-Disable">Cancel</div>
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={loading}
+          className="TextStyle-Headline-5 cursor-pointer text-Primary-DeepTeal disabled:opacity-50"
+        >
+          {loading ? <SpinnerLoader color="#005F73" /> : 'Save'}
+        </button>
+      </div>
     </div>
   );
 };

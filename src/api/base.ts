@@ -1,19 +1,15 @@
 /* eslint-disable prefer-const */
 const baseProductEndPoint =
   'https://vercel-backend-one-roan.vercel.app/holisticare';
-const baseTestEndPoint =
-  'https://vercel-backend-one-roan.vercel.app/holisticare_test';
-
-const baseLocalEndpoint = 'http://127.0.0.1:8000';
-
+/*const baseTestEndPoint =
+  'https://vercel-backend-one-roan.vercel.app/holisticare_test';*/
 const baseProductUrl = 'https://holisticare.vercel.app';
-const baseTestUrl = 'https://holisticare-develop.vercel.app';
-let env: 'test' | 'production' | 'local' = 'production';
+const baseTestUrl = 'http://20.254.199.21:3901';
+const baseTestEndPoint = 'http://20.254.199.21:3901';
+
+let env: 'test' | 'production' = 'test';
 
 const resolveBaseEndPoint = () => {
-  if (env == 'local') {
-    return baseLocalEndpoint;
-  }
   if (env == 'test') {
     return baseTestEndPoint;
   }

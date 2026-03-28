@@ -1150,6 +1150,15 @@ class Application extends Api {
   static remove_mapping = (data: any) => {
     return this.post('/remove_clinic_biomarker_mapping', data);
   };
+  static suggestBiomarkerMappings = (data: any) => {
+    return this.post('/patients/suggest_biomarker_mappings', data);
+  };
+  static prefillBiomarkerDraft = (data: any) => {
+    return this.post('/patients/prefill_biomarker_draft', data);
+  };
+  static addBiomarkerUnit = (data: any) => {
+    return this.post('/clinic/add_biomarker_unit', data);
+  };
   static checkRefreshProgress = (member_id: string) => {
     return this.post(`/patients/check_refresh_progress`, {
       member_id: member_id,

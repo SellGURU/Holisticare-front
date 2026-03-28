@@ -13,6 +13,22 @@ class BiomarkersApi extends Api {
   static addBiomarkersList = (data: any) => {
     return this.post('/custom_biomarker/add_biomarker', data);
   };
+
+  static getUnitMapping = () => {
+    return this.post('/custom_biomarker/unit_mapping', {});
+  };
+
+  static updateUnitMapping = (data: any) => {
+    return this.post('/custom_biomarker/update_unit_mapping', data);
+  };
+
+  static getBiomarkerMapping = () => {
+    return this.post('/custom_biomarker/biomarker_mapping', {});
+  };
+
+  static updateBiomarkerMapping = (data: any) => {
+    return this.post('/custom_biomarker/update_biomarker_mapping', data);
+  };
 }
 
 export default BiomarkersApi;

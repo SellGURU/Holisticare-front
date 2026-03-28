@@ -110,9 +110,9 @@ const ActionSection: FC<ActionSectionProps> = ({
     onDelete();
   };
   return (
-    <div className="w-[16%]">
+    <div className="w-[80px]">
       <div
-        className={`flex justify-end gap-2 items-center ${
+        className={`flex justify-center flex-wrap sm:flex-nowrap gap-[4px] xs:gap-1 items-center ${
           isDeleted ? 'opacity-50' : ''
         }`}
       >
@@ -142,7 +142,7 @@ const ActionSection: FC<ActionSectionProps> = ({
                 <BeatLoader color="#6CC24A" size={10} />
               </div>
             ) : (
-              <div className="flex items-center justify-start gap-1 confirm-animation">
+              <div className="flex items-center justify-center flex-wrap sm:flex-nowrap gap-[4px] xs:gap-1 confirm-animation">
                 {/* Download */}
                 <img
                   onClick={() => {
@@ -150,9 +150,9 @@ const ActionSection: FC<ActionSectionProps> = ({
                       downloadFile();
                     }
                   }}
-                  className="cursor-pointer"
+                  className="cursor-pointer w-[18px] h-[18px] sm:w-5 sm:h-5"
                   src="/icons/import.svg"
-                  alt=""
+                  alt="Download"
                 />
                 {/* Edit */}
                 {file.file_id && file.process_done !== false && (
@@ -163,11 +163,12 @@ const ActionSection: FC<ActionSectionProps> = ({
                         publish('uploadTestShow', {
                           isShow: true,
                           file_id: file.file_id,
+                          file_name: file.file_name || file.name || 'Uploaded Document.pdf',
                         });
                       }
                     }}
-                    className="cursor-pointer w-5 h-5"
-                    src="/icons/edit.svg"
+                    className="cursor-pointer w-[18px] h-[18px] sm:w-5 sm:h-5"
+                    src="/icons/edit-2-green.svg"
                     alt="Edit"
                     title="Edit biomarkers"
                   />
@@ -180,8 +181,8 @@ const ActionSection: FC<ActionSectionProps> = ({
                     }
                   }}
                   src="/icons/delete-green.svg"
-                  alt=""
-                  className="cursor-pointer w-5 h-5"
+                  alt="Delete"
+                  className="cursor-pointer w-[18px] h-[18px] sm:w-5 sm:h-5"
                 />
               </div>
             )}

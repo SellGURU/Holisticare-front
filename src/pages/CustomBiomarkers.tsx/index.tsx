@@ -5,13 +5,11 @@ import Circleloader from '../../Components/CircleLoader';
 import SearchBox from '../../Components/SearchBox';
 import BioMarkerBox from './BiomarkerBox';
 
-// import mackData from './newMock.json';
 import { MainModal } from '../../Components';
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
 
 import DefaultData from './default.json';
-// import mockData from './mockData.json';
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
@@ -20,8 +18,6 @@ const CustomBiomarkers = () => {
   };
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  // const [isChanged, setIsChanged] = useState(false);
-  // const [showSuccess, setShowSuccess] = useState(false);
   const [activeAdd, setActiveAdd] = useState(false);
   const [loading, setLoading] = useState(false);
   const openModalAdd = () => setActiveAdd(true);
@@ -30,71 +26,84 @@ const CustomBiomarkers = () => {
     setErrorDetails('');
   };
   const [errorDetails, setErrorDetails] = useState<string>('');
+
+  // Mapping data loaded once at page level
+  const [unitMappingData, setUnitMappingData] = useState<any>(null);
+  const [unitMappings, setUnitMappings] = useState<any[]>([]);
+  const [biomarkerMappings, setBiomarkerMappings] = useState<any[]>([]);
+
   const getBiomarkers = () => {
     setIsLoading(true);
-    // setBiomarkers(mockData);
-    // setIsLoading(false);
     BiomarkersApi.getBiomarkersList()
       .then((res) => {
         setBiomarkers(res.data);
-        // setBiomarkers(mackData);
       })
       .catch((err) => {
         console.error('Error getting biomarkers:', err);
       })
       .finally(() => {
-        // setBiomarkers(mackData);
         setIsLoading(false);
       });
   };
+
+  const loadMappings = () => {
+    BiomarkersApi.getUnitMapping()
+      .then((res) => {
+        const d = res.data;
+        setUnitMappingData(d);
+        setUnitMappings(d?.biomarker_specific || []);
+      })
+      .catch(() => {});
+
+    BiomarkersApi.getBiomarkerMapping()
+      .then((res) => {
+        const data = res.data;
+        if (data?.mappings && Array.isArray(data.mappings)) {
+          setBiomarkerMappings(data.mappings);
+        } else if (Array.isArray(data)) {
+          setBiomarkerMappings(data);
+        }
+      })
+      .catch(() => {});
+  };
+
   useEffect(() => {
     getBiomarkers();
+    loadMappings();
   }, []);
-  // useEffect(() => {
-  //   if (biomarkers.length > 0 && isChanged) {
-  //     BiomarkersApi.saveBiomarkersList({
-  //       new_ranges: biomarkers,
-  //     }).then(() => {
-  //       if (isChanged) {
-  //         setShowSuccess(true);
-  //         setTimeout(() => {
-  //           setShowSuccess(false);
-  //         }, 3000);
-  //       }
-  //     });
-  //   }
-  // }, [biomarkers]);
+
+  // Save unit mappings back to server
+  const handleUnitMappingsChange = (entries: any[]) => {
+    setUnitMappings(entries);
+    const payload = { ...unitMappingData, biomarker_specific: entries };
+    setUnitMappingData(payload);
+    BiomarkersApi.updateUnitMapping(payload).catch(() => {});
+  };
+
+  // Save biomarker name mappings back to server
+  const handleBiomarkerMappingsChange = (entries: any[]) => {
+    setBiomarkerMappings(entries);
+    BiomarkersApi.updateBiomarkerMapping({ mappings: entries }).catch(() => {});
+  };
+
   const filteredBiomarkers = () => {
-    if (!searchValue.trim()) {
-      return biomarkers;
-    }
-
+    if (!searchValue.trim()) return biomarkers;
     const lowerSearch = searchValue.toLowerCase();
-
-    const results = biomarkers.filter(
+    return biomarkers.filter(
       (item) =>
         item['Benchmark areas'].toLowerCase().includes(lowerSearch) ||
         item['Biomarker'].toLowerCase().includes(lowerSearch),
     );
-
-    return results;
   };
 
   const resolveAllBenchmarks = () => {
-    return [
-      ...new Set(
-        filteredBiomarkers().map((el) => {
-          return el['Benchmark areas'];
-        }),
-      ),
-    ];
+    return [...new Set(filteredBiomarkers().map((el) => el['Benchmark areas']))];
   };
 
   const getFilteredBiomarkersForCategory = (benchmark: string) => {
     if (!searchValue.trim()) {
       return biomarkers.filter((item) => item['Benchmark areas'] === benchmark);
     }
-
     const lowerSearch = searchValue.toLowerCase();
     return biomarkers.filter(
       (item) =>
@@ -103,11 +112,10 @@ const CustomBiomarkers = () => {
           item['Biomarker'].toLowerCase().includes(lowerSearch)),
     );
   };
+
   const onsave = (values: any) => {
     setLoading(true);
-    BiomarkersApi.addBiomarkersList({
-      new_biomarker: values,
-    })
+    BiomarkersApi.addBiomarkersList({ new_biomarker: values })
       .then(() => {
         closeModalAdd();
         setBiomarkers((pre) => [...pre, values]);
@@ -119,6 +127,7 @@ const CustomBiomarkers = () => {
         setLoading(false);
       });
   };
+
   return (
     <>
       <div className="fixed w-full z-30 bg-bg-color px-2 md:px-6 pt-8 pb-2 md:pr-[200px]">
@@ -131,9 +140,7 @@ const CustomBiomarkers = () => {
               value={searchValue}
               ClassName="rounded-2xl !h-7 !py-[0px] !px-3 !shadow-[unset]"
               placeHolder="Search categories & biomarkers ..."
-              onSearch={(val) => {
-                setSearchValue(val);
-              }}
+              onSearch={(val) => setSearchValue(val)}
             />
             <ButtonSecondary
               ClassName="rounded-[20px] text-xs border border-white"
@@ -145,30 +152,20 @@ const CustomBiomarkers = () => {
           </div>
         </div>
       </div>
-      {/* {showSuccess && (
-        <div className="absolute right-12 top-[120px] w-[198px] h-[44px] rounded-xl border border-Gray-50 shadow-100 flex items-center justify-center bg-white gap-2 z-50">
-          <img src="/icons/tick-circle-large.svg" alt="" className="w-5 h-5" />
-          <div className="text-[10px] bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent">
-            Changes applied successfully.
-          </div>
-        </div>
-      )} */}
+
       {isLoading ? (
-        <>
-          <div className="w-full flex justify-center items-center min-h-[550px] px-6 py-[80px]">
-            <Circleloader></Circleloader>
-          </div>
-        </>
+        <div className="w-full flex justify-center items-center min-h-[550px] px-6 py-[80px]">
+          <Circleloader />
+        </div>
       ) : (
         <div className="w-full min-h-full px-2 md:px-6 py-[80px]">
           {resolveAllBenchmarks().map((benchmark) => {
-            const filteredBiomarkersForCategory =
-              getFilteredBiomarkersForCategory(benchmark);
+            const filteredBiomarkersForCategory = getFilteredBiomarkersForCategory(benchmark);
             return (
               <BioMarkerBox
+                key={benchmark}
                 biomarkers={filteredBiomarkersForCategory}
                 onSave={(values) => {
-                  // setIsChanged(true);
                   setBiomarkers((pre) => {
                     const resolved = pre.map((ol) => {
                       if (ol['Benchmark areas'] == values['Benchmark areas']) {
@@ -188,18 +185,18 @@ const CustomBiomarkers = () => {
                 biomarkersData={biomarkers}
                 changeBiomarkersValue={changeBiomarkersValue}
                 searchTerm={searchValue}
+                unitMappings={unitMappings}
+                biomarkerMappings={biomarkerMappings}
+                onUnitMappingsChange={handleUnitMappingsChange}
+                onBiomarkerMappingsChange={handleBiomarkerMappingsChange}
               />
             );
           })}
           {filteredBiomarkers().length == 0 && (
             <div className="h-full">
-              <div className="flex h-full  justify-center items-center   flex-col gap-2">
-                <img
-                  className="w-[220px]"
-                  src="/icons/empty-messages-coach.svg"
-                  alt=""
-                />
-                <div className="text-Text-Primary -mt-10  text-center text-base font-medium">
+              <div className="flex h-full justify-center items-center flex-col gap-2">
+                <img className="w-[220px]" src="/icons/empty-messages-coach.svg" alt="" />
+                <div className="text-Text-Primary -mt-10 text-center text-base font-medium">
                   No results found.
                 </div>
               </div>
@@ -207,26 +204,16 @@ const CustomBiomarkers = () => {
           )}
         </div>
       )}
-      <MainModal
-        isOpen={activeAdd}
-        onClose={() => {
-          closeModalAdd();
-        }}
-      >
-        <>
-          <AddModal
-            onCancel={() => {
-              closeModalAdd();
-            }}
-            onSave={(values: any) => {
-              onsave(values);
-            }}
-            data={DefaultData}
-            loading={loading}
-            errorDetails={errorDetails}
-            setErrorDetails={setErrorDetails}
-          />
-        </>
+
+      <MainModal isOpen={activeAdd} onClose={closeModalAdd}>
+        <AddModal
+          onCancel={closeModalAdd}
+          onSave={(values: any) => onsave(values)}
+          data={DefaultData}
+          loading={loading}
+          errorDetails={errorDetails}
+          setErrorDetails={setErrorDetails}
+        />
       </MainModal>
     </>
   );

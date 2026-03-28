@@ -12,7 +12,8 @@ interface FileUploaderSectionProps {
   formatFileSize: (bytes: number) => string;
   fileInputRef: any;
   onClose: () => void;
-  isScaling: boolean;
+  onDownload?: () => void;
+  isEditMode?: boolean;
 }
 
 const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
@@ -24,17 +25,54 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   formatFileSize,
   onClose,
   fileInputRef,
-  isScaling,
+  isEditMode,
+  onDownload,
 }) => {
+  if (uploadedFile) {
+    return (
+      <div className="w-full flex justify-center mb-2 mt-2">
+        <div className="w-full md:w-1/2">
+          <div className="text-xs font-medium text-Text-Primary mb-1">
+            Uploaded File
+          </div>
+          <FileBoxUploadingV2
+            onClose={onClose}
+            onDownload={onDownload}
+            onDelete={isEditMode ? undefined : () => handleDeleteFile(uploadedFile.file_id)}
+            el={{
+              ...uploadedFile,
+              uploadedSize: uploadedFile.uploadedSize || 0,
+              totalSize: uploadedFile?.file?.size,
+              progress: uploadedFile.progress || 0.5,
+              formattedSize: `${formatFileSize(
+                uploadedFile.uploadedSize || 0,
+              )} / ${formatFileSize(uploadedFile?.file?.size || 1)}`,
+            }}
+          />
+          {uploadedFile.progress >= 100 && (
+            <div className="flex items-start gap-1 text-xs text-Text-Primary text-justify mt-2">
+              <img
+                className="size-5 -mt-[2px]"
+                src="/icons/danger-fill.svg"
+                alt=""
+              />
+              The blood test information has been automatically extracted
+              from the uploaded file. Please review the data and
+              confirm its accuracy.
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
-      className={`flex flex-col md:flex-row   w-full justify-between rounded-2xl border p-2 md:p-4 bg-white shadow-200 border-Gray-50 gap-8 ${isScaling ? 'h-0 hidden p-0' : 'h-auto visible'} `}
+      className={`flex flex-col md:flex-row   w-full justify-between rounded-2xl border p-2 md:p-4 bg-white shadow-200 border-Gray-50 gap-8 h-auto visible `}
     >
       {/* Left side - Upload area */}
       <div
-        className={` text-xs md:text-sm w-full  font-medium text-Text-Primary ${
-          uploadedFile ? 'opacity-50 ' : ''
-        }`}
+        className={` text-xs md:text-sm w-full  font-medium text-Text-Primary`}
         data-tour="file-uploader"
       >
         File Uploader
@@ -44,7 +82,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
               document.getElementById('uploadFile')?.click();
             }
           }}
-          className={`mt-1 rounded-2xl h-[120px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${uploadedFile ? 'cursor-auto' : ' cursor-pointer'}`}
+          className={`mt-1 rounded-2xl h-[120px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center cursor-pointer`}
         >
           <div className="w-full flex justify-center">
             <img src="/icons/upload-test.svg" alt="" />
@@ -53,7 +91,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
             Drag and drop your test file here or click to upload.
           </div>
           <div className="text-[#888888] font-medium text-[10px] md:text-[12px] text-center">
-            {`Accepted formats: .pdf, .docx.`}
+            {`Accepted formats: .pdf, .doc, .docx, .png, .jpg, .jpeg, .webp.`}
           </div>
           {errorMessage && (
             <div className="text-red-500 text-[10px] md:text-[12px] text-center mt-1 w-[220px] xs:w-[300px] md:w-[500px]">
@@ -63,7 +101,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
           <input
             type="file"
             ref={fileInputRef}
-            // accept=".pdf, .docx"
+            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp"
             onChange={handleFileChange}
             id="uploadFile"
             className="w-full absolute invisible h-full left-0 top-0"
@@ -78,46 +116,12 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
       >
         Uploaded File
         <div className="mt-1 rounded-2xl md:h-[100px] bg-white flex flex-col ">
-          {!uploadedFile ? (
-            <div className="w-full flex flex-col items-center justify-center h-full">
-              <img src="/icons/EmptyState-upload.svg" alt="" />
-              <div className="text-xs font-medium text-Text-Primary -mt-8">
-                No file uploaded yet.
-              </div>
+          <div className="w-full flex flex-col items-center justify-center h-full">
+            <img src="/icons/EmptyState-upload.svg" alt="" />
+            <div className="text-xs font-medium text-Text-Primary -mt-8">
+              No file uploaded yet.
             </div>
-          ) : (
-            <div className="grid grid-cols-1 mt-[2px] gap-4 ">
-              <FileBoxUploadingV2
-                onClose={onClose}
-                onDelete={() => handleDeleteFile(uploadedFile.file_id)}
-                el={{
-                  ...uploadedFile,
-                  uploadedSize: uploadedFile.uploadedSize || 0,
-                  totalSize: uploadedFile?.file?.size,
-                  progress: uploadedFile.progress || 0.5,
-                  formattedSize: `${formatFileSize(
-                    uploadedFile.uploadedSize || 0,
-                  )} / ${formatFileSize(uploadedFile?.file?.size || 1)}`,
-                }}
-              />
-              {uploadedFile.progress >= 100 && (
-                <div
-                  className="flex items-start gap-1 text-xs text-Text-Primary 
-              text-justify"
-                >
-                  {' '}
-                  <img
-                    className="size-5 -mt-[2px]"
-                    src="/icons/danger-fill.svg"
-                    alt=""
-                  />{' '}
-                  The blood test information has been automatically extracted
-                  from the uploaded file. <br /> Please review the data and
-                  confirm its accuracy.
-                </div>
-              )}
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

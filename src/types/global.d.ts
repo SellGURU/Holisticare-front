@@ -26,6 +26,7 @@ declare global {
     response: string;
     options?: Array<string>;
     is_biomarker?: boolean;
+    use_in_insight?: boolean;
     use_in_insights?: boolean;
     is_goal?: boolean;
     is_medication?: boolean;

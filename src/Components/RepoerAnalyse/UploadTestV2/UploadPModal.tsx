@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import SpinnerLoader from '../../SpinnerLoader';
-import Toggle from '../../Toggle';
 import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
@@ -10,20 +9,10 @@ import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
 
 const labBiomarkerSteps: Step[] = [
-  // {
-  //   target: '[data-tour="lab-title"]',
-  //   content: 'Here you can upload lab reports or manually add biomarkers.',
-  // },
-  {
-    target: '[data-tour="upload-switch"]',
-    content:
-      'Switch between uploading a lab report or adding biomarkers manually.',
-    placement: 'bottom',
-  },
   {
     target: '[data-tour="file-uploader"]',
     content:
-      'Upload your client’s lab report here. Supported formats are PDF and DOCX.',
+      'Upload your client’s lab report here. Supported formats include PDF, DOC, DOCX, PNG, JPG, JPEG, and WEBP.',
   },
   {
     target: '[data-tour="uploaded-file"]',
@@ -43,6 +32,8 @@ const labBiomarkerSteps: Step[] = [
 ];
 
 interface UploadPModalProps {
+  initialMode?: string;
+  isEditMode?: boolean;
   OnBack: () => void;
   uploadedFile: FileUpload | null;
   onSave: () => void;
@@ -65,6 +56,7 @@ interface UploadPModalProps {
   addedDateOfTest: Date | null;
   handleAddedDateOfTestChange: (date: Date | null) => void;
   onClose: () => void;
+  onDownload?: () => void;
   fileType: string;
   loading: boolean;
   rowErrors?: any;
@@ -75,6 +67,8 @@ interface UploadPModalProps {
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
+  initialMode,
+  isEditMode,
   fileType,
   OnBack,
   uploadedFile,
@@ -98,6 +92,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   addedDateOfTest,
   handleAddedDateOfTestChange,
   onClose,
+  onDownload,
   loading,
   btnLoading,
   rowErrors,
@@ -105,10 +100,34 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   setrowErrors,
   progressBiomarkerUpload,
 }) => {
-  const [activeMenu, setactiveMenu] = useState('Upload File');
+  const [activeMenu, setactiveMenu] = useState(isEditMode ? 'Upload File' : initialMode || 'Upload File');
   const [showOnlyErrors, setShowOnlyErrors] = useState(false);
-  const [isScaling, setIsScaling] = useState(false);
   const [shouldAutoSwitch, setShouldAutoSwitch] = useState(false);
+
+  useEffect(() => {
+    // Only switch the active tab once data has actually loaded (loading=false).
+    // Without this guard, fileType is still 'more_info' (its default) while the
+    // API request is in flight, incorrectly showing the manual-entry tab for PDF uploads.
+    if (isEditMode && !loading) {
+      const fileName = uploadedFile?.file?.name?.toLowerCase?.() || '';
+      const isDocumentUpload =
+        fileName.endsWith('.pdf') ||
+        fileName.endsWith('.doc') ||
+        fileName.endsWith('.docx') ||
+        fileName.endsWith('.png') ||
+        fileName.endsWith('.jpg') ||
+        fileName.endsWith('.jpeg') ||
+        fileName.endsWith('.webp');
+
+      // If edit was opened from an uploaded document, always keep the Upload File tab.
+      // For true manual-entry edits, keep the legacy behavior based on lab type.
+      if (isDocumentUpload) {
+        setactiveMenu('Upload File');
+      } else {
+        setactiveMenu(fileType === 'more_info' ? 'Add Biomarker' : 'Upload File');
+      }
+    }
+  }, [isEditMode, fileType, loading, uploadedFile]);
 
   useEffect(() => {
     if (!shouldAutoSwitch) return;
@@ -200,7 +219,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
     <>
       <Joyride
         steps={labBiomarkerSteps}
-        run={run}
+        run={Boolean(run && activeMenu === 'Upload File' && !isEditMode && !uploadedFile)}
         continuous
         scrollToFirstStep
         showSkipButton
@@ -293,41 +312,35 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             </ButtonPrimary>
           </div>
           <div className="flex w-full relative justify-center mt-6">
-            <Toggle
-              active={activeMenu}
-              setActive={setactiveMenu}
-              value={['Upload File', 'Add Biomarker']}
-            ></Toggle>
-            {showReview && activeErrorCount > 0 ? (
-              <div className="bg-[#FFD8E4] absolute right-0 bottom-0 text-[10px] text-Text-Primary w-[291px] rounded-[20px] h-[36px] py-2 px-4 flex justify-between items-center gap-2">
-                <div className="flex items-cente gap-1">
-                  <img src="/icons/info-circle-red-2.svg" alt="" />
-                  {activeErrorCount}{' '}
-                  {activeErrorCount === 1 ? 'error' : 'errors'} found in
-                  biomarkers.
-                  <div
-                    className="underline cursor-pointer text-[10px] text-Text-Primary"
-                    onClick={() => setShowOnlyErrors(true)}
-                  >
-                    View {activeErrorCount === 1 ? 'Error' : 'Errors'}
+                {showReview && activeErrorCount > 0 ? (
+                  <div className="bg-[#FFD8E4] absolute right-0 bottom-0 text-[10px] text-Text-Primary w-[291px] rounded-[20px] h-[36px] py-2 px-4 flex justify-between items-center gap-2">
+                    <div className="flex items-cente gap-1">
+                      <img src="/icons/info-circle-red-2.svg" alt="" />
+                      {activeErrorCount}{' '}
+                      {activeErrorCount === 1 ? 'error' : 'errors'} found in
+                      biomarkers.
+                      <div
+                        className="underline cursor-pointer text-[10px] text-Text-Primary"
+                        onClick={() => setShowOnlyErrors(true)}
+                      >
+                        View {activeErrorCount === 1 ? 'Error' : 'Errors'}
+                      </div>
+                    </div>
+                    <img
+                      onClick={() => setshowReview(false)}
+                      className="cursor-pointer size-4"
+                      src="/icons/close-black.svg"
+                      alt=""
+                    />
                   </div>
-                </div>
-
-                <img
-                  onClick={() => setshowReview(false)}
-                  className="cursor-pointer size-4"
-                  src="/icons/close-black.svg"
-                  alt=""
-                />
+                ) : null}
               </div>
-            ) : null}
-          </div>
           <div
             className={`w-full h-fit sm:h-full flex flex-col mt-4 gap-2 ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
           >
             <FileUploaderSection
+              isEditMode={isEditMode}
               isShare={isShare}
-              isScaling={isScaling}
               errorMessage={errorMessage}
               handleFileChange={handleFileChange}
               uploadedFile={uploadedFile}
@@ -335,6 +348,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               formatFileSize={formatFileSize}
               fileInputRef={fileInputRef}
               onClose={onClose}
+              onDownload={onDownload}
             />
             {/* Show empty state for ultrasound reports */}
             {fileType === 'ultrasound' ? (
@@ -356,11 +370,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   Click "Continue" to proceed to Health Plan
                 </div>
               </div>
-            ) : (
+            ) : uploadedFile || fileType !== 'more_info' ? (
               <BiomarkersSection
                 rowErrors={rowErrors}
-                isScaling={isScaling}
-                setIsScaling={setIsScaling}
                 setrowErrors={setrowErrors}
                 loading={loading}
                 progressBiomarkerUpload={progressBiomarkerUpload}
@@ -373,19 +385,47 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 showOnlyErrors={showOnlyErrors}
                 setShowOnlyErrors={setShowOnlyErrors}
               />
-            )}
+            ) : null}
           </div>
           <div className={activeMenu !== 'Add Biomarker' ? 'hidden' : ''}>
             <AddBiomarker
-              biomarkers={addedBiomarkers}
-              rowErrors={AddedRowErrors}
-              onAddBiomarker={handleAddBiomarker}
+              biomarkers={isEditMode && fileType === 'more_info' ? extractedBiomarkers : addedBiomarkers}
+              rowErrors={isEditMode && fileType === 'more_info' ? rowErrors : AddedRowErrors}
+              onAddBiomarker={(newBio) => {
+                if (isEditMode && fileType === 'more_info') {
+                  setExtractedBiomarkers([...extractedBiomarkers, newBio]);
+                } else {
+                  handleAddBiomarker(newBio);
+                }
+              }}
               onTrashClick={handleTrashClick}
-              onConfirm={handleConfirm}
+              onConfirm={(index) => {
+                if (isEditMode && fileType === 'more_info') {
+                  setExtractedBiomarkers(extractedBiomarkers.filter((_, i) => i !== index));
+                  
+                  // Shift row errors to match new positions
+                  if (rowErrors) {
+                    const newErrors: Record<number, string> = {};
+                    Object.keys(rowErrors).forEach((key) => {
+                      const idx = Number(key);
+                      if (idx < index) {
+                        newErrors[idx] = rowErrors[idx];
+                      } else if (idx > index) {
+                        newErrors[idx - 1] = rowErrors[idx];
+                      }
+                    });
+                    setrowErrors(newErrors);
+                  }
+                  
+                  handleCancel();
+                } else {
+                  handleConfirm(index);
+                }
+              }}
               onCancel={handleCancel}
               deleteIndex={deleteIndex}
-              dateOfTest={addedDateOfTest}
-              setDateOfTest={handleAddedDateOfTestChange}
+              dateOfTest={isEditMode && fileType === 'more_info' ? modifiedDateOfTest : addedDateOfTest}
+              setDateOfTest={isEditMode && fileType === 'more_info' ? handleModifiedDateOfTestChange : handleAddedDateOfTestChange}
               showOnlyErrors={showOnlyErrors}
               setShowOnlyErrors={setShowOnlyErrors}
             ></AddBiomarker>

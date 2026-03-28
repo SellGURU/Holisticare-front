@@ -312,7 +312,7 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
           <div className="w-[70px] text-center text-nowrap">File Name</div>
           <div className="w-[80px]  text-nowrap">Upload Date</div>
           <div className="w-[80px]  text-nowrap">Test Date</div>
-          <div>Action</div>
+          <div className="w-[80px] text-center">Action</div>
         </div>
         {/* File Upload Progress List */}
         <div
