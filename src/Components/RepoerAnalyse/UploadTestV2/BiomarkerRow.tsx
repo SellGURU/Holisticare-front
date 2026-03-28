@@ -64,10 +64,12 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
     }
   };
 
-  const hasBiomarkerError =
-    isHaveError && errorText && errorText.includes('System Biomarker');
-  const hasUnitError =
-    isHaveError && errorText && errorText.includes('Extracted Unit');
+  const hasBiomarkerError = Boolean(
+    isHaveError && errorText && errorText.includes('System Biomarker'),
+  );
+  const hasUnitError = Boolean(
+    isHaveError && errorText && errorText.includes('Extracted Unit'),
+  );
 
   // Build the effective suggestions list:
   // For successfully mapped rows, include the current mapping as a top suggestion

@@ -103,7 +103,6 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
   // Biomarkers (user-edited) - for BiomarkersSection
   const [biomarkers, setBiomarkers] = useState<any[]>([]);
   const [dateOfTest, setDateOfTest] = useState<Date | null>(new Date());
-  const [isScaling, setIsScaling] = useState(true);
   const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
   const [showOnlyErrors, setShowOnlyErrors] = useState(false);
   const [biomarkersLoading] = useState(false);
@@ -842,8 +841,6 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
               setDateOfTest={setDateOfTest}
               fileType="more_info"
               loading={biomarkersLoading}
-              isScaling={isScaling}
-              setIsScaling={setIsScaling}
               rowErrors={rowErrors}
               setrowErrors={setRowErrors}
               showOnlyErrors={showOnlyErrors}
