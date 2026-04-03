@@ -197,6 +197,57 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     Record<string, { matches: BiomarkerSuggestion[]; no_match_reason?: string | null }>
   >({});
   const suggestionsFetchedRef = useRef(false);
+  const [suggestionsLoading, setSuggestionsLoading] = useState<Record<string, boolean>>(
+    {},
+  );
+
+  const fetchBiomarkerSuggestions = async (rows: any[]) => {
+    const unresolvedRows = rows
+      .map((row: any) => ({
+        extracted_name: row.original_biomarker_name || row.biomarker || '',
+        extracted_value: String(row.original_value || row.value || ''),
+        extracted_unit: row.original_unit || row.unit || '',
+      }))
+      .filter((row: any) => row.extracted_name);
+
+    const uncachedRows = unresolvedRows.filter(
+      (row: any) =>
+        !suggestions[row.extracted_name] &&
+        !suggestionsLoading[row.extracted_name],
+    );
+
+    if (uncachedRows.length === 0) return;
+
+    setSuggestionsLoading((prev) => {
+      const next = { ...prev };
+      uncachedRows.forEach((row: any) => {
+        next[row.extracted_name] = true;
+      });
+      return next;
+    });
+
+    try {
+      const res = await Application.suggestBiomarkerMappings({
+        biomarkers: uncachedRows,
+      });
+      if (res?.data?.suggestions) {
+        setSuggestions((prev) => ({
+          ...prev,
+          ...res.data.suggestions,
+        }));
+      }
+    } catch {
+      // Suggestions are non-critical; silently ignore failures
+    } finally {
+      setSuggestionsLoading((prev) => {
+        const next = { ...prev };
+        uncachedRows.forEach((row: any) => {
+          delete next[row.extracted_name];
+        });
+        return next;
+      });
+    }
+  };
 
   useEffect(() => {
     if (
@@ -207,29 +258,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       return;
     }
 
-    // Gather all unresolved rows (error rows)
-    const unresolvedRows = biomarkers
-      .filter((_b: any, idx: number) => rowErrors[idx])
-      .map((b: any) => ({
-        extracted_name: b.original_biomarker_name || b.biomarker || '',
-        extracted_value: String(b.original_value || b.value || ''),
-        extracted_unit: b.original_unit || b.unit || '',
-      }))
-      .filter((r: any) => r.extracted_name);
-
+    const unresolvedRows = biomarkers.filter((_b: any, idx: number) => rowErrors[idx]);
     if (unresolvedRows.length === 0) return;
     if (suggestionsFetchedRef.current) return;
     suggestionsFetchedRef.current = true;
 
-    Application.suggestBiomarkerMappings({ biomarkers: unresolvedRows })
-      .then((res: any) => {
-        if (res?.data?.suggestions) {
-          setSuggestions(res.data.suggestions);
-        }
-      })
-      .catch(() => {
-        // Suggestions are non-critical; silently ignore failures
-      });
+    fetchBiomarkerSuggestions(unresolvedRows);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowErrors]);
 
@@ -237,6 +271,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   useEffect(() => {
     suggestionsFetchedRef.current = false;
     setSuggestions({});
+    setSuggestionsLoading({});
   }, [biomarkers.length]);
 
   // ── Modal state ────────────────────────────────────────────────────────────
@@ -245,6 +280,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     extractedName: string;
     extractedValue: string;
     extractedUnit: string;
+    uploadedReferenceRange: string;
     suggestionMatches: BiomarkerSuggestion[];
   } | null>(null);
 
@@ -572,13 +608,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       />
       <div
         // style={{ height: window.innerHeight - 400 + 'px' }}
-        className={`w-full  ${uploadedFile ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'}  rounded-2xl border  border-Gray-50 p-2 md:p-4 shadow-300 text-xs  text-Text-Primary overflow-hidden`}
+        className={`w-full flex-1 min-h-0 ${uploadedFile ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'} rounded-2xl border border-Gray-50 p-2 md:p-4 shadow-300 text-xs text-Text-Primary overflow-hidden`}
         data-tour="biomarkers-section"
       >
         {loading ? (
           <div
-            style={{ height: window.innerHeight - 480 + 'px' }}
-            className="flex items-center min-h-[200px] w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4"
+            className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4"
           >
             {/* <Circleloader /> */}
             {/* Progress Bar */}
@@ -588,69 +623,55 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           </div>
         ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
           <div
-            style={{ height: window.innerHeight - 480 + 'px' }}
-            className="flex items-center  justify-center flex-col text-xs font-medium text-Text-Primary"
+            className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center justify-center flex-col text-xs font-medium text-Text-Primary"
           >
             <img src="/icons/EmptyState-biomarkers.svg" alt="" />
             <div className="-mt-5">No data provided yet.</div>
           </div>
         ) : (
-          <div className=" relative ">
-            <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
-              <div className="flex text-nowrap overflow-x-auto hidden-scrollbar w-full gap-6 justify-between">
-                <div className="flex items-center gap-2">
-                  <div className=" text-[8px] xs:text-[10px] md:text-sm font-medium">
-                    List of Biomarkers{' '}
-                    <span className="text-[#B0B0B0] text-[8px] md:text-xs font-medium">
-                      ({biomarkers.length})
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center absolute right-0 top-[-2px] gap-6">
-                  <div className=" hidden sm:flex items-center gap-3">
-                    <Toggle
-                      checked={showOnlyErrors}
-                      setChecked={setShowOnlyErrors}
-                    />
-                    <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
-                      Show Only Errors
-                    </div>
-                  </div>
-                  <div className="flex items-center text-[8px] md:text-xs text-Text-Quadruple">
-                    Date of Test:
-                    <SimpleDatePicker
-                      key={'biomarkerUpload'}
-                      textStyle
-                      isUploadFile
-                      date={dateOfTest}
-                      setDate={setDateOfTest}
-                      placeholder="Select Date"
-                      ClassName="ml-2 border border-Gray-50  !rounded-2xl px-2 py-1 text-Text-Primary"
-                    />
-                  </div>
-                </div>
+          <div className="relative h-full min-h-0 flex flex-col">
+            <div className="flex flex-wrap gap-2 md:gap-3 justify-between items-center mb-3 shrink-0">
+              <div className="text-[10px] md:text-sm font-medium text-Text-Primary">
+                Biomarkers{' '}
+                <span className="text-[#B0B0B0] text-[10px] md:text-xs font-medium">
+                  ({biomarkers.length})
+                </span>
               </div>
-              <div className=" flex sm:hidden items-center gap-3">
-                <Toggle
-                  checked={showOnlyErrors}
-                  setChecked={setShowOnlyErrors}
-                />
-                <div className=" text-[8px] text-nowrap sm:text-[10px] md:text-xs font-normal text-Text-Primary">
-                  Show Only Errors
+
+              <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                <div className="flex items-center gap-2">
+                  <Toggle
+                    checked={showOnlyErrors}
+                    setChecked={setShowOnlyErrors}
+                  />
+                  <div className="text-[10px] md:text-xs font-normal text-Text-Primary whitespace-nowrap">
+                    Errors only
+                  </div>
+                </div>
+                <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple whitespace-nowrap">
+                  Date of Test:
+                  <SimpleDatePicker
+                    key={'biomarkerUpload'}
+                    textStyle
+                    isUploadFile
+                    date={dateOfTest}
+                    setDate={setDateOfTest}
+                    placeholder="Select Date"
+                    ClassName="ml-2 border border-Gray-50 !rounded-2xl px-2 py-1 text-Text-Primary"
+                  />
                 </div>
               </div>
             </div>
 
             <div
-              className="relative w-full text-xs h-full border border-Gray-50 rounded-[12px] overflow-hidden"
+              className="relative w-full text-xs flex-1 min-h-0 border border-Gray-50 rounded-[12px] overflow-hidden"
               data-tour="biomarker-table"
             >
-              <div className="w-full hidden-scrollbar p overflow-x-auto md:overflow-x-visible">
-                <div className="w-full min-w-[900px]">
+              <div className="w-full h-full hidden-scrollbar overflow-x-auto md:overflow-x-visible">
+                <div className="w-full min-w-[900px] h-full flex flex-col">
                   {/* Table Header */}
                   <div
-                    className="grid biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                    className="grid biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 shrink-0 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
                     style={{
                       gridTemplateColumns:
                         'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
@@ -682,21 +703,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   {/* Table Rows */}
                   <div
                     ref={tableRef}
-                    className=" overflow-y-auto pb-[40px] sm:pb-0 w-[100%]"
-                    style={{
-                      minHeight: uploadedFile
-                        ? window.innerHeight - 330 + 'px'
-                        : window.innerHeight - 500 + 'px',
-                      maxHeight: uploadedFile
-                        ? window.innerHeight - 330 + 'px'
-                        : window.innerWidth > 640
-                          ? window.innerHeight - 500 + 'px'
-                          : window.innerHeight - 700 + 'px',
-                    }}
+                    className="flex-1 min-h-0 overflow-y-auto w-full pb-8"
                   >
                     {biomarkers.map((b, index) => {
                       const rowSuggestions =
                         suggestions[b.original_biomarker_name || b.biomarker || ''];
+                      const suggestionKey =
+                        b.original_biomarker_name || b.biomarker || '';
                       return (
                         <BiomarkerRow
                           key={b.biomarker_id}
@@ -713,12 +726,24 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           renderValueField={renderValueField}
                           updateAndStandardize={updateAndStandardize}
                           suggestionMatches={rowSuggestions?.matches || []}
+                          isSuggestionsLoading={Boolean(
+                            suggestionsLoading[suggestionKey],
+                          )}
+                          onBiomarkerMenuOpen={() => {
+                            fetchBiomarkerSuggestions([b]);
+                          }}
                           onCreateNewBiomarker={() => {
                             setCreateBiomarkerFor({
                               biomarkerId: b.biomarker_id,
                               extractedName: b.original_biomarker_name || b.biomarker || '',
                               extractedValue: String(b.original_value || b.value || ''),
                               extractedUnit: b.original_unit || b.unit || '',
+                              uploadedReferenceRange:
+                                b.uploaded_reference_range ||
+                                b.reference_range ||
+                                b.reference_interval ||
+                                b.lab_ref_range ||
+                                '',
                               suggestionMatches: rowSuggestions?.matches || [],
                             });
                           }}
@@ -735,6 +760,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         />
                       );
                     })}
+                    <div className="h-4" />
                   </div>
                 </div>
               </div>
@@ -749,6 +775,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           extractedName={createBiomarkerFor.extractedName}
           extractedValue={createBiomarkerFor.extractedValue}
           extractedUnit={createBiomarkerFor.extractedUnit}
+          uploadedReferenceRange={createBiomarkerFor.uploadedReferenceRange}
           suggestions={createBiomarkerFor.suggestionMatches}
           onClose={() => setCreateBiomarkerFor(null)}
           onCreated={(newName) => {

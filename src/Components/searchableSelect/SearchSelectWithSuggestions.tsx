@@ -24,6 +24,7 @@ type Props = {
   placeholder?: string;
   isError?: boolean;
   suggestions?: BiomarkerSuggestion[];
+  isSuggestionsLoading?: boolean;
   onCreateNew?: () => void;
   onMenuOpen?: () => void;
 };
@@ -46,6 +47,7 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
   placeholder = 'Select an option',
   isError = false,
   suggestions = [],
+  isSuggestionsLoading = false,
   onCreateNew,
   onMenuOpen,
 }) => {
@@ -261,12 +263,22 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
             </div>
           )}
 
+          {isSuggestionsLoading && (
+            <div className="order-2 px-3 py-2 text-[9px] text-blue-700 bg-blue-50 border-b border-blue-100 flex items-center gap-2">
+              <span className="inline-block h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+              Finding similar biomarkers...
+            </div>
+          )}
+
           {/* No suggestions notice */}
-          {isError && visibleSuggestions.length === 0 && !searchTerm && (
+          {isError &&
+            !isSuggestionsLoading &&
+            visibleSuggestions.length === 0 &&
+            !searchTerm && (
             <div className="order-2 px-3 py-2 text-[9px] text-orange-600 bg-orange-50 border-b border-orange-100 italic">
               No exact match found — search or create a new biomarker
             </div>
-          )}
+            )}
 
           {/* Create New Biomarker action */}
           {onCreateNew && (

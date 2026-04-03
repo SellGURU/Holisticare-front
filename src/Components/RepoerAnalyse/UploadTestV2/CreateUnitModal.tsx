@@ -24,12 +24,16 @@ const CreateUnitModal: React.FC<Props> = ({
 }) => {
   const [unit, setUnit] = useState(extractedUnit || '');
   // toUnit is always the biomarker's system unit — fixed target, not user-editable
-  const toUnit = systemUnit || extractedUnit;
+  const toUnit = systemUnit || '';
   const [conversionFactor, setConversionFactor] = useState('');
   const [offset, setOffset] = useState('');
   const [prefilling, setPrefilling] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    setUnit(extractedUnit || '');
+  }, [extractedUnit]);
 
   // Live preview: compute what the extracted value would convert to
   const livePreview = useMemo(() => {
@@ -82,11 +86,15 @@ const CreateUnitModal: React.FC<Props> = ({
   const handleSave = async () => {
     setErrorMsg('');
     if (!unit.trim()) {
-      setErrorMsg('Unit name is required.');
+      setErrorMsg('Extracted unit is missing.');
       return;
     }
     if (!biomarkerName.trim()) {
       setErrorMsg('Biomarker name is missing.');
+      return;
+    }
+    if (!toUnit.trim()) {
+      setErrorMsg('System unit is missing for this biomarker, so the conversion target cannot be created.');
       return;
     }
 
@@ -108,7 +116,7 @@ const CreateUnitModal: React.FC<Props> = ({
       await Application.addBiomarkerUnit({
         biomarker_name: biomarkerName,
         new_unit: unit.trim(),
-        to_unit: toUnit.trim() || unit.trim(),
+        to_unit: toUnit.trim(),
         conversion_factor: parsedFactor,
         offset: parsedOffset,
       });
@@ -138,6 +146,11 @@ const CreateUnitModal: React.FC<Props> = ({
             <div className="text-[10px] text-Text-Secondary mt-0.5">
               Biomarker: <span className="font-medium text-Text-Primary">{biomarkerName || '—'}</span>
             </div>
+            {extractedUnit && (
+              <div className="text-[10px] text-Text-Secondary mt-0.5">
+                Extracted unit: <span className="font-medium text-Text-Primary">{extractedUnit}</span>
+              </div>
+            )}
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">
             ×
@@ -169,15 +182,20 @@ const CreateUnitModal: React.FC<Props> = ({
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   New Unit <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  value={unit}
-                  onChange={(e) => setUnit(e.target.value)}
-                  placeholder="e.g. mg/dL, µmol/L"
-                  className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none focus:border-Primary-DeepTeal"
-                />
+                <div className="w-full border border-Gray-50 bg-gray-50 rounded-2xl px-3 py-2 text-[12px] text-Text-Secondary flex items-center justify-between gap-2">
+                  <span
+                    className={`font-medium ${
+                      unit ? 'text-Text-Primary' : 'text-Text-Quadruple italic'
+                    }`}
+                  >
+                    {unit || 'No extracted unit found'}
+                  </span>
+                  <span className="text-[9px] text-Text-Secondary bg-gray-200 rounded-full px-2 py-0.5 shrink-0">
+                    extracted
+                  </span>
+                </div>
                 <div className="text-[9px] text-Text-Secondary mt-0.5 ml-1">
-                  The extracted unit from the lab report that needs to be mapped.
+                  Always matches the extracted unit from the uploaded lab report.
                 </div>
               </div>
 
@@ -192,11 +210,11 @@ const CreateUnitModal: React.FC<Props> = ({
                     {toUnit || 'No standard unit defined'}
                   </span>
                   <span className="text-[9px] text-Text-Secondary bg-gray-200 rounded-full px-2 py-0.5 ml-2 shrink-0">
-                    read-only
+                    system
                   </span>
                 </div>
                 <div className="text-[9px] text-Text-Secondary mt-0.5 ml-1">
-                  The system will always convert to this unit. Defined by the biomarker's standard definition.
+                  Always matches the system unit defined for this biomarker.
                 </div>
               </div>
 

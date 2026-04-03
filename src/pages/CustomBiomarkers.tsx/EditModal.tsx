@@ -2,6 +2,8 @@
 import { FC, useEffect, useState, useCallback } from 'react';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import { ApiBiomarkerData } from '../../types/biormarker';
+import BiomarkersApi from '../../api/Biomarkers';
+import BenchmarkAreaSelect from '../../Components/BenchmarkAreaSelect';
 
 const ALLOWED_STATUSES = [
   { value: 'OptimalRange', label: 'Optimal Range', color: '#22C55E' },
@@ -32,6 +34,29 @@ const EditModal: FC<EditModalProps> = ({
   const [draft, setDraft] = useState<any>({ ...data });
   const [jsonText, setJsonText] = useState('');
   const [jsonError, setJsonError] = useState('');
+  const [benchmarkAreaOptions, setBenchmarkAreaOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    BiomarkersApi.getBiomarkersList()
+      .then((res: any) => {
+        if (!isMounted || !Array.isArray(res?.data)) return;
+        const options = Array.from(
+          new Set<string>(
+            res.data
+              .map((item: any) => String(item?.['Benchmark areas'] || '').trim())
+              .filter((item: string) => Boolean(item)),
+          ),
+        ).sort((a: string, b: string) => a.localeCompare(b));
+        setBenchmarkAreaOptions(options);
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     setDraft({ ...data });
@@ -61,6 +86,24 @@ const EditModal: FC<EditModalProps> = ({
       const genderData = { ...(thresholds[gender] || {}) };
       const ranges = [...(genderData[ageKey] || [])];
       ranges[rangeIdx] = { ...ranges[rangeIdx], [field]: value };
+      genderData[ageKey] = ranges;
+      thresholds[gender] = genderData;
+      updateDraft('thresholds', thresholds);
+    },
+    [draft],
+  );
+
+  const updateThresholdStatus = useCallback(
+    (gender: 'male' | 'female', ageKey: string, rangeIdx: number, status: string) => {
+      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
+      const genderData = { ...(thresholds[gender] || {}) };
+      const ranges = [...(genderData[ageKey] || [])];
+      const found = ALLOWED_STATUSES.find((item) => item.value === status);
+      ranges[rangeIdx] = {
+        ...ranges[rangeIdx],
+        status,
+        color: found?.color || ranges[rangeIdx]?.color || '#22C55E',
+      };
       genderData[ageKey] = ranges;
       thresholds[gender] = genderData;
       updateDraft('thresholds', thresholds);
@@ -222,11 +265,14 @@ const EditModal: FC<EditModalProps> = ({
                       />
                       <select
                         value={range.status || ''}
-                        onChange={(e) => {
-                          const found = ALLOWED_STATUSES.find((s) => s.value === e.target.value);
-                          updateThresholdRange(gender, ageKey, rIdx, 'status', e.target.value);
-                          if (found) updateThresholdRange(gender, ageKey, rIdx, 'color', found.color);
-                        }}
+                        onChange={(e) =>
+                          updateThresholdStatus(
+                            gender,
+                            ageKey,
+                            rIdx,
+                            e.target.value,
+                          )
+                        }
                         className="w-[110px] border border-Gray-50 rounded-lg px-1 py-0.5 text-[10px] outline-none focus:border-Primary-DeepTeal bg-white"
                       >
                         <option value="">— select —</option>
@@ -329,12 +375,10 @@ const EditModal: FC<EditModalProps> = ({
           <>
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Benchmark Area <span className="text-red-500">*</span></label>
-              <input
-                type="text"
+              <BenchmarkAreaSelect
                 value={draft['Benchmark areas'] || ''}
-                onChange={(e) => updateDraft('Benchmark areas', e.target.value)}
-                placeholder="e.g. Vitamins"
-                className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none focus:border-Primary-DeepTeal"
+                options={benchmarkAreaOptions}
+                onChange={(value) => updateDraft('Benchmark areas', value)}
               />
             </div>
             <div>

@@ -30,11 +30,12 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
 }) => {
   if (uploadedFile) {
     return (
-      <div className="w-full flex justify-center mb-2 mt-2">
-        <div className="w-full md:w-1/2">
-          <div className="text-xs font-medium text-Text-Primary mb-1">
+      <div className="w-full mb-2 mt-1">
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 rounded-2xl border border-Gray-50 bg-white px-3 py-2">
+          <div className="text-[10px] md:text-xs font-medium text-Text-Primary shrink-0">
             Uploaded File
           </div>
+          <div className="flex-1 min-w-0">
           <FileBoxUploadingV2
             onClose={onClose}
             onDownload={onDownload}
@@ -49,16 +50,17 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
               )} / ${formatFileSize(uploadedFile?.file?.size || 1)}`,
             }}
           />
+          </div>
           {uploadedFile.progress >= 100 && (
-            <div className="flex items-start gap-1 text-xs text-Text-Primary text-justify mt-2">
+            <div className="flex items-start gap-1 text-[10px] md:text-xs text-Text-Primary md:max-w-[320px]">
               <img
-                className="size-5 -mt-[2px]"
+                className="size-4 shrink-0 mt-[1px]"
                 src="/icons/danger-fill.svg"
                 alt=""
               />
-              The blood test information has been automatically extracted
-              from the uploaded file. Please review the data and
-              confirm its accuracy.
+              <span>
+                Review the extracted biomarkers below and confirm they are correct.
+              </span>
             </div>
           )}
         </div>

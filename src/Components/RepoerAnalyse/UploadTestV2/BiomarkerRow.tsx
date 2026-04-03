@@ -23,8 +23,10 @@ interface BiomarkerRowProps {
     updatedField: Partial<any>,
   ) => void;
   suggestionMatches?: BiomarkerSuggestion[];
+  isSuggestionsLoading?: boolean;
   onCreateNewBiomarker?: () => void;
   onCreateNewUnit?: () => void;
+  onBiomarkerMenuOpen?: () => void;
 }
 
 const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
@@ -39,8 +41,10 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   refRenceEl,
   handleConfirmDelete,
   suggestionMatches = [],
+  isSuggestionsLoading = false,
   onCreateNewBiomarker,
   onCreateNewUnit,
+  onBiomarkerMenuOpen,
 }) => {
   const [isChanged, setIsChenged] = useState(false);
   const [isMapped, setIsMapped] = useState(false);
@@ -145,7 +149,9 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
             options={allAvilableBiomarkers}
             isError={hasBiomarkerError}
             suggestions={effectiveSuggestions}
+            isSuggestionsLoading={isSuggestionsLoading}
             onCreateNew={onCreateNewBiomarker}
+            onMenuOpen={onBiomarkerMenuOpen}
             onChange={(val: string) => {
               updateAndStandardize(biomarker.biomarker_id, {
                 biomarker: val,

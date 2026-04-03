@@ -3,11 +3,13 @@ import { useState, useEffect, useCallback } from 'react';
 import SpinnerLoader from '../../SpinnerLoader';
 import Application from '../../../api/app';
 import BiomarkersApi from '../../../api/Biomarkers';
+import BenchmarkAreaSelect from '../../BenchmarkAreaSelect';
 
 interface Props {
   extractedName: string;
   extractedValue?: string;
   extractedUnit?: string;
+  uploadedReferenceRange?: string;
   suggestions?: Array<{ system_biomarker: string; confidence: number; reason: string }>;
   onClose: () => void;
   onCreated: (newBiomarkerName: string) => void;
@@ -35,6 +37,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
   extractedName,
   extractedValue = '',
   extractedUnit = '',
+  uploadedReferenceRange = '',
   suggestions = [],
   onClose,
   onCreated,
@@ -46,6 +49,34 @@ const CreateBiomarkerModal: React.FC<Props> = ({
   const [prefilling, setPrefilling] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [nameVariations, setNameVariations] = useState<string[]>(
+    extractedName ? [extractedName] : [],
+  );
+  const [newVariation, setNewVariation] = useState('');
+  const [benchmarkAreaOptions, setBenchmarkAreaOptions] = useState<string[]>([]);
+  const [aiSuggestedBenchmarkArea, setAiSuggestedBenchmarkArea] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    BiomarkersApi.getBiomarkersList()
+      .then((res: any) => {
+        if (!isMounted || !Array.isArray(res?.data)) return;
+        const options = Array.from(
+          new Set<string>(
+            res.data
+              .map((item: any) => String(item?.['Benchmark areas'] || '').trim())
+              .filter((item: string) => Boolean(item)),
+          ),
+        ).sort((a: string, b: string) => a.localeCompare(b));
+        setBenchmarkAreaOptions(options);
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Pre-fill via LLM on mount
   useEffect(() => {
@@ -56,6 +87,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
           extracted_name: extractedName,
           extracted_value: extractedValue,
           extracted_unit: extractedUnit,
+          uploaded_reference_range: uploadedReferenceRange,
           mode: 'biomarker',
           suggestions: suggestions.slice(0, 3),
         });
@@ -67,12 +99,16 @@ const CreateBiomarkerModal: React.FC<Props> = ({
             'show_in_maual_entry': true,
             source: res.data.draft.source || 'Custom',
           };
+          setAiSuggestedBenchmarkArea(
+            String(res.data.draft['Benchmark areas'] || '').trim(),
+          );
           setDraft(d);
           setJsonText(JSON.stringify(d, null, 2));
         }
       } catch {
         // If prefill fails, just use the empty draft with extracted name
         const d = { ...EMPTY_DRAFT, Biomarker: extractedName, unit: extractedUnit };
+        setAiSuggestedBenchmarkArea('');
         setDraft(d);
         setJsonText(JSON.stringify(d, null, 2));
       } finally {
@@ -118,6 +154,24 @@ const CreateBiomarkerModal: React.FC<Props> = ({
       const genderData = { ...(thresholds[gender] || {}) };
       const ranges = [...(genderData[ageKey] || [])];
       ranges[rangeIdx] = { ...ranges[rangeIdx], [field]: value };
+      genderData[ageKey] = ranges;
+      thresholds[gender] = genderData;
+      updateDraft('thresholds', thresholds);
+    },
+    [draft],
+  );
+
+  const updateThresholdStatus = useCallback(
+    (gender: 'male' | 'female', ageKey: string, rangeIdx: number, status: string) => {
+      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
+      const genderData = { ...(thresholds[gender] || {}) };
+      const ranges = [...(genderData[ageKey] || [])];
+      const found = ALLOWED_STATUSES.find((item) => item.value === status);
+      ranges[rangeIdx] = {
+        ...ranges[rangeIdx],
+        status,
+        color: found?.color || ranges[rangeIdx]?.color || '#22C55E',
+      };
       genderData[ageKey] = ranges;
       thresholds[gender] = genderData;
       updateDraft('thresholds', thresholds);
@@ -192,6 +246,21 @@ const CreateBiomarkerModal: React.FC<Props> = ({
     [draft],
   );
 
+  const addVariation = () => {
+    const cleaned = newVariation.trim();
+    if (!cleaned) return;
+    if (nameVariations.some((item) => item.toLowerCase() === cleaned.toLowerCase())) {
+      setNewVariation('');
+      return;
+    }
+    setNameVariations([...nameVariations, cleaned]);
+    setNewVariation('');
+  };
+
+  const removeVariation = (variation: string) => {
+    setNameVariations(nameVariations.filter((item) => item !== variation));
+  };
+
   const handleSave = async () => {
     setErrorMsg('');
     if (!draft.Biomarker?.trim()) {
@@ -213,7 +282,10 @@ const CreateBiomarkerModal: React.FC<Props> = ({
 
     setSaving(true);
     try {
-      await BiomarkersApi.addBiomarkersList({ new_biomarker: draft });
+      await BiomarkersApi.addBiomarkersList({
+        new_biomarker: draft,
+        name_variations: nameVariations,
+      });
       onCreated(draft.Biomarker);
       onClose();
     } catch (err: any) {
@@ -230,7 +302,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/30">
-      <div className="bg-white rounded-2xl shadow-xl w-[90vw] max-w-[620px] max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-2xl shadow-xl w-[90vw] max-w-[760px] max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-Gray-50">
           <div>
@@ -243,6 +315,11 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                 <span> &nbsp;·&nbsp; Unit: <span className="font-medium">{extractedUnit}</span></span>
               )}
             </div>
+            {uploadedReferenceRange && (
+              <div className="text-[10px] text-Text-Secondary mt-0.5">
+                Uploaded lab reference: <span className="font-medium text-Text-Primary">{uploadedReferenceRange}</span>
+              </div>
+            )}
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">
             ×
@@ -304,12 +381,11 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Benchmark Area <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="text"
+                    <BenchmarkAreaSelect
                       value={draft['Benchmark areas'] || ''}
-                      onChange={(e) => updateDraft('Benchmark areas', e.target.value)}
-                      placeholder="e.g. Vitamins, Cardiovascular Risk"
-                      className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none focus:border-Primary-DeepTeal"
+                      options={benchmarkAreaOptions}
+                      suggestedValue={aiSuggestedBenchmarkArea}
+                      onChange={(value) => updateDraft('Benchmark areas', value)}
                     />
                   </div>
 
@@ -358,7 +434,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                       Thresholds (Reference Ranges)
                     </label>
                     <div className="text-[9px] text-Text-Secondary mb-2">
-                      AI-suggested clinical ranges based on international standards. Review and adjust as needed.
+                      Draft ranges prioritize the uploaded report reference when available, then align it to our chart-bounds structure.
                     </div>
                     {(['male', 'female'] as const).map((gender) => {
                       const genderData = draft.thresholds?.[gender] || {};
@@ -442,15 +518,14 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                                         />
                                         <select
                                           value={range.status || ''}
-                                          onChange={(e) => {
-                                            const found = ALLOWED_STATUSES.find(
-                                              (s) => s.value === e.target.value,
-                                            );
-                                            updateThresholdRange(gender, ageKey, rIdx, 'status', e.target.value);
-                                            if (found) {
-                                              updateThresholdRange(gender, ageKey, rIdx, 'color', found.color);
-                                            }
-                                          }}
+                                          onChange={(e) =>
+                                            updateThresholdStatus(
+                                              gender,
+                                              ageKey,
+                                              rIdx,
+                                              e.target.value,
+                                            )
+                                          }
                                           className="w-[110px] border border-Gray-50 rounded-lg px-1 py-0.5 text-[10px] outline-none focus:border-Primary-DeepTeal bg-white"
                                         >
                                           <option value="">— select —</option>
@@ -517,6 +592,57 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                         </div>
                       );
                     })}
+                  </div>
+
+                  <div className="border border-Gray-50 rounded-2xl p-4">
+                    <div className="text-xs font-medium text-Text-Primary mb-2">
+                      Name Variations
+                    </div>
+                    <div className="text-[10px] text-Text-Secondary mb-2">
+                      After finalizing the biomarker data, you can edit this list so future uploads map the lab-file name to this biomarker.
+                    </div>
+                    {nameVariations.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {nameVariations.map((variation, index) => (
+                          <span
+                            key={`${variation}-${index}`}
+                            className="bg-white border border-gray-100 rounded-full px-2 py-0.5 text-[10px] text-Text-Secondary flex items-center gap-1"
+                          >
+                            {variation}
+                            <button
+                              type="button"
+                              className="text-red-400 hover:text-red-600 text-[11px] leading-none"
+                              onClick={() => removeVariation(variation)}
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={newVariation}
+                        onChange={(e) => setNewVariation(e.target.value)}
+                        placeholder="Add another variation..."
+                        className="flex-1 border border-Gray-50 rounded-lg px-2 py-1 text-[11px] outline-none focus:border-Primary-DeepTeal bg-white"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            addVariation();
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={addVariation}
+                        disabled={!newVariation.trim()}
+                        className="text-[10px] text-Primary-DeepTeal hover:underline font-medium disabled:opacity-40"
+                      >
+                        + Add
+                      </button>
+                    </div>
                   </div>
                 </>
               ) : (
