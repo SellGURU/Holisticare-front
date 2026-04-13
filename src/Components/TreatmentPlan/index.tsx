@@ -537,7 +537,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                               e.stopPropagation();
 
                               navigate(
-                                `/report/Generate-Recommendation/${id}/${card.t_plan_id}`,
+                                `/report/Generate-Holistic-Plan/${id}/${card.t_plan_id}?isUpdate=true`,
                               );
                             }}
                             className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"

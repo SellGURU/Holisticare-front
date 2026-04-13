@@ -193,10 +193,10 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             onClick={() => {
               setSearchParams({
                 ['type']: 'Progress',
-                ['section']: 'Wellness Data',
+                ['section']: 'Wellness Summary',
               });
               setActiveReportSection('Progress');
-              setactiveMenu('Wellness Data');
+              setactiveMenu('Wellness Summary');
               setactiveImg(1);
               // publish('activeTabChange', { tab: 'Progress' });
             }}

@@ -2,6 +2,18 @@
 import Api from './api';
 
 class BiomarkersApi extends Api {
+  static getJsonManagerClinics = () => {
+    return this.post('/custom_biomarker/admin/clinics', {});
+  };
+
+  static loadClinicJsonConfigs = (data: any) => {
+    return this.post('/custom_biomarker/admin/load_configs', data);
+  };
+
+  static saveClinicJsonConfig = (data: any) => {
+    return this.post('/custom_biomarker/admin/save_config', data);
+  };
+
   static getBiomarkersList = () => {
     return this.post('/custom_biomarker/chart_bounds', {});
   };

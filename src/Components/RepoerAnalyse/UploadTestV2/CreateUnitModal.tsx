@@ -144,7 +144,7 @@ const CreateUnitModal: React.FC<Props> = ({
               Create New Unit
             </div>
             <div className="text-[10px] text-Text-Secondary mt-0.5">
-              Biomarker: <span className="font-medium text-Text-Primary">{biomarkerName || '—'}</span>
+              System biomarker: <span className="font-medium text-Text-Primary">{biomarkerName || '—'}</span>
             </div>
             {extractedUnit && (
               <div className="text-[10px] text-Text-Secondary mt-0.5">
@@ -203,7 +203,9 @@ const CreateUnitModal: React.FC<Props> = ({
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   Convert To Unit
-                  <span className="text-[10px] text-Text-Secondary font-normal ml-1">(biomarker's standard unit)</span>
+                  <span className="text-[10px] text-Text-Secondary font-normal ml-1">
+                    (default unit for the selected system biomarker)
+                  </span>
                 </label>
                 <div className="w-full border border-Gray-50 bg-gray-50 rounded-2xl px-3 py-2 text-[12px] text-Text-Secondary flex items-center justify-between">
                   <span className={`font-medium ${toUnit ? 'text-Text-Primary' : 'text-Text-Quadruple italic'}`}>
@@ -214,7 +216,9 @@ const CreateUnitModal: React.FC<Props> = ({
                   </span>
                 </div>
                 <div className="text-[9px] text-Text-Secondary mt-0.5 ml-1">
-                  Always matches the system unit defined for this biomarker.
+                  {biomarkerName
+                    ? `Always matches the system unit defined for "${biomarkerName}".`
+                    : 'Select a system biomarker first so the conversion target can match its default system unit.'}
                 </div>
               </div>
 

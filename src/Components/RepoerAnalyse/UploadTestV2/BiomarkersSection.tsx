@@ -11,7 +11,11 @@ import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
 import CreateBiomarkerModal from './CreateBiomarkerModal';
 import CreateUnitModal from './CreateUnitModal';
-import type { BiomarkerSuggestion } from '../../searchableSelect/SearchSelectWithSuggestions';
+import BiomarkersApi from '../../../api/Biomarkers';
+import type {
+  BiomarkerOption,
+  BiomarkerSuggestion,
+} from '../../searchableSelect/SearchSelectWithSuggestions';
 
 const biomarkersSteps: Step[] = [
   {
@@ -28,7 +32,7 @@ const biomarkersSteps: Step[] = [
   {
     target: '[data-tour="system-biomarker"]',
     content:
-      'Select the correct system biomarker to properly map and validate the extracted data.',
+      'Select the correct system biomarker. Its default system unit is shown there too so you can compare it against the extracted lab unit.',
   },
   {
     target: '[data-tour="extracted-value"]',
@@ -39,16 +43,6 @@ const biomarkersSteps: Step[] = [
     target: '[data-tour="extracted-unit"]',
     content:
       'Ensure the unit matches the original lab report before proceeding.',
-  },
-  {
-    target: '[data-tour="system-value"]',
-    content:
-      'This is the normalized value used internally by the system for analysis.',
-  },
-  {
-    target: '[data-tour="system-unit"]',
-    content:
-      'This is the normalized unit used internally by the system for analysis.',
   },
   {
     target: '[data-tour="delete-biomarker"]',
@@ -179,14 +173,26 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     'Compromised Outcome',
     'Moderately Enhanced Outcome',
   ];
-  const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState<any[]>([]);
+  const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState<BiomarkerOption[]>([]);
 
   useEffect(() => {
-    Application.getBiomarkerName({})
+    BiomarkersApi.getBiomarkersList()
       .then((res) => {
-        const sorted = [...res.data.biomarkers_list].sort((a: any, b: any) =>
-          a.localeCompare(b),
-        );
+        const sorted = (Array.isArray(res?.data) ? res.data : [])
+          .map((item: any) => ({
+            biomarker: String(item?.Biomarker || '').trim(),
+            benchmark_area: String(item?.['Benchmark areas'] || '').trim(),
+            unit: String(item?.unit || '').trim(),
+          }))
+          .filter((item: BiomarkerOption) => item.biomarker)
+          .sort((a: BiomarkerOption, b: BiomarkerOption) => {
+            const areaCompare = (a.benchmark_area || '').localeCompare(
+              b.benchmark_area || '',
+            );
+            return areaCompare !== 0
+              ? areaCompare
+              : a.biomarker.localeCompare(b.biomarker);
+          });
         setAvalibaleBiomarkers(sorted);
       })
       .catch(() => {});
@@ -668,13 +674,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               data-tour="biomarker-table"
             >
               <div className="w-full h-full hidden-scrollbar overflow-x-auto md:overflow-x-visible">
-                <div className="w-full min-w-[900px] h-full flex flex-col">
+                <div className="w-full min-w-[760px] h-full flex flex-col">
                   {/* Table Header */}
                   <div
                     className="grid biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 shrink-0 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
                     style={{
                       gridTemplateColumns:
-                        'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
+                        'minmax(220px,1.3fr) minmax(240px,1.4fr) minmax(110px,0.8fr) minmax(130px,0.9fr) 60px',
                     }}
                   >
                     <div className="text-left" data-tour="extracted-biomarker">
@@ -688,12 +694,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     </div>
                     <div className="text-center" data-tour="extracted-unit">
                       Extracted Unit
-                    </div>
-                    <div className="text-center" data-tour="system-value">
-                      System Value
-                    </div>
-                    <div className="text-center" data-tour="system-unit">
-                      System Unit
                     </div>
                     <div className="text-center" data-tour="delete-biomarker">
                       Action
@@ -710,6 +710,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         suggestions[b.original_biomarker_name || b.biomarker || ''];
                       const suggestionKey =
                         b.original_biomarker_name || b.biomarker || '';
+                      const selectedSystemMeta = avalibaleBiomarkers.find(
+                        (option) =>
+                          option.biomarker.toLowerCase() ===
+                          (b.biomarker || '').toLowerCase(),
+                      );
                       return (
                         <BiomarkerRow
                           key={b.biomarker_id}
@@ -750,10 +755,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           onCreateNewUnit={() => {
                             setCreateUnitFor({
                               biomarkerId: b.biomarker_id,
-                              biomarkerName: b.biomarker || b.original_biomarker_name || '',
+                              biomarkerName: b.biomarker || '',
                               extractedUnit: b.original_unit || '',
                               extractedValue: String(b.original_value || b.value || ''),
-                              systemUnit: b.unit || '',
+                              systemUnit: selectedSystemMeta?.unit || b.unit || '',
                               suggestionMatches: rowSuggestions?.matches || [],
                             });
                           }}
@@ -780,11 +785,23 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           onClose={() => setCreateBiomarkerFor(null)}
           onCreated={(newName) => {
             // Refresh the available biomarkers list
-            Application.getBiomarkerName({})
+            BiomarkersApi.getBiomarkersList()
               .then((res: any) => {
-                const sorted = [...res.data.biomarkers_list].sort((a: any, b: any) =>
-                  a.localeCompare(b),
-                );
+                const sorted = (Array.isArray(res?.data) ? res.data : [])
+                  .map((item: any) => ({
+                    biomarker: String(item?.Biomarker || '').trim(),
+                    benchmark_area: String(item?.['Benchmark areas'] || '').trim(),
+                    unit: String(item?.unit || '').trim(),
+                  }))
+                  .filter((item: BiomarkerOption) => item.biomarker)
+                  .sort((a: BiomarkerOption, b: BiomarkerOption) => {
+                    const areaCompare = (a.benchmark_area || '').localeCompare(
+                      b.benchmark_area || '',
+                    );
+                    return areaCompare !== 0
+                      ? areaCompare
+                      : a.biomarker.localeCompare(b.biomarker);
+                  });
                 setAvalibaleBiomarkers(sorted);
               })
               .catch(() => {});

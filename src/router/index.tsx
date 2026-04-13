@@ -43,6 +43,11 @@ import FHIRIntegration from '../pages/FHIRIntegration/index.tsx';
 import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
+import JsonUploading from '../pages/JsonUploading/index.tsx';
+import AdminLogin from '../pages/admin/Login.tsx';
+import MarketingDashboard from '../pages/admin/MarketingDashboard.tsx';
+import AdminProtectedRoute from './AdminProtected.tsx';
+import AdminJsonUploading from '../pages/admin/JsonUploading.tsx';
 
 const router = createBrowserRouter([
   {
@@ -93,6 +98,10 @@ const router = createBrowserRouter([
           {
             path: '/biomarkers',
             element: <CustomBiomarkers></CustomBiomarkers>,
+          },
+          {
+            path: '/json-uploading',
+            element: <JsonUploading></JsonUploading>,
           },
           {
             path: '/custom-branding',
@@ -167,6 +176,22 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login></Login>,
+  },
+  {
+    path: '/admin/login',
+    element: <AdminLogin></AdminLogin>,
+  },
+  {
+    path: '/admin/marketing',
+    element: (
+      <AdminProtectedRoute Component={MarketingDashboard}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/json-uploading',
+    element: (
+      <AdminProtectedRoute Component={AdminJsonUploading}></AdminProtectedRoute>
+    ),
   },
   {
     path: '/register',

@@ -757,6 +757,9 @@ class Application extends Api {
     member_id: number;
     from_date?: string;
     to_date?: string;
+    aggregation?: 'daily' | 'weekly' | 'monthly';
+    compare_previous?: boolean;
+    metrics?: string[];
   }) => {
     const response = this.post('/wellness_scores', data);
     return response;
@@ -766,6 +769,9 @@ class Application extends Api {
     member_id: number;
     from_date?: string;
     to_date?: string;
+    aggregation?: 'daily' | 'weekly' | 'monthly';
+    compare_previous?: boolean;
+    metrics?: string[];
   }) => {
     const response = this.post('/wellness_scores/historical', data);
     return response;

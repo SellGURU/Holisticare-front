@@ -2,6 +2,7 @@
 import { Tooltip } from 'react-tooltip';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import SearchSelectWithSuggestions, {
+  BiomarkerOption,
   BiomarkerSuggestion,
 } from '../../searchableSelect/SearchSelectWithSuggestions';
 import SelectWithCreate from '../../Select/SelectWithCreate';
@@ -15,7 +16,7 @@ interface BiomarkerRowProps {
   biomarker: any;
   errorText: string;
   isHaveError: boolean;
-  allAvilableBiomarkers: Array<string>;
+  allAvilableBiomarkers: Array<BiomarkerOption>;
   renderValueField: (biomarker: any) => any;
   handleConfirmDelete: () => void;
   updateAndStandardize: (
@@ -92,10 +93,17 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         system_biomarker: currentBiomarker,
         confidence: 100,
         reason: 'Current system match',
+        benchmark_area: biomarker['Benchmark areas'] || '',
+        unit: biomarker.unit || '',
       });
     }
     return list;
   })();
+
+  const selectedSystemMeta = allAvilableBiomarkers.find(
+    (option) =>
+      option.biomarker.toLowerCase() === (biomarker.biomarker || '').toLowerCase(),
+  );
 
   return (
     <>
@@ -111,31 +119,44 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         } grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
         style={{
           gridTemplateColumns:
-            'minmax(170px,1fr) minmax(220px,1fr) minmax(90px,1fr) minmax(120px,1fr) minmax(100px,1fr) minmax(100px,1fr) 60px',
+            'minmax(220px,1.3fr) minmax(240px,1.4fr) minmax(110px,0.8fr) minmax(130px,0.9fr) 60px',
         }}
       >
         {/* Column 1: Extracted Biomarker */}
-        <div className="text-left text-Text-Primary flex gap-1">
-          <TooltipTextAuto maxWidth="160px">
-            {biomarker.original_biomarker_name}
-          </TooltipTextAuto>
-          {isHaveError && (
-            <>
-              <img
-                data-tooltip-id={`tooltip-${index}`}
-                src="/icons/info-circle-red.svg"
-                alt="Error"
-                className="w-4 h-4"
-              />
-              <Tooltip
-                id={`tooltip-${index}`}
-                place="top"
-                className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-              >
-                {errorText}
-              </Tooltip>
-            </>
-          )}
+        <div className="text-left text-Text-Primary flex flex-col gap-1 min-w-0">
+          <div className="flex gap-1 items-start">
+            <TooltipTextAuto maxWidth="180px">
+              {biomarker.original_biomarker_name}
+            </TooltipTextAuto>
+            {isHaveError && (
+              <>
+                <img
+                  data-tooltip-id={`tooltip-${index}`}
+                  src="/icons/info-circle-red.svg"
+                  alt="Error"
+                  className="w-4 h-4 shrink-0"
+                />
+                <Tooltip
+                  id={`tooltip-${index}`}
+                  place="top"
+                  className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  {errorText}
+                </Tooltip>
+              </>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-1">
+            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] text-Text-Secondary">
+              Value: {String(biomarker.original_value ?? biomarker.value ?? '—')}
+            </span>
+            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] text-Text-Secondary">
+              Unit:{' '}
+              {biomarker.original_unit === ''
+                ? '(no unit)'
+                : biomarker.original_unit || biomarker.unit || '—'}
+            </span>
+          </div>
         </div>
 
         {/* Column 2: System Biomarker with suggestions */}
@@ -160,6 +181,25 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
               setIsMapped(false);
             }}
           />
+          <div className="mt-1 flex flex-wrap gap-1 justify-center">
+            {biomarker.biomarker ? (
+              <>
+                {selectedSystemMeta?.benchmark_area && (
+                  <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] text-Text-Secondary">
+                    {selectedSystemMeta.benchmark_area}
+                  </span>
+                )}
+                <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] text-Text-Secondary">
+                  Default unit:{' '}
+                  {selectedSystemMeta?.unit || biomarker.unit || '(no unit)'}
+                </span>
+              </>
+            ) : (
+              <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] text-Text-Secondary">
+                Select a system biomarker to see area and default unit.
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Column 3: Extracted Value */}
@@ -181,7 +221,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
               }
               options={unitOptions}
               onMenuOpen={fetchUnits}
-              onCreateNew={onCreateNewUnit}
+              onCreateNew={biomarker.biomarker ? onCreateNewUnit : undefined}
               onChange={(val: string) => {
                 const actualUnit = val === '(no unit)' ? '' : val;
                 updateAndStandardize(biomarker.biomarker_id, {
@@ -192,15 +232,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
           </div>
         </div>
 
-        {/* Column 5: System Value */}
-        <div className="text-center text-[#888888]">{biomarker.value}</div>
-
-        {/* Column 6: System Unit */}
-        <div className="text-center pl-3 sm:pl-0 text-[#888888]">
-          {biomarker.unit}
-        </div>
-
-        {/* Column 7: Actions */}
+        {/* Column 5: Actions */}
         <div
           className={`flex items-center ${
             isChanged || isMapped ? 'justify-end' : 'justify-center'

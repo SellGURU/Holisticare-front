@@ -12,11 +12,19 @@ export interface BiomarkerSuggestion {
   system_biomarker: string;
   confidence: number;
   reason: string;
+  benchmark_area?: string;
+  unit?: string;
+}
+
+export interface BiomarkerOption {
+  biomarker: string;
+  benchmark_area?: string;
+  unit?: string;
 }
 
 type Props = {
   onChange: (value: string) => void;
-  options?: Array<string>;
+  options?: Array<string | BiomarkerOption>;
   value?: string;
   isLarge?: boolean;
   isSetting?: boolean;
@@ -54,7 +62,7 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || '');
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredOptions, setFilteredOptions] = useState(options);
+  const [filteredOptions, setFilteredOptions] = useState<BiomarkerOption[]>([]);
   const [openDirection, setOpenDirection] = useState<'top' | 'bottom'>('bottom');
 
   const selectWrapperRef = useRef<HTMLDivElement>(null);
@@ -103,10 +111,30 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
 
   useEffect(() => {
     const term = searchTerm.toLowerCase();
-    const unique = [...new Set(options)];
+    const normalizedOptions = options.reduce<BiomarkerOption[]>((acc, option) => {
+      if (typeof option === 'string') {
+        acc.push({ biomarker: option });
+      } else if (option?.biomarker) {
+        acc.push(option);
+      }
+      return acc;
+    }, []);
+    const uniqueMap = new Map<string, BiomarkerOption>();
+    normalizedOptions.forEach((option) => {
+      const key = option.biomarker.toLowerCase();
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, option);
+      }
+    });
+    const unique = Array.from(uniqueMap.values());
     setFilteredOptions(
       term
-        ? unique.filter((o) => o.toLowerCase().includes(term))
+        ? unique.filter(
+            (o) =>
+              o.biomarker.toLowerCase().includes(term) ||
+              (o.benchmark_area || '').toLowerCase().includes(term) ||
+              (o.unit || '').toLowerCase().includes(term),
+          )
         : unique,
     );
   }, [searchTerm, options]);
@@ -152,8 +180,36 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
   const visibleSuggestions = suggestions.filter(
     (s) =>
       !searchTerm ||
-      s.system_biomarker.toLowerCase().includes(searchTerm.toLowerCase()),
+      s.system_biomarker.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (s.benchmark_area || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (s.unit || '').toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  const groupedSuggestions = visibleSuggestions.reduce<
+    Array<{ area: string; matches: BiomarkerSuggestion[] }>
+  >((groups, suggestion) => {
+    const area = suggestion.benchmark_area?.trim() || 'Other Areas';
+    const existingGroup = groups.find((group) => group.area === area);
+    if (existingGroup) {
+      existingGroup.matches.push(suggestion);
+    } else {
+      groups.push({ area, matches: [suggestion] });
+    }
+    return groups;
+  }, []);
+
+  const groupedOptions = filteredOptions.reduce<
+    Array<{ area: string; matches: BiomarkerOption[] }>
+  >((groups, option) => {
+    const area = option.benchmark_area?.trim() || 'Other Areas';
+    const existingGroup = groups.find((group) => group.area === area);
+    if (existingGroup) {
+      existingGroup.matches.push(option);
+    } else {
+      groups.push({ area, matches: [option] });
+    }
+    return groups;
+  }, []);
 
   return (
     <div
@@ -238,25 +294,39 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
                 </div>
               )}
               <ul role="listbox">
-                {visibleSuggestions.map((s) => (
-                  <li
-                    key={`suggestion-${s.system_biomarker}`}
-                    className={`py-1.5 px-3 cursor-pointer text-[10px] text-Text-Primary text-start flex items-start justify-between gap-2 border-b border-Gray-50 ${
-                      selectedValue === s.system_biomarker
-                        ? 'bg-blue-50 font-medium'
-                        : 'hover:bg-blue-50'
-                    }`}
-                    onClick={() => handleOptionClick(s.system_biomarker)}
-                    role="option"
-                    aria-selected={selectedValue === s.system_biomarker}
-                    title={s.reason}
-                  >
-                    <span className="flex-1 text-wrap">{s.system_biomarker}</span>
-                    <span
-                      className={`shrink-0 text-[8px] font-semibold px-1.5 py-0.5 rounded-full ${confidenceBadge(s.confidence)}`}
-                    >
-                      {s.confidence}%
-                    </span>
+                {groupedSuggestions.map((group) => (
+                  <li key={`group-${group.area}`}>
+                    <div className="px-3 py-1 text-[8px] font-semibold uppercase tracking-wide text-Text-Secondary bg-white border-b border-Gray-50">
+                      {group.area}
+                    </div>
+                    {group.matches.map((s) => (
+                      <div
+                        key={`suggestion-${group.area}-${s.system_biomarker}`}
+                        className={`py-1.5 px-3 cursor-pointer text-[10px] text-Text-Primary text-start flex items-start justify-between gap-2 border-b border-Gray-50 ${
+                          selectedValue === s.system_biomarker
+                            ? 'bg-blue-50 font-medium'
+                            : 'hover:bg-blue-50'
+                        }`}
+                        onClick={() => handleOptionClick(s.system_biomarker)}
+                        role="option"
+                        aria-selected={selectedValue === s.system_biomarker}
+                        title={s.reason}
+                      >
+                        <span className="flex-1 min-w-0">
+                          <div className="text-wrap">{s.system_biomarker}</div>
+                          {s.unit && (
+                            <div className="text-[8px] text-Text-Secondary mt-0.5">
+                              Unit: {s.unit}
+                            </div>
+                          )}
+                        </span>
+                        <span
+                          className={`shrink-0 text-[8px] font-semibold px-1.5 py-0.5 rounded-full ${confidenceBadge(s.confidence)}`}
+                        >
+                          {s.confidence}%
+                        </span>
+                      </div>
+                    ))}
                   </li>
                 ))}
               </ul>
@@ -308,15 +378,31 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
           {/* Full option list */}
           <ul role="listbox" className="order-5">
             {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
-                <li
-                  key={option}
-                  className="py-1 px-3 text-wrap w-full cursor-pointer text-[10px] text-Text-Primary hover:bg-gray-200 text-start"
-                  onClick={() => handleOptionClick(option)}
-                  role="option"
-                  aria-selected={selectedValue === option}
-                >
-                  {option}
+              groupedOptions.map((group) => (
+                <li key={`option-group-${group.area}`}>
+                  <div className="px-3 py-1 text-[8px] font-semibold uppercase tracking-wide text-Text-Secondary bg-white border-b border-Gray-50">
+                    {group.area}
+                  </div>
+                  {group.matches.map((option) => (
+                    <div
+                      key={option.biomarker}
+                      className={`py-1 px-3 text-wrap w-full cursor-pointer text-[10px] text-start border-b border-Gray-50 ${
+                        selectedValue === option.biomarker
+                          ? 'bg-blue-50 font-medium text-Primary-DeepTeal'
+                          : 'text-Text-Primary hover:bg-gray-50'
+                      }`}
+                      onClick={() => handleOptionClick(option.biomarker)}
+                      role="option"
+                      aria-selected={selectedValue === option.biomarker}
+                    >
+                      <div>{option.biomarker}</div>
+                      {option.unit && (
+                        <div className="text-[8px] text-Text-Secondary mt-0.5">
+                          Unit: {option.unit}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </li>
               ))
             ) : (
