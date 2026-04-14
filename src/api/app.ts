@@ -749,6 +749,12 @@ class Application extends Api {
     const response = this.post('/patients/treatment_plan_rescore', data);
     return response;
   };
+  static holisticPlanReScoreStart = (data: any) => {
+    return this.post('/patients/treatment_plan_rescore_start', data);
+  };
+  static holisticPlanReScoreStatus = (data: any) => {
+    return this.post('/patients/treatment_plan_rescore_status', data);
+  };
   static saveHolisticPlan = (data: any) => {
     const response = this.post('/initial_save_treatment_plan', data);
     return response;
@@ -1005,6 +1011,12 @@ class Application extends Api {
   };
   static clientInterventionGenerate = (data: any) => {
     return this.post('/treatment_plan/client_intervention', data);
+  };
+  static clientInterventionGenerateStart = (data: any) => {
+    return this.post('/treatment_plan/client_intervention_start', data);
+  };
+  static clientInterventionGenerateStatus = (data: any) => {
+    return this.post('/treatment_plan/client_intervention_status', data);
   };
   static pollPerBiomarkerStatus = (data: any) => {
     return this.post('/treatment_plan/per_biomarker_status', data);

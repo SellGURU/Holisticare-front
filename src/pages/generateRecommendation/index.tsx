@@ -37,6 +37,11 @@ const serializeKeyAreas = (value: any) => {
   });
 };
 
+const sleep = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
 const initialCategoryState: CategoryState[] = [
   { name: 'Diet', visible: true },
   { name: 'Activity', visible: true },
@@ -139,6 +144,56 @@ export const GenerateRecommendation = () => {
   const biomarkerPollingRef = useRef<NodeJS.Timeout | null>(null);
   const lastKeyAreasUpdateFromRemapRef = useRef(false);
   const lastScoredKeyAreasSignatureRef = useRef<string>('');
+
+  const pollHolisticRescoreJob = async (jobId: string) => {
+    for (let attempt = 0; attempt < 90; attempt += 1) {
+      if (!isMountedRef.current) {
+        throw new Error('Rescore polling cancelled');
+      }
+
+      const res = await Application.holisticPlanReScoreStatus({
+        job_id: jobId,
+      });
+      const data = res.data ?? {};
+
+      if (data.status === 'completed' && data.ready) {
+        return data;
+      }
+
+      if (data.status === 'failed') {
+        throw new Error(data.error || 'Async rescore failed');
+      }
+
+      await sleep(2000);
+    }
+
+    throw new Error('Async rescore timed out');
+  };
+
+  const pollClientInterventionJob = async (jobId: string) => {
+    for (let attempt = 0; attempt < 90; attempt += 1) {
+      if (!isMountedRef.current) {
+        throw new Error('Client intervention polling cancelled');
+      }
+
+      const res = await Application.clientInterventionGenerateStatus({
+        job_id: jobId,
+      });
+      const data = res.data ?? {};
+
+      if (data.status === 'completed' && data.ready) {
+        return data;
+      }
+
+      if (data.status === 'failed') {
+        throw new Error(data.error || 'Async client intervention failed');
+      }
+
+      await sleep(2000);
+    }
+
+    throw new Error('Async client intervention timed out');
+  };
   const [coverageProgess, setcoverageProgess] = useState(0);
   const [coverageDetails, setcoverageDetails] = useState<any[]>([]);
 
@@ -446,20 +501,25 @@ export const GenerateRecommendation = () => {
         );
         try {
           const remappedPlan = await remapIssues(treatmentPlanData);
-          const res = await Application.holisticPlanReScore({
+          const startRes = await Application.holisticPlanReScoreStart({
             member_id: id,
             suggestion_tab: remappedPlan?.suggestion_tab ?? [],
             key_areas_to_address: remappedPlan?.key_areas_to_address,
           });
+          const jobId = startRes.data?.job_id;
+          if (!jobId) {
+            throw new Error('Rescore job did not return a job_id');
+          }
+          const res = await pollHolisticRescoreJob(jobId);
           const rescoredKeyAreas = toType2(
-            res.data?.key_areas_to_address ??
+            res?.key_areas_to_address ??
               remappedPlan?.key_areas_to_address ??
               [],
           );
           const rescoredPlan = {
             ...(remappedPlan ?? treatmentPlanData),
             suggestion_tab:
-              res.data?.suggestion_tab ??
+              res?.suggestion_tab ??
               remappedPlan?.suggestion_tab ??
               treatmentPlanData?.suggestion_tab ??
               [],
@@ -555,7 +615,7 @@ export const GenerateRecommendation = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setisButtonLoading(true);
     const selectedSuggestions = treatmentPlanData.suggestion_tab.filter(
       (el: any) =>
@@ -564,57 +624,58 @@ export const GenerateRecommendation = () => {
           .map((visible) => visible.name)
           .includes(el.Category),
     );
-
-    Application.clientInterventionGenerate({
-      member_id: id,
-      selected_interventions: selectedSuggestions,
-      client_insight: treatmentPlanData?.client_insight,
-    })
-      .then((clientInterventionRes) => {
-        const clientContent = clientInterventionRes.data?.result;
-        const mergedSuggestionTab =
-          clientContent && Array.isArray(clientContent)
-            ? mergeClientInterventionContent(
-                treatmentPlanData.suggestion_tab,
-                clientContent,
-              )
-            : treatmentPlanData.suggestion_tab;
-
-        const savePayload = {
-          ...treatmentPlanData,
-          suggestion_tab: mergedSuggestionTab.filter(
-            (el: any) =>
-              el.checked === true &&
-              VisibleCategories.filter((visible) => visible.visible)
-                .map((visible) => visible.name)
-                .includes(el.Category),
-          ),
-          is_update: treatment_id && treatment_id?.length > 1 ? true : false,
-          treatment_id: resolveTreatmentId(),
-          result_tab: treatment_id && treatment_id?.length > 1 ? [] : [],
-        };
-
-        setTratmentPlanData((prev: any) =>
-          prev ? { ...prev, suggestion_tab: mergedSuggestionTab } : prev,
-        );
-
-        return Application.saveHolisticPlan(savePayload);
-      })
-      .then(() => {
-        setTreatmentId(treatmentPlanData.treatment_id);
-        navigate(
-          `/report/Generate-Holistic-Plan/${id}/${resolveTreatmentId() + '?isUpdate=' + (treatment_id && treatment_id?.length > 1 ? 'true' : 'false')}`,
-        );
-      })
-      .catch((err) => {
-        console.error(
-          'Error generating client intervention or saving holistic plan:',
-          err,
-        );
-      })
-      .finally(() => {
-        setisButtonLoading(false);
+    try {
+      const startRes = await Application.clientInterventionGenerateStart({
+        member_id: id,
+        selected_interventions: selectedSuggestions,
+        client_insight: treatmentPlanData?.client_insight,
       });
+      const jobId = startRes.data?.job_id;
+      if (!jobId) {
+        throw new Error('Client intervention job did not return a job_id');
+      }
+
+      const clientInterventionRes = await pollClientInterventionJob(jobId);
+      const clientContent = clientInterventionRes?.result;
+      const mergedSuggestionTab =
+        clientContent && Array.isArray(clientContent)
+          ? mergeClientInterventionContent(
+              treatmentPlanData.suggestion_tab,
+              clientContent,
+            )
+          : treatmentPlanData.suggestion_tab;
+
+      const savePayload = {
+        ...treatmentPlanData,
+        suggestion_tab: mergedSuggestionTab.filter(
+          (el: any) =>
+            el.checked === true &&
+            VisibleCategories.filter((visible) => visible.visible)
+              .map((visible) => visible.name)
+              .includes(el.Category),
+        ),
+        is_update: treatment_id && treatment_id?.length > 1 ? true : false,
+        treatment_id: resolveTreatmentId(),
+        result_tab: treatment_id && treatment_id?.length > 1 ? [] : [],
+      };
+
+      setTratmentPlanData((prev: any) =>
+        prev ? { ...prev, suggestion_tab: mergedSuggestionTab } : prev,
+      );
+
+      await Application.saveHolisticPlan(savePayload);
+      setTreatmentId(treatmentPlanData.treatment_id);
+      navigate(
+        `/report/Generate-Holistic-Plan/${id}/${resolveTreatmentId() + '?isUpdate=' + (treatment_id && treatment_id?.length > 1 ? 'true' : 'false')}`,
+      );
+    } catch (err) {
+      console.error(
+        'Error generating client intervention or saving holistic plan:',
+        err,
+      );
+    } finally {
+      setisButtonLoading(false);
+    }
   };
 
   useEffect(() => {
