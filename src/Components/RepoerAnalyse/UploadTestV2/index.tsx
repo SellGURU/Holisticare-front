@@ -156,15 +156,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
       setExtractedBiomarkers(sorted);
 
-      // Stop polling + mark valid once we have biomarkers
+      // Stop polling + show biomarkers immediately
       if (data.extracted_biomarkers && data.extracted_biomarkers.length > 0) {
         setPolling(false);
+        setbiomarkerLoading(false);
         if (data.is_edited) {
-          // Skip re-validation — data was already validated on first save.
           setisSaveClicked(false);
-          setbiomarkerLoading(false); // clear spinner — onValidate won't run to do this
-        } else {
-          onValidate(sorted, data.lab_type);
         }
       }
     };

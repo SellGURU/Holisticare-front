@@ -202,7 +202,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const [suggestions, setSuggestions] = useState<
     Record<string, { matches: BiomarkerSuggestion[]; no_match_reason?: string | null }>
   >({});
-  const suggestionsFetchedRef = useRef(false);
   const [suggestionsLoading, setSuggestionsLoading] = useState<Record<string, boolean>>(
     {},
   );
@@ -255,27 +254,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (
-      !rowErrors ||
-      Object.keys(rowErrors).length === 0 ||
-      biomarkers.length === 0
-    ) {
-      return;
-    }
-
-    const unresolvedRows = biomarkers.filter((_b: any, idx: number) => rowErrors[idx]);
-    if (unresolvedRows.length === 0) return;
-    if (suggestionsFetchedRef.current) return;
-    suggestionsFetchedRef.current = true;
-
-    fetchBiomarkerSuggestions(unresolvedRows);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rowErrors]);
-
   // Reset suggestion cache whenever biomarkers change (new upload)
   useEffect(() => {
-    suggestionsFetchedRef.current = false;
     setSuggestions({});
     setSuggestionsLoading({});
   }, [biomarkers.length]);
