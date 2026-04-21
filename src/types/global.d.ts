@@ -19,6 +19,7 @@ declare global {
   };
 
   type QuestionaryType = {
+    id?: string;
     order?: number;
     question: string;
     type: string;
@@ -50,14 +51,24 @@ declare global {
     }[];
   };
 
+  type ScoringRuleType = {
+    name: string;
+    map_to_biomarker?: string;
+    unit?: string;
+    formula: string;
+    round?: number;
+  };
+
   type QuestoinaryFormType = {
     title: string;
     questions: Array<QuestionaryType>;
+    scoring?: Array<ScoringRuleType>;
   };
 
   type QuestoinaryEditFormType = {
     title: string;
     questions: Array<QuestionaryType>;
+    scoring?: Array<ScoringRuleType>;
   };
 
   type CheckinFormType = {

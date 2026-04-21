@@ -9,8 +9,40 @@ import Toggle from '../../../Components/RepoerAnalyse/Boxs/Toggle';
 import TextField from '../../../Components/TextField';
 import { TextAreaField } from '../../../Components/UnitComponents';
 import AddQuestionsModal from './AddQuestionaryQuestionModal';
+import CalculationsEditor from './CalculationsEditor';
 import QuestionItem from './QuestionItem';
+import QuestionsJsonEditor from './QuestionsJsonEditor';
 import TimerPicker from './TimerPicker';
+
+const SCORING_SENTINEL_KEY = '__scoring__';
+
+const splitScoringFromQuestions = (
+  rawQuestions: Array<any>,
+): { questions: Array<QuestionaryType>; scoring: Array<ScoringRuleType> } => {
+  const questions: Array<QuestionaryType> = [];
+  let scoring: Array<ScoringRuleType> = [];
+  (rawQuestions || []).forEach((item) => {
+    if (item && typeof item === 'object' && SCORING_SENTINEL_KEY in item) {
+      const rules = (item as any)[SCORING_SENTINEL_KEY];
+      if (Array.isArray(rules)) {
+        scoring = rules as Array<ScoringRuleType>;
+      }
+      return;
+    }
+    questions.push(item as QuestionaryType);
+  });
+  return { questions, scoring };
+};
+
+const mergeScoringIntoQuestions = (
+  questions: Array<QuestionaryType>,
+  scoring: Array<ScoringRuleType>,
+): Array<any> => {
+  if (!scoring || scoring.length === 0) {
+    return questions;
+  }
+  return [...questions, { [SCORING_SENTINEL_KEY]: scoring }];
+};
 interface QuestionaryControllerModalProps {
   editId?: string;
   mode?: 'Edit' | 'Reposition' | 'Add';
@@ -37,9 +69,21 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   const [checked, setChecked] = useState(false);
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(15);
-  const [questions, setQuestions] = useState<Array<QuestionaryType>>(
+  const initialSplit = splitScoringFromQuestions(
     templateData ? templateData.questions : [],
   );
+  const [questions, setQuestions] = useState<Array<QuestionaryType>>(
+    initialSplit.questions,
+  );
+  const [scoring, setScoring] = useState<Array<ScoringRuleType>>(
+    (templateData && Array.isArray(templateData.scoring)
+      ? (templateData.scoring as Array<ScoringRuleType>)
+      : initialSplit.scoring) || [],
+  );
+  const [questionsViewMode, setQuestionsViewMode] = useState<'form' | 'json'>(
+    'form',
+  );
+  const [questionsJsonError, setQuestionsJsonError] = useState<string>('');
   const [AddquestionStep, setAddquestionStep] = useState(0);
   const [showTitleRequired, setShowTitleRequired] = useState(false);
   const [autoAssign, setAutoAssign] = useState(false);
@@ -106,6 +150,12 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             onChange={(values) => {
               setQuestions(values);
             }}
+            upScoring={scoring}
+            onChangeScoring={setScoring}
+            viewMode={questionsViewMode}
+            setViewMode={setQuestionsViewMode}
+            jsonError={questionsJsonError}
+            setJsonError={setQuestionsJsonError}
             onChangeChecked={(value: boolean) => {
               setChecked(value);
             }}
@@ -153,6 +203,12 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             onChange={(values) => {
               setQuestions(values);
             }}
+            upScoring={scoring}
+            onChangeScoring={setScoring}
+            viewMode={questionsViewMode}
+            setViewMode={setQuestionsViewMode}
+            jsonError={questionsJsonError}
+            setJsonError={setQuestionsJsonError}
             onChangeChecked={(value: boolean) => {
               setChecked(value);
             }}
@@ -197,6 +253,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       return true;
     } else if (questions.length == 0 && step !== 0) {
       return true;
+    } else if (step === 1 && questionsJsonError) {
+      return true;
     }
     // }
     return false;
@@ -214,7 +272,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     };
     onSave({
       title: titleForm.length > 0 ? titleForm : templateData.title,
-      questions: questions,
+      questions: mergeScoringIntoQuestions(questions, scoring),
       share_with_client: checked,
       time: getTimeInMilliseconds(),
       consent_text: consentText,
@@ -235,7 +293,13 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       setLoading(true);
       FormsApi.showQuestinary(editId)
         .then((res) => {
-          setQuestions(res.data.questions);
+          const loaded = splitScoringFromQuestions(res.data.questions || []);
+          setQuestions(loaded.questions);
+          setScoring(
+            Array.isArray(res.data.scoring) && res.data.scoring.length > 0
+              ? res.data.scoring
+              : loaded.scoring,
+          );
           setTitleForm(res.data.title);
           setDescriptionForm(res.data.description || '');
           setConsentText(res.data.consent_text || '');
@@ -429,6 +493,12 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
 interface AddQuestionaryProps {
   onChange: (questions: Array<QuestionaryType>) => void;
   upQuestions: Array<QuestionaryType>;
+  upScoring: Array<ScoringRuleType>;
+  onChangeScoring: (scoring: Array<ScoringRuleType>) => void;
+  viewMode: 'form' | 'json';
+  setViewMode: (value: 'form' | 'json') => void;
+  jsonError: string;
+  setJsonError: (message: string) => void;
   step: number;
   onChangeChecked: (value: boolean) => void;
   onChangeMinutes: (value: number) => void;
@@ -453,6 +523,12 @@ interface AddQuestionaryProps {
 const AddQuestionary: FC<AddQuestionaryProps> = ({
   onChange,
   upQuestions,
+  upScoring,
+  onChangeScoring,
+  viewMode,
+  setViewMode,
+  jsonError,
+  setJsonError,
   step,
   onChangeChecked,
   onChangeMinutes,
@@ -517,11 +593,60 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
   useEffect(() => {
     onChange(questions);
   }, [questions]);
+  const renderViewModeToggle = () => (
+    <div className="w-full flex items-center justify-end gap-2 mb-3">
+      <button
+        type="button"
+        onClick={() => {
+          if (viewMode === 'form') return;
+          if (jsonError) return;
+          setViewMode('form');
+        }}
+        disabled={viewMode === 'json' && !!jsonError}
+        className={`rounded-full px-3 py-1 text-[11px] border transition-colors ${
+          viewMode === 'form'
+            ? 'bg-Primary-DeepTeal text-white border-Primary-DeepTeal'
+            : 'bg-white text-Text-Primary border-Gray-50 hover:border-Primary-DeepTeal'
+        } ${viewMode === 'json' && jsonError ? 'opacity-50 cursor-not-allowed' : ''}`}
+        title={
+          viewMode === 'json' && jsonError
+            ? 'Fix JSON errors before switching back to the form view.'
+            : ''
+        }
+      >
+        UI
+      </button>
+      <button
+        type="button"
+        onClick={() => setViewMode('json')}
+        className={`rounded-full px-3 py-1 text-[11px] border transition-colors ${
+          viewMode === 'json'
+            ? 'bg-Primary-DeepTeal text-white border-Primary-DeepTeal'
+            : 'bg-white text-Text-Primary border-Gray-50 hover:border-Primary-DeepTeal'
+        }`}
+      >
+        JSON
+      </button>
+    </div>
+  );
+
   return (
     <>
       {step === 1 || mode == 'Reposition' ? (
         <>
-          {questions.length > 0 && !addMore && (
+          {mode != 'Reposition' && !addMore && renderViewModeToggle()}
+          {viewMode === 'json' && !addMore && mode != 'Reposition' ? (
+            <QuestionsJsonEditor
+              questions={questions}
+              scoring={upScoring}
+              onChange={(nextQuestions, nextScoring) => {
+                setQuestions(nextQuestions);
+                onChangeScoring(nextScoring);
+              }}
+              onError={setJsonError}
+            />
+          ) : null}
+          {viewMode === 'form' && questions.length > 0 && !addMore && (
             <>
               <div
                 className={`${addMore ? 'max-h-[45px]' : 'max-h-[200px] min-h-[60px]'} overflow-y-auto w-full`}
@@ -577,7 +702,7 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
               </div>
             </>
           )}
-          {questions.length > 0 && !addMore && (
+          {viewMode === 'form' && questions.length > 0 && !addMore && (
             <div
               className="flex items-center justify-center text-xs cursor-pointer text-Primary-DeepTeal font-medium border-2 border-dashed rounded-xl w-full h-[36px] bg-backgroundColor-Card border-Primary-DeepTeal mb-4 mt-2"
               onClick={() => {
@@ -596,7 +721,14 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
               Add Question
             </div>
           )}
-          {questions.length == 0 && !addMore && (
+          {viewMode === 'form' && !addMore && mode != 'Reposition' && (
+            <CalculationsEditor
+              scoring={upScoring}
+              onChange={onChangeScoring}
+              questions={questions}
+            />
+          )}
+          {viewMode === 'form' && questions.length == 0 && !addMore && (
             <>
               <img
                 src="./icons/document-text-rectangle.svg"
