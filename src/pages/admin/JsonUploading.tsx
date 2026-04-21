@@ -15,7 +15,7 @@ type ConfigKey =
 
 interface ClinicOption {
   clinic_id: number;
-  clinic_name: string;
+  clinic_name: string | null;
   admin_email?: string;
 }
 
@@ -69,6 +69,9 @@ const EMPTY_CONFIGS: ConfigBundle = {
     mappings: [],
   },
 };
+
+const normalizeSearchableText = (value?: string | null) =>
+  (value || '').toLowerCase();
 
 const AdminJsonUploading = () => {
   const navigate = useNavigate();
@@ -124,8 +127,8 @@ const AdminJsonUploading = () => {
     if (!search) return clinics;
     return clinics.filter(
       (clinic) =>
-        clinic.clinic_name.toLowerCase().includes(search) ||
-        (clinic.admin_email || '').toLowerCase().includes(search),
+        normalizeSearchableText(clinic.clinic_name).includes(search) ||
+        normalizeSearchableText(clinic.admin_email).includes(search),
     );
   }, [clinicSearch, clinics]);
 
@@ -134,8 +137,8 @@ const AdminJsonUploading = () => {
     if (!search) return clinics;
     return clinics.filter(
       (clinic) =>
-        clinic.clinic_name.toLowerCase().includes(search) ||
-        (clinic.admin_email || '').toLowerCase().includes(search),
+        normalizeSearchableText(clinic.clinic_name).includes(search) ||
+        normalizeSearchableText(clinic.admin_email).includes(search),
     );
   }, [targetSearch, clinics]);
 
@@ -315,6 +318,7 @@ const AdminJsonUploading = () => {
     <AdminShellLayout
       title="Admin JSON Uploading"
       subtitle="Manage More Info, Categories, Unit Mapping, and Biomarker Mapping with the admin login."
+      showGlobalFilters={false}
       actions={
         <button
           type="button"

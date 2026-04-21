@@ -36,7 +36,7 @@ const AdminLogin = () => {
           'adminPermissions',
           JSON.stringify(res.data.permission || {}),
         );
-        navigate('/admin/marketing');
+        navigate('/admin/overview');
       })
       .catch((err) => {
         const detail =

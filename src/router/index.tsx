@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import {
   AddClient,
   AiKnowledge,
@@ -45,9 +45,15 @@ import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
 import JsonUploading from '../pages/JsonUploading/index.tsx';
 import AdminLogin from '../pages/admin/Login.tsx';
-import MarketingDashboard from '../pages/admin/MarketingDashboard.tsx';
 import AdminProtectedRoute from './AdminProtected.tsx';
 import AdminJsonUploading from '../pages/admin/JsonUploading.tsx';
+import OverviewDashboard from '../pages/admin/OverviewDashboard.tsx';
+import SessionInsights from '../pages/admin/SessionInsights.tsx';
+import DataExplorer from '../pages/admin/DataExplorer.tsx';
+import AdminConfig from '../pages/admin/AdminConfig.tsx';
+import LlmPromptCatalog from '../pages/admin/LlmPromptCatalog.tsx';
+import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
+import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
 
 const router = createBrowserRouter([
   {
@@ -182,10 +188,54 @@ const router = createBrowserRouter([
     element: <AdminLogin></AdminLogin>,
   },
   {
-    path: '/admin/marketing',
+    path: '/admin/overview',
     element: (
-      <AdminProtectedRoute Component={MarketingDashboard}></AdminProtectedRoute>
+      <AdminProtectedRoute Component={OverviewDashboard}></AdminProtectedRoute>
     ),
+  },
+  {
+    path: '/admin/marketing',
+    element: <Navigate to="/admin/overview" replace />,
+  },
+  {
+    path: '/admin/sessions',
+    element: (
+      <AdminProtectedRoute Component={SessionInsights}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/explorer',
+    element: <AdminProtectedRoute Component={DataExplorer}></AdminProtectedRoute>,
+  },
+  {
+    path: '/admin/workspace',
+    element: (
+      <AdminProtectedRoute Component={ClinicWorkspace}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/reports',
+    element: (
+      <AdminProtectedRoute Component={AIReportCopilot}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/config',
+    element: <AdminProtectedRoute Component={AdminConfig}></AdminProtectedRoute>,
+  },
+  {
+    path: '/admin/llm-prompts',
+    element: (
+      <AdminProtectedRoute Component={LlmPromptCatalog}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin',
+    element: <Navigate to="/admin/overview" replace />,
+  },
+  {
+    path: '/admin/',
+    element: <Navigate to="/admin/overview" replace />,
   },
   {
     path: '/admin/json-uploading',

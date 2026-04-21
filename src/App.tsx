@@ -4,6 +4,7 @@ import router from './router';
 import { useEffect } from 'react';
 import ActivityLogger from './utils/activty-logger';
 import { useServiceWorker } from './hooks/useServiceWorker';
+import AdminContextProvider from './store/adminContext';
 // import useMoch from './hooks/useMoch';
 
 function App() {
@@ -17,9 +18,9 @@ function App() {
   useServiceWorker();
   // useMoch();
   return (
-    <>
+    <AdminContextProvider>
       <RouterProvider router={router} />
-    </>
+    </AdminContextProvider>
   );
 }
 

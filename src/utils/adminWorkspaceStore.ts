@@ -1,10 +1,10 @@
-import {
+import type {
   ClinicNote,
   ClinicReport,
   ClinicTag,
   ClinicWorkspaceRecord,
   FollowUpState,
-} from '../types/admin';
+} from '../types/admin.ts';
 
 const WORKSPACE_STORAGE_KEY = 'adminClinicWorkspaceRecords';
 const REPORT_STORAGE_KEY = 'adminGeneratedReports';

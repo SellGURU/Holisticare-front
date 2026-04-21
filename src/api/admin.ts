@@ -57,6 +57,13 @@ class AdminApi {
     });
   }
 
+  static getBackendErrors(params?: { limit?: number; search?: string; status_code?: number }) {
+    return axios.get(`${baseUrl}/admin/logs/backend-errors`, {
+      headers: withAuthHeaders(),
+      params,
+    });
+  }
+
   static getJsonManagerClinics() {
     return axios.post(
       `${baseUrl}/admin/custom_biomarker/clinics`,
@@ -87,6 +94,74 @@ class AdminApi {
         headers: withAuthHeaders(),
       },
     );
+  }
+
+  // ==========================================================================
+  // LLM Prompt Catalog
+  // ==========================================================================
+
+  static listLlmPrompts(params?: {
+    category?: string;
+    owner?: string;
+    search?: string;
+    only_active?: boolean;
+  }) {
+    return axios.get(`${baseUrl}/admin/llm/prompts`, {
+      headers: withAuthHeaders(),
+      params,
+    });
+  }
+
+  static getLlmPrompt(key: string) {
+    return axios.get(`${baseUrl}/admin/llm/prompts/${encodeURIComponent(key)}`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static updateLlmPrompt(key: string, payload: any) {
+    return axios.put(
+      `${baseUrl}/admin/llm/prompts/${encodeURIComponent(key)}`,
+      payload,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static toggleLlmPrompt(key: string, is_active: boolean) {
+    return axios.post(
+      `${baseUrl}/admin/llm/prompts/${encodeURIComponent(key)}/toggle`,
+      { is_active },
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static testLlmPrompt(key: string, payload: any) {
+    return axios.post(
+      `${baseUrl}/admin/llm/prompts/${encodeURIComponent(key)}/test`,
+      payload,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static reseedLlmPrompts() {
+    return axios.post(
+      `${baseUrl}/admin/llm/prompts/_reseed`,
+      {},
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static invalidateLlmPromptCache(key?: string) {
+    return axios.post(
+      `${baseUrl}/admin/llm/prompts/_invalidate`,
+      key ? { key } : {},
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static getLlmPromptCacheStats() {
+    return axios.get(`${baseUrl}/admin/llm/prompts/_cache`, {
+      headers: withAuthHeaders(),
+    });
   }
 }
 
