@@ -38,84 +38,65 @@ const GenerateActionPlan = () => {
     checkIn: [],
     category: [],
   });
-  const checkSelectedTaskConflict = useCallback(
-    (newPlans: any, isshowPlan?: boolean) => {
+  const splitTasks = useCallback((items: any[] = []) => {
+    const checkInItems = items.filter((item: any) => item.Task_Type === 'Checkin');
+    const categoryItems = items.filter(
+      (item: any) => item.Task_Type !== 'Checkin',
+    );
+
+    return {
+      checkIn: checkInItems,
+      category: categoryItems,
+    };
+  }, []);
+
+  const buildTaskIdentity = useCallback((task: any) => {
+    return (
+      task?.task_directory_id ||
+      `${task?.Task_Type || ''}|${task?.Category || ''}|${task?.Check_in_id || ''}|${task?.Title || ''}`
+    );
+  }, []);
+
+  const removeSelectedTasks = useCallback(
+    (availableTasks: any[] = [], selectedTasks: any[] = []) => {
+      const selectedKeys = new Set(selectedTasks.map(buildTaskIdentity));
+      return availableTasks.filter(
+        (task: any) => !selectedKeys.has(buildTaskIdentity(task)),
+      );
+    },
+    [buildTaskIdentity],
+  );
+
+  const loadAvailableTasks = useCallback(
+    (selectedTasks: any[] = []) => {
       setIsLoadingPlans(true);
-      const tasksIdis = newPlans.map((el: any) => el.task_directory_id);
-      Application.checkSelectedTaskConflict({
+      Application.getActionPlanTaskDirectoryNew({
         member_id: id,
-        tasks: newPlans,
       })
         .then((res) => {
-          // Helper function to remove duplicates based on unique identifier
+          if (!isMountedRef.current) return;
 
-          const checkInItems = res.data.filter(
-            (el: any) => el.Task_Type == 'Checkin',
-          );
-          if (isshowPlan) {
-            const categoryItems = res.data.filter(
-              (el: any) =>
-                el.Task_Type != 'Checkin' &&
-                !tasksIdis.includes(el.task_directory_id),
-            );
-            setActions({
-              checkIn: checkInItems,
-              category: categoryItems,
-            });
-          } else {
-            const categoryItems = res.data.filter(
-              (el: any) => el.Task_Type != 'Checkin',
-            );
-            setCategories({
-              checkIn: checkInItems,
-              category: categoryItems,
-            });
-          }
+          const availableTasks = removeSelectedTasks(res.data, selectedTasks);
+          setCategories(splitTasks(availableTasks));
+          setActionPlanError(false);
+        })
+        .catch(() => {
+          if (!isMountedRef.current) return;
+          setActionPlanError(true);
         })
         .finally(() => {
-          setIsLoadingPlans(false);
-        })
-        .catch(() => {});
+          if (isMountedRef.current) {
+            setIsLoadingPlans(false);
+          }
+        });
     },
-    [id],
+    [id, removeSelectedTasks, splitTasks],
   );
   const [actionPlanError, setActionPlanError] = useState(false);
   const getPaln = useCallback(() => {
-    Application.getActionPlanTaskDirectoryNew({
-      member_id: id,
-      // percents: newPlans,
-    })
-      .then((res) => {
-        if (!isMountedRef.current) return;
-
-        const checkInItems = res.data.filter(
-          (item: any) => item.Task_Type === 'Checkin',
-        );
-        const categoryItems = res.data.filter(
-          (item: any) => item.Task_Type !== 'Checkin',
-        );
-
-        setCategories({
-          checkIn: checkInItems,
-          category: categoryItems,
-        });
-
-        setIsWeighted(true);
-        checkSelectedTaskConflict(res.data);
-        setActionPlanError(false);
-      })
-      .catch(() => {
-        if (!isMountedRef.current) return;
-
-        setActionPlanError(true);
-        timeoutRef.current = setTimeout(() => {
-          if (isMountedRef.current) {
-            getPaln();
-          }
-        }, 5000);
-        // navigate(-1);
-      });
-  }, [id, checkSelectedTaskConflict]);
+    loadAvailableTasks();
+    setIsWeighted(true);
+  }, [loadAvailableTasks]);
   const getSavedPaln = (planId: string) => {
     Application.actionPalnShowTasks({
       member_id: id,
@@ -123,28 +104,18 @@ const GenerateActionPlan = () => {
       // percents: newPlans,
     })
       .then((res) => {
-        const checkInItems = res.data.tasks.filter(
-          (item: any) => item.Task_Type === 'Checkin',
-        );
-        const categoryItems = res.data.tasks.filter(
-          (item: any) => item.Task_Type !== 'Checkin',
-        );
+        const splitSelectedTasks = splitTasks(res.data.tasks);
         setIsDarft(res.data.is_draft);
-        // setCategories({
-        //   checkIn: checkInItems,
-        //   category: categoryItems,
-        // });
         setActions({
-          checkIn: checkInItems,
-          category: categoryItems,
+          checkIn: splitSelectedTasks.checkIn,
+          category: splitSelectedTasks.category,
         });
         setDuration(res.data.duration);
         setPlanObjective(res.data.plan_objective);
 
         setIsWeighted(true);
-        checkSelectedTaskConflict(res.data.tasks);
+        loadAvailableTasks(res.data.tasks);
         setActionPlanError(false);
-        setIsLoadingPlans(false);
       })
       .catch(() => {
         // if (!isMountedRef.current) return;
@@ -155,6 +126,11 @@ const GenerateActionPlan = () => {
         //   }
         // }, 5000);
         // navigate(-1);
+      })
+      .finally(() => {
+        if (isMountedRef.current) {
+          setIsLoadingPlans(false);
+        }
       });
   };
   useEffect(() => {
@@ -194,7 +170,8 @@ const GenerateActionPlan = () => {
       duration: duration,
       plan_objective: planObjective,
       id: actionPlanId ? actionPlanId : undefined,
-      is_update: !isDarft,
+      // Only use update mode for finalized (non-draft) plans.
+      is_update: isDarft === false,
     })
       .then(() => {
         // navigate(-1);
@@ -231,7 +208,11 @@ const GenerateActionPlan = () => {
       return [...data.checkIn, ...data.category];
     };
     const flattenedData = prepareDataForBackend(actions);
-    if (flattenedData.length > 0 && (isDarft === null || isDarft === true)) {
+    if (
+      !isLoadingSaveChanges &&
+      flattenedData.length > 0 &&
+      (isDarft === null || isDarft === true)
+    ) {
       Application.initialSaveActionPlan({
         member_id: id,
         tasks: flattenedData,
@@ -251,7 +232,7 @@ const GenerateActionPlan = () => {
   };
   useEffect(() => {
     autoSaveActionPlan();
-  }, [actions, duration, planObjective]);
+  }, [actions, duration, planObjective, isLoadingSaveChanges]);
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
     if (calendarView) {

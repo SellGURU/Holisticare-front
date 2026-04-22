@@ -176,6 +176,29 @@ const Stadio: FC<StadioProps> = ({
   const { id } = useParams<{ id: string }>();
   const AutoGenerate = () => {
     setIsAutoGenerate(true);
+
+    const recommendedCategory = (data.category || []).filter(
+      (item: any) => item?.holisticare_recommendation === true,
+    );
+    const recommendedCheckIn = (data.checkIn || []).filter(
+      (item: any) => item?.holisticare_recommendation === true,
+    );
+
+    if (recommendedCategory.length || recommendedCheckIn.length) {
+      setActions((prevCategories: any) => ({
+        ...prevCategories,
+        category: recommendedCategory,
+        checkIn: recommendedCheckIn,
+      }));
+      setIsAutoGenerate(false);
+      setIsAutoGenerateComplete(true);
+      setTimeout(() => {
+        setIsAutoGenerateComplete(false);
+        setIsAutoGenerateShow(false);
+      }, 5000);
+      return;
+    }
+
     Application.getActionPlanGenerateActionPlanTaskNew({
       member_id: id,
     })
