@@ -654,37 +654,38 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               data-tour="biomarker-table"
             >
               <div className="w-full h-full hidden-scrollbar overflow-x-auto md:overflow-x-visible">
-                <div className="w-full min-w-[760px] h-full flex flex-col">
-                  {/* Table Header */}
-                  <div
-                    className="grid biomarker-grid-desktop biomarker-grid-mobile w-full sticky top-0 z-20 shrink-0 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
-                    style={{
-                      gridTemplateColumns:
-                        'minmax(220px,1.3fr) minmax(240px,1.4fr) minmax(110px,0.8fr) minmax(130px,0.9fr) 60px',
-                    }}
-                  >
-                    <div className="text-left" data-tour="extracted-biomarker">
-                      Extracted Biomarker
-                    </div>
-                    <div className="text-center" data-tour="system-biomarker">
-                      System Biomarker
-                    </div>
-                    <div className="text-center" data-tour="extracted-value">
-                      Extracted Value
-                    </div>
-                    <div className="text-center" data-tour="extracted-unit">
-                      Extracted Unit
-                    </div>
-                    <div className="text-center" data-tour="delete-biomarker">
-                      Action
-                    </div>
-                  </div>
-
-                  {/* Table Rows */}
+                <div className="w-full min-w-[760px] h-full flex flex-col min-h-0">
+                  {/* Single vertical scroll for header + rows so a scrollbar does not
+                      shrink the body grid relative to the header (column misalignment). */}
                   <div
                     ref={tableRef}
-                    className="flex-1 min-h-0 overflow-y-auto w-full pb-8"
+                    className="flex-1 min-h-0 overflow-y-auto w-full pb-8 [scrollbar-gutter:stable]"
                   >
+                    {/* Table Header */}
+                    <div
+                      className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                      style={{
+                        gridTemplateColumns:
+                          'minmax(220px,1.3fr) minmax(240px,1.4fr) minmax(110px,0.8fr) minmax(130px,0.9fr) 60px',
+                      }}
+                    >
+                      <div className="text-left" data-tour="extracted-biomarker">
+                        Extracted Biomarker
+                      </div>
+                      <div className="text-center" data-tour="system-biomarker">
+                        System Biomarker
+                      </div>
+                      <div className="text-center" data-tour="extracted-value">
+                        Extracted Value
+                      </div>
+                      <div className="text-center" data-tour="extracted-unit">
+                        Extracted Unit
+                      </div>
+                      <div className="text-center" data-tour="delete-biomarker">
+                        Action
+                      </div>
+                    </div>
+
                     {biomarkers.map((b, index) => {
                       const rowSuggestions =
                         suggestions[b.original_biomarker_name || b.biomarker || ''];

@@ -726,6 +726,7 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
               scoring={upScoring}
               onChange={onChangeScoring}
               questions={questions}
+              onChangeQuestions={(next) => setQuestions(next)}
             />
           )}
           {viewMode === 'form' && questions.length == 0 && !addMore && (

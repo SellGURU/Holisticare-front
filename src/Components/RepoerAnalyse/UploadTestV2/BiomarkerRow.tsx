@@ -116,15 +116,15 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
             : index % 2 === 0
               ? 'bg-white'
               : 'bg-[#F8FAFB]'
-        } grid py-1 px-4 border-b border-Gray-50 items-center text-[8px] md:text-xs text-Text-Primary`}
+        } grid px-4 py-2 border-b border-Gray-50 items-start text-[8px] md:text-xs text-Text-Primary`}
         style={{
           gridTemplateColumns:
             'minmax(220px,1.3fr) minmax(240px,1.4fr) minmax(110px,0.8fr) minmax(130px,0.9fr) 60px',
         }}
       >
         {/* Column 1: Extracted Biomarker */}
-        <div className="text-left text-Text-Primary flex flex-col gap-1 min-w-0">
-          <div className="flex gap-1 items-start">
+        <div className="min-w-0 pt-1">
+          <div className="flex min-h-[40px] items-center gap-1">
             <TooltipTextAuto maxWidth="180px">
               {biomarker.original_biomarker_name}
             </TooltipTextAuto>
@@ -146,11 +146,11 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
               </>
             )}
           </div>
-          <div className="flex flex-wrap gap-1">
-            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] text-Text-Secondary">
+          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px] text-Text-Secondary">
+            <span>
               Value: {String(biomarker.original_value ?? biomarker.value ?? '—')}
             </span>
-            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] text-Text-Secondary">
+            <span>
               Unit:{' '}
               {biomarker.original_unit === ''
                 ? '(no unit)'
@@ -160,7 +160,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         </div>
 
         {/* Column 2: System Biomarker with suggestions */}
-        <div className="text-center">
+        <div className="min-w-0 w-full pt-1">
           <SearchSelectWithSuggestions
             isStaff
             isLarge
@@ -181,32 +181,34 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
               setIsMapped(false);
             }}
           />
-          <div className="mt-1 flex flex-wrap gap-1 justify-center">
+          <div className="mt-1 flex min-h-[20px] flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[9px] text-Text-Secondary">
             {biomarker.biomarker ? (
               <>
                 {selectedSystemMeta?.benchmark_area && (
-                  <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] text-Text-Secondary">
+                  <span className="truncate">
                     {selectedSystemMeta.benchmark_area}
                   </span>
                 )}
-                <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] text-Text-Secondary">
+                <span>
                   Default unit:{' '}
                   {selectedSystemMeta?.unit || biomarker.unit || '(no unit)'}
                 </span>
               </>
             ) : (
-              <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] text-Text-Secondary">
+              <span>
                 Select a system biomarker to see area and default unit.
               </span>
             )}
           </div>
         </div>
 
-        {/* Column 3: Extracted Value */}
-        <div className="text-center">{renderValueField(biomarker)}</div>
+        {/* Column 3: Extracted Value — centered under header like the column title */}
+        <div className="flex min-w-0 justify-center pt-1">
+          {renderValueField(biomarker)}
+        </div>
 
         {/* Column 4: Extracted Unit with create action */}
-        <div className="flex justify-center">
+        <div className="flex min-w-0 justify-center pt-1">
           <div className="w-full max-w-[100px] 2xl:max-w-[140px]">
             <SelectWithCreate
               isLarge
@@ -234,9 +236,9 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
 
         {/* Column 5: Actions */}
         <div
-          className={`flex items-center ${
+          className={`flex pt-1 items-start ${
             isChanged || isMapped ? 'justify-end' : 'justify-center'
-          } gap-2 h-full`}
+          } gap-2`}
         >
           {isConfirmDelete ? (
             <div className="flex items-center justify-end w-full gap-1">
@@ -342,7 +344,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         </div>
 
         {isHaveError && (
-          <div className="text-Red font-normal text-[10px] text-nowrap mt-1">
+          <div className="col-span-full px-0 pb-1 pt-0 text-left text-Red font-normal text-[10px] leading-snug break-words">
             {errorText}
           </div>
         )}

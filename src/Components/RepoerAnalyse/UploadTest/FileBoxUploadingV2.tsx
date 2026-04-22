@@ -69,47 +69,56 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
   return (
     <>
       <div
-        className=" bg-white border border-Gray-50 mb-1 py-1 px-4 h-[52px] w-full rounded-[12px]  text-Text-Primary text-[10px]"
+        className={`bg-white border border-Gray-50 mb-1 px-4 py-2 w-full rounded-[12px] text-Text-Primary text-[10px] ${
+          isuploaded && !el.warning ? 'min-h-[52px] flex flex-col justify-center' : ''
+        }`}
         style={{ borderColor: el.status == 'error' ? '#FC5474' : '#e9edf5 ' }}
       >
         {isuploaded ? (
-          <div className="flex justify-between items-center">
-            <div className="flex justify-start gap-2">
-              <img
-                className="object-contain w-[30px] h-[40px]"
-                src={fileIcon}
-                alt=""
-              />
-              <div onClick={onDownload ? onDownload : undefined} className={onDownload ? "cursor-pointer" : ""}>
-                <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                  <TooltipTextAuto maxWidth="400px">
-                    {el.file_name || el.file.name}
-                  </TooltipTextAuto>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className=" text-[10px] md:text-[12px] text-Text-Secondary">
-                    {el.file.size > 0 ? `${(el.file.size / 1024).toFixed(2)} KB` : 'Uploaded'}
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-start gap-2">
+              <div className="flex justify-start gap-2 min-w-0 flex-1">
+                <img
+                  className="object-contain w-[30px] h-[40px] shrink-0"
+                  src={fileIcon}
+                  alt=""
+                />
+                <div
+                  onClick={onDownload ? onDownload : undefined}
+                  className={onDownload ? 'cursor-pointer min-w-0' : 'min-w-0'}
+                >
+                  <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
+                    <TooltipTextAuto maxWidth="400px">
+                      {el.file_name || el.file.name}
+                    </TooltipTextAuto>
                   </div>
-                  {el.warning && (
-                    <div className="text-[10px] md:text-[12px] text-Text-Quadruple flex items-center gap-1">
-                      <img
-                        src="/icons/danger-new.svg"
-                        alt=""
-                        className="w-4 h-4"
-                      />
-                      The uploaded file is not one of the clinic's Templates.
-                    </div>
-                  )}
+                  <div className="text-[10px] md:text-[12px] text-Text-Secondary mt-0.5">
+                    {el.file.size > 0
+                      ? `${(el.file.size / 1024).toFixed(2)} KB`
+                      : 'Uploaded'}
+                  </div>
                 </div>
               </div>
+              {onDelete && (
+                <img
+                  onClick={onDelete}
+                  className="cursor-pointer w-6 h-6 shrink-0 mt-0.5"
+                  src="/icons/delete.svg"
+                  alt=""
+                />
+              )}
             </div>
-            {onDelete && (
-              <img
-                onClick={onDelete}
-                className="cursor-pointer w-6 h-6"
-                src="/icons/delete.svg"
-                alt=""
-              />
+            {el.warning && (
+              <div className="flex gap-2 rounded-lg border border-[#F5D9A3] bg-[#FFFBF0] px-2.5 py-2 text-[10px] leading-snug text-[#5C4A1F]">
+                <img
+                  src="/icons/danger-new.svg"
+                  alt=""
+                  className="w-4 h-4 shrink-0 mt-0.5 opacity-90"
+                />
+                <span className="min-w-0 break-words">
+                  {"The uploaded file is not one of the clinic's Templates."}
+                </span>
+              </div>
             )}
           </div>
         ) : (
