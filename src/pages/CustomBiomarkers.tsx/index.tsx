@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
 import Circleloader from '../../Components/CircleLoader';
 import SearchBox from '../../Components/SearchBox';
@@ -10,6 +10,12 @@ import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
 
 import DefaultData from './default.json';
+
+const normalizeSearchTerm = (value: any) =>
+  String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
@@ -86,30 +92,95 @@ const CustomBiomarkers = () => {
     BiomarkersApi.updateBiomarkerMapping({ mappings: entries }).catch(() => {});
   };
 
-  const filteredBiomarkers = () => {
-    if (!searchValue.trim()) return biomarkers;
-    const lowerSearch = searchValue.toLowerCase();
-    return biomarkers.filter(
-      (item) =>
-        item['Benchmark areas'].toLowerCase().includes(lowerSearch) ||
-        item['Biomarker'].toLowerCase().includes(lowerSearch),
-    );
+  const normalizedSearchValue = useMemo(
+    () => normalizeSearchTerm(searchValue),
+    [searchValue],
+  );
+
+  const getBiomarkerVariations = (biomarkerName: string) => {
+    const normalizedBiomarkerName = normalizeSearchTerm(biomarkerName);
+    const matchingMapping = biomarkerMappings.find((mapping) => {
+      const standardName = normalizeSearchTerm(mapping?.standard_name);
+      const variations = (mapping?.variations || []).map(normalizeSearchTerm);
+      return (
+        standardName === normalizedBiomarkerName ||
+        variations.includes(normalizedBiomarkerName)
+      );
+    });
+
+    return (matchingMapping?.variations || [])
+      .map(normalizeSearchTerm)
+      .filter(Boolean);
   };
 
+  const getBiomarkerSearchScore = (item: any) => {
+    if (!normalizedSearchValue) return 1;
+
+    const biomarkerName = normalizeSearchTerm(item?.Biomarker);
+    const benchmarkArea = normalizeSearchTerm(item?.['Benchmark areas']);
+    const category = normalizeSearchTerm(item?.Category);
+    const variations = getBiomarkerVariations(item?.Biomarker || '');
+    const queryTokens = normalizedSearchValue.split(' ').filter(Boolean);
+
+    const exactBiomarkerMatch =
+      biomarkerName === normalizedSearchValue ||
+      variations.includes(normalizedSearchValue);
+    if (exactBiomarkerMatch) return 100;
+
+    const startsWithBiomarkerMatch =
+      biomarkerName.startsWith(normalizedSearchValue) ||
+      variations.some((variation) => variation.startsWith(normalizedSearchValue));
+    if (startsWithBiomarkerMatch) return 80;
+
+    const allTokensMatchBiomarker = queryTokens.every(
+      (token) =>
+        biomarkerName.includes(token) ||
+        variations.some((variation) => variation.includes(token)),
+    );
+    if (allTokensMatchBiomarker) return 60;
+
+    const categoryFields = [benchmarkArea, category].filter(Boolean);
+    const exactCategoryMatch = categoryFields.includes(normalizedSearchValue);
+    if (exactCategoryMatch) return 40;
+
+    const startsWithCategoryMatch = categoryFields.some((field) =>
+      field.startsWith(normalizedSearchValue),
+    );
+    if (startsWithCategoryMatch) return 30;
+
+    const allTokensMatchCategory =
+      queryTokens.length > 1 &&
+      queryTokens.every((token) =>
+        categoryFields.some((field) => field.includes(token)),
+      );
+    if (allTokensMatchCategory) return 20;
+
+    return 0;
+  };
+
+  const filteredBiomarkers = useMemo(() => {
+    return biomarkers
+      .map((item) => ({
+        item,
+        score: getBiomarkerSearchScore(item),
+      }))
+      .filter((entry) => entry.score > 0)
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return String(a.item?.Biomarker || '').localeCompare(
+          String(b.item?.Biomarker || ''),
+        );
+      })
+      .map((entry) => entry.item);
+  }, [biomarkers, biomarkerMappings, normalizedSearchValue]);
+
   const resolveAllBenchmarks = () => {
-    return [...new Set(filteredBiomarkers().map((el) => el['Benchmark areas']))];
+    return [...new Set(filteredBiomarkers.map((el) => el['Benchmark areas']))];
   };
 
   const getFilteredBiomarkersForCategory = (benchmark: string) => {
-    if (!searchValue.trim()) {
-      return biomarkers.filter((item) => item['Benchmark areas'] === benchmark);
-    }
-    const lowerSearch = searchValue.toLowerCase();
-    return biomarkers.filter(
-      (item) =>
-        item['Benchmark areas'] === benchmark &&
-        (item['Benchmark areas'].toLowerCase().includes(lowerSearch) ||
-          item['Biomarker'].toLowerCase().includes(lowerSearch)),
+    return filteredBiomarkers.filter(
+      (item) => item['Benchmark areas'] === benchmark,
     );
   };
 
@@ -192,7 +263,7 @@ const CustomBiomarkers = () => {
               />
             );
           })}
-          {filteredBiomarkers().length == 0 && (
+          {filteredBiomarkers.length == 0 && (
             <div className="h-full">
               <div className="flex h-full justify-center items-center flex-col gap-2">
                 <img className="w-[220px]" src="/icons/empty-messages-coach.svg" alt="" />
