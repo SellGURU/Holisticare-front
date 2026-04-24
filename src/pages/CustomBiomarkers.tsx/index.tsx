@@ -78,6 +78,14 @@ const CustomBiomarkers = () => {
     loadMappings();
   }, []);
 
+  // Warm the edit-modal chunk after biomarkers load so the first "Edit" click
+  // does not wait on dynamic import.
+  useEffect(() => {
+    if (biomarkers.length > 0) {
+      void import('./EditModal');
+    }
+  }, [biomarkers.length]);
+
   // Save unit mappings back to server
   const handleUnitMappingsChange = (entries: any[]) => {
     setUnitMappings(entries);
@@ -129,13 +137,15 @@ const CustomBiomarkers = () => {
 
     const startsWithBiomarkerMatch =
       biomarkerName.startsWith(normalizedSearchValue) ||
-      variations.some((variation) => variation.startsWith(normalizedSearchValue));
+      variations.some((variation: string) =>
+        variation.startsWith(normalizedSearchValue),
+      );
     if (startsWithBiomarkerMatch) return 80;
 
     const allTokensMatchBiomarker = queryTokens.every(
       (token) =>
         biomarkerName.includes(token) ||
-        variations.some((variation) => variation.includes(token)),
+        variations.some((variation: string) => variation.includes(token)),
     );
     if (allTokensMatchBiomarker) return 60;
 
@@ -173,6 +183,18 @@ const CustomBiomarkers = () => {
       })
       .map((entry) => entry.item);
   }, [biomarkers, biomarkerMappings, normalizedSearchValue]);
+
+  const benchmarkAreaOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          biomarkers
+            .map((item) => String(item?.['Benchmark areas'] || '').trim())
+            .filter(Boolean),
+        ),
+      ).sort((a, b) => a.localeCompare(b)),
+    [biomarkers],
+  );
 
   const resolveAllBenchmarks = () => {
     return [...new Set(filteredBiomarkers.map((el) => el['Benchmark areas']))];
@@ -256,6 +278,7 @@ const CustomBiomarkers = () => {
                 biomarkersData={biomarkers}
                 changeBiomarkersValue={changeBiomarkersValue}
                 searchTerm={searchValue}
+                benchmarkAreaOptions={benchmarkAreaOptions}
                 unitMappings={unitMappings}
                 biomarkerMappings={biomarkerMappings}
                 onUnitMappingsChange={handleUnitMappingsChange}

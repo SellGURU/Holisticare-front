@@ -10,6 +10,7 @@ interface BiomarkerBoxProps {
   changeBiomarkersValue: (values: any) => void;
   biomarkersData: any[];
   searchTerm?: string;
+  benchmarkAreaOptions?: string[];
   unitMappings?: any[];
   biomarkerMappings?: any[];
   onUnitMappingsChange?: (entries: any[]) => void;
@@ -22,6 +23,7 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   changeBiomarkersValue,
   biomarkersData,
   searchTerm = '',
+  benchmarkAreaOptions = [],
   unitMappings = [],
   biomarkerMappings = [],
   onUnitMappingsChange,
@@ -75,6 +77,7 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
               biomarkers={biomarkersData}
               changeBiomarkersValue={changeBiomarkersValue}
               searchTerm={searchTerm}
+              benchmarkAreaOptions={benchmarkAreaOptions}
               unitMappings={unitMappings}
               biomarkerMappings={biomarkerMappings}
               onUnitMappingsChange={onUnitMappingsChange}

@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useEffect, lazy, memo, Suspense, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
 import { MainModal } from '../../Components';
 import SvgIcon from '../../utils/svgIcon';
-import EditModal from './EditModal';
 import Select from '../../Components/Select';
 import StatusBarChartv3 from './StatusBarChartv3';
 import SpinnerLoader from '../../Components/SpinnerLoader';
+
+const EditModal = lazy(() => import('./EditModal'));
 
 interface BiomarkerItemNewProps {
   data: any;
   biomarkers: any[];
   changeBiomarkersValue: (values: any) => void;
   searchTerm?: string;
+  benchmarkAreaOptions?: string[];
   unitMappings?: any[];
   biomarkerMappings?: any[];
   onUnitMappingsChange?: (entries: any[]) => void;
@@ -24,6 +26,7 @@ const BiomarkerItem = ({
   biomarkers,
   changeBiomarkersValue,
   searchTerm = '',
+  benchmarkAreaOptions = [],
   unitMappings = [],
   biomarkerMappings = [],
   onUnitMappingsChange,
@@ -65,7 +68,6 @@ const BiomarkerItem = ({
   const [errorDetails, setErrorDetails] = useState('');
   const [showMappings, setShowMappings] = useState(false);
   const [savingMapping, setSavingMapping] = useState(false);
-
   useEffect(() => {
     const maleKeys = data && data.thresholds && data.thresholds.male ? Object.keys(data.thresholds.male) : [];
     const femaleKeys = data && data.thresholds && data.thresholds.female ? Object.keys(data.thresholds.female) : [];
@@ -212,34 +214,37 @@ const BiomarkerItem = ({
 
   return (
     <>
-      <div className="w-full relative py-2 px-3 bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 min-h-[60px]">
-        <div className="flex flex-col md:flex-row gap-6 w-full min-h-[60px] justify-start items-start">
-          <div className="md:w-[200px]">
-            <div className="text-[10px] md:text-[12px] font-medium text-Text-Primary">
+      <div className="w-full py-3 px-4 bg-[#F4F4F4] rounded-[12px] border border-gray-50">
+
+        {/* ── Row 1: name + category pill  |  action buttons ── */}
+        <div className="flex items-start justify-between gap-3 mb-3">
+          {/* Left: name + category */}
+          <div className="min-w-0 flex-1">
+            <div className="text-[11px] md:text-[12px] font-semibold text-Text-Primary leading-snug">
               {highlightText(data.Biomarker, searchTerm)}
-              <span className="text-[8px] md:text-[10px] text-[#888888] ml-[2px]">
+              <span className="ml-1 text-[9px] md:text-[10px] font-normal text-[#888888]">
                 ({data.unit})
               </span>
             </div>
-            <div className="text-[8px] md:text-[10px] text-nowrap mt-1 text-Text-Quadruple">
-              {data.Category}
-            </div>
+            {data.Category ? (
+              <span className="mt-1 inline-block text-[9px] md:text-[10px] text-Text-Quadruple">
+                {data.Category}
+              </span>
+            ) : null}
           </div>
-          <div className="w-full md:w-[80%] mt-4 md:mt-8">
-            <StatusBarChartv3 isCustom data={activeBiomarker ?? []} />
-          </div>
-          <div className="absolute right-4 gap-2 flex justify-end items-center top-2">
+
+          {/* Right: Mappings pill + Edit icon on one horizontal line */}
+          <div className="flex items-center gap-2 shrink-0">
             <div className="hidden">
               <Select key="ages" onChange={(val) => setAgeRange(val)} value={ageRange} options={avilableAges()} />
             </div>
             <div className="hidden">
               <Select isCapital key="gender" onChange={(val) => setGender(val)} value={gender} options={avilableGenders()} />
             </div>
-            {/* Mapping toggle */}
             <button
               type="button"
               onClick={() => setShowMappings(!showMappings)}
-              className={`text-[9px] px-2 py-0.5 rounded-full border transition-colors ${
+              className={`inline-flex items-center text-[9px] px-2.5 py-1 rounded-full border transition-colors whitespace-nowrap ${
                 showMappings
                   ? 'bg-Primary-DeepTeal text-white border-Primary-DeepTeal'
                   : 'bg-white text-Text-Secondary border-Gray-50 hover:border-Primary-DeepTeal'
@@ -248,16 +253,28 @@ const BiomarkerItem = ({
             >
               Mappings
               {(relevantUnitMappings.length > 0 || relevantBiomarkerMapping) && (
-                <span className="ml-1 bg-white/30 rounded-full px-1 text-[8px]">
+                <span className={`ml-1 rounded-full px-1 text-[8px] ${showMappings ? 'bg-white/30' : 'bg-gray-100 text-Text-Secondary'}`}>
                   {relevantUnitMappings.length + (relevantBiomarkerMapping ? (relevantBiomarkerMapping.variations?.length || 0) : 0)}
                 </span>
               )}
             </button>
-            <div onClick={openModalEdit}>
+            <button
+              type="button"
+              onClick={openModalEdit}
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-Gray-50 bg-white hover:border-Primary-DeepTeal transition-colors"
+              title="Edit biomarker"
+            >
               <SvgIcon color="#005F73" src="./icons/edit-green.svg" />
-            </div>
+            </button>
           </div>
         </div>
+
+        {/* ── Row 2: full-width chart ── */}
+        {/* pt-10 gives the chart's absolute labels (top-[-35px]) room to render above the bar */}
+        <div className="w-full pt-10 pb-1">
+          <StatusBarChartv3 isCustom data={activeBiomarker ?? []} />
+        </div>
+
 
         {/* Mappings panel */}
         {showMappings && (
@@ -387,17 +404,26 @@ const BiomarkerItem = ({
       </div>
 
       <MainModal isOpen={activeEdit} onClose={closeModalEdit}>
-        <EditModal
-          onCancel={closeModalEdit}
-          onSave={(values: any) => onsave(values)}
-          data={data}
-          loading={loading}
-          errorDetails={errorDetails}
-          setErrorDetails={setErrorDetails}
-        />
+        <Suspense
+          fallback={
+            <div className="w-[90vw] md:w-[620px] max-w-[620px] min-h-[200px] flex items-center justify-center bg-white rounded-[16px]">
+              <SpinnerLoader color="#005F73" />
+            </div>
+          }
+        >
+          <EditModal
+            onCancel={closeModalEdit}
+            onSave={(values: any) => onsave(values)}
+            data={data}
+            benchmarkAreaOptions={benchmarkAreaOptions}
+            loading={loading}
+            errorDetails={errorDetails}
+            setErrorDetails={setErrorDetails}
+          />
+        </Suspense>
       </MainModal>
     </>
   );
 };
 
-export default BiomarkerItem;
+export default memo(BiomarkerItem);

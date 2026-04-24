@@ -2,7 +2,6 @@
 import { FC, useEffect, useState, useCallback } from 'react';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import { ApiBiomarkerData } from '../../types/biormarker';
-import BiomarkersApi from '../../api/Biomarkers';
 import BenchmarkAreaSelect from '../../Components/BenchmarkAreaSelect';
 
 const ALLOWED_STATUSES = [
@@ -15,6 +14,7 @@ const ALLOWED_STATUSES = [
 
 interface EditModalProps {
   data: ApiBiomarkerData;
+  benchmarkAreaOptions: string[];
   onCancel: () => void;
   onSave: (values: ApiBiomarkerData) => void;
   loading: boolean;
@@ -24,6 +24,7 @@ interface EditModalProps {
 
 const EditModal: FC<EditModalProps> = ({
   data,
+  benchmarkAreaOptions,
   onCancel,
   onSave,
   loading,
@@ -34,39 +35,18 @@ const EditModal: FC<EditModalProps> = ({
   const [draft, setDraft] = useState<any>({ ...data });
   const [jsonText, setJsonText] = useState('');
   const [jsonError, setJsonError] = useState('');
-  const [benchmarkAreaOptions, setBenchmarkAreaOptions] = useState<string[]>([]);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    BiomarkersApi.getBiomarkersList()
-      .then((res: any) => {
-        if (!isMounted || !Array.isArray(res?.data)) return;
-        const options = Array.from(
-          new Set<string>(
-            res.data
-              .map((item: any) => String(item?.['Benchmark areas'] || '').trim())
-              .filter((item: string) => Boolean(item)),
-          ),
-        ).sort((a: string, b: string) => a.localeCompare(b));
-        setBenchmarkAreaOptions(options);
-      })
-      .catch(() => {});
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  // Do not JSON.stringify the full document on open — that blocks the main thread for large
+  // threshold trees. The Raw JSON view builds a string only when the user opens that tab.
   useEffect(() => {
     setDraft({ ...data });
-    setJsonText(JSON.stringify(data, null, 2));
+    setViewMode('form');
+    setJsonText('');
+    setJsonError('');
   }, [data]);
 
   const updateDraft = (field: string, value: any) => {
-    const updated = { ...draft, [field]: value };
-    setDraft(updated);
-    setJsonText(JSON.stringify(updated, null, 2));
+    setDraft((prev: any) => ({ ...prev, [field]: value }));
   };
 
   const handleJsonChange = (text: string) => {
@@ -82,100 +62,114 @@ const EditModal: FC<EditModalProps> = ({
 
   const updateThresholdRange = useCallback(
     (gender: 'male' | 'female', ageKey: string, rangeIdx: number, field: string, value: any) => {
-      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
-      const genderData = { ...(thresholds[gender] || {}) };
-      const ranges = [...(genderData[ageKey] || [])];
-      ranges[rangeIdx] = { ...ranges[rangeIdx], [field]: value };
-      genderData[ageKey] = ranges;
-      thresholds[gender] = genderData;
-      updateDraft('thresholds', thresholds);
+      setDraft((prev: any) => {
+        const thresholds = { ...(prev.thresholds || { male: {}, female: {} }) };
+        const genderData = { ...(thresholds[gender] || {}) };
+        const ranges = [...(genderData[ageKey] || [])];
+        ranges[rangeIdx] = { ...ranges[rangeIdx], [field]: value };
+        genderData[ageKey] = ranges;
+        thresholds[gender] = genderData;
+        return { ...prev, thresholds };
+      });
     },
-    [draft],
+    [],
   );
 
   const updateThresholdStatus = useCallback(
     (gender: 'male' | 'female', ageKey: string, rangeIdx: number, status: string) => {
-      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
-      const genderData = { ...(thresholds[gender] || {}) };
-      const ranges = [...(genderData[ageKey] || [])];
-      const found = ALLOWED_STATUSES.find((item) => item.value === status);
-      ranges[rangeIdx] = {
-        ...ranges[rangeIdx],
-        status,
-        color: found?.color || ranges[rangeIdx]?.color || '#22C55E',
-      };
-      genderData[ageKey] = ranges;
-      thresholds[gender] = genderData;
-      updateDraft('thresholds', thresholds);
+      setDraft((prev: any) => {
+        const thresholds = { ...(prev.thresholds || { male: {}, female: {} }) };
+        const genderData = { ...(thresholds[gender] || {}) };
+        const ranges = [...(genderData[ageKey] || [])];
+        const found = ALLOWED_STATUSES.find((item) => item.value === status);
+        ranges[rangeIdx] = {
+          ...ranges[rangeIdx],
+          status,
+          color: found?.color || ranges[rangeIdx]?.color || '#22C55E',
+        };
+        genderData[ageKey] = ranges;
+        thresholds[gender] = genderData;
+        return { ...prev, thresholds };
+      });
     },
-    [draft],
+    [],
   );
 
   const addThresholdRange = useCallback(
     (gender: 'male' | 'female', ageKey: string) => {
-      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
-      const genderData = { ...(thresholds[gender] || {}) };
-      const ranges = [...(genderData[ageKey] || [])];
-      ranges.push({ label: '', status: 'OptimalRange', low: null, high: null, color: '#22C55E' });
-      genderData[ageKey] = ranges;
-      thresholds[gender] = genderData;
-      updateDraft('thresholds', thresholds);
+      setDraft((prev: any) => {
+        const thresholds = { ...(prev.thresholds || { male: {}, female: {} }) };
+        const genderData = { ...(thresholds[gender] || {}) };
+        const ranges = [...(genderData[ageKey] || [])];
+        ranges.push({ label: '', status: 'OptimalRange', low: null, high: null, color: '#22C55E' });
+        genderData[ageKey] = ranges;
+        thresholds[gender] = genderData;
+        return { ...prev, thresholds };
+      });
     },
-    [draft],
+    [],
   );
 
   const removeThresholdRange = useCallback(
     (gender: 'male' | 'female', ageKey: string, rangeIdx: number) => {
-      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
-      const genderData = { ...(thresholds[gender] || {}) };
-      const ranges = [...(genderData[ageKey] || [])];
-      ranges.splice(rangeIdx, 1);
-      genderData[ageKey] = ranges;
-      thresholds[gender] = genderData;
-      updateDraft('thresholds', thresholds);
+      setDraft((prev: any) => {
+        const thresholds = { ...(prev.thresholds || { male: {}, female: {} }) };
+        const genderData = { ...(thresholds[gender] || {}) };
+        const ranges = [...(genderData[ageKey] || [])];
+        ranges.splice(rangeIdx, 1);
+        genderData[ageKey] = ranges;
+        thresholds[gender] = genderData;
+        return { ...prev, thresholds };
+      });
     },
-    [draft],
+    [],
   );
 
   const addAgeGroup = useCallback(
     (gender: 'male' | 'female') => {
-      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
-      const genderData = { ...(thresholds[gender] || {}) };
-      const existingKeys = Object.keys(genderData);
-      const newKey = existingKeys.length === 0 ? '18-100' : '';
-      genderData[newKey] = [
-        { label: 'Critical Low', status: 'CriticalRange', low: null, high: null, color: '#EF4444' },
-        { label: 'Optimal', status: 'OptimalRange', low: null, high: null, color: '#22C55E' },
-        { label: 'Critical High', status: 'CriticalRange', low: null, high: null, color: '#EF4444' },
-      ];
-      thresholds[gender] = genderData;
-      updateDraft('thresholds', thresholds);
+      setDraft((prev: any) => {
+        const thresholds = { ...(prev.thresholds || { male: {}, female: {} }) };
+        const genderData = { ...(thresholds[gender] || {}) };
+        const existingKeys = Object.keys(genderData);
+        const newKey = existingKeys.length === 0 ? '18-100' : '';
+        genderData[newKey] = [
+          { label: 'Critical Low', status: 'CriticalRange', low: null, high: null, color: '#EF4444' },
+          { label: 'Optimal', status: 'OptimalRange', low: null, high: null, color: '#22C55E' },
+          { label: 'Critical High', status: 'CriticalRange', low: null, high: null, color: '#EF4444' },
+        ];
+        thresholds[gender] = genderData;
+        return { ...prev, thresholds };
+      });
     },
-    [draft],
+    [],
   );
 
   const removeAgeGroup = useCallback(
     (gender: 'male' | 'female', ageKey: string) => {
-      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
-      const genderData = { ...(thresholds[gender] || {}) };
-      delete genderData[ageKey];
-      thresholds[gender] = genderData;
-      updateDraft('thresholds', thresholds);
+      setDraft((prev: any) => {
+        const thresholds = { ...(prev.thresholds || { male: {}, female: {} }) };
+        const genderData = { ...(thresholds[gender] || {}) };
+        delete genderData[ageKey];
+        thresholds[gender] = genderData;
+        return { ...prev, thresholds };
+      });
     },
-    [draft],
+    [],
   );
 
   const renameAgeGroup = useCallback(
     (gender: 'male' | 'female', oldKey: string, newKey: string) => {
-      const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
-      const genderData = { ...(thresholds[gender] || {}) };
-      const ranges = genderData[oldKey];
-      delete genderData[oldKey];
-      genderData[newKey] = ranges;
-      thresholds[gender] = genderData;
-      updateDraft('thresholds', thresholds);
+      setDraft((prev: any) => {
+        const thresholds = { ...(prev.thresholds || { male: {}, female: {} }) };
+        const genderData = { ...(thresholds[gender] || {}) };
+        const ranges = genderData[oldKey];
+        delete genderData[oldKey];
+        genderData[newKey] = ranges;
+        thresholds[gender] = genderData;
+        return { ...prev, thresholds };
+      });
     },
-    [draft],
+    [],
   );
 
   const handleSave = () => {
