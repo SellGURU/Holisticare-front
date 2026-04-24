@@ -119,7 +119,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         } grid px-4 py-2 border-b border-Gray-50 items-start text-[8px] md:text-xs text-Text-Primary`}
         style={{
           gridTemplateColumns:
-            'minmax(220px,1.3fr) minmax(240px,1.4fr) minmax(110px,0.8fr) minmax(130px,0.9fr) 60px',
+            'minmax(180px,1.25fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 52px',
         }}
       >
         {/* Column 1: Extracted Biomarker */}

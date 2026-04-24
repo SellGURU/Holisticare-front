@@ -100,6 +100,14 @@ const CustomBiomarkers = () => {
     BiomarkersApi.updateBiomarkerMapping({ mappings: entries }).catch(() => {});
   };
 
+  const handleUnitMappingsLocalChange = (entries: any[]) => {
+    setUnitMappings(entries);
+  };
+
+  const handleBiomarkerMappingsLocalChange = (entries: any[]) => {
+    setBiomarkerMappings(entries);
+  };
+
   const normalizedSearchValue = useMemo(
     () => normalizeSearchTerm(searchValue),
     [searchValue],
@@ -283,6 +291,8 @@ const CustomBiomarkers = () => {
                 biomarkerMappings={biomarkerMappings}
                 onUnitMappingsChange={handleUnitMappingsChange}
                 onBiomarkerMappingsChange={handleBiomarkerMappingsChange}
+                onUnitMappingsLocalChange={handleUnitMappingsLocalChange}
+                onBiomarkerMappingsLocalChange={handleBiomarkerMappingsLocalChange}
               />
             );
           })}

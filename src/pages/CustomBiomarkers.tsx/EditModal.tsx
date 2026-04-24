@@ -16,7 +16,7 @@ interface EditModalProps {
   data: ApiBiomarkerData;
   benchmarkAreaOptions: string[];
   onCancel: () => void;
-  onSave: (values: ApiBiomarkerData) => void;
+  onSave: (values: ApiBiomarkerData, meta: { originalBiomarkerName: string }) => void;
   loading: boolean;
   errorDetails: string;
   setErrorDetails: (errorDetails: string) => void;
@@ -55,8 +55,8 @@ const EditModal: FC<EditModalProps> = ({
     try {
       const parsed = JSON.parse(text);
       setDraft(parsed);
-    } catch {
-      setJsonError('Invalid JSON');
+    } catch (error: any) {
+      setJsonError(error?.message || 'Invalid JSON');
     }
   };
 
@@ -186,7 +186,7 @@ const EditModal: FC<EditModalProps> = ({
       setErrorDetails('Please fix the JSON errors before saving.');
       return;
     }
-    onSave(draft);
+    onSave(draft, { originalBiomarkerName: data.Biomarker || '' });
   };
 
   const renderThresholdGender = (gender: 'male' | 'female') => {
@@ -381,8 +381,7 @@ const EditModal: FC<EditModalProps> = ({
                 type="text"
                 value={draft.Biomarker || ''}
                 onChange={(e) => updateDraft('Biomarker', e.target.value)}
-                disabled
-                className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none bg-gray-50 text-Text-Secondary"
+                className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none focus:border-Primary-DeepTeal"
               />
             </div>
             <div>

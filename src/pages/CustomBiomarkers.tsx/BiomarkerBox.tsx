@@ -15,6 +15,8 @@ interface BiomarkerBoxProps {
   biomarkerMappings?: any[];
   onUnitMappingsChange?: (entries: any[]) => void;
   onBiomarkerMappingsChange?: (entries: any[]) => void;
+  onUnitMappingsLocalChange?: (entries: any[]) => void;
+  onBiomarkerMappingsLocalChange?: (entries: any[]) => void;
 }
 
 const BiomarkerBox: FC<BiomarkerBoxProps> = ({
@@ -28,6 +30,8 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   biomarkerMappings = [],
   onUnitMappingsChange,
   onBiomarkerMappingsChange,
+  onUnitMappingsLocalChange,
+  onBiomarkerMappingsLocalChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -82,6 +86,8 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
               biomarkerMappings={biomarkerMappings}
               onUnitMappingsChange={onUnitMappingsChange}
               onBiomarkerMappingsChange={onBiomarkerMappingsChange}
+              onUnitMappingsLocalChange={onUnitMappingsLocalChange}
+              onBiomarkerMappingsLocalChange={onBiomarkerMappingsLocalChange}
             />
           ))}
         </div>

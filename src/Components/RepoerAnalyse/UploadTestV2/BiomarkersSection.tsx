@@ -650,11 +650,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             </div>
 
             <div
-              className="relative w-full text-xs flex-1 min-h-0 border border-Gray-50 rounded-[12px] overflow-hidden"
+              className="relative w-full min-w-0 text-xs flex-1 min-h-0 border border-Gray-50 rounded-[12px] overflow-hidden"
               data-tour="biomarker-table"
             >
-              <div className="w-full h-full hidden-scrollbar overflow-x-auto md:overflow-x-visible">
-                <div className="w-full min-w-[760px] h-full flex flex-col min-h-0">
+              <div className="w-full h-full overflow-x-auto overflow-y-hidden pb-2">
+                <div className="w-full min-w-[700px] h-full flex flex-col min-h-0">
                   {/* Single vertical scroll for header + rows so a scrollbar does not
                       shrink the body grid relative to the header (column misalignment). */}
                   <div
@@ -666,7 +666,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
                       style={{
                         gridTemplateColumns:
-                          'minmax(220px,1.3fr) minmax(240px,1.4fr) minmax(110px,0.8fr) minmax(130px,0.9fr) 60px',
+                          'minmax(180px,1.25fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 52px',
                       }}
                     >
                       <div className="text-left" data-tour="extracted-biomarker">

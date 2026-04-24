@@ -19,6 +19,8 @@ interface BiomarkerItemNewProps {
   biomarkerMappings?: any[];
   onUnitMappingsChange?: (entries: any[]) => void;
   onBiomarkerMappingsChange?: (entries: any[]) => void;
+  onUnitMappingsLocalChange?: (entries: any[]) => void;
+  onBiomarkerMappingsLocalChange?: (entries: any[]) => void;
 }
 
 const BiomarkerItem = ({
@@ -31,6 +33,8 @@ const BiomarkerItem = ({
   biomarkerMappings = [],
   onUnitMappingsChange,
   onBiomarkerMappingsChange,
+  onUnitMappingsLocalChange,
+  onBiomarkerMappingsLocalChange,
 }: BiomarkerItemNewProps) => {
   const getMaleThresholdKeys = () => {
     if (data && data.thresholds && data.thresholds.male) {
@@ -90,9 +94,12 @@ const BiomarkerItem = ({
   const avilableGenders = () => ['male', 'female'];
   const avilableAges = () => getMaleThresholdKeys();
 
-  const replaceBiomarker = (biomarkers: any[], updatedItem: any): any[] => {
+  const replaceBiomarker = (biomarkers: any[], originalBiomarkerName: string, updatedItem: any): any[] => {
     return biomarkers.map((item) =>
-      item.Biomarker === updatedItem.Biomarker ? updatedItem : item,
+      String(item?.Biomarker || '').trim().toLowerCase() ===
+      String(originalBiomarkerName || '').trim().toLowerCase()
+        ? updatedItem
+        : item,
     );
   };
 
@@ -109,15 +116,37 @@ const BiomarkerItem = ({
     );
   };
 
-  const onsave = (values: any) => {
+  const onsave = (
+    values: any,
+    meta: { originalBiomarkerName: string },
+  ) => {
     setLoading(true);
-    BiomarkersApi.saveBiomarkersList({ updated_biomarker: values })
-      .then(() => {
+    BiomarkersApi.saveBiomarkersList({
+      updated_biomarker: values,
+      original_biomarker_name: meta.originalBiomarkerName,
+    })
+      .then((response) => {
+        const payload = response?.data || {};
+        const savedBiomarker = payload.updated_biomarker || values;
         closeModalEdit();
-        changeBiomarkersValue(replaceBiomarker(biomarkers, values));
+        changeBiomarkersValue(
+          payload.chart_bounds ||
+            replaceBiomarker(biomarkers, meta.originalBiomarkerName, savedBiomarker),
+        );
+        if (payload.unit_mapping?.biomarker_specific) {
+          onUnitMappingsLocalChange?.(payload.unit_mapping.biomarker_specific);
+        }
+        if (payload.biomarker_mapping?.mappings) {
+          onBiomarkerMappingsLocalChange?.(payload.biomarker_mapping.mappings);
+        }
       })
       .catch((error) => {
-        setErrorDetails(error.detail);
+        setErrorDetails(
+          error?.response?.data?.detail ||
+            error?.detail ||
+            error?.message ||
+            'Unable to save biomarker changes.',
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -413,7 +442,7 @@ const BiomarkerItem = ({
         >
           <EditModal
             onCancel={closeModalEdit}
-            onSave={(values: any) => onsave(values)}
+            onSave={(values: any, meta) => onsave(values, meta)}
             data={data}
             benchmarkAreaOptions={benchmarkAreaOptions}
             loading={loading}
