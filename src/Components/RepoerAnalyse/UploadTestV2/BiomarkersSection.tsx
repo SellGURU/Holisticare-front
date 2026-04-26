@@ -58,6 +58,8 @@ interface BiomarkersSectionProps {
   setDateOfTest: (date: Date | null) => void;
   fileType: string;
   loading: boolean;
+  uploadPhase?: string;
+  reviewSummary?: any;
   rowErrors?: any;
   setrowErrors: any;
   showOnlyErrors: boolean;
@@ -73,6 +75,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   dateOfTest,
   setDateOfTest,
   loading,
+  uploadPhase,
+  reviewSummary,
   rowErrors,
   setrowErrors,
   showOnlyErrors,
@@ -605,6 +609,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             {/* Progress Bar */}
             <ProgressLoading
               maxProgress={progressBiomarkerUpload}
+              phase={uploadPhase}
             ></ProgressLoading>
           </div>
         ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
@@ -648,6 +653,29 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 </div>
               </div>
             </div>
+
+            {reviewSummary && (
+              <div className="mb-3 grid grid-cols-1 gap-2 text-[10px] md:grid-cols-3 md:text-xs">
+                <div className="rounded-lg border border-Gray-50 bg-white px-3 py-2">
+                  <span className="text-Text-Secondary">Biomarkers: </span>
+                  <span className="font-medium text-Text-Primary">
+                    {reviewSummary.biomarker_count ?? biomarkers.length}
+                  </span>
+                </div>
+                <div className="rounded-lg border border-Gray-50 bg-white px-3 py-2">
+                  <span className="text-Text-Secondary">Errors: </span>
+                  <span className="font-medium text-Red">
+                    {reviewSummary.error_count ?? Object.keys(rowErrors || {}).length}
+                  </span>
+                </div>
+                <div className="rounded-lg border border-Gray-50 bg-white px-3 py-2">
+                  <span className="text-Text-Secondary">Duplicates: </span>
+                  <span className="font-medium text-Text-Primary">
+                    {reviewSummary.duplicate_count ?? 0}
+                  </span>
+                </div>
+              </div>
+            )}
 
             <div
               className="relative w-full min-w-0 text-xs flex-1 min-h-0 border border-Gray-50 rounded-[12px] overflow-hidden"

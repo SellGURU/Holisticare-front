@@ -76,6 +76,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [polling, setPolling] = useState(true); // ✅ control polling
   const [deleteLoading] = useState(false);
   const [isSaveClicked, setisSaveClicked] = useState(false);
+  const [uploadPhase, setUploadPhase] = useState('uploading');
+  const [reviewSummary, setReviewSummary] = useState<any>(null);
   // console.log(extractedBiomarkers);
   const [isUploadFromComboBar, setIsUploadFromComboBar] = useState(false);
   const stepOnePollInFlightRef = useRef(false);
@@ -110,10 +112,66 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     if (!activeFileId) return;
 
     let intervalId: NodeJS.Timeout;
+    const showReviewLoading = () =>
+      new Promise((resolve) => setTimeout(resolve, 900));
 
-    const processStepOneData = (data: any) => {
+    const toUtcDateTimestamp = (date: Date | string | null | undefined) => {
+      if (!date) return null;
+      const parsed = date instanceof Date ? date : new Date(date);
+      if (Number.isNaN(parsed.getTime())) return null;
+      return Date.UTC(
+        parsed.getFullYear(),
+        parsed.getMonth(),
+        parsed.getDate(),
+      ).toString();
+    };
+
+    const validateRowsBeforeDisplay = async (
+      biomarkers: any[],
+      labType: string,
+      dateOfTest?: string | null,
+    ) => {
+      const timestamp =
+        toUtcDateTimestamp(dateOfTest) ?? toUtcDateTimestamp(modifiedDateOfTest);
+
+      if (!timestamp || biomarkers.length === 0 || labType === 'ultrasound') {
+        setRowErrors({});
+        setAddedRowErrors({});
+        return;
+      }
+
+      try {
+        await Application.validateBiomarkers({
+          modified_biomarkers_list: mapExtractedBiomarkersForValidation(
+            biomarkers,
+            labType,
+          ),
+          added_biomarkers_list: [],
+          modified_biomarkers_date_of_test: timestamp,
+          added_biomarkers_date_of_test: timestamp,
+          modified_lab_type: labType,
+          modified_file_id: activeFileId,
+          member_id: memberId,
+        });
+        setRowErrors({});
+        setAddedRowErrors({});
+      } catch (err: any) {
+        const detail = err?.detail ?? err?.response?.data?.detail;
+        if (detail) {
+          applyValidationErrors(detail);
+        } else {
+          setRowErrors({});
+          setAddedRowErrors({});
+          console.error('Initial biomarker review validation failed:', err);
+        }
+      }
+    };
+
+    const processStepOneData = async (data: any) => {
       setProgressBiomarkerUpload(data.progress);
       setfileType(data.lab_type || 'more_info');
+      setUploadPhase(data.status || 'ocr_processing');
+      setReviewSummary(data.summary || null);
       setUploadedFile((prev) =>
         prev
           ? {
@@ -132,6 +190,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setPolling(false);
         setbiomarkerLoading(false);
         setExtractedBiomarkers([]);
+        setUploadPhase('failed');
         setUploadedFile((prev) =>
           prev
             ? {
@@ -152,6 +211,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setbiomarkerLoading(false);
         setisSaveClicked(true);
         setExtractedBiomarkers([]);
+        setUploadPhase('review_ready');
         return;
       }
 
@@ -184,11 +244,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           });
         });
 
-      setExtractedBiomarkers(sorted);
-
       // Stop polling + show biomarkers immediately
       if (data.extracted_biomarkers && data.extracted_biomarkers.length > 0) {
         setPolling(false);
+        setUploadPhase('validating_review');
+        setbiomarkerLoading(true);
+        await showReviewLoading();
+
+        if (data.validation?.ready) {
+          applyValidationErrors(data.validation);
+        } else {
+          await validateRowsBeforeDisplay(
+            sorted,
+            data.lab_type || 'more_info',
+            data.date_of_test || null,
+          );
+        }
+
+        setExtractedBiomarkers(sorted);
+        setUploadPhase(data.status || 'review_ready');
         setbiomarkerLoading(false);
         if (data.is_edited) {
           setisSaveClicked(false);
@@ -204,7 +278,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         const res = await Application.checkLabStepOne({
           file_id: activeFileId,
         });
-        processStepOneData(res.data);
+        await processStepOneData(res.data);
       } catch (err: any) {
         // Backward-compatibility for older backend builds that still return 206
         // for non-template warnings. The response body still contains valid
@@ -214,7 +288,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           : err?.response?.data ?? null; // standard axios error shape
 
         if (errData && errData.extracted_biomarkers !== undefined) {
-          processStepOneData(errData);
+          await processStepOneData(errData);
         } else {
           console.error('Error checking lab step one:', err);
         }
@@ -248,12 +322,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const handleDeleteFile = (fileId?: string) => {
     setExtractedBiomarkers([]);
-    console.log(fileId);
     setfileType('more_info');
     setPolling(true);
     setUploadedFile(null);
     setRowErrors({});
     setAddedRowErrors({});
+    setReviewSummary(null);
+    setUploadPhase('uploading');
     publish('RESET_MAPPING_ROWS', {});
     setbiomarkerLoading(false);
     setModifiedDateOfTest(new Date());
@@ -289,9 +364,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       })
       .catch((err) => console.error('Download failed', err));
   };
-
-  console.log(uploadedFile);
-
   const sendToBackend = async (file: File, azureUrl: string) => {
     await Application.addLabReport(
       {
@@ -337,6 +409,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             prev ? { ...prev, status: 'completed' } : prev,
           );
         } else {
+          setUploadPhase('failed');
           setUploadedFile((prev) =>
             prev
               ? {
@@ -381,6 +454,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             'Unsupported format. Allowed: PDF, DOC, DOCX, PNG, JPG, JPEG, WEBP.',
         };
         setUploadedFile(newFile);
+        setUploadPhase('failed');
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
@@ -397,6 +471,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       };
 
       setUploadedFile(newFile);
+      setReviewSummary(null);
+      setExtractedBiomarkers([]);
+      setRowErrors({});
+      setAddedRowErrors({});
+      setUploadPhase('uploading');
 
       try {
         // Step 1: Upload to Azure
@@ -433,6 +512,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         // Step 2: Send to backend
         // await sendToBackend(file, azureUrl);
       } catch (error: any) {
+        setUploadPhase('failed');
         setUploadedFile((prev) =>
           prev
             ? {
@@ -593,18 +673,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     Record<number, string>
   >({});
   const [btnLoading, setBtnLoading] = useState(false);
-  const initialValidationFileRef = useRef<string | null>(null);
-
-  const toUtcDateTimestamp = (date: Date | string | null | undefined) => {
-    if (!date) return null;
-    const parsed = date instanceof Date ? date : new Date(date);
-    if (Number.isNaN(parsed.getTime())) return null;
-    return Date.UTC(
-      parsed.getFullYear(),
-      parsed.getMonth(),
-      parsed.getDate(),
-    ).toString();
-  };
 
   const mapExtractedBiomarkersForValidation = (
     biomarkers: any[],
@@ -661,90 +729,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setRowErrors(modifiedErrors);
     setAddedRowErrors(addedErrors);
   };
-
-  const validateLoadedBiomarkers = async (
-    biomarkers: any[],
-    labType: string,
-    dateOfTest?: string | null,
-  ) => {
-    const effectiveLab =
-      labType && String(labType).trim() ? labType : 'more_info';
-    if (
-      !uploadedFile?.file_id ||
-      biomarkers.length === 0 ||
-      effectiveLab === 'ultrasound'
-    ) {
-      return;
-    }
-
-    // Backend requires non-empty dates for modified rows. Step-one often
-    // returns null date_of_test until OCR picks a date; Continue uses the
-    // date picker (modifiedDateOfTest), so mirror that here.
-    const modifiedDateTs =
-      toUtcDateTimestamp(dateOfTest) ??
-      toUtcDateTimestamp(modifiedDateOfTest);
-    if (!modifiedDateTs) {
-      return;
-    }
-
-    try {
-      await Application.validateBiomarkers({
-        modified_biomarkers_list: mapExtractedBiomarkersForValidation(
-          biomarkers,
-          effectiveLab,
-        ),
-        added_biomarkers_list: [],
-        modified_biomarkers_date_of_test: modifiedDateTs,
-        added_biomarkers_date_of_test: modifiedDateTs,
-        modified_lab_type: effectiveLab,
-        modified_file_id: uploadedFile.file_id,
-        member_id: memberId,
-      });
-      setRowErrors({});
-      setAddedRowErrors({});
-    } catch (err: any) {
-      const detail = err?.detail ?? err?.response?.data?.detail;
-      if (detail) {
-        applyValidationErrors(detail);
-      } else {
-        console.error('Initial biomarker validation failed:', err);
-      }
-    }
-  };
-
-  useEffect(() => {
-    const fileId = uploadedFile?.file_id ?? null;
-
-    if (!fileId) {
-      initialValidationFileRef.current = null;
-      return;
-    }
-
-    if (
-      initialValidationFileRef.current === fileId ||
-      polling ||
-      biomarkerLoading ||
-      extractedBiomarkers.length === 0 ||
-      fileType === 'ultrasound' ||
-      uploadedFile?.status === 'error'
-    ) {
-      return;
-    }
-
-    initialValidationFileRef.current = fileId;
-    void validateLoadedBiomarkers(
-      extractedBiomarkers,
-      fileType,
-      modifiedDateOfTest?.toISOString() ?? null,
-    );
-  }, [
-    biomarkerLoading,
-    extractedBiomarkers,
-    fileType,
-    modifiedDateOfTest,
-    polling,
-    uploadedFile,
-  ]);
 
   const onSave = () => {
     // ✅ For ultrasound reports, just close the modal and go to step 0
@@ -1241,9 +1225,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             setbiomarkerLoading(false);
             setExtractedBiomarkers([]);
             setAddedBiomarkers([]);
-            setRowErrors([]);
+            setRowErrors({});
+            setAddedRowErrors({});
+            setReviewSummary(null);
+            setUploadPhase('uploading');
           }}
           loading={biomarkerLoading}
+          uploadPhase={uploadPhase}
+          reviewSummary={reviewSummary}
           progressBiomarkerUpload={progressBiomarkerUpload}
           btnLoading={btnLoading}
           fileType={fileType}

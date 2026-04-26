@@ -59,6 +59,8 @@ interface UploadPModalProps {
   onDownload?: () => void;
   fileType: string;
   loading: boolean;
+  uploadPhase?: string;
+  reviewSummary?: any;
   rowErrors?: any;
   AddedRowErrors?: any;
   btnLoading: boolean;
@@ -94,6 +96,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   onClose,
   onDownload,
   loading,
+  uploadPhase,
+  reviewSummary,
   btnLoading,
   rowErrors,
   AddedRowErrors,
@@ -375,6 +379,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 rowErrors={rowErrors}
                 setrowErrors={setrowErrors}
                 loading={loading}
+                uploadPhase={uploadPhase}
+                reviewSummary={reviewSummary}
                 progressBiomarkerUpload={progressBiomarkerUpload}
                 fileType={fileType}
                 dateOfTest={modifiedDateOfTest}

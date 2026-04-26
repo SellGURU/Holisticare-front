@@ -2,8 +2,20 @@ import { useEffect, useState } from 'react';
 
 interface ProgressLoadingProps {
   maxProgress: number;
+  phase?: string;
 }
-const ProgressLoading: React.FC<ProgressLoadingProps> = ({ maxProgress }) => {
+const phaseLabel: Record<string, string> = {
+  uploading: 'Uploading file',
+  ocr_processing: 'Extracting biomarkers',
+  validating_review: 'Checking mappings, duplicates, and errors',
+  review_ready: 'Preparing review',
+  failed: 'Processing failed',
+};
+
+const ProgressLoading: React.FC<ProgressLoadingProps> = ({
+  maxProgress,
+  phase = 'ocr_processing',
+}) => {
   const [progress, setProgress] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -29,7 +41,7 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({ maxProgress }) => {
     <>
       <div className="w-72">
         <div className="flex justify-between mb-1 text-[11px] text-Text-Secondary">
-          <span>Analyzing biomarkers</span>
+          <span>{phaseLabel[phase] || 'Analyzing biomarkers'}</span>
           <span>{progress.toFixed(0)}%</span>
         </div>
 
@@ -43,7 +55,9 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({ maxProgress }) => {
         </div>
       </div>
 
-      <div className="text-center">Results will appear automatically.</div>
+      <div className="text-center">
+        We’ll show the review after errors and duplicates are checked.
+      </div>
     </>
   );
 };
