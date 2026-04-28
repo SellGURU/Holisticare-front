@@ -14,12 +14,14 @@ export interface BiomarkerSuggestion {
   reason: string;
   benchmark_area?: string;
   unit?: string;
+  value_type?: string;
 }
 
 export interface BiomarkerOption {
   biomarker: string;
   benchmark_area?: string;
   unit?: string;
+  value_type?: string;
 }
 
 type Props = {
@@ -43,6 +45,31 @@ const confidenceBadge = (confidence: number) => {
   if (confidence >= 60)
     return 'bg-yellow-50 text-yellow-700 border border-yellow-200';
   return 'bg-orange-50 text-orange-600 border border-orange-200';
+};
+
+const optionIdentity = (item: {
+  biomarker?: string;
+  system_biomarker?: string;
+  benchmark_area?: string;
+  unit?: string;
+  value_type?: string;
+}) =>
+  [
+    item.biomarker || item.system_biomarker || '',
+    item.unit || '',
+    item.value_type || '',
+    item.benchmark_area || '',
+  ]
+    .map((part) => String(part || '').trim().toLowerCase())
+    .join('|');
+
+const unitTypeLabel = (unit?: string, valueType?: string) => {
+  const cleanUnit = String(unit || '').trim();
+  const cleanType = String(valueType || '').trim();
+  if (cleanUnit && cleanType) return `Unit/type: ${cleanUnit} | ${cleanType}`;
+  if (cleanUnit) return `Unit/type: ${cleanUnit}`;
+  if (cleanType) return `Type: ${cleanType}`;
+  return 'Unit/type: no unit';
 };
 
 const SearchSelectWithSuggestions: React.FC<Props> = ({
@@ -121,7 +148,7 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
     }, []);
     const uniqueMap = new Map<string, BiomarkerOption>();
     normalizedOptions.forEach((option) => {
-      const key = option.biomarker.toLowerCase();
+      const key = optionIdentity(option);
       if (!uniqueMap.has(key)) {
         uniqueMap.set(key, option);
       }
@@ -133,7 +160,8 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
             (o) =>
               o.biomarker.toLowerCase().includes(term) ||
               (o.benchmark_area || '').toLowerCase().includes(term) ||
-              (o.unit || '').toLowerCase().includes(term),
+              (o.unit || '').toLowerCase().includes(term) ||
+              (o.value_type || '').toLowerCase().includes(term),
           )
         : unique,
     );
@@ -182,7 +210,8 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
       !searchTerm ||
       s.system_biomarker.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (s.benchmark_area || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (s.unit || '').toLowerCase().includes(searchTerm.toLowerCase()),
+      (s.unit || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (s.value_type || '').toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const groupedSuggestions = visibleSuggestions.reduce<
@@ -301,7 +330,7 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
                     </div>
                     {group.matches.map((s) => (
                       <div
-                        key={`suggestion-${group.area}-${s.system_biomarker}`}
+                        key={`suggestion-${group.area}-${optionIdentity(s)}`}
                         className={`py-1.5 px-3 cursor-pointer text-[10px] text-Text-Primary text-start flex items-start justify-between gap-2 border-b border-Gray-50 ${
                           selectedValue === s.system_biomarker
                             ? 'bg-blue-50 font-medium'
@@ -314,11 +343,9 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
                       >
                         <span className="flex-1 min-w-0">
                           <div className="text-wrap">{s.system_biomarker}</div>
-                          {s.unit && (
-                            <div className="text-[8px] text-Text-Secondary mt-0.5">
-                              Unit: {s.unit}
-                            </div>
-                          )}
+                          <div className="text-[8px] text-Text-Secondary mt-0.5">
+                            {unitTypeLabel(s.unit, s.value_type)}
+                          </div>
                         </span>
                         <span
                           className={`shrink-0 text-[8px] font-semibold px-1.5 py-0.5 rounded-full ${confidenceBadge(s.confidence)}`}
@@ -385,7 +412,7 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
                   </div>
                   {group.matches.map((option) => (
                     <div
-                      key={option.biomarker}
+                      key={optionIdentity(option)}
                       className={`py-1 px-3 text-wrap w-full cursor-pointer text-[10px] text-start border-b border-Gray-50 ${
                         selectedValue === option.biomarker
                           ? 'bg-blue-50 font-medium text-Primary-DeepTeal'
@@ -396,11 +423,9 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
                       aria-selected={selectedValue === option.biomarker}
                     >
                       <div>{option.biomarker}</div>
-                      {option.unit && (
-                        <div className="text-[8px] text-Text-Secondary mt-0.5">
-                          Unit: {option.unit}
-                        </div>
-                      )}
+                      <div className="text-[8px] text-Text-Secondary mt-0.5">
+                        {unitTypeLabel(option.unit, option.value_type)}
+                      </div>
                     </div>
                   ))}
                 </li>

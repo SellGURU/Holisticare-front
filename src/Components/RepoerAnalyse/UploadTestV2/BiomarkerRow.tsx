@@ -30,6 +30,50 @@ interface BiomarkerRowProps {
   onBiomarkerMenuOpen?: () => void;
 }
 
+const inferExtractedValueKind = (value: unknown, unit?: string) => {
+  const text = String(value ?? '').trim();
+  const unitText = String(unit ?? '').trim().toLowerCase();
+  if (!text) return 'unknown';
+  if (/\d/.test(text)) return 'numeric';
+  if (unitText === '%' || unitText === 'percent' || unitText === 'ratio') {
+    return 'numeric';
+  }
+  return 'string';
+};
+
+const inferSystemValueKind = (valueType?: string, unit?: string) => {
+  const type = String(valueType ?? '').trim().toLowerCase();
+  const unitText = String(unit ?? '').trim();
+  if (
+    ['string', 'text', 'categorical', 'qualitative', 'boolean', 'choice'].some(
+      (token) => type.includes(token),
+    )
+  ) {
+    return 'string';
+  }
+  if (
+    ['number', 'numeric', 'integer', 'float', 'decimal', 'range'].some((token) =>
+      type.includes(token),
+    )
+  ) {
+    return 'numeric';
+  }
+  if (unitText) return 'numeric';
+  return 'unknown';
+};
+
+const isValueTypeCompatible = (
+  extractedValue: unknown,
+  extractedUnit: string,
+  systemValueType?: string,
+  systemUnit?: string,
+) => {
+  const extractedKind = inferExtractedValueKind(extractedValue, extractedUnit);
+  const systemKind = inferSystemValueKind(systemValueType, systemUnit);
+  if (extractedKind === 'unknown' || systemKind === 'unknown') return true;
+  return extractedKind === systemKind;
+};
+
 const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   index,
   updateAndStandardize,
@@ -52,6 +96,27 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   const [mappingStatus, setMappingStatus] = useState<any>(null);
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
   const [unitOptions, setUnitOptions] = useState([]);
+  const [copiedExactName, setCopiedExactName] = useState(false);
+  const normalizedName = biomarker.biomarker || biomarker.original_biomarker_name || '';
+  // Always use the string from the report for the PDF line and copy, when present
+  const pdfNameFromDocument = String(biomarker.original_biomarker_name || '').trim();
+  // Show the PDF sub-line whenever we have a document label, including unmapped rows
+  // (where the title line may repeat the same name).
+  const showPdfNameLine = pdfNameFromDocument.length > 0;
+  const valueText = String(biomarker.original_value ?? biomarker.value ?? '').trim();
+  const extractedUnitText = String(biomarker.original_unit ?? biomarker.unit ?? '').trim();
+  const isTextValueWithoutUnit = valueText.length > 0 && !/\d/.test(valueText);
+
+  const copyExactPdfName = async () => {
+    if (!pdfNameFromDocument) return;
+    try {
+      await navigator.clipboard.writeText(pdfNameFromDocument);
+      setCopiedExactName(true);
+      setTimeout(() => setCopiedExactName(false), 1500);
+    } catch {
+      setCopiedExactName(false);
+    }
+  };
 
   const fetchUnits = async () => {
     try {
@@ -75,35 +140,93 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   const hasUnitError = Boolean(
     isHaveError && errorText && errorText.includes('Extracted Unit'),
   );
+  const isErrorHandled = Boolean(isHaveError && biomarker.review_error_handled);
+  const normalizedErrorText = String(errorText || '').toLowerCase();
+  const isSystemBiomarkerError = Boolean(
+    hasBiomarkerError ||
+      normalizedErrorText.includes('invalid biomarker type') ||
+      normalizedErrorText.includes('biomarker is not recognized') ||
+      normalizedErrorText.includes('biomarker name'),
+  );
+  const isExtractedUnitError = Boolean(
+    !isTextValueWithoutUnit &&
+      (hasUnitError ||
+        normalizedErrorText.includes('unit') ||
+        normalizedErrorText.includes('cannot be provided')),
+  );
 
   // Build the effective suggestions list:
   // For successfully mapped rows, include the current mapping as a top suggestion
   // so the user can easily return to it after exploring other options.
+  const compatibleSystemOptions = allAvilableBiomarkers.filter((option) =>
+    isValueTypeCompatible(
+      valueText,
+      extractedUnitText,
+      option.value_type,
+      option.unit,
+    ),
+  );
+  const compatibleSuggestions = suggestionMatches.filter((suggestion) =>
+    isValueTypeCompatible(
+      valueText,
+      extractedUnitText,
+      suggestion.value_type,
+      suggestion.unit,
+    ),
+  );
+
   const effectiveSuggestions: BiomarkerSuggestion[] = (() => {
-    const list = [...suggestionMatches];
+    const list = [...compatibleSuggestions];
     const currentBiomarker = biomarker.biomarker;
+    const currentUnit = biomarker.unit || biomarker.original_unit || '';
+    const currentMeta = compatibleSystemOptions.find(
+      (option) =>
+        option.biomarker.toLowerCase() === String(currentBiomarker || '').toLowerCase() &&
+        String(option.unit || '').toLowerCase() === String(currentUnit || '').toLowerCase(),
+    );
     if (
       currentBiomarker &&
+      currentMeta &&
       !hasBiomarkerError &&
       !list.some(
-        (s) => s.system_biomarker.toLowerCase() === currentBiomarker.toLowerCase(),
+        (s) =>
+          s.system_biomarker.toLowerCase() === currentBiomarker.toLowerCase() &&
+          String(s.unit || '').toLowerCase() === String(currentUnit || '').toLowerCase(),
       )
     ) {
       list.unshift({
         system_biomarker: currentBiomarker,
         confidence: 100,
         reason: 'Current system match',
-        benchmark_area: biomarker['Benchmark areas'] || '',
-        unit: biomarker.unit || '',
+        benchmark_area: currentMeta.benchmark_area || biomarker['Benchmark areas'] || '',
+        unit: currentUnit,
+        value_type: currentMeta.value_type,
       });
     }
     return list;
   })();
 
-  const selectedSystemMeta = allAvilableBiomarkers.find(
+  const displayUnit =
+    biomarker.original_unit === ''
+      ? '(no unit)'
+      : biomarker.original_unit || biomarker.possible_values?.units?.[0] || '';
+
+  const matchingSystemOptions = compatibleSystemOptions.filter(
     (option) =>
       option.biomarker.toLowerCase() === (biomarker.biomarker || '').toLowerCase(),
   );
+  const selectedSystemMeta =
+    matchingSystemOptions.find(
+      (option) =>
+        String(option.unit || '').toLowerCase() ===
+        String(biomarker.original_unit || biomarker.unit || '').toLowerCase(),
+    ) ||
+    matchingSystemOptions.find(
+      (option) =>
+        String(option.unit || '').toLowerCase() ===
+        String(biomarker.unit || '').toLowerCase(),
+    ) ||
+    matchingSystemOptions[0];
 
   return (
     <>
@@ -111,7 +234,9 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         ref={refRenceEl}
         key={biomarker.biomarker_id}
         className={`${showOnlyErrors && !isHaveError ? 'hidden' : ''} ${
-          isHaveError
+          isErrorHandled
+            ? 'bg-[#ECFDF3]'
+            : isHaveError
             ? 'bg-[#FFD8E480]'
             : index % 2 === 0
               ? 'bg-white'
@@ -124,26 +249,50 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
       >
         {/* Column 1: Extracted Biomarker */}
         <div className="min-w-0 pt-1">
-          <div className="flex min-h-[40px] items-center gap-1">
-            <TooltipTextAuto maxWidth="180px">
-              {biomarker.original_biomarker_name}
-            </TooltipTextAuto>
-            {isHaveError && (
-              <>
-                <img
-                  data-tooltip-id={`tooltip-${index}`}
-                  src="/icons/info-circle-red.svg"
-                  alt="Error"
-                  className="w-4 h-4 shrink-0"
-                />
-                <Tooltip
-                  id={`tooltip-${index}`}
-                  place="top"
-                  className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+          <div className="flex min-h-[40px] flex-col justify-center gap-1">
+            <div className="flex min-w-0 items-center gap-1">
+              <TooltipTextAuto maxWidth="180px">
+                {normalizedName || '—'}
+              </TooltipTextAuto>
+              {isHaveError && (
+                <>
+                  <img
+                    data-tooltip-id={`tooltip-${index}`}
+                    src={
+                      isErrorHandled
+                        ? '/icons/tick-circle-green-new.svg'
+                        : '/icons/info-circle-red.svg'
+                    }
+                    alt="Error"
+                    className="w-4 h-4 shrink-0"
+                  />
+                  <Tooltip
+                    id={`tooltip-${index}`}
+                    place="top"
+                    className="!bg-[#F9DEDC] !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                  >
+                    {errorText}
+                  </Tooltip>
+                </>
+              )}
+            </div>
+            {showPdfNameLine && (
+              <div className="flex min-w-0 items-center gap-1 text-[9px] text-Text-Secondary">
+                <span className="shrink-0">PDF:</span>
+                <TooltipTextAuto maxWidth="150px">{pdfNameFromDocument}</TooltipTextAuto>
+                <button
+                  type="button"
+                  onClick={copyExactPdfName}
+                  className="shrink-0 rounded p-0.5 hover:bg-Gray-50"
+                  title="Copy exact PDF biomarker name"
                 >
-                  {errorText}
-                </Tooltip>
-              </>
+                  <img
+                    src={copiedExactName ? '/icons/copy-success.svg' : '/icons/copy.svg'}
+                    alt="Copy exact PDF biomarker name"
+                    className="h-3.5 w-3.5"
+                  />
+                </button>
+              </div>
             )}
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px] text-Text-Secondary">
@@ -165,18 +314,35 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
             isStaff
             isLarge
             isSetting
-            value={hasBiomarkerError ? '' : biomarker.biomarker}
-            placeholder={hasBiomarkerError ? '...' : 'Select an option'}
-            options={allAvilableBiomarkers}
-            isError={hasBiomarkerError}
+            value={
+              isSystemBiomarkerError && !isErrorHandled ? '' : biomarker.biomarker
+            }
+            placeholder={
+              isSystemBiomarkerError && !isErrorHandled
+                ? '...'
+                : 'Select an option'
+            }
+            options={compatibleSystemOptions}
+            isError={isSystemBiomarkerError && !isErrorHandled}
             suggestions={effectiveSuggestions}
             isSuggestionsLoading={isSuggestionsLoading}
             onCreateNew={onCreateNewBiomarker}
             onMenuOpen={onBiomarkerMenuOpen}
             onChange={(val: string) => {
-              updateAndStandardize(biomarker.biomarker_id, {
-                biomarker: val,
-              });
+              const selectedOption = compatibleSystemOptions.find(
+                (option) =>
+                  option.biomarker.toLowerCase() === val.toLowerCase() &&
+                  String(option.unit || '').trim(),
+              );
+              const nextFields: Partial<any> = { biomarker: val };
+              if (
+                !isTextValueWithoutUnit &&
+                !String(biomarker.original_unit ?? '').trim() &&
+                selectedOption?.unit
+              ) {
+                nextFields.original_unit = selectedOption.unit;
+              }
+              updateAndStandardize(biomarker.biomarker_id, nextFields);
               setIsChenged(true);
               setIsMapped(false);
             }}
@@ -190,8 +356,11 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                   </span>
                 )}
                 <span>
-                  Default unit:{' '}
+                  Default unit/type:{' '}
                   {selectedSystemMeta?.unit || biomarker.unit || '(no unit)'}
+                  {selectedSystemMeta?.value_type
+                    ? ` | ${selectedSystemMeta.value_type}`
+                    : ''}
                 </span>
               </>
             ) : (
@@ -210,27 +379,30 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         {/* Column 4: Extracted Unit with create action */}
         <div className="flex min-w-0 justify-center pt-1">
           <div className="w-full max-w-[100px] 2xl:max-w-[140px]">
-            <SelectWithCreate
-              isLarge
-              isSetting
-              value={
-                hasUnitError
-                  ? '...'
-                  : biomarker.original_unit === ''
-                    ? '(no unit)'
-                    : biomarker.original_unit ||
-                      biomarker.possible_values?.units?.[0]
-              }
-              options={unitOptions}
-              onMenuOpen={fetchUnits}
-              onCreateNew={biomarker.biomarker ? onCreateNewUnit : undefined}
-              onChange={(val: string) => {
-                const actualUnit = val === '(no unit)' ? '' : val;
-                updateAndStandardize(biomarker.biomarker_id, {
-                  original_unit: actualUnit,
-                });
-              }}
-            />
+            {isTextValueWithoutUnit ? (
+              <div className="flex min-h-[28px] items-center justify-center rounded-2xl border border-Gray-50 bg-[#FDFDFD] px-3 py-1 text-center text-[8px] text-Text-Secondary md:text-[10px]">
+                Not required
+              </div>
+            ) : (
+              <SelectWithCreate
+                isLarge
+                isSetting
+                value={
+                  isExtractedUnitError && !isErrorHandled && !displayUnit
+                    ? '...'
+                    : displayUnit
+                }
+                options={unitOptions}
+                onMenuOpen={fetchUnits}
+                onCreateNew={biomarker.biomarker ? onCreateNewUnit : undefined}
+                onChange={(val: string) => {
+                  const actualUnit = val === '(no unit)' ? '' : val;
+                  updateAndStandardize(biomarker.biomarker_id, {
+                    original_unit: actualUnit,
+                  });
+                }}
+              />
+            )}
           </div>
         </div>
 
@@ -345,7 +517,12 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
 
         {isHaveError && (
           <div className="col-span-full px-0 pb-1 pt-0 text-left text-Red font-normal text-[10px] leading-snug break-words">
-            {errorText}
+            <span>{errorText}</span>
+            {isErrorHandled && (
+              <span className="ml-2 inline-flex rounded-full bg-[#DEF7EC] px-2 py-0.5 text-[9px] font-medium text-green-700">
+                Handled, click Continue to re-check
+              </span>
+            )}
           </div>
         )}
       </div>

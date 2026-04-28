@@ -89,6 +89,45 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   //   Record<string, 'added' | 'removed' | null>
   // >({});
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const currentRowErrors = rowErrors || {};
+  const rowErrorEntries = Object.entries(currentRowErrors);
+  const activeErrorCount = rowErrorEntries.length;
+  const isTextValueWithoutUnit = (value: any) => {
+    const text = String(value ?? '').trim();
+    return text.length > 0 && !/\d/.test(text);
+  };
+
+  const getRowDisplayName = (index: number) => {
+    const row = biomarkers[index] || {};
+    return (
+      row.original_biomarker_name ||
+      row.biomarker ||
+      `Row ${index + 1}`
+    );
+  };
+
+  const formatRowError = (row: any, message: string) => {
+    const name = row?.original_biomarker_name || row?.biomarker || 'This row';
+    const text = String(message || 'Invalid biomarker');
+    if (text.toLowerCase().startsWith(String(name).toLowerCase())) {
+      return text;
+    }
+
+    const value = row?.original_value ?? row?.value;
+    const unit = row?.original_unit ?? row?.unit;
+    const context = [
+      value !== undefined && value !== null && String(value).trim() !== ''
+        ? `value "${value}"`
+        : null,
+      unit !== undefined && unit !== null && String(unit).trim() !== ''
+        ? `unit "${unit}"`
+        : null,
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    return `${name}${context ? ` (${context})` : ''}: ${text}`;
+  };
 
   const handleValueChange = (id: string, newValue: string) => {
     // update local state immediately so UI feels responsive
@@ -179,6 +218,25 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   ];
   const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState<BiomarkerOption[]>([]);
 
+  const getDefaultUnitForBiomarker = (row: any) => {
+    const biomarkerName = String(row?.biomarker || '').trim().toLowerCase();
+    if (!biomarkerName || isTextValueWithoutUnit(row?.original_value ?? row?.value)) {
+      return '';
+    }
+
+    const currentSystemUnit = String(row?.unit || '').trim();
+    if (currentSystemUnit) {
+      return currentSystemUnit;
+    }
+
+    const exactOption = avalibaleBiomarkers.find(
+      (option) =>
+        option.biomarker.toLowerCase() === biomarkerName &&
+        String(option.unit || '').trim(),
+    );
+    return String(exactOption?.unit || '').trim();
+  };
+
   useEffect(() => {
     BiomarkersApi.getBiomarkersList()
       .then((res) => {
@@ -187,6 +245,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             biomarker: String(item?.Biomarker || '').trim(),
             benchmark_area: String(item?.['Benchmark areas'] || '').trim(),
             unit: String(item?.unit || '').trim(),
+            value_type: String(
+              item?.value_type || item?.type || item?.data_type || '',
+            ).trim(),
           }))
           .filter((item: BiomarkerOption) => item.biomarker)
           .sort((a: BiomarkerOption, b: BiomarkerOption) => {
@@ -214,8 +275,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     const unresolvedRows = rows
       .map((row: any) => ({
         extracted_name: row.original_biomarker_name || row.biomarker || '',
-        extracted_value: String(row.original_value || row.value || ''),
-        extracted_unit: row.original_unit || row.unit || '',
+        normalized_name: row.biomarker || '',
+        extracted_value: String(row.original_value ?? row.value ?? ''),
+        extracted_unit: row.original_unit ?? row.unit ?? '',
       }))
       .filter((row: any) => row.extracted_name);
 
@@ -321,11 +383,20 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   };
   React.useEffect(() => {
     const updated = biomarkers.map((b) => {
+      if (isTextValueWithoutUnit(b.original_value ?? b.value)) {
+        return b.original_unit === '' ? b : { ...b, original_unit: '' };
+      }
       if (
         (!b.original_unit || b.original_unit === '') &&
         b.possible_values?.units?.length > 0
       ) {
         return { ...b, original_unit: b.possible_values.units[0] };
+      }
+      if (!b.original_unit || b.original_unit === '') {
+        const defaultUnit = getDefaultUnitForBiomarker(b);
+        if (defaultUnit) {
+          return { ...b, original_unit: defaultUnit };
+        }
       }
       return b;
     });
@@ -334,7 +405,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     if (JSON.stringify(updated) !== JSON.stringify(biomarkers)) {
       onChange(updated);
     }
-  }, [biomarkers, onChange]);
+  }, [avalibaleBiomarkers, biomarkers, onChange]);
   const standardizeBiomarkers = async (payload: {
     biomarker: string;
     value: string;
@@ -377,36 +448,47 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     const index = updated.findIndex((b) => b.biomarker_id === id);
 
     const current = updated.find((b) => b.biomarker_id === id);
+    if (!current) {
+      onChange(updated);
+      return;
+    }
+    const textValueDoesNotNeedUnit = isTextValueWithoutUnit(
+      current.original_value ?? current.value,
+    );
+    if (textValueDoesNotNeedUnit && current.original_unit !== '') {
+      current.original_unit = '';
+      updated = updated.map((b) =>
+        b.biomarker_id === id ? { ...b, original_unit: '' } : b,
+      );
+    }
     const payload = {
       biomarker: current.biomarker,
       value: current.original_value?.toString() || '',
-      unit: current.original_unit || '',
+      unit: textValueDoesNotNeedUnit ? '' : current.original_unit || '',
       bio_type: 'more_info',
     };
 
+    const hadExistingError = index !== -1 && Boolean(currentRowErrors[index]);
     const result = await standardizeBiomarkers(payload);
 
     if (result.success) {
       updated = updated.map((b) =>
-        b.biomarker_id === id ? { ...b, ...result.data } : b,
+        b.biomarker_id === id
+          ? { ...b, ...result.data, review_error_handled: hadExistingError }
+          : b,
       );
-      // Clear error for this specific row only
-      if (index !== -1) {
-        setrowErrors((prev: any) => {
-          if (!prev || !prev[index]) return prev;
-          const newErrors = { ...prev };
-          delete newErrors[index];
-          return newErrors;
-        });
-      }
     } else {
       // Set error for this specific row only
       if (index !== -1) {
+        const row = updated[index];
         setrowErrors((prev: any) => ({
           ...prev,
-          [index]: result.error,
+          [index]: formatRowError(row, result.error),
         }));
       }
+      updated = updated.map((b) =>
+        b.biomarker_id === id ? { ...b, review_error_handled: false } : b,
+      );
     }
 
     onChange(updated);
@@ -452,7 +534,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       }
     }
   }, [biomarkers]);
-  console.log(biomarkers);
   // const handleMappingToggle = async (id: string) => {
   //   const row = biomarkers.filter((b) => b.biomarker_id === id)[0];
   //   const extracted = row.original_biomarker_name;
@@ -665,7 +746,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 <div className="rounded-lg border border-Gray-50 bg-white px-3 py-2">
                   <span className="text-Text-Secondary">Errors: </span>
                   <span className="font-medium text-Red">
-                    {reviewSummary.error_count ?? Object.keys(rowErrors || {}).length}
+                    {activeErrorCount}
                   </span>
                 </div>
                 <div className="rounded-lg border border-Gray-50 bg-white px-3 py-2">
@@ -673,6 +754,35 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   <span className="font-medium text-Text-Primary">
                     {reviewSummary.duplicate_count ?? 0}
                   </span>
+                </div>
+              </div>
+            )}
+
+            {activeErrorCount > 0 && (
+              <div className="mb-3 rounded-lg border border-[#F3B8C8] bg-[#FFF5F8] px-3 py-2 text-[10px] md:text-xs">
+                <div className="mb-1 font-medium text-Text-Primary">
+                  Errors to review
+                </div>
+                <div className="max-h-[96px] space-y-1 overflow-y-auto pr-1">
+                  {rowErrorEntries.map(([key, error]) => {
+                    const index = Number(key);
+                    const row = biomarkers[index] || {};
+                    const isHandled = Boolean(row.review_error_handled);
+                    return (
+                      <div
+                        key={key}
+                        className="flex flex-wrap items-center gap-x-2 gap-y-1 text-Text-Primary"
+                      >
+                        <span className="font-medium">{getRowDisplayName(index)}:</span>
+                        <span className="text-Text-Secondary">{String(error)}</span>
+                        {isHandled && (
+                          <span className="rounded-full bg-[#DEF7EC] px-2 py-0.5 text-[9px] font-medium text-green-700">
+                            Mapped, pending Continue
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -728,8 +838,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         <BiomarkerRow
                           key={b.biomarker_id}
                           refRenceEl={(el: any) => (rowRefs.current[index] = el)}
-                          isHaveError={rowErrors[index]}
-                          errorText={rowErrors[index]}
+                          isHaveError={currentRowErrors[index]}
+                          errorText={currentRowErrors[index]}
                           biomarker={b}
                           index={index}
                           showOnlyErrors={showOnlyErrors}
@@ -801,6 +911,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     biomarker: String(item?.Biomarker || '').trim(),
                     benchmark_area: String(item?.['Benchmark areas'] || '').trim(),
                     unit: String(item?.unit || '').trim(),
+                    value_type: String(
+                      item?.value_type || item?.type || item?.data_type || '',
+                    ).trim(),
                   }))
                   .filter((item: BiomarkerOption) => item.biomarker)
                   .sort((a: BiomarkerOption, b: BiomarkerOption) => {

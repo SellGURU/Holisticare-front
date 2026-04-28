@@ -158,7 +158,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       } catch (err: any) {
         const detail = err?.detail ?? err?.response?.data?.detail;
         if (detail) {
-          applyValidationErrors(detail);
+          applyValidationErrors(detail, biomarkers);
         } else {
           setRowErrors({});
           setAddedRowErrors({});
@@ -252,7 +252,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         await showReviewLoading();
 
         if (data.validation?.ready) {
-          applyValidationErrors(data.validation);
+          applyValidationErrors(data.validation, sorted);
         } else {
           await validateRowsBeforeDisplay(
             sorted,
@@ -701,7 +701,88 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       return base;
     });
 
-  const applyValidationErrors = (detail: any) => {
+  const formatValidationErrorForDisplay = (
+    item: any,
+    biomarkers: any[],
+    rowIndex: number,
+  ) => {
+    const row = biomarkers?.[rowIndex] || {};
+    const name =
+      item?.extracted_biomarker ||
+      item?.biomarker ||
+      row.original_biomarker_name ||
+      row.biomarker ||
+      `Row ${rowIndex + 1}`;
+    const message = String(item?.display_detail || item?.detail || 'Invalid biomarker');
+
+    if (message.toLowerCase().startsWith(String(name).toLowerCase())) {
+      return message;
+    }
+
+    const value = row.original_value ?? row.value ?? item?.value;
+    const unit = row.original_unit ?? row.unit ?? item?.unit;
+    const context = [
+      value !== undefined && value !== null && String(value).trim() !== ''
+        ? `value "${value}"`
+        : null,
+      unit !== undefined && unit !== null && String(unit).trim() !== ''
+        ? `unit "${unit}"`
+        : null,
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    return `${name}${context ? ` (${context})` : ''}: ${message}`;
+  };
+
+  const resolveValidationErrorRowIndex = (
+    item: any,
+    biomarkers: any[],
+    fallbackIndex: number,
+  ) => {
+    const errorName = String(
+      item?.extracted_biomarker || item?.biomarker || '',
+    )
+      .trim()
+      .toLowerCase();
+    const errorValue = String(item?.value ?? '').trim().toLowerCase();
+    const errorUnit = String(item?.unit ?? '').trim().toLowerCase();
+
+    if (errorName) {
+      const exactMatchIndex = biomarkers.findIndex((row: any) => {
+        const rowNames = [
+          row?.original_biomarker_name,
+          row?.biomarker,
+        ].map((name) => String(name || '').trim().toLowerCase());
+        const rowValue = String(row?.original_value ?? row?.value ?? '')
+          .trim()
+          .toLowerCase();
+        const rowUnit = String(row?.original_unit ?? row?.unit ?? '')
+          .trim()
+          .toLowerCase();
+
+        return (
+          rowNames.includes(errorName) &&
+          (!errorValue || rowValue === errorValue) &&
+          (!errorUnit || rowUnit === errorUnit)
+        );
+      });
+
+      if (exactMatchIndex !== -1) return exactMatchIndex;
+
+      const nameOnlyMatchIndex = biomarkers.findIndex((row: any) =>
+        [row?.original_biomarker_name, row?.biomarker]
+          .map((name) => String(name || '').trim().toLowerCase())
+          .includes(errorName),
+      );
+
+      if (nameOnlyMatchIndex !== -1) return nameOnlyMatchIndex;
+    }
+
+    return Number.isInteger(item?.index) ? item.index : fallbackIndex;
+  };
+
+  const applyValidationErrors = (detail: any, contextBiomarkers = extractedBiomarkers) => {
     let parsedDetail: any = {};
 
     if (typeof detail === 'string') {
@@ -718,16 +799,61 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const modifiedErrors: Record<number, string> = {};
     const addedErrors: Record<number, string> = {};
 
-    parsedDetail.modified_biomarkers_list?.forEach((item: any) => {
-      modifiedErrors[item.index] = item.detail;
+    parsedDetail.modified_biomarkers_list?.forEach((item: any, fallbackIndex: number) => {
+      const rowIndex = resolveValidationErrorRowIndex(
+        item,
+        contextBiomarkers,
+        fallbackIndex,
+      );
+      modifiedErrors[rowIndex] = formatValidationErrorForDisplay(
+        item,
+        contextBiomarkers,
+        rowIndex,
+      );
     });
 
-    parsedDetail.added_biomarkers_list?.forEach((item: any) => {
-      addedErrors[item.index] = item.detail;
+    parsedDetail.added_biomarkers_list?.forEach((item: any, fallbackIndex: number) => {
+      const rowIndex = resolveValidationErrorRowIndex(
+        item,
+        addedBiomarkers,
+        fallbackIndex,
+      );
+      addedErrors[rowIndex] = formatValidationErrorForDisplay(
+        item,
+        addedBiomarkers,
+        rowIndex,
+      );
     });
 
     setRowErrors(modifiedErrors);
     setAddedRowErrors(addedErrors);
+  };
+
+  const autoSaveExactBiomarkerMappings = async () => {
+    const uniqueMappings = new Map<string, { extracted: string; system: string }>();
+
+    extractedBiomarkers.forEach((row: any) => {
+      const extracted = String(row.original_biomarker_name || '').trim();
+      const system = String(row.biomarker || '').trim();
+      if (!extracted || !system || extracted.toLowerCase() === system.toLowerCase()) {
+        return;
+      }
+      uniqueMappings.set(`${extracted.toLowerCase()}|${system.toLowerCase()}`, {
+        extracted,
+        system,
+      });
+    });
+
+    if (uniqueMappings.size === 0) return;
+
+    await Promise.allSettled(
+      Array.from(uniqueMappings.values()).map(({ extracted, system }) =>
+        Application.add_mapping({
+          extracted_biomarker: extracted,
+          system_biomarker: system,
+        }),
+      ),
+    );
   };
 
   const onSave = () => {
@@ -768,7 +894,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       modified_file_id: uploadedFile?.file_id ?? '',
       member_id: memberId,
     })
-      .then(() => {
+      .then(async () => {
+        await autoSaveExactBiomarkerMappings();
         // 200 response
         setisSaveClicked(true);
         setstep(0);
