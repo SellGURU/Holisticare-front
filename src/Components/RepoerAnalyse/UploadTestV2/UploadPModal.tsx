@@ -266,7 +266,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
         <div className="w-full h-full opacity-85  rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
         <div
           // style={{ height: window.innerHeight - 80 + 'px' }}
-          className="bg-white p-2 md:p-6 h-[calc(100vh-80px)] rounded-md pb-[80px] sm:pb-0 w-full flex flex-col min-h-0 overflow-hidden z-[99]"
+          className="bg-white p-2 md:p-6 h-[calc(100vh-80px)] rounded-md pb-[80px] sm:pb-0 w-full flex flex-col min-h-0 overflow-y-auto overflow-x-hidden z-[99]"
         >
           <div className="w-full flex items-center justify-between">
             <div
@@ -340,7 +340,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 ) : null}
               </div>
           <div
-            className={`w-full flex-1 min-h-0 flex flex-col mt-3 gap-2 overflow-hidden ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
+            className={`w-full flex flex-col mt-3 gap-2 ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
           >
             <FileUploaderSection
               isEditMode={isEditMode}

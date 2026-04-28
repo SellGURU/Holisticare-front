@@ -679,7 +679,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       />
       <div
         // style={{ height: window.innerHeight - 400 + 'px' }}
-        className={`w-full flex-1 min-h-0 ${uploadedFile ? 'biomarkerTableShowAnimation' : 'biomarkerTableHideAnimation'} rounded-2xl border border-Gray-50 p-2 md:p-4 shadow-300 text-xs text-Text-Primary overflow-hidden`}
+        className={`w-full rounded-2xl border border-Gray-50 p-2 md:p-4 shadow-300 text-xs text-Text-Primary overflow-visible ${
+          uploadedFile ? 'opacity-100' : 'opacity-0'
+        }`}
         data-tour="biomarkers-section"
       >
         {loading ? (
@@ -701,7 +703,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="-mt-5">No data provided yet.</div>
           </div>
         ) : (
-          <div className="relative h-full min-h-0 flex flex-col">
+          <div className="relative flex flex-col">
             <div className="flex flex-wrap gap-2 md:gap-3 justify-between items-center mb-3 shrink-0">
               <div className="text-[10px] md:text-sm font-medium text-Text-Primary">
                 Biomarkers{' '}
@@ -788,16 +790,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             )}
 
             <div
-              className="relative w-full min-w-0 text-xs flex-1 min-h-0 border border-Gray-50 rounded-[12px] overflow-hidden"
+              className="relative w-full min-w-0 text-xs border border-Gray-50 rounded-[12px] overflow-hidden"
               data-tour="biomarker-table"
             >
-              <div className="w-full h-full overflow-x-auto overflow-y-hidden pb-2">
-                <div className="w-full min-w-[700px] h-full flex flex-col min-h-0">
-                  {/* Single vertical scroll for header + rows so a scrollbar does not
-                      shrink the body grid relative to the header (column misalignment). */}
+              <div className="w-full overflow-x-auto overflow-y-visible pb-2">
+                <div className="w-full min-w-[700px]">
                   <div
                     ref={tableRef}
-                    className="flex-1 min-h-0 overflow-y-auto w-full pb-8 [scrollbar-gutter:stable]"
+                    className="w-full pb-8"
                   >
                     {/* Table Header */}
                     <div
