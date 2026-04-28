@@ -589,6 +589,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   }, []);
   const [run, setRun] = useState(false);
   const [showReminder, setShowReminder] = useState(false);
+  const [errorsExpanded, setErrorsExpanded] = useState(false);
   useEffect(() => {
     if (biomarkers.length > 0) {
       const tutorialSeen = localStorage.getItem('tutorialSeen');
@@ -679,9 +680,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       />
       <div
         // style={{ height: window.innerHeight - 400 + 'px' }}
-        className={`w-full rounded-2xl border border-Gray-50 p-2 md:p-4 shadow-300 text-xs text-Text-Primary overflow-visible ${
-          uploadedFile ? 'opacity-100' : 'opacity-0'
-        }`}
+        className={`w-full flex-1 min-h-0 ${uploadedFile ? 'flex flex-col' : 'hidden'} rounded-2xl border border-Gray-50 p-2 md:p-3 shadow-300 text-xs text-Text-Primary overflow-hidden`}
         data-tour="biomarkers-section"
       >
         {loading ? (
@@ -703,105 +702,108 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="-mt-5">No data provided yet.</div>
           </div>
         ) : (
-          <div className="relative flex flex-col">
-            <div className="flex flex-wrap gap-2 md:gap-3 justify-between items-center mb-3 shrink-0">
-              <div className="text-[10px] md:text-sm font-medium text-Text-Primary">
-                Biomarkers{' '}
-                <span className="text-[#B0B0B0] text-[10px] md:text-xs font-medium">
-                  ({biomarkers.length})
+          <div className="relative flex-1 min-h-0 flex flex-col gap-2">
+            {/* ── Compact single-row toolbar ───────────────────────────── */}
+            <div className="shrink-0 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-Gray-50 bg-white px-3 py-1.5">
+              {/* Title + counts */}
+              <span className="text-[10px] md:text-xs font-semibold text-Text-Primary whitespace-nowrap">
+                Biomarkers
+                <span className="ml-1 font-normal text-[#B0B0B0]">
+                  ({reviewSummary?.biomarker_count ?? biomarkers.length})
                 </span>
+              </span>
+
+              {/* Stats chips */}
+              {activeErrorCount > 0 && (
+                <span className="flex items-center gap-1 rounded-full bg-[#FFF5F8] border border-[#F3B8C8] px-2 py-0.5 text-[9px] md:text-[10px] text-Red font-medium whitespace-nowrap">
+                  <img src="/icons/info-circle-red.svg" alt="" className="size-3" />
+                  {activeErrorCount} error{activeErrorCount !== 1 ? 's' : ''}
+                </span>
+              )}
+              {(reviewSummary?.duplicate_count ?? 0) > 0 && (
+                <span className="flex items-center gap-1 rounded-full bg-orange-50 border border-orange-200 px-2 py-0.5 text-[9px] md:text-[10px] text-orange-600 font-medium whitespace-nowrap">
+                  {reviewSummary.duplicate_count} duplicate{reviewSummary.duplicate_count !== 1 ? 's' : ''}
+                </span>
+              )}
+
+              {/* Spacer */}
+              <div className="flex-1" />
+
+              {/* Errors-only toggle */}
+              <div className="flex items-center gap-1.5 whitespace-nowrap">
+                <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
+                <span className="text-[9px] md:text-[10px] text-Text-Primary">Errors only</span>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 md:gap-4">
-                <div className="flex items-center gap-2">
-                  <Toggle
-                    checked={showOnlyErrors}
-                    setChecked={setShowOnlyErrors}
-                  />
-                  <div className="text-[10px] md:text-xs font-normal text-Text-Primary whitespace-nowrap">
-                    Errors only
-                  </div>
-                </div>
-                <div className="flex items-center text-[10px] md:text-xs text-Text-Quadruple whitespace-nowrap">
-                  Date of Test:
-                  <SimpleDatePicker
-                    key={'biomarkerUpload'}
-                    textStyle
-                    isUploadFile
-                    date={dateOfTest}
-                    setDate={setDateOfTest}
-                    placeholder="Select Date"
-                    ClassName="ml-2 border border-Gray-50 !rounded-2xl px-2 py-1 text-Text-Primary"
-                  />
-                </div>
+              {/* Date picker */}
+              <div className="flex items-center text-[9px] md:text-[10px] text-Text-Quadruple whitespace-nowrap">
+                Date of Test:
+                <SimpleDatePicker
+                  key={'biomarkerUpload'}
+                  textStyle
+                  isUploadFile
+                  date={dateOfTest}
+                  setDate={setDateOfTest}
+                  placeholder="Select Date"
+                  ClassName="ml-1.5 border border-Gray-50 !rounded-2xl px-2 py-0.5 text-Text-Primary"
+                />
               </div>
             </div>
 
-            {reviewSummary && (
-              <div className="mb-3 grid grid-cols-1 gap-2 text-[10px] md:grid-cols-3 md:text-xs">
-                <div className="rounded-lg border border-Gray-50 bg-white px-3 py-2">
-                  <span className="text-Text-Secondary">Biomarkers: </span>
-                  <span className="font-medium text-Text-Primary">
-                    {reviewSummary.biomarker_count ?? biomarkers.length}
-                  </span>
-                </div>
-                <div className="rounded-lg border border-Gray-50 bg-white px-3 py-2">
-                  <span className="text-Text-Secondary">Errors: </span>
-                  <span className="font-medium text-Red">
-                    {activeErrorCount}
-                  </span>
-                </div>
-                <div className="rounded-lg border border-Gray-50 bg-white px-3 py-2">
-                  <span className="text-Text-Secondary">Duplicates: </span>
-                  <span className="font-medium text-Text-Primary">
-                    {reviewSummary.duplicate_count ?? 0}
-                  </span>
-                </div>
-              </div>
-            )}
-
+            {/* ── Collapsible errors strip ─────────────────────────────── */}
             {activeErrorCount > 0 && (
-              <div className="mb-3 rounded-lg border border-[#F3B8C8] bg-[#FFF5F8] px-3 py-2 text-[10px] md:text-xs">
-                <div className="mb-1 font-medium text-Text-Primary">
-                  Errors to review
-                </div>
-                <div className="max-h-[96px] space-y-1 overflow-y-auto pr-1">
-                  {rowErrorEntries.map(([key, error]) => {
-                    const index = Number(key);
-                    const row = biomarkers[index] || {};
-                    const isHandled = Boolean(row.review_error_handled);
-                    return (
-                      <div
-                        key={key}
-                        className="flex flex-wrap items-center gap-x-2 gap-y-1 text-Text-Primary"
-                      >
-                        <span className="font-medium">{getRowDisplayName(index)}:</span>
-                        <span className="text-Text-Secondary">{String(error)}</span>
-                        {isHandled && (
-                          <span className="rounded-full bg-[#DEF7EC] px-2 py-0.5 text-[9px] font-medium text-green-700">
-                            Mapped, pending Continue
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+              <div className="shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setErrorsExpanded(prev => !prev)}
+                  className="w-full flex items-center gap-2 rounded-xl border border-[#F3B8C8] bg-[#FFF5F8] px-3 py-1.5 text-left hover:bg-[#ffe9f0] transition-colors"
+                >
+                  <img src="/icons/info-circle-red.svg" alt="" className="size-3.5 shrink-0" />
+                  <span className="flex-1 text-[9px] md:text-[10px] font-medium text-Red">
+                    {activeErrorCount} error{activeErrorCount !== 1 ? 's' : ''} to review
+                  </span>
+                  <img
+                    src="/icons/arrow-down.svg"
+                    alt=""
+                    className={`size-3.5 shrink-0 transition-transform duration-200 ${errorsExpanded ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                {errorsExpanded && (
+                  <div className="mt-1 max-h-[120px] overflow-y-auto rounded-xl border border-[#F3B8C8] bg-[#FFF5F8] px-3 py-2 space-y-1.5 text-[9px] md:text-[10px] text-Text-Primary">
+                    {rowErrorEntries.map(([key, error]) => {
+                      const index = Number(key);
+                      const row = biomarkers[index] || {};
+                      const isHandled = Boolean(row.review_error_handled);
+                      return (
+                        <div key={key} className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                          <span className="font-medium">{getRowDisplayName(index)}:</span>
+                          <span className="text-Text-Secondary">{String(error)}</span>
+                          {isHandled && (
+                            <span className="rounded-full bg-[#DEF7EC] px-2 py-0.5 text-[8px] font-medium text-green-700">
+                              Mapped
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
 
             <div
-              className="relative w-full min-w-0 text-xs border border-Gray-50 rounded-[12px] overflow-hidden"
+              className="relative flex-1 min-h-0 w-full min-w-0 text-xs border border-Gray-50 rounded-[12px] overflow-hidden"
               data-tour="biomarker-table"
             >
-              <div className="w-full overflow-x-auto overflow-y-visible pb-2">
-                <div className="w-full min-w-[700px]">
+              <div className="w-full h-full overflow-x-auto overflow-y-hidden">
+                <div className="w-full min-w-[700px] h-full flex flex-col min-h-0">
                   <div
                     ref={tableRef}
-                    className="w-full pb-8"
+                    className="flex-1 min-h-0 overflow-y-auto w-full pb-8 [scrollbar-gutter:stable]"
                   >
                     {/* Table Header */}
                     <div
-                      className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b rounded-t-[12px] border-Gray-50"
+                      className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b border-Gray-50"
                       style={{
                         gridTemplateColumns:
                           'minmax(180px,1.25fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 52px',

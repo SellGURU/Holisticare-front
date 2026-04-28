@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import FileBoxUploadingV2 from '../UploadTest/FileBoxUploadingV2'; // Ensure this path is correct
 
 interface FileUploaderSectionProps {
   isShare: boolean | undefined;
@@ -29,39 +28,43 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   onDownload,
 }) => {
   if (uploadedFile) {
+    const fileName = uploadedFile?.file?.name || '';
+    const fileSize = formatFileSize(uploadedFile?.file?.size || 0);
+    const isComplete = uploadedFile.status === 'completed';
+    const hasWarning = Boolean(uploadedFile.warning);
     return (
-      <div className="w-full mb-2 mt-1">
-        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 rounded-2xl border border-Gray-50 bg-white px-3 py-2">
-          <div className="text-[10px] md:text-xs font-medium text-Text-Primary shrink-0">
-            Uploaded File
-          </div>
-          <div className="flex-1 min-w-0">
-          <FileBoxUploadingV2
-            onClose={onClose}
-            onDownload={onDownload}
-            onDelete={isEditMode ? undefined : () => handleDeleteFile(uploadedFile.file_id)}
-            el={{
-              ...uploadedFile,
-              uploadedSize: uploadedFile.uploadedSize || 0,
-              totalSize: uploadedFile?.file?.size,
-              progress: uploadedFile.progress || 0.5,
-              formattedSize: `${formatFileSize(
-                uploadedFile.uploadedSize || 0,
-              )} / ${formatFileSize(uploadedFile?.file?.size || 1)}`,
-            }}
-          />
-          </div>
-          {uploadedFile.progress >= 100 && (
-            <div className="flex items-start gap-1 text-[10px] md:text-xs text-Text-Primary md:max-w-[320px]">
-              <img
-                className="size-4 shrink-0 mt-[1px]"
-                src="/icons/danger-fill.svg"
-                alt=""
-              />
-              <span>
-                Review the extracted biomarkers below and confirm they are correct.
-              </span>
-            </div>
+      <div className="w-full shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 rounded-xl border border-Gray-50 bg-white px-3 py-1.5">
+          <img src="/images/Pdf.png" alt="pdf" className="size-5 shrink-0 object-contain" />
+          <span className="flex-1 min-w-0 text-[10px] md:text-xs font-medium text-Text-Primary truncate">
+            {fileName || 'Lab Report'}
+          </span>
+          {fileSize && (
+            <span className="text-[9px] md:text-[10px] text-Text-Secondary shrink-0 hidden sm:block">
+              {fileSize}
+            </span>
+          )}
+          {hasWarning && (
+            <span className="flex items-center gap-1 text-[9px] text-amber-600 shrink-0">
+              <img className="size-3.5" src="/icons/danger-fill.svg" alt="" />
+              <span className="hidden md:inline">Not a clinic template</span>
+            </span>
+          )}
+          {isComplete && (
+            <span className="flex items-center gap-1 text-[9px] text-Primary-DeepTeal shrink-0">
+              <img className="size-3.5" src="/icons/tick-circle-green-new.svg" alt="" />
+              <span className="hidden md:inline">Extracted</span>
+            </span>
+          )}
+          {!isEditMode && (
+            <button
+              type="button"
+              onClick={() => handleDeleteFile(uploadedFile.file_id)}
+              className="shrink-0 rounded-md p-1 hover:bg-red-50 transition-colors"
+              title="Remove file"
+            >
+              <img src="/icons/trash-red.svg" alt="Remove" className="size-3.5 opacity-50 hover:opacity-80" />
+            </button>
           )}
         </div>
       </div>
