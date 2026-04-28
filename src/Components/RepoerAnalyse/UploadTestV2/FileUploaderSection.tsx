@@ -22,10 +22,10 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   uploadedFile,
   handleDeleteFile,
   formatFileSize,
-  onClose,
+  onClose: _onClose,
   fileInputRef,
   isEditMode,
-  onDownload,
+  onDownload: _onDownload,
 }) => {
   if (uploadedFile) {
     const fileName = uploadedFile?.file?.name || '';
