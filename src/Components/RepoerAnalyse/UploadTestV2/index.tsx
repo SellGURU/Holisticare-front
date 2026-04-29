@@ -218,6 +218,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       const sorted = (data.extracted_biomarkers || [])
         .map((b: any) => ({
           ...b,
+          normalized_biomarker_name:
+            b.normalized_biomarker_name !== undefined
+              ? b.normalized_biomarker_name
+              : b.biomarker,
           original_biomarker_name:
             b.original_biomarker_name !== undefined
               ? b.original_biomarker_name

@@ -97,7 +97,12 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
   const [unitOptions, setUnitOptions] = useState([]);
   const [copiedExactName, setCopiedExactName] = useState(false);
-  const normalizedName = biomarker.biomarker || biomarker.original_biomarker_name || '';
+  const normalizedName =
+    biomarker.normalized_biomarker_name ||
+    biomarker.extracted_biomarker_name ||
+    biomarker.original_biomarker_name ||
+    biomarker.biomarker ||
+    '';
   // Always use the string from the report for the PDF line and copy, when present
   const pdfNameFromDocument = String(biomarker.original_biomarker_name || '').trim();
   // Show the PDF sub-line whenever we have a document label, including unmapped rows

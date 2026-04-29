@@ -441,7 +441,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   ) => {
     // update local state immediately
     let updated = biomarkers.map((b) =>
-      b.biomarker_id === id ? { ...b, ...updatedField } : b,
+      b.biomarker_id === id
+        ? {
+            ...b,
+            normalized_biomarker_name:
+              b.normalized_biomarker_name ||
+              b.extracted_biomarker_name ||
+              b.biomarker ||
+              b.original_biomarker_name,
+            ...updatedField,
+          }
+        : b,
     );
 
     // Find the index for this biomarker (needed for rowErrors)
@@ -474,7 +484,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     if (result.success) {
       updated = updated.map((b) =>
         b.biomarker_id === id
-          ? { ...b, ...result.data, review_error_handled: hadExistingError }
+          ? {
+              ...b,
+              ...result.data,
+              normalized_biomarker_name:
+                b.normalized_biomarker_name ||
+                b.extracted_biomarker_name ||
+                b.original_biomarker_name ||
+                result.data?.biomarker,
+              review_error_handled: hadExistingError,
+            }
           : b,
       );
     } else {
