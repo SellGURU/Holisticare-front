@@ -598,7 +598,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setAddedDateOfTest(date);
   };
 
-  const handleSaveLabReport = () => {
+  const handleSaveLabReport = async () => {
     // ✅ For ultrasound reports, call API with empty lists
     if (fileType === 'ultrasound') {
       const modifiedTimestamp = modifiedDateOfTest
@@ -655,6 +655,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       list_of_genes: b['list_of_genes'],
       your_result: b['your_result'],
     }));
+
+    await autoSaveBiomarkerMappings();
 
     return Application.SaveLabReport({
       member_id: memberId,
@@ -833,18 +835,28 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setAddedRowErrors(addedErrors);
   };
 
-  const autoSaveExactBiomarkerMappings = async () => {
+  const autoSaveBiomarkerMappings = async () => {
     const uniqueMappings = new Map<string, { extracted: string; system: string }>();
 
     extractedBiomarkers.forEach((row: any) => {
-      const extracted = String(row.original_biomarker_name || '').trim();
       const system = String(row.biomarker || '').trim();
-      if (!extracted || !system || extracted.toLowerCase() === system.toLowerCase()) {
+      if (!system) {
         return;
       }
-      uniqueMappings.set(`${extracted.toLowerCase()}|${system.toLowerCase()}`, {
-        extracted,
-        system,
+
+      [
+        row.original_biomarker_name,
+        row.normalized_biomarker_name,
+        row.extracted_biomarker_name,
+      ].forEach((name) => {
+        const extracted = String(name || '').trim();
+        if (!extracted || extracted.toLowerCase() === system.toLowerCase()) {
+          return;
+        }
+        uniqueMappings.set(`${extracted.toLowerCase()}|${system.toLowerCase()}`, {
+          extracted,
+          system,
+        });
       });
     });
 
@@ -899,7 +911,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       member_id: memberId,
     })
       .then(async () => {
-        await autoSaveExactBiomarkerMappings();
+        await autoSaveBiomarkerMappings();
         // 200 response
         setisSaveClicked(true);
         setstep(0);

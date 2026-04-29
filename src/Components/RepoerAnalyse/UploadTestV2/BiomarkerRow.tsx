@@ -216,6 +216,29 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
       ? '(no unit)'
       : biomarker.original_unit || biomarker.possible_values?.units?.[0] || '';
 
+  const getMappingAliases = () => {
+    const system = String(biomarker.biomarker || '').trim();
+    if (!system) return [];
+
+    const aliases = [
+      biomarker.original_biomarker_name,
+      biomarker.normalized_biomarker_name,
+      biomarker.extracted_biomarker_name,
+    ]
+      .map((name) => String(name || '').trim())
+      .filter(
+        (name, idx, list) =>
+          name &&
+          name.toLowerCase() !== system.toLowerCase() &&
+          list.findIndex((item) => item.toLowerCase() === name.toLowerCase()) === idx,
+      );
+
+    return aliases.map((extracted) => ({
+      extracted_biomarker: extracted,
+      system_biomarker: system,
+    }));
+  };
+
   const matchingSystemOptions = compatibleSystemOptions.filter(
     (option) =>
       option.biomarker.toLowerCase() === (biomarker.biomarker || '').toLowerCase(),
@@ -465,13 +488,15 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                       : `Save mapping: "${biomarker.original_biomarker_name}" → "${biomarker.biomarker}" for future uploads.`
                   }
                   onClick={async () => {
-                    const extracted = biomarker.original_biomarker_name;
-                    const system = biomarker.biomarker;
+                    const mappingAliases = getMappingAliases();
+                    if (mappingAliases.length === 0) return;
+
                     if (isMapped) {
-                      Application.remove_mapping({
-                        extracted_biomarker: extracted,
-                        system_biomarker: system,
-                      })
+                      Promise.allSettled(
+                        mappingAliases.map((mapping) =>
+                          Application.remove_mapping(mapping),
+                        ),
+                      )
                         .then(() => {
                           setIsMapped(false);
                           setMappingStatus('removed');
@@ -479,10 +504,11 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                         })
                         .catch(() => {});
                     } else {
-                      Application.add_mapping({
-                        extracted_biomarker: extracted,
-                        system_biomarker: system,
-                      })
+                      Promise.allSettled(
+                        mappingAliases.map((mapping) =>
+                          Application.add_mapping(mapping),
+                        ),
+                      )
                         .then(() => {
                           setIsMapped(true);
                           setMappingStatus('added');
