@@ -416,10 +416,16 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                 isLarge
                 isSetting
                 value={
-                  isExtractedUnitError && !isErrorHandled && !displayUnit
-                    ? '...'
+                  isExtractedUnitError && !isErrorHandled
+                    ? ''
                     : displayUnit
                 }
+                placeholder={
+                  isExtractedUnitError && !isErrorHandled
+                    ? 'Select unit'
+                    : 'Select an option'
+                }
+                validation={isExtractedUnitError && !isErrorHandled}
                 options={unitOptions}
                 onMenuOpen={fetchUnits}
                 onCreateNew={biomarker.biomarker ? onCreateNewUnit : undefined}
