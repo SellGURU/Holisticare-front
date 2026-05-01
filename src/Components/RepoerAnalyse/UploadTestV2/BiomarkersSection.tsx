@@ -97,6 +97,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     return text.length > 0 && !/\d/.test(text);
   };
 
+const preferNonEmpty = (...values: any[]) => {
+  const found = values.find(
+    (value) =>
+      value !== undefined &&
+      value !== null &&
+      String(value).trim() !== '',
+  );
+  return found ?? '';
+};
+
   const getRowDisplayName = (index: number) => {
     const row = biomarkers[index] || {};
     return (
@@ -113,7 +123,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       return text;
     }
 
-    const value = row?.original_value ?? row?.value;
+    const value = preferNonEmpty(row?.original_value, row?.value);
     const unit = row?.original_unit ?? row?.unit;
     const context = [
       value !== undefined && value !== null && String(value).trim() !== ''
@@ -220,7 +230,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   const getDefaultUnitForBiomarker = (row: any) => {
     const biomarkerName = String(row?.biomarker || '').trim().toLowerCase();
-    if (!biomarkerName || isTextValueWithoutUnit(row?.original_value ?? row?.value)) {
+    if (
+      !biomarkerName ||
+      isTextValueWithoutUnit(preferNonEmpty(row?.original_value, row?.value))
+    ) {
       return '';
     }
 
@@ -276,7 +289,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       .map((row: any) => ({
         extracted_name: row.original_biomarker_name || row.biomarker || '',
         normalized_name: row.biomarker || '',
-        extracted_value: String(row.original_value ?? row.value ?? ''),
+        extracted_value: String(preferNonEmpty(row.original_value, row.value)),
         extracted_unit: row.original_unit ?? row.unit ?? '',
       }))
       .filter((row: any) => row.extracted_name);
@@ -351,7 +364,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         <Select
           isSmall
           isSetting
-          value={b.original_value}
+          value={preferNonEmpty(b.original_value, b.value)}
           options={dnaOptions}
           onChange={(val: string) =>
             updateAndStandardize(b.biomarker_id, { original_value: val })
@@ -363,7 +376,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         <Select
           isSmall
           isSetting
-          value={b.original_value}
+          value={preferNonEmpty(b.original_value, b.value)}
           options={gutOptions}
           onChange={(val: string) =>
             updateAndStandardize(b.biomarker_id, { original_value: val })
@@ -374,7 +387,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       return (
         <input
           type="text"
-          value={b.original_value}
+          value={preferNonEmpty(b.original_value, b.value)}
           className="text-center border border-Gray-50 w-[70px] md:w-[95px] outline-none rounded-md text-[8px] md:text-[12px] text-Text-Primary px-2 md:py-1"
           onChange={(e) => handleValueChange(b.biomarker_id, e.target.value)}
         />
@@ -383,7 +396,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   };
   React.useEffect(() => {
     const updated = biomarkers.map((b) => {
-      if (isTextValueWithoutUnit(b.original_value ?? b.value)) {
+      if (isTextValueWithoutUnit(preferNonEmpty(b.original_value, b.value))) {
         return b.original_unit === '' ? b : { ...b, original_unit: '' };
       }
       if (
@@ -463,7 +476,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       return;
     }
     const textValueDoesNotNeedUnit = isTextValueWithoutUnit(
-      current.original_value ?? current.value,
+      preferNonEmpty(current.original_value, current.value),
     );
     if (textValueDoesNotNeedUnit && current.original_unit !== '') {
       current.original_unit = '';
@@ -473,7 +486,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     }
     const payload = {
       biomarker: current.biomarker,
-      value: current.original_value?.toString() || '',
+      value: String(preferNonEmpty(current.original_value, current.value)),
       unit: textValueDoesNotNeedUnit ? '' : current.original_unit || '',
       bio_type: 'more_info',
     };
@@ -881,7 +894,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             setCreateBiomarkerFor({
                               biomarkerId: b.biomarker_id,
                               extractedName: b.original_biomarker_name || b.biomarker || '',
-                              extractedValue: String(b.original_value || b.value || ''),
+                              extractedValue: String(preferNonEmpty(b.original_value, b.value)),
                               extractedUnit: b.original_unit || b.unit || '',
                               uploadedReferenceRange:
                                 b.uploaded_reference_range ||
@@ -897,7 +910,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               biomarkerId: b.biomarker_id,
                               biomarkerName: b.biomarker || '',
                               extractedUnit: b.original_unit || '',
-                              extractedValue: String(b.original_value || b.value || ''),
+                              extractedValue: String(preferNonEmpty(b.original_value, b.value)),
                               systemUnit: selectedSystemMeta?.unit || b.unit || '',
                               suggestionMatches: rowSuggestions?.matches || [],
                             });

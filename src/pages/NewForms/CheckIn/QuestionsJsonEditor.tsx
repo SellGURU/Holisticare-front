@@ -70,7 +70,9 @@ Each rule derives a new biomarker value from question responses.
 Fields per rule:
 - "name"              (string, required)  Label for this rule.
 - "formula"           (string, required)  Expression using question ids as variables. Max 512 chars.
+- "is_biomarker"      (boolean, optional) If true, emit the result as a biomarker. Defaults to true.
 - "map_to_biomarker"  (string, optional)  Canonical biomarker name to emit.
+- "use_in_insight"    (boolean, optional) Include the calculated value in AI insight prompts.
 - "unit"              (string, optional)  e.g. "kg/m^2".
 - "round"             (number, optional)  Decimal places for the output.
 
@@ -115,7 +117,9 @@ Fields per rule:
   "scoring": [
     {
       "name": "BMI",
+      "is_biomarker": true,
       "map_to_biomarker": "Body Mass Index",
+      "use_in_insight": true,
       "unit": "kg/m^2",
       "formula": "q_weight / ((q_height / 100) ** 2)",
       "round": 2
@@ -194,11 +198,27 @@ const validateShape = (raw: any): ValidationResult => {
         );
       }
       if (
+        rule.is_biomarker !== undefined &&
+        typeof rule.is_biomarker !== 'boolean'
+      ) {
+        throw new Error(
+          `Scoring rule #${index + 1} "is_biomarker" must be a boolean.`,
+        );
+      }
+      if (
         rule.map_to_biomarker !== undefined &&
         typeof rule.map_to_biomarker !== 'string'
       ) {
         throw new Error(
           `Scoring rule #${index + 1} "map_to_biomarker" must be a string.`,
+        );
+      }
+      if (
+        rule.use_in_insight !== undefined &&
+        typeof rule.use_in_insight !== 'boolean'
+      ) {
+        throw new Error(
+          `Scoring rule #${index + 1} "use_in_insight" must be a boolean.`,
         );
       }
       if (rule.unit !== undefined && typeof rule.unit !== 'string') {

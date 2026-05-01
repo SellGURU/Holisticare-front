@@ -41,6 +41,16 @@ const steps: Step[] = [
   },
 ];
 
+const preferNonEmpty = (...values: any[]) => {
+  const found = values.find(
+    (value) =>
+      value !== undefined &&
+      value !== null &&
+      String(value).trim() !== '',
+  );
+  return found ?? '';
+};
+
 interface UploadTestProps {
   memberId: any;
   onGenderate: (file_id: string | undefined) => void;
@@ -124,6 +134,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         parsed.getMonth(),
         parsed.getDate(),
       ).toString();
+    };
+
+    const preferNonEmpty = (...values: any[]) => {
+      const found = values.find(
+        (value) =>
+          value !== undefined &&
+          value !== null &&
+          String(value).trim() !== '',
+      );
+      return found ?? '';
     };
 
     const validateRowsBeforeDisplay = async (
@@ -227,7 +247,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               ? b.original_biomarker_name
               : b.biomarker,
           original_value:
-            b.original_value !== undefined ? b.original_value : b.value,
+            preferNonEmpty(b.original_value, b.value),
           original_unit:
             b.original_unit !== undefined ? b.original_unit : b.unit,
         }))
@@ -645,7 +665,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
       original_biomarker_name: b.original_biomarker_name,
-      original_value: b.original_value,
+      original_value: preferNonEmpty(b.original_value, b.value),
       original_unit: b.original_unit,
       value: b.value,
       unit: b.unit,
@@ -688,10 +708,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       const base = {
         biomarker_id: b.biomarker_id || b.biomarker || '',
         biomarker: b.biomarker,
-        value: b.value,
+        value: preferNonEmpty(b.original_value, b.value),
         unit: b.unit,
         original_biomarker_name: b.original_biomarker_name,
-        original_value: b.original_value,
+        original_value: preferNonEmpty(b.original_value, b.value),
         original_unit: b.original_unit,
       };
       if (labType === 'gut') return { ...base, 'sub-value': b['sub-value'] };
@@ -725,7 +745,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       return message;
     }
 
-    const value = row.original_value ?? row.value ?? item?.value;
+    const value = preferNonEmpty(row.original_value, row.value, item?.value);
     const unit = row.original_unit ?? row.unit ?? item?.unit;
     const context = [
       value !== undefined && value !== null && String(value).trim() !== ''
@@ -760,7 +780,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           row?.original_biomarker_name,
           row?.biomarker,
         ].map((name) => String(name || '').trim().toLowerCase());
-        const rowValue = String(row?.original_value ?? row?.value ?? '')
+        const rowValue = String(preferNonEmpty(row?.original_value, row?.value))
           .trim()
           .toLowerCase();
         const rowUnit = String(row?.original_unit ?? row?.unit ?? '')
@@ -804,13 +824,39 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
     const modifiedErrors: Record<number, string> = {};
     const addedErrors: Record<number, string> = {};
+    const isUnitError = (item: any) => {
+      const message = String(
+        item?.display_detail || item?.detail || '',
+      ).toLowerCase();
+      return (
+        message.includes('unit') ||
+        message.includes('extracted unit') ||
+        message.includes('system standard')
+      );
+    };
 
-    parsedDetail.modified_biomarkers_list?.forEach((item: any, fallbackIndex: number) => {
+    const modifiedItems = parsedDetail.modified_biomarkers_list || [];
+    const modifiedUnitErrorRows = new Set<number>();
+    modifiedItems.forEach((item: any, fallbackIndex: number) => {
       const rowIndex = resolveValidationErrorRowIndex(
         item,
         contextBiomarkers,
         fallbackIndex,
       );
+      if (isUnitError(item)) {
+        modifiedUnitErrorRows.add(rowIndex);
+      }
+    });
+
+    modifiedItems.forEach((item: any, fallbackIndex: number) => {
+      const rowIndex = resolveValidationErrorRowIndex(
+        item,
+        contextBiomarkers,
+        fallbackIndex,
+      );
+      if (modifiedUnitErrorRows.has(rowIndex) && !isUnitError(item)) {
+        return;
+      }
       modifiedErrors[rowIndex] = formatValidationErrorForDisplay(
         item,
         contextBiomarkers,
@@ -818,12 +864,28 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       );
     });
 
-    parsedDetail.added_biomarkers_list?.forEach((item: any, fallbackIndex: number) => {
+    const addedItems = parsedDetail.added_biomarkers_list || [];
+    const addedUnitErrorRows = new Set<number>();
+    addedItems.forEach((item: any, fallbackIndex: number) => {
       const rowIndex = resolveValidationErrorRowIndex(
         item,
         addedBiomarkers,
         fallbackIndex,
       );
+      if (isUnitError(item)) {
+        addedUnitErrorRows.add(rowIndex);
+      }
+    });
+
+    addedItems.forEach((item: any, fallbackIndex: number) => {
+      const rowIndex = resolveValidationErrorRowIndex(
+        item,
+        addedBiomarkers,
+        fallbackIndex,
+      );
+      if (addedUnitErrorRows.has(rowIndex) && !isUnitError(item)) {
+        return;
+      }
       addedErrors[rowIndex] = formatValidationErrorForDisplay(
         item,
         addedBiomarkers,

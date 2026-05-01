@@ -53,6 +53,9 @@ declare global {
 
   type ScoringRuleType = {
     name: string;
+    is_biomarker?: boolean;
+    use_in_insight?: boolean;
+    use_in_insights?: boolean;
     map_to_biomarker?: string;
     unit?: string;
     formula: string;

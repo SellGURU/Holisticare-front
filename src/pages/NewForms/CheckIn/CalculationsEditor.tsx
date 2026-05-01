@@ -9,6 +9,8 @@ interface CalculationsEditorProps {
 
 const emptyRule: ScoringRuleType = {
   name: '',
+  is_biomarker: true,
+  use_in_insight: false,
   map_to_biomarker: '',
   unit: '',
   formula: '',
@@ -144,11 +146,18 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
   const saveDraft = () => {
     if (!draft) return;
     if (!draft.name.trim() || !draft.formula.trim()) return;
+    if ((draft.is_biomarker ?? true) && !draft.map_to_biomarker?.trim()) return;
+    const normalizedDraft = {
+      ...draft,
+      map_to_biomarker: draft.map_to_biomarker?.trim() || '',
+      is_biomarker: draft.is_biomarker ?? true,
+      use_in_insight: draft.use_in_insight ?? draft.use_in_insights ?? false,
+    };
     const next = [...scoring];
     if (editIndex >= 0) {
-      next[editIndex] = draft;
+      next[editIndex] = normalizedDraft;
     } else {
-      next.push(draft);
+      next.push(normalizedDraft);
     }
     onChange(next);
     cancelDraft();
@@ -190,10 +199,15 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
               <div className="flex items-center justify-between">
                 <div className="text-[12px] text-Text-Primary font-medium">
                   {rule.name}
-                  {rule.map_to_biomarker && (
+                  {(rule.is_biomarker ?? true) && rule.map_to_biomarker && (
                     <span className="text-Text-Secondary font-normal">
                       {' '}
                       → {rule.map_to_biomarker}
+                    </span>
+                  )}
+                  {rule.use_in_insight && (
+                    <span className="ml-2 rounded-full bg-[#E8F0F3] px-2 py-[1px] text-[9px] font-normal text-Primary-DeepTeal">
+                      Insight
                     </span>
                   )}
                 </div>
@@ -228,24 +242,66 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
           {draft && (
             <div className="rounded-xl border border-Primary-DeepTeal p-3 space-y-3">
               <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  placeholder="Name (e.g. GAD-7 Total)"
-                  value={draft.name}
-                  onChange={(e) =>
-                    setDraft({ ...draft, name: e.target.value })
-                  }
-                  className="rounded-md border border-Gray-50 px-2 py-1 text-[12px]"
-                />
-                <input
-                  type="text"
-                  placeholder="Map to biomarker (optional)"
-                  value={draft.map_to_biomarker || ''}
-                  onChange={(e) =>
-                    setDraft({ ...draft, map_to_biomarker: e.target.value })
-                  }
-                  className="rounded-md border border-Gray-50 px-2 py-1 text-[12px]"
-                />
+                <label className="flex flex-col gap-1">
+                  <span className="text-[10px] font-medium text-Text-Secondary">
+                    Calculation name
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="e.g. FSFI Total Score"
+                    value={draft.name}
+                    onChange={(e) =>
+                      setDraft({ ...draft, name: e.target.value })
+                    }
+                    className="rounded-md border border-Gray-50 px-2 py-1 text-[12px]"
+                  />
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="text-[10px] font-medium text-Text-Secondary">
+                    Biomarker name
+                    {(draft.is_biomarker ?? true) ? (
+                      <span className="text-red-500"> *</span>
+                    ) : null}
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="e.g. Female Sexual Function Index"
+                    value={draft.map_to_biomarker || ''}
+                    onChange={(e) =>
+                      setDraft({ ...draft, map_to_biomarker: e.target.value })
+                    }
+                    disabled={draft.is_biomarker === false}
+                    className="rounded-md border border-Gray-50 px-2 py-1 text-[12px] disabled:bg-gray-50 disabled:text-Text-Secondary"
+                  />
+                </label>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <label className="flex items-center gap-2 rounded-md border border-Gray-50 px-2 py-1 text-[11px] text-Text-Primary">
+                  <input
+                    type="checkbox"
+                    checked={draft.is_biomarker ?? true}
+                    onChange={(e) =>
+                      setDraft({ ...draft, is_biomarker: e.target.checked })
+                    }
+                    className="accent-Primary-DeepTeal"
+                  />
+                  Use calculated value as biomarker
+                </label>
+                <label className="flex items-center gap-2 rounded-md border border-Gray-50 px-2 py-1 text-[11px] text-Text-Primary">
+                  <input
+                    type="checkbox"
+                    checked={draft.use_in_insight ?? draft.use_in_insights ?? false}
+                    onChange={(e) =>
+                      setDraft({
+                        ...draft,
+                        use_in_insight: e.target.checked,
+                        use_in_insights: undefined,
+                      })
+                    }
+                    className="accent-Primary-DeepTeal"
+                  />
+                  Include calculated value in insights
+                </label>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <input
@@ -430,9 +486,17 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
                 <button
                   type="button"
                   onClick={saveDraft}
-                  disabled={!draft.name.trim() || !draft.formula.trim()}
+                  disabled={
+                    !draft.name.trim() ||
+                    !draft.formula.trim() ||
+                    ((draft.is_biomarker ?? true) &&
+                      !draft.map_to_biomarker?.trim())
+                  }
                   className={`text-[11px] ${
-                    !draft.name.trim() || !draft.formula.trim()
+                    !draft.name.trim() ||
+                    !draft.formula.trim() ||
+                    ((draft.is_biomarker ?? true) &&
+                      !draft.map_to_biomarker?.trim())
                       ? 'text-Disable cursor-not-allowed'
                       : 'text-Primary-DeepTeal'
                   }`}

@@ -74,6 +74,16 @@ const isValueTypeCompatible = (
   return extractedKind === systemKind;
 };
 
+const preferNonEmpty = (...values: unknown[]) => {
+  const found = values.find(
+    (value) =>
+      value !== undefined &&
+      value !== null &&
+      String(value).trim() !== '',
+  );
+  return found ?? '';
+};
+
 const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   index,
   updateAndStandardize,
@@ -108,7 +118,8 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   // Show the PDF sub-line whenever we have a document label, including unmapped rows
   // (where the title line may repeat the same name).
   const showPdfNameLine = pdfNameFromDocument.length > 0;
-  const valueText = String(biomarker.original_value ?? biomarker.value ?? '').trim();
+  const displayValue = preferNonEmpty(biomarker.original_value, biomarker.value);
+  const valueText = String(displayValue).trim();
   const extractedUnitText = String(biomarker.original_unit ?? biomarker.unit ?? '').trim();
   const isTextValueWithoutUnit = valueText.length > 0 && !/\d/.test(valueText);
 
@@ -325,7 +336,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px] text-Text-Secondary">
             <span>
-              Value: {String(biomarker.original_value ?? biomarker.value ?? '—')}
+              Value: {String(displayValue || '—')}
             </span>
             <span>
               Unit:{' '}
