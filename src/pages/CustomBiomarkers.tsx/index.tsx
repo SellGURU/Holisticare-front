@@ -3,13 +3,18 @@ import { useEffect, useMemo, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
 import Circleloader from '../../Components/CircleLoader';
 import SearchBox from '../../Components/SearchBox';
-import BioMarkerBox from './BiomarkerBox';
+import BiomarkerRow from './BiomarkerItemNew';
 
 import { MainModal } from '../../Components';
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
+import ChartModal from './ChartModal';
+import MappingsModal from './MappingsModal';
 
 import DefaultData from './default.json';
+
+type SortKey = 'Biomarker' | 'Benchmark areas' | 'unit';
+type SortDirection = 'asc' | 'desc';
 
 const normalizeSearchTerm = (value: any) =>
   String(value || '')
@@ -17,26 +22,45 @@ const normalizeSearchTerm = (value: any) =>
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 
+const getFieldValue = (item: any, key: SortKey) =>
+  String(item?.[key] || '').trim();
+
+const getUniqueOptions = (items: any[], key: string) =>
+  Array.from(
+    new Set(
+      items
+        .map((item) => String(item?.[key] || '').trim())
+        .filter(Boolean),
+    ),
+  ).sort((a, b) => a.localeCompare(b));
+
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [panelFilter, setPanelFilter] = useState('');
+  const [sortKey, setSortKey] = useState<SortKey>('Biomarker');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [activeAdd, setActiveAdd] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorDetails, setErrorDetails] = useState<string>('');
+  const [selectedChartBiomarker, setSelectedChartBiomarker] = useState<any>(null);
+  const [selectedMappingBiomarker, setSelectedMappingBiomarker] = useState<any>(null);
+
+  const [unitMappingData, setUnitMappingData] = useState<any>(null);
+  const [unitMappings, setUnitMappings] = useState<any[]>([]);
+  const [biomarkerMappings, setBiomarkerMappings] = useState<any[]>([]);
+
   const changeBiomarkersValue = (values: any) => {
     setBiomarkers(values);
   };
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-  const [activeAdd, setActiveAdd] = useState(false);
-  const [loading, setLoading] = useState(false);
+
   const openModalAdd = () => setActiveAdd(true);
   const closeModalAdd = () => {
     setActiveAdd(false);
     setErrorDetails('');
   };
-  const [errorDetails, setErrorDetails] = useState<string>('');
-
-  // Mapping data loaded once at page level
-  const [unitMappingData, setUnitMappingData] = useState<any>(null);
-  const [unitMappings, setUnitMappings] = useState<any[]>([]);
-  const [biomarkerMappings, setBiomarkerMappings] = useState<any[]>([]);
 
   const getBiomarkers = () => {
     setIsLoading(true);
@@ -78,15 +102,20 @@ const CustomBiomarkers = () => {
     loadMappings();
   }, []);
 
-  // Warm the edit-modal chunk after biomarkers load so the first "Edit" click
-  // does not wait on dynamic import.
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setSearchValue(searchInput);
+    }, 180);
+
+    return () => window.clearTimeout(timeout);
+  }, [searchInput]);
+
   useEffect(() => {
     if (biomarkers.length > 0) {
       void import('./EditModal');
     }
   }, [biomarkers.length]);
 
-  // Save unit mappings back to server
   const handleUnitMappingsChange = (entries: any[]) => {
     setUnitMappings(entries);
     const payload = { ...unitMappingData, biomarker_specific: entries };
@@ -94,7 +123,6 @@ const CustomBiomarkers = () => {
     BiomarkersApi.updateUnitMapping(payload).catch(() => {});
   };
 
-  // Save biomarker name mappings back to server
   const handleBiomarkerMappingsChange = (entries: any[]) => {
     setBiomarkerMappings(entries);
     BiomarkersApi.updateBiomarkerMapping({ mappings: entries }).catch(() => {});
@@ -113,68 +141,28 @@ const CustomBiomarkers = () => {
     [searchValue],
   );
 
-  const getBiomarkerVariations = (biomarkerName: string) => {
-    const normalizedBiomarkerName = normalizeSearchTerm(biomarkerName);
-    const matchingMapping = biomarkerMappings.find((mapping) => {
-      const standardName = normalizeSearchTerm(mapping?.standard_name);
-      const variations = (mapping?.variations || []).map(normalizeSearchTerm);
-      return (
-        standardName === normalizedBiomarkerName ||
-        variations.includes(normalizedBiomarkerName)
-      );
-    });
-
-    return (matchingMapping?.variations || [])
-      .map(normalizeSearchTerm)
-      .filter(Boolean);
-  };
-
   const getBiomarkerSearchScore = (item: any) => {
     if (!normalizedSearchValue) return 1;
 
     const biomarkerName = normalizeSearchTerm(item?.Biomarker);
-    const benchmarkArea = normalizeSearchTerm(item?.['Benchmark areas']);
-    const category = normalizeSearchTerm(item?.Category);
-    const variations = getBiomarkerVariations(item?.Biomarker || '');
     const queryTokens = normalizedSearchValue.split(' ').filter(Boolean);
 
-    const exactBiomarkerMatch =
-      biomarkerName === normalizedSearchValue ||
-      variations.includes(normalizedSearchValue);
-    if (exactBiomarkerMatch) return 100;
+    if (biomarkerName === normalizedSearchValue) return 100;
 
-    const startsWithBiomarkerMatch =
-      biomarkerName.startsWith(normalizedSearchValue) ||
-      variations.some((variation: string) =>
-        variation.startsWith(normalizedSearchValue),
-      );
-    if (startsWithBiomarkerMatch) return 80;
+    if (biomarkerName.startsWith(normalizedSearchValue)) return 80;
 
-    const allTokensMatchBiomarker = queryTokens.every(
-      (token) =>
-        biomarkerName.includes(token) ||
-        variations.some((variation: string) => variation.includes(token)),
+    const allTokensMatchBiomarker = queryTokens.every((token) =>
+      biomarkerName.includes(token),
     );
     if (allTokensMatchBiomarker) return 60;
 
-    const categoryFields = [benchmarkArea, category].filter(Boolean);
-    const exactCategoryMatch = categoryFields.includes(normalizedSearchValue);
-    if (exactCategoryMatch) return 40;
-
-    const startsWithCategoryMatch = categoryFields.some((field) =>
-      field.startsWith(normalizedSearchValue),
-    );
-    if (startsWithCategoryMatch) return 30;
-
-    const allTokensMatchCategory =
-      queryTokens.length > 1 &&
-      queryTokens.every((token) =>
-        categoryFields.some((field) => field.includes(token)),
-      );
-    if (allTokensMatchCategory) return 20;
-
     return 0;
   };
+
+  const benchmarkAreaOptions = useMemo(
+    () => getUniqueOptions(biomarkers, 'Benchmark areas'),
+    [biomarkers],
+  );
 
   const filteredBiomarkers = useMemo(() => {
     return biomarkers
@@ -182,36 +170,64 @@ const CustomBiomarkers = () => {
         item,
         score: getBiomarkerSearchScore(item),
       }))
-      .filter((entry) => entry.score > 0)
+      .filter(({ item, score }) => {
+        if (score <= 0) return false;
+        if (panelFilter && item?.['Benchmark areas'] !== panelFilter) return false;
+        return true;
+      })
       .sort((a, b) => {
+        const aValue = getFieldValue(a.item, sortKey);
+        const bValue = getFieldValue(b.item, sortKey);
+        const valueCompare = aValue.localeCompare(bValue, undefined, {
+          sensitivity: 'base',
+          numeric: true,
+        });
+
+        if (valueCompare !== 0) {
+          return sortDirection === 'asc' ? valueCompare : -valueCompare;
+        }
+
         if (b.score !== a.score) return b.score - a.score;
+
         return String(a.item?.Biomarker || '').localeCompare(
           String(b.item?.Biomarker || ''),
         );
       })
       .map((entry) => entry.item);
-  }, [biomarkers, biomarkerMappings, normalizedSearchValue]);
+  }, [
+    biomarkers,
+    normalizedSearchValue,
+    panelFilter,
+    sortKey,
+    sortDirection,
+  ]);
 
-  const benchmarkAreaOptions = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          biomarkers
-            .map((item) => String(item?.['Benchmark areas'] || '').trim())
-            .filter(Boolean),
-        ),
-      ).sort((a, b) => a.localeCompare(b)),
-    [biomarkers],
-  );
-
-  const resolveAllBenchmarks = () => {
-    return [...new Set(filteredBiomarkers.map((el) => el['Benchmark areas']))];
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDirection((current) => (current === 'asc' ? 'desc' : 'asc'));
+      return;
+    }
+    setSortKey(key);
+    setSortDirection('asc');
   };
 
-  const getFilteredBiomarkersForCategory = (benchmark: string) => {
-    return filteredBiomarkers.filter(
-      (item) => item['Benchmark areas'] === benchmark,
-    );
+  const renderSortLabel = (label: string, key: SortKey) => (
+    <button
+      type="button"
+      onClick={() => handleSort(key)}
+      className="inline-flex items-center gap-1 text-left hover:text-Primary-DeepTeal"
+    >
+      {label}
+      {sortKey === key ? (
+        <span className="text-[9px]">{sortDirection === 'asc' ? '^' : 'v'}</span>
+      ) : null}
+    </button>
+  );
+
+  const clearFilters = () => {
+    setSearchInput('');
+    setSearchValue('');
+    setPanelFilter('');
   };
 
   const onsave = (values: any) => {
@@ -222,7 +238,12 @@ const CustomBiomarkers = () => {
         setBiomarkers((pre) => [...pre, values]);
       })
       .catch((error) => {
-        setErrorDetails(error.detail);
+        setErrorDetails(
+          error?.response?.data?.detail ||
+            error?.detail ||
+            error?.message ||
+            'Unable to add biomarker.',
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -231,81 +252,119 @@ const CustomBiomarkers = () => {
 
   return (
     <>
-      <div className="fixed w-full z-30 bg-bg-color px-2 md:px-6 pt-8 pb-2 md:pr-[200px]">
-        <div className="w-full flex flex-col md:flex-row gap-4 justify-between md:items-center">
-          <div className="text-Text-Primary font-medium opacity-[87%] text-nowrap">
-            Custom Biomarker
-          </div>
-          <div className="flex flex-col md:flex-row pr-4 md:pr-0 md:items-center gap-4">
-            <SearchBox
-              value={searchValue}
-              ClassName="rounded-2xl !h-7 !py-[0px] !px-3 !shadow-[unset]"
-              placeHolder="Search categories & biomarkers ..."
-              onSearch={(val) => setSearchValue(val)}
-            />
-            <ButtonSecondary
-              ClassName="rounded-[20px] text-xs border border-white"
-              onClick={openModalAdd}
-            >
-              <img src="/icons/add-square.svg" alt="" />
-              Add Biomarker
-            </ButtonSecondary>
+      <div className="fixed z-30 w-full bg-bg-color px-2 pt-6 pb-3 md:px-6 md:pr-[200px]">
+        <div className="rounded-2xl border border-Gray-50 bg-white px-4 py-3 shadow-100">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="text-[15px] font-semibold text-Text-Primary">
+                Custom Biomarkers
+              </div>
+              <div className="mt-0.5 text-[10px] text-Text-Secondary">
+                Showing {filteredBiomarkers.length} of {biomarkers.length} biomarkers
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2 md:flex-row md:items-center">
+              <SearchBox
+                value={searchInput}
+                ClassName="!h-9 !rounded-xl !border !border-Gray-50 !bg-white !py-0 !px-3 !shadow-[unset] md:!min-w-[340px]"
+                placeHolder="Search biomarker name..."
+                onSearch={(val) => setSearchInput(val)}
+                showClose
+                isHaveBorder
+              />
+
+              <select
+                value={panelFilter}
+                onChange={(event) => setPanelFilter(event.target.value)}
+                className="h-9 min-w-[170px] rounded-xl border border-Gray-50 bg-white px-3 text-[11px] text-Text-Primary outline-none focus:border-Primary-DeepTeal"
+              >
+                <option value="">All panels</option>
+                {benchmarkAreaOptions.map((panel) => (
+                  <option key={panel} value={panel}>
+                    {panel}
+                  </option>
+                ))}
+              </select>
+
+              {(searchInput || panelFilter) && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="h-9 rounded-xl border border-Gray-50 bg-white px-3 text-[11px] font-medium text-Text-Secondary hover:border-Primary-DeepTeal hover:text-Primary-DeepTeal"
+                >
+                  Clear
+                </button>
+              )}
+
+              <ButtonSecondary
+                ClassName="h-9 rounded-xl text-xs border border-white"
+                onClick={openModalAdd}
+              >
+                <img src="/icons/add-square.svg" alt="" />
+                Add Biomarker
+              </ButtonSecondary>
+            </div>
           </div>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="w-full flex justify-center items-center min-h-[550px] px-6 py-[80px]">
+        <div className="flex min-h-[550px] w-full items-center justify-center px-6 py-[100px]">
           <Circleloader />
         </div>
       ) : (
-        <div className="w-full min-h-full px-2 md:px-6 py-[80px]">
-          {resolveAllBenchmarks().map((benchmark) => {
-            const filteredBiomarkersForCategory = getFilteredBiomarkersForCategory(benchmark);
-            return (
-              <BioMarkerBox
-                key={benchmark}
-                biomarkers={filteredBiomarkersForCategory}
-                onSave={(values) => {
-                  setBiomarkers((pre) => {
-                    const resolved = pre.map((ol) => {
-                      if (ol['Benchmark areas'] == values['Benchmark areas']) {
-                        return values;
-                      } else {
-                        return ol;
-                      }
-                    });
-                    return [...resolved];
-                  });
-                }}
-                data={
-                  biomarkers.filter(
-                    (item) => item['Benchmark areas'] == benchmark,
-                  )[0]
-                }
-                biomarkersData={biomarkers}
-                changeBiomarkersValue={changeBiomarkersValue}
-                searchTerm={searchValue}
-                benchmarkAreaOptions={benchmarkAreaOptions}
-                unitMappings={unitMappings}
-                biomarkerMappings={biomarkerMappings}
-                onUnitMappingsChange={handleUnitMappingsChange}
-                onBiomarkerMappingsChange={handleBiomarkerMappingsChange}
-                onUnitMappingsLocalChange={handleUnitMappingsLocalChange}
-                onBiomarkerMappingsLocalChange={handleBiomarkerMappingsLocalChange}
-              />
-            );
-          })}
-          {filteredBiomarkers.length == 0 && (
-            <div className="h-full">
-              <div className="flex h-full justify-center items-center flex-col gap-2">
-                <img className="w-[220px]" src="/icons/empty-messages-coach.svg" alt="" />
-                <div className="text-Text-Primary -mt-10 text-center text-base font-medium">
-                  No results found.
-                </div>
+        <div className="min-h-full w-full px-2 pt-[150px] pb-8 md:px-6">
+          <div className="overflow-hidden rounded-2xl border border-Gray-50 bg-white shadow-100">
+            <div className="overflow-x-auto">
+              <div className="grid min-w-[900px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_90px_92px_128px] gap-3 border-b border-Gray-50 bg-gray-50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-Text-Secondary">
+                <span>#</span>
+                <span>{renderSortLabel('Biomarker', 'Biomarker')}</span>
+                <span>{renderSortLabel('Panel', 'Benchmark areas')}</span>
+                <span>{renderSortLabel('Unit', 'unit')}</span>
+                <span>Mappings</span>
+                <span className="text-right">Actions</span>
               </div>
+
+              {filteredBiomarkers.map((value: any, index: number) => (
+                <BiomarkerRow
+                  key={`${value?.Biomarker || 'biomarker'}-${index}`}
+                  rowIndex={index}
+                  data={value}
+                  biomarkers={biomarkers}
+                  changeBiomarkersValue={changeBiomarkersValue}
+                  searchTerm={searchValue}
+                  benchmarkAreaOptions={benchmarkAreaOptions}
+                  unitMappings={unitMappings}
+                  biomarkerMappings={biomarkerMappings}
+                  onUnitMappingsLocalChange={handleUnitMappingsLocalChange}
+                  onBiomarkerMappingsLocalChange={handleBiomarkerMappingsLocalChange}
+                  onOpenChart={setSelectedChartBiomarker}
+                  onOpenMappings={setSelectedMappingBiomarker}
+                />
+              ))}
+
+              {filteredBiomarkers.length === 0 && (
+                <div className="flex min-h-[320px] min-w-[900px] flex-col items-center justify-center gap-2">
+                  <img
+                    className="w-[220px]"
+                    src="/icons/empty-messages-coach.svg"
+                    alt=""
+                  />
+                  <div className="-mt-10 text-center text-base font-medium text-Text-Primary">
+                    No results found.
+                  </div>
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="text-[11px] font-medium text-Primary-DeepTeal hover:underline"
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       )}
 
@@ -317,6 +376,30 @@ const CustomBiomarkers = () => {
           loading={loading}
           errorDetails={errorDetails}
           setErrorDetails={setErrorDetails}
+        />
+      </MainModal>
+
+      <MainModal
+        isOpen={Boolean(selectedChartBiomarker)}
+        onClose={() => setSelectedChartBiomarker(null)}
+      >
+        <ChartModal
+          data={selectedChartBiomarker}
+          onClose={() => setSelectedChartBiomarker(null)}
+        />
+      </MainModal>
+
+      <MainModal
+        isOpen={Boolean(selectedMappingBiomarker)}
+        onClose={() => setSelectedMappingBiomarker(null)}
+      >
+        <MappingsModal
+          data={selectedMappingBiomarker}
+          unitMappings={unitMappings}
+          biomarkerMappings={biomarkerMappings}
+          onClose={() => setSelectedMappingBiomarker(null)}
+          onUnitMappingsChange={handleUnitMappingsChange}
+          onBiomarkerMappingsChange={handleBiomarkerMappingsChange}
         />
       </MainModal>
     </>
