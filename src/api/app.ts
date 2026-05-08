@@ -1145,6 +1145,17 @@ class Application extends Api {
   static getHtmlReport = (member_id: string) => {
     return this.post(`/get_html_report`, { member_id: member_id });
   };
+  static getPublicShareState = (payload: {
+    member_id: string | number;
+  }) => {
+    return this.post('/patients/public_share_state', payload);
+  };
+  static setPublicShareEnabled = (payload: {
+    member_id: string | number;
+    enabled: boolean;
+  }) => {
+    return this.post('/patients/public_share_toggle', payload);
+  };
   static checkHtmlReport = (member_id: string) => {
     return this.post(`/check_html_report`, { member_id: member_id });
   };
