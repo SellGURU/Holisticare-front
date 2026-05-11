@@ -16,8 +16,10 @@ import { ComboBar } from '../ComboBar';
 import SemiCircularProgressBar from './components/SemiCircularProgressBar';
 import CircularProgressBar from './components/CircularProgressBar';
 // import { AlertModal } from '../AlertModal';
+import useIsDemo from '../../hooks/useIsDemo';
 
 const GenerateActionPlan = () => {
+  const isDemo = useIsDemo();
   // const [plans, setPlans] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
@@ -157,6 +159,7 @@ const GenerateActionPlan = () => {
     'Personalized Action Plan',
   );
   const saveChanges = () => {
+    if (isDemo) return;
     setCheckSave(true);
     const prepareDataForBackend = (data: any) => {
       return [...data.checkIn, ...data.category];
@@ -204,6 +207,7 @@ const GenerateActionPlan = () => {
   }, [actionPlanId]);
   const [isDarft, setIsDarft] = useState<boolean | null>(null);
   const autoSaveActionPlan = () => {
+    if (isDemo) return;
     const prepareDataForBackend = (data: any) => {
       return [...data.checkIn, ...data.category];
     };
@@ -300,7 +304,9 @@ const GenerateActionPlan = () => {
                     <div className="lg:pr-[70px]">
                       <ButtonPrimary
                         ClassName="h-[33px] w-[120px] xs:w-[155px] text-[10px] xs:text-xs text-nowrap"
+                        disabled={isDemo}
                         onClick={saveChanges}
+                        title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
                       >
                         {isLoadingSaveChanges ? (
                           <>

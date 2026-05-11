@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import PreviewExerciseModal from './PreviewModal';
 import Application from '../../../../api/app';
+import useIsDemo from '../../../../hooks/useIsDemo';
 interface ExerciseRowProps {
   exercise: any;
   index: number;
@@ -15,6 +16,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
   onDelete,
   onEdit,
 }) => {
+  const isDemo = useIsDemo();
   const [ConfirmDelete, setConfirmDelete] = useState(false);
   const formatDate = (isoString: any) => {
     const date = new Date(isoString);
@@ -73,6 +75,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
         onClose={() => setViewModal(false)}
         exercise={exercise}
         onEdit={() => {
+          if (isDemo) return;
           setViewModal(false);
           onEdit();
         }}
@@ -179,7 +182,9 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
               Sure?
               <img
                 className="cursor-pointer w-[20px] h-[20px]"
+                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                 onClick={() => {
+                  if (isDemo) return;
                   onDelete();
                   setConfirmDelete(false);
                 }}
@@ -202,16 +207,22 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
                 alt=""
               />
               <img
-                onClick={onEdit}
-                className="cursor-pointer"
+                onClick={() => {
+                  if (isDemo) return;
+                  onEdit();
+                }}
+                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                className={isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 src="/icons/edit-blue.svg"
                 alt=""
               />
               <img
                 onClick={() => {
+                  if (isDemo) return;
                   setConfirmDelete(true);
                 }}
-                className="cursor-pointer"
+                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                className={isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 src="/icons/trash-blue.svg"
                 alt=""
               />

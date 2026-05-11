@@ -4,6 +4,7 @@ import Application from '../../../../../api/app';
 import { BeatLoader } from 'react-spinners';
 import { publish } from '../../../../../utils/event';
 import { downloadManualEntryPdfFromApi } from '../../../../../utils/manualEntry';
+import useIsDemo from '../../../../../hooks/useIsDemo';
 interface ActionSectionProps {
   file: any;
   isDeleted: boolean;
@@ -20,6 +21,7 @@ const ActionSection: FC<ActionSectionProps> = ({
   onEdit,
   date,
 }) => {
+  const isDemo = useIsDemo();
   const [isSureRemove, setIsSureRemove] = useState(false);
   const [loadingDelete] = useState<boolean>(false);
   const downloadFile = () => {
@@ -86,6 +88,7 @@ const ActionSection: FC<ActionSectionProps> = ({
   };
 
   const handleDelete = () => {
+    if (isDemo) return;
     // setLoadingDelete(true);
     setIsSureRemove(false);
 
@@ -158,6 +161,7 @@ const ActionSection: FC<ActionSectionProps> = ({
                 {file.file_id && file.process_done !== false && (
                   <img
                     onClick={() => {
+                      if (isDemo) return;
                       if (!isDeleted) {
                         if (onEdit) onEdit();
                         publish('uploadTestShow', {
@@ -167,22 +171,24 @@ const ActionSection: FC<ActionSectionProps> = ({
                         });
                       }
                     }}
-                    className="cursor-pointer w-[18px] h-[18px] sm:w-5 sm:h-5"
+                    className={`${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} w-[18px] h-[18px] sm:w-5 sm:h-5`}
                     src="/icons/edit-2-green.svg"
                     alt="Edit"
-                    title="Edit biomarkers"
+                    title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : 'Edit biomarkers'}
                   />
                 )}
                 {/* Delete */}
                 <img
                   onClick={() => {
+                    if (isDemo) return;
                     if (!isDeleted) {
                       setIsSureRemove(true);
                     }
                   }}
                   src="/icons/delete-green.svg"
                   alt="Delete"
-                  className="cursor-pointer w-[18px] h-[18px] sm:w-5 sm:h-5"
+                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  className={`${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} w-[18px] h-[18px] sm:w-5 sm:h-5`}
                 />
               </div>
             )}

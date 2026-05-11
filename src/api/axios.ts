@@ -66,6 +66,12 @@ axios.interceptors.response.use(
   },
   (error) => {
     const config = error.config || {};
+    const backendDetail = error.response?.data?.detail;
+    const backendCode =
+      error.response?.data?.code ||
+      (typeof backendDetail === 'object' ? backendDetail?.code : undefined);
+    const backendMessage =
+      typeof backendDetail === 'object' ? backendDetail?.detail : backendDetail;
     const start =
       (config as any).metadata?.startTime?.getTime?.() || Date.now();
     const duration = new Date().getTime() - start;
@@ -76,7 +82,7 @@ axios.interceptors.response.use(
       method: config.method?.toUpperCase() || 'GET',
       status: error.response?.status || 0,
       message:
-        error.response?.data?.detail ||
+        backendMessage ||
         error.message ||
         'Unknown network error',
       durationMs: duration,
@@ -113,16 +119,30 @@ axios.interceptors.response.use(
       return Promise.reject(error.message);
     }
 
+    if (error.response?.status === 403 && backendCode === 'DEMO_RESTRICTED') {
+      showError(
+        backendMessage ||
+          'Your clinic is on the Demo plan. Upgrade to access this feature.',
+      );
+      return Promise.reject({
+        ...error.response.data,
+        detail:
+          backendMessage ||
+          'Your clinic is on the Demo plan. Upgrade to access this feature.',
+        code: 'DEMO_RESTRICTED',
+      });
+    }
+
     // 🔹 Toast for backend messages
     if (
-      error.response?.data?.detail &&
+      backendMessage &&
       error.response?.status !== 406 &&
-      !error.response.data.detail.toLowerCase().includes('google')
+      !String(backendMessage).toLowerCase().includes('google')
     ) {
-      if (error.response.data.detail.toLowerCase().includes('successfully')) {
-        showSuccess(error.response.data.detail);
+      if (String(backendMessage).toLowerCase().includes('successfully')) {
+        showSuccess(backendMessage);
       } else {
-        showError(error.response.data.detail);
+        showError(backendMessage);
       }
     }
 

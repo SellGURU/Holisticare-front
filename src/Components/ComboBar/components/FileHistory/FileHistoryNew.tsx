@@ -5,6 +5,7 @@ import Application from '../../../../api/app';
 import { useParams } from 'react-router-dom';
 import { publish, subscribe, unsubscribe } from '../../../../utils/event';
 import FileUploadProgressList from './FileUploadProgressList';
+import useIsDemo from '../../../../hooks/useIsDemo';
 
 interface FileHistoryNewProps {
   handleCloseSlideOutPanel: () => void;
@@ -16,6 +17,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   isOpen,
   handleCloseSlideOutPanel,
 }) => {
+  const isDemo = useIsDemo();
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const { id } = useParams<{ id: string }>();
@@ -79,13 +81,15 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       <div className="w-full">
         <div
           onClick={() => {
+            if (isDemo) return;
             // fileInputRef.current?.click();
             publish('uploadTestShow', {
               isShow: true,
             });
             handleCloseSlideOutPanel();
           }}
-          className="mb-3 text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal"
+          title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+          className={`mb-3 text-[14px] flex justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${isDemo ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           <img className="w-5 h-5" src="/icons/add-blue.svg" alt="" />
           Add File or Biomarker
@@ -94,6 +98,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           type="file"
           accept=".pdf, .xls, .xlsx"
           multiple
+          disabled={isDemo}
           id="uploadFileBoxes"
           className="w-full absolute invisible h-full left-0 top-0"
         />

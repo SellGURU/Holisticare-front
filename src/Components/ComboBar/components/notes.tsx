@@ -5,7 +5,9 @@ import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
 import Accordion from '../../Accordion';
 import Circleloader from '../../CircleLoader';
+import useIsDemo from '../../../hooks/useIsDemo';
 export const Notes = () => {
+  const isDemo = useIsDemo();
   const [data, setData] = useState<any>([]);
   const { id } = useParams<{ id: string }>();
   const [showAddNote, setShowAddNote] = useState(false);
@@ -35,6 +37,7 @@ export const Notes = () => {
     getNotes(id);
   }, [id]);
   const handleNoteDelete = (noteId: string) => {
+    if (isDemo) return;
     setLoading(true);
     Application.deleteNote(noteId)
       .then(() => {
@@ -48,6 +51,7 @@ export const Notes = () => {
       });
   };
   const handleNoteUpdate = (noteId: string) => {
+    if (isDemo) return;
     setLoading(true);
     const data = {
       note_unique_id: noteId,
@@ -73,6 +77,7 @@ export const Notes = () => {
     });
   };
   const handleEditClick = (index: number, currentNote: string) => {
+    if (isDemo) return;
     setEditIndex(index);
     setEditText(currentNote);
   };
@@ -82,6 +87,7 @@ export const Notes = () => {
     setEditIndex(null);
   };
   const handleDeleteClick = (index: number) => {
+    if (isDemo) return;
     setDeleteIndex(index);
   };
 
@@ -103,9 +109,11 @@ export const Notes = () => {
       {!showAddNote && (
         <div
           onClick={() => {
+            if (isDemo) return;
             setShowAddNote(true);
           }}
-          className=" text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal "
+          title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+          className={` text-[14px] flex justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${isDemo ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} `}
         >
           <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
           Add Note
@@ -144,7 +152,10 @@ export const Notes = () => {
                 </div>
               </ButtonPrimary>
               <ButtonPrimary
+                disabled={isDemo}
+                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                 onClick={() => {
+                  if (isDemo) return;
                   setShowAddNote(false);
                   Application.addNote({
                     member_id: id,
@@ -208,7 +219,8 @@ export const Notes = () => {
                               Cancel
                             </button>
                             <button
-                              className="text-xs font-medium text-Primary-DeepTeal cursor-pointer"
+                              className={`text-xs font-medium ${isDemo ? 'text-Text-Secondary cursor-not-allowed' : 'text-Primary-DeepTeal cursor-pointer'}`}
+                              title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                               onClick={() => handleSaveEdit(el.unique_id)}
                             >
                               Save Changes
@@ -245,17 +257,19 @@ export const Notes = () => {
                             ) : (
                               <>
                                 <img
-                                  className="size-5 cursor-pointer"
+                                  className={`size-5 ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                                   src="/icons/edit-green.svg"
                                   alt="Edit"
+                                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                                   onClick={() =>
                                     handleEditClick(index, el.note)
                                   }
                                 />
                                 <img
-                                  className="size-5 cursor-pointer"
+                                  className={`size-5 ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                                   src="/icons/trash-red.svg"
                                   alt="Delete"
+                                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                                   onClick={() => handleDeleteClick(index)}
                                 />
                               </>

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import PreviewExerciseModal from './PreviewModal';
 import { Tooltip } from 'react-tooltip';
+import useIsDemo from '../../../../hooks/useIsDemo';
 interface ActivityRowProps {
   exercise: any;
   index: number;
@@ -14,6 +15,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
   onDelete,
   onEdit,
 }) => {
+  const isDemo = useIsDemo();
   const [ConfirmDelete, setConfirmDelete] = useState(false);
   const [viewModal, setViewModal] = useState(false);
 
@@ -33,6 +35,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
         isActivty
         exercise={exercise}
         onEdit={() => {
+          if (isDemo) return;
           setViewModal(false);
           onEdit();
         }}
@@ -145,7 +148,9 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
               Sure?
               <img
                 className="cursor-pointer w-[20px] h-[20px]"
+                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                 onClick={() => {
+                  if (isDemo) return;
                   onDelete();
                   setConfirmDelete(false);
                 }}
@@ -168,16 +173,22 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
                 alt=""
               />
               <img
-                onClick={() => onEdit()}
-                className="cursor-pointer"
+                onClick={() => {
+                  if (isDemo) return;
+                  onEdit();
+                }}
+                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                className={isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 src="/icons/edit-blue.svg"
                 alt=""
               />
               <img
                 onClick={() => {
+                  if (isDemo) return;
                   setConfirmDelete(true);
                 }}
-                className="cursor-pointer"
+                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                className={isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 src="/icons/trash-blue.svg"
                 alt=""
               />

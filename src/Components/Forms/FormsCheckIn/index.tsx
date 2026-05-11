@@ -6,6 +6,7 @@ import MainModal from '../../MainModal';
 import CheckInModalContent from './components/CheckInModalContent';
 import TableNoPaginateForForms from './components/TableNoPaginate';
 import ScheduleModalContent from './components/ScheduleModalContent';
+import useIsDemo from '../../../hooks/useIsDemo';
 
 interface FormsProps {
   showModal: boolean;
@@ -60,6 +61,7 @@ const FormsCheckIn: FC<FormsProps> = ({
   setTime,
   time,
 }) => {
+  const isDemo = useIsDemo();
   return (
     <>
       {checkInLists.length > 0 ? (
@@ -70,7 +72,10 @@ const FormsCheckIn: FC<FormsProps> = ({
             </div>
             <ButtonSecondary
               ClassName="rounded-[20px] w-[152px]"
+              disabled={isDemo}
+              title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
               onClick={() => {
+                if (isDemo) return;
                 setCheckInList([]);
                 setMainTitle('');
                 setEditModeModal(false);
@@ -106,7 +111,10 @@ const FormsCheckIn: FC<FormsProps> = ({
           </div>
           <ButtonSecondary
             ClassName="rounded-[20px] w-[229px] mt-9"
+            disabled={isDemo}
+            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
             onClick={() => {
+              if (isDemo) return;
               setShowModal(true);
             }}
           >

@@ -4,6 +4,7 @@ import SearchBox from '../../SearchBox';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import SvgIcon from '../../../utils/svgIcon';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import useIsDemo from '../../../hooks/useIsDemo';
 
 interface HeaderLibraryTreePagesProps {
   pageType: string;
@@ -24,6 +25,7 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
   onChangeSort,
   onManageTypes,
 }) => {
+  const isDemo = useIsDemo();
   const [isSortOpen, setIsSortOpen] = useState(false);
 
   const sortOptions = [
@@ -125,14 +127,24 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
             {onManageTypes && (
               <ButtonSecondary
                 ClassName="w-full md:w-[180px] h-[32px] rounded-[20px] shadow-Btn"
-                onClick={onManageTypes}
+                disabled={isDemo}
+                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                onClick={() => {
+                  if (isDemo) return;
+                  onManageTypes();
+                }}
               >
                 Manage types
               </ButtonSecondary>
             )}
             <ButtonSecondary
               ClassName="w-full md:w-[180px] h-[32px] rounded-[20px] shadow-Btn"
-              onClick={handleOpenModal}
+              disabled={isDemo}
+              title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+              onClick={() => {
+                if (isDemo) return;
+                handleOpenModal();
+              }}
             >
               <img src="/icons/add-square.svg" alt="" />
               Add {pageType}

@@ -45,6 +45,18 @@ class AdminApi {
     });
   }
 
+  static listClinics() {
+    return axios.get(`${baseUrl}/admin/clinics`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static updateClinic(id: number, data: { plan_type?: 'demo' | 'paying'; is_disabled?: boolean }) {
+    return axios.patch(`${baseUrl}/admin/clinics/${id}`, data, {
+      headers: withAuthHeaders(),
+    });
+  }
+
   static getAnalytics(data: any) {
     return axios.post(`${baseUrl}/admin/marketing/analytics`, data, {
       headers: withAuthHeaders(),

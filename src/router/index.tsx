@@ -51,6 +51,7 @@ import OverviewDashboard from '../pages/admin/OverviewDashboard.tsx';
 import SessionInsights from '../pages/admin/SessionInsights.tsx';
 import DataExplorer from '../pages/admin/DataExplorer.tsx';
 import AdminConfig from '../pages/admin/AdminConfig.tsx';
+import Clinics from '../pages/admin/Clinics.tsx';
 import LlmPromptCatalog from '../pages/admin/LlmPromptCatalog.tsx';
 import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
 import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
@@ -222,6 +223,10 @@ const router = createBrowserRouter([
   {
     path: '/admin/config',
     element: <AdminProtectedRoute Component={AdminConfig}></AdminProtectedRoute>,
+  },
+  {
+    path: '/admin/clinics',
+    element: <AdminProtectedRoute Component={Clinics}></AdminProtectedRoute>,
   },
   {
     path: '/admin/llm-prompts',

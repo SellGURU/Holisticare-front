@@ -19,6 +19,7 @@ import {
 import UploadCard from '../../../pages/CheckIn/components/UploadCard';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
+import useIsDemo from '../../../hooks/useIsDemo';
 // import DatePicker from '../../DatePicker';
 interface QuestionaryProps {
   isOpen?: boolean;
@@ -28,6 +29,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
   isOpen,
   handleCloseSlideOutPanel,
 }) => {
+  const isDemo = useIsDemo();
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [tryAdd, setTryAdd] = useState(false);
@@ -51,6 +53,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
   //   );
   // };
   const toggleSelection = (id: string) => {
+    if (isDemo) return;
     setSelectedFormIDs((prev: string[]) =>
       prev.includes(id)
         ? prev.filter((formId) => formId !== id)
@@ -59,6 +62,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
   };
   // const [unsyncedIdes, setUnsyncedIdes] = useState<string[]>([]);
   const handleAddQuestionnaires = () => {
+    if (isDemo) return;
     // const selectedData = AddForms
     //   .filter((form: any) => selectedQuestionnaires.includes(form.id))
     //   .map((form: any) => ({
@@ -538,6 +542,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
     <div className=" w-full">
       <div
         onClick={() => {
+          if (isDemo) return;
           if (!tryComplete) {
             Application.AddQuestionaryList({ member_id: id })
               .then((res) => {
@@ -561,7 +566,8 @@ export const Questionary: React.FC<QuestionaryProps> = ({
           //   setTryComplete(false);
           // }
         }}
-        className={` ${tryComplete && 'opacity-40'} text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
+        title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+        className={` ${tryComplete && 'opacity-40'} text-[14px] flex ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
       >
         <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
         Add Questionnaire
@@ -629,9 +635,11 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                   Cancel
                 </ButtonPrimary>
                 <ButtonPrimary
-                  disabled={selectedFormIDs.length == 0}
+                  disabled={selectedFormIDs.length == 0 || isDemo}
                   size="small"
+                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                   onClick={() => {
+                    if (isDemo) return;
                     handleAddQuestionnaires();
                     // Application.AddQuestionary({
                     //   member_id:id,
@@ -665,6 +673,7 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                 <div
                   className={`${checkFormComplete() ? 'opacity-100 cursor-pointer' : 'opacity-50'} w-5 h-5 `}
                   onClick={() => {
+                    if (isDemo) return;
                     if (checkFormComplete()) {
                       setSubmitLoading(true);
                       Application.SaveQuestionary({

@@ -26,6 +26,7 @@ import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
 import { CoverageCard } from '../../Components/coverageCard';
 import { SourceTag } from '../../Components/source-badge';
+import useIsDemo from '../../hooks/useIsDemo';
 import {
   toType2,
   type2ToFlatList,
@@ -35,6 +36,7 @@ import {
 
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
+  const isDemo = useIsDemo();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
   const [isLoading] = useState(false);
   const { id, treatment_id } = useParams<{
@@ -128,6 +130,7 @@ const NewGenerateHolisticPlan = () => {
   ]);
 
   const resolveNextStep = () => {
+    if (isDemo) return;
     setisFinalLoading(true);
     const continueSteps = () => {
       Application.saveTreatmentPaln({
@@ -472,10 +475,12 @@ const NewGenerateHolisticPlan = () => {
           {treatmentPlanData && (
             <div className="text-nowrap">
               <ButtonPrimary
-                disabled={isLoading}
+                disabled={isLoading || isDemo}
                 onClick={() => {
+                  if (isDemo) return;
                   resolveNextStep();
                 }}
+                title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
                 ClassName="flex"
               >
                 {isLoading ? (
@@ -515,10 +520,12 @@ const NewGenerateHolisticPlan = () => {
               {/* {treatmentPlanData && ( */}
               <div className="w-full md:flex gap-2 justify-center lg:justify-end items-center">
                 <ButtonPrimary
-                  disabled={isLoading || !treatmentPlanData}
+                  disabled={isLoading || !treatmentPlanData || isDemo}
                   onClick={() => {
+                    if (isDemo) return;
                     resolveNextStep();
                   }}
+                  title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
                   ClassName="hidden lg:flex"
                 >
                   {isLoading ? (
@@ -679,12 +686,15 @@ const NewGenerateHolisticPlan = () => {
                       {treatmentPlanData?.suggestion_tab?.length > 0 &&
                         treatment_id == 'a' && (
                           <ButtonSecondary
+                            disabled={isDemo}
                             onClick={() => {
+                              if (isDemo) return;
                               navigate(
                                 `/report/Generate-Recommendation/${id}/A`,
                               );
                             }}
                             ClassName="w-full md:w-fit rounded-full"
+                            title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
                           >
                             <img src="/icons/tick-square.svg" alt="" /> Auto
                             Generate
@@ -692,9 +702,12 @@ const NewGenerateHolisticPlan = () => {
                         )}
                       <ButtonPrimary
                         ClassName="w-full"
+                        disabled={isDemo}
                         onClick={() => {
+                          if (isDemo) return;
                           setshowAddModal(true);
                         }}
+                        title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
                       >
                         {' '}
                         <img src="/icons/add-square.svg" alt="" /> Add
@@ -718,7 +731,7 @@ const NewGenerateHolisticPlan = () => {
                                         key={`${el.title}-${suggestionIndex}-${refreshKey}`}
                                       >
                                         <BioMarkerRowSuggestions
-                                          editAble
+                                          editAble={!isDemo}
                                           value={el}
                                           index={suggestionIndex}
                                           issuesData={coverageDetails}
@@ -793,13 +806,16 @@ const NewGenerateHolisticPlan = () => {
                                   {/* Start creating your Holistic Plan */}
                                 </div>
                                 <ButtonSecondary
+                                  disabled={isDemo}
                                   onClick={() => {
+                                    if (isDemo) return;
                                     navigate(
                                       `/report/Generate-Recommendation/${id}/A`,
                                     );
                                     // setshowAutoGenerateModal(true)
                                   }}
                                   ClassName="w-full md:w-fit"
+                                  title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
                                 >
                                   <img src="/icons/tick-square.svg" alt="" />{' '}
                                   Auto Generate
@@ -829,13 +845,16 @@ const NewGenerateHolisticPlan = () => {
                             Start creating your holistic plan
                           </div>
                           <ButtonSecondary
+                            disabled={isDemo}
                             onClick={() => {
+                              if (isDemo) return;
                               navigate(
                                 `/report/Generate-Recommendation/${id}/A`,
                               );
                             }}
                             // onClick={() => setshowAutoGenerateModal(true)}
                             ClassName="w-full md:w-fit rounded-full"
+                            title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
                           >
                             <img src="/icons/tick-square.svg" alt="" /> Auto
                             Generate

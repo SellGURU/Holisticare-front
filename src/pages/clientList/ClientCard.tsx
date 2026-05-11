@@ -12,6 +12,7 @@ import MainModal from '../../Components/MainModal/index.tsx';
 import Checkbox from '../../Components/checkbox/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';
 import EllipsedTooltip from '../../Components/LibraryThreePages/components/TableNoPaginate/ElipsedTooltip.tsx';
+import useIsDemo from '../../hooks/useIsDemo.ts';
 interface ClientCardProps {
   client: any;
   indexItem: number;
@@ -34,6 +35,7 @@ const ClientCard: FC<ClientCardProps> = ({
   onClientUpdated,
 }) => {
   const navigate = useNavigate();
+  const isDemo = useIsDemo();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
@@ -215,6 +217,7 @@ const ClientCard: FC<ClientCardProps> = ({
   });
 
   const handleOpenClientAccess = () => {
+    if (isDemo) return;
     Application.giveClientAccess({
       member_id: client.member_id,
     })
@@ -745,12 +748,14 @@ const ClientCard: FC<ClientCardProps> = ({
             </div>
             <div
               onClick={() => {
+                if (isDemo) return;
                 if (!isSavingClientInfo) {
                   handleSaveClientInfo();
                 }
               }}
+              title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
               className={`text-sm font-medium cursor-pointer ${
-                isSavingClientInfo
+                isSavingClientInfo || isDemo
                   ? 'text-Text-Secondary pointer-events-none'
                   : 'text-Primary-DeepTeal'
               }`}
@@ -828,6 +833,7 @@ const ClientCard: FC<ClientCardProps> = ({
               <>
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     setshowModal(false);
                     setshowArchiveModal(true);
                     // Application.archivePatient({
@@ -863,9 +869,11 @@ const ClientCard: FC<ClientCardProps> = ({
                 )}
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     handleOpenEditModal();
                   }}
-                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
+                  title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+                  className={`flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray ${isDemo ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <img src="/icons/keyboard-open.svg" alt="" />
                   Edit Client
@@ -879,6 +887,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 </div>
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     setshowDeleteModal(true);
                   }}
                   // onClick={() => {
@@ -969,6 +978,7 @@ const ClientCard: FC<ClientCardProps> = ({
 
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     setshowModal(false);
                     setshowArchiveModal(true);
                     // Application.archivePatient({
@@ -1013,9 +1023,11 @@ const ClientCard: FC<ClientCardProps> = ({
                 </div> */}
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     handleOpenEditModal();
                   }}
-                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
+                  title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+                  className={`flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray ${isDemo ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <img src="/icons/keyboard-open.svg" alt="" />
                   Edit Client
@@ -1029,6 +1041,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 </div>
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     setshowDeleteModal(true);
                   }}
                   // onClick={() => {

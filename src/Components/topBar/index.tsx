@@ -11,6 +11,7 @@ import { SlideOutPanel } from '../SlideOutPanel';
 // import SpinnerLoader from '../SpinnerLoader';
 import DownloadModal from './downloadModal';
 import CompileButton from './CimpleButton';
+import { useApp } from '../../hooks';
 // import { CircleLoader } from 'react-spinners';
 // import { useEffect } from "react";
 
@@ -28,6 +29,7 @@ export const TopBar: FC<TopBarProps> = ({
   isShare,
 }) => {
   const navigate = useNavigate();
+  const { setClinicAccess } = useApp();
   const printreport = () => {
     const mywindow: any = window.open('', 'PRINT', 'height=300,width=800');
     mywindow.document.write(`
@@ -194,12 +196,17 @@ export const TopBar: FC<TopBarProps> = ({
           name: res.data.brand_elements.name,
           selectedImage: res.data.brand_elements.logo,
         });
+        const clinicPlan = res.data.brand_elements.clinic_plan || 'paying';
+        const clinicStatus = res.data.brand_elements.clinic_status || 'active';
+        setClinicAccess(clinicPlan, clinicStatus);
         localStorage.setItem(
           'brandInfoData',
           JSON.stringify({
             headLine: res.data.brand_elements.headline,
             name: res.data.brand_elements.name,
             selectedImage: res.data.brand_elements.logo,
+            clinicPlan,
+            clinicStatus,
           }),
         );
         // alert(res.data.brand_elements.knowledge_playground);

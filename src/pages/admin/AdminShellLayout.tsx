@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {
   BarChart3,
   Brain,
+  Building2,
   ChevronRight,
   Database,
   FileCog,
@@ -43,6 +44,7 @@ const navigationSections = [
     items: [
       { to: '/admin/config', label: 'Config Publishing', icon: FileCog },
       { to: '/admin/json-uploading', label: 'JSON Uploading', icon: FileCog },
+      { to: '/admin/clinics', label: 'Clinics', icon: Building2 },
       { to: '/admin/llm-prompts', label: 'LLM Prompts', icon: Brain },
     ],
   },
@@ -182,7 +184,7 @@ const AdminShellLayout = ({
                     onChange={(event) => setSelectedClinicEmail(event.target.value)}
                     className="w-full rounded-2xl border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] outline-none"
                   >
-                    <option value="">All allowed clinics</option>
+                    <option value="">All clinics</option>
                     {clinics.map((clinic) => (
                       <option key={clinic.clinic_email} value={clinic.clinic_email}>
                         {clinic.clinic_name} ({clinic.clinic_email})

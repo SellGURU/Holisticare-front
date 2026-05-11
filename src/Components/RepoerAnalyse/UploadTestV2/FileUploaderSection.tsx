@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+import useIsDemo from '../../../hooks/useIsDemo';
 
 interface FileUploaderSectionProps {
   isShare: boolean | undefined;
@@ -27,6 +28,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   isEditMode,
   onDownload: _onDownload,
 }) => {
+  const isDemo = useIsDemo();
   if (uploadedFile) {
     const fileName = uploadedFile?.file?.name || '';
     const fileSize = formatFileSize(uploadedFile?.file?.size || 0);
@@ -59,9 +61,10 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
           {!isEditMode && (
             <button
               type="button"
+              disabled={isDemo}
               onClick={() => handleDeleteFile(uploadedFile.file_id)}
-              className="shrink-0 rounded-md p-1 hover:bg-red-50 transition-colors"
-              title="Remove file"
+              className={`shrink-0 rounded-md p-1 hover:bg-red-50 transition-colors ${isDemo ? 'cursor-not-allowed opacity-50' : ''}`}
+              title={isDemo ? 'Demo plan - upgrade to enable' : 'Remove file'}
             >
               <img src="/icons/trash-red.svg" alt="Remove" className="size-3.5 opacity-50 hover:opacity-80" />
             </button>
@@ -83,11 +86,13 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
         File Uploader
         <div
           onClick={() => {
+            if (isDemo) return;
             if (!isShare && !uploadedFile) {
               document.getElementById('uploadFile')?.click();
             }
           }}
-          className={`mt-1 rounded-2xl h-[120px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center cursor-pointer`}
+          title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+          className={`mt-1 rounded-2xl h-[120px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${isDemo ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
         >
           <div className="w-full flex justify-center">
             <img src="/icons/upload-test.svg" alt="" />
@@ -108,6 +113,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
             ref={fileInputRef}
             accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp"
             onChange={handleFileChange}
+            disabled={isDemo}
             id="uploadFile"
             className="w-full absolute invisible h-full left-0 top-0"
           />

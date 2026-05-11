@@ -15,6 +15,9 @@ interface AppContextProp {
   setPatientsList: (patients: any[]) => void;
   appConfig: AppConfig;
   setAppConfig: (config: AppConfig) => void;
+  clinicPlan: 'demo' | 'paying' | string;
+  clinicStatus: 'active' | 'disabled' | string;
+  setClinicAccess: (plan: string, status: string) => void;
 }
 
 export const AppContext = createContext<AppContextProp>({
@@ -24,6 +27,9 @@ export const AppContext = createContext<AppContextProp>({
   permisions: {},
   logout: () => {},
   setAppConfig: () => {},
+  clinicPlan: localStorage.getItem('clinicPlan') || 'paying',
+  clinicStatus: localStorage.getItem('clinicStatus') || 'active',
+  setClinicAccess: () => {},
   appConfig: {
     google_client_id: '',
     azure_storage_account_url: '',
@@ -55,10 +61,18 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     JSON.parse(localStorage.getItem('permisins') || '{}'),
   );
   const [patientsList, setPatientsList] = useState<any[]>([]);
+  const [clinicPlan, setClinicPlan] = useState(
+    localStorage.getItem('clinicPlan') || 'paying',
+  );
+  const [clinicStatus, setClinicStatus] = useState(
+    localStorage.getItem('clinicStatus') || 'active',
+  );
 
   const logOut = () => {
     setToken('');
     setPermisions({});
+    setClinicPlan('paying');
+    setClinicStatus('active');
     localStorage.clear();
   };
   const contextValue: AppContextProp = {
@@ -81,6 +95,14 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     setPatientsList: setPatientsList,
     appConfig: appConfig,
     setAppConfig: setAppConfig,
+    clinicPlan,
+    clinicStatus,
+    setClinicAccess: (plan: string, status: string) => {
+      setClinicPlan(plan);
+      setClinicStatus(status);
+      localStorage.setItem('clinicPlan', plan);
+      localStorage.setItem('clinicStatus', status);
+    },
   };
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

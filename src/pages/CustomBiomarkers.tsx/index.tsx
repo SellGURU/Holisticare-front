@@ -10,6 +10,7 @@ import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
 import ChartModal from './ChartModal';
 import MappingsModal from './MappingsModal';
+import useIsDemo from '../../hooks/useIsDemo';
 
 import DefaultData from './default.json';
 
@@ -35,6 +36,7 @@ const getUniqueOptions = (items: any[], key: string) =>
   ).sort((a, b) => a.localeCompare(b));
 
 const CustomBiomarkers = () => {
+  const isDemo = useIsDemo();
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -56,7 +58,10 @@ const CustomBiomarkers = () => {
     setBiomarkers(values);
   };
 
-  const openModalAdd = () => setActiveAdd(true);
+  const openModalAdd = () => {
+    if (isDemo) return;
+    setActiveAdd(true);
+  };
   const closeModalAdd = () => {
     setActiveAdd(false);
     setErrorDetails('');
@@ -117,6 +122,7 @@ const CustomBiomarkers = () => {
   }, [biomarkers.length]);
 
   const handleUnitMappingsChange = (entries: any[]) => {
+    if (isDemo) return;
     setUnitMappings(entries);
     const payload = { ...unitMappingData, biomarker_specific: entries };
     setUnitMappingData(payload);
@@ -124,6 +130,7 @@ const CustomBiomarkers = () => {
   };
 
   const handleBiomarkerMappingsChange = (entries: any[]) => {
+    if (isDemo) return;
     setBiomarkerMappings(entries);
     BiomarkersApi.updateBiomarkerMapping({ mappings: entries }).catch(() => {});
   };
@@ -299,7 +306,9 @@ const CustomBiomarkers = () => {
 
               <ButtonSecondary
                 ClassName="h-9 rounded-xl text-xs border border-white"
+                disabled={isDemo}
                 onClick={openModalAdd}
+                title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
               >
                 <img src="/icons/add-square.svg" alt="" />
                 Add Biomarker

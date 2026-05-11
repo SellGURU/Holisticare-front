@@ -16,6 +16,7 @@ import type {
   BiomarkerOption,
   BiomarkerSuggestion,
 } from '../../searchableSelect/SearchSelectWithSuggestions';
+import useIsDemo from '../../../hooks/useIsDemo';
 
 const biomarkersSteps: Step[] = [
   {
@@ -83,6 +84,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   setShowOnlyErrors,
   progressBiomarkerUpload,
 }) => {
+  const isDemo = useIsDemo();
   // const [changedRows, setChangedRows] = useState<string[]>([]);
   // const [mappedRows, setMappedRows] = useState<string[]>([]);
   // const [mappingStatus, setMappingStatus] = useState<
@@ -140,6 +142,7 @@ const preferNonEmpty = (...values: any[]) => {
   };
 
   const handleValueChange = (id: string, newValue: string) => {
+    if (isDemo) return;
     // update local state immediately so UI feels responsive
     const updated = biomarkers.map((b) =>
       b.biomarker_id === id ? { ...b, original_value: newValue } : b,
@@ -186,6 +189,7 @@ const preferNonEmpty = (...values: any[]) => {
   const deletedIndexRef = useRef<number | null>(null);
 
   const handleConfirm = (indexToDelete: number) => {
+    if (isDemo) return;
     // Remember which index was deleted
     deletedIndexRef.current = indexToDelete;
 
@@ -389,6 +393,8 @@ const preferNonEmpty = (...values: any[]) => {
           type="text"
           value={preferNonEmpty(b.original_value, b.value)}
           className="text-center border border-Gray-50 w-[70px] md:w-[95px] outline-none rounded-md text-[8px] md:text-[12px] text-Text-Primary px-2 md:py-1"
+          disabled={isDemo}
+          title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
           onChange={(e) => handleValueChange(b.biomarker_id, e.target.value)}
         />
       );
@@ -891,6 +897,7 @@ const preferNonEmpty = (...values: any[]) => {
                             fetchBiomarkerSuggestions([b]);
                           }}
                           onCreateNewBiomarker={() => {
+                            if (isDemo) return;
                             setCreateBiomarkerFor({
                               biomarkerId: b.biomarker_id,
                               extractedName: b.original_biomarker_name || b.biomarker || '',
@@ -906,6 +913,7 @@ const preferNonEmpty = (...values: any[]) => {
                             });
                           }}
                           onCreateNewUnit={() => {
+                            if (isDemo) return;
                             setCreateUnitFor({
                               biomarkerId: b.biomarker_id,
                               biomarkerName: b.biomarker || '',

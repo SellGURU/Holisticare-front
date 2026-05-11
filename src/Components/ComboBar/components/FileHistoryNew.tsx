@@ -6,6 +6,7 @@ import Application from '../../../api/app';
 import { publish, subscribe } from '../../../utils/event';
 import Circleloader from '../../CircleLoader';
 import FileBox from './FileBox';
+import useIsDemo from '../../../hooks/useIsDemo';
 
 interface FileUpload {
   file: File;
@@ -26,6 +27,7 @@ const formatFileSize = (bytes: number): string => {
 const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
   handleCloseSlideOutPanel,
 }) => {
+  const isDemo = useIsDemo();
   const fileInputRef = useRef<any>(null);
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const { id } = useParams<{ id: string }>();
@@ -163,6 +165,7 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
   // };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isDemo) return;
     const files = e.target.files;
     if (files) {
       const newFiles = Array.from(files).map((file) => ({
@@ -288,13 +291,15 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
       <div className="w-full">
         <div
           onClick={() => {
+            if (isDemo) return;
             // fileInputRef.current?.click();
             publish('uploadTestShow', {
               isShow: true,
             });
             handleCloseSlideOutPanel();
           }}
-          className="mb-3 text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal"
+          title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+          className={`mb-3 text-[14px] flex justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${isDemo ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           <img className="w-5 h-5" src="/icons/add-blue.svg" alt="" />
           Add File or Biomarker
@@ -304,6 +309,7 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
           ref={fileInputRef}
           accept=".pdf, .xls, .xlsx"
           multiple
+          disabled={isDemo}
           onChange={handleFileChange}
           id="uploadFileBoxes"
           className="w-full absolute invisible h-full left-0 top-0"

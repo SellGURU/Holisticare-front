@@ -8,12 +8,14 @@ import TableNoPaginateForLibraryThreePages from './components/TableNoPaginate';
 import PreviewModalLibraryTreePages from './components/PreviewModal';
 import ManageOtherTypesModal from './components/ManageOtherTypesModal';
 import Circleloader from '../CircleLoader';
+import useIsDemo from '../../hooks/useIsDemo';
 
 interface LibraryThreePagesProps {
   pageType: string;
 }
 
 const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
+  const isDemo = useIsDemo();
   const [loading, setLoading] = useState(true);
   const [loadingCall, setLoadingCall] = useState(false);
   const [tableData, setTableData] = useState<any[]>([]);
@@ -47,6 +49,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
     setAddShowModal(false);
   };
   const handleOpenModal = () => {
+    if (isDemo) return;
     setPreviewShowModal(false);
     setAddShowModal(true);
   };
@@ -134,6 +137,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
     }
   }, [pageType]);
   const onSave = (values: any) => {
+    if (isDemo) return;
     if (selectedRow !== null) {
       setLoadingCall(true);
 
@@ -288,6 +292,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
     }
   };
   const onDelete = (id: string) => {
+    if (isDemo) return;
     if (pageType === 'Supplement') {
       setLoading(true);
       Application.deleteSupplement(id)
@@ -455,7 +460,12 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         currentSortLabel={currentSortLabel}
         onChangeSort={(id: string) => setSortId(id ?? 'title_asc')}
         onManageTypes={
-          pageType === 'Other' ? () => setManageTypesModal(true) : undefined
+          pageType === 'Other'
+            ? () => {
+                if (isDemo) return;
+                setManageTypesModal(true);
+              }
+            : undefined
         }
       />
       {pageType === 'Other' && (
@@ -505,7 +515,12 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             {pageType === 'Other' && (
               <ButtonSecondary
                 ClassName="w-[210px] rounded-[20px] shadow-Btn"
-                onClick={() => setManageTypesModal(true)}
+                disabled={isDemo}
+                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                onClick={() => {
+                  if (isDemo) return;
+                  setManageTypesModal(true);
+                }}
               >
                 Manage types
               </ButtonSecondary>
@@ -513,6 +528,8 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             {isTypeEmpty && (
               <ButtonSecondary
                 ClassName="w-[210px] rounded-[20px] shadow-Btn"
+                disabled={isDemo}
+                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                 onClick={handleOpenModal}
               >
                 <img src="/icons/add-square.svg" alt="" />
@@ -529,6 +546,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
               tableData={sortedData}
               onDelete={(id) => onDelete(id)}
               onEdit={(row) => {
+                if (isDemo) return;
                 setSelectedRow(row);
                 handleOpenModal();
               }}

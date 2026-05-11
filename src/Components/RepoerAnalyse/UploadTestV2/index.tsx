@@ -10,6 +10,7 @@ import UploadPModal from './UploadPModal';
 import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
 import { uploadBlobToAzure } from '../../../services/uploadBlobService';
+import useIsDemo from '../../../hooks/useIsDemo';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -72,6 +73,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   has_wearable_data,
   isLoadingQuestionnaires,
 }) => {
+  const isDemo = useIsDemo();
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
   const [initialLabMenu, setInitialLabMenu] = useState('Upload File');
@@ -93,6 +95,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const stepOnePollInFlightRef = useRef(false);
   useEffect(() => {
     subscribe('uploadTestShow-stepTwo', (data: any) => {
+      if (isDemo) return;
       const editFileId = data?.detail?.file_id;
       const fileName = data?.detail?.file_name || '';
       setIsUploadFromComboBar(true);
@@ -114,7 +117,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setstep(2); // Go to PDF vs Manual choice
       }
     });
-  }, []);
+  }, [isDemo]);
   const [biomarkerLoading, setbiomarkerLoading] = useState(false);
   const [progressBiomarkerUpload, setProgressBiomarkerUpload] = useState(0);
   useEffect(() => {
@@ -345,6 +348,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [, forceReRender] = useState(0);
 
   const handleDeleteFile = (fileId?: string) => {
+    if (isDemo) return;
     setExtractedBiomarkers([]);
     setfileType('more_info');
     setPolling(true);
@@ -389,6 +393,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       .catch((err) => console.error('Download failed', err));
   };
   const sendToBackend = async (file: File, azureUrl: string) => {
+    if (isDemo) return;
     await Application.addLabReport(
       {
         member_id: memberId,
@@ -451,6 +456,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isDemo) return;
     const files = e.target.files;
     if (files && files[0]) {
       const file = files[0];
@@ -568,14 +574,17 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     value: string;
     unit: string;
   }) => {
+    if (isDemo) return;
     setAddedBiomarkers([...addedBiomarkers, newBiomarker]);
   };
 
   const handleTrashClick = (index: number) => {
+    if (isDemo) return;
     setDeleteIndex(index);
   };
 
   const handleConfirm = (indexToDelete: number) => {
+    if (isDemo) return;
     // 1. Update added biomarkers
     setAddedBiomarkers((prev) => prev.filter((_, i) => i !== indexToDelete));
 
@@ -619,6 +628,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const handleSaveLabReport = async () => {
+    if (isDemo) {
+      throw new Error('Demo version cannot add or edit data.');
+    }
     // ✅ For ultrasound reports, call API with empty lists
     if (fileType === 'ultrasound') {
       const modifiedTimestamp = modifiedDateOfTest
@@ -898,6 +910,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const autoSaveBiomarkerMappings = async () => {
+    if (isDemo) return;
     const uniqueMappings = new Map<string, { extracted: string; system: string }>();
 
     extractedBiomarkers.forEach((row: any) => {
@@ -935,6 +948,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const onSave = () => {
+    if (isDemo) return;
     // ✅ For ultrasound reports, just close the modal and go to step 0
     // The API call will happen when clicking "Save & Continue to Health Plan"
     if (fileType === 'ultrasound') {
@@ -1134,7 +1148,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   </div>
                   <div className="w-full gap-2 flex justify-center mt-[46px] ">
                     <ButtonSecondary
+                      title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                       onClick={() => {
+                        if (isDemo) return;
                         onGenderate('discard');
                       }}
                       style={{ borderRadius: '20px' }}
@@ -1144,12 +1160,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       Discard Changes
                     </ButtonSecondary>
                     <ButtonSecondary
+                      title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                       style={{
                         // width: '150px',
                         borderRadius: '20px',
                       }}
-                      disabled={!resolveActiveButtonReportAnalyse()}
+                      disabled={isDemo || !resolveActiveButtonReportAnalyse()}
                       onClick={() => {
+                        if (isDemo) return;
                         if (
                           uploadedFile != null ||
                           addedBiomarkers.length != 0
@@ -1212,9 +1230,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   <div className="flex  w-full items-center gap-2 xs:gap-6">
                     <div
                       onClick={() => {
+                        if (isDemo) return;
                         setstep(2);
                       }}
-                      className={`cursor-pointer w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
+                      title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                      className={`${isDemo ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {isSaveClicked &&
                         extractedBiomarkers.length + addedBiomarkers.length >
@@ -1263,6 +1283,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                     </div>
                     <div
                       onClick={() => {
+                        if (isDemo) return;
                         // if (
                         //   extractedBiomarkers.length + addedBiomarkers.length >
                         //   0
@@ -1272,7 +1293,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         publish('QuestionaryTrackingCall', {});
                         // }
                       }}
-                      className={`cursor-pointer w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
+                      title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                      className={`${isDemo ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {questionnaires.length > 0 && (
                         <div className="w-[167px] py-1 h-[20px] text-[10px] text-Primary-DeepTeal px-2.5 rounded-full bg-[#E5E5E5] flex items-center gap-1">
@@ -1315,12 +1337,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   </div>
                   <div className="w-full flex justify-center mt-4">
                     <ButtonSecondary
+                      title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                       style={{
                         width: '250px',
                         borderRadius: '20px',
                       }}
-                      disabled={!resolveActiveButtonReportAnalyse()}
+                      disabled={isDemo || !resolveActiveButtonReportAnalyse()}
                       onClick={() => {
+                        if (isDemo) return;
                         if (
                           uploadedFile != null ||
                           addedBiomarkers.length != 0
