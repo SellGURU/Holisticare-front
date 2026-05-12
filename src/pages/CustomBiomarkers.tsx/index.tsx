@@ -171,10 +171,11 @@ const CustomBiomarkers = () => {
     [biomarkers],
   );
 
-  const filteredBiomarkers = useMemo(() => {
+  const filteredBiomarkerEntries = useMemo(() => {
     return biomarkers
-      .map((item) => ({
+      .map((item, originalIndex) => ({
         item,
+        originalIndex,
         score: getBiomarkerSearchScore(item),
       }))
       .filter(({ item, score }) => {
@@ -199,8 +200,7 @@ const CustomBiomarkers = () => {
         return String(a.item?.Biomarker || '').localeCompare(
           String(b.item?.Biomarker || ''),
         );
-      })
-      .map((entry) => entry.item);
+      });
   }, [
     biomarkers,
     normalizedSearchValue,
@@ -208,6 +208,11 @@ const CustomBiomarkers = () => {
     sortKey,
     sortDirection,
   ]);
+
+  const filteredBiomarkers = useMemo(
+    () => filteredBiomarkerEntries.map((entry) => entry.item),
+    [filteredBiomarkerEntries],
+  );
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -335,10 +340,11 @@ const CustomBiomarkers = () => {
                 <span className="text-right">Actions</span>
               </div>
 
-              {filteredBiomarkers.map((value: any, index: number) => (
+              {filteredBiomarkerEntries.map(({ item: value, originalIndex }, index: number) => (
                 <BiomarkerRow
-                  key={`${value?.Biomarker || 'biomarker'}-${index}`}
+                  key={`${value?.Biomarker || 'biomarker'}-${originalIndex}`}
                   rowIndex={index}
+                  biomarkerIndex={originalIndex}
                   data={value}
                   biomarkers={biomarkers}
                   changeBiomarkersValue={changeBiomarkersValue}

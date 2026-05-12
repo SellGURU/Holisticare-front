@@ -10,6 +10,7 @@ const EditModal = lazy(() => import('./EditModal'));
 
 interface BiomarkerRowProps {
   rowIndex: number;
+  biomarkerIndex: number;
   data: any;
   biomarkers: any[];
   changeBiomarkersValue: (values: any) => void;
@@ -30,14 +31,36 @@ const escapeRegExp = (value: string) =>
 
 const replaceBiomarker = (
   biomarkers: any[],
+  originalBiomarkerIndex: number,
   originalBiomarkerName: string,
   updatedItem: any,
-) =>
-  biomarkers.map((item) =>
-    normalize(item?.Biomarker) === normalize(originalBiomarkerName)
-      ? updatedItem
-      : item,
+) => {
+  if (
+    Number.isInteger(originalBiomarkerIndex) &&
+    originalBiomarkerIndex >= 0 &&
+    originalBiomarkerIndex < biomarkers.length
+  ) {
+    return biomarkers.map((item, index) =>
+      index === originalBiomarkerIndex ? updatedItem : item,
+    );
+  }
+
+  const matchingIndexes = biomarkers
+    .map((item, index) => ({ item, index }))
+    .filter(
+      ({ item }) =>
+        normalize(item?.Biomarker) === normalize(originalBiomarkerName),
+    )
+    .map(({ index }) => index);
+
+  if (matchingIndexes.length !== 1) {
+    return biomarkers;
+  }
+
+  return biomarkers.map((item, index) =>
+    index === matchingIndexes[0] ? updatedItem : item,
   );
+};
 
 const highlightText = (text: string, term: string) => {
   const source = String(text || '');
@@ -65,6 +88,7 @@ const highlightText = (text: string, term: string) => {
 
 const BiomarkerRow = ({
   rowIndex,
+  biomarkerIndex,
   data,
   biomarkers,
   changeBiomarkersValue,
@@ -115,6 +139,7 @@ const BiomarkerRow = ({
     BiomarkersApi.saveBiomarkersList({
       updated_biomarker: values,
       original_biomarker_name: meta.originalBiomarkerName,
+      original_biomarker_index: biomarkerIndex,
     })
       .then((response) => {
         const payload = response?.data || {};
@@ -122,7 +147,12 @@ const BiomarkerRow = ({
         closeModalEdit();
         changeBiomarkersValue(
           payload.chart_bounds ||
-            replaceBiomarker(biomarkers, meta.originalBiomarkerName, savedBiomarker),
+            replaceBiomarker(
+              biomarkers,
+              biomarkerIndex,
+              meta.originalBiomarkerName,
+              savedBiomarker,
+            ),
         );
         if (payload.unit_mapping?.biomarker_specific) {
           onUnitMappingsLocalChange?.(payload.unit_mapping.biomarker_specific);

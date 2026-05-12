@@ -716,9 +716,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     biomarkers: any[],
     labType: string,
   ) =>
-    biomarkers.map((b) => {
+    biomarkers.map((b, index) => {
       const base = {
-        biomarker_id: b.biomarker_id || b.biomarker || '',
+        biomarker_id: b.biomarker_id || `${labType}-${index}`,
+        index,
         biomarker: b.biomarker,
         value: preferNonEmpty(b.original_value, b.value),
         unit: b.unit,
@@ -785,9 +786,19 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       .toLowerCase();
     const errorValue = String(item?.value ?? '').trim().toLowerCase();
     const errorUnit = String(item?.unit ?? '').trim().toLowerCase();
+    const errorBiomarkerId = String(item?.biomarker_id || '').trim();
+
+    if (errorBiomarkerId) {
+      const idMatchIndex = biomarkers.findIndex(
+        (row: any) => String(row?.biomarker_id || '').trim() === errorBiomarkerId,
+      );
+      if (idMatchIndex !== -1) return idMatchIndex;
+    }
 
     if (errorName) {
-      const exactMatchIndex = biomarkers.findIndex((row: any) => {
+      const exactMatchIndexes = biomarkers
+        .map((row: any, index: number) => ({ row, index }))
+        .filter(({ row }: any) => {
         const rowNames = [
           row?.original_biomarker_name,
           row?.biomarker,
@@ -804,17 +815,21 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           (!errorValue || rowValue === errorValue) &&
           (!errorUnit || rowUnit === errorUnit)
         );
-      });
+      })
+        .map(({ index }: any) => index);
 
-      if (exactMatchIndex !== -1) return exactMatchIndex;
+      if (exactMatchIndexes.length === 1) return exactMatchIndexes[0];
 
-      const nameOnlyMatchIndex = biomarkers.findIndex((row: any) =>
-        [row?.original_biomarker_name, row?.biomarker]
-          .map((name) => String(name || '').trim().toLowerCase())
-          .includes(errorName),
-      );
+      const nameOnlyMatchIndexes = biomarkers
+        .map((row: any, index: number) => ({ row, index }))
+        .filter(({ row }: any) =>
+          [row?.original_biomarker_name, row?.biomarker]
+            .map((name) => String(name || '').trim().toLowerCase())
+            .includes(errorName),
+        )
+        .map(({ index }: any) => index);
 
-      if (nameOnlyMatchIndex !== -1) return nameOnlyMatchIndex;
+      if (nameOnlyMatchIndexes.length === 1) return nameOnlyMatchIndexes[0];
     }
 
     return Number.isInteger(item?.index) ? item.index : fallbackIndex;

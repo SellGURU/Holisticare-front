@@ -280,7 +280,7 @@ const preferNonEmpty = (...values: any[]) => {
       .catch(() => {});
   }, []);
 
-  // ── Suggestions state (keyed by extracted biomarker name) ──────────────────
+  // ── Suggestions state (keyed by stable row id, not biomarker name) ─────────
   const [suggestions, setSuggestions] = useState<
     Record<string, { matches: BiomarkerSuggestion[]; no_match_reason?: string | null }>
   >({});
@@ -291,6 +291,9 @@ const preferNonEmpty = (...values: any[]) => {
   const fetchBiomarkerSuggestions = async (rows: any[]) => {
     const unresolvedRows = rows
       .map((row: any) => ({
+        cache_key:
+          row.biomarker_id ||
+          `${row.original_biomarker_name || row.biomarker || ''}-${row.original_value || row.value || ''}-${row.original_unit || row.unit || ''}`,
         extracted_name: row.original_biomarker_name || row.biomarker || '',
         normalized_name: row.biomarker || '',
         extracted_value: String(preferNonEmpty(row.original_value, row.value)),
@@ -300,8 +303,8 @@ const preferNonEmpty = (...values: any[]) => {
 
     const uncachedRows = unresolvedRows.filter(
       (row: any) =>
-        !suggestions[row.extracted_name] &&
-        !suggestionsLoading[row.extracted_name],
+        !suggestions[row.cache_key] &&
+        !suggestionsLoading[row.cache_key],
     );
 
     if (uncachedRows.length === 0) return;
@@ -309,20 +312,32 @@ const preferNonEmpty = (...values: any[]) => {
     setSuggestionsLoading((prev) => {
       const next = { ...prev };
       uncachedRows.forEach((row: any) => {
-        next[row.extracted_name] = true;
+        next[row.cache_key] = true;
       });
       return next;
     });
 
     try {
+      const suggestionRequestRows = uncachedRows.map((row: any) => ({
+        extracted_name: row.extracted_name,
+        normalized_name: row.normalized_name,
+        extracted_value: row.extracted_value,
+        extracted_unit: row.extracted_unit,
+      }));
       const res = await Application.suggestBiomarkerMappings({
-        biomarkers: uncachedRows,
+        biomarkers: suggestionRequestRows,
       });
       if (res?.data?.suggestions) {
-        setSuggestions((prev) => ({
-          ...prev,
-          ...res.data.suggestions,
-        }));
+        setSuggestions((prev) => {
+          const next = { ...prev };
+          uncachedRows.forEach((row: any) => {
+            const rowSuggestion = res.data.suggestions[row.extracted_name];
+            if (rowSuggestion) {
+              next[row.cache_key] = rowSuggestion;
+            }
+          });
+          return next;
+        });
       }
     } catch {
       // Suggestions are non-critical; silently ignore failures
@@ -330,7 +345,7 @@ const preferNonEmpty = (...values: any[]) => {
       setSuggestionsLoading((prev) => {
         const next = { ...prev };
         uncachedRows.forEach((row: any) => {
-          delete next[row.extracted_name];
+          delete next[row.cache_key];
         });
         return next;
       });
@@ -865,10 +880,10 @@ const preferNonEmpty = (...values: any[]) => {
                     </div>
 
                     {biomarkers.map((b, index) => {
-                      const rowSuggestions =
-                        suggestions[b.original_biomarker_name || b.biomarker || ''];
                       const suggestionKey =
-                        b.original_biomarker_name || b.biomarker || '';
+                        b.biomarker_id ||
+                        `${b.original_biomarker_name || b.biomarker || ''}-${b.original_value || b.value || ''}-${b.original_unit || b.unit || ''}`;
+                      const rowSuggestions = suggestions[suggestionKey];
                       const selectedSystemMeta = avalibaleBiomarkers.find(
                         (option) =>
                           option.biomarker.toLowerCase() ===
