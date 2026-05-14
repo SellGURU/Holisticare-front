@@ -719,7 +719,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     biomarkers.map((b, index) => {
       const base = {
         biomarker_id: b.biomarker_id || `${labType}-${index}`,
-        index,
         biomarker: b.biomarker,
         value: preferNonEmpty(b.original_value, b.value),
         unit: b.unit,
