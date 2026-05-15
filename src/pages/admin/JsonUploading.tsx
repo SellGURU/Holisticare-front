@@ -3,9 +3,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Circleloader from '../../Components/CircleLoader';
+import JsonErrorPanel, { JsonErrorInfo } from '../../Components/JsonErrorPanel';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
 import AdminShellLayout from './AdminShellLayout';
+import {
+  buildJsonPublishErrorInfo,
+  buildJsonSyntaxErrorInfo,
+} from '../../utils/jsonErrorDetails';
 
 type ConfigKey =
   | 'more_info'
@@ -87,6 +92,7 @@ const AdminJsonUploading = () => {
     JSON.stringify(EMPTY_CONFIGS.more_info, null, 2),
   );
   const [editorError, setEditorError] = useState('');
+  const [jsonErrorInfo, setJsonErrorInfo] = useState<JsonErrorInfo | null>(null);
   const [loadedSourceName, setLoadedSourceName] = useState('');
   const [clinicSearch, setClinicSearch] = useState('');
   const [targetSearch, setTargetSearch] = useState('');
@@ -146,6 +152,7 @@ const AdminJsonUploading = () => {
     setActiveConfig(configKey);
     setEditorValue(JSON.stringify(configs[configKey], null, 2));
     setEditorError('');
+    setJsonErrorInfo(null);
   };
 
   const loadConfigs = async (useDefaultTemplate = false) => {
@@ -174,6 +181,7 @@ const AdminJsonUploading = () => {
       setSetAsDefault(false);
       setEditorValue(JSON.stringify(nextConfigs[activeConfig], null, 2));
       setEditorError('');
+      setJsonErrorInfo(null);
 
       if (!useDefaultTemplate && res?.data?.source?.clinic_id) {
         const clinicId = Number(res.data.source.clinic_id);
@@ -201,8 +209,11 @@ const AdminJsonUploading = () => {
     try {
       JSON.parse(value);
       setEditorError('');
+      setJsonErrorInfo(null);
     } catch (error: any) {
-      setEditorError(error?.message || 'Invalid JSON');
+      const syntaxError = buildJsonSyntaxErrorInfo(value, error);
+      setEditorError(syntaxError.message);
+      setJsonErrorInfo(syntaxError);
     }
   };
 
@@ -211,8 +222,11 @@ const AdminJsonUploading = () => {
       const parsed = JSON.parse(editorValue);
       setEditorValue(JSON.stringify(parsed, null, 2));
       setEditorError('');
+      setJsonErrorInfo(null);
     } catch (error: any) {
-      setEditorError(error?.message || 'Invalid JSON');
+      const syntaxError = buildJsonSyntaxErrorInfo(editorValue, error);
+      setEditorError(syntaxError.message);
+      setJsonErrorInfo(syntaxError);
       toast.error('Fix the JSON syntax before formatting.');
     }
   };
@@ -221,6 +235,7 @@ const AdminJsonUploading = () => {
     const formatted = JSON.stringify(loadedConfigs[activeConfig], null, 2);
     setEditorValue(formatted);
     setEditorError('');
+    setJsonErrorInfo(null);
   };
 
   const toggleTarget = (clinicId: number) => {
@@ -233,6 +248,11 @@ const AdminJsonUploading = () => {
 
   const publish = async () => {
     if (editorError) {
+      setJsonErrorInfo({
+        title: 'JSON syntax error',
+        message: editorError,
+        details: ['Fix the JSON syntax before publishing.'],
+      });
       toast.error('Fix the JSON syntax before publishing.');
       return;
     }
@@ -240,19 +260,26 @@ const AdminJsonUploading = () => {
     let parsed: any;
     try {
       parsed = JSON.parse(editorValue);
-    } catch {
+    } catch (error: any) {
+      const syntaxError = buildJsonSyntaxErrorInfo(editorValue, error);
+      setEditorError(syntaxError.message);
+      setJsonErrorInfo(syntaxError);
       toast.error('Fix the JSON syntax before publishing.');
       return;
     }
 
     if (targetClinicIds.length === 0 && !setAsDefault) {
+      setJsonErrorInfo({
+        title: 'Publish target required',
+        message: 'Choose at least one clinic or enable default template update.',
+      });
       toast.error('Choose at least one clinic or enable default template update.');
       return;
     }
 
     setSaving(true);
     try {
-      await AdminApi.saveClinicJsonConfig({
+      const res = await AdminApi.saveClinicJsonConfig({
         config_key: activeConfig,
         data: parsed,
         clinic_ids: targetClinicIds,
@@ -264,15 +291,22 @@ const AdminJsonUploading = () => {
         [activeConfig]: parsed,
       };
       setLoadedConfigs(nextConfigs);
-      toast.success(
-        `${activeTab.label} updated for ${targetClinicIds.length} clinic${targetClinicIds.length === 1 ? '' : 's'}${setAsDefault ? ' and saved as default' : ''}.`,
-      );
+      setJsonErrorInfo(null);
+      if (res?.data?.no_change) {
+        toast.info(res.data.message || 'This JSON is already up to date.');
+      } else {
+        toast.success(
+          `${activeTab.label} updated for ${targetClinicIds.length} clinic${targetClinicIds.length === 1 ? '' : 's'}${setAsDefault ? ' and saved as default' : ''}.`,
+        );
+      }
     } catch (err: any) {
       if (err?.response?.status === 401) {
         handleAuthFailure();
         return;
       }
-      toast.error(err?.response?.data?.detail || 'Failed to save config.');
+      const publishError = buildJsonPublishErrorInfo(err, 'Failed to save config.');
+      setJsonErrorInfo(publishError);
+      toast.error(publishError.message);
     } finally {
       setSaving(false);
     }
@@ -509,6 +543,12 @@ const AdminJsonUploading = () => {
               {activeTab.description}
             </div>
           </div>
+
+          <JsonErrorPanel
+            error={jsonErrorInfo}
+            fileName={activeTab.fileName}
+            onDismiss={() => setJsonErrorInfo(null)}
+          />
 
           <textarea
             value={editorValue}

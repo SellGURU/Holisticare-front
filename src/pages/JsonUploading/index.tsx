@@ -2,7 +2,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import Circleloader from '../../Components/CircleLoader';
+import JsonErrorPanel, { JsonErrorInfo } from '../../Components/JsonErrorPanel';
 import BiomarkersApi from '../../api/Biomarkers';
+import {
+  buildJsonPublishErrorInfo,
+  buildJsonSyntaxErrorInfo,
+} from '../../utils/jsonErrorDetails';
 
 type ConfigKey =
   | 'more_info'
@@ -89,6 +94,7 @@ const JsonUploading = () => {
     JSON.stringify(EMPTY_CONFIGS.more_info, null, 2),
   );
   const [editorError, setEditorError] = useState('');
+  const [jsonErrorInfo, setJsonErrorInfo] = useState<JsonErrorInfo | null>(null);
   const [clinicSearch, setClinicSearch] = useState('');
   const [targetSearch, setTargetSearch] = useState('');
   const [setAsDefault, setSetAsDefault] = useState(false);
@@ -104,8 +110,11 @@ const JsonUploading = () => {
         [configKey]: parsed,
       }));
       setEditorError('');
+      setJsonErrorInfo(null);
     } catch (error: any) {
-      setEditorError(error?.message || 'Invalid JSON');
+      const syntaxError = buildJsonSyntaxErrorInfo(text, error);
+      setEditorError(syntaxError.message);
+      setJsonErrorInfo(syntaxError);
     }
   };
 
@@ -113,6 +122,7 @@ const JsonUploading = () => {
     setActiveConfig(configKey);
     setEditorValue(JSON.stringify(configs[configKey], null, 2));
     setEditorError('');
+    setJsonErrorInfo(null);
   };
 
   useEffect(() => {
@@ -188,6 +198,7 @@ const JsonUploading = () => {
       setDraftConfigs(nextConfigs);
       setEditorValue(JSON.stringify(nextConfigs[activeConfig], null, 2));
       setEditorError('');
+      setJsonErrorInfo(null);
       setSetAsDefault(false);
 
       if (!useDefaultTemplate && res?.data?.source?.clinic_id) {
@@ -246,8 +257,11 @@ const JsonUploading = () => {
         [activeConfig]: parsed,
       }));
       setEditorError('');
+      setJsonErrorInfo(null);
     } catch (error: any) {
-      setEditorError(error?.message || 'Invalid JSON');
+      const syntaxError = buildJsonSyntaxErrorInfo(editorValue, error);
+      setEditorError(syntaxError.message);
+      setJsonErrorInfo(syntaxError);
       toast.error('Fix the JSON syntax before formatting.');
     }
   };
@@ -261,6 +275,7 @@ const JsonUploading = () => {
     }));
     setEditorValue(formatted);
     setEditorError('');
+    setJsonErrorInfo(null);
     toast.info(`${activeTab.label} reset to the last loaded version.`);
   };
 
@@ -292,11 +307,20 @@ const JsonUploading = () => {
 
   const handlePublish = async () => {
     if (editorError) {
+      setJsonErrorInfo({
+        title: 'JSON syntax error',
+        message: editorError,
+        details: ['Fix the JSON syntax before updating clinics.'],
+      });
       toast.error('Fix the JSON syntax before updating clinics.');
       return;
     }
 
     if (targetClinicIds.length === 0 && !setAsDefault) {
+      setJsonErrorInfo({
+        title: 'Publish target required',
+        message: 'Choose at least one target clinic or enable default template update.',
+      });
       toast.error('Choose at least one target clinic or enable default template update.');
       return;
     }
@@ -304,14 +328,17 @@ const JsonUploading = () => {
     let parsed: any;
     try {
       parsed = JSON.parse(editorValue);
-    } catch {
+    } catch (error: any) {
+      const syntaxError = buildJsonSyntaxErrorInfo(editorValue, error);
+      setEditorError(syntaxError.message);
+      setJsonErrorInfo(syntaxError);
       toast.error('Fix the JSON syntax before updating clinics.');
       return;
     }
 
     setSaving(true);
     try {
-      await BiomarkersApi.saveClinicJsonConfig({
+      const res = await BiomarkersApi.saveClinicJsonConfig({
         config_key: activeConfig,
         data: parsed,
         clinic_ids: targetClinicIds,
@@ -327,11 +354,18 @@ const JsonUploading = () => {
         [activeConfig]: parsed,
       }));
 
-      toast.success(
-        `${activeTab.label} updated for ${targetClinicIds.length} clinic${targetClinicIds.length === 1 ? '' : 's'}${setAsDefault ? ' and saved as default' : ''}.`,
-      );
+      if (res?.data?.no_change) {
+        toast.info(res.data.message || 'This JSON is already up to date.');
+      } else {
+        toast.success(
+          `${activeTab.label} updated for ${targetClinicIds.length} clinic${targetClinicIds.length === 1 ? '' : 's'}${setAsDefault ? ' and saved as default' : ''}.`,
+        );
+      }
+      setJsonErrorInfo(null);
     } catch (error: any) {
-      toast.error(error?.response?.data?.detail || 'Failed to update JSON.');
+      const publishError = buildJsonPublishErrorInfo(error, 'Failed to update JSON.');
+      setJsonErrorInfo(publishError);
+      toast.error(publishError.message);
     } finally {
       setSaving(false);
     }
@@ -610,6 +644,12 @@ const JsonUploading = () => {
                 {activeTab.description}
               </div>
             </div>
+
+            <JsonErrorPanel
+              error={jsonErrorInfo}
+              fileName={activeTab.fileName}
+              onDismiss={() => setJsonErrorInfo(null)}
+            />
 
             <div className="mt-4">
               <textarea
