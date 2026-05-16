@@ -15,6 +15,7 @@ export interface BiomarkerSuggestion {
   benchmark_area?: string;
   unit?: string;
   value_type?: string;
+  biomarker_type?: string;
 }
 
 export interface BiomarkerOption {
@@ -22,6 +23,7 @@ export interface BiomarkerOption {
   benchmark_area?: string;
   unit?: string;
   value_type?: string;
+  biomarker_type?: string;
 }
 
 type Props = {
@@ -53,12 +55,14 @@ const optionIdentity = (item: {
   benchmark_area?: string;
   unit?: string;
   value_type?: string;
+  biomarker_type?: string;
 }) =>
   [
     item.biomarker || item.system_biomarker || '',
     item.unit || '',
     item.value_type || '',
     item.benchmark_area || '',
+    item.biomarker_type || '',
   ]
     .map((part) => String(part || '').trim().toLowerCase())
     .join('|');

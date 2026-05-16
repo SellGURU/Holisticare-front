@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState, useCallback } from 'react';
+import { FC, useEffect, useMemo, useState, useCallback } from 'react';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import { ApiBiomarkerData } from '../../types/biormarker';
 import BenchmarkAreaSelect from '../../Components/BenchmarkAreaSelect';
@@ -12,9 +12,27 @@ const ALLOWED_STATUSES = [
   { value: 'CriticalRange', label: 'Critical Range', color: '#EF4444' },
 ];
 
+const BIOMARKER_TYPE_LABELS: Record<string, string> = {
+  blood: 'Blood',
+  urine: 'Urine',
+  dna: 'DNA',
+  gut: 'Gut',
+  saliva: 'Saliva',
+  stool: 'Stool',
+  other: 'Other',
+};
+
+const formatBiomarkerTypeLabel = (value: string) =>
+  BIOMARKER_TYPE_LABELS[value] ||
+  String(value || '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
 interface EditModalProps {
   data: ApiBiomarkerData;
   benchmarkAreaOptions: string[];
+  benchmarkAreaOptionsByType?: Record<string, string[]>;
+  biomarkerTypeOptions: string[];
   onCancel: () => void;
   onSave: (values: ApiBiomarkerData, meta: { originalBiomarkerName: string }) => void;
   loading: boolean;
@@ -25,6 +43,8 @@ interface EditModalProps {
 const EditModal: FC<EditModalProps> = ({
   data,
   benchmarkAreaOptions,
+  benchmarkAreaOptionsByType = {},
+  biomarkerTypeOptions,
   onCancel,
   onSave,
   loading,
@@ -47,6 +67,29 @@ const EditModal: FC<EditModalProps> = ({
 
   const updateDraft = (field: string, value: any) => {
     setDraft((prev: any) => ({ ...prev, [field]: value }));
+  };
+
+  const selectedType = String(draft.biomarker_type || 'blood');
+  const filteredBenchmarkAreaOptions = useMemo(() => {
+    const typedOptions = benchmarkAreaOptionsByType[selectedType] || [];
+    return typedOptions.length > 0 ? typedOptions : benchmarkAreaOptions;
+  }, [benchmarkAreaOptions, benchmarkAreaOptionsByType, selectedType]);
+
+  const updateBiomarkerType = (nextType: string) => {
+    const nextOptions = benchmarkAreaOptionsByType[nextType] || [];
+    setDraft((prev: any) => {
+      const currentArea = String(prev['Benchmark areas'] || '').trim();
+      const areaBelongsToType =
+        nextOptions.length === 0 ||
+        nextOptions.some(
+          (area) => area.toLowerCase() === currentArea.toLowerCase(),
+        );
+      return {
+        ...prev,
+        biomarker_type: nextType,
+        'Benchmark areas': areaBelongsToType ? prev['Benchmark areas'] : '',
+      };
+    });
   };
 
   const handleJsonChange = (text: string) => {
@@ -368,12 +411,31 @@ const EditModal: FC<EditModalProps> = ({
         {viewMode === 'form' ? (
           <>
             <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Type</label>
+              <select
+                value={selectedType}
+                onChange={(e) => updateBiomarkerType(e.target.value)}
+                className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none focus:border-Primary-DeepTeal bg-white"
+              >
+                {biomarkerTypeOptions.map((type) => (
+                  <option key={type} value={type}>
+                    {formatBiomarkerTypeLabel(type)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Benchmark Area <span className="text-red-500">*</span></label>
               <BenchmarkAreaSelect
                 value={draft['Benchmark areas'] || ''}
-                options={benchmarkAreaOptions}
+                options={filteredBenchmarkAreaOptions}
+                placeholder={`Select or create ${formatBiomarkerTypeLabel(selectedType)} benchmark area`}
+                createContextLabel={formatBiomarkerTypeLabel(selectedType)}
                 onChange={(value) => updateDraft('Benchmark areas', value)}
               />
+              <div className="mt-1 text-[10px] text-Text-Secondary">
+                Showing benchmark areas for {formatBiomarkerTypeLabel(selectedType)}. New areas created here will be saved under this type.
+              </div>
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Biomarker Name <span className="text-red-500">*</span></label>

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import SpinnerLoader from '../../SpinnerLoader';
 import Application from '../../../api/app';
 import BiomarkersApi from '../../../api/Biomarkers';
@@ -9,6 +9,8 @@ interface Props {
   extractedName: string;
   extractedValue?: string;
   extractedUnit?: string;
+  biomarkerType?: string;
+  biomarkerTypeOptions?: string[];
   uploadedReferenceRange?: string;
   suggestions?: Array<{ system_biomarker: string; confidence: number; reason: string }>;
   onClose: () => void;
@@ -23,11 +25,28 @@ const ALLOWED_STATUSES = [
   { value: 'CriticalRange', label: 'Critical Range', color: '#EF4444' },
 ];
 
+const BIOMARKER_TYPE_LABELS: Record<string, string> = {
+  blood: 'Blood',
+  urine: 'Urine',
+  dna: 'DNA',
+  gut: 'Gut',
+  saliva: 'Saliva',
+  stool: 'Stool',
+  other: 'Other',
+};
+
+const formatBiomarkerTypeLabel = (value: string) =>
+  BIOMARKER_TYPE_LABELS[value] ||
+  String(value || '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
 const EMPTY_DRAFT = {
   'Benchmark areas': '',
   Biomarker: '',
   Definition: '',
   unit: '',
+  biomarker_type: 'blood',
   source: 'Custom',
   'show_in_maual_entry': true,
   thresholds: { male: {}, female: {} },
@@ -37,6 +56,8 @@ const CreateBiomarkerModal: React.FC<Props> = ({
   extractedName,
   extractedValue = '',
   extractedUnit = '',
+  biomarkerType = 'blood',
+  biomarkerTypeOptions = ['blood', 'urine', 'dna', 'gut', 'saliva', 'stool', 'other'],
   uploadedReferenceRange = '',
   suggestions = [],
   onClose,
@@ -54,6 +75,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
   );
   const [newVariation, setNewVariation] = useState('');
   const [benchmarkAreaOptions, setBenchmarkAreaOptions] = useState<string[]>([]);
+  const [benchmarkAreaOptionsByType, setBenchmarkAreaOptionsByType] = useState<Record<string, string[]>>({});
   const [aiSuggestedBenchmarkArea, setAiSuggestedBenchmarkArea] = useState('');
 
   useEffect(() => {
@@ -62,13 +84,27 @@ const CreateBiomarkerModal: React.FC<Props> = ({
     BiomarkersApi.getBiomarkersList()
       .then((res: any) => {
         if (!isMounted || !Array.isArray(res?.data)) return;
+        const optionsByType: Record<string, string[]> = {};
+        res.data.forEach((item: any) => {
+          const type = String(item?.biomarker_type || 'blood').trim();
+          const area = String(item?.['Benchmark areas'] || '').trim();
+          if (!type || !area) return;
+          if (!optionsByType[type]) optionsByType[type] = [];
+          if (
+            !optionsByType[type].some(
+              (existing) => existing.toLowerCase() === area.toLowerCase(),
+            )
+          ) {
+            optionsByType[type].push(area);
+          }
+        });
+        Object.keys(optionsByType).forEach((type) => {
+          optionsByType[type].sort((a, b) => a.localeCompare(b));
+        });
         const options = Array.from(
-          new Set<string>(
-            res.data
-              .map((item: any) => String(item?.['Benchmark areas'] || '').trim())
-              .filter((item: string) => Boolean(item)),
-          ),
+          new Set<string>(Object.values(optionsByType).flat()),
         ).sort((a: string, b: string) => a.localeCompare(b));
+        setBenchmarkAreaOptionsByType(optionsByType);
         setBenchmarkAreaOptions(options);
       })
       .catch(() => {});
@@ -95,6 +131,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
           const d = {
             ...EMPTY_DRAFT,
             ...res.data.draft,
+            biomarker_type: res.data.draft.biomarker_type || biomarkerType,
             thresholds: res.data.draft.thresholds || { male: {}, female: {} },
             'show_in_maual_entry': true,
             source: res.data.draft.source || 'Custom',
@@ -107,7 +144,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
         }
       } catch {
         // If prefill fails, just use the empty draft with extracted name
-        const d = { ...EMPTY_DRAFT, Biomarker: extractedName, unit: extractedUnit };
+        const d = { ...EMPTY_DRAFT, Biomarker: extractedName, unit: extractedUnit, biomarker_type: biomarkerType };
         setAiSuggestedBenchmarkArea('');
         setDraft(d);
         setJsonText(JSON.stringify(d, null, 2));
@@ -122,6 +159,29 @@ const CreateBiomarkerModal: React.FC<Props> = ({
   // Keep JSON text in sync with form fields
   const updateDraft = (field: string, value: any) => {
     const updated = { ...draft, [field]: value };
+    setDraft(updated);
+    setJsonText(JSON.stringify(updated, null, 2));
+  };
+
+  const selectedType = String(draft.biomarker_type || biomarkerType || 'blood');
+  const filteredBenchmarkAreaOptions = useMemo(() => {
+    const typedOptions = benchmarkAreaOptionsByType[selectedType] || [];
+    return typedOptions.length > 0 ? typedOptions : benchmarkAreaOptions;
+  }, [benchmarkAreaOptions, benchmarkAreaOptionsByType, selectedType]);
+
+  const updateBiomarkerType = (nextType: string) => {
+    const nextOptions = benchmarkAreaOptionsByType[nextType] || [];
+    const currentArea = String(draft['Benchmark areas'] || '').trim();
+    const areaBelongsToType =
+      nextOptions.length === 0 ||
+      nextOptions.some(
+        (area) => area.toLowerCase() === currentArea.toLowerCase(),
+      );
+    const updated = {
+      ...draft,
+      biomarker_type: nextType,
+      'Benchmark areas': areaBelongsToType ? draft['Benchmark areas'] : '',
+    };
     setDraft(updated);
     setJsonText(JSON.stringify(updated, null, 2));
   };
@@ -379,14 +439,36 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                 <>
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Type
+                    </label>
+                    <select
+                      value={selectedType}
+                      onChange={(e) => updateBiomarkerType(e.target.value)}
+                      className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none focus:border-Primary-DeepTeal bg-white"
+                    >
+                      {biomarkerTypeOptions.map((type) => (
+                        <option key={type} value={type}>
+                          {formatBiomarkerTypeLabel(type)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Benchmark Area <span className="text-red-500">*</span>
                     </label>
                     <BenchmarkAreaSelect
                       value={draft['Benchmark areas'] || ''}
-                      options={benchmarkAreaOptions}
+                      options={filteredBenchmarkAreaOptions}
                       suggestedValue={aiSuggestedBenchmarkArea}
+                      placeholder={`Select or create ${formatBiomarkerTypeLabel(selectedType)} benchmark area`}
+                      createContextLabel={formatBiomarkerTypeLabel(selectedType)}
                       onChange={(value) => updateDraft('Benchmark areas', value)}
                     />
+                    <div className="mt-1 text-[10px] text-Text-Secondary">
+                      Showing benchmark areas for {formatBiomarkerTypeLabel(selectedType)}. New areas created here will be saved under this type.
+                    </div>
                   </div>
 
                   <div>

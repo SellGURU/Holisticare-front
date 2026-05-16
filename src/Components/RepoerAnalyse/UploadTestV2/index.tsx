@@ -52,6 +52,13 @@ const preferNonEmpty = (...values: any[]) => {
   return found ?? '';
 };
 
+const inferBiomarkerTypeFromLabType = (labType?: string) => {
+  const normalized = String(labType || '').trim().toLowerCase();
+  if (normalized === 'gut') return 'gut';
+  if (normalized === 'dna') return 'dna';
+  return 'blood';
+};
+
 interface UploadTestProps {
   memberId: any;
   onGenderate: (file_id: string | undefined) => void;
@@ -241,6 +248,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       const sorted = (data.extracted_biomarkers || [])
         .map((b: any) => ({
           ...b,
+          biomarker_type:
+            b.biomarker_type || inferBiomarkerTypeFromLabType(data.lab_type),
           normalized_biomarker_name:
             b.normalized_biomarker_name !== undefined
               ? b.normalized_biomarker_name
@@ -676,6 +685,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
       biomarker_id: b.biomarker_id,
       biomarker: b.biomarker,
+      biomarker_type: b.biomarker_type,
       original_biomarker_name: b.original_biomarker_name,
       original_value: preferNonEmpty(b.original_value, b.value),
       original_unit: b.original_unit,
@@ -720,6 +730,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       const base = {
         biomarker_id: b.biomarker_id || `${labType}-${index}`,
         biomarker: b.biomarker,
+        biomarker_type: b.biomarker_type || inferBiomarkerTypeFromLabType(labType),
         value: preferNonEmpty(b.original_value, b.value),
         unit: b.unit,
         original_biomarker_name: b.original_biomarker_name,

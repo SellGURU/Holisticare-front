@@ -5,6 +5,7 @@ type Props = {
   options?: string[];
   suggestedValue?: string;
   placeholder?: string;
+  createContextLabel?: string;
   onChange: (value: string) => void;
 };
 
@@ -15,6 +16,7 @@ const BenchmarkAreaSelect: React.FC<Props> = ({
   options = [],
   suggestedValue = '',
   placeholder = 'Select or search benchmark area',
+  createContextLabel = '',
   onChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,6 +58,7 @@ const BenchmarkAreaSelect: React.FC<Props> = ({
 
   const cleanedValue = value.trim();
   const cleanedSuggestedValue = suggestedValue.trim();
+  const contextText = createContextLabel.trim();
   const filteredOptions = uniqueOptions.filter((option) =>
     option.toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -104,8 +107,8 @@ const BenchmarkAreaSelect: React.FC<Props> = ({
             {cleanedSuggestedValue &&
             normalizeBenchmarkArea(cleanedSuggestedValue) ===
               normalizeBenchmarkArea(cleanedValue)
-              ? 'AI selected a new benchmark area. It will be created when you save.'
-              : 'This will be added as a new benchmark area when you save.'}
+              ? `AI selected a new benchmark area. It will be created${contextText ? ` under ${contextText}` : ''} when you save.`
+              : `This will be added as a new benchmark area${contextText ? ` under ${contextText}` : ''} when you save.`}
           </span>
         </div>
       )}
@@ -169,7 +172,7 @@ const BenchmarkAreaSelect: React.FC<Props> = ({
               ))
             ) : (
               <div className="px-3 py-2 text-[11px] text-Text-Secondary">
-                No existing benchmark areas found.
+                No existing benchmark areas found{contextText ? ` for ${contextText}` : ''}.
               </div>
             )}
           </div>
@@ -183,7 +186,7 @@ const BenchmarkAreaSelect: React.FC<Props> = ({
               <div className="flex items-center gap-2 min-w-0">
                 <img src="/icons/add-square.svg" alt="" className="w-4 h-4 shrink-0" />
                 <span className="text-[12px] text-Primary-DeepTeal truncate">
-                  Create new benchmark area "{searchTerm.trim()}"
+                  Create new benchmark area "{searchTerm.trim()}"{contextText ? ` under ${contextText}` : ''}
                 </span>
               </div>
               <span className="text-[10px] text-Text-Secondary shrink-0">

@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState, useCallback } from 'react';
+import { FC, useEffect, useMemo, useState, useCallback } from 'react';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import { ApiBiomarkerData } from '../../types/biormarker';
-import BiomarkersApi from '../../api/Biomarkers';
 import BenchmarkAreaSelect from '../../Components/BenchmarkAreaSelect';
 
 const ALLOWED_STATUSES = [
@@ -13,6 +12,22 @@ const ALLOWED_STATUSES = [
   { value: 'CriticalRange', label: 'Critical Range', color: '#EF4444' },
 ];
 
+const BIOMARKER_TYPE_LABELS: Record<string, string> = {
+  blood: 'Blood',
+  urine: 'Urine',
+  dna: 'DNA',
+  gut: 'Gut',
+  saliva: 'Saliva',
+  stool: 'Stool',
+  other: 'Other',
+};
+
+const formatBiomarkerTypeLabel = (value: string) =>
+  BIOMARKER_TYPE_LABELS[value] ||
+  String(value || '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
 interface AddModalProps {
   data: Partial<ApiBiomarkerData>;
   onCancel: () => void;
@@ -20,6 +35,8 @@ interface AddModalProps {
   loading: boolean;
   errorDetails: string;
   setErrorDetails: (errorDetails: string) => void;
+  biomarkerTypeOptions?: string[];
+  benchmarkAreaOptionsByType?: Record<string, string[]>;
 }
 
 const AddModal: FC<AddModalProps> = ({
@@ -29,6 +46,8 @@ const AddModal: FC<AddModalProps> = ({
   loading,
   errorDetails,
   setErrorDetails,
+  biomarkerTypeOptions = ['blood', 'urine', 'dna', 'gut', 'saliva', 'stool', 'other'],
+  benchmarkAreaOptionsByType = {},
 }) => {
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
   const [draft, setDraft] = useState<any>({
@@ -36,35 +55,19 @@ const AddModal: FC<AddModalProps> = ({
     Biomarker: data.Biomarker || '',
     Definition: data.Definition || '',
     unit: data.unit || '',
+    biomarker_type: (data as any).biomarker_type || 'blood',
     source: 'Custom',
     show_in_maual_entry: true,
     thresholds: data.thresholds || { male: {}, female: {} },
   });
   const [jsonText, setJsonText] = useState('');
   const [jsonError, setJsonError] = useState('');
-  const [benchmarkAreaOptions, setBenchmarkAreaOptions] = useState<string[]>([]);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    BiomarkersApi.getBiomarkersList()
-      .then((res: any) => {
-        if (!isMounted || !Array.isArray(res?.data)) return;
-        const options = Array.from(
-          new Set<string>(
-            res.data
-              .map((item: any) => String(item?.['Benchmark areas'] || '').trim())
-              .filter((item: string) => Boolean(item)),
-          ),
-        ).sort((a: string, b: string) => a.localeCompare(b));
-        setBenchmarkAreaOptions(options);
-      })
-      .catch(() => {});
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const selectedType = String(draft.biomarker_type || 'blood');
+  const filteredBenchmarkAreaOptions = useMemo(
+    () => benchmarkAreaOptionsByType[selectedType] || [],
+    [benchmarkAreaOptionsByType, selectedType],
+  );
 
   useEffect(() => {
     const d = {
@@ -72,6 +75,7 @@ const AddModal: FC<AddModalProps> = ({
       Biomarker: data.Biomarker || '',
       Definition: data.Definition || '',
       unit: data.unit || '',
+      biomarker_type: (data as any).biomarker_type || 'blood',
       source: 'Custom',
       show_in_maual_entry: true,
       thresholds: data.thresholds || { male: {}, female: {} },
@@ -82,6 +86,23 @@ const AddModal: FC<AddModalProps> = ({
 
   const updateDraft = (field: string, value: any) => {
     const updated = { ...draft, [field]: value };
+    setDraft(updated);
+    setJsonText(JSON.stringify(updated, null, 2));
+  };
+
+  const updateBiomarkerType = (nextType: string) => {
+    const nextOptions = benchmarkAreaOptionsByType[nextType] || [];
+    const currentArea = String(draft['Benchmark areas'] || '').trim();
+    const areaBelongsToType =
+      nextOptions.length === 0 ||
+      nextOptions.some(
+        (area) => area.toLowerCase() === currentArea.toLowerCase(),
+      );
+    const updated = {
+      ...draft,
+      biomarker_type: nextType,
+      'Benchmark areas': areaBelongsToType ? draft['Benchmark areas'] : '',
+    };
     setDraft(updated);
     setJsonText(JSON.stringify(updated, null, 2));
   };
@@ -386,12 +407,31 @@ const AddModal: FC<AddModalProps> = ({
         {viewMode === 'form' ? (
           <>
             <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Type</label>
+              <select
+                value={selectedType}
+                onChange={(e) => updateBiomarkerType(e.target.value)}
+                className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none focus:border-Primary-DeepTeal bg-white"
+              >
+                {biomarkerTypeOptions.map((type) => (
+                  <option key={type} value={type}>
+                    {formatBiomarkerTypeLabel(type)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Benchmark Area <span className="text-red-500">*</span></label>
               <BenchmarkAreaSelect
                 value={draft['Benchmark areas'] || ''}
-                options={benchmarkAreaOptions}
+                options={filteredBenchmarkAreaOptions}
+                placeholder={`Select or create ${formatBiomarkerTypeLabel(selectedType)} benchmark area`}
+                createContextLabel={formatBiomarkerTypeLabel(selectedType)}
                 onChange={(value) => updateDraft('Benchmark areas', value)}
               />
+              <div className="mt-1 text-[10px] text-Text-Secondary">
+                Showing benchmark areas for {formatBiomarkerTypeLabel(selectedType)}. New areas created here will be saved under this type.
+              </div>
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Biomarker Name <span className="text-red-500">*</span></label>

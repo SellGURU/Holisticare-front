@@ -17,6 +17,8 @@ interface BiomarkerRowProps {
   errorText: string;
   isHaveError: boolean;
   allAvilableBiomarkers: Array<BiomarkerOption>;
+  biomarkerTypes: string[];
+  formatBiomarkerTypeLabel: (value: string) => string;
   renderValueField: (biomarker: any) => any;
   handleConfirmDelete: () => void;
   updateAndStandardize: (
@@ -93,6 +95,8 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   errorText,
   isHaveError,
   allAvilableBiomarkers,
+  biomarkerTypes,
+  formatBiomarkerTypeLabel,
   refRenceEl,
   handleConfirmDelete,
   suggestionMatches = [],
@@ -190,6 +194,13 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
       suggestion.unit,
     ),
   );
+  const isCurrentSystemAllowed =
+    !biomarker.biomarker ||
+    compatibleSystemOptions.some(
+      (option) =>
+        option.biomarker.toLowerCase() ===
+        String(biomarker.biomarker || '').toLowerCase(),
+    );
 
   const effectiveSuggestions: BiomarkerSuggestion[] = (() => {
     const list = [...compatibleSuggestions];
@@ -283,7 +294,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         } grid px-4 py-2 border-b border-Gray-50 items-start text-[8px] md:text-xs text-Text-Primary`}
         style={{
           gridTemplateColumns:
-            'minmax(180px,1.25fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 52px',
+            'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 52px',
         }}
       >
         {/* Column 1: Extracted Biomarker */}
@@ -347,18 +358,44 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
           </div>
         </div>
 
-        {/* Column 2: System Biomarker with suggestions */}
+        {/* Column 2: Biomarker Type */}
+        <div className="flex min-w-0 justify-center pt-1">
+          <select
+            value={biomarker.biomarker_type || 'blood'}
+            onChange={(event) => {
+              const nextType = event.target.value;
+              updateAndStandardize(biomarker.biomarker_id, {
+                biomarker_type: nextType,
+              });
+              setIsChenged(true);
+              setIsMapped(false);
+            }}
+            className="h-7 w-full max-w-[100px] rounded-xl border border-Gray-50 bg-white px-2 text-center text-[8px] text-Text-Primary outline-none focus:border-Primary-DeepTeal md:text-[10px]"
+          >
+            {biomarkerTypes.map((type) => (
+              <option key={type} value={type}>
+                {formatBiomarkerTypeLabel(type)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Column 3: System Biomarker with suggestions */}
         <div className="min-w-0 w-full pt-1">
           <SearchSelectWithSuggestions
             isStaff
             isLarge
             isSetting
             value={
-              isSystemBiomarkerError && !isErrorHandled ? '' : biomarker.biomarker
+              (isSystemBiomarkerError && !isErrorHandled) || !isCurrentSystemAllowed
+                ? ''
+                : biomarker.biomarker
             }
             placeholder={
               isSystemBiomarkerError && !isErrorHandled
                 ? '...'
+                : !isCurrentSystemAllowed
+                ? 'Select for this type'
                 : 'Select an option'
             }
             options={compatibleSystemOptions}
@@ -410,12 +447,12 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
           </div>
         </div>
 
-        {/* Column 3: Extracted Value — centered under header like the column title */}
+        {/* Column 4: Extracted Value — centered under header like the column title */}
         <div className="flex min-w-0 justify-center pt-1">
           {renderValueField(biomarker)}
         </div>
 
-        {/* Column 4: Extracted Unit with create action */}
+        {/* Column 5: Extracted Unit with create action */}
         <div className="flex min-w-0 justify-center pt-1">
           <div className="w-full max-w-[100px] 2xl:max-w-[140px]">
             {isTextValueWithoutUnit ? (
@@ -451,7 +488,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
           </div>
         </div>
 
-        {/* Column 5: Actions */}
+        {/* Column 6: Actions */}
         <div
           className={`flex pt-1 items-start ${
             isChanged || isMapped ? 'justify-end' : 'justify-center'

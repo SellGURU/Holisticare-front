@@ -16,6 +16,9 @@ interface BiomarkerRowProps {
   changeBiomarkersValue: (values: any) => void;
   searchTerm?: string;
   benchmarkAreaOptions?: string[];
+  benchmarkAreaOptionsByType?: Record<string, string[]>;
+  biomarkerTypeOptions?: string[];
+  formatBiomarkerTypeLabel: (value: string) => string;
   unitMappings?: any[];
   biomarkerMappings?: any[];
   onUnitMappingsLocalChange?: (entries: any[]) => void;
@@ -94,6 +97,9 @@ const BiomarkerRow = ({
   changeBiomarkersValue,
   searchTerm = '',
   benchmarkAreaOptions = [],
+  benchmarkAreaOptionsByType = {},
+  biomarkerTypeOptions = [],
+  formatBiomarkerTypeLabel,
   unitMappings = [],
   biomarkerMappings = [],
   onUnitMappingsLocalChange,
@@ -176,7 +182,7 @@ const BiomarkerRow = ({
 
   return (
     <>
-      <div className="grid min-w-[900px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_90px_92px_128px] items-center gap-3 border-b border-Gray-50 px-3 py-2 text-[11px] transition-colors hover:bg-[#F8FAFA]">
+      <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_128px] items-center gap-3 border-b border-Gray-50 px-3 py-2 text-[11px] transition-colors hover:bg-[#F8FAFA]">
         <div className="text-Text-Secondary">{rowIndex + 1}</div>
 
         <div className="min-w-0">
@@ -200,6 +206,12 @@ const BiomarkerRow = ({
           </span>
           <span className="truncate text-Text-Secondary">
             {data?.['Benchmark areas'] || '-'}
+          </span>
+        </div>
+
+        <div>
+          <span className="inline-flex rounded-full bg-[#F4F7F7] px-2 py-1 text-[10px] font-medium text-Text-Secondary">
+            {formatBiomarkerTypeLabel(data?.biomarker_type || 'blood')}
           </span>
         </div>
 
@@ -252,6 +264,8 @@ const BiomarkerRow = ({
             onSave={(values: any, meta) => onsave(values, meta)}
             data={data}
             benchmarkAreaOptions={benchmarkAreaOptions}
+            benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
+            biomarkerTypeOptions={biomarkerTypeOptions}
             loading={loading}
             errorDetails={errorDetails}
             setErrorDetails={setErrorDetails}

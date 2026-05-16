@@ -14,8 +14,25 @@ import useIsDemo from '../../hooks/useIsDemo';
 
 import DefaultData from './default.json';
 
-type SortKey = 'Biomarker' | 'Benchmark areas' | 'unit';
+type SortKey = 'Biomarker' | 'Benchmark areas' | 'biomarker_type' | 'unit';
 type SortDirection = 'asc' | 'desc';
+
+const DEFAULT_BIOMARKER_TYPES = ['blood', 'urine', 'dna', 'gut', 'saliva', 'stool', 'other'];
+const BIOMARKER_TYPE_LABELS: Record<string, string> = {
+  blood: 'Blood',
+  urine: 'Urine',
+  dna: 'DNA',
+  gut: 'Gut',
+  saliva: 'Saliva',
+  stool: 'Stool',
+  other: 'Other',
+};
+
+const formatBiomarkerTypeLabel = (value: string) =>
+  BIOMARKER_TYPE_LABELS[value] ||
+  String(value || '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
 const normalizeSearchTerm = (value: any) =>
   String(value || '')
@@ -42,6 +59,7 @@ const CustomBiomarkers = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [panelFilter, setPanelFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('Biomarker');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [activeAdd, setActiveAdd] = useState(false);
@@ -53,6 +71,7 @@ const CustomBiomarkers = () => {
   const [unitMappingData, setUnitMappingData] = useState<any>(null);
   const [unitMappings, setUnitMappings] = useState<any[]>([]);
   const [biomarkerMappings, setBiomarkerMappings] = useState<any[]>([]);
+  const [biomarkerTypes, setBiomarkerTypes] = useState<string[]>(DEFAULT_BIOMARKER_TYPES);
 
   const changeBiomarkersValue = (values: any) => {
     setBiomarkers(values);
@@ -69,6 +88,14 @@ const CustomBiomarkers = () => {
 
   const getBiomarkers = () => {
     setIsLoading(true);
+    BiomarkersApi.getBiomarkerTypes()
+      .then((res) => {
+        const nextTypes = res?.data?.types;
+        if (Array.isArray(nextTypes) && nextTypes.length > 0) {
+          setBiomarkerTypes(nextTypes.map((type: any) => String(type)));
+        }
+      })
+      .catch(() => {});
     BiomarkersApi.getBiomarkersList()
       .then((res) => {
         setBiomarkers(res.data);
@@ -170,6 +197,36 @@ const CustomBiomarkers = () => {
     () => getUniqueOptions(biomarkers, 'Benchmark areas'),
     [biomarkers],
   );
+  const benchmarkAreaOptionsByType = useMemo(() => {
+    const optionsByType: Record<string, string[]> = {};
+    biomarkers.forEach((item) => {
+      const type = String(item?.biomarker_type || 'blood').trim();
+      const area = String(item?.['Benchmark areas'] || '').trim();
+      if (!type || !area) return;
+      if (!optionsByType[type]) optionsByType[type] = [];
+      if (
+        !optionsByType[type].some(
+          (existing) => existing.toLowerCase() === area.toLowerCase(),
+        )
+      ) {
+        optionsByType[type].push(area);
+      }
+    });
+    Object.keys(optionsByType).forEach((type) => {
+      optionsByType[type].sort((a, b) => a.localeCompare(b));
+    });
+    return optionsByType;
+  }, [biomarkers]);
+  const biomarkerTypeOptions = useMemo(
+    () =>
+      Array.from(
+        new Set([
+          ...biomarkerTypes,
+          ...getUniqueOptions(biomarkers, 'biomarker_type'),
+        ]),
+      ).filter(Boolean),
+    [biomarkers, biomarkerTypes],
+  );
 
   const filteredBiomarkerEntries = useMemo(() => {
     return biomarkers
@@ -181,6 +238,7 @@ const CustomBiomarkers = () => {
       .filter(({ item, score }) => {
         if (score <= 0) return false;
         if (panelFilter && item?.['Benchmark areas'] !== panelFilter) return false;
+        if (typeFilter && item?.biomarker_type !== typeFilter) return false;
         return true;
       })
       .sort((a, b) => {
@@ -205,6 +263,7 @@ const CustomBiomarkers = () => {
     biomarkers,
     normalizedSearchValue,
     panelFilter,
+    typeFilter,
     sortKey,
     sortDirection,
   ]);
@@ -240,6 +299,7 @@ const CustomBiomarkers = () => {
     setSearchInput('');
     setSearchValue('');
     setPanelFilter('');
+    setTypeFilter('');
   };
 
   const onsave = (values: any) => {
@@ -299,7 +359,20 @@ const CustomBiomarkers = () => {
                 ))}
               </select>
 
-              {(searchInput || panelFilter) && (
+              <select
+                value={typeFilter}
+                onChange={(event) => setTypeFilter(event.target.value)}
+                className="h-9 min-w-[140px] rounded-xl border border-Gray-50 bg-white px-3 text-[11px] text-Text-Primary outline-none focus:border-Primary-DeepTeal"
+              >
+                <option value="">All types</option>
+                {biomarkerTypeOptions.map((type) => (
+                  <option key={type} value={type}>
+                    {formatBiomarkerTypeLabel(type)}
+                  </option>
+                ))}
+              </select>
+
+              {(searchInput || panelFilter || typeFilter) && (
                 <button
                   type="button"
                   onClick={clearFilters}
@@ -331,10 +404,11 @@ const CustomBiomarkers = () => {
         <div className="min-h-full w-full px-2 pt-[150px] pb-8 md:px-6">
           <div className="overflow-hidden rounded-2xl border border-Gray-50 bg-white shadow-100">
             <div className="overflow-x-auto">
-              <div className="grid min-w-[900px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_90px_92px_128px] gap-3 border-b border-Gray-50 bg-gray-50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-Text-Secondary">
+              <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_128px] gap-3 border-b border-Gray-50 bg-gray-50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-Text-Secondary">
                 <span>#</span>
                 <span>{renderSortLabel('Biomarker', 'Biomarker')}</span>
                 <span>{renderSortLabel('Panel', 'Benchmark areas')}</span>
+                <span>{renderSortLabel('Type', 'biomarker_type')}</span>
                 <span>{renderSortLabel('Unit', 'unit')}</span>
                 <span>Mappings</span>
                 <span className="text-right">Actions</span>
@@ -350,6 +424,9 @@ const CustomBiomarkers = () => {
                   changeBiomarkersValue={changeBiomarkersValue}
                   searchTerm={searchValue}
                   benchmarkAreaOptions={benchmarkAreaOptions}
+                  benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
+                  biomarkerTypeOptions={biomarkerTypeOptions}
+                  formatBiomarkerTypeLabel={formatBiomarkerTypeLabel}
                   unitMappings={unitMappings}
                   biomarkerMappings={biomarkerMappings}
                   onUnitMappingsLocalChange={handleUnitMappingsLocalChange}
@@ -360,7 +437,7 @@ const CustomBiomarkers = () => {
               ))}
 
               {filteredBiomarkers.length === 0 && (
-                <div className="flex min-h-[320px] min-w-[900px] flex-col items-center justify-center gap-2">
+                <div className="flex min-h-[320px] min-w-[1000px] flex-col items-center justify-center gap-2">
                   <img
                     className="w-[220px]"
                     src="/icons/empty-messages-coach.svg"
@@ -388,6 +465,8 @@ const CustomBiomarkers = () => {
           onCancel={closeModalAdd}
           onSave={(values: any) => onsave(values)}
           data={DefaultData}
+          biomarkerTypeOptions={biomarkerTypeOptions}
+          benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
           loading={loading}
           errorDetails={errorDetails}
           setErrorDetails={setErrorDetails}

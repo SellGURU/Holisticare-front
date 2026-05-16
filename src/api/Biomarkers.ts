@@ -18,6 +18,10 @@ class BiomarkersApi extends Api {
     return this.post('/custom_biomarker/chart_bounds', {});
   };
 
+  static getBiomarkerTypes = () => {
+    return this.post('/custom_biomarker/biomarker_types', {});
+  };
+
   static saveBiomarkersList = (data: any) => {
     return this.post('/custom_biomarker/update_chart_bounds', data);
   };

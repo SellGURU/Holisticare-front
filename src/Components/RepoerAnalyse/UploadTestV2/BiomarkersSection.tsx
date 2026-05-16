@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Application from '../../../api/app';
 import Select from '../../Select';
 import SimpleDatePicker from '../../SimpleDatePicker';
@@ -17,6 +17,25 @@ import type {
   BiomarkerSuggestion,
 } from '../../searchableSelect/SearchSelectWithSuggestions';
 import useIsDemo from '../../../hooks/useIsDemo';
+
+const DEFAULT_BIOMARKER_TYPES = ['blood', 'urine', 'dna', 'gut', 'saliva', 'stool', 'other'];
+const BIOMARKER_TYPE_LABELS: Record<string, string> = {
+  blood: 'Blood',
+  urine: 'Urine',
+  dna: 'DNA',
+  gut: 'Gut',
+  saliva: 'Saliva',
+  stool: 'Stool',
+  other: 'Other',
+};
+const BIOMARKER_ROW_GRID =
+  'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 52px';
+
+const formatBiomarkerTypeLabel = (value: string) =>
+  BIOMARKER_TYPE_LABELS[value] ||
+  String(value || '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
 const biomarkersSteps: Step[] = [
   {
@@ -231,6 +250,8 @@ const preferNonEmpty = (...values: any[]) => {
     'Moderately Enhanced Outcome',
   ];
   const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState<BiomarkerOption[]>([]);
+  const [biomarkerTypes, setBiomarkerTypes] = useState<string[]>(DEFAULT_BIOMARKER_TYPES);
+  const [typeFilter, setTypeFilter] = useState('');
 
   const getDefaultUnitForBiomarker = (row: any) => {
     const biomarkerName = String(row?.biomarker || '').trim().toLowerCase();
@@ -255,6 +276,15 @@ const preferNonEmpty = (...values: any[]) => {
   };
 
   useEffect(() => {
+    BiomarkersApi.getBiomarkerTypes()
+      .then((res) => {
+        const nextTypes = res?.data?.types;
+        if (Array.isArray(nextTypes) && nextTypes.length > 0) {
+          setBiomarkerTypes(nextTypes.map((type: any) => String(type)));
+        }
+      })
+      .catch(() => {});
+
     BiomarkersApi.getBiomarkersList()
       .then((res) => {
         const sorted = (Array.isArray(res?.data) ? res.data : [])
@@ -262,6 +292,7 @@ const preferNonEmpty = (...values: any[]) => {
             biomarker: String(item?.Biomarker || '').trim(),
             benchmark_area: String(item?.['Benchmark areas'] || '').trim(),
             unit: String(item?.unit || '').trim(),
+            biomarker_type: String(item?.biomarker_type || 'blood').trim(),
             value_type: String(
               item?.value_type || item?.type || item?.data_type || '',
             ).trim(),
@@ -298,6 +329,7 @@ const preferNonEmpty = (...values: any[]) => {
         normalized_name: row.biomarker || '',
         extracted_value: String(preferNonEmpty(row.original_value, row.value)),
         extracted_unit: row.original_unit ?? row.unit ?? '',
+        biomarker_type: row.biomarker_type || '',
       }))
       .filter((row: any) => row.extracted_name);
 
@@ -323,6 +355,7 @@ const preferNonEmpty = (...values: any[]) => {
         normalized_name: row.normalized_name,
         extracted_value: row.extracted_value,
         extracted_unit: row.extracted_unit,
+        biomarker_type: row.biomarker_type,
       }));
       const res = await Application.suggestBiomarkerMappings({
         biomarkers: suggestionRequestRows,
@@ -496,6 +529,13 @@ const preferNonEmpty = (...values: any[]) => {
       onChange(updated);
       return;
     }
+    if (
+      Object.keys(updatedField).length === 1 &&
+      Object.prototype.hasOwnProperty.call(updatedField, 'biomarker_type')
+    ) {
+      onChange(updated);
+      return;
+    }
     const textValueDoesNotNeedUnit = isTextValueWithoutUnit(
       preferNonEmpty(current.original_value, current.value),
     );
@@ -509,7 +549,12 @@ const preferNonEmpty = (...values: any[]) => {
       biomarker: current.biomarker,
       value: String(preferNonEmpty(current.original_value, current.value)),
       unit: textValueDoesNotNeedUnit ? '' : current.original_unit || '',
-      bio_type: 'more_info',
+      bio_type:
+        current.biomarker_type === 'gut'
+          ? 'gut'
+          : current.biomarker_type === 'dna'
+            ? 'dna'
+            : 'more_info',
     };
 
     const hadExistingError = index !== -1 && Boolean(currentRowErrors[index]);
@@ -587,6 +632,16 @@ const preferNonEmpty = (...values: any[]) => {
       }
     }
   }, [biomarkers]);
+  const visibleBiomarkerEntries = useMemo(
+    () =>
+      biomarkers
+        .map((biomarker, originalIndex) => ({ biomarker, originalIndex }))
+        .filter(
+          ({ biomarker }) =>
+            !typeFilter || String(biomarker?.biomarker_type || 'blood') === typeFilter,
+        ),
+    [biomarkers, typeFilter],
+  );
   // const handleMappingToggle = async (id: string) => {
   //   const row = biomarkers.filter((b) => b.biomarker_id === id)[0];
   //   const extracted = row.original_biomarker_name;
@@ -782,6 +837,19 @@ const preferNonEmpty = (...values: any[]) => {
               {/* Spacer */}
               <div className="flex-1" />
 
+              <select
+                value={typeFilter}
+                onChange={(event) => setTypeFilter(event.target.value)}
+                className="h-7 rounded-xl border border-Gray-50 bg-white px-2 text-[9px] text-Text-Primary outline-none focus:border-Primary-DeepTeal md:text-[10px]"
+              >
+                <option value="">All types</option>
+                {biomarkerTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {formatBiomarkerTypeLabel(type)}
+                  </option>
+                ))}
+              </select>
+
               {/* Errors-only toggle */}
               <div className="flex items-center gap-1.5 whitespace-nowrap">
                 <Toggle checked={showOnlyErrors} setChecked={setShowOnlyErrors} />
@@ -849,7 +917,7 @@ const preferNonEmpty = (...values: any[]) => {
               data-tour="biomarker-table"
             >
               <div className="w-full h-full overflow-x-auto overflow-y-hidden">
-                <div className="w-full min-w-[700px] h-full flex flex-col min-h-0">
+                <div className="w-full min-w-[820px] h-full flex flex-col min-h-0">
                   <div
                     ref={tableRef}
                     className="flex-1 min-h-0 overflow-y-auto w-full pb-8 [scrollbar-gutter:stable]"
@@ -858,12 +926,14 @@ const preferNonEmpty = (...values: any[]) => {
                     <div
                       className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b border-Gray-50"
                       style={{
-                        gridTemplateColumns:
-                          'minmax(180px,1.25fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 52px',
+                        gridTemplateColumns: BIOMARKER_ROW_GRID,
                       }}
                     >
                       <div className="text-left" data-tour="extracted-biomarker">
                         Extracted Biomarker
+                      </div>
+                      <div className="text-center">
+                        Type
                       </div>
                       <div className="text-center" data-tour="system-biomarker">
                         System Biomarker
@@ -879,28 +949,35 @@ const preferNonEmpty = (...values: any[]) => {
                       </div>
                     </div>
 
-                    {biomarkers.map((b, index) => {
+                    {visibleBiomarkerEntries.map(({ biomarker: b, originalIndex }) => {
                       const suggestionKey =
                         b.biomarker_id ||
                         `${b.original_biomarker_name || b.biomarker || ''}-${b.original_value || b.value || ''}-${b.original_unit || b.unit || ''}`;
                       const rowSuggestions = suggestions[suggestionKey];
+                      const rowType = String(b.biomarker_type || 'blood');
+                      const rowAvailableBiomarkers = avalibaleBiomarkers.filter(
+                        (option) => String(option.biomarker_type || 'blood') === rowType,
+                      );
                       const selectedSystemMeta = avalibaleBiomarkers.find(
                         (option) =>
                           option.biomarker.toLowerCase() ===
-                          (b.biomarker || '').toLowerCase(),
+                            (b.biomarker || '').toLowerCase() &&
+                          String(option.biomarker_type || 'blood') === rowType,
                       );
                       return (
                         <BiomarkerRow
                           key={b.biomarker_id}
-                          refRenceEl={(el: any) => (rowRefs.current[index] = el)}
-                          isHaveError={currentRowErrors[index]}
-                          errorText={currentRowErrors[index]}
+                          refRenceEl={(el: any) => (rowRefs.current[originalIndex] = el)}
+                          isHaveError={currentRowErrors[originalIndex]}
+                          errorText={currentRowErrors[originalIndex]}
                           biomarker={b}
-                          index={index}
+                          index={originalIndex}
                           showOnlyErrors={showOnlyErrors}
-                          allAvilableBiomarkers={avalibaleBiomarkers}
+                          allAvilableBiomarkers={rowAvailableBiomarkers}
+                          biomarkerTypes={biomarkerTypes}
+                          formatBiomarkerTypeLabel={formatBiomarkerTypeLabel}
                           handleConfirmDelete={() => {
-                            handleConfirm(index);
+                            handleConfirm(originalIndex);
                           }}
                           renderValueField={renderValueField}
                           updateAndStandardize={updateAndStandardize}
@@ -956,6 +1033,8 @@ const preferNonEmpty = (...values: any[]) => {
           extractedName={createBiomarkerFor.extractedName}
           extractedValue={createBiomarkerFor.extractedValue}
           extractedUnit={createBiomarkerFor.extractedUnit}
+          biomarkerType={(biomarkers.find((b) => b.biomarker_id === createBiomarkerFor.biomarkerId)?.biomarker_type) || 'blood'}
+          biomarkerTypeOptions={biomarkerTypes}
           uploadedReferenceRange={createBiomarkerFor.uploadedReferenceRange}
           suggestions={createBiomarkerFor.suggestionMatches}
           onClose={() => setCreateBiomarkerFor(null)}
@@ -968,6 +1047,7 @@ const preferNonEmpty = (...values: any[]) => {
                     biomarker: String(item?.Biomarker || '').trim(),
                     benchmark_area: String(item?.['Benchmark areas'] || '').trim(),
                     unit: String(item?.unit || '').trim(),
+                    biomarker_type: String(item?.biomarker_type || 'blood').trim(),
                     value_type: String(
                       item?.value_type || item?.type || item?.data_type || '',
                     ).trim(),
