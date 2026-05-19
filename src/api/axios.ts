@@ -27,7 +27,7 @@ const checkHealthAndRedirect = async () => {
   }
 
   // Redirect to maintenance page
-  window.location.href = '/maintenance';
+  // window.location.href = '/maintenance';
 };
 
 axios.interceptors.response.use(

@@ -8,7 +8,7 @@ const baseLocalEndpoint = 'http://127.0.0.1:8000';
 
 const baseProductUrl = 'https://holisticare.vercel.app';
 const baseTestUrl = 'https://holisticare-develop.vercel.app';
-let env: 'test' | 'production' | 'local' = 'production';
+let env: 'test' | 'production' | 'local' = 'local';
 
 const resolveBaseEndPoint = () => {
   if (env == 'local') {

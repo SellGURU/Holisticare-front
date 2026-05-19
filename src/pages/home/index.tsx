@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
-import { SideMenu, MainTopBar } from '../../Components';
+import { MainTopBar } from '../../Components';
+import { SideMenu } from '../AppendUi/components';
 import { useRef, useState, useEffect } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { subscribe } from '../../utils/event';
@@ -118,10 +119,11 @@ const Home = () => {
           md:left-0
         `}
       >
-        <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} />
+        <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} ></SideMenu>
+        {/* <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} /> */}
       </div>
 
-      <div className="w-full md:pl-[170px] pt-0 pb-2 bg-bg-color h-[100vh]  overflow-y-scroll hidden-scrollbar">
+      <div className="w-full md:pl-[210px] pt-0 pb-2 bg-bg-color h-[100vh]  overflow-y-scroll hidden-scrollbar">
         <Outlet></Outlet>
       </div>
     </div>

@@ -55,6 +55,7 @@ import Clinics from '../pages/admin/Clinics.tsx';
 import LlmPromptCatalog from '../pages/admin/LlmPromptCatalog.tsx';
 import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
 import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
+import App from '../pages/AppendUi/Dashboard/index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -139,6 +140,7 @@ const router = createBrowserRouter([
             path: '/other',
             element: <Other></Other>,
           },
+
           {
             path: '/fhir-integration',
             element: <FHIRIntegration></FHIRIntegration>,
@@ -175,6 +177,10 @@ const router = createBrowserRouter([
         element: <AddClient></AddClient>,
       },
     ],
+  },
+  {
+    path:'/check',
+    element:<App></App>
   },
   {
     path: '/share/:id/:name',
