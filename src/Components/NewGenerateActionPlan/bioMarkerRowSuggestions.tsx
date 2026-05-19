@@ -700,109 +700,112 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     )}
                   </div>
                 </div> */}
-                {value.Category === 'Activity' && activitySections.length > 0 && (
-                  <div
-                    className={`   overflow-x-auto overflow-y-hidden hidden-scrollbr h-full bg-[#E9F0F2] rounded-[16px] mt-2`}
-                  >
-                    {(() => {
-                      // Create a map to track section numbers
-                      const sectionNumbers: Record<string, number> = {};
-                      let nextSectionNumber = 1;
+                {value.Category === 'Activity' &&
+                  activitySections.length > 0 && (
+                    <div
+                      className={`   overflow-x-auto overflow-y-hidden hidden-scrollbr h-full bg-[#E9F0F2] rounded-[16px] mt-2`}
+                    >
+                      {(() => {
+                        // Create a map to track section numbers
+                        const sectionNumbers: Record<string, number> = {};
+                        let nextSectionNumber = 1;
 
-                      return activitySections.map((el: any, index: number) => {
-                        // Check if this section has been shown before
-                        const isFirstOccurrence =
-                          index ===
-                          activitySections.findIndex(
-                            (t: any) => t.Section === el.Section,
-                          );
+                        return activitySections.map(
+                          (el: any, index: number) => {
+                            // Check if this section has been shown before
+                            const isFirstOccurrence =
+                              index ===
+                              activitySections.findIndex(
+                                (t: any) => t.Section === el.Section,
+                              );
 
-                        // Assign section number if it's the first occurrence
-                        if (isFirstOccurrence && el.Section) {
-                          sectionNumbers[el.Section] = nextSectionNumber++;
-                        }
+                            // Assign section number if it's the first occurrence
+                            if (isFirstOccurrence && el.Section) {
+                              sectionNumbers[el.Section] = nextSectionNumber++;
+                            }
 
-                        return (
-                          <>
-                            <div className=" p-2 hidden md:block md:p-4 ">
-                              <div className="flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start">
-                                <div
-                                  className={` ${el.Section && isFirstOccurrence ? 'visible' : 'invisible'} text-[12px] text-Text-Primary font-medium`}
-                                >
-                                  {el.Section &&
-                                    isFirstOccurrence &&
-                                    `${sectionNumbers[el.Section]}. ${el.Section}`}
-                                </div>
-
-                                <div className="w-[80%] relative gap-2 grid">
-                                  {el.Exercises.length > 1 && (
+                            return (
+                              <>
+                                <div className=" p-2 hidden md:block md:p-4 ">
+                                  <div className="flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-start">
                                     <div
-                                      className="absolute   top-[25px] left-[-8px]"
-                                      style={{
-                                        height: `${el.Exercises.length * 48 - 35}px`,
-                                      }}
+                                      className={` ${el.Section && isFirstOccurrence ? 'visible' : 'invisible'} text-[12px] text-Text-Primary font-medium`}
                                     >
-                                      <div className="w-[20px] relative h-full rounded-[16px]  bg-bg-color border-2 border-gray-300 border-r-bg-color">
-                                        <img
-                                          className="absolute top-[35%] left-[-8px] bg-bg-color py-1"
-                                          src="/icons/link.svg"
-                                          alt="super set"
-                                        />
-                                      </div>
+                                      {el.Section &&
+                                        isFirstOccurrence &&
+                                        `${sectionNumbers[el.Section]}. ${el.Section}`}
                                     </div>
-                                  )}
-                                  {el.Exercises.map((val: any) => {
-                                    return (
-                                      <>
-                                        <div className="w-full relative  bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
-                                          <div className="flex items-center justify-between w-full">
-                                            <div className="flex justify-start items-center">
-                                              <div className="relative">
-                                                <img
-                                                  src="/images/activity/activity-demo.png"
-                                                  alt=""
-                                                  className="w-[32px] h-[32px] rounded-[6.4px]"
-                                                />
-                                                <img
-                                                  src="/icons/youtube.svg"
-                                                  alt=""
-                                                  className="w-[15.48px] h-[16px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
-                                                />
-                                              </div>
-                                              <div className=" text-[10px] md:text-xs text-nowrap text-Text-Primary ml-2 font-medium">
-                                                {val?.Title}
-                                              </div>
-                                            </div>
-                                            <div className="flex items-center min-w-[200px] w-full md:w-[400px] h-[28px] gap-2 border border-Gray-50 rounded-lg text-[10px] text-Text-Quadruple">
-                                              <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
-                                                Set {el?.Sets}
-                                              </div>
-                                              <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
-                                                Reps {val?.Reps}
-                                              </div>
-                                              <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
-                                                Weight {val?.Weight}{' '}
-                                                {val?.Weight && 'g'}
-                                              </div>
-                                              <div className="w-[25%] flex items-center justify-center">
-                                                Rest {val?.Rest}{' '}
-                                                {val?.Rest && 's'}
-                                              </div>
-                                            </div>
+
+                                    <div className="w-[80%] relative gap-2 grid">
+                                      {el.Exercises.length > 1 && (
+                                        <div
+                                          className="absolute   top-[25px] left-[-8px]"
+                                          style={{
+                                            height: `${el.Exercises.length * 48 - 35}px`,
+                                          }}
+                                        >
+                                          <div className="w-[20px] relative h-full rounded-[16px]  bg-bg-color border-2 border-gray-300 border-r-bg-color">
+                                            <img
+                                              className="absolute top-[35%] left-[-8px] bg-bg-color py-1"
+                                              src="/icons/link.svg"
+                                              alt="super set"
+                                            />
                                           </div>
                                         </div>
-                                      </>
-                                    );
-                                  })}
+                                      )}
+                                      {el.Exercises.map((val: any) => {
+                                        return (
+                                          <>
+                                            <div className="w-full relative  bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
+                                              <div className="flex items-center justify-between w-full">
+                                                <div className="flex justify-start items-center">
+                                                  <div className="relative">
+                                                    <img
+                                                      src="/images/activity/activity-demo.png"
+                                                      alt=""
+                                                      className="w-[32px] h-[32px] rounded-[6.4px]"
+                                                    />
+                                                    <img
+                                                      src="/icons/youtube.svg"
+                                                      alt=""
+                                                      className="w-[15.48px] h-[16px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
+                                                    />
+                                                  </div>
+                                                  <div className=" text-[10px] md:text-xs text-nowrap text-Text-Primary ml-2 font-medium">
+                                                    {val?.Title}
+                                                  </div>
+                                                </div>
+                                                <div className="flex items-center min-w-[200px] w-full md:w-[400px] h-[28px] gap-2 border border-Gray-50 rounded-lg text-[10px] text-Text-Quadruple">
+                                                  <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
+                                                    Set {el?.Sets}
+                                                  </div>
+                                                  <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
+                                                    Reps {val?.Reps}
+                                                  </div>
+                                                  <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
+                                                    Weight {val?.Weight}{' '}
+                                                    {val?.Weight && 'g'}
+                                                  </div>
+                                                  <div className="w-[25%] flex items-center justify-center">
+                                                    Rest {val?.Rest}{' '}
+                                                    {val?.Rest && 's'}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                          </>
+                              </>
+                            );
+                          },
                         );
-                      });
-                    })()}
-                  </div>
-                )}
+                      })()}
+                    </div>
+                  )}
               </div>
               {/* <div className="flex"> */}
               {/* <div

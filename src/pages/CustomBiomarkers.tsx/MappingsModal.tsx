@@ -11,7 +11,10 @@ interface MappingsModalProps {
   onBiomarkerMappingsChange?: (entries: any[]) => void;
 }
 
-const normalize = (value: any) => String(value || '').trim().toLowerCase();
+const normalize = (value: any) =>
+  String(value || '')
+    .trim()
+    .toLowerCase();
 
 const MappingsModal: React.FC<MappingsModalProps> = ({
   data,
@@ -176,8 +179,12 @@ const MappingsModal: React.FC<MappingsModalProps> = ({
                   key={`${mapping.unit}-${index}`}
                   className="grid grid-cols-[1fr_1fr_90px_80px_52px] items-center gap-2 border-t border-Gray-50 px-3 py-2 text-[11px]"
                 >
-                  <span className="font-mono text-Text-Primary">{mapping.unit}</span>
-                  <span className="font-mono text-Text-Primary">{mapping.to_unit}</span>
+                  <span className="font-mono text-Text-Primary">
+                    {mapping.unit}
+                  </span>
+                  <span className="font-mono text-Text-Primary">
+                    {mapping.to_unit}
+                  </span>
                   <span className="text-center text-Text-Secondary">
                     {mapping.conversion_factor ?? '-'}
                   </span>
@@ -243,7 +250,8 @@ const MappingsModal: React.FC<MappingsModalProps> = ({
           </div>
           {!targetUnit ? (
             <div className="mt-2 text-[10px] text-red-400">
-              This biomarker has no default unit, so a conversion target cannot be created.
+              This biomarker has no default unit, so a conversion target cannot
+              be created.
             </div>
           ) : null}
         </section>

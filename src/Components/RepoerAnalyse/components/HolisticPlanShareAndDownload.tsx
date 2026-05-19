@@ -176,7 +176,8 @@ const HolisticPlanShareAndDownload = ({
   };
 
   const resolvePublicShareButtonHandler = () => {
-    const disabled = !isHtmlReportExists && activeTreatment?.state == 'On Going';
+    const disabled =
+      !isHtmlReportExists && activeTreatment?.state == 'On Going';
     return (
       <div className="flex flex-col items-center gap-1">
         <button

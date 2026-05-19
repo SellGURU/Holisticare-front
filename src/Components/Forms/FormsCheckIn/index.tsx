@@ -73,7 +73,11 @@ const FormsCheckIn: FC<FormsProps> = ({
             <ButtonSecondary
               ClassName="rounded-[20px] w-[152px]"
               disabled={isDemo}
-              title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+              title={
+                isDemo
+                  ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                  : undefined
+              }
               onClick={() => {
                 if (isDemo) return;
                 setCheckInList([]);
@@ -112,7 +116,11 @@ const FormsCheckIn: FC<FormsProps> = ({
           <ButtonSecondary
             ClassName="rounded-[20px] w-[229px] mt-9"
             disabled={isDemo}
-            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+            title={
+              isDemo
+                ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                : undefined
+            }
             onClick={() => {
               if (isDemo) return;
               setShowModal(true);

@@ -92,7 +92,9 @@ const Clinics = () => {
   ) => {
     if (
       changes.is_disabled === true &&
-      !window.confirm('Disabling this clinic will block login and reject active sessions. Continue?')
+      !window.confirm(
+        'Disabling this clinic will block login and reject active sessions. Continue?',
+      )
     ) {
       return;
     }
@@ -147,13 +149,18 @@ const Clinics = () => {
       <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
         <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="text-lg font-semibold text-Text-Primary">Clinic directory</div>
+            <div className="text-lg font-semibold text-Text-Primary">
+              Clinic directory
+            </div>
             <div className="text-[12px] text-Text-Secondary">
               {filteredClinics.length} of {clinics.length} clinics shown
             </div>
           </div>
           <div className="relative w-full md:w-[320px]">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-Text-Secondary" />
+            <Search
+              size={15}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-Text-Secondary"
+            />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -186,12 +193,19 @@ const Clinics = () => {
                         {clinic.name || `Clinic #${clinic.clinic_id}`}
                       </div>
                       <div className="mt-1 text-[11px] text-Text-Secondary">
-                        {clinic.primary_email || 'No admin email'} · ID {clinic.clinic_id}
+                        {clinic.primary_email || 'No admin email'} · ID{' '}
+                        {clinic.clinic_id}
                       </div>
                     </td>
-                    <td className="px-3 py-3 text-Text-Secondary">{formatDate(clinic.created_date)}</td>
-                    <td className="px-3 py-3 text-Text-Primary">{clinic.user_count}</td>
-                    <td className="px-3 py-3 text-Text-Primary">{clinic.patient_count}</td>
+                    <td className="px-3 py-3 text-Text-Secondary">
+                      {formatDate(clinic.created_date)}
+                    </td>
+                    <td className="px-3 py-3 text-Text-Primary">
+                      {clinic.user_count}
+                    </td>
+                    <td className="px-3 py-3 text-Text-Primary">
+                      {clinic.patient_count}
+                    </td>
                     <td className="px-3 py-3">
                       <select
                         value={clinic.plan_type}
@@ -211,21 +225,31 @@ const Clinics = () => {
                       <button
                         type="button"
                         disabled={busy}
-                        onClick={() => updateClinic(clinic, { is_disabled: !clinic.is_disabled })}
+                        onClick={() =>
+                          updateClinic(clinic, {
+                            is_disabled: !clinic.is_disabled,
+                          })
+                        }
                         className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-[12px] ${
                           clinic.is_disabled
                             ? 'bg-red-50 text-red-700'
                             : 'bg-emerald-50 text-emerald-700'
                         }`}
                       >
-                        {clinic.is_disabled ? <ShieldOff size={14} /> : <ShieldCheck size={14} />}
+                        {clinic.is_disabled ? (
+                          <ShieldOff size={14} />
+                        ) : (
+                          <ShieldCheck size={14} />
+                        )}
                         {clinic.is_disabled ? 'Disabled' : 'Active'}
                       </button>
                     </td>
                     <td className="px-3 py-3 text-Text-Secondary">
                       <div>{formatDate(clinic.plan_updated_at)}</div>
                       {clinic.plan_updated_by && (
-                        <div className="mt-1 text-[11px]">by {clinic.plan_updated_by}</div>
+                        <div className="mt-1 text-[11px]">
+                          by {clinic.plan_updated_by}
+                        </div>
                       )}
                     </td>
                   </tr>

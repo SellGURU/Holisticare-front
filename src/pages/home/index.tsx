@@ -119,7 +119,9 @@ const Home = () => {
           md:left-0
         `}
       >
-        <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} ></SideMenu>
+        <SideMenu
+          onClose={() => isMobileView && setIsMobileMenuOpen(false)}
+        ></SideMenu>
         {/* <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} /> */}
       </div>
 

@@ -8,7 +8,11 @@ interface Props {
   extractedUnit: string;
   extractedValue?: string;
   systemUnit?: string;
-  suggestions?: Array<{ system_biomarker: string; confidence: number; reason: string }>;
+  suggestions?: Array<{
+    system_biomarker: string;
+    confidence: number;
+    reason: string;
+  }>;
   onClose: () => void;
   onCreated: (newUnit: string) => void;
 }
@@ -80,7 +84,7 @@ const CreateUnitModal: React.FC<Props> = ({
       }
     };
     prefill();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSave = async () => {
@@ -94,7 +98,9 @@ const CreateUnitModal: React.FC<Props> = ({
       return;
     }
     if (!toUnit.trim()) {
-      setErrorMsg('System unit is missing for this biomarker, so the conversion target cannot be created.');
+      setErrorMsg(
+        'System unit is missing for this biomarker, so the conversion target cannot be created.',
+      );
       return;
     }
 
@@ -144,15 +150,24 @@ const CreateUnitModal: React.FC<Props> = ({
               Create New Unit
             </div>
             <div className="text-[10px] text-Text-Secondary mt-0.5">
-              System biomarker: <span className="font-medium text-Text-Primary">{biomarkerName || '—'}</span>
+              System biomarker:{' '}
+              <span className="font-medium text-Text-Primary">
+                {biomarkerName || '—'}
+              </span>
             </div>
             {extractedUnit && (
               <div className="text-[10px] text-Text-Secondary mt-0.5">
-                Extracted unit: <span className="font-medium text-Text-Primary">{extractedUnit}</span>
+                Extracted unit:{' '}
+                <span className="font-medium text-Text-Primary">
+                  {extractedUnit}
+                </span>
               </div>
             )}
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+          >
             ×
           </button>
         </div>
@@ -170,13 +185,16 @@ const CreateUnitModal: React.FC<Props> = ({
             {/* Error banner */}
             {errorMsg && (
               <div className="mx-6 mt-4 bg-[#F9DEDC] rounded-xl px-4 py-2 text-[10px] text-Text-Primary flex items-start gap-2">
-                <img src="/icons/info-circle-orange.svg" alt="" className="w-4 h-4 mt-0.5 shrink-0" />
+                <img
+                  src="/icons/info-circle-orange.svg"
+                  alt=""
+                  className="w-4 h-4 mt-0.5 shrink-0"
+                />
                 <span>{errorMsg}</span>
               </div>
             )}
 
             <div className="px-6 py-4 space-y-4 overflow-y-auto">
-
               {/* New Unit (extracted, editable) */}
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -195,7 +213,8 @@ const CreateUnitModal: React.FC<Props> = ({
                   </span>
                 </div>
                 <div className="text-[9px] text-Text-Secondary mt-0.5 ml-1">
-                  Always matches the extracted unit from the uploaded lab report.
+                  Always matches the extracted unit from the uploaded lab
+                  report.
                 </div>
               </div>
 
@@ -208,7 +227,9 @@ const CreateUnitModal: React.FC<Props> = ({
                   </span>
                 </label>
                 <div className="w-full border border-Gray-50 bg-gray-50 rounded-2xl px-3 py-2 text-[12px] text-Text-Secondary flex items-center justify-between">
-                  <span className={`font-medium ${toUnit ? 'text-Text-Primary' : 'text-Text-Quadruple italic'}`}>
+                  <span
+                    className={`font-medium ${toUnit ? 'text-Text-Primary' : 'text-Text-Quadruple italic'}`}
+                  >
                     {toUnit || 'No standard unit defined'}
                   </span>
                   <span className="text-[9px] text-Text-Secondary bg-gray-200 rounded-full px-2 py-0.5 ml-2 shrink-0">
@@ -227,7 +248,9 @@ const CreateUnitModal: React.FC<Props> = ({
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
                     Conversion Factor
-                    <span className="text-[10px] text-Primary-DeepTeal font-normal ml-1">✦ AI-suggested</span>
+                    <span className="text-[10px] text-Primary-DeepTeal font-normal ml-1">
+                      ✦ AI-suggested
+                    </span>
                   </label>
                   <input
                     type="number"
@@ -241,7 +264,9 @@ const CreateUnitModal: React.FC<Props> = ({
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
                     Offset
-                    <span className="text-[10px] text-Text-Secondary font-normal ml-1">(rare)</span>
+                    <span className="text-[10px] text-Text-Secondary font-normal ml-1">
+                      (rare)
+                    </span>
                   </label>
                   <input
                     type="number"
@@ -255,11 +280,13 @@ const CreateUnitModal: React.FC<Props> = ({
               </div>
 
               {/* Live Conversion Preview */}
-              <div className={`rounded-xl border px-3 py-2.5 text-[11px] ${
-                livePreview
-                  ? 'bg-green-50 border-green-200'
-                  : 'bg-gray-50 border-gray-200'
-              }`}>
+              <div
+                className={`rounded-xl border px-3 py-2.5 text-[11px] ${
+                  livePreview
+                    ? 'bg-green-50 border-green-200'
+                    : 'bg-gray-50 border-gray-200'
+                }`}
+              >
                 <div className="font-medium text-Text-Primary mb-1">
                   Conversion Preview
                 </div>
@@ -272,7 +299,9 @@ const CreateUnitModal: React.FC<Props> = ({
                       <span className="bg-white border border-gray-200 rounded px-1.5 py-0.5 font-mono text-[11px] font-medium text-Text-Primary">
                         {livePreview.input}
                       </span>
-                      <span className="text-Text-Secondary text-[10px]">{unit || '?'}</span>
+                      <span className="text-Text-Secondary text-[10px]">
+                        {unit || '?'}
+                      </span>
                       <span className="text-Text-Secondary">×</span>
                       <span className="bg-white border border-gray-200 rounded px-1.5 py-0.5 font-mono text-[11px] text-Primary-DeepTeal font-medium">
                         {livePreview.factor}
@@ -289,10 +318,13 @@ const CreateUnitModal: React.FC<Props> = ({
                       <span className="bg-green-100 border border-green-300 rounded px-1.5 py-0.5 font-mono text-[12px] font-bold text-green-700">
                         {livePreview.result}
                       </span>
-                      <span className="text-Text-Secondary text-[10px]">{toUnit || '?'}</span>
+                      <span className="text-Text-Secondary text-[10px]">
+                        {toUnit || '?'}
+                      </span>
                     </div>
                     <div className="text-[9px] text-Text-Secondary mt-1">
-                      Based on the extracted sample value from the lab report. Verify this result matches clinical expectation.
+                      Based on the extracted sample value from the lab report.
+                      Verify this result matches clinical expectation.
                     </div>
                   </div>
                 ) : (

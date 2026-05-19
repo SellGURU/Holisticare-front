@@ -104,7 +104,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   setrowErrors,
   progressBiomarkerUpload,
 }) => {
-  const [activeMenu, setactiveMenu] = useState(isEditMode ? 'Upload File' : initialMode || 'Upload File');
+  const [activeMenu, setactiveMenu] = useState(
+    isEditMode ? 'Upload File' : initialMode || 'Upload File',
+  );
   const [showOnlyErrors, setShowOnlyErrors] = useState(false);
   const [shouldAutoSwitch, setShouldAutoSwitch] = useState(false);
 
@@ -128,7 +130,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
       if (isDocumentUpload) {
         setactiveMenu('Upload File');
       } else {
-        setactiveMenu(fileType === 'more_info' ? 'Add Biomarker' : 'Upload File');
+        setactiveMenu(
+          fileType === 'more_info' ? 'Add Biomarker' : 'Upload File',
+        );
       }
     }
   }, [isEditMode, fileType, loading, uploadedFile]);
@@ -223,7 +227,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
     <>
       <Joyride
         steps={labBiomarkerSteps}
-        run={Boolean(run && activeMenu === 'Upload File' && !isEditMode && !uploadedFile)}
+        run={Boolean(
+          run && activeMenu === 'Upload File' && !isEditMode && !uploadedFile,
+        )}
         continuous
         scrollToFirstStep
         showSkipButton
@@ -316,29 +322,29 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             </ButtonPrimary>
           </div>
           <div className="flex w-full relative justify-center mt-3 md:mt-4 shrink-0">
-                {showReview && activeErrorCount > 0 ? (
-                  <div className="bg-[#FFD8E4] absolute right-0 bottom-0 text-[10px] text-Text-Primary w-[291px] rounded-[20px] h-[36px] py-2 px-4 flex justify-between items-center gap-2">
-                    <div className="flex items-cente gap-1">
-                      <img src="/icons/info-circle-red-2.svg" alt="" />
-                      {activeErrorCount}{' '}
-                      {activeErrorCount === 1 ? 'error' : 'errors'} found in
-                      biomarkers.
-                      <div
-                        className="underline cursor-pointer text-[10px] text-Text-Primary"
-                        onClick={() => setShowOnlyErrors(true)}
-                      >
-                        View {activeErrorCount === 1 ? 'Error' : 'Errors'}
-                      </div>
-                    </div>
-                    <img
-                      onClick={() => setshowReview(false)}
-                      className="cursor-pointer size-4"
-                      src="/icons/close-black.svg"
-                      alt=""
-                    />
+            {showReview && activeErrorCount > 0 ? (
+              <div className="bg-[#FFD8E4] absolute right-0 bottom-0 text-[10px] text-Text-Primary w-[291px] rounded-[20px] h-[36px] py-2 px-4 flex justify-between items-center gap-2">
+                <div className="flex items-cente gap-1">
+                  <img src="/icons/info-circle-red-2.svg" alt="" />
+                  {activeErrorCount}{' '}
+                  {activeErrorCount === 1 ? 'error' : 'errors'} found in
+                  biomarkers.
+                  <div
+                    className="underline cursor-pointer text-[10px] text-Text-Primary"
+                    onClick={() => setShowOnlyErrors(true)}
+                  >
+                    View {activeErrorCount === 1 ? 'Error' : 'Errors'}
                   </div>
-                ) : null}
+                </div>
+                <img
+                  onClick={() => setshowReview(false)}
+                  className="cursor-pointer size-4"
+                  src="/icons/close-black.svg"
+                  alt=""
+                />
               </div>
+            ) : null}
+          </div>
           <div
             className={`w-full flex-1 min-h-0 flex flex-col mt-3 gap-2 overflow-hidden ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
           >
@@ -395,8 +401,16 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
           </div>
           <div className={activeMenu !== 'Add Biomarker' ? 'hidden' : ''}>
             <AddBiomarker
-              biomarkers={isEditMode && fileType === 'more_info' ? extractedBiomarkers : addedBiomarkers}
-              rowErrors={isEditMode && fileType === 'more_info' ? rowErrors : AddedRowErrors}
+              biomarkers={
+                isEditMode && fileType === 'more_info'
+                  ? extractedBiomarkers
+                  : addedBiomarkers
+              }
+              rowErrors={
+                isEditMode && fileType === 'more_info'
+                  ? rowErrors
+                  : AddedRowErrors
+              }
               onAddBiomarker={(newBio) => {
                 if (isEditMode && fileType === 'more_info') {
                   setExtractedBiomarkers([...extractedBiomarkers, newBio]);
@@ -407,8 +421,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               onTrashClick={handleTrashClick}
               onConfirm={(index) => {
                 if (isEditMode && fileType === 'more_info') {
-                  setExtractedBiomarkers(extractedBiomarkers.filter((_, i) => i !== index));
-                  
+                  setExtractedBiomarkers(
+                    extractedBiomarkers.filter((_, i) => i !== index),
+                  );
+
                   // Shift row errors to match new positions
                   if (rowErrors) {
                     const newErrors: Record<number, string> = {};
@@ -422,7 +438,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     });
                     setrowErrors(newErrors);
                   }
-                  
+
                   handleCancel();
                 } else {
                   handleConfirm(index);
@@ -430,8 +446,16 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               }}
               onCancel={handleCancel}
               deleteIndex={deleteIndex}
-              dateOfTest={isEditMode && fileType === 'more_info' ? modifiedDateOfTest : addedDateOfTest}
-              setDateOfTest={isEditMode && fileType === 'more_info' ? handleModifiedDateOfTestChange : handleAddedDateOfTestChange}
+              dateOfTest={
+                isEditMode && fileType === 'more_info'
+                  ? modifiedDateOfTest
+                  : addedDateOfTest
+              }
+              setDateOfTest={
+                isEditMode && fileType === 'more_info'
+                  ? handleModifiedDateOfTestChange
+                  : handleAddedDateOfTestChange
+              }
               showOnlyErrors={showOnlyErrors}
               setShowOnlyErrors={setShowOnlyErrors}
             ></AddBiomarker>

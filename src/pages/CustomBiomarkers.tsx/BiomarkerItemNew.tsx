@@ -27,7 +27,10 @@ interface BiomarkerRowProps {
   onOpenMappings: (data: any) => void;
 }
 
-const normalize = (value: any) => String(value || '').trim().toLowerCase();
+const normalize = (value: any) =>
+  String(value || '')
+    .trim()
+    .toLowerCase();
 
 const escapeRegExp = (value: string) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -123,7 +126,8 @@ const BiomarkerRow = ({
   const relevantBiomarkerMapping = useMemo(
     () =>
       biomarkerMappings.find(
-        (mapping) => normalize(mapping?.standard_name) === normalize(biomarkerName),
+        (mapping) =>
+          normalize(mapping?.standard_name) === normalize(biomarkerName),
       ),
     [biomarkerMappings, biomarkerName],
   );
@@ -137,10 +141,7 @@ const BiomarkerRow = ({
     setErrorDetails('');
   };
 
-  const onsave = (
-    values: any,
-    meta: { originalBiomarkerName: string },
-  ) => {
+  const onsave = (values: any, meta: { originalBiomarkerName: string }) => {
     setLoading(true);
     BiomarkersApi.saveBiomarkersList({
       updated_biomarker: values,

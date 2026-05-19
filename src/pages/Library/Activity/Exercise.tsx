@@ -132,7 +132,11 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
               <div className="flex justify-center mt-4">
                 <ButtonSecondary
                   disabled={isDemo}
-                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  title={
+                    isDemo
+                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                      : undefined
+                  }
                   onClick={() => {
                     if (isDemo) return;
                     setShowAdd(true);

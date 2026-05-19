@@ -94,7 +94,8 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
     const joiner = needsLeftSpace ? ' ' : '';
     const nextText = `${before}${joiner}${snippet}${after}`;
     setDraft((d) => (d ? { ...d, formula: nextText } : d));
-    const caret = before.length + joiner.length + snippet.length - cursorOffsetFromEnd;
+    const caret =
+      before.length + joiner.length + snippet.length - cursorOffsetFromEnd;
     window.requestAnimationFrame(() => {
       if (formulaRef.current) {
         formulaRef.current.focus();
@@ -290,7 +291,9 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
                 <label className="flex items-center gap-2 rounded-md border border-Gray-50 px-2 py-1 text-[11px] text-Text-Primary">
                   <input
                     type="checkbox"
-                    checked={draft.use_in_insight ?? draft.use_in_insights ?? false}
+                    checked={
+                      draft.use_in_insight ?? draft.use_in_insights ?? false
+                    }
                     onChange={(e) =>
                       setDraft({
                         ...draft,
@@ -308,9 +311,7 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
                   type="text"
                   placeholder="Unit (optional, e.g. kg/m^2)"
                   value={draft.unit || ''}
-                  onChange={(e) =>
-                    setDraft({ ...draft, unit: e.target.value })
-                  }
+                  onChange={(e) => setDraft({ ...draft, unit: e.target.value })}
                   className="rounded-md border border-Gray-50 px-2 py-1 text-[12px]"
                 />
                 <input
@@ -352,7 +353,10 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
                       onClick={() => {
                         if (chip.snippet === '()') {
                           insertSnippet('()', 1);
-                        } else if (chip.snippet === 'sum()' || chip.snippet === 'avg()') {
+                        } else if (
+                          chip.snippet === 'sum()' ||
+                          chip.snippet === 'avg()'
+                        ) {
                           insertSnippet(chip.snippet, 1);
                         } else if (chip.snippet === 'if_(, , )') {
                           insertSnippet('if_(, , )', 5);

@@ -417,7 +417,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <ButtonSecondary
                   ClassName="w-full md:w-fit"
                   disabled={!resolveCanGenerateNew()}
-                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  title={
+                    isDemo
+                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                      : undefined
+                  }
                   onClick={() => {
                     if (resolveCanGenerateNew() && id) {
                       Application.checkClientRefresh(id)
@@ -546,7 +550,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                                 `/report/Generate-Holistic-Plan/${id}/${card.t_plan_id}?isUpdate=true`,
                               );
                             }}
-                            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                            title={
+                              isDemo
+                                ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                                : undefined
+                            }
                             className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                           >
                             <img src="/icons/edit-green.svg" alt="" />
@@ -558,7 +566,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                               if (isDemo) return;
                               setDeleteConfirmIndex(index);
                             }}
-                            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                            title={
+                              isDemo
+                                ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                                : undefined
+                            }
                             className={`flex w-full items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                           >
                             {deleteConfirmIndex === index ? (

@@ -11,7 +11,11 @@ interface JsonErrorPanelProps {
   onDismiss?: () => void;
 }
 
-const JsonErrorPanel = ({ error, fileName, onDismiss }: JsonErrorPanelProps) => {
+const JsonErrorPanel = ({
+  error,
+  fileName,
+  onDismiss,
+}: JsonErrorPanelProps) => {
   if (!error) return null;
 
   return (

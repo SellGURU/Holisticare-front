@@ -8,7 +8,11 @@ import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
 import { useAdminContext } from '../../store/adminContext';
 import AdminShellLayout from './AdminShellLayout';
-import { buildAnalyticsPayload, formatCompactNumber, formatPercentage } from './adminShared';
+import {
+  buildAnalyticsPayload,
+  formatCompactNumber,
+  formatPercentage,
+} from './adminShared';
 import {
   deleteGeneratedReport,
   getClinicWorkspaceRecord,
@@ -61,7 +65,9 @@ const sectionOptions = [
   'Follow-up actions',
 ];
 
-const defaultComposerState = (selectedClinicEmail: string): ReportComposerState => ({
+const defaultComposerState = (
+  selectedClinicEmail: string,
+): ReportComposerState => ({
   clinicEmails: selectedClinicEmail ? [selectedClinicEmail] : [],
   mode: 'stakeholder_update',
   audience: 'internal_support',
@@ -82,16 +88,26 @@ const downloadMarkdown = (content: string) => {
 };
 
 const toneLead: Record<ReportTone, string> = {
-  neutral: 'This report summarizes the selected clinic activity and support context.',
-  supportive: 'This report highlights recent clinic momentum while keeping support context visible.',
-  action_oriented: 'This report focuses on the signals that need immediate operational follow-up.',
-  executive: 'This report provides a concise leadership view of clinic performance and risk.',
+  neutral:
+    'This report summarizes the selected clinic activity and support context.',
+  supportive:
+    'This report highlights recent clinic momentum while keeping support context visible.',
+  action_oriented:
+    'This report focuses on the signals that need immediate operational follow-up.',
+  executive:
+    'This report provides a concise leadership view of clinic performance and risk.',
 };
 
 const AIReportCopilot = () => {
   const navigate = useNavigate();
-  const { clinics, loadingClinics, refreshClinics, selectedClinicEmail, startDate, endDate } =
-    useAdminContext();
+  const {
+    clinics,
+    loadingClinics,
+    refreshClinics,
+    selectedClinicEmail,
+    startDate,
+    endDate,
+  } = useAdminContext();
   const [loading, setLoading] = useState(false);
   const [savedReports, setSavedReports] = useState<ClinicReport[]>([]);
   const [generatedReport, setGeneratedReport] = useState('');
@@ -117,7 +133,9 @@ const AIReportCopilot = () => {
 
       return {
         ...current,
-        clinicEmails: selectedClinicEmail ? [selectedClinicEmail] : current.clinicEmails,
+        clinicEmails: selectedClinicEmail
+          ? [selectedClinicEmail]
+          : current.clinicEmails,
       };
     });
   }, [selectedClinicEmail]);
@@ -179,11 +197,19 @@ const AIReportCopilot = () => {
 
       const reportParts: string[] = [];
 
-      reportParts.push(`# ${modeOptions.find((item) => item.value === composer.mode)?.label}`);
+      reportParts.push(
+        `# ${modeOptions.find((item) => item.value === composer.mode)?.label}`,
+      );
       reportParts.push('');
-      reportParts.push(`Audience: ${audienceOptions.find((item) => item.value === composer.audience)?.label}`);
-      reportParts.push(`Tone: ${toneOptions.find((item) => item.value === composer.tone)?.label}`);
-      reportParts.push(`Date range: ${startDate || 'All time'} to ${endDate || 'Today'}`);
+      reportParts.push(
+        `Audience: ${audienceOptions.find((item) => item.value === composer.audience)?.label}`,
+      );
+      reportParts.push(
+        `Tone: ${toneOptions.find((item) => item.value === composer.tone)?.label}`,
+      );
+      reportParts.push(
+        `Date range: ${startDate || 'All time'} to ${endDate || 'Today'}`,
+      );
       reportParts.push(`Clinics: ${selectedClinicNames.join(', ')}`);
       reportParts.push('');
       reportParts.push(toneLead[composer.tone]);
@@ -193,8 +219,8 @@ const AIReportCopilot = () => {
         reportParts.push('## KPI Summary');
         analyticsResults.forEach(({ clinicEmail, analytics }) => {
           const clinicName =
-            clinics.find((clinic) => clinic.clinic_email === clinicEmail)?.clinic_name ||
-            clinicEmail;
+            clinics.find((clinic) => clinic.clinic_email === clinicEmail)
+              ?.clinic_name || clinicEmail;
           const completionRate =
             analytics.num_of_questionnaires_assigned > 0
               ? (analytics.num_of_questionnaires_filled /
@@ -218,10 +244,14 @@ const AIReportCopilot = () => {
         reportParts.push('## Issues and Risks');
         analyticsResults.forEach(({ clinicEmail, analytics, workspace }) => {
           const clinicName =
-            clinics.find((clinic) => clinic.clinic_email === clinicEmail)?.clinic_name ||
-            clinicEmail;
-          const openTags = workspace.tags.filter((tag) => tag.status === 'active');
-          const riskNotes = workspace.notes.filter((note) => note.followUpRequired);
+            clinics.find((clinic) => clinic.clinic_email === clinicEmail)
+              ?.clinic_name || clinicEmail;
+          const openTags = workspace.tags.filter(
+            (tag) => tag.status === 'active',
+          );
+          const riskNotes = workspace.notes.filter(
+            (note) => note.followUpRequired,
+          );
           const completionRate =
             analytics.num_of_questionnaires_assigned > 0
               ? (analytics.num_of_questionnaires_filled /
@@ -230,20 +260,26 @@ const AIReportCopilot = () => {
               : 0;
           const risks: string[] = [];
           if (completionRate > 0 && completionRate < 50) {
-            risks.push(`low questionnaire completion at ${formatPercentage(completionRate)}`);
+            risks.push(
+              `low questionnaire completion at ${formatPercentage(completionRate)}`,
+            );
           }
           if (workspace.followUpState === 'escalate') {
             risks.push('follow-up state is set to escalate');
           }
           if (openTags.length > 0) {
-            risks.push(`${openTags.length} active support tags remain unresolved`);
+            risks.push(
+              `${openTags.length} active support tags remain unresolved`,
+            );
           }
           if (riskNotes.length > 0) {
             risks.push(`${riskNotes.length} notes require follow-up`);
           }
           reportParts.push(
             `- ${clinicName}: ${
-              risks.length > 0 ? risks.join('; ') : 'no high-risk issue was flagged in the current workspace state'
+              risks.length > 0
+                ? risks.join('; ')
+                : 'no high-risk issue was flagged in the current workspace state'
             }.`,
           );
         });
@@ -254,17 +290,21 @@ const AIReportCopilot = () => {
         reportParts.push('## Opportunities');
         analyticsResults.forEach(({ clinicEmail, analytics, workspace }) => {
           const clinicName =
-            clinics.find((clinic) => clinic.clinic_email === clinicEmail)?.clinic_name ||
-            clinicEmail;
+            clinics.find((clinic) => clinic.clinic_email === clinicEmail)
+              ?.clinic_name || clinicEmail;
           const opportunityTags = workspace.tags.filter(
             (tag) => tag.tagType === 'opportunity' && tag.status === 'active',
           );
           const positives: string[] = [];
           if ((analytics.num_of_new_clients || 0) > 0) {
-            positives.push(`${analytics.num_of_new_clients} new clients joined in the selected period`);
+            positives.push(
+              `${analytics.num_of_new_clients} new clients joined in the selected period`,
+            );
           }
           if (opportunityTags.length > 0) {
-            positives.push(`${opportunityTags.length} active opportunity tags are on record`);
+            positives.push(
+              `${opportunityTags.length} active opportunity tags are on record`,
+            );
           }
           reportParts.push(
             `- ${clinicName}: ${
@@ -281,13 +321,24 @@ const AIReportCopilot = () => {
         reportParts.push('## Timeline Notes');
         analyticsResults.forEach(({ clinicEmail, workspace }) => {
           const clinicName =
-            clinics.find((clinic) => clinic.clinic_email === clinicEmail)?.clinic_name ||
-            clinicEmail;
+            clinics.find((clinic) => clinic.clinic_email === clinicEmail)
+              ?.clinic_name || clinicEmail;
           const timelineNotes = [...workspace.notes]
-            .sort((first, second) => second.createdAt.localeCompare(first.createdAt))
-            .slice(0, composer.length === 'short' ? 1 : composer.length === 'medium' ? 2 : 4);
+            .sort((first, second) =>
+              second.createdAt.localeCompare(first.createdAt),
+            )
+            .slice(
+              0,
+              composer.length === 'short'
+                ? 1
+                : composer.length === 'medium'
+                  ? 2
+                  : 4,
+            );
           if (timelineNotes.length === 0) {
-            reportParts.push(`- ${clinicName}: no operational notes were saved yet.`);
+            reportParts.push(
+              `- ${clinicName}: no operational notes were saved yet.`,
+            );
             return;
           }
 
@@ -307,8 +358,8 @@ const AIReportCopilot = () => {
         reportParts.push('## Recommended Next Steps');
         analyticsResults.forEach(({ clinicEmail, workspace }) => {
           const clinicName =
-            clinics.find((clinic) => clinic.clinic_email === clinicEmail)?.clinic_name ||
-            clinicEmail;
+            clinics.find((clinic) => clinic.clinic_email === clinicEmail)
+              ?.clinic_name || clinicEmail;
           const recommendation =
             workspace.followUpState === 'escalate'
               ? 'Escalate this clinic to leadership or product review.'
@@ -341,7 +392,9 @@ const AIReportCopilot = () => {
         output,
       });
       setSavedReports(readSavedReports());
-      toast.success(`Report generated for ${savedReport.clinicEmails.length} clinic(s).`);
+      toast.success(
+        `Report generated for ${savedReport.clinicEmails.length} clinic(s).`,
+      );
     } catch (error: any) {
       if (error?.response?.status === 401) {
         handleAuthFailure();
@@ -397,7 +450,9 @@ const AIReportCopilot = () => {
                   >
                     <input
                       type="checkbox"
-                      checked={composer.clinicEmails.includes(clinic.clinic_email)}
+                      checked={composer.clinicEmails.includes(
+                        clinic.clinic_email,
+                      )}
                       onChange={() => toggleClinic(clinic.clinic_email)}
                       className="mt-0.5"
                     />
@@ -405,7 +460,9 @@ const AIReportCopilot = () => {
                       <div className="text-[12px] font-medium text-Text-Primary">
                         {clinic.clinic_name}
                       </div>
-                      <div className="text-[11px] text-Text-Secondary">{clinic.clinic_email}</div>
+                      <div className="text-[11px] text-Text-Secondary">
+                        {clinic.clinic_email}
+                      </div>
                     </div>
                   </label>
                 ))}
@@ -519,14 +576,20 @@ const AIReportCopilot = () => {
               className="mt-4 rounded-full bg-Primary-DeepTeal px-4 py-2 text-[12px] text-white disabled:opacity-50"
             >
               <span className="inline-flex items-center gap-2">
-                {loading ? <RefreshCw size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                {loading ? (
+                  <RefreshCw size={14} className="animate-spin" />
+                ) : (
+                  <Sparkles size={14} />
+                )}
                 Generate report
               </span>
             </button>
           </div>
 
           <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
-            <div className="TextStyle-Headline-5 text-Text-Primary">Saved report history</div>
+            <div className="TextStyle-Headline-5 text-Text-Primary">
+              Saved report history
+            </div>
             <div className="mt-4 space-y-3">
               {savedReports.length > 0 ? (
                 savedReports.slice(0, 8).map((report) => (
@@ -534,10 +597,15 @@ const AIReportCopilot = () => {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="text-[12px] font-medium text-Text-Primary">
-                          {modeOptions.find((item) => item.value === report.mode)?.label}
+                          {
+                            modeOptions.find(
+                              (item) => item.value === report.mode,
+                            )?.label
+                          }
                         </div>
                         <div className="mt-1 text-[11px] text-Text-Secondary">
-                          {report.clinicEmails.length} clinics | {report.createdAt}
+                          {report.clinicEmails.length} clinics |{' '}
+                          {report.createdAt}
                         </div>
                       </div>
                       <button
@@ -588,9 +656,12 @@ const AIReportCopilot = () => {
         <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <div className="TextStyle-Headline-5 text-Text-Primary">Generated output</div>
+              <div className="TextStyle-Headline-5 text-Text-Primary">
+                Generated output
+              </div>
               <div className="mt-1 text-[11px] text-Text-Secondary">
-                The report is generated from KPI data plus the local clinic workspace notes and tags.
+                The report is generated from KPI data plus the local clinic
+                workspace notes and tags.
               </div>
             </div>
             <div className="flex gap-2">

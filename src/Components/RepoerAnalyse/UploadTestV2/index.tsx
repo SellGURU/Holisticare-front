@@ -45,15 +45,15 @@ const steps: Step[] = [
 const preferNonEmpty = (...values: any[]) => {
   const found = values.find(
     (value) =>
-      value !== undefined &&
-      value !== null &&
-      String(value).trim() !== '',
+      value !== undefined && value !== null && String(value).trim() !== '',
   );
   return found ?? '';
 };
 
 const inferBiomarkerTypeFromLabType = (labType?: string) => {
-  const normalized = String(labType || '').trim().toLowerCase();
+  const normalized = String(labType || '')
+    .trim()
+    .toLowerCase();
   if (normalized === 'gut') return 'gut';
   if (normalized === 'dna') return 'dna';
   return 'blood';
@@ -149,9 +149,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const preferNonEmpty = (...values: any[]) => {
       const found = values.find(
         (value) =>
-          value !== undefined &&
-          value !== null &&
-          String(value).trim() !== '',
+          value !== undefined && value !== null && String(value).trim() !== '',
       );
       return found ?? '';
     };
@@ -162,7 +160,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       dateOfTest?: string | null,
     ) => {
       const timestamp =
-        toUtcDateTimestamp(dateOfTest) ?? toUtcDateTimestamp(modifiedDateOfTest);
+        toUtcDateTimestamp(dateOfTest) ??
+        toUtcDateTimestamp(modifiedDateOfTest);
 
       if (!timestamp || biomarkers.length === 0 || labType === 'ultrasound') {
         setRowErrors({});
@@ -258,8 +257,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             b.original_biomarker_name !== undefined
               ? b.original_biomarker_name
               : b.biomarker,
-          original_value:
-            preferNonEmpty(b.original_value, b.value),
+          original_value: preferNonEmpty(b.original_value, b.value),
           original_unit:
             b.original_unit !== undefined ? b.original_unit : b.unit,
         }))
@@ -319,9 +317,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         // Backward-compatibility for older backend builds that still return 206
         // for non-template warnings. The response body still contains valid
         // biomarker data, so process it normally.
-        const errData = err?.extracted_biomarkers !== undefined
-          ? err                          // interceptor threw the body directly
-          : err?.response?.data ?? null; // standard axios error shape
+        const errData =
+          err?.extracted_biomarkers !== undefined
+            ? err // interceptor threw the body directly
+            : (err?.response?.data ?? null); // standard axios error shape
 
         if (errData && errData.extracted_biomarkers !== undefined) {
           await processStepOneData(errData);
@@ -730,7 +729,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       const base = {
         biomarker_id: b.biomarker_id || `${labType}-${index}`,
         biomarker: b.biomarker,
-        biomarker_type: b.biomarker_type || inferBiomarkerTypeFromLabType(labType),
+        biomarker_type:
+          b.biomarker_type || inferBiomarkerTypeFromLabType(labType),
         value: preferNonEmpty(b.original_value, b.value),
         unit: b.unit,
         original_biomarker_name: b.original_biomarker_name,
@@ -762,7 +762,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       row.original_biomarker_name ||
       row.biomarker ||
       `Row ${rowIndex + 1}`;
-    const message = String(item?.display_detail || item?.detail || 'Invalid biomarker');
+    const message = String(
+      item?.display_detail || item?.detail || 'Invalid biomarker',
+    );
 
     if (message.toLowerCase().startsWith(String(name).toLowerCase())) {
       return message;
@@ -789,18 +791,21 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     biomarkers: any[],
     fallbackIndex: number,
   ) => {
-    const errorName = String(
-      item?.extracted_biomarker || item?.biomarker || '',
-    )
+    const errorName = String(item?.extracted_biomarker || item?.biomarker || '')
       .trim()
       .toLowerCase();
-    const errorValue = String(item?.value ?? '').trim().toLowerCase();
-    const errorUnit = String(item?.unit ?? '').trim().toLowerCase();
+    const errorValue = String(item?.value ?? '')
+      .trim()
+      .toLowerCase();
+    const errorUnit = String(item?.unit ?? '')
+      .trim()
+      .toLowerCase();
     const errorBiomarkerId = String(item?.biomarker_id || '').trim();
 
     if (errorBiomarkerId) {
       const idMatchIndex = biomarkers.findIndex(
-        (row: any) => String(row?.biomarker_id || '').trim() === errorBiomarkerId,
+        (row: any) =>
+          String(row?.biomarker_id || '').trim() === errorBiomarkerId,
       );
       if (idMatchIndex !== -1) return idMatchIndex;
     }
@@ -809,23 +814,27 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       const exactMatchIndexes = biomarkers
         .map((row: any, index: number) => ({ row, index }))
         .filter(({ row }: any) => {
-        const rowNames = [
-          row?.original_biomarker_name,
-          row?.biomarker,
-        ].map((name) => String(name || '').trim().toLowerCase());
-        const rowValue = String(preferNonEmpty(row?.original_value, row?.value))
-          .trim()
-          .toLowerCase();
-        const rowUnit = String(row?.original_unit ?? row?.unit ?? '')
-          .trim()
-          .toLowerCase();
+          const rowNames = [row?.original_biomarker_name, row?.biomarker].map(
+            (name) =>
+              String(name || '')
+                .trim()
+                .toLowerCase(),
+          );
+          const rowValue = String(
+            preferNonEmpty(row?.original_value, row?.value),
+          )
+            .trim()
+            .toLowerCase();
+          const rowUnit = String(row?.original_unit ?? row?.unit ?? '')
+            .trim()
+            .toLowerCase();
 
-        return (
-          rowNames.includes(errorName) &&
-          (!errorValue || rowValue === errorValue) &&
-          (!errorUnit || rowUnit === errorUnit)
-        );
-      })
+          return (
+            rowNames.includes(errorName) &&
+            (!errorValue || rowValue === errorValue) &&
+            (!errorUnit || rowUnit === errorUnit)
+          );
+        })
         .map(({ index }: any) => index);
 
       if (exactMatchIndexes.length === 1) return exactMatchIndexes[0];
@@ -834,7 +843,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         .map((row: any, index: number) => ({ row, index }))
         .filter(({ row }: any) =>
           [row?.original_biomarker_name, row?.biomarker]
-            .map((name) => String(name || '').trim().toLowerCase())
+            .map((name) =>
+              String(name || '')
+                .trim()
+                .toLowerCase(),
+            )
             .includes(errorName),
         )
         .map(({ index }: any) => index);
@@ -845,7 +858,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     return Number.isInteger(item?.index) ? item.index : fallbackIndex;
   };
 
-  const applyValidationErrors = (detail: any, contextBiomarkers = extractedBiomarkers) => {
+  const applyValidationErrors = (
+    detail: any,
+    contextBiomarkers = extractedBiomarkers,
+  ) => {
     let parsedDetail: any = {};
 
     if (typeof detail === 'string') {
@@ -936,7 +952,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const autoSaveBiomarkerMappings = async () => {
     if (isDemo) return;
-    const uniqueMappings = new Map<string, { extracted: string; system: string }>();
+    const uniqueMappings = new Map<
+      string,
+      { extracted: string; system: string }
+    >();
 
     extractedBiomarkers.forEach((row: any) => {
       const system = String(row.biomarker || '').trim();
@@ -953,10 +972,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         if (!extracted || extracted.toLowerCase() === system.toLowerCase()) {
           return;
         }
-        uniqueMappings.set(`${extracted.toLowerCase()}|${system.toLowerCase()}`, {
-          extracted,
-          system,
-        });
+        uniqueMappings.set(
+          `${extracted.toLowerCase()}|${system.toLowerCase()}`,
+          {
+            extracted,
+            system,
+          },
+        );
       });
     });
 
@@ -1173,7 +1195,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   </div>
                   <div className="w-full gap-2 flex justify-center mt-[46px] ">
                     <ButtonSecondary
-                      title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                      title={
+                        isDemo
+                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                          : undefined
+                      }
                       onClick={() => {
                         if (isDemo) return;
                         onGenderate('discard');
@@ -1185,7 +1211,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       Discard Changes
                     </ButtonSecondary>
                     <ButtonSecondary
-                      title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                      title={
+                        isDemo
+                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                          : undefined
+                      }
                       style={{
                         // width: '150px',
                         borderRadius: '20px',
@@ -1258,7 +1288,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         if (isDemo) return;
                         setstep(2);
                       }}
-                      title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                      title={
+                        isDemo
+                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                          : undefined
+                      }
                       className={`${isDemo ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {isSaveClicked &&
@@ -1318,7 +1352,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                         publish('QuestionaryTrackingCall', {});
                         // }
                       }}
-                      title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                      title={
+                        isDemo
+                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                          : undefined
+                      }
                       className={`${isDemo ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'} w-full md:w-[477px]  h-[269px] rounded-2xl border p-3 md:p-6 flex flex-col items-center gap-[12px] relative bg-white shadow-100 border-Gray-50`}
                     >
                       {questionnaires.length > 0 && (
@@ -1362,7 +1400,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                   </div>
                   <div className="w-full flex justify-center mt-4">
                     <ButtonSecondary
-                      title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                      title={
+                        isDemo
+                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                          : undefined
+                      }
                       style={{
                         width: '250px',
                         borderRadius: '20px',
@@ -1426,30 +1468,57 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                 }}
                 className="absolute left-0 cursor-pointer size-8 md:size-10 rounded-full p-2 bg-white border border-Gray-50 shadow-100 flex items-center justify-center hover:bg-gray-50"
               >
-                <img src="/icons/arrow-back.svg" className="w-5 h-5" alt="Back" />
+                <img
+                  src="/icons/arrow-back.svg"
+                  className="w-5 h-5"
+                  alt="Back"
+                />
               </div>
               <div className="text-center text-xl md:text-2xl font-semibold text-Text-Primary">
                 Select Input Method
               </div>
             </div>
-            
+
             <div className="flex flex-col md:flex-row gap-6 w-full justify-center px-4 md:px-6">
-                <div onClick={() => {
+              <div
+                onClick={() => {
                   setInitialLabMenu('Upload File');
                   setstep(1);
-                }} className="cursor-pointer bg-white w-full md:w-[350px] h-[240px] rounded-2xl border p-6 flex flex-col items-center justify-center gap-[16px] shadow-100 border-Gray-50 hover:shadow-200 hover:-translate-y-1 transition-all">
-                   <img src="/icons/document-upload-new.svg" className="w-[60px] h-[60px] mb-2" alt="Upload" />
-                   <div className="text-base font-semibold text-Text-Primary">Upload Lab Report</div>
-                   <div className="text-sm text-Text-Secondary mt-1 text-center">Upload a PDF, DOC, DOCX, or image file (PNG/JPG/JPEG/WEBP) to automatically extract biomarkers.</div>
+                }}
+                className="cursor-pointer bg-white w-full md:w-[350px] h-[240px] rounded-2xl border p-6 flex flex-col items-center justify-center gap-[16px] shadow-100 border-Gray-50 hover:shadow-200 hover:-translate-y-1 transition-all"
+              >
+                <img
+                  src="/icons/document-upload-new.svg"
+                  className="w-[60px] h-[60px] mb-2"
+                  alt="Upload"
+                />
+                <div className="text-base font-semibold text-Text-Primary">
+                  Upload Lab Report
                 </div>
-                <div onClick={() => {
+                <div className="text-sm text-Text-Secondary mt-1 text-center">
+                  Upload a PDF, DOC, DOCX, or image file (PNG/JPG/JPEG/WEBP) to
+                  automatically extract biomarkers.
+                </div>
+              </div>
+              <div
+                onClick={() => {
                   setInitialLabMenu('Add Biomarker');
                   setstep(1);
-                }} className="cursor-pointer bg-white w-full md:w-[350px] h-[240px] rounded-2xl border p-6 flex flex-col items-center justify-center gap-[16px] shadow-100 border-Gray-50 hover:shadow-200 hover:-translate-y-1 transition-all">
-                   <img src="/icons/task-square-new.svg" className="w-[60px] h-[60px] mb-2" alt="Manual" />
-                   <div className="text-base font-semibold text-Text-Primary">Enter Manually</div>
-                   <div className="text-sm text-Text-Secondary mt-1 text-center">Type your biomarkers directly into an editable grid.</div>
+                }}
+                className="cursor-pointer bg-white w-full md:w-[350px] h-[240px] rounded-2xl border p-6 flex flex-col items-center justify-center gap-[16px] shadow-100 border-Gray-50 hover:shadow-200 hover:-translate-y-1 transition-all"
+              >
+                <img
+                  src="/icons/task-square-new.svg"
+                  className="w-[60px] h-[60px] mb-2"
+                  alt="Manual"
+                />
+                <div className="text-base font-semibold text-Text-Primary">
+                  Enter Manually
                 </div>
+                <div className="text-sm text-Text-Secondary mt-1 text-center">
+                  Type your biomarkers directly into an editable grid.
+                </div>
+              </div>
             </div>
           </div>
         </div>

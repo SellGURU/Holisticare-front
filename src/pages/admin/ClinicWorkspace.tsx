@@ -17,7 +17,12 @@ import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
 import { useAdminContext } from '../../store/adminContext';
 import AdminShellLayout from './AdminShellLayout';
-import { buildAnalyticsPayload, formatCompactNumber, formatPercentage, summaryCards } from './adminShared';
+import {
+  buildAnalyticsPayload,
+  formatCompactNumber,
+  formatPercentage,
+  summaryCards,
+} from './adminShared';
 import {
   addClinicNote,
   addClinicTag,
@@ -27,10 +32,7 @@ import {
   toggleClinicTagStatus,
   updateClinicNote,
 } from '../../utils/adminWorkspaceStore';
-import {
-  AdminTagType,
-  FollowUpState,
-} from '../../types/admin';
+import { AdminTagType, FollowUpState } from '../../types/admin';
 
 const followUpOptions: Array<{ value: FollowUpState; label: string }> = [
   { value: 'no_action', label: 'No action needed' },
@@ -40,7 +42,11 @@ const followUpOptions: Array<{ value: FollowUpState; label: string }> = [
   { value: 'resolved', label: 'Resolved' },
 ];
 
-const tagTypeOptions: Array<{ value: AdminTagType; label: string; color: string }> = [
+const tagTypeOptions: Array<{
+  value: AdminTagType;
+  label: string;
+  color: string;
+}> = [
   { value: 'sentiment', label: 'At Risk', color: '#FC5474' },
   { value: 'product_issue', label: 'Product Bug', color: '#FF8B3D' },
   { value: 'business_issue', label: 'Staffing Issue', color: '#9E77ED' },
@@ -61,14 +67,12 @@ const noteTemplates = [
 
 const ClinicWorkspace = () => {
   const navigate = useNavigate();
-  const {
-    clinics,
-    loadingClinics,
-    refreshClinics,
-    selectedClinicEmail,
-  } = useAdminContext();
-  const activeClinicEmail = selectedClinicEmail || clinics[0]?.clinic_email || '';
-  const activeClinic = clinics.find((clinic) => clinic.clinic_email === activeClinicEmail) || null;
+  const { clinics, loadingClinics, refreshClinics, selectedClinicEmail } =
+    useAdminContext();
+  const activeClinicEmail =
+    selectedClinicEmail || clinics[0]?.clinic_email || '';
+  const activeClinic =
+    clinics.find((clinic) => clinic.clinic_email === activeClinicEmail) || null;
 
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -77,7 +81,9 @@ const ClinicWorkspace = () => {
   const [noteTitle, setNoteTitle] = useState('');
   const [noteBody, setNoteBody] = useState('');
   const [noteTemplate, setNoteTemplate] = useState('');
-  const [noteVisibility, setNoteVisibility] = useState<'internal' | 'leadership'>('internal');
+  const [noteVisibility, setNoteVisibility] = useState<
+    'internal' | 'leadership'
+  >('internal');
   const [noteFollowUpRequired, setNoteFollowUpRequired] = useState(false);
   const [noteFollowUpDueDate, setNoteFollowUpDueDate] = useState('');
   const [noteTagInput, setNoteTagInput] = useState('');
@@ -132,7 +138,8 @@ const ClinicWorkspace = () => {
   }, [activeClinicEmail]);
 
   const workspace = useMemo(
-    () => (activeClinicEmail ? getClinicWorkspaceRecord(activeClinicEmail) : null),
+    () =>
+      activeClinicEmail ? getClinicWorkspaceRecord(activeClinicEmail) : null,
     [activeClinicEmail, workspaceVersion],
   );
 
@@ -166,14 +173,27 @@ const ClinicWorkspace = () => {
     if ((workspace?.followUpState || 'monitor') === 'escalate') {
       return 'Needs escalation';
     }
-    if (completionRate < 50 || tags.some((tag) => tag.status === 'active' && tag.tagType !== 'opportunity')) {
+    if (
+      completionRate < 50 ||
+      tags.some(
+        (tag) => tag.status === 'active' && tag.tagType !== 'opportunity',
+      )
+    ) {
       return 'Needs support';
     }
-    if ((analytics?.num_of_new_clients || 0) > 0 || tags.some((tag) => tag.tagType === 'opportunity')) {
+    if (
+      (analytics?.num_of_new_clients || 0) > 0 ||
+      tags.some((tag) => tag.tagType === 'opportunity')
+    ) {
       return 'Healthy momentum';
     }
     return 'Stable';
-  }, [analytics?.num_of_new_clients, completionRate, tags, workspace?.followUpState]);
+  }, [
+    analytics?.num_of_new_clients,
+    completionRate,
+    tags,
+    workspace?.followUpState,
+  ]);
 
   const refreshWorkspace = () => setWorkspaceVersion((current) => current + 1);
 
@@ -274,7 +294,10 @@ const ClinicWorkspace = () => {
             className="rounded-full border border-Gray-50 bg-white px-4 py-2 text-[12px] text-Text-Primary"
           >
             <span className="inline-flex items-center gap-2">
-              <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+              <RefreshCw
+                size={14}
+                className={refreshing ? 'animate-spin' : ''}
+              />
               Refresh
             </span>
           </button>
@@ -290,7 +313,8 @@ const ClinicWorkspace = () => {
     >
       {!activeClinicEmail ? (
         <div className="rounded-[20px] border border-Gray-50 bg-white p-6 shadow-100 text-[12px] text-Text-Secondary">
-          Select a clinic from the shared admin filters to start using the workspace.
+          Select a clinic from the shared admin filters to start using the
+          workspace.
         </div>
       ) : (
         <div className="space-y-4">
@@ -303,7 +327,9 @@ const ClinicWorkspace = () => {
                 <div className="mt-1 text-2xl font-semibold text-Text-Primary">
                   {activeClinic?.clinic_name || activeClinicEmail}
                 </div>
-                <div className="mt-1 text-[12px] text-Text-Secondary">{activeClinicEmail}</div>
+                <div className="mt-1 text-[12px] text-Text-Secondary">
+                  {activeClinicEmail}
+                </div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {tags.length > 0 ? (
                     tags.slice(0, 6).map((tag) => (
@@ -311,7 +337,8 @@ const ClinicWorkspace = () => {
                         key={tag.id}
                         className="rounded-full px-3 py-1 text-[11px] font-medium text-white"
                         style={{
-                          backgroundColor: tag.status === 'active' ? tag.color : '#98A2B3',
+                          backgroundColor:
+                            tag.status === 'active' ? tag.color : '#98A2B3',
                         }}
                       >
                         {tag.name}
@@ -330,7 +357,9 @@ const ClinicWorkspace = () => {
                   <div className="text-[11px] uppercase tracking-wide text-Text-Secondary">
                     Clinic state
                   </div>
-                  <div className="mt-1 text-lg font-semibold text-Text-Primary">{healthTone}</div>
+                  <div className="mt-1 text-lg font-semibold text-Text-Primary">
+                    {healthTone}
+                  </div>
                   <div className="mt-1 text-[11px] text-Text-Secondary">
                     Based on completion rate, active tags, and follow-up status.
                   </div>
@@ -341,7 +370,9 @@ const ClinicWorkspace = () => {
                   </div>
                   <select
                     value={workspace?.followUpState || 'monitor'}
-                    onChange={(event) => updateFollowUp(event.target.value as FollowUpState)}
+                    onChange={(event) =>
+                      updateFollowUp(event.target.value as FollowUpState)
+                    }
                     className="mt-2 w-full rounded-2xl border border-Gray-50 bg-white px-3 py-2 text-[12px] outline-none"
                   >
                     {followUpOptions.map((option) => (
@@ -357,7 +388,10 @@ const ClinicWorkspace = () => {
 
           <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
             {summaryCards.slice(0, 4).map((card) => (
-              <div key={card.key} className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
+              <div
+                key={card.key}
+                className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100"
+              >
                 <div className="text-[11px] uppercase tracking-wide text-Text-Secondary">
                   {card.label}
                 </div>
@@ -417,7 +451,9 @@ const ClinicWorkspace = () => {
                   <select
                     value={noteVisibility}
                     onChange={(event) =>
-                      setNoteVisibility(event.target.value as 'internal' | 'leadership')
+                      setNoteVisibility(
+                        event.target.value as 'internal' | 'leadership',
+                      )
                     }
                     className="rounded-2xl border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] outline-none"
                   >
@@ -428,14 +464,18 @@ const ClinicWorkspace = () => {
                     <input
                       type="checkbox"
                       checked={noteFollowUpRequired}
-                      onChange={(event) => setNoteFollowUpRequired(event.target.checked)}
+                      onChange={(event) =>
+                        setNoteFollowUpRequired(event.target.checked)
+                      }
                     />
                     Follow-up required
                   </label>
                   <input
                     type="date"
                     value={noteFollowUpDueDate}
-                    onChange={(event) => setNoteFollowUpDueDate(event.target.value)}
+                    onChange={(event) =>
+                      setNoteFollowUpDueDate(event.target.value)
+                    }
                     className="rounded-2xl border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] outline-none"
                   />
                 </div>
@@ -453,9 +493,12 @@ const ClinicWorkspace = () => {
               <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <div className="TextStyle-Headline-5 text-Text-Primary">Notes and timeline</div>
+                    <div className="TextStyle-Headline-5 text-Text-Primary">
+                      Notes and timeline
+                    </div>
                     <div className="mt-1 text-[11px] text-Text-Secondary">
-                      Operational memory for future support reviews and stakeholder updates.
+                      Operational memory for future support reviews and
+                      stakeholder updates.
                     </div>
                   </div>
                   <div className="grid gap-2 md:grid-cols-2">
@@ -467,7 +510,9 @@ const ClinicWorkspace = () => {
                     />
                     <select
                       value={visibilityFilter}
-                      onChange={(event) => setVisibilityFilter(event.target.value)}
+                      onChange={(event) =>
+                        setVisibilityFilter(event.target.value)
+                      }
                       className="rounded-2xl border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] outline-none"
                     >
                       <option value="all">All visibility</option>
@@ -480,27 +525,43 @@ const ClinicWorkspace = () => {
                 <div className="mt-4 space-y-3">
                   {filteredNotes.length > 0 ? (
                     filteredNotes.map((note) => (
-                      <div key={note.id} className="rounded-2xl border border-Gray-50 bg-[#F8FAFB] p-4">
+                      <div
+                        key={note.id}
+                        className="rounded-2xl border border-Gray-50 bg-[#F8FAFB] p-4"
+                      >
                         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                           <div>
                             <div className="flex items-center gap-2">
                               <div className="text-[12px] font-semibold text-Text-Primary">
                                 {note.title}
                               </div>
-                              {note.pinned && <Pin size={12} className="text-Primary-DeepTeal" />}
+                              {note.pinned && (
+                                <Pin
+                                  size={12}
+                                  className="text-Primary-DeepTeal"
+                                />
+                              )}
                             </div>
                             <div className="mt-1 text-[11px] text-Text-Secondary">
-                              {format(new Date(note.createdAt), 'MMM dd, yyyy HH:mm')} by {note.author}
+                              {format(
+                                new Date(note.createdAt),
+                                'MMM dd, yyyy HH:mm',
+                              )}{' '}
+                              by {note.author}
                             </div>
                           </div>
                           <div className="flex gap-2">
                             <button
                               type="button"
                               onClick={() => {
-                                updateClinicNote(activeClinicEmail, note.id, (currentNote) => ({
-                                  ...currentNote,
-                                  pinned: !currentNote.pinned,
-                                }));
+                                updateClinicNote(
+                                  activeClinicEmail,
+                                  note.id,
+                                  (currentNote) => ({
+                                    ...currentNote,
+                                    pinned: !currentNote.pinned,
+                                  }),
+                                );
                                 refreshWorkspace();
                               }}
                               className="rounded-full border border-Gray-50 bg-white px-3 py-1 text-[11px] text-Text-Primary"
@@ -522,7 +583,9 @@ const ClinicWorkspace = () => {
                             </button>
                           </div>
                         </div>
-                        <div className="mt-3 text-[12px] leading-6 text-Text-Primary">{note.body}</div>
+                        <div className="mt-3 text-[12px] leading-6 text-Text-Primary">
+                          {note.body}
+                        </div>
                         <div className="mt-3 flex flex-wrap gap-2">
                           {note.tags.map((tag) => (
                             <span
@@ -533,11 +596,14 @@ const ClinicWorkspace = () => {
                             </span>
                           ))}
                           <span className="rounded-full bg-white px-3 py-1 text-[11px] text-Text-Secondary">
-                            {note.visibility === 'internal' ? 'Internal' : 'Leadership visible'}
+                            {note.visibility === 'internal'
+                              ? 'Internal'
+                              : 'Leadership visible'}
                           </span>
                           {note.followUpRequired && (
                             <span className="rounded-full bg-white px-3 py-1 text-[11px] text-Text-Primary">
-                              Follow-up by {note.followUpDueDate || 'No due date'}
+                              Follow-up by{' '}
+                              {note.followUpDueDate || 'No due date'}
                             </span>
                           )}
                         </div>
@@ -567,7 +633,9 @@ const ClinicWorkspace = () => {
                   />
                   <select
                     value={newTagType}
-                    onChange={(event) => setNewTagType(event.target.value as AdminTagType)}
+                    onChange={(event) =>
+                      setNewTagType(event.target.value as AdminTagType)
+                    }
                     className="rounded-2xl border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] outline-none"
                   >
                     {tagTypeOptions.map((option) => (
@@ -587,7 +655,10 @@ const ClinicWorkspace = () => {
                 <div className="mt-4 space-y-3">
                   {tags.length > 0 ? (
                     tags.map((tag) => (
-                      <div key={tag.id} className="rounded-2xl bg-[#F8FAFB] p-4">
+                      <div
+                        key={tag.id}
+                        className="rounded-2xl bg-[#F8FAFB] p-4"
+                      >
                         <div className="flex items-center justify-between gap-3">
                           <div>
                             <div className="flex items-center gap-2">
@@ -625,12 +696,16 @@ const ClinicWorkspace = () => {
               </div>
 
               <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
-                <div className="TextStyle-Headline-5 text-Text-Primary">Support health summary</div>
+                <div className="TextStyle-Headline-5 text-Text-Primary">
+                  Support health summary
+                </div>
                 <div className="mt-4 space-y-3">
                   <div className="rounded-2xl bg-[#F8FAFB] p-4">
                     <div className="flex items-center gap-2 text-Text-Primary">
                       <CheckCircle2 size={16} />
-                      <div className="text-[12px] font-medium">Questionnaire completion</div>
+                      <div className="text-[12px] font-medium">
+                        Questionnaire completion
+                      </div>
                     </div>
                     <div className="mt-2 text-2xl font-semibold text-Text-Primary">
                       {formatPercentage(completionRate)}
@@ -639,13 +714,17 @@ const ClinicWorkspace = () => {
                   <div className="rounded-2xl bg-[#F8FAFB] p-4">
                     <div className="flex items-center gap-2 text-Text-Primary">
                       <AlertCircle size={16} />
-                      <div className="text-[12px] font-medium">Open follow-up signals</div>
+                      <div className="text-[12px] font-medium">
+                        Open follow-up signals
+                      </div>
                     </div>
                     <div className="mt-2 text-2xl font-semibold text-Text-Primary">
-                      {notes.filter((note) => note.followUpRequired).length + tags.filter((tag) => tag.status === 'active').length}
+                      {notes.filter((note) => note.followUpRequired).length +
+                        tags.filter((tag) => tag.status === 'active').length}
                     </div>
                     <div className="mt-1 text-[11px] text-Text-Secondary">
-                      Counts follow-up notes and active tags that still need attention.
+                      Counts follow-up notes and active tags that still need
+                      attention.
                     </div>
                   </div>
                 </div>

@@ -199,7 +199,9 @@ const LlmPromptCatalog = () => {
       const data: PromptRow = res.data;
       setEditor({ ...data });
       setToolsText(
-        data.tools_json == null ? 'null' : JSON.stringify(data.tools_json, null, 2),
+        data.tools_json == null
+          ? 'null'
+          : JSON.stringify(data.tools_json, null, 2),
       );
       setToolsError('');
       setExtraText(
@@ -274,7 +276,9 @@ const LlmPromptCatalog = () => {
       const updated: PromptRow = res.data;
       setEditor({ ...updated });
       setToolsText(
-        updated.tools_json == null ? 'null' : JSON.stringify(updated.tools_json, null, 2),
+        updated.tools_json == null
+          ? 'null'
+          : JSON.stringify(updated.tools_json, null, 2),
       );
       setExtraText(
         updated.extra_settings_json == null
@@ -303,7 +307,10 @@ const LlmPromptCatalog = () => {
     setToggling(true);
     try {
       const res = await AdminApi.toggleLlmPrompt(editor.key, !editor.is_active);
-      setEditor({ ...editor, is_active: res.data?.is_active ?? !editor.is_active });
+      setEditor({
+        ...editor,
+        is_active: res.data?.is_active ?? !editor.is_active,
+      });
       await loadList();
     } catch (err: any) {
       if (err?.response?.status === 401) handleAuthFailure();
@@ -521,7 +528,8 @@ const LlmPromptCatalog = () => {
         <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
           {!editor ? (
             <div className="flex h-full min-h-[500px] items-center justify-center text-[12px] text-Text-Secondary">
-              Pick a prompt on the left to edit its system prompt, model and tools.
+              Pick a prompt on the left to edit its system prompt, model and
+              tools.
             </div>
           ) : (
             <div className="space-y-4">
@@ -618,9 +626,10 @@ const LlmPromptCatalog = () => {
 
               {!editorHasContent && (
                 <div className="rounded-[14px] border border-amber-200 bg-amber-50 px-3 py-3 text-[11px] text-amber-800">
-                  This key does not have a DB override yet. The fields below are showing the
-                  currently active prompt text resolved from code, and saving here will convert it
-                  into the new admin-managed source of truth for this key.
+                  This key does not have a DB override yet. The fields below are
+                  showing the currently active prompt text resolved from code,
+                  and saving here will convert it into the new admin-managed
+                  source of truth for this key.
                 </div>
               )}
 
@@ -643,10 +652,14 @@ const LlmPromptCatalog = () => {
                 </div>
                 <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                   <div>
-                    <label className="text-[11px] text-Text-Secondary">Model tier</label>
+                    <label className="text-[11px] text-Text-Secondary">
+                      Model tier
+                    </label>
                     <select
                       value={editor.model_tier || ''}
-                      onChange={(e) => patchEditor({ model_tier: e.target.value })}
+                      onChange={(e) =>
+                        patchEditor({ model_tier: e.target.value })
+                      }
                       className="mt-1 w-full rounded-[10px] border border-Gray-50 bg-white px-2 py-1.5 text-[12px]"
                     >
                       {TIER_OPTIONS.map((t) => (
@@ -688,7 +701,9 @@ const LlmPromptCatalog = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[11px] text-Text-Secondary">Temperature</label>
+                    <label className="text-[11px] text-Text-Secondary">
+                      Temperature
+                    </label>
                     <input
                       type="number"
                       step="0.05"
@@ -698,7 +713,9 @@ const LlmPromptCatalog = () => {
                       onChange={(e) =>
                         patchEditor({
                           temperature:
-                            e.target.value === '' ? null : Number(e.target.value),
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
                         })
                       }
                       placeholder="auto"
@@ -706,7 +723,9 @@ const LlmPromptCatalog = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] text-Text-Secondary">top_p</label>
+                    <label className="text-[11px] text-Text-Secondary">
+                      top_p
+                    </label>
                     <input
                       type="number"
                       step="0.01"
@@ -715,7 +734,10 @@ const LlmPromptCatalog = () => {
                       value={editor.top_p ?? ''}
                       onChange={(e) =>
                         patchEditor({
-                          top_p: e.target.value === '' ? null : Number(e.target.value),
+                          top_p:
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
                         })
                       }
                       placeholder="auto"
@@ -723,7 +745,9 @@ const LlmPromptCatalog = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] text-Text-Secondary">max_tokens</label>
+                    <label className="text-[11px] text-Text-Secondary">
+                      max_tokens
+                    </label>
                     <input
                       type="number"
                       min="0"
@@ -747,7 +771,9 @@ const LlmPromptCatalog = () => {
                     <select
                       value={editor.reasoning_effort || ''}
                       onChange={(e) =>
-                        patchEditor({ reasoning_effort: e.target.value || null })
+                        patchEditor({
+                          reasoning_effort: e.target.value || null,
+                        })
                       }
                       className="mt-1 w-full rounded-[10px] border border-Gray-50 bg-white px-2 py-1.5 text-[12px]"
                     >
@@ -801,11 +827,15 @@ const LlmPromptCatalog = () => {
                   </span>
                 </div>
                 <div className="mt-3">
-                  <label className="text-[11px] text-Text-Secondary">System prompt</label>
+                  <label className="text-[11px] text-Text-Secondary">
+                    System prompt
+                  </label>
                 </div>
                 <textarea
                   value={editor.system_prompt || ''}
-                  onChange={(e) => patchEditor({ system_prompt: e.target.value })}
+                  onChange={(e) =>
+                    patchEditor({ system_prompt: e.target.value })
+                  }
                   spellCheck={false}
                   className="mt-2 min-h-[240px] w-full resize-y rounded-[12px] border border-Gray-50 bg-[#0F172A] p-3 font-mono text-[12px] text-[#E2E8F0] outline-none"
                   placeholder="Edit the live system prompt text for this key…"
@@ -886,7 +916,8 @@ const LlmPromptCatalog = () => {
                       <span className="text-red-500">{toolsError}</span>
                     ) : (
                       <span className="text-Text-Secondary">
-                        Accepts <code>null</code> or a JSON array of OpenAI tool definitions.
+                        Accepts <code>null</code> or a JSON array of OpenAI tool
+                        definitions.
                       </span>
                     )}
                   </div>
@@ -932,7 +963,8 @@ const LlmPromptCatalog = () => {
                       <span className="text-red-500">{extraError}</span>
                     ) : (
                       <span className="text-Text-Secondary">
-                        Free-form JSON. Accessible via <code>PromptConfig.extra</code>.
+                        Free-form JSON. Accessible via{' '}
+                        <code>PromptConfig.extra</code>.
                       </span>
                     )}
                   </div>
@@ -947,8 +979,9 @@ const LlmPromptCatalog = () => {
                     <div className="TextStyle-Headline-6">Test console</div>
                   </div>
                   <div className="mt-1 text-[11px] text-Text-Secondary">
-                    Dry-run preview. Returns the resolved messages, model settings and tool payload the backend
-                    would send — no LLM call is made, so test safely.
+                    Dry-run preview. Returns the resolved messages, model
+                    settings and tool payload the backend would send — no LLM
+                    call is made, so test safely.
                   </div>
                   <textarea
                     value={testUserInput}

@@ -105,7 +105,9 @@ export function toCoverageDetails(
 }
 
 /** Extract a map of issue text → category key from a type2 structure. */
-export function extractCategoryMap(type2: KeyAreasType2): Record<string, string> {
+export function extractCategoryMap(
+  type2: KeyAreasType2,
+): Record<string, string> {
   const map: Record<string, string> = {};
   const keyAreas = type2['Key areas to address'] || {};
   for (const cat of CATEGORY_ORDER) {

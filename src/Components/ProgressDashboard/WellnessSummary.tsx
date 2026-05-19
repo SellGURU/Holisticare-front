@@ -83,12 +83,16 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
   const series = analytics?.series ?? [];
 
   const metricKeys = useMemo(() => {
-    return Object.keys(metricDetails).filter((metricKey) => metricKey !== 'global_score');
+    return Object.keys(metricDetails).filter(
+      (metricKey) => metricKey !== 'global_score',
+    );
   }, [metricDetails]);
 
   const globalScore = summary?.average_global_score ?? null;
   const globalScoreValue =
-    typeof globalScore === 'number' ? Math.max(0, Math.min(100, globalScore)) : 0;
+    typeof globalScore === 'number'
+      ? Math.max(0, Math.min(100, globalScore))
+      : 0;
   const lastSyncText = summary?.latest_sync
     ? formatRelativeDate(summary.latest_sync)
     : 'No sync date available';
@@ -98,7 +102,8 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
       const values = series.map((point) => point.scores?.[metricKey] ?? null);
       return {
         metricKey,
-        label: metricDetails[metricKey]?.label ?? getMetricVisual(metricKey).label,
+        label:
+          metricDetails[metricKey]?.label ?? getMetricVisual(metricKey).label,
         average: metricDetails[metricKey]?.average ?? null,
         trend: describeRangeTrend(values),
         spread: calculateRangeSpread(values),
@@ -107,11 +112,17 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
 
     const weakestMetric = metricsWithSeries
       .filter((metric) => metric.average != null)
-      .sort((firstMetric, secondMetric) => (firstMetric.average ?? 0) - (secondMetric.average ?? 0))[0];
+      .sort(
+        (firstMetric, secondMetric) =>
+          (firstMetric.average ?? 0) - (secondMetric.average ?? 0),
+      )[0];
 
     const steadiestMetric = metricsWithSeries
       .filter((metric) => metric.spread != null)
-      .sort((firstMetric, secondMetric) => (firstMetric.spread ?? Infinity) - (secondMetric.spread ?? Infinity))[0];
+      .sort(
+        (firstMetric, secondMetric) =>
+          (firstMetric.spread ?? Infinity) - (secondMetric.spread ?? Infinity),
+      )[0];
 
     return {
       weakestMetric,
@@ -127,7 +138,9 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="text-xl font-semibold text-slate-900">Wellness Summary</h2>
+            <h2 className="text-xl font-semibold text-slate-900">
+              Wellness Summary
+            </h2>
             {summary && (
               <>
                 <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
@@ -143,7 +156,8 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
             )}
           </div>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-            Period averages, score movement, and wearable-led insights across the selected timeframe.
+            Period averages, score movement, and wearable-led insights across
+            the selected timeframe.
           </p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
@@ -153,10 +167,14 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
       </div>
 
       {loading ? (
-        <div className="py-16 text-center text-slate-400">Loading wellness analytics...</div>
+        <div className="py-16 text-center text-slate-400">
+          Loading wellness analytics...
+        </div>
       ) : !analytics || !summary ? (
         <div className="py-16 text-center">
-          <div className="text-lg text-slate-400">No wellness data available</div>
+          <div className="text-lg text-slate-400">
+            No wellness data available
+          </div>
           <div className="mt-2 text-sm text-slate-300">
             Wellness summary will appear here once score data is available.
           </div>
@@ -165,7 +183,9 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
         <div className="mt-6 space-y-6">
           <div className="grid gap-4 xl:grid-cols-[280px,1fr]">
             <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-5">
-              <div className="text-sm font-medium text-slate-600">Average Global Score</div>
+              <div className="text-sm font-medium text-slate-600">
+                Average Global Score
+              </div>
               <div className="mt-4 flex justify-center">
                 <CircularGauge
                   value={globalScoreValue}
@@ -193,7 +213,10 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
               />
               <InsightCard
                 title="Strongest Domain"
-                value={analytics.insights.strongest_domain?.label ?? 'No dominant metric yet'}
+                value={
+                  analytics.insights.strongest_domain?.label ??
+                  'No dominant metric yet'
+                }
                 description={
                   analytics.insights.strongest_domain
                     ? `${analytics.insights.strongest_domain.value}/100 average across the selected range.`
@@ -203,7 +226,8 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
               <InsightCard
                 title="Needs Attention"
                 value={
-                  currentRangeInsights.weakestMetric?.label ?? 'No weak spot yet'
+                  currentRangeInsights.weakestMetric?.label ??
+                  'No weak spot yet'
                 }
                 description={
                   currentRangeInsights.weakestMetric?.average != null
@@ -267,8 +291,12 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
                     <div className="mt-5 flex items-end justify-between gap-3">
                       <div>
                         <div className="text-3xl font-semibold text-slate-900">
-                          {metric.average != null ? metric.average.toFixed(1) : '--'}
-                          <span className="ml-1 text-lg text-slate-400">/100</span>
+                          {metric.average != null
+                            ? metric.average.toFixed(1)
+                            : '--'}
+                          <span className="ml-1 text-lg text-slate-400">
+                            /100
+                          </span>
                         </div>
                         <div
                           className={`mt-1 text-sm font-medium ${
@@ -283,14 +311,23 @@ const WellnessSummary: React.FC<WellnessSummaryProps> = ({
                         </div>
                       </div>
                       <div className="min-w-[110px] flex-1">
-                        <Sparkline values={sparklineValues} color={visual.color} />
+                        <Sparkline
+                          values={sparklineValues}
+                          color={visual.color}
+                        />
                       </div>
                     </div>
 
                     <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
-                      <span>Latest: {metric.current != null ? metric.current.toFixed(1) : '--'}</span>
                       <span>
-                        {currentRangeInsights.steadiestMetric?.metricKey === metricKey
+                        Latest:{' '}
+                        {metric.current != null
+                          ? metric.current.toFixed(1)
+                          : '--'}
+                      </span>
+                      <span>
+                        {currentRangeInsights.steadiestMetric?.metricKey ===
+                        metricKey
                           ? 'Most stable'
                           : `${metric.coverage_days} active days`}
                       </span>

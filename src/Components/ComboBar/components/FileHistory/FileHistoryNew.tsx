@@ -88,7 +88,11 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
             });
             handleCloseSlideOutPanel();
           }}
-          title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+          title={
+            isDemo
+              ? 'Demo version cannot add or edit data. Upgrade for full access.'
+              : undefined
+          }
           className={`mb-3 text-[14px] flex justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${isDemo ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           <img className="w-5 h-5" src="/icons/add-blue.svg" alt="" />

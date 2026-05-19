@@ -17,7 +17,15 @@ import DefaultData from './default.json';
 type SortKey = 'Biomarker' | 'Benchmark areas' | 'biomarker_type' | 'unit';
 type SortDirection = 'asc' | 'desc';
 
-const DEFAULT_BIOMARKER_TYPES = ['blood', 'urine', 'dna', 'gut', 'saliva', 'stool', 'other'];
+const DEFAULT_BIOMARKER_TYPES = [
+  'blood',
+  'urine',
+  'dna',
+  'gut',
+  'saliva',
+  'stool',
+  'other',
+];
 const BIOMARKER_TYPE_LABELS: Record<string, string> = {
   blood: 'Blood',
   urine: 'Urine',
@@ -46,9 +54,7 @@ const getFieldValue = (item: any, key: SortKey) =>
 const getUniqueOptions = (items: any[], key: string) =>
   Array.from(
     new Set(
-      items
-        .map((item) => String(item?.[key] || '').trim())
-        .filter(Boolean),
+      items.map((item) => String(item?.[key] || '').trim()).filter(Boolean),
     ),
   ).sort((a, b) => a.localeCompare(b));
 
@@ -65,13 +71,17 @@ const CustomBiomarkers = () => {
   const [activeAdd, setActiveAdd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorDetails, setErrorDetails] = useState<string>('');
-  const [selectedChartBiomarker, setSelectedChartBiomarker] = useState<any>(null);
-  const [selectedMappingBiomarker, setSelectedMappingBiomarker] = useState<any>(null);
+  const [selectedChartBiomarker, setSelectedChartBiomarker] =
+    useState<any>(null);
+  const [selectedMappingBiomarker, setSelectedMappingBiomarker] =
+    useState<any>(null);
 
   const [unitMappingData, setUnitMappingData] = useState<any>(null);
   const [unitMappings, setUnitMappings] = useState<any[]>([]);
   const [biomarkerMappings, setBiomarkerMappings] = useState<any[]>([]);
-  const [biomarkerTypes, setBiomarkerTypes] = useState<string[]>(DEFAULT_BIOMARKER_TYPES);
+  const [biomarkerTypes, setBiomarkerTypes] = useState<string[]>(
+    DEFAULT_BIOMARKER_TYPES,
+  );
 
   const changeBiomarkersValue = (values: any) => {
     setBiomarkers(values);
@@ -237,7 +247,8 @@ const CustomBiomarkers = () => {
       }))
       .filter(({ item, score }) => {
         if (score <= 0) return false;
-        if (panelFilter && item?.['Benchmark areas'] !== panelFilter) return false;
+        if (panelFilter && item?.['Benchmark areas'] !== panelFilter)
+          return false;
         if (typeFilter && item?.biomarker_type !== typeFilter) return false;
         return true;
       })
@@ -290,7 +301,9 @@ const CustomBiomarkers = () => {
     >
       {label}
       {sortKey === key ? (
-        <span className="text-[9px]">{sortDirection === 'asc' ? '^' : 'v'}</span>
+        <span className="text-[9px]">
+          {sortDirection === 'asc' ? '^' : 'v'}
+        </span>
       ) : null}
     </button>
   );
@@ -332,7 +345,8 @@ const CustomBiomarkers = () => {
                 Custom Biomarkers
               </div>
               <div className="mt-0.5 text-[10px] text-Text-Secondary">
-                Showing {filteredBiomarkers.length} of {biomarkers.length} biomarkers
+                Showing {filteredBiomarkers.length} of {biomarkers.length}{' '}
+                biomarkers
               </div>
             </div>
 
@@ -414,27 +428,31 @@ const CustomBiomarkers = () => {
                 <span className="text-right">Actions</span>
               </div>
 
-              {filteredBiomarkerEntries.map(({ item: value, originalIndex }, index: number) => (
-                <BiomarkerRow
-                  key={`${value?.Biomarker || 'biomarker'}-${originalIndex}`}
-                  rowIndex={index}
-                  biomarkerIndex={originalIndex}
-                  data={value}
-                  biomarkers={biomarkers}
-                  changeBiomarkersValue={changeBiomarkersValue}
-                  searchTerm={searchValue}
-                  benchmarkAreaOptions={benchmarkAreaOptions}
-                  benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
-                  biomarkerTypeOptions={biomarkerTypeOptions}
-                  formatBiomarkerTypeLabel={formatBiomarkerTypeLabel}
-                  unitMappings={unitMappings}
-                  biomarkerMappings={biomarkerMappings}
-                  onUnitMappingsLocalChange={handleUnitMappingsLocalChange}
-                  onBiomarkerMappingsLocalChange={handleBiomarkerMappingsLocalChange}
-                  onOpenChart={setSelectedChartBiomarker}
-                  onOpenMappings={setSelectedMappingBiomarker}
-                />
-              ))}
+              {filteredBiomarkerEntries.map(
+                ({ item: value, originalIndex }, index: number) => (
+                  <BiomarkerRow
+                    key={`${value?.Biomarker || 'biomarker'}-${originalIndex}`}
+                    rowIndex={index}
+                    biomarkerIndex={originalIndex}
+                    data={value}
+                    biomarkers={biomarkers}
+                    changeBiomarkersValue={changeBiomarkersValue}
+                    searchTerm={searchValue}
+                    benchmarkAreaOptions={benchmarkAreaOptions}
+                    benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
+                    biomarkerTypeOptions={biomarkerTypeOptions}
+                    formatBiomarkerTypeLabel={formatBiomarkerTypeLabel}
+                    unitMappings={unitMappings}
+                    biomarkerMappings={biomarkerMappings}
+                    onUnitMappingsLocalChange={handleUnitMappingsLocalChange}
+                    onBiomarkerMappingsLocalChange={
+                      handleBiomarkerMappingsLocalChange
+                    }
+                    onOpenChart={setSelectedChartBiomarker}
+                    onOpenMappings={setSelectedMappingBiomarker}
+                  />
+                ),
+              )}
 
               {filteredBiomarkers.length === 0 && (
                 <div className="flex min-h-[320px] min-w-[1000px] flex-col items-center justify-center gap-2">

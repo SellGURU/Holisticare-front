@@ -291,7 +291,11 @@ const Activity = () => {
               {active === 'Exercise' && (
                 <ButtonSecondary
                   disabled={isDemo}
-                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  title={
+                    isDemo
+                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                      : undefined
+                  }
                   onClick={() => {
                     if (isDemo) return;
                     setShowAdd(true);
@@ -307,7 +311,11 @@ const Activity = () => {
               {active === 'Activity' && (
                 <ButtonSecondary
                   disabled={isDemo}
-                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  title={
+                    isDemo
+                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                      : undefined
+                  }
                   onClick={() => {
                     if (isDemo) return;
                     setShowAddActivity(true);

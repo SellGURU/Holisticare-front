@@ -179,8 +179,8 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path:'/check',
-    element:<App></App>
+    path: '/check',
+    element: <App></App>,
   },
   {
     path: '/share/:id/:name',
@@ -212,7 +212,9 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin/explorer',
-    element: <AdminProtectedRoute Component={DataExplorer}></AdminProtectedRoute>,
+    element: (
+      <AdminProtectedRoute Component={DataExplorer}></AdminProtectedRoute>
+    ),
   },
   {
     path: '/admin/workspace',
@@ -228,7 +230,9 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin/config',
-    element: <AdminProtectedRoute Component={AdminConfig}></AdminProtectedRoute>,
+    element: (
+      <AdminProtectedRoute Component={AdminConfig}></AdminProtectedRoute>
+    ),
   },
   {
     path: '/admin/clinics',

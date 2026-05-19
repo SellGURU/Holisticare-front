@@ -33,7 +33,12 @@ import {
   getChangeTone,
   summaryCards,
 } from './adminShared';
-import { aggregateRoutes, flattenEvents, parseSessions, summariseEventsByDay } from '../../utils/sessionParser';
+import {
+  aggregateRoutes,
+  flattenEvents,
+  parseSessions,
+  summariseEventsByDay,
+} from '../../utils/sessionParser';
 
 ChartJS.register(
   LineElement,
@@ -73,7 +78,11 @@ const OverviewDashboard = () => {
 
     try {
       await AdminApi.checkAuth();
-      const currentPayload = buildAnalyticsPayload(selectedClinicEmail, startDate, endDate);
+      const currentPayload = buildAnalyticsPayload(
+        selectedClinicEmail,
+        startDate,
+        endDate,
+      );
       const previousRange = buildPreviousRange(startDate, endDate);
 
       const requests = [AdminApi.getAnalytics(currentPayload)];
@@ -113,9 +122,18 @@ const OverviewDashboard = () => {
     () => parseSessions(analytics?.sessions || []),
     [analytics?.sessions],
   );
-  const allEvents = useMemo(() => flattenEvents(parsedSessions), [parsedSessions]);
-  const dailySummary = useMemo(() => summariseEventsByDay(allEvents), [allEvents]);
-  const routeSummary = useMemo(() => aggregateRoutes(parsedSessions).slice(0, 5), [parsedSessions]);
+  const allEvents = useMemo(
+    () => flattenEvents(parsedSessions),
+    [parsedSessions],
+  );
+  const dailySummary = useMemo(
+    () => summariseEventsByDay(allEvents),
+    [allEvents],
+  );
+  const routeSummary = useMemo(
+    () => aggregateRoutes(parsedSessions).slice(0, 5),
+    [parsedSessions],
+  );
 
   const chartData = useMemo(
     () => ({
@@ -198,7 +216,11 @@ const OverviewDashboard = () => {
   }, [analytics]);
 
   const alerts = useMemo(() => {
-    const nextAlerts: Array<{ title: string; detail: string; tone: keyof typeof toneClasses }> = [];
+    const nextAlerts: Array<{
+      title: string;
+      detail: string;
+      tone: keyof typeof toneClasses;
+    }> = [];
 
     if (completionRate > 0 && completionRate < 50) {
       nextAlerts.push({
@@ -222,7 +244,8 @@ const OverviewDashboard = () => {
     if ((analytics?.num_of_new_clients || 0) === 0) {
       nextAlerts.push({
         title: 'No new clients captured',
-        detail: 'This period returned zero newly added clients. Validate campaign or onboarding status.',
+        detail:
+          'This period returned zero newly added clients. Validate campaign or onboarding status.',
         tone: 'neutral',
       });
     }
@@ -253,7 +276,9 @@ const OverviewDashboard = () => {
       },
       {
         label: 'Unique support users',
-        value: formatCompactNumber(new Set(parsedSessions.map((session) => session.userId)).size),
+        value: formatCompactNumber(
+          new Set(parsedSessions.map((session) => session.userId)).size,
+        ),
         helper: 'Distinct browser/user identifiers seen in activity logs',
       },
       {
@@ -305,7 +330,10 @@ const OverviewDashboard = () => {
             className="rounded-full border border-Gray-50 bg-white px-4 py-2 text-[12px] text-Text-Primary"
           >
             <span className="inline-flex items-center gap-2">
-              <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+              <RefreshCw
+                size={14}
+                className={refreshing ? 'animate-spin' : ''}
+              />
               Refresh
             </span>
           </button>
@@ -364,7 +392,8 @@ const OverviewDashboard = () => {
                   Activity Trend
                 </div>
                 <div className="mt-1 text-[11px] text-Text-Secondary">
-                  Clicks, page views, and error volume parsed from the stored frontend sessions.
+                  Clicks, page views, and error volume parsed from the stored
+                  frontend sessions.
                 </div>
               </div>
             </div>
@@ -382,17 +411,24 @@ const OverviewDashboard = () => {
 
           <div className="space-y-4">
             <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
-              <div className="TextStyle-Headline-5 text-Text-Primary">Support Snapshot</div>
+              <div className="TextStyle-Headline-5 text-Text-Primary">
+                Support Snapshot
+              </div>
               <div className="mt-4 grid gap-3">
                 {insightCards.map((card) => (
-                  <div key={card.label} className="rounded-2xl bg-[#F8FAFB] px-4 py-3">
+                  <div
+                    key={card.label}
+                    className="rounded-2xl bg-[#F8FAFB] px-4 py-3"
+                  >
                     <div className="text-[11px] uppercase tracking-wide text-Text-Secondary">
                       {card.label}
                     </div>
                     <div className="mt-1 text-lg font-semibold text-Text-Primary">
                       {card.value}
                     </div>
-                    <div className="mt-1 text-[11px] text-Text-Secondary">{card.helper}</div>
+                    <div className="mt-1 text-[11px] text-Text-Secondary">
+                      {card.helper}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -401,7 +437,9 @@ const OverviewDashboard = () => {
             <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
               <div className="flex items-center gap-2 text-Text-Primary">
                 <AlertTriangle size={16} />
-                <div className="TextStyle-Headline-5">Alerts and Opportunities</div>
+                <div className="TextStyle-Headline-5">
+                  Alerts and Opportunities
+                </div>
               </div>
               <div className="mt-4 space-y-3">
                 {alerts.length > 0 ? (
@@ -410,8 +448,12 @@ const OverviewDashboard = () => {
                       key={alert.title}
                       className={`rounded-2xl px-4 py-3 ${toneClasses[alert.tone]}`}
                     >
-                      <div className="text-[12px] font-medium">{alert.title}</div>
-                      <div className="mt-1 text-[11px] leading-5 opacity-90">{alert.detail}</div>
+                      <div className="text-[12px] font-medium">
+                        {alert.title}
+                      </div>
+                      <div className="mt-1 text-[11px] leading-5 opacity-90">
+                        {alert.detail}
+                      </div>
                     </div>
                   ))
                 ) : (
@@ -427,9 +469,12 @@ const OverviewDashboard = () => {
         <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
-              <div className="TextStyle-Headline-5 text-Text-Primary">Top Active Routes</div>
+              <div className="TextStyle-Headline-5 text-Text-Primary">
+                Top Active Routes
+              </div>
               <div className="mt-1 text-[11px] text-Text-Secondary">
-                The pages that generated the most interaction in captured sessions.
+                The pages that generated the most interaction in captured
+                sessions.
               </div>
             </div>
           </div>
@@ -437,7 +482,10 @@ const OverviewDashboard = () => {
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
             {routeSummary.length > 0 ? (
               routeSummary.map((route) => (
-                <div key={route.route} className="rounded-2xl border border-Gray-50 bg-[#F8FAFB] p-4">
+                <div
+                  key={route.route}
+                  className="rounded-2xl border border-Gray-50 bg-[#F8FAFB] p-4"
+                >
                   <div className="truncate text-[12px] font-medium text-Text-Primary">
                     {route.route}
                   </div>

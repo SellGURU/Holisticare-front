@@ -12,7 +12,11 @@ interface Props {
   biomarkerType?: string;
   biomarkerTypeOptions?: string[];
   uploadedReferenceRange?: string;
-  suggestions?: Array<{ system_biomarker: string; confidence: number; reason: string }>;
+  suggestions?: Array<{
+    system_biomarker: string;
+    confidence: number;
+    reason: string;
+  }>;
   onClose: () => void;
   onCreated: (newBiomarkerName: string) => void;
 }
@@ -48,7 +52,7 @@ const EMPTY_DRAFT = {
   unit: '',
   biomarker_type: 'blood',
   source: 'Custom',
-  'show_in_maual_entry': true,
+  show_in_maual_entry: true,
   thresholds: { male: {}, female: {} },
 };
 
@@ -57,7 +61,15 @@ const CreateBiomarkerModal: React.FC<Props> = ({
   extractedValue = '',
   extractedUnit = '',
   biomarkerType = 'blood',
-  biomarkerTypeOptions = ['blood', 'urine', 'dna', 'gut', 'saliva', 'stool', 'other'],
+  biomarkerTypeOptions = [
+    'blood',
+    'urine',
+    'dna',
+    'gut',
+    'saliva',
+    'stool',
+    'other',
+  ],
   uploadedReferenceRange = '',
   suggestions = [],
   onClose,
@@ -74,8 +86,12 @@ const CreateBiomarkerModal: React.FC<Props> = ({
     extractedName ? [extractedName] : [],
   );
   const [newVariation, setNewVariation] = useState('');
-  const [benchmarkAreaOptions, setBenchmarkAreaOptions] = useState<string[]>([]);
-  const [benchmarkAreaOptionsByType, setBenchmarkAreaOptionsByType] = useState<Record<string, string[]>>({});
+  const [benchmarkAreaOptions, setBenchmarkAreaOptions] = useState<string[]>(
+    [],
+  );
+  const [benchmarkAreaOptionsByType, setBenchmarkAreaOptionsByType] = useState<
+    Record<string, string[]>
+  >({});
   const [aiSuggestedBenchmarkArea, setAiSuggestedBenchmarkArea] = useState('');
 
   useEffect(() => {
@@ -133,7 +149,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
             ...res.data.draft,
             biomarker_type: res.data.draft.biomarker_type || biomarkerType,
             thresholds: res.data.draft.thresholds || { male: {}, female: {} },
-            'show_in_maual_entry': true,
+            show_in_maual_entry: true,
             source: res.data.draft.source || 'Custom',
           };
           setAiSuggestedBenchmarkArea(
@@ -144,7 +160,12 @@ const CreateBiomarkerModal: React.FC<Props> = ({
         }
       } catch {
         // If prefill fails, just use the empty draft with extracted name
-        const d = { ...EMPTY_DRAFT, Biomarker: extractedName, unit: extractedUnit, biomarker_type: biomarkerType };
+        const d = {
+          ...EMPTY_DRAFT,
+          Biomarker: extractedName,
+          unit: extractedUnit,
+          biomarker_type: biomarkerType,
+        };
         setAiSuggestedBenchmarkArea('');
         setDraft(d);
         setJsonText(JSON.stringify(d, null, 2));
@@ -153,7 +174,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
       }
     };
     prefill();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Keep JSON text in sync with form fields
@@ -209,7 +230,13 @@ const CreateBiomarkerModal: React.FC<Props> = ({
   };
 
   const updateThresholdRange = useCallback(
-    (gender: 'male' | 'female', ageKey: string, rangeIdx: number, field: string, value: any) => {
+    (
+      gender: 'male' | 'female',
+      ageKey: string,
+      rangeIdx: number,
+      field: string,
+      value: any,
+    ) => {
       const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
       const genderData = { ...(thresholds[gender] || {}) };
       const ranges = [...(genderData[ageKey] || [])];
@@ -222,7 +249,12 @@ const CreateBiomarkerModal: React.FC<Props> = ({
   );
 
   const updateThresholdStatus = useCallback(
-    (gender: 'male' | 'female', ageKey: string, rangeIdx: number, status: string) => {
+    (
+      gender: 'male' | 'female',
+      ageKey: string,
+      rangeIdx: number,
+      status: string,
+    ) => {
       const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
       const genderData = { ...(thresholds[gender] || {}) };
       const ranges = [...(genderData[ageKey] || [])];
@@ -244,7 +276,13 @@ const CreateBiomarkerModal: React.FC<Props> = ({
       const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
       const genderData = { ...(thresholds[gender] || {}) };
       const ranges = [...(genderData[ageKey] || [])];
-      ranges.push({ label: '', status: 'OptimalRange', low: null, high: null, color: '#22C55E' });
+      ranges.push({
+        label: '',
+        status: 'OptimalRange',
+        low: null,
+        high: null,
+        color: '#22C55E',
+      });
       genderData[ageKey] = ranges;
       thresholds[gender] = genderData;
       updateDraft('thresholds', thresholds);
@@ -272,9 +310,27 @@ const CreateBiomarkerModal: React.FC<Props> = ({
       const existingKeys = Object.keys(genderData);
       const newKey = existingKeys.length === 0 ? '18-100' : '';
       genderData[newKey] = [
-        { label: 'Critical Low', status: 'CriticalRange', low: null, high: null, color: '#EF4444' },
-        { label: 'Optimal', status: 'OptimalRange', low: null, high: null, color: '#22C55E' },
-        { label: 'Critical High', status: 'CriticalRange', low: null, high: null, color: '#EF4444' },
+        {
+          label: 'Critical Low',
+          status: 'CriticalRange',
+          low: null,
+          high: null,
+          color: '#EF4444',
+        },
+        {
+          label: 'Optimal',
+          status: 'OptimalRange',
+          low: null,
+          high: null,
+          color: '#22C55E',
+        },
+        {
+          label: 'Critical High',
+          status: 'CriticalRange',
+          low: null,
+          high: null,
+          color: '#EF4444',
+        },
       ];
       thresholds[gender] = genderData;
       updateDraft('thresholds', thresholds);
@@ -309,7 +365,11 @@ const CreateBiomarkerModal: React.FC<Props> = ({
   const addVariation = () => {
     const cleaned = newVariation.trim();
     if (!cleaned) return;
-    if (nameVariations.some((item) => item.toLowerCase() === cleaned.toLowerCase())) {
+    if (
+      nameVariations.some(
+        (item) => item.toLowerCase() === cleaned.toLowerCase(),
+      )
+    ) {
       setNewVariation('');
       return;
     }
@@ -370,18 +430,31 @@ const CreateBiomarkerModal: React.FC<Props> = ({
               Create New Biomarker
             </div>
             <div className="text-[10px] text-Text-Secondary mt-0.5">
-              Extracted: <span className="font-medium text-Text-Primary">{extractedName}</span>
+              Extracted:{' '}
+              <span className="font-medium text-Text-Primary">
+                {extractedName}
+              </span>
               {extractedUnit && (
-                <span> &nbsp;·&nbsp; Unit: <span className="font-medium">{extractedUnit}</span></span>
+                <span>
+                  {' '}
+                  &nbsp;·&nbsp; Unit:{' '}
+                  <span className="font-medium">{extractedUnit}</span>
+                </span>
               )}
             </div>
             {uploadedReferenceRange && (
               <div className="text-[10px] text-Text-Secondary mt-0.5">
-                Uploaded lab reference: <span className="font-medium text-Text-Primary">{uploadedReferenceRange}</span>
+                Uploaded lab reference:{' '}
+                <span className="font-medium text-Text-Primary">
+                  {uploadedReferenceRange}
+                </span>
               </div>
             )}
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+          >
             ×
           </button>
         </div>
@@ -428,7 +501,11 @@ const CreateBiomarkerModal: React.FC<Props> = ({
             {/* Error banner */}
             {errorMsg && (
               <div className="mx-6 mt-3 bg-[#F9DEDC] rounded-xl px-4 py-2 text-[10px] text-Text-Primary flex items-start gap-2">
-                <img src="/icons/info-circle-orange.svg" alt="" className="w-4 h-4 mt-0.5 shrink-0" />
+                <img
+                  src="/icons/info-circle-orange.svg"
+                  alt=""
+                  className="w-4 h-4 mt-0.5 shrink-0"
+                />
                 <span>{errorMsg}</span>
               </div>
             )}
@@ -463,11 +540,17 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                       options={filteredBenchmarkAreaOptions}
                       suggestedValue={aiSuggestedBenchmarkArea}
                       placeholder={`Select or create ${formatBiomarkerTypeLabel(selectedType)} benchmark area`}
-                      createContextLabel={formatBiomarkerTypeLabel(selectedType)}
-                      onChange={(value) => updateDraft('Benchmark areas', value)}
+                      createContextLabel={formatBiomarkerTypeLabel(
+                        selectedType,
+                      )}
+                      onChange={(value) =>
+                        updateDraft('Benchmark areas', value)
+                      }
                     />
                     <div className="mt-1 text-[10px] text-Text-Secondary">
-                      Showing benchmark areas for {formatBiomarkerTypeLabel(selectedType)}. New areas created here will be saved under this type.
+                      Showing benchmark areas for{' '}
+                      {formatBiomarkerTypeLabel(selectedType)}. New areas
+                      created here will be saved under this type.
                     </div>
                   </div>
 
@@ -503,7 +586,9 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                     </label>
                     <textarea
                       value={draft.Definition || ''}
-                      onChange={(e) => updateDraft('Definition', e.target.value)}
+                      onChange={(e) =>
+                        updateDraft('Definition', e.target.value)
+                      }
                       placeholder="Clinical description of this biomarker"
                       rows={3}
                       className="w-full border border-Gray-50 rounded-2xl px-3 py-2 text-[12px] outline-none resize-none focus:border-Primary-DeepTeal"
@@ -516,13 +601,17 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                       Thresholds (Reference Ranges)
                     </label>
                     <div className="text-[9px] text-Text-Secondary mb-2">
-                      Draft ranges prioritize the uploaded report reference when available, then align it to our chart-bounds structure.
+                      Draft ranges prioritize the uploaded report reference when
+                      available, then align it to our chart-bounds structure.
                     </div>
                     {(['male', 'female'] as const).map((gender) => {
                       const genderData = draft.thresholds?.[gender] || {};
                       const ageKeys = Object.keys(genderData);
                       return (
-                        <div key={gender} className="mb-3 border border-Gray-50 rounded-xl p-3">
+                        <div
+                          key={gender}
+                          className="mb-3 border border-Gray-50 rounded-xl p-3"
+                        >
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-[11px] font-semibold text-Text-Primary capitalize">
                               {gender} Thresholds
@@ -537,28 +626,42 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                           </div>
                           {ageKeys.length === 0 && (
                             <div className="text-[9px] text-Text-Secondary italic py-2 text-center">
-                              No age groups defined. Click "Add {gender} Age Group" to start.
+                              No age groups defined. Click "Add {gender} Age
+                              Group" to start.
                             </div>
                           )}
                           {ageKeys.map((ageKey) => {
                             const ranges = genderData[ageKey];
                             if (!Array.isArray(ranges)) return null;
                             return (
-                              <div key={ageKey} className="mb-3 bg-gray-50 rounded-lg p-2 relative">
+                              <div
+                                key={ageKey}
+                                className="mb-3 bg-gray-50 rounded-lg p-2 relative"
+                              >
                                 {/* Age group header with editable age range */}
                                 <div className="flex items-center gap-2 mb-2">
-                                  <span className="text-[9px] text-Text-Secondary shrink-0">Age Range:</span>
+                                  <span className="text-[9px] text-Text-Secondary shrink-0">
+                                    Age Range:
+                                  </span>
                                   <input
                                     type="text"
                                     value={ageKey}
-                                    onChange={(e) => renameAgeGroup(gender, ageKey, e.target.value)}
+                                    onChange={(e) =>
+                                      renameAgeGroup(
+                                        gender,
+                                        ageKey,
+                                        e.target.value,
+                                      )
+                                    }
                                     placeholder="e.g. 18-100"
                                     className="w-[80px] border border-Gray-50 rounded-lg px-1.5 py-0.5 text-[10px] outline-none focus:border-Primary-DeepTeal bg-white"
                                   />
                                   <button
                                     type="button"
                                     className="text-red-400 hover:text-red-600 text-[9px] ml-auto shrink-0"
-                                    onClick={() => removeAgeGroup(gender, ageKey)}
+                                    onClick={() =>
+                                      removeAgeGroup(gender, ageKey)
+                                    }
                                   >
                                     Remove Age Group
                                   </button>
@@ -569,8 +672,12 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                                     <span className="w-4" />
                                     <span className="w-[80px]">Label</span>
                                     <span className="w-[110px]">Status</span>
-                                    <span className="w-[55px] text-center">Low</span>
-                                    <span className="w-[55px] text-center">High</span>
+                                    <span className="w-[55px] text-center">
+                                      Low
+                                    </span>
+                                    <span className="w-[55px] text-center">
+                                      High
+                                    </span>
                                     <span className="w-4" />
                                   </div>
                                   {ranges.map((range: any, rIdx: number) => {
@@ -586,14 +693,22 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                                           className="w-4 h-4 rounded-full shrink-0 border border-gray-200"
                                           style={{
                                             backgroundColor:
-                                              statusInfo?.color || range.color || '#22C55E',
+                                              statusInfo?.color ||
+                                              range.color ||
+                                              '#22C55E',
                                           }}
                                         />
                                         <input
                                           type="text"
                                           value={range.label || ''}
                                           onChange={(e) =>
-                                            updateThresholdRange(gender, ageKey, rIdx, 'label', e.target.value)
+                                            updateThresholdRange(
+                                              gender,
+                                              ageKey,
+                                              rIdx,
+                                              'label',
+                                              e.target.value,
+                                            )
                                           }
                                           placeholder="e.g. Optimal"
                                           className="w-[80px] border border-Gray-50 rounded-lg px-1.5 py-0.5 text-[10px] outline-none focus:border-Primary-DeepTeal bg-white"
@@ -612,7 +727,10 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                                         >
                                           <option value="">— select —</option>
                                           {ALLOWED_STATUSES.map((s) => (
-                                            <option key={s.value} value={s.value}>
+                                            <option
+                                              key={s.value}
+                                              value={s.value}
+                                            >
                                               {s.label}
                                             </option>
                                           ))}
@@ -627,7 +745,9 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                                               ageKey,
                                               rIdx,
                                               'low',
-                                              e.target.value === '' ? null : Number(e.target.value),
+                                              e.target.value === ''
+                                                ? null
+                                                : Number(e.target.value),
                                             )
                                           }
                                           placeholder="null"
@@ -643,7 +763,9 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                                               ageKey,
                                               rIdx,
                                               'high',
-                                              e.target.value === '' ? null : Number(e.target.value),
+                                              e.target.value === ''
+                                                ? null
+                                                : Number(e.target.value),
                                             )
                                           }
                                           placeholder="null"
@@ -653,7 +775,13 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                                           type="button"
                                           className="text-red-400 hover:text-red-600 text-[12px] leading-none ml-0.5"
                                           title="Remove range"
-                                          onClick={() => removeThresholdRange(gender, ageKey, rIdx)}
+                                          onClick={() =>
+                                            removeThresholdRange(
+                                              gender,
+                                              ageKey,
+                                              rIdx,
+                                            )
+                                          }
                                         >
                                           ×
                                         </button>
@@ -663,7 +791,9 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                                   <button
                                     type="button"
                                     className="text-[9px] text-Primary-DeepTeal hover:underline mt-0.5 ml-5"
-                                    onClick={() => addThresholdRange(gender, ageKey)}
+                                    onClick={() =>
+                                      addThresholdRange(gender, ageKey)
+                                    }
                                   >
                                     + Add range
                                   </button>
@@ -681,7 +811,9 @@ const CreateBiomarkerModal: React.FC<Props> = ({
                       Name Variations
                     </div>
                     <div className="text-[10px] text-Text-Secondary mb-2">
-                      After finalizing the biomarker data, you can edit this list so future uploads map the lab-file name to this biomarker.
+                      After finalizing the biomarker data, you can edit this
+                      list so future uploads map the lab-file name to this
+                      biomarker.
                     </div>
                     {nameVariations.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-2">
@@ -730,7 +862,8 @@ const CreateBiomarkerModal: React.FC<Props> = ({
               ) : (
                 <>
                   <div className="text-[10px] text-Text-Secondary mb-1">
-                    Edit the full JSON definition. Must follow chart_bounds schema.
+                    Edit the full JSON definition. Must follow chart_bounds
+                    schema.
                   </div>
                   <textarea
                     value={jsonText}

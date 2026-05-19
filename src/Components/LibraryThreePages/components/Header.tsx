@@ -128,7 +128,11 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
               <ButtonSecondary
                 ClassName="w-full md:w-[180px] h-[32px] rounded-[20px] shadow-Btn"
                 disabled={isDemo}
-                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                title={
+                  isDemo
+                    ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                    : undefined
+                }
                 onClick={() => {
                   if (isDemo) return;
                   onManageTypes();
@@ -140,7 +144,11 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
             <ButtonSecondary
               ClassName="w-full md:w-[180px] h-[32px] rounded-[20px] shadow-Btn"
               disabled={isDemo}
-              title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+              title={
+                isDemo
+                  ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                  : undefined
+              }
               onClick={() => {
                 if (isDemo) return;
                 handleOpenModal();
