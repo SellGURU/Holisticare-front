@@ -1,4 +1,4 @@
-import { ChevronRight, Search, Bell } from 'lucide-react';
+import { ChevronRight, Bell, Menu } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { publish, subscribe } from '../../../../utils/event';
 import Application from '../../../../api/app';
@@ -7,6 +7,7 @@ import { BeatLoader } from 'react-spinners';
 import { Notification } from '../../../../Components/Notification';
 import NotificationApi from '../../../../api/Notification';
 import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
+import LogOutModal from '../../../../Components/LogOutModal';
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Client List',
@@ -53,13 +54,21 @@ const TopBar = () => {
   const location = useLocation();
   const [showNotification, setshowNotification] = useState(false);
   const [isUnReadNotif, setisUnReadNotif] = useState(false);
+  const [visibleClinic, setVisibleClinic] = useState(false);
   const [unreadNotificationIds, setUnreadNotificationIds] = useState<string[]>(
     [],
   );
-  //   const refrence = useRef(null);
-  //   const buttentRef = useRef(null);
+  const refrence = useRef(null);
+  const buttentRef = useRef(null);
   const notifRefrence = useRef(null);
   const notifButtentRef = useRef(null);
+  useModalAutoClose({
+    refrence: refrence,
+    buttonRefrence: buttentRef,
+    close: () => {
+      setVisibleClinic(false);
+    },
+  });
   useModalAutoClose({
     refrence: notifRefrence,
     buttonRefrence: notifButtentRef,
@@ -163,16 +172,23 @@ const TopBar = () => {
   return (
     <>
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-[52px] bg-white border-b border-gray-200 flex items-center justify-between md:pl-[250px] px-6 flex-shrink-0">
+        <header className="h-[52px] bg-white border-b border-gray-200 flex items-center justify-between md:pl-[250px] px-4 md:px-6 flex-shrink-0">
           <div className="flex items-center gap-2 text-[13px]">
+            <button
+              type="button"
+              onClick={() => {
+                publish('mobileMenuOpen', {});
+              }}
+              aria-label="Open menu"
+              className="md:hidden w-8 h-8 -ml-1 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors duration-150"
+            >
+              <Menu className="w-5 h-5 text-gray-600" />
+            </button>
             <span className="text-gray-400">Clinic</span>
             <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
             <span className="text-gray-800 font-semibold">{pageTitle}</span>
           </div>
           <div className="flex items-center gap-3">
-            <button className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors duration-150">
-              <Search className="w-4 h-4 text-gray-400" />
-            </button>
             <button
               ref={notifButtentRef}
               onClick={() => setshowNotification(!showNotification)}
@@ -184,27 +200,41 @@ const TopBar = () => {
               )}
             </button>
             <div className="w-[1px] h-5 bg-gray-200" />
-            <div className="flex items-center gap-2">
-              {customTheme.selectedImage ? (
-                <img
-                  className="size-8 rounded-full border  "
-                  src={customTheme.selectedImage}
-                  alt=""
-                />
-              ) : (
-                <div className="w-full h-5 flex justify-center items-center">
-                  <BeatLoader size={6}></BeatLoader>
+            <div className="relative">
+              <div
+                ref={buttentRef}
+                onClick={() => {
+                  setVisibleClinic(!visibleClinic);
+                }}
+                className="flex items-center gap-2 cursor-pointer select-none"
+              >
+                {customTheme.selectedImage ? (
+                  <img
+                    className="size-8 rounded-full border  "
+                    src={customTheme.selectedImage}
+                    alt=""
+                  />
+                ) : (
+                  <div className="w-full h-5 flex justify-center items-center">
+                    <BeatLoader size={6}></BeatLoader>
+                  </div>
+                )}
+                <div>
+                  <p className="text-[12px] font-semibold text-gray-800 leading-tight">
+                    {/* Dr. Raina Holt */}
+                    {customTheme.name ? customTheme.name : ''}{' '}
+                  </p>
+                  <p className="text-[10px] text-gray-400 leading-tight">
+                    {customTheme.headLine ? customTheme.headLine : ''}
+                  </p>
                 </div>
-              )}
-              <div>
-                <p className="text-[12px] font-semibold text-gray-800 leading-tight">
-                  {/* Dr. Raina Holt */}
-                  {customTheme.name ? customTheme.name : ''}{' '}
-                </p>
-                <p className="text-[10px] text-gray-400 leading-tight">
-                  {customTheme.headLine ? customTheme.headLine : ''}
-                </p>
               </div>
+              {visibleClinic && (
+                <LogOutModal
+                  customTheme={customTheme}
+                  refrence={refrence}
+                ></LogOutModal>
+              )}
             </div>
             {showNotification && (
               <Notification
