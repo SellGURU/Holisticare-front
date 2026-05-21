@@ -1,10 +1,11 @@
 import { Outlet } from 'react-router-dom';
-import { MainTopBar } from '../../Components';
+// import { MainTopBar } from '../../Components';
 import { SideMenu } from '../AppendUi/components';
 import { useRef, useState, useEffect } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { subscribe } from '../../utils/event';
 import RouteTracker from '../../utils/route-tracker';
+import TopBar from '../AppendUi/components/topBar';
 
 const Home = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -108,7 +109,8 @@ const Home = () => {
         <MainTopBar></MainTopBar>
       </div> */}
       <RouteTracker />
-      <MainTopBar></MainTopBar>
+      {/* <MainTopBar></MainTopBar> */}
+      <TopBar></TopBar>
       <div
         ref={sideMenuRef}
         className={`
@@ -122,8 +124,8 @@ const Home = () => {
         <SideMenu
           onClose={() => isMobileView && setIsMobileMenuOpen(false)}
         ></SideMenu>
-        {/* <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} /> */}
       </div>
+        {/* <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} /> */}
 
       <div className="w-full md:pl-[210px] pt-0 pb-2 bg-bg-color h-[100vh]  overflow-y-scroll hidden-scrollbar">
         <Outlet></Outlet>

@@ -114,7 +114,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ onClose }) => {
     navigate(item.url);
     onClose();
   };
-  const [activePage, setActivePage] = useState('dashboard');
+  const [activePage, setActivePage] = useState('clients');
   return (
     <>
       <aside className="w-[220px] bg-white border-r  border-gray-200 flex flex-col flex-shrink-0">
