@@ -125,7 +125,7 @@ const Home = () => {
           onClose={() => isMobileView && setIsMobileMenuOpen(false)}
         ></SideMenu>
       </div>
-        {/* <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} /> */}
+      {/* <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} /> */}
 
       <div className="w-full md:pl-[210px] pt-0 pb-2 bg-bg-color h-[100vh]  overflow-y-scroll hidden-scrollbar">
         <Outlet></Outlet>
