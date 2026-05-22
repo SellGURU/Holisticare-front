@@ -1,5 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useMemo, SetStateAction } from 'react';
+import {
+  useState,
+  useMemo,
+  SetStateAction,
+  type ReactElement,
+  type ReactNode,
+  type ReactPortal,
+  type JSXElementConstructor,
+  type Key,
+} from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -21,7 +30,6 @@ import {
   Search,
   Settings,
   MoreHorizontal,
-  Circle,
   ArrowUpRight,
   CheckCircle2,
   Clock,
@@ -2847,57 +2855,7 @@ function App() {
                   </div>
                   <div className="space-y-1 max-h-[320px] overflow-y-auto pr-1">
                     {priorityQueue.map(
-                      (patient: {
-                        priority:
-                          | string
-                          | number
-                          | boolean
-                          | ReactElement<
-                              any,
-                              string | JSXElementConstructor<any>
-                            >
-                          | Iterable<ReactNode>
-                          | null
-                          | undefined;
-                        id: Key | null | undefined;
-                        initials:
-                          | string
-                          | number
-                          | boolean
-                          | ReactElement<
-                              any,
-                              string | JSXElementConstructor<any>
-                            >
-                          | Iterable<ReactNode>
-                          | ReactPortal
-                          | null
-                          | undefined;
-                        unread: any;
-                        name:
-                          | string
-                          | number
-                          | boolean
-                          | ReactElement<
-                              any,
-                              string | JSXElementConstructor<any>
-                            >
-                          | Iterable<ReactNode>
-                          | ReactPortal
-                          | null
-                          | undefined;
-                        reason:
-                          | string
-                          | number
-                          | boolean
-                          | ReactElement<
-                              any,
-                              string | JSXElementConstructor<any>
-                            >
-                          | Iterable<ReactNode>
-                          | ReactPortal
-                          | null
-                          | undefined;
-                      }) => {
+                      (patient: any) => {
                         const colors = urgencyConfig[patient.priority];
                         return (
                           <button
@@ -3084,7 +3042,7 @@ function App() {
                             dataKey="value"
                             strokeWidth={0}
                           >
-                            {programDonut.map((entry: any[], index: any) => (
+                            {programDonut.map((entry: any, index: any) => (
                               <Cell key={index} fill={entry.fill} />
                             ))}
                           </Pie>
@@ -3093,31 +3051,7 @@ function App() {
                     </div>
                     <div className="flex-1 space-y-2">
                       {programs.map(
-                        (prog: {
-                          name:
-                            | boolean
-                            | Key
-                            | ReactElement<
-                                any,
-                                string | JSXElementConstructor<any>
-                              >
-                            | Iterable<ReactNode>
-                            | null
-                            | undefined;
-                          color: any;
-                          count:
-                            | string
-                            | number
-                            | boolean
-                            | ReactElement<
-                                any,
-                                string | JSXElementConstructor<any>
-                              >
-                            | Iterable<ReactNode>
-                            | ReactPortal
-                            | null
-                            | undefined;
-                        }) => (
+                        (prog: any) => (
                           <div
                             key={prog.name}
                             className="flex items-center justify-between"
@@ -3552,7 +3486,7 @@ function App() {
                                       <div className="absolute top-0 left-0 w-full h-full flex pointer-events-none">
                                         {ranges.map(
                                           (
-                                            zone: any,
+                                            _zone: any,
                                             i: Key | null | undefined,
                                           ) => (
                                             <div
