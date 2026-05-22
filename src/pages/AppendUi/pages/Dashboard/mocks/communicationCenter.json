@@ -1,34 +1,46 @@
-[
-  {
-    "id": 1,
-    "name": "Mona Azami",
-    "initials": "MA",
-    "snippet": "Hi doctor, I had my ApoB test done yesterday. Should I send the results through the app?",
-    "time": "2h ago",
-    "waiting": false
+{
+  "summary": {
+    "unreadCount": 4,
+    "waitingOver24hCount": 2
   },
-  {
-    "id": 2,
-    "name": "Felix Petrov",
-    "initials": "FP",
-    "snippet": "I have been experiencing some dizziness after the new supplement. Is that expected?",
-    "time": "18h ago",
-    "waiting": false
-  },
-  {
-    "id": 3,
-    "name": "Sara Lindqvist",
-    "initials": "SL",
-    "snippet": "Can we reschedule my follow-up to next Thursday instead?",
-    "time": "26h ago",
-    "waiting": true
-  },
-  {
-    "id": 4,
-    "name": "Omar Hadid",
-    "initials": "OH",
-    "snippet": "My sleep tracker shows improvement this week. Wanted to share the data with you.",
-    "time": "31h ago",
-    "waiting": true
+  "items": [
+    {
+      "id": "msg_001",
+      "patientId": "pat_001",
+      "name": "Mona Azami",
+      "snippet": "Hi doctor, I had my ApoB test done yesterday. Should I send the results through the app?",
+      "sentAt": "2026-05-21T08:30:00Z",
+      "isWaiting": false
+    },
+    {
+      "id": "msg_002",
+      "patientId": "pat_002",
+      "name": "Felix Petrov",
+      "snippet": "I have been experiencing some dizziness after the new supplement. Is that expected?",
+      "sentAt": "2026-05-20T16:30:00Z",
+      "isWaiting": false
+    },
+    {
+      "id": "msg_003",
+      "patientId": "pat_005",
+      "name": "Sara Lindqvist",
+      "snippet": "Can we reschedule my follow-up to next Thursday instead?",
+      "sentAt": "2026-05-20T08:30:00Z",
+      "isWaiting": true
+    },
+    {
+      "id": "msg_004",
+      "patientId": "pat_006",
+      "name": "Omar Hadid",
+      "snippet": "My sleep tracker shows improvement this week. Wanted to share the data with you.",
+      "sentAt": "2026-05-20T03:30:00Z",
+      "isWaiting": true
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "perPage": 20,
+    "total": 4,
+    "hasMore": false
   }
-]
+}

@@ -1,7 +1,7 @@
 [
-  { "name": "Lab Coverage", "value": 74, "fill": "#10B981" },
-  { "name": "Wearable", "value": 58, "fill": "#0D9488" },
-  { "name": "App Active", "value": 82, "fill": "#6366F1" },
-  { "name": "Follow-ups Due", "value": 21, "fill": "#F59E0B" },
-  { "name": "AI Plans", "value": 67, "fill": "#8B5CF6" }
+  { "key": "lab_coverage", "label": "Lab Coverage", "value": 74 },
+  { "key": "wearable", "label": "Wearable", "value": 58 },
+  { "key": "app_active", "label": "App Active", "value": 82 },
+  { "key": "follow_ups_due", "label": "Follow-ups Due", "value": 21 },
+  { "key": "ai_plans", "label": "AI Plans", "value": 67 }
 ]

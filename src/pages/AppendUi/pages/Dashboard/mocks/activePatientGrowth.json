@@ -2,11 +2,47 @@
   "currentActive": 135,
   "changePercent": 5.5,
   "trend": [
-    { "month": "Aug", "active": 98, "new": 14, "churned": 3 },
-    { "month": "Sep", "active": 109, "new": 16, "churned": 5 },
-    { "month": "Oct", "active": 118, "new": 13, "churned": 4 },
-    { "month": "Nov", "active": 124, "new": 11, "churned": 5 },
-    { "month": "Dec", "active": 128, "new": 9, "churned": 5 },
-    { "month": "Jan", "active": 135, "new": 15, "churned": 8 }
+    {
+      "period": "2025-08",
+      "label": "Aug",
+      "active": 98,
+      "new": 14,
+      "churned": 3
+    },
+    {
+      "period": "2025-09",
+      "label": "Sep",
+      "active": 109,
+      "new": 16,
+      "churned": 5
+    },
+    {
+      "period": "2025-10",
+      "label": "Oct",
+      "active": 118,
+      "new": 13,
+      "churned": 4
+    },
+    {
+      "period": "2025-11",
+      "label": "Nov",
+      "active": 124,
+      "new": 11,
+      "churned": 5
+    },
+    {
+      "period": "2025-12",
+      "label": "Dec",
+      "active": 128,
+      "new": 9,
+      "churned": 5
+    },
+    {
+      "period": "2026-01",
+      "label": "Jan",
+      "active": 135,
+      "new": 15,
+      "churned": 8
+    }
   ]
 }

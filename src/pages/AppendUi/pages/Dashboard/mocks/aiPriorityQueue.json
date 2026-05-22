@@ -1,66 +1,74 @@
-[
-  {
-    "id": 1,
-    "name": "Mona Azami",
-    "initials": "MA",
-    "priority": "immediate",
-    "reason": "Missing ApoB biomarker — overdue 14 days",
-    "unread": true
-  },
-  {
-    "id": 2,
-    "name": "Felix Petrov",
-    "initials": "FP",
-    "priority": "immediate",
-    "reason": "HbA1c trending above threshold (6.8%)",
-    "unread": false
-  },
-  {
-    "id": 3,
-    "name": "Aaliya Gupta",
-    "initials": "AG",
-    "priority": "immediate",
-    "reason": "Cortisol spike detected via wearable",
-    "unread": true
-  },
-  {
-    "id": 4,
-    "name": "Marcus Torres",
-    "initials": "MT",
-    "priority": "monitor",
-    "reason": "Sleep protocol adherence dropped to 40%",
-    "unread": false
-  },
-  {
-    "id": 5,
-    "name": "Sara Lindqvist",
-    "initials": "SL",
-    "priority": "monitor",
-    "reason": "Vitamin D levels declining — recheck due",
-    "unread": false
-  },
-  {
-    "id": 6,
-    "name": "Omar Hadid",
-    "initials": "OH",
-    "priority": "monitor",
-    "reason": "Peptide therapy cycle ending in 3 days",
-    "unread": true
-  },
-  {
-    "id": 7,
-    "name": "Chiara Rossi",
-    "initials": "CR",
-    "priority": "stable",
-    "reason": "Lifestyle plan progressing on track",
-    "unread": false
-  },
-  {
-    "id": 8,
-    "name": "James Okafor",
-    "initials": "JO",
-    "priority": "monitor",
-    "reason": "BMI plateau — intervention review needed",
-    "unread": false
+{
+  "items": [
+    {
+      "id": "pq_001",
+      "patientId": "pat_001",
+      "name": "Mona Azami",
+      "priority": "immediate",
+      "reason": "Missing ApoB biomarker — overdue 14 days",
+      "isUnread": true
+    },
+    {
+      "id": "pq_002",
+      "patientId": "pat_002",
+      "name": "Felix Petrov",
+      "priority": "immediate",
+      "reason": "HbA1c trending above threshold (6.8%)",
+      "isUnread": false
+    },
+    {
+      "id": "pq_003",
+      "patientId": "pat_003",
+      "name": "Aaliya Gupta",
+      "priority": "immediate",
+      "reason": "Cortisol spike detected via wearable",
+      "isUnread": true
+    },
+    {
+      "id": "pq_004",
+      "patientId": "pat_004",
+      "name": "Marcus Torres",
+      "priority": "monitor",
+      "reason": "Sleep protocol adherence dropped to 40%",
+      "isUnread": false
+    },
+    {
+      "id": "pq_005",
+      "patientId": "pat_005",
+      "name": "Sara Lindqvist",
+      "priority": "monitor",
+      "reason": "Vitamin D levels declining — recheck due",
+      "isUnread": false
+    },
+    {
+      "id": "pq_006",
+      "patientId": "pat_006",
+      "name": "Omar Hadid",
+      "priority": "monitor",
+      "reason": "Peptide therapy cycle ending in 3 days",
+      "isUnread": true
+    },
+    {
+      "id": "pq_007",
+      "patientId": "pat_007",
+      "name": "Chiara Rossi",
+      "priority": "stable",
+      "reason": "Lifestyle plan progressing on track",
+      "isUnread": false
+    },
+    {
+      "id": "pq_008",
+      "patientId": "pat_008",
+      "name": "James Okafor",
+      "priority": "monitor",
+      "reason": "BMI plateau — intervention review needed",
+      "isUnread": false
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "perPage": 20,
+    "total": 8,
+    "hasMore": false
   }
-]
+}
