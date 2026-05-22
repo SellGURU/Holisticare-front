@@ -2854,44 +2854,42 @@ function App() {
                     </span>
                   </div>
                   <div className="space-y-1 max-h-[320px] overflow-y-auto pr-1">
-                    {priorityQueue.map(
-                      (patient: any) => {
-                        const colors = urgencyConfig[patient.priority];
-                        return (
-                          <button
-                            key={patient.id}
-                            className={`w-full flex items-center gap-3 p-3 rounded-lg border ${colors.border} ${colors.bg} hover:shadow-sm transition-all duration-150 text-left group`}
-                          >
-                            <div className="relative flex-shrink-0">
-                              <div
-                                className={`w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold ${colors.avatarBg} ${colors.avatarText}`}
+                    {priorityQueue.map((patient: any) => {
+                      const colors = urgencyConfig[patient.priority];
+                      return (
+                        <button
+                          key={patient.id}
+                          className={`w-full flex items-center gap-3 p-3 rounded-lg border ${colors.border} ${colors.bg} hover:shadow-sm transition-all duration-150 text-left group`}
+                        >
+                          <div className="relative flex-shrink-0">
+                            <div
+                              className={`w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold ${colors.avatarBg} ${colors.avatarText}`}
+                            >
+                              {patient.initials}
+                            </div>
+                            {patient.unread && (
+                              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 rounded-full border-2 border-white" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[13px] font-semibold text-gray-900">
+                                {patient.name}
+                              </span>
+                              <span
+                                className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${colors.text} ${colors.bg} border ${colors.border}`}
                               >
-                                {patient.initials}
-                              </div>
-                              {patient.unread && (
-                                <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 rounded-full border-2 border-white" />
-                              )}
+                                {patient.priority}
+                              </span>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="text-[13px] font-semibold text-gray-900">
-                                  {patient.name}
-                                </span>
-                                <span
-                                  className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${colors.text} ${colors.bg} border ${colors.border}`}
-                                >
-                                  {patient.priority}
-                                </span>
-                              </div>
-                              <p className="text-[11px] text-gray-500 mt-0.5 truncate">
-                                {patient.reason}
-                              </p>
-                            </div>
-                            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors duration-150 flex-shrink-0" />
-                          </button>
-                        );
-                      },
-                    )}
+                            <p className="text-[11px] text-gray-500 mt-0.5 truncate">
+                              {patient.reason}
+                            </p>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors duration-150 flex-shrink-0" />
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
                 <div className="col-span-5 bg-white rounded-xl border border-gray-200/80 p-5">
@@ -3050,27 +3048,25 @@ function App() {
                       </ResponsiveContainer>
                     </div>
                     <div className="flex-1 space-y-2">
-                      {programs.map(
-                        (prog: any) => (
-                          <div
-                            key={prog.name}
-                            className="flex items-center justify-between"
-                          >
-                            <div className="flex items-center gap-2">
-                              <div
-                                className="w-2 h-2 rounded-sm"
-                                style={{ backgroundColor: prog.color }}
-                              />
-                              <span className="text-[12px] text-gray-600">
-                                {prog.name}
-                              </span>
-                            </div>
-                            <span className="text-[12px] font-bold text-gray-800">
-                              {prog.count}
+                      {programs.map((prog: any) => (
+                        <div
+                          key={prog.name}
+                          className="flex items-center justify-between"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-2 h-2 rounded-sm"
+                              style={{ backgroundColor: prog.color }}
+                            />
+                            <span className="text-[12px] text-gray-600">
+                              {prog.name}
                             </span>
                           </div>
-                        ),
-                      )}
+                          <span className="text-[12px] font-bold text-gray-800">
+                            {prog.count}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                   <div className="mt-4 pt-3.5 border-t border-gray-100 grid grid-cols-2 gap-3">
