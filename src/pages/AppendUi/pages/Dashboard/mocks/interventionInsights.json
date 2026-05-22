@@ -1,0 +1,14 @@
+{
+  "programs": [
+    { "name": "Peptide Therapy", "count": 28, "color": "#8B5CF6" },
+    { "name": "Lifestyle Optimization", "count": 45, "color": "#10B981" },
+    { "name": "Diet Intervention", "count": 33, "color": "#F59E0B" },
+    { "name": "Sleep Protocol", "count": 19, "color": "#0D9488" }
+  ],
+  "metrics": {
+    "adherenceRate": 76,
+    "planCompliance": 68,
+    "inactiveUsers": 14,
+    "completed": 31
+  }
+}

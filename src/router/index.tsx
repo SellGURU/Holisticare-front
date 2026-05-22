@@ -7,7 +7,6 @@ import {
   Playground,
   Messages,
   Setting,
-  DashBoard,
   ForgetPassword,
   DriftAnaysis,
   Home,
@@ -56,6 +55,7 @@ import LlmPromptCatalog from '../pages/admin/LlmPromptCatalog.tsx';
 import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
 import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
 import App from '../pages/AppendUi/Dashboard/index.tsx';
+import AppendUiDashboard from '../pages/AppendUi/pages/Dashboard/index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -72,7 +72,7 @@ const router = createBrowserRouter([
           },
           {
             path: '/dashboard',
-            element: <DashBoard></DashBoard>,
+            element: <AppendUiDashboard></AppendUiDashboard>,
           },
           {
             path: '/drift-analysis',

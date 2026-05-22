@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "Mona Azami",
+    "initials": "MA",
+    "snippet": "Hi doctor, I had my ApoB test done yesterday. Should I send the results through the app?",
+    "time": "2h ago",
+    "waiting": false
+  },
+  {
+    "id": 2,
+    "name": "Felix Petrov",
+    "initials": "FP",
+    "snippet": "I have been experiencing some dizziness after the new supplement. Is that expected?",
+    "time": "18h ago",
+    "waiting": false
+  },
+  {
+    "id": 3,
+    "name": "Sara Lindqvist",
+    "initials": "SL",
+    "snippet": "Can we reschedule my follow-up to next Thursday instead?",
+    "time": "26h ago",
+    "waiting": true
+  },
+  {
+    "id": 4,
+    "name": "Omar Hadid",
+    "initials": "OH",
+    "snippet": "My sleep tracker shows improvement this week. Wanted to share the data with you.",
+    "time": "31h ago",
+    "waiting": true
+  }
+]
