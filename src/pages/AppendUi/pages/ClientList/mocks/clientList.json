@@ -1,0 +1,226 @@
+{
+  "items": [
+    {
+      "id": "HC-0041",
+      "name": "Mona Azami",
+      "gender": "F",
+      "age": 42,
+      "urgency": "immediate",
+      "enrollment": {
+        "program": "Peptide Therapy",
+        "startDate": "Oct 12",
+        "week": 6,
+        "totalWeeks": 12
+      },
+      "connectedApps": ["Oura", "Apple Health"],
+      "category": "Peptide",
+      "planStatus": "draft",
+      "lastCheckIn": 18,
+      "assigned": "Dr. Holt"
+    },
+    {
+      "id": "HC-0023",
+      "name": "Felix Petrov",
+      "gender": "M",
+      "age": 55,
+      "urgency": "immediate",
+      "enrollment": {
+        "program": "Longevity Protocol",
+        "startDate": "Sep 3",
+        "week": 10,
+        "totalWeeks": 16
+      },
+      "connectedApps": ["Garmin", "Oura"],
+      "category": "Longevity",
+      "planStatus": "active",
+      "lastCheckIn": 3,
+      "assigned": "Dr. Holt"
+    },
+    {
+      "id": "HC-0067",
+      "name": "Aaliya Gupta",
+      "gender": "F",
+      "age": 38,
+      "urgency": "immediate",
+      "enrollment": {
+        "program": "Diet Intervention",
+        "startDate": "Nov 20",
+        "week": 4,
+        "totalWeeks": 8
+      },
+      "connectedApps": ["Apple Health"],
+      "category": "Diet",
+      "planStatus": "active",
+      "lastCheckIn": 1,
+      "assigned": "Dr. Voss"
+    },
+    {
+      "id": "HC-0089",
+      "name": "Marcus Torres",
+      "gender": "M",
+      "age": 47,
+      "urgency": "monitor",
+      "enrollment": {
+        "program": "Sleep Protocol",
+        "startDate": "Aug 15",
+        "week": 14,
+        "totalWeeks": 16
+      },
+      "connectedApps": ["Oura", "Garmin", "Apple Health"],
+      "category": "Sleep",
+      "planStatus": "active",
+      "lastCheckIn": 5,
+      "assigned": "Dr. Holt"
+    },
+    {
+      "id": "HC-0034",
+      "name": "Sara Lindqvist",
+      "gender": "F",
+      "age": 51,
+      "urgency": "monitor",
+      "enrollment": {
+        "program": "Longevity Protocol",
+        "startDate": "Oct 1",
+        "week": 8,
+        "totalWeeks": 16
+      },
+      "connectedApps": ["Garmin"],
+      "category": "Longevity",
+      "planStatus": "active",
+      "lastCheckIn": 7,
+      "assigned": "Dr. Voss"
+    },
+    {
+      "id": "HC-0056",
+      "name": "Omar Hadid",
+      "gender": "M",
+      "age": 33,
+      "urgency": "monitor",
+      "enrollment": {
+        "program": "Peptide Therapy",
+        "startDate": "Nov 1",
+        "week": 5,
+        "totalWeeks": 12
+      },
+      "connectedApps": ["Oura", "Apple Health"],
+      "category": "Peptide",
+      "planStatus": "active",
+      "lastCheckIn": 2,
+      "assigned": "Dr. Holt"
+    },
+    {
+      "id": "HC-0078",
+      "name": "Chiara Rossi",
+      "gender": "F",
+      "age": 35,
+      "urgency": "stable",
+      "enrollment": {
+        "program": "Lifestyle Optimization",
+        "startDate": "Jul 22",
+        "week": 16,
+        "totalWeeks": 16
+      },
+      "connectedApps": ["Apple Health", "Garmin", "Oura"],
+      "category": "Lifestyle",
+      "planStatus": "active",
+      "lastCheckIn": 2,
+      "assigned": "Dr. Holt"
+    },
+    {
+      "id": "HC-0012",
+      "name": "James Okafor",
+      "gender": "M",
+      "age": 60,
+      "urgency": "monitor",
+      "enrollment": {
+        "program": "Diet Intervention",
+        "startDate": "Dec 5",
+        "week": 3,
+        "totalWeeks": 8
+      },
+      "connectedApps": ["Garmin"],
+      "category": "Diet",
+      "planStatus": "draft",
+      "lastCheckIn": 10,
+      "assigned": "Dr. Voss"
+    },
+    {
+      "id": "HC-0045",
+      "name": "Lena Muller",
+      "gender": "F",
+      "age": 29,
+      "urgency": "stable",
+      "enrollment": {
+        "program": "Sleep Protocol",
+        "startDate": "Sep 18",
+        "week": 12,
+        "totalWeeks": 16
+      },
+      "connectedApps": ["Oura"],
+      "category": "Sleep",
+      "planStatus": "active",
+      "lastCheckIn": 4,
+      "assigned": "Dr. Holt"
+    },
+    {
+      "id": "HC-0091",
+      "name": "Raj Patel",
+      "gender": "M",
+      "age": 44,
+      "urgency": "stable",
+      "enrollment": {
+        "program": "Longevity Protocol",
+        "startDate": "Oct 28",
+        "week": 7,
+        "totalWeeks": 16
+      },
+      "connectedApps": ["Apple Health", "Oura"],
+      "category": "Longevity",
+      "planStatus": "active",
+      "lastCheckIn": 1,
+      "assigned": "Dr. Voss"
+    },
+    {
+      "id": "HC-0063",
+      "name": "Yuki Tanaka",
+      "gender": "F",
+      "age": 41,
+      "urgency": "immediate",
+      "enrollment": {
+        "program": "Peptide Therapy",
+        "startDate": "Nov 10",
+        "week": 4,
+        "totalWeeks": 12
+      },
+      "connectedApps": [],
+      "category": "Peptide",
+      "planStatus": "none",
+      "lastCheckIn": 22,
+      "assigned": "Dr. Holt"
+    },
+    {
+      "id": "HC-0029",
+      "name": "David Kim",
+      "gender": "M",
+      "age": 52,
+      "urgency": "stable",
+      "enrollment": {
+        "program": "Lifestyle Optimization",
+        "startDate": "Aug 5",
+        "week": 16,
+        "totalWeeks": 16
+      },
+      "connectedApps": ["Garmin", "Apple Health"],
+      "category": "Lifestyle",
+      "planStatus": "active",
+      "lastCheckIn": 3,
+      "assigned": "Dr. Voss"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "perPage": 20,
+    "total": 12,
+    "hasMore": false
+  }
+}

@@ -14,7 +14,6 @@ import {
   Login,
   Share,
   Tasks,
-  ClientList,
   MaintenancePage,
   NotFound,
 } from '../pages';
@@ -56,6 +55,7 @@ import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
 import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
 import App from '../pages/AppendUi/Dashboard/index.tsx';
 import AppendUiDashboard from '../pages/AppendUi/pages/Dashboard/index.tsx';
+import AppendUiClientList from '../pages/AppendUi/pages/ClientList/index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -68,7 +68,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: '/',
-            element: <ClientList></ClientList>,
+            element: <AppendUiClientList></AppendUiClientList>,
           },
           {
             path: '/dashboard',
