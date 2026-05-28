@@ -197,9 +197,7 @@ const ClientListPage = () => {
   };
 
   const handleOpenClient = (client: Client) => {
-    navigate(
-      `/report/${client.memberId}/${encodeURIComponent(client.name)}`,
-    );
+    navigate(`/report/${client.memberId}/${encodeURIComponent(client.name)}`);
   };
 
   const handleOpenAddClient = () => setShowAddClient(true);

@@ -192,8 +192,7 @@ const ClientTable = ({
   const hasData = clients.length > 0;
   const skeletonRowCount = Math.min(perPage, 8);
   const pageList = buildPageList(currentPage, totalPages);
-  const rangeStart =
-    filteredCount === 0 ? 0 : (currentPage - 1) * perPage + 1;
+  const rangeStart = filteredCount === 0 ? 0 : (currentPage - 1) * perPage + 1;
   const rangeEnd = Math.min(currentPage * perPage, filteredCount);
   const canPrev = !isLoading && currentPage > 1;
   const canNext = !isLoading && currentPage < totalPages;

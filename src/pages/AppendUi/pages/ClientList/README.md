@@ -26,32 +26,32 @@ ClientList/
 
 ## ✅ Connected to Backend (live)
 
-| Action       | Endpoint           | Frontend caller             |
-| ------------ | ------------------ | --------------------------- |
-| Fetch list   | `GET /patients`    | `Application.getPatients()` |
+| Action     | Endpoint        | Frontend caller             |
+| ---------- | --------------- | --------------------------- |
+| Fetch list | `GET /patients` | `Application.getPatients()` |
 
 The backend returns `{ patients_list_data: BackendPatient[] }`. Each item is
 mapped to the design's `Client` shape by `mapPatient.ts`.
 
 ### Fields that come straight from the backend
 
-| Design field         | Backend field                              |
-| -------------------- | ------------------------------------------ |
-| `id`                 | `member_id` (formatted as `HC-XXXX`)       |
-| `name`               | `name`                                     |
-| `gender`             | `sex` (`"female"` → `'F'`, else `'M'`)     |
-| `age`                | `age`                                      |
-| `enrollment.startDate` | `enroll_date` (formatted as `Oct 12`)    |
-| `lastCheckIn`        | days since `last_followup`                 |
-| `assigned`           | `assigned_to.join(', ')`                   |
+| Design field           | Backend field                          |
+| ---------------------- | -------------------------------------- |
+| `id`                   | `member_id` (formatted as `HC-XXXX`)   |
+| `name`                 | `name`                                 |
+| `gender`               | `sex` (`"female"` → `'F'`, else `'M'`) |
+| `age`                  | `age`                                  |
+| `enrollment.startDate` | `enroll_date` (formatted as `Oct 12`)  |
+| `lastCheckIn`          | days since `last_followup`             |
+| `assigned`             | `assigned_to.join(', ')`               |
 
 ### Fields derived from existing backend data
 
-| Design field        | Derivation rule                                                                                       |
-| ------------------- | ----------------------------------------------------------------------------------------------------- |
-| `urgency`           | `status === 'needs check'` OR `daysSinceCheckIn > 14` → `immediate`; `status === 'incomplete data'` OR `> 7` days → `monitor`; else → `stable` |
-| `planStatus`        | `checked` → `active`, `incomplete data` → `draft`, `needs check` → `none`, else → `active`           |
-| `enrollment.week` + `totalWeeks` | mapped from `progress` (0–100). Internally stored as `week = progress`, `totalWeeks = 100` so the progress bar shows `progress%` correctly |
+| Design field                     | Derivation rule                                                                                                                                |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `urgency`                        | `status === 'needs check'` OR `daysSinceCheckIn > 14` → `immediate`; `status === 'incomplete data'` OR `> 7` days → `monitor`; else → `stable` |
+| `planStatus`                     | `checked` → `active`, `incomplete data` → `draft`, `needs check` → `none`, else → `active`                                                     |
+| `enrollment.week` + `totalWeeks` | mapped from `progress` (0–100). Internally stored as `week = progress`, `totalWeeks = 100` so the progress bar shows `progress%` correctly     |
 
 ---
 
@@ -60,25 +60,25 @@ mapped to the design's `Client` shape by `mapPatient.ts`.
 Each of these is currently filled with a safe default; please tell me how you
 want to handle them.
 
-| Design field                  | Default in code           | Question for product / backend                                                                                     |
-| ----------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `enrollment.program`          | `'—'` (em dash)           | Should the backend add a `program` field per patient? Or should we derive it from `category`?                       |
-| `enrollment.week`             | `progress` (approx.)      | The design uses week-of-N progress. Should backend send `week` & `totalWeeks` explicitly, or keep using `progress`? |
-| `enrollment.totalWeeks`       | `100`                     | Same as above.                                                                                                     |
-| `category`                    | `'—'` (em dash, default color) | Should backend add a `category` enum (`Peptide`, `Longevity`, `Diet`, `Sleep`, `Lifestyle`)? Or derive from program? |
-| `connectedApps`               | `[]` → "Not Connected"    | The design shows badges for connected wearables (Oura, Garmin, Apple Health, etc.). Should backend add `connected_apps: string[]`? |
-| `assigned` (multiple)         | `assigned_to.join(', ')`  | Design currently shows one practitioner. Should it show multiple? Show the primary one? Show first + "+N more"?    |
+| Design field            | Default in code                | Question for product / backend                                                                                                     |
+| ----------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `enrollment.program`    | `'—'` (em dash)                | Should the backend add a `program` field per patient? Or should we derive it from `category`?                                      |
+| `enrollment.week`       | `progress` (approx.)           | The design uses week-of-N progress. Should backend send `week` & `totalWeeks` explicitly, or keep using `progress`?                |
+| `enrollment.totalWeeks` | `100`                          | Same as above.                                                                                                                     |
+| `category`              | `'—'` (em dash, default color) | Should backend add a `category` enum (`Peptide`, `Longevity`, `Diet`, `Sleep`, `Lifestyle`)? Or derive from program?               |
+| `connectedApps`         | `[]` → "Not Connected"         | The design shows badges for connected wearables (Oura, Garmin, Apple Health, etc.). Should backend add `connected_apps: string[]`? |
+| `assigned` (multiple)   | `assigned_to.join(', ')`       | Design currently shows one practitioner. Should it show multiple? Show the primary one? Show first + "+N more"?                    |
 
 ### Filter dropdowns that won't fully work until the missing fields exist
 
-| Filter         | Status                                                                  |
-| -------------- | ----------------------------------------------------------------------- |
-| Urgency        | ✅ Works (derived)                                                       |
-| Category       | ⚠️ Always empty — needs `category` field                                |
-| Plan Status    | ✅ Works (derived)                                                       |
-| Assigned To    | ⚠️ Hard-coded options `Dr. Holt` / `Dr. Voss` — should list real coaches |
-| Mobile App     | ⚠️ Always "Not Connected" — needs `connectedApps`                       |
-| Check-In       | ✅ Works (derived from `last_followup`)                                  |
+| Filter      | Status                                                                   |
+| ----------- | ------------------------------------------------------------------------ |
+| Urgency     | ✅ Works (derived)                                                       |
+| Category    | ⚠️ Always empty — needs `category` field                                 |
+| Plan Status | ✅ Works (derived)                                                       |
+| Assigned To | ⚠️ Hard-coded options `Dr. Holt` / `Dr. Voss` — should list real coaches |
+| Mobile App  | ⚠️ Always "Not Connected" — needs `connectedApps`                        |
+| Check-In    | ✅ Works (derived from `last_followup`)                                  |
 
 ### Other things to decide
 

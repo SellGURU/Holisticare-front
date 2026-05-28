@@ -1,13 +1,5 @@
 import { ChangeEvent } from 'react';
-import {
-  X,
-  UserPlus,
-  Mail,
-  Phone,
-  Calendar,
-  Check,
-  Plus,
-} from 'lucide-react';
+import { X, UserPlus, Mail, Phone, Calendar, Check, Plus } from 'lucide-react';
 import type { NewClientForm } from './types';
 
 interface AddClientModalProps {
