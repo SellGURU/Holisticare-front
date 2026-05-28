@@ -46,7 +46,15 @@ const AddModal: FC<AddModalProps> = ({
   loading,
   errorDetails,
   setErrorDetails,
-  biomarkerTypeOptions = ['blood', 'urine', 'dna', 'gut', 'saliva', 'stool', 'other'],
+  biomarkerTypeOptions = [
+    'blood',
+    'urine',
+    'dna',
+    'gut',
+    'saliva',
+    'stool',
+    'other',
+  ],
   benchmarkAreaOptionsByType = {},
 }) => {
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
@@ -119,7 +127,13 @@ const AddModal: FC<AddModalProps> = ({
   };
 
   const updateThresholdRange = useCallback(
-    (gender: 'male' | 'female', ageKey: string, rangeIdx: number, field: string, value: any) => {
+    (
+      gender: 'male' | 'female',
+      ageKey: string,
+      rangeIdx: number,
+      field: string,
+      value: any,
+    ) => {
       const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
       const genderData = { ...(thresholds[gender] || {}) };
       const ranges = [...(genderData[ageKey] || [])];
@@ -132,7 +146,12 @@ const AddModal: FC<AddModalProps> = ({
   );
 
   const updateThresholdStatus = useCallback(
-    (gender: 'male' | 'female', ageKey: string, rangeIdx: number, status: string) => {
+    (
+      gender: 'male' | 'female',
+      ageKey: string,
+      rangeIdx: number,
+      status: string,
+    ) => {
       const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
       const genderData = { ...(thresholds[gender] || {}) };
       const ranges = [...(genderData[ageKey] || [])];
@@ -154,7 +173,13 @@ const AddModal: FC<AddModalProps> = ({
       const thresholds = { ...(draft.thresholds || { male: {}, female: {} }) };
       const genderData = { ...(thresholds[gender] || {}) };
       const ranges = [...(genderData[ageKey] || [])];
-      ranges.push({ label: '', status: 'OptimalRange', low: null, high: null, color: '#22C55E' });
+      ranges.push({
+        label: '',
+        status: 'OptimalRange',
+        low: null,
+        high: null,
+        color: '#22C55E',
+      });
       genderData[ageKey] = ranges;
       thresholds[gender] = genderData;
       updateDraft('thresholds', thresholds);
@@ -182,9 +207,27 @@ const AddModal: FC<AddModalProps> = ({
       const existingKeys = Object.keys(genderData);
       const newKey = existingKeys.length === 0 ? '18-100' : '';
       genderData[newKey] = [
-        { label: 'Critical Low', status: 'CriticalRange', low: null, high: null, color: '#EF4444' },
-        { label: 'Optimal', status: 'OptimalRange', low: null, high: null, color: '#22C55E' },
-        { label: 'Critical High', status: 'CriticalRange', low: null, high: null, color: '#EF4444' },
+        {
+          label: 'Critical Low',
+          status: 'CriticalRange',
+          low: null,
+          high: null,
+          color: '#EF4444',
+        },
+        {
+          label: 'Optimal',
+          status: 'OptimalRange',
+          low: null,
+          high: null,
+          color: '#22C55E',
+        },
+        {
+          label: 'Critical High',
+          status: 'CriticalRange',
+          low: null,
+          high: null,
+          color: '#EF4444',
+        },
       ];
       thresholds[gender] = genderData;
       updateDraft('thresholds', thresholds);
@@ -261,11 +304,15 @@ const AddModal: FC<AddModalProps> = ({
           return (
             <div key={ageKey} className="mb-3 bg-gray-50 rounded-lg p-2">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[9px] text-Text-Secondary shrink-0">Age Range:</span>
+                <span className="text-[9px] text-Text-Secondary shrink-0">
+                  Age Range:
+                </span>
                 <input
                   type="text"
                   value={ageKey}
-                  onChange={(e) => renameAgeGroup(gender, ageKey, e.target.value)}
+                  onChange={(e) =>
+                    renameAgeGroup(gender, ageKey, e.target.value)
+                  }
                   placeholder="e.g. 18-100"
                   className="w-[80px] border border-Gray-50 rounded-lg px-1.5 py-0.5 text-[10px] outline-none focus:border-Primary-DeepTeal bg-white"
                 />
@@ -287,17 +334,33 @@ const AddModal: FC<AddModalProps> = ({
                   <span className="w-4" />
                 </div>
                 {ranges.map((range: any, rIdx: number) => {
-                  const statusInfo = ALLOWED_STATUSES.find((s) => s.value === range.status);
+                  const statusInfo = ALLOWED_STATUSES.find(
+                    (s) => s.value === range.status,
+                  );
                   return (
-                    <div key={rIdx} className="flex items-center gap-1.5 text-[10px]">
+                    <div
+                      key={rIdx}
+                      className="flex items-center gap-1.5 text-[10px]"
+                    >
                       <div
                         className="w-4 h-4 rounded-full shrink-0 border border-gray-200"
-                        style={{ backgroundColor: statusInfo?.color || range.color || '#22C55E' }}
+                        style={{
+                          backgroundColor:
+                            statusInfo?.color || range.color || '#22C55E',
+                        }}
                       />
                       <input
                         type="text"
                         value={range.label || ''}
-                        onChange={(e) => updateThresholdRange(gender, ageKey, rIdx, 'label', e.target.value)}
+                        onChange={(e) =>
+                          updateThresholdRange(
+                            gender,
+                            ageKey,
+                            rIdx,
+                            'label',
+                            e.target.value,
+                          )
+                        }
                         placeholder="e.g. Optimal"
                         className="w-[80px] border border-Gray-50 rounded-lg px-1.5 py-0.5 text-[10px] outline-none focus:border-Primary-DeepTeal bg-white"
                       />
@@ -315,14 +378,26 @@ const AddModal: FC<AddModalProps> = ({
                       >
                         <option value="">— select —</option>
                         {ALLOWED_STATUSES.map((s) => (
-                          <option key={s.value} value={s.value}>{s.label}</option>
+                          <option key={s.value} value={s.value}>
+                            {s.label}
+                          </option>
                         ))}
                       </select>
                       <input
                         type="number"
                         step="any"
                         value={range.low ?? ''}
-                        onChange={(e) => updateThresholdRange(gender, ageKey, rIdx, 'low', e.target.value === '' ? null : Number(e.target.value))}
+                        onChange={(e) =>
+                          updateThresholdRange(
+                            gender,
+                            ageKey,
+                            rIdx,
+                            'low',
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
+                          )
+                        }
                         placeholder="null"
                         className="w-[55px] border border-Gray-50 rounded-lg px-1.5 py-0.5 text-[10px] outline-none text-center focus:border-Primary-DeepTeal bg-white"
                       />
@@ -330,14 +405,26 @@ const AddModal: FC<AddModalProps> = ({
                         type="number"
                         step="any"
                         value={range.high ?? ''}
-                        onChange={(e) => updateThresholdRange(gender, ageKey, rIdx, 'high', e.target.value === '' ? null : Number(e.target.value))}
+                        onChange={(e) =>
+                          updateThresholdRange(
+                            gender,
+                            ageKey,
+                            rIdx,
+                            'high',
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
+                          )
+                        }
                         placeholder="null"
                         className="w-[55px] border border-Gray-50 rounded-lg px-1.5 py-0.5 text-[10px] outline-none text-center focus:border-Primary-DeepTeal bg-white"
                       />
                       <button
                         type="button"
                         className="text-red-400 hover:text-red-600 text-[12px] leading-none ml-0.5"
-                        onClick={() => removeThresholdRange(gender, ageKey, rIdx)}
+                        onClick={() =>
+                          removeThresholdRange(gender, ageKey, rIdx)
+                        }
                       >
                         ×
                       </button>
@@ -363,7 +450,9 @@ const AddModal: FC<AddModalProps> = ({
     <div className="w-[90vw] md:w-[620px] max-w-[620px] max-h-[85vh] relative bg-white rounded-[16px] flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-Gray-50">
-        <div className="TextStyle-Headline-5 text-Text-Primary">Add Biomarker</div>
+        <div className="TextStyle-Headline-5 text-Text-Primary">
+          Add Biomarker
+        </div>
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -396,9 +485,18 @@ const AddModal: FC<AddModalProps> = ({
       {/* Error banner */}
       {errorDetails && (
         <div className="mx-6 mt-3 bg-[#F9DEDC] rounded-xl px-4 py-2 text-[10px] text-Text-Primary flex items-start gap-2">
-          <img src="/icons/info-circle-orange.svg" alt="" className="w-4 h-4 mt-0.5 shrink-0" />
+          <img
+            src="/icons/info-circle-orange.svg"
+            alt=""
+            className="w-4 h-4 mt-0.5 shrink-0"
+          />
           <span className="flex-1">{errorDetails}</span>
-          <img src="/icons/close-black.svg" alt="" className="cursor-pointer w-4 h-4" onClick={() => setErrorDetails('')} />
+          <img
+            src="/icons/close-black.svg"
+            alt=""
+            className="cursor-pointer w-4 h-4"
+            onClick={() => setErrorDetails('')}
+          />
         </div>
       )}
 
@@ -407,7 +505,9 @@ const AddModal: FC<AddModalProps> = ({
         {viewMode === 'form' ? (
           <>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Type</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Type
+              </label>
               <select
                 value={selectedType}
                 onChange={(e) => updateBiomarkerType(e.target.value)}
@@ -421,7 +521,9 @@ const AddModal: FC<AddModalProps> = ({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Benchmark Area <span className="text-red-500">*</span></label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Benchmark Area <span className="text-red-500">*</span>
+              </label>
               <BenchmarkAreaSelect
                 value={draft['Benchmark areas'] || ''}
                 options={filteredBenchmarkAreaOptions}
@@ -430,11 +532,15 @@ const AddModal: FC<AddModalProps> = ({
                 onChange={(value) => updateDraft('Benchmark areas', value)}
               />
               <div className="mt-1 text-[10px] text-Text-Secondary">
-                Showing benchmark areas for {formatBiomarkerTypeLabel(selectedType)}. New areas created here will be saved under this type.
+                Showing benchmark areas for{' '}
+                {formatBiomarkerTypeLabel(selectedType)}. New areas created here
+                will be saved under this type.
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Biomarker Name <span className="text-red-500">*</span></label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Biomarker Name <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 value={draft.Biomarker || ''}
@@ -444,7 +550,9 @@ const AddModal: FC<AddModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Unit</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Unit
+              </label>
               <input
                 type="text"
                 value={draft.unit || ''}
@@ -454,7 +562,9 @@ const AddModal: FC<AddModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Definition</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Definition
+              </label>
               <textarea
                 value={draft.Definition || ''}
                 onChange={(e) => updateDraft('Definition', e.target.value)}
@@ -466,7 +576,9 @@ const AddModal: FC<AddModalProps> = ({
 
             {/* Thresholds */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">Thresholds (Reference Ranges)</label>
+              <label className="block text-xs font-medium text-gray-700 mb-2">
+                Thresholds (Reference Ranges)
+              </label>
               {renderThresholdGender('male')}
               {renderThresholdGender('female')}
             </div>
@@ -482,17 +594,26 @@ const AddModal: FC<AddModalProps> = ({
               rows={18}
               spellCheck={false}
               className={`w-full font-mono text-[11px] border rounded-xl px-3 py-2 outline-none resize-none ${
-                jsonError ? 'border-red-400 bg-red-50' : 'border-Gray-50 focus:border-Primary-DeepTeal'
+                jsonError
+                  ? 'border-red-400 bg-red-50'
+                  : 'border-Gray-50 focus:border-Primary-DeepTeal'
               }`}
             />
-            {jsonError && <div className="text-[10px] text-red-500">{jsonError}</div>}
+            {jsonError && (
+              <div className="text-[10px] text-red-500">{jsonError}</div>
+            )}
           </>
         )}
       </div>
 
       {/* Footer */}
       <div className="px-6 py-4 border-t border-Gray-50 flex items-center justify-end gap-4">
-        <div onClick={onCancel} className="TextStyle-Headline-5 cursor-pointer text-Disable">Cancel</div>
+        <div
+          onClick={onCancel}
+          className="TextStyle-Headline-5 cursor-pointer text-Disable"
+        >
+          Cancel
+        </div>
         <button
           type="button"
           onClick={handleSave}

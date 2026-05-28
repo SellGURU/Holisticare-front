@@ -51,7 +51,10 @@ class AdminApi {
     });
   }
 
-  static updateClinic(id: number, data: { plan_type?: 'demo' | 'paying'; is_disabled?: boolean }) {
+  static updateClinic(
+    id: number,
+    data: { plan_type?: 'demo' | 'paying'; is_disabled?: boolean },
+  ) {
     return axios.patch(`${baseUrl}/admin/clinics/${id}`, data, {
       headers: withAuthHeaders(),
     });
@@ -69,7 +72,11 @@ class AdminApi {
     });
   }
 
-  static getBackendErrors(params?: { limit?: number; search?: string; status_code?: number }) {
+  static getBackendErrors(params?: {
+    limit?: number;
+    search?: string;
+    status_code?: number;
+  }) {
     return axios.get(`${baseUrl}/admin/logs/backend-errors`, {
       headers: withAuthHeaders(),
       params,
@@ -125,9 +132,12 @@ class AdminApi {
   }
 
   static getLlmPrompt(key: string) {
-    return axios.get(`${baseUrl}/admin/llm/prompts/${encodeURIComponent(key)}`, {
-      headers: withAuthHeaders(),
-    });
+    return axios.get(
+      `${baseUrl}/admin/llm/prompts/${encodeURIComponent(key)}`,
+      {
+        headers: withAuthHeaders(),
+      },
+    );
   }
 
   static updateLlmPrompt(key: string, payload: any) {

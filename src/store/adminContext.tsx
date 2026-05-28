@@ -103,10 +103,19 @@ const AdminContextProvider = ({ children }: { children: ReactNode }) => {
       setDateRange,
       refreshClinics,
     }),
-    [clinics, endDate, loadingClinics, refreshClinics, selectedClinicEmail, startDate],
+    [
+      clinics,
+      endDate,
+      loadingClinics,
+      refreshClinics,
+      selectedClinicEmail,
+      startDate,
+    ],
   );
 
-  return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
+  return (
+    <AdminContext.Provider value={value}>{children}</AdminContext.Provider>
+  );
 };
 
 export const useAdminContext = () => {

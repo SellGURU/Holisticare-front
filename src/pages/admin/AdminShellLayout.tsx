@@ -96,9 +96,12 @@ const AdminShellLayout = ({
         <div className="text-[11px] uppercase tracking-[0.24em] text-white/70">
           HolistiCare Admin
         </div>
-        <div className="mt-1 text-lg font-semibold">Support Intelligence Console</div>
+        <div className="mt-1 text-lg font-semibold">
+          Support Intelligence Console
+        </div>
         <div className="mt-2 text-[11px] leading-5 text-white/80">
-          Analytics, click activity, clinic context, reports, and publishing in one place.
+          Analytics, click activity, clinic context, reports, and publishing in
+          one place.
         </div>
       </div>
 
@@ -143,7 +146,9 @@ const AdminShellLayout = ({
             <div className="text-[11px] uppercase tracking-[0.24em] text-Text-Secondary">
               HolistiCare Admin
             </div>
-            <div className="text-lg font-semibold text-Text-Primary">Support Console</div>
+            <div className="text-lg font-semibold text-Text-Primary">
+              Support Console
+            </div>
           </div>
           <button
             type="button"
@@ -164,9 +169,13 @@ const AdminShellLayout = ({
                 <ChevronRight size={12} />
                 <span>{breadcrumb}</span>
               </div>
-              <div className="mt-1 text-2xl font-medium text-Text-Primary">{title}</div>
+              <div className="mt-1 text-2xl font-medium text-Text-Primary">
+                {title}
+              </div>
               {subtitle && (
-                <div className="text-[12px] text-Text-Secondary mt-1 max-w-3xl">{subtitle}</div>
+                <div className="text-[12px] text-Text-Secondary mt-1 max-w-3xl">
+                  {subtitle}
+                </div>
               )}
             </div>
             {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
@@ -181,12 +190,17 @@ const AdminShellLayout = ({
                   </label>
                   <select
                     value={selectedClinicEmail}
-                    onChange={(event) => setSelectedClinicEmail(event.target.value)}
+                    onChange={(event) =>
+                      setSelectedClinicEmail(event.target.value)
+                    }
                     className="w-full rounded-2xl border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] outline-none"
                   >
                     <option value="">All clinics</option>
                     {clinics.map((clinic) => (
-                      <option key={clinic.clinic_email} value={clinic.clinic_email}>
+                      <option
+                        key={clinic.clinic_email}
+                        value={clinic.clinic_email}
+                      >
                         {clinic.clinic_name} ({clinic.clinic_email})
                       </option>
                     ))}

@@ -87,14 +87,17 @@ const JsonUploading = () => {
   const [sourceClinicId, setSourceClinicId] = useState<string>('');
   const [targetClinicIds, setTargetClinicIds] = useState<number[]>([]);
   const [loadedSource, setLoadedSource] = useState<LoadedSource | null>(null);
-  const [loadedConfigs, setLoadedConfigs] = useState<ConfigBundle>(EMPTY_CONFIGS);
+  const [loadedConfigs, setLoadedConfigs] =
+    useState<ConfigBundle>(EMPTY_CONFIGS);
   const [draftConfigs, setDraftConfigs] = useState<ConfigBundle>(EMPTY_CONFIGS);
   const [activeConfig, setActiveConfig] = useState<ConfigKey>('more_info');
   const [editorValue, setEditorValue] = useState(
     JSON.stringify(EMPTY_CONFIGS.more_info, null, 2),
   );
   const [editorError, setEditorError] = useState('');
-  const [jsonErrorInfo, setJsonErrorInfo] = useState<JsonErrorInfo | null>(null);
+  const [jsonErrorInfo, setJsonErrorInfo] = useState<JsonErrorInfo | null>(
+    null,
+  );
   const [clinicSearch, setClinicSearch] = useState('');
   const [targetSearch, setTargetSearch] = useState('');
   const [setAsDefault, setSetAsDefault] = useState(false);
@@ -130,7 +133,9 @@ const JsonUploading = () => {
       setLoadingPage(true);
       try {
         const res = await BiomarkersApi.getJsonManagerClinics();
-        const nextClinics = Array.isArray(res?.data?.clinics) ? res.data.clinics : [];
+        const nextClinics = Array.isArray(res?.data?.clinics)
+          ? res.data.clinics
+          : [];
         const nextCurrentClinicId = res?.data?.current_clinic_id ?? null;
 
         setClinics(nextClinics);
@@ -190,7 +195,9 @@ const JsonUploading = () => {
           biomarker_specific: [],
           common_unit_aliases: {},
         },
-        biomarker_mapping: res?.data?.configs?.biomarker_mapping || { mappings: [] },
+        biomarker_mapping: res?.data?.configs?.biomarker_mapping || {
+          mappings: [],
+        },
       };
 
       setLoadedSource(res?.data?.source || null);
@@ -204,9 +211,7 @@ const JsonUploading = () => {
       if (!useDefaultTemplate && res?.data?.source?.clinic_id) {
         const sourceId = Number(res.data.source.clinic_id);
         setSourceClinicId(String(sourceId));
-        setTargetClinicIds((prev) =>
-          prev.length > 0 ? prev : [sourceId],
-        );
+        setTargetClinicIds((prev) => (prev.length > 0 ? prev : [sourceId]));
       }
 
       toast.success(
@@ -319,9 +324,12 @@ const JsonUploading = () => {
     if (targetClinicIds.length === 0 && !setAsDefault) {
       setJsonErrorInfo({
         title: 'Publish target required',
-        message: 'Choose at least one target clinic or enable default template update.',
+        message:
+          'Choose at least one target clinic or enable default template update.',
       });
-      toast.error('Choose at least one target clinic or enable default template update.');
+      toast.error(
+        'Choose at least one target clinic or enable default template update.',
+      );
       return;
     }
 
@@ -363,7 +371,10 @@ const JsonUploading = () => {
       }
       setJsonErrorInfo(null);
     } catch (error: any) {
-      const publishError = buildJsonPublishErrorInfo(error, 'Failed to update JSON.');
+      const publishError = buildJsonPublishErrorInfo(
+        error,
+        'Failed to update JSON.',
+      );
       setJsonErrorInfo(publishError);
       toast.error(publishError.message);
     } finally {
@@ -388,8 +399,9 @@ const JsonUploading = () => {
               JSON Configuration Manager
             </div>
             <div className="text-[11px] text-Text-Secondary mt-1">
-              Load clinic JSON, edit full documents, download them, publish to one or many clinics,
-              and optionally save defaults for future clinics.
+              Load clinic JSON, edit full documents, download them, publish to
+              one or many clinics, and optionally save defaults for future
+              clinics.
             </div>
           </div>
           <div className="flex items-center gap-2 text-[11px] text-Text-Secondary">
@@ -406,17 +418,21 @@ const JsonUploading = () => {
       <div className="w-full min-h-full px-2 md:px-6 py-[96px]">
         {!canManageAllClinics && (
           <div className="mb-4 rounded-[16px] border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] text-Text-Primary">
-            Your access is currently limited to your own clinic. Multi-clinic publishing and default
-            template updates are only available for platform-level admins.
+            Your access is currently limited to your own clinic. Multi-clinic
+            publishing and default template updates are only available for
+            platform-level admins.
           </div>
         )}
 
         <div className="grid grid-cols-1 xl:grid-cols-[320px_minmax(0,1fr)] gap-4">
           <div className="space-y-4">
             <div className="bg-white border border-Gray-50 shadow-100 rounded-[16px] p-4">
-              <div className="TextStyle-Headline-5 text-Text-Primary">1. Load Source Data</div>
+              <div className="TextStyle-Headline-5 text-Text-Primary">
+                1. Load Source Data
+              </div>
               <div className="text-[11px] text-Text-Secondary mt-1">
-                Choose one clinic to load its current JSON, or load the default templates.
+                Choose one clinic to load its current JSON, or load the default
+                templates.
               </div>
 
               <input
@@ -439,7 +455,9 @@ const JsonUploading = () => {
                       type="radio"
                       name="source-clinic"
                       checked={sourceClinicId === String(clinic.clinic_id)}
-                      onChange={() => setSourceClinicId(String(clinic.clinic_id))}
+                      onChange={() =>
+                        setSourceClinicId(String(clinic.clinic_id))
+                      }
                       className="mt-1"
                     />
                     <div className="min-w-0">
@@ -483,15 +501,20 @@ const JsonUploading = () => {
               {loadedSource && (
                 <div className="mt-3 rounded-xl bg-[#F8FAFB] border border-Gray-50 px-3 py-2 text-[11px] text-Text-Secondary">
                   Loaded from:{' '}
-                  <span className="font-medium text-Text-Primary">{loadedSource.clinic_name}</span>
+                  <span className="font-medium text-Text-Primary">
+                    {loadedSource.clinic_name}
+                  </span>
                 </div>
               )}
             </div>
 
             <div className="bg-white border border-Gray-50 shadow-100 rounded-[16px] p-4">
-              <div className="TextStyle-Headline-5 text-Text-Primary">2. Publish Targets</div>
+              <div className="TextStyle-Headline-5 text-Text-Primary">
+                2. Publish Targets
+              </div>
               <div className="text-[11px] text-Text-Secondary mt-1">
-                Choose one or many clinics that should receive the active JSON file.
+                Choose one or many clinics that should receive the active JSON
+                file.
               </div>
 
               <input
@@ -563,7 +586,8 @@ const JsonUploading = () => {
 
               <div className="mt-3 flex items-center justify-between text-[11px]">
                 <span className="text-Text-Secondary">
-                  {targetClinicIds.length} clinic{targetClinicIds.length === 1 ? '' : 's'} selected
+                  {targetClinicIds.length} clinic
+                  {targetClinicIds.length === 1 ? '' : 's'} selected
                 </span>
                 <label className="flex items-center gap-2 text-Text-Primary">
                   <input
@@ -585,7 +609,8 @@ const JsonUploading = () => {
                   3. Edit Full JSON
                 </div>
                 <div className="text-[11px] text-Text-Secondary mt-1">
-                  Switch between JSON files, edit the full content, then publish the active file.
+                  Switch between JSON files, edit the full content, then publish
+                  the active file.
                 </div>
               </div>
 
@@ -639,7 +664,9 @@ const JsonUploading = () => {
             </div>
 
             <div className="mt-3 rounded-xl bg-[#F8FAFB] border border-Gray-50 px-3 py-2">
-              <div className="text-[12px] font-medium text-Text-Primary">{activeTab.fileName}</div>
+              <div className="text-[12px] font-medium text-Text-Primary">
+                {activeTab.fileName}
+              </div>
               <div className="text-[11px] text-Text-Secondary mt-1">
                 {activeTab.description}
               </div>
@@ -654,14 +681,18 @@ const JsonUploading = () => {
             <div className="mt-4">
               <textarea
                 value={editorValue}
-                onChange={(e) => applyEditorToDraft(e.target.value, activeConfig)}
+                onChange={(e) =>
+                  applyEditorToDraft(e.target.value, activeConfig)
+                }
                 spellCheck={false}
                 className="w-full min-h-[520px] rounded-[16px] border border-Gray-50 bg-[#0F172A] text-[#E2E8F0] p-4 text-[12px] font-mono outline-none resize-y"
               />
               <div className="mt-2 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                 <div className="text-[11px] text-Text-Secondary">
                   {editorError ? (
-                    <span className="text-red-500">JSON error: {editorError}</span>
+                    <span className="text-red-500">
+                      JSON error: {editorError}
+                    </span>
                   ) : (
                     <span>Valid JSON. Ready to publish.</span>
                   )}

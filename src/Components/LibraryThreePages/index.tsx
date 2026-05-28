@@ -516,7 +516,11 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
               <ButtonSecondary
                 ClassName="w-[210px] rounded-[20px] shadow-Btn"
                 disabled={isDemo}
-                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                title={
+                  isDemo
+                    ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                    : undefined
+                }
                 onClick={() => {
                   if (isDemo) return;
                   setManageTypesModal(true);
@@ -529,7 +533,11 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
               <ButtonSecondary
                 ClassName="w-[210px] rounded-[20px] shadow-Btn"
                 disabled={isDemo}
-                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                title={
+                  isDemo
+                    ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                    : undefined
+                }
                 onClick={handleOpenModal}
               >
                 <img src="/icons/add-square.svg" alt="" />

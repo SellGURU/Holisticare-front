@@ -14,9 +14,7 @@ const getThresholdCharts = (data: any) => {
       .map((ageRange) => ({
         gender,
         ageRange,
-        ranges: Array.isArray(genderData[ageRange])
-          ? genderData[ageRange]
-          : [],
+        ranges: Array.isArray(genderData[ageRange]) ? genderData[ageRange] : [],
       }))
       .filter((item) => item.ranges.length > 0);
   });

@@ -102,9 +102,12 @@ const AdminConfig = () => {
       <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="TextStyle-Headline-5 text-Text-Primary">Config JSON</div>
+            <div className="TextStyle-Headline-5 text-Text-Primary">
+              Config JSON
+            </div>
             <div className="mt-1 text-[11px] text-Text-Secondary">
-              Keep publishing controls separate from support analytics to reduce risk and confusion.
+              Keep publishing controls separate from support analytics to reduce
+              risk and confusion.
             </div>
           </div>
           <div className="flex gap-2">

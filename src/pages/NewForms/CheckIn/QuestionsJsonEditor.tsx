@@ -143,7 +143,9 @@ type ValidationResult = {
 
 const validateShape = (raw: any): ValidationResult => {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
-    throw new Error('Root must be an object with "questions" and optional "scoring".');
+    throw new Error(
+      'Root must be an object with "questions" and optional "scoring".',
+    );
   }
 
   const rawQuestions = raw.questions;
@@ -158,7 +160,9 @@ const validateShape = (raw: any): ValidationResult => {
         throw new Error(`Question #${index + 1} must be an object.`);
       }
       if (typeof item.question !== 'string' || !item.question.trim()) {
-        throw new Error(`Question #${index + 1} is missing a "question" string.`);
+        throw new Error(
+          `Question #${index + 1} is missing a "question" string.`,
+        );
       }
       if (typeof item.type !== 'string' || !item.type.trim()) {
         throw new Error(`Question #${index + 1} is missing a "type" string.`);
@@ -168,7 +172,9 @@ const validateShape = (raw: any): ValidationResult => {
           throw new Error(`Question #${index + 1} has an invalid "id".`);
         }
         if (seenIds.has(item.id)) {
-          throw new Error(`Question #${index + 1} has a duplicate id "${item.id}".`);
+          throw new Error(
+            `Question #${index + 1} has a duplicate id "${item.id}".`,
+          );
         }
         seenIds.add(item.id);
       }
@@ -241,7 +247,10 @@ const serialize = (
   questions: Array<QuestionaryType>,
   scoring: Array<ScoringRuleType>,
 ): string => {
-  const payload: { questions: Array<QuestionaryType>; scoring?: Array<ScoringRuleType> } = {
+  const payload: {
+    questions: Array<QuestionaryType>;
+    scoring?: Array<ScoringRuleType>;
+  } = {
     questions,
   };
   if (scoring && scoring.length > 0) {
@@ -340,7 +349,8 @@ const QuestionsJsonEditor: FC<QuestionsJsonEditorProps> = ({
     <div className="w-full flex flex-col">
       <div className="flex items-center justify-between mb-2">
         <div className="text-[11px] text-Text-Secondary">
-          Edit the full <code>questions</code> array (and optional <code>scoring</code>) as JSON.
+          Edit the full <code>questions</code> array (and optional{' '}
+          <code>scoring</code>) as JSON.
         </div>
         <button
           type="button"
@@ -410,15 +420,17 @@ const QuestionsJsonEditor: FC<QuestionsJsonEditorProps> = ({
               />
             </div>
             <div className="mt-2 text-[10px] text-Text-Secondary">
-              Tip: click anywhere in the box to select the whole prompt, or use the
-              Copy button. Paste into ChatGPT / Claude / any LLM, describe the
-              questionnaire you need, and paste the returned JSON back here.
+              Tip: click anywhere in the box to select the whole prompt, or use
+              the Copy button. Paste into ChatGPT / Claude / any LLM, describe
+              the questionnaire you need, and paste the returned JSON back here.
             </div>
           </div>
         )}
 
         <div className="px-3 pb-3 text-[11px] text-Text-Secondary">
-          <div className="font-medium text-Text-Primary mb-1">Quick reference</div>
+          <div className="font-medium text-Text-Primary mb-1">
+            Quick reference
+          </div>
           <div>
             Variables are question ids (e.g. <code>q_weight</code>). Operators:
             <code> + - * / ** ( )</code>. Functions:

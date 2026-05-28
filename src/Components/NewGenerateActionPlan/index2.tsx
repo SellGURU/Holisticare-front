@@ -41,7 +41,9 @@ const GenerateActionPlan = () => {
     category: [],
   });
   const splitTasks = useCallback((items: any[] = []) => {
-    const checkInItems = items.filter((item: any) => item.Task_Type === 'Checkin');
+    const checkInItems = items.filter(
+      (item: any) => item.Task_Type === 'Checkin',
+    );
     const categoryItems = items.filter(
       (item: any) => item.Task_Type !== 'Checkin',
     );
@@ -306,7 +308,9 @@ const GenerateActionPlan = () => {
                         ClassName="h-[33px] w-[120px] xs:w-[155px] text-[10px] xs:text-xs text-nowrap"
                         disabled={isDemo}
                         onClick={saveChanges}
-                        title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+                        title={
+                          isDemo ? 'Demo plan - upgrade to enable' : undefined
+                        }
                       >
                         {isLoadingSaveChanges ? (
                           <>

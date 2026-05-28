@@ -78,10 +78,19 @@ const UnitMappingSection = () => {
 
   const handleAdd = () => {
     if (!newEntry.biomarker.trim() || !newEntry.unit.trim()) return;
-    const updated = [...entries, { ...newEntry, to_unit: newEntry.to_unit || newEntry.unit }];
+    const updated = [
+      ...entries,
+      { ...newEntry, to_unit: newEntry.to_unit || newEntry.unit },
+    ];
     saveAll(updated);
     setAddMode(false);
-    setNewEntry({ biomarker: '', unit: '', to_unit: '', conversion_factor: null, offset: null });
+    setNewEntry({
+      biomarker: '',
+      unit: '',
+      to_unit: '',
+      conversion_factor: null,
+      offset: null,
+    });
   };
 
   if (loading) {
@@ -135,21 +144,27 @@ const UnitMappingSection = () => {
               <input
                 type="text"
                 value={newEntry.biomarker}
-                onChange={(e) => setNewEntry({ ...newEntry, biomarker: e.target.value })}
+                onChange={(e) =>
+                  setNewEntry({ ...newEntry, biomarker: e.target.value })
+                }
                 placeholder="Biomarker name"
                 className="border border-Gray-50 rounded-lg px-2 py-1 text-[11px] outline-none bg-white"
               />
               <input
                 type="text"
                 value={newEntry.unit}
-                onChange={(e) => setNewEntry({ ...newEntry, unit: e.target.value })}
+                onChange={(e) =>
+                  setNewEntry({ ...newEntry, unit: e.target.value })
+                }
                 placeholder="From"
                 className="border border-Gray-50 rounded-lg px-2 py-1 text-[11px] outline-none bg-white"
               />
               <input
                 type="text"
                 value={newEntry.to_unit}
-                onChange={(e) => setNewEntry({ ...newEntry, to_unit: e.target.value })}
+                onChange={(e) =>
+                  setNewEntry({ ...newEntry, to_unit: e.target.value })
+                }
                 placeholder="To"
                 className="border border-Gray-50 rounded-lg px-2 py-1 text-[11px] outline-none bg-white"
               />
@@ -160,7 +175,8 @@ const UnitMappingSection = () => {
                 onChange={(e) =>
                   setNewEntry({
                     ...newEntry,
-                    conversion_factor: e.target.value === '' ? null : Number(e.target.value),
+                    conversion_factor:
+                      e.target.value === '' ? null : Number(e.target.value),
                   })
                 }
                 placeholder="1.0"
@@ -173,7 +189,8 @@ const UnitMappingSection = () => {
                 onChange={(e) =>
                   setNewEntry({
                     ...newEntry,
-                    offset: e.target.value === '' ? null : Number(e.target.value),
+                    offset:
+                      e.target.value === '' ? null : Number(e.target.value),
                   })
                 }
                 placeholder="0"
@@ -206,7 +223,11 @@ const UnitMappingSection = () => {
               <div
                 key={i}
                 className={`grid grid-cols-[1fr_100px_100px_80px_60px_50px] items-center px-3 py-1.5 gap-2 text-[11px] border-b border-Gray-50 ${
-                  isEditing ? 'bg-yellow-50' : i % 2 === 0 ? 'bg-white' : 'bg-[#FAFBFC]'
+                  isEditing
+                    ? 'bg-yellow-50'
+                    : i % 2 === 0
+                      ? 'bg-white'
+                      : 'bg-[#FAFBFC]'
                 }`}
               >
                 {isEditing && editEntry ? (
@@ -214,19 +235,28 @@ const UnitMappingSection = () => {
                     <input
                       type="text"
                       value={editEntry.biomarker}
-                      onChange={(e) => setEditEntry({ ...editEntry, biomarker: e.target.value })}
+                      onChange={(e) =>
+                        setEditEntry({
+                          ...editEntry,
+                          biomarker: e.target.value,
+                        })
+                      }
                       className="border border-Gray-50 rounded-lg px-2 py-0.5 text-[11px] outline-none"
                     />
                     <input
                       type="text"
                       value={editEntry.unit}
-                      onChange={(e) => setEditEntry({ ...editEntry, unit: e.target.value })}
+                      onChange={(e) =>
+                        setEditEntry({ ...editEntry, unit: e.target.value })
+                      }
                       className="border border-Gray-50 rounded-lg px-2 py-0.5 text-[11px] outline-none"
                     />
                     <input
                       type="text"
                       value={editEntry.to_unit}
-                      onChange={(e) => setEditEntry({ ...editEntry, to_unit: e.target.value })}
+                      onChange={(e) =>
+                        setEditEntry({ ...editEntry, to_unit: e.target.value })
+                      }
                       className="border border-Gray-50 rounded-lg px-2 py-0.5 text-[11px] outline-none"
                     />
                     <input
@@ -236,7 +266,10 @@ const UnitMappingSection = () => {
                       onChange={(e) =>
                         setEditEntry({
                           ...editEntry,
-                          conversion_factor: e.target.value === '' ? null : Number(e.target.value),
+                          conversion_factor:
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
                         })
                       }
                       className="border border-Gray-50 rounded-lg px-1 py-0.5 text-[11px] outline-none text-center"
@@ -248,27 +281,56 @@ const UnitMappingSection = () => {
                       onChange={(e) =>
                         setEditEntry({
                           ...editEntry,
-                          offset: e.target.value === '' ? null : Number(e.target.value),
+                          offset:
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
                         })
                       }
                       className="border border-Gray-50 rounded-lg px-1 py-0.5 text-[11px] outline-none text-center"
                     />
                     <div className="flex gap-1 justify-center">
-                      <button type="button" onClick={handleEditSave} className="text-green-600 text-[12px]" title="Save">✓</button>
-                      <button type="button" onClick={() => { setEditIdx(null); setEditEntry(null); }} className="text-red-400 text-[12px]" title="Cancel">×</button>
+                      <button
+                        type="button"
+                        onClick={handleEditSave}
+                        className="text-green-600 text-[12px]"
+                        title="Save"
+                      >
+                        ✓
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditIdx(null);
+                          setEditEntry(null);
+                        }}
+                        className="text-red-400 text-[12px]"
+                        title="Cancel"
+                      >
+                        ×
+                      </button>
                     </div>
                   </>
                 ) : (
                   <>
-                    <span className="text-Text-Primary truncate">{entry.biomarker}</span>
+                    <span className="text-Text-Primary truncate">
+                      {entry.biomarker}
+                    </span>
                     <span className="text-Text-Secondary">{entry.unit}</span>
                     <span className="text-Text-Secondary">{entry.to_unit}</span>
-                    <span className="text-center text-Text-Secondary">{entry.conversion_factor ?? '—'}</span>
-                    <span className="text-center text-Text-Secondary">{entry.offset ?? '—'}</span>
+                    <span className="text-center text-Text-Secondary">
+                      {entry.conversion_factor ?? '—'}
+                    </span>
+                    <span className="text-center text-Text-Secondary">
+                      {entry.offset ?? '—'}
+                    </span>
                     <div className="flex gap-1 justify-center">
                       <button
                         type="button"
-                        onClick={() => { setEditIdx(realIdx); setEditEntry({ ...entry }); }}
+                        onClick={() => {
+                          setEditIdx(realIdx);
+                          setEditEntry({ ...entry });
+                        }}
                         className="text-Primary-DeepTeal text-[10px] hover:underline"
                       >
                         Edit

@@ -51,23 +51,31 @@ const AdminPlaceholderPage = ({
             {icon || <Hammer size={18} />}
           </div>
           <div>
-            <div className="TextStyle-Headline-5 text-Text-Primary">Planned Next</div>
+            <div className="TextStyle-Headline-5 text-Text-Primary">
+              Planned Next
+            </div>
             <div className="mt-1 text-[11px] text-Text-Secondary">
-              This section is scaffolded in the new admin navigation and ready for the next implementation pass.
+              This section is scaffolded in the new admin navigation and ready
+              for the next implementation pass.
             </div>
           </div>
         </div>
 
         <div className="mt-6 grid gap-3 md:grid-cols-2">
           {bullets.map((bullet) => (
-            <div key={bullet} className="rounded-2xl bg-[#F8FAFB] px-4 py-4 text-[12px] text-Text-Primary">
+            <div
+              key={bullet}
+              className="rounded-2xl bg-[#F8FAFB] px-4 py-4 text-[12px] text-Text-Primary"
+            >
               {bullet}
             </div>
           ))}
         </div>
 
         <div className="mt-6 rounded-2xl border border-dashed border-Gray-100 bg-[#FBFCFD] px-4 py-4 text-[11px] text-Text-Secondary">
-          The new shell, routing, overview, session insights, and data explorer are live now. This page is the next step for notes, tags, follow-up workflows, and stakeholder-ready reports.
+          The new shell, routing, overview, session insights, and data explorer
+          are live now. This page is the next step for notes, tags, follow-up
+          workflows, and stakeholder-ready reports.
         </div>
       </div>
     </AdminShellLayout>

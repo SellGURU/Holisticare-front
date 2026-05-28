@@ -148,7 +148,11 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
               Sure?
               <img
                 className="cursor-pointer w-[20px] h-[20px]"
-                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                title={
+                  isDemo
+                    ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                    : undefined
+                }
                 onClick={() => {
                   if (isDemo) return;
                   onDelete();
@@ -177,8 +181,14 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
                   if (isDemo) return;
                   onEdit();
                 }}
-                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
-                className={isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+                title={
+                  isDemo
+                    ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                    : undefined
+                }
+                className={
+                  isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                }
                 src="/icons/edit-blue.svg"
                 alt=""
               />
@@ -187,8 +197,14 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
                   if (isDemo) return;
                   setConfirmDelete(true);
                 }}
-                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
-                className={isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+                title={
+                  isDemo
+                    ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                    : undefined
+                }
+                className={
+                  isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                }
                 src="/icons/trash-blue.svg"
                 alt=""
               />

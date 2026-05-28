@@ -174,7 +174,8 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
       const spread = calculateRangeSpread(values);
       return {
         metricKey,
-        label: metricDetails[metricKey]?.label ?? getMetricVisual(metricKey).label,
+        label:
+          metricDetails[metricKey]?.label ?? getMetricVisual(metricKey).label,
         average: metricDetails[metricKey]?.average ?? null,
         trend,
         spread,
@@ -183,19 +184,32 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
 
     const strongestMetric = metricsWithSeries
       .filter((metric) => metric.average != null)
-      .sort((firstMetric, secondMetric) => (secondMetric.average ?? 0) - (firstMetric.average ?? 0))[0];
+      .sort(
+        (firstMetric, secondMetric) =>
+          (secondMetric.average ?? 0) - (firstMetric.average ?? 0),
+      )[0];
 
     const lowestMetric = metricsWithSeries
       .filter((metric) => metric.average != null)
-      .sort((firstMetric, secondMetric) => (firstMetric.average ?? 0) - (secondMetric.average ?? 0))[0];
+      .sort(
+        (firstMetric, secondMetric) =>
+          (firstMetric.average ?? 0) - (secondMetric.average ?? 0),
+      )[0];
 
     const mostStableMetric = metricsWithSeries
       .filter((metric) => metric.spread != null)
-      .sort((firstMetric, secondMetric) => (firstMetric.spread ?? Infinity) - (secondMetric.spread ?? Infinity))[0];
+      .sort(
+        (firstMetric, secondMetric) =>
+          (firstMetric.spread ?? Infinity) - (secondMetric.spread ?? Infinity),
+      )[0];
 
     const biggestMover = metricsWithSeries
       .filter((metric) => Math.abs(metric.trend.delta) >= 2)
-      .sort((firstMetric, secondMetric) => Math.abs(secondMetric.trend.delta) - Math.abs(firstMetric.trend.delta))[0];
+      .sort(
+        (firstMetric, secondMetric) =>
+          Math.abs(secondMetric.trend.delta) -
+          Math.abs(firstMetric.trend.delta),
+      )[0];
 
     return {
       strongestMetric,
@@ -212,9 +226,12 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
     >
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-slate-900">Score Progression</h2>
+          <h2 className="text-xl font-semibold text-slate-900">
+            Score Progression
+          </h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-            Track how wearable and compiled scores move across the selected range, then focus on the domains with the strongest signals.
+            Track how wearable and compiled scores move across the selected
+            range, then focus on the domains with the strongest signals.
           </p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
@@ -306,12 +323,17 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
       </div>
 
       {loading ? (
-        <div className="py-16 text-center text-slate-400">Loading progression data...</div>
+        <div className="py-16 text-center text-slate-400">
+          Loading progression data...
+        </div>
       ) : series.length === 0 ? (
         <div className="py-16 text-center">
-          <div className="text-lg text-slate-400">No progression data available</div>
+          <div className="text-lg text-slate-400">
+            No progression data available
+          </div>
           <div className="mt-2 text-sm text-slate-300">
-            Score progression will appear here once the selected range has enough data.
+            Score progression will appear here once the selected range has
+            enough data.
           </div>
         </div>
       ) : (
@@ -320,9 +342,11 @@ const ScoreProgression: React.FC<ScoreProgressionProps> = ({
             <Line data={chartData} options={chartOptions} />
           </div>
           <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-600">
-            This chart shows {aggregationLabel(filters.aggregation).toLowerCase()} values for the selected range.
-            Missing dates stay empty so sparse wearable coverage is not shown as zero.
-            Each chip shows a dot in the same color as its line on the chart. Tap chips to show or hide metrics.
+            This chart shows{' '}
+            {aggregationLabel(filters.aggregation).toLowerCase()} values for the
+            selected range. Missing dates stay empty so sparse wearable coverage
+            is not shown as zero. Each chip shows a dot in the same color as its
+            line on the chart. Tap chips to show or hide metrics.
           </div>
         </>
       )}

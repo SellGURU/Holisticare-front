@@ -67,9 +67,12 @@ const ProgressFiltersBar: React.FC<ProgressFiltersBarProps> = ({
     <div className="sticky top-0 z-20 rounded-3xl border border-slate-200 bg-white/95 p-4 shadow-sm backdrop-blur">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <div className="text-sm font-semibold text-slate-900">Progress filters</div>
+          <div className="text-sm font-semibold text-slate-900">
+            Progress filters
+          </div>
           <div className="mt-1 text-sm text-slate-500">
-            Switch time range and aggregation without losing your place on the page.
+            Switch time range and aggregation without losing your place on the
+            page.
           </div>
         </div>
         <div className="flex flex-col gap-3 xl:items-end">
@@ -148,7 +151,9 @@ const ProgressFiltersBar: React.FC<ProgressFiltersBarProps> = ({
             />
           </div>
           {dateError && (
-            <div className="text-sm text-rose-600 md:col-span-2">{dateError}</div>
+            <div className="text-sm text-rose-600 md:col-span-2">
+              {dateError}
+            </div>
           )}
         </div>
       )}

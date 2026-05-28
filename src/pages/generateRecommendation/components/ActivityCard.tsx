@@ -632,7 +632,9 @@ export const ActivityCard: FC<ActivityCardProps> = ({
             {positive}
           </li>
           <li className=" text-justify">
-            <span className="text-Text-Secondary bullet-point">Practitioner Insight (Risks):</span>{' '}
+            <span className="text-Text-Secondary bullet-point">
+              Practitioner Insight (Risks):
+            </span>{' '}
             {negative}
           </li>
         </ul>

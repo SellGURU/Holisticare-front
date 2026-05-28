@@ -87,12 +87,15 @@ const AdminJsonUploading = () => {
   const [sourceClinicId, setSourceClinicId] = useState('');
   const [targetClinicIds, setTargetClinicIds] = useState<number[]>([]);
   const [activeConfig, setActiveConfig] = useState<ConfigKey>('more_info');
-  const [loadedConfigs, setLoadedConfigs] = useState<ConfigBundle>(EMPTY_CONFIGS);
+  const [loadedConfigs, setLoadedConfigs] =
+    useState<ConfigBundle>(EMPTY_CONFIGS);
   const [editorValue, setEditorValue] = useState(
     JSON.stringify(EMPTY_CONFIGS.more_info, null, 2),
   );
   const [editorError, setEditorError] = useState('');
-  const [jsonErrorInfo, setJsonErrorInfo] = useState<JsonErrorInfo | null>(null);
+  const [jsonErrorInfo, setJsonErrorInfo] = useState<JsonErrorInfo | null>(
+    null,
+  );
   const [loadedSourceName, setLoadedSourceName] = useState('');
   const [clinicSearch, setClinicSearch] = useState('');
   const [targetSearch, setTargetSearch] = useState('');
@@ -111,7 +114,9 @@ const AdminJsonUploading = () => {
       try {
         await AdminApi.checkAuth();
         const res = await AdminApi.getJsonManagerClinics();
-        const nextClinics = Array.isArray(res?.data?.clinics) ? res.data.clinics : [];
+        const nextClinics = Array.isArray(res?.data?.clinics)
+          ? res.data.clinics
+          : [];
         setClinics(nextClinics);
         if (res?.data?.current_clinic_id) {
           const currentId = Number(res.data.current_clinic_id);
@@ -171,9 +176,11 @@ const AdminJsonUploading = () => {
       const nextConfigs: ConfigBundle = {
         more_info: res?.data?.configs?.more_info || [],
         categories: res?.data?.configs?.categories || [],
-        unit_mapping: res?.data?.configs?.unit_mapping || EMPTY_CONFIGS.unit_mapping,
+        unit_mapping:
+          res?.data?.configs?.unit_mapping || EMPTY_CONFIGS.unit_mapping,
         biomarker_mapping:
-          res?.data?.configs?.biomarker_mapping || EMPTY_CONFIGS.biomarker_mapping,
+          res?.data?.configs?.biomarker_mapping ||
+          EMPTY_CONFIGS.biomarker_mapping,
       };
 
       setLoadedConfigs(nextConfigs);
@@ -271,9 +278,12 @@ const AdminJsonUploading = () => {
     if (targetClinicIds.length === 0 && !setAsDefault) {
       setJsonErrorInfo({
         title: 'Publish target required',
-        message: 'Choose at least one clinic or enable default template update.',
+        message:
+          'Choose at least one clinic or enable default template update.',
       });
-      toast.error('Choose at least one clinic or enable default template update.');
+      toast.error(
+        'Choose at least one clinic or enable default template update.',
+      );
       return;
     }
 
@@ -304,7 +314,10 @@ const AdminJsonUploading = () => {
         handleAuthFailure();
         return;
       }
-      const publishError = buildJsonPublishErrorInfo(err, 'Failed to save config.');
+      const publishError = buildJsonPublishErrorInfo(
+        err,
+        'Failed to save config.',
+      );
       setJsonErrorInfo(publishError);
       toast.error(publishError.message);
     } finally {
@@ -426,7 +439,9 @@ const AdminJsonUploading = () => {
             {loadedSourceName && (
               <div className="mt-3 rounded-xl bg-[#F8FAFB] border border-Gray-50 px-3 py-2 text-[11px] text-Text-Secondary">
                 Loaded from:{' '}
-                <span className="font-medium text-Text-Primary">{loadedSourceName}</span>
+                <span className="font-medium text-Text-Primary">
+                  {loadedSourceName}
+                </span>
               </div>
             )}
           </div>
@@ -471,7 +486,8 @@ const AdminJsonUploading = () => {
 
             <div className="mt-3 flex items-center justify-between text-[11px]">
               <span className="text-Text-Secondary">
-                {targetClinicIds.length} clinic{targetClinicIds.length === 1 ? '' : 's'} selected
+                {targetClinicIds.length} clinic
+                {targetClinicIds.length === 1 ? '' : 's'} selected
               </span>
               <label className="flex items-center gap-2 text-Text-Primary">
                 <input
@@ -492,7 +508,8 @@ const AdminJsonUploading = () => {
                 3. Edit Full JSON
               </div>
               <div className="text-[11px] text-Text-Secondary mt-1">
-                Admin access to the same JSON manager with clinic-wide publishing.
+                Admin access to the same JSON manager with clinic-wide
+                publishing.
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -538,7 +555,9 @@ const AdminJsonUploading = () => {
           </div>
 
           <div className="mt-3 rounded-xl bg-[#F8FAFB] border border-Gray-50 px-3 py-2">
-            <div className="text-[12px] font-medium text-Text-Primary">{activeTab.fileName}</div>
+            <div className="text-[12px] font-medium text-Text-Primary">
+              {activeTab.fileName}
+            </div>
             <div className="text-[11px] text-Text-Secondary mt-1">
               {activeTab.description}
             </div>

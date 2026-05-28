@@ -656,6 +656,34 @@ input:-webkit-autofill:active {
     #56a79a
   ); /* Slightly darker on hover */
 }
+
+/* Thin gray scrollbar that stays visible on macOS Chrome.
+   The standard scrollbar-width/scrollbar-color alone do NOT force
+   Chrome out of macOS overlay-scrollbar mode (which hides the
+   thumb when idle), so we also define ::-webkit-scrollbar with an
+   explicit width to keep it always rendered. */
+.thin-scrollbar {
+  scrollbar-width: thin; /* Firefox + modern Chrome */
+  scrollbar-color: #e5e5e5 transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #e5e5e5;
+  border-radius: 8px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #cfcfcf;
+}
 /* === Task Check Animation === */
 /* Infinite horizontal loading bar */
 .loading-bar-container {

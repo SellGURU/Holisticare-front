@@ -151,9 +151,12 @@ const SessionInsights = () => {
       const res = await AdminApi.getBackendErrors({
         limit: 50,
         search: backendSearch.trim() || undefined,
-        status_code: backendStatus === 'all' ? undefined : Number(backendStatus),
+        status_code:
+          backendStatus === 'all' ? undefined : Number(backendStatus),
       });
-      setBackendErrors(Array.isArray(res?.data?.entries) ? res.data.entries : []);
+      setBackendErrors(
+        Array.isArray(res?.data?.entries) ? res.data.entries : [],
+      );
     } catch (error: any) {
       if (error?.response?.status === 401) {
         handleAuthFailure();
@@ -246,7 +249,9 @@ const SessionInsights = () => {
     >();
 
     backendErrors.forEach((entry) => {
-      const endpoint = [entry.method, entry.endpoint].filter(Boolean).join(' ') || 'Unknown endpoint';
+      const endpoint =
+        [entry.method, entry.endpoint].filter(Boolean).join(' ') ||
+        'Unknown endpoint';
       const severity = getBackendSeverity(entry);
       const current = groups.get(endpoint) || {
         endpoint,
@@ -257,13 +262,19 @@ const SessionInsights = () => {
       };
 
       current.count += 1;
-      if (entry.timestamp && (!current.latestTimestamp || entry.timestamp > current.latestTimestamp)) {
+      if (
+        entry.timestamp &&
+        (!current.latestTimestamp || entry.timestamp > current.latestTimestamp)
+      ) {
         current.latestTimestamp = entry.timestamp;
       }
       if (entry.status_code != null) {
         current.statuses.add(String(entry.status_code));
       }
-      if (severity === 'critical' || (severity === 'warning' && current.severity === 'info')) {
+      if (
+        severity === 'critical' ||
+        (severity === 'warning' && current.severity === 'info')
+      ) {
         current.severity = severity;
       }
 
@@ -287,14 +298,16 @@ const SessionInsights = () => {
       {
         label: 'Page Views',
         value: formatCompactNumber(
-          visibleEvents.filter((event) => event.eventName === 'page_view').length,
+          visibleEvents.filter((event) => event.eventName === 'page_view')
+            .length,
         ),
       },
       {
         label: 'Errors',
         value: formatCompactNumber(
           visibleEvents.filter(
-            (event) => event.eventName === 'error' || event.eventName === 'api_error',
+            (event) =>
+              event.eventName === 'error' || event.eventName === 'api_error',
           ).length,
         ),
       },
@@ -384,12 +397,17 @@ const SessionInsights = () => {
           <button
             type="button"
             onClick={() => {
-              Promise.all([loadAnalytics(true), loadBackendErrors(true)]).catch(() => {});
+              Promise.all([loadAnalytics(true), loadBackendErrors(true)]).catch(
+                () => {},
+              );
             }}
             className="rounded-full border border-Gray-50 bg-white px-4 py-2 text-[12px] text-Text-Primary"
           >
             <span className="inline-flex items-center gap-2">
-              <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+              <RefreshCw
+                size={14}
+                className={refreshing ? 'animate-spin' : ''}
+              />
               Refresh
             </span>
           </button>
@@ -430,7 +448,9 @@ const SessionInsights = () => {
             </div>
 
             <div>
-              <label className="mb-1 block text-[11px] text-Text-Secondary">Route</label>
+              <label className="mb-1 block text-[11px] text-Text-Secondary">
+                Route
+              </label>
               <select
                 value={selectedRoute}
                 onChange={(event) => setSelectedRoute(event.target.value)}
@@ -464,11 +484,16 @@ const SessionInsights = () => {
 
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-6">
           {cards.map((card) => (
-            <div key={card.label} className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
+            <div
+              key={card.label}
+              className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100"
+            >
               <div className="text-[11px] uppercase tracking-wide text-Text-Secondary">
                 {card.label}
               </div>
-              <div className="mt-3 text-2xl font-semibold text-Text-Primary">{card.value}</div>
+              <div className="mt-3 text-2xl font-semibold text-Text-Primary">
+                {card.value}
+              </div>
             </div>
           ))}
         </div>
@@ -481,7 +506,8 @@ const SessionInsights = () => {
             </div>
             <div className="flex items-center gap-2">
               <div className="text-[11px] text-Text-Secondary">
-                Separate from click filters so support can inspect server-side failures directly.
+                Separate from click filters so support can inspect server-side
+                failures directly.
               </div>
               <button
                 type="button"
@@ -576,13 +602,19 @@ const SessionInsights = () => {
 
             {backendEndpointGroups.length > 0 && (
               <div className="rounded-2xl border border-Gray-50 bg-white p-4">
-                <div className="TextStyle-Headline-5 text-Text-Primary">Endpoint Hotspots</div>
+                <div className="TextStyle-Headline-5 text-Text-Primary">
+                  Endpoint Hotspots
+                </div>
                 <div className="mt-1 text-[11px] text-Text-Secondary">
-                  Grouped failures to help support spot repeated backend problems faster.
+                  Grouped failures to help support spot repeated backend
+                  problems faster.
                 </div>
                 <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                   {backendEndpointGroups.map((group) => (
-                    <div key={group.endpoint} className="rounded-2xl bg-[#F8FAFB] p-4">
+                    <div
+                      key={group.endpoint}
+                      className="rounded-2xl bg-[#F8FAFB] p-4"
+                    >
                       <div className="flex items-start justify-between gap-3">
                         <div className="text-[12px] font-medium text-Text-Primary">
                           {group.endpoint}
@@ -597,7 +629,8 @@ const SessionInsights = () => {
                         {group.count}
                       </div>
                       <div className="mt-1 text-[11px] text-Text-Secondary">
-                        statuses: {Array.from(group.statuses).join(', ') || 'unknown'}
+                        statuses:{' '}
+                        {Array.from(group.statuses).join(', ') || 'unknown'}
                       </div>
                       <div className="mt-1 text-[11px] text-Text-Secondary">
                         latest: {group.latestTimestamp || 'unknown'}
@@ -614,7 +647,10 @@ const SessionInsights = () => {
               </div>
             ) : backendErrors.length > 0 ? (
               backendErrors.slice(0, 12).map((entry, index) => (
-                <div key={`${entry.request_id || entry.timestamp || 'error'}-${index}`} className="rounded-2xl bg-[#F8FAFB] p-4">
+                <div
+                  key={`${entry.request_id || entry.timestamp || 'error'}-${index}`}
+                  className="rounded-2xl bg-[#F8FAFB] p-4"
+                >
                   <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <div className="flex items-center gap-2">
                       <span
@@ -631,7 +667,9 @@ const SessionInsights = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="text-[11px] text-Text-Secondary">
-                        {entry.process_time_ms != null ? `${entry.process_time_ms} ms` : 'No duration'}
+                        {entry.process_time_ms != null
+                          ? `${entry.process_time_ms} ms`
+                          : 'No duration'}
                       </div>
                       <button
                         type="button"
@@ -649,18 +687,26 @@ const SessionInsights = () => {
                   </div>
 
                   <div className="mt-3 text-[12px] font-medium text-Text-Primary">
-                    {[entry.method, entry.endpoint].filter(Boolean).join(' ') || 'Unknown endpoint'}
+                    {[entry.method, entry.endpoint].filter(Boolean).join(' ') ||
+                      'Unknown endpoint'}
                   </div>
                   <div className="mt-1 text-[12px] leading-6 text-Text-Primary">
-                    {entry.response_detail || entry.exception || entry.summary || 'No backend message captured for this entry.'}
+                    {entry.response_detail ||
+                      entry.exception ||
+                      entry.summary ||
+                      'No backend message captured for this entry.'}
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-Text-Secondary">
                     {entry.request_id && (
-                      <span className="rounded-full bg-white px-3 py-1">Request ID: {entry.request_id}</span>
+                      <span className="rounded-full bg-white px-3 py-1">
+                        Request ID: {entry.request_id}
+                      </span>
                     )}
                     {entry.exception_type && (
-                      <span className="rounded-full bg-white px-3 py-1">{entry.exception_type}</span>
+                      <span className="rounded-full bg-white px-3 py-1">
+                        {entry.exception_type}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -677,12 +723,17 @@ const SessionInsights = () => {
           <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
             <div className="flex items-center gap-2 text-Text-Primary">
               <Route size={16} />
-              <div className="TextStyle-Headline-5">Route Activity Breakdown</div>
+              <div className="TextStyle-Headline-5">
+                Route Activity Breakdown
+              </div>
             </div>
             <div className="mt-4 space-y-3">
               {routeBreakdown.length > 0 ? (
                 routeBreakdown.map((route) => (
-                  <div key={route.route} className="rounded-2xl bg-[#F8FAFB] p-4">
+                  <div
+                    key={route.route}
+                    className="rounded-2xl bg-[#F8FAFB] p-4"
+                  >
                     <div className="flex items-center justify-between gap-3">
                       <div className="truncate text-[12px] font-medium text-Text-Primary">
                         {route.route}
@@ -736,12 +787,16 @@ const SessionInsights = () => {
               <div className="mt-4 space-y-3">
                 {elementBreakdown.length > 0 ? (
                   elementBreakdown.map((element) => (
-                    <div key={element.key} className="rounded-2xl bg-[#F8FAFB] p-4">
+                    <div
+                      key={element.key}
+                      className="rounded-2xl bg-[#F8FAFB] p-4"
+                    >
                       <div className="text-[12px] font-medium text-Text-Primary">
                         {element.label}
                       </div>
                       <div className="mt-1 text-[11px] text-Text-Secondary">
-                        {element.routes.slice(0, 2).join(', ') || 'Unknown route'}
+                        {element.routes.slice(0, 2).join(', ') ||
+                          'Unknown route'}
                       </div>
                       <div className="mt-2 text-base font-semibold text-Text-Primary">
                         {element.clicks} clicks
@@ -764,12 +819,16 @@ const SessionInsights = () => {
               <div className="mt-4 space-y-3">
                 {dropOffRoutes.length > 0 ? (
                   dropOffRoutes.map((route) => (
-                    <div key={route.route} className="rounded-2xl bg-[#F8FAFB] p-4">
+                    <div
+                      key={route.route}
+                      className="rounded-2xl bg-[#F8FAFB] p-4"
+                    >
                       <div className="text-[12px] font-medium text-Text-Primary">
                         {route.route}
                       </div>
                       <div className="mt-1 text-[11px] text-Text-Secondary">
-                        This route was the last recorded step in {route.exits} filtered sessions.
+                        This route was the last recorded step in {route.exits}{' '}
+                        filtered sessions.
                       </div>
                     </div>
                   ))
@@ -784,9 +843,12 @@ const SessionInsights = () => {
         </div>
 
         <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
-          <div className="TextStyle-Headline-5 text-Text-Primary">Session Timeline</div>
+          <div className="TextStyle-Headline-5 text-Text-Primary">
+            Session Timeline
+          </div>
           <div className="mt-1 text-[11px] text-Text-Secondary">
-            Expand any session to see the event sequence support needs during triage.
+            Expand any session to see the event sequence support needs during
+            triage.
           </div>
 
           <div className="mt-4 space-y-3">
@@ -794,12 +856,17 @@ const SessionInsights = () => {
               visibleSessions.map((session) => {
                 const isExpanded = expandedSessionId === session.sessionId;
                 return (
-                  <div key={session.sessionId} className="rounded-2xl border border-Gray-50">
+                  <div
+                    key={session.sessionId}
+                    className="rounded-2xl border border-Gray-50"
+                  >
                     <button
                       type="button"
                       onClick={() =>
                         setExpandedSessionId((current) =>
-                          current === session.sessionId ? '' : session.sessionId,
+                          current === session.sessionId
+                            ? ''
+                            : session.sessionId,
                         )
                       }
                       className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left"
@@ -809,23 +876,32 @@ const SessionInsights = () => {
                           {session.userId}
                         </div>
                         <div className="mt-1 text-[11px] text-Text-Secondary">
-                          {session.eventCount} events, {Math.round(session.totalActiveTimeMs / 60000)} min
+                          {session.eventCount} events,{' '}
+                          {Math.round(session.totalActiveTimeMs / 60000)} min
                           active, session ID: {session.sessionId}
                         </div>
                       </div>
-                      {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      {isExpanded ? (
+                        <ChevronUp size={16} />
+                      ) : (
+                        <ChevronDown size={16} />
+                      )}
                     </button>
 
                     {isExpanded && (
                       <div className="border-t border-Gray-50 px-4 py-4">
                         <div className="space-y-3">
                           {session.events.map((event) => (
-                            <div key={event.id} className="rounded-2xl bg-[#F8FAFB] p-4">
+                            <div
+                              key={event.id}
+                              className="rounded-2xl bg-[#F8FAFB] p-4"
+                            >
                               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                                 <div className="flex items-center gap-2">
                                   <span
                                     className={`rounded-full px-2 py-1 text-[10px] font-medium ${
-                                      eventTypeColors[event.eventName] || eventTypeColors.unknown
+                                      eventTypeColors[event.eventName] ||
+                                      eventTypeColors.unknown
                                     }`}
                                   >
                                     {event.eventName}
@@ -842,37 +918,49 @@ const SessionInsights = () => {
                               <div className="mt-3 grid gap-2 text-[11px] text-Text-Secondary md:grid-cols-2">
                                 {event.elementSelector && (
                                   <div>
-                                    <span className="font-medium text-Text-Primary">Element:</span>{' '}
+                                    <span className="font-medium text-Text-Primary">
+                                      Element:
+                                    </span>{' '}
                                     {event.elementSelector}
                                   </div>
                                 )}
                                 {event.elementText && (
                                   <div>
-                                    <span className="font-medium text-Text-Primary">Text:</span>{' '}
+                                    <span className="font-medium text-Text-Primary">
+                                      Text:
+                                    </span>{' '}
                                     {event.elementText}
                                   </div>
                                 )}
                                 {event.apiEndpoint && (
                                   <div>
-                                    <span className="font-medium text-Text-Primary">Endpoint:</span>{' '}
+                                    <span className="font-medium text-Text-Primary">
+                                      Endpoint:
+                                    </span>{' '}
                                     {event.apiEndpoint}
                                   </div>
                                 )}
                                 {event.apiStatus != null && (
                                   <div>
-                                    <span className="font-medium text-Text-Primary">Status:</span>{' '}
+                                    <span className="font-medium text-Text-Primary">
+                                      Status:
+                                    </span>{' '}
                                     {event.apiStatus}
                                   </div>
                                 )}
                                 {event.errorMessage && (
                                   <div className="md:col-span-2">
-                                    <span className="font-medium text-Text-Primary">Error:</span>{' '}
+                                    <span className="font-medium text-Text-Primary">
+                                      Error:
+                                    </span>{' '}
                                     {event.errorMessage}
                                   </div>
                                 )}
                                 {event.formId && (
                                   <div>
-                                    <span className="font-medium text-Text-Primary">Form:</span>{' '}
+                                    <span className="font-medium text-Text-Primary">
+                                      Form:
+                                    </span>{' '}
                                     {event.formId}
                                   </div>
                                 )}

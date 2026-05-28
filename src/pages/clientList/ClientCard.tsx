@@ -270,8 +270,9 @@ const ClientCard: FC<ClientCardProps> = ({
         setEditForm((prev) => ({
           ...prev,
           email:
-            (info.email && info.email !== '-' ? String(info.email) : prev.email) ||
-            '',
+            (info.email && info.email !== '-'
+              ? String(info.email)
+              : prev.email) || '',
           phone_number:
             info['phone number'] && info['phone number'] !== '-'
               ? String(info['phone number'])
@@ -309,13 +310,15 @@ const ClientCard: FC<ClientCardProps> = ({
     })
       .then((res) => {
         onClientUpdated(client.member_id, {
-          name: res?.data?.name || `${editForm.first_name} ${editForm.last_name}`,
+          name:
+            res?.data?.name || `${editForm.first_name} ${editForm.last_name}`,
           email: res?.data?.email || editForm.email.trim(),
         });
         setShowEditModal(false);
       })
       .catch((err) => {
-        const msg = err?.response?.data?.detail || 'Failed to update client info.';
+        const msg =
+          err?.response?.data?.detail || 'Failed to update client info.';
         setEditError(String(msg));
       })
       .finally(() => setIsSavingClientInfo(false));
@@ -613,31 +616,31 @@ const ClientCard: FC<ClientCardProps> = ({
                   )}
                 </div>
               </div>
-                <div className="flex w-full justify-end mt-7 md:mt-9 gap-4 items-center">
+              <div className="flex w-full justify-end mt-7 md:mt-9 gap-4 items-center">
                 <div
                   onClick={() => setShowAccessModal(false)}
                   className="text-sm font-medium cursor-pointer text-Text-Secondary "
                 >
                   {!AccessPassword ? 'Close' : 'Cancel'}
                 </div>
-                  {!isShared && (
-                    <div
-                      onClick={() => {
-                        if (!isRegeneratingPassword) {
-                          handleRegeneratePassword();
-                        }
-                      }}
-                      className={`text-sm font-medium cursor-pointer ${
-                        isRegeneratingPassword
-                          ? 'text-Text-Secondary pointer-events-none'
-                          : 'text-Primary-DeepTeal'
-                      }`}
-                    >
-                      {isRegeneratingPassword
-                        ? 'Regenerating...'
-                        : 'Regenerate Password'}
-                    </div>
-                  )}
+                {!isShared && (
+                  <div
+                    onClick={() => {
+                      if (!isRegeneratingPassword) {
+                        handleRegeneratePassword();
+                      }
+                    }}
+                    className={`text-sm font-medium cursor-pointer ${
+                      isRegeneratingPassword
+                        ? 'text-Text-Secondary pointer-events-none'
+                        : 'text-Primary-DeepTeal'
+                    }`}
+                  >
+                    {isRegeneratingPassword
+                      ? 'Regenerating...'
+                      : 'Regenerate Password'}
+                  </div>
+                )}
                 {!isShared && AccessPassword && (
                   <div
                     onClick={() => {
@@ -685,7 +688,10 @@ const ClientCard: FC<ClientCardProps> = ({
               <input
                 value={editForm.first_name}
                 onChange={(e) =>
-                  setEditForm((prev) => ({ ...prev, first_name: e.target.value }))
+                  setEditForm((prev) => ({
+                    ...prev,
+                    first_name: e.target.value,
+                  }))
                 }
                 className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-xs outline-none"
               />
@@ -695,7 +701,10 @@ const ClientCard: FC<ClientCardProps> = ({
               <input
                 value={editForm.last_name}
                 onChange={(e) =>
-                  setEditForm((prev) => ({ ...prev, last_name: e.target.value }))
+                  setEditForm((prev) => ({
+                    ...prev,
+                    last_name: e.target.value,
+                  }))
                 }
                 className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-xs outline-none"
               />
@@ -715,7 +724,10 @@ const ClientCard: FC<ClientCardProps> = ({
               <input
                 value={editForm.phone_number}
                 onChange={(e) =>
-                  setEditForm((prev) => ({ ...prev, phone_number: e.target.value }))
+                  setEditForm((prev) => ({
+                    ...prev,
+                    phone_number: e.target.value,
+                  }))
                 }
                 className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-xs outline-none"
               />

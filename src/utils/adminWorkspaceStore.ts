@@ -16,7 +16,7 @@ const createId = () =>
     ? crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-const readJson = <T,>(key: string, fallback: T): T => {
+const readJson = <T>(key: string, fallback: T): T => {
   if (!isBrowser) {
     return fallback;
   }
@@ -33,7 +33,7 @@ const readJson = <T,>(key: string, fallback: T): T => {
   }
 };
 
-const writeJson = <T,>(key: string, value: T) => {
+const writeJson = <T>(key: string, value: T) => {
   if (!isBrowser) {
     return;
   }
@@ -44,11 +44,15 @@ const writeJson = <T,>(key: string, value: T) => {
 const readWorkspaceRecords = () =>
   readJson<Record<string, ClinicWorkspaceRecord>>(WORKSPACE_STORAGE_KEY, {});
 
-const writeWorkspaceRecords = (records: Record<string, ClinicWorkspaceRecord>) => {
+const writeWorkspaceRecords = (
+  records: Record<string, ClinicWorkspaceRecord>,
+) => {
   writeJson(WORKSPACE_STORAGE_KEY, records);
 };
 
-export const getClinicWorkspaceRecord = (clinicEmail: string): ClinicWorkspaceRecord => {
+export const getClinicWorkspaceRecord = (
+  clinicEmail: string,
+): ClinicWorkspaceRecord => {
   const records = readWorkspaceRecords();
   return (
     records[clinicEmail] || {
@@ -99,11 +103,17 @@ export const addClinicNote = (
   });
 };
 
-export const updateClinicNote = (clinicEmail: string, noteId: string, updater: (note: ClinicNote) => ClinicNote) => {
+export const updateClinicNote = (
+  clinicEmail: string,
+  noteId: string,
+  updater: (note: ClinicNote) => ClinicNote,
+) => {
   const record = getClinicWorkspaceRecord(clinicEmail);
   saveClinicWorkspaceRecord({
     ...record,
-    notes: record.notes.map((note) => (note.id === noteId ? updater(note) : note)),
+    notes: record.notes.map((note) =>
+      note.id === noteId ? updater(note) : note,
+    ),
   });
 };
 
@@ -121,7 +131,8 @@ export const addClinicTag = (
 ) => {
   const record = getClinicWorkspaceRecord(clinicEmail);
   const exists = record.tags.some(
-    (currentTag) => currentTag.name.toLowerCase() === tag.name.trim().toLowerCase(),
+    (currentTag) =>
+      currentTag.name.toLowerCase() === tag.name.trim().toLowerCase(),
   );
 
   if (exists) {
@@ -155,9 +166,12 @@ export const toggleClinicTagStatus = (clinicEmail: string, tagId: string) => {
   });
 };
 
-export const readSavedReports = () => readJson<ClinicReport[]>(REPORT_STORAGE_KEY, []);
+export const readSavedReports = () =>
+  readJson<ClinicReport[]>(REPORT_STORAGE_KEY, []);
 
-export const saveGeneratedReport = (report: Omit<ClinicReport, 'id' | 'createdAt'>) => {
+export const saveGeneratedReport = (
+  report: Omit<ClinicReport, 'id' | 'createdAt'>,
+) => {
   const reports = readSavedReports();
   const nextReport: ClinicReport = {
     ...report,

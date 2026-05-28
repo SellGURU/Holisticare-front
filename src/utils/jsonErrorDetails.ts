@@ -92,14 +92,18 @@ export const buildJsonPublishErrorInfo = (
   fallback = 'Failed to update JSON.',
 ): JsonErrorInfo => {
   const rawDetail = unwrapErrorPayload(error);
-  const structuredErrors = Array.isArray(rawDetail?.errors) ? rawDetail.errors : [];
+  const structuredErrors = Array.isArray(rawDetail?.errors)
+    ? rawDetail.errors
+    : [];
   const detail = stringifyDetail(rawDetail?.message || rawDetail) || fallback;
   const details: string[] = [];
 
   if (structuredErrors.length > 0) {
     structuredErrors.forEach((item: any, index: number) => {
       const parts = [
-        item?.index !== undefined ? `index ${item.index}` : `issue ${index + 1}`,
+        item?.index !== undefined
+          ? `index ${item.index}`
+          : `issue ${index + 1}`,
         item?.biomarker ? `biomarker "${item.biomarker}"` : null,
         item?.benchmark_area ? `area "${item.benchmark_area}"` : null,
         item?.path ? `path ${item.path}` : null,
@@ -116,12 +120,18 @@ export const buildJsonPublishErrorInfo = (
 
   const statusMatch = detail.match(/statuses?\s+'([^']+)'\s+and\s+'([^']+)'/i);
   if (statusMatch) {
-    details.push(`Conflicting statuses: ${statusMatch[1]} and ${statusMatch[2]}.`);
+    details.push(
+      `Conflicting statuses: ${statusMatch[1]} and ${statusMatch[2]}.`,
+    );
   }
 
-  const ageGenderMatch = detail.match(/age range\s+'([^']+)'\s*,\s*gender\s+'([^']+)'/i);
+  const ageGenderMatch = detail.match(
+    /age range\s+'([^']+)'\s*,\s*gender\s+'([^']+)'/i,
+  );
   if (ageGenderMatch) {
-    details.push(`Affected group: age ${ageGenderMatch[1]}, gender ${ageGenderMatch[2]}.`);
+    details.push(
+      `Affected group: age ${ageGenderMatch[1]}, gender ${ageGenderMatch[2]}.`,
+    );
   }
 
   if (/overlapping numeric ranges/i.test(detail)) {

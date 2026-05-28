@@ -70,7 +70,9 @@ const FileBoxUploadingV2: React.FC<FileBoxProps> = ({
     <>
       <div
         className={`bg-white border border-Gray-50 mb-1 px-4 py-2 w-full rounded-[12px] text-Text-Primary text-[10px] ${
-          isuploaded && !el.warning ? 'min-h-[52px] flex flex-col justify-center' : ''
+          isuploaded && !el.warning
+            ? 'min-h-[52px] flex flex-col justify-center'
+            : ''
         }`}
         style={{ borderColor: el.status == 'error' ? '#FC5474' : '#e9edf5 ' }}
       >
