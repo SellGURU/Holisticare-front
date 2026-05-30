@@ -2,53 +2,57 @@
 import React from 'react';
 import WellnessSummary from './WellnessSummary';
 import ScoreProgression from './ScoreProgression';
+import {
+  ProgressFilters,
+  ScoreAnalyticsResponse,
+  ScoreAggregation,
+} from './types';
+import ProgressFiltersBar from './ProgressFiltersBar';
 
 interface ProgressDashboardProps {
-  wellnessData: {
-    scores: { [key: string]: number }; // Dynamic scores object
-    scoresData?: { [key: string]: any }; // Dynamic scores data object
-    globalScore: number; // Global score for the circular gauge
-    globalScoreData: any; // Global score data for tooltip
-    archetype: string;
-    archetypeData: any;
-    latestDate: string | null; // Last sync date
-  } | null;
-  progressionData: Array<{
-    date: string;
-    global: number;
-    sleep: number;
-    activity: number;
-    heart: number;
-    stress: number;
-    calories: number;
-    body: number;
-  }> | null;
-  wellnessLoading?: boolean;
-  progressionLoading?: boolean;
+  analyticsData: ScoreAnalyticsResponse | null;
+  loading?: boolean;
   error?: string | null;
-  onDateRangeChange?: (fromDate?: string, toDate?: string) => void;
+  filters: ProgressFilters;
+  onPresetChange: (preset: ProgressFilters['preset']) => void;
+  onCustomRangeChange: (fromDate?: string, toDate?: string) => void;
+  onAggregationChange: (aggregation: ScoreAggregation) => void;
 }
 
 const ProgressDashboard: React.FC<ProgressDashboardProps> = ({
-  wellnessData,
-  progressionData,
-  wellnessLoading = false,
-  progressionLoading = false,
+  analyticsData,
+  loading = false,
   error = null,
-  onDateRangeChange,
+  filters,
+  onPresetChange,
+  onCustomRangeChange,
+  onAggregationChange,
 }) => {
   return (
     <div className="w-full p-6 space-y-6">
+      <ProgressFiltersBar
+        filters={filters}
+        onPresetChange={onPresetChange}
+        onCustomRangeChange={onCustomRangeChange}
+        onAggregationChange={onAggregationChange}
+      />
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
           {error}
         </div>
       )}
-      <WellnessSummary data={wellnessData} loading={wellnessLoading} />
+      <WellnessSummary
+        analytics={analyticsData}
+        loading={loading}
+        filters={filters}
+      />
       <ScoreProgression
-        data={progressionData}
-        loading={progressionLoading}
-        onDateRangeChange={onDateRangeChange}
+        analytics={analyticsData}
+        loading={loading}
+        filters={filters}
+        onPresetChange={onPresetChange}
+        onCustomRangeChange={onCustomRangeChange}
+        onAggregationChange={onAggregationChange}
       />
     </div>
   );

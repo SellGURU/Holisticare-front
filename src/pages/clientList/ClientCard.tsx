@@ -12,6 +12,7 @@ import MainModal from '../../Components/MainModal/index.tsx';
 import Checkbox from '../../Components/checkbox/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';
 import EllipsedTooltip from '../../Components/LibraryThreePages/components/TableNoPaginate/ElipsedTooltip.tsx';
+import useIsDemo from '../../hooks/useIsDemo.ts';
 interface ClientCardProps {
   client: any;
   indexItem: number;
@@ -20,6 +21,7 @@ interface ClientCardProps {
   onToggleHighPriority: (memberid: any) => void;
   activeTab: string;
   onAssign: (memberId: number, coachUsername: string) => void;
+  onClientUpdated: (memberId: number, updates: Record<string, any>) => void;
 }
 
 const ClientCard: FC<ClientCardProps> = ({
@@ -30,8 +32,10 @@ const ClientCard: FC<ClientCardProps> = ({
   onToggleHighPriority,
   activeTab,
   onAssign,
+  onClientUpdated,
 }) => {
   const navigate = useNavigate();
+  const isDemo = useIsDemo();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
@@ -169,9 +173,20 @@ const ClientCard: FC<ClientCardProps> = ({
   };
   const { backgroundColor, ellipseColor } = getStatusStyles(client.status);
   const [showAccessModal, setShowAccessModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [AccessUserName, setAccessUserName] = useState('');
   const [AccessPassword, setAccessPassword] = useState<string | null>(null);
+  const [isRegeneratingPassword, setIsRegeneratingPassword] = useState(false);
   const [isShared, setIsShared] = useState(false);
+  const [isSavingClientInfo, setIsSavingClientInfo] = useState(false);
+  const [editError, setEditError] = useState('');
+  const [editForm, setEditForm] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone_number: '',
+    address: '',
+  });
   // Application.giveClientAccess({ member_id: client.member_id }).then((res) => {
   //   console.log(res);
 
@@ -200,6 +215,111 @@ const ClientCard: FC<ClientCardProps> = ({
       setNotificationMessage('');
     },
   });
+
+  const handleOpenClientAccess = () => {
+    if (isDemo) return;
+    Application.giveClientAccess({
+      member_id: client.member_id,
+    })
+      .then((res) => {
+        setAccessUserName(res.data.username);
+        setAccessPassword(res.data.password);
+        setShowAccessModal(true);
+      })
+      .catch(() => {});
+  };
+
+  const handleRegeneratePassword = () => {
+    setIsRegeneratingPassword(true);
+    Application.regenerateClientAccessPassword({
+      member_id: client.member_id,
+    })
+      .then((res) => {
+        setAccessUserName(res.data.username);
+        setAccessPassword(res.data.password);
+        setNotifType('Regenerate');
+        setNotificationMessage('Password regenerated successfully');
+        setTimeout(() => {
+          setNotifType('');
+          setNotificationMessage('');
+        }, 3000);
+      })
+      .catch(() => {})
+      .finally(() => setIsRegeneratingPassword(false));
+  };
+
+  const handleOpenEditModal = () => {
+    setEditError('');
+    const fullName = String(client.name || '').trim();
+    const tokens = fullName.split(/\s+/).filter(Boolean);
+    const firstName = tokens.length > 0 ? tokens[0] : '';
+    const lastName = tokens.length > 1 ? tokens.slice(1).join(' ') : '';
+
+    setEditForm({
+      first_name: firstName,
+      last_name: lastName,
+      email: String(client.email || ''),
+      phone_number: '',
+      address: '',
+    });
+    setShowEditModal(true);
+
+    Application.getClientInfo({ member_id: client.member_id })
+      .then((res) => {
+        const info = res?.data?.personal_info || {};
+        setEditForm((prev) => ({
+          ...prev,
+          email:
+            (info.email && info.email !== '-' ? String(info.email) : prev.email) ||
+            '',
+          phone_number:
+            info['phone number'] && info['phone number'] !== '-'
+              ? String(info['phone number'])
+              : '',
+          address:
+            info.Location && info.Location !== '-' ? String(info.Location) : '',
+        }));
+      })
+      .catch(() => {});
+  };
+
+  const handleSaveClientInfo = () => {
+    setEditError('');
+    if (!editForm.first_name.trim()) {
+      setEditError('First name is required.');
+      return;
+    }
+    if (!editForm.last_name.trim()) {
+      setEditError('Last name is required.');
+      return;
+    }
+    if (!editForm.email.trim()) {
+      setEditError('Email is required.');
+      return;
+    }
+
+    setIsSavingClientInfo(true);
+    Application.updateClientInfo({
+      member_id: client.member_id,
+      first_name: editForm.first_name.trim(),
+      last_name: editForm.last_name.trim(),
+      email: editForm.email.trim(),
+      phone_number: editForm.phone_number.trim(),
+      address: editForm.address.trim(),
+    })
+      .then((res) => {
+        onClientUpdated(client.member_id, {
+          name: res?.data?.name || `${editForm.first_name} ${editForm.last_name}`,
+          email: res?.data?.email || editForm.email.trim(),
+        });
+        setShowEditModal(false);
+      })
+      .catch((err) => {
+        const msg = err?.response?.data?.detail || 'Failed to update client info.';
+        setEditError(String(msg));
+      })
+      .finally(() => setIsSavingClientInfo(false));
+  };
   // const [showAsignList, setshowAsignList] = useState(false);
   const [showAssign, setshowAssign] = useState(false);
   interface Coach {
@@ -493,13 +613,31 @@ const ClientCard: FC<ClientCardProps> = ({
                   )}
                 </div>
               </div>
-              <div className="flex w-full justify-end mt-7 md:mt-9 gap-4 items-center">
+                <div className="flex w-full justify-end mt-7 md:mt-9 gap-4 items-center">
                 <div
                   onClick={() => setShowAccessModal(false)}
                   className="text-sm font-medium cursor-pointer text-Text-Secondary "
                 >
                   {!AccessPassword ? 'Close' : 'Cancel'}
                 </div>
+                  {!isShared && (
+                    <div
+                      onClick={() => {
+                        if (!isRegeneratingPassword) {
+                          handleRegeneratePassword();
+                        }
+                      }}
+                      className={`text-sm font-medium cursor-pointer ${
+                        isRegeneratingPassword
+                          ? 'text-Text-Secondary pointer-events-none'
+                          : 'text-Primary-DeepTeal'
+                      }`}
+                    >
+                      {isRegeneratingPassword
+                        ? 'Regenerating...'
+                        : 'Regenerate Password'}
+                    </div>
+                  )}
                 {!isShared && AccessPassword && (
                   <div
                     onClick={() => {
@@ -519,9 +657,113 @@ const ClientCard: FC<ClientCardProps> = ({
                   </div>
                 )}
               </div>
+              {notificationMessage && notifType === 'Regenerate' && (
+                <div className="mt-3 text-xs text-Primary-DeepTeal">
+                  {notificationMessage}
+                </div>
+              )}
             </div>
           )}
         </>
+      </MainModal>
+      <MainModal
+        isOpen={showEditModal}
+        onClose={() => {
+          if (!isSavingClientInfo) {
+            setShowEditModal(false);
+            setEditError('');
+          }
+        }}
+      >
+        <div className="bg-white w-[90vw] md:w-[520px] min-h-[360px] rounded-2xl p-4 shadow-800 text-Text-Primary">
+          <div className="border-b border-Gray-50 pb-2 text-sm font-medium">
+            Edit Client Info
+          </div>
+          <div className="mt-4 grid grid-cols-1 gap-3">
+            <div>
+              <div className="text-xs font-medium mb-1">First Name</div>
+              <input
+                value={editForm.first_name}
+                onChange={(e) =>
+                  setEditForm((prev) => ({ ...prev, first_name: e.target.value }))
+                }
+                className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-xs outline-none"
+              />
+            </div>
+            <div>
+              <div className="text-xs font-medium mb-1">Last Name</div>
+              <input
+                value={editForm.last_name}
+                onChange={(e) =>
+                  setEditForm((prev) => ({ ...prev, last_name: e.target.value }))
+                }
+                className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-xs outline-none"
+              />
+            </div>
+            <div>
+              <div className="text-xs font-medium mb-1">Email</div>
+              <input
+                value={editForm.email}
+                onChange={(e) =>
+                  setEditForm((prev) => ({ ...prev, email: e.target.value }))
+                }
+                className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-xs outline-none"
+              />
+            </div>
+            <div>
+              <div className="text-xs font-medium mb-1">Phone Number</div>
+              <input
+                value={editForm.phone_number}
+                onChange={(e) =>
+                  setEditForm((prev) => ({ ...prev, phone_number: e.target.value }))
+                }
+                className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-xs outline-none"
+              />
+            </div>
+            <div>
+              <div className="text-xs font-medium mb-1">Address</div>
+              <input
+                value={editForm.address}
+                onChange={(e) =>
+                  setEditForm((prev) => ({ ...prev, address: e.target.value }))
+                }
+                className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-xs outline-none"
+              />
+            </div>
+          </div>
+          {editError && (
+            <div className="mt-3 text-xs text-[#FC5474]">{editError}</div>
+          )}
+          <div className="flex w-full justify-end mt-6 gap-4 items-center">
+            <div
+              onClick={() => {
+                if (!isSavingClientInfo) {
+                  setShowEditModal(false);
+                  setEditError('');
+                }
+              }}
+              className="text-sm font-medium cursor-pointer text-Text-Secondary"
+            >
+              Cancel
+            </div>
+            <div
+              onClick={() => {
+                if (isDemo) return;
+                if (!isSavingClientInfo) {
+                  handleSaveClientInfo();
+                }
+              }}
+              title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+              className={`text-sm font-medium cursor-pointer ${
+                isSavingClientInfo || isDemo
+                  ? 'text-Text-Secondary pointer-events-none'
+                  : 'text-Primary-DeepTeal'
+              }`}
+            >
+              {isSavingClientInfo ? 'Saving...' : 'Save Changes'}
+            </div>
+          </div>
+        </div>
       </MainModal>
       <ArchiveModal
         archived={client.archived}
@@ -591,6 +833,7 @@ const ClientCard: FC<ClientCardProps> = ({
               <>
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     setshowModal(false);
                     setshowArchiveModal(true);
                     // Application.archivePatient({
@@ -626,16 +869,17 @@ const ClientCard: FC<ClientCardProps> = ({
                 )}
                 <div
                   onClick={() => {
-                    Application.giveClientAccess({
-                      member_id: client.member_id,
-                    })
-                      .then((res) => {
-                        setAccessUserName(res.data.username);
-                        setAccessPassword(res.data.password);
-                        setShowAccessModal(true);
-                      })
-                      .catch(() => {});
+                    if (isDemo) return;
+                    handleOpenEditModal();
                   }}
+                  title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+                  className={`flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray ${isDemo ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <img src="/icons/keyboard-open.svg" alt="" />
+                  Edit Client
+                </div>
+                <div
+                  onClick={handleOpenClientAccess}
                   className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                 >
                   <img src="/icons/keyboard-open.svg" alt="" />
@@ -643,6 +887,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 </div>
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     setshowDeleteModal(true);
                   }}
                   // onClick={() => {
@@ -733,6 +978,7 @@ const ClientCard: FC<ClientCardProps> = ({
 
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     setshowModal(false);
                     setshowArchiveModal(true);
                     // Application.archivePatient({
@@ -777,16 +1023,17 @@ const ClientCard: FC<ClientCardProps> = ({
                 </div> */}
                 <div
                   onClick={() => {
-                    Application.giveClientAccess({
-                      member_id: client.member_id,
-                    })
-                      .then((res) => {
-                        setAccessUserName(res.data.username);
-                        setAccessPassword(res.data.password);
-                        setShowAccessModal(true);
-                      })
-                      .catch(() => {});
+                    if (isDemo) return;
+                    handleOpenEditModal();
                   }}
+                  title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+                  className={`flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray ${isDemo ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <img src="/icons/keyboard-open.svg" alt="" />
+                  Edit Client
+                </div>
+                <div
+                  onClick={handleOpenClientAccess}
                   className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                 >
                   <img src="/icons/keyboard-open.svg" alt="" />
@@ -794,6 +1041,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 </div>
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     setshowDeleteModal(true);
                   }}
                   // onClick={() => {

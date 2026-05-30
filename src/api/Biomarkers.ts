@@ -2,8 +2,24 @@
 import Api from './api';
 
 class BiomarkersApi extends Api {
+  static getJsonManagerClinics = () => {
+    return this.post('/custom_biomarker/admin/clinics', {});
+  };
+
+  static loadClinicJsonConfigs = (data: any) => {
+    return this.post('/custom_biomarker/admin/load_configs', data);
+  };
+
+  static saveClinicJsonConfig = (data: any) => {
+    return this.post('/custom_biomarker/admin/save_config', data);
+  };
+
   static getBiomarkersList = () => {
     return this.post('/custom_biomarker/chart_bounds', {});
+  };
+
+  static getBiomarkerTypes = () => {
+    return this.post('/custom_biomarker/biomarker_types', {});
   };
 
   static saveBiomarkersList = (data: any) => {
@@ -12,6 +28,22 @@ class BiomarkersApi extends Api {
 
   static addBiomarkersList = (data: any) => {
     return this.post('/custom_biomarker/add_biomarker', data);
+  };
+
+  static getUnitMapping = () => {
+    return this.post('/custom_biomarker/unit_mapping', {});
+  };
+
+  static updateUnitMapping = (data: any) => {
+    return this.post('/custom_biomarker/update_unit_mapping', data);
+  };
+
+  static getBiomarkerMapping = () => {
+    return this.post('/custom_biomarker/biomarker_mapping', {});
+  };
+
+  static updateBiomarkerMapping = (data: any) => {
+    return this.post('/custom_biomarker/update_biomarker_mapping', data);
   };
 }
 

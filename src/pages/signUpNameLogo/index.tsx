@@ -40,13 +40,13 @@ const SignUpNameLogo = () => {
   const validateForm = () => {
     if (
       clinicName.length < 3 ||
-      clinicName.length > 15 ||
+      clinicName.length > 30 ||
       /^\d+$/.test(clinicName)
     ) {
       setErrorName(
         /^\d+$/.test(clinicName)
           ? 'Name cannot be only numbers.'
-          : 'Must be between 3 and 15 characters.',
+          : 'Must be between 3 and 30 characters.',
       );
 
       if (selectedFiles.length === 0) {
@@ -124,14 +124,14 @@ const SignUpNameLogo = () => {
                 if (e.target.value.length === 0) {
                   setErrorName('This field is required.');
                 } else if (
-                  e.target.value.length < 2 ||
+                  e.target.value.length < 3 ||
                   e.target.value.length > 30 ||
                   /^\d+$/.test(e.target.value)
                 ) {
                   setErrorName(
                     /^\d+$/.test(e.target.value)
                       ? 'Name cannot be only numbers.'
-                      : 'Must be between 2 and 30 characters.',
+                      : 'Must be between 3 and 30 characters.',
                   );
                 } else {
                   setErrorName('');

@@ -1,250 +1,279 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { lazy, memo, Suspense, useMemo, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
 import { MainModal } from '../../Components';
+import SpinnerLoader from '../../Components/SpinnerLoader';
 import SvgIcon from '../../utils/svgIcon';
-import EditModal from './EditModal';
-// import StatusBarChartV2 from './StatusBarChartV2';
-import Select from '../../Components/Select';
-import StatusBarChartv3 from './StatusBarChartv3';
+import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-interface BiomarkerItemNewProps {
+const EditModal = lazy(() => import('./EditModal'));
+
+interface BiomarkerRowProps {
+  rowIndex: number;
+  biomarkerIndex: number;
   data: any;
   biomarkers: any[];
   changeBiomarkersValue: (values: any) => void;
   searchTerm?: string;
+  benchmarkAreaOptions?: string[];
+  benchmarkAreaOptionsByType?: Record<string, string[]>;
+  biomarkerTypeOptions?: string[];
+  formatBiomarkerTypeLabel: (value: string) => string;
+  unitMappings?: any[];
+  biomarkerMappings?: any[];
+  onUnitMappingsLocalChange?: (entries: any[]) => void;
+  onBiomarkerMappingsLocalChange?: (entries: any[]) => void;
+  onOpenChart: (data: any) => void;
+  onOpenMappings: (data: any) => void;
 }
 
-const biomarkerItem = ({
+const normalize = (value: any) => String(value || '').trim().toLowerCase();
+
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const replaceBiomarker = (
+  biomarkers: any[],
+  originalBiomarkerIndex: number,
+  originalBiomarkerName: string,
+  updatedItem: any,
+) => {
+  if (
+    Number.isInteger(originalBiomarkerIndex) &&
+    originalBiomarkerIndex >= 0 &&
+    originalBiomarkerIndex < biomarkers.length
+  ) {
+    return biomarkers.map((item, index) =>
+      index === originalBiomarkerIndex ? updatedItem : item,
+    );
+  }
+
+  const matchingIndexes = biomarkers
+    .map((item, index) => ({ item, index }))
+    .filter(
+      ({ item }) =>
+        normalize(item?.Biomarker) === normalize(originalBiomarkerName),
+    )
+    .map(({ index }) => index);
+
+  if (matchingIndexes.length !== 1) {
+    return biomarkers;
+  }
+
+  return biomarkers.map((item, index) =>
+    index === matchingIndexes[0] ? updatedItem : item,
+  );
+};
+
+const highlightText = (text: string, term: string) => {
+  const source = String(text || '');
+  const tokens = String(term || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(escapeRegExp);
+
+  if (tokens.length === 0) return source;
+
+  const regex = new RegExp(`(${tokens.join('|')})`, 'gi');
+  const parts = source.split(regex);
+
+  return parts.map((part, index) =>
+    regex.test(part) ? (
+      <mark key={`${part}-${index}`} className="rounded bg-yellow-100 px-0.5">
+        {part}
+      </mark>
+    ) : (
+      part
+    ),
+  );
+};
+
+const BiomarkerRow = ({
+  rowIndex,
+  biomarkerIndex,
   data,
   biomarkers,
   changeBiomarkersValue,
   searchTerm = '',
-}: BiomarkerItemNewProps) => {
-  const getMaleThresholdKeys = () => {
-    if (data && data.thresholds && data.thresholds.male) {
-      return Object.keys(data.thresholds.male);
-    }
-    return [];
-  };
-  const getFemaleThresholdKeys = () => {
-    if (data && data.thresholds && data.thresholds.female) {
-      return Object.keys(data.thresholds.female);
-    }
-    return [];
-  };
+  benchmarkAreaOptions = [],
+  benchmarkAreaOptionsByType = {},
+  biomarkerTypeOptions = [],
+  formatBiomarkerTypeLabel,
+  unitMappings = [],
+  biomarkerMappings = [],
+  onUnitMappingsLocalChange,
+  onBiomarkerMappingsLocalChange,
+  onOpenChart,
+  onOpenMappings,
+}: BiomarkerRowProps) => {
   const [activeEdit, setActiveEdit] = useState(false);
   const [loading, setLoading] = useState(false);
-  const openModalEdit = () => setActiveEdit(true);
+  const [errorDetails, setErrorDetails] = useState('');
+
+  const biomarkerName = data?.Biomarker || '';
+  const relevantUnitMappings = useMemo(
+    () =>
+      unitMappings.filter(
+        (mapping) => normalize(mapping?.biomarker) === normalize(biomarkerName),
+      ),
+    [unitMappings, biomarkerName],
+  );
+
+  const relevantBiomarkerMapping = useMemo(
+    () =>
+      biomarkerMappings.find(
+        (mapping) => normalize(mapping?.standard_name) === normalize(biomarkerName),
+      ),
+    [biomarkerMappings, biomarkerName],
+  );
+
+  const mappingCount =
+    relevantUnitMappings.length +
+    (relevantBiomarkerMapping?.variations?.length || 0);
+
   const closeModalEdit = () => {
     setActiveEdit(false);
     setErrorDetails('');
   };
-  const [activeBiomarker, setActiveBiomarker] = useState(() => {
-    const maleKeys = getMaleThresholdKeys();
-    const femaleKeys = getFemaleThresholdKeys();
 
-    // Try to get male data first
-    if (maleKeys.length > 0 && data?.thresholds?.male?.[maleKeys[0]]) {
-      const maleData = data.thresholds.male[maleKeys[0]];
-      // Check if male data is not empty (has actual data)
-      if (
-        maleData &&
-        (Array.isArray(maleData)
-          ? maleData.length > 0
-          : Object.keys(maleData).length > 0)
-      ) {
-        return maleData;
-      }
-    }
-
-    // If male data is empty or doesn't exist, use female data
-    if (femaleKeys.length > 0 && data?.thresholds?.female?.[femaleKeys[0]]) {
-      return data.thresholds.female[femaleKeys[0]];
-    }
-
-    return null;
-  });
-  const [errorDetails, setErrorDetails] = useState('');
-  useEffect(() => {
-    // Get male threshold keys
-    const maleKeys =
-      data && data.thresholds && data.thresholds.male
-        ? Object.keys(data.thresholds.male)
-        : [];
-
-    // Get female threshold keys
-    const femaleKeys =
-      data && data.thresholds && data.thresholds.female
-        ? Object.keys(data.thresholds.female)
-        : [];
-
-    // Try to get male data first
-    if (maleKeys.length > 0 && data?.thresholds?.male?.[maleKeys[0]]) {
-      const maleData = data.thresholds.male[maleKeys[0]];
-      // Check if male data is not empty (has actual data)
-      if (
-        maleData &&
-        (Array.isArray(maleData)
-          ? maleData.length > 0
-          : Object.keys(maleData).length > 0)
-      ) {
-        setActiveBiomarker(maleData);
-        return;
-      }
-    }
-
-    // If male data is empty or doesn't exist, use female data
-    if (femaleKeys.length > 0 && data?.thresholds?.female?.[femaleKeys[0]]) {
-      setActiveBiomarker(data.thresholds.female[femaleKeys[0]]);
-      return;
-    }
-
-    setActiveBiomarker(null);
-  }, [data]);
-  const [gender, setGender] = useState('male');
-  const [ageRange, setAgeRange] = useState(getMaleThresholdKeys()[0]);
-  const avilableGenders = () => {
-    const resolvedValues: Array<string> = ['male', 'female'];
-    // data.age_groups.map((el: any) => {
-    //   if (!resolvedValues.includes(el.gender)) {
-    //     resolvedValues.push(el.gender);
-    //   }
-    // });
-    return resolvedValues;
-  };
-  const avilableAges = () => {
-    const resolvedValues: Array<string> = getMaleThresholdKeys();
-    // data.age_groups.map((el: any) => {
-    //   if (!resolvedValues.includes(el.min_age + '-' + el.max_age)) {
-    //     resolvedValues.push(el.min_age + '-' + el.max_age);
-    //   }
-    // });
-    return resolvedValues;
-  };
-
-  const replaceBiomarker = (biomarkers: any[], updatedItem: any): any[] => {
-    return biomarkers.map((item) =>
-      item.Biomarker === updatedItem.Biomarker ? updatedItem : item,
-    );
-  };
-
-  const highlightText = (text: string, searchTerm: string) => {
-    if (!searchTerm.trim()) {
-      return text;
-    }
-
-    const regex = new RegExp(`(${searchTerm})`, 'gi');
-    const parts = text.split(regex);
-
-    return parts.map((part, index) =>
-      regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 px-1 rounded">
-          {part}
-        </mark>
-      ) : (
-        part
-      ),
-    );
-  };
-
-  const onsave = (values: any) => {
+  const onsave = (
+    values: any,
+    meta: { originalBiomarkerName: string },
+  ) => {
     setLoading(true);
     BiomarkersApi.saveBiomarkersList({
       updated_biomarker: values,
+      original_biomarker_name: meta.originalBiomarkerName,
+      original_biomarker_index: biomarkerIndex,
     })
-      .then(() => {
+      .then((response) => {
+        const payload = response?.data || {};
+        const savedBiomarker = payload.updated_biomarker || values;
         closeModalEdit();
-        changeBiomarkersValue(replaceBiomarker(biomarkers, values));
+        changeBiomarkersValue(
+          payload.chart_bounds ||
+            replaceBiomarker(
+              biomarkers,
+              biomarkerIndex,
+              meta.originalBiomarkerName,
+              savedBiomarker,
+            ),
+        );
+        if (payload.unit_mapping?.biomarker_specific) {
+          onUnitMappingsLocalChange?.(payload.unit_mapping.biomarker_specific);
+        }
+        if (payload.biomarker_mapping?.mappings) {
+          onBiomarkerMappingsLocalChange?.(payload.biomarker_mapping.mappings);
+        }
       })
       .catch((error) => {
-        setErrorDetails(error.detail);
+        setErrorDetails(
+          error?.response?.data?.detail ||
+            error?.detail ||
+            error?.message ||
+            'Unable to save biomarker changes.',
+        );
       })
       .finally(() => {
         setLoading(false);
       });
   };
-  // console.log(data);
 
   return (
     <>
-      <div className="w-full relative py-2 px-3  bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 min-h-[60px]">
-        <div className="flex flex-col md:flex-row gap-6 w-full min-h-[60px] justify-start items-start">
-          <div className="md:w-[200px]">
-            <div className=" text-[10px] md:text-[12px] font-medium text-Text-Primary   ">
-              {highlightText(data.Biomarker, searchTerm)}
-              <span className=" text-[8px] md:text-[10px] text-[#888888] ml-[2px]">
-                ({data.unit})
-              </span>
-            </div>
-            <div className=" text-[8px] md:text-[10px] text-nowrap mt-1 text-Text-Quadruple">
-              {data.Category}
-            </div>
+      <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_128px] items-center gap-3 border-b border-Gray-50 px-3 py-2 text-[11px] transition-colors hover:bg-[#F8FAFA]">
+        <div className="text-Text-Secondary">{rowIndex + 1}</div>
+
+        <div className="min-w-0">
+          <div className="truncate font-semibold text-Text-Primary">
+            {highlightText(biomarkerName, searchTerm)}
           </div>
-          <div className=" w-full md:w-[80%] mt-4 md:mt-8  ">
-            {/* <StatusBarChartV2
-              isCustom
-              mapingData={data.label_mapping_chart}
-              data={activeBiomarker}
-            ></StatusBarChartV2> */}
-            <StatusBarChartv3
-              isCustom
-              data={activeBiomarker ?? []}
-            ></StatusBarChartv3>
-          </div>
-          <div className="absolute right-4 gap-2 flex justify-end items-center top-2">
-            <div className="hidden">
-              <Select
-                key="ages"
-                onChange={(val) => {
-                  setAgeRange(val);
-                }}
-                value={ageRange}
-                options={avilableAges()}
-              ></Select>
+          {data?.Definition ? (
+            <div className="mt-0.5 truncate text-[10px] leading-4 text-Text-Secondary">
+              {data.Definition}
             </div>
-            <div className="hidden">
-              <Select
-                isCapital
-                key="gender"
-                onChange={(val) => {
-                  setGender(val);
-                }}
-                value={gender}
-                options={avilableGenders()}
-              ></Select>
-            </div>
-            <div onClick={openModalEdit}>
-              <SvgIcon color="#005F73" src="./icons/edit-green.svg"></SvgIcon>
-            </div>
-          </div>
+          ) : null}
+        </div>
+
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-Gray-50 bg-white">
+            <img
+              src={resolveAnalyseIcon(data?.['Benchmark areas'] || '')}
+              alt=""
+              className="h-4 w-4"
+            />
+          </span>
+          <span className="truncate text-Text-Secondary">
+            {data?.['Benchmark areas'] || '-'}
+          </span>
+        </div>
+
+        <div>
+          <span className="inline-flex rounded-full bg-[#F4F7F7] px-2 py-1 text-[10px] font-medium text-Text-Secondary">
+            {formatBiomarkerTypeLabel(data?.biomarker_type || 'blood')}
+          </span>
+        </div>
+
+        <div className="truncate font-mono text-[10px] text-Text-Secondary">
+          {data?.unit || '-'}
+        </div>
+
+        <div>
+          <button
+            type="button"
+            onClick={() => onOpenMappings(data)}
+            className="inline-flex items-center gap-1 rounded-full border border-Gray-50 bg-white px-2 py-1 text-[10px] text-Text-Secondary hover:border-Primary-DeepTeal hover:text-Primary-DeepTeal"
+          >
+            Mappings
+            <span className="rounded-full bg-[#F4F7F7] px-1.5 text-[9px]">
+              {mappingCount}
+            </span>
+          </button>
+        </div>
+
+        <div className="flex items-center justify-end gap-1.5">
+          <button
+            type="button"
+            onClick={() => onOpenChart(data)}
+            className="rounded-full border border-Gray-50 bg-white px-2.5 py-1 text-[10px] font-medium text-Primary-DeepTeal hover:border-Primary-DeepTeal"
+          >
+            Chart
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveEdit(true)}
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-Gray-50 bg-white hover:border-Primary-DeepTeal"
+            title="Edit biomarker"
+          >
+            <SvgIcon color="#005F73" src="./icons/edit-green.svg" />
+          </button>
         </div>
       </div>
 
-      <MainModal
-        isOpen={activeEdit}
-        onClose={() => {
-          closeModalEdit();
-        }}
-      >
-        <>
+      <MainModal isOpen={activeEdit} onClose={closeModalEdit}>
+        <Suspense
+          fallback={
+            <div className="flex min-h-[200px] w-[90vw] max-w-[620px] items-center justify-center rounded-[16px] bg-white md:w-[620px]">
+              <SpinnerLoader color="#005F73" />
+            </div>
+          }
+        >
           <EditModal
-            onCancel={() => {
-              closeModalEdit();
-            }}
-            onSave={(values: any) => {
-              onsave(values);
-            }}
+            onCancel={closeModalEdit}
+            onSave={(values: any, meta) => onsave(values, meta)}
             data={data}
+            benchmarkAreaOptions={benchmarkAreaOptions}
+            benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
+            biomarkerTypeOptions={biomarkerTypeOptions}
             loading={loading}
             errorDetails={errorDetails}
             setErrorDetails={setErrorDetails}
           />
-        </>
+        </Suspense>
       </MainModal>
     </>
   );
 };
 
-export default biomarkerItem;
+export default memo(BiomarkerRow);

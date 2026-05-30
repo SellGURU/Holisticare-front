@@ -5,6 +5,7 @@ import Application from '../../../api/app';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import ExerciseModal from './AddComponents/ExcersieModal';
 import { ExerciseRow } from './AddComponents/ExerciseRow';
+import useIsDemo from '../../../hooks/useIsDemo';
 interface ExerciseHandlerProps {
   data: Array<any>;
   onAdd: () => void;
@@ -19,6 +20,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   setShowAdd,
   ExcercisesListLength,
 }) => {
+  const isDemo = useIsDemo();
   const [loadingCall, setLoadingCall] = useState(false);
   const [clearData, setClearData] = useState(false);
   const [showDeleteError, setshowDeleteError] = useState('');
@@ -29,6 +31,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
     setClearData(value);
   };
   const handleAddExercise = (newExercise: any) => {
+    if (isDemo) return;
     setLoadingCall(true);
     Application.addExercise(newExercise)
       .then(() => {
@@ -45,6 +48,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   };
 
   const handleDeleteExercise = (exerciseIdToDelete: string) => {
+    if (isDemo) return;
     Application.DeleteExercise({ Exercise_Id: exerciseIdToDelete })
       .then(() => {
         // setData((prevData) =>
@@ -66,6 +70,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   };
 
   const handleUpdateExercise = (updatedExercise: any) => {
+    if (isDemo) return;
     setLoadingCall(true);
     Application.updateExercise(updatedExercise)
       .then(() => {
@@ -126,7 +131,10 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
               </div>
               <div className="flex justify-center mt-4">
                 <ButtonSecondary
+                  disabled={isDemo}
+                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                   onClick={() => {
+                    if (isDemo) return;
                     setShowAdd(true);
                   }}
                   ClassName="rounded-full min-w-[180px]"
@@ -183,6 +191,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
                         handleDeleteExercise(exercise.Exercise_Id)
                       }
                       onEdit={() => {
+                        if (isDemo) return;
                         setShowEditModal(true);
                         setExerciseId(exercise.Exercise_Id);
                       }}

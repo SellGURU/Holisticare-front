@@ -3,7 +3,6 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../api/app';
-import { resolveAccesssUser } from '../../help';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
 // import { ButtonPrimary } from '../Button/ButtonPrimary';
@@ -11,8 +10,8 @@ import LogOutModal from '../LogOutModal';
 import { SlideOutPanel } from '../SlideOutPanel';
 // import SpinnerLoader from '../SpinnerLoader';
 import DownloadModal from './downloadModal';
-import { resolveBaseUrl } from '../../api/base';
 import CompileButton from './CimpleButton';
+import { useApp } from '../../hooks';
 // import { CircleLoader } from 'react-spinners';
 // import { useEffect } from "react";
 
@@ -30,6 +29,7 @@ export const TopBar: FC<TopBarProps> = ({
   isShare,
 }) => {
   const navigate = useNavigate();
+  const { setClinicAccess } = useApp();
   const printreport = () => {
     const mywindow: any = window.open('', 'PRINT', 'height=300,width=800');
     mywindow.document.write(`
@@ -163,7 +163,6 @@ export const TopBar: FC<TopBarProps> = ({
     }
   };
   const [openDownload, setOpenDownload] = useState(false);
-  const [openShare, setOpenShare] = useState(false);
   const [, setDownloadingState] = useState('download');
   const [isReportAvailable, setIsReportAvailable] = useState(true);
   const [showReport, setShowReport] = useState(false);
@@ -179,7 +178,7 @@ export const TopBar: FC<TopBarProps> = ({
   const [hasReportInRoute, setHasReportInRoute] = useState(false);
   const [hasShareInRoute, setHasShareInRoute] = useState(false);
   const [userInfoData, setUserInfoData] = useState(null);
-
+  const [isAutoCompile, setIsAutoCompile] = useState(false);
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo()
       .then((res) => {
@@ -191,17 +190,23 @@ export const TopBar: FC<TopBarProps> = ({
           navigate('/register-profile');
           return;
         }
+        setIsAutoCompile(res.data.auto_copmile);
         setCustomTheme({
           headLine: res.data.brand_elements.headline,
           name: res.data.brand_elements.name,
           selectedImage: res.data.brand_elements.logo,
         });
+        const clinicPlan = res.data.brand_elements.clinic_plan || 'paying';
+        const clinicStatus = res.data.brand_elements.clinic_status || 'active';
+        setClinicAccess(clinicPlan, clinicStatus);
         localStorage.setItem(
           'brandInfoData',
           JSON.stringify({
             headLine: res.data.brand_elements.headline,
             name: res.data.brand_elements.name,
             selectedImage: res.data.brand_elements.logo,
+            clinicPlan,
+            clinicStatus,
           }),
         );
         // alert(res.data.brand_elements.knowledge_playground);
@@ -316,6 +321,14 @@ export const TopBar: FC<TopBarProps> = ({
       )}
       {(hasReportInRoute || hasShareInRoute) && (
         <div className="flex xl:hidden items-center gap-2 xs:gap-4">
+          {hasReportInRoute && !shouldEnableActions && (
+            <div>
+              <CompileButton
+                isAutoCompile={isAutoCompile}
+                userInfoData={userInfoData}
+              ></CompileButton>
+            </div>
+          )}
           {/* <img
             className={`xl:block ${shouldEnableActions && 'opacity-40'} `}
             onClick={() => {
@@ -325,19 +338,7 @@ export const TopBar: FC<TopBarProps> = ({
             }}
             src="/icons/document-download.svg"
             alt=""
-          />
-          {!hasShareInRoute && (
-            <img
-              className={`${shouldEnableActions && 'opacity-40'} `}
-              onClick={() => {
-                if (!shouldEnableActions) {
-                  setOpenShare(true);
-                }
-              }}
-              src="/icons/link-2.svg"
-              alt=""
-            />
-          )} */}
+          /> */}
           {!hasShareInRoute && (
             <img
               onClick={setShowCombo}
@@ -350,7 +351,10 @@ export const TopBar: FC<TopBarProps> = ({
       <div className="hidden xl:flex gap-3">
         {hasReportInRoute && !shouldEnableActions && (
           <div>
-            <CompileButton userInfoData={userInfoData}></CompileButton>
+            <CompileButton
+              isAutoCompile={isAutoCompile}
+              userInfoData={userInfoData}
+            ></CompileButton>
           </div>
         )}
         {canDownload && (hasReportInRoute || hasShareInRoute) && (
@@ -381,22 +385,6 @@ export const TopBar: FC<TopBarProps> = ({
                 </>
               )}
             </ButtonPrimary> */}
-            {/* {!hasShareInRoute && (
-              <div
-                onClick={() => {
-                  if (shouldEnableActions) return;
-                  setOpenShare(true);
-                }}
-                className={`flex items-center gap-1 TextStyle-Button text-[#005F73] ${
-                  shouldEnableActions
-                    ? 'cursor-not-allowed opacity-60'
-                    : 'cursor-pointer'
-                }`}
-              >
-                <img src="/icons/share.svg" alt="" />
-                Share
-              </div>
-            )} */}
           </div>
         )}
         {!isShare && (
@@ -438,77 +426,29 @@ export const TopBar: FC<TopBarProps> = ({
       </div>
 
       <SlideOutPanel
-        isOpen={openDownload || openShare}
-        headline={
-          openDownload
-            ? 'Select Sections to Download'
-            : 'Select Sections to Share'
-        }
+        isOpen={openDownload}
+        headline="Select Sections to Download"
         onClose={() => {
           setOpenDownload(false);
-          setOpenShare(false);
         }}
       >
         <>
           <DownloadModal
-            mode={openDownload ? 'download' : 'share'}
-            // isOpen={openDownload || openShare}
+            mode="download"
             onconfirm={(settingsData) => {
-              const locationAddress = window.location.pathname;
-              const routeData = locationAddress.split('/');
-              if (openDownload) {
-                setDownloadingState('downloading');
-                publish('downloadCalled', settingsData);
-                setOpenDownload(false);
+              setDownloadingState('downloading');
+              publish('downloadCalled', settingsData);
+              setOpenDownload(false);
+              setTimeout(() => {
+                printreport();
+                setDownloadingState('Downloaded');
                 setTimeout(() => {
-                  printreport();
-                  setDownloadingState('Downloaded');
-                  setTimeout(() => {
-                    setDownloadingState('download');
-                  }, 200);
-                }, 300);
-                setOpenShare(false);
-              } else {
-                Application.getPatientsInfo({
-                  member_id: routeData[2],
-                })
-                  .then(async (res) => {
-                    if (navigator.share) {
-                      try {
-                        await navigator
-                          .share({
-                            title: 'Holisticare',
-                            url:
-                              resolveBaseUrl() +
-                              '/share/' +
-                              res.data.unique_key +
-                              '/' +
-                              resolveAccesssUser(settingsData),
-                          })
-                          .finally(() => {
-                            setOpenShare(false);
-                          });
-                      } catch (error) {
-                        console.error('Error sharing:', error);
-                      }
-                    } else {
-                      alert('Sharing not supported in this browser.');
-                    }
-                    // window.open(
-                    //   '/share/' +
-                    //     res.data.unique_key +
-                    //     '/' +
-                    //     resolveAccesssUser(settingsData),
-                    // );
-                  })
-                  .catch((err) => {
-                    console.error('Error getting patient info', err);
-                  });
-              }
+                  setDownloadingState('download');
+                }, 200);
+              }, 300);
             }}
             onclose={() => {
               setOpenDownload(false);
-              setOpenShare(false);
             }}
           ></DownloadModal>
         </>

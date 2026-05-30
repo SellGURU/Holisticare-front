@@ -123,7 +123,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   return (
     <div
       // style={{ height: window.innerHeight - 235 + 'px' }}
-      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200   md:h-[calc(100vh-235px)] mt-4 overflow-y-auto md:overflow-hidden overflow-x-hidden "
+      className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200 md:h-[calc(100vh-235px)] mt-4 overflow-y-auto overflow-x-hidden"
     >
       {loading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
@@ -271,7 +271,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
         {/* Right side: Table */}
         <div
           ref={tableRef}
-          className={`w-full border-Gray-50 overflow-x-auto  hidden-scrollbar   ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
+          className={`w-full min-h-0 border-Gray-50 overflow-auto ${biomarkers.length === 0 && 'overflow-hidden '} pr-1`}
         >
           <div className="w-full border border-Gray-50  min-w-[300px] sm:min-w-[700px]    rounded-[20px] h-full text-xs">
             {/* Table Header */}
@@ -294,7 +294,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
             {/* Table Rows */}
             <div
               // style={{ height: window.innerHeight - 550 + 'px' }}
-              className="w-full md:h-[calc(100vh-550px)]  "
+              className="w-full md:h-[calc(100vh-550px)] overflow-y-auto"
             >
               {biomarkers.map((biomarker, index) => {
                 const errorForRow = rowErrors[index];

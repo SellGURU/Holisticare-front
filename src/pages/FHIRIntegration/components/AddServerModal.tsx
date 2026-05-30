@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { FHIRServerConfig } from '../../../api/fhir';
+import { MainModal } from '../../../Components';
+import SpinnerLoader from '../../../Components/SpinnerLoader';
+import { TextField } from '../../../Components/UnitComponents';
 
 interface AddServerModalProps {
   onClose: () => void;
   onSave: (config: FHIRServerConfig) => void;
+  isOpen: boolean;
 }
 
-const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
+const AddServerModal: FC<AddServerModalProps> = ({
+  onClose,
+  onSave,
+  isOpen,
+}) => {
   const [name, setName] = useState('');
   const [baseUrl, setBaseUrl] = useState('');
   const [authType, setAuthType] = useState<
@@ -18,6 +26,16 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
   const [apiKey, setApiKey] = useState('');
   const [headerName, setHeaderName] = useState('X-API-Key');
   const [saving, setSaving] = useState(false);
+
+  const onClear = () => {
+    setName('');
+    setBaseUrl('');
+    setAuthType('none');
+    setUsername('');
+    setPassword('');
+    setToken('');
+    setApiKey('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,32 +73,19 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+    <MainModal
+      isOpen={isOpen}
+      onClose={() => {
+        onClear();
+        onClose();
+      }}
+    >
+      <div className="bg-white rounded-2xl shadow-xl w-full overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-Boarder">
+          <h2 className="text-base font-medium text-Text-Primary">
             Add FHIR Server
           </h2>
-          <button
-            onClick={onClose}
-            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
         </div>
 
         {/* Form */}
@@ -109,44 +114,38 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
           </div>
 
           {/* Server Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Server Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Hospital FHIR Server"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            />
-          </div>
+          <TextField
+            label="Server Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g., Hospital FHIR Server"
+            isValid={true}
+            validationText={''}
+          />
 
           {/* Base URL */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Base URL <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="url"
-              value={baseUrl}
-              onChange={(e) => setBaseUrl(e.target.value)}
-              placeholder="https://fhir.example.com/baseR4"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            />
-          </div>
+          <TextField
+            label="Base URL"
+            value={baseUrl}
+            onChange={(e) => setBaseUrl(e.target.value)}
+            placeholder="https://fhir.example.com/baseR4"
+            isValid={true}
+            validationText={''}
+          />
 
           {/* Authentication Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="text-xs font-medium text-Text-Primary mb-1 block">
               Authentication
             </label>
             <select
               value={authType}
-              onChange={(e) => setAuthType(e.target.value as any)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(e) =>
+                setAuthType(
+                  e.target.value as 'none' | 'basic' | 'bearer' | 'api_key',
+                )
+              }
+              className="w-full h-[28px] rounded-[16px] py-1 px-3 border bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold focus-visible:outline-none md:focus-visible:border-black border-Gray-50"
             >
               <option value="none">No Authentication</option>
               <option value="basic">Basic Auth (Username/Password)</option>
@@ -157,29 +156,24 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
 
           {/* Basic Auth Fields */}
           {authType === 'basic' && (
-            <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+            <div className="px-3 py-1 bg-gray-50 rounded-lg">
+              <TextField
+                label="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
+                isValid={true}
+                validationText={''}
+                margin="mt-1"
+              />
+              <TextField
+                label="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                isValid={true}
+                validationText={''}
+              />
             </div>
           )}
 
@@ -229,25 +223,27 @@ const AddServerModal: React.FC<AddServerModalProps> = ({ onClose, onSave }) => {
           )}
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          <div className="w-full flex justify-end items-center p-2 mt-5">
+            <div
+              className="text-Disable text-sm font-medium mr-4 cursor-pointer"
+              onClick={() => {
+                onClear();
+                onClose();
+              }}
             >
               Cancel
-            </button>
+            </div>
             <button
               type="submit"
               disabled={saving || !name.trim() || !baseUrl.trim()}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-Primary-DeepTeal text-sm font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {saving ? 'Adding...' : 'Add Server'}
+              {saving ? <SpinnerLoader color="#005F73" /> : 'Add'}
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </MainModal>
   );
 };
 

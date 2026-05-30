@@ -5,6 +5,7 @@ import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import MainModal from '../../MainModal';
 import QuestionaryModalContent from './components/QuestionaryModalContent';
 import TableNoPaginateForForms from './components/TableNoPaginate';
+import useIsDemo from '../../../hooks/useIsDemo';
 
 interface FormsQuestionaryProps {
   showModalQuestionary: boolean;
@@ -43,6 +44,7 @@ const FormsQuestionary: FC<FormsQuestionaryProps> = ({
   setStep,
   step,
 }) => {
+  const isDemo = useIsDemo();
   return (
     <>
       {questionaryLists.length > 0 ? (
@@ -53,7 +55,10 @@ const FormsQuestionary: FC<FormsQuestionaryProps> = ({
             </div>
             <ButtonSecondary
               ClassName="rounded-[20px] w-[152px]"
+              disabled={isDemo}
+              title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
               onClick={() => {
+                if (isDemo) return;
                 setQuestionaryListModal([]);
                 setEditModeModalQuestionary(false);
                 setShowModalQuestionary(true);
@@ -89,7 +94,10 @@ const FormsQuestionary: FC<FormsQuestionaryProps> = ({
           </div>
           <ButtonSecondary
             ClassName="rounded-[20px] w-[229px] mt-9"
+            disabled={isDemo}
+            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
             onClick={() => {
+              if (isDemo) return;
               setShowModalQuestionary(true);
               setStep(1);
             }}

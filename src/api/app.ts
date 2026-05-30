@@ -749,6 +749,12 @@ class Application extends Api {
     const response = this.post('/patients/treatment_plan_rescore', data);
     return response;
   };
+  static holisticPlanReScoreStart = (data: any) => {
+    return this.post('/patients/treatment_plan_rescore_start', data);
+  };
+  static holisticPlanReScoreStatus = (data: any) => {
+    return this.post('/patients/treatment_plan_rescore_status', data);
+  };
   static saveHolisticPlan = (data: any) => {
     const response = this.post('/initial_save_treatment_plan', data);
     return response;
@@ -757,6 +763,9 @@ class Application extends Api {
     member_id: number;
     from_date?: string;
     to_date?: string;
+    aggregation?: 'daily' | 'weekly' | 'monthly';
+    compare_previous?: boolean;
+    metrics?: string[];
   }) => {
     const response = this.post('/wellness_scores', data);
     return response;
@@ -766,6 +775,9 @@ class Application extends Api {
     member_id: number;
     from_date?: string;
     to_date?: string;
+    aggregation?: 'daily' | 'weekly' | 'monthly';
+    compare_previous?: boolean;
+    metrics?: string[];
   }) => {
     const response = this.post('/wellness_scores/historical', data);
     return response;
@@ -791,6 +803,14 @@ class Application extends Api {
     const response = this.post('/patients/give_access/mobile_user_info', data);
     return response;
   };
+  static updateClientInfo = (data: any) => {
+    const response = this.post('/patients/update_client_info', data);
+    return response;
+  };
+  static regenerateClientAccessPassword = (data: any) => {
+    const response = this.post('/patients/give_access/regenerate_password', data);
+    return response;
+  };
   static shareClientAccess = (data: any) => {
     const response = this.post('/patients/give_access/share_with_email', data);
     return response;
@@ -808,6 +828,34 @@ class Application extends Api {
   };
   static getSupplementList = () => {
     return this.post('/supplement_library/supplements_list', {});
+  };
+  // Other Library APIs (Type-based, like Supplement but with Type instead of Dose)
+  static getOtherTypeList = () => {
+    return this.post('/other_library/types_list', {});
+  };
+  static addOtherType = (data: { type_name: string }) => {
+    return this.post('/other_library/add_type', data);
+  };
+  static editOtherType = (data: { Ot_Id: string; type_name: string }) => {
+    return this.post('/other_library/edit_type', data);
+  };
+  static deleteOtherType = (Ot_Id: string) => {
+    return this.post('/other_library/delete_type', { Ot_Id });
+  };
+  static getOtherList = () => {
+    return this.post('/other_library/list', {});
+  };
+  static addOther = (data: any) => {
+    return this.post('/other_library/add', data);
+  };
+  static editOther = (data: any) => {
+    return this.post('/other_library/edit', data);
+  };
+  static deleteOther = (O_Id: string) => {
+    return this.post('/other_library/delete', { O_Id });
+  };
+  static showOtherDetails = (O_Id: string) => {
+    return this.post('/other_library/show_details', { O_Id });
   };
   // Peptide Library APIs (Layer 1 - Base Peptides)
   static addPeptide = (data: any) => {
@@ -961,6 +1009,18 @@ class Application extends Api {
   static tratmentPlanConflict = (data: any) => {
     return this.post('/treatment_plan/conflict_check', data);
   };
+  static clientInterventionGenerate = (data: any) => {
+    return this.post('/treatment_plan/client_intervention', data);
+  };
+  static clientInterventionGenerateStart = (data: any) => {
+    return this.post('/treatment_plan/client_intervention_start', data);
+  };
+  static clientInterventionGenerateStatus = (data: any) => {
+    return this.post('/treatment_plan/client_intervention_status', data);
+  };
+  static pollPerBiomarkerStatus = (data: any) => {
+    return this.post('/treatment_plan/per_biomarker_status', data);
+  };
   static getCoachList = (data: any) => {
     return this.post('/patients/coaches_usernames', data);
   };
@@ -1085,6 +1145,17 @@ class Application extends Api {
   static getHtmlReport = (member_id: string) => {
     return this.post(`/get_html_report`, { member_id: member_id });
   };
+  static getPublicShareState = (payload: {
+    member_id: string | number;
+  }) => {
+    return this.post('/patients/public_share_state', payload);
+  };
+  static setPublicShareEnabled = (payload: {
+    member_id: string | number;
+    enabled: boolean;
+  }) => {
+    return this.post('/patients/public_share_toggle', payload);
+  };
   static checkHtmlReport = (member_id: string) => {
     return this.post(`/check_html_report`, { member_id: member_id });
   };
@@ -1107,6 +1178,15 @@ class Application extends Api {
   };
   static remove_mapping = (data: any) => {
     return this.post('/remove_clinic_biomarker_mapping', data);
+  };
+  static suggestBiomarkerMappings = (data: any) => {
+    return this.post('/patients/suggest_biomarker_mappings', data);
+  };
+  static prefillBiomarkerDraft = (data: any) => {
+    return this.post('/patients/prefill_biomarker_draft', data);
+  };
+  static addBiomarkerUnit = (data: any) => {
+    return this.post('/clinic/add_biomarker_unit', data);
   };
   static checkRefreshProgress = (member_id: string) => {
     return this.post(`/patients/check_refresh_progress`, {

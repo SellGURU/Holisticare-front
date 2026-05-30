@@ -122,6 +122,11 @@ const FileBox: React.FC<FileBoxProps> = ({
               el.date_uploaded ? el.date_uploaded : new Date().toDateString(),
             )}
           </div>
+          <div
+            className={`w-[70px] text-center ${isDeleted ? 'opacity-50' : ''}`}
+          >
+            {el.date_of_test ? el.date_of_test : '—'}
+          </div>
           {el.status == 'error' ? (
             <>
               <div className="flex w-[55px] justify-center gap-1">
@@ -136,7 +141,7 @@ const FileBox: React.FC<FileBoxProps> = ({
           ) : (
             <>
               <div
-                className={`flex justify-center gap-2 items-center ${
+                className={`flex justify-center flex-wrap sm:flex-nowrap gap-[4px] xs:gap-1 w-[80px] items-center ${
                   isDeleted ? 'opacity-50' : ''
                 }`}
               >
@@ -175,7 +180,7 @@ const FileBox: React.FC<FileBoxProps> = ({
                       }}
                       src="/icons/delete-green.svg"
                       alt=""
-                      className="cursor-pointer w-5 h-5"
+                      className="cursor-pointer w-[18px] h-[18px] sm:w-5 sm:h-5"
                     />
                     {el.file_name !== 'Manual Entry' && (
                       <img
@@ -237,9 +242,27 @@ const FileBox: React.FC<FileBoxProps> = ({
                             }
                           }
                         }}
-                        className="cursor-pointer"
+                        className="cursor-pointer w-[18px] h-[18px] sm:w-5 sm:h-5"
                         src="/icons/import.svg"
                         alt=""
+                      />
+                    )}
+                    {/* Edit button */}
+                    {el.file_id && el.process_done !== false && (
+                      <img
+                        onClick={() => {
+                          if (!isDeleted) {
+                            publish('uploadTestShow', {
+                              isShow: true,
+                              file_id: el.file_id,
+                              file_name: el.file_name || el.file?.name || '',
+                            });
+                          }
+                        }}
+                        className="cursor-pointer w-[18px] h-[18px] sm:w-5 sm:h-5"
+                        src="/icons/edit-2-green.svg"
+                        alt="Edit"
+                        title="Edit biomarkers"
                       />
                     )}
                   </>

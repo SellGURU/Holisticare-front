@@ -9,8 +9,10 @@ import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
 import ActivityHandler from './ActivityHandler';
 import Exercise from './Exercise';
+import useIsDemo from '../../../hooks/useIsDemo';
 
 const Activity = () => {
+  const isDemo = useIsDemo();
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
   const [loading, setLoading] = useState(true);
   const [dataList, setDataList] = useState<Array<any>>([]);
@@ -288,7 +290,12 @@ const Activity = () => {
               {/* Add buttons */}
               {active === 'Exercise' && (
                 <ButtonSecondary
-                  onClick={() => setShowAdd(true)}
+                  disabled={isDemo}
+                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  onClick={() => {
+                    if (isDemo) return;
+                    setShowAdd(true);
+                  }}
                   ClassName={`rounded-full w-full text-nowrap ${
                     isMobilePage ? 'w-full' : 'w-[180px]'
                   }`}
@@ -299,7 +306,12 @@ const Activity = () => {
               )}
               {active === 'Activity' && (
                 <ButtonSecondary
-                  onClick={() => setShowAddActivity(true)}
+                  disabled={isDemo}
+                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  onClick={() => {
+                    if (isDemo) return;
+                    setShowAddActivity(true);
+                  }}
                   ClassName={`rounded-full w-full text-nowrap ${
                     isMobilePage ? 'w-full' : 'w-[180px]'
                   }`}

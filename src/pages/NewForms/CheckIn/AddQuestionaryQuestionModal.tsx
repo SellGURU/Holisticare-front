@@ -136,7 +136,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
   const [advancedSettings, setAdvancedSettings] = useState(false);
   const [biomarker] = useState(editQUestion?.is_biomarker || false);
   const [clientInsights, setClientInsights] = useState(
-    editQUestion?.use_in_insights || false,
+    editQUestion?.use_in_insight || editQUestion?.use_in_insights || false,
   );
   const [clientGoals, setClientGoals] = useState(
     editQUestion?.is_goal || false,
@@ -209,6 +209,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
               ? multiChoiceOptions
               : undefined,
         is_biomarker: biomarker,
+        use_in_insight: clientInsights,
         use_in_insights: clientInsights,
         is_goal: clientGoals,
         is_medication: medication,

@@ -94,7 +94,13 @@ export const menus = [
       {
         name: 'Peptide',
         url: '/peptide',
-        icon: 'sidemenu-menu-icon-peptide ',
+        icon: 'sidemenu-menu-icon-peptide',
+        active: true,
+      },
+      {
+        name: 'Other',
+        url: '/other',
+        icon: 'sidemenu-menu-icon-Other',
         active: true,
       },
     ],

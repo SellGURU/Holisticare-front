@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import {
   AddClient,
   AiKnowledge,
@@ -38,15 +38,30 @@ import Supplement from '../pages/supplement/index.tsx';
 import Lifestyle from '../pages/lifestyle/index.tsx';
 import Diet from '../pages/diet/index.tsx';
 import Peptide from '../pages/peptide/index.tsx';
+import Other from '../pages/other/index.tsx';
 import FHIRIntegration from '../pages/FHIRIntegration/index.tsx';
 import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 import SurveyResponsesPage from '../pages/surveysView/page.tsx';
+import JsonUploading from '../pages/JsonUploading/index.tsx';
+import AdminLogin from '../pages/admin/Login.tsx';
+import AdminProtectedRoute from './AdminProtected.tsx';
+import AdminJsonUploading from '../pages/admin/JsonUploading.tsx';
+import OverviewDashboard from '../pages/admin/OverviewDashboard.tsx';
+import SessionInsights from '../pages/admin/SessionInsights.tsx';
+import DataExplorer from '../pages/admin/DataExplorer.tsx';
+import AdminConfig from '../pages/admin/AdminConfig.tsx';
+import Clinics from '../pages/admin/Clinics.tsx';
+import LlmPromptCatalog from '../pages/admin/LlmPromptCatalog.tsx';
+import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
+import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
+import RouteErrorFallback from './RouteErrorFallback';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <ProtectedRoute Component={Layout}></ProtectedRoute>,
+    errorElement: <RouteErrorFallback />,
     children: [
       {
         path: '/',
@@ -94,6 +109,10 @@ const router = createBrowserRouter([
             element: <CustomBiomarkers></CustomBiomarkers>,
           },
           {
+            path: '/json-uploading',
+            element: <JsonUploading></JsonUploading>,
+          },
+          {
             path: '/custom-branding',
             element: <CustomBranding></CustomBranding>,
           },
@@ -119,6 +138,10 @@ const router = createBrowserRouter([
             element: <Peptide></Peptide>,
           },
           {
+            path: '/other',
+            element: <Other></Other>,
+          },
+          {
             path: '/fhir-integration',
             element: <FHIRIntegration></FHIRIntegration>,
           },
@@ -135,6 +158,7 @@ const router = createBrowserRouter([
       {
         path: '/report/:id/:name',
         element: <Report></Report>,
+        errorElement: <RouteErrorFallback />,
       },
 
       {
@@ -162,6 +186,70 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login></Login>,
+  },
+  {
+    path: '/admin/login',
+    element: <AdminLogin></AdminLogin>,
+  },
+  {
+    path: '/admin/overview',
+    element: (
+      <AdminProtectedRoute Component={OverviewDashboard}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/marketing',
+    element: <Navigate to="/admin/overview" replace />,
+  },
+  {
+    path: '/admin/sessions',
+    element: (
+      <AdminProtectedRoute Component={SessionInsights}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/explorer',
+    element: <AdminProtectedRoute Component={DataExplorer}></AdminProtectedRoute>,
+  },
+  {
+    path: '/admin/workspace',
+    element: (
+      <AdminProtectedRoute Component={ClinicWorkspace}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/reports',
+    element: (
+      <AdminProtectedRoute Component={AIReportCopilot}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/config',
+    element: <AdminProtectedRoute Component={AdminConfig}></AdminProtectedRoute>,
+  },
+  {
+    path: '/admin/clinics',
+    element: <AdminProtectedRoute Component={Clinics}></AdminProtectedRoute>,
+  },
+  {
+    path: '/admin/llm-prompts',
+    element: (
+      <AdminProtectedRoute Component={LlmPromptCatalog}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin',
+    element: <Navigate to="/admin/overview" replace />,
+  },
+  {
+    path: '/admin/',
+    element: <Navigate to="/admin/overview" replace />,
+  },
+  {
+    path: '/admin/json-uploading',
+    element: (
+      <AdminProtectedRoute Component={AdminJsonUploading}></AdminProtectedRoute>
+    ),
   },
   {
     path: '/register',

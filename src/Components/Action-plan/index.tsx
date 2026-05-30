@@ -10,6 +10,7 @@ import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 import ProgressCalenderView from './ProgressCalendarView';
 import { Tooltip } from 'react-tooltip';
+import useIsDemo from '../../hooks/useIsDemo';
 
 // type CardData = {
 //   cardID: number;
@@ -36,6 +37,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
   setCalendarPrintData,
   disableGenerate,
 }) => {
+  const isDemo = useIsDemo();
   const { id } = useParams<{ id: string }>();
   const [actionPlanData, setActionPlanData] = useState<any>(calenderDataUper);
   useEffect(() => {
@@ -127,6 +129,9 @@ export const ActionPlan: FC<ActionPlanProps> = ({
   }, []);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const canCreateNewActionPlan = () => {
+    if (isDemo) {
+      return false;
+    }
     if (isHolisticPlanEmpty) {
       return false;
     }
@@ -247,6 +252,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                       ))}
                       <div
                         onClick={() => {
+                          if (isDemo) return;
                           if (canCreateNewActionPlan() && id) {
                             Application.checkClientRefresh(id)
                               .then((res) => {
@@ -267,14 +273,16 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                           }
                         }}
                         data-tooltip-id={
-                          disableGenerate ? 'generate-new-tooltip2' : ''
+                          disableGenerate || isDemo ? 'generate-new-tooltip2' : ''
                         }
                         data-tooltip-content={
                           disableGenerate
                             ? 'Data sync in progress — please wait until it’s complete'
-                            : ''
+                            : isDemo
+                              ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                              : ''
                         }
-                        className={` min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal c ${!canCreateNewActionPlan() ? 'opacity-40 cursor-not-allowed' : 'cursor-default'}`}
+                        className={` min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal c ${!canCreateNewActionPlan() || isDemo ? 'opacity-40 cursor-not-allowed' : 'cursor-default'}`}
                       >
                         <div className="flex flex-col  TextStyle-Subtitle-2 items-center justify-center ">
                           <img
@@ -285,7 +293,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                           Add New
                         </div>
                       </div>
-                      {disableGenerate && (
+                      {(disableGenerate || isDemo) && (
                         <Tooltip
                           id="generate-new-tooltip2"
                           place="top"
@@ -380,7 +388,9 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                         <ButtonSecondary
                           ClassName="py-[6px] px-6"
                           disabled={!canCreateNewActionPlan()}
+                          title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                           onClick={() => {
+                            if (isDemo) return;
                             if (canCreateNewActionPlan() && id) {
                               Application.checkClientRefresh(id)
                                 .then((res) => {

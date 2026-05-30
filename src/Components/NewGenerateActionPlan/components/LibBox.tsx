@@ -37,6 +37,9 @@ const LibBox: FC<LibBoxProps> = ({
       case 'Medical Peptide Therapy':
         setValueData('Dose_Schedules');
         break;
+      case 'Other':
+        setValueData('Type');
+        break;
     }
   }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
@@ -193,7 +196,9 @@ const LibBox: FC<LibBoxProps> = ({
                 place="top"
                 className="!bg-white !w-[300px] !leading-5 !shadow-100 !text-wrap !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
               >
-                {data['Practitioner Comments'][0]}
+                {data['Practitioner Comments']?.[0] ||
+                  data.ai_note ||
+                  'No analysis info available.'}
               </Tooltip>
             </div>
             {data.flag && data.flag.conflicts.length > 0 && (

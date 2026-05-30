@@ -38,6 +38,26 @@ const MessageList: React.FC<MessageListProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+  const linkify = (text: string) => {
+    const parts = text.split(urlRegex);
+    return parts.map((part, index) =>
+      urlRegex.test(part) ? (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 underline"
+        >
+          {part}
+        </a>
+      ) : (
+        part
+      ),
+    );
+  };
   const [search, setSearch] = useState('');
   useEffect(() => {
     if (id != undefined) {
@@ -233,7 +253,7 @@ const MessageList: React.FC<MessageListProps> = ({
                           expandedMessage === message.member_id ? '' : ''
                         } `}
                       >
-                        {message.message}
+                        {linkify(message.message)}
                       </div>
                     </div>
                   </div>

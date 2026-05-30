@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { publish, subscribe } from '../../../utils/event';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import SpinnerLoader from '../../SpinnerLoader';
 import SvgIcon from '../../../utils/svgIcon';
+import { PublicShareModal } from '../PublicShareModal';
 
 interface HolisticPlanShareAndDownloadProps {
   isHtmlReportExists: boolean;
@@ -16,7 +18,9 @@ const HolisticPlanShareAndDownload = ({
   loadingHtmlReport,
   handleGetHtmlReport,
 }: HolisticPlanShareAndDownloadProps) => {
+  const { id } = useParams<{ id: string }>();
   const [activeTreatment, setActiveTreatment] = useState<any>(null);
+  const [openPublicShare, setOpenPublicShare] = useState(false);
   useEffect(() => {
     subscribe('holisticPlanactiveChange', (data: any) => {
       setActiveTreatment(data.detail.data);
@@ -170,6 +174,35 @@ const HolisticPlanShareAndDownload = ({
       </>
     );
   };
+
+  const resolvePublicShareButtonHandler = () => {
+    const disabled = !isHtmlReportExists && activeTreatment?.state == 'On Going';
+    return (
+      <div className="flex flex-col items-center gap-1">
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => {
+            if (!disabled) {
+              setOpenPublicShare(true);
+            }
+          }}
+          className={`text-Primary-DeepTeal text-xs font-medium flex items-center gap-1 ${
+            disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+          }`}
+        >
+          <img src="/icons/link-2.svg" alt="" className="w-5 h-5" />
+          Public Link
+        </button>
+        {!isHtmlReportExists && activeTreatment?.state == 'On Going' && (
+          <div className="text-[10px] text-Text-Fivefold">
+            Available after report is ready
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
       <div
@@ -178,10 +211,16 @@ const HolisticPlanShareAndDownload = ({
         {activeTreatment?.state != 'Draft' && (
           <>
             {resolveShareButtonHadler()}
+            {resolvePublicShareButtonHandler()}
             {resolveDownloadButtonHadler()}
           </>
         )}
       </div>
+      <PublicShareModal
+        isOpen={openPublicShare}
+        memberId={id}
+        onClose={() => setOpenPublicShare(false)}
+      />
     </>
   );
 };

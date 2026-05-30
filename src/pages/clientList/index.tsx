@@ -16,6 +16,7 @@ import Circleloader from '../../Components/CircleLoader/index.tsx';
 import Toggle from '../../Components/Toggle/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';
 import { AppContext } from '../../store/app.tsx';
+import useIsDemo from '../../hooks/useIsDemo.ts';
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -63,6 +64,7 @@ type Filters = {
   age: number[];
 };
 const ClientList = () => {
+  const isDemo = useIsDemo();
   const [clientList, setClientList] = useState<ClientData[]>([]);
   const [filteredClientList, setFilteredClientList] = useState<ClientData[]>(
     [],
@@ -384,9 +386,12 @@ const ClientList = () => {
                 </div>
                 <ButtonSecondary
                   style={{ borderRadius: '20px' }}
+                  disabled={isDemo}
                   onClick={() => {
+                    if (isDemo) return;
                     navigate('/addClient');
                   }}
+                  title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
                 >
                   <img className="mr-1" src="/icons/user-add2.svg" alt="" />
                   Add Client
@@ -638,6 +643,18 @@ const ClientList = () => {
                                 });
                               }}
                               onToggleHighPriority={toggleHighPriority}
+                              onClientUpdated={(memberId, updates) => {
+                                setFilteredClientList((prevList) =>
+                                  prevList.map((c) =>
+                                    c.member_id === memberId ? { ...c, ...updates } : c,
+                                  ),
+                                );
+                                setClientList((prevList) =>
+                                  prevList.map((c) =>
+                                    c.member_id === memberId ? { ...c, ...updates } : c,
+                                  ),
+                                );
+                              }}
                               client={client}
                             ></ClientCard>
                           );
@@ -674,9 +691,12 @@ const ClientList = () => {
                 </div>
                 <div className="mt-2.5">
                   <ButtonSecondary
+                    disabled={isDemo}
                     onClick={() => {
+                      if (isDemo) return;
                       navigate('/addClient');
                     }}
+                    title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
                     ClassName="border border-white rounded-[20px] w-[191px]"
                   >
                     <div className="flex gap-1 text-white text-xs font-medium">

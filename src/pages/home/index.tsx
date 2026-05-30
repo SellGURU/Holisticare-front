@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { subscribe } from '../../utils/event';
 import RouteTracker from '../../utils/route-tracker';
+
 const Home = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768); // Using 768px as md breakpoint

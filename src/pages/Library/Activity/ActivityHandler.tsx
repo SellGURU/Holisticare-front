@@ -5,6 +5,7 @@ import { MainModal } from '../../../Components';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import AddActivity from './AddActivity';
 import { ActivityRow } from './AddComponents/ActivityRow';
+import useIsDemo from '../../../hooks/useIsDemo';
 
 interface ActivityHandlerProps {
   data: Array<any>;
@@ -21,12 +22,14 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
   setShowAddActivity,
   dataListLength,
 }) => {
+  const isDemo = useIsDemo();
   const [showAdd, setShowAdd] = useState(isShowAddActivity);
   const handleCloseShowAdd = () => {
     setShowAdd(false);
     setEditid(null);
   };
   const handleOpenShowAdd = () => {
+    if (isDemo) return;
     setShowAdd(true);
   };
 
@@ -38,6 +41,7 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
   }, [showAdd]);
   const [editid, setEditid] = useState<string | null>(null);
   const onDeleteActivity = (id: string) => {
+    if (isDemo) return;
     Application.deleteActivity(id)
       .then(() => {
         onDelete();
@@ -76,6 +80,8 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
               <div className="flex justify-center mt-4">
                 <ButtonSecondary
                   onClick={handleOpenShowAdd}
+                  disabled={isDemo}
+                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                   ClassName="rounded-full min-w-[180px]"
                 >
                   <img src="./icons/add-square.svg" alt="" />
@@ -126,6 +132,7 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
                   index={index}
                   onDelete={() => onDeleteActivity(exercise.Act_Id)}
                   onEdit={() => {
+                    if (isDemo) return;
                     setShowAdd(true);
                     setEditid(exercise.Act_Id);
                   }}

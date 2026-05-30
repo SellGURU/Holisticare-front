@@ -9,6 +9,7 @@ import {
 import { FC, useEffect, useState } from 'react';
 import { FaSort } from 'react-icons/fa';
 import { columns } from './tableTd';
+import useIsDemo from '../../../../hooks/useIsDemo';
 
 interface TableProps {
   tableData: Array<any>;
@@ -35,6 +36,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   onEdit,
   onPreview,
 }) => {
+  const isDemo = useIsDemo();
   const [data, setData] = useState(tableData);
   useEffect(() => {
     setData(tableData);
@@ -48,10 +50,12 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   });
   const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
   const removeItemByNo = (id: string) => {
+    if (isDemo) return;
     onDelete(id);
     setSureRemoveIndex(null);
   };
   const handleEdit = (row: any) => {
+    if (isDemo) return;
     onEdit(row);
   };
   const handlePreview = (row: any) => {
@@ -142,6 +146,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                   if (pageType === 'Supplement') return row.original.Sup_Id;
                   if (pageType === 'Lifestyle') return row.original.Life_Id;
                   if (pageType === 'Peptide') return row.original.Peptide_Id;
+                  if (pageType === 'Other') return row.original.O_Id;
                   return row.original.Diet_Id;
                 };
                 return (
@@ -169,7 +174,8 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                           <img
                             src="/icons/tick-circle-green.svg"
                             alt=""
-                            className="w-[20px] h-[20px] cursor-pointer"
+                            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                            className={`w-[20px] h-[20px] ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                             onClick={() => {
                               if (pageType === 'Supplement') {
                                 removeItemByNo(row.original.Sup_Id);
@@ -177,6 +183,8 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                                 removeItemByNo(row.original.Life_Id);
                               } else if (pageType === 'Peptide') {
                                 removeItemByNo(row.original.Peptide_Id);
+                              } else if (pageType === 'Other') {
+                                removeItemByNo(row.original.O_Id);
                               } else {
                                 removeItemByNo(row.original.Diet_Id);
                               }
@@ -201,13 +209,18 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                             onClick={() => handleEdit(row.original)}
                             src="/icons/edit-blue.svg"
                             alt=""
-                            className="cursor-pointer"
+                            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                            className={isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                           />
                           <img
-                            onClick={() => setSureRemoveIndex(index)}
+                            onClick={() => {
+                              if (isDemo) return;
+                              setSureRemoveIndex(index);
+                            }}
                             src="/icons/trash-blue.svg"
                             alt=""
-                            className="cursor-pointer"
+                            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                            className={isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                           />
                         </div>
                       )}

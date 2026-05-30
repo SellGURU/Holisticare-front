@@ -11,6 +11,7 @@ import { SlideOutPanel } from '../SlideOutPanel';
 import TreatmentCard from './TreatmentCard';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
 import { Tooltip } from 'react-tooltip';
+import useIsDemo from '../../hooks/useIsDemo';
 
 type CardData = {
   id: number;
@@ -39,6 +40,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   setDateShare,
   disableGenerate,
 }) => {
+  const isDemo = useIsDemo();
   const resolveStatusColor = (status: string) => {
     switch (status) {
       case 'Completed':
@@ -56,6 +58,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     }
   };
   const resolveCanGenerateNew = () => {
+    if (isDemo) return false;
     if (disableGenerate) return false;
 
     // If we have plans, check if the last one is Draft
@@ -195,6 +198,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     }
   };
   const handleDeleteCard = (index: number, tretmentid: string) => {
+    if (isDemo) return;
     Application.deleteHolisticPlan({
       treatment_id: tretmentid,
       member_id: id,
@@ -413,6 +417,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <ButtonSecondary
                   ClassName="w-full md:w-fit"
                   disabled={!resolveCanGenerateNew()}
+                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
                   onClick={() => {
                     if (resolveCanGenerateNew() && id) {
                       Application.checkClientRefresh(id)
@@ -535,12 +540,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                           <div
                             onClick={(e) => {
                               e.stopPropagation();
+                              if (isDemo) return;
 
                               navigate(
-                                `/report/Generate-Recommendation/${id}/${card.t_plan_id}`,
+                                `/report/Generate-Holistic-Plan/${id}/${card.t_plan_id}?isUpdate=true`,
                               );
                             }}
-                            className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                            className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                           >
                             <img src="/icons/edit-green.svg" alt="" />
                             Edit
@@ -548,9 +555,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                           <div
                             onClick={(e) => {
                               e.stopPropagation();
+                              if (isDemo) return;
                               setDeleteConfirmIndex(index);
                             }}
-                            className="flex w-full items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+                            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                            className={`flex w-full items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                           >
                             {deleteConfirmIndex === index ? (
                               <div className="text-[12px] text-Text-Secondary  w-full flex items-center justify-between">
@@ -588,6 +597,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 ))}
                 <div
                   onClick={() => {
+                    if (isDemo) return;
                     if (resolveCanGenerateNew() && id) {
                       Application.checkClientRefresh(id)
                         .then((res) => {
@@ -607,12 +617,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                     }
                   }}
                   data-tooltip-id={
-                    disableGenerate ? 'generate-new-tooltip' : ''
+                    disableGenerate || isDemo ? 'generate-new-tooltip' : ''
                   }
                   data-tooltip-content={
                     disableGenerate
                       ? 'Data sync in progress — please wait until it’s complete'
-                      : ''
+                      : isDemo
+                        ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                        : ''
                   }
                   className={` 
                     relative ${resolveCanGenerateNew() ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'} mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed  `}

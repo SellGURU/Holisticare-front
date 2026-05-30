@@ -138,6 +138,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }
   }, [value?.label]);
   const [showMore, setShowMore] = useState(false);
+  const practitionerComments = Array.isArray(value?.['Practitioner Comments'])
+    ? value['Practitioner Comments']
+    : [];
+  const primaryPractitionerComment =
+    practitionerComments[0] || value?.ai_note || '';
+  const activitySections = Array.isArray(value?.Sections) ? value.Sections : [];
 
   return (
     <>
@@ -322,23 +328,21 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             </div>
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
-                {value['Practitioner Comments'][0]?.length > 0 && (
+                {primaryPractitionerComment.length > 0 && (
                   <div className="flex flex-col gap-1 mb-1.5 ml-2 mt-3">
                     <div className="flex items-center gap-1 text-xs text-Primary-DeepTeal text-nowrap">
                       <img src="/icons/info-circle-blue.svg" alt="" />
                       Analysis Info
                     </div>
                     <div className="text-[#666666]  leading-5 break-words text-xs text-justify">
-                      {value['Practitioner Comments'][0]?.substring(
+                      {primaryPractitionerComment.substring(
                         0,
-                        showMore
-                          ? value['Practitioner Comments'][0]?.length
-                          : 430,
+                        showMore ? primaryPractitionerComment.length : 430,
                       )}
-                      {value['Practitioner Comments'][0]?.length > 430 &&
+                      {primaryPractitionerComment.length > 430 &&
                         !showMore &&
                         '... '}
-                      {value['Practitioner Comments'][0]?.length > 430 && (
+                      {primaryPractitionerComment.length > 430 && (
                         <span
                           className="text-Primary-DeepTeal cursor-pointer underline font-medium"
                           onClick={() => setShowMore(!showMore)}
@@ -696,7 +700,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     )}
                   </div>
                 </div> */}
-                {value.Category === 'Activity' && value.Sections.length > 0 && (
+                {value.Category === 'Activity' && activitySections.length > 0 && (
                   <div
                     className={`   overflow-x-auto overflow-y-hidden hidden-scrollbr h-full bg-[#E9F0F2] rounded-[16px] mt-2`}
                   >
@@ -705,11 +709,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       const sectionNumbers: Record<string, number> = {};
                       let nextSectionNumber = 1;
 
-                      return value.Sections.map((el: any, index: number) => {
+                      return activitySections.map((el: any, index: number) => {
                         // Check if this section has been shown before
                         const isFirstOccurrence =
                           index ===
-                          value.Sections.findIndex(
+                          activitySections.findIndex(
                             (t: any) => t.Section === el.Section,
                           );
 
@@ -829,7 +833,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         </div>
       </div>
       <BasedOnModal
-        value={value['Practitioner Comments']}
+        value={practitionerComments}
         setShowModal={setShowBasedOn}
         showModal={showBasedOn}
       />
@@ -843,7 +847,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       <FilePreviewModal
         isOpen={showFilePreviewModal}
         onClose={() => setShowFilePreviewModal(false)}
-        sections={value.Sections || []}
+        sections={activitySections}
       />
       <ActionEditModal
         isOpen={showEditModal}

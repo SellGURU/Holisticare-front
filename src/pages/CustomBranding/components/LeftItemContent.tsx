@@ -51,8 +51,8 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
     // Validate Name
     if (customTheme.name === '') {
       setErrorName('This field is required.');
-    } else if (customTheme.name.length < 3 || customTheme.name.length > 15) {
-      setErrorName('Must be between 3 and 15 characters.');
+    } else if (customTheme.name.length < 3 || customTheme.name.length > 30) {
+      setErrorName('Must be between 3 and 30 characters.');
     }
 
     // Validate Logo
@@ -89,12 +89,12 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
     const value = e.target.value;
     if (value === '') {
       setErrorName('This field is required.');
-    } else if (value.length < 3 || value.length > 15) {
-      setErrorName('Must be between 3 and 15 characters.');
+    } else if (value.length < 3 || value.length > 30) {
+      setErrorName('Must be between 3 and 30 characters.');
     } else {
       setErrorName('');
     }
-    if (value.length <= 15) {
+    if (value.length <= 30) {
       updateCustomTheme('name', value);
     }
   };
@@ -225,7 +225,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               >
                 <div className="flex items-center gap-1">
                   Maximum Characters:{' '}
-                  <div className="!text-Text-Primary">15</div>
+                  <div className="!text-Text-Primary">30</div>
                 </div>
               </Tooltip>
             </div>

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import FileBoxUploadingV2 from '../UploadTest/FileBoxUploadingV2'; // Ensure this path is correct
+import useIsDemo from '../../../hooks/useIsDemo';
 
 interface FileUploaderSectionProps {
   isShare: boolean | undefined;
@@ -12,7 +12,8 @@ interface FileUploaderSectionProps {
   formatFileSize: (bytes: number) => string;
   fileInputRef: any;
   onClose: () => void;
-  isScaling: boolean;
+  onDownload?: () => void;
+  isEditMode?: boolean;
 }
 
 const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
@@ -22,29 +23,76 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   uploadedFile,
   handleDeleteFile,
   formatFileSize,
-  onClose,
+  onClose: _onClose,
   fileInputRef,
-  isScaling,
+  isEditMode,
+  onDownload: _onDownload,
 }) => {
+  const isDemo = useIsDemo();
+  if (uploadedFile) {
+    const fileName = uploadedFile?.file?.name || '';
+    const fileSize = formatFileSize(uploadedFile?.file?.size || 0);
+    const isComplete = uploadedFile.status === 'completed';
+    const hasWarning = Boolean(uploadedFile.warning);
+    return (
+      <div className="w-full shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 rounded-xl border border-Gray-50 bg-white px-3 py-1.5">
+          <img src="/images/Pdf.png" alt="pdf" className="size-5 shrink-0 object-contain" />
+          <span className="flex-1 min-w-0 text-[10px] md:text-xs font-medium text-Text-Primary truncate">
+            {fileName || 'Lab Report'}
+          </span>
+          {fileSize && (
+            <span className="text-[9px] md:text-[10px] text-Text-Secondary shrink-0 hidden sm:block">
+              {fileSize}
+            </span>
+          )}
+          {hasWarning && (
+            <span className="flex items-center gap-1 text-[9px] text-amber-600 shrink-0">
+              <img className="size-3.5" src="/icons/danger-fill.svg" alt="" />
+              <span className="hidden md:inline">Not a clinic template</span>
+            </span>
+          )}
+          {isComplete && (
+            <span className="flex items-center gap-1 text-[9px] text-Primary-DeepTeal shrink-0">
+              <img className="size-3.5" src="/icons/tick-circle-green-new.svg" alt="" />
+              <span className="hidden md:inline">Extracted</span>
+            </span>
+          )}
+          {!isEditMode && (
+            <button
+              type="button"
+              disabled={isDemo}
+              onClick={() => handleDeleteFile(uploadedFile.file_id)}
+              className={`shrink-0 rounded-md p-1 hover:bg-red-50 transition-colors ${isDemo ? 'cursor-not-allowed opacity-50' : ''}`}
+              title={isDemo ? 'Demo plan - upgrade to enable' : 'Remove file'}
+            >
+              <img src="/icons/trash-red.svg" alt="Remove" className="size-3.5 opacity-50 hover:opacity-80" />
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
-      className={`flex flex-col md:flex-row   w-full justify-between rounded-2xl border p-2 md:p-4 bg-white shadow-200 border-Gray-50 gap-8 ${isScaling ? 'h-0 hidden p-0' : 'h-auto visible'} `}
+      className={`flex flex-col md:flex-row   w-full justify-between rounded-2xl border p-2 md:p-4 bg-white shadow-200 border-Gray-50 gap-8 h-auto visible `}
     >
       {/* Left side - Upload area */}
       <div
-        className={` text-xs md:text-sm w-full  font-medium text-Text-Primary ${
-          uploadedFile ? 'opacity-50 ' : ''
-        }`}
+        className={` text-xs md:text-sm w-full  font-medium text-Text-Primary`}
         data-tour="file-uploader"
       >
         File Uploader
         <div
           onClick={() => {
+            if (isDemo) return;
             if (!isShare && !uploadedFile) {
               document.getElementById('uploadFile')?.click();
             }
           }}
-          className={`mt-1 rounded-2xl h-[120px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${uploadedFile ? 'cursor-auto' : ' cursor-pointer'}`}
+          title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+          className={`mt-1 rounded-2xl h-[120px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${isDemo ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
         >
           <div className="w-full flex justify-center">
             <img src="/icons/upload-test.svg" alt="" />
@@ -53,7 +101,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
             Drag and drop your test file here or click to upload.
           </div>
           <div className="text-[#888888] font-medium text-[10px] md:text-[12px] text-center">
-            {`Accepted formats: .pdf, .docx.`}
+            {`Accepted formats: .pdf, .doc, .docx, .png, .jpg, .jpeg, .webp.`}
           </div>
           {errorMessage && (
             <div className="text-red-500 text-[10px] md:text-[12px] text-center mt-1 w-[220px] xs:w-[300px] md:w-[500px]">
@@ -63,8 +111,9 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
           <input
             type="file"
             ref={fileInputRef}
-            // accept=".pdf, .docx"
+            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp"
             onChange={handleFileChange}
+            disabled={isDemo}
             id="uploadFile"
             className="w-full absolute invisible h-full left-0 top-0"
           />
@@ -78,46 +127,12 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
       >
         Uploaded File
         <div className="mt-1 rounded-2xl md:h-[100px] bg-white flex flex-col ">
-          {!uploadedFile ? (
-            <div className="w-full flex flex-col items-center justify-center h-full">
-              <img src="/icons/EmptyState-upload.svg" alt="" />
-              <div className="text-xs font-medium text-Text-Primary -mt-8">
-                No file uploaded yet.
-              </div>
+          <div className="w-full flex flex-col items-center justify-center h-full">
+            <img src="/icons/EmptyState-upload.svg" alt="" />
+            <div className="text-xs font-medium text-Text-Primary -mt-8">
+              No file uploaded yet.
             </div>
-          ) : (
-            <div className="grid grid-cols-1 mt-[2px] gap-4 ">
-              <FileBoxUploadingV2
-                onClose={onClose}
-                onDelete={() => handleDeleteFile(uploadedFile.file_id)}
-                el={{
-                  ...uploadedFile,
-                  uploadedSize: uploadedFile.uploadedSize || 0,
-                  totalSize: uploadedFile?.file?.size,
-                  progress: uploadedFile.progress || 0.5,
-                  formattedSize: `${formatFileSize(
-                    uploadedFile.uploadedSize || 0,
-                  )} / ${formatFileSize(uploadedFile?.file?.size || 1)}`,
-                }}
-              />
-              {uploadedFile.progress >= 100 && (
-                <div
-                  className="flex items-start gap-1 text-xs text-Text-Primary 
-              text-justify"
-                >
-                  {' '}
-                  <img
-                    className="size-5 -mt-[2px]"
-                    src="/icons/danger-fill.svg"
-                    alt=""
-                  />{' '}
-                  The blood test information has been automatically extracted
-                  from the uploaded file. <br /> Please review the data and
-                  confirm its accuracy.
-                </div>
-              )}
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

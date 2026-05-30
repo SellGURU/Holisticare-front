@@ -319,7 +319,7 @@ const AddClient = () => {
                         </div>
                       )}
                     </div>
-                    <div className="w-full md:w-[220px]">
+                    <div className="w-full md:ml-2 md:w-[220px] ">
                       <TextField
                         type="text"
                         {...formik.getFieldProps('lastName')}
@@ -342,7 +342,7 @@ const AddClient = () => {
                     </div>
                   </div>
                   <div className="w-full mb-6 flex flex-col md:flex-row justify-between items-start md:h-[50px] overflow-visible">
-                    <div className=" w-full relative md:h-[28px] overflow-visible mb-4">
+                    <div className=" w-full relative md:h-[28px] md:w-[220px] overflow-visible mb-4">
                       <label className="text-Text-Primary text-[12px] font-medium">
                         Gender
                       </label>
@@ -411,7 +411,7 @@ const AddClient = () => {
                       )}
                     </div>
 
-                    <div className="w-full  md:ml-2 ">
+                    <div className="w-full  md:ml-2 md:w-[220px]">
                       <label className="text-Text-Primary text-[12px] font-medium">
                         Date of Birth
                       </label>
@@ -472,11 +472,11 @@ const AddClient = () => {
                   <div>
                     <div className=" mt-2">
                       <div className="w-full  flex flex-col md:flex-row justify-between items-center gap-2 overflow-visible">
-                        <div className="w-full h-[70px]">
+                        <div className="w-full md:w-[220px] h-[70px]">
                           <label className="text-[12px] text-Text-Primary font-medium">
                             Phone Number
                           </label>
-                          <div className="mt-1">
+                          <div className="mt-1 md:w-[220px]">
                             <PhoneInput
                               country={'us'}
                               value={formik.values.phone}

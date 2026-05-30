@@ -4,11 +4,13 @@ import Application from '../../../../../api/app';
 import { BeatLoader } from 'react-spinners';
 import { publish } from '../../../../../utils/event';
 import { downloadManualEntryPdfFromApi } from '../../../../../utils/manualEntry';
+import useIsDemo from '../../../../../hooks/useIsDemo';
 interface ActionSectionProps {
   file: any;
   isDeleted: boolean;
   memberId: string;
   onDelete: () => void;
+  onEdit?: () => void;
   date?: string;
 }
 const ActionSection: FC<ActionSectionProps> = ({
@@ -16,8 +18,10 @@ const ActionSection: FC<ActionSectionProps> = ({
   isDeleted,
   memberId,
   onDelete,
+  onEdit,
   date,
 }) => {
+  const isDemo = useIsDemo();
   const [isSureRemove, setIsSureRemove] = useState(false);
   const [loadingDelete] = useState<boolean>(false);
   const downloadFile = () => {
@@ -84,6 +88,7 @@ const ActionSection: FC<ActionSectionProps> = ({
   };
 
   const handleDelete = () => {
+    if (isDemo) return;
     // setLoadingDelete(true);
     setIsSureRemove(false);
 
@@ -108,9 +113,9 @@ const ActionSection: FC<ActionSectionProps> = ({
     onDelete();
   };
   return (
-    <div className="w-[16%]">
+    <div className="w-[80px]">
       <div
-        className={`flex justify-end gap-2 items-center ${
+        className={`flex justify-center flex-wrap sm:flex-nowrap gap-[4px] xs:gap-1 items-center ${
           isDeleted ? 'opacity-50' : ''
         }`}
       >
@@ -140,28 +145,50 @@ const ActionSection: FC<ActionSectionProps> = ({
                 <BeatLoader color="#6CC24A" size={10} />
               </div>
             ) : (
-              <div className="flex items-center justify-start gap-1 confirm-animation">
-                {/* {file.file_name !== 'Manual Entry' && ( */}
+              <div className="flex items-center justify-center flex-wrap sm:flex-nowrap gap-[4px] xs:gap-1 confirm-animation">
+                {/* Download */}
                 <img
                   onClick={() => {
                     if (!isDeleted) {
                       downloadFile();
                     }
                   }}
-                  className="cursor-pointer"
+                  className="cursor-pointer w-[18px] h-[18px] sm:w-5 sm:h-5"
                   src="/icons/import.svg"
-                  alt=""
+                  alt="Download"
                 />
-                {/* )} */}
+                {/* Edit */}
+                {file.file_id && file.process_done !== false && (
+                  <img
+                    onClick={() => {
+                      if (isDemo) return;
+                      if (!isDeleted) {
+                        if (onEdit) onEdit();
+                        publish('uploadTestShow', {
+                          isShow: true,
+                          file_id: file.file_id,
+                          file_name: file.file_name || file.name || 'Uploaded Document.pdf',
+                        });
+                      }
+                    }}
+                    className={`${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} w-[18px] h-[18px] sm:w-5 sm:h-5`}
+                    src="/icons/edit-2-green.svg"
+                    alt="Edit"
+                    title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : 'Edit biomarkers'}
+                  />
+                )}
+                {/* Delete */}
                 <img
                   onClick={() => {
+                    if (isDemo) return;
                     if (!isDeleted) {
                       setIsSureRemove(true);
                     }
                   }}
                   src="/icons/delete-green.svg"
-                  alt=""
-                  className="cursor-pointer w-5 h-5"
+                  alt="Delete"
+                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  className={`${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} w-[18px] h-[18px] sm:w-5 sm:h-5`}
                 />
               </div>
             )}
