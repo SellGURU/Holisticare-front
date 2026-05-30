@@ -81,7 +81,11 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
                 <ButtonSecondary
                   onClick={handleOpenShowAdd}
                   disabled={isDemo}
-                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  title={
+                    isDemo
+                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                      : undefined
+                  }
                   ClassName="rounded-full min-w-[180px]"
                 >
                   <img src="./icons/add-square.svg" alt="" />

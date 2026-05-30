@@ -37,7 +37,11 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
     return (
       <div className="w-full shrink-0">
         <div className="flex items-center gap-2 md:gap-3 rounded-xl border border-Gray-50 bg-white px-3 py-1.5">
-          <img src="/images/Pdf.png" alt="pdf" className="size-5 shrink-0 object-contain" />
+          <img
+            src="/images/Pdf.png"
+            alt="pdf"
+            className="size-5 shrink-0 object-contain"
+          />
           <span className="flex-1 min-w-0 text-[10px] md:text-xs font-medium text-Text-Primary truncate">
             {fileName || 'Lab Report'}
           </span>
@@ -54,7 +58,11 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
           )}
           {isComplete && (
             <span className="flex items-center gap-1 text-[9px] text-Primary-DeepTeal shrink-0">
-              <img className="size-3.5" src="/icons/tick-circle-green-new.svg" alt="" />
+              <img
+                className="size-3.5"
+                src="/icons/tick-circle-green-new.svg"
+                alt=""
+              />
               <span className="hidden md:inline">Extracted</span>
             </span>
           )}
@@ -66,7 +74,11 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
               className={`shrink-0 rounded-md p-1 hover:bg-red-50 transition-colors ${isDemo ? 'cursor-not-allowed opacity-50' : ''}`}
               title={isDemo ? 'Demo plan - upgrade to enable' : 'Remove file'}
             >
-              <img src="/icons/trash-red.svg" alt="Remove" className="size-3.5 opacity-50 hover:opacity-80" />
+              <img
+                src="/icons/trash-red.svg"
+                alt="Remove"
+                className="size-3.5 opacity-50 hover:opacity-80"
+              />
             </button>
           )}
         </div>

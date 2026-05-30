@@ -22,7 +22,9 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
     const handleLoaded = (response: { data?: any }) => {
       const payload = response?.data;
       if (!payload || !Array.isArray(payload.questions)) {
-        setLoadError('Could not load this questionnaire. Please try again or contact your clinic.');
+        setLoadError(
+          'Could not load this questionnaire. Please try again or contact your clinic.',
+        );
         setIsLaoding(false);
         return;
       }
@@ -43,7 +45,9 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
         setLoadError(null);
       } else {
         setLoadError(
-          typeof detail === 'string' ? detail : 'Could not load this questionnaire.',
+          typeof detail === 'string'
+            ? detail
+            : 'Could not load this questionnaire.',
         );
       }
       setIsLaoding(false);

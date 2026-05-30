@@ -65,10 +65,14 @@ const FALLBACK_VISUAL = {
 };
 
 export const getMetricVisual = (metricKey: string) => {
-  return METRIC_VISUALS[metricKey] ?? {
-    ...FALLBACK_VISUAL,
-    label: metricKey.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
-  };
+  return (
+    METRIC_VISUALS[metricKey] ?? {
+      ...FALLBACK_VISUAL,
+      label: metricKey
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase()),
+    }
+  );
 };
 
 export const scoreToTone = (score: number | null | undefined) => {
@@ -97,9 +101,12 @@ export const aggregationLabel = (aggregation: string) => {
   return 'Daily trend';
 };
 
-export const describeRangeTrend = (values: Array<number | null | undefined>) => {
+export const describeRangeTrend = (
+  values: Array<number | null | undefined>,
+) => {
   const numericValues = values.filter(
-    (value): value is number => typeof value === 'number' && !Number.isNaN(value),
+    (value): value is number =>
+      typeof value === 'number' && !Number.isNaN(value),
   );
 
   if (numericValues.length < 2) {
@@ -134,9 +141,12 @@ export const describeRangeTrend = (values: Array<number | null | undefined>) => 
   };
 };
 
-export const calculateRangeSpread = (values: Array<number | null | undefined>) => {
+export const calculateRangeSpread = (
+  values: Array<number | null | undefined>,
+) => {
   const numericValues = values.filter(
-    (value): value is number => typeof value === 'number' && !Number.isNaN(value),
+    (value): value is number =>
+      typeof value === 'number' && !Number.isNaN(value),
   );
   if (!numericValues.length) return null;
   return Math.max(...numericValues) - Math.min(...numericValues);
@@ -148,7 +158,8 @@ export const buildSparklinePath = (
   height = 40,
 ) => {
   const numericValues = values.filter(
-    (value): value is number => typeof value === 'number' && !Number.isNaN(value),
+    (value): value is number =>
+      typeof value === 'number' && !Number.isNaN(value),
   );
 
   if (!numericValues.length) {
@@ -161,7 +172,8 @@ export const buildSparklinePath = (
 
   return values
     .map((value, index) => {
-      const x = values.length === 1 ? width / 2 : (index / (values.length - 1)) * width;
+      const x =
+        values.length === 1 ? width / 2 : (index / (values.length - 1)) * width;
       const y =
         typeof value === 'number'
           ? height - ((value - min) / range) * height

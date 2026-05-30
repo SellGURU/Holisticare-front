@@ -64,7 +64,11 @@ const optionIdentity = (item: {
     item.benchmark_area || '',
     item.biomarker_type || '',
   ]
-    .map((part) => String(part || '').trim().toLowerCase())
+    .map((part) =>
+      String(part || '')
+        .trim()
+        .toLowerCase(),
+    )
     .join('|');
 
 const unitTypeLabel = (unit?: string, valueType?: string) => {
@@ -94,7 +98,9 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
   const [selectedValue, setSelectedValue] = useState(value || '');
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredOptions, setFilteredOptions] = useState<BiomarkerOption[]>([]);
-  const [openDirection, setOpenDirection] = useState<'top' | 'bottom'>('bottom');
+  const [openDirection, setOpenDirection] = useState<'top' | 'bottom'>(
+    'bottom',
+  );
 
   const selectWrapperRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -142,14 +148,17 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
 
   useEffect(() => {
     const term = searchTerm.toLowerCase();
-    const normalizedOptions = options.reduce<BiomarkerOption[]>((acc, option) => {
-      if (typeof option === 'string') {
-        acc.push({ biomarker: option });
-      } else if (option?.biomarker) {
-        acc.push(option);
-      }
-      return acc;
-    }, []);
+    const normalizedOptions = options.reduce<BiomarkerOption[]>(
+      (acc, option) => {
+        if (typeof option === 'string') {
+          acc.push({ biomarker: option });
+        } else if (option?.biomarker) {
+          acc.push(option);
+        }
+        return acc;
+      },
+      [],
+    );
     const uniqueMap = new Map<string, BiomarkerOption>();
     normalizedOptions.forEach((option) => {
       const key = optionIdentity(option);
@@ -213,7 +222,9 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
     (s) =>
       !searchTerm ||
       s.system_biomarker.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (s.benchmark_area || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (s.benchmark_area || '')
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       (s.unit || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (s.value_type || '').toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -253,9 +264,7 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
       <div
         ref={buttonRef}
         className={`flex items-center justify-between ${isStaff ? 'h-[28px]' : ''} ${
-          isError
-            ? 'border rounded-2xl border-red-400'
-            : ''
+          isError ? 'border rounded-2xl border-red-400' : ''
         } ${
           isSetting
             ? 'bg-[#FDFDFD] rounded-2xl border border-Gray-50 py-1 px-3'
@@ -314,11 +323,13 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
           {/* Suggestions section — always visible when suggestions exist */}
           {visibleSuggestions.length > 0 && (
             <div className="order-2">
-              <div className={`px-3 py-1 text-[9px] font-semibold uppercase tracking-wide border-b ${
-                isError
-                  ? 'text-orange-600 bg-orange-50 border-orange-100'
-                  : 'text-Text-Secondary bg-blue-50 border-blue-100'
-              }`}>
+              <div
+                className={`px-3 py-1 text-[9px] font-semibold uppercase tracking-wide border-b ${
+                  isError
+                    ? 'text-orange-600 bg-orange-50 border-orange-100'
+                    : 'text-Text-Secondary bg-blue-50 border-blue-100'
+                }`}
+              >
                 {isError ? 'Suggestions' : 'Suggested Match'}
               </div>
               {isError && (
@@ -376,9 +387,9 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
             !isSuggestionsLoading &&
             visibleSuggestions.length === 0 &&
             !searchTerm && (
-            <div className="order-2 px-3 py-2 text-[9px] text-orange-600 bg-orange-50 border-b border-orange-100 italic">
-              No exact match found — search or create a new biomarker
-            </div>
+              <div className="order-2 px-3 py-2 text-[9px] text-orange-600 bg-orange-50 border-b border-orange-100 italic">
+                No exact match found — search or create a new biomarker
+              </div>
             )}
 
           {/* Create New Biomarker action */}

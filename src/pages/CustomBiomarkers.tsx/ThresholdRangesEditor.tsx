@@ -55,11 +55,15 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
             control={control}
             name={`thresholds.${gender}.${nestIndex}.ranges.${k}.color`}
             render={({ field: { value } }) => {
-              const statusInfo = ALLOWED_STATUSES.find((s) => s.color === value);
+              const statusInfo = ALLOWED_STATUSES.find(
+                (s) => s.color === value,
+              );
               return (
                 <div
                   className="w-4 h-4 rounded-full shrink-0 border border-gray-200"
-                  style={{ backgroundColor: statusInfo?.color || value || '#ddd' }}
+                  style={{
+                    backgroundColor: statusInfo?.color || value || '#ddd',
+                  }}
                 />
               );
             }}
@@ -89,7 +93,9 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
                 value={value || ''}
                 onChange={(e) => {
                   onChange(e.target.value);
-                  const found = ALLOWED_STATUSES.find((s) => s.value === e.target.value);
+                  const found = ALLOWED_STATUSES.find(
+                    (s) => s.value === e.target.value,
+                  );
                   if (found && setValue) {
                     setValue(
                       `thresholds.${gender}.${nestIndex}.ranges.${k}.color` as never,
@@ -118,7 +124,11 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
                 type="number"
                 step="any"
                 value={value === null || value === undefined ? '' : value}
-                onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))}
+                onChange={(e) =>
+                  onChange(
+                    e.target.value === '' ? null : Number(e.target.value),
+                  )
+                }
                 placeholder="null"
                 className="w-[65px] shrink-0 border border-Gray-50 rounded-lg px-1.5 py-1 text-[11px] outline-none text-center focus:border-Primary-DeepTeal"
               />
@@ -134,7 +144,11 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
                 type="number"
                 step="any"
                 value={value === null || value === undefined ? '' : value}
-                onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))}
+                onChange={(e) =>
+                  onChange(
+                    e.target.value === '' ? null : Number(e.target.value),
+                  )
+                }
                 placeholder="null"
                 className="w-[65px] shrink-0 border border-Gray-50 rounded-lg px-1.5 py-1 text-[11px] outline-none text-center focus:border-Primary-DeepTeal"
               />

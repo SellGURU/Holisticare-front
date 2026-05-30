@@ -174,7 +174,11 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                           <img
                             src="/icons/tick-circle-green.svg"
                             alt=""
-                            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                            title={
+                              isDemo
+                                ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                                : undefined
+                            }
                             className={`w-[20px] h-[20px] ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                             onClick={() => {
                               if (pageType === 'Supplement') {
@@ -209,8 +213,16 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                             onClick={() => handleEdit(row.original)}
                             src="/icons/edit-blue.svg"
                             alt=""
-                            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
-                            className={isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+                            title={
+                              isDemo
+                                ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                                : undefined
+                            }
+                            className={
+                              isDemo
+                                ? 'cursor-not-allowed opacity-50'
+                                : 'cursor-pointer'
+                            }
                           />
                           <img
                             onClick={() => {
@@ -219,8 +231,16 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                             }}
                             src="/icons/trash-blue.svg"
                             alt=""
-                            title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
-                            className={isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+                            title={
+                              isDemo
+                                ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                                : undefined
+                            }
+                            className={
+                              isDemo
+                                ? 'cursor-not-allowed opacity-50'
+                                : 'cursor-pointer'
+                            }
                           />
                         </div>
                       )}

@@ -18,7 +18,10 @@ const BiomarkerMappingSection = () => {
   const [editIdx, setEditIdx] = useState<number | null>(null);
   const [editEntry, setEditEntry] = useState<MappingEntry | null>(null);
   const [addMode, setAddMode] = useState(false);
-  const [newEntry, setNewEntry] = useState<MappingEntry>({ standard_name: '', variations: [''] });
+  const [newEntry, setNewEntry] = useState<MappingEntry>({
+    standard_name: '',
+    variations: [''],
+  });
 
   useEffect(() => {
     BiomarkersApi.getBiomarkerMapping()
@@ -119,7 +122,10 @@ const BiomarkerMappingSection = () => {
 
       {/* Info */}
       <div className="bg-blue-50 border border-blue-100 rounded-xl px-3 py-2 text-[10px] text-Text-Secondary">
-        Each mapping links a <strong>Standard System Name</strong> to one or more <strong>Variations</strong> (alternate lab names). When a lab report uses a variation name, the system maps it to the standard biomarker automatically.
+        Each mapping links a <strong>Standard System Name</strong> to one or
+        more <strong>Variations</strong> (alternate lab names). When a lab
+        report uses a variation name, the system maps it to the standard
+        biomarker automatically.
       </div>
 
       {/* Add new */}
@@ -127,26 +133,49 @@ const BiomarkerMappingSection = () => {
         <div className="border border-blue-200 bg-blue-50 rounded-xl p-3 space-y-2">
           <div className="flex items-center gap-3">
             <div className="flex-1">
-              <label className="block text-[10px] text-Text-Secondary mb-0.5">Standard Name</label>
+              <label className="block text-[10px] text-Text-Secondary mb-0.5">
+                Standard Name
+              </label>
               <input
                 type="text"
                 value={newEntry.standard_name}
-                onChange={(e) => setNewEntry({ ...newEntry, standard_name: e.target.value })}
+                onChange={(e) =>
+                  setNewEntry({ ...newEntry, standard_name: e.target.value })
+                }
                 placeholder="e.g. 25 OH Vitamin D"
                 className="w-full border border-Gray-50 rounded-lg px-2 py-1 text-[11px] outline-none bg-white"
               />
             </div>
             <div className="flex gap-2 mt-3">
-              <button type="button" onClick={handleAdd} className="text-green-600 text-[12px] font-medium">Save</button>
-              <button type="button" onClick={() => setAddMode(false)} className="text-red-400 text-[12px]">Cancel</button>
+              <button
+                type="button"
+                onClick={handleAdd}
+                className="text-green-600 text-[12px] font-medium"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => setAddMode(false)}
+                className="text-red-400 text-[12px]"
+              >
+                Cancel
+              </button>
             </div>
           </div>
           <div>
-            <label className="block text-[10px] text-Text-Secondary mb-0.5">Variations (one per line)</label>
+            <label className="block text-[10px] text-Text-Secondary mb-0.5">
+              Variations (one per line)
+            </label>
             <textarea
               value={newEntry.variations.join('\n')}
-              onChange={(e) => setNewEntry({ ...newEntry, variations: e.target.value.split('\n') })}
-              placeholder={"Vitamin D\nVit D 25-OH\n25-Hydroxyvitamin D"}
+              onChange={(e) =>
+                setNewEntry({
+                  ...newEntry,
+                  variations: e.target.value.split('\n'),
+                })
+              }
+              placeholder={'Vitamin D\nVit D 25-OH\n25-Hydroxyvitamin D'}
               rows={3}
               className="w-full border border-Gray-50 rounded-lg px-2 py-1 text-[11px] outline-none resize-none bg-white font-mono"
             />
@@ -169,7 +198,11 @@ const BiomarkerMappingSection = () => {
               <div
                 key={i}
                 className={`grid grid-cols-[200px_1fr_70px] items-start px-3 py-2 gap-2 text-[11px] border-b border-Gray-50 ${
-                  isEditing ? 'bg-yellow-50' : i % 2 === 0 ? 'bg-white' : 'bg-[#FAFBFC]'
+                  isEditing
+                    ? 'bg-yellow-50'
+                    : i % 2 === 0
+                      ? 'bg-white'
+                      : 'bg-[#FAFBFC]'
                 }`}
               >
                 {isEditing && editEntry ? (
@@ -177,25 +210,50 @@ const BiomarkerMappingSection = () => {
                     <input
                       type="text"
                       value={editEntry.standard_name}
-                      onChange={(e) => setEditEntry({ ...editEntry, standard_name: e.target.value })}
+                      onChange={(e) =>
+                        setEditEntry({
+                          ...editEntry,
+                          standard_name: e.target.value,
+                        })
+                      }
                       className="border border-Gray-50 rounded-lg px-2 py-0.5 text-[11px] outline-none"
                     />
                     <textarea
                       value={editEntry.variations.join('\n')}
                       onChange={(e) =>
-                        setEditEntry({ ...editEntry, variations: e.target.value.split('\n') })
+                        setEditEntry({
+                          ...editEntry,
+                          variations: e.target.value.split('\n'),
+                        })
                       }
                       rows={Math.max(2, editEntry.variations.length)}
                       className="border border-Gray-50 rounded-lg px-2 py-0.5 text-[11px] outline-none resize-none font-mono"
                     />
                     <div className="flex gap-1 pt-1">
-                      <button type="button" onClick={handleEditSave} className="text-green-600 text-[10px]">Save</button>
-                      <button type="button" onClick={() => { setEditIdx(null); setEditEntry(null); }} className="text-red-400 text-[10px]">Cancel</button>
+                      <button
+                        type="button"
+                        onClick={handleEditSave}
+                        className="text-green-600 text-[10px]"
+                      >
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditIdx(null);
+                          setEditEntry(null);
+                        }}
+                        className="text-red-400 text-[10px]"
+                      >
+                        Cancel
+                      </button>
                     </div>
                   </>
                 ) : (
                   <>
-                    <span className="text-Text-Primary font-medium">{entry.standard_name}</span>
+                    <span className="text-Text-Primary font-medium">
+                      {entry.standard_name}
+                    </span>
                     <div className="flex flex-wrap gap-1">
                       {entry.variations.map((v, vi) => (
                         <span
@@ -206,13 +264,21 @@ const BiomarkerMappingSection = () => {
                         </span>
                       ))}
                       {entry.variations.length === 0 && (
-                        <span className="text-Text-Secondary italic text-[10px]">No variations</span>
+                        <span className="text-Text-Secondary italic text-[10px]">
+                          No variations
+                        </span>
                       )}
                     </div>
                     <div className="flex gap-1 pt-0.5">
                       <button
                         type="button"
-                        onClick={() => { setEditIdx(realIdx); setEditEntry({ ...entry, variations: [...entry.variations] }); }}
+                        onClick={() => {
+                          setEditIdx(realIdx);
+                          setEditEntry({
+                            ...entry,
+                            variations: [...entry.variations],
+                          });
+                        }}
                         className="text-Primary-DeepTeal text-[10px] hover:underline"
                       >
                         Edit

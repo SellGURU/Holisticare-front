@@ -1,4 +1,8 @@
-import { isRouteErrorResponse, useNavigate, useRouteError } from 'react-router-dom';
+import {
+  isRouteErrorResponse,
+  useNavigate,
+  useRouteError,
+} from 'react-router-dom';
 
 /**
  * Replaces React Router's default "Unexpected Application Error" screen with

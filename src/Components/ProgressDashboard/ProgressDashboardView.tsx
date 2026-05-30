@@ -41,7 +41,8 @@ const ProgressDashboardView = ({
 }: ProgressDashboardViewProps) => {
   const { id } = useParams<{ id: string }>();
   const defaultRange = useMemo(() => buildRangeFromPreset('30d'), []);
-  const [analyticsData, setAnalyticsData] = useState<ScoreAnalyticsResponse | null>(null);
+  const [analyticsData, setAnalyticsData] =
+    useState<ScoreAnalyticsResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<ProgressFilters>({

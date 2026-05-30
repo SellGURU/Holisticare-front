@@ -4,7 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { Download, RefreshCw, Search, ServerCrash } from 'lucide-react';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
-import { useAdminAnalyticsLoading, useAdminContext } from '../../store/adminContext';
+import {
+  useAdminAnalyticsLoading,
+  useAdminContext,
+} from '../../store/adminContext';
 import AdminAnalyticsLoadingNotice from './AdminAnalyticsLoadingNotice';
 import AdminShellLayout from './AdminShellLayout';
 import { buildAnalyticsPayload } from './adminShared';
@@ -51,7 +54,10 @@ const downloadCsv = (rows: ExplorerRow[]) => {
     ...rows.map((row) =>
       headers
         .map((header) => {
-          const value = String(row[header as keyof ExplorerRow] ?? '').replace(/"/g, '""');
+          const value = String(row[header as keyof ExplorerRow] ?? '').replace(
+            /"/g,
+            '""',
+          );
           return `"${value}"`;
         })
         .join(','),
@@ -118,14 +124,19 @@ const DataExplorer = () => {
     try {
       await AdminApi.checkAuth();
       const [analyticsRes, backendRes] = await Promise.all([
-        AdminApi.getAnalytics(buildAnalyticsPayload(selectedClinicEmail, startDate, endDate)),
+        AdminApi.getAnalytics(
+          buildAnalyticsPayload(selectedClinicEmail, startDate, endDate),
+        ),
         AdminApi.getBackendErrors({
           limit: 200,
-          status_code: backendStatus === 'all' ? undefined : Number(backendStatus),
+          status_code:
+            backendStatus === 'all' ? undefined : Number(backendStatus),
         }),
       ]);
       setAnalytics(analyticsRes.data || null);
-      setBackendErrors(Array.isArray(backendRes?.data?.entries) ? backendRes.data.entries : []);
+      setBackendErrors(
+        Array.isArray(backendRes?.data?.entries) ? backendRes.data.entries : [],
+      );
     } catch (error: any) {
       if (error?.response?.status === 401) {
         handleAuthFailure();
@@ -177,12 +188,18 @@ const DataExplorer = () => {
         timestamp: entry.timestamp || '',
         source: 'backend',
         type: entry.type || 'backend_error',
-        routeOrEndpoint: [entry.method, entry.endpoint].filter(Boolean).join(' ') || 'Unknown endpoint',
+        routeOrEndpoint:
+          [entry.method, entry.endpoint].filter(Boolean).join(' ') ||
+          'Unknown endpoint',
         details:
-          entry.response_detail || entry.exception || entry.summary || 'No backend message captured.',
+          entry.response_detail ||
+          entry.exception ||
+          entry.summary ||
+          'No backend message captured.',
         reference: entry.request_id || '',
         statusCode: entry.status_code != null ? String(entry.status_code) : '',
-        duration: entry.process_time_ms != null ? `${entry.process_time_ms} ms` : '',
+        duration:
+          entry.process_time_ms != null ? `${entry.process_time_ms} ms` : '',
       })),
     [backendErrors],
   );
@@ -195,7 +212,9 @@ const DataExplorer = () => {
     let combinedRows = [...frontendRows, ...backendRows];
 
     if (category.source !== 'all') {
-      combinedRows = combinedRows.filter((row) => row.source === category.source);
+      combinedRows = combinedRows.filter(
+        (row) => row.source === category.source,
+      );
     }
 
     if (category.type !== 'all') {
@@ -220,7 +239,13 @@ const DataExplorer = () => {
 
     if (searchValue) {
       combinedRows = combinedRows.filter((row) =>
-        [row.type, row.routeOrEndpoint, row.details, row.reference, row.statusCode]
+        [
+          row.type,
+          row.routeOrEndpoint,
+          row.details,
+          row.reference,
+          row.statusCode,
+        ]
           .join(' ')
           .toLowerCase()
           .includes(searchValue),
@@ -255,7 +280,10 @@ const DataExplorer = () => {
             className="rounded-full border border-Gray-50 bg-white px-4 py-2 text-[12px] text-Text-Primary"
           >
             <span className="inline-flex items-center gap-2">
-              <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+              <RefreshCw
+                size={14}
+                className={refreshing ? 'animate-spin' : ''}
+              />
               Refresh
             </span>
           </button>
@@ -300,12 +328,16 @@ const DataExplorer = () => {
                   <option value="frontend:click">Clicks</option>
                   <option value="frontend:page_view">Page views</option>
                   <option value="frontend:error">Frontend errors</option>
-                  <option value="frontend:api_error">Frontend API errors</option>
+                  <option value="frontend:api_error">
+                    Frontend API errors
+                  </option>
                   <option value="frontend:form_submit">Form submit</option>
                 </optgroup>
                 <optgroup label="Backend">
                   <option value="backend:all">All backend errors</option>
-                  <option value="backend:http_error">Backend HTTP errors</option>
+                  <option value="backend:http_error">
+                    Backend HTTP errors
+                  </option>
                   <option value="backend:exception">Backend exceptions</option>
                 </optgroup>
               </select>
@@ -375,9 +407,12 @@ const DataExplorer = () => {
         <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <div className="TextStyle-Headline-5 text-Text-Primary">Explorer Rows</div>
+              <div className="TextStyle-Headline-5 text-Text-Primary">
+                Explorer Rows
+              </div>
               <div className="mt-1 text-[11px] text-Text-Secondary">
-                Includes backend error detail messages and exports exactly what is visible.
+                Includes backend error detail messages and exports exactly what
+                is visible.
               </div>
             </div>
             <div className="flex items-center gap-3 text-[11px] text-Text-Secondary">
@@ -410,7 +445,9 @@ const DataExplorer = () => {
                       key={`${row.reference || row.timestamp}-${row.type}-${index}`}
                       className="border-b border-Gray-50 align-top"
                     >
-                      <td className="px-3 py-3 text-Text-Secondary">{row.timestamp}</td>
+                      <td className="px-3 py-3 text-Text-Secondary">
+                        {row.timestamp}
+                      </td>
                       <td className="px-3 py-3">
                         <span
                           className={`rounded-full px-2 py-1 text-[10px] font-medium ${
@@ -427,21 +464,31 @@ const DataExplorer = () => {
                           {row.type}
                         </span>
                       </td>
-                      <td className="px-3 py-3 text-Text-Primary">{row.routeOrEndpoint}</td>
+                      <td className="px-3 py-3 text-Text-Primary">
+                        {row.routeOrEndpoint}
+                      </td>
                       <td className="px-3 py-3 text-Text-Secondary whitespace-pre-wrap break-words min-w-[320px]">
                         {row.details}
                       </td>
                       <td className="px-3 py-3 font-mono text-[11px] text-Text-Secondary">
                         {row.reference}
                       </td>
-                      <td className="px-3 py-3 text-Text-Secondary">{row.statusCode}</td>
-                      <td className="px-3 py-3 text-Text-Secondary">{row.duration}</td>
+                      <td className="px-3 py-3 text-Text-Secondary">
+                        {row.statusCode}
+                      </td>
+                      <td className="px-3 py-3 text-Text-Secondary">
+                        {row.duration}
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={8} className="px-3 py-12 text-center text-[11px] text-Text-Secondary">
-                      No explorer rows matched the current search and filter state.
+                    <td
+                      colSpan={8}
+                      className="px-3 py-12 text-center text-[11px] text-Text-Secondary"
+                    >
+                      No explorer rows matched the current search and filter
+                      state.
                     </td>
                   </tr>
                 )}

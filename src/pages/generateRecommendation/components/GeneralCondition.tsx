@@ -670,7 +670,9 @@ const Card: React.FC<CardProps> = ({
                       <textarea
                         ref={(el) => (textareaRefs.current[index] = el)}
                         value={item}
-                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        onChange={(
+                          e: React.ChangeEvent<HTMLTextAreaElement>,
+                        ) => {
                           onContentChange(index, e.target.value);
                           adjustHeight(e.target);
                         }}
@@ -678,7 +680,9 @@ const Card: React.FC<CardProps> = ({
                       />
                       {currentIndex === index ? (
                         <div className="flex flex-col justify-end items-center gap-2 ml-3">
-                          <span className="text-xs  text-[#909090] ">Sure?</span>
+                          <span className="text-xs  text-[#909090] ">
+                            Sure?
+                          </span>
                           <img
                             className="size-5 cursor-pointer"
                             src="/icons/confirm-tick-circle.svg"

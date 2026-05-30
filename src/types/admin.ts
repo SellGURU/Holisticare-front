@@ -24,7 +24,11 @@ export type ReportAudience =
   | 'product_team'
   | 'founders'
   | 'external_stakeholder';
-export type ReportTone = 'neutral' | 'supportive' | 'action_oriented' | 'executive';
+export type ReportTone =
+  | 'neutral'
+  | 'supportive'
+  | 'action_oriented'
+  | 'executive';
 export type ReportLength = 'short' | 'medium' | 'long';
 
 export interface ClinicNote {

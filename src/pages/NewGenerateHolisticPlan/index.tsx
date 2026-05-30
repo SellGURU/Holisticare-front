@@ -142,7 +142,8 @@ const NewGenerateHolisticPlan = () => {
           toType2(planData.key_areas_to_address ?? planData.looking_forwards);
         const nextPlan = {
           ...planData,
-          suggestion_tab: res.data.suggestion_tab ?? planData.suggestion_tab ?? [],
+          suggestion_tab:
+            res.data.suggestion_tab ?? planData.suggestion_tab ?? [],
           key_areas_to_address: nextKeyAreas,
           looking_forwards: type2ToFlatList(toType2(nextKeyAreas)),
         };
@@ -253,10 +254,7 @@ const NewGenerateHolisticPlan = () => {
       });
       publish('reckecHtmlReport', {});
       const res = await Application.checkHtmlReport(id?.toString() || '');
-      sessionStorage.setItem(
-        'isHtmlReportExists',
-        res.data.exists.toString(),
-      );
+      sessionStorage.setItem('isHtmlReportExists', res.data.exists.toString());
       shouldNavigate = true;
     } catch (err) {
       console.error('resolveNextStep error:', err);
@@ -824,7 +822,11 @@ const NewGenerateHolisticPlan = () => {
                               );
                             }}
                             ClassName="w-full md:w-fit rounded-full"
-                            title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+                            title={
+                              isDemo
+                                ? 'Demo plan - upgrade to enable'
+                                : undefined
+                            }
                           >
                             <img src="/icons/tick-square.svg" alt="" /> Auto
                             Generate
@@ -837,7 +839,9 @@ const NewGenerateHolisticPlan = () => {
                           if (isDemo) return;
                           setshowAddModal(true);
                         }}
-                        title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+                        title={
+                          isDemo ? 'Demo plan - upgrade to enable' : undefined
+                        }
                       >
                         {' '}
                         <img src="/icons/add-square.svg" alt="" /> Add
@@ -945,7 +949,8 @@ const NewGenerateHolisticPlan = () => {
                                   </div>
                                 )}
                                 <div className="text-xs text-Text-Primary mt-2 mb-5">
-                                  Start creating your Holistic Plan or retry loading
+                                  Start creating your Holistic Plan or retry
+                                  loading
                                 </div>
                                 <div className="flex flex-col md:flex-row gap-2">
                                   <ButtonSecondary
@@ -1018,7 +1023,11 @@ const NewGenerateHolisticPlan = () => {
                             }}
                             // onClick={() => setshowAutoGenerateModal(true)}
                             ClassName="w-full md:w-fit rounded-full"
-                            title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+                            title={
+                              isDemo
+                                ? 'Demo plan - upgrade to enable'
+                                : undefined
+                            }
                           >
                             <img src="/icons/tick-square.svg" alt="" /> Auto
                             Generate
@@ -1110,22 +1119,37 @@ const NewGenerateHolisticPlan = () => {
                                         </div>
                                         {resol.reasoning && (
                                           <div className="mt-2 p-2 bg-blue-50 rounded-lg border border-blue-100">
-                                            <div className="text-[10px] font-medium text-blue-700 mb-0.5">Clinical Reasoning</div>
-                                            <div className="text-[10px] text-blue-600 leading-[16px]">{resol.reasoning}</div>
-                                          </div>
-                                        )}
-                                        {resol.risk_flags && resol.risk_flags.length > 0 && (
-                                          <div className="mt-2">
-                                            <div className="text-[10px] font-medium text-red-600 mb-1">Risk Flags</div>
-                                            <div className="flex flex-wrap gap-1">
-                                              {resol.risk_flags.map((flag: string, idx: number) => (
-                                                <span key={idx} className="inline-block bg-red-50 text-red-700 text-[9px] px-2 py-0.5 rounded-full border border-red-200">
-                                                  {flag}
-                                                </span>
-                                              ))}
+                                            <div className="text-[10px] font-medium text-blue-700 mb-0.5">
+                                              Clinical Reasoning
+                                            </div>
+                                            <div className="text-[10px] text-blue-600 leading-[16px]">
+                                              {resol.reasoning}
                                             </div>
                                           </div>
                                         )}
+                                        {resol.risk_flags &&
+                                          resol.risk_flags.length > 0 && (
+                                            <div className="mt-2">
+                                              <div className="text-[10px] font-medium text-red-600 mb-1">
+                                                Risk Flags
+                                              </div>
+                                              <div className="flex flex-wrap gap-1">
+                                                {resol.risk_flags.map(
+                                                  (
+                                                    flag: string,
+                                                    idx: number,
+                                                  ) => (
+                                                    <span
+                                                      key={idx}
+                                                      className="inline-block bg-red-50 text-red-700 text-[9px] px-2 py-0.5 rounded-full border border-red-200"
+                                                    >
+                                                      {flag}
+                                                    </span>
+                                                  ),
+                                                )}
+                                              </div>
+                                            </div>
+                                          )}
                                       </div>
                                       <div className="flex flex-col lg:flex-row w-full justify-center gap-2 md:gap-4 mt-2 md:mt-4">
                                         <div className="w-full lg:w-[50%]">
@@ -1229,22 +1253,34 @@ const NewGenerateHolisticPlan = () => {
                               </div>
                               {activeEl.reasoning && (
                                 <div className="mt-2 p-2 bg-blue-50 rounded-lg border border-blue-100">
-                                  <div className="text-[10px] font-medium text-blue-700 mb-0.5">Clinical Reasoning</div>
-                                  <div className="text-[10px] text-blue-600 leading-[16px]">{activeEl.reasoning}</div>
-                                </div>
-                              )}
-                              {activeEl.risk_flags && activeEl.risk_flags.length > 0 && (
-                                <div className="mt-2">
-                                  <div className="text-[10px] font-medium text-red-600 mb-1">Risk Flags</div>
-                                  <div className="flex flex-wrap gap-1">
-                                    {activeEl.risk_flags.map((flag: string, idx: number) => (
-                                      <span key={idx} className="inline-block bg-red-50 text-red-700 text-[9px] px-2 py-0.5 rounded-full border border-red-200">
-                                        {flag}
-                                      </span>
-                                    ))}
+                                  <div className="text-[10px] font-medium text-blue-700 mb-0.5">
+                                    Clinical Reasoning
+                                  </div>
+                                  <div className="text-[10px] text-blue-600 leading-[16px]">
+                                    {activeEl.reasoning}
                                   </div>
                                 </div>
                               )}
+                              {activeEl.risk_flags &&
+                                activeEl.risk_flags.length > 0 && (
+                                  <div className="mt-2">
+                                    <div className="text-[10px] font-medium text-red-600 mb-1">
+                                      Risk Flags
+                                    </div>
+                                    <div className="flex flex-wrap gap-1">
+                                      {activeEl.risk_flags.map(
+                                        (flag: string, idx: number) => (
+                                          <span
+                                            key={idx}
+                                            className="inline-block bg-red-50 text-red-700 text-[9px] px-2 py-0.5 rounded-full border border-red-200"
+                                          >
+                                            {flag}
+                                          </span>
+                                        ),
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
                             </div>
                             <div className="flex flex-col lg:flex-row w-full justify-center gap-2 md:gap-4 mt-2 md:mt-4">
                               <div className="w-full lg:w-[50%]">

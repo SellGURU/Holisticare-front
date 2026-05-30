@@ -808,7 +808,10 @@ class Application extends Api {
     return response;
   };
   static regenerateClientAccessPassword = (data: any) => {
-    const response = this.post('/patients/give_access/regenerate_password', data);
+    const response = this.post(
+      '/patients/give_access/regenerate_password',
+      data,
+    );
     return response;
   };
   static shareClientAccess = (data: any) => {
@@ -1145,9 +1148,7 @@ class Application extends Api {
   static getHtmlReport = (member_id: string) => {
     return this.post(`/get_html_report`, { member_id: member_id });
   };
-  static getPublicShareState = (payload: {
-    member_id: string | number;
-  }) => {
+  static getPublicShareState = (payload: { member_id: string | number }) => {
     return this.post('/patients/public_share_state', payload);
   };
   static setPublicShareEnabled = (payload: {

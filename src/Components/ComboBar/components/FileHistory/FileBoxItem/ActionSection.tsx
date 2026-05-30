@@ -167,14 +167,21 @@ const ActionSection: FC<ActionSectionProps> = ({
                         publish('uploadTestShow', {
                           isShow: true,
                           file_id: file.file_id,
-                          file_name: file.file_name || file.name || 'Uploaded Document.pdf',
+                          file_name:
+                            file.file_name ||
+                            file.name ||
+                            'Uploaded Document.pdf',
                         });
                       }
                     }}
                     className={`${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} w-[18px] h-[18px] sm:w-5 sm:h-5`}
                     src="/icons/edit-2-green.svg"
                     alt="Edit"
-                    title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : 'Edit biomarkers'}
+                    title={
+                      isDemo
+                        ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                        : 'Edit biomarkers'
+                    }
                   />
                 )}
                 {/* Delete */}
@@ -187,7 +194,11 @@ const ActionSection: FC<ActionSectionProps> = ({
                   }}
                   src="/icons/delete-green.svg"
                   alt="Delete"
-                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  title={
+                    isDemo
+                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                      : undefined
+                  }
                   className={`${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} w-[18px] h-[18px] sm:w-5 sm:h-5`}
                 />
               </div>

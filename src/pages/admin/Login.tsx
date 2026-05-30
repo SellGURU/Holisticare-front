@@ -113,7 +113,8 @@ const AdminLogin = () => {
         </ButtonSecondary>
 
         <div className="text-[12px] text-center text-Text-Secondary">
-          Public users should continue using <span className="font-medium">/login</span>.
+          Public users should continue using{' '}
+          <span className="font-medium">/login</span>.
         </div>
       </form>
     </AuthLayout>

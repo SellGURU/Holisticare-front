@@ -112,7 +112,11 @@ export const Notes = () => {
             if (isDemo) return;
             setShowAddNote(true);
           }}
-          title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+          title={
+            isDemo
+              ? 'Demo version cannot add or edit data. Upgrade for full access.'
+              : undefined
+          }
           className={` text-[14px] flex justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${isDemo ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} `}
         >
           <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
@@ -153,7 +157,11 @@ export const Notes = () => {
               </ButtonPrimary>
               <ButtonPrimary
                 disabled={isDemo}
-                title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                title={
+                  isDemo
+                    ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                    : undefined
+                }
                 onClick={() => {
                   if (isDemo) return;
                   setShowAddNote(false);
@@ -220,7 +228,11 @@ export const Notes = () => {
                             </button>
                             <button
                               className={`text-xs font-medium ${isDemo ? 'text-Text-Secondary cursor-not-allowed' : 'text-Primary-DeepTeal cursor-pointer'}`}
-                              title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                              title={
+                                isDemo
+                                  ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                                  : undefined
+                              }
                               onClick={() => handleSaveEdit(el.unique_id)}
                             >
                               Save Changes
@@ -260,7 +272,11 @@ export const Notes = () => {
                                   className={`size-5 ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                                   src="/icons/edit-green.svg"
                                   alt="Edit"
-                                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                                  title={
+                                    isDemo
+                                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                                      : undefined
+                                  }
                                   onClick={() =>
                                     handleEditClick(index, el.note)
                                   }
@@ -269,7 +285,11 @@ export const Notes = () => {
                                   className={`size-5 ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                                   src="/icons/trash-red.svg"
                                   alt="Delete"
-                                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                                  title={
+                                    isDemo
+                                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                                      : undefined
+                                  }
                                   onClick={() => handleDeleteClick(index)}
                                 />
                               </>

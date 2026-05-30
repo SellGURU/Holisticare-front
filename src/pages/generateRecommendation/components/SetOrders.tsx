@@ -622,43 +622,42 @@ export const SetOrders: FC<SetOrdersProps> = ({
           className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 md:pb-8 px-3 md:px-6 h-[80%] overflow-y-auto"
         >
           {activeItemsSorted.map((item: any, index: number) => {
-              if (!matchesSearch(item, activeCategory, searchQuery))
-                return null;
-              const globalIndex = (data || []).findIndex(
-                (el: any) => el === item,
-              );
-              if (globalIndex < 0) return null;
+            if (!matchesSearch(item, activeCategory, searchQuery)) return null;
+            const globalIndex = (data || []).findIndex(
+              (el: any) => el === item,
+            );
+            if (globalIndex < 0) return null;
 
-              return (
-                <ActivityCard
-                  key={`${index}-${refreshKey}`}
-                  item={item}
-                  index={globalIndex}
-                  activeCategory={activeCategory}
-                  handleCheckboxChange={handleCheckboxChange}
-                  issuesData={details}
-                  setIssuesData={setDetails}
-                  keyAreasType2={keyAreasType2}
-                  handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
-                  handleRemoveLookingForwards={handleRemoveLookingForwards}
-                  handleRemoveIssueFromList={handleRemoveIssueFromList}
-                  handleUpdateDoseByKey={(
-                    category: string,
-                    recommendation: string,
-                    newDose: string,
-                  ) => {
-                    setData(
-                      data.map((el: any) =>
-                        el.Category === category &&
-                        el.Recommendation === recommendation
-                          ? { ...el, Dose: newDose }
-                          : el,
-                      ),
-                    );
-                  }}
-                />
-              );
-            })}
+            return (
+              <ActivityCard
+                key={`${index}-${refreshKey}`}
+                item={item}
+                index={globalIndex}
+                activeCategory={activeCategory}
+                handleCheckboxChange={handleCheckboxChange}
+                issuesData={details}
+                setIssuesData={setDetails}
+                keyAreasType2={keyAreasType2}
+                handleUpdateIssueListByKey={handleUpdateIssueListByKeys}
+                handleRemoveLookingForwards={handleRemoveLookingForwards}
+                handleRemoveIssueFromList={handleRemoveIssueFromList}
+                handleUpdateDoseByKey={(
+                  category: string,
+                  recommendation: string,
+                  newDose: string,
+                ) => {
+                  setData(
+                    data.map((el: any) =>
+                      el.Category === category &&
+                      el.Recommendation === recommendation
+                        ? { ...el, Dose: newDose }
+                        : el,
+                    ),
+                  );
+                }}
+              />
+            );
+          })}
           {activeItemsSorted.every(
             (item: any) => !matchesSearch(item, activeCategory, searchQuery),
           ) && (

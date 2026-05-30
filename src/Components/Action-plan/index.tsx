@@ -273,7 +273,9 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                           }
                         }}
                         data-tooltip-id={
-                          disableGenerate || isDemo ? 'generate-new-tooltip2' : ''
+                          disableGenerate || isDemo
+                            ? 'generate-new-tooltip2'
+                            : ''
                         }
                         data-tooltip-content={
                           disableGenerate
@@ -388,7 +390,11 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                         <ButtonSecondary
                           ClassName="py-[6px] px-6"
                           disabled={!canCreateNewActionPlan()}
-                          title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                          title={
+                            isDemo
+                              ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                              : undefined
+                          }
                           onClick={() => {
                             if (isDemo) return;
                             if (canCreateNewActionPlan() && id) {

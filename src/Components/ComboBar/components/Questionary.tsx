@@ -566,7 +566,11 @@ export const Questionary: React.FC<QuestionaryProps> = ({
           //   setTryComplete(false);
           // }
         }}
-        title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+        title={
+          isDemo
+            ? 'Demo version cannot add or edit data. Upgrade for full access.'
+            : undefined
+        }
         className={` ${tryComplete && 'opacity-40'} text-[14px] flex ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-[20px] border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
       >
         <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
@@ -637,7 +641,11 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                 <ButtonPrimary
                   disabled={selectedFormIDs.length == 0 || isDemo}
                   size="small"
-                  title={isDemo ? 'Demo version cannot add or edit data. Upgrade for full access.' : undefined}
+                  title={
+                    isDemo
+                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                      : undefined
+                  }
                   onClick={() => {
                     if (isDemo) return;
                     handleAddQuestionnaires();

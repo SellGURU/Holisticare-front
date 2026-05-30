@@ -13,7 +13,8 @@ import AdminApi from '../api/admin';
 /** Bump when default filter semantics change (one-time localStorage refresh). */
 const ADMIN_FILTERS_VERSION = '2';
 
-export const defaultAdminStartDate = () => format(subDays(new Date(), 6), 'yyyy-MM-dd');
+export const defaultAdminStartDate = () =>
+  format(subDays(new Date(), 6), 'yyyy-MM-dd');
 export const defaultAdminEndDate = () => format(new Date(), 'yyyy-MM-dd');
 
 const ensureAdminFilterDefaults = () => {
@@ -151,7 +152,9 @@ const AdminContextProvider = ({ children }: { children: ReactNode }) => {
     ],
   );
 
-  return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
+  return (
+    <AdminContext.Provider value={value}>{children}</AdminContext.Provider>
+  );
 };
 
 export const useAdminContext = () => {

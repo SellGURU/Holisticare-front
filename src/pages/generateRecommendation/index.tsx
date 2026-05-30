@@ -70,20 +70,17 @@ const mergeClientInterventionContent = (
           Intervnetion_content:
             item.Intervention_content ||
             updatedTab[globalIdx].Intervnetion_content,
-          key_benefits:
-            item.key_benefits || updatedTab[globalIdx].key_benefits,
+          key_benefits: item.key_benefits || updatedTab[globalIdx].key_benefits,
           client_version:
             item.client_version || updatedTab[globalIdx].client_version,
           foods_to_avoid:
             item.foods_to_avoid || updatedTab[globalIdx].foods_to_avoid,
           foods_to_eat: item.foods_to_eat || updatedTab[globalIdx].foods_to_eat,
           exercises_to_avoid:
-            item.exercises_to_avoid ||
-            updatedTab[globalIdx].exercises_to_avoid,
+            item.exercises_to_avoid || updatedTab[globalIdx].exercises_to_avoid,
           exercises_to_do:
             item.exercises_to_do || updatedTab[globalIdx].exercises_to_do,
-          how_to_do_it:
-            item.how_to_do_it || updatedTab[globalIdx].how_to_do_it,
+          how_to_do_it: item.how_to_do_it || updatedTab[globalIdx].how_to_do_it,
           // Preserve practitioner-edited dose when present.
           Dose:
             String(updatedTab[globalIdx].Dose ?? '').trim() ||
@@ -219,7 +216,9 @@ export const GenerateRecommendation = () => {
   const lookingForwardsInIssueOrder = resolvedType2
     ? type2ToFlatListInIssueOrder(resolvedType2)
     : (treatmentPlanData?.looking_forwards ?? []);
-  const issueCategoryMap = resolvedType2 ? extractCategoryMap(resolvedType2) : undefined;
+  const issueCategoryMap = resolvedType2
+    ? extractCategoryMap(resolvedType2)
+    : undefined;
 
   const resolveCoverage = (planData = treatmentPlanData) => {
     if (!planData || !id) return;
@@ -273,7 +272,8 @@ export const GenerateRecommendation = () => {
           toType2(planData.key_areas_to_address ?? planData.looking_forwards);
         const nextPlan = {
           ...planData,
-          suggestion_tab: res.data.suggestion_tab ?? planData.suggestion_tab ?? [],
+          suggestion_tab:
+            res.data.suggestion_tab ?? planData.suggestion_tab ?? [],
           key_areas_to_address: nextKeyAreas,
           looking_forwards: type2ToFlatList(toType2(nextKeyAreas)),
         };
@@ -302,20 +302,23 @@ export const GenerateRecommendation = () => {
 
     biomarkerPollingRef.current = setInterval(() => {
       if (!isMountedRef.current) {
-        if (biomarkerPollingRef.current) clearInterval(biomarkerPollingRef.current);
+        if (biomarkerPollingRef.current)
+          clearInterval(biomarkerPollingRef.current);
         return;
       }
       Application.pollPerBiomarkerStatus({ member_id: id })
         .then((res) => {
           if (res.data?.ready) {
-            if (biomarkerPollingRef.current) clearInterval(biomarkerPollingRef.current);
+            if (biomarkerPollingRef.current)
+              clearInterval(biomarkerPollingRef.current);
             biomarkerPollingRef.current = null;
             const moreInfos = res.data.more_infos;
             const biomarkerInsights = res.data.biomarker_insights;
             setTratmentPlanData((prev: any) => {
               if (!prev) return prev;
               const newMoreInfos = moreInfos && moreInfos.length > 0;
-              const newBiomarker = biomarkerInsights && biomarkerInsights.length > 0;
+              const newBiomarker =
+                biomarkerInsights && biomarkerInsights.length > 0;
               if (!newMoreInfos && !newBiomarker) return prev;
               const moreInfosChanged =
                 newMoreInfos &&
@@ -332,7 +335,9 @@ export const GenerateRecommendation = () => {
               return {
                 ...prev,
                 ...(moreInfosChanged ? { more_infos: moreInfos } : {}),
-                ...(biomarkerChanged ? { biomarker_insight: biomarkerInsights } : {}),
+                ...(biomarkerChanged
+                  ? { biomarker_insight: biomarkerInsights }
+                  : {}),
               };
             });
           }
@@ -345,7 +350,11 @@ export const GenerateRecommendation = () => {
 
   useEffect(() => {
     resolveCoverage();
-  }, [treatmentPlanData?.suggestion_tab, treatmentPlanData?.key_areas_to_address, id]);
+  }, [
+    treatmentPlanData?.suggestion_tab,
+    treatmentPlanData?.key_areas_to_address,
+    id,
+  ]);
 
   /** When key_areas change from Set Orders (add/remove issue), call remap so backend stays in sync. Skip initial load (handlePlan already calls remap). */
   const keyAreasChangeCountRef = useRef(0);
