@@ -59,10 +59,6 @@ const toneClasses: Record<string, string> = {
   neutral: 'bg-[#F2F4F7] text-[#475467]',
 };
 
-const MetricSkeleton = ({ className = 'h-8 w-20' }: { className?: string }) => (
-  <div className={`animate-pulse rounded-md bg-[#E4E7EC] ${className}`} />
-);
-
 const OverviewDashboard = () => {
   const navigate = useNavigate();
   const { selectedClinicEmail, startDate, endDate } = useAdminContext();
@@ -129,6 +125,7 @@ const OverviewDashboard = () => {
     const previousRange = buildPreviousRange(startDate, endDate);
 
     try {
+      await AdminApi.checkAuth();
       const currentRes = await AdminApi.getAnalytics(
         buildAnalyticsPayload(selectedClinicEmail, startDate, endDate, true),
       );

@@ -111,7 +111,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   const [isMapped, setIsMapped] = useState(false);
   const [mappingStatus, setMappingStatus] = useState<any>(null);
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
-  const [unitOptions, setUnitOptions] = useState([]);
+  const [unitOptions, setUnitOptions] = useState<string[]>([]);
   const [copiedExactName, setCopiedExactName] = useState(false);
   const normalizedName =
     biomarker.normalized_biomarker_name ||

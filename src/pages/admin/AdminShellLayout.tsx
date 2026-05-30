@@ -73,7 +73,9 @@ const AdminShellLayout = ({
     setSelectedClinicEmail,
     setStartDate,
     setEndDate,
+    setDateRange,
     refreshClinics,
+    analyticsLoading,
   } = useAdminContext();
 
   useEffect(() => {

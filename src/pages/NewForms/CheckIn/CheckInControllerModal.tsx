@@ -185,13 +185,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div
-        className="flex flex-col justify-between max-h-[650px] overflow-y-auto bg-white w-[90vw] md:w-[664px] rounded-[20px] p-4"
-        style={{
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#E5E5E5 transparent',
-        }}
-      >
+      <div className="thin-scrollbar flex flex-col justify-between max-h-[650px] overflow-y-auto bg-white w-[90vw] md:w-[664px] rounded-[20px] p-4">
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
             <div className="text-Text-Primary font-medium">
@@ -367,11 +361,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
           {questions.length > 0 && !addMore && (
             <>
               <div
-                className={`${addMore ? 'max-h-[45px]' : 'max-h-[200px] min-h-[60px]'} overflow-y-auto w-full`}
-                style={{
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: '#E5E5E5 transparent',
-                }}
+                className={`thin-scrollbar ${addMore ? 'max-h-[45px]' : 'max-h-[200px] min-h-[60px]'} overflow-y-auto w-full`}
               >
                 <div className="flex flex-col items-center justify-center gap-1 w-full">
                   {questions?.map((item: any, index: number) => {
