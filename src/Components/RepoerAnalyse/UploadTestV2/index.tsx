@@ -514,6 +514,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       setRowErrors({});
       setAddedRowErrors({});
       setUploadPhase('uploading');
+      setbiomarkerLoading(true);
 
       try {
         // Step 1: Upload to Azure

@@ -5,31 +5,6 @@ import SpinnerLoader from '../../SpinnerLoader';
 import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
-import Joyride, { CallBackProps, Step } from 'react-joyride';
-import { TutorialReminderToast } from './showTutorialReminderToast';
-
-const labBiomarkerSteps: Step[] = [
-  {
-    target: '[data-tour="file-uploader"]',
-    content:
-      'Upload your client’s lab report here. Supported formats include PDF, DOC, DOCX, PNG, JPG, JPEG, and WEBP.',
-  },
-  {
-    target: '[data-tour="uploaded-file"]',
-    content:
-      'Once uploaded, your file will appear here for review and processing.',
-  },
-  {
-    target: '[data-tour="biomarkers-section"]',
-    content:
-      'Detected or manually added biomarkers will be shown in this section.',
-  },
-  {
-    target: '[data-tour="continue-btn"]',
-    content:
-      'When everything looks good, continue to generate the health plan.',
-  },
-];
 
 interface UploadPModalProps {
   initialMode?: string;
@@ -182,89 +157,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   useEffect(() => {
     setShowOnlyErrors(false);
   }, [activeMenu]);
-  const [run, setRun] = useState(false);
-  const [showReminder, setShowReminder] = useState(false);
-
-  useEffect(() => {
-    const tutorialSeen = localStorage.getItem('tutorialSeen');
-    if (tutorialSeen === 'true') {
-      return;
-    }
-    const hasSeenTour = localStorage.getItem('labTourSeen');
-
-    if (hasSeenTour === 'true') {
-      setShowReminder(true);
-    }
-  }, []);
-  useEffect(() => {
-    const showTutorialAgain = localStorage.getItem('showTutorialAgain');
-    if (showTutorialAgain === 'true') {
-      setRun(true);
-      return;
-    }
-    const seen = localStorage.getItem('labTourSeen');
-    if (!seen) {
-      setRun(true);
-      localStorage.setItem('labTourSeen', 'true');
-    }
-  }, []);
-  const handleViewTutorial = (value: boolean) => {
-    if (value) {
-      localStorage.setItem('showTutorialAgain', 'true');
-    } else {
-      localStorage.setItem('showTutorialAgain', 'false');
-    }
-  };
-  const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status } = data;
-
-    if (status === 'finished' || status === 'skipped') {
-      localStorage.setItem('labTourSeen', 'true');
-      setRun(false);
-    }
-  };
   return (
     <>
-      <Joyride
-        steps={labBiomarkerSteps}
-        run={Boolean(
-          run && activeMenu === 'Upload File' && !isEditMode && !uploadedFile,
-        )}
-        continuous
-        scrollToFirstStep
-        showSkipButton
-        disableOverlayClose
-        styles={{
-          options: {
-            arrowColor: '#fff',
-            backgroundColor: '#fff',
-            primaryColor: '#0f766e',
-            textColor: '#1f2937',
-            zIndex: 10000,
-          },
-          tooltip: {
-            borderRadius: '12px',
-            padding: '16px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
-          },
-        }}
-        callback={handleJoyrideCallback}
-        locale={{
-          last: 'Done',
-        }}
-      />
-      <TutorialReminderToast
-        visible={showReminder}
-        onViewTutorial={(value) => {
-          handleViewTutorial(value);
-          setRun(value);
-        }}
-        setRun={setRun}
-        onClose={() => {
-          setShowReminder(false);
-          localStorage.setItem('tutorialSeen', 'true');
-        }}
-      />
       <div
         // style={{ height: window.innerHeight - 40 + 'px' }}
         className="w-full  h-[calc(100vh-40px)] rounded-[16px] y md:h-[89vh] top-4 flex justify-center absolute  left-0 text-Text-Primary px-2 md:px-6 xl:px-0 xl:pr-[95px]"

@@ -584,9 +584,9 @@ const Card: React.FC<CardProps> = ({
                         />
                       </div>
                       <div className="flex flex-wrap items-center justify-between gap-3 pl-[18px]">
-                        <div className="relative shrink-0">
+                        <div className="relative shrink-0 isolate">
                           <span
-                            className={`pointer-events-none absolute left-3 top-1/2 z-10 size-2.5 -translate-y-1/2 rounded-full ${
+                            className={`pointer-events-none absolute left-3 top-1/2 size-2.5 -translate-y-1/2 rounded-full ${
                               getIssueCategoryStyle(issueCategories[item]).dot
                             }`}
                           ></span>
