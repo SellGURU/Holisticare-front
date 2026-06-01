@@ -828,6 +828,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               phase={uploadPhase}
             ></ProgressLoading>
           </div>
+        ) : uploadedFile?.status === 'error' ? (
+          <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center justify-center flex-col px-4 text-center text-xs font-medium text-Text-Primary">
+            <img src="/icons/EmptyState-biomarkers.svg" alt="" />
+            <div className="-mt-5 text-red-500">
+              {uploadedFile?.errorMessage ||
+                'Failed to extract biomarkers from this file. Please try uploading it again.'}
+            </div>
+          </div>
         ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
           <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center justify-center flex-col text-xs font-medium text-Text-Primary">
             <img src="/icons/EmptyState-biomarkers.svg" alt="" />
