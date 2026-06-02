@@ -2,10 +2,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Download, RefreshCw, Search, ServerCrash } from 'lucide-react';
-import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
-import { useAdminContext } from '../../store/adminContext';
+import {
+  useAdminAnalyticsLoading,
+  useAdminContext,
+} from '../../store/adminContext';
+import AdminAnalyticsLoadingNotice from './AdminAnalyticsLoadingNotice';
 import AdminShellLayout from './AdminShellLayout';
 import { buildAnalyticsPayload } from './adminShared';
 import { parseSessions } from '../../utils/sessionParser';
@@ -103,6 +106,8 @@ const DataExplorer = () => {
   const [backendStatus, setBackendStatus] = useState('all');
   const [timeFrom, setTimeFrom] = useState('');
   const [timeTo, setTimeTo] = useState('');
+
+  useAdminAnalyticsLoading(loading || refreshing);
 
   const handleAuthFailure = () => {
     removeAdminToken();
@@ -263,14 +268,6 @@ const DataExplorer = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="h-screen overflow-y-auto w-full flex justify-center items-center min-h-[550px] px-6 py-[80px]">
-        <Circleloader />
-      </div>
-    );
-  }
-
   return (
     <AdminShellLayout
       title="Data Explorer"
@@ -311,6 +308,9 @@ const DataExplorer = () => {
       }
     >
       <div className="space-y-4">
+        {(loading || refreshing) && (
+          <AdminAnalyticsLoadingNotice detail="Loading activity records and backend errors for your filters." />
+        )}
         <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
           <div className="grid grid-cols-1 gap-3 xl:grid-cols-[260px_180px_220px_220px_minmax(0,1fr)]">
             <div>

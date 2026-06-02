@@ -514,6 +514,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       setRowErrors({});
       setAddedRowErrors({});
       setUploadPhase('uploading');
+      setbiomarkerLoading(true);
 
       try {
         // Step 1: Upload to Azure
@@ -735,7 +736,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         unit: b.unit,
         original_biomarker_name: b.original_biomarker_name,
         original_value: preferNonEmpty(b.original_value, b.value),
-        original_unit: b.original_unit,
+        original_unit: preferNonEmpty(b.original_unit, b.unit),
       };
       if (labType === 'gut') return { ...base, 'sub-value': b['sub-value'] };
       if (labType === 'dna') {

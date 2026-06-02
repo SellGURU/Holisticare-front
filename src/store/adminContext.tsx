@@ -3,11 +3,34 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
 import { format, subDays } from 'date-fns';
 import AdminApi from '../api/admin';
+
+/** Bump when default filter semantics change (one-time localStorage refresh). */
+const ADMIN_FILTERS_VERSION = '2';
+
+export const defaultAdminStartDate = () =>
+  format(subDays(new Date(), 6), 'yyyy-MM-dd');
+export const defaultAdminEndDate = () => format(new Date(), 'yyyy-MM-dd');
+
+const ensureAdminFilterDefaults = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  if (localStorage.getItem('adminFiltersVersion') === ADMIN_FILTERS_VERSION) {
+    return;
+  }
+  localStorage.setItem('adminStartDate', defaultAdminStartDate());
+  localStorage.setItem('adminEndDate', defaultAdminEndDate());
+  localStorage.removeItem('adminSelectedClinicEmail');
+  localStorage.setItem('adminFiltersVersion', ADMIN_FILTERS_VERSION);
+};
+
+ensureAdminFilterDefaults();
 
 interface AdminClinicOption {
   clinic_email: string;
@@ -25,10 +48,9 @@ interface AdminContextValue {
   setEndDate: (value: string) => void;
   setDateRange: (start: string, end: string) => void;
   refreshClinics: () => Promise<void>;
+  analyticsLoading: boolean;
+  setAnalyticsLoading: (value: boolean) => void;
 }
-
-const defaultStartDate = format(subDays(new Date(), 29), 'yyyy-MM-dd');
-const defaultEndDate = format(new Date(), 'yyyy-MM-dd');
 
 const AdminContext = createContext<AdminContextValue | null>(null);
 
@@ -47,11 +69,12 @@ const AdminContextProvider = ({ children }: { children: ReactNode }) => {
     getStoredValue('adminSelectedClinicEmail', ''),
   );
   const [startDate, setStartDateState] = useState(() =>
-    getStoredValue('adminStartDate', defaultStartDate),
+    getStoredValue('adminStartDate', defaultAdminStartDate()),
   );
   const [endDate, setEndDateState] = useState(() =>
-    getStoredValue('adminEndDate', defaultEndDate),
+    getStoredValue('adminEndDate', defaultAdminEndDate()),
   );
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
 
   const persist = (key: string, value: string) => {
     if (typeof window !== 'undefined') {
@@ -85,10 +108,23 @@ const AdminContextProvider = ({ children }: { children: ReactNode }) => {
       const res = await AdminApi.getClinics();
       const nextClinics = Array.isArray(res.data) ? res.data : [];
       setClinics(nextClinics);
+      if (nextClinics.length > 0 && !selectedClinicEmail) {
+        const firstEmail = nextClinics[0].clinic_email;
+        setSelectedClinicEmailState(firstEmail);
+        persist('adminSelectedClinicEmail', firstEmail);
+      }
     } finally {
       setLoadingClinics(false);
     }
-  }, []);
+  }, [selectedClinicEmail]);
+
+  useEffect(() => {
+    if (clinics.length > 0 && !selectedClinicEmail) {
+      const firstEmail = clinics[0].clinic_email;
+      setSelectedClinicEmailState(firstEmail);
+      persist('adminSelectedClinicEmail', firstEmail);
+    }
+  }, [clinics, selectedClinicEmail]);
 
   const value = useMemo(
     () => ({
@@ -102,8 +138,11 @@ const AdminContextProvider = ({ children }: { children: ReactNode }) => {
       setEndDate,
       setDateRange,
       refreshClinics,
+      analyticsLoading,
+      setAnalyticsLoading,
     }),
     [
+      analyticsLoading,
       clinics,
       endDate,
       loadingClinics,
@@ -125,6 +164,16 @@ export const useAdminContext = () => {
   }
 
   return context;
+};
+
+/** Sync page-level analytics loading state to the shared admin shell banner. */
+export const useAdminAnalyticsLoading = (loading: boolean) => {
+  const { setAnalyticsLoading } = useAdminContext();
+
+  useEffect(() => {
+    setAnalyticsLoading(loading);
+    return () => setAnalyticsLoading(false);
+  }, [loading, setAnalyticsLoading]);
 };
 
 export default AdminContextProvider;

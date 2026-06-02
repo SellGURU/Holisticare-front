@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -19,10 +19,13 @@ import {
   Tooltip,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
-import { useAdminContext } from '../../store/adminContext';
+import {
+  useAdminAnalyticsLoading,
+  useAdminContext,
+} from '../../store/adminContext';
+import AdminAnalyticsLoadingNotice from './AdminAnalyticsLoadingNotice';
 import AdminShellLayout from './AdminShellLayout';
 import {
   buildAnalyticsPayload,
@@ -59,58 +62,100 @@ const toneClasses: Record<string, string> = {
 const OverviewDashboard = () => {
   const navigate = useNavigate();
   const { selectedClinicEmail, startDate, endDate } = useAdminContext();
-  const [loading, setLoading] = useState(true);
+  const [loadingCurrent, setLoadingCurrent] = useState(true);
+  const [loadingPrevious, setLoadingPrevious] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [analytics, setAnalytics] = useState<any>(null);
   const [previousAnalytics, setPreviousAnalytics] = useState<any>(null);
+  const loadGenerationRef = useRef(0);
+  const analyticsBusy = loadingCurrent || loadingPrevious || refreshing;
+
+  useAdminAnalyticsLoading(analyticsBusy);
 
   const handleAuthFailure = () => {
     removeAdminToken();
     navigate('/admin/login');
   };
 
+  const loadPreviousPeriod = (
+    previousRange: { startDate: string; endDate: string },
+    loadGeneration: number,
+  ) => {
+    setLoadingPrevious(true);
+    AdminApi.getAnalytics(
+      buildAnalyticsPayload(
+        selectedClinicEmail,
+        previousRange.startDate,
+        previousRange.endDate,
+        false,
+      ),
+    )
+      .then((previousRes) => {
+        if (loadGeneration !== loadGenerationRef.current) {
+          return;
+        }
+        setPreviousAnalytics(previousRes.data || null);
+      })
+      .catch((error: any) => {
+        if (loadGeneration !== loadGenerationRef.current) {
+          return;
+        }
+        if (error?.response?.status === 401) {
+          handleAuthFailure();
+          return;
+        }
+        setPreviousAnalytics(null);
+      })
+      .finally(() => {
+        if (loadGeneration === loadGenerationRef.current) {
+          setLoadingPrevious(false);
+        }
+      });
+  };
+
   const loadAnalytics = async (showRefreshState = false) => {
+    const loadGeneration = ++loadGenerationRef.current;
     if (showRefreshState) {
       setRefreshing(true);
     } else {
-      setLoading(true);
+      setLoadingCurrent(true);
+      setLoadingPrevious(true);
     }
+
+    const previousRange = buildPreviousRange(startDate, endDate);
 
     try {
       await AdminApi.checkAuth();
-      const currentPayload = buildAnalyticsPayload(
-        selectedClinicEmail,
-        startDate,
-        endDate,
+      const currentRes = await AdminApi.getAnalytics(
+        buildAnalyticsPayload(selectedClinicEmail, startDate, endDate, true),
       );
-      const previousRange = buildPreviousRange(startDate, endDate);
-
-      const requests = [AdminApi.getAnalytics(currentPayload)];
-      if (previousRange) {
-        requests.push(
-          AdminApi.getAnalytics(
-            buildAnalyticsPayload(
-              selectedClinicEmail,
-              previousRange.startDate,
-              previousRange.endDate,
-            ),
-          ),
-        );
+      if (loadGeneration !== loadGenerationRef.current) {
+        return;
       }
-
-      const [currentRes, previousRes] = await Promise.all(requests);
       setAnalytics(currentRes.data || null);
-      setPreviousAnalytics(previousRes?.data || null);
+
+      if (previousRange) {
+        loadPreviousPeriod(previousRange, loadGeneration);
+      } else {
+        setPreviousAnalytics(null);
+        setLoadingPrevious(false);
+      }
     } catch (error: any) {
+      if (loadGeneration !== loadGenerationRef.current) {
+        return;
+      }
       if (error?.response?.status === 401) {
         handleAuthFailure();
         return;
       }
       setAnalytics(null);
       setPreviousAnalytics(null);
+      setLoadingPrevious(false);
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (loadGeneration === loadGenerationRef.current) {
+        setLoadingCurrent(false);
+        setRefreshing(false);
+      }
     }
   };
 
@@ -310,14 +355,6 @@ const OverviewDashboard = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="h-screen overflow-y-auto w-full flex justify-center items-center min-h-[550px] px-6 py-[80px]">
-        <Circleloader />
-      </div>
-    );
-  }
-
   return (
     <AdminShellLayout
       title="Overview Dashboard"
@@ -348,6 +385,9 @@ const OverviewDashboard = () => {
       }
     >
       <div className="space-y-4">
+        {analyticsBusy && (
+          <AdminAnalyticsLoadingNotice detail="Loading overview metrics and session activity for your filters." />
+        )}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {summaryCards.map((card) => {
             const currentValue = analytics?.[card.key] ?? 0;
@@ -398,7 +438,9 @@ const OverviewDashboard = () => {
               </div>
             </div>
 
-            {dailySummary.length > 0 ? (
+            {loadingCurrent && analytics === null ? (
+              <div className="mt-4 h-[320px] animate-pulse rounded-2xl bg-[#E4E7EC]" />
+            ) : dailySummary.length > 0 ? (
               <div className="mt-4 h-[320px]">
                 <Line data={chartData} options={chartOptions} />
               </div>

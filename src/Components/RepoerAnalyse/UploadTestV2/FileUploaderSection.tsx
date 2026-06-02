@@ -82,6 +82,11 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
             </button>
           )}
         </div>
+        {uploadedFile.status === 'error' && errorMessage && (
+          <div className="mt-1 text-[10px] md:text-[12px] text-red-500">
+            {errorMessage}
+          </div>
+        )}
       </div>
     );
   }

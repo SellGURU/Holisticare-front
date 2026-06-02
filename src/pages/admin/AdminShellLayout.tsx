@@ -13,7 +13,12 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
-import { useAdminContext } from '../../store/adminContext';
+import {
+  defaultAdminEndDate,
+  defaultAdminStartDate,
+  useAdminContext,
+} from '../../store/adminContext';
+import AdminAnalyticsLoadingNotice from './AdminAnalyticsLoadingNotice';
 
 interface AdminShellLayoutProps {
   title: string;
@@ -68,7 +73,9 @@ const AdminShellLayout = ({
     setSelectedClinicEmail,
     setStartDate,
     setEndDate,
+    setDateRange,
     refreshClinics,
+    analyticsLoading,
   } = useAdminContext();
 
   useEffect(() => {
@@ -231,13 +238,34 @@ const AdminShellLayout = ({
                     />
                   </div>
                 </div>
+
+                <div className="flex shrink-0 flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDateRange(
+                        defaultAdminStartDate(),
+                        defaultAdminEndDate(),
+                      )
+                    }
+                    className="rounded-2xl border border-Gray-50 bg-[#F8FAFB] px-4 py-2 text-[12px] text-Text-Primary hover:bg-Gray-15"
+                  >
+                    Last 7 days
+                  </button>
+                </div>
               </div>
 
               <div className="mt-3 text-[11px] text-Text-Secondary">
                 {loadingClinics
-                  ? 'Refreshing clinic access...'
-                  : 'These filters stay shared across Overview, Session Insights, Data Explorer, and Config.'}
+                  ? 'Refreshing clinic list…'
+                  : 'Default: last 7 days and one clinic (faster load). Use All clinics or a wider range when you need full reports.'}
               </div>
+
+              {analyticsLoading && (
+                <div className="mt-3">
+                  <AdminAnalyticsLoadingNotice />
+                </div>
+              )}
             </div>
           )}
         </div>

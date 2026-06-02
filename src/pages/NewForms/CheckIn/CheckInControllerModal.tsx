@@ -185,22 +185,16 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div
-        className="flex flex-col justify-between max-h-[650px] overflow-y-auto bg-white w-[90vw] md:w-[664px] rounded-[20px] p-4"
-        style={{
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#E5E5E5 transparent',
-        }}
-      >
-        <div className="w-full h-full">
-          <div className="flex justify-start items-center">
-            <div className="text-Text-Primary font-medium">
-              {titleForm.length && step === 1
-                ? titleForm + ' Form'
-                : resolveFormTitle() + ' Form'}
-            </div>
+      <div className="flex flex-col bg-white w-[90vw] md:w-[664px] rounded-[20px] p-4 h-[650px] max-h-[90vh] overflow-hidden">
+        <div className="flex justify-start items-center shrink-0">
+          <div className="text-Text-Primary font-medium">
+            {titleForm.length && step === 1
+              ? titleForm + ' Form'
+              : resolveFormTitle() + ' Form'}
           </div>
-          <div className="w-full h-[1px] bg-Gray-50 my-3"></div>
+        </div>
+        <div className="w-full h-[1px] bg-Gray-50 my-3 shrink-0"></div>
+        <div className="thin-scrollbar w-full flex-1 overflow-y-auto pr-1">
           {step == 0 && (AddquestionStep == 0 || AddquestionStep == 2) && (
             <>
               <div className="w-full mt-6">
@@ -238,10 +232,12 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
           </div>
         </div>
         {showValidation && questions.length == 0 && (
-          <div className="text-[10px] text-Red">Add question to continue.</div>
+          <div className="text-[10px] text-Red shrink-0">
+            Add question to continue.
+          </div>
         )}
         <div
-          className={`w-full flex justify-end items-center p-2 ${AddquestionStep == 1 && 'hidden'} `}
+          className={`w-full flex shrink-0 justify-end items-center p-2 ${AddquestionStep == 1 && 'hidden'} `}
         >
           <div
             className="text-Disable text-sm font-medium mr-4 cursor-pointer"
@@ -253,6 +249,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
           </div>
           <div
             onClick={() => {
+              if (isSaveLoding) return;
               setShowValidation(true);
               if (!isDisable()) {
                 if (step == 0 && mode != 'Reposition') {
@@ -264,7 +261,9 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
                 }
               }
             }}
-            className={`text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
+            className={`text-sm text-Primary-DeepTeal font-medium ${
+              isSaveLoding ? 'cursor-default' : 'cursor-pointer'
+            }`}
           >
             {isSaveLoding ? (
               <BeatLoader size={6}></BeatLoader>
@@ -367,11 +366,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
           {questions.length > 0 && !addMore && (
             <>
               <div
-                className={`${addMore ? 'max-h-[45px]' : 'max-h-[200px] min-h-[60px]'} overflow-y-auto w-full`}
-                style={{
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: '#E5E5E5 transparent',
-                }}
+                className={`thin-scrollbar always-scroll ${addMore ? 'max-h-[45px]' : 'max-h-[200px] min-h-[60px]'} w-full`}
               >
                 <div className="flex flex-col items-center justify-center gap-1 w-full">
                   {questions?.map((item: any, index: number) => {

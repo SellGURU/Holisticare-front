@@ -33,6 +33,12 @@ import {
   forApiPayload,
   type KeyAreasType2,
 } from '../../utils/lookingForwards';
+import { publish } from '../../utils/event';
+
+const sleep = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
@@ -61,6 +67,12 @@ const NewGenerateHolisticPlan = () => {
 
   /** Set when user adds/edits/removes issues so we call remap once (avoids endless loop). */
   const userDidChangeIssuesRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const suggestionsLoadInFlightRef = useRef(false);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [suggestionLoadError, setSuggestionLoadError] = useState<string | null>(
+    null,
+  );
 
   // getCoverage: run when suggestion_tab or id changes. Send type2 to API.
   useEffect(() => {
@@ -88,34 +100,124 @@ const NewGenerateHolisticPlan = () => {
       });
   }, [treatmentPlanData?.suggestion_tab, id]);
 
+  const pollHolisticRescoreJob = async (jobId: string) => {
+    for (let attempt = 0; attempt < 90; attempt += 1) {
+      if (!isMountedRef.current) {
+        throw new Error('Rescore polling cancelled');
+      }
+
+      const res = await Application.holisticPlanReScoreStatus({
+        job_id: jobId,
+      });
+      const data = res.data ?? {};
+
+      if (data.status === 'completed' && data.ready) {
+        return data;
+      }
+
+      if (data.status === 'failed') {
+        throw new Error(data.error || 'Async rescore failed');
+      }
+
+      await sleep(2000);
+    }
+
+    throw new Error('Async rescore timed out');
+  };
+
   /** Remap: call only once after plan load (no effect on key_areas to avoid endless calls). */
   const remapIssues = (planData: any) => {
-    if (!planData || !id) return;
+    if (!planData || !id) return Promise.resolve(planData);
     const payload = forApiPayload(
       planData.key_areas_to_address ?? planData.looking_forwards ?? [],
     );
-    Application.remapIssues({
+    return Application.remapIssues({
       member_id: id,
       suggestion_tab: planData.suggestion_tab ?? [],
       key_areas_to_address: payload,
     })
       .then((res: any) => {
-        setTratmentPlanData((pre: any) => ({
-          ...pre,
-          suggestion_tab: res.data.suggestion_tab,
-          key_areas_to_address:
-            res.data.key_areas_to_address ??
-            toType2(pre.key_areas_to_address ?? pre.looking_forwards),
-          looking_forwards: type2ToFlatList(
-            toType2(
-              res.data.key_areas_to_address ?? pre.key_areas_to_address ?? [],
-            ),
-          ),
-        }));
+        const nextKeyAreas =
+          res.data.key_areas_to_address ??
+          toType2(planData.key_areas_to_address ?? planData.looking_forwards);
+        const nextPlan = {
+          ...planData,
+          suggestion_tab:
+            res.data.suggestion_tab ?? planData.suggestion_tab ?? [],
+          key_areas_to_address: nextKeyAreas,
+          looking_forwards: type2ToFlatList(toType2(nextKeyAreas)),
+        };
+        setTratmentPlanData((pre: any) =>
+          pre ? { ...pre, ...nextPlan } : nextPlan,
+        );
+        return nextPlan;
       })
       .catch((err) => {
         console.error('remapIssues error:', err);
+        throw err;
       });
+  };
+
+  const loadInterventionSuggestions = async (planData: any) => {
+    if (!planData || !id) return planData;
+    if (suggestionsLoadInFlightRef.current) return planData;
+
+    suggestionsLoadInFlightRef.current = true;
+    setIsLoadingSuggestions(true);
+    setSuggestionLoadError(null);
+
+    try {
+      const remappedPlan = await remapIssues(planData);
+      const startRes = await Application.holisticPlanReScoreStart({
+        member_id: id,
+        suggestion_tab: remappedPlan?.suggestion_tab ?? [],
+        key_areas_to_address: remappedPlan?.key_areas_to_address,
+      });
+      const jobId = startRes.data?.job_id;
+      if (!jobId) {
+        throw new Error('Rescore job did not return a job_id');
+      }
+
+      const res = await pollHolisticRescoreJob(jobId);
+      const rescoredKeyAreas = toType2(
+        res?.key_areas_to_address ??
+          remappedPlan?.key_areas_to_address ??
+          planData.key_areas_to_address ??
+          [],
+      );
+      const rescoredPlan = {
+        ...(remappedPlan ?? planData),
+        suggestion_tab:
+          res?.suggestion_tab ??
+          remappedPlan?.suggestion_tab ??
+          planData?.suggestion_tab ??
+          [],
+        key_areas_to_address: rescoredKeyAreas,
+        looking_forwards: type2ToFlatList(rescoredKeyAreas),
+      };
+
+      if (isMountedRef.current) {
+        setTratmentPlanData((prev: any) =>
+          prev ? { ...prev, ...rescoredPlan } : rescoredPlan,
+        );
+      }
+      return rescoredPlan;
+    } catch (err) {
+      const message =
+        (err as any)?.response?.data?.detail ??
+        (err as Error)?.message ??
+        'Failed to load intervention recommendations';
+      console.error('loadInterventionSuggestions error:', message, err);
+      if (isMountedRef.current) {
+        setSuggestionLoadError(String(message));
+      }
+      throw err;
+    } finally {
+      suggestionsLoadInFlightRef.current = false;
+      if (isMountedRef.current) {
+        setIsLoadingSuggestions(false);
+      }
+    }
   };
 
   // When user adds/edits/removes issues, call remap so backend and next step stay in sync (ref avoids loop).
@@ -129,35 +231,43 @@ const NewGenerateHolisticPlan = () => {
     id,
   ]);
 
-  const resolveNextStep = () => {
+  const resolveNextStep = async () => {
     if (isDemo) return;
     setisFinalLoading(true);
-    const continueSteps = () => {
-      Application.saveTreatmentPaln({
-        ...treatmentPlanData,
+    let shouldNavigate = false;
+    try {
+      let planToSave = treatmentPlanData;
+      if (!planToSave?.suggestion_tab?.length) {
+        planToSave = await loadInterventionSuggestions(planToSave);
+      }
+      if (!planToSave?.suggestion_tab?.length) {
+        setSuggestionLoadError(
+          'No intervention recommendations available. Add interventions manually or retry.',
+        );
+        return;
+      }
+
+      await Application.saveTreatmentPaln({
+        ...planToSave,
         member_id: id,
         is_update: isUpdate,
-      })
-        .then(() => {
-          return Application.checkHtmlReport(id?.toString() || '');
-        })
-        .then((res) => {
-          sessionStorage.setItem(
-            'isHtmlReportExists',
-            res.data.exists.toString(),
-          );
-        })
-        .catch(() => {
-          console.log('error');
-        })
-        .finally(() => {
-          setTimeout(() => {
-            setisFinalLoading(false);
-            navigate(`/report/${id}/a?section=Holistic Plan`);
-          }, 3000);
-        });
-    };
-    continueSteps();
+      });
+      publish('reckecHtmlReport', {});
+      const res = await Application.checkHtmlReport(id?.toString() || '');
+      sessionStorage.setItem('isHtmlReportExists', res.data.exists.toString());
+      shouldNavigate = true;
+    } catch (err) {
+      console.error('resolveNextStep error:', err);
+    } finally {
+      if (shouldNavigate) {
+        setTimeout(() => {
+          setisFinalLoading(false);
+          navigate(`/report/${id}/a?section=Holistic Plan`);
+        }, 3000);
+      } else {
+        setisFinalLoading(false);
+      }
+    }
   };
 
   const [activeEl, setActiveEl] = useState<any>();
@@ -242,6 +352,24 @@ const NewGenerateHolisticPlan = () => {
     );
   };
 
+  const hasSuggestionsData = (data: any) =>
+    Array.isArray(data?.suggestion_tab) && data.suggestion_tab.length > 0;
+
+  const hydrateInterventionSuggestions = (planData: any) => {
+    if (!hasSuggestionsData(planData)) {
+      loadInterventionSuggestions(planData).catch(() => {});
+      return;
+    }
+    remapIssues(planData);
+  };
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     if (treatment_id && treatment_id?.length > 1) {
       setisFirstLoading(true);
@@ -261,7 +389,7 @@ const NewGenerateHolisticPlan = () => {
           });
           setClientGools({ ...res.data.client_goals });
           setActiveEl(res.data.result_tab[0]);
-          remapIssues({
+          hydrateInterventionSuggestions({
             ...data,
             key_areas_to_address: keyAreas,
             suggestion_tab: data.suggestion_tab ?? [],
@@ -290,12 +418,12 @@ const NewGenerateHolisticPlan = () => {
             const payload = {
               ...data,
               member_id: id,
-              suggestion_tab: [],
+              suggestion_tab: data.suggestion_tab ?? [],
               key_areas_to_address: keyAreas,
               looking_forwards: type2ToFlatList(keyAreas),
             };
             setTratmentPlanData(payload);
-            remapIssues(payload);
+            hydrateInterventionSuggestions(payload);
           } else {
             console.log('Missing essential data');
           }
@@ -801,6 +929,13 @@ const NewGenerateHolisticPlan = () => {
                                 },
                               )}
                             </>
+                          ) : isLoadingSuggestions ? (
+                            <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
+                              <Circleloader></Circleloader>
+                              <div className="text-base font-medium text-Text-Primary mt-4">
+                                Loading intervention recommendations...
+                              </div>
+                            </div>
                           ) : (
                             <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
                               <div className="w-full h-full flex flex-col items-center justify-center">
@@ -808,28 +943,52 @@ const NewGenerateHolisticPlan = () => {
                                 <div className="text-base font-medium text-Text-Primary -mt-9">
                                   No recommendation to show
                                 </div>
+                                {suggestionLoadError && (
+                                  <div className="text-xs text-red-600 mt-2 mb-2 text-center px-4">
+                                    {suggestionLoadError}
+                                  </div>
+                                )}
                                 <div className="text-xs text-Text-Primary mt-2 mb-5">
-                                  {/* Start creating your Holistic Plan */}
+                                  Start creating your Holistic Plan or retry
+                                  loading
                                 </div>
-                                <ButtonSecondary
-                                  disabled={isDemo}
-                                  onClick={() => {
-                                    if (isDemo) return;
-                                    navigate(
-                                      `/report/Generate-Recommendation/${id}/A`,
-                                    );
-                                    // setshowAutoGenerateModal(true)
-                                  }}
-                                  ClassName="w-full md:w-fit"
-                                  title={
-                                    isDemo
-                                      ? 'Demo plan - upgrade to enable'
-                                      : undefined
-                                  }
-                                >
-                                  <img src="/icons/tick-square.svg" alt="" />{' '}
-                                  Auto Generate
-                                </ButtonSecondary>
+                                <div className="flex flex-col md:flex-row gap-2">
+                                  <ButtonSecondary
+                                    disabled={isDemo || isLoadingSuggestions}
+                                    onClick={() => {
+                                      if (isDemo || !treatmentPlanData) return;
+                                      loadInterventionSuggestions(
+                                        treatmentPlanData,
+                                      ).catch(() => {});
+                                    }}
+                                    ClassName="w-full md:w-fit"
+                                    title={
+                                      isDemo
+                                        ? 'Demo plan - upgrade to enable'
+                                        : undefined
+                                    }
+                                  >
+                                    Retry Load
+                                  </ButtonSecondary>
+                                  <ButtonSecondary
+                                    disabled={isDemo}
+                                    onClick={() => {
+                                      if (isDemo) return;
+                                      navigate(
+                                        `/report/Generate-Recommendation/${id}/A`,
+                                      );
+                                    }}
+                                    ClassName="w-full md:w-fit"
+                                    title={
+                                      isDemo
+                                        ? 'Demo plan - upgrade to enable'
+                                        : undefined
+                                    }
+                                  >
+                                    <img src="/icons/tick-square.svg" alt="" />{' '}
+                                    Auto Generate
+                                  </ButtonSecondary>
+                                </div>
                               </div>
                             </div>
                           )}

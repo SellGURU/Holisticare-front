@@ -12,11 +12,14 @@ import {
   Trash2,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
-import { useAdminContext } from '../../store/adminContext';
+import {
+  useAdminAnalyticsLoading,
+  useAdminContext,
+} from '../../store/adminContext';
 import AdminShellLayout from './AdminShellLayout';
+import AdminAnalyticsLoadingNotice from './AdminAnalyticsLoadingNotice';
 import {
   buildAnalyticsPayload,
   formatCompactNumber,
@@ -67,8 +70,14 @@ const noteTemplates = [
 
 const ClinicWorkspace = () => {
   const navigate = useNavigate();
-  const { clinics, loadingClinics, refreshClinics, selectedClinicEmail } =
-    useAdminContext();
+  const {
+    clinics,
+    loadingClinics,
+    refreshClinics,
+    selectedClinicEmail,
+    startDate,
+    endDate,
+  } = useAdminContext();
   const activeClinicEmail =
     selectedClinicEmail || clinics[0]?.clinic_email || '';
   const activeClinic =
@@ -91,6 +100,8 @@ const ClinicWorkspace = () => {
   const [visibilityFilter, setVisibilityFilter] = useState('all');
   const [newTagName, setNewTagName] = useState('');
   const [newTagType, setNewTagType] = useState<AdminTagType>('workflow');
+
+  useAdminAnalyticsLoading(loading || refreshing);
 
   useEffect(() => {
     if (!clinics.length && !loadingClinics) {
@@ -135,7 +146,7 @@ const ClinicWorkspace = () => {
 
   useEffect(() => {
     loadAnalytics().catch(() => {});
-  }, [activeClinicEmail]);
+  }, [activeClinicEmail, startDate, endDate]);
 
   const workspace = useMemo(
     () =>
@@ -274,14 +285,6 @@ const ClinicWorkspace = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="h-screen overflow-y-auto w-full flex justify-center items-center min-h-[550px] px-6 py-[80px]">
-        <Circleloader />
-      </div>
-    );
-  }
-
   return (
     <AdminShellLayout
       title="Clinic Workspace"
@@ -318,6 +321,9 @@ const ClinicWorkspace = () => {
         </div>
       ) : (
         <div className="space-y-4">
+          {(loading || refreshing) && (
+            <AdminAnalyticsLoadingNotice detail="Loading clinic metrics for the selected period." />
+          )}
           <div className="rounded-[20px] border border-Gray-50 bg-white p-5 shadow-100">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div>

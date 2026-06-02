@@ -270,9 +270,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       return '';
     }
 
-    const currentSystemUnit = String(row?.unit || '').trim();
-    if (currentSystemUnit) {
-      return currentSystemUnit;
+    const extractedUnit = String(
+      preferNonEmpty(row?.original_unit, row?.unit) || '',
+    ).trim();
+    if (extractedUnit) {
+      return extractedUnit;
+    }
+
+    const possibleUnit = String(row?.possible_values?.units?.[0] || '').trim();
+    if (possibleUnit) {
+      return possibleUnit;
     }
 
     const exactOption = avalibaleBiomarkers.find(
@@ -467,17 +474,21 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       if (isTextValueWithoutUnit(preferNonEmpty(b.original_value, b.value))) {
         return b.original_unit === '' ? b : { ...b, original_unit: '' };
       }
-      if (
-        (!b.original_unit || b.original_unit === '') &&
-        b.possible_values?.units?.length > 0
-      ) {
-        return { ...b, original_unit: b.possible_values.units[0] };
-      }
-      if (!b.original_unit || b.original_unit === '') {
+      const extractedUnit = String(
+        preferNonEmpty(b.original_unit, b.unit) || '',
+      ).trim();
+      if (!extractedUnit) {
+        if (b.possible_values?.units?.length === 1) {
+          return { ...b, original_unit: b.possible_values.units[0] };
+        }
         const defaultUnit = getDefaultUnitForBiomarker(b);
         if (defaultUnit) {
           return { ...b, original_unit: defaultUnit };
         }
+        return b;
+      }
+      if (!b.original_unit || b.original_unit === '') {
+        return { ...b, original_unit: extractedUnit };
       }
       return b;
     });
@@ -562,7 +573,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     const payload = {
       biomarker: current.biomarker,
       value: String(preferNonEmpty(current.original_value, current.value)),
-      unit: textValueDoesNotNeedUnit ? '' : current.original_unit || '',
+      unit: textValueDoesNotNeedUnit
+        ? ''
+        : String(preferNonEmpty(current.original_unit, current.unit) || ''),
       bio_type:
         current.biomarker_type === 'gut'
           ? 'gut'
@@ -806,7 +819,15 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         className={`w-full flex-1 min-h-0 ${uploadedFile ? 'flex flex-col' : 'hidden'} rounded-2xl border border-Gray-50 p-2 md:p-3 shadow-300 text-xs text-Text-Primary overflow-hidden`}
         data-tour="biomarkers-section"
       >
-        {loading ? (
+        {uploadedFile?.status === 'error' ? (
+          <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center justify-center flex-col px-4 text-center text-xs font-medium text-Text-Primary">
+            <img src="/icons/EmptyState-biomarkers.svg" alt="" />
+            <div className="-mt-5 text-red-500">
+              {uploadedFile?.errorMessage ||
+                'Failed to extract biomarkers from this file. Please try uploading it again.'}
+            </div>
+          </div>
+        ) : loading || uploadedFile?.status === 'uploading' ? (
           <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4">
             {/* <Circleloader /> */}
             {/* Progress Bar */}
@@ -815,7 +836,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               phase={uploadPhase}
             ></ProgressLoading>
           </div>
-        ) : uploadedFile?.status !== 'completed' || biomarkers.length == 0 ? (
+        ) : biomarkers.length === 0 ? (
           <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center justify-center flex-col text-xs font-medium text-Text-Primary">
             <img src="/icons/EmptyState-biomarkers.svg" alt="" />
             <div className="-mt-5">No data provided yet.</div>

@@ -6,7 +6,7 @@ import SearchSelectWithSuggestions, {
   BiomarkerSuggestion,
 } from '../../searchableSelect/SearchSelectWithSuggestions';
 import SelectWithCreate from '../../Select/SelectWithCreate';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Application from '../../../api/app';
 
 interface BiomarkerRowProps {
@@ -111,7 +111,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   const [isMapped, setIsMapped] = useState(false);
   const [mappingStatus, setMappingStatus] = useState<any>(null);
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
-  const [unitOptions, setUnitOptions] = useState([]);
+  const [unitOptions, setUnitOptions] = useState<string[]>([]);
   const [copiedExactName, setCopiedExactName] = useState(false);
   const normalizedName =
     biomarker.normalized_biomarker_name ||
@@ -147,21 +147,30 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
     }
   };
 
+  const buildUnitOptions = (units: string[]) => {
+    const normalized = units
+      .map((u: string) => (u === '' ? '(no unit)' : u))
+      .filter((u, idx, list) => list.indexOf(u) === idx);
+    setUnitOptions(normalized);
+    return normalized;
+  };
+
   const fetchUnits = async () => {
     try {
       const res = await Application.getAllBiomarkerUnits({
         biomarker_name: biomarker.biomarker,
       });
       if (res && Array.isArray(res.data.units)) {
-        const transformedUnits = res.data.units.map((u: string) =>
-          u === '' ? '(no unit)' : u,
-        );
-        setUnitOptions(transformedUnits);
+        buildUnitOptions(res.data.units);
       }
     } catch (err) {
       console.log(err);
     }
   };
+
+  const effectiveExtractedUnit = String(
+    preferNonEmpty(biomarker.original_unit, biomarker.unit) || '',
+  ).trim();
 
   const hasBiomarkerError = Boolean(
     isHaveError && errorText && errorText.includes('System Biomarker'),
@@ -246,10 +255,95 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
     return list;
   })();
 
-  const displayUnit =
-    biomarker.original_unit === ''
-      ? '(no unit)'
-      : biomarker.original_unit || biomarker.possible_values?.units?.[0] || '';
+  const matchingSystemOptions = compatibleSystemOptions.filter(
+    (option) =>
+      option.biomarker.toLowerCase() ===
+      (biomarker.biomarker || '').toLowerCase(),
+  );
+  const selectedSystemMeta =
+    matchingSystemOptions.find(
+      (option) =>
+        String(option.unit || '').toLowerCase() ===
+        String(biomarker.original_unit || biomarker.unit || '').toLowerCase(),
+    ) ||
+    matchingSystemOptions.find(
+      (option) =>
+        String(option.unit || '').toLowerCase() ===
+        String(biomarker.unit || '').toLowerCase(),
+    ) ||
+    matchingSystemOptions[0];
+
+  const displayUnit = (() => {
+    if (biomarker.original_unit === '') {
+      return '(no unit)';
+    }
+    if (effectiveExtractedUnit) {
+      return effectiveExtractedUnit;
+    }
+    if (biomarker.possible_values?.units?.length === 1) {
+      return biomarker.possible_values.units[0];
+    }
+    if (unitOptions.length === 1) {
+      return unitOptions[0];
+    }
+    return selectedSystemMeta?.unit || '';
+  })();
+
+  useEffect(() => {
+    if (!biomarker.biomarker || isTextValueWithoutUnit) {
+      return;
+    }
+
+    const seedUnits = [
+      ...(Array.isArray(biomarker.possible_values?.units)
+        ? biomarker.possible_values.units
+        : []),
+      selectedSystemMeta?.unit || '',
+    ].filter(
+      (unit) =>
+        unit !== undefined && unit !== null && String(unit).trim() !== '',
+    );
+    if (seedUnits.length > 0) {
+      buildUnitOptions(seedUnits);
+    } else {
+      void fetchUnits();
+    }
+  }, [
+    biomarker.biomarker,
+    biomarker.possible_values?.units?.join('|'),
+    selectedSystemMeta?.unit,
+  ]);
+
+  useEffect(() => {
+    if (isTextValueWithoutUnit || !biomarker.biomarker) {
+      return;
+    }
+    if (String(biomarker.original_unit ?? '').trim()) {
+      return;
+    }
+    const autoUnit =
+      effectiveExtractedUnit ||
+      (unitOptions.length === 1 && unitOptions[0] !== '(no unit)'
+        ? String(unitOptions[0])
+        : '') ||
+      (biomarker.possible_values?.units?.length === 1
+        ? String(biomarker.possible_values.units[0])
+        : '') ||
+      String(selectedSystemMeta?.unit || '').trim();
+    if (!autoUnit) {
+      return;
+    }
+    updateAndStandardize(biomarker.biomarker_id, {
+      original_unit: autoUnit,
+    });
+  }, [
+    biomarker.biomarker,
+    biomarker.biomarker_id,
+    biomarker.original_unit,
+    effectiveExtractedUnit,
+    unitOptions.join('|'),
+    selectedSystemMeta?.unit,
+  ]);
 
   const getMappingAliases = () => {
     const system = String(biomarker.biomarker || '').trim();
@@ -275,24 +369,6 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
       system_biomarker: system,
     }));
   };
-
-  const matchingSystemOptions = compatibleSystemOptions.filter(
-    (option) =>
-      option.biomarker.toLowerCase() ===
-      (biomarker.biomarker || '').toLowerCase(),
-  );
-  const selectedSystemMeta =
-    matchingSystemOptions.find(
-      (option) =>
-        String(option.unit || '').toLowerCase() ===
-        String(biomarker.original_unit || biomarker.unit || '').toLowerCase(),
-    ) ||
-    matchingSystemOptions.find(
-      (option) =>
-        String(option.unit || '').toLowerCase() ===
-        String(biomarker.unit || '').toLowerCase(),
-    ) ||
-    matchingSystemOptions[0];
 
   return (
     <>
@@ -432,12 +508,18 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                   String(option.unit || '').trim(),
               );
               const nextFields: Partial<any> = { biomarker: val };
-              if (
-                !isTextValueWithoutUnit &&
-                !String(biomarker.original_unit ?? '').trim() &&
-                selectedOption?.unit
-              ) {
-                nextFields.original_unit = selectedOption.unit;
+              if (!isTextValueWithoutUnit) {
+                const extractedUnit = String(
+                  preferNonEmpty(biomarker.original_unit, biomarker.unit) || '',
+                ).trim();
+                if (!extractedUnit && selectedOption?.unit) {
+                  nextFields.original_unit = selectedOption.unit;
+                } else if (
+                  !extractedUnit &&
+                  biomarker.possible_values?.units?.length === 1
+                ) {
+                  nextFields.original_unit = biomarker.possible_values.units[0];
+                }
               }
               updateAndStandardize(biomarker.biomarker_id, nextFields);
               setIsChenged(true);
@@ -485,7 +567,12 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                 isLarge
                 isSetting
                 value={
-                  isExtractedUnitError && !isErrorHandled ? '' : displayUnit
+                  isExtractedUnitError &&
+                  !isErrorHandled &&
+                  !effectiveExtractedUnit &&
+                  unitOptions.length !== 1
+                    ? ''
+                    : displayUnit
                 }
                 placeholder={
                   isExtractedUnitError && !isErrorHandled

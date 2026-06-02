@@ -17,16 +17,19 @@ export interface AnalyticsPayload {
   clinic_email: string | null;
   start_date: string | null;
   end_date: string | null;
+  include_sessions?: boolean;
 }
 
 export const buildAnalyticsPayload = (
   selectedClinicEmail: string,
   startDate: string,
   endDate: string,
+  includeSessions = true,
 ): AnalyticsPayload => ({
   clinic_email: selectedClinicEmail || null,
   start_date: startDate || null,
   end_date: endDate || null,
+  include_sessions: includeSessions,
 });
 
 export const buildPreviousRange = (startDate: string, endDate: string) => {

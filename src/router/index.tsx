@@ -56,11 +56,13 @@ import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
 import App from '../pages/AppendUi/Dashboard/index.tsx';
 import AppendUiDashboard from '../pages/AppendUi/pages/Dashboard/index.tsx';
 import AppendUiClientList from '../pages/AppendUi/pages/ClientList/index.tsx';
+import RouteErrorFallback from './RouteErrorFallback';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <ProtectedRoute Component={Layout}></ProtectedRoute>,
+    errorElement: <RouteErrorFallback />,
     children: [
       {
         path: '/',
@@ -158,6 +160,7 @@ const router = createBrowserRouter([
       {
         path: '/report/:id/:name',
         element: <Report></Report>,
+        errorElement: <RouteErrorFallback />,
       },
 
       {

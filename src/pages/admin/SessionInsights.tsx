@@ -14,10 +14,13 @@ import {
   ServerCrash,
   TriangleAlert,
 } from 'lucide-react';
-import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
-import { useAdminContext } from '../../store/adminContext';
+import {
+  useAdminAnalyticsLoading,
+  useAdminContext,
+} from '../../store/adminContext';
+import AdminAnalyticsLoadingNotice from './AdminAnalyticsLoadingNotice';
 import AdminShellLayout from './AdminShellLayout';
 import { buildAnalyticsPayload, formatCompactNumber } from './adminShared';
 import { copyText } from '../../utils/clipboard';
@@ -109,6 +112,8 @@ const SessionInsights = () => {
   const [search, setSearch] = useState('');
   const [backendSearch, setBackendSearch] = useState('');
   const [backendStatus, setBackendStatus] = useState('all');
+
+  useAdminAnalyticsLoading(loading || refreshing);
 
   const handleAuthFailure = () => {
     removeAdminToken();
@@ -380,14 +385,6 @@ const SessionInsights = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="h-screen overflow-y-auto w-full flex justify-center items-center min-h-[550px] px-6 py-[80px]">
-        <Circleloader />
-      </div>
-    );
-  }
-
   return (
     <AdminShellLayout
       title="Session Insights"
@@ -422,6 +419,9 @@ const SessionInsights = () => {
       }
     >
       <div className="space-y-4">
+        {(loading || refreshing) && (
+          <AdminAnalyticsLoadingNotice detail="Loading session events and route activity for your filters." />
+        )}
         <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
           <div className="flex items-center gap-2 text-Text-Primary">
             <Filter size={16} />

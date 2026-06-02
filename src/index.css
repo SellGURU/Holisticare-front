@@ -656,6 +656,57 @@ input:-webkit-autofill:active {
     #56a79a
   ); /* Slightly darker on hover */
 }
+
+/* Thin gray scrollbar that stays visible on macOS Chrome and Safari.
+   On macOS the OS uses "overlay" scrollbars by default (hidden when
+   idle, regardless of CSS). We need ALL of the following to force a
+   permanently visible custom scrollbar:
+     1. -webkit-appearance: none  -> opt out of native overlay
+     2. explicit width            -> reserve space
+     3. solid (non-transparent) thumb color
+     4. !important                -> beat the project's global
+        `::-webkit-scrollbar { width: var(--sb-size) }` rule that
+        otherwise resets our width on lower-specificity matches.
+   For Firefox we set scrollbar-width / scrollbar-color. */
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #c4c4c4 transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 8px !important;
+  height: 8px !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+  border-radius: 8px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #c4c4c4 !important;
+  border-radius: 8px;
+  min-height: 24px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #a0a0a0 !important;
+}
+
+/* Variant that ALWAYS reserves scrollbar space (overflow: scroll).
+   Use on lists where users must clearly see "this is scrollable",
+   even when content currently fits without overflowing. */
+.thin-scrollbar.always-scroll,
+.always-scroll {
+  overflow-y: scroll !important;
+}
 /* === Task Check Animation === */
 /* Infinite horizontal loading bar */
 .loading-bar-container {

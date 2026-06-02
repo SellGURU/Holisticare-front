@@ -12,35 +12,64 @@ interface FormViewProps {
 const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id, 'f-id': fId } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
-  const [isComplete] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [data, setData] = useState<any>(null);
   useEffect(() => {
     setIsLaoding(true);
+    setLoadError(null);
+
+    const handleLoaded = (response: { data?: any }) => {
+      const payload = response?.data;
+      if (!payload || !Array.isArray(payload.questions)) {
+        setLoadError(
+          'Could not load this questionnaire. Please try again or contact your clinic.',
+        );
+        setIsLaoding(false);
+        return;
+      }
+      setData(payload);
+      setIsLaoding(false);
+    };
+
+    const handleLoadError = (error: any) => {
+      const detail =
+        error?.response?.data?.detail ||
+        error?.message ||
+        'Could not load this questionnaire.';
+      if (
+        typeof detail === 'string' &&
+        detail.toLowerCase().includes('already answered')
+      ) {
+        setIsComplete(true);
+        setLoadError(null);
+      } else {
+        setLoadError(
+          typeof detail === 'string'
+            ? detail
+            : 'Could not load this questionnaire.',
+        );
+      }
+      setIsLaoding(false);
+    };
+
     if (mode == 'questionary') {
       Mobile.getQuestionaryEmpty({
         encoded_mi: encode as string,
         unique_id: id as string,
         f_unique_id: fId as string,
       })
-        .then((e) => {
-          setData(e.data);
-          setIsLaoding(false);
-        })
-        .catch(() => {});
-      // setData(mokQuestionary);
-      // setIsLaoding(false);
+        .then(handleLoaded)
+        .catch(handleLoadError);
     } else {
       Mobile.getCheckInEmpty({
         encoded_mi: encode as string,
         unique_id: id as string,
       })
-        .then((e) => {
-          setData(e.data);
-          setIsLaoding(false);
-        })
-        .catch(() => {});
+        .then(handleLoaded)
+        .catch(handleLoadError);
     }
-  }, []);
+  }, [encode, fId, id, mode]);
   const submit = (e: any) => {
     // setIsLaoding(true);
     const apiCall =
@@ -127,6 +156,12 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
                   <Circleloader></Circleloader>
                 </div>
               </>
+            ) : loadError ? (
+              <div className="py-4">
+                <div className="text-[12px] text-Text-Secondary text-center">
+                  {loadError}
+                </div>
+              </div>
             ) : (
               <>
                 <PublicSurveyForm
