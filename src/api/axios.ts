@@ -35,9 +35,7 @@ const isPotentialServerOutage = (error: any) => {
   if (status && SERVER_DOWN_STATUSES.has(status)) {
     return true;
   }
-  return (
-    error.message === 'Network Error' || error.code === 'ERR_NETWORK'
-  );
+  return error.message === 'Network Error' || error.code === 'ERR_NETWORK';
 };
 
 const resetHealthFailureCount = () => {
@@ -82,9 +80,7 @@ const checkHealthAndRedirect = async () => {
   }
 
   if (recordHealthFailure()) {
-    console.log(
-      'Health check failed repeatedly, redirecting to maintenance',
-    );
+    console.log('Health check failed repeatedly, redirecting to maintenance');
     window.location.href = '/maintenance';
   }
 };
