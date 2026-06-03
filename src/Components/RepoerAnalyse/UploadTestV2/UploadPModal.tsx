@@ -215,16 +215,22 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               )}
             </ButtonPrimary>
           </div>
-          <div className="flex w-full relative justify-center mt-3 md:mt-4 shrink-0">
+          <div className="flex w-full justify-end mt-3 md:mt-4 shrink-0">
             {showReview && activeErrorCount > 0 ? (
-              <div className="bg-[#FFD8E4] absolute right-0 bottom-0 text-[10px] text-Text-Primary w-[291px] rounded-[20px] h-[36px] py-2 px-4 flex justify-between items-center gap-2">
-                <div className="flex items-cente gap-1">
-                  <img src="/icons/info-circle-red-2.svg" alt="" />
-                  {activeErrorCount}{' '}
-                  {activeErrorCount === 1 ? 'error' : 'errors'} found in
-                  biomarkers.
+              <div className="bg-[#FFD8E4] text-[10px] text-Text-Primary w-full max-w-[320px] rounded-[20px] min-h-[36px] py-2 px-4 flex justify-between items-center gap-3">
+                <div className="flex items-center gap-1 min-w-0 flex-1 flex-wrap">
+                  <img
+                    className="shrink-0"
+                    src="/icons/info-circle-red-2.svg"
+                    alt=""
+                  />
+                  <span>
+                    {activeErrorCount}{' '}
+                    {activeErrorCount === 1 ? 'error' : 'errors'} found in
+                    biomarkers.
+                  </span>
                   <div
-                    className="underline cursor-pointer text-[10px] text-Text-Primary"
+                    className="underline cursor-pointer text-[10px] text-Text-Primary shrink-0"
                     onClick={() => setShowOnlyErrors(true)}
                   >
                     View {activeErrorCount === 1 ? 'Error' : 'Errors'}
@@ -232,7 +238,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 </div>
                 <img
                   onClick={() => setshowReview(false)}
-                  className="cursor-pointer size-4"
+                  className="cursor-pointer size-4 shrink-0"
                   src="/icons/close-black.svg"
                   alt=""
                 />

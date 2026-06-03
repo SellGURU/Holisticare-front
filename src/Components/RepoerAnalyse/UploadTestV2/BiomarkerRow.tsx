@@ -624,20 +624,20 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
           ) : (
             <div className="relative flex items-center justify-end gap-1 h-full">
               {mappingStatus === 'added' && (
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
+                <div className="absolute right-0 bottom-full mb-1 z-30 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
                   <img src="/icons/tick-circle-green-new.svg" alt="" />
                   Mapping saved for future uploads.
                 </div>
               )}
               {mappingStatus === 'removed' && (
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[220px] rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
+                <div className="absolute right-0 bottom-full mb-1 z-30 h-5 w-[220px] rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
                   <img src="/icons/info-circle-orange.svg" alt="" />
                   This mapping will only be used for this upload.
                 </div>
               )}
               {(isChanged || isMapped) && (
                 <div
-                  className={`cursor-pointer flex items-center gap-1 rounded-full px-2 py-0.5 text-[8px] font-medium transition-all ${
+                  className={`cursor-pointer shrink-0 flex items-center gap-1 rounded-full px-2 py-0.5 text-[8px] font-medium transition-all ${
                     isMapped
                       ? 'bg-green-100 text-green-700 hover:bg-red-50 hover:text-red-600'
                       : 'bg-gray-100 text-Text-Secondary hover:bg-green-50 hover:text-green-700'
@@ -691,12 +691,12 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                 </div>
               )}
               <div
-                className={`${isChanged || isMapped ? 'pl-0' : 'pl-4 sm:pl-6'}`}
+                className={`shrink-0 ${isChanged || isMapped ? 'pl-0' : 'pl-4 sm:pl-6'}`}
               >
                 <img
                   src="/icons/trash-blue.svg"
                   alt="Delete"
-                  className="cursor-pointer w-4 h-4"
+                  className="cursor-pointer w-4 h-4 shrink-0"
                   onClick={() => setIsConfirmDelete(true)}
                 />
               </div>

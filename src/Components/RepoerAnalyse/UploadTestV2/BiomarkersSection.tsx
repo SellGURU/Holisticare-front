@@ -37,7 +37,7 @@ const BIOMARKER_TYPE_LABELS: Record<string, string> = {
   other: 'Other',
 };
 const BIOMARKER_ROW_GRID =
-  'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 52px';
+  'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 96px';
 
 const formatBiomarkerTypeLabel = (value: string) =>
   BIOMARKER_TYPE_LABELS[value] ||
