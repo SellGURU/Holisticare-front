@@ -244,9 +244,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin/llm-calls',
-    element: (
-      <AdminProtectedRoute Component={LlmCallLog}></AdminProtectedRoute>
-    ),
+    element: <AdminProtectedRoute Component={LlmCallLog}></AdminProtectedRoute>,
   },
   {
     path: '/admin',

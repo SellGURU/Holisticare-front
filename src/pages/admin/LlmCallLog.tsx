@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Activity,
-  Eye,
-  RefreshCw,
-  Search,
-  X,
-} from 'lucide-react';
+import { Activity, Eye, RefreshCw, Search, X } from 'lucide-react';
 import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
@@ -35,7 +29,11 @@ interface LlmCallEntry {
   model: string | null;
 }
 
-type SummarySortKey = 'function_name' | 'count' | 'avg_duration_ms' | 'last_called';
+type SummarySortKey =
+  | 'function_name'
+  | 'count'
+  | 'avg_duration_ms'
+  | 'last_called';
 
 const formatDate = (iso: string | null | undefined): string => {
   if (!iso) return '—';
@@ -155,9 +153,7 @@ const LlmCallLog = () => {
       if (av == null) return 1;
       if (bv == null) return -1;
       if (typeof av === 'string' && typeof bv === 'string') {
-        return summarySortDesc
-          ? bv.localeCompare(av)
-          : av.localeCompare(bv);
+        return summarySortDesc ? bv.localeCompare(av) : av.localeCompare(bv);
       }
       const numA = Number(av);
       const numB = Number(bv);
@@ -316,24 +312,36 @@ const LlmCallLog = () => {
                 <thead>
                   <tr className="border-b border-Gray-50 text-Text-Secondary">
                     <th className="px-2 py-2">
-                      <button type="button" onClick={() => toggleSummarySort('function_name')}>
+                      <button
+                        type="button"
+                        onClick={() => toggleSummarySort('function_name')}
+                      >
                         Name{sortIndicator('function_name')}
                       </button>
                     </th>
                     <th className="px-2 py-2">
-                      <button type="button" onClick={() => toggleSummarySort('count')}>
+                      <button
+                        type="button"
+                        onClick={() => toggleSummarySort('count')}
+                      >
                         Calls{sortIndicator('count')}
                       </button>
                     </th>
                     <th className="px-2 py-2">
-                      <button type="button" onClick={() => toggleSummarySort('avg_duration_ms')}>
+                      <button
+                        type="button"
+                        onClick={() => toggleSummarySort('avg_duration_ms')}
+                      >
                         Avg Response{sortIndicator('avg_duration_ms')}
                       </button>
                     </th>
                     <th className="px-2 py-2">Success</th>
                     <th className="px-2 py-2">Failed</th>
                     <th className="px-2 py-2">
-                      <button type="button" onClick={() => toggleSummarySort('last_called')}>
+                      <button
+                        type="button"
+                        onClick={() => toggleSummarySort('last_called')}
+                      >
                         Last Called{sortIndicator('last_called')}
                       </button>
                     </th>
