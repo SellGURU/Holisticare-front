@@ -9,7 +9,9 @@ const baseTestEndPoint =
 // In dev, use the Vite proxy (/api → 127.0.0.1:3902) so requests work when the
 // UI is opened via a network IP (e.g. http://20.254.199.21:5173). Direct loopback
 // calls from a non-secure public origin are blocked by the browser.
-const defaultLocalApiUrl = import.meta.env.DEV ? '/api' : 'http://127.0.0.1:3902';
+const defaultLocalApiUrl = import.meta.env.DEV
+  ? '/api'
+  : 'http://127.0.0.1:3902';
 
 const baseLocalEndpoint =
   (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
