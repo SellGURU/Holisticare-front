@@ -78,6 +78,9 @@ const EMPTY_CONFIGS: ConfigBundle = {
 const normalizeSearchableText = (value?: string | null) =>
   (value || '').toLowerCase();
 
+const isAuthError = (err: any) =>
+  err?.response?.status === 401 || err?.response?.status === 403;
+
 const AdminJsonUploading = () => {
   const navigate = useNavigate();
   const [loadingPage, setLoadingPage] = useState(true);
@@ -123,8 +126,12 @@ const AdminJsonUploading = () => {
           setSourceClinicId(String(currentId));
           setTargetClinicIds([currentId]);
         }
-      } catch {
-        handleAuthFailure();
+      } catch (err: any) {
+        if (isAuthError(err)) {
+          handleAuthFailure();
+        } else {
+          toast.error(err?.response?.data?.detail || 'Failed to load clinics.');
+        }
       } finally {
         setLoadingPage(false);
       }
@@ -201,7 +208,7 @@ const AdminJsonUploading = () => {
           : 'Clinic JSON loaded successfully.',
       );
     } catch (err: any) {
-      if (err?.response?.status === 401) {
+      if (isAuthError(err)) {
         handleAuthFailure();
         return;
       }
@@ -310,7 +317,7 @@ const AdminJsonUploading = () => {
         );
       }
     } catch (err: any) {
-      if (err?.response?.status === 401) {
+      if (isAuthError(err)) {
         handleAuthFailure();
         return;
       }

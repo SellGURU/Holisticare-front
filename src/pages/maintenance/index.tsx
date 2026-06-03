@@ -7,23 +7,13 @@ const MaintenancePage: React.FC = () => {
   //   const [lastCheck, setLastCheck] = useState<Date | null>(null);
 
   const checkServerStatus = async () => {
-    // setCheckingStatus(true);
     try {
-      // Try to make a simple API call to check if server is back online
-      // Using a lightweight endpoint that doesn't require authentication
-      const response = Auth.helth();
-
-      if ((await response).data) {
-        // Server is back online, redirect to app
+      const response = await Auth.helthNoAuth();
+      if (response.status === 200 && response.data) {
         window.location.href = '/';
-        return;
       }
     } catch {
-      // Server still down, continue showing maintenance page
       console.log('Server still under maintenance');
-    } finally {
-      //   setCheckingStatus(false);
-      //   setLastCheck(new Date());
     }
   };
 

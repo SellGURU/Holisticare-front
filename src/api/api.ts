@@ -28,7 +28,7 @@ class Api {
   }
 
   protected static get(url: string, config?: any) {
-    const { noAuth, ...axiosConfig } = config || {};
+    const { noAuth, holisticareHealthCheck, ...axiosConfig } = config || {};
     const headers = noAuth
       ? config?.headers || {}
       : {
@@ -39,6 +39,7 @@ class Api {
     const response = axios.get(this.base_url + url, {
       ...axiosConfig,
       headers,
+      holisticareHealthCheck,
     });
     return response;
   }

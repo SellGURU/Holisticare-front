@@ -36,6 +36,11 @@ class Auth extends Api {
   static helth() {
     return this.get('/health');
   }
+
+  /** Unauthenticated health check for maintenance detection (no Bearer token). */
+  static helthNoAuth() {
+    return this.get('/health', { noAuth: true, holisticareHealthCheck: true });
+  }
   static signup(
     username?: string,
     email?: string,
