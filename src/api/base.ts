@@ -6,7 +6,7 @@ const baseProductEndPoint =
 const baseTestEndPoint =
   'https://vercel-backend-one-roan.vercel.app/holisticare_test';
 
-const defaultLocalApiUrl = 'http://127.0.0.1:3901';
+const defaultLocalApiUrl = 'http://127.0.0.1:3902';
 
 const baseLocalEndpoint =
   (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||

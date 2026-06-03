@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
+  Activity,
   BarChart3,
   Brain,
   Building2,
@@ -51,6 +52,7 @@ const navigationSections = [
       { to: '/admin/json-uploading', label: 'JSON Uploading', icon: FileCog },
       { to: '/admin/clinics', label: 'Clinics', icon: Building2 },
       { to: '/admin/llm-prompts', label: 'LLM Prompts', icon: Brain },
+      { to: '/admin/llm-calls', label: 'LLM Calls', icon: Activity },
     ],
   },
 ];
