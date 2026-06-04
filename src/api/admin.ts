@@ -83,6 +83,18 @@ class AdminApi {
     });
   }
 
+  static getLlmCalls(params?: {
+    limit?: number;
+    search?: string;
+    status?: string;
+    name?: string;
+  }) {
+    return axios.get(`${baseUrl}/admin/logs/llm-calls`, {
+      headers: withAuthHeaders(),
+      params,
+    });
+  }
+
   static getJsonManagerClinics() {
     return axios.post(
       `${baseUrl}/admin/custom_biomarker/clinics`,
