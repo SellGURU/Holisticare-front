@@ -57,6 +57,9 @@ import App from '../pages/AppendUi/Dashboard/index.tsx';
 import AppendUiDashboard from '../pages/AppendUi/pages/Dashboard/index.tsx';
 import AppendUiClientList from '../pages/AppendUi/pages/ClientList/index.tsx';
 import RouteErrorFallback from './RouteErrorFallback';
+import Health from '../pages/AppendUi/stash/health.tsx';
+import HealthPlan from '../pages/AppendUi/stash/HealthPlan.tsx';
+import HealthPlanPage from '../pages/HealthPlan/index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -151,6 +154,10 @@ const router = createBrowserRouter([
             path: 'playground',
             element: <Playground></Playground>,
           },
+          {
+            path: '/healthplan/:id/:name',
+            element: <HealthPlanPage></HealthPlanPage>,
+          },
         ],
       },
       {
@@ -184,6 +191,14 @@ const router = createBrowserRouter([
   {
     path: '/check',
     element: <App></App>,
+  },
+  {
+    path:'/check2',
+    element: <Health></Health>,
+  },
+  {
+    path:'/check3',
+    element: <HealthPlan></HealthPlan>,
   },
   {
     path: '/share/:id/:name',

@@ -200,6 +200,12 @@ const ClientListPage = () => {
     navigate(`/report/${client.memberId}/${encodeURIComponent(client.name)}`);
   };
 
+  const handleViewPlan = (client: Client) => {
+    navigate(
+      `/healthplan/${client.memberId}/${encodeURIComponent(client.name)}`,
+    );
+  };
+
   const handleOpenAddClient = () => setShowAddClient(true);
   const handleCloseAddClient = () => {
     setShowAddClient(false);
@@ -261,6 +267,7 @@ const ClientListPage = () => {
         onRowLeave={() => setHoveredRow(null)}
         onMessageClick={handleMessageClient}
         onClientOpen={handleOpenClient}
+        onViewPlan={handleViewPlan}
         isLoading={isLoading}
       />
       <AddClientModal

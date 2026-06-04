@@ -36,6 +36,7 @@ interface ClientTableProps {
   onRowLeave: () => void;
   onMessageClick?: (client: Client) => void;
   onClientOpen?: (client: Client) => void;
+  onViewPlan?: (client: Client) => void;
   className?: string;
   isLoading?: boolean;
 }
@@ -186,6 +187,7 @@ const ClientTable = ({
   onRowLeave,
   onMessageClick,
   onClientOpen,
+  onViewPlan,
   className = '',
   isLoading = false,
 }: ClientTableProps) => {
@@ -494,7 +496,7 @@ const ClientTable = ({
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onClientOpen?.(client);
+                            onViewPlan?.(client);
                           }}
                           className="w-7 h-7 rounded-md hover:bg-emerald-50 flex items-center justify-center transition-colors duration-150"
                           title="View Plan"
