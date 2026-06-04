@@ -193,11 +193,11 @@ const router = createBrowserRouter([
     element: <App></App>,
   },
   {
-    path:'/check2',
+    path: '/check2',
     element: <Health></Health>,
   },
   {
-    path:'/check3',
+    path: '/check3',
     element: <HealthPlan></HealthPlan>,
   },
   {
