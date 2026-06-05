@@ -692,7 +692,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       biomarker: b.biomarker,
       biomarker_type: b.biomarker_type,
       original_biomarker_name: b.original_biomarker_name,
-      normalized_biomarker_name: b.normalized_biomarker_name,
       original_value: preferNonEmpty(b.original_value, b.value),
       original_unit: b.original_unit,
       value: b.value,
