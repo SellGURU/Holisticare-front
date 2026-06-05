@@ -17,6 +17,11 @@ import type {
   BiomarkerSuggestion,
 } from '../../searchableSelect/SearchSelectWithSuggestions';
 import useIsDemo from '../../../hooks/useIsDemo';
+import {
+  pinBiomarkerNameFields,
+  resolveExactBiomarkerName,
+  resolveNormalizedBiomarkerName,
+} from './biomarkerNameFields';
 
 const DEFAULT_BIOMARKER_TYPES = [
   'blood',
@@ -136,7 +141,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   const getRowDisplayName = (index: number) => {
     const row = biomarkers[index] || {};
-    return row.original_biomarker_name || row.biomarker || `Row ${index + 1}`;
+    return (
+      resolveExactBiomarkerName(row) || row.biomarker || `Row ${index + 1}`
+    );
   };
 
   const formatRowError = (row: any, message: string) => {
@@ -343,8 +350,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         cache_key:
           row.biomarker_id ||
           `${row.original_biomarker_name || row.biomarker || ''}-${row.original_value || row.value || ''}-${row.original_unit || row.unit || ''}`,
-        extracted_name: row.original_biomarker_name || row.biomarker || '',
-        normalized_name: row.biomarker || '',
+        extracted_name: resolveExactBiomarkerName(row) || row.biomarker || '',
+        normalized_name:
+          resolveNormalizedBiomarkerName(row) || row.biomarker || '',
         extracted_value: String(preferNonEmpty(row.original_value, row.value)),
         extracted_unit: row.original_unit ?? row.unit ?? '',
         biomarker_type: row.biomarker_type || '',
@@ -534,15 +542,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     // update local state immediately
     let updated = biomarkers.map((b) =>
       b.biomarker_id === id
-        ? {
-            ...b,
-            normalized_biomarker_name:
-              b.normalized_biomarker_name ||
-              b.extracted_biomarker_name ||
-              b.biomarker ||
-              b.original_biomarker_name,
-            ...updatedField,
-          }
+        ? pinBiomarkerNameFields(
+            {
+              ...b,
+              normalized_biomarker_name:
+                b.normalized_biomarker_name ||
+                resolveNormalizedBiomarkerName(b),
+              ...updatedField,
+            },
+            b,
+          )
         : b,
     );
 
@@ -588,18 +597,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     const result = await standardizeBiomarkers(payload);
 
     if (result.success) {
+      const prior = biomarkers.find((b) => b.biomarker_id === id) || current;
       updated = updated.map((b) =>
         b.biomarker_id === id
-          ? {
-              ...b,
-              ...result.data,
-              normalized_biomarker_name:
-                b.normalized_biomarker_name ||
-                b.extracted_biomarker_name ||
-                b.original_biomarker_name ||
-                result.data?.biomarker,
-              review_error_handled: hadExistingError,
-            }
+          ? pinBiomarkerNameFields(
+              {
+                ...b,
+                ...result.data,
+                review_error_handled: hadExistingError,
+              },
+              prior,
+            )
           : b,
       );
     } else {

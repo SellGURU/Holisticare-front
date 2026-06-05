@@ -8,6 +8,11 @@ import SearchSelectWithSuggestions, {
 import SelectWithCreate from '../../Select/SelectWithCreate';
 import { useEffect, useState } from 'react';
 import Application from '../../../api/app';
+import {
+  collectMappingNameVariations,
+  resolveExactBiomarkerName,
+  resolveNormalizedBiomarkerName,
+} from './biomarkerNameFields';
 
 interface BiomarkerRowProps {
   refRenceEl: any;
@@ -113,18 +118,8 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
   const [unitOptions, setUnitOptions] = useState<string[]>([]);
   const [copiedExactName, setCopiedExactName] = useState(false);
-  const normalizedName =
-    biomarker.normalized_biomarker_name ||
-    biomarker.extracted_biomarker_name ||
-    biomarker.original_biomarker_name ||
-    biomarker.biomarker ||
-    '';
-  // Always use the string from the report for the PDF line and copy, when present
-  const pdfNameFromDocument = String(
-    biomarker.original_biomarker_name || '',
-  ).trim();
-  // Show the PDF sub-line whenever we have a document label, including unmapped rows
-  // (where the title line may repeat the same name).
+  const normalizedName = resolveNormalizedBiomarkerName(biomarker);
+  const pdfNameFromDocument = resolveExactBiomarkerName(biomarker);
   const showPdfNameLine = pdfNameFromDocument.length > 0;
   const displayValue = preferNonEmpty(
     biomarker.original_value,
@@ -349,25 +344,12 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
     const system = String(biomarker.biomarker || '').trim();
     if (!system) return [];
 
-    const aliases = [
-      biomarker.original_biomarker_name,
-      biomarker.normalized_biomarker_name,
-      biomarker.extracted_biomarker_name,
-    ]
-      .map((name) => String(name || '').trim())
-      .filter(
-        (name, idx, list) =>
-          name &&
-          name.toLowerCase() !== system.toLowerCase() &&
-          list.findIndex(
-            (item) => item.toLowerCase() === name.toLowerCase(),
-          ) === idx,
-      );
-
-    return aliases.map((extracted) => ({
-      extracted_biomarker: extracted,
-      system_biomarker: system,
-    }));
+    return collectMappingNameVariations(biomarker)
+      .filter((name) => name.toLowerCase() !== system.toLowerCase())
+      .map((extracted) => ({
+        extracted_biomarker: extracted,
+        system_biomarker: system,
+      }));
   };
 
   return (
@@ -392,7 +374,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         {/* Column 1: Extracted Biomarker */}
         <div className="min-w-0 pt-1">
           <div className="flex min-h-[40px] flex-col justify-center gap-1">
-            <div className="flex min-w-0 items-center gap-1">
+            <div className="flex min-w-0 items-center gap-1 font-medium">
               <TooltipTextAuto maxWidth="180px">
                 {normalizedName || '—'}
               </TooltipTextAuto>
@@ -420,7 +402,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
             </div>
             {showPdfNameLine && (
               <div className="flex min-w-0 items-center gap-1 text-[9px] text-Text-Secondary">
-                <span className="shrink-0">PDF:</span>
+                <span className="shrink-0">Exact (PDF):</span>
                 <TooltipTextAuto maxWidth="150px">
                   {pdfNameFromDocument}
                 </TooltipTextAuto>
