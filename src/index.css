@@ -770,6 +770,15 @@ input:-webkit-autofill:active {
   }
 }
 
+@keyframes progressShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
 .animate-spin-slow {
   animation: spin-slow 2s linear infinite;
 }

@@ -836,13 +836,34 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             </div>
           </div>
         ) : loading || uploadedFile?.status === 'uploading' ? (
-          <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center w-full justify-center flex-col text-xs font-medium text-Text-Primary gap-4">
-            {/* <Circleloader /> */}
-            {/* Progress Bar */}
+          <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] w-full flex-col items-center gap-5 overflow-hidden px-2 pt-6">
+            {/* Stepped progress + smooth bar */}
             <ProgressLoading
               maxProgress={progressBiomarkerUpload}
               phase={uploadPhase}
             ></ProgressLoading>
+            {/* Skeleton hint of the table forming below */}
+            <div
+              aria-hidden
+              className="flex w-full flex-1 min-h-0 flex-col gap-1.5 overflow-hidden opacity-70"
+            >
+              {Array.from({ length: 4 }).map((_, rowIndex) => (
+                <div
+                  key={rowIndex}
+                  className="grid w-full items-center gap-3 rounded-lg border border-Gray-25 bg-Gray-15 px-3 py-2.5 animate-pulse"
+                  style={{
+                    gridTemplateColumns: '1.3fr 0.7fr 1.4fr 0.7fr 0.8fr',
+                    animationDelay: `${rowIndex * 120}ms`,
+                  }}
+                >
+                  <div className="h-2.5 rounded bg-Gray-100" />
+                  <div className="h-2.5 rounded bg-Gray-50" />
+                  <div className="h-2.5 rounded bg-Gray-100" />
+                  <div className="h-2.5 rounded bg-Gray-50" />
+                  <div className="h-2.5 rounded bg-Gray-50" />
+                </div>
+              ))}
+            </div>
           </div>
         ) : biomarkers.length === 0 ? (
           <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center justify-center flex-col text-xs font-medium text-Text-Primary">
