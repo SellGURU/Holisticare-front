@@ -70,11 +70,7 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
     return (
       <div className="w-full max-w-[360px] flex flex-col items-center gap-3 text-center">
         <div className="flex size-12 items-center justify-center rounded-full bg-[#FFF5F8] border border-[#F3B8C8]">
-          <img
-            src="/icons/info-circle-red.svg"
-            alt=""
-            className="size-6"
-          />
+          <img src="/icons/info-circle-red.svg" alt="" className="size-6" />
         </div>
         <div className="text-sm font-medium text-Text-Primary">
           Processing failed
