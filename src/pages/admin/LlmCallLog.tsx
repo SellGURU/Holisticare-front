@@ -478,7 +478,9 @@ const LlmCallLog = () => {
               <input
                 type="text"
                 value={filters.patientIdFilter}
-                onChange={(e) => updateFilter('patientIdFilter', e.target.value)}
+                onChange={(e) =>
+                  updateFilter('patientIdFilter', e.target.value)
+                }
                 placeholder="e.g. 345"
                 className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-[12px]"
               />
@@ -605,7 +607,9 @@ const LlmCallLog = () => {
                       <td className="px-2 py-2">
                         <button
                           type="button"
-                          onClick={() => filterByFunctionName(row.function_name)}
+                          onClick={() =>
+                            filterByFunctionName(row.function_name)
+                          }
                           className="font-medium text-Primary-DeepTeal hover:underline"
                           title="Filter call details by this function"
                         >
