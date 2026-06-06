@@ -51,6 +51,7 @@ import DataExplorer from '../pages/admin/DataExplorer.tsx';
 import AdminConfig from '../pages/admin/AdminConfig.tsx';
 import Clinics from '../pages/admin/Clinics.tsx';
 import LlmPromptCatalog from '../pages/admin/LlmPromptCatalog.tsx';
+import LlmCallLog from '../pages/admin/LlmCallLog.tsx';
 import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
 import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
 import App from '../pages/AppendUi/Dashboard/index.tsx';
@@ -261,6 +262,10 @@ const router = createBrowserRouter([
     element: (
       <AdminProtectedRoute Component={LlmPromptCatalog}></AdminProtectedRoute>
     ),
+  },
+  {
+    path: '/admin/llm-calls',
+    element: <AdminProtectedRoute Component={LlmCallLog}></AdminProtectedRoute>,
   },
   {
     path: '/admin',

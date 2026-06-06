@@ -11,6 +11,10 @@ import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
 import { uploadBlobToAzure } from '../../../services/uploadBlobService';
 import useIsDemo from '../../../hooks/useIsDemo';
+import {
+  collectMappingNameVariations,
+  enrichBiomarkerNameFieldsOnLoad,
+} from './biomarkerNameFields';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -245,22 +249,23 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       }
 
       const sorted = (data.extracted_biomarkers || [])
-        .map((b: any) => ({
-          ...b,
-          biomarker_type:
-            b.biomarker_type || inferBiomarkerTypeFromLabType(data.lab_type),
-          normalized_biomarker_name:
-            b.normalized_biomarker_name !== undefined
-              ? b.normalized_biomarker_name
-              : b.biomarker,
-          original_biomarker_name:
-            b.original_biomarker_name !== undefined
-              ? b.original_biomarker_name
-              : b.biomarker,
-          original_value: preferNonEmpty(b.original_value, b.value),
-          original_unit:
-            b.original_unit !== undefined ? b.original_unit : b.unit,
-        }))
+        .map((b: any) => {
+          const withNames = enrichBiomarkerNameFieldsOnLoad(b);
+          return {
+            ...withNames,
+            biomarker_type:
+              withNames.biomarker_type ||
+              inferBiomarkerTypeFromLabType(data.lab_type),
+            original_value: preferNonEmpty(
+              withNames.original_value,
+              withNames.value,
+            ),
+            original_unit:
+              withNames.original_unit !== undefined
+                ? withNames.original_unit
+                : withNames.unit,
+          };
+        })
         .slice()
         .sort((a: any, b: any) => {
           const nameA = (
@@ -960,19 +965,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
     extractedBiomarkers.forEach((row: any) => {
       const system = String(row.biomarker || '').trim();
-      if (!system) {
-        return;
-      }
+      if (!system) return;
 
-      [
-        row.original_biomarker_name,
-        row.normalized_biomarker_name,
-        row.extracted_biomarker_name,
-      ].forEach((name) => {
-        const extracted = String(name || '').trim();
-        if (!extracted || extracted.toLowerCase() === system.toLowerCase()) {
-          return;
-        }
+      collectMappingNameVariations(row).forEach((extracted) => {
+        if (extracted.toLowerCase() === system.toLowerCase()) return;
         uniqueMappings.set(
           `${extracted.toLowerCase()}|${system.toLowerCase()}`,
           {
