@@ -94,6 +94,8 @@ class AdminApi {
     model?: string;
     date_from?: string;
     date_to?: string;
+    category?: string;
+    max_scan_bytes?: number;
     include_summary?: boolean;
   }) {
     return axios.get(`${baseUrl}/admin/logs/llm-calls`, {
