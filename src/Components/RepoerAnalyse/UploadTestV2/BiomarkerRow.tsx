@@ -35,6 +35,7 @@ interface BiomarkerRowProps {
   onCreateNewBiomarker?: () => void;
   onCreateNewUnit?: () => void;
   onBiomarkerMenuOpen?: () => void;
+  onDropdownOpen?: () => void;
 }
 
 const inferExtractedValueKind = (value: unknown, unit?: string) => {
@@ -111,6 +112,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   onCreateNewBiomarker,
   onCreateNewUnit,
   onBiomarkerMenuOpen,
+  onDropdownOpen,
 }) => {
   const [isChanged, setIsChenged] = useState(false);
   const [isMapped, setIsMapped] = useState(false);
@@ -363,12 +365,12 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
             : isHaveError
               ? 'bg-[#FFD8E480]'
               : index % 2 === 0
-                ? 'bg-white'
-                : 'bg-[#F8FAFB]'
-        } grid px-4 py-2 border-b border-Gray-50 items-start text-[8px] md:text-xs text-Text-Primary`}
+                ? 'bg-white hover:bg-[#F1F7F8]'
+                : 'bg-[#F8FAFB] hover:bg-[#F1F7F8]'
+        } group grid px-4 py-2 border-b border-Gray-50 items-start text-[8px] md:text-xs text-Text-Primary transition-colors duration-150`}
         style={{
           gridTemplateColumns:
-            'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 52px',
+            'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 96px',
         }}
       >
         {/* Column 1: Extracted Biomarker */}
@@ -482,7 +484,10 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
             suggestions={effectiveSuggestions}
             isSuggestionsLoading={isSuggestionsLoading}
             onCreateNew={onCreateNewBiomarker}
-            onMenuOpen={onBiomarkerMenuOpen}
+            onMenuOpen={() => {
+              onDropdownOpen?.();
+              onBiomarkerMenuOpen?.();
+            }}
             onChange={(val: string) => {
               const selectedOption = compatibleSystemOptions.find(
                 (option) =>
@@ -563,7 +568,10 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                 }
                 validation={isExtractedUnitError && !isErrorHandled}
                 options={unitOptions}
-                onMenuOpen={fetchUnits}
+                onMenuOpen={() => {
+                  onDropdownOpen?.();
+                  void fetchUnits();
+                }}
                 onCreateNew={biomarker.biomarker ? onCreateNewUnit : undefined}
                 onChange={(val: string) => {
                   const actualUnit = val === '(no unit)' ? '' : val;

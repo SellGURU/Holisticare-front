@@ -187,6 +187,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       updateAndStandardize(id, { original_value: newValue });
     }, 3000);
   };
+
+  // Commit immediately (blur / Enter) instead of waiting for the 3s debounce.
+  const commitValueChange = (id: string, newValue: string) => {
+    if (isDemo) return;
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+    updateAndStandardize(id, { original_value: newValue });
+  };
   // const handleValueChange = (index: number, newValue: number | string) => {
   //   const updated = biomarkers.map((b, i) =>
   //     i === index ? { ...b, original_value: newValue } : b,
@@ -465,7 +475,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         <input
           type="text"
           value={preferNonEmpty(b.original_value, b.value)}
-          className="text-center border border-Gray-50 w-[70px] md:w-[95px] outline-none rounded-md text-[8px] md:text-[12px] text-Text-Primary px-2 md:py-1"
+          className="text-center border border-Gray-50 w-[70px] md:w-[95px] outline-none rounded-md text-[8px] md:text-[12px] text-Text-Primary px-2 md:py-1 transition-colors focus:border-Primary-DeepTeal focus:ring-1 focus:ring-Primary-DeepTeal/30"
           disabled={isDemo}
           title={
             isDemo
@@ -473,6 +483,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               : undefined
           }
           onChange={(e) => handleValueChange(b.biomarker_id, e.target.value)}
+          onBlur={(e) => commitValueChange(b.biomarker_id, e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.currentTarget.blur();
+            }
+          }}
         />
       );
     }
@@ -731,40 +748,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     return () => unsubscribe('RESET_MAPPING_ROWS', listener);
   }, []);
+  // Tutorial (Joyride tour + reminder toast) is disabled for this screen.
   const [run, setRun] = useState(false);
   const [showReminder, setShowReminder] = useState(false);
   const [errorsExpanded, setErrorsExpanded] = useState(false);
-  useEffect(() => {
-    if (biomarkers.length > 0) {
-      const tutorialSeen = localStorage.getItem('tutorialSeen');
-      if (tutorialSeen === 'true') {
-        return;
-      }
-      const hasSeenTour = localStorage.getItem('biomarkersTourSeen');
-
-      if (hasSeenTour === 'true') {
-        setShowReminder(true);
-      }
-    }
-  }, [biomarkers.length]);
-  useEffect(() => {
-    if (biomarkers.length > 0) {
-      const showTutorialAgain = localStorage.getItem('showTutorialAgain');
-      if (showTutorialAgain === 'true') {
-        setTimeout(() => {
-          setRun(true);
-        }, 3000);
-        return;
-      }
-      const seen = localStorage.getItem('biomarkersTourSeen');
-      if (!seen) {
-        setTimeout(() => {
-          setRun(true);
-        }, 3000);
-        localStorage.setItem('biomarkersTourSeen', 'true');
-      }
-    }
-  }, [biomarkers.length]);
   const handleViewTutorial = (value: boolean) => {
     if (value) {
       localStorage.setItem('showTutorialAgain', 'true');
@@ -780,6 +767,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       setRun(false);
     }
   };
+
+  const dismissTutorialReminder = () => {
+    if (!showReminder) return;
+    setShowReminder(false);
+    localStorage.setItem('tutorialSeen', 'true');
+  };
+
   return (
     <>
       {run && (
@@ -873,12 +867,19 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         ) : (
           <div className="relative flex-1 min-h-0 flex flex-col gap-2">
             {/* ── Compact single-row toolbar ───────────────────────────── */}
-            <div className="shrink-0 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-Gray-50 bg-white px-3 py-1.5">
+            <div className="shrink-0 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-Gray-50 bg-gradient-to-r from-[#F6FAFB] to-white px-3 py-2 shadow-100">
               {/* Title + counts */}
-              <span className="text-[10px] md:text-xs font-semibold text-Text-Primary whitespace-nowrap">
+              <span className="flex items-center gap-1.5 text-[10px] md:text-xs font-semibold text-Text-Primary whitespace-nowrap">
+                <span className="inline-flex size-5 items-center justify-center rounded-md bg-Primary-DeepTeal/10 text-Primary-DeepTeal">
+                  <img
+                    src="/icons/tick-circle-upload.svg"
+                    alt=""
+                    className="size-3.5"
+                  />
+                </span>
                 Biomarkers
-                <span className="ml-1 font-normal text-[#B0B0B0]">
-                  ({reviewSummary?.biomarker_count ?? biomarkers.length})
+                <span className="rounded-full bg-Gray-50 px-1.5 py-0.5 text-[9px] font-medium text-Text-Quadruple">
+                  {reviewSummary?.biomarker_count ?? biomarkers.length}
                 </span>
               </span>
 
@@ -906,7 +907,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               <select
                 value={typeFilter}
                 onChange={(event) => setTypeFilter(event.target.value)}
-                className="h-7 rounded-xl border border-Gray-50 bg-white px-2 text-[9px] text-Text-Primary outline-none focus:border-Primary-DeepTeal md:text-[10px]"
+                className="h-7 cursor-pointer rounded-lg border border-Gray-50 bg-white px-2 text-[9px] text-Text-Primary outline-none transition-colors hover:border-Gray-100 focus:border-Primary-DeepTeal md:text-[10px]"
               >
                 <option value="">All types</option>
                 {biomarkerTypes.map((type) => (
@@ -917,7 +918,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               </select>
 
               {/* Errors-only toggle */}
-              <div className="flex items-center gap-1.5 whitespace-nowrap">
+              <div className="flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-Gray-50 bg-white px-2 py-1">
                 <Toggle
                   checked={showOnlyErrors}
                   setChecked={setShowOnlyErrors}
@@ -996,7 +997,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             )}
 
             <div
-              className="relative flex-1 min-h-0 w-full min-w-0 text-xs border border-Gray-50 rounded-[12px] overflow-hidden"
+              className="relative flex-1 min-h-0 w-full min-w-0 text-xs border border-Gray-50 rounded-[12px] overflow-hidden shadow-100 bg-white"
               data-tour="biomarker-table"
             >
               <div className="w-full h-full overflow-x-auto overflow-y-hidden">
@@ -1007,7 +1008,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   >
                     {/* Table Header */}
                     <div
-                      className="grid w-full sticky top-0 z-20 py-2 px-4 font-medium text-Text-Primary text-[8px] md:text-xs bg-[#E9F0F2] border-b border-Gray-50"
+                      className="grid w-full sticky top-0 z-20 py-2.5 px-4 font-semibold uppercase tracking-wide text-Text-Secondary text-[8px] md:text-[10px] bg-gradient-to-b from-[#EDF3F5] to-[#E4EDF0] border-b border-Gray-100 shadow-[0_1px_2px_rgba(24,39,75,0.06)]"
                       style={{
                         gridTemplateColumns: BIOMARKER_ROW_GRID,
                       }}
@@ -1076,6 +1077,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             isSuggestionsLoading={Boolean(
                               suggestionsLoading[suggestionKey],
                             )}
+                            onDropdownOpen={dismissTutorialReminder}
                             onBiomarkerMenuOpen={() => {
                               fetchBiomarkerSuggestions([b]);
                             }}
@@ -1119,6 +1121,30 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           />
                         );
                       },
+                    )}
+                    {visibleBiomarkerEntries.length === 0 && (
+                      <div className="flex flex-col items-center justify-center gap-2 px-4 py-10 text-center">
+                        <img
+                          src="/icons/EmptyState-biomarkers.svg"
+                          alt=""
+                          className="size-16 opacity-70"
+                        />
+                        <div className="text-[11px] font-medium text-Text-Primary">
+                          {showOnlyErrors
+                            ? 'No biomarkers with errors.'
+                            : 'No biomarkers match this filter.'}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTypeFilter('');
+                            setShowOnlyErrors(false);
+                          }}
+                          className="rounded-full border border-Primary-DeepTeal px-3 py-1 text-[10px] font-medium text-Primary-DeepTeal transition-colors hover:bg-Primary-DeepTeal/10"
+                        >
+                          Clear filters
+                        </button>
+                      </div>
                     )}
                     <div className="h-4" />
                   </div>

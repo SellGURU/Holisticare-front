@@ -1119,7 +1119,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     <>
       <Joyride
         steps={steps}
-        run={run}
+        run={run && step === 0}
         continuous
         showSkipButton
         disableOverlayClose

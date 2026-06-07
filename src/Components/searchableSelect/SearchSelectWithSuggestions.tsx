@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import {
   computePosition,
@@ -186,13 +187,15 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
       if (
-        selectWrapperRef.current &&
-        !selectWrapperRef.current.contains(e.target as Node)
+        selectWrapperRef.current?.contains(target) ||
+        dropdownRef.current?.contains(target)
       ) {
-        setIsOpen(false);
-        setSearchTerm('');
+        return;
       }
+      setIsOpen(false);
+      setSearchTerm('');
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -295,12 +298,17 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
         />
       </div>
 
-      {/* Dropdown */}
-      {isOpen && (
+      {/* Dropdown — portaled so it escapes table overflow/stacking contexts */}
+      {isOpen &&
+        createPortal(
         <div
           ref={dropdownRef}
-          style={{ position: 'fixed', width: buttonRef.current?.offsetWidth }}
-          className={`absolute flex flex-col z-[9999] ${
+          style={{
+            position: 'fixed',
+            zIndex: 9990,
+            width: buttonRef.current?.offsetWidth,
+          }}
+          className={`flex flex-col ${
             isSetting
               ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
               : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
@@ -451,7 +459,8 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
               </li>
             )}
           </ul>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );
