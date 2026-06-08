@@ -48,7 +48,7 @@ export const enrichBiomarkerNameFieldsOnLoad = <T extends BiomarkerNameRow>(
     row.normalized_biomarker_name !== null &&
     trim(row.normalized_biomarker_name)
       ? trim(row.normalized_biomarker_name)
-      : trim(row.biomarker) || exact;
+      : exact || trim(row.biomarker);
 
   return {
     ...row,
