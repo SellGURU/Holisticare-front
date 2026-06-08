@@ -75,8 +75,12 @@ const inferSystemValueKind = (valueType?: string, unit?: string) => {
 };
 
 const inferMeasurementContext = (name: string, unit: string) => {
-  const unitText = String(unit || '').trim().toLowerCase();
-  const nameText = String(name || '').trim().toLowerCase();
+  const unitText = String(unit || '')
+    .trim()
+    .toLowerCase();
+  const nameText = String(name || '')
+    .trim()
+    .toLowerCase();
   if (unitText.includes('%') || nameText.includes('%')) return 'percent';
   if (
     /x10[e^]?\d+\/l|10\^?\d+\/l|cells?\/?u[lµμ]|\/hpf|\/lpf/i.test(unitText)
@@ -787,7 +791,11 @@ export default function BiomarkerRow({
                         className="h-3.5 w-3.5"
                       />
                       <span className="leading-tight">
-                        {isSavingMapping ? 'Saving...' : isMapped ? 'Saved' : 'Save'}
+                        {isSavingMapping
+                          ? 'Saving...'
+                          : isMapped
+                            ? 'Saved'
+                            : 'Save'}
                       </span>
                     </button>
                     <Tooltip

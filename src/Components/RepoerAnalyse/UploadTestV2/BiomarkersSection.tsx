@@ -1007,9 +1007,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     className="flex-1 min-h-0 overflow-y-auto w-full pb-8 [scrollbar-gutter:stable]"
                   >
                     <div className="border-b border-Gray-50 bg-[#F8FAFB] px-4 py-2 text-[9px] leading-relaxed text-Text-Secondary">
-                      Use <span className="font-medium text-Primary-DeepTeal">Save</span>{' '}
-                      to store the PDF name → system biomarker mapping for future
-                      uploads.
+                      Use{' '}
+                      <span className="font-medium text-Primary-DeepTeal">
+                        Save
+                      </span>{' '}
+                      to store the PDF name → system biomarker mapping for
+                      future uploads.
                     </div>
 
                     {/* Table Header */}
