@@ -13,7 +13,10 @@ import {
   resolveExactBiomarkerName,
   resolveNormalizedBiomarkerName,
 } from './biomarkerNameFields';
-import { isValueTypeCompatible } from './biomarkerReviewCompat';
+import {
+  isValueTypeCompatible,
+  normalizeBiomarkerNameForMatch,
+} from './biomarkerReviewCompat';
 
 interface BiomarkerRowProps {
   refRenceEl: any;
@@ -188,10 +191,9 @@ export default function BiomarkerRow({
     }, []);
   const isCurrentSystemAllowed =
     !biomarker.biomarker ||
-    compatibleSystemOptions.some(
-      (option) =>
-        option.biomarker.toLowerCase() ===
-        String(biomarker.biomarker || '').toLowerCase(),
+    compatibleSystemOptions.some((option) =>
+      normalizeBiomarkerNameForMatch(option.biomarker) ===
+      normalizeBiomarkerNameForMatch(biomarker.biomarker),
     );
 
   const effectiveSuggestions: BiomarkerSuggestion[] = (() => {
@@ -200,8 +202,8 @@ export default function BiomarkerRow({
     const currentUnit = biomarker.unit || biomarker.original_unit || '';
     const currentMeta = compatibleSystemOptions.find(
       (option) =>
-        option.biomarker.toLowerCase() ===
-          String(currentBiomarker || '').toLowerCase() &&
+        normalizeBiomarkerNameForMatch(option.biomarker) ===
+          normalizeBiomarkerNameForMatch(currentBiomarker) &&
         String(option.unit || '').toLowerCase() ===
           String(currentUnit || '').toLowerCase(),
     );
@@ -229,8 +231,8 @@ export default function BiomarkerRow({
 
   const matchingSystemOptions = compatibleSystemOptions.filter(
     (option) =>
-      option.biomarker.toLowerCase() ===
-      (biomarker.biomarker || '').toLowerCase(),
+      normalizeBiomarkerNameForMatch(option.biomarker) ===
+      normalizeBiomarkerNameForMatch(biomarker.biomarker),
   );
   const selectedSystemMeta =
     matchingSystemOptions.find(

@@ -15,6 +15,7 @@ import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
 } from './biomarkerNameFields';
+import { dedupeReviewBiomarkerRows } from './biomarkerReviewCompat';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -283,6 +284,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           });
         });
 
+      const { rows: reviewBiomarkers, removedCount: removedDuplicateCount } =
+        dedupeReviewBiomarkerRows(sorted);
+
       // Stop polling + show biomarkers immediately
       if (data.extracted_biomarkers && data.extracted_biomarkers.length > 0) {
         setPolling(false);
@@ -291,16 +295,23 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         await showReviewLoading();
 
         if (data.validation?.ready) {
-          applyValidationErrors(data.validation, sorted);
+          applyValidationErrors(data.validation, reviewBiomarkers);
         } else {
           await validateRowsBeforeDisplay(
-            sorted,
+            reviewBiomarkers,
             data.lab_type || 'more_info',
             data.date_of_test || null,
           );
         }
 
-        setExtractedBiomarkers(sorted);
+        setExtractedBiomarkers(reviewBiomarkers);
+        if (removedDuplicateCount > 0) {
+          setReviewSummary((prev: any) => ({
+            ...(prev || data.summary || {}),
+            biomarker_count: reviewBiomarkers.length,
+            duplicate_count: 0,
+          }));
+        }
         setUploadPhase(data.status || 'review_ready');
         setbiomarkerLoading(false);
         if (data.is_edited) {

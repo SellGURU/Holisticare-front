@@ -4,6 +4,27 @@ const trim = (value: unknown) => String(value ?? '').trim();
 
 const normalizeKey = (value: unknown) => trim(value).toLowerCase();
 
+/** Match HbA1c, Hb A1c, and similar spacing variants to the same catalog row. */
+export const normalizeBiomarkerNameForMatch = (value: unknown) =>
+  normalizeKey(value).replace(/\s+/g, '').replace(/[^a-z0-9+]/g, '');
+
+const resolveRowCatalogNameKey = (row: any) => {
+  const candidates = [
+    row?.biomarker,
+    row?.original_biomarker_name,
+    row?.normalized_biomarker_name,
+    row?.extracted_biomarker_name,
+  ];
+  for (const candidate of candidates) {
+    const key = normalizeBiomarkerNameForMatch(candidate);
+    if (key) return key;
+  }
+  return '';
+};
+
+const catalogNamesMatch = (left: unknown, right: unknown) =>
+  normalizeBiomarkerNameForMatch(left) === normalizeBiomarkerNameForMatch(right);
+
 const preferNonEmpty = (...values: unknown[]) => {
   const found = values.find(
     (value) =>
@@ -433,19 +454,19 @@ export const findCompatibleCatalogOptions = (catalog: any[], row: any) => {
 
 export const findCatalogMatchForRow = (catalog: any[], row: any) => {
   const rowType = inferRowBiomarkerType(row);
-  const currentName = normalizeKey(row?.biomarker);
-  if (!currentName) return null;
+  const currentNameKey = resolveRowCatalogNameKey(row);
+  if (!currentNameKey) return null;
 
   const typedMatches = catalog.filter(
     (option) =>
-      normalizeKey(option?.biomarker) === currentName &&
+      catalogNamesMatch(option?.biomarker, currentNameKey) &&
       normalizeKey(option?.biomarker_type || 'blood') === normalizeKey(rowType),
   );
   if (typedMatches.length === 1) return typedMatches[0];
 
   const compatible = findCompatibleCatalogOptions(catalog, row);
-  const sameNameMatches = compatible.filter(
-    (option) => normalizeKey(option?.biomarker) === currentName,
+  const sameNameMatches = compatible.filter((option) =>
+    catalogNamesMatch(option?.biomarker, currentNameKey),
   );
   if (sameNameMatches.length === 1) return sameNameMatches[0];
   if (compatible.length === 1) return compatible[0];
@@ -453,18 +474,24 @@ export const findCatalogMatchForRow = (catalog: any[], row: any) => {
 };
 
 export const resolveSystemBiomarkerForRow = (catalog: any[], row: any) => {
-  const currentName = normalizeKey(row?.biomarker);
+  const currentNameKey = resolveRowCatalogNameKey(row);
   const rowType = inferRowBiomarkerType(row);
   let next = {
     ...row,
     biomarker_type: trim(row?.biomarker_type) || rowType,
   };
 
-  if (!currentName) return next;
+  if (!currentNameKey) return next;
+
+  const catalogTypedMatches = catalog.filter(
+    (option) =>
+      catalogNamesMatch(option?.biomarker, currentNameKey) &&
+      normalizeKey(option?.biomarker_type || 'blood') === normalizeKey(rowType),
+  );
 
   const compatible = findCompatibleCatalogOptions(catalog, next);
-  const sameNameMatches = compatible.filter(
-    (option) => normalizeKey(option?.biomarker) === currentName,
+  const sameNameMatches = compatible.filter((option) =>
+    catalogNamesMatch(option?.biomarker, currentNameKey),
   );
 
   if (sameNameMatches.length === 1) {
@@ -487,21 +514,23 @@ export const resolveSystemBiomarkerForRow = (catalog: any[], row: any) => {
     };
   }
 
-  const typedNameExists = catalog.some(
-    (option) =>
-      normalizeKey(option?.biomarker) === currentName &&
-      normalizeKey(option?.biomarker_type || 'blood') === normalizeKey(rowType),
-  );
-
-  if (!typedNameExists) {
+  if (catalogTypedMatches.length === 1) {
     return {
       ...next,
-      biomarker: '',
-      unit: '',
+      biomarker: catalogTypedMatches[0].biomarker,
+      unit: catalogTypedMatches[0].unit || next.unit || '',
     };
   }
 
-  return next;
+  if (catalogTypedMatches.length > 1) {
+    return next;
+  }
+
+  return {
+    ...next,
+    biomarker: '',
+    unit: '',
+  };
 };
 
 export const resolveRowForReview = (catalog: any[], row: any) => {
@@ -518,5 +547,118 @@ export const resolveRowForReview = (catalog: any[], row: any) => {
     next = { ...next, original_value: normalizedValue };
   }
 
+  return next;
+};
+
+const normalizeUnitKey = (unit: unknown) =>
+  normalizeKey(String(unit ?? '').replace('(no unit)', ''));
+
+export const buildReviewBiomarkerDedupKey = (row: any) => {
+  const name = resolveRowCatalogNameKey(row);
+  if (!name) return '';
+  const type = normalizeKey(inferRowBiomarkerType(row));
+  return `${name}|${type}`;
+};
+
+export const scoreReviewBiomarkerRow = (row: any, catalogMatch: any | null) => {
+  let score = 0;
+  const valueText = trim(row?.original_value ?? row?.value);
+  const defaultUnit = normalizeUnitKey(catalogMatch?.unit);
+  const originalUnit = normalizeUnitKey(row?.original_unit ?? row?.unit);
+  const systemUnit = normalizeUnitKey(row?.unit);
+
+  if (valueText && /\d/.test(valueText)) {
+    score += 100;
+  }
+  if (
+    defaultUnit &&
+    (originalUnit === defaultUnit || systemUnit === defaultUnit)
+  ) {
+    score += 80;
+  } else if (originalUnit || systemUnit) {
+    score += 10;
+  }
+
+  if (resolveRowCatalogNameKey(row)) {
+    score += 5;
+  }
+
+  if (row?.review_error_handled) {
+    score += 5;
+  }
+
+  return score;
+};
+
+export const dedupeReviewBiomarkerRows = (
+  rows: any[],
+  catalog: any[] = [],
+): {
+  rows: any[];
+  indexMap: Map<number, number>;
+  removedCount: number;
+} => {
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return { rows: [], indexMap: new Map(), removedCount: 0 };
+  }
+
+  const winners = new Map<
+    string,
+    { row: any; originalIndex: number; score: number }
+  >();
+
+  rows.forEach((row, originalIndex) => {
+    const key = buildReviewBiomarkerDedupKey(row);
+    if (!key) return;
+
+    const score = scoreReviewBiomarkerRow(
+      row,
+      findCatalogMatchForRow(catalog, row),
+    );
+    const existing = winners.get(key);
+    if (
+      !existing ||
+      score > existing.score ||
+      (score === existing.score && originalIndex < existing.originalIndex)
+    ) {
+      winners.set(key, { row, originalIndex, score });
+    }
+  });
+
+  const keptRows: any[] = [];
+  const indexMap = new Map<number, number>();
+
+  rows.forEach((row, originalIndex) => {
+    const key = buildReviewBiomarkerDedupKey(row);
+    if (key) {
+      const winner = winners.get(key);
+      if (!winner || winner.originalIndex !== originalIndex) {
+        return;
+      }
+    }
+
+    indexMap.set(originalIndex, keptRows.length);
+    keptRows.push(row);
+  });
+
+  return {
+    rows: keptRows,
+    indexMap,
+    removedCount: rows.length - keptRows.length,
+  };
+};
+
+export const remapRowErrorsAfterDedup = (
+  errors: Record<number, string>,
+  indexMap: Map<number, number>,
+) => {
+  const next: Record<number, string> = {};
+  Object.entries(errors).forEach(([key, value]) => {
+    const oldIndex = Number(key);
+    const newIndex = indexMap.get(oldIndex);
+    if (newIndex !== undefined) {
+      next[newIndex] = value;
+    }
+  });
   return next;
 };

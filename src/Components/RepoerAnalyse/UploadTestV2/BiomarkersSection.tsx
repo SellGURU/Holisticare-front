@@ -29,7 +29,10 @@ import {
   inferBiomarkerTypeFromCatalogItem,
   inferCatalogValueType,
   isTextValueWithoutUnit,
+  dedupeReviewBiomarkerRows,
+  normalizeBiomarkerNameForMatch,
   normalizeExtractedValueForCatalog,
+  remapRowErrorsAfterDedup,
   resolveRowForReview,
 } from './biomarkerReviewCompat';
 
@@ -306,7 +309,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     const exactOption = avalibaleBiomarkers.find(
       (option) =>
-        option.biomarker.toLowerCase() === biomarkerName &&
+        normalizeBiomarkerNameForMatch(option.biomarker) ===
+          normalizeBiomarkerNameForMatch(biomarkerName) &&
         String(option.unit || '').trim(),
     );
     return String(exactOption?.unit || '').trim();
@@ -369,11 +373,23 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     const resolved = biomarkers.map((row) =>
       resolveRowForReview(avalibaleBiomarkers, row),
     );
+    const { rows: deduped, indexMap, removedCount } = dedupeReviewBiomarkerRows(
+      resolved,
+      avalibaleBiomarkers,
+    );
 
-    if (JSON.stringify(resolved) !== JSON.stringify(biomarkers)) {
-      onChange(resolved);
+    if (
+      removedCount > 0 ||
+      JSON.stringify(deduped) !== JSON.stringify(biomarkers)
+    ) {
+      if (removedCount > 0) {
+        setrowErrors((prev: Record<number, string>) =>
+          remapRowErrorsAfterDedup(prev, indexMap),
+        );
+      }
+      onChange(deduped);
     }
-  }, [avalibaleBiomarkers, biomarkerResolutionSignature, onChange]);
+  }, [avalibaleBiomarkers, biomarkerResolutionSignature, onChange, setrowErrors]);
 
   // ── Suggestions state (keyed by stable row id, not biomarker name) ─────────
   const [suggestions, setSuggestions] = useState<
@@ -633,10 +649,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       avalibaleBiomarkers,
       current,
     );
-    const biomarkerAllowed = compatibleOptions.some(
-      (option) =>
-        option.biomarker.toLowerCase() ===
-        String(current.biomarker || '').toLowerCase(),
+    const biomarkerAllowed = compatibleOptions.some((option) =>
+      normalizeBiomarkerNameForMatch(option.biomarker) ===
+      normalizeBiomarkerNameForMatch(current.biomarker),
     );
     if (!String(current.biomarker || '').trim() || !biomarkerAllowed) {
       if (index !== -1) {
@@ -1138,8 +1153,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           );
                         const selectedSystemMeta = avalibaleBiomarkers.find(
                           (option) =>
-                            option.biomarker.toLowerCase() ===
-                              (b.biomarker || '').toLowerCase() &&
+                            normalizeBiomarkerNameForMatch(option.biomarker) ===
+                              normalizeBiomarkerNameForMatch(b.biomarker) &&
                             String(option.biomarker_type || 'blood') ===
                               rowType,
                         );
