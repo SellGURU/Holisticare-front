@@ -14,8 +14,8 @@ class BiomarkersApi extends Api {
     return this.post('/custom_biomarker/admin/save_config', data);
   };
 
-  static getBiomarkersList = () => {
-    return this.post('/custom_biomarker/chart_bounds', {});
+  static getBiomarkersList = (data: { include_all?: boolean } = {}) => {
+    return this.post('/custom_biomarker/chart_bounds', data);
   };
 
   static getBiomarkerTypes = () => {

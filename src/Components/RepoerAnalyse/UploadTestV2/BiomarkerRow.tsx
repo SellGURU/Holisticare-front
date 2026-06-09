@@ -13,6 +13,7 @@ import {
   resolveExactBiomarkerName,
   resolveNormalizedBiomarkerName,
 } from './biomarkerNameFields';
+import { isValueTypeCompatible } from './biomarkerReviewCompat';
 
 interface BiomarkerRowProps {
   refRenceEl: any;
@@ -37,99 +38,6 @@ interface BiomarkerRowProps {
   onBiomarkerMenuOpen?: () => void;
   onDropdownOpen?: () => void;
 }
-
-const inferExtractedValueKind = (value: unknown, unit?: string) => {
-  const text = String(value ?? '').trim();
-  const unitText = String(unit ?? '')
-    .trim()
-    .toLowerCase();
-  if (!text) return 'unknown';
-  if (/\d/.test(text)) return 'numeric';
-  if (unitText === '%' || unitText === 'percent' || unitText === 'ratio') {
-    return 'numeric';
-  }
-  return 'string';
-};
-
-const inferSystemValueKind = (valueType?: string, unit?: string) => {
-  const type = String(valueType ?? '')
-    .trim()
-    .toLowerCase();
-  const unitText = String(unit ?? '').trim();
-  if (
-    ['string', 'text', 'categorical', 'qualitative', 'boolean', 'choice'].some(
-      (token) => type.includes(token),
-    )
-  ) {
-    return 'string';
-  }
-  if (
-    ['number', 'numeric', 'integer', 'float', 'decimal', 'range'].some(
-      (token) => type.includes(token),
-    )
-  ) {
-    return 'numeric';
-  }
-  if (unitText) return 'numeric';
-  return 'unknown';
-};
-
-const inferMeasurementContext = (name: string, unit: string) => {
-  const unitText = String(unit || '')
-    .trim()
-    .toLowerCase();
-  const nameText = String(name || '')
-    .trim()
-    .toLowerCase();
-  if (unitText.includes('%') || nameText.includes('%')) return 'percent';
-  if (
-    /x10[e^]?\d+\/l|10\^?\d+\/l|cells?\/?u[lµμ]|\/hpf|\/lpf/i.test(unitText)
-  ) {
-    return 'absolute_count';
-  }
-  if (nameText.includes('absolute') || nameText.includes('count')) {
-    return 'absolute_count';
-  }
-  return 'generic';
-};
-
-const isMeasurementContextCompatible = (
-  extractedUnit: string,
-  systemUnit?: string,
-  systemName?: string,
-) => {
-  const extractedContext = inferMeasurementContext('', extractedUnit);
-  const systemContext = inferMeasurementContext(
-    systemName || '',
-    systemUnit || '',
-  );
-  if (extractedContext === 'generic' || systemContext === 'generic') {
-    return true;
-  }
-  return extractedContext === systemContext;
-};
-
-const isValueTypeCompatible = (
-  extractedValue: unknown,
-  extractedUnit: string,
-  systemValueType?: string,
-  systemUnit?: string,
-  systemName?: string,
-) => {
-  const extractedKind = inferExtractedValueKind(extractedValue, extractedUnit);
-  const systemKind = inferSystemValueKind(systemValueType, systemUnit);
-  if (extractedKind === 'unknown' || systemKind === 'unknown') {
-    return isMeasurementContextCompatible(
-      extractedUnit,
-      systemUnit,
-      systemName,
-    );
-  }
-  return (
-    extractedKind === systemKind &&
-    isMeasurementContextCompatible(extractedUnit, systemUnit, systemName)
-  );
-};
 
 const preferNonEmpty = (...values: unknown[]) => {
   const found = values.find(

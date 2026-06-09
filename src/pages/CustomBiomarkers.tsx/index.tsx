@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
 import Circleloader from '../../Components/CircleLoader';
 import SearchBox from '../../Components/SearchBox';
@@ -15,6 +15,8 @@ import useIsDemo from '../../hooks/useIsDemo';
 import DefaultData from './default.json';
 import {
   ensureBiomarkerUid,
+  migrateLegacyMappingsForDuplicates,
+  migrateLegacyUnitMappingsForDuplicates,
   normalizeBiomarkersList,
 } from './biomarkerIdentity';
 
@@ -86,9 +88,10 @@ const CustomBiomarkers = () => {
   const [biomarkerTypes, setBiomarkerTypes] = useState<string[]>(
     DEFAULT_BIOMARKER_TYPES,
   );
+  const mappingsMigrationDone = useRef(false);
 
   const changeBiomarkersValue = (values: any) => {
-    setBiomarkers(values);
+    setBiomarkers(normalizeBiomarkersList(values));
   };
 
   const openModalAdd = () => {
@@ -110,7 +113,7 @@ const CustomBiomarkers = () => {
         }
       })
       .catch(() => {});
-    BiomarkersApi.getBiomarkersList()
+    BiomarkersApi.getBiomarkersList({ include_all: true })
       .then((res) => {
         setBiomarkers(normalizeBiomarkersList(res.data));
       })
@@ -161,6 +164,53 @@ const CustomBiomarkers = () => {
       void import('./EditModal');
     }
   }, [biomarkers.length]);
+
+  useEffect(() => {
+    if (mappingsMigrationDone.current || biomarkers.length === 0 || isDemo) {
+      return;
+    }
+
+    const migratedBiomarkerMappings = migrateLegacyMappingsForDuplicates(
+      biomarkers,
+      biomarkerMappings,
+    );
+    const migratedUnitMappings = migrateLegacyUnitMappingsForDuplicates(
+      biomarkers,
+      unitMappings,
+    );
+
+    const biomarkerMappingsChanged =
+      migratedBiomarkerMappings.length !== biomarkerMappings.length ||
+      migratedBiomarkerMappings.some(
+        (entry, index) => entry !== biomarkerMappings[index],
+      );
+    const unitMappingsChanged =
+      migratedUnitMappings.length !== unitMappings.length ||
+      migratedUnitMappings.some((entry, index) => entry !== unitMappings[index]);
+
+    if (!biomarkerMappingsChanged && !unitMappingsChanged) {
+      return;
+    }
+
+    mappingsMigrationDone.current = true;
+
+    if (biomarkerMappingsChanged) {
+      setBiomarkerMappings(migratedBiomarkerMappings);
+      BiomarkersApi.updateBiomarkerMapping({
+        mappings: migratedBiomarkerMappings,
+      }).catch(() => {});
+    }
+
+    if (unitMappingsChanged) {
+      setUnitMappings(migratedUnitMappings);
+      const payload = {
+        ...unitMappingData,
+        biomarker_specific: migratedUnitMappings,
+      };
+      setUnitMappingData(payload);
+      BiomarkersApi.updateUnitMapping(payload).catch(() => {});
+    }
+  }, [biomarkers, biomarkerMappings, unitMappings, unitMappingData, isDemo]);
 
   const handleUnitMappingsChange = (entries: any[]) => {
     if (isDemo) return;
@@ -514,8 +564,10 @@ const CustomBiomarkers = () => {
       >
         <MappingsModal
           data={selectedMappingBiomarker}
+          allBiomarkers={biomarkers}
           unitMappings={unitMappings}
           biomarkerMappings={biomarkerMappings}
+          formatBiomarkerTypeLabel={formatBiomarkerTypeLabel}
           onClose={() => setSelectedMappingBiomarker(null)}
           onUnitMappingsChange={handleUnitMappingsChange}
           onBiomarkerMappingsChange={handleBiomarkerMappingsChange}
