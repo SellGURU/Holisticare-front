@@ -13,6 +13,10 @@ import MappingsModal from './MappingsModal';
 import useIsDemo from '../../hooks/useIsDemo';
 
 import DefaultData from './default.json';
+import {
+  ensureBiomarkerUid,
+  normalizeBiomarkersList,
+} from './biomarkerIdentity';
 
 type SortKey = 'Biomarker' | 'Benchmark areas' | 'biomarker_type' | 'unit';
 type SortDirection = 'asc' | 'desc';
@@ -108,7 +112,7 @@ const CustomBiomarkers = () => {
       .catch(() => {});
     BiomarkersApi.getBiomarkersList()
       .then((res) => {
-        setBiomarkers(res.data);
+        setBiomarkers(normalizeBiomarkersList(res.data));
       })
       .catch((err) => {
         console.error('Error getting biomarkers:', err);
@@ -320,7 +324,7 @@ const CustomBiomarkers = () => {
     BiomarkersApi.addBiomarkersList({ new_biomarker: values })
       .then(() => {
         closeModalAdd();
-        setBiomarkers((pre) => [...pre, values]);
+        setBiomarkers((pre) => [...pre, ensureBiomarkerUid(values)]);
       })
       .catch((error) => {
         setErrorDetails(
@@ -431,7 +435,10 @@ const CustomBiomarkers = () => {
               {filteredBiomarkerEntries.map(
                 ({ item: value, originalIndex }, index: number) => (
                   <BiomarkerRow
-                    key={`${value?.Biomarker || 'biomarker'}-${originalIndex}`}
+                    key={
+                      value?.biomarker_uid ||
+                      `${value?.Biomarker || 'biomarker'}-${originalIndex}`
+                    }
                     rowIndex={index}
                     biomarkerIndex={originalIndex}
                     data={value}

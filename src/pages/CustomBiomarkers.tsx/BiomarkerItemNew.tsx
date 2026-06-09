@@ -5,6 +5,12 @@ import { MainModal } from '../../Components';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import SvgIcon from '../../utils/svgIcon';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
+import {
+  BiomarkerIdentityMeta,
+  buildBiomarkerIdentityMeta,
+  normalizeBiomarkersList,
+  replaceBiomarkerByIdentity,
+} from './biomarkerIdentity';
 
 const EditModal = lazy(() => import('./EditModal'));
 
@@ -34,39 +40,6 @@ const normalize = (value: any) =>
 
 const escapeRegExp = (value: string) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const replaceBiomarker = (
-  biomarkers: any[],
-  originalBiomarkerIndex: number,
-  originalBiomarkerName: string,
-  updatedItem: any,
-) => {
-  if (
-    Number.isInteger(originalBiomarkerIndex) &&
-    originalBiomarkerIndex >= 0 &&
-    originalBiomarkerIndex < biomarkers.length
-  ) {
-    return biomarkers.map((item, index) =>
-      index === originalBiomarkerIndex ? updatedItem : item,
-    );
-  }
-
-  const matchingIndexes = biomarkers
-    .map((item, index) => ({ item, index }))
-    .filter(
-      ({ item }) =>
-        normalize(item?.Biomarker) === normalize(originalBiomarkerName),
-    )
-    .map(({ index }) => index);
-
-  if (matchingIndexes.length !== 1) {
-    return biomarkers;
-  }
-
-  return biomarkers.map((item, index) =>
-    index === matchingIndexes[0] ? updatedItem : item,
-  );
-};
 
 const highlightText = (text: string, term: string) => {
   const source = String(text || '');
@@ -141,25 +114,30 @@ const BiomarkerRow = ({
     setErrorDetails('');
   };
 
-  const onsave = (values: any, meta: { originalBiomarkerName: string }) => {
+  const identityMeta = useMemo(
+    () => buildBiomarkerIdentityMeta(data, biomarkerIndex),
+    [data, biomarkerIndex],
+  );
+
+  const onsave = (values: any, meta: BiomarkerIdentityMeta) => {
     setLoading(true);
     BiomarkersApi.saveBiomarkersList({
       updated_biomarker: values,
       original_biomarker_name: meta.originalBiomarkerName,
-      original_biomarker_index: biomarkerIndex,
+      original_biomarker_index: meta.originalBiomarkerIndex,
+      original_biomarker_uid: meta.biomarkerUid,
+      original_biomarker_type: meta.originalBiomarkerType,
+      original_unit: meta.originalUnit,
+      original_benchmark_area: meta.originalBenchmarkArea,
     })
       .then((response) => {
         const payload = response?.data || {};
         const savedBiomarker = payload.updated_biomarker || values;
         closeModalEdit();
         changeBiomarkersValue(
-          payload.chart_bounds ||
-            replaceBiomarker(
-              biomarkers,
-              biomarkerIndex,
-              meta.originalBiomarkerName,
-              savedBiomarker,
-            ),
+          payload.chart_bounds
+            ? normalizeBiomarkersList(payload.chart_bounds)
+            : replaceBiomarkerByIdentity(biomarkers, meta, savedBiomarker),
         );
         if (payload.unit_mapping?.biomarker_specific) {
           onUnitMappingsLocalChange?.(payload.unit_mapping.biomarker_specific);
@@ -262,7 +240,7 @@ const BiomarkerRow = ({
         >
           <EditModal
             onCancel={closeModalEdit}
-            onSave={(values: any, meta) => onsave(values, meta)}
+            onSave={(values: any) => onsave(values, identityMeta)}
             data={data}
             benchmarkAreaOptions={benchmarkAreaOptions}
             benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
