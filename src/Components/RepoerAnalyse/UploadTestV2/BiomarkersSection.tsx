@@ -656,7 +656,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     }
 
     const catalogMatch = findCatalogMatchForRow(avalibaleBiomarkers, current);
-    const rawValue = String(preferNonEmpty(current.original_value, current.value));
+    const rawValue = String(
+      preferNonEmpty(current.original_value, current.value),
+    );
     const normalizedValue = catalogMatch
       ? normalizeExtractedValueForCatalog(rawValue, catalogMatch)
       : rawValue;

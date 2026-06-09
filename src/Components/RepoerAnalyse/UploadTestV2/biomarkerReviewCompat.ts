@@ -39,7 +39,11 @@ export const inferBiomarkerTypeFromCatalogItem = (item: any) => {
   ) {
     return 'dna';
   }
-  if (['gut health', 'gut', 'microbiome'].some((token) => sourceText.includes(token))) {
+  if (
+    ['gut health', 'gut', 'microbiome'].some((token) =>
+      sourceText.includes(token),
+    )
+  ) {
     return 'gut';
   }
   if (
@@ -62,7 +66,11 @@ export const inferBiomarkerTypeFromCatalogItem = (item: any) => {
   ) {
     return 'urine';
   }
-  if (['stool', 'fecal', 'faecal', 'calprotectin'].some((token) => sourceText.includes(token))) {
+  if (
+    ['stool', 'fecal', 'faecal', 'calprotectin'].some((token) =>
+      sourceText.includes(token),
+    )
+  ) {
     return 'stool';
   }
   if (sourceText.includes('saliva') || sourceText.includes('salivary')) {
@@ -95,7 +103,12 @@ export const ruleReferenceIsNumeric = (thresholds: any): boolean | null => {
   const lowIsNumeric = thresholdValueIsNumeric(low);
   const highIsNumeric = thresholdValueIsNumeric(high);
 
-  if (low !== undefined && low !== null && high !== undefined && high !== null) {
+  if (
+    low !== undefined &&
+    low !== null &&
+    high !== undefined &&
+    high !== null
+  ) {
     if (lowIsNumeric && highIsNumeric) return true;
     if (!lowIsNumeric && !highIsNumeric) return false;
     return null;
@@ -105,7 +118,9 @@ export const ruleReferenceIsNumeric = (thresholds: any): boolean | null => {
   return null;
 };
 
-export const extractCategoricalValuesFromThresholds = (thresholds: any): string[] => {
+export const extractCategoricalValuesFromThresholds = (
+  thresholds: any,
+): string[] => {
   const values = new Set<string>();
   if (!thresholds || typeof thresholds !== 'object') return [];
 
@@ -116,7 +131,11 @@ export const extractCategoricalValuesFromThresholds = (thresholds: any): string[
       ageGroup.forEach((threshold: any) => {
         ['low', 'high'].forEach((key) => {
           const val = threshold?.[key];
-          if (typeof val === 'string' && val.trim() && !thresholdValueIsNumeric(val)) {
+          if (
+            typeof val === 'string' &&
+            val.trim() &&
+            !thresholdValueIsNumeric(val)
+          ) {
             values.add(val.trim());
           }
         });
@@ -191,8 +210,8 @@ export const inferSystemValueKind = (valueType?: string, unit?: string) => {
     return 'string';
   }
   if (
-    ['number', 'numeric', 'integer', 'float', 'decimal', 'range'].some((token) =>
-      type.includes(token),
+    ['number', 'numeric', 'integer', 'float', 'decimal', 'range'].some(
+      (token) => type.includes(token),
     )
   ) {
     return 'numeric';
@@ -209,7 +228,9 @@ const inferMeasurementContext = (name: string, unit: string) => {
   const nameText = normalizeKey(name);
   if (unitText.includes('%') || nameText.includes('%')) return 'percent';
   if (
-    /x10[e^]?\d+\/l|10\^?\d+\/l|cells?\/?u[lµμ]|\/hpf|\/lpf|hpf|lpf/i.test(unitText)
+    /x10[e^]?\d+\/l|10\^?\d+\/l|cells?\/?u[lµμ]|\/hpf|\/lpf|hpf|lpf/i.test(
+      unitText,
+    )
   ) {
     return 'absolute_count';
   }
@@ -225,7 +246,10 @@ const isMeasurementContextCompatible = (
   systemName?: string,
 ) => {
   const extractedContext = inferMeasurementContext('', extractedUnit);
-  const systemContext = inferMeasurementContext(systemName || '', systemUnit || '');
+  const systemContext = inferMeasurementContext(
+    systemName || '',
+    systemUnit || '',
+  );
   if (extractedContext === 'generic' || systemContext === 'generic') {
     return true;
   }
@@ -243,7 +267,11 @@ export const isValueTypeCompatible = (
   const systemKind = inferSystemValueKind(systemValueType, systemUnit);
 
   if (extractedKind === 'string' && isMicroscopyUnit(systemUnit)) {
-    return isMeasurementContextCompatible(extractedUnit, systemUnit, systemName);
+    return isMeasurementContextCompatible(
+      extractedUnit,
+      systemUnit,
+      systemName,
+    );
   }
 
   if (extractedKind === 'string' && systemKind === 'string') {
@@ -251,7 +279,11 @@ export const isValueTypeCompatible = (
   }
 
   if (extractedKind === 'unknown' || systemKind === 'unknown') {
-    return isMeasurementContextCompatible(extractedUnit, systemUnit, systemName);
+    return isMeasurementContextCompatible(
+      extractedUnit,
+      systemUnit,
+      systemName,
+    );
   }
 
   return (
@@ -352,7 +384,9 @@ export const fuzzyMatchCategoricalValue = (
 };
 
 export const getCatalogCategoricalValues = (item: any): string[] => {
-  const fromThresholds = extractCategoricalValuesFromThresholds(item?.thresholds);
+  const fromThresholds = extractCategoricalValuesFromThresholds(
+    item?.thresholds,
+  );
   if (fromThresholds.length) return fromThresholds;
   return Array.isArray(item?.categorical_values) ? item.categorical_values : [];
 };
@@ -382,7 +416,9 @@ export const findCompatibleCatalogOptions = (catalog: any[], row: any) => {
   const extractedUnit = trim(row?.original_unit ?? row?.unit);
 
   return catalog.filter((option) => {
-    if (normalizeKey(option?.biomarker_type || 'blood') !== normalizeKey(rowType)) {
+    if (
+      normalizeKey(option?.biomarker_type || 'blood') !== normalizeKey(rowType)
+    ) {
       return false;
     }
     return isValueTypeCompatible(
@@ -474,7 +510,10 @@ export const resolveRowForReview = (catalog: any[], row: any) => {
   if (!catalogMatch) return next;
 
   const value = preferNonEmpty(next.original_value, next.value);
-  const normalizedValue = normalizeExtractedValueForCatalog(value, catalogMatch);
+  const normalizedValue = normalizeExtractedValueForCatalog(
+    value,
+    catalogMatch,
+  );
   if (normalizedValue !== trim(value)) {
     next = { ...next, original_value: normalizedValue };
   }

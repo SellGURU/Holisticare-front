@@ -186,7 +186,9 @@ const CustomBiomarkers = () => {
       );
     const unitMappingsChanged =
       migratedUnitMappings.length !== unitMappings.length ||
-      migratedUnitMappings.some((entry, index) => entry !== unitMappings[index]);
+      migratedUnitMappings.some(
+        (entry, index) => entry !== unitMappings[index],
+      );
 
     if (!biomarkerMappingsChanged && !unitMappingsChanged) {
       return;

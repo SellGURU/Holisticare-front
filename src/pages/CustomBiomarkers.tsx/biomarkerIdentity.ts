@@ -37,7 +37,10 @@ const TYPE_ALIASES: Record<string, string> = {
 
 /** Match backend `_normalize_biomarker_type` so identity keys stay in sync. */
 export const normalizeBiomarkerType = (value: unknown) => {
-  const cleaned = trim(value).toLowerCase().replace(/ /g, '_').replace(/-/g, '_');
+  const cleaned = trim(value)
+    .toLowerCase()
+    .replace(/ /g, '_')
+    .replace(/-/g, '_');
   const normalized = TYPE_ALIASES[cleaned] || cleaned;
   return BIOMARKER_TYPE_OPTIONS.includes(normalized) ? normalized : 'blood';
 };
