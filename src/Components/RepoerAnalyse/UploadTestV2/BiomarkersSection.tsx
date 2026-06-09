@@ -373,10 +373,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     const resolved = biomarkers.map((row) =>
       resolveRowForReview(avalibaleBiomarkers, row),
     );
-    const { rows: deduped, indexMap, removedCount } = dedupeReviewBiomarkerRows(
-      resolved,
-      avalibaleBiomarkers,
-    );
+    const {
+      rows: deduped,
+      indexMap,
+      removedCount,
+    } = dedupeReviewBiomarkerRows(resolved, avalibaleBiomarkers);
 
     if (
       removedCount > 0 ||
@@ -389,7 +390,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       }
       onChange(deduped);
     }
-  }, [avalibaleBiomarkers, biomarkerResolutionSignature, onChange, setrowErrors]);
+  }, [
+    avalibaleBiomarkers,
+    biomarkerResolutionSignature,
+    onChange,
+    setrowErrors,
+  ]);
 
   // ── Suggestions state (keyed by stable row id, not biomarker name) ─────────
   const [suggestions, setSuggestions] = useState<
@@ -649,9 +655,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       avalibaleBiomarkers,
       current,
     );
-    const biomarkerAllowed = compatibleOptions.some((option) =>
-      normalizeBiomarkerNameForMatch(option.biomarker) ===
-      normalizeBiomarkerNameForMatch(current.biomarker),
+    const biomarkerAllowed = compatibleOptions.some(
+      (option) =>
+        normalizeBiomarkerNameForMatch(option.biomarker) ===
+        normalizeBiomarkerNameForMatch(current.biomarker),
     );
     if (!String(current.biomarker || '').trim() || !biomarkerAllowed) {
       if (index !== -1) {

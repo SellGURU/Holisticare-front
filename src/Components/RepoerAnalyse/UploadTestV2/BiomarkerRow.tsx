@@ -191,9 +191,10 @@ export default function BiomarkerRow({
     }, []);
   const isCurrentSystemAllowed =
     !biomarker.biomarker ||
-    compatibleSystemOptions.some((option) =>
-      normalizeBiomarkerNameForMatch(option.biomarker) ===
-      normalizeBiomarkerNameForMatch(biomarker.biomarker),
+    compatibleSystemOptions.some(
+      (option) =>
+        normalizeBiomarkerNameForMatch(option.biomarker) ===
+        normalizeBiomarkerNameForMatch(biomarker.biomarker),
     );
 
   const effectiveSuggestions: BiomarkerSuggestion[] = (() => {

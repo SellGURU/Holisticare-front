@@ -6,7 +6,9 @@ const normalizeKey = (value: unknown) => trim(value).toLowerCase();
 
 /** Match HbA1c, Hb A1c, and similar spacing variants to the same catalog row. */
 export const normalizeBiomarkerNameForMatch = (value: unknown) =>
-  normalizeKey(value).replace(/\s+/g, '').replace(/[^a-z0-9+]/g, '');
+  normalizeKey(value)
+    .replace(/\s+/g, '')
+    .replace(/[^a-z0-9+]/g, '');
 
 const resolveRowCatalogNameKey = (row: any) => {
   const candidates = [
@@ -23,7 +25,8 @@ const resolveRowCatalogNameKey = (row: any) => {
 };
 
 const catalogNamesMatch = (left: unknown, right: unknown) =>
-  normalizeBiomarkerNameForMatch(left) === normalizeBiomarkerNameForMatch(right);
+  normalizeBiomarkerNameForMatch(left) ===
+  normalizeBiomarkerNameForMatch(right);
 
 const preferNonEmpty = (...values: unknown[]) => {
   const found = values.find(
