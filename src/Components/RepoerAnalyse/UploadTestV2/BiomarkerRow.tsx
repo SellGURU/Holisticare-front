@@ -261,15 +261,23 @@ export default function BiomarkerRow({
       option.biomarker,
     ),
   );
-  const compatibleSuggestions = suggestionMatches.filter((suggestion) =>
-    isValueTypeCompatible(
-      valueText,
-      extractedUnitText,
-      suggestion.value_type,
-      suggestion.unit,
-      suggestion.system_biomarker,
-    ),
-  );
+  const compatibleSuggestions = suggestionMatches
+    .filter((suggestion) =>
+      isValueTypeCompatible(
+        valueText,
+        extractedUnitText,
+        suggestion.value_type,
+        suggestion.unit,
+        suggestion.system_biomarker,
+      ),
+    )
+    .reduce<BiomarkerSuggestion[]>((acc, suggestion) => {
+      const key = suggestion.system_biomarker.toLowerCase();
+      if (!acc.some((item) => item.system_biomarker.toLowerCase() === key)) {
+        acc.push(suggestion);
+      }
+      return acc;
+    }, []);
   const isCurrentSystemAllowed =
     !biomarker.biomarker ||
     compatibleSystemOptions.some(
@@ -295,9 +303,7 @@ export default function BiomarkerRow({
       !hasBiomarkerError &&
       !list.some(
         (s) =>
-          s.system_biomarker.toLowerCase() === currentBiomarker.toLowerCase() &&
-          String(s.unit || '').toLowerCase() ===
-            String(currentUnit || '').toLowerCase(),
+          s.system_biomarker.toLowerCase() === currentBiomarker.toLowerCase(),
       )
     ) {
       list.unshift({
@@ -431,8 +437,14 @@ export default function BiomarkerRow({
       },
     ];
   }, [mappingAliases, pdfBiomarkerName, systemBiomarkerName]);
+  const namesAlreadyMatch =
+    pdfBiomarkerName.length > 0 &&
+    systemBiomarkerName.length > 0 &&
+    pdfBiomarkerName.toLowerCase() === systemBiomarkerName.toLowerCase();
   const showSaveButton =
-    systemBiomarkerName.length > 0 && (isChanged || isMapped);
+    systemBiomarkerName.length > 0 &&
+    (isChanged || isMapped) &&
+    !namesAlreadyMatch;
   const saveTooltipId = `save-mapping-${biomarker.biomarker_id || index}`;
 
   const handleSaveMapping = async () => {
@@ -461,6 +473,12 @@ export default function BiomarkerRow({
       } finally {
         setIsSavingMapping(false);
       }
+      return;
+    }
+
+    if (namesAlreadyMatch) {
+      setIsMapped(true);
+      setIsChenged(false);
       return;
     }
 
