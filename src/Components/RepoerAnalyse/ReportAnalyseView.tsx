@@ -729,11 +729,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         if (res.data.exists) {
           setIsHtmlReportExists(true);
         } else {
-          setTimeout(pollHtmlReport, 10000);
+          setIsHtmlReportExists(false);
+          setTimeout(pollHtmlReport, 3000);
         }
       })
       .catch(() => {
-        setTimeout(pollHtmlReport, 10000);
+        setIsHtmlReportExists(false);
+        setTimeout(pollHtmlReport, 3000);
       });
   };
   useEffect(() => {
