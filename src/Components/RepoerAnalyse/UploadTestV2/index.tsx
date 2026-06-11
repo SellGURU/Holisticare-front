@@ -808,6 +808,14 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     biomarkers: any[],
     fallbackIndex: number,
   ) => {
+    if (
+      Number.isInteger(item?.index) &&
+      item.index >= 0 &&
+      item.index < biomarkers.length
+    ) {
+      return item.index;
+    }
+
     const errorName = String(item?.extracted_biomarker || item?.biomarker || '')
       .trim()
       .toLowerCase();
@@ -872,7 +880,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       if (nameOnlyMatchIndexes.length === 1) return nameOnlyMatchIndexes[0];
     }
 
-    return Number.isInteger(item?.index) ? item.index : fallbackIndex;
+    return fallbackIndex;
   };
 
   const applyValidationErrors = (
