@@ -64,7 +64,6 @@ const inferBiomarkerTypeFromLabType = (labType?: string) => {
   return 'blood';
 };
 
-
 const enrichExtractedRowForReview = (row: any, labType?: string) => {
   const withNames = enrichBiomarkerNameFieldsOnLoad(row);
   return {
@@ -81,16 +80,8 @@ const enrichExtractedRowForReview = (row: any, labType?: string) => {
 
 const sortReviewBiomarkerRows = (rows: any[]) =>
   rows.slice().sort((a: any, b: any) => {
-    const nameA = (
-      a.original_biomarker_name ||
-      a.biomarker ||
-      ''
-    ).toString();
-    const nameB = (
-      b.original_biomarker_name ||
-      b.biomarker ||
-      ''
-    ).toString();
+    const nameA = (a.original_biomarker_name || a.biomarker || '').toString();
+    const nameB = (b.original_biomarker_name || b.biomarker || '').toString();
     return nameA.localeCompare(nameB, undefined, {
       sensitivity: 'base',
     });
@@ -808,10 +799,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     return `${name}${context ? ` (${context})` : ''}: ${message}`;
   };
 
-  const resolveValidationErrorRowIndex = (
-    item: any,
-    biomarkers: any[],
-  ) => {
+  const resolveValidationErrorRowIndex = (item: any, biomarkers: any[]) => {
     const idx = Number(item?.index);
     if (Number.isInteger(idx) && idx >= 0 && idx < biomarkers.length) {
       return idx;

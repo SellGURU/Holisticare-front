@@ -676,7 +676,9 @@ const reviewRowStableKey = (row: any, index: number) => {
   if (biomarkerId) {
     return `id:${biomarkerId}`;
   }
-  const name = String(row?.original_biomarker_name || row?.biomarker || '').trim();
+  const name = String(
+    row?.original_biomarker_name || row?.biomarker || '',
+  ).trim();
   const value = String(row?.original_value ?? row?.value ?? '').trim();
   const unit = String(row?.original_unit ?? row?.unit ?? '').trim();
   return `idx:${index}|${name}|${value}|${unit}`;
