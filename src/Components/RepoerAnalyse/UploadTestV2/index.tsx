@@ -174,14 +174,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       ).toString();
     };
 
-    const preferNonEmpty = (...values: any[]) => {
-      const found = values.find(
-        (value) =>
-          value !== undefined && value !== null && String(value).trim() !== '',
-      );
-      return found ?? '';
-    };
-
     const validateRowsBeforeDisplay = async (
       biomarkers: any[],
       labType: string,
