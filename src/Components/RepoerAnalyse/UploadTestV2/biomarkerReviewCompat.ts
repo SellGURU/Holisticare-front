@@ -477,13 +477,18 @@ export const findCatalogMatchForRow = (catalog: any[], row: any) => {
 };
 
 export const resolveSystemBiomarkerForRow = (catalog: any[], row: any) => {
-  const currentNameKey = resolveRowCatalogNameKey(row);
   const rowType = inferRowBiomarkerType(row);
   let next = {
     ...row,
     biomarker_type: trim(row?.biomarker_type) || rowType,
   };
 
+  // Keep backend-resolved system biomarker; only infer from catalog when empty.
+  if (trim(next?.biomarker)) {
+    return next;
+  }
+
+  const currentNameKey = resolveRowCatalogNameKey(row);
   if (!currentNameKey) return next;
 
   const catalogTypedMatches = catalog.filter(
