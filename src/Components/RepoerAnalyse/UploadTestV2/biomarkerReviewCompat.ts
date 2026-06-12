@@ -670,3 +670,42 @@ export const remapRowErrorsAfterDedup = (
   });
   return next;
 };
+
+const reviewRowStableKey = (row: any, index: number) => {
+  const biomarkerId = String(row?.biomarker_id || '').trim();
+  if (biomarkerId) {
+    return `id:${biomarkerId}`;
+  }
+  const name = String(row?.original_biomarker_name || row?.biomarker || '').trim();
+  const value = String(row?.original_value ?? row?.value ?? '').trim();
+  const unit = String(row?.original_unit ?? row?.unit ?? '').trim();
+  return `idx:${index}|${name}|${value}|${unit}`;
+};
+
+/** Remap rowErrors after sort/reorder; keys follow sourceRows indices. */
+export const remapRowErrorsAfterReorder = (
+  errors: Record<number, string>,
+  sourceRows: any[],
+  targetRows: any[],
+) => {
+  const targetIndexByKey = new Map<string, number>();
+  targetRows.forEach((row, index) => {
+    targetIndexByKey.set(reviewRowStableKey(row, index), index);
+  });
+
+  const next: Record<number, string> = {};
+  Object.entries(errors).forEach(([key, value]) => {
+    const sourceIndex = Number(key);
+    const sourceRow = sourceRows[sourceIndex];
+    if (!sourceRow) {
+      return;
+    }
+    const targetIndex = targetIndexByKey.get(
+      reviewRowStableKey(sourceRow, sourceIndex),
+    );
+    if (targetIndex !== undefined) {
+      next[targetIndex] = value;
+    }
+  });
+  return next;
+};

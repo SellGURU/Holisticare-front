@@ -15,7 +15,7 @@ import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
 } from './biomarkerNameFields';
-import { dedupeReviewBiomarkerRows } from './biomarkerReviewCompat';
+import { remapRowErrorsAfterReorder } from './biomarkerReviewCompat';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -63,6 +63,38 @@ const inferBiomarkerTypeFromLabType = (labType?: string) => {
   if (normalized === 'dna') return 'dna';
   return 'blood';
 };
+
+
+const enrichExtractedRowForReview = (row: any, labType?: string) => {
+  const withNames = enrichBiomarkerNameFieldsOnLoad(row);
+  return {
+    ...withNames,
+    biomarker_type:
+      withNames.biomarker_type || inferBiomarkerTypeFromLabType(labType),
+    original_value: preferNonEmpty(withNames.original_value, withNames.value),
+    original_unit:
+      withNames.original_unit !== undefined
+        ? withNames.original_unit
+        : withNames.unit,
+  };
+};
+
+const sortReviewBiomarkerRows = (rows: any[]) =>
+  rows.slice().sort((a: any, b: any) => {
+    const nameA = (
+      a.original_biomarker_name ||
+      a.biomarker ||
+      ''
+    ).toString();
+    const nameB = (
+      b.original_biomarker_name ||
+      b.biomarker ||
+      ''
+    ).toString();
+    return nameA.localeCompare(nameB, undefined, {
+      sensitivity: 'base',
+    });
+  });
 
 interface UploadTestProps {
   memberId: any;
@@ -249,43 +281,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         return;
       }
 
-      const sorted = (data.extracted_biomarkers || [])
-        .map((b: any) => {
-          const withNames = enrichBiomarkerNameFieldsOnLoad(b);
-          return {
-            ...withNames,
-            biomarker_type:
-              withNames.biomarker_type ||
-              inferBiomarkerTypeFromLabType(data.lab_type),
-            original_value: preferNonEmpty(
-              withNames.original_value,
-              withNames.value,
-            ),
-            original_unit:
-              withNames.original_unit !== undefined
-                ? withNames.original_unit
-                : withNames.unit,
-          };
-        })
-        .slice()
-        .sort((a: any, b: any) => {
-          const nameA = (
-            a.original_biomarker_name ||
-            a.biomarker ||
-            ''
-          ).toString();
-          const nameB = (
-            b.original_biomarker_name ||
-            b.biomarker ||
-            ''
-          ).toString();
-          return nameA.localeCompare(nameB, undefined, {
-            sensitivity: 'base',
-          });
-        });
-
-      const { rows: reviewBiomarkers, removedCount: removedDuplicateCount } =
-        dedupeReviewBiomarkerRows(sorted);
+      // Keep backend row order for validation indices; sort only for display.
+      const enrichedRows = (data.extracted_biomarkers || []).map((b: any) =>
+        enrichExtractedRowForReview(b, data.lab_type),
+      );
+      const displayRows = sortReviewBiomarkerRows(enrichedRows);
 
       // Stop polling + show biomarkers immediately
       if (data.extracted_biomarkers && data.extracted_biomarkers.length > 0) {
@@ -295,23 +295,28 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         await showReviewLoading();
 
         if (data.validation?.ready) {
-          applyValidationErrors(data.validation, reviewBiomarkers);
+          const errorMaps = buildValidationErrorsMaps(
+            data.validation,
+            enrichedRows,
+            addedBiomarkers,
+          );
+          setRowErrors(
+            remapRowErrorsAfterReorder(
+              errorMaps.modifiedErrors,
+              enrichedRows,
+              displayRows,
+            ),
+          );
+          setAddedRowErrors(errorMaps.addedErrors);
         } else {
           await validateRowsBeforeDisplay(
-            reviewBiomarkers,
+            displayRows,
             data.lab_type || 'more_info',
             data.date_of_test || null,
           );
         }
 
-        setExtractedBiomarkers(reviewBiomarkers);
-        if (removedDuplicateCount > 0) {
-          setReviewSummary((prev: any) => ({
-            ...(prev || data.summary || {}),
-            biomarker_count: reviewBiomarkers.length,
-            duplicate_count: 0,
-          }));
-        }
+        setExtractedBiomarkers(displayRows);
         setUploadPhase(data.status || 'review_ready');
         setbiomarkerLoading(false);
         if (data.is_edited) {
@@ -806,14 +811,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const resolveValidationErrorRowIndex = (
     item: any,
     biomarkers: any[],
-    fallbackIndex: number,
   ) => {
-    if (
-      Number.isInteger(item?.index) &&
-      item.index >= 0 &&
-      item.index < biomarkers.length
-    ) {
-      return item.index;
+    const idx = Number(item?.index);
+    if (Number.isInteger(idx) && idx >= 0 && idx < biomarkers.length) {
+      return idx;
     }
 
     const errorName = String(item?.extracted_biomarker || item?.biomarker || '')
@@ -880,12 +881,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       if (nameOnlyMatchIndexes.length === 1) return nameOnlyMatchIndexes[0];
     }
 
-    return fallbackIndex;
+    return -1;
   };
 
-  const applyValidationErrors = (
+  const buildValidationErrorsMaps = (
     detail: any,
-    contextBiomarkers = extractedBiomarkers,
+    contextBiomarkers: any[],
+    contextAddedBiomarkers: any[],
   ) => {
     let parsedDetail: any = {};
 
@@ -915,23 +917,21 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
     const modifiedItems = parsedDetail.modified_biomarkers_list || [];
     const modifiedUnitErrorRows = new Set<number>();
-    modifiedItems.forEach((item: any, fallbackIndex: number) => {
-      const rowIndex = resolveValidationErrorRowIndex(
-        item,
-        contextBiomarkers,
-        fallbackIndex,
-      );
+    modifiedItems.forEach((item: any) => {
+      const rowIndex = resolveValidationErrorRowIndex(item, contextBiomarkers);
+      if (rowIndex < 0) {
+        return;
+      }
       if (isUnitError(item)) {
         modifiedUnitErrorRows.add(rowIndex);
       }
     });
 
-    modifiedItems.forEach((item: any, fallbackIndex: number) => {
-      const rowIndex = resolveValidationErrorRowIndex(
-        item,
-        contextBiomarkers,
-        fallbackIndex,
-      );
+    modifiedItems.forEach((item: any) => {
+      const rowIndex = resolveValidationErrorRowIndex(item, contextBiomarkers);
+      if (rowIndex < 0) {
+        return;
+      }
       if (modifiedUnitErrorRows.has(rowIndex) && !isUnitError(item)) {
         return;
       }
@@ -944,33 +944,49 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
     const addedItems = parsedDetail.added_biomarkers_list || [];
     const addedUnitErrorRows = new Set<number>();
-    addedItems.forEach((item: any, fallbackIndex: number) => {
+    addedItems.forEach((item: any) => {
       const rowIndex = resolveValidationErrorRowIndex(
         item,
-        addedBiomarkers,
-        fallbackIndex,
+        contextAddedBiomarkers,
       );
+      if (rowIndex < 0) {
+        return;
+      }
       if (isUnitError(item)) {
         addedUnitErrorRows.add(rowIndex);
       }
     });
 
-    addedItems.forEach((item: any, fallbackIndex: number) => {
+    addedItems.forEach((item: any) => {
       const rowIndex = resolveValidationErrorRowIndex(
         item,
-        addedBiomarkers,
-        fallbackIndex,
+        contextAddedBiomarkers,
       );
+      if (rowIndex < 0) {
+        return;
+      }
       if (addedUnitErrorRows.has(rowIndex) && !isUnitError(item)) {
         return;
       }
       addedErrors[rowIndex] = formatValidationErrorForDisplay(
         item,
-        addedBiomarkers,
+        contextAddedBiomarkers,
         rowIndex,
       );
     });
 
+    return { modifiedErrors, addedErrors };
+  };
+
+  const applyValidationErrors = (
+    detail: any,
+    contextBiomarkers = extractedBiomarkers,
+  ) => {
+    const { modifiedErrors, addedErrors } = buildValidationErrorsMaps(
+      detail,
+      contextBiomarkers,
+      addedBiomarkers,
+    );
     setRowErrors(modifiedErrors);
     setAddedRowErrors(addedErrors);
   };
