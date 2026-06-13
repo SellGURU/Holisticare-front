@@ -282,6 +282,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               </div>
             ) : uploadedFile || fileType !== 'more_info' ? (
               <BiomarkersSection
+                isEditMode={isEditMode}
                 rowErrors={rowErrors}
                 setrowErrors={setrowErrors}
                 loading={loading}

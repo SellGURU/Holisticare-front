@@ -7,6 +7,7 @@ import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import Toggle from '../Boxs/Toggle';
 import BiomarkerRow from './BiomarkerRow';
 import ProgressLoading from './ProgressLoading';
+import Circleloader from '../../CircleLoader';
 import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
 import CreateBiomarkerModal from './CreateBiomarkerModal';
@@ -98,6 +99,7 @@ interface BiomarkersSectionProps {
   showOnlyErrors: boolean;
   setShowOnlyErrors: (showOnlyErrors: boolean) => void;
   progressBiomarkerUpload: number;
+  isEditMode?: boolean;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -115,6 +117,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   showOnlyErrors,
   setShowOnlyErrors,
   progressBiomarkerUpload,
+  isEditMode,
 }) => {
   const isDemo = useIsDemo();
   // const [changedRows, setChangedRows] = useState<string[]>([]);
@@ -621,6 +624,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               {
                 ...b,
                 ...result.data,
+                // Keep the row's stable id; the standardize response derives
+                // biomarker_id from content and could otherwise collide with
+                // another row sharing a base name (e.g. "Neutrophils" vs
+                // "Neutrophils %") and edit both rows at once.
+                biomarker_id: id,
                 review_error_handled: hadExistingError,
               },
               prior,
@@ -827,6 +835,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="-mt-5 text-red-500">
               {uploadedFile?.errorMessage ||
                 'Failed to extract biomarkers from this file. Please try uploading it again.'}
+            </div>
+          </div>
+        ) : isEditMode && loading && uploadedFile?.status !== 'uploading' ? (
+          <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] w-full flex-col items-center justify-center gap-4 px-4 text-center">
+            <Circleloader />
+            <div className="text-xs font-medium text-Text-Primary">
+              Loading biomarkers…
+            </div>
+            <div className="text-[10px] text-Text-Quadruple">
+              Fetching the saved data for this report.
             </div>
           </div>
         ) : loading || uploadedFile?.status === 'uploading' ? (

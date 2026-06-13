@@ -14,6 +14,7 @@ import useIsDemo from '../../../hooks/useIsDemo';
 import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
+  ensureUniqueBiomarkerIds,
 } from './biomarkerNameFields';
 // import SpinnerLoader from '../../SpinnerLoader';
 
@@ -248,7 +249,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         return;
       }
 
-      const sorted = (data.extracted_biomarkers || [])
+      const sorted = ensureUniqueBiomarkerIds(
+        (data.extracted_biomarkers || [])
         .map((b: any) => {
           const withNames = enrichBiomarkerNameFieldsOnLoad(b);
           return {
@@ -281,7 +283,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           return nameA.localeCompare(nameB, undefined, {
             sensitivity: 'base',
           });
-        });
+        }),
+      );
 
       // Stop polling + show biomarkers immediately
       if (data.extracted_biomarkers && data.extracted_biomarkers.length > 0) {

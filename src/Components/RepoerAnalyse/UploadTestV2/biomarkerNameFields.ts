@@ -71,6 +71,38 @@ export const pinBiomarkerNameFields = <T extends BiomarkerNameRow>(
     resolveNormalizedBiomarkerName(prior),
 });
 
+/**
+ * Guarantee every row has a stable, unique `biomarker_id`.
+ *
+ * The backend derives `biomarker_id` from biomarker content, so two distinct
+ * rows that share a base name (e.g. "Neutrophils" and "Neutrophils %") — or
+ * rows that arrive without an id — can collide. Since every row edit matches by
+ * `biomarker_id`, a collision causes editing one row to mutate the other.
+ * Here we keep the backend id when it is unique and assign a unique fallback id
+ * otherwise, so each row is always addressable on its own.
+ */
+export const ensureUniqueBiomarkerIds = <T extends { biomarker_id?: string }>(
+  rows: T[],
+): T[] => {
+  const seen = new Set<string>();
+  return rows.map((row, index) => {
+    const provided = trim(row.biomarker_id);
+    let id = provided;
+    if (!id || seen.has(id)) {
+      const base = provided || `biomarker-${index}`;
+      let candidate = `${base}-${index}`;
+      let suffix = index;
+      while (seen.has(candidate)) {
+        suffix += 1;
+        candidate = `${base}-${suffix}`;
+      }
+      id = candidate;
+    }
+    seen.add(id);
+    return row.biomarker_id === id ? row : { ...row, biomarker_id: id };
+  });
+};
+
 /** Variation strings to persist as extracted → system mappings. */
 export const collectMappingNameVariations = (
   row: BiomarkerNameRow,
