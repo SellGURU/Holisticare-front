@@ -251,39 +251,39 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
       const sorted = ensureUniqueBiomarkerIds(
         (data.extracted_biomarkers || [])
-        .map((b: any) => {
-          const withNames = enrichBiomarkerNameFieldsOnLoad(b);
-          return {
-            ...withNames,
-            biomarker_type:
-              withNames.biomarker_type ||
-              inferBiomarkerTypeFromLabType(data.lab_type),
-            original_value: preferNonEmpty(
-              withNames.original_value,
-              withNames.value,
-            ),
-            original_unit:
-              withNames.original_unit !== undefined
-                ? withNames.original_unit
-                : withNames.unit,
-          };
-        })
-        .slice()
-        .sort((a: any, b: any) => {
-          const nameA = (
-            a.original_biomarker_name ||
-            a.biomarker ||
-            ''
-          ).toString();
-          const nameB = (
-            b.original_biomarker_name ||
-            b.biomarker ||
-            ''
-          ).toString();
-          return nameA.localeCompare(nameB, undefined, {
-            sensitivity: 'base',
-          });
-        }),
+          .map((b: any) => {
+            const withNames = enrichBiomarkerNameFieldsOnLoad(b);
+            return {
+              ...withNames,
+              biomarker_type:
+                withNames.biomarker_type ||
+                inferBiomarkerTypeFromLabType(data.lab_type),
+              original_value: preferNonEmpty(
+                withNames.original_value,
+                withNames.value,
+              ),
+              original_unit:
+                withNames.original_unit !== undefined
+                  ? withNames.original_unit
+                  : withNames.unit,
+            };
+          })
+          .slice()
+          .sort((a: any, b: any) => {
+            const nameA = (
+              a.original_biomarker_name ||
+              a.biomarker ||
+              ''
+            ).toString();
+            const nameB = (
+              b.original_biomarker_name ||
+              b.biomarker ||
+              ''
+            ).toString();
+            return nameA.localeCompare(nameB, undefined, {
+              sensitivity: 'base',
+            });
+          }),
       );
 
       // Stop polling + show biomarkers immediately
