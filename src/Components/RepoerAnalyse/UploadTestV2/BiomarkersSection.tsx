@@ -23,6 +23,19 @@ import {
   resolveExactBiomarkerName,
   resolveNormalizedBiomarkerName,
 } from './biomarkerNameFields';
+import {
+  extractCategoricalValuesFromThresholds,
+  findCatalogMatchForRow,
+  findCompatibleCatalogOptions,
+  inferBiomarkerTypeFromCatalogItem,
+  inferCatalogValueType,
+  isTextValueWithoutUnit,
+  dedupeReviewBiomarkerRows,
+  normalizeBiomarkerNameForMatch,
+  normalizeExtractedValueForCatalog,
+  remapRowErrorsAfterDedup,
+  resolveRowForReview,
+} from './biomarkerReviewCompat';
 
 const DEFAULT_BIOMARKER_TYPES = [
   'blood',
@@ -43,7 +56,7 @@ const BIOMARKER_TYPE_LABELS: Record<string, string> = {
   other: 'Other',
 };
 const BIOMARKER_ROW_GRID =
-  'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 96px';
+  'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) minmax(108px,1fr)';
 
 const formatBiomarkerTypeLabel = (value: string) =>
   BIOMARKER_TYPE_LABELS[value] ||
@@ -129,11 +142,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const currentRowErrors = rowErrors || {};
   const rowErrorEntries = Object.entries(currentRowErrors);
   const activeErrorCount = rowErrorEntries.length;
-  const isTextValueWithoutUnit = (value: any) => {
-    const text = String(value ?? '').trim();
-    return text.length > 0 && !/\d/.test(text);
-  };
-
   const preferNonEmpty = (...values: any[]) => {
     const found = values.find(
       (value) =>
@@ -304,7 +312,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     const exactOption = avalibaleBiomarkers.find(
       (option) =>
-        option.biomarker.toLowerCase() === biomarkerName &&
+        normalizeBiomarkerNameForMatch(option.biomarker) ===
+          normalizeBiomarkerNameForMatch(biomarkerName) &&
         String(option.unit || '').trim(),
     );
     return String(exactOption?.unit || '').trim();
@@ -320,17 +329,19 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       })
       .catch(() => {});
 
-    BiomarkersApi.getBiomarkersList()
+    BiomarkersApi.getBiomarkersList({ include_all: true })
       .then((res) => {
         const sorted = (Array.isArray(res?.data) ? res.data : [])
           .map((item: any) => ({
             biomarker: String(item?.Biomarker || '').trim(),
             benchmark_area: String(item?.['Benchmark areas'] || '').trim(),
             unit: String(item?.unit || '').trim(),
-            biomarker_type: String(item?.biomarker_type || 'blood').trim(),
-            value_type: String(
-              item?.value_type || item?.type || item?.data_type || '',
-            ).trim(),
+            biomarker_type: inferBiomarkerTypeFromCatalogItem(item),
+            value_type: inferCatalogValueType(item),
+            thresholds: item?.thresholds,
+            categorical_values: extractCategoricalValuesFromThresholds(
+              item?.thresholds,
+            ),
           }))
           .filter((item: BiomarkerOption) => item.biomarker)
           .sort((a: BiomarkerOption, b: BiomarkerOption) => {
@@ -345,6 +356,49 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       })
       .catch(() => {});
   }, []);
+
+  const biomarkerResolutionSignature = useMemo(
+    () =>
+      biomarkers
+        .map(
+          (row) =>
+            `${row.biomarker_id}:${row.biomarker_type || 'blood'}:${row.biomarker || ''}`,
+        )
+        .join('|'),
+    [biomarkers],
+  );
+
+  useEffect(() => {
+    if (!avalibaleBiomarkers.length || !biomarkers.length) {
+      return;
+    }
+
+    const resolved = biomarkers.map((row) =>
+      resolveRowForReview(avalibaleBiomarkers, row),
+    );
+    const {
+      rows: deduped,
+      indexMap,
+      removedCount,
+    } = dedupeReviewBiomarkerRows(resolved, avalibaleBiomarkers);
+
+    if (
+      removedCount > 0 ||
+      JSON.stringify(deduped) !== JSON.stringify(biomarkers)
+    ) {
+      if (removedCount > 0) {
+        setrowErrors((prev: Record<number, string>) =>
+          remapRowErrorsAfterDedup(prev, indexMap),
+        );
+      }
+      onChange(deduped);
+    }
+  }, [
+    avalibaleBiomarkers,
+    biomarkerResolutionSignature,
+    onChange,
+    setrowErrors,
+  ]);
 
   // ── Suggestions state (keyed by stable row id, not biomarker name) ─────────
   const [suggestions, setSuggestions] = useState<
@@ -578,7 +632,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     // Find the index for this biomarker (needed for rowErrors)
     const index = updated.findIndex((b) => b.biomarker_id === id);
 
-    const current = updated.find((b) => b.biomarker_id === id);
+    let current = updated.find((b) => b.biomarker_id === id);
     if (!current) {
       onChange(updated);
       return;
@@ -594,14 +648,55 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       preferNonEmpty(current.original_value, current.value),
     );
     if (textValueDoesNotNeedUnit && current.original_unit !== '') {
-      current.original_unit = '';
+      current = { ...current, original_unit: '' };
       updated = updated.map((b) =>
         b.biomarker_id === id ? { ...b, original_unit: '' } : b,
       );
     }
+
+    const compatibleOptions = findCompatibleCatalogOptions(
+      avalibaleBiomarkers,
+      current,
+    );
+    const biomarkerAllowed = compatibleOptions.some(
+      (option) =>
+        normalizeBiomarkerNameForMatch(option.biomarker) ===
+        normalizeBiomarkerNameForMatch(current.biomarker),
+    );
+    if (!String(current.biomarker || '').trim() || !biomarkerAllowed) {
+      if (index !== -1) {
+        setrowErrors((prev: any) => ({
+          ...prev,
+          [index]: formatRowError(
+            current,
+            'Please select a valid system biomarker for this type and extracted value.',
+          ),
+        }));
+      }
+      updated = updated.map((b) =>
+        b.biomarker_id === id ? { ...b, review_error_handled: false } : b,
+      );
+      onChange(updated);
+      return;
+    }
+
+    const catalogMatch = findCatalogMatchForRow(avalibaleBiomarkers, current);
+    const rawValue = String(
+      preferNonEmpty(current.original_value, current.value),
+    );
+    const normalizedValue = catalogMatch
+      ? normalizeExtractedValueForCatalog(rawValue, catalogMatch)
+      : rawValue;
+    if (normalizedValue !== rawValue) {
+      current = { ...current, original_value: normalizedValue };
+      updated = updated.map((b) =>
+        b.biomarker_id === id ? { ...b, original_value: normalizedValue } : b,
+      );
+    }
+
     const payload = {
       biomarker: current.biomarker,
-      value: String(preferNonEmpty(current.original_value, current.value)),
+      value: normalizedValue,
       unit: textValueDoesNotNeedUnit
         ? ''
         : String(preferNonEmpty(current.original_unit, current.unit) || ''),
@@ -611,6 +706,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           : current.biomarker_type === 'dna'
             ? 'dna'
             : 'more_info',
+      biomarker_type: String(current.biomarker_type || 'blood'),
     };
 
     const hadExistingError = index !== -1 && Boolean(currentRowErrors[index]);
@@ -1024,6 +1120,15 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     ref={tableRef}
                     className="flex-1 min-h-0 overflow-y-auto w-full pb-8 [scrollbar-gutter:stable]"
                   >
+                    <div className="border-b border-Gray-50 bg-[#F8FAFB] px-4 py-2 text-[9px] leading-relaxed text-Text-Secondary">
+                      Use{' '}
+                      <span className="font-medium text-Primary-DeepTeal">
+                        Save
+                      </span>{' '}
+                      to store the PDF name → system biomarker mapping for
+                      future uploads.
+                    </div>
+
                     {/* Table Header */}
                     <div
                       className="grid w-full sticky top-0 z-20 py-2.5 px-4 font-semibold uppercase tracking-wide text-Text-Secondary text-[8px] md:text-[10px] bg-gradient-to-b from-[#EDF3F5] to-[#E4EDF0] border-b border-Gray-100 shadow-[0_1px_2px_rgba(24,39,75,0.06)]"
@@ -1047,8 +1152,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       <div className="text-center" data-tour="extracted-unit">
                         Extracted Unit
                       </div>
-                      <div className="text-center" data-tour="delete-biomarker">
-                        Action
+                      <div
+                        className="text-center leading-tight"
+                        data-tour="delete-biomarker"
+                      >
+                        <span className="block">Actions</span>
+                        <span className="block font-normal normal-case tracking-normal text-[7px] text-Text-Quadruple">
+                          save / delete
+                        </span>
                       </div>
                     </div>
 
@@ -1067,8 +1178,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           );
                         const selectedSystemMeta = avalibaleBiomarkers.find(
                           (option) =>
-                            option.biomarker.toLowerCase() ===
-                              (b.biomarker || '').toLowerCase() &&
+                            normalizeBiomarkerNameForMatch(option.biomarker) ===
+                              normalizeBiomarkerNameForMatch(b.biomarker) &&
                             String(option.biomarker_type || 'blood') ===
                               rowType,
                         );

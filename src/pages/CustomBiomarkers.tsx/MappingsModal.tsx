@@ -1,31 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from 'react';
 import SpinnerLoader from '../../Components/SpinnerLoader';
+import {
+  buildMappingEntryFromBiomarker,
+  buildUnitMappingEntryFromBiomarker,
+  filterUnitMappingsForBiomarker,
+  findBiomarkerMapping,
+  updateBiomarkerMappingsForBiomarker,
+} from './biomarkerIdentity';
 
 interface MappingsModalProps {
   data: any;
+  allBiomarkers: any[];
   unitMappings: any[];
   biomarkerMappings: any[];
+  formatBiomarkerTypeLabel?: (value: string) => string;
   onClose: () => void;
   onUnitMappingsChange?: (entries: any[]) => void;
   onBiomarkerMappingsChange?: (entries: any[]) => void;
 }
 
-const normalize = (value: any) =>
-  String(value || '')
-    .trim()
-    .toLowerCase();
-
 const MappingsModal: React.FC<MappingsModalProps> = ({
   data,
+  allBiomarkers,
   unitMappings,
   biomarkerMappings,
+  formatBiomarkerTypeLabel = (value) => value,
   onClose,
   onUnitMappingsChange,
   onBiomarkerMappingsChange,
 }) => {
   const biomarkerName = data?.Biomarker || '';
   const targetUnit = String(data?.unit || '').trim();
+  const biomarkerTypeLabel = formatBiomarkerTypeLabel(
+    data?.biomarker_type || 'blood',
+  );
+  const panelLabel = String(data?.['Benchmark areas'] || '').trim();
   const [savingMapping, setSavingMapping] = useState(false);
   const [newUnit, setNewUnit] = useState('');
   const [newFactor, setNewFactor] = useState('');
@@ -33,33 +43,25 @@ const MappingsModal: React.FC<MappingsModalProps> = ({
   const [newVariation, setNewVariation] = useState('');
 
   const relevantUnitMappings = useMemo(
-    () =>
-      unitMappings.filter(
-        (mapping) => normalize(mapping?.biomarker) === normalize(biomarkerName),
-      ),
-    [unitMappings, biomarkerName],
+    () => filterUnitMappingsForBiomarker(unitMappings, data, allBiomarkers),
+    [unitMappings, data, allBiomarkers],
   );
 
   const relevantBiomarkerMapping = useMemo(
-    () =>
-      biomarkerMappings.find(
-        (mapping) =>
-          normalize(mapping?.standard_name) === normalize(biomarkerName),
-      ),
-    [biomarkerMappings, biomarkerName],
+    () => findBiomarkerMapping(biomarkerMappings, data, allBiomarkers),
+    [biomarkerMappings, data, allBiomarkers],
   );
 
   const handleAddUnitMapping = () => {
     if (!newUnit.trim()) return;
     setSavingMapping(true);
 
-    const entry = {
-      biomarker: biomarkerName,
+    const entry = buildUnitMappingEntryFromBiomarker(data, {
       unit: newUnit.trim(),
       to_unit: targetUnit,
       conversion_factor: newFactor ? Number(newFactor) : null,
       offset: newOffset ? Number(newOffset) : null,
-    };
+    });
 
     onUnitMappingsChange?.([...unitMappings, entry]);
     setNewUnit('');
@@ -69,62 +71,54 @@ const MappingsModal: React.FC<MappingsModalProps> = ({
   };
 
   const handleRemoveUnitMapping = (localIndex: number) => {
-    let seen = -1;
-    const updated = unitMappings.filter((mapping) => {
-      if (normalize(mapping?.biomarker) !== normalize(biomarkerName)) {
-        return true;
-      }
-      seen += 1;
-      return seen !== localIndex;
-    });
-    onUnitMappingsChange?.(updated);
+    const target = relevantUnitMappings[localIndex];
+    if (!target) return;
+
+    onUnitMappingsChange?.(
+      unitMappings.filter((mapping) => mapping !== target),
+    );
   };
 
   const handleAddVariation = () => {
     const value = newVariation.trim();
     if (!value) return;
 
-    const existing = relevantBiomarkerMapping;
-    if (existing) {
-      const currentVariations = existing.variations || [];
-      const exists = currentVariations.some(
-        (variation: string) => normalize(variation) === normalize(value),
-      );
-      if (exists) {
-        setNewVariation('');
-        return;
-      }
+    const updated = updateBiomarkerMappingsForBiomarker(
+      biomarkerMappings,
+      data,
+      allBiomarkers,
+      (mapping) => {
+        const currentVariations = mapping.variations || [];
+        const exists = currentVariations.some(
+          (variation: string) =>
+            variation.trim().toLowerCase() === value.toLowerCase(),
+        );
+        if (exists) return mapping;
 
-      const updated = biomarkerMappings.map((mapping) =>
-        normalize(mapping?.standard_name) === normalize(biomarkerName)
-          ? { ...mapping, variations: [...currentVariations, value] }
-          : mapping,
-      );
-      onBiomarkerMappingsChange?.(updated);
-    } else {
-      onBiomarkerMappingsChange?.([
-        ...biomarkerMappings,
-        {
-          standard_name: biomarkerName,
-          variations: [biomarkerName, value],
-        },
-      ]);
-    }
+        return {
+          ...buildMappingEntryFromBiomarker(data, currentVariations),
+          variations: [...currentVariations, value],
+        };
+      },
+    );
 
+    onBiomarkerMappingsChange?.(updated);
     setNewVariation('');
   };
 
   const handleRemoveVariation = (variation: string) => {
-    const updated = biomarkerMappings.map((mapping) =>
-      normalize(mapping?.standard_name) === normalize(biomarkerName)
-        ? {
-            ...mapping,
-            variations: (mapping.variations || []).filter(
-              (item: string) => item !== variation,
-            ),
-          }
-        : mapping,
+    const updated = updateBiomarkerMappingsForBiomarker(
+      biomarkerMappings,
+      data,
+      allBiomarkers,
+      (mapping) => ({
+        ...mapping,
+        variations: (mapping.variations || []).filter(
+          (item: string) => item !== variation,
+        ),
+      }),
     );
+
     onBiomarkerMappingsChange?.(updated);
   };
 
@@ -136,7 +130,10 @@ const MappingsModal: React.FC<MappingsModalProps> = ({
             Manage Mappings
           </div>
           <div className="mt-1 text-[10px] text-Text-Secondary truncate">
-            {biomarkerName} {data?.unit ? `- ${data.unit}` : ''}
+            {biomarkerName}
+            {targetUnit ? ` · ${targetUnit}` : ' · no unit'}
+            {panelLabel ? ` · ${panelLabel}` : ''}
+            {` · ${biomarkerTypeLabel}`}
           </div>
         </div>
         <button
@@ -176,7 +173,7 @@ const MappingsModal: React.FC<MappingsModalProps> = ({
               </div>
               {relevantUnitMappings.map((mapping, index) => (
                 <div
-                  key={`${mapping.unit}-${index}`}
+                  key={`${mapping.unit}-${mapping.to_unit}-${index}`}
                   className="grid grid-cols-[1fr_1fr_90px_80px_52px] items-center gap-2 border-t border-Gray-50 px-3 py-2 text-[11px]"
                 >
                   <span className="font-mono text-Text-Primary">
@@ -263,7 +260,7 @@ const MappingsModal: React.FC<MappingsModalProps> = ({
                 Name Variations
               </div>
               <div className="text-[10px] text-Text-Secondary">
-                Alternate names that should map to this biomarker.
+                Alternate names that should map to this specific biomarker row.
               </div>
             </div>
             <span className="rounded-full bg-[#F4F7F7] px-2 py-1 text-[10px] text-Text-Secondary">
@@ -294,7 +291,7 @@ const MappingsModal: React.FC<MappingsModalProps> = ({
             </div>
           ) : (
             <div className="mb-3 rounded-xl bg-[#F8FAFA] px-3 py-3 text-center text-[11px] text-Text-Secondary">
-              No name variations for this biomarker.
+              No name variations for this biomarker yet.
             </div>
           )}
 

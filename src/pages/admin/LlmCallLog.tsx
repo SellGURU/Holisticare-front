@@ -27,6 +27,10 @@ interface LlmCallEntry {
   error_message: string | null;
   duration_ms: number | null;
   model: string | null;
+  prompt_key?: string | null;
+  category?: string | null;
+  source?: string | null;
+  log_source?: string | null;
 }
 
 type SummarySortKey =
@@ -42,6 +46,7 @@ interface LlmCallFilters {
   clinicIdFilter: string;
   patientIdFilter: string;
   modelFilter: string;
+  categoryFilter: string;
   dateFrom: string;
   dateTo: string;
 }
@@ -56,9 +61,67 @@ const EMPTY_FILTERS: LlmCallFilters = {
   clinicIdFilter: '',
   patientIdFilter: '',
   modelFilter: '',
+  categoryFilter: '',
   dateFrom: '',
   dateTo: '',
 };
+
+const FRIENDLY_FUNCTION_LABELS: Record<string, string> = {
+  'ocr.detect_file_type': 'OCR: Detect file type',
+  'ocr.document_analysis': 'OCR: Document analysis',
+  'ocr.lab_parsing': 'OCR: Lab parsing',
+  azure_get_completion_result: 'OCR: Detect file type (legacy name)',
+  azure_get_completion_result_for_ocr: 'OCR: Document analysis (legacy name)',
+  'ocr.pipeline.start': 'OCR pipeline: Start',
+  'ocr.pipeline.preprocess': 'OCR pipeline: Preprocess',
+  'ocr.pipeline.mistral_extract_start': 'OCR pipeline: Mistral OCR start',
+  'ocr.pipeline.mistral_extract_done': 'OCR pipeline: Mistral OCR done',
+  'ocr.pipeline.detect_type_start': 'OCR pipeline: Detect type start',
+  'ocr.pipeline.detect_type_done': 'OCR pipeline: Detect type done',
+  'ocr.pipeline.llm_analysis_start': 'OCR pipeline: LLM analysis start',
+  'ocr.pipeline.llm_analysis_done': 'OCR pipeline: LLM analysis done',
+  'ocr.pipeline.fallback': 'OCR pipeline: Local fallback',
+  'ocr.pipeline.end': 'OCR pipeline: Complete',
+  'ocr.pipeline.ultrasound': 'OCR pipeline: Ultrasound detected',
+  'ocr.pipeline.backend_start': 'OCR pipeline: Backend processing',
+  'ocr.pipeline.event': 'OCR pipeline event',
+};
+
+const friendlyFunctionLabel = (
+  functionName: string | null | undefined,
+  promptKey?: string | null,
+): string => {
+  const fn = functionName || '';
+  if (FRIENDLY_FUNCTION_LABELS[fn]) return FRIENDLY_FUNCTION_LABELS[fn];
+  if (
+    fn === 'azure_get_completion_result' &&
+    (promptKey || '').includes('detect_file')
+  ) {
+    return 'OCR: Detect file type';
+  }
+  return fn || 'Unknown function';
+};
+
+const categoryBadgeClass = (category: string | null | undefined): string => {
+  switch ((category || '').toLowerCase()) {
+    case 'ocr':
+      return 'bg-sky-50 text-sky-700';
+    case 'ocr_pipeline':
+      return 'bg-indigo-50 text-indigo-700';
+    case 'agent':
+      return 'bg-violet-50 text-violet-700';
+    case 'html_report':
+      return 'bg-amber-50 text-amber-700';
+    case 'conflict_check':
+      return 'bg-orange-50 text-orange-700';
+    default:
+      return 'bg-gray-100 text-gray-700';
+  }
+};
+
+const isPipelineEntry = (entry: LlmCallEntry): boolean =>
+  (entry.category || '').toLowerCase() === 'ocr_pipeline' ||
+  (entry.function_name || '').startsWith('ocr.pipeline.');
 
 const formatDate = (iso: string | null | undefined): string => {
   if (!iso) return '—';
@@ -125,6 +188,7 @@ const buildRequestParams = (
     params.patient_id = filters.patientIdFilter.trim();
   }
   if (filters.modelFilter.trim()) params.model = filters.modelFilter.trim();
+  if (filters.categoryFilter) params.category = filters.categoryFilter;
 
   const dateFrom = toIsoDateStart(filters.dateFrom);
   const dateTo = toIsoDateEnd(filters.dateTo);
@@ -280,6 +344,7 @@ const LlmCallLog = () => {
         filters.clinicIdFilter === appliedFilters.clinicIdFilter &&
         filters.patientIdFilter === appliedFilters.patientIdFilter &&
         filters.modelFilter === appliedFilters.modelFilter &&
+        filters.categoryFilter === appliedFilters.categoryFilter &&
         filters.dateFrom === appliedFilters.dateFrom &&
         filters.dateTo === appliedFilters.dateTo
       ) {
@@ -378,7 +443,7 @@ const LlmCallLog = () => {
   return (
     <AdminShellLayout
       title="LLM Calls"
-      subtitle="Analyze logged LLM requests and responses from agents_llm.log"
+      subtitle="LLM calls and OCR pipeline events from agents_llm.log, clinic_llm.log, and processing.log"
       showGlobalFilters={false}
       actions={
         <button
@@ -501,6 +566,25 @@ const LlmCallLog = () => {
 
             <label className="block">
               <span className="mb-1 block text-[11px] text-Text-Secondary">
+                Category
+              </span>
+              <select
+                value={filters.categoryFilter}
+                onChange={(e) => updateFilter('categoryFilter', e.target.value)}
+                className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-[12px]"
+              >
+                <option value="">All</option>
+                <option value="ocr">OCR (LLM)</option>
+                <option value="ocr_pipeline">OCR Pipeline</option>
+                <option value="agent">Agents</option>
+                <option value="html_report">HTML Reports</option>
+                <option value="conflict_check">Conflict checks</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-[11px] text-Text-Secondary">
                 Date from
               </span>
               <input
@@ -613,8 +697,11 @@ const LlmCallLog = () => {
                           className="font-medium text-Primary-DeepTeal hover:underline"
                           title="Filter call details by this function"
                         >
-                          {row.function_name}
+                          {friendlyFunctionLabel(row.function_name)}
                         </button>
+                        <div className="text-[10px] text-Text-Secondary">
+                          {row.function_name}
+                        </div>
                       </td>
                       <td className="px-2 py-2">{row.count}</td>
                       <td className="px-2 py-2">
@@ -672,6 +759,23 @@ const LlmCallLog = () => {
                         >
                           {entry.status || 'unknown'}
                         </span>
+                        {entry.category ? (
+                          <span
+                            className={`rounded-full px-2 py-1 text-[10px] font-medium ${categoryBadgeClass(entry.category)}`}
+                          >
+                            {entry.category}
+                          </span>
+                        ) : null}
+                        {entry.log_source ? (
+                          <span className="rounded-full bg-white px-2 py-1 text-[10px] text-Text-Secondary">
+                            {entry.log_source}
+                          </span>
+                        ) : null}
+                        {entry.source ? (
+                          <span className="rounded-full bg-white px-2 py-1 text-[10px] text-Text-Secondary">
+                            {entry.source}
+                          </span>
+                        ) : null}
                         <span className="rounded-full bg-white px-2 py-1 text-[10px] font-medium text-Text-Primary">
                           {formatDuration(entry.duration_ms)}
                         </span>
@@ -682,7 +786,18 @@ const LlmCallLog = () => {
                         ) : null}
                       </div>
                       <div className="text-[12px] font-medium text-Text-Primary">
-                        {entry.function_name || 'Unknown function'}
+                        {friendlyFunctionLabel(
+                          entry.function_name,
+                          entry.prompt_key,
+                        )}
+                      </div>
+                      {entry.prompt_key ? (
+                        <div className="text-[10px] text-Text-Secondary">
+                          prompt: {entry.prompt_key}
+                        </div>
+                      ) : null}
+                      <div className="text-[10px] text-Text-Secondary">
+                        {entry.function_name || 'unknown'}
                       </div>
                       <div className="text-[11px] text-Text-Secondary">
                         {formatDate(entry.timestamp)}
@@ -707,7 +822,9 @@ const LlmCallLog = () => {
                       className="inline-flex items-center gap-1 rounded-full border border-Gray-50 bg-white px-3 py-1.5 text-[11px] text-Text-Primary"
                     >
                       <Eye size={12} />
-                      View input/output
+                      {isPipelineEntry(entry)
+                        ? 'View details'
+                        : 'View input/output'}
                     </button>
                   </div>
                 </div>
@@ -736,12 +853,18 @@ const LlmCallLog = () => {
             <div className="flex items-center justify-between border-b border-Gray-50 px-4 py-3">
               <div>
                 <h3 className="text-[14px] font-semibold text-Text-Primary">
-                  {selectedEntry.function_name || 'LLM call'}
+                  {friendlyFunctionLabel(
+                    selectedEntry.function_name,
+                    selectedEntry.prompt_key,
+                  )}
                 </h3>
                 <p className="text-[11px] text-Text-Secondary">
                   {formatDate(selectedEntry.timestamp)} ·{' '}
                   {formatDuration(selectedEntry.duration_ms)}
                   {selectedEntry.model ? ` · ${selectedEntry.model}` : ''}
+                  {selectedEntry.log_source
+                    ? ` · ${selectedEntry.log_source}`
+                    : ''}
                 </p>
               </div>
               <button
@@ -753,21 +876,13 @@ const LlmCallLog = () => {
               </button>
             </div>
 
-            <div className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2">
-              <div>
+            {isPipelineEntry(selectedEntry) ? (
+              <div className="flex-1 overflow-auto p-4">
                 <h4 className="mb-2 text-[12px] font-semibold text-Text-Primary">
-                  Input (messages)
+                  Pipeline event
                 </h4>
                 <pre className="max-h-[60vh] overflow-auto rounded-xl bg-[#F8FAFB] p-3 text-[11px] leading-5 text-Text-Primary">
                   {prettyPrintPayload(selectedEntry.request_payload)}
-                </pre>
-              </div>
-              <div>
-                <h4 className="mb-2 text-[12px] font-semibold text-Text-Primary">
-                  Output (response)
-                </h4>
-                <pre className="max-h-[60vh] overflow-auto rounded-xl bg-[#F8FAFB] p-3 text-[11px] leading-5 text-Text-Primary">
-                  {prettyPrintPayload(selectedEntry.response_payload)}
                 </pre>
                 {(selectedEntry.status || '').toLowerCase() === 'failed' &&
                 selectedEntry.error_message ? (
@@ -776,7 +891,32 @@ const LlmCallLog = () => {
                   </div>
                 ) : null}
               </div>
-            </div>
+            ) : (
+              <div className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2">
+                <div>
+                  <h4 className="mb-2 text-[12px] font-semibold text-Text-Primary">
+                    Input (messages)
+                  </h4>
+                  <pre className="max-h-[60vh] overflow-auto rounded-xl bg-[#F8FAFB] p-3 text-[11px] leading-5 text-Text-Primary">
+                    {prettyPrintPayload(selectedEntry.request_payload)}
+                  </pre>
+                </div>
+                <div>
+                  <h4 className="mb-2 text-[12px] font-semibold text-Text-Primary">
+                    Output (response)
+                  </h4>
+                  <pre className="max-h-[60vh] overflow-auto rounded-xl bg-[#F8FAFB] p-3 text-[11px] leading-5 text-Text-Primary">
+                    {prettyPrintPayload(selectedEntry.response_payload)}
+                  </pre>
+                  {(selectedEntry.status || '').toLowerCase() === 'failed' &&
+                  selectedEntry.error_message ? (
+                    <div className="mt-3 rounded-xl border border-red-100 bg-red-50 p-3 text-[11px] text-red-700">
+                      {selectedEntry.error_message}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ) : null}

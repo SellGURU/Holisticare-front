@@ -5,6 +5,13 @@ import { MainModal } from '../../Components';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import SvgIcon from '../../utils/svgIcon';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
+import {
+  applySavedBiomarkerUpdate,
+  BiomarkerIdentityMeta,
+  buildBiomarkerIdentityMeta,
+  filterUnitMappingsForBiomarker,
+  findBiomarkerMapping,
+} from './biomarkerIdentity';
 
 const EditModal = lazy(() => import('./EditModal'));
 
@@ -27,46 +34,8 @@ interface BiomarkerRowProps {
   onOpenMappings: (data: any) => void;
 }
 
-const normalize = (value: any) =>
-  String(value || '')
-    .trim()
-    .toLowerCase();
-
 const escapeRegExp = (value: string) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const replaceBiomarker = (
-  biomarkers: any[],
-  originalBiomarkerIndex: number,
-  originalBiomarkerName: string,
-  updatedItem: any,
-) => {
-  if (
-    Number.isInteger(originalBiomarkerIndex) &&
-    originalBiomarkerIndex >= 0 &&
-    originalBiomarkerIndex < biomarkers.length
-  ) {
-    return biomarkers.map((item, index) =>
-      index === originalBiomarkerIndex ? updatedItem : item,
-    );
-  }
-
-  const matchingIndexes = biomarkers
-    .map((item, index) => ({ item, index }))
-    .filter(
-      ({ item }) =>
-        normalize(item?.Biomarker) === normalize(originalBiomarkerName),
-    )
-    .map(({ index }) => index);
-
-  if (matchingIndexes.length !== 1) {
-    return biomarkers;
-  }
-
-  return biomarkers.map((item, index) =>
-    index === matchingIndexes[0] ? updatedItem : item,
-  );
-};
 
 const highlightText = (text: string, term: string) => {
   const source = String(text || '');
@@ -113,53 +82,52 @@ const BiomarkerRow = ({
   const [activeEdit, setActiveEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorDetails, setErrorDetails] = useState('');
+  const [editIdentityMeta, setEditIdentityMeta] =
+    useState<BiomarkerIdentityMeta | null>(null);
 
   const biomarkerName = data?.Biomarker || '';
   const relevantUnitMappings = useMemo(
-    () =>
-      unitMappings.filter(
-        (mapping) => normalize(mapping?.biomarker) === normalize(biomarkerName),
-      ),
-    [unitMappings, biomarkerName],
+    () => filterUnitMappingsForBiomarker(unitMappings, data, biomarkers),
+    [unitMappings, data, biomarkers],
   );
 
   const relevantBiomarkerMapping = useMemo(
-    () =>
-      biomarkerMappings.find(
-        (mapping) =>
-          normalize(mapping?.standard_name) === normalize(biomarkerName),
-      ),
-    [biomarkerMappings, biomarkerName],
+    () => findBiomarkerMapping(biomarkerMappings, data, biomarkers),
+    [biomarkerMappings, data, biomarkers],
   );
 
   const mappingCount =
     relevantUnitMappings.length +
     (relevantBiomarkerMapping?.variations?.length || 0);
 
+  const openModalEdit = () => {
+    setEditIdentityMeta(buildBiomarkerIdentityMeta(data, biomarkerIndex));
+    setActiveEdit(true);
+  };
+
   const closeModalEdit = () => {
     setActiveEdit(false);
+    setEditIdentityMeta(null);
     setErrorDetails('');
   };
 
-  const onsave = (values: any, meta: { originalBiomarkerName: string }) => {
+  const onsave = (values: any, meta: BiomarkerIdentityMeta) => {
     setLoading(true);
     BiomarkersApi.saveBiomarkersList({
       updated_biomarker: values,
       original_biomarker_name: meta.originalBiomarkerName,
-      original_biomarker_index: biomarkerIndex,
+      original_biomarker_index: meta.originalBiomarkerIndex,
+      original_biomarker_uid: meta.biomarkerUid,
+      original_biomarker_type: meta.originalBiomarkerType,
+      original_unit: meta.originalUnit,
+      original_benchmark_area: meta.originalBenchmarkArea,
     })
       .then((response) => {
         const payload = response?.data || {};
         const savedBiomarker = payload.updated_biomarker || values;
         closeModalEdit();
         changeBiomarkersValue(
-          payload.chart_bounds ||
-            replaceBiomarker(
-              biomarkers,
-              biomarkerIndex,
-              meta.originalBiomarkerName,
-              savedBiomarker,
-            ),
+          applySavedBiomarkerUpdate(biomarkers, meta, savedBiomarker),
         );
         if (payload.unit_mapping?.biomarker_specific) {
           onUnitMappingsLocalChange?.(payload.unit_mapping.biomarker_specific);
@@ -243,7 +211,7 @@ const BiomarkerRow = ({
           </button>
           <button
             type="button"
-            onClick={() => setActiveEdit(true)}
+            onClick={openModalEdit}
             className="flex h-7 w-7 items-center justify-center rounded-full border border-Gray-50 bg-white hover:border-Primary-DeepTeal"
             title="Edit biomarker"
           >
@@ -262,7 +230,9 @@ const BiomarkerRow = ({
         >
           <EditModal
             onCancel={closeModalEdit}
-            onSave={(values: any, meta) => onsave(values, meta)}
+            onSave={(values: any) =>
+              editIdentityMeta && onsave(values, editIdentityMeta)
+            }
             data={data}
             benchmarkAreaOptions={benchmarkAreaOptions}
             benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}

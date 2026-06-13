@@ -34,10 +34,7 @@ interface EditModalProps {
   benchmarkAreaOptionsByType?: Record<string, string[]>;
   biomarkerTypeOptions: string[];
   onCancel: () => void;
-  onSave: (
-    values: ApiBiomarkerData,
-    meta: { originalBiomarkerName: string },
-  ) => void;
+  onSave: (values: ApiBiomarkerData) => void;
   loading: boolean;
   errorDetails: string;
   setErrorDetails: (errorDetails: string) => void;
@@ -55,7 +52,10 @@ const EditModal: FC<EditModalProps> = ({
   setErrorDetails,
 }) => {
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
-  const [draft, setDraft] = useState<any>({ ...data });
+  const [draft, setDraft] = useState<any>({
+    ...data,
+    biomarker_uid: data.biomarker_uid,
+  });
   const [jsonText, setJsonText] = useState('');
   const [jsonError, setJsonError] = useState('');
 
@@ -264,7 +264,12 @@ const EditModal: FC<EditModalProps> = ({
       setErrorDetails('Please fix the JSON errors before saving.');
       return;
     }
-    onSave(draft, { originalBiomarkerName: data.Biomarker || '' });
+    onSave({
+      ...draft,
+      biomarker_uid: String(
+        draft.biomarker_uid || data.biomarker_uid || '',
+      ).trim(),
+    });
   };
 
   const renderThresholdGender = (gender: 'male' | 'female') => {
