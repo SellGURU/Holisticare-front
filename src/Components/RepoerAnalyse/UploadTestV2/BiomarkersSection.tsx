@@ -788,8 +788,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         .filter(
           ({ biomarker }) =>
             !typeFilter ||
-            String(biomarker?.biomarker_type || 'blood').trim().toLowerCase() ===
-              String(typeFilter).trim().toLowerCase(),
+            String(biomarker?.biomarker_type || 'blood')
+              .trim()
+              .toLowerCase() === String(typeFilter).trim().toLowerCase(),
         ),
     [biomarkers, typeFilter],
   );
@@ -1161,8 +1162,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             (option) =>
                               String(option.biomarker_type || 'blood')
                                 .trim()
-                                .toLowerCase() ===
-                              rowType,
+                                .toLowerCase() === rowType,
                           );
                         const selectedSystemMeta = avalibaleBiomarkers.find(
                           (option) =>
@@ -1170,8 +1170,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               normalizeBiomarkerNameForMatch(b.biomarker) &&
                             String(option.biomarker_type || 'blood')
                               .trim()
-                              .toLowerCase() ===
-                              rowType,
+                              .toLowerCase() === rowType,
                         );
                         const rowErrorKey = reviewRowErrorKey(b, originalIndex);
                         return (
