@@ -760,15 +760,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     biomarkers: any[],
     rowIndex: number,
   ) => {
+    if (item?.display_detail) {
+      return String(item.display_detail);
+    }
+
     const row = biomarkers?.[rowIndex] || {};
     const name =
       item?.extracted_biomarker ||
+      item?.original_biomarker_name ||
       item?.biomarker ||
       row.original_biomarker_name ||
       row.biomarker ||
       `Row ${rowIndex + 1}`;
     const message = String(
-      item?.display_detail || item?.detail || 'Invalid biomarker',
+      item?.detail || 'Invalid biomarker',
     );
 
     if (message.toLowerCase().startsWith(String(name).toLowerCase())) {
@@ -792,20 +797,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const resolveValidationErrorRowIndex = (item: any, biomarkers: any[]) => {
-    const idx = Number(item?.index);
-    if (Number.isInteger(idx) && idx >= 0 && idx < biomarkers.length) {
-      return idx;
-    }
-
-    const errorName = String(item?.extracted_biomarker || item?.biomarker || '')
-      .trim()
-      .toLowerCase();
-    const errorValue = String(item?.value ?? '')
-      .trim()
-      .toLowerCase();
-    const errorUnit = String(item?.unit ?? '')
-      .trim()
-      .toLowerCase();
     const errorBiomarkerId = String(item?.biomarker_id || '').trim();
 
     if (errorBiomarkerId) {
@@ -815,6 +806,26 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       );
       if (idMatchIndex !== -1) return idMatchIndex;
     }
+
+    const idx = Number(item?.index);
+    if (Number.isInteger(idx) && idx >= 0 && idx < biomarkers.length) {
+      return idx;
+    }
+
+    const errorName = String(
+      item?.extracted_biomarker ||
+        item?.original_biomarker_name ||
+        item?.biomarker ||
+        '',
+    )
+      .trim()
+      .toLowerCase();
+    const errorValue = String(item?.value ?? '')
+      .trim()
+      .toLowerCase();
+    const errorUnit = String(item?.unit ?? '')
+      .trim()
+      .toLowerCase();
 
     if (errorName) {
       const exactMatchIndexes = biomarkers
