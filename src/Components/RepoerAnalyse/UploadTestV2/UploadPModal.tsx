@@ -331,7 +331,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   );
 
                   if (deletedRowKey && rowErrors) {
-                    setrowErrors((prev) =>
+                    setrowErrors((prev: Record<string, string>) =>
                       removeRowErrorKey(prev || {}, deletedRowKey),
                     );
                   }
