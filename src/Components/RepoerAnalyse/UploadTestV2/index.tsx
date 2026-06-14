@@ -772,9 +772,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       row.original_biomarker_name ||
       row.biomarker ||
       `Row ${rowIndex + 1}`;
-    const message = String(
-      item?.detail || 'Invalid biomarker',
-    );
+    const message = String(item?.detail || 'Invalid biomarker');
 
     if (message.toLowerCase().startsWith(String(name).toLowerCase())) {
       return message;
