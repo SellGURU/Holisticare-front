@@ -1098,7 +1098,9 @@ class Application extends Api {
     return this.post('/activity_library/get_parent_id', {});
   };
   static checkLabStepOne = (data: any) => {
-    return this.post('/patients/check_lab_report_step_one', data);
+    return this.post('/patients/check_lab_report_step_one', data, {
+      timeout: 180000,
+    });
   };
   static SaveLabReport = (data: any) => {
     return this.post('/patients/process_lab_report', data);
