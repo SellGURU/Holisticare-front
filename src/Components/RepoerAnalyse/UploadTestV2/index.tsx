@@ -163,59 +163,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const showReviewLoading = () =>
       new Promise((resolve) => setTimeout(resolve, 900));
 
-    const toUtcDateTimestamp = (date: Date | string | null | undefined) => {
-      if (!date) return null;
-      const parsed = date instanceof Date ? date : new Date(date);
-      if (Number.isNaN(parsed.getTime())) return null;
-      return Date.UTC(
-        parsed.getFullYear(),
-        parsed.getMonth(),
-        parsed.getDate(),
-      ).toString();
-    };
-
-    const validateRowsBeforeDisplay = async (
-      biomarkers: any[],
-      labType: string,
-      dateOfTest?: string | null,
-    ) => {
-      const timestamp =
-        toUtcDateTimestamp(dateOfTest) ??
-        toUtcDateTimestamp(modifiedDateOfTest);
-
-      if (!timestamp || biomarkers.length === 0 || labType === 'ultrasound') {
-        setRowErrors({});
-        setAddedRowErrors({});
-        return;
-      }
-
-      try {
-        await Application.validateBiomarkers({
-          modified_biomarkers_list: mapExtractedBiomarkersForValidation(
-            biomarkers,
-            labType,
-          ),
-          added_biomarkers_list: [],
-          modified_biomarkers_date_of_test: timestamp,
-          added_biomarkers_date_of_test: timestamp,
-          modified_lab_type: labType,
-          modified_file_id: activeFileId,
-          member_id: memberId,
-        });
-        setRowErrors({});
-        setAddedRowErrors({});
-      } catch (err: any) {
-        const detail = err?.detail ?? err?.response?.data?.detail;
-        if (detail) {
-          applyValidationErrors(detail, biomarkers);
-        } else {
-          setRowErrors({});
-          setAddedRowErrors({});
-          console.error('Initial biomarker review validation failed:', err);
-        }
-      }
-    };
-
     const processStepOneData = async (data: any) => {
       setProgressBiomarkerUpload(data.progress);
       setfileType(data.lab_type || 'more_info');
@@ -254,6 +201,18 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         return;
       }
 
+      // Background validation still running — keep polling; do not call validateBiomarkers.
+      if (
+        data.status === 'validating_review' ||
+        (data.progress === 100 &&
+          data.extracted_biomarkers?.length > 0 &&
+          !data.validation?.ready)
+      ) {
+        setUploadPhase('validating_review');
+        setbiomarkerLoading(true);
+        return;
+      }
+
       // Handle ultrasound reports — skip biomarkers table
       if (data.lab_type === 'ultrasound') {
         setPolling(false);
@@ -270,34 +229,30 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       );
       const displayRows = sortReviewBiomarkerRows(enrichedRows);
 
-      // Stop polling + show biomarkers immediately
-      if (data.extracted_biomarkers && data.extracted_biomarkers.length > 0) {
+      // Stop polling once validation is ready and show biomarkers
+      if (
+        data.extracted_biomarkers &&
+        data.extracted_biomarkers.length > 0 &&
+        data.validation?.ready
+      ) {
         setPolling(false);
         setUploadPhase('validating_review');
         setbiomarkerLoading(true);
         await showReviewLoading();
 
-        if (data.validation?.ready) {
-          const errorMaps = buildValidationErrorsMaps(
-            data.validation,
+        const errorMaps = buildValidationErrorsMaps(
+          data.validation,
+          enrichedRows,
+          addedBiomarkers,
+        );
+        setRowErrors(
+          remapRowErrorsAfterReorder(
+            errorMaps.modifiedErrors,
             enrichedRows,
-            addedBiomarkers,
-          );
-          setRowErrors(
-            remapRowErrorsAfterReorder(
-              errorMaps.modifiedErrors,
-              enrichedRows,
-              displayRows,
-            ),
-          );
-          setAddedRowErrors(errorMaps.addedErrors);
-        } else {
-          await validateRowsBeforeDisplay(
             displayRows,
-            data.lab_type || 'more_info',
-            data.date_of_test || null,
-          );
-        }
+          ),
+        );
+        setAddedRowErrors(errorMaps.addedErrors);
 
         setExtractedBiomarkers(displayRows);
         setUploadPhase(data.status || 'review_ready');
