@@ -4,6 +4,15 @@ const trim = (value: unknown) => String(value ?? '').trim();
 
 const normalizeKey = (value: unknown) => trim(value).toLowerCase();
 
+/** Lowercase unit text with dots/spaces removed so cells/h.p.f matches /hpf. */
+const normalizeUnitForClass = (unit?: unknown) =>
+  normalizeKey(unit).replace(/[.\s]/g, '');
+
+const MICROSCOPY_UNIT_PATTERN = /\/?hpf|\/?lpf|perhpf|perlpf|cellshpf|cellslfp/;
+
+const isMicroscopyUnit = (unit?: string) =>
+  MICROSCOPY_UNIT_PATTERN.test(normalizeUnitForClass(unit));
+
 /** Match HbA1c, Hb A1c, and similar spacing variants to the same catalog row. */
 export const normalizeBiomarkerNameForMatch = (value: unknown) =>
   normalizeKey(value)
@@ -47,12 +56,7 @@ export const inferBiomarkerTypeFromCatalogItem = (item: any) => {
   const sourceText = `${benchmarkArea} ${biomarkerName}`;
   const unitText = normalizeKey(item?.unit);
 
-  if (
-    unitText &&
-    ['hpf', 'lpf', '/hpf', '/lpf', 'per hpf', 'per lpf'].some((token) =>
-      unitText.includes(token),
-    )
-  ) {
+  if (unitText && isMicroscopyUnit(unitText)) {
     return 'urine';
   }
 
@@ -175,7 +179,7 @@ export const inferCatalogValueType = (item: any) => {
   if (existing) return existing;
 
   const unitText = normalizeKey(item?.unit);
-  if (/\/hpf|\/lpf|hpf|lpf|per hpf|per lpf/.test(unitText)) {
+  if (isMicroscopyUnit(unitText)) {
     return 'string';
   }
 
@@ -219,9 +223,6 @@ export const inferExtractedValueKind = (value: unknown, unit?: string) => {
   return 'string';
 };
 
-const isMicroscopyUnit = (unit?: string) =>
-  /\/hpf|\/lpf|hpf|lpf|per hpf|per lpf/i.test(trim(unit));
-
 export const inferSystemValueKind = (valueType?: string, unit?: string) => {
   const type = normalizeKey(valueType);
   const unitText = trim(unit);
@@ -248,13 +249,12 @@ export const inferSystemValueKind = (valueType?: string, unit?: string) => {
 };
 
 const inferMeasurementContext = (name: string, unit: string) => {
-  const unitText = normalizeKey(unit);
+  const unitNorm = normalizeUnitForClass(unit);
   const nameText = normalizeKey(name);
-  if (unitText.includes('%') || nameText.includes('%')) return 'percent';
+  if (unitNorm.includes('%') || nameText.includes('%')) return 'percent';
   if (
-    /x10[e^]?\d+\/l|10\^?\d+\/l|cells?\/?u[lµμ]|\/hpf|\/lpf|hpf|lpf/i.test(
-      unitText,
-    )
+    /x10[e^]?\d+\/l|10\^?\d+\/l|cells?\/?u[lµμ]/.test(unitNorm) ||
+    isMicroscopyUnit(unit)
   ) {
     return 'absolute_count';
   }
