@@ -788,7 +788,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         .filter(
           ({ biomarker }) =>
             !typeFilter ||
-            String(biomarker?.biomarker_type || 'blood') === typeFilter,
+            String(biomarker?.biomarker_type || 'blood').trim().toLowerCase() ===
+              String(typeFilter).trim().toLowerCase(),
         ),
     [biomarkers, typeFilter],
   );
@@ -1152,18 +1153,24 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           b.biomarker_id ||
                           `${b.original_biomarker_name || b.biomarker || ''}-${b.original_value || b.value || ''}-${b.original_unit || b.unit || ''}`;
                         const rowSuggestions = suggestions[suggestionKey];
-                        const rowType = String(b.biomarker_type || 'blood');
+                        const rowType = String(b.biomarker_type || 'blood')
+                          .trim()
+                          .toLowerCase();
                         const rowAvailableBiomarkers =
                           avalibaleBiomarkers.filter(
                             (option) =>
-                              String(option.biomarker_type || 'blood') ===
+                              String(option.biomarker_type || 'blood')
+                                .trim()
+                                .toLowerCase() ===
                               rowType,
                           );
                         const selectedSystemMeta = avalibaleBiomarkers.find(
                           (option) =>
                             normalizeBiomarkerNameForMatch(option.biomarker) ===
                               normalizeBiomarkerNameForMatch(b.biomarker) &&
-                            String(option.biomarker_type || 'blood') ===
+                            String(option.biomarker_type || 'blood')
+                              .trim()
+                              .toLowerCase() ===
                               rowType,
                         );
                         const rowErrorKey = reviewRowErrorKey(b, originalIndex);
