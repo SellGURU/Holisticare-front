@@ -15,7 +15,7 @@ import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
 } from './biomarkerNameFields';
-import { remapRowErrorsAfterReorder } from './biomarkerReviewCompat';
+import { reviewRowErrorKey } from './biomarkerReviewCompat';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -245,13 +245,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           enrichedRows,
           addedBiomarkers,
         );
-        setRowErrors(
-          remapRowErrorsAfterReorder(
-            errorMaps.modifiedErrors,
-            enrichedRows,
-            displayRows,
-          ),
-        );
+        setRowErrors(errorMaps.modifiedErrors);
         setAddedRowErrors(errorMaps.addedErrors);
 
         setExtractedBiomarkers(displayRows);
@@ -692,7 +686,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       },
     });
   };
-  const [rowErrors, setRowErrors] = React.useState<Record<number, string>>({});
+  const [rowErrors, setRowErrors] = React.useState<Record<string, string>>({});
   const [addedrowErrors, setAddedRowErrors] = React.useState<
     Record<number, string>
   >({});
@@ -845,6 +839,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     return -1;
   };
 
+  const resolveValidationErrorRowKey = (item: any, biomarkers: any[]) => {
+    const errorBiomarkerId = String(item?.biomarker_id || '').trim();
+    if (errorBiomarkerId) {
+      const idMatchIndex = biomarkers.findIndex(
+        (row: any) =>
+          String(row?.biomarker_id || '').trim() === errorBiomarkerId,
+      );
+      if (idMatchIndex !== -1) {
+        return reviewRowErrorKey(biomarkers[idMatchIndex], idMatchIndex);
+      }
+    }
+
+    const rowIndex = resolveValidationErrorRowIndex(item, biomarkers);
+    if (rowIndex < 0) {
+      return '';
+    }
+    return reviewRowErrorKey(biomarkers[rowIndex], rowIndex);
+  };
+
   const buildValidationErrorsMaps = (
     detail: any,
     contextBiomarkers: any[],
@@ -863,7 +876,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       parsedDetail = detail || {};
     }
 
-    const modifiedErrors: Record<number, string> = {};
+    const modifiedErrors: Record<string, string> = {};
     const addedErrors: Record<number, string> = {};
     const isUnitError = (item: any) => {
       const message = String(
@@ -877,26 +890,27 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     };
 
     const modifiedItems = parsedDetail.modified_biomarkers_list || [];
-    const modifiedUnitErrorRows = new Set<number>();
+    const modifiedUnitErrorRows = new Set<string>();
     modifiedItems.forEach((item: any) => {
-      const rowIndex = resolveValidationErrorRowIndex(item, contextBiomarkers);
-      if (rowIndex < 0) {
+      const rowKey = resolveValidationErrorRowKey(item, contextBiomarkers);
+      if (!rowKey) {
         return;
       }
       if (isUnitError(item)) {
-        modifiedUnitErrorRows.add(rowIndex);
+        modifiedUnitErrorRows.add(rowKey);
       }
     });
 
     modifiedItems.forEach((item: any) => {
       const rowIndex = resolveValidationErrorRowIndex(item, contextBiomarkers);
-      if (rowIndex < 0) {
+      const rowKey = resolveValidationErrorRowKey(item, contextBiomarkers);
+      if (!rowKey || rowIndex < 0) {
         return;
       }
-      if (modifiedUnitErrorRows.has(rowIndex) && !isUnitError(item)) {
+      if (modifiedUnitErrorRows.has(rowKey) && !isUnitError(item)) {
         return;
       }
-      modifiedErrors[rowIndex] = formatValidationErrorForDisplay(
+      modifiedErrors[rowKey] = formatValidationErrorForDisplay(
         item,
         contextBiomarkers,
         rowIndex,

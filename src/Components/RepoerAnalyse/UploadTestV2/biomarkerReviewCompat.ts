@@ -561,11 +561,74 @@ export const resolveRowForReview = (catalog: any[], row: any) => {
 const normalizeUnitKey = (unit: unknown) =>
   normalizeKey(String(unit ?? '').replace('(no unit)', ''));
 
+/** Stable PDF/extracted name for dedupe keys — never use resolved system biomarker. */
+export const reviewRowDedupNameKey = (row: any) => {
+  const candidates = [
+    row?.original_biomarker_name,
+    row?.extracted_biomarker_name,
+    row?.normalized_biomarker_name,
+    row?.biomarker,
+  ];
+  for (const candidate of candidates) {
+    const key = normalizeBiomarkerNameForMatch(candidate);
+    if (key) return key;
+  }
+  return '';
+};
+
 export const buildReviewBiomarkerDedupKey = (row: any) => {
-  const name = resolveRowCatalogNameKey(row);
+  const name = reviewRowDedupNameKey(row);
   if (!name) return '';
   const type = normalizeKey(inferRowBiomarkerType(row));
   return `${name}|${type}`;
+};
+
+export const reviewRowErrorKey = (row: any, index: number) => {
+  const biomarkerId = String(row?.biomarker_id || '').trim();
+  if (biomarkerId) {
+    return biomarkerId;
+  }
+  return `index:${index}`;
+};
+
+export const removeRowErrorKey = (
+  errors: Record<string, string>,
+  rowKey: string,
+) => {
+  if (!rowKey || !errors[rowKey]) {
+    return errors;
+  }
+  const next = { ...errors };
+  delete next[rowKey];
+  return next;
+};
+
+export const remapRowErrorsAfterDedupById = (
+  errors: Record<string, string>,
+  indexMap: Map<number, number>,
+  sourceRows: any[],
+) => {
+  const next: Record<string, string> = {};
+  Object.entries(errors).forEach(([key, value]) => {
+    if (!key.startsWith('index:')) {
+      const stillPresent = sourceRows.some(
+        (row) => String(row?.biomarker_id || '').trim() === key,
+      );
+      if (stillPresent) {
+        next[key] = value;
+      }
+      return;
+    }
+    const oldIndex = Number(key.slice('index:'.length));
+    const newIndex = indexMap.get(oldIndex);
+    if (newIndex === undefined) {
+      return;
+    }
+    const row = sourceRows[newIndex];
+    const rowKey = reviewRowErrorKey(row, newIndex);
+    next[rowKey] = value;
+  });
+  return next;
 };
 
 export const scoreReviewBiomarkerRow = (row: any, catalogMatch: any | null) => {
