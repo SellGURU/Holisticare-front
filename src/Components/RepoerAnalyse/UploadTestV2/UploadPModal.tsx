@@ -5,10 +5,7 @@ import SpinnerLoader from '../../SpinnerLoader';
 import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
-import {
-  removeRowErrorKey,
-  reviewRowErrorKey,
-} from './biomarkerReviewCompat';
+import { removeRowErrorKey, reviewRowErrorKey } from './biomarkerReviewCompat';
 
 interface UploadPModalProps {
   initialMode?: string;
