@@ -328,7 +328,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
         if (errData && errData.extracted_biomarkers !== undefined) {
           await processStepOneData(errData);
-        } else if (err?.response?.status === 504 || err?.code === 'ECONNABORTED') {
+        } else if (
+          err?.response?.status === 504 ||
+          err?.code === 'ECONNABORTED'
+        ) {
           setPolling(false);
           setbiomarkerLoading(false);
           setUploadPhase('failed');
