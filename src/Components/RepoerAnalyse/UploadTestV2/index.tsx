@@ -221,7 +221,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setModifiedDateOfTest(new Date(data.date_of_test));
       }
 
-      if (Array.isArray(data.extracted_biomarkers) && data.extracted_biomarkers.length > 0) {
+      if (
+        Array.isArray(data.extracted_biomarkers) &&
+        data.extracted_biomarkers.length > 0
+      ) {
         setExtractedCount(data.extracted_biomarkers.length);
       }
 
@@ -734,7 +737,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
     // Map over all extractedBiomarkers to create the required API structure
     const mappedExtractedBiomarkers = biomarkerSource.map((b) => {
-      const value = stringifyLabField(preferNonEmpty(b.original_value, b.value));
+      const value = stringifyLabField(
+        preferNonEmpty(b.original_value, b.value),
+      );
       const unit = stringifyLabField(preferNonEmpty(b.original_unit, b.unit));
       return {
         biomarker_id: stringifyLabField(b.biomarker_id),
@@ -1109,7 +1114,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       setfileType(res.data.lab_type || 'more_info');
       setUploadPhase(res.data.status || 'ocr_processing');
       setReviewSummary(res.data.summary || null);
-      if (Array.isArray(res.data.extracted_biomarkers) && res.data.extracted_biomarkers.length > 0) {
+      if (
+        Array.isArray(res.data.extracted_biomarkers) &&
+        res.data.extracted_biomarkers.length > 0
+      ) {
         setExtractedCount(res.data.extracted_biomarkers.length);
       }
       if (res.data.date_of_test) {
@@ -1120,8 +1128,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         res.data.extracted_biomarkers.length > 0 &&
         res.data.validation?.ready
       ) {
-        const enrichedRows = (res.data.extracted_biomarkers || []).map((b: any) =>
-          enrichExtractedRowForReview(b, res.data.lab_type),
+        const enrichedRows = (res.data.extracted_biomarkers || []).map(
+          (b: any) => enrichExtractedRowForReview(b, res.data.lab_type),
         );
         const displayRows = sortReviewBiomarkerRows(enrichedRows);
         const errorMaps = buildValidationErrorsMaps(

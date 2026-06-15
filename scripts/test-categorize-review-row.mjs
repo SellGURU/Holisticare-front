@@ -30,7 +30,11 @@ const readyResult = categorizeReviewRow(
   emptySuppressed,
   0,
 );
-assert.equal(readyResult.category, 'ready', 'Resolved row with no errors is Ready');
+assert.equal(
+  readyResult.category,
+  'ready',
+  'Resolved row with no errors is Ready',
+);
 
 const unmatchedRow = {
   biomarker_id: 'bac-1',
@@ -63,8 +67,7 @@ const unitErrorRow = {
   original_unit: 'x10^9/L',
 };
 const unitErrors = {
-  'baso-1':
-    "Unit 'x10^9/L' differs from system default '10^9/L'",
+  'baso-1': "Unit 'x10^9/L' differs from system default '10^9/L'",
 };
 
 const unitErrorResult = categorizeReviewRow(

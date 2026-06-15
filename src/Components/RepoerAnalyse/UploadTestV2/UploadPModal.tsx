@@ -98,7 +98,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   reviewCatalog = [],
   onReviewCatalogRefresh,
 }) => {
-  const isReviewWithFile = Boolean(uploadedFile?.file_id || uploadedFile?.status === 'completed');
+  const isReviewWithFile = Boolean(
+    uploadedFile?.file_id || uploadedFile?.status === 'completed',
+  );
   const [reviewCountsLocal, setReviewCountsLocal] = useState({
     ready: 0,
     review: 0,
@@ -252,26 +254,26 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     : undefined
                 }
               >
-              {btnLoading ? (
-                <>
-                  {' '}
-                  <SpinnerLoader></SpinnerLoader>
-                  Continue
-                </>
-              ) : (
-                <div
-                  className="flex gap-2 justify-center text-[10px] xs:text-xs"
-                  data-tour="continue-btn"
-                >
-                  <img
-                    className="size-4"
-                    src="/icons/arrow-right-white.svg"
-                    alt=""
-                  />
-                  Continue{' '}
-                </div>
-              )}
-            </ButtonPrimary>
+                {btnLoading ? (
+                  <>
+                    {' '}
+                    <SpinnerLoader></SpinnerLoader>
+                    Continue
+                  </>
+                ) : (
+                  <div
+                    className="flex gap-2 justify-center text-[10px] xs:text-xs"
+                    data-tour="continue-btn"
+                  >
+                    <img
+                      className="size-4"
+                      src="/icons/arrow-right-white.svg"
+                      alt=""
+                    />
+                    Continue{' '}
+                  </div>
+                )}
+              </ButtonPrimary>
             </div>
           </div>
           {!isReviewWithFile && showReview && activeErrorCount > 0 ? (
@@ -385,8 +387,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                       Ultrasound Report Uploaded
                     </div>
                     <div className="text-sm text-gray-500 text-center max-w-md">
-                      This is an ultrasound/imaging report. Biomarker
-                      extraction is not applicable for this type of report.
+                      This is an ultrasound/imaging report. Biomarker extraction
+                      is not applicable for this type of report.
                     </div>
                   </div>
                 ) : uploadedFile || fileType !== 'more_info' ? (

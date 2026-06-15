@@ -115,15 +115,23 @@ class AdminApi {
   }
 
   static loadClinicJsonConfigs(data: any) {
-    return axios.post(`${getBaseUrl()}/admin/custom_biomarker/load_configs`, data, {
-      headers: withAuthHeaders(),
-    });
+    return axios.post(
+      `${getBaseUrl()}/admin/custom_biomarker/load_configs`,
+      data,
+      {
+        headers: withAuthHeaders(),
+      },
+    );
   }
 
   static saveClinicJsonConfig(data: any) {
-    return axios.post(`${getBaseUrl()}/admin/custom_biomarker/save_config`, data, {
-      headers: withAuthHeaders(),
-    });
+    return axios.post(
+      `${getBaseUrl()}/admin/custom_biomarker/save_config`,
+      data,
+      {
+        headers: withAuthHeaders(),
+      },
+    );
   }
 
   static updateConfig(config_data: any) {

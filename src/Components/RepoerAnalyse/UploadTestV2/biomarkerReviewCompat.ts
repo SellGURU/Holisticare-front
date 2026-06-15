@@ -7,9 +7,7 @@ const normalizeKey = (value: unknown) => trim(value).toLowerCase();
 const MICROSCOPY_UNIT_PATTERN = /\/?hpf|\/?lpf|perhpf|perlpf|cellshpf|cellslfp/;
 
 const isMicroscopyUnit = (unit?: string) =>
-  MICROSCOPY_UNIT_PATTERN.test(
-    normalizeKey(unit).replace(/[.\s]/g, ''),
-  );
+  MICROSCOPY_UNIT_PATTERN.test(normalizeKey(unit).replace(/[.\s]/g, ''));
 
 /** Match HbA1c, Hb A1c, and similar spacing variants to the same catalog row. */
 export const normalizeBiomarkerNameForMatch = (value: unknown) =>
@@ -265,7 +263,10 @@ export const buildBiomarkerRowsForValidation = (
       value,
       unit,
       original_biomarker_name: trim(
-        preferNonEmpty(row.original_biomarker_name, row.extracted_biomarker_name),
+        preferNonEmpty(
+          row.original_biomarker_name,
+          row.extracted_biomarker_name,
+        ),
       ),
       original_value: value,
       original_unit: unit,
@@ -510,7 +511,9 @@ export const suppressedItemMatchesRow = (
 
 export const buildRowFromSuppressedItem = (item: SuppressedBiomarkerItem) => {
   const extracted = String(item?.extracted_name || '').trim();
-  const type = String(item?.biomarker_type || 'blood').trim().toLowerCase();
+  const type = String(item?.biomarker_type || 'blood')
+    .trim()
+    .toLowerCase();
   return {
     biomarker_id: `suppressed-${item?.id ?? `${extracted}-${type}`}`,
     biomarker: item?.system_biomarker || '',
@@ -587,7 +590,9 @@ export const pickCatalogEntryForRow = (catalog: any[], row: any) => {
   const extractedUnit = normalizeUnitKey(
     preferNonEmpty(row.original_unit, row.unit),
   );
-  const possibleUnits = (row?.possible_values?.units || []).map(normalizeUnitKey);
+  const possibleUnits = (row?.possible_values?.units || []).map(
+    normalizeUnitKey,
+  );
 
   if (extractedUnit) {
     const exact = candidates.find(

@@ -481,7 +481,13 @@ export default function BiomarkerRow({
                 </span>
               ) : null}
               <TooltipTextAuto maxWidth="180px">
-                <span className={rowCategory === 'excluded' ? 'italic text-Text-Secondary' : ''}>
+                <span
+                  className={
+                    rowCategory === 'excluded'
+                      ? 'italic text-Text-Secondary'
+                      : ''
+                  }
+                >
                   {normalizedName || '—'}
                 </span>
               </TooltipTextAuto>
@@ -593,10 +599,13 @@ export default function BiomarkerRow({
               onBiomarkerMenuOpen?.();
             }}
             onChange={(val: string) => {
-              const catalogEntry = pickCatalogEntryForRow(allAvilableBiomarkers, {
-                ...biomarker,
-                biomarker: val,
-              });
+              const catalogEntry = pickCatalogEntryForRow(
+                allAvilableBiomarkers,
+                {
+                  ...biomarker,
+                  biomarker: val,
+                },
+              );
               const nextFields: Partial<any> = { biomarker: val };
               if (!isTextValueWithoutUnit) {
                 const extractedUnit = String(
@@ -811,7 +820,8 @@ export default function BiomarkerRow({
                           {isMapped ? (
                             <>
                               Mapping saved: &quot;{pdfBiomarkerName}&quot; →
-                              &quot;{systemBiomarkerName}&quot;. Click to remove.
+                              &quot;{systemBiomarkerName}&quot;. Click to
+                              remove.
                             </>
                           ) : (
                             <>

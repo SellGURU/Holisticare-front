@@ -160,7 +160,9 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
               >
                 {step.label}
               </span>
-              {isExtractionStep && extractionComplete && (isDone || isActive) ? (
+              {isExtractionStep &&
+              extractionComplete &&
+              (isDone || isActive) ? (
                 <span className="ml-auto rounded-full bg-Primary-DeepTeal/10 px-2 py-0.5 text-[9px] font-medium text-Primary-DeepTeal whitespace-nowrap">
                   {extractedCount} biomarkers found
                 </span>

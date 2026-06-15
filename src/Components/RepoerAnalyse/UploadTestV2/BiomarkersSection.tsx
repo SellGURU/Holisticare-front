@@ -375,12 +375,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const rowCategoryResults = useMemo(
     () =>
       reviewBiomarkers.map((row, index) =>
-        categorizeReviewRow(
-          row,
-          currentRowErrors,
-          suppressedSet,
-          index,
-        ),
+        categorizeReviewRow(row, currentRowErrors, suppressedSet, index),
       ),
     [reviewBiomarkers, currentRowErrors, suppressedSet],
   );
@@ -427,7 +422,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       ]);
     } catch (err) {
       console.error('Failed to exclude biomarker:', err);
-      showError('Could not exclude biomarker', 'Please try again or contact support.');
+      showError(
+        'Could not exclude biomarker',
+        'Please try again or contact support.',
+      );
     }
   };
 
@@ -945,7 +943,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           if (!typeOk) return false;
 
           if (useReviewUx) {
-            const category = rowCategoryResults[originalIndex]?.category || 'ready';
+            const category =
+              rowCategoryResults[originalIndex]?.category || 'ready';
             return rowMatchesCategoryFilter(
               categoryFilter,
               category,
@@ -1170,7 +1169,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     type="button"
                     onClick={() => setCategoryFilter('review')}
                     className={`rounded-full px-2.5 py-0.5 text-[9px] md:text-[10px] font-medium transition-colors ${
-                      categoryFilter === 'review' || categoryFilter === 'default'
+                      categoryFilter === 'review' ||
+                      categoryFilter === 'default'
                         ? 'bg-[#FFFBEB] text-[#B45309] border border-[#FCD34D]'
                         : 'bg-white text-Text-Secondary border border-Gray-50 hover:bg-Gray-15'
                     }`}
@@ -1217,7 +1217,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         alt=""
                         className="size-3"
                       />
-                      {activeErrorCount} error{activeErrorCount !== 1 ? 's' : ''}
+                      {activeErrorCount} error
+                      {activeErrorCount !== 1 ? 's' : ''}
                     </span>
                   )}
                   {(reviewSummary?.duplicate_count ?? 0) > 0 && (
@@ -1400,13 +1401,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         const rowType = String(b.biomarker_type || 'blood')
                           .trim()
                           .toLowerCase();
-                        const rowAvailableBiomarkers =
-                          effectiveCatalog.filter(
-                            (option) =>
-                              String(option.biomarker_type || 'blood')
-                                .trim()
-                                .toLowerCase() === rowType,
-                          );
+                        const rowAvailableBiomarkers = effectiveCatalog.filter(
+                          (option) =>
+                            String(option.biomarker_type || 'blood')
+                              .trim()
+                              .toLowerCase() === rowType,
+                        );
                         const selectedSystemMeta = effectiveCatalog.find(
                           (option) =>
                             normalizeBiomarkerNameForMatch(option.biomarker) ===
