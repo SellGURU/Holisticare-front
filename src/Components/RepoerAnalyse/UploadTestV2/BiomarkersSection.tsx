@@ -1133,7 +1133,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               Fetching the saved data for this report.
             </div>
           </div>
-        ) : loading || recheckLoading || uploadedFile?.status === 'uploading' ? (
+        ) : loading ||
+          recheckLoading ||
+          uploadedFile?.status === 'uploading' ? (
           <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] w-full flex-col items-center gap-5 overflow-hidden px-2 pt-6">
             {reopeningExistingFile || recheckLoading ? (
               <div className="flex flex-1 flex-col items-center justify-center gap-3">

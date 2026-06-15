@@ -232,14 +232,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                       Re-check
                     </>
                   ) : (
-                    <div
-                      className="flex gap-2 justify-center text-[10px] xs:text-xs"
-                    >
-                      <img
-                        className="size-4"
-                        src="/icons/refresh.svg"
-                        alt=""
-                      />
+                    <div className="flex gap-2 justify-center text-[10px] xs:text-xs">
+                      <img className="size-4" src="/icons/refresh.svg" alt="" />
                       Re-check
                     </div>
                   )}
