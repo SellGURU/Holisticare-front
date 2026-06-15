@@ -46,10 +46,9 @@ interface BiomarkerRowProps {
   rowCategory?: CategorizeReviewRowResult['category'];
   reviewReason?: ReviewReason;
   reviewMessage?: string;
-  onClearRowError?: () => void;
-  onConfirmReviewRow?: () => void;
   onExcludeReview?: () => void;
   onRestoreExcluded?: () => void;
+  onMappingDirtyChange?: (dirty: boolean) => void;
   excludedReason?: string;
   excludedAt?: string;
   hiddenByFilter?: boolean;
@@ -95,15 +94,13 @@ export default function BiomarkerRow({
   rowCategory = 'ready',
   reviewReason,
   reviewMessage = '',
-  onClearRowError,
-  onConfirmReviewRow,
   onExcludeReview,
   onRestoreExcluded,
+  onMappingDirtyChange,
   excludedReason,
   excludedAt,
   hiddenByFilter = false,
 }: BiomarkerRowProps) {
-  const [confirmGuardMsg, setConfirmGuardMsg] = useState('');
   const [isChanged, setIsChenged] = useState(false);
   const [isMapped, setIsMapped] = useState(false);
   const [savedMappings, setSavedMappings] = useState<
@@ -115,6 +112,16 @@ export default function BiomarkerRow({
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
   const [unitOptions, setUnitOptions] = useState<string[]>([]);
   const [copiedExactName, setCopiedExactName] = useState(false);
+
+  const markMappingDirty = () => {
+    setIsChenged(true);
+    onMappingDirtyChange?.(true);
+  };
+
+  const clearMappingDirty = () => {
+    setIsChenged(false);
+    onMappingDirtyChange?.(false);
+  };
   const normalizedName = resolveNormalizedBiomarkerName(biomarker);
   const pdfNameFromDocument = resolveExactBiomarkerName(biomarker);
   const showPdfNameLine = pdfNameFromDocument.length > 0;
@@ -389,7 +396,7 @@ export default function BiomarkerRow({
 
     if (namesAlreadyMatch) {
       setIsMapped(true);
-      setIsChenged(false);
+      clearMappingDirty();
       return;
     }
 
@@ -406,7 +413,7 @@ export default function BiomarkerRow({
       }
       setIsMapped(true);
       setSavedMappings(saveMappingPayloads);
-      setIsChenged(false);
+      clearMappingDirty();
       setMappingStatus('added');
       setTimeout(() => setMappingStatus(null), 5000);
     } catch (err) {
@@ -414,20 +421,6 @@ export default function BiomarkerRow({
     } finally {
       setIsSavingMapping(false);
     }
-  };
-
-  const handleConfirmReviewClick = async () => {
-    if (
-      reviewReason === 'unmatched' &&
-      !String(biomarker.biomarker || '').trim()
-    ) {
-      setConfirmGuardMsg('Please select a system biomarker first');
-      return;
-    }
-    setConfirmGuardMsg('');
-    await handleSaveMapping();
-    onClearRowError?.();
-    onConfirmReviewRow?.();
   };
 
   const rowBorderClass = useReviewUx
@@ -558,7 +551,7 @@ export default function BiomarkerRow({
               updateAndStandardize(biomarker.biomarker_id, {
                 biomarker_type: nextType,
               });
-              setIsChenged(true);
+              markMappingDirty();
               setIsMapped(false);
               setSavedMappings([]);
               setSaveError(null);
@@ -621,7 +614,7 @@ export default function BiomarkerRow({
                 }
               }
               updateAndStandardize(biomarker.biomarker_id, nextFields);
-              setIsChenged(true);
+              markMappingDirty();
               setIsMapped(false);
               setSavedMappings([]);
               setSaveError(null);
@@ -692,7 +685,7 @@ export default function BiomarkerRow({
                   updateAndStandardize(biomarker.biomarker_id, {
                     original_unit: actualUnit,
                   });
-                  setIsChenged(true);
+                  markMappingDirty();
                   setIsMapped(false);
                   setSavedMappings([]);
                   setSaveError(null);
@@ -719,7 +712,7 @@ export default function BiomarkerRow({
                   handleConfirmDelete();
                   setIsConfirmDelete(false);
                   setIsMapped(false);
-                  setIsChenged(false);
+                  clearMappingDirty();
                 }}
               />
               <img
@@ -745,34 +738,7 @@ export default function BiomarkerRow({
               )}
 
               <div className="flex items-center justify-end gap-1 flex-wrap">
-                {useReviewUx && rowCategory === 'review' ? (
-                  <>
-                    <button
-                      type="button"
-                      disabled={isSavingMapping}
-                      onClick={() => void handleConfirmReviewClick()}
-                      className="rounded-md border border-Primary-DeepTeal px-2 py-0.5 text-[8px] font-medium text-Primary-DeepTeal hover:bg-Primary-DeepTeal/10 disabled:opacity-60"
-                    >
-                      ✓ Confirm
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onExcludeReview?.()}
-                      className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Text-Secondary hover:bg-Gray-50"
-                    >
-                      Exclude ✗
-                    </button>
-                  </>
-                ) : useReviewUx && rowCategory === 'ready' ? (
-                  <button
-                    type="button"
-                    onClick={() => onExcludeReview?.()}
-                    className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Text-Secondary hover:bg-Gray-50"
-                    title="Move to excluded list"
-                  >
-                    Exclude ✗
-                  </button>
-                ) : useReviewUx && rowCategory === 'excluded' ? (
+                {useReviewUx && rowCategory === 'excluded' ? (
                   <button
                     type="button"
                     onClick={() => onRestoreExcluded?.()}
@@ -782,7 +748,7 @@ export default function BiomarkerRow({
                   </button>
                 ) : (
                   <>
-                    {showSaveButton && !useReviewUx && (
+                    {showSaveButton && (
                       <>
                         <button
                           type="button"
@@ -834,7 +800,16 @@ export default function BiomarkerRow({
                       </>
                     )}
 
-                    {!useReviewUx && (
+                    {useReviewUx ? (
+                      <button
+                        type="button"
+                        onClick={() => onExcludeReview?.()}
+                        className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Text-Secondary hover:bg-Gray-50"
+                        title="Move to excluded list"
+                      >
+                        Exclude ✗
+                      </button>
+                    ) : (
                       <button
                         type="button"
                         className="shrink-0 rounded p-0.5 hover:bg-Gray-50"
@@ -851,11 +826,6 @@ export default function BiomarkerRow({
                   </>
                 )}
               </div>
-              {confirmGuardMsg && (
-                <p className="max-w-[160px] text-right text-[8px] text-Red">
-                  {confirmGuardMsg}
-                </p>
-              )}
               {saveError && (
                 <p className="max-w-[140px] rounded-md bg-[#F9DEDC] px-2 py-1 text-right text-[8px] leading-tight text-Red">
                   {saveError}

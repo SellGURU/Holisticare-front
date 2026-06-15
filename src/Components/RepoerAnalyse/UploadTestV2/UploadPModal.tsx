@@ -217,12 +217,14 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
             </div>
             <div className="flex items-center gap-2">
               {onRecheck && fileId && isReviewWithFile ? (
-                <button
+                <ButtonPrimary
                   type="button"
+                  outLine
                   disabled={recheckLoading || btnLoading}
                   onClick={() => onRecheck()}
-                  className="flex h-9 items-center gap-1.5 rounded-lg border border-Primary-DeepTeal px-3 text-[10px] font-medium text-Primary-DeepTeal transition-colors hover:bg-Primary-DeepTeal/10 disabled:cursor-not-allowed disabled:opacity-60"
+                  ClassName="min-w-[100px] xs:min-w-[127px] disabled:!bg-transparent disabled:!text-Primary-DeepTeal disabled:!border-Primary-DeepTeal disabled:opacity-100"
                   title="Re-run validation for this file"
+                  aria-busy={recheckLoading}
                 >
                   {recheckLoading ? (
                     <>
@@ -230,9 +232,18 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                       Re-check
                     </>
                   ) : (
-                    <>↻ Re-check</>
+                    <div
+                      className="flex gap-2 justify-center text-[10px] xs:text-xs"
+                    >
+                      <img
+                        className="size-4"
+                        src="/icons/refresh.svg"
+                        alt=""
+                      />
+                      Re-check
+                    </div>
                   )}
-                </button>
+                </ButtonPrimary>
               ) : null}
               <ButtonPrimary
                 disabled={
@@ -361,6 +372,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   reopeningExistingFile={reopeningExistingFile}
                   reviewCatalog={reviewCatalog}
                   onReviewCatalogRefresh={onReviewCatalogRefresh}
+                  recheckLoading={recheckLoading}
                 />
               )}
             </div>
@@ -419,6 +431,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     setShowOnlyErrors={setShowOnlyErrors}
                     reviewCatalog={reviewCatalog}
                     onReviewCatalogRefresh={onReviewCatalogRefresh}
+                    recheckLoading={recheckLoading}
                   />
                 ) : null}
               </div>

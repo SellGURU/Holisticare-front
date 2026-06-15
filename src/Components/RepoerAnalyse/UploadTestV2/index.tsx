@@ -1111,12 +1111,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     if (!fileId || recheckLoading || stepOnePollInFlightRef.current) return;
     setRecheckLoading(true);
     stepOnePollInFlightRef.current = true;
-    setbiomarkerLoading(true);
     try {
       const res = await Application.checkLabStepOne({ file_id: fileId });
-      setProgressBiomarkerUpload(res.data.progress);
       setfileType(res.data.lab_type || 'more_info');
-      setUploadPhase(res.data.status || 'ocr_processing');
       setReviewSummary(res.data.summary || null);
       if (
         Array.isArray(res.data.extracted_biomarkers) &&
@@ -1145,14 +1142,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setAddedRowErrors(errorMaps.addedErrors);
         setExtractedBiomarkers(displayRows);
         setUploadPhase(res.data.status || 'review_ready');
-        setbiomarkerLoading(false);
+        setProgressBiomarkerUpload(res.data.progress ?? 100);
       }
     } catch (err: any) {
       console.error('Re-check failed:', err);
     } finally {
       stepOnePollInFlightRef.current = false;
       setRecheckLoading(false);
-      setbiomarkerLoading(false);
     }
   };
 

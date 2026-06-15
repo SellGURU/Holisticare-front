@@ -132,6 +132,7 @@ interface BiomarkersSectionProps {
   reviewCatalog?: BiomarkerOption[];
   onReviewCatalogRefresh?: () => void;
   isEditMode?: boolean;
+  recheckLoading?: boolean;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -157,6 +158,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   reviewCatalog = [],
   onReviewCatalogRefresh,
   isEditMode,
+  recheckLoading = false,
 }) => {
   const isDemo = useIsDemo();
   // const [changedRows, setChangedRows] = useState<string[]>([]);
@@ -311,6 +313,23 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     Record<string, { reason?: string; excludedAt?: string }>
   >({});
   const categoryFilterInitialized = useRef(false);
+  const [pendingMappingRowIds, setPendingMappingRowIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const previousRowErrorKeysRef = useRef<string[]>([]);
+
+  const handleMappingDirtyChange = (biomarkerId: string, dirty: boolean) => {
+    if (!biomarkerId) return;
+    setPendingMappingRowIds((prev) => {
+      const next = new Set(prev);
+      if (dirty) {
+        next.add(biomarkerId);
+      } else {
+        next.delete(biomarkerId);
+      }
+      return next;
+    });
+  };
 
   const formatExcludedDate = (iso?: string | null) => {
     if (!iso) return '';
@@ -339,6 +358,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   useEffect(() => {
     categoryFilterInitialized.current = false;
     setCategoryFilter('default');
+    setPendingMappingRowIds(new Set());
+    previousRowErrorKeysRef.current = [];
   }, [sessionFileId]);
 
   useEffect(() => {
@@ -466,24 +487,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     } catch (err) {
       console.error('Failed to restore biomarker:', err);
     }
-  };
-
-  const handleClearRowError = (row: any, index: number) => {
-    const key = reviewRowErrorKey(row, index);
-    if (!key) return;
-    setrowErrors((prev: Record<string, string>) =>
-      removeRowErrorKey(prev || {}, key),
-    );
-  };
-
-  const handleConfirmReviewRow = (biomarkerId: string) => {
-    onChange(
-      biomarkers.map((row) =>
-        row.biomarker_id === biomarkerId
-          ? { ...row, review_error_handled: true }
-          : row,
-      ),
-    );
   };
 
   const getDefaultUnitForBiomarker = (row: any) => {
@@ -896,10 +899,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
   React.useEffect(() => {
-    if (!rowErrors || Object.keys(rowErrors).length === 0) {
+    const currentKeys = Object.keys(rowErrors || {});
+    const previousKeys = previousRowErrorKeysRef.current;
+    const addedKeys = currentKeys.filter((key) => !previousKeys.includes(key));
+    previousRowErrorKeysRef.current = currentKeys;
+
+    if (addedKeys.length === 0) {
       return;
     }
-    const firstErrorKey = Object.keys(rowErrors)[0];
+
+    const firstErrorKey = addedKeys[0];
     const targetIndex = biomarkers.findIndex(
       (row, index) => reviewRowErrorKey(row, index) === firstErrorKey,
     );
@@ -950,6 +959,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           if (!typeOk) return false;
 
           if (useReviewUx) {
+            if (pendingMappingRowIds.has(biomarker.biomarker_id)) {
+              return true;
+            }
             const category =
               rowCategoryResults[originalIndex]?.category || 'ready';
             return rowMatchesCategoryFilter(
@@ -972,6 +984,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       rowCategoryResults,
       categoryFilter,
       reviewCategoryCounts.review,
+      pendingMappingRowIds,
       showOnlyErrors,
       currentRowErrors,
     ],
@@ -1120,11 +1133,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               Fetching the saved data for this report.
             </div>
           </div>
-        ) : loading || uploadedFile?.status === 'uploading' ? (
+        ) : loading || recheckLoading || uploadedFile?.status === 'uploading' ? (
           <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] w-full flex-col items-center gap-5 overflow-hidden px-2 pt-6">
-            {reopeningExistingFile ? (
-              <div className="flex flex-1 items-center justify-center">
+            {reopeningExistingFile || recheckLoading ? (
+              <div className="flex flex-1 flex-col items-center justify-center gap-3">
                 <Circleloader />
+                {recheckLoading ? (
+                  <div className="text-xs font-medium text-Text-Primary">
+                    Re-checking biomarkers…
+                  </div>
+                ) : null}
               </div>
             ) : (
               <>
@@ -1404,7 +1422,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       >
                         <span className="block">Actions</span>
                         <span className="block font-normal normal-case tracking-normal text-[7px] text-Text-Quadruple">
-                          {useReviewUx ? 'confirm / exclude' : 'save / delete'}
+                          {useReviewUx ? 'save / exclude' : 'save / delete'}
                         </span>
                       </div>
                     </div>
@@ -1465,15 +1483,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             reviewMessage={reviewMessage}
                             excludedReason={excludedMetaEntry?.reason}
                             excludedAt={excludedMetaEntry?.excludedAt}
-                            onClearRowError={() =>
-                              handleClearRowError(b, originalIndex)
-                            }
-                            onConfirmReviewRow={() =>
-                              handleConfirmReviewRow(b.biomarker_id)
-                            }
                             onExcludeReview={() => handleExcludeReviewRow(b)}
                             onRestoreExcluded={() =>
                               handleRestoreExcludedRow(b)
+                            }
+                            onMappingDirtyChange={(dirty) =>
+                              handleMappingDirtyChange(b.biomarker_id, dirty)
                             }
                             allAvilableBiomarkers={rowAvailableBiomarkers}
                             biomarkerTypes={biomarkerTypes}
