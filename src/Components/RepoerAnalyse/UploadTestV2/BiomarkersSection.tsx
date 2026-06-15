@@ -1481,7 +1481,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             showOnlyErrors={showOnlyErrors}
                             useReviewUx={useReviewUx}
                             rowCategory={categoryResult.category}
-                            reviewReason={categoryResult.reviewReason}
                             reviewMessage={reviewMessage}
                             excludedReason={excludedMetaEntry?.reason}
                             excludedAt={excludedMetaEntry?.excludedAt}

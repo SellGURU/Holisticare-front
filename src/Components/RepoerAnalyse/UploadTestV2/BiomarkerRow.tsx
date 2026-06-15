@@ -17,7 +17,6 @@ import {
   normalizeBiomarkerNameForMatch,
   pickCatalogEntryForRow,
   type CategorizeReviewRowResult,
-  type ReviewReason,
 } from './biomarkerReviewCompat';
 
 interface BiomarkerRowProps {
@@ -44,7 +43,6 @@ interface BiomarkerRowProps {
   onDropdownOpen?: () => void;
   useReviewUx?: boolean;
   rowCategory?: CategorizeReviewRowResult['category'];
-  reviewReason?: ReviewReason;
   reviewMessage?: string;
   onExcludeReview?: () => void;
   onRestoreExcluded?: () => void;
@@ -92,7 +90,6 @@ export default function BiomarkerRow({
   onDropdownOpen,
   useReviewUx = false,
   rowCategory = 'ready',
-  reviewReason,
   reviewMessage = '',
   onExcludeReview,
   onRestoreExcluded,
