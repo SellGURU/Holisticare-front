@@ -4,38 +4,19 @@ const trim = (value: unknown) => String(value ?? '').trim();
 
 const normalizeKey = (value: unknown) => trim(value).toLowerCase();
 
-/** Lowercase unit text with dots/spaces removed so cells/h.p.f matches /hpf. */
-const normalizeUnitForClass = (unit?: unknown) =>
-  normalizeKey(unit).replace(/[.\s]/g, '');
-
 const MICROSCOPY_UNIT_PATTERN = /\/?hpf|\/?lpf|perhpf|perlpf|cellshpf|cellslfp/;
 
 const isMicroscopyUnit = (unit?: string) =>
-  MICROSCOPY_UNIT_PATTERN.test(normalizeUnitForClass(unit));
+  MICROSCOPY_UNIT_PATTERN.test(
+    normalizeKey(unit).replace(/[.\s]/g, ''),
+  );
 
 /** Match HbA1c, Hb A1c, and similar spacing variants to the same catalog row. */
 export const normalizeBiomarkerNameForMatch = (value: unknown) =>
   normalizeKey(value)
-    .replace(/\s+/g, '')
-    .replace(/[^a-z0-9+]/g, '');
-
-const resolveRowCatalogNameKey = (row: any) => {
-  const candidates = [
-    row?.biomarker,
-    row?.original_biomarker_name,
-    row?.normalized_biomarker_name,
-    row?.extracted_biomarker_name,
-  ];
-  for (const candidate of candidates) {
-    const key = normalizeBiomarkerNameForMatch(candidate);
-    if (key) return key;
-  }
-  return '';
-};
-
-const catalogNamesMatch = (left: unknown, right: unknown) =>
-  normalizeBiomarkerNameForMatch(left) ===
-  normalizeBiomarkerNameForMatch(right);
+    .replace(/\s+/g, ' ')
+    .replace(/\bhba1c\b/g, 'hb a1c')
+    .replace(/\ba1c\b/g, 'a1c');
 
 const preferNonEmpty = (...values: unknown[]) => {
   const found = values.find(
@@ -43,6 +24,44 @@ const preferNonEmpty = (...values: unknown[]) => {
       value !== undefined && value !== null && String(value).trim() !== '',
   );
   return found ?? '';
+};
+
+const thresholdValueIsNumeric = (value: unknown) => {
+  if (value === null || value === undefined) return false;
+  if (typeof value === 'number') return true;
+  const text = trim(value);
+  if (!text) return false;
+  return /^-?\d+(\.\d+)?$/.test(text.replace(/,/g, ''));
+};
+
+const ruleReferenceIsNumeric = (thresholds: any): boolean | null => {
+  if (!thresholds || typeof thresholds !== 'object') return null;
+
+  const firstGender = Object.values(thresholds)[0] as any;
+  if (!firstGender) return null;
+
+  const firstAgeGroup = Object.values(firstGender)[0] as any[];
+  if (!Array.isArray(firstAgeGroup) || !firstAgeGroup[0]) return null;
+
+  const firstThreshold = firstAgeGroup[0];
+  const low = firstThreshold?.low;
+  const high = firstThreshold?.high;
+  const lowIsNumeric = thresholdValueIsNumeric(low);
+  const highIsNumeric = thresholdValueIsNumeric(high);
+
+  if (
+    low !== undefined &&
+    low !== null &&
+    high !== undefined &&
+    high !== null
+  ) {
+    if (lowIsNumeric && highIsNumeric) return true;
+    if (!lowIsNumeric && !highIsNumeric) return false;
+    return null;
+  }
+  if (low !== undefined && low !== null) return lowIsNumeric;
+  if (high !== undefined && high !== null) return highIsNumeric;
+  return null;
 };
 
 export const inferBiomarkerTypeFromCatalogItem = (item: any) => {
@@ -106,44 +125,6 @@ export const inferBiomarkerTypeFromCatalogItem = (item: any) => {
   }
 
   return 'blood';
-};
-
-const thresholdValueIsNumeric = (value: unknown) => {
-  if (value === null || value === undefined) return false;
-  if (typeof value === 'number') return true;
-  const text = trim(value);
-  if (!text) return false;
-  return /^-?\d+(\.\d+)?$/.test(text.replace(/,/g, ''));
-};
-
-export const ruleReferenceIsNumeric = (thresholds: any): boolean | null => {
-  if (!thresholds || typeof thresholds !== 'object') return null;
-
-  const firstGender = Object.values(thresholds)[0] as any;
-  if (!firstGender) return null;
-
-  const firstAgeGroup = Object.values(firstGender)[0] as any[];
-  if (!Array.isArray(firstAgeGroup) || !firstAgeGroup[0]) return null;
-
-  const firstThreshold = firstAgeGroup[0];
-  const low = firstThreshold?.low;
-  const high = firstThreshold?.high;
-  const lowIsNumeric = thresholdValueIsNumeric(low);
-  const highIsNumeric = thresholdValueIsNumeric(high);
-
-  if (
-    low !== undefined &&
-    low !== null &&
-    high !== undefined &&
-    high !== null
-  ) {
-    if (lowIsNumeric && highIsNumeric) return true;
-    if (!lowIsNumeric && !highIsNumeric) return false;
-    return null;
-  }
-  if (low !== undefined && low !== null) return lowIsNumeric;
-  if (high !== undefined && high !== null) return highIsNumeric;
-  return null;
 };
 
 export const extractCategoricalValuesFromThresholds = (
@@ -212,565 +193,441 @@ export const inferRowBiomarkerType = (row: any) => {
   });
 };
 
-export const inferExtractedValueKind = (value: unknown, unit?: string) => {
-  const text = trim(value);
-  const unitText = normalizeKey(unit);
-  if (!text) return 'unknown';
-  if (/\d/.test(text)) return 'numeric';
-  if (unitText === '%' || unitText === 'percent' || unitText === 'ratio') {
-    return 'numeric';
-  }
-  return 'string';
-};
-
-export const inferSystemValueKind = (valueType?: string, unit?: string) => {
-  const type = normalizeKey(valueType);
-  const unitText = trim(unit);
-
-  if (
-    ['string', 'text', 'categorical', 'qualitative', 'boolean', 'choice'].some(
-      (token) => type.includes(token),
-    )
-  ) {
-    return 'string';
-  }
-  if (
-    ['number', 'numeric', 'integer', 'float', 'decimal', 'range'].some(
-      (token) => type.includes(token),
-    )
-  ) {
-    return 'numeric';
-  }
-  if (isMicroscopyUnit(unitText)) {
-    return 'string';
-  }
-  if (unitText) return 'numeric';
-  return 'unknown';
-};
-
-const inferMeasurementContext = (name: string, unit: string) => {
-  const unitNorm = normalizeUnitForClass(unit);
-  const nameText = normalizeKey(name);
-  if (unitNorm.includes('%') || nameText.includes('%')) return 'percent';
-  if (
-    /x10[e^]?\d+\/l|10\^?\d+\/l|cells?\/?u[lµμ]/.test(unitNorm) ||
-    isMicroscopyUnit(unit)
-  ) {
-    return 'absolute_count';
-  }
-  if (nameText.includes('absolute') || nameText.includes('count')) {
-    return 'absolute_count';
-  }
-  return 'generic';
-};
-
-const isMeasurementContextCompatible = (
-  extractedUnit: string,
-  systemUnit?: string,
-  systemName?: string,
-) => {
-  const extractedContext = inferMeasurementContext('', extractedUnit);
-  const systemContext = inferMeasurementContext(
-    systemName || '',
-    systemUnit || '',
-  );
-  if (extractedContext === 'generic' || systemContext === 'generic') {
-    return true;
-  }
-  return extractedContext === systemContext;
-};
-
-export const isValueTypeCompatible = (
-  extractedValue: unknown,
-  extractedUnit: string,
-  systemValueType?: string,
-  systemUnit?: string,
-  systemName?: string,
-) => {
-  const extractedKind = inferExtractedValueKind(extractedValue, extractedUnit);
-  const systemKind = inferSystemValueKind(systemValueType, systemUnit);
-
-  if (extractedKind === 'string' && isMicroscopyUnit(systemUnit)) {
-    return isMeasurementContextCompatible(
-      extractedUnit,
-      systemUnit,
-      systemName,
-    );
-  }
-
-  if (extractedKind === 'string' && systemKind === 'string') {
-    return true;
-  }
-
-  if (extractedKind === 'unknown' || systemKind === 'unknown') {
-    return isMeasurementContextCompatible(
-      extractedUnit,
-      systemUnit,
-      systemName,
-    );
-  }
-
-  return (
-    extractedKind === systemKind &&
-    isMeasurementContextCompatible(extractedUnit, systemUnit, systemName)
-  );
-};
-
 export const isTextValueWithoutUnit = (value: unknown) => {
   const text = trim(value);
-  return text.length > 0 && !/\d/.test(text);
-};
-
-const simplifyCategoricalKey = (value: string) =>
-  normalizeKey(value).replace(/[^a-z0-9+]/g, '');
-
-export const fuzzyMatchCategoricalValue = (
-  rawValue: unknown,
-  validValues: string[],
-): string | null => {
-  const raw = trim(rawValue);
-  if (!raw || !validValues.length) return null;
-
-  const rawLower = normalizeKey(raw);
-  const lookup = new Map(
-    validValues
-      .filter((value) => trim(value))
-      .map((value) => [normalizeKey(value), value] as const),
-  );
-
-  if (lookup.has(rawLower)) {
-    return lookup.get(rawLower) || null;
-  }
-
-  const rawSimple = simplifyCategoricalKey(raw);
-  for (const [key, display] of lookup.entries()) {
-    if (simplifyCategoricalKey(key) === rawSimple) {
-      return display;
-    }
-  }
-
-  for (const [key, display] of lookup.entries()) {
-    const rawStem = rawLower.replace(/s$/, '');
-    const keyStem = key.replace(/s$/, '');
-    if (rawStem.length >= 3 && rawStem === keyStem) {
-      return display;
-    }
-    if (`${rawLower}s` === key || rawLower === `${key}s`) {
-      return display;
-    }
-  }
-
-  const absenceValues = new Set([
-    'not present',
-    'none',
-    'none seen',
-    'nil',
-    'negative',
-    'absent',
-    'not detected',
-    'undetected',
-    'not seen',
-    'no rbc',
-    'no wbc',
-  ]);
-  const presenceValues = new Set([
-    'present',
-    'positive',
-    'detected',
-    'trace',
-    'traces',
-  ]);
-
-  if (absenceValues.has(rawLower) && lookup.has('nil')) {
-    return lookup.get('nil') || null;
-  }
-  if (presenceValues.has(rawLower)) {
-    if (
-      lookup.has('traces') &&
-      (rawLower === 'trace' || rawLower === 'traces')
-    ) {
-      return lookup.get('traces') || null;
-    }
-    if (lookup.has('present')) {
-      return lookup.get('present') || null;
-    }
-  }
-
-  for (const [key, display] of lookup.entries()) {
-    if (rawLower.includes(key) || key.includes(rawLower)) {
-      if (Math.max(rawLower.length, key.length) >= 4) {
-        return display;
-      }
-    }
-  }
-
-  return null;
-};
-
-export const getCatalogCategoricalValues = (item: any): string[] => {
-  const fromThresholds = extractCategoricalValuesFromThresholds(
-    item?.thresholds,
-  );
-  if (fromThresholds.length) return fromThresholds;
-  return Array.isArray(item?.categorical_values) ? item.categorical_values : [];
-};
-
-export const normalizeExtractedValueForCatalog = (
-  rawValue: unknown,
-  catalogItem: any,
-): string => {
-  const raw = trim(rawValue);
-  if (!raw) return raw;
-
-  const validValues = getCatalogCategoricalValues(catalogItem);
-  if (!validValues.length) return raw;
-
-  const valueType = inferCatalogValueType(catalogItem);
-  const numericRef = ruleReferenceIsNumeric(catalogItem?.thresholds);
-  if (valueType !== 'string' && numericRef !== false) {
-    return raw;
-  }
-
-  return fuzzyMatchCategoricalValue(raw, validValues) || raw;
-};
-
-export const findCompatibleCatalogOptions = (catalog: any[], row: any) => {
-  const rowType = inferRowBiomarkerType(row);
-  const valueText = trim(row?.original_value ?? row?.value);
-  const extractedUnit = trim(row?.original_unit ?? row?.unit);
-
-  return catalog.filter((option) => {
-    if (
-      normalizeKey(option?.biomarker_type || 'blood') !== normalizeKey(rowType)
-    ) {
-      return false;
-    }
-    return isValueTypeCompatible(
-      valueText,
-      extractedUnit,
-      option?.value_type,
-      option?.unit,
-      option?.biomarker,
-    );
-  });
-};
-
-export const findCatalogMatchForRow = (catalog: any[], row: any) => {
-  const rowType = inferRowBiomarkerType(row);
-  const currentNameKey = resolveRowCatalogNameKey(row);
-  if (!currentNameKey) return null;
-
-  const typedMatches = catalog.filter(
-    (option) =>
-      catalogNamesMatch(option?.biomarker, currentNameKey) &&
-      normalizeKey(option?.biomarker_type || 'blood') === normalizeKey(rowType),
-  );
-  if (typedMatches.length === 1) return typedMatches[0];
-
-  const compatible = findCompatibleCatalogOptions(catalog, row);
-  const sameNameMatches = compatible.filter((option) =>
-    catalogNamesMatch(option?.biomarker, currentNameKey),
-  );
-  if (sameNameMatches.length === 1) return sameNameMatches[0];
-  if (compatible.length === 1) return compatible[0];
-  return typedMatches[0] || sameNameMatches[0] || null;
-};
-
-export const resolveSystemBiomarkerForRow = (catalog: any[], row: any) => {
-  const rowType = inferRowBiomarkerType(row);
-  let next = {
-    ...row,
-    biomarker_type: trim(row?.biomarker_type) || rowType,
-  };
-
-  // Keep backend-resolved system biomarker; only infer from catalog when empty.
-  if (trim(next?.biomarker)) {
-    return next;
-  }
-
-  const currentNameKey = resolveRowCatalogNameKey(row);
-  if (!currentNameKey) return next;
-
-  const catalogTypedMatches = catalog.filter(
-    (option) =>
-      catalogNamesMatch(option?.biomarker, currentNameKey) &&
-      normalizeKey(option?.biomarker_type || 'blood') === normalizeKey(rowType),
-  );
-
-  const compatible = findCompatibleCatalogOptions(catalog, next);
-  const sameNameMatches = compatible.filter((option) =>
-    catalogNamesMatch(option?.biomarker, currentNameKey),
-  );
-
-  if (sameNameMatches.length === 1) {
-    return {
-      ...next,
-      biomarker: sameNameMatches[0].biomarker,
-      unit: sameNameMatches[0].unit || next.unit || '',
-    };
-  }
-
-  if (sameNameMatches.length > 1) {
-    return next;
-  }
-
-  if (compatible.length === 1) {
-    return {
-      ...next,
-      biomarker: compatible[0].biomarker,
-      unit: compatible[0].unit || next.unit || '',
-    };
-  }
-
-  if (catalogTypedMatches.length === 1) {
-    return {
-      ...next,
-      biomarker: catalogTypedMatches[0].biomarker,
-      unit: catalogTypedMatches[0].unit || next.unit || '',
-    };
-  }
-
-  if (catalogTypedMatches.length > 1) {
-    return next;
-  }
-
-  return {
-    ...next,
-    biomarker: '',
-    unit: '',
-  };
-};
-
-export const resolveRowForReview = (catalog: any[], row: any) => {
-  let next = resolveSystemBiomarkerForRow(catalog, row);
-  const catalogMatch = findCatalogMatchForRow(catalog, next);
-  if (!catalogMatch) return next;
-
-  const value = preferNonEmpty(next.original_value, next.value);
-  const normalizedValue = normalizeExtractedValueForCatalog(
-    value,
-    catalogMatch,
-  );
-  if (normalizedValue !== trim(value)) {
-    next = { ...next, original_value: normalizedValue };
-  }
-
-  return next;
-};
-
-const normalizeUnitKey = (unit: unknown) =>
-  normalizeKey(String(unit ?? '').replace('(no unit)', ''));
-
-/** Stable PDF/extracted name for dedupe keys — never use resolved system biomarker. */
-export const reviewRowDedupNameKey = (row: any) => {
-  const candidates = [
-    row?.original_biomarker_name,
-    row?.extracted_biomarker_name,
-    row?.normalized_biomarker_name,
-    row?.biomarker,
-  ];
-  for (const candidate of candidates) {
-    const key = normalizeBiomarkerNameForMatch(candidate);
-    if (key) return key;
-  }
-  return '';
-};
-
-export const buildReviewBiomarkerDedupKey = (row: any) => {
-  const name = reviewRowDedupNameKey(row);
-  if (!name) return '';
-  const type = normalizeKey(inferRowBiomarkerType(row));
-  return `${name}|${type}`;
+  if (!text) return false;
+  return !/\d/.test(text);
 };
 
 export const reviewRowErrorKey = (row: any, index: number) => {
-  const biomarkerId = String(row?.biomarker_id || '').trim();
-  if (biomarkerId) {
-    return biomarkerId;
-  }
-  return `index:${index}`;
+  const id = trim(row?.biomarker_id);
+  if (id) return id;
+  return `row-${index}`;
 };
 
 export const removeRowErrorKey = (
   errors: Record<string, string>,
-  rowKey: string,
+  key: string,
 ) => {
-  if (!rowKey || !errors[rowKey]) {
-    return errors;
-  }
+  if (!key || !errors[key]) return errors;
   const next = { ...errors };
-  delete next[rowKey];
+  delete next[key];
   return next;
 };
 
-export const remapRowErrorsAfterDedupById = (
-  errors: Record<string, string>,
-  indexMap: Map<number, number>,
-  sourceRows: any[],
-) => {
-  const next: Record<string, string> = {};
-  Object.entries(errors).forEach(([key, value]) => {
-    if (!key.startsWith('index:')) {
-      const stillPresent = sourceRows.some(
-        (row) => String(row?.biomarker_id || '').trim() === key,
+/** Map chart_bounds API rows into catalog options for dropdowns and unit hints. */
+export const mapChartBoundsToReviewCatalog = (items: any[]) =>
+  (Array.isArray(items) ? items : [])
+    .map((item: any) => ({
+      biomarker: String(item?.Biomarker || '').trim(),
+      benchmark_area: String(item?.['Benchmark areas'] || '').trim(),
+      unit: String(item?.unit || '').trim(),
+      biomarker_type: inferBiomarkerTypeFromCatalogItem(item),
+      value_type: inferCatalogValueType(item),
+      thresholds: item?.thresholds,
+      categorical_values: extractCategoricalValuesFromThresholds(
+        item?.thresholds,
+      ),
+    }))
+    .filter((item) => item.biomarker)
+    .sort((a, b) => {
+      const areaCompare = (a.benchmark_area || '').localeCompare(
+        b.benchmark_area || '',
       );
-      if (stillPresent) {
-        next[key] = value;
-      }
-      return;
-    }
-    const oldIndex = Number(key.slice('index:'.length));
-    const newIndex = indexMap.get(oldIndex);
-    if (newIndex === undefined) {
-      return;
-    }
-    const row = sourceRows[newIndex];
-    const rowKey = reviewRowErrorKey(row, newIndex);
-    next[rowKey] = value;
-  });
-  return next;
+      return areaCompare !== 0
+        ? areaCompare
+        : a.biomarker.localeCompare(b.biomarker);
+    });
+
+const inferBiomarkerTypeFromLabType = (labType?: string) => {
+  const normalized = String(labType || '')
+    .trim()
+    .toLowerCase();
+  if (normalized === 'gut') return 'gut';
+  if (normalized === 'dna') return 'dna';
+  return 'blood';
 };
 
-export const scoreReviewBiomarkerRow = (row: any, catalogMatch: any | null) => {
-  let score = 0;
-  const valueText = trim(row?.original_value ?? row?.value);
-  const defaultUnit = normalizeUnitKey(catalogMatch?.unit);
-  const originalUnit = normalizeUnitKey(row?.original_unit ?? row?.unit);
-  const systemUnit = normalizeUnitKey(row?.unit);
+/** Build validate_biomarkers payload rows from backend-resolved row fields. */
+export const buildBiomarkerRowsForValidation = (
+  biomarkers: any[],
+  labType: string,
+) =>
+  biomarkers.map((row, index) => {
+    const biomarker = trim(row?.biomarker);
+    const unit = trim(preferNonEmpty(row.original_unit, row.unit));
+    const value = trim(preferNonEmpty(row.original_value, row.value));
+    const base = {
+      biomarker_id: row.biomarker_id || `${labType}-${index}`,
+      biomarker,
+      biomarker_type:
+        row.biomarker_type || inferBiomarkerTypeFromLabType(labType),
+      value,
+      unit,
+      original_biomarker_name: trim(
+        preferNonEmpty(row.original_biomarker_name, row.extracted_biomarker_name),
+      ),
+      original_value: value,
+      original_unit: unit,
+    };
+    if (labType === 'gut') {
+      return { ...base, 'sub-value': row['sub-value'] };
+    }
+    if (labType === 'dna') {
+      return {
+        ...base,
+        header_1: row['header_1'],
+        more_info: row['more_info'],
+        list_of_genes: row['list_of_genes'],
+        your_result: row['your_result'],
+      };
+    }
+    return base;
+  });
 
-  if (valueText && /\d/.test(valueText)) {
-    score += 100;
+export type ReviewRowCategory = 'ready' | 'review' | 'excluded';
+export type ReviewReason =
+  | 'unmatched'
+  | 'value_mismatch'
+  | 'unit_mismatch'
+  | 'suggest_delete';
+
+export type CategorizeReviewRowResult = {
+  category: ReviewRowCategory;
+  reviewReason?: ReviewReason;
+};
+
+export type CategoryFilter =
+  | 'default'
+  | 'all'
+  | 'ready'
+  | 'review'
+  | 'excluded';
+
+export const inferReviewReasonFromErrorText = (
+  errorText: string,
+): ReviewReason | null => {
+  const msg = String(errorText || '').toLowerCase();
+  if (!msg) return null;
+  if (
+    msg.includes('valid options') ||
+    msg.includes('not accepted for this biomarker')
+  ) {
+    return 'value_mismatch';
   }
   if (
-    defaultUnit &&
-    (originalUnit === defaultUnit || systemUnit === defaultUnit)
+    msg.includes('unit') &&
+    (msg.includes('match') ||
+      msg.includes('extracted unit') ||
+      msg.includes('system standard') ||
+      msg.includes('system default') ||
+      msg.includes('differs') ||
+      msg.includes('cannot be provided'))
   ) {
-    score += 80;
-  } else if (originalUnit || systemUnit) {
-    score += 10;
+    return 'unit_mismatch';
   }
-
-  if (resolveRowCatalogNameKey(row)) {
-    score += 5;
+  if (
+    msg.includes('not recognized') ||
+    msg.includes('system biomarker') ||
+    msg.includes('invalid biomarker type') ||
+    msg.includes('biomarker name')
+  ) {
+    return 'unmatched';
   }
-
-  if (row?.review_error_handled) {
-    score += 5;
-  }
-
-  return score;
+  return null;
 };
 
-export const dedupeReviewBiomarkerRows = (
-  rows: any[],
-  catalog: any[] = [],
-): {
-  rows: any[];
-  indexMap: Map<number, number>;
-  removedCount: number;
-} => {
-  if (!Array.isArray(rows) || rows.length === 0) {
-    return { rows: [], indexMap: new Map(), removedCount: 0 };
+export const buildSuppressedRowKey = (row: any) => {
+  const extracted = normalizeBiomarkerNameForMatch(
+    row?.original_biomarker_name || row?.extracted_biomarker_name,
+  );
+  const type = normalizeKey(inferRowBiomarkerType(row));
+  return `${extracted}|${type}`;
+};
+
+export const isRowSuppressed = (row: any, suppressedSet: Set<string>) => {
+  const key = buildSuppressedRowKey(row);
+  if (!key || key === '|') return false;
+  const systemKey = `${normalizeBiomarkerNameForMatch(row?.biomarker)}|${normalizeKey(inferRowBiomarkerType(row))}`;
+  return (
+    suppressedSet.has(key) ||
+    (systemKey !== '|' && suppressedSet.has(systemKey))
+  );
+};
+
+/** Categorize a review row using backend resolution and validation signals only. */
+export const categorizeReviewRow = (
+  row: any,
+  rowErrors: Record<string, string>,
+  suppressedSet: Set<string>,
+  index: number,
+): CategorizeReviewRowResult => {
+  if (isRowSuppressed(row, suppressedSet)) {
+    return { category: 'excluded' };
   }
 
-  const winners = new Map<
-    string,
-    { row: any; originalIndex: number; score: number }
-  >();
+  if (!trim(row?.biomarker)) {
+    return { category: 'review', reviewReason: 'unmatched' };
+  }
 
-  rows.forEach((row, originalIndex) => {
-    const key = buildReviewBiomarkerDedupKey(row);
-    if (!key) return;
+  const rowKey = reviewRowErrorKey(row, index);
+  const errorText = rowErrors[rowKey] || '';
+  if (errorText.trim()) {
+    return {
+      category: 'review',
+      reviewReason: inferReviewReasonFromErrorText(errorText) || 'unmatched',
+    };
+  }
 
-    const score = scoreReviewBiomarkerRow(
+  if (row?.suggest_delete === true) {
+    return { category: 'review', reviewReason: 'suggest_delete' };
+  }
+
+  return { category: 'ready' };
+};
+
+export const countReviewRowCategories = (
+  rows: any[],
+  rowErrors: Record<string, string>,
+  suppressedSet: Set<string>,
+) => {
+  let ready = 0;
+  let review = 0;
+  let excluded = 0;
+  rows.forEach((row, index) => {
+    const { category } = categorizeReviewRow(
       row,
-      findCatalogMatchForRow(catalog, row),
+      rowErrors,
+      suppressedSet,
+      index,
     );
-    const existing = winners.get(key);
-    if (
-      !existing ||
-      score > existing.score ||
-      (score === existing.score && originalIndex < existing.originalIndex)
-    ) {
-      winners.set(key, { row, originalIndex, score });
+    if (category === 'ready') ready += 1;
+    else if (category === 'review') review += 1;
+    else excluded += 1;
+  });
+  return { ready, review, excluded };
+};
+
+export const getReviewRowMessage = (
+  result: CategorizeReviewRowResult,
+  _row: any,
+  errorText?: string,
+): string => {
+  if (result.category !== 'review') return '';
+
+  if (errorText?.trim()) {
+    return errorText.trim();
+  }
+
+  if (result.reviewReason === 'unmatched') {
+    return 'Unmatched — please select a system biomarker';
+  }
+  if (result.reviewReason === 'suggest_delete') {
+    return 'Suggested for removal';
+  }
+
+  return '';
+};
+
+export const rowMatchesCategoryFilter = (
+  categoryFilter: CategoryFilter,
+  category: ReviewRowCategory,
+  reviewCount: number,
+) => {
+  if (categoryFilter === 'all') return true;
+  if (categoryFilter === 'default') {
+    return category === 'review' || (category === 'ready' && reviewCount === 0);
+  }
+  return category === categoryFilter;
+};
+
+export type SuppressedBiomarkerItem = {
+  id?: number;
+  system_biomarker?: string | null;
+  extracted_name?: string;
+  biomarker_type?: string;
+  reason?: string | null;
+  excluded_at?: string | null;
+};
+
+export const formatSuppressionReason = (reason?: string | null) => {
+  const text = trim(reason);
+  if (!text || text.toLowerCase() === 'user_manual') {
+    return 'Excluded manually';
+  }
+  return text;
+};
+
+export const buildSuppressedStateFromItems = (
+  items: SuppressedBiomarkerItem[],
+  formatExcludedDate: (iso?: string | null) => string = () => '',
+) => {
+  const nextSet = new Set<string>();
+  const nextMeta: Record<string, { reason?: string; excludedAt?: string }> = {};
+  (items || []).forEach((item) => {
+    const type = normalizeKey(item?.biomarker_type || 'blood');
+    const extractedKey = normalizeBiomarkerNameForMatch(
+      item?.extracted_name || '',
+    );
+    const rowKey = `${extractedKey}|${type}`;
+    if (extractedKey) {
+      nextSet.add(rowKey);
+      nextMeta[rowKey] = {
+        reason: formatSuppressionReason(item?.reason),
+        excludedAt: formatExcludedDate(item?.excluded_at),
+      };
+    }
+    const systemKey = normalizeBiomarkerNameForMatch(
+      item?.system_biomarker || '',
+    );
+    if (systemKey) {
+      nextSet.add(`${systemKey}|${type}`);
     }
   });
+  return { suppressedSet: nextSet, suppressedMeta: nextMeta };
+};
 
-  const keptRows: any[] = [];
-  const indexMap = new Map<number, number>();
+export const suppressedItemMatchesRow = (
+  item: SuppressedBiomarkerItem,
+  row: any,
+) => {
+  const type = normalizeKey(item?.biomarker_type || 'blood');
+  const extractedKey = normalizeBiomarkerNameForMatch(
+    item?.extracted_name || '',
+  );
+  if (!extractedKey) return false;
+  const itemKey = `${extractedKey}|${type}`;
+  const rowKey = buildSuppressedRowKey(row);
+  if (rowKey === itemKey) return true;
+  const rowSystemKey = `${normalizeBiomarkerNameForMatch(row?.biomarker)}|${normalizeKey(inferRowBiomarkerType(row))}`;
+  const itemSystemKey = `${normalizeBiomarkerNameForMatch(item?.system_biomarker || '')}|${type}`;
+  return (
+    rowSystemKey === itemKey ||
+    rowKey === itemSystemKey ||
+    (itemSystemKey !== '|' && rowSystemKey === itemSystemKey)
+  );
+};
 
-  rows.forEach((row, originalIndex) => {
-    const key = buildReviewBiomarkerDedupKey(row);
-    if (key) {
-      const winner = winners.get(key);
-      if (!winner || winner.originalIndex !== originalIndex) {
-        return;
-      }
-    }
-
-    indexMap.set(originalIndex, keptRows.length);
-    keptRows.push(row);
-  });
-
+export const buildRowFromSuppressedItem = (item: SuppressedBiomarkerItem) => {
+  const extracted = String(item?.extracted_name || '').trim();
+  const type = String(item?.biomarker_type || 'blood').trim().toLowerCase();
   return {
-    rows: keptRows,
-    indexMap,
-    removedCount: rows.length - keptRows.length,
+    biomarker_id: `suppressed-${item?.id ?? `${extracted}-${type}`}`,
+    biomarker: item?.system_biomarker || '',
+    original_biomarker_name: extracted,
+    normalized_biomarker_name: extracted,
+    biomarker_type: type,
+    value: '',
+    unit: '',
+    original_value: '',
+    original_unit: '',
+    is_suppressed_only: true,
   };
 };
 
-export const remapRowErrorsAfterDedup = (
-  errors: Record<number, string>,
-  indexMap: Map<number, number>,
-) => {
-  const next: Record<number, string> = {};
-  Object.entries(errors).forEach(([key, value]) => {
-    const oldIndex = Number(key);
-    const newIndex = indexMap.get(oldIndex);
-    if (newIndex !== undefined) {
-      next[newIndex] = value;
-    }
+export const sortReviewBiomarkerRows = (rows: any[]) =>
+  rows.slice().sort((a: any, b: any) => {
+    const nameA = (a.original_biomarker_name || a.biomarker || '').toString();
+    const nameB = (b.original_biomarker_name || b.biomarker || '').toString();
+    return nameA.localeCompare(nameB, undefined, {
+      sensitivity: 'base',
+    });
   });
-  return next;
-};
 
-const reviewRowStableKey = (row: any, index: number) => {
-  const biomarkerId = String(row?.biomarker_id || '').trim();
-  if (biomarkerId) {
-    return `id:${biomarkerId}`;
+/** Append display-only rows for DB-suppressed biomarkers missing from the file payload. */
+export const mergeSuppressedRowsIntoReview = (
+  biomarkers: any[],
+  suppressedItems: SuppressedBiomarkerItem[],
+) => {
+  if (!Array.isArray(suppressedItems) || suppressedItems.length === 0) {
+    return biomarkers;
   }
-  const name = String(
-    row?.original_biomarker_name || row?.biomarker || '',
-  ).trim();
-  const value = String(row?.original_value ?? row?.value ?? '').trim();
-  const unit = String(row?.original_unit ?? row?.unit ?? '').trim();
-  return `idx:${index}|${name}|${value}|${unit}`;
+  const phantoms: any[] = [];
+  for (const item of suppressedItems) {
+    const hasRow = biomarkers.some((row) =>
+      suppressedItemMatchesRow(item, row),
+    );
+    if (hasRow) continue;
+    phantoms.push(buildRowFromSuppressedItem(item));
+  }
+  if (phantoms.length === 0) return biomarkers;
+  return sortReviewBiomarkerRows([...biomarkers, ...phantoms]);
 };
 
-/** Remap rowErrors after sort/reorder; keys follow sourceRows indices. */
-export const remapRowErrorsAfterReorder = (
-  errors: Record<number, string>,
-  sourceRows: any[],
-  targetRows: any[],
-) => {
-  const targetIndexByKey = new Map<string, number>();
-  targetRows.forEach((row, index) => {
-    targetIndexByKey.set(reviewRowStableKey(row, index), index);
-  });
+const normalizeUnitKey = (unit: unknown) =>
+  trim(unit)
+    .toLowerCase()
+    .replace(/[μµ×]/g, (char) => (char === '×' ? 'x' : 'u'))
+    .replace(/\s+/g, '');
 
-  const next: Record<number, string> = {};
-  Object.entries(errors).forEach(([key, value]) => {
-    const sourceIndex = Number(key);
-    const sourceRow = sourceRows[sourceIndex];
-    if (!sourceRow) {
-      return;
-    }
-    const targetIndex = targetIndexByKey.get(
-      reviewRowStableKey(sourceRow, sourceIndex),
+const MASS_CONCENTRATION_UNITS = new Set([
+  'g/l',
+  'g/dl',
+  'mg/dl',
+  'mg/l',
+  'mmol/l',
+  'umol/l',
+]);
+
+/** Pick the best catalog row when duplicate biomarker names exist (UI hint only). */
+export const pickCatalogEntryForRow = (catalog: any[], row: any) => {
+  const biomarker = trim(row?.biomarker);
+  if (!biomarker || !catalog.length) return null;
+
+  const rowType = inferRowBiomarkerType(row);
+  const candidates = catalog.filter(
+    (option) =>
+      normalizeBiomarkerNameForMatch(option.biomarker) ===
+        normalizeBiomarkerNameForMatch(biomarker) &&
+      String(option.biomarker_type || 'blood').toLowerCase() === rowType,
+  );
+  if (!candidates.length) return null;
+  if (candidates.length === 1) return candidates[0];
+
+  const extractedUnit = normalizeUnitKey(
+    preferNonEmpty(row.original_unit, row.unit),
+  );
+  const possibleUnits = (row?.possible_values?.units || []).map(normalizeUnitKey);
+
+  if (extractedUnit) {
+    const exact = candidates.find(
+      (entry) => normalizeUnitKey(entry.unit) === extractedUnit,
     );
-    if (targetIndex !== undefined) {
-      next[targetIndex] = value;
+    if (exact) return exact;
+
+    if (MASS_CONCENTRATION_UNITS.has(extractedUnit)) {
+      const massEntry = candidates.find((entry) =>
+        MASS_CONCENTRATION_UNITS.has(normalizeUnitKey(entry.unit)),
+      );
+      if (massEntry) return massEntry;
     }
-  });
-  return next;
+  }
+
+  if (possibleUnits.length) {
+    const byPossible = candidates.find((entry) =>
+      possibleUnits.includes(normalizeUnitKey(entry.unit)),
+    );
+    if (byPossible) return byPossible;
+  }
+
+  const withoutKg = candidates.filter(
+    (entry) => normalizeUnitKey(entry.unit) !== 'kg',
+  );
+  if (withoutKg.length) {
+    return withoutKg.find((entry) => trim(entry.unit)) || withoutKg[0];
+  }
+
+  return candidates.find((entry) => trim(entry.unit)) || candidates[0];
+};
+
+/** Resolve unit for standardize_biomarkers from row + catalog hints (UI only). */
+export const resolveUnitForStandardize = (catalog: any[], row: any) => {
+  const extracted = trim(preferNonEmpty(row.original_unit, row.unit));
+  if (extracted) return extracted;
+
+  const possibleUnit = trim(row?.possible_values?.units?.[0]);
+  if (possibleUnit) return possibleUnit;
+
+  const catalogEntry = pickCatalogEntryForRow(catalog, row);
+  return trim(catalogEntry?.unit);
 };

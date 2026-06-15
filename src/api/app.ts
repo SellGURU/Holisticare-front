@@ -1144,6 +1144,23 @@ class Application extends Api {
   static validateBiomarkers = (data: any) => {
     return this.post('/patients/validate_biomarkers', data);
   };
+  static suppressBiomarker = (data: {
+    extracted_name: string;
+    system_biomarker?: string | null;
+    biomarker_type?: string;
+    reason?: string;
+  }) => {
+    return this.post('/patients/suppress_biomarker', data);
+  };
+  static unsuppressBiomarker = (data: {
+    extracted_name: string;
+    biomarker_type?: string;
+  }) => {
+    return this.post('/patients/unsuppress_biomarker', data);
+  };
+  static listSuppressedBiomarkers = () => {
+    return this.post('/patients/list_suppressed_biomarkers', {});
+  };
   static validateAddedBiomarkers = (data: any) => {
     return this.post('/patients/validate_added_biomarkers', data);
   };

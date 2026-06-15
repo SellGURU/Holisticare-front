@@ -14,14 +14,16 @@ import {
   resolveNormalizedBiomarkerName,
 } from './biomarkerNameFields';
 import {
-  isValueTypeCompatible,
   normalizeBiomarkerNameForMatch,
+  pickCatalogEntryForRow,
+  type CategorizeReviewRowResult,
+  type ReviewReason,
 } from './biomarkerReviewCompat';
 
 interface BiomarkerRowProps {
   refRenceEl: any;
   index: number;
-  showOnlyErrors: boolean;
+  showOnlyErrors?: boolean;
   biomarker: any;
   errorText: string;
   isHaveError: boolean;
@@ -40,6 +42,17 @@ interface BiomarkerRowProps {
   onCreateNewUnit?: () => void;
   onBiomarkerMenuOpen?: () => void;
   onDropdownOpen?: () => void;
+  useReviewUx?: boolean;
+  rowCategory?: CategorizeReviewRowResult['category'];
+  reviewReason?: ReviewReason;
+  reviewMessage?: string;
+  onClearRowError?: () => void;
+  onConfirmReviewRow?: () => void;
+  onExcludeReview?: () => void;
+  onRestoreExcluded?: () => void;
+  excludedReason?: string;
+  excludedAt?: string;
+  hiddenByFilter?: boolean;
 }
 
 const preferNonEmpty = (...values: unknown[]) => {
@@ -78,7 +91,19 @@ export default function BiomarkerRow({
   onCreateNewUnit,
   onBiomarkerMenuOpen,
   onDropdownOpen,
+  useReviewUx = false,
+  rowCategory = 'ready',
+  reviewReason,
+  reviewMessage = '',
+  onClearRowError,
+  onConfirmReviewRow,
+  onExcludeReview,
+  onRestoreExcluded,
+  excludedReason,
+  excludedAt,
+  hiddenByFilter = false,
 }: BiomarkerRowProps) {
+  const [confirmGuardMsg, setConfirmGuardMsg] = useState('');
   const [isChanged, setIsChenged] = useState(false);
   const [isMapped, setIsMapped] = useState(false);
   const [savedMappings, setSavedMappings] = useState<
@@ -98,9 +123,6 @@ export default function BiomarkerRow({
     biomarker.value,
   );
   const valueText = String(displayValue).trim();
-  const extractedUnitText = String(
-    biomarker.original_unit ?? biomarker.unit ?? '',
-  ).trim();
   const isTextValueWithoutUnit = valueText.length > 0 && !/\d/.test(valueText);
 
   const copyExactPdfName = async () => {
@@ -163,45 +185,23 @@ export default function BiomarkerRow({
   // Build the effective suggestions list:
   // For successfully mapped rows, include the current mapping as a top suggestion
   // so the user can easily return to it after exploring other options.
-  const compatibleSystemOptions = allAvilableBiomarkers.filter((option) =>
-    isValueTypeCompatible(
-      valueText,
-      extractedUnitText,
-      option.value_type,
-      option.unit,
-      option.biomarker,
-    ),
-  );
-  const compatibleSuggestions = suggestionMatches
-    .filter((suggestion) =>
-      isValueTypeCompatible(
-        valueText,
-        extractedUnitText,
-        suggestion.value_type,
-        suggestion.unit,
-        suggestion.system_biomarker,
-      ),
-    )
-    .reduce<BiomarkerSuggestion[]>((acc, suggestion) => {
+  const rowTypeOptions = allAvilableBiomarkers;
+  const compatibleSuggestions = suggestionMatches.reduce<BiomarkerSuggestion[]>(
+    (acc, suggestion) => {
       const key = suggestion.system_biomarker.toLowerCase();
       if (!acc.some((item) => item.system_biomarker.toLowerCase() === key)) {
         acc.push(suggestion);
       }
       return acc;
-    }, []);
-  const isCurrentSystemAllowed =
-    !biomarker.biomarker ||
-    compatibleSystemOptions.some(
-      (option) =>
-        normalizeBiomarkerNameForMatch(option.biomarker) ===
-        normalizeBiomarkerNameForMatch(biomarker.biomarker),
-    );
+    },
+    [],
+  );
 
   const effectiveSuggestions: BiomarkerSuggestion[] = (() => {
     const list = [...compatibleSuggestions];
     const currentBiomarker = biomarker.biomarker;
     const currentUnit = biomarker.unit || biomarker.original_unit || '';
-    const currentMeta = compatibleSystemOptions.find(
+    const currentMeta = rowTypeOptions.find(
       (option) =>
         normalizeBiomarkerNameForMatch(option.biomarker) ===
           normalizeBiomarkerNameForMatch(currentBiomarker) &&
@@ -230,7 +230,7 @@ export default function BiomarkerRow({
     return list;
   })();
 
-  const matchingSystemOptions = compatibleSystemOptions.filter(
+  const matchingSystemOptions = rowTypeOptions.filter(
     (option) =>
       normalizeBiomarkerNameForMatch(option.biomarker) ===
       normalizeBiomarkerNameForMatch(biomarker.biomarker),
@@ -416,20 +416,56 @@ export default function BiomarkerRow({
     }
   };
 
+  const handleConfirmReviewClick = async () => {
+    if (
+      reviewReason === 'unmatched' &&
+      !String(biomarker.biomarker || '').trim()
+    ) {
+      setConfirmGuardMsg('Please select a system biomarker first');
+      return;
+    }
+    setConfirmGuardMsg('');
+    await handleSaveMapping();
+    onClearRowError?.();
+    onConfirmReviewRow?.();
+  };
+
+  const rowBorderClass = useReviewUx
+    ? rowCategory === 'ready'
+      ? 'border-l-4 border-l-[#12B76A]'
+      : rowCategory === 'review'
+        ? 'border-l-4 border-l-[#F59E0B] bg-[#FFFBEB]/60'
+        : rowCategory === 'excluded'
+          ? 'border-l-4 border-l-Gray-100 bg-Gray-15 opacity-80'
+          : ''
+    : '';
+
+  const rowBackgroundClass = useReviewUx
+    ? rowCategory === 'ready'
+      ? index % 2 === 0
+        ? 'bg-white hover:bg-[#F1F7F8]'
+        : 'bg-[#F8FAFB] hover:bg-[#F1F7F8]'
+      : rowCategory === 'review'
+        ? 'hover:bg-[#FFF7ED]'
+        : 'hover:bg-Gray-25'
+    : isErrorHandled
+      ? 'bg-[#ECFDF3]'
+      : isHaveError
+        ? 'bg-[#FFD8E480]'
+        : index % 2 === 0
+          ? 'bg-white hover:bg-[#F1F7F8]'
+          : 'bg-[#F8FAFB] hover:bg-[#F1F7F8]';
+
+  if (hiddenByFilter) {
+    return null;
+  }
+
   return (
     <>
       <div
         ref={refRenceEl}
         key={biomarker.biomarker_id}
-        className={`${showOnlyErrors && !isHaveError ? 'hidden' : ''} ${
-          isErrorHandled
-            ? 'bg-[#ECFDF3]'
-            : isHaveError
-              ? 'bg-[#FFD8E480]'
-              : index % 2 === 0
-                ? 'bg-white hover:bg-[#F1F7F8]'
-                : 'bg-[#F8FAFB] hover:bg-[#F1F7F8]'
-        } group grid px-4 py-2 border-b border-Gray-50 items-start text-[8px] md:text-xs text-Text-Primary transition-colors duration-150`}
+        className={`${!useReviewUx && showOnlyErrors && !isHaveError ? 'hidden' : ''} ${rowBorderClass} ${rowBackgroundClass} group grid px-4 py-2 border-b border-Gray-50 items-start text-[8px] md:text-xs text-Text-Primary transition-colors duration-150`}
         style={{
           gridTemplateColumns:
             'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) minmax(108px,1fr)',
@@ -439,10 +475,17 @@ export default function BiomarkerRow({
         <div className="min-w-0 pt-1">
           <div className="flex min-h-[40px] flex-col justify-center gap-1">
             <div className="flex min-w-0 items-center gap-1 font-medium">
+              {useReviewUx && rowCategory === 'ready' ? (
+                <span className="text-[#12B76A] shrink-0" aria-hidden>
+                  ✓
+                </span>
+              ) : null}
               <TooltipTextAuto maxWidth="180px">
-                {normalizedName || '—'}
+                <span className={rowCategory === 'excluded' ? 'italic text-Text-Secondary' : ''}>
+                  {normalizedName || '—'}
+                </span>
               </TooltipTextAuto>
-              {isHaveError && (
+              {!useReviewUx && isHaveError && (
                 <>
                   <img
                     data-tooltip-id={`tooltip-${index}`}
@@ -531,19 +574,16 @@ export default function BiomarkerRow({
             isLarge
             isSetting
             value={
-              (isSystemBiomarkerError && !isErrorHandled) ||
-              !isCurrentSystemAllowed
+              isSystemBiomarkerError && !isErrorHandled && !biomarker.biomarker
                 ? ''
-                : biomarker.biomarker
+                : biomarker.biomarker || ''
             }
             placeholder={
               isSystemBiomarkerError && !isErrorHandled
                 ? '...'
-                : !isCurrentSystemAllowed
-                  ? 'Select for this type'
-                  : 'Select an option'
+                : 'Select an option'
             }
-            options={compatibleSystemOptions}
+            options={rowTypeOptions}
             isError={isSystemBiomarkerError && !isErrorHandled}
             suggestions={effectiveSuggestions}
             isSuggestionsLoading={isSuggestionsLoading}
@@ -553,18 +593,17 @@ export default function BiomarkerRow({
               onBiomarkerMenuOpen?.();
             }}
             onChange={(val: string) => {
-              const selectedOption = compatibleSystemOptions.find(
-                (option) =>
-                  option.biomarker.toLowerCase() === val.toLowerCase() &&
-                  String(option.unit || '').trim(),
-              );
+              const catalogEntry = pickCatalogEntryForRow(allAvilableBiomarkers, {
+                ...biomarker,
+                biomarker: val,
+              });
               const nextFields: Partial<any> = { biomarker: val };
               if (!isTextValueWithoutUnit) {
                 const extractedUnit = String(
                   preferNonEmpty(biomarker.original_unit, biomarker.unit) || '',
                 ).trim();
-                if (!extractedUnit && selectedOption?.unit) {
-                  nextFields.original_unit = selectedOption.unit;
+                if (!extractedUnit && catalogEntry?.unit) {
+                  nextFields.original_unit = catalogEntry.unit;
                 } else if (
                   !extractedUnit &&
                   biomarker.possible_values?.units?.length === 1
@@ -696,71 +735,117 @@ export default function BiomarkerRow({
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-1">
-                {showSaveButton && (
+              <div className="flex items-center justify-end gap-1 flex-wrap">
+                {useReviewUx && rowCategory === 'review' ? (
                   <>
                     <button
                       type="button"
                       disabled={isSavingMapping}
-                      data-tooltip-id={saveTooltipId}
-                      className={`flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[8px] font-medium transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
-                        isMapped
-                          ? 'bg-green-100 text-green-700 hover:bg-red-50 hover:text-red-600'
-                          : 'bg-gray-100 text-Text-Secondary hover:bg-green-50 hover:text-green-700'
-                      }`}
-                      onClick={() => void handleSaveMapping()}
+                      onClick={() => void handleConfirmReviewClick()}
+                      className="rounded-md border border-Primary-DeepTeal px-2 py-0.5 text-[8px] font-medium text-Primary-DeepTeal hover:bg-Primary-DeepTeal/10 disabled:opacity-60"
                     >
-                      <img
-                        src={
-                          isMapped
-                            ? '/icons/save-2-fill.svg'
-                            : '/icons/save-2.svg'
-                        }
-                        alt=""
-                        className="h-3.5 w-3.5"
-                      />
-                      <span className="leading-tight">
-                        {isSavingMapping
-                          ? 'Saving...'
-                          : isMapped
-                            ? 'Saved'
-                            : 'Save'}
-                      </span>
+                      ✓ Confirm
                     </button>
-                    <Tooltip
-                      id={saveTooltipId}
-                      place="top"
-                      className="!bg-[#E8F4F6] !bg-opacity-100 !max-w-[260px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 !z-[99999]"
+                    <button
+                      type="button"
+                      onClick={() => onExcludeReview?.()}
+                      className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Text-Secondary hover:bg-Gray-50"
                     >
-                      {isMapped ? (
-                        <>
-                          Mapping saved: &quot;{pdfBiomarkerName}&quot; → &quot;
-                          {systemBiomarkerName}&quot;. Click to remove.
-                        </>
-                      ) : (
-                        <>
-                          Save PDF name mapping for your clinic: &quot;
-                          {pdfBiomarkerName}&quot; → &quot;
-                          {systemBiomarkerName}&quot;.
-                        </>
-                      )}
-                    </Tooltip>
+                      Exclude ✗
+                    </button>
+                  </>
+                ) : useReviewUx && rowCategory === 'ready' ? (
+                  <button
+                    type="button"
+                    onClick={() => onExcludeReview?.()}
+                    className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Text-Secondary hover:bg-Gray-50"
+                    title="Move to excluded list"
+                  >
+                    Exclude ✗
+                  </button>
+                ) : useReviewUx && rowCategory === 'excluded' ? (
+                  <button
+                    type="button"
+                    onClick={() => onRestoreExcluded?.()}
+                    className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Primary-DeepTeal hover:bg-Primary-DeepTeal/10"
+                  >
+                    ↩ Restore
+                  </button>
+                ) : (
+                  <>
+                    {showSaveButton && !useReviewUx && (
+                      <>
+                        <button
+                          type="button"
+                          disabled={isSavingMapping}
+                          data-tooltip-id={saveTooltipId}
+                          className={`flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[8px] font-medium transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
+                            isMapped
+                              ? 'bg-green-100 text-green-700 hover:bg-red-50 hover:text-red-600'
+                              : 'bg-gray-100 text-Text-Secondary hover:bg-green-50 hover:text-green-700'
+                          }`}
+                          onClick={() => void handleSaveMapping()}
+                        >
+                          <img
+                            src={
+                              isMapped
+                                ? '/icons/save-2-fill.svg'
+                                : '/icons/save-2.svg'
+                            }
+                            alt=""
+                            className="h-3.5 w-3.5"
+                          />
+                          <span className="leading-tight">
+                            {isSavingMapping
+                              ? 'Saving...'
+                              : isMapped
+                                ? 'Saved'
+                                : 'Save'}
+                          </span>
+                        </button>
+                        <Tooltip
+                          id={saveTooltipId}
+                          place="top"
+                          className="!bg-[#E8F4F6] !bg-opacity-100 !max-w-[260px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 !z-[99999]"
+                        >
+                          {isMapped ? (
+                            <>
+                              Mapping saved: &quot;{pdfBiomarkerName}&quot; →
+                              &quot;{systemBiomarkerName}&quot;. Click to remove.
+                            </>
+                          ) : (
+                            <>
+                              Save PDF name mapping for your clinic: &quot;
+                              {pdfBiomarkerName}&quot; → &quot;
+                              {systemBiomarkerName}&quot;.
+                            </>
+                          )}
+                        </Tooltip>
+                      </>
+                    )}
+
+                    {!useReviewUx && (
+                      <button
+                        type="button"
+                        className="shrink-0 rounded p-0.5 hover:bg-Gray-50"
+                        title="Remove this biomarker row"
+                        onClick={() => setIsConfirmDelete(true)}
+                      >
+                        <img
+                          src="/icons/trash-blue.svg"
+                          alt="Delete row"
+                          className="h-4 w-4"
+                        />
+                      </button>
+                    )}
                   </>
                 )}
-
-                <button
-                  type="button"
-                  className="shrink-0 rounded p-0.5 hover:bg-Gray-50"
-                  title="Remove this biomarker row"
-                  onClick={() => setIsConfirmDelete(true)}
-                >
-                  <img
-                    src="/icons/trash-blue.svg"
-                    alt="Delete row"
-                    className="h-4 w-4"
-                  />
-                </button>
               </div>
+              {confirmGuardMsg && (
+                <p className="max-w-[160px] text-right text-[8px] text-Red">
+                  {confirmGuardMsg}
+                </p>
+              )}
               {saveError && (
                 <p className="max-w-[140px] rounded-md bg-[#F9DEDC] px-2 py-1 text-right text-[8px] leading-tight text-Red">
                   {saveError}
@@ -770,7 +855,22 @@ export default function BiomarkerRow({
           )}
         </div>
 
-        {isHaveError && (
+        {useReviewUx && rowCategory === 'review' && reviewMessage ? (
+          <div className="col-span-full px-0 pb-1 pt-0 text-left text-[10px] leading-snug text-[#B45309] break-words">
+            ⚠ {reviewMessage}
+          </div>
+        ) : null}
+        {useReviewUx && rowCategory === 'excluded' ? (
+          <div className="col-span-full px-0 pb-1 pt-0 text-left text-[10px] leading-snug text-Text-Secondary break-words">
+            {excludedReason ? (
+              <span className="mr-2 rounded-full bg-Gray-50 px-2 py-0.5">
+                {excludedReason}
+              </span>
+            ) : null}
+            {excludedAt ? <span>Excluded {excludedAt}</span> : null}
+          </div>
+        ) : null}
+        {!useReviewUx && isHaveError && (
           <div className="col-span-full px-0 pb-1 pt-0 text-left text-Red font-normal text-[10px] leading-snug break-words">
             <span>{errorText}</span>
             {isErrorHandled && (

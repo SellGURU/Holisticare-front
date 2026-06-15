@@ -384,13 +384,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   useEffect(() => {
     const handleSyncReport = (data: any) => {
-      if (data.detail.part == 'treatmentPlan') {
+      const detail = data?.detail ?? {};
+      if (detail.part === 'treatmentPlan') {
         getTreatmentPlanData();
-      } else {
-        setCallSync(true);
-        if (location.search) {
-          navigate(location.pathname, { replace: true });
-        }
+        return;
+      }
+      if (detail.silent === true) {
+        fetchData();
+        return;
+      }
+      setCallSync(true);
+      if (location.search) {
+        navigate(location.pathname, { replace: true });
       }
     };
 
@@ -399,7 +404,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return () => {
       unsubscribe('syncReport', handleSyncReport);
     };
-  }, [isHaveReport]);
+  }, [isHaveReport, location.pathname, location.search, navigate]);
+
+  useEffect(() => {
+    const handleCompletedProgress = (data: any) => {
+      if (data?.detail?.type === 'uploaded') {
+        fetchData();
+      }
+    };
+    subscribe('completedProgress', handleCompletedProgress);
+    return () => {
+      unsubscribe('completedProgress', handleCompletedProgress);
+    };
+  }, [resolvedMemberID]);
   const [accessManager, setAccessManager] = useState<
     Array<{
       name: string;
@@ -1286,12 +1303,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     }}
                     isShare={isShare}
                     showReport={isHaveReport}
-                    onGenderate={(file_id: string | undefined) => {
+                    onGenderate={(
+                      file_id: string | undefined,
+                      options?: { silent?: boolean },
+                    ) => {
                       if (file_id == 'discard') {
                         setShowUploadTest(false);
                         return;
                       }
-                      setISGenerateLoading(true);
+                      const silentContinue =
+                        options?.silent === true && Boolean(file_id);
+                      if (!silentContinue) {
+                        setISGenerateLoading(true);
+                      }
                       Application.first_view_report(resolvedMemberID)
                         .then((res) => {
                           console.log(res);

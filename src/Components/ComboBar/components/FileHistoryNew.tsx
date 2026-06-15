@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
 // import { uploadToAzure } from '../../../help';
-import { publish, subscribe } from '../../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import Circleloader from '../../CircleLoader';
 import FileBox from './FileBox';
 import useIsDemo from '../../../hooks/useIsDemo';
@@ -244,9 +244,9 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
     fileInputRef.current.value = '';
   };
 
-  const getFileList = (id: string) => {
+  const getFileList = useCallback((memberId: string) => {
     setIsLoading(true);
-    Application.getFilleList({ member_id: id })
+    Application.getFilleList({ member_id: memberId })
       .then((res) => {
         if (res.data) {
           setUploadedFiles(res.data);
@@ -260,22 +260,25 @@ const FileHistoryNew: FC<{ handleCloseSlideOutPanel: () => void }> = ({
       .finally(() => {
         setIsLoading(false);
       });
-  };
+  }, []);
   useEffect(() => {
     if (id) {
       getFileList(id);
     }
-  }, [id]);
+  }, [id, getFileList]);
 
-  subscribe('syncReport', () => {
-    Application.getFilleList({ member_id: id })
-      .then((res) => {
-        setUploadedFiles(res.data);
-      })
-      .catch((err) => {
-        console.error('Error getting file list:', err);
-      });
-  });
+  useEffect(() => {
+    const handleSyncReport = () => {
+      if (id) {
+        getFileList(id);
+      }
+    };
+
+    subscribe('syncReport', handleSyncReport);
+    return () => {
+      unsubscribe('syncReport', handleSyncReport);
+    };
+  }, [id, getFileList]);
 
   const handleFileDeleteSuccess = () => {
     getFileList(id || '');

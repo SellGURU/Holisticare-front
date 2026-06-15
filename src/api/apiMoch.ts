@@ -6,7 +6,9 @@ import { resolveBaseEndPoint } from './base';
 const mock = new MockAdapter(axios, { delayResponse: 2000 });
 
 class Api {
-  protected static base_url: string = resolveBaseEndPoint();
+  protected static get base_url(): string {
+    return resolveBaseEndPoint();
+  }
 
   public static post(url: string, reply: any, status?: number, body?: any) {
     const useStatus = status || 200;

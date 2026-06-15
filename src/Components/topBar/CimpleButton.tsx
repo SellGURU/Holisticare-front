@@ -224,6 +224,7 @@ const CompileButton: FC<CompileButtonProps> = ({
     const handleSyncReport = () => {
       setIsSyncing(false);
       setProgressData([]);
+      checkRefrashData();
     };
 
     subscribe('openProgressModal', handleOpenProgressModal);
@@ -311,7 +312,13 @@ const CompileButton: FC<CompileButtonProps> = ({
       if (progressData.every((item) => item.process_status === true)) {
         setIsCompiling(false);
         setshowProgressModal(false);
-        publish('syncReport', {});
+        const hasRefresh = progressData.some(
+          (item) => item.category === 'refresh',
+        );
+        publish('syncReport', {
+          fullReload: hasRefresh,
+          silent: !hasRefresh,
+        });
       }
     }
   }, [progressData]);

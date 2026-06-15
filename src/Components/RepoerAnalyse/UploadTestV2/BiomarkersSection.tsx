@@ -7,11 +7,13 @@ import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import Toggle from '../Boxs/Toggle';
 import BiomarkerRow from './BiomarkerRow';
 import ProgressLoading from './ProgressLoading';
+import Circleloader from '../../CircleLoader';
 import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
 import CreateBiomarkerModal from './CreateBiomarkerModal';
 import CreateUnitModal from './CreateUnitModal';
 import BiomarkersApi from '../../../api/Biomarkers';
+import { showError } from '../../GlobalToast';
 import type {
   BiomarkerOption,
   BiomarkerSuggestion,
@@ -23,19 +25,23 @@ import {
   resolveNormalizedBiomarkerName,
 } from './biomarkerNameFields';
 import {
-  extractCategoricalValuesFromThresholds,
-  findCatalogMatchForRow,
-  findCompatibleCatalogOptions,
-  inferBiomarkerTypeFromCatalogItem,
-  inferCatalogValueType,
   isTextValueWithoutUnit,
-  dedupeReviewBiomarkerRows,
-  normalizeBiomarkerNameForMatch,
-  normalizeExtractedValueForCatalog,
-  remapRowErrorsAfterDedupById,
   removeRowErrorKey,
-  resolveRowForReview,
   reviewRowErrorKey,
+  categorizeReviewRow,
+  countReviewRowCategories,
+  getReviewRowMessage,
+  rowMatchesCategoryFilter,
+  buildSuppressedRowKey,
+  buildSuppressedStateFromItems,
+  mergeSuppressedRowsIntoReview,
+  suppressedItemMatchesRow,
+  inferRowBiomarkerType,
+  normalizeBiomarkerNameForMatch,
+  pickCatalogEntryForRow,
+  resolveUnitForStandardize,
+  type CategoryFilter,
+  type SuppressedBiomarkerItem,
 } from './biomarkerReviewCompat';
 
 const DEFAULT_BIOMARKER_TYPES = [
@@ -94,7 +100,8 @@ const biomarkersSteps: Step[] = [
   },
   {
     target: '[data-tour="delete-biomarker"]',
-    content: 'Use this action to remove an incorrect or unnecessary biomarker.',
+    content:
+      'Use Exclude to move a biomarker off the analysis list, or Restore it from the Excluded filter.',
   },
 ];
 
@@ -110,9 +117,20 @@ interface BiomarkersSectionProps {
   reviewSummary?: any;
   rowErrors?: any;
   setrowErrors: any;
-  showOnlyErrors: boolean;
-  setShowOnlyErrors: (showOnlyErrors: boolean) => void;
+  showOnlyErrors?: boolean;
+  setShowOnlyErrors?: (showOnlyErrors: boolean) => void;
   progressBiomarkerUpload: number;
+  useReviewUx?: boolean;
+  onReviewCountsChange?: (counts: {
+    ready: number;
+    review: number;
+    excluded: number;
+  }) => void;
+  onSuppressedSetChange?: (keys: Set<string>) => void;
+  extractedCount?: number;
+  reopeningExistingFile?: boolean;
+  reviewCatalog?: BiomarkerOption[];
+  onReviewCatalogRefresh?: () => void;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -127,9 +145,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   reviewSummary,
   rowErrors,
   setrowErrors,
-  showOnlyErrors,
+  showOnlyErrors = false,
   setShowOnlyErrors,
   progressBiomarkerUpload,
+  useReviewUx = false,
+  onReviewCountsChange,
+  onSuppressedSetChange,
+  extractedCount,
+  reopeningExistingFile = false,
+  reviewCatalog = [],
+  onReviewCatalogRefresh,
 }) => {
   const isDemo = useIsDemo();
   // const [changedRows, setChangedRows] = useState<string[]>([]);
@@ -269,13 +294,197 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     'Compromised Outcome',
     'Moderately Enhanced Outcome',
   ];
-  const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState<
-    BiomarkerOption[]
-  >([]);
+  const effectiveCatalog = reviewCatalog;
   const [biomarkerTypes, setBiomarkerTypes] = useState<string[]>(
     DEFAULT_BIOMARKER_TYPES,
   );
   const [typeFilter, setTypeFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] =
+    useState<CategoryFilter>('default');
+  const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());
+  const [suppressedItems, setSuppressedItems] = useState<
+    SuppressedBiomarkerItem[]
+  >([]);
+  const [suppressedMeta, setSuppressedMeta] = useState<
+    Record<string, { reason?: string; excludedAt?: string }>
+  >({});
+  const categoryFilterInitialized = useRef(false);
+
+  const formatExcludedDate = (iso?: string | null) => {
+    if (!iso) return '';
+    try {
+      return new Date(iso).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return iso;
+    }
+  };
+
+  const syncSuppressedFromApi = (items: SuppressedBiomarkerItem[]) => {
+    const { suppressedSet: nextSet, suppressedMeta: nextMeta } =
+      buildSuppressedStateFromItems(items, formatExcludedDate);
+    setSuppressedItems(items || []);
+    setSuppressedSet(nextSet);
+    setSuppressedMeta(nextMeta);
+    onSuppressedSetChange?.(nextSet);
+  };
+
+  const sessionFileId = uploadedFile?.file_id;
+
+  useEffect(() => {
+    categoryFilterInitialized.current = false;
+    setCategoryFilter('default');
+  }, [sessionFileId]);
+
+  useEffect(() => {
+    if (!useReviewUx || !sessionFileId) return;
+    Application.listSuppressedBiomarkers()
+      .then((res) => syncSuppressedFromApi(res?.data?.suppressed || []))
+      .catch(() => {});
+  }, [useReviewUx, sessionFileId]);
+
+  const reviewBiomarkers = useMemo(
+    () => mergeSuppressedRowsIntoReview(biomarkers, suppressedItems),
+    [biomarkers, suppressedItems],
+  );
+
+  const reviewCategoryCounts = useMemo(
+    () =>
+      countReviewRowCategories(
+        reviewBiomarkers,
+        currentRowErrors,
+        suppressedSet,
+      ),
+    [reviewBiomarkers, currentRowErrors, suppressedSet],
+  );
+
+  useEffect(() => {
+    onReviewCountsChange?.(reviewCategoryCounts);
+  }, [onReviewCountsChange, reviewCategoryCounts]);
+
+  useEffect(() => {
+    if (!useReviewUx || categoryFilterInitialized.current) return;
+    if (!reviewBiomarkers.length) return;
+    categoryFilterInitialized.current = true;
+    setCategoryFilter('default');
+  }, [useReviewUx, reviewBiomarkers.length, reviewCategoryCounts.review]);
+
+  const rowCategoryResults = useMemo(
+    () =>
+      reviewBiomarkers.map((row, index) =>
+        categorizeReviewRow(
+          row,
+          currentRowErrors,
+          suppressedSet,
+          index,
+        ),
+      ),
+    [reviewBiomarkers, currentRowErrors, suppressedSet],
+  );
+
+  const handleExcludeReviewRow = async (row: any) => {
+    if (isDemo) return;
+    const extractedName =
+      resolveExactBiomarkerName(row) ||
+      row.original_biomarker_name ||
+      row.biomarker ||
+      '';
+    const biomarkerType = inferRowBiomarkerType(row);
+    try {
+      const res = await Application.suppressBiomarker({
+        extracted_name: extractedName,
+        system_biomarker: row.biomarker || null,
+        biomarker_type: biomarkerType,
+        reason: 'Excluded manually',
+      });
+      const rowKey = buildSuppressedRowKey(row);
+      setSuppressedSet((prev) => {
+        const next = new Set(prev);
+        next.add(rowKey);
+        onSuppressedSetChange?.(next);
+        return next;
+      });
+      setSuppressedMeta((prev) => ({
+        ...prev,
+        [rowKey]: {
+          reason: 'Excluded manually',
+          excludedAt: formatExcludedDate(res?.data?.excluded_at),
+        },
+      }));
+      setSuppressedItems((prev) => [
+        ...prev.filter((item) => !suppressedItemMatchesRow(item, row)),
+        {
+          id: res?.data?.id,
+          extracted_name: extractedName,
+          system_biomarker: row.biomarker || null,
+          biomarker_type: biomarkerType,
+          reason: 'Excluded manually',
+          excluded_at: res?.data?.excluded_at,
+        },
+      ]);
+    } catch (err) {
+      console.error('Failed to exclude biomarker:', err);
+      showError('Could not exclude biomarker', 'Please try again or contact support.');
+    }
+  };
+
+  const handleRestoreExcludedRow = async (row: any) => {
+    if (isDemo) return;
+    const extractedName =
+      resolveExactBiomarkerName(row) ||
+      row.original_biomarker_name ||
+      row.biomarker ||
+      '';
+    const biomarkerType = inferRowBiomarkerType(row);
+    try {
+      await Application.unsuppressBiomarker({
+        extracted_name: extractedName,
+        biomarker_type: biomarkerType,
+      });
+      const rowKey = buildSuppressedRowKey(row);
+      setSuppressedSet((prev) => {
+        const next = new Set(prev);
+        next.delete(rowKey);
+        onSuppressedSetChange?.(next);
+        return next;
+      });
+      setSuppressedMeta((prev) => {
+        const next = { ...prev };
+        delete next[rowKey];
+        return next;
+      });
+      setSuppressedItems((prev) =>
+        prev.filter((item) => !suppressedItemMatchesRow(item, row)),
+      );
+      if (row.is_suppressed_only) {
+        const { is_suppressed_only: _phantom, ...restoredRow } = row;
+        onChange([...biomarkers, restoredRow]);
+      }
+    } catch (err) {
+      console.error('Failed to restore biomarker:', err);
+    }
+  };
+
+  const handleClearRowError = (row: any, index: number) => {
+    const key = reviewRowErrorKey(row, index);
+    if (!key) return;
+    setrowErrors((prev: Record<string, string>) =>
+      removeRowErrorKey(prev || {}, key),
+    );
+  };
+
+  const handleConfirmReviewRow = (biomarkerId: string) => {
+    onChange(
+      biomarkers.map((row) =>
+        row.biomarker_id === biomarkerId
+          ? { ...row, review_error_handled: true }
+          : row,
+      ),
+    );
+  };
 
   const getDefaultUnitForBiomarker = (row: any) => {
     const biomarkerName = String(row?.biomarker || '')
@@ -300,12 +509,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       return possibleUnit;
     }
 
-    const exactOption = avalibaleBiomarkers.find(
-      (option) =>
-        normalizeBiomarkerNameForMatch(option.biomarker) ===
-          normalizeBiomarkerNameForMatch(biomarkerName) &&
-        String(option.unit || '').trim(),
-    );
+    const exactOption = pickCatalogEntryForRow(effectiveCatalog, row);
     return String(exactOption?.unit || '').trim();
   };
 
@@ -318,77 +522,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         }
       })
       .catch(() => {});
-
-    BiomarkersApi.getBiomarkersList({ include_all: true })
-      .then((res) => {
-        const sorted = (Array.isArray(res?.data) ? res.data : [])
-          .map((item: any) => ({
-            biomarker: String(item?.Biomarker || '').trim(),
-            benchmark_area: String(item?.['Benchmark areas'] || '').trim(),
-            unit: String(item?.unit || '').trim(),
-            biomarker_type: inferBiomarkerTypeFromCatalogItem(item),
-            value_type: inferCatalogValueType(item),
-            thresholds: item?.thresholds,
-            categorical_values: extractCategoricalValuesFromThresholds(
-              item?.thresholds,
-            ),
-          }))
-          .filter((item: BiomarkerOption) => item.biomarker)
-          .sort((a: BiomarkerOption, b: BiomarkerOption) => {
-            const areaCompare = (a.benchmark_area || '').localeCompare(
-              b.benchmark_area || '',
-            );
-            return areaCompare !== 0
-              ? areaCompare
-              : a.biomarker.localeCompare(b.biomarker);
-          });
-        setAvalibaleBiomarkers(sorted);
-      })
-      .catch(() => {});
   }, []);
-
-  const biomarkerResolutionSignature = useMemo(
-    () =>
-      biomarkers
-        .map(
-          (row) =>
-            `${row.biomarker_id}:${row.biomarker_type || 'blood'}:${row.biomarker || ''}`,
-        )
-        .join('|'),
-    [biomarkers],
-  );
-
-  useEffect(() => {
-    if (!avalibaleBiomarkers.length || !biomarkers.length) {
-      return;
-    }
-
-    const resolved = biomarkers.map((row) =>
-      resolveRowForReview(avalibaleBiomarkers, row),
-    );
-    const {
-      rows: deduped,
-      indexMap,
-      removedCount,
-    } = dedupeReviewBiomarkerRows(resolved, avalibaleBiomarkers);
-
-    if (
-      removedCount > 0 ||
-      JSON.stringify(deduped) !== JSON.stringify(biomarkers)
-    ) {
-      if (removedCount > 0) {
-        setrowErrors((prev: Record<string, string>) =>
-          remapRowErrorsAfterDedupById(prev, indexMap, deduped),
-        );
-      }
-      onChange(deduped);
-    }
-  }, [
-    avalibaleBiomarkers,
-    biomarkerResolutionSignature,
-    onChange,
-    setrowErrors,
-  ]);
 
   // ── Suggestions state (keyed by stable row id, not biomarker name) ─────────
   const [suggestions, setSuggestions] = useState<
@@ -569,7 +703,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     if (JSON.stringify(updated) !== JSON.stringify(biomarkers)) {
       onChange(updated);
     }
-  }, [avalibaleBiomarkers, biomarkers, onChange]);
+  }, [effectiveCatalog, biomarkers, onChange]);
   const standardizeBiomarkers = async (payload: {
     biomarker: string;
     value: string;
@@ -644,17 +778,20 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       );
     }
 
-    const compatibleOptions = findCompatibleCatalogOptions(
-      avalibaleBiomarkers,
-      current,
-    );
-    const biomarkerAllowed = compatibleOptions.some(
+    const isInCatalogForType = effectiveCatalog.some(
       (option) =>
         normalizeBiomarkerNameForMatch(option.biomarker) ===
-        normalizeBiomarkerNameForMatch(current.biomarker),
+          normalizeBiomarkerNameForMatch(current.biomarker) &&
+        String(option.biomarker_type || 'blood').toLowerCase() ===
+          String(current.biomarker_type || 'blood').toLowerCase(),
     );
-    if (!String(current.biomarker || '').trim() || !biomarkerAllowed) {
-      const rowKey = reviewRowErrorKey(current, index);
+
+    // Show selection immediately while standardize runs in the background.
+    onChange(updated);
+
+    const rowKey = reviewRowErrorKey(current, index);
+
+    if (!String(current.biomarker || '').trim() || !isInCatalogForType) {
       if (rowKey) {
         setrowErrors((prev: Record<string, string>) => ({
           ...prev,
@@ -671,26 +808,36 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       return;
     }
 
-    const catalogMatch = findCatalogMatchForRow(avalibaleBiomarkers, current);
+    if (rowKey) {
+      setrowErrors((prev: Record<string, string>) =>
+        removeRowErrorKey(prev, rowKey),
+      );
+    }
+
     const rawValue = String(
       preferNonEmpty(current.original_value, current.value),
     );
-    const normalizedValue = catalogMatch
-      ? normalizeExtractedValueForCatalog(rawValue, catalogMatch)
-      : rawValue;
-    if (normalizedValue !== rawValue) {
-      current = { ...current, original_value: normalizedValue };
+    const unitForStandardize = textValueDoesNotNeedUnit
+      ? ''
+      : resolveUnitForStandardize(effectiveCatalog, current);
+
+    if (
+      !textValueDoesNotNeedUnit &&
+      unitForStandardize &&
+      unitForStandardize !==
+        String(preferNonEmpty(current.original_unit, current.unit) || '').trim()
+    ) {
+      current = { ...current, original_unit: unitForStandardize };
       updated = updated.map((b) =>
-        b.biomarker_id === id ? { ...b, original_value: normalizedValue } : b,
+        b.biomarker_id === id ? { ...b, original_unit: unitForStandardize } : b,
       );
+      onChange(updated);
     }
 
     const payload = {
       biomarker: current.biomarker,
-      value: normalizedValue,
-      unit: textValueDoesNotNeedUnit
-        ? ''
-        : String(preferNonEmpty(current.original_unit, current.unit) || ''),
+      value: rawValue,
+      unit: unitForStandardize,
       bio_type:
         current.biomarker_type === 'gut'
           ? 'gut'
@@ -700,11 +847,15 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       biomarker_type: String(current.biomarker_type || 'blood'),
     };
 
-    const rowKey = reviewRowErrorKey(current, index);
     const hadExistingError = Boolean(rowKey && currentRowErrors[rowKey]);
     const result = await standardizeBiomarkers(payload);
 
     if (result.success) {
+      if (rowKey) {
+        setrowErrors((prev: Record<string, string>) =>
+          removeRowErrorKey(prev, rowKey),
+        );
+      }
       const prior = biomarkers.find((b) => b.biomarker_id === id) || current;
       updated = updated.map((b) =>
         b.biomarker_id === id
@@ -783,16 +934,41 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   }, [biomarkers]);
   const visibleBiomarkerEntries = useMemo(
     () =>
-      biomarkers
+      reviewBiomarkers
         .map((biomarker, originalIndex) => ({ biomarker, originalIndex }))
-        .filter(
-          ({ biomarker }) =>
+        .filter(({ biomarker, originalIndex }) => {
+          const typeOk =
             !typeFilter ||
             String(biomarker?.biomarker_type || 'blood')
               .trim()
-              .toLowerCase() === String(typeFilter).trim().toLowerCase(),
-        ),
-    [biomarkers, typeFilter],
+              .toLowerCase() === String(typeFilter).trim().toLowerCase();
+          if (!typeOk) return false;
+
+          if (useReviewUx) {
+            const category = rowCategoryResults[originalIndex]?.category || 'ready';
+            return rowMatchesCategoryFilter(
+              categoryFilter,
+              category,
+              reviewCategoryCounts.review,
+            );
+          }
+
+          if (showOnlyErrors) {
+            const rowKey = reviewRowErrorKey(biomarker, originalIndex);
+            return Boolean(currentRowErrors[rowKey]);
+          }
+          return true;
+        }),
+    [
+      reviewBiomarkers,
+      typeFilter,
+      useReviewUx,
+      rowCategoryResults,
+      categoryFilter,
+      reviewCategoryCounts.review,
+      showOnlyErrors,
+      currentRowErrors,
+    ],
   );
   // const handleMappingToggle = async (id: string) => {
   //   const row = biomarkers.filter((b) => b.biomarker_id === id)[0];
@@ -930,33 +1106,40 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           </div>
         ) : loading || uploadedFile?.status === 'uploading' ? (
           <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] w-full flex-col items-center gap-5 overflow-hidden px-2 pt-6">
-            {/* Stepped progress + smooth bar */}
-            <ProgressLoading
-              maxProgress={progressBiomarkerUpload}
-              phase={uploadPhase}
-            ></ProgressLoading>
-            {/* Skeleton hint of the table forming below */}
-            <div
-              aria-hidden
-              className="flex w-full flex-1 min-h-0 flex-col gap-1.5 overflow-hidden opacity-70"
-            >
-              {Array.from({ length: 4 }).map((_, rowIndex) => (
+            {reopeningExistingFile ? (
+              <div className="flex flex-1 items-center justify-center">
+                <Circleloader />
+              </div>
+            ) : (
+              <>
+                <ProgressLoading
+                  maxProgress={progressBiomarkerUpload}
+                  phase={uploadPhase}
+                  extractedCount={extractedCount}
+                ></ProgressLoading>
                 <div
-                  key={rowIndex}
-                  className="grid w-full items-center gap-3 rounded-lg border border-Gray-25 bg-Gray-15 px-3 py-2.5 animate-pulse"
-                  style={{
-                    gridTemplateColumns: '1.3fr 0.7fr 1.4fr 0.7fr 0.8fr',
-                    animationDelay: `${rowIndex * 120}ms`,
-                  }}
+                  aria-hidden
+                  className="flex w-full flex-1 min-h-0 flex-col gap-1.5 overflow-hidden opacity-70"
                 >
-                  <div className="h-2.5 rounded bg-Gray-100" />
-                  <div className="h-2.5 rounded bg-Gray-50" />
-                  <div className="h-2.5 rounded bg-Gray-100" />
-                  <div className="h-2.5 rounded bg-Gray-50" />
-                  <div className="h-2.5 rounded bg-Gray-50" />
+                  {Array.from({ length: 4 }).map((_, rowIndex) => (
+                    <div
+                      key={rowIndex}
+                      className="grid w-full items-center gap-3 rounded-lg border border-Gray-25 bg-Gray-15 px-3 py-2.5 animate-pulse"
+                      style={{
+                        gridTemplateColumns: '1.3fr 0.7fr 1.4fr 0.7fr 0.8fr',
+                        animationDelay: `${rowIndex * 120}ms`,
+                      }}
+                    >
+                      <div className="h-2.5 rounded bg-Gray-100" />
+                      <div className="h-2.5 rounded bg-Gray-50" />
+                      <div className="h-2.5 rounded bg-Gray-100" />
+                      <div className="h-2.5 rounded bg-Gray-50" />
+                      <div className="h-2.5 rounded bg-Gray-50" />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
         ) : biomarkers.length === 0 ? (
           <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center justify-center flex-col text-xs font-medium text-Text-Primary">
@@ -967,40 +1150,85 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           <div className="relative flex-1 min-h-0 flex flex-col gap-2">
             {/* ── Compact single-row toolbar ───────────────────────────── */}
             <div className="shrink-0 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-Gray-50 bg-gradient-to-r from-[#F6FAFB] to-white px-3 py-2 shadow-100">
-              {/* Title + counts */}
-              <span className="flex items-center gap-1.5 text-[10px] md:text-xs font-semibold text-Text-Primary whitespace-nowrap">
-                <span className="inline-flex size-5 items-center justify-center rounded-md bg-Primary-DeepTeal/10 text-Primary-DeepTeal">
-                  <img
-                    src="/icons/tick-circle-upload.svg"
-                    alt=""
-                    className="size-3.5"
-                  />
-                </span>
-                Biomarkers
-                <span className="rounded-full bg-Gray-50 px-1.5 py-0.5 text-[9px] font-medium text-Text-Quadruple">
-                  {reviewSummary?.biomarker_count ?? biomarkers.length}
-                </span>
-              </span>
-
-              {/* Stats chips */}
-              {activeErrorCount > 0 && (
-                <span className="flex items-center gap-1 rounded-full bg-[#FFF5F8] border border-[#F3B8C8] px-2 py-0.5 text-[9px] md:text-[10px] text-Red font-medium whitespace-nowrap">
-                  <img
-                    src="/icons/info-circle-red.svg"
-                    alt=""
-                    className="size-3"
-                  />
-                  {activeErrorCount} error{activeErrorCount !== 1 ? 's' : ''}
-                </span>
+              {useReviewUx ? (
+                <>
+                  <span className="text-[10px] md:text-xs font-semibold text-Text-Primary whitespace-nowrap">
+                    Biomarkers
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setCategoryFilter('ready')}
+                    className={`rounded-full px-2.5 py-0.5 text-[9px] md:text-[10px] font-medium transition-colors ${
+                      categoryFilter === 'ready'
+                        ? 'bg-[#DEF7EC] text-green-800 border border-green-200'
+                        : 'bg-white text-Text-Secondary border border-Gray-50 hover:bg-Gray-15'
+                    }`}
+                  >
+                    ✓ Ready ({reviewCategoryCounts.ready})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCategoryFilter('review')}
+                    className={`rounded-full px-2.5 py-0.5 text-[9px] md:text-[10px] font-medium transition-colors ${
+                      categoryFilter === 'review' || categoryFilter === 'default'
+                        ? 'bg-[#FFFBEB] text-[#B45309] border border-[#FCD34D]'
+                        : 'bg-white text-Text-Secondary border border-Gray-50 hover:bg-Gray-15'
+                    }`}
+                  >
+                    ⚠ Review ({reviewCategoryCounts.review})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCategoryFilter('excluded')}
+                    className={`rounded-full px-2.5 py-0.5 text-[9px] md:text-[10px] font-medium transition-colors ${
+                      categoryFilter === 'excluded'
+                        ? 'bg-Gray-50 text-Text-Secondary border border-Gray-100'
+                        : 'bg-white text-Text-Secondary border border-Gray-50 hover:bg-Gray-15'
+                    }`}
+                  >
+                    — Excluded ({reviewCategoryCounts.excluded})
+                  </button>
+                  {(reviewSummary?.duplicate_count ?? 0) > 0 && (
+                    <span className="flex items-center gap-1 rounded-full bg-orange-50 border border-orange-200 px-2 py-0.5 text-[9px] md:text-[10px] text-orange-600 font-medium whitespace-nowrap">
+                      {reviewSummary.duplicate_count} duplicate
+                      {reviewSummary.duplicate_count !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <span className="flex items-center gap-1.5 text-[10px] md:text-xs font-semibold text-Text-Primary whitespace-nowrap">
+                    <span className="inline-flex size-5 items-center justify-center rounded-md bg-Primary-DeepTeal/10 text-Primary-DeepTeal">
+                      <img
+                        src="/icons/tick-circle-upload.svg"
+                        alt=""
+                        className="size-3.5"
+                      />
+                    </span>
+                    Biomarkers
+                    <span className="rounded-full bg-Gray-50 px-1.5 py-0.5 text-[9px] font-medium text-Text-Quadruple">
+                      {reviewSummary?.biomarker_count ?? biomarkers.length}
+                    </span>
+                  </span>
+                  {activeErrorCount > 0 && (
+                    <span className="flex items-center gap-1 rounded-full bg-[#FFF5F8] border border-[#F3B8C8] px-2 py-0.5 text-[9px] md:text-[10px] text-Red font-medium whitespace-nowrap">
+                      <img
+                        src="/icons/info-circle-red.svg"
+                        alt=""
+                        className="size-3"
+                      />
+                      {activeErrorCount} error{activeErrorCount !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                  {(reviewSummary?.duplicate_count ?? 0) > 0 && (
+                    <span className="flex items-center gap-1 rounded-full bg-orange-50 border border-orange-200 px-2 py-0.5 text-[9px] md:text-[10px] text-orange-600 font-medium whitespace-nowrap">
+                      {reviewSummary.duplicate_count} duplicate
+                      {reviewSummary.duplicate_count !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                </>
               )}
-              {(reviewSummary?.duplicate_count ?? 0) > 0 && (
-                <span className="flex items-center gap-1 rounded-full bg-orange-50 border border-orange-200 px-2 py-0.5 text-[9px] md:text-[10px] text-orange-600 font-medium whitespace-nowrap">
-                  {reviewSummary.duplicate_count} duplicate
-                  {reviewSummary.duplicate_count !== 1 ? 's' : ''}
-                </span>
-              )}
 
-              {/* Spacer */}
               <div className="flex-1" />
 
               <select
@@ -1016,18 +1244,18 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 ))}
               </select>
 
-              {/* Errors-only toggle */}
-              <div className="flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-Gray-50 bg-white px-2 py-1">
-                <Toggle
-                  checked={showOnlyErrors}
-                  setChecked={setShowOnlyErrors}
-                />
-                <span className="text-[9px] md:text-[10px] text-Text-Primary">
-                  Errors only
-                </span>
-              </div>
+              {!useReviewUx && setShowOnlyErrors ? (
+                <div className="flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-Gray-50 bg-white px-2 py-1">
+                  <Toggle
+                    checked={showOnlyErrors}
+                    setChecked={setShowOnlyErrors}
+                  />
+                  <span className="text-[9px] md:text-[10px] text-Text-Primary">
+                    Errors only
+                  </span>
+                </div>
+              ) : null}
 
-              {/* Date picker */}
               <div className="flex items-center text-[9px] md:text-[10px] text-Text-Quadruple whitespace-nowrap">
                 Date of Test:
                 <SimpleDatePicker
@@ -1042,8 +1270,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               </div>
             </div>
 
-            {/* ── Collapsible errors strip ─────────────────────────────── */}
-            {activeErrorCount > 0 && (
+            {!useReviewUx && activeErrorCount > 0 && (
               <div className="shrink-0">
                 <button
                   type="button"
@@ -1106,12 +1333,28 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     className="flex-1 min-h-0 overflow-y-auto w-full pb-8 [scrollbar-gutter:stable]"
                   >
                     <div className="border-b border-Gray-50 bg-[#F8FAFB] px-4 py-2 text-[9px] leading-relaxed text-Text-Secondary">
-                      Use{' '}
-                      <span className="font-medium text-Primary-DeepTeal">
-                        Save
-                      </span>{' '}
-                      to store the PDF name → system biomarker mapping for
-                      future uploads.
+                      {useReviewUx ? (
+                        <>
+                          <span className="font-medium text-Primary-DeepTeal">
+                            Ready
+                          </span>{' '}
+                          rows are included in analysis. Use{' '}
+                          <span className="font-medium text-Primary-DeepTeal">
+                            Exclude
+                          </span>{' '}
+                          to move biomarkers off the list instead of deleting
+                          them.
+                        </>
+                      ) : (
+                        <>
+                          Use{' '}
+                          <span className="font-medium text-Primary-DeepTeal">
+                            Save
+                          </span>{' '}
+                          to store the PDF name → system biomarker mapping for
+                          future uploads.
+                        </>
+                      )}
                     </div>
 
                     {/* Table Header */}
@@ -1143,7 +1386,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       >
                         <span className="block">Actions</span>
                         <span className="block font-normal normal-case tracking-normal text-[7px] text-Text-Quadruple">
-                          save / delete
+                          {useReviewUx ? 'confirm / exclude' : 'save / delete'}
                         </span>
                       </div>
                     </div>
@@ -1158,13 +1401,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           .trim()
                           .toLowerCase();
                         const rowAvailableBiomarkers =
-                          avalibaleBiomarkers.filter(
+                          effectiveCatalog.filter(
                             (option) =>
                               String(option.biomarker_type || 'blood')
                                 .trim()
                                 .toLowerCase() === rowType,
                           );
-                        const selectedSystemMeta = avalibaleBiomarkers.find(
+                        const selectedSystemMeta = effectiveCatalog.find(
                           (option) =>
                             normalizeBiomarkerNameForMatch(option.biomarker) ===
                               normalizeBiomarkerNameForMatch(b.biomarker) &&
@@ -1173,6 +1416,21 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               .toLowerCase() === rowType,
                         );
                         const rowErrorKey = reviewRowErrorKey(b, originalIndex);
+                        const categoryResult =
+                          rowCategoryResults[originalIndex] ||
+                          categorizeReviewRow(
+                            b,
+                            currentRowErrors,
+                            suppressedSet,
+                            originalIndex,
+                          );
+                        const rowMetaKey = buildSuppressedRowKey(b);
+                        const excludedMetaEntry = suppressedMeta[rowMetaKey];
+                        const reviewMessage = getReviewRowMessage(
+                          categoryResult,
+                          b,
+                          currentRowErrors[rowErrorKey],
+                        );
                         return (
                           <BiomarkerRow
                             key={b.biomarker_id}
@@ -1184,6 +1442,22 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             biomarker={b}
                             index={originalIndex}
                             showOnlyErrors={showOnlyErrors}
+                            useReviewUx={useReviewUx}
+                            rowCategory={categoryResult.category}
+                            reviewReason={categoryResult.reviewReason}
+                            reviewMessage={reviewMessage}
+                            excludedReason={excludedMetaEntry?.reason}
+                            excludedAt={excludedMetaEntry?.excludedAt}
+                            onClearRowError={() =>
+                              handleClearRowError(b, originalIndex)
+                            }
+                            onConfirmReviewRow={() =>
+                              handleConfirmReviewRow(b.biomarker_id)
+                            }
+                            onExcludeReview={() => handleExcludeReviewRow(b)}
+                            onRestoreExcluded={() =>
+                              handleRestoreExcludedRow(b)
+                            }
                             allAvilableBiomarkers={rowAvailableBiomarkers}
                             biomarkerTypes={biomarkerTypes}
                             formatBiomarkerTypeLabel={formatBiomarkerTypeLabel}
@@ -1249,15 +1523,26 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           className="size-16 opacity-70"
                         />
                         <div className="text-[11px] font-medium text-Text-Primary">
-                          {showOnlyErrors
-                            ? 'No biomarkers with errors.'
-                            : 'No biomarkers match this filter.'}
+                          {useReviewUx
+                            ? categoryFilter === 'excluded'
+                              ? 'No excluded biomarkers. Items you exclude will appear here.'
+                              : categoryFilter === 'review' ||
+                                  categoryFilter === 'default'
+                                ? 'No biomarkers need review.'
+                                : 'No ready biomarkers match this filter.'
+                            : showOnlyErrors
+                              ? 'No biomarkers with errors.'
+                              : 'No biomarkers match this filter.'}
                         </div>
                         <button
                           type="button"
                           onClick={() => {
                             setTypeFilter('');
-                            setShowOnlyErrors(false);
+                            if (useReviewUx) {
+                              setCategoryFilter('all');
+                            } else {
+                              setShowOnlyErrors?.(false);
+                            }
                           }}
                           className="rounded-full border border-Primary-DeepTeal px-3 py-1 text-[10px] font-medium text-Primary-DeepTeal transition-colors hover:bg-Primary-DeepTeal/10"
                         >
@@ -1266,6 +1551,18 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       </div>
                     )}
                     <div className="h-4" />
+                    {useReviewUx && biomarkers.length > 0 ? (
+                      <div className="sticky bottom-0 z-10 border-t border-Gray-50 bg-[#F8FAFB] px-4 py-2.5 text-[10px] text-Text-Secondary">
+                        <div className="font-medium text-Text-Primary">
+                          ✓ {reviewCategoryCounts.ready} Ready · ⚠{' '}
+                          {reviewCategoryCounts.review} will be skipped · —{' '}
+                          {reviewCategoryCounts.excluded} Excluded
+                        </div>
+                        <div className="mt-0.5 text-[9px] text-Text-Quadruple">
+                          Only Ready biomarkers will be included in analysis.
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -1290,35 +1587,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           suggestions={createBiomarkerFor.suggestionMatches}
           onClose={() => setCreateBiomarkerFor(null)}
           onCreated={(newName) => {
-            // Refresh the available biomarkers list
-            BiomarkersApi.getBiomarkersList()
-              .then((res: any) => {
-                const sorted = (Array.isArray(res?.data) ? res.data : [])
-                  .map((item: any) => ({
-                    biomarker: String(item?.Biomarker || '').trim(),
-                    benchmark_area: String(
-                      item?.['Benchmark areas'] || '',
-                    ).trim(),
-                    unit: String(item?.unit || '').trim(),
-                    biomarker_type: String(
-                      item?.biomarker_type || 'blood',
-                    ).trim(),
-                    value_type: String(
-                      item?.value_type || item?.type || item?.data_type || '',
-                    ).trim(),
-                  }))
-                  .filter((item: BiomarkerOption) => item.biomarker)
-                  .sort((a: BiomarkerOption, b: BiomarkerOption) => {
-                    const areaCompare = (a.benchmark_area || '').localeCompare(
-                      b.benchmark_area || '',
-                    );
-                    return areaCompare !== 0
-                      ? areaCompare
-                      : a.biomarker.localeCompare(b.biomarker);
-                  });
-                setAvalibaleBiomarkers(sorted);
-              })
-              .catch(() => {});
+            onReviewCatalogRefresh?.();
             // Auto-select the new biomarker on the triggering row
             if (createBiomarkerFor.biomarkerId) {
               updateAndStandardize(createBiomarkerFor.biomarkerId, {

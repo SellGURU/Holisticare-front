@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 interface ProgressLoadingProps {
   maxProgress: number;
   phase?: string;
+  extractedCount?: number;
 }
 
 type StepKey =
@@ -36,12 +37,23 @@ const STEPS: { key: StepKey; label: string; hint: string }[] = [
 
 const resolveActiveIndex = (phase: string) => {
   const index = STEPS.findIndex((step) => step.key === phase);
-  return index === -1 ? 1 : index; // default to extraction step
+  return index === -1 ? 1 : index;
+};
+
+const resolveBarClass = (progress: number) => {
+  if (progress >= 100) {
+    return 'bg-[#12B76A]';
+  }
+  if (progress >= 60) {
+    return 'bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen';
+  }
+  return 'bg-[#2563EB]';
 };
 
 const ProgressLoading: React.FC<ProgressLoadingProps> = ({
   maxProgress,
   phase = 'ocr_processing',
+  extractedCount,
 }) => {
   const [progress, setProgress] = useState(0);
   const isFailed = phase === 'failed';
@@ -52,8 +64,6 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
       setProgress((prev) => {
         const target = maxProgress >= 100 ? 100 : 95;
         if (prev >= target) return prev;
-        // Slow ease-out: the bar fills gradually and keeps decelerating as it
-        // nears the target, so it never "completes" before the real data lands.
         const remaining = target - prev;
         const increment = Math.max(remaining * 0.012, 0.06);
         return Math.min(prev + increment, target);
@@ -65,6 +75,10 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
 
   const activeIndex = resolveActiveIndex(phase);
   const activeStep = STEPS[activeIndex];
+  const extractionComplete =
+    extractedCount != null &&
+    extractedCount > 0 &&
+    activeIndex >= STEPS.findIndex((s) => s.key === 'ocr_processing');
 
   if (isFailed) {
     return (
@@ -84,7 +98,6 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
 
   return (
     <div className="w-full max-w-[360px] flex flex-col gap-5">
-      {/* Progress bar */}
       <div className="w-full">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-[12px] font-medium text-Text-Primary">
@@ -97,10 +110,9 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
 
         <div className="relative w-full h-2 bg-Gray-50 rounded-full overflow-hidden">
           <div
-            className="relative h-full overflow-hidden rounded-full bg-gradient-to-r from-Primary-DeepTeal to-Primary-EmeraldGreen transition-[width] duration-300 ease-out"
+            className={`relative h-full overflow-hidden rounded-full transition-[width] duration-300 ease-out ${resolveBarClass(progress)}`}
             style={{ width: `${progress}%` }}
           >
-            {/* Moving shimmer to signal active work */}
             <div className="absolute inset-y-0 left-0 w-1/2 animate-[progressShimmer_1.6s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/45 to-transparent" />
           </div>
         </div>
@@ -109,11 +121,11 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
         </p>
       </div>
 
-      {/* Stepped checklist */}
       <ol className="flex flex-col gap-2.5">
         {STEPS.map((step, idx) => {
           const isDone = idx < activeIndex;
           const isActive = idx === activeIndex;
+          const isExtractionStep = step.key === 'ocr_processing';
           return (
             <li key={step.key} className="flex items-center gap-2.5">
               <span
@@ -148,6 +160,11 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
               >
                 {step.label}
               </span>
+              {isExtractionStep && extractionComplete && (isDone || isActive) ? (
+                <span className="ml-auto rounded-full bg-Primary-DeepTeal/10 px-2 py-0.5 text-[9px] font-medium text-Primary-DeepTeal whitespace-nowrap">
+                  {extractedCount} biomarkers found
+                </span>
+              ) : null}
             </li>
           );
         })}
