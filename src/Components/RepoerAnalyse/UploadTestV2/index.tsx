@@ -14,6 +14,7 @@ import useIsDemo from '../../../hooks/useIsDemo';
 import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
+  ensureUniqueBiomarkerIds,
 } from './biomarkerNameFields';
 import {
   buildBiomarkerRowsForValidation,
@@ -275,8 +276,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       }
 
       // Keep backend row order for validation indices; sort only for display.
-      const enrichedRows = (data.extracted_biomarkers || []).map((b: any) =>
-        enrichExtractedRowForReview(b, data.lab_type),
+      // Enforce unique biomarker ids so rows sharing a base name don't collide.
+      const enrichedRows = ensureUniqueBiomarkerIds(
+        (data.extracted_biomarkers || []).map((b: any) =>
+          enrichExtractedRowForReview(b, data.lab_type),
+        ),
       );
       const displayRows = sortReviewBiomarkerRows(enrichedRows);
 

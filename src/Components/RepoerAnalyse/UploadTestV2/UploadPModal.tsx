@@ -332,11 +332,16 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   </div>
                   <div className="text-sm text-gray-500 text-center max-w-md">
                     This is an ultrasound/imaging report. Biomarker extraction
-                    is not applicable for this type of report.
+                    is not applicable for this type of report. The report content
+                    will be included in your health plan.
+                  </div>
+                  <div className="mt-4 px-4 py-2 bg-Primary-DeepTeal/10 rounded-full text-sm text-Primary-DeepTeal font-medium">
+                    Click "Continue" to proceed to Health Plan
                   </div>
                 </div>
               ) : (
                 <BiomarkersSection
+                  isEditMode={isEditMode}
                   rowErrors={rowErrors}
                   setrowErrors={setrowErrors}
                   loading={loading}
@@ -388,11 +393,16 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     </div>
                     <div className="text-sm text-gray-500 text-center max-w-md">
                       This is an ultrasound/imaging report. Biomarker extraction
-                      is not applicable for this type of report.
+                      is not applicable for this type of report. The report content
+                      will be included in your health plan.
+                    </div>
+                    <div className="mt-4 px-4 py-2 bg-Primary-DeepTeal/10 rounded-full text-sm text-Primary-DeepTeal font-medium">
+                      Click "Continue" to proceed to Health Plan
                     </div>
                   </div>
                 ) : uploadedFile || fileType !== 'more_info' ? (
                   <BiomarkersSection
+                    isEditMode={isEditMode}
                     rowErrors={rowErrors}
                     setrowErrors={setrowErrors}
                     loading={loading}
