@@ -22,7 +22,7 @@ class Api {
         }
       },
       signal: config?.signal,
-      // timeout:15000
+      timeout: config?.timeout,
     });
     return response;
   }

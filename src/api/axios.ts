@@ -16,8 +16,20 @@ let maintenanceCheckInFlight = false;
 
 const SERVER_DOWN_STATUSES = new Set([500, 502, 503, 504]);
 
+const LAB_UPLOAD_ENDPOINTS = [
+  '/patients/check_lab_report_step_one',
+  '/patients/check_lab_report_step_two',
+  '/patients/process_lab_report',
+  '/patients/validate_biomarkers',
+];
+
 const isHealthCheckRequest = (config: any) =>
   Boolean(config?.holisticareHealthCheck);
+
+const isLabUploadRequest = (config: any) => {
+  const url = String(config?.url || '');
+  return LAB_UPLOAD_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+};
 
 const isCanceledRequest = (error: any) =>
   error.code === 'ERR_CANCELED' ||
@@ -33,6 +45,9 @@ const isPotentialServerOutage = (error: any) => {
   }
   const status = error.response?.status;
   if (status && SERVER_DOWN_STATUSES.has(status)) {
+    if (isLabUploadRequest(error.config)) {
+      return false;
+    }
     return true;
   }
   return error.message === 'Network Error' || error.code === 'ERR_NETWORK';

@@ -5,6 +5,7 @@ import SpinnerLoader from '../../SpinnerLoader';
 import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
+import { removeRowErrorKey, reviewRowErrorKey } from './biomarkerReviewCompat';
 
 interface UploadPModalProps {
   initialMode?: string;
@@ -322,22 +323,18 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               onTrashClick={handleTrashClick}
               onConfirm={(index) => {
                 if (isEditMode && fileType === 'more_info') {
+                  const deletedRow = extractedBiomarkers[index];
+                  const deletedRowKey = deletedRow
+                    ? reviewRowErrorKey(deletedRow, index)
+                    : '';
                   setExtractedBiomarkers(
                     extractedBiomarkers.filter((_, i) => i !== index),
                   );
 
-                  // Shift row errors to match new positions
-                  if (rowErrors) {
-                    const newErrors: Record<number, string> = {};
-                    Object.keys(rowErrors).forEach((key) => {
-                      const idx = Number(key);
-                      if (idx < index) {
-                        newErrors[idx] = rowErrors[idx];
-                      } else if (idx > index) {
-                        newErrors[idx - 1] = rowErrors[idx];
-                      }
-                    });
-                    setrowErrors(newErrors);
+                  if (deletedRowKey && rowErrors) {
+                    setrowErrors((prev: Record<string, string>) =>
+                      removeRowErrorKey(prev || {}, deletedRowKey),
+                    );
                   }
 
                   handleCancel();

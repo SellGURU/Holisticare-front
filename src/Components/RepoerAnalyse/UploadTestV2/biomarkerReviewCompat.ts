@@ -4,6 +4,15 @@ const trim = (value: unknown) => String(value ?? '').trim();
 
 const normalizeKey = (value: unknown) => trim(value).toLowerCase();
 
+/** Lowercase unit text with dots/spaces removed so cells/h.p.f matches /hpf. */
+const normalizeUnitForClass = (unit?: unknown) =>
+  normalizeKey(unit).replace(/[.\s]/g, '');
+
+const MICROSCOPY_UNIT_PATTERN = /\/?hpf|\/?lpf|perhpf|perlpf|cellshpf|cellslfp/;
+
+const isMicroscopyUnit = (unit?: string) =>
+  MICROSCOPY_UNIT_PATTERN.test(normalizeUnitForClass(unit));
+
 /** Match HbA1c, Hb A1c, and similar spacing variants to the same catalog row. */
 export const normalizeBiomarkerNameForMatch = (value: unknown) =>
   normalizeKey(value)
@@ -47,12 +56,7 @@ export const inferBiomarkerTypeFromCatalogItem = (item: any) => {
   const sourceText = `${benchmarkArea} ${biomarkerName}`;
   const unitText = normalizeKey(item?.unit);
 
-  if (
-    unitText &&
-    ['hpf', 'lpf', '/hpf', '/lpf', 'per hpf', 'per lpf'].some((token) =>
-      unitText.includes(token),
-    )
-  ) {
+  if (unitText && isMicroscopyUnit(unitText)) {
     return 'urine';
   }
 
@@ -175,7 +179,7 @@ export const inferCatalogValueType = (item: any) => {
   if (existing) return existing;
 
   const unitText = normalizeKey(item?.unit);
-  if (/\/hpf|\/lpf|hpf|lpf|per hpf|per lpf/.test(unitText)) {
+  if (isMicroscopyUnit(unitText)) {
     return 'string';
   }
 
@@ -219,9 +223,6 @@ export const inferExtractedValueKind = (value: unknown, unit?: string) => {
   return 'string';
 };
 
-const isMicroscopyUnit = (unit?: string) =>
-  /\/hpf|\/lpf|hpf|lpf|per hpf|per lpf/i.test(trim(unit));
-
 export const inferSystemValueKind = (valueType?: string, unit?: string) => {
   const type = normalizeKey(valueType);
   const unitText = trim(unit);
@@ -248,13 +249,12 @@ export const inferSystemValueKind = (valueType?: string, unit?: string) => {
 };
 
 const inferMeasurementContext = (name: string, unit: string) => {
-  const unitText = normalizeKey(unit);
+  const unitNorm = normalizeUnitForClass(unit);
   const nameText = normalizeKey(name);
-  if (unitText.includes('%') || nameText.includes('%')) return 'percent';
+  if (unitNorm.includes('%') || nameText.includes('%')) return 'percent';
   if (
-    /x10[e^]?\d+\/l|10\^?\d+\/l|cells?\/?u[lµμ]|\/hpf|\/lpf|hpf|lpf/i.test(
-      unitText,
-    )
+    /x10[e^]?\d+\/l|10\^?\d+\/l|cells?\/?u[lµμ]/.test(unitNorm) ||
+    isMicroscopyUnit(unit)
   ) {
     return 'absolute_count';
   }
@@ -561,11 +561,74 @@ export const resolveRowForReview = (catalog: any[], row: any) => {
 const normalizeUnitKey = (unit: unknown) =>
   normalizeKey(String(unit ?? '').replace('(no unit)', ''));
 
+/** Stable PDF/extracted name for dedupe keys — never use resolved system biomarker. */
+export const reviewRowDedupNameKey = (row: any) => {
+  const candidates = [
+    row?.original_biomarker_name,
+    row?.extracted_biomarker_name,
+    row?.normalized_biomarker_name,
+    row?.biomarker,
+  ];
+  for (const candidate of candidates) {
+    const key = normalizeBiomarkerNameForMatch(candidate);
+    if (key) return key;
+  }
+  return '';
+};
+
 export const buildReviewBiomarkerDedupKey = (row: any) => {
-  const name = resolveRowCatalogNameKey(row);
+  const name = reviewRowDedupNameKey(row);
   if (!name) return '';
   const type = normalizeKey(inferRowBiomarkerType(row));
   return `${name}|${type}`;
+};
+
+export const reviewRowErrorKey = (row: any, index: number) => {
+  const biomarkerId = String(row?.biomarker_id || '').trim();
+  if (biomarkerId) {
+    return biomarkerId;
+  }
+  return `index:${index}`;
+};
+
+export const removeRowErrorKey = (
+  errors: Record<string, string>,
+  rowKey: string,
+) => {
+  if (!rowKey || !errors[rowKey]) {
+    return errors;
+  }
+  const next = { ...errors };
+  delete next[rowKey];
+  return next;
+};
+
+export const remapRowErrorsAfterDedupById = (
+  errors: Record<string, string>,
+  indexMap: Map<number, number>,
+  sourceRows: any[],
+) => {
+  const next: Record<string, string> = {};
+  Object.entries(errors).forEach(([key, value]) => {
+    if (!key.startsWith('index:')) {
+      const stillPresent = sourceRows.some(
+        (row) => String(row?.biomarker_id || '').trim() === key,
+      );
+      if (stillPresent) {
+        next[key] = value;
+      }
+      return;
+    }
+    const oldIndex = Number(key.slice('index:'.length));
+    const newIndex = indexMap.get(oldIndex);
+    if (newIndex === undefined) {
+      return;
+    }
+    const row = sourceRows[newIndex];
+    const rowKey = reviewRowErrorKey(row, newIndex);
+    next[rowKey] = value;
+  });
+  return next;
 };
 
 export const scoreReviewBiomarkerRow = (row: any, catalogMatch: any | null) => {

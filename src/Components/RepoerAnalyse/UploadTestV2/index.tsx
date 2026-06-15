@@ -16,7 +16,7 @@ import {
   enrichBiomarkerNameFieldsOnLoad,
   ensureUniqueBiomarkerIds,
 } from './biomarkerNameFields';
-import { remapRowErrorsAfterReorder } from './biomarkerReviewCompat';
+import { reviewRowErrorKey } from './biomarkerReviewCompat';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -164,59 +164,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const showReviewLoading = () =>
       new Promise((resolve) => setTimeout(resolve, 900));
 
-    const toUtcDateTimestamp = (date: Date | string | null | undefined) => {
-      if (!date) return null;
-      const parsed = date instanceof Date ? date : new Date(date);
-      if (Number.isNaN(parsed.getTime())) return null;
-      return Date.UTC(
-        parsed.getFullYear(),
-        parsed.getMonth(),
-        parsed.getDate(),
-      ).toString();
-    };
-
-    const validateRowsBeforeDisplay = async (
-      biomarkers: any[],
-      labType: string,
-      dateOfTest?: string | null,
-    ) => {
-      const timestamp =
-        toUtcDateTimestamp(dateOfTest) ??
-        toUtcDateTimestamp(modifiedDateOfTest);
-
-      if (!timestamp || biomarkers.length === 0 || labType === 'ultrasound') {
-        setRowErrors({});
-        setAddedRowErrors({});
-        return;
-      }
-
-      try {
-        await Application.validateBiomarkers({
-          modified_biomarkers_list: mapExtractedBiomarkersForValidation(
-            biomarkers,
-            labType,
-          ),
-          added_biomarkers_list: [],
-          modified_biomarkers_date_of_test: timestamp,
-          added_biomarkers_date_of_test: timestamp,
-          modified_lab_type: labType,
-          modified_file_id: activeFileId,
-          member_id: memberId,
-        });
-        setRowErrors({});
-        setAddedRowErrors({});
-      } catch (err: any) {
-        const detail = err?.detail ?? err?.response?.data?.detail;
-        if (detail) {
-          applyValidationErrors(detail, biomarkers);
-        } else {
-          setRowErrors({});
-          setAddedRowErrors({});
-          console.error('Initial biomarker review validation failed:', err);
-        }
-      }
-    };
-
     const processStepOneData = async (data: any) => {
       setProgressBiomarkerUpload(data.progress);
       setfileType(data.lab_type || 'more_info');
@@ -255,6 +202,18 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         return;
       }
 
+      // Background validation still running — keep polling; do not call validateBiomarkers.
+      if (
+        data.status === 'validating_review' ||
+        (data.progress === 100 &&
+          data.extracted_biomarkers?.length > 0 &&
+          !data.validation?.ready)
+      ) {
+        setUploadPhase('validating_review');
+        setbiomarkerLoading(true);
+        return;
+      }
+
       // Handle ultrasound reports — skip biomarkers table
       if (data.lab_type === 'ultrasound') {
         setPolling(false);
@@ -274,34 +233,24 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       );
       const displayRows = sortReviewBiomarkerRows(enrichedRows);
 
-      // Stop polling + show biomarkers immediately
-      if (data.extracted_biomarkers && data.extracted_biomarkers.length > 0) {
+      // Stop polling once validation is ready and show biomarkers
+      if (
+        data.extracted_biomarkers &&
+        data.extracted_biomarkers.length > 0 &&
+        data.validation?.ready
+      ) {
         setPolling(false);
         setUploadPhase('validating_review');
         setbiomarkerLoading(true);
         await showReviewLoading();
 
-        if (data.validation?.ready) {
-          const errorMaps = buildValidationErrorsMaps(
-            data.validation,
-            enrichedRows,
-            addedBiomarkers,
-          );
-          setRowErrors(
-            remapRowErrorsAfterReorder(
-              errorMaps.modifiedErrors,
-              enrichedRows,
-              displayRows,
-            ),
-          );
-          setAddedRowErrors(errorMaps.addedErrors);
-        } else {
-          await validateRowsBeforeDisplay(
-            displayRows,
-            data.lab_type || 'more_info',
-            data.date_of_test || null,
-          );
-        }
+        const errorMaps = buildValidationErrorsMaps(
+          data.validation,
+          enrichedRows,
+          addedBiomarkers,
+        );
+        setRowErrors(errorMaps.modifiedErrors);
+        setAddedRowErrors(errorMaps.addedErrors);
 
         setExtractedBiomarkers(displayRows);
         setUploadPhase(data.status || 'review_ready');
@@ -332,6 +281,23 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
         if (errData && errData.extracted_biomarkers !== undefined) {
           await processStepOneData(errData);
+        } else if (
+          err?.response?.status === 504 ||
+          err?.code === 'ECONNABORTED'
+        ) {
+          setPolling(false);
+          setbiomarkerLoading(false);
+          setUploadPhase('failed');
+          setUploadedFile((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  status: 'error',
+                  errorMessage:
+                    'Lab review validation timed out. Please refresh and try again, or contact support if this persists.',
+                }
+              : prev,
+          );
         } else {
           console.error('Error checking lab step one:', err);
         }
@@ -724,7 +690,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       },
     });
   };
-  const [rowErrors, setRowErrors] = React.useState<Record<number, string>>({});
+  const [rowErrors, setRowErrors] = React.useState<Record<string, string>>({});
   const [addedrowErrors, setAddedRowErrors] = React.useState<
     Record<number, string>
   >({});
@@ -764,16 +730,19 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     biomarkers: any[],
     rowIndex: number,
   ) => {
+    if (item?.display_detail) {
+      return String(item.display_detail);
+    }
+
     const row = biomarkers?.[rowIndex] || {};
     const name =
       item?.extracted_biomarker ||
+      item?.original_biomarker_name ||
       item?.biomarker ||
       row.original_biomarker_name ||
       row.biomarker ||
       `Row ${rowIndex + 1}`;
-    const message = String(
-      item?.display_detail || item?.detail || 'Invalid biomarker',
-    );
+    const message = String(item?.detail || 'Invalid biomarker');
 
     if (message.toLowerCase().startsWith(String(name).toLowerCase())) {
       return message;
@@ -796,20 +765,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   };
 
   const resolveValidationErrorRowIndex = (item: any, biomarkers: any[]) => {
-    const idx = Number(item?.index);
-    if (Number.isInteger(idx) && idx >= 0 && idx < biomarkers.length) {
-      return idx;
-    }
-
-    const errorName = String(item?.extracted_biomarker || item?.biomarker || '')
-      .trim()
-      .toLowerCase();
-    const errorValue = String(item?.value ?? '')
-      .trim()
-      .toLowerCase();
-    const errorUnit = String(item?.unit ?? '')
-      .trim()
-      .toLowerCase();
     const errorBiomarkerId = String(item?.biomarker_id || '').trim();
 
     if (errorBiomarkerId) {
@@ -819,6 +774,26 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       );
       if (idMatchIndex !== -1) return idMatchIndex;
     }
+
+    const idx = Number(item?.index);
+    if (Number.isInteger(idx) && idx >= 0 && idx < biomarkers.length) {
+      return idx;
+    }
+
+    const errorName = String(
+      item?.extracted_biomarker ||
+        item?.original_biomarker_name ||
+        item?.biomarker ||
+        '',
+    )
+      .trim()
+      .toLowerCase();
+    const errorValue = String(item?.value ?? '')
+      .trim()
+      .toLowerCase();
+    const errorUnit = String(item?.unit ?? '')
+      .trim()
+      .toLowerCase();
 
     if (errorName) {
       const exactMatchIndexes = biomarkers
@@ -868,6 +843,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     return -1;
   };
 
+  const resolveValidationErrorRowKey = (item: any, biomarkers: any[]) => {
+    const errorBiomarkerId = String(item?.biomarker_id || '').trim();
+    if (errorBiomarkerId) {
+      const idMatchIndex = biomarkers.findIndex(
+        (row: any) =>
+          String(row?.biomarker_id || '').trim() === errorBiomarkerId,
+      );
+      if (idMatchIndex !== -1) {
+        return reviewRowErrorKey(biomarkers[idMatchIndex], idMatchIndex);
+      }
+    }
+
+    const rowIndex = resolveValidationErrorRowIndex(item, biomarkers);
+    if (rowIndex < 0) {
+      return '';
+    }
+    return reviewRowErrorKey(biomarkers[rowIndex], rowIndex);
+  };
+
   const buildValidationErrorsMaps = (
     detail: any,
     contextBiomarkers: any[],
@@ -886,7 +880,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       parsedDetail = detail || {};
     }
 
-    const modifiedErrors: Record<number, string> = {};
+    const modifiedErrors: Record<string, string> = {};
     const addedErrors: Record<number, string> = {};
     const isUnitError = (item: any) => {
       const message = String(
@@ -900,26 +894,27 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     };
 
     const modifiedItems = parsedDetail.modified_biomarkers_list || [];
-    const modifiedUnitErrorRows = new Set<number>();
+    const modifiedUnitErrorRows = new Set<string>();
     modifiedItems.forEach((item: any) => {
-      const rowIndex = resolveValidationErrorRowIndex(item, contextBiomarkers);
-      if (rowIndex < 0) {
+      const rowKey = resolveValidationErrorRowKey(item, contextBiomarkers);
+      if (!rowKey) {
         return;
       }
       if (isUnitError(item)) {
-        modifiedUnitErrorRows.add(rowIndex);
+        modifiedUnitErrorRows.add(rowKey);
       }
     });
 
     modifiedItems.forEach((item: any) => {
       const rowIndex = resolveValidationErrorRowIndex(item, contextBiomarkers);
-      if (rowIndex < 0) {
+      const rowKey = resolveValidationErrorRowKey(item, contextBiomarkers);
+      if (!rowKey || rowIndex < 0) {
         return;
       }
-      if (modifiedUnitErrorRows.has(rowIndex) && !isUnitError(item)) {
+      if (modifiedUnitErrorRows.has(rowKey) && !isUnitError(item)) {
         return;
       }
-      modifiedErrors[rowIndex] = formatValidationErrorForDisplay(
+      modifiedErrors[rowKey] = formatValidationErrorForDisplay(
         item,
         contextBiomarkers,
         rowIndex,

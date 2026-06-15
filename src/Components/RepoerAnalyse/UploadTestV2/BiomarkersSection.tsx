@@ -33,8 +33,10 @@ import {
   dedupeReviewBiomarkerRows,
   normalizeBiomarkerNameForMatch,
   normalizeExtractedValueForCatalog,
-  remapRowErrorsAfterDedup,
+  remapRowErrorsAfterDedupById,
+  removeRowErrorKey,
   resolveRowForReview,
+  reviewRowErrorKey,
 } from './biomarkerReviewCompat';
 
 const DEFAULT_BIOMARKER_TYPES = [
@@ -239,32 +241,23 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   const handleConfirm = (indexToDelete: number) => {
     if (isDemo) return;
-    // Remember which index was deleted
+    const deletedRow = biomarkers[indexToDelete];
+    const deletedRowKey = deletedRow
+      ? reviewRowErrorKey(deletedRow, indexToDelete)
+      : '';
     deletedIndexRef.current = indexToDelete;
 
-    // update biomarkers
     const updated = biomarkers.filter((_, i) => i !== indexToDelete);
     if (updated.length === 0) {
-      // alert('delete file trigger1');
       publish('DELETE_FILE_TRIGGER', {});
     }
     onChange(updated);
 
-    // update rowErrors
-    setrowErrors((prev: any) => {
-      if (!prev) return prev;
-
-      const newErrors: Record<number, string> = {};
-      Object.keys(prev).forEach((key) => {
-        const idx = Number(key);
-        if (idx < indexToDelete) {
-          newErrors[idx] = prev[idx]; // keep errors before deleted row
-        } else if (idx > indexToDelete) {
-          newErrors[idx - 1] = prev[idx]; // shift errors after deleted row
-        }
-      });
-      return newErrors;
-    });
+    if (deletedRowKey) {
+      setrowErrors((prev: Record<string, string>) =>
+        removeRowErrorKey(prev || {}, deletedRowKey),
+      );
+    }
   };
 
   // const handleCancel = (indexToUpdate: number) => {
@@ -387,8 +380,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       JSON.stringify(deduped) !== JSON.stringify(biomarkers)
     ) {
       if (removedCount > 0) {
-        setrowErrors((prev: Record<number, string>) =>
-          remapRowErrorsAfterDedup(prev, indexMap),
+        setrowErrors((prev: Record<string, string>) =>
+          remapRowErrorsAfterDedupById(prev, indexMap, deduped),
         );
       }
       onChange(deduped);
@@ -664,10 +657,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         normalizeBiomarkerNameForMatch(current.biomarker),
     );
     if (!String(current.biomarker || '').trim() || !biomarkerAllowed) {
-      if (index !== -1) {
-        setrowErrors((prev: any) => ({
+      const rowKey = reviewRowErrorKey(current, index);
+      if (rowKey) {
+        setrowErrors((prev: Record<string, string>) => ({
           ...prev,
-          [index]: formatRowError(
+          [rowKey]: formatRowError(
             current,
             'Please select a valid system biomarker for this type and extracted value.',
           ),
@@ -709,7 +703,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       biomarker_type: String(current.biomarker_type || 'blood'),
     };
 
-    const hadExistingError = index !== -1 && Boolean(currentRowErrors[index]);
+    const rowKey = reviewRowErrorKey(current, index);
+    const hadExistingError = Boolean(rowKey && currentRowErrors[rowKey]);
     const result = await standardizeBiomarkers(payload);
 
     if (result.success) {
@@ -732,12 +727,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           : b,
       );
     } else {
-      // Set error for this specific row only
-      if (index !== -1) {
-        const row = updated[index];
-        setrowErrors((prev: any) => ({
+      if (rowKey) {
+        const row = updated.find((b) => b.biomarker_id === id) || current;
+        setrowErrors((prev: Record<string, string>) => ({
           ...prev,
-          [index]: formatRowError(row, result.error),
+          [rowKey]: formatRowError(row, result.error),
         }));
       }
       updated = updated.map((b) =>
@@ -754,20 +748,27 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
   React.useEffect(() => {
-    if (rowErrors && Object.keys(rowErrors).length > 0) {
-      const firstErrorIndex = Math.min(...Object.keys(rowErrors).map(Number));
-      const el = rowRefs.current[firstErrorIndex];
-      const container = tableRef.current;
-
-      if (el && container) {
-        const elTop = el.offsetTop;
-        container.scrollTo({
-          top: elTop - container.clientHeight / 2, // center it
-          behavior: 'smooth',
-        });
-      }
+    if (!rowErrors || Object.keys(rowErrors).length === 0) {
+      return;
     }
-  }, [rowErrors]);
+    const firstErrorKey = Object.keys(rowErrors)[0];
+    const targetIndex = biomarkers.findIndex(
+      (row, index) => reviewRowErrorKey(row, index) === firstErrorKey,
+    );
+    if (targetIndex < 0) {
+      return;
+    }
+    const el = rowRefs.current[targetIndex];
+    const container = tableRef.current;
+
+    if (el && container) {
+      const elTop = el.offsetTop;
+      container.scrollTo({
+        top: elTop - container.clientHeight / 2,
+        behavior: 'smooth',
+      });
+    }
+  }, [rowErrors, biomarkers]);
   useEffect(() => {
     if (deletedIndexRef.current !== null) {
       const index = deletedIndexRef.current;
@@ -795,7 +796,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         .filter(
           ({ biomarker }) =>
             !typeFilter ||
-            String(biomarker?.biomarker_type || 'blood') === typeFilter,
+            String(biomarker?.biomarker_type || 'blood')
+              .trim()
+              .toLowerCase() === String(typeFilter).trim().toLowerCase(),
         ),
     [biomarkers, typeFilter],
   );
@@ -1169,28 +1172,33 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           b.biomarker_id ||
                           `${b.original_biomarker_name || b.biomarker || ''}-${b.original_value || b.value || ''}-${b.original_unit || b.unit || ''}`;
                         const rowSuggestions = suggestions[suggestionKey];
-                        const rowType = String(b.biomarker_type || 'blood');
+                        const rowType = String(b.biomarker_type || 'blood')
+                          .trim()
+                          .toLowerCase();
                         const rowAvailableBiomarkers =
                           avalibaleBiomarkers.filter(
                             (option) =>
-                              String(option.biomarker_type || 'blood') ===
-                              rowType,
+                              String(option.biomarker_type || 'blood')
+                                .trim()
+                                .toLowerCase() === rowType,
                           );
                         const selectedSystemMeta = avalibaleBiomarkers.find(
                           (option) =>
                             normalizeBiomarkerNameForMatch(option.biomarker) ===
                               normalizeBiomarkerNameForMatch(b.biomarker) &&
-                            String(option.biomarker_type || 'blood') ===
-                              rowType,
+                            String(option.biomarker_type || 'blood')
+                              .trim()
+                              .toLowerCase() === rowType,
                         );
+                        const rowErrorKey = reviewRowErrorKey(b, originalIndex);
                         return (
                           <BiomarkerRow
                             key={b.biomarker_id}
                             refRenceEl={(el: any) =>
                               (rowRefs.current[originalIndex] = el)
                             }
-                            isHaveError={currentRowErrors[originalIndex]}
-                            errorText={currentRowErrors[originalIndex]}
+                            isHaveError={Boolean(currentRowErrors[rowErrorKey])}
+                            errorText={currentRowErrors[rowErrorKey]}
                             biomarker={b}
                             index={originalIndex}
                             showOnlyErrors={showOnlyErrors}
