@@ -332,8 +332,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   </div>
                   <div className="text-sm text-gray-500 text-center max-w-md">
                     This is an ultrasound/imaging report. Biomarker extraction
-                    is not applicable for this type of report. The report content
-                    will be included in your health plan.
+                    is not applicable for this type of report. The report
+                    content will be included in your health plan.
                   </div>
                   <div className="mt-4 px-4 py-2 bg-Primary-DeepTeal/10 rounded-full text-sm text-Primary-DeepTeal font-medium">
                     Click "Continue" to proceed to Health Plan
@@ -393,8 +393,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     </div>
                     <div className="text-sm text-gray-500 text-center max-w-md">
                       This is an ultrasound/imaging report. Biomarker extraction
-                      is not applicable for this type of report. The report content
-                      will be included in your health plan.
+                      is not applicable for this type of report. The report
+                      content will be included in your health plan.
                     </div>
                     <div className="mt-4 px-4 py-2 bg-Primary-DeepTeal/10 rounded-full text-sm text-Primary-DeepTeal font-medium">
                       Click "Continue" to proceed to Health Plan
