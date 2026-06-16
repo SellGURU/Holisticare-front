@@ -282,7 +282,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           enrichExtractedRowForReview(b, data.lab_type),
         ),
       );
-      const displayRows = sortReviewBiomarkerRows(enrichedRows);
 
       // Show biomarkers once validation is ready, or immediately when editing/reopening.
       if (
@@ -312,6 +311,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setRowErrors(errorMaps.modifiedErrors);
         setAddedRowErrors(errorMaps.addedErrors);
 
+        const displayRows = sortReviewBiomarkerRows(enrichedRows);
         setExtractedBiomarkers(displayRows);
         setUploadPhase(
           reopenExistingFile && !data.validation?.ready
@@ -1095,7 +1095,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
   };
 
-  const buildReadyOnlyRows = () =>
+  const buildSavableRows = () =>
     extractedBiomarkers.filter((row, index) => {
       const { category } = categorizeReviewRow(
         row,
@@ -1105,6 +1105,87 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       );
       return category === 'ready';
     });
+
+  const parseApiErrorDetail = (err: any) =>
+    err?.detail ?? err?.response?.data?.detail ?? err;
+
+  const completeReviewContinue = async () => {
+    setBtnLoading(true);
+    setPolling(false);
+
+    const savableRows = buildSavableRows();
+
+    if (savableRows.length === 0) {
+      showError(
+        'Could not save biomarkers',
+        'No ready biomarkers to save. Resolve or exclude Review items first.',
+      );
+      setBtnLoading(false);
+      return;
+    }
+
+    try {
+      if (reviewCatalog.length === 0) {
+        showError(
+          'Could not save biomarkers',
+          'Biomarker catalog is still loading. Please try again in a moment.',
+        );
+        return;
+      }
+      const modifiedTimestamp = modifiedDateOfTest
+        ? Date.UTC(
+            modifiedDateOfTest.getFullYear(),
+            modifiedDateOfTest.getMonth(),
+            modifiedDateOfTest.getDate(),
+          ).toString()
+        : '';
+      const mappedReady = mapExtractedBiomarkersForValidation(
+        savableRows,
+        fileType,
+      );
+      await Application.validateBiomarkers({
+        modified_biomarkers_list: mappedReady,
+        added_biomarkers_list: [],
+        modified_biomarkers_date_of_test: modifiedTimestamp,
+        added_biomarkers_date_of_test: '',
+        modified_lab_type: fileType,
+        modified_file_id: uploadedFile?.file_id ?? '',
+        member_id: memberId,
+      });
+      const res = await handleSaveLabReport(savableRows, {
+        skipAddedBiomarkers: true,
+        skipAutoSaveMappings: true,
+      });
+
+      const savedFileId =
+        res?.data?.modified_biomarkers_file_id ||
+        res?.data?.added_biomarkers_file_id ||
+        uploadedFile?.file_id;
+
+      showSuccess(
+        `${savableRows.length} biomarkers saved.`,
+        'Updating your health plan...',
+      );
+      publish('syncReport', { silent: true });
+      publish('checkProgress', {});
+      onGenderate(savedFileId, { silent: true });
+
+      void autoSaveBiomarkerMappings(savableRows);
+    } catch (err: any) {
+      console.error('Review continue save failed:', err);
+      const detail = parseApiErrorDetail(err);
+      if (detail) {
+        applyValidationErrors(detail);
+      }
+      const message =
+        typeof detail === 'string' && !detail.trim().startsWith('{')
+          ? detail
+          : 'Please resolve Review items and try again.';
+      showError('Could not save biomarkers', message);
+    } finally {
+      setBtnLoading(false);
+    }
+  };
 
   const handleRecheck = async () => {
     const fileId = uploadedFile?.file_id;
@@ -1129,10 +1210,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         res.data.extracted_biomarkers.length > 0 &&
         res.data.validation?.ready
       ) {
-        const enrichedRows = (res.data.extracted_biomarkers || []).map(
-          (b: any) => enrichExtractedRowForReview(b, res.data.lab_type),
+        const enrichedRows = ensureUniqueBiomarkerIds(
+          (res.data.extracted_biomarkers || []).map((b: any) =>
+            enrichExtractedRowForReview(b, res.data.lab_type),
+          ),
         );
-        const displayRows = sortReviewBiomarkerRows(enrichedRows);
         const errorMaps = buildValidationErrorsMaps(
           res.data.validation,
           enrichedRows,
@@ -1140,7 +1222,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         );
         setRowErrors(errorMaps.modifiedErrors);
         setAddedRowErrors(errorMaps.addedErrors);
-        setExtractedBiomarkers(displayRows);
+        setExtractedBiomarkers(sortReviewBiomarkerRows(enrichedRows));
         setUploadPhase(res.data.status || 'review_ready');
         setProgressBiomarkerUpload(res.data.progress ?? 100);
       }
@@ -1149,98 +1231,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     } finally {
       stepOnePollInFlightRef.current = false;
       setRecheckLoading(false);
-    }
-  };
-
-  const completeReviewContinue = async () => {
-    setBtnLoading(true);
-    setPolling(false);
-
-    const readyRows = buildReadyOnlyRows();
-
-    if (readyRows.length === 0) {
-      onGenderate(undefined);
-      setBtnLoading(false);
-      return;
-    }
-
-    try {
-      if (reviewCatalog.length === 0) {
-        showError(
-          'Could not save biomarkers',
-          'Biomarker catalog is still loading. Please try again in a moment.',
-        );
-        return;
-      }
-      const modifiedTimestamp = modifiedDateOfTest
-        ? Date.UTC(
-            modifiedDateOfTest.getFullYear(),
-            modifiedDateOfTest.getMonth(),
-            modifiedDateOfTest.getDate(),
-          ).toString()
-        : '';
-      const mappedReady = mapExtractedBiomarkersForValidation(
-        readyRows,
-        fileType,
-      );
-      await Application.validateBiomarkers({
-        modified_biomarkers_list: mappedReady,
-        added_biomarkers_list: [],
-        modified_biomarkers_date_of_test: modifiedTimestamp,
-        added_biomarkers_date_of_test: '',
-        modified_lab_type: fileType,
-        modified_file_id: uploadedFile?.file_id ?? '',
-        member_id: memberId,
-      });
-      const saveRequest = handleSaveLabReport(readyRows, {
-        skipAddedBiomarkers: true,
-        skipAutoSaveMappings: true,
-      });
-      let didReleaseUi = false;
-      const releaseUi = (fileId: string | undefined) => {
-        if (didReleaseUi) return;
-        didReleaseUi = true;
-        setBtnLoading(false);
-        onGenderate(fileId, { silent: true });
-      };
-
-      const releaseTimer = setTimeout(() => {
-        publish('syncReport', { silent: true });
-        releaseUi(uploadedFile?.file_id);
-      }, 1500);
-
-      let res;
-      try {
-        res = await saveRequest;
-      } finally {
-        clearTimeout(releaseTimer);
-      }
-
-      const savedFileId =
-        res?.data?.modified_biomarkers_file_id ||
-        res?.data?.added_biomarkers_file_id ||
-        uploadedFile?.file_id;
-
-      showSuccess(
-        `${readyRows.length} biomarkers saved.`,
-        'Updating your health plan...',
-      );
-      publish('syncReport', { silent: true });
-      releaseUi(savedFileId);
-      publish('checkProgress', {});
-
-      void autoSaveBiomarkerMappings(readyRows);
-    } catch (err: any) {
-      console.error('Review continue save failed:', err);
-      const detail = err?.detail ?? err?.response?.data?.detail ?? err;
-      showError(
-        'Could not save biomarkers',
-        typeof detail === 'string'
-          ? detail
-          : 'Please resolve Review items and try again.',
-      );
-    } finally {
-      setBtnLoading(false);
     }
   };
 
@@ -1485,6 +1475,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       onClick={() => {
                         if (isDemo) return;
                         if (
+                          uploadedFile != null &&
+                          fileType !== 'ultrasound'
+                        ) {
+                          void completeReviewContinue();
+                          return;
+                        }
+                        if (
                           uploadedFile != null ||
                           addedBiomarkers.length != 0
                         ) {
@@ -1505,7 +1502,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                               } else {
                                 onGenderate(undefined);
                               }
-                              console.log(res);
                             })
                             .catch((err) => {
                               console.log(err);
@@ -1674,6 +1670,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       onClick={() => {
                         if (isDemo) return;
                         if (
+                          uploadedFile != null &&
+                          fileType !== 'ultrasound'
+                        ) {
+                          void completeReviewContinue();
+                          return;
+                        }
+                        if (
                           uploadedFile != null ||
                           addedBiomarkers.length != 0
                         ) {
@@ -1694,7 +1697,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                               } else {
                                 onGenderate(undefined);
                               }
-                              console.log(res);
                             })
                             .catch((err) => {
                               console.log(err);

@@ -315,12 +315,20 @@ export const inferReviewReasonFromErrorText = (
   ) {
     return 'biomarker_not_found';
   }
+  if (
+    typeof errorText === 'object' &&
+    errorText?.code === 'value_mismatch'
+  ) {
+    return 'value_mismatch';
+  }
   const rawText = typeof errorText === 'object' ? errorText?.detail : errorText;
   const msg = String(rawText || '').toLowerCase();
   if (!msg) return null;
   if (
     msg.includes('valid options') ||
-    msg.includes('not accepted for this biomarker')
+    msg.includes('not accepted for this biomarker') ||
+    msg.includes('must be a number') ||
+    msg.includes('must be a text value')
   ) {
     return 'value_mismatch';
   }

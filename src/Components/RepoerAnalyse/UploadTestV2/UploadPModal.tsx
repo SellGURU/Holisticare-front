@@ -244,7 +244,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   (extractedBiomarkers.length == 0 &&
                     addedBiomarkers.length == 0 &&
                     fileType !== 'ultrasound') ||
-                  btnLoading
+                  btnLoading ||
+                  (isReviewWithFile &&
+                    (effectiveReviewCounts?.review ?? 0) > 0)
                 }
                 onClick={() => {
                   onSave();
@@ -255,7 +257,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 ClassName=" w-[100px] xs:w-[127px] md:w-[167px]"
                 title={
                   effectiveReviewCounts && effectiveReviewCounts.review > 0
-                    ? `${effectiveReviewCounts.review} item${effectiveReviewCounts.review !== 1 ? 's' : ''} still need review and will be skipped. You can go back anytime to resolve them.`
+                    ? `Resolve or exclude all ${effectiveReviewCounts.review} Review item(s) before continuing.`
                     : undefined
                 }
               >
