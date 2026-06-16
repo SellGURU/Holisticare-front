@@ -181,6 +181,7 @@ export default function BiomarkerRow({
   );
   const isExtractedUnitError = Boolean(
     !isTextValueWithoutUnit &&
+      biomarker.biomarker &&
       (hasUnitError ||
         normalizedErrorText.includes('unit') ||
         normalizedErrorText.includes('cannot be provided')),

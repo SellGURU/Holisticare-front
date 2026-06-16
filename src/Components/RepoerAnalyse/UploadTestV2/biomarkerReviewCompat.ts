@@ -289,6 +289,7 @@ export const buildBiomarkerRowsForValidation = (
 export type ReviewRowCategory = 'ready' | 'review' | 'excluded';
 export type ReviewReason =
   | 'unmatched'
+  | 'biomarker_not_found'
   | 'value_mismatch'
   | 'unit_mismatch'
   | 'suggest_delete';
@@ -306,9 +307,14 @@ export type CategoryFilter =
   | 'excluded';
 
 export const inferReviewReasonFromErrorText = (
-  errorText: string,
+  errorText: string | { code?: string; detail?: string },
 ): ReviewReason | null => {
-  const msg = String(errorText || '').toLowerCase();
+  if (typeof errorText === 'object' && errorText?.code === 'biomarker_not_found') {
+    return 'biomarker_not_found';
+  }
+  const rawText =
+    typeof errorText === 'object' ? errorText?.detail : errorText;
+  const msg = String(rawText || '').toLowerCase();
   if (!msg) return null;
   if (
     msg.includes('valid options') ||
