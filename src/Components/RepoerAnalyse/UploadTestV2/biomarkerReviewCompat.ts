@@ -309,11 +309,13 @@ export type CategoryFilter =
 export const inferReviewReasonFromErrorText = (
   errorText: string | { code?: string; detail?: string },
 ): ReviewReason | null => {
-  if (typeof errorText === 'object' && errorText?.code === 'biomarker_not_found') {
+  if (
+    typeof errorText === 'object' &&
+    errorText?.code === 'biomarker_not_found'
+  ) {
     return 'biomarker_not_found';
   }
-  const rawText =
-    typeof errorText === 'object' ? errorText?.detail : errorText;
+  const rawText = typeof errorText === 'object' ? errorText?.detail : errorText;
   const msg = String(rawText || '').toLowerCase();
   if (!msg) return null;
   if (
