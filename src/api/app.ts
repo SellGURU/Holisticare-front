@@ -1103,7 +1103,9 @@ class Application extends Api {
     });
   };
   static SaveLabReport = (data: any) => {
-    return this.post('/patients/process_lab_report', data);
+    return this.post('/patients/process_lab_report', data, {
+      timeout: 180000,
+    });
   };
   static getBiomarkerName = (data: any) => {
     return this.post('/clinic/get_biomarkers_list', data);

@@ -1109,6 +1109,17 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const parseApiErrorDetail = (err: any) =>
     err?.detail ?? err?.response?.data?.detail ?? err;
 
+  const isLabSaveGatewayTimeout = (err: any) =>
+    err?.response?.status === 504 ||
+    err?.code === 'ECONNABORTED' ||
+    err?.error?.code === '504' ||
+    String(err?.error?.message || err?.message || '')
+      .toLowerCase()
+      .includes('deployment');
+
+  const labSaveGatewayTimeoutMessage =
+    'Save timed out at the gateway. Your biomarkers may still be processing — refresh and check step two, or try again in a moment.';
+
   const completeReviewContinue = async () => {
     setBtnLoading(true);
     setPolling(false);
@@ -1173,6 +1184,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       void autoSaveBiomarkerMappings(savableRows);
     } catch (err: any) {
       console.error('Review continue save failed:', err);
+      if (isLabSaveGatewayTimeout(err)) {
+        showError('Could not save biomarkers', labSaveGatewayTimeoutMessage);
+        return;
+      }
       const detail = parseApiErrorDetail(err);
       if (detail) {
         applyValidationErrors(detail);
@@ -1501,6 +1516,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                               }
                             })
                             .catch((err) => {
+                              if (isLabSaveGatewayTimeout(err)) {
+                                showError(
+                                  'Could not save biomarkers',
+                                  labSaveGatewayTimeoutMessage,
+                                );
+                                return;
+                              }
                               console.log(err);
                             });
                           onGenderate('customBiomarker');
@@ -1693,6 +1715,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                               }
                             })
                             .catch((err) => {
+                              if (isLabSaveGatewayTimeout(err)) {
+                                showError(
+                                  'Could not save biomarkers',
+                                  labSaveGatewayTimeoutMessage,
+                                );
+                                return;
+                              }
                               console.log(err);
                             });
                           onGenderate('customBiomarker');
