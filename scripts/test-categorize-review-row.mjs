@@ -113,7 +113,9 @@ assert.equal(
   'System biomarker key keeps row excluded',
 );
 const restoredSet = new Set(systemKeySuppressedSet);
-buildSuppressionKeysForRow(suppressedRow).forEach((key) => restoredSet.delete(key));
+buildSuppressionKeysForRow(suppressedRow).forEach((key) =>
+  restoredSet.delete(key),
+);
 assert.equal(
   isRowSuppressed(suppressedRow, restoredSet),
   false,

@@ -1481,7 +1481,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             suppressedSet,
                             originalIndex,
                           );
-                        const rowMetaKey = buildSuppressedRowKey(b);
                         const excludedMetaEntry = buildSuppressionKeysForRow(b)
                           .map((key) => suppressedMeta[key])
                           .find(Boolean);
