@@ -1381,14 +1381,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             )}
 
             <div
-              className="relative flex-1 min-h-0 w-full min-w-0 text-xs border border-Gray-50 rounded-[12px] overflow-hidden shadow-100 bg-white"
+              className="relative flex flex-col flex-1 min-h-0 w-full min-w-0 text-xs border border-Gray-50 rounded-[12px] overflow-hidden shadow-100 bg-white"
               data-tour="biomarker-table"
             >
-              <div className="w-full h-full overflow-x-auto overflow-y-hidden">
+              <div className="flex-1 min-h-0 w-full overflow-x-auto overflow-y-hidden">
                 <div className="w-full min-w-[820px] h-full flex flex-col min-h-0">
                   <div
                     ref={tableRef}
-                    className="flex-1 min-h-0 overflow-y-auto w-full pb-8 [scrollbar-gutter:stable]"
+                    className="flex-1 min-h-0 overflow-y-auto w-full [scrollbar-gutter:stable]"
                   >
                     <div className="border-b border-Gray-50 bg-[#F8FAFB] px-4 py-2 text-[9px] leading-relaxed text-Text-Secondary">
                       {useReviewUx ? (
@@ -1604,22 +1604,21 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         </button>
                       </div>
                     )}
-                    <div className="h-4" />
-                    {useReviewUx && biomarkers.length > 0 ? (
-                      <div className="sticky bottom-0 z-10 border-t border-Gray-50 bg-[#F8FAFB] px-4 py-2.5 text-[10px] text-Text-Secondary">
-                        <div className="font-medium text-Text-Primary">
-                          ✓ {reviewCategoryCounts.ready} Ready · ⚠{' '}
-                          {reviewCategoryCounts.review} will be skipped · —{' '}
-                          {reviewCategoryCounts.excluded} Excluded
-                        </div>
-                        <div className="mt-0.5 text-[9px] text-Text-Quadruple">
-                          Only Ready biomarkers will be included in analysis.
-                        </div>
-                      </div>
-                    ) : null}
                   </div>
                 </div>
               </div>
+              {useReviewUx && biomarkers.length > 0 ? (
+                <div className="shrink-0 z-10 border-t border-Gray-50 bg-[#F8FAFB] px-4 py-2.5 text-[10px] text-Text-Secondary">
+                  <div className="font-medium text-Text-Primary">
+                    ✓ {reviewCategoryCounts.ready} Ready · ⚠{' '}
+                    {reviewCategoryCounts.review} will be skipped · —{' '}
+                    {reviewCategoryCounts.excluded} Excluded
+                  </div>
+                  <div className="mt-0.5 text-[9px] text-Text-Quadruple">
+                    Only Ready biomarkers will be included in analysis.
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         )}
