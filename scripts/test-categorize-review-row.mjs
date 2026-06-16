@@ -118,13 +118,47 @@ const suggestDeleteResult = categorizeReviewRow(
 assert.equal(suggestDeleteResult.category, 'review');
 assert.equal(suggestDeleteResult.reviewReason, 'suggest_delete');
 
+const valueErrorRow = {
+  biomarker_id: 'e745f2be',
+  biomarker: 'Microscopic Examination',
+  original_biomarker_name: 'Microscopic Examination',
+  biomarker_type: 'urine',
+  value: 'Microscopic follows if indicated.',
+  unit: '',
+  original_value: 'Microscopic follows if indicated.',
+  original_unit: '',
+};
+const valueErrors = {
+  'e745f2be':
+    "This value must be a number. Please enter a valid numeric value in 'Extracted Value'.",
+};
+
+const valueErrorResult = categorizeReviewRow(
+  valueErrorRow,
+  valueErrors,
+  emptySuppressed,
+  5,
+);
+assert.equal(valueErrorResult.category, 'review');
+assert.equal(valueErrorResult.reviewReason, 'value_mismatch');
+
 const counts = countReviewRowCategories(
-  [readyRow, unmatchedRow, unitErrorRow, suppressedRow, suggestDeleteRow],
-  unitErrors,
+  [
+    readyRow,
+    unmatchedRow,
+    unitErrorRow,
+    suppressedRow,
+    suggestDeleteRow,
+    valueErrorRow,
+  ],
+  { ...unitErrors, ...valueErrors },
   suppressedSet,
 );
 assert.equal(counts.ready, 1);
-assert.equal(counts.review, 3);
+assert.equal(counts.review, 4);
 assert.equal(counts.excluded, 1);
+
+// Continue gate: any review row blocks progression
+assert.ok(counts.review > 0, 'Continue must stay disabled while review rows remain');
 
 console.log('categorizeReviewRow tests passed');
