@@ -129,7 +129,7 @@ const valueErrorRow = {
   original_unit: '',
 };
 const valueErrors = {
-  'e745f2be':
+  e745f2be:
     "This value must be a number. Please enter a valid numeric value in 'Extracted Value'.",
 };
 
@@ -159,6 +159,9 @@ assert.equal(counts.review, 4);
 assert.equal(counts.excluded, 1);
 
 // Continue gate: any review row blocks progression
-assert.ok(counts.review > 0, 'Continue must stay disabled while review rows remain');
+assert.ok(
+  counts.review > 0,
+  'Continue must stay disabled while review rows remain',
+);
 
 console.log('categorizeReviewRow tests passed');
