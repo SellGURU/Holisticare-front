@@ -15,6 +15,10 @@ export type BiomarkerNameRow = {
 
 const trim = (value: unknown) => String(value ?? '').trim();
 
+/** LabCorp-style footnote markers on OCR names, e.g. `pH^{01}` → `pH`. */
+export const stripLabFootnoteMarkers = (value: unknown) =>
+  trim(value).replace(/\^\{\d+\}/g, '');
+
 /** Exact OCR / PDF label — never fall back to system `biomarker`. */
 export const resolveExactBiomarkerName = (row: BiomarkerNameRow): string => {
   const original = trim(row.original_biomarker_name);
@@ -26,13 +30,13 @@ export const resolveExactBiomarkerName = (row: BiomarkerNameRow): string => {
 export const resolveNormalizedBiomarkerName = (
   row: BiomarkerNameRow,
 ): string => {
-  const normalized = trim(row.normalized_biomarker_name);
+  const normalized = stripLabFootnoteMarkers(row.normalized_biomarker_name);
   if (normalized) return normalized;
-  const extracted = trim(row.extracted_biomarker_name);
+  const extracted = stripLabFootnoteMarkers(row.extracted_biomarker_name);
   if (extracted) return extracted;
   const system = trim(row.biomarker);
   if (system) return system;
-  return resolveExactBiomarkerName(row);
+  return stripLabFootnoteMarkers(resolveExactBiomarkerName(row));
 };
 
 /** Apply load-time name fields when biomarkers arrive from step-one / backend. */
@@ -47,8 +51,8 @@ export const enrichBiomarkerNameFieldsOnLoad = <T extends BiomarkerNameRow>(
     row.normalized_biomarker_name !== undefined &&
     row.normalized_biomarker_name !== null &&
     trim(row.normalized_biomarker_name)
-      ? trim(row.normalized_biomarker_name)
-      : exact || trim(row.biomarker);
+      ? stripLabFootnoteMarkers(row.normalized_biomarker_name)
+      : stripLabFootnoteMarkers(exact) || trim(row.biomarker);
 
   return {
     ...row,
@@ -111,8 +115,11 @@ export const collectMappingNameVariations = (
   const out: string[] = [];
   for (const name of [
     resolveExactBiomarkerName(row),
+    stripLabFootnoteMarkers(resolveExactBiomarkerName(row)),
     trim(row.normalized_biomarker_name),
+    stripLabFootnoteMarkers(row.normalized_biomarker_name),
     trim(row.extracted_biomarker_name),
+    stripLabFootnoteMarkers(row.extracted_biomarker_name),
   ]) {
     const key = name.toLowerCase();
     if (!name || seen.has(key)) continue;

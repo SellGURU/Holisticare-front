@@ -8,7 +8,10 @@ import {
   countReviewRowCategories,
   getReviewRowMessage,
   buildSuppressedRowKey,
+  buildSuppressionKeysForRow,
+  isRowSuppressed,
 } from '../src/Components/RepoerAnalyse/UploadTestV2/biomarkerReviewCompat.ts';
+import { stripLabFootnoteMarkers } from '../src/Components/RepoerAnalyse/UploadTestV2/biomarkerNameFields.ts';
 
 const emptySuppressed = new Set();
 const emptyErrors = {};
@@ -99,6 +102,25 @@ const suppressedResult = categorizeReviewRow(
   3,
 );
 assert.equal(suppressedResult.category, 'excluded');
+
+const systemKeySuppressedSet = new Set([
+  buildSuppressedRowKey(suppressedRow),
+  'glucose|blood',
+]);
+assert.equal(
+  isRowSuppressed(suppressedRow, systemKeySuppressedSet),
+  true,
+  'System biomarker key keeps row excluded',
+);
+const restoredSet = new Set(systemKeySuppressedSet);
+buildSuppressionKeysForRow(suppressedRow).forEach((key) => restoredSet.delete(key));
+assert.equal(
+  isRowSuppressed(suppressedRow, restoredSet),
+  false,
+  'Removing all suppression keys restores the row',
+);
+
+assert.equal(stripLabFootnoteMarkers('pH^{01}'), 'pH');
 
 const suggestDeleteRow = {
   biomarker_id: 'del-1',

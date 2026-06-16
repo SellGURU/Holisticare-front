@@ -33,6 +33,7 @@ import {
   getReviewRowMessage,
   rowMatchesCategoryFilter,
   buildSuppressedRowKey,
+  buildSuppressionKeysForRow,
   buildSuppressedStateFromItems,
   mergeSuppressedRowsIntoReview,
   suppressedItemMatchesRow,
@@ -454,27 +455,42 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   const handleRestoreExcludedRow = async (row: any) => {
     if (isDemo) return;
+    const matchedItem = suppressedItems.find((item) =>
+      suppressedItemMatchesRow(item, row),
+    );
     const extractedName =
+      matchedItem?.extracted_name ||
       resolveExactBiomarkerName(row) ||
       row.original_biomarker_name ||
       row.biomarker ||
       '';
     const biomarkerType = inferRowBiomarkerType(row);
+    const suppressionKeys = buildSuppressionKeysForRow(row);
     try {
-      await Application.unsuppressBiomarker({
+      const res = await Application.unsuppressBiomarker({
         extracted_name: extractedName,
         biomarker_type: biomarkerType,
       });
-      const rowKey = buildSuppressedRowKey(row);
+      if (res?.data?.status === 'not_found') {
+        showError(
+          'Could not restore biomarker',
+          'No exclusion record found for this row. Refreshing the list.',
+        );
+        const listRes = await Application.listSuppressedBiomarkers();
+        syncSuppressedFromApi(listRes?.data?.suppressed || []);
+        return;
+      }
       setSuppressedSet((prev) => {
         const next = new Set(prev);
-        next.delete(rowKey);
+        suppressionKeys.forEach((key) => next.delete(key));
         onSuppressedSetChange?.(next);
         return next;
       });
       setSuppressedMeta((prev) => {
         const next = { ...prev };
-        delete next[rowKey];
+        suppressionKeys.forEach((key) => {
+          delete next[key];
+        });
         return next;
       });
       setSuppressedItems((prev) =>
@@ -486,6 +502,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       }
     } catch (err) {
       console.error('Failed to restore biomarker:', err);
+      showError(
+        'Could not restore biomarker',
+        'Please try again or contact support.',
+      );
     }
   };
 
@@ -1462,7 +1482,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             originalIndex,
                           );
                         const rowMetaKey = buildSuppressedRowKey(b);
-                        const excludedMetaEntry = suppressedMeta[rowMetaKey];
+                        const excludedMetaEntry = buildSuppressionKeysForRow(b)
+                          .map((key) => suppressedMeta[key])
+                          .find(Boolean);
                         const reviewMessage = getReviewRowMessage(
                           categoryResult,
                           b,

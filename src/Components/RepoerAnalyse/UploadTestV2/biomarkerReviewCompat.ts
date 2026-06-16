@@ -12,9 +12,25 @@ const isMicroscopyUnit = (unit?: string) =>
 /** Match HbA1c, Hb A1c, and similar spacing variants to the same catalog row. */
 export const normalizeBiomarkerNameForMatch = (value: unknown) =>
   normalizeKey(value)
+    .replace(/\^\{\d+\}/g, '')
     .replace(/\s+/g, ' ')
     .replace(/\bhba1c\b/g, 'hb a1c')
     .replace(/\ba1c\b/g, 'a1c');
+
+/** All suppression-set keys that can mark a row as excluded (extracted + system). */
+export const buildSuppressionKeysForRow = (row: any): string[] => {
+  const keys = new Set<string>();
+  const extractedKey = buildSuppressedRowKey(row);
+  if (extractedKey && extractedKey !== '|') {
+    keys.add(extractedKey);
+  }
+  const type = normalizeKey(inferRowBiomarkerType(row));
+  const systemKey = `${normalizeBiomarkerNameForMatch(row?.biomarker)}|${type}`;
+  if (systemKey !== '|') {
+    keys.add(systemKey);
+  }
+  return [...keys];
+};
 
 const preferNonEmpty = (...values: unknown[]) => {
   const found = values.find(
