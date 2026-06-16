@@ -1474,10 +1474,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       disabled={isDemo || !resolveActiveButtonReportAnalyse()}
                       onClick={() => {
                         if (isDemo) return;
-                        if (
-                          uploadedFile != null &&
-                          fileType !== 'ultrasound'
-                        ) {
+                        if (uploadedFile != null && fileType !== 'ultrasound') {
                           void completeReviewContinue();
                           return;
                         }
@@ -1669,10 +1666,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       disabled={isDemo || !resolveActiveButtonReportAnalyse()}
                       onClick={() => {
                         if (isDemo) return;
-                        if (
-                          uploadedFile != null &&
-                          fileType !== 'ultrasound'
-                        ) {
+                        if (uploadedFile != null && fileType !== 'ultrasound') {
                           void completeReviewContinue();
                           return;
                         }

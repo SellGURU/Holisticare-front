@@ -245,8 +245,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     addedBiomarkers.length == 0 &&
                     fileType !== 'ultrasound') ||
                   btnLoading ||
-                  (isReviewWithFile &&
-                    (effectiveReviewCounts?.review ?? 0) > 0)
+                  (isReviewWithFile && (effectiveReviewCounts?.review ?? 0) > 0)
                 }
                 onClick={() => {
                   onSave();

@@ -315,10 +315,7 @@ export const inferReviewReasonFromErrorText = (
   ) {
     return 'biomarker_not_found';
   }
-  if (
-    typeof errorText === 'object' &&
-    errorText?.code === 'value_mismatch'
-  ) {
+  if (typeof errorText === 'object' && errorText?.code === 'value_mismatch') {
     return 'value_mismatch';
   }
   const rawText = typeof errorText === 'object' ? errorText?.detail : errorText;
