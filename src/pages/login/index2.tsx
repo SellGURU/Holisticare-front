@@ -16,6 +16,22 @@ const validationSchema = yup.object({
   password: yup.string().required('This field is required'),
 });
 
+const getLoginErrorMessage = (error: unknown): string => {
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (error && typeof error === 'object') {
+    const err = error as { detail?: string; message?: string };
+    if (typeof err.detail === 'string') {
+      return err.detail;
+    }
+    if (typeof err.message === 'string') {
+      return err.message;
+    }
+  }
+  return 'Login failed. Please try again.';
+};
+
 const Login = () => {
   const formik = useFormik({
     initialValues: {
@@ -32,6 +48,7 @@ const Login = () => {
   const navigate = useNavigate();
   const appContext = useApp();
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const submit = () => {
     // Mark all fields as touched to trigger validation errors
     formik.setTouched({
@@ -46,6 +63,7 @@ const Login = () => {
       }
 
       setIsLoading(true);
+      setLoginError('');
       Auth.login(formik.values.email, formik.values.password)
         .then((res) => {
           appContext.login(
@@ -56,20 +74,30 @@ const Login = () => {
           navigate('/');
         })
         .catch((res) => {
-          if (res.detail) {
-            if (res.detail.includes('email')) {
-              formik.setFieldError(
-                'email',
-                'This email address is not registered in our system.',
-              );
-            } else if (res.detail.includes('password')) {
-              formik.setFieldError(
-                'password',
-                ' Incorrect password. Please try again.',
-              );
-            } else {
-              formik.setFieldError('email', res.detail);
-            }
+          const detail = getLoginErrorMessage(res);
+          const detailLower = detail.toLowerCase();
+
+          if (detailLower.includes('clinic is disabled')) {
+            setLoginError(detail);
+            return;
+          }
+
+          if (detailLower.includes('email')) {
+            formik.setFieldError(
+              'email',
+              detail.includes('not registered')
+                ? 'This email address is not registered in our system.'
+                : detail,
+            );
+          } else if (detailLower.includes('password')) {
+            formik.setFieldError(
+              'password',
+              'Incorrect password. Please try again.',
+            );
+          } else if (detail) {
+            setLoginError(detail);
+          } else {
+            setLoginError('Login failed. Please try again.');
           }
         })
         .finally(() => {
@@ -86,6 +114,11 @@ const Login = () => {
         <div className="text-xl font-medium text-Text-Primary text-center">
           Welcome Back!
         </div>
+        {loginError ? (
+          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {loginError}
+          </div>
+        ) : null}
         <form
           id="login-form"
           className="mt-6 grid gap-4"
