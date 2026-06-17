@@ -1120,6 +1120,74 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const labSaveGatewayTimeoutMessage =
     'Save timed out at the gateway. Your biomarkers may still be processing — refresh and check step two, or try again in a moment.';
 
+  const buildLabValidationPayload = () => {
+    const modifiedTimestamp = modifiedDateOfTest
+      ? Date.UTC(
+          modifiedDateOfTest.getFullYear(),
+          modifiedDateOfTest.getMonth(),
+          modifiedDateOfTest.getDate(),
+        ).toString()
+      : '';
+    const addedTimestamp = addedDateOfTest
+      ? Date.UTC(
+          addedDateOfTest.getFullYear(),
+          addedDateOfTest.getMonth(),
+          addedDateOfTest.getDate(),
+        ).toString()
+      : '';
+
+    return {
+      modified_biomarkers_list: mapExtractedBiomarkersForValidation(
+        extractedBiomarkers,
+        fileType,
+      ),
+      added_biomarkers_list: addedBiomarkers,
+      modified_biomarkers_date_of_test: modifiedTimestamp,
+      added_biomarkers_date_of_test: addedTimestamp,
+      modified_lab_type: fileType,
+      modified_file_id: uploadedFile?.file_id ?? '',
+      member_id: memberId,
+    };
+  };
+
+  const validateAndSaveLabReport = async () => {
+    await Application.validateBiomarkers(buildLabValidationPayload());
+    return handleSaveLabReport();
+  };
+
+  const handleLabSaveError = (err: any) => {
+    if (isLabSaveGatewayTimeout(err)) {
+      showError('Could not save biomarkers', labSaveGatewayTimeoutMessage);
+      return;
+    }
+    const detail = parseApiErrorDetail(err);
+    if (detail) {
+      if (typeof detail === 'string') {
+        try {
+          const parsed = JSON.parse(detail);
+          applyValidationErrors(parsed);
+          return;
+        } catch {
+          if (detail.includes('biomarkers_list')) {
+            applyValidationErrors(detail);
+            return;
+          }
+        }
+      }
+      if (typeof detail === 'object') {
+        applyValidationErrors(detail);
+        return;
+      }
+      showError('Could not save biomarkers', String(detail));
+      return;
+    }
+    console.error('API error:', err);
+    showError(
+      'Could not save biomarkers',
+      'An unexpected error occurred. Please try again.',
+    );
+  };
+
   const completeReviewContinue = async () => {
     setBtnLoading(true);
     setPolling(false);
@@ -1497,7 +1565,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           uploadedFile != null ||
                           addedBiomarkers.length != 0
                         ) {
-                          handleSaveLabReport()
+                          validateAndSaveLabReport()
                             .then((res) => {
                               if (
                                 res.data.modified_biomarkers_file_id != null &&
@@ -1515,16 +1583,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                                 onGenderate(undefined);
                               }
                             })
-                            .catch((err) => {
-                              if (isLabSaveGatewayTimeout(err)) {
-                                showError(
-                                  'Could not save biomarkers',
-                                  labSaveGatewayTimeoutMessage,
-                                );
-                                return;
-                              }
-                              console.log(err);
-                            });
+                            .catch(handleLabSaveError);
                           onGenderate('customBiomarker');
                         } else {
                           onGenderate(undefined);
@@ -1696,7 +1755,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                           uploadedFile != null ||
                           addedBiomarkers.length != 0
                         ) {
-                          handleSaveLabReport()
+                          validateAndSaveLabReport()
                             .then((res) => {
                               if (
                                 res.data.modified_biomarkers_file_id != null &&
@@ -1714,16 +1773,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                                 onGenderate(undefined);
                               }
                             })
-                            .catch((err) => {
-                              if (isLabSaveGatewayTimeout(err)) {
-                                showError(
-                                  'Could not save biomarkers',
-                                  labSaveGatewayTimeoutMessage,
-                                );
-                                return;
-                              }
-                              console.log(err);
-                            });
+                            .catch(handleLabSaveError);
                           onGenderate('customBiomarker');
                         } else {
                           onGenderate(undefined);
