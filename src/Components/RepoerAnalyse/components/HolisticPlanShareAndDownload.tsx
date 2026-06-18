@@ -134,8 +134,7 @@ const HolisticPlanShareAndDownload = ({
     const isReportUnavailable =
       activeTreatment?.state == 'On Going' &&
       !isHtmlReportExists &&
-      (htmlReportPollState === 'failed' ||
-        htmlReportPollState === 'timed_out');
+      (htmlReportPollState === 'failed' || htmlReportPollState === 'timed_out');
 
     return (
       <>

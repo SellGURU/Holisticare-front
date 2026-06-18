@@ -390,7 +390,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         return;
       }
       if (detail.silent === true) {
-        fetchData();
         return;
       }
       setCallSync(true);
@@ -412,9 +411,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         fetchData();
       }
     };
+    const handleAllProgressCompleted = () => {
+      fetchData();
+    };
     subscribe('completedProgress', handleCompletedProgress);
+    subscribe('allProgressCompleted', handleAllProgressCompleted);
     return () => {
       unsubscribe('completedProgress', handleCompletedProgress);
+      unsubscribe('allProgressCompleted', handleAllProgressCompleted);
     };
   }, [resolvedMemberID]);
   const [accessManager, setAccessManager] = useState<
@@ -755,7 +759,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           htmlReportPollAttemptRef.current = 0;
         } else {
           htmlReportPollAttemptRef.current += 1;
-          if (htmlReportPollAttemptRef.current >= HTML_REPORT_POLL_MAX_ATTEMPTS) {
+          if (
+            htmlReportPollAttemptRef.current >= HTML_REPORT_POLL_MAX_ATTEMPTS
+          ) {
             setIsHtmlReportExists(false);
             setHtmlReportPollState('timed_out');
             return;
@@ -1372,7 +1378,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         setCheckedStepTwo(false);
                         setISGenerateLoading(false);
                         setTimeout(() => {
-                          publish('checkProgress', {});
+                          publish('checkProgress', {
+                            type: 'file',
+                            file_id: file_id,
+                            action_type: 'uploaded',
+                            process_status: false,
+                          });
                         }, 400);
                         // if (file_id !== 'customBiomarker') {
                         //   setTimeout(() => {

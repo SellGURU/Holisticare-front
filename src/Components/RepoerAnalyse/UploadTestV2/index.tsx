@@ -1246,7 +1246,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         'Updating your health plan...',
       );
       publish('syncReport', { silent: true });
-      publish('checkProgress', {});
+      publish('checkProgress', {
+        type: 'file',
+        file_id: savedFileId,
+        action_type: 'uploaded',
+        process_status: false,
+      });
       onGenderate(savedFileId, { silent: true });
 
       void autoSaveBiomarkerMappings(savableRows);

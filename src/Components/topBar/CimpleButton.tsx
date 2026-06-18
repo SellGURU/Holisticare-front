@@ -61,6 +61,13 @@ const CompileButton: FC<CompileButtonProps> = ({
     isCompiling,
     beRecompile,
   ]);
+  const hasInFlightUpload = useMemo(
+    () =>
+      progressData
+        .filter((el) => el.category !== 'refresh')
+        .some((item) => item.process_status === false),
+    [progressData],
+  );
   const resolveSectionName = (item: any) => {
     if (item.category === 'file') {
       if (item.action_type === 'deleted') {
@@ -221,7 +228,11 @@ const CompileButton: FC<CompileButtonProps> = ({
     // subscribe('openSideMenu', (status: any) => {
     //   setIsSideMenuOpen(status.detail.status);
     // });
-    const handleSyncReport = () => {
+    const handleSyncReport = (data?: any) => {
+      const detail = data?.detail ?? {};
+      if (detail.silent === true) {
+        return;
+      }
       setIsSyncing(false);
       setProgressData([]);
       checkRefrashData();
@@ -278,10 +289,10 @@ const CompileButton: FC<CompileButtonProps> = ({
       tooltip: '',
     },
     PROGRESSING: {
-      label: 'Progressing...',
+      label: 'Processing...',
       disabled: false,
       tooltip:
-        'Your changes are being Progressed. You can continue working while this completes.',
+        'Your lab results are being analyzed. You can continue working while this completes.',
     },
     IDLE: {
       label: 'Compiled',
@@ -315,6 +326,7 @@ const CompileButton: FC<CompileButtonProps> = ({
         const hasRefresh = progressData.some(
           (item) => item.category === 'refresh',
         );
+        checkRefrashData();
         publish('syncReport', {
           fullReload: hasRefresh,
           silent: !hasRefresh,
@@ -324,7 +336,13 @@ const CompileButton: FC<CompileButtonProps> = ({
   }, [progressData]);
 
   useEffect(() => {
-    if (!isAutoCompile || !id || state !== 'READY_TO_COMPILE' || isCompiling)
+    if (
+      !isAutoCompile ||
+      !id ||
+      state !== 'READY_TO_COMPILE' ||
+      isCompiling ||
+      hasInFlightUpload
+    )
       return;
     setIsCompiling(true);
     setNeedCompile(false);
@@ -339,6 +357,10 @@ const CompileButton: FC<CompileButtonProps> = ({
   /* ---------- handlers ---------- */
 
   const handleClick = () => {
+    if (hasInFlightUpload) {
+      setshowProgressModal(true);
+      return;
+    }
     if (state == 'READY_TO_COMPILE' || state == 'RECOMPILE') {
       setIsCompiling(true);
       setNeedCompile(false);
@@ -375,7 +397,11 @@ const CompileButton: FC<CompileButtonProps> = ({
         )}
         <ButtonPrimary
           size="small"
-          isSoftDisabled={ui.disabled}
+          isSoftDisabled={
+            ui.disabled ||
+            (hasInFlightUpload &&
+              (state === 'READY_TO_COMPILE' || state === 'RECOMPILE'))
+          }
           // disabled={state == 'IDLE'}
           onMouseEnter={() => {
             if (state === 'IDLE') {
