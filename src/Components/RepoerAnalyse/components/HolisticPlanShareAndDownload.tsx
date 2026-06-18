@@ -11,12 +11,16 @@ interface HolisticPlanShareAndDownloadProps {
   isHtmlReportExists: boolean;
   loadingHtmlReport: boolean;
   handleGetHtmlReport: (url?: string) => void;
+  htmlReportPollState?: 'building' | 'ready' | 'failed' | 'timed_out';
+  onRetryHtmlReport?: () => void;
 }
 
 const HolisticPlanShareAndDownload = ({
   isHtmlReportExists,
   loadingHtmlReport,
   handleGetHtmlReport,
+  htmlReportPollState = 'building',
+  onRetryHtmlReport,
 }: HolisticPlanShareAndDownloadProps) => {
   const { id } = useParams<{ id: string }>();
   const [activeTreatment, setActiveTreatment] = useState<any>(null);
@@ -123,6 +127,16 @@ const HolisticPlanShareAndDownload = ({
   };
 
   const resolveDownloadButtonHadler = () => {
+    const isBuilding =
+      activeTreatment?.state == 'On Going' &&
+      !isHtmlReportExists &&
+      htmlReportPollState === 'building';
+    const isReportUnavailable =
+      activeTreatment?.state == 'On Going' &&
+      !isHtmlReportExists &&
+      (htmlReportPollState === 'failed' ||
+        htmlReportPollState === 'timed_out');
+
     return (
       <>
         <div className="flex flex-col items-center gap-1">
@@ -135,7 +149,6 @@ const HolisticPlanShareAndDownload = ({
                 } else {
                   handleGetHtmlReport();
                 }
-                // handleGetHtmlReport();
               }
             }}
           >
@@ -149,7 +162,6 @@ const HolisticPlanShareAndDownload = ({
                       src="/icons/download.svg"
                       color="#005F73"
                     ></SvgIcon>
-                    {/* <img className="w-5 h-5" src="/icons/download.svg" alt="" /> */}
                     Download Holistic Plan
                   </>
                 ) : (
@@ -159,17 +171,35 @@ const HolisticPlanShareAndDownload = ({
                   </>
                 )}
               </>
-            ) : (
+            ) : isBuilding ? (
               <div className="flex flex-col items-center gap-1">
                 <SpinnerLoader color="#005F73"></SpinnerLoader>
                 <div className="text-[10px] text-Primary-DeepTeal">
                   Your report is currently being prepared.
                 </div>
               </div>
-            )}
+            ) : isReportUnavailable ? (
+              <div className="flex flex-col items-center gap-1 max-w-[220px] text-center">
+                <div className="text-[10px] text-Text-Fivefold">
+                  {htmlReportPollState === 'timed_out'
+                    ? 'Report preparation is taking longer than expected.'
+                    : 'We could not prepare your report.'}
+                </div>
+                {onRetryHtmlReport && (
+                  <button
+                    type="button"
+                    className="text-[10px] font-medium text-Primary-DeepTeal underline"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onRetryHtmlReport();
+                    }}
+                  >
+                    Retry
+                  </button>
+                )}
+              </div>
+            ) : null}
           </div>
-          {/* {!isHtmlReportExists && (
-              )} */}
         </div>
       </>
     );

@@ -732,6 +732,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   // };
 
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
+  const [htmlReportPollState, setHtmlReportPollState] = useState<
+    'building' | 'ready' | 'failed' | 'timed_out'
+  >('building');
+  const htmlReportPollAttemptRef = useRef(0);
+  const HTML_REPORT_POLL_INTERVAL_MS = 3000;
+  const HTML_REPORT_POLL_MAX_ATTEMPTS = 200; // ~10 minutes at 3s intervals
   const stopPolling = useRef(false);
   useEffect(() => {
     stopPolling.current = false; // reset on mount
@@ -745,19 +751,51 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       .then((res) => {
         if (res.data.exists) {
           setIsHtmlReportExists(true);
+          setHtmlReportPollState('ready');
+          htmlReportPollAttemptRef.current = 0;
         } else {
+          htmlReportPollAttemptRef.current += 1;
+          if (htmlReportPollAttemptRef.current >= HTML_REPORT_POLL_MAX_ATTEMPTS) {
+            setIsHtmlReportExists(false);
+            setHtmlReportPollState('timed_out');
+            return;
+          }
           setIsHtmlReportExists(false);
-          setTimeout(pollHtmlReport, 3000);
+          setHtmlReportPollState('building');
+          setTimeout(pollHtmlReport, HTML_REPORT_POLL_INTERVAL_MS);
         }
       })
       .catch(() => {
+        htmlReportPollAttemptRef.current += 1;
+        if (htmlReportPollAttemptRef.current >= HTML_REPORT_POLL_MAX_ATTEMPTS) {
+          setIsHtmlReportExists(false);
+          setHtmlReportPollState('failed');
+          return;
+        }
         setIsHtmlReportExists(false);
-        setTimeout(pollHtmlReport, 3000);
+        setHtmlReportPollState('building');
+        setTimeout(pollHtmlReport, HTML_REPORT_POLL_INTERVAL_MS);
+      });
+  };
+  const retryHtmlReportBuild = () => {
+    htmlReportPollAttemptRef.current = 0;
+    setIsHtmlReportExists(false);
+    setHtmlReportPollState('building');
+    Application.createReportBackground(
+      resolvedMemberID?.toString() || id?.toString() || '',
+    )
+      .catch(() => {
+        setHtmlReportPollState('failed');
+      })
+      .finally(() => {
+        pollHtmlReport();
       });
   };
   useEffect(() => {
     const handleRecheckHtmlReport = () => {
+      htmlReportPollAttemptRef.current = 0;
       setIsHtmlReportExists(false);
+      setHtmlReportPollState('building');
       pollHtmlReport();
     };
 
@@ -1182,6 +1220,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       handleGetHtmlReport={handleGetHtmlReport}
                       loadingHtmlReport={loadingHtmlReport}
                       isHtmlReportExists={isHtmlReportExists}
+                      htmlReportPollState={htmlReportPollState}
+                      onRetryHtmlReport={retryHtmlReportBuild}
                     />
                   ) : (
                     ''
