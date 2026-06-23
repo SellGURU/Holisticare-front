@@ -24,6 +24,7 @@ import {
 } from './biomarkerReviewCompat';
 import BiomarkersApi from '../../../api/Biomarkers';
 import { showError, showSuccess } from '../../GlobalToast';
+import { ReviewFinding } from './ReviewFindingsPanel';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -141,6 +142,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [isSaveClicked, setisSaveClicked] = useState(false);
   const [uploadPhase, setUploadPhase] = useState('uploading');
   const [reviewSummary, setReviewSummary] = useState<any>(null);
+  const [reviewFindings, setReviewFindings] = useState<ReviewFinding[]>([]);
+  const [reviewFindingsLoading, setReviewFindingsLoading] = useState(false);
   // console.log(extractedBiomarkers);
   const [isUploadFromComboBar, setIsUploadFromComboBar] = useState(false);
   const stepOnePollInFlightRef = useRef(false);
@@ -1054,6 +1057,35 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setAddedRowErrors(addedErrors);
   };
 
+  const applyPersistedReviewFindings = (
+    findings: ReviewFinding[],
+    contextBiomarkers = extractedBiomarkers,
+  ) => {
+    const openFindings = findings.filter(
+      (finding) =>
+        finding.status === 'pending' || finding.status === 'reviewed',
+    );
+    if (!contextBiomarkers.length) return;
+
+    const persistedItems = openFindings.map((finding) => ({
+      ...(typeof (finding as any).payload === 'object'
+        ? (finding as any).payload
+        : {}),
+      biomarker_id: finding.biomarker_id,
+      code: finding.finding_type,
+      detail: finding.detail,
+      display_detail: finding.display_detail || finding.detail,
+      extracted_biomarker: finding.extracted_biomarker,
+    }));
+
+    const { modifiedErrors } = buildValidationErrorsMaps(
+      { modified_biomarkers_list: persistedItems },
+      contextBiomarkers,
+      addedBiomarkers,
+    );
+    setRowErrors(modifiedErrors);
+  };
+
   const autoSaveBiomarkerMappings = async (rowsOverride?: any[]) => {
     if (isDemo) return;
     const rows = rowsOverride ?? extractedBiomarkers;
@@ -1095,7 +1127,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
   };
 
-  const buildSavableRows = () =>
+  // Advisory review: continue with every row the user has not explicitly
+  // excluded (ready + review). Review items are saved and become persisted
+  // findings the user can resolve later in Edit Mode; they no longer block.
+  const buildContinueRows = () =>
     extractedBiomarkers.filter((row, index) => {
       const { category } = categorizeReviewRow(
         row,
@@ -1103,7 +1138,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         suppressedSet,
         index,
       );
-      return category === 'ready';
+      return category !== 'excluded';
     });
 
   const parseApiErrorDetail = (err: any) =>
@@ -1192,12 +1227,23 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setBtnLoading(true);
     setPolling(false);
 
-    const savableRows = buildSavableRows();
+    // Advisory review: save everything not explicitly excluded. Review items
+    // are saved and recorded as findings the user can resolve later in Edit.
+    const continueRows = buildContinueRows();
+    const reviewItemCount = continueRows.filter((row, index) => {
+      const { category } = categorizeReviewRow(
+        row,
+        rowErrors,
+        suppressedSet,
+        index,
+      );
+      return category !== 'ready';
+    }).length;
 
-    if (savableRows.length === 0) {
+    if (continueRows.length === 0) {
       showError(
         'Could not save biomarkers',
-        'No ready biomarkers to save. Resolve or exclude Review items first.',
+        'There are no biomarkers to save. Add or include at least one biomarker.',
       );
       setBtnLoading(false);
       return;
@@ -1211,27 +1257,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         );
         return;
       }
-      const modifiedTimestamp = modifiedDateOfTest
-        ? Date.UTC(
-            modifiedDateOfTest.getFullYear(),
-            modifiedDateOfTest.getMonth(),
-            modifiedDateOfTest.getDate(),
-          ).toString()
-        : '';
-      const mappedReady = mapExtractedBiomarkersForValidation(
-        savableRows,
-        fileType,
-      );
-      await Application.validateBiomarkers({
-        modified_biomarkers_list: mappedReady,
-        added_biomarkers_list: [],
-        modified_biomarkers_date_of_test: modifiedTimestamp,
-        added_biomarkers_date_of_test: '',
-        modified_lab_type: fileType,
-        modified_file_id: uploadedFile?.file_id ?? '',
-        member_id: memberId,
-      });
-      const res = await handleSaveLabReport(savableRows, {
+
+      // Note: no pre-`validateBiomarkers` gate. process_lab_report runs the
+      // full review validation and (in advisory mode) records findings instead
+      // of raising, so the user is never blocked here.
+      const res = await handleSaveLabReport(continueRows, {
         skipAddedBiomarkers: true,
         skipAutoSaveMappings: true,
       });
@@ -1242,8 +1272,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         uploadedFile?.file_id;
 
       showSuccess(
-        `${savableRows.length} biomarkers saved.`,
-        'Updating your health plan...',
+        `${continueRows.length} biomarkers saved.`,
+        reviewItemCount > 0
+          ? `${reviewItemCount} item(s) need review — fix them anytime in Edit. Updating your health plan...`
+          : 'Updating your health plan...',
       );
       publish('syncReport', { silent: true });
       publish('checkProgress', {
@@ -1254,7 +1286,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       });
       onGenderate(savedFileId, { silent: true });
 
-      void autoSaveBiomarkerMappings(savableRows);
+      void loadReviewFindings(savedFileId);
+      void autoSaveBiomarkerMappings(continueRows);
     } catch (err: any) {
       console.error('Review continue save failed:', err);
       if (isLabSaveGatewayTimeout(err)) {
@@ -1268,12 +1301,40 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       const message =
         typeof detail === 'string' && !detail.trim().startsWith('{')
           ? detail
-          : 'Please resolve Review items and try again.';
+          : 'Something went wrong while saving. Please try again.';
       showError('Could not save biomarkers', message);
     } finally {
       setBtnLoading(false);
     }
   };
+
+  const loadReviewFindings = async (fileIdOverride?: string) => {
+    const fileId = fileIdOverride || uploadedFile?.file_id;
+    if (!fileId) return;
+    setReviewFindingsLoading(true);
+    try {
+      const res = await Application.getLabReviewFindings({ file_id: fileId });
+      if (!isMountedRef.current) return;
+      const findings = Array.isArray(res?.data?.findings)
+        ? res.data.findings
+        : [];
+      setReviewFindings(findings);
+      applyPersistedReviewFindings(findings);
+    } catch (err: any) {
+      console.error('Failed to load review findings:', err);
+    } finally {
+      if (isMountedRef.current) setReviewFindingsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fid = uploadedFile?.file_id;
+    if (!fid) return;
+    if (isTrueEditMode || uploadPhase === 'review_ready') {
+      void loadReviewFindings(fid);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uploadedFile?.file_id, isTrueEditMode, uploadPhase]);
 
   const handleRecheck = async () => {
     const fileId = uploadedFile?.file_id;
@@ -1934,6 +1995,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           reopeningExistingFile={reopeningExistingFile}
           reviewCatalog={reviewCatalog}
           onReviewCatalogRefresh={refreshReviewCatalog}
+          reviewFindings={reviewFindings}
+          reviewFindingsLoading={reviewFindingsLoading}
+          onReloadReviewFindings={() => loadReviewFindings()}
         />
       )}
     </>

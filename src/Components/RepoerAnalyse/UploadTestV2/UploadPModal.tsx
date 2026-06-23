@@ -6,6 +6,7 @@ import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
 import { removeRowErrorKey, reviewRowErrorKey } from './biomarkerReviewCompat';
+import ReviewFindingsPanel, { ReviewFinding } from './ReviewFindingsPanel';
 
 interface UploadPModalProps {
   initialMode?: string;
@@ -51,6 +52,9 @@ interface UploadPModalProps {
   reopeningExistingFile?: boolean;
   reviewCatalog?: any[];
   onReviewCatalogRefresh?: () => void;
+  reviewFindings?: ReviewFinding[];
+  reviewFindingsLoading?: boolean;
+  onReloadReviewFindings?: () => void;
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -97,6 +101,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   reopeningExistingFile = false,
   reviewCatalog = [],
   onReviewCatalogRefresh,
+  reviewFindings = [],
+  reviewFindingsLoading = false,
+  onReloadReviewFindings,
 }) => {
   const isReviewWithFile = Boolean(
     uploadedFile?.file_id || uploadedFile?.status === 'completed',
@@ -244,8 +251,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   (extractedBiomarkers.length == 0 &&
                     addedBiomarkers.length == 0 &&
                     fileType !== 'ultrasound') ||
-                  btnLoading ||
-                  (isReviewWithFile && (effectiveReviewCounts?.review ?? 0) > 0)
+                  btnLoading
                 }
                 onClick={() => {
                   onSave();
@@ -255,8 +261,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 }}
                 ClassName=" w-[100px] xs:w-[127px] md:w-[167px]"
                 title={
-                  effectiveReviewCounts && effectiveReviewCounts.review > 0
-                    ? `Resolve or exclude all ${effectiveReviewCounts.review} Review item(s) before continuing.`
+                  isReviewWithFile && (effectiveReviewCounts?.review ?? 0) > 0
+                    ? `${effectiveReviewCounts.review} item(s) need review. You can continue now and fix them later in Edit.`
                     : undefined
                 }
               >
@@ -346,11 +352,20 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   </div>
                 </div>
               ) : (
-                <BiomarkersSection
-                  isEditMode={isEditMode}
-                  rowErrors={rowErrors}
-                  setrowErrors={setrowErrors}
-                  loading={loading}
+                <>
+                  {isReviewWithFile &&
+                  (reviewFindingsLoading || reviewFindings.length > 0) ? (
+                    <ReviewFindingsPanel
+                      findings={reviewFindings}
+                      loading={reviewFindingsLoading}
+                      onFindingUpdated={onReloadReviewFindings}
+                    />
+                  ) : null}
+                  <BiomarkersSection
+                    isEditMode={isEditMode}
+                    rowErrors={rowErrors}
+                    setrowErrors={setrowErrors}
+                    loading={loading}
                   uploadPhase={uploadPhase}
                   reviewSummary={reviewSummary}
                   progressBiomarkerUpload={progressBiomarkerUpload}
@@ -368,7 +383,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   reviewCatalog={reviewCatalog}
                   onReviewCatalogRefresh={onReviewCatalogRefresh}
                   recheckLoading={recheckLoading}
-                />
+                  />
+                </>
               )}
             </div>
           ) : (

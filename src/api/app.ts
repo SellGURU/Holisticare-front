@@ -1163,6 +1163,18 @@ class Application extends Api {
   static listSuppressedBiomarkers = () => {
     return this.post('/patients/list_suppressed_biomarkers', {});
   };
+  static getLabReviewFindings = (data: {
+    file_id: string;
+    include_ignored?: boolean;
+  }) => {
+    return this.post('/patients/lab_review_findings', data);
+  };
+  static updateLabReviewFinding = (data: {
+    finding_id: number;
+    status: 'pending' | 'reviewed' | 'resolved' | 'ignored';
+  }) => {
+    return this.post('/patients/update_lab_review_finding', data);
+  };
   static validateAddedBiomarkers = (data: any) => {
     return this.post('/patients/validate_added_biomarkers', data);
   };
