@@ -16,7 +16,7 @@ const baseProductUrl = 'https://holisticare.vercel.app';
 
 const baseTestUrl = 'https://holisticare-develop.vercel.app';
 
-let env: 'test' | 'production' | 'local' = 'production';
+let env: 'test' | 'production' | 'local' = 'test';
 
 const resolveBaseEndPoint = () => {
   if (env == 'local') {
