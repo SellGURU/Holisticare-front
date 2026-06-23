@@ -366,23 +366,23 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     rowErrors={rowErrors}
                     setrowErrors={setrowErrors}
                     loading={loading}
-                  uploadPhase={uploadPhase}
-                  reviewSummary={reviewSummary}
-                  progressBiomarkerUpload={progressBiomarkerUpload}
-                  fileType={fileType}
-                  dateOfTest={modifiedDateOfTest}
-                  setDateOfTest={handleModifiedDateOfTestChange}
-                  uploadedFile={uploadedFile}
-                  biomarkers={extractedBiomarkers}
-                  onChange={(updated) => setExtractedBiomarkers(updated)}
-                  useReviewUx
-                  onReviewCountsChange={setReviewCountsLocal}
-                  onSuppressedSetChange={onSuppressedSetChange}
-                  extractedCount={extractedCount}
-                  reopeningExistingFile={reopeningExistingFile}
-                  reviewCatalog={reviewCatalog}
-                  onReviewCatalogRefresh={onReviewCatalogRefresh}
-                  recheckLoading={recheckLoading}
+                    uploadPhase={uploadPhase}
+                    reviewSummary={reviewSummary}
+                    progressBiomarkerUpload={progressBiomarkerUpload}
+                    fileType={fileType}
+                    dateOfTest={modifiedDateOfTest}
+                    setDateOfTest={handleModifiedDateOfTestChange}
+                    uploadedFile={uploadedFile}
+                    biomarkers={extractedBiomarkers}
+                    onChange={(updated) => setExtractedBiomarkers(updated)}
+                    useReviewUx
+                    onReviewCountsChange={setReviewCountsLocal}
+                    onSuppressedSetChange={onSuppressedSetChange}
+                    extractedCount={extractedCount}
+                    reopeningExistingFile={reopeningExistingFile}
+                    reviewCatalog={reviewCatalog}
+                    onReviewCatalogRefresh={onReviewCatalogRefresh}
+                    recheckLoading={recheckLoading}
                   />
                 </>
               )}

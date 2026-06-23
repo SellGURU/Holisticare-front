@@ -96,11 +96,14 @@ const ReviewFindingsPanel: React.FC<ReviewFindingsPanelProps> = ({
               {finding.status}
             </span>
             <span className="text-[11px] text-Text-Secondary">
-              {FINDING_TYPE_LABELS[finding.finding_type] || finding.finding_type}
+              {FINDING_TYPE_LABELS[finding.finding_type] ||
+                finding.finding_type}
             </span>
           </div>
           <span className="text-xs text-Text-Primary break-words">
-            {finding.display_detail || finding.detail || finding.extracted_biomarker}
+            {finding.display_detail ||
+              finding.detail ||
+              finding.extracted_biomarker}
           </span>
         </div>
         {!isTerminal ? (
