@@ -166,11 +166,7 @@ const ReviewFindingsPanel: React.FC<ReviewFindingsPanelProps> = ({
           title="View flagged review findings"
         >
           <div className="flex gap-2 justify-center items-center text-[10px] xs:text-xs">
-            <img
-              className="size-4"
-              src="/icons/danger-fill.svg"
-              alt=""
-            />
+            <img className="size-4" src="/icons/danger-fill.svg" alt="" />
             Review findings
             {open.length > 0 ? ` (${open.length})` : ''}
           </div>
