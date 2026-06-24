@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import Application from '../../../api/app';
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
 
 export interface ReviewFinding {
   id: number;
@@ -16,6 +17,7 @@ export interface ReviewFinding {
 interface ReviewFindingsPanelProps {
   findings: ReviewFinding[];
   loading?: boolean;
+  layout?: 'inline' | 'modal';
   // Called after a finding's status changes so the parent can refresh counts.
   onFindingUpdated?: () => void;
 }
@@ -38,12 +40,18 @@ const STATUS_STYLES: Record<string, string> = {
   ignored: 'bg-gray-100 text-gray-500 border-gray-200',
 };
 
+const HELPER_TEXT =
+  'These items were flagged during review. Saving was not blocked — fix the biomarker rows and mark each finding resolved, or ignore it.';
+
 const ReviewFindingsPanel: React.FC<ReviewFindingsPanelProps> = ({
   findings,
   loading = false,
+  layout = 'inline',
   onFindingUpdated,
 }) => {
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const isModal = layout === 'modal';
 
   const { open, resolved } = useMemo(() => {
     const openList = findings.filter(
@@ -84,7 +92,7 @@ const ReviewFindingsPanel: React.FC<ReviewFindingsPanelProps> = ({
     return (
       <div
         key={finding.id}
-        className="flex items-start justify-between gap-3 rounded-md border border-Gray-50 bg-white px-3 py-2"
+        className="flex items-start justify-between gap-2 rounded-md border border-Gray-50 bg-white px-3 py-2"
       >
         <div className="flex flex-col gap-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -139,6 +147,78 @@ const ReviewFindingsPanel: React.FC<ReviewFindingsPanelProps> = ({
     );
   };
 
+  const findingsList = (
+    <div className="flex flex-col gap-2">
+      {open.map(renderFinding)}
+      {resolved.map(renderFinding)}
+    </div>
+  );
+
+  if (isModal) {
+    return (
+      <>
+        <ButtonPrimary
+          type="button"
+          outLine
+          disabled={loading}
+          onClick={() => setIsModalOpen(true)}
+          ClassName="min-w-[100px] xs:min-w-[127px] disabled:!bg-transparent disabled:!text-Primary-DeepTeal disabled:!border-Primary-DeepTeal disabled:opacity-100"
+          title="View flagged review findings"
+        >
+          <div className="flex gap-2 justify-center items-center text-[10px] xs:text-xs">
+            <img
+              className="size-4"
+              src="/icons/danger-fill.svg"
+              alt=""
+            />
+            Review findings
+            {open.length > 0 ? ` (${open.length})` : ''}
+          </div>
+        </ButtonPrimary>
+        {isModalOpen ? (
+          <div
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/30 p-4"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-xl w-full max-w-[640px] max-h-[85vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-5 py-4 border-b border-Gray-50 shrink-0">
+                <div>
+                  <div className="text-sm font-semibold text-Text-Primary">
+                    Review findings
+                    {open.length > 0 ? ` (${open.length} open)` : ''}
+                  </div>
+                  <p className="text-[11px] text-Text-Secondary mt-1">
+                    {HELPER_TEXT}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-400 hover:text-gray-600 text-xl leading-none shrink-0 ml-4"
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              </div>
+              {loading ? (
+                <div className="px-5 py-8 text-center text-[11px] text-Text-Secondary">
+                  Loading…
+                </div>
+              ) : (
+                <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4">
+                  {findingsList}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : null}
+      </>
+    );
+  }
+
   return (
     <div className="w-full flex flex-col gap-2 rounded-lg border border-amber-200 bg-amber-50/40 p-3 mb-3">
       <div className="flex items-center justify-between">
@@ -150,10 +230,7 @@ const ReviewFindingsPanel: React.FC<ReviewFindingsPanelProps> = ({
           <span className="text-[11px] text-Text-Secondary">Loading…</span>
         ) : null}
       </div>
-      <p className="text-[11px] text-Text-Secondary">
-        These items were flagged during review. Saving was not blocked — fix the
-        biomarker rows above and mark each finding resolved, or ignore it.
-      </p>
+      <p className="text-[11px] text-Text-Secondary">{HELPER_TEXT}</p>
       <div className="flex flex-col gap-2 max-h-[220px] overflow-auto">
         {open.map(renderFinding)}
         {resolved.map(renderFinding)}

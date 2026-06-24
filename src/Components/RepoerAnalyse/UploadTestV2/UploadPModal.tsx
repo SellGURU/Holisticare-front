@@ -223,6 +223,15 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               Lab Data & Biomarkers
             </div>
             <div className="flex items-center gap-2">
+              {isReviewWithFile &&
+              (reviewFindingsLoading || reviewFindings.length > 0) ? (
+                <ReviewFindingsPanel
+                  layout="modal"
+                  findings={reviewFindings}
+                  loading={reviewFindingsLoading}
+                  onFindingUpdated={onReloadReviewFindings}
+                />
+              ) : null}
               {onRecheck && fileId && isReviewWithFile ? (
                 <ButtonPrimary
                   type="button"
@@ -352,39 +361,29 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   </div>
                 </div>
               ) : (
-                <>
-                  {isReviewWithFile &&
-                  (reviewFindingsLoading || reviewFindings.length > 0) ? (
-                    <ReviewFindingsPanel
-                      findings={reviewFindings}
-                      loading={reviewFindingsLoading}
-                      onFindingUpdated={onReloadReviewFindings}
-                    />
-                  ) : null}
-                  <BiomarkersSection
-                    isEditMode={isEditMode}
-                    rowErrors={rowErrors}
-                    setrowErrors={setrowErrors}
-                    loading={loading}
-                    uploadPhase={uploadPhase}
-                    reviewSummary={reviewSummary}
-                    progressBiomarkerUpload={progressBiomarkerUpload}
-                    fileType={fileType}
-                    dateOfTest={modifiedDateOfTest}
-                    setDateOfTest={handleModifiedDateOfTestChange}
-                    uploadedFile={uploadedFile}
-                    biomarkers={extractedBiomarkers}
-                    onChange={(updated) => setExtractedBiomarkers(updated)}
-                    useReviewUx
-                    onReviewCountsChange={setReviewCountsLocal}
-                    onSuppressedSetChange={onSuppressedSetChange}
-                    extractedCount={extractedCount}
-                    reopeningExistingFile={reopeningExistingFile}
-                    reviewCatalog={reviewCatalog}
-                    onReviewCatalogRefresh={onReviewCatalogRefresh}
-                    recheckLoading={recheckLoading}
-                  />
-                </>
+                <BiomarkersSection
+                  isEditMode={isEditMode}
+                  rowErrors={rowErrors}
+                  setrowErrors={setrowErrors}
+                  loading={loading}
+                  uploadPhase={uploadPhase}
+                  reviewSummary={reviewSummary}
+                  progressBiomarkerUpload={progressBiomarkerUpload}
+                  fileType={fileType}
+                  dateOfTest={modifiedDateOfTest}
+                  setDateOfTest={handleModifiedDateOfTestChange}
+                  uploadedFile={uploadedFile}
+                  biomarkers={extractedBiomarkers}
+                  onChange={(updated) => setExtractedBiomarkers(updated)}
+                  useReviewUx
+                  onReviewCountsChange={setReviewCountsLocal}
+                  onSuppressedSetChange={onSuppressedSetChange}
+                  extractedCount={extractedCount}
+                  reopeningExistingFile={reopeningExistingFile}
+                  reviewCatalog={reviewCatalog}
+                  onReviewCatalogRefresh={onReviewCatalogRefresh}
+                  recheckLoading={recheckLoading}
+                />
               )}
             </div>
           ) : (
