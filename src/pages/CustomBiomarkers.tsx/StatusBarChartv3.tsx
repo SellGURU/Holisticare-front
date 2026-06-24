@@ -201,8 +201,7 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     if (currentStatus !== el.status) {
       if (el.high != null && numValue === Number(el.high)) {
         const claimedByStatus = sameStatusRanges.some(
-          (range: any) =>
-            range.low != null && numValue === Number(range.low),
+          (range: any) => range.low != null && numValue === Number(range.low),
         );
         if (claimedByStatus) return 'none';
       }
