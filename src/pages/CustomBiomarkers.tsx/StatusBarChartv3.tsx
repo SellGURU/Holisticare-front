@@ -163,6 +163,22 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     return 50;
   };
 
+  const valueInStatusSegment = (el: any, numValue: number): boolean => {
+    const low = el.low === null ? null : Number(el.low);
+    const high = el.high === null ? null : Number(el.high);
+
+    if (low != null && high != null) {
+      return numValue >= low && numValue <= high;
+    }
+    if (low == null && high != null) {
+      return numValue <= high;
+    }
+    if (high == null && low != null) {
+      return numValue >= low;
+    }
+    return false;
+  };
+
   // Helper function to determine marker mode
   const getStatusMarkerMode = (
     el: any,
@@ -170,23 +186,30 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     values: any,
     data: any,
   ): 'unique' | 'inRange' | 'none' => {
-    if (!status || !data) return 'none';
+    if (!status || !data || !values?.[0]) return 'none';
+
+    const currentStatus = status[0];
+    const numValue = Number(values[0]);
     const sameStatusRanges = sortByRange(data).filter(
-      (item: any) => item.status === status?.[0],
+      (item: any) => item.status === currentStatus,
     );
+
     if (sameStatusRanges.length === 1) {
-      if (status[0] == el.status) return 'unique';
+      return currentStatus === el.status ? 'unique' : 'none';
+    }
+
+    if (currentStatus !== el.status) {
+      if (el.high != null && numValue === Number(el.high)) {
+        const claimedByStatus = sameStatusRanges.some(
+          (range: any) =>
+            range.low != null && numValue === Number(range.low),
+        );
+        if (claimedByStatus) return 'none';
+      }
       return 'none';
     }
-    if (
-      status[0] == el.status &&
-      values &&
-      (el.low === null || Number(values[0]) > Number(el.low)) &&
-      (el.high === null || Number(values[0]) <= Number(el.high))
-    ) {
-      return 'inRange';
-    }
-    return 'none';
+
+    return valueInStatusSegment(el, numValue) ? 'inRange' : 'none';
   };
 
   return (
