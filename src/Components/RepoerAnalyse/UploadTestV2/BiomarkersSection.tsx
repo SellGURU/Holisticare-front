@@ -674,8 +674,29 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           }
         />
       );
-    } else {
+    }
+
+    const catalogEntry = pickCatalogEntryForRow(effectiveCatalog, b);
+    const categoricalValues = catalogEntry?.categorical_values || [];
+    if (
+      catalogEntry?.value_type === 'string' &&
+      categoricalValues.length > 0
+    ) {
       return (
+        <Select
+          isSmall
+          isSetting
+          value={preferNonEmpty(b.original_value, b.value)}
+          options={categoricalValues}
+          placeholder="Select value"
+          onChange={(val: string) =>
+            updateAndStandardize(b.biomarker_id, { original_value: val })
+          }
+        />
+      );
+    }
+
+    return (
         <input
           type="text"
           value={preferNonEmpty(b.original_value, b.value)}
@@ -695,8 +716,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             }
           }}
         />
-      );
-    }
+    );
   };
   React.useEffect(() => {
     const updated = biomarkers.map((b) => {

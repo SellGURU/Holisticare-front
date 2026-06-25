@@ -21,6 +21,7 @@ import {
   mapChartBoundsToReviewCatalog,
   reviewRowErrorKey,
   categorizeReviewRow,
+  inferReviewReasonFromErrorText,
 } from './biomarkerReviewCompat';
 import BiomarkersApi from '../../../api/Biomarkers';
 import { showError, showSuccess } from '../../GlobalToast';
@@ -150,6 +151,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const isMountedRef = useRef(true);
   const skipExtractionProgressRef = useRef(false);
   const [reopeningExistingFile, setReopeningExistingFile] = useState(false);
+  const backendRowErrorsRef = useRef<Record<string, string>>({});
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -311,6 +313,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               addedBiomarkers,
             )
           : { modifiedErrors: {}, addedErrors: {} };
+        backendRowErrorsRef.current = errorMaps.modifiedErrors;
         setRowErrors(errorMaps.modifiedErrors);
         setAddedRowErrors(errorMaps.addedErrors);
 
@@ -1060,6 +1063,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const applyPersistedReviewFindings = (
     findings: ReviewFinding[],
     contextBiomarkers = extractedBiomarkers,
+    backendErrors: Record<string, string> | null = null,
   ) => {
     const openFindings = findings.filter(
       (finding) =>
@@ -1083,6 +1087,53 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       contextBiomarkers,
       addedBiomarkers,
     );
+
+    const authoritativeErrors =
+      backendErrors !== null ? backendErrors : backendRowErrorsRef.current;
+
+    const rowForErrorKey = (rowKey: string) => {
+      const match = contextBiomarkers
+        .map((row: any, index: number) => ({
+          row,
+          key: reviewRowErrorKey(row, index),
+        }))
+        .find(({ key }) => key === rowKey);
+      return match?.row;
+    };
+
+    const shouldSkipPersistedError = (rowKey: string, message: string) => {
+      if (Object.prototype.hasOwnProperty.call(authoritativeErrors, rowKey)) {
+        return true;
+      }
+      const row = rowForErrorKey(rowKey);
+      if (!row || !String(row.biomarker || '').trim()) {
+        return false;
+      }
+      const reason = inferReviewReasonFromErrorText(message);
+      if (
+        reason === 'biomarker_not_found' ||
+        reason === 'unmatched' ||
+        String(message || '')
+          .toLowerCase()
+          .includes('not recognized')
+      ) {
+        return true;
+      }
+      return false;
+    };
+
+    if (backendErrors !== null || Object.keys(authoritativeErrors).length > 0) {
+      const merged = { ...authoritativeErrors };
+      Object.entries(modifiedErrors).forEach(([rowKey, message]) => {
+        if (shouldSkipPersistedError(rowKey, message)) {
+          return;
+        }
+        merged[rowKey] = message;
+      });
+      setRowErrors(merged);
+      return;
+    }
+
     setRowErrors(modifiedErrors);
   };
 
@@ -1286,7 +1337,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       });
       onGenderate(savedFileId, { silent: true });
 
-      void loadReviewFindings(savedFileId);
+      void loadReviewFindings(savedFileId, backendRowErrorsRef.current);
       void autoSaveBiomarkerMappings(continueRows);
     } catch (err: any) {
       console.error('Review continue save failed:', err);
@@ -1308,7 +1359,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
   };
 
-  const loadReviewFindings = async (fileIdOverride?: string) => {
+  const loadReviewFindings = async (
+    fileIdOverride?: string,
+    backendErrors: Record<string, string> | null = null,
+  ) => {
     const fileId = fileIdOverride || uploadedFile?.file_id;
     if (!fileId) return;
     setReviewFindingsLoading(true);
@@ -1319,7 +1373,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         ? res.data.findings
         : [];
       setReviewFindings(findings);
-      applyPersistedReviewFindings(findings);
+      applyPersistedReviewFindings(findings, extractedBiomarkers, backendErrors);
     } catch (err: any) {
       console.error('Failed to load review findings:', err);
     } finally {
@@ -1331,7 +1385,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const fid = uploadedFile?.file_id;
     if (!fid) return;
     if (isTrueEditMode || uploadPhase === 'review_ready') {
-      void loadReviewFindings(fid);
+      void loadReviewFindings(fid, backendRowErrorsRef.current);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadedFile?.file_id, isTrueEditMode, uploadPhase]);
@@ -1369,11 +1423,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           enrichedRows,
           addedBiomarkers,
         );
+        backendRowErrorsRef.current = errorMaps.modifiedErrors;
         setRowErrors(errorMaps.modifiedErrors);
         setAddedRowErrors(errorMaps.addedErrors);
         setExtractedBiomarkers(sortReviewBiomarkerRows(enrichedRows));
         setUploadPhase(res.data.status || 'review_ready');
         setProgressBiomarkerUpload(res.data.progress ?? 100);
+        void loadReviewFindings(fileId, errorMaps.modifiedErrors);
       }
     } catch (err: any) {
       console.error('Re-check failed:', err);
@@ -1997,7 +2053,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           onReviewCatalogRefresh={refreshReviewCatalog}
           reviewFindings={reviewFindings}
           reviewFindingsLoading={reviewFindingsLoading}
-          onReloadReviewFindings={() => loadReviewFindings()}
+          onReloadReviewFindings={() =>
+            loadReviewFindings(undefined, backendRowErrorsRef.current)
+          }
         />
       )}
     </>

@@ -266,7 +266,7 @@ export default function BiomarkerRow({
     if (unitOptions.length === 1) {
       return unitOptions[0];
     }
-    return selectedSystemMeta?.unit || '';
+    return '';
   })();
 
   useEffect(() => {
@@ -669,7 +669,9 @@ export default function BiomarkerRow({
                 placeholder={
                   isExtractedUnitError && !isErrorHandled
                     ? 'Select unit'
-                    : 'Select an option'
+                    : !displayUnit
+                      ? 'Select unit'
+                      : 'Select an option'
                 }
                 validation={isExtractedUnitError && !isErrorHandled}
                 options={unitOptions}

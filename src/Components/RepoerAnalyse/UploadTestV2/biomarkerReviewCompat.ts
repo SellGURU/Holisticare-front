@@ -403,9 +403,19 @@ export const categorizeReviewRow = (
   const rowKey = reviewRowErrorKey(row, index);
   const errorText = rowErrors[rowKey] || '';
   if (errorText.trim()) {
+    const reviewReason =
+      inferReviewReasonFromErrorText(errorText) || 'unmatched';
+    if (
+      trim(row?.biomarker) &&
+      (reviewReason === 'biomarker_not_found' ||
+        reviewReason === 'unmatched' ||
+        String(errorText).toLowerCase().includes('not recognized'))
+    ) {
+      return { category: 'ready' };
+    }
     return {
       category: 'review',
-      reviewReason: inferReviewReasonFromErrorText(errorText) || 'unmatched',
+      reviewReason,
     };
   }
 
