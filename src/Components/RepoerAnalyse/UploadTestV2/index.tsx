@@ -1373,7 +1373,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         ? res.data.findings
         : [];
       setReviewFindings(findings);
-      applyPersistedReviewFindings(findings, extractedBiomarkers, backendErrors);
+      applyPersistedReviewFindings(
+        findings,
+        extractedBiomarkers,
+        backendErrors,
+      );
     } catch (err: any) {
       console.error('Failed to load review findings:', err);
     } finally {

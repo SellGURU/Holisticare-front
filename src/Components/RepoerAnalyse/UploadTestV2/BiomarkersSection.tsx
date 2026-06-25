@@ -678,10 +678,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     const catalogEntry = pickCatalogEntryForRow(effectiveCatalog, b);
     const categoricalValues = catalogEntry?.categorical_values || [];
-    if (
-      catalogEntry?.value_type === 'string' &&
-      categoricalValues.length > 0
-    ) {
+    if (catalogEntry?.value_type === 'string' && categoricalValues.length > 0) {
       return (
         <Select
           isSmall
@@ -697,25 +694,25 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     }
 
     return (
-        <input
-          type="text"
-          value={preferNonEmpty(b.original_value, b.value)}
-          className="text-center border border-Gray-50 w-[70px] md:w-[95px] outline-none rounded-md text-[8px] md:text-[12px] text-Text-Primary px-2 md:py-1 transition-colors focus:border-Primary-DeepTeal focus:ring-1 focus:ring-Primary-DeepTeal/30"
-          disabled={isDemo}
-          title={
-            isDemo
-              ? 'Demo version cannot add or edit data. Upgrade for full access.'
-              : undefined
+      <input
+        type="text"
+        value={preferNonEmpty(b.original_value, b.value)}
+        className="text-center border border-Gray-50 w-[70px] md:w-[95px] outline-none rounded-md text-[8px] md:text-[12px] text-Text-Primary px-2 md:py-1 transition-colors focus:border-Primary-DeepTeal focus:ring-1 focus:ring-Primary-DeepTeal/30"
+        disabled={isDemo}
+        title={
+          isDemo
+            ? 'Demo version cannot add or edit data. Upgrade for full access.'
+            : undefined
+        }
+        onChange={(e) => handleValueChange(b.biomarker_id, e.target.value)}
+        onBlur={(e) => commitValueChange(b.biomarker_id, e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            e.currentTarget.blur();
           }
-          onChange={(e) => handleValueChange(b.biomarker_id, e.target.value)}
-          onBlur={(e) => commitValueChange(b.biomarker_id, e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              e.currentTarget.blur();
-            }
-          }}
-        />
+        }}
+      />
     );
   };
   React.useEffect(() => {
