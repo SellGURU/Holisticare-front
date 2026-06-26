@@ -136,7 +136,7 @@ export const Notes = () => {
                 setCommentText(e.target.value);
               }}
               placeholder="Provide expert commentary on the patient's condition"
-              className="h-[215px] font-light text-[12px] p-2 border border-Gray-50 text-justify  mt-1 rounded-[16px] bg-backgroundColor-Card w-full resize-none outline-none"
+              className="min-h-[215px] font-light text-[12px] p-2 border border-Gray-50 text-justify mt-1 rounded-[16px] bg-backgroundColor-Card w-full resize-y outline-none"
             />
             <div className="flex justify-between items-center mt-2">
               <ButtonPrimary
@@ -205,7 +205,7 @@ export const Notes = () => {
                     <Accordion time={el.time} title={formatDate(el.date)}>
                       {editIndex === index ? (
                         <textarea
-                          className="text-[12px] w-full resize-none outline-none"
+                          className="text-[12px] w-full min-h-[80px] resize-y outline-none"
                           value={editText}
                           onChange={(e) => setEditText(e.target.value)}
                         />
