@@ -384,13 +384,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   useEffect(() => {
     const handleSyncReport = (data: any) => {
-      if (data.detail.part == 'treatmentPlan') {
+      const detail = data?.detail ?? {};
+      if (detail.part === 'treatmentPlan') {
         getTreatmentPlanData();
-      } else {
-        setCallSync(true);
-        if (location.search) {
-          navigate(location.pathname, { replace: true });
-        }
+        return;
+      }
+      if (detail.silent === true) {
+        return;
+      }
+      setCallSync(true);
+      if (location.search) {
+        navigate(location.pathname, { replace: true });
       }
     };
 
@@ -399,7 +403,24 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return () => {
       unsubscribe('syncReport', handleSyncReport);
     };
-  }, [isHaveReport]);
+  }, [isHaveReport, location.pathname, location.search, navigate]);
+
+  useEffect(() => {
+    const handleCompletedProgress = (data: any) => {
+      if (data?.detail?.type === 'uploaded') {
+        fetchData();
+      }
+    };
+    const handleAllProgressCompleted = () => {
+      fetchData();
+    };
+    subscribe('completedProgress', handleCompletedProgress);
+    subscribe('allProgressCompleted', handleAllProgressCompleted);
+    return () => {
+      unsubscribe('completedProgress', handleCompletedProgress);
+      unsubscribe('allProgressCompleted', handleAllProgressCompleted);
+    };
+  }, [resolvedMemberID]);
   const [accessManager, setAccessManager] = useState<
     Array<{
       name: string;
@@ -715,6 +736,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   // };
 
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
+  const [htmlReportPollState, setHtmlReportPollState] = useState<
+    'building' | 'ready' | 'failed' | 'timed_out'
+  >('building');
+  const htmlReportPollAttemptRef = useRef(0);
+  const HTML_REPORT_POLL_INTERVAL_MS = 3000;
+  const HTML_REPORT_POLL_MAX_ATTEMPTS = 200; // ~10 minutes at 3s intervals
   const stopPolling = useRef(false);
   useEffect(() => {
     stopPolling.current = false; // reset on mount
@@ -728,17 +755,53 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       .then((res) => {
         if (res.data.exists) {
           setIsHtmlReportExists(true);
+          setHtmlReportPollState('ready');
+          htmlReportPollAttemptRef.current = 0;
         } else {
-          setTimeout(pollHtmlReport, 10000);
+          htmlReportPollAttemptRef.current += 1;
+          if (
+            htmlReportPollAttemptRef.current >= HTML_REPORT_POLL_MAX_ATTEMPTS
+          ) {
+            setIsHtmlReportExists(false);
+            setHtmlReportPollState('timed_out');
+            return;
+          }
+          setIsHtmlReportExists(false);
+          setHtmlReportPollState('building');
+          setTimeout(pollHtmlReport, HTML_REPORT_POLL_INTERVAL_MS);
         }
       })
       .catch(() => {
-        setTimeout(pollHtmlReport, 10000);
+        htmlReportPollAttemptRef.current += 1;
+        if (htmlReportPollAttemptRef.current >= HTML_REPORT_POLL_MAX_ATTEMPTS) {
+          setIsHtmlReportExists(false);
+          setHtmlReportPollState('failed');
+          return;
+        }
+        setIsHtmlReportExists(false);
+        setHtmlReportPollState('building');
+        setTimeout(pollHtmlReport, HTML_REPORT_POLL_INTERVAL_MS);
+      });
+  };
+  const retryHtmlReportBuild = () => {
+    htmlReportPollAttemptRef.current = 0;
+    setIsHtmlReportExists(false);
+    setHtmlReportPollState('building');
+    Application.createReportBackground(
+      resolvedMemberID?.toString() || id?.toString() || '',
+    )
+      .catch(() => {
+        setHtmlReportPollState('failed');
+      })
+      .finally(() => {
+        pollHtmlReport();
       });
   };
   useEffect(() => {
     const handleRecheckHtmlReport = () => {
+      htmlReportPollAttemptRef.current = 0;
       setIsHtmlReportExists(false);
+      setHtmlReportPollState('building');
       pollHtmlReport();
     };
 
@@ -1163,6 +1226,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       handleGetHtmlReport={handleGetHtmlReport}
                       loadingHtmlReport={loadingHtmlReport}
                       isHtmlReportExists={isHtmlReportExists}
+                      htmlReportPollState={htmlReportPollState}
+                      onRetryHtmlReport={retryHtmlReportBuild}
                     />
                   ) : (
                     ''
@@ -1284,12 +1349,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     }}
                     isShare={isShare}
                     showReport={isHaveReport}
-                    onGenderate={(file_id: string | undefined) => {
+                    onGenderate={(
+                      file_id: string | undefined,
+                      options?: { silent?: boolean },
+                    ) => {
                       if (file_id == 'discard') {
                         setShowUploadTest(false);
                         return;
                       }
-                      setISGenerateLoading(true);
+                      const silentContinue =
+                        options?.silent === true && Boolean(file_id);
+                      if (!silentContinue) {
+                        setISGenerateLoading(true);
+                      }
                       Application.first_view_report(resolvedMemberID)
                         .then((res) => {
                           console.log(res);
@@ -1306,7 +1378,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         setCheckedStepTwo(false);
                         setISGenerateLoading(false);
                         setTimeout(() => {
-                          publish('checkProgress', {});
+                          publish('checkProgress', {
+                            type: 'file',
+                            file_id: file_id,
+                            action_type: 'uploaded',
+                            process_status: false,
+                          });
                         }, 400);
                         // if (file_id !== 'customBiomarker') {
                         //   setTimeout(() => {

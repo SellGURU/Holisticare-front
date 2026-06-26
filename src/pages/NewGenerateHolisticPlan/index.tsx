@@ -252,18 +252,15 @@ const NewGenerateHolisticPlan = () => {
         member_id: id,
         is_update: isUpdate,
       });
+      sessionStorage.setItem('isHtmlReportExists', 'false');
       publish('reckecHtmlReport', {});
-      const res = await Application.checkHtmlReport(id?.toString() || '');
-      sessionStorage.setItem('isHtmlReportExists', res.data.exists.toString());
       shouldNavigate = true;
     } catch (err) {
       console.error('resolveNextStep error:', err);
     } finally {
       if (shouldNavigate) {
-        setTimeout(() => {
-          setisFinalLoading(false);
-          navigate(`/report/${id}/a?section=Holistic Plan`);
-        }, 3000);
+        setisFinalLoading(false);
+        navigate(`/report/${id}/a?section=Holistic Plan`);
       } else {
         setisFinalLoading(false);
       }

@@ -1,4 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import {
+  autoUpdate,
+  computePosition,
+  flip,
+  shift,
+  size,
+} from '@floating-ui/dom';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 
 type Props = {
@@ -33,6 +41,9 @@ const SelectWithCreate: React.FC<Props> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || '');
   const selectWrapperRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLUListElement>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     setSelectedValue(value || '');
@@ -43,13 +54,48 @@ const SelectWithCreate: React.FC<Props> = ({
   }, [isOpen, onMenuOpen]);
 
   useEffect(() => {
+    if (!isOpen || !buttonRef.current || !dropdownRef.current) return;
+    cleanupRef.current = autoUpdate(
+      buttonRef.current,
+      dropdownRef.current,
+      () => {
+        computePosition(buttonRef.current!, dropdownRef.current!, {
+          placement: 'bottom-start',
+          middleware: [
+            flip(),
+            shift({ padding: 8 }),
+            size({
+              apply({ rects, elements }) {
+                Object.assign(elements.floating.style, {
+                  width: `${rects.reference.width}px`,
+                });
+              },
+            }),
+          ],
+        }).then(({ x, y }) => {
+          Object.assign(dropdownRef.current!.style, {
+            left: `${x}px`,
+            top: `${y}px`,
+          });
+        });
+      },
+    );
+    return () => {
+      cleanupRef.current?.();
+      cleanupRef.current = null;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
       if (
-        selectWrapperRef.current &&
-        !selectWrapperRef.current.contains(e.target as Node)
+        selectWrapperRef.current?.contains(target) ||
+        dropdownRef.current?.contains(target)
       ) {
-        setIsOpen(false);
+        return;
       }
+      setIsOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -78,6 +124,7 @@ const SelectWithCreate: React.FC<Props> = ({
     >
       {/* Trigger */}
       <div
+        ref={buttonRef}
         className={`flex items-center justify-between ${isStaff ? 'h-[28px]' : ''} ${
           validation ? 'border rounded-2xl border-red-500' : ''
         } ${
@@ -114,47 +161,50 @@ const SelectWithCreate: React.FC<Props> = ({
         )}
       </div>
 
-      {/* Options */}
-      {isOpen && (
-        <ul
-          className={`absolute ${isOpen ? 'rounded-t-none' : ''} z-10 w-full ${
-            isSetting
-              ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
-              : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
-          } overflow-auto max-h-60`}
-          role="listbox"
-        >
-          {options?.map((option) => (
-            <li
-              key={option}
-              className={`${
-                options.length > 1 ? 'border-y border-Gray-50' : ''
-              } py-1 px-4 cursor-pointer text-wrap text-[10px] text-Text-Primary hover:bg-gray-200 text-start`}
-              onClick={() => handleOptionClick(option)}
-              role="option"
-              aria-selected={selectedValue === option}
-            >
-              {option}
-            </li>
-          ))}
+      {/* Options — portaled so it escapes table overflow/stacking contexts */}
+      {isOpen &&
+        createPortal(
+          <ul
+            ref={dropdownRef}
+            style={{ position: 'fixed', zIndex: 9990 }}
+            className={`${isOpen ? 'rounded-t-none' : ''} w-full ${
+              isSetting
+                ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
+                : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
+            } overflow-auto max-h-60`}
+            role="listbox"
+          >
+            {options?.map((option) => (
+              <li
+                key={option}
+                className={`${
+                  options.length > 1 ? 'border-y border-Gray-50' : ''
+                } py-1 px-4 cursor-pointer text-wrap text-[10px] text-Text-Primary hover:bg-gray-200 text-start`}
+                onClick={() => handleOptionClick(option)}
+                role="option"
+                aria-selected={selectedValue === option}
+              >
+                {option}
+              </li>
+            ))}
 
-          {/* Create New Unit action */}
-          {onCreateNew && (
-            <li
-              className="border-t border-Gray-50 py-1.5 px-4 cursor-pointer text-[10px] text-Primary-DeepTeal font-medium hover:bg-teal-50 flex items-center gap-1.5"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpen(false);
-                onCreateNew();
-              }}
-              role="option"
-            >
-              <span className="text-sm leading-none">+</span>
-              {createLabel}
-            </li>
-          )}
-        </ul>
-      )}
+            {onCreateNew && (
+              <li
+                className="border-t border-Gray-50 py-1.5 px-4 cursor-pointer text-[10px] text-Primary-DeepTeal font-medium hover:bg-teal-50 flex items-center gap-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                  onCreateNew();
+                }}
+                role="option"
+              >
+                <span className="text-sm leading-none">+</span>
+                {createLabel}
+              </li>
+            )}
+          </ul>,
+          document.body,
+        )}
     </div>
   );
 };

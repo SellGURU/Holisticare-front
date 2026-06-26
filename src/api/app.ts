@@ -1098,10 +1098,14 @@ class Application extends Api {
     return this.post('/activity_library/get_parent_id', {});
   };
   static checkLabStepOne = (data: any) => {
-    return this.post('/patients/check_lab_report_step_one', data);
+    return this.post('/patients/check_lab_report_step_one', data, {
+      timeout: 180000,
+    });
   };
   static SaveLabReport = (data: any) => {
-    return this.post('/patients/process_lab_report', data);
+    return this.post('/patients/process_lab_report', data, {
+      timeout: 180000,
+    });
   };
   static getBiomarkerName = (data: any) => {
     return this.post('/clinic/get_biomarkers_list', data);
@@ -1142,6 +1146,35 @@ class Application extends Api {
   static validateBiomarkers = (data: any) => {
     return this.post('/patients/validate_biomarkers', data);
   };
+  static suppressBiomarker = (data: {
+    extracted_name: string;
+    system_biomarker?: string | null;
+    biomarker_type?: string;
+    reason?: string;
+  }) => {
+    return this.post('/patients/suppress_biomarker', data);
+  };
+  static unsuppressBiomarker = (data: {
+    extracted_name: string;
+    biomarker_type?: string;
+  }) => {
+    return this.post('/patients/unsuppress_biomarker', data);
+  };
+  static listSuppressedBiomarkers = () => {
+    return this.post('/patients/list_suppressed_biomarkers', {});
+  };
+  static getLabReviewFindings = (data: {
+    file_id: string;
+    include_ignored?: boolean;
+  }) => {
+    return this.post('/patients/lab_review_findings', data);
+  };
+  static updateLabReviewFinding = (data: {
+    finding_id: number;
+    status: 'pending' | 'reviewed' | 'resolved' | 'ignored';
+  }) => {
+    return this.post('/patients/update_lab_review_finding', data);
+  };
   static validateAddedBiomarkers = (data: any) => {
     return this.post('/patients/validate_added_biomarkers', data);
   };
@@ -1159,6 +1192,11 @@ class Application extends Api {
   };
   static checkHtmlReport = (member_id: string) => {
     return this.post(`/check_html_report`, { member_id: member_id });
+  };
+  static createReportBackground = (member_id: string) => {
+    return this.get(`/create_report_background`, {
+      params: { member_id: member_id },
+    });
   };
   static showExerciseDetails = (exercise_Id: string) => {
     return this.post(`/activity_library/show_exercise_details`, {

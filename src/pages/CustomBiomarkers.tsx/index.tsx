@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
 import Circleloader from '../../Components/CircleLoader';
 import SearchBox from '../../Components/SearchBox';
@@ -13,6 +13,12 @@ import MappingsModal from './MappingsModal';
 import useIsDemo from '../../hooks/useIsDemo';
 
 import DefaultData from './default.json';
+import {
+  ensureBiomarkerUid,
+  migrateLegacyMappingsForDuplicates,
+  migrateLegacyUnitMappingsForDuplicates,
+  normalizeBiomarkersList,
+} from './biomarkerIdentity';
 
 type SortKey = 'Biomarker' | 'Benchmark areas' | 'biomarker_type' | 'unit';
 type SortDirection = 'asc' | 'desc';
@@ -82,9 +88,10 @@ const CustomBiomarkers = () => {
   const [biomarkerTypes, setBiomarkerTypes] = useState<string[]>(
     DEFAULT_BIOMARKER_TYPES,
   );
+  const mappingsMigrationDone = useRef(false);
 
   const changeBiomarkersValue = (values: any) => {
-    setBiomarkers(values);
+    setBiomarkers(normalizeBiomarkersList(values));
   };
 
   const openModalAdd = () => {
@@ -106,9 +113,9 @@ const CustomBiomarkers = () => {
         }
       })
       .catch(() => {});
-    BiomarkersApi.getBiomarkersList()
+    BiomarkersApi.getBiomarkersList({ include_all: true })
       .then((res) => {
-        setBiomarkers(res.data);
+        setBiomarkers(normalizeBiomarkersList(res.data));
       })
       .catch((err) => {
         console.error('Error getting biomarkers:', err);
@@ -157,6 +164,55 @@ const CustomBiomarkers = () => {
       void import('./EditModal');
     }
   }, [biomarkers.length]);
+
+  useEffect(() => {
+    if (mappingsMigrationDone.current || biomarkers.length === 0 || isDemo) {
+      return;
+    }
+
+    const migratedBiomarkerMappings = migrateLegacyMappingsForDuplicates(
+      biomarkers,
+      biomarkerMappings,
+    );
+    const migratedUnitMappings = migrateLegacyUnitMappingsForDuplicates(
+      biomarkers,
+      unitMappings,
+    );
+
+    const biomarkerMappingsChanged =
+      migratedBiomarkerMappings.length !== biomarkerMappings.length ||
+      migratedBiomarkerMappings.some(
+        (entry, index) => entry !== biomarkerMappings[index],
+      );
+    const unitMappingsChanged =
+      migratedUnitMappings.length !== unitMappings.length ||
+      migratedUnitMappings.some(
+        (entry, index) => entry !== unitMappings[index],
+      );
+
+    if (!biomarkerMappingsChanged && !unitMappingsChanged) {
+      return;
+    }
+
+    mappingsMigrationDone.current = true;
+
+    if (biomarkerMappingsChanged) {
+      setBiomarkerMappings(migratedBiomarkerMappings);
+      BiomarkersApi.updateBiomarkerMapping({
+        mappings: migratedBiomarkerMappings,
+      }).catch(() => {});
+    }
+
+    if (unitMappingsChanged) {
+      setUnitMappings(migratedUnitMappings);
+      const payload = {
+        ...unitMappingData,
+        biomarker_specific: migratedUnitMappings,
+      };
+      setUnitMappingData(payload);
+      BiomarkersApi.updateUnitMapping(payload).catch(() => {});
+    }
+  }, [biomarkers, biomarkerMappings, unitMappings, unitMappingData, isDemo]);
 
   const handleUnitMappingsChange = (entries: any[]) => {
     if (isDemo) return;
@@ -320,7 +376,7 @@ const CustomBiomarkers = () => {
     BiomarkersApi.addBiomarkersList({ new_biomarker: values })
       .then(() => {
         closeModalAdd();
-        setBiomarkers((pre) => [...pre, values]);
+        setBiomarkers((pre) => [...pre, ensureBiomarkerUid(values)]);
       })
       .catch((error) => {
         setErrorDetails(
@@ -418,7 +474,7 @@ const CustomBiomarkers = () => {
         <div className="min-h-full w-full px-2 pt-[150px] pb-8 md:px-6">
           <div className="overflow-hidden rounded-2xl border border-Gray-50 bg-white shadow-100">
             <div className="overflow-x-auto">
-              <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_128px] gap-3 border-b border-Gray-50 bg-gray-50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-Text-Secondary">
+              <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_156px] gap-3 border-b border-Gray-50 bg-gray-50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-Text-Secondary">
                 <span>#</span>
                 <span>{renderSortLabel('Biomarker', 'Biomarker')}</span>
                 <span>{renderSortLabel('Panel', 'Benchmark areas')}</span>
@@ -431,7 +487,10 @@ const CustomBiomarkers = () => {
               {filteredBiomarkerEntries.map(
                 ({ item: value, originalIndex }, index: number) => (
                   <BiomarkerRow
-                    key={`${value?.Biomarker || 'biomarker'}-${originalIndex}`}
+                    key={
+                      value?.biomarker_uid ||
+                      `${value?.Biomarker || 'biomarker'}-${originalIndex}`
+                    }
                     rowIndex={index}
                     biomarkerIndex={originalIndex}
                     data={value}
@@ -507,8 +566,10 @@ const CustomBiomarkers = () => {
       >
         <MappingsModal
           data={selectedMappingBiomarker}
+          allBiomarkers={biomarkers}
           unitMappings={unitMappings}
           biomarkerMappings={biomarkerMappings}
+          formatBiomarkerTypeLabel={formatBiomarkerTypeLabel}
           onClose={() => setSelectedMappingBiomarker(null)}
           onUnitMappingsChange={handleUnitMappingsChange}
           onBiomarkerMappingsChange={handleBiomarkerMappingsChange}

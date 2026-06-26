@@ -2,9 +2,20 @@
 import { lazy, memo, Suspense, useMemo, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
 import { MainModal } from '../../Components';
+import ConfirmModal from '../../Components/confitmModal';
+import { showError, showSuccess } from '../../Components/GlobalToast';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import SvgIcon from '../../utils/svgIcon';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
+import {
+  applySavedBiomarkerUpdate,
+  BiomarkerIdentityMeta,
+  buildBiomarkerIdentityMeta,
+  filterUnitMappingsForBiomarker,
+  findBiomarkerMapping,
+  isCustomBiomarker,
+  removeBiomarkerByIdentity,
+} from './biomarkerIdentity';
 
 const EditModal = lazy(() => import('./EditModal'));
 
@@ -27,46 +38,8 @@ interface BiomarkerRowProps {
   onOpenMappings: (data: any) => void;
 }
 
-const normalize = (value: any) =>
-  String(value || '')
-    .trim()
-    .toLowerCase();
-
 const escapeRegExp = (value: string) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const replaceBiomarker = (
-  biomarkers: any[],
-  originalBiomarkerIndex: number,
-  originalBiomarkerName: string,
-  updatedItem: any,
-) => {
-  if (
-    Number.isInteger(originalBiomarkerIndex) &&
-    originalBiomarkerIndex >= 0 &&
-    originalBiomarkerIndex < biomarkers.length
-  ) {
-    return biomarkers.map((item, index) =>
-      index === originalBiomarkerIndex ? updatedItem : item,
-    );
-  }
-
-  const matchingIndexes = biomarkers
-    .map((item, index) => ({ item, index }))
-    .filter(
-      ({ item }) =>
-        normalize(item?.Biomarker) === normalize(originalBiomarkerName),
-    )
-    .map(({ index }) => index);
-
-  if (matchingIndexes.length !== 1) {
-    return biomarkers;
-  }
-
-  return biomarkers.map((item, index) =>
-    index === matchingIndexes[0] ? updatedItem : item,
-  );
-};
 
 const highlightText = (text: string, term: string) => {
   const source = String(text || '');
@@ -111,55 +84,111 @@ const BiomarkerRow = ({
   onOpenMappings,
 }: BiomarkerRowProps) => {
   const [activeEdit, setActiveEdit] = useState(false);
+  const [activeDelete, setActiveDelete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [errorDetails, setErrorDetails] = useState('');
+  const [editIdentityMeta, setEditIdentityMeta] =
+    useState<BiomarkerIdentityMeta | null>(null);
+  const [deleteIdentityMeta, setDeleteIdentityMeta] =
+    useState<BiomarkerIdentityMeta | null>(null);
 
   const biomarkerName = data?.Biomarker || '';
+  const canDelete = isCustomBiomarker(data);
   const relevantUnitMappings = useMemo(
-    () =>
-      unitMappings.filter(
-        (mapping) => normalize(mapping?.biomarker) === normalize(biomarkerName),
-      ),
-    [unitMappings, biomarkerName],
+    () => filterUnitMappingsForBiomarker(unitMappings, data, biomarkers),
+    [unitMappings, data, biomarkers],
   );
 
   const relevantBiomarkerMapping = useMemo(
-    () =>
-      biomarkerMappings.find(
-        (mapping) =>
-          normalize(mapping?.standard_name) === normalize(biomarkerName),
-      ),
-    [biomarkerMappings, biomarkerName],
+    () => findBiomarkerMapping(biomarkerMappings, data, biomarkers),
+    [biomarkerMappings, data, biomarkers],
   );
 
   const mappingCount =
     relevantUnitMappings.length +
     (relevantBiomarkerMapping?.variations?.length || 0);
 
+  const openModalEdit = () => {
+    setEditIdentityMeta(buildBiomarkerIdentityMeta(data, biomarkerIndex));
+    setActiveEdit(true);
+  };
+
   const closeModalEdit = () => {
     setActiveEdit(false);
+    setEditIdentityMeta(null);
     setErrorDetails('');
   };
 
-  const onsave = (values: any, meta: { originalBiomarkerName: string }) => {
+  const openModalDelete = () => {
+    setDeleteIdentityMeta(buildBiomarkerIdentityMeta(data, biomarkerIndex));
+    setActiveDelete(true);
+  };
+
+  const closeModalDelete = () => {
+    setActiveDelete(false);
+    setDeleteIdentityMeta(null);
+  };
+
+  const onDelete = (meta: BiomarkerIdentityMeta) => {
+    setDeleteLoading(true);
+    BiomarkersApi.deleteBiomarker({
+      original_biomarker_name: meta.originalBiomarkerName,
+      original_biomarker_index: meta.originalBiomarkerIndex,
+      original_biomarker_uid: meta.biomarkerUid,
+      original_biomarker_type: meta.originalBiomarkerType,
+      original_unit: meta.originalUnit,
+      original_benchmark_area: meta.originalBenchmarkArea,
+    })
+      .then((response) => {
+        const payload = response?.data || {};
+        closeModalDelete();
+        changeBiomarkersValue(removeBiomarkerByIdentity(biomarkers, meta));
+        if (payload.unit_mapping?.biomarker_specific) {
+          onUnitMappingsLocalChange?.(payload.unit_mapping.biomarker_specific);
+        }
+        if (payload.biomarker_mapping?.mappings) {
+          onBiomarkerMappingsLocalChange?.(payload.biomarker_mapping.mappings);
+        }
+        showSuccess(
+          'Biomarker deleted',
+          `${meta.originalBiomarkerName} was removed from your clinic catalog.`,
+        );
+      })
+      .catch((error) => {
+        const detail =
+          error?.detail ||
+          error?.response?.data?.detail ||
+          error?.message ||
+          'Unable to delete biomarker.';
+        if (String(detail).toLowerCase().includes('linked lab result')) {
+          showError('Cannot delete because linked lab result');
+        } else {
+          showError('Unable to delete biomarker', String(detail));
+        }
+      })
+      .finally(() => {
+        setDeleteLoading(false);
+      });
+  };
+
+  const onsave = (values: any, meta: BiomarkerIdentityMeta) => {
     setLoading(true);
     BiomarkersApi.saveBiomarkersList({
       updated_biomarker: values,
       original_biomarker_name: meta.originalBiomarkerName,
-      original_biomarker_index: biomarkerIndex,
+      original_biomarker_index: meta.originalBiomarkerIndex,
+      original_biomarker_uid: meta.biomarkerUid,
+      original_biomarker_type: meta.originalBiomarkerType,
+      original_unit: meta.originalUnit,
+      original_benchmark_area: meta.originalBenchmarkArea,
     })
       .then((response) => {
         const payload = response?.data || {};
         const savedBiomarker = payload.updated_biomarker || values;
         closeModalEdit();
         changeBiomarkersValue(
-          payload.chart_bounds ||
-            replaceBiomarker(
-              biomarkers,
-              biomarkerIndex,
-              meta.originalBiomarkerName,
-              savedBiomarker,
-            ),
+          applySavedBiomarkerUpdate(biomarkers, meta, savedBiomarker),
         );
         if (payload.unit_mapping?.biomarker_specific) {
           onUnitMappingsLocalChange?.(payload.unit_mapping.biomarker_specific);
@@ -183,7 +212,7 @@ const BiomarkerRow = ({
 
   return (
     <>
-      <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_128px] items-center gap-3 border-b border-Gray-50 px-3 py-2 text-[11px] transition-colors hover:bg-[#F8FAFA]">
+      <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_156px] items-center gap-3 border-b border-Gray-50 px-3 py-2 text-[11px] transition-colors hover:bg-[#F8FAFA]">
         <div className="text-Text-Secondary">{rowIndex + 1}</div>
 
         <div className="min-w-0">
@@ -243,14 +272,41 @@ const BiomarkerRow = ({
           </button>
           <button
             type="button"
-            onClick={() => setActiveEdit(true)}
+            onClick={openModalEdit}
             className="flex h-7 w-7 items-center justify-center rounded-full border border-Gray-50 bg-white hover:border-Primary-DeepTeal"
             title="Edit biomarker"
           >
             <SvgIcon color="#005F73" src="./icons/edit-green.svg" />
           </button>
+          {canDelete ? (
+            <button
+              type="button"
+              onClick={openModalDelete}
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-Gray-50 bg-white hover:border-Primary-DeepTeal"
+              title="Delete biomarker"
+            >
+              <SvgIcon
+                color="#005F73"
+                src="./icons/delete.svg"
+                width="18"
+                height="18"
+              />
+            </button>
+          ) : null}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={activeDelete}
+        onClose={closeModalDelete}
+        onConfirm={() =>
+          deleteIdentityMeta && !deleteLoading && onDelete(deleteIdentityMeta)
+        }
+        heading="Delete biomarker"
+        message="This will permanently remove this custom biomarker from your clinic catalog."
+        confirmText={deleteLoading ? 'Deleting...' : 'Delete'}
+        cancelText="Cancel"
+      />
 
       <MainModal isOpen={activeEdit} onClose={closeModalEdit}>
         <Suspense
@@ -262,7 +318,9 @@ const BiomarkerRow = ({
         >
           <EditModal
             onCancel={closeModalEdit}
-            onSave={(values: any, meta) => onsave(values, meta)}
+            onSave={(values: any) =>
+              editIdentityMeta && onsave(values, editIdentityMeta)
+            }
             data={data}
             benchmarkAreaOptions={benchmarkAreaOptions}
             benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}

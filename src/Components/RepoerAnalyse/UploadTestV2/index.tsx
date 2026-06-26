@@ -14,7 +14,18 @@ import useIsDemo from '../../../hooks/useIsDemo';
 import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
+  ensureUniqueBiomarkerIds,
 } from './biomarkerNameFields';
+import {
+  buildBiomarkerRowsForValidation,
+  mapChartBoundsToReviewCatalog,
+  reviewRowErrorKey,
+  categorizeReviewRow,
+  inferReviewReasonFromErrorText,
+} from './biomarkerReviewCompat';
+import BiomarkersApi from '../../../api/Biomarkers';
+import { showError, showSuccess } from '../../GlobalToast';
+import { ReviewFinding } from './ReviewFindingsPanel';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -54,6 +65,11 @@ const preferNonEmpty = (...values: any[]) => {
   return found ?? '';
 };
 
+const stringifyLabField = (value: unknown) => {
+  if (value === undefined || value === null) return '';
+  return String(value);
+};
+
 const inferBiomarkerTypeFromLabType = (labType?: string) => {
   const normalized = String(labType || '')
     .trim()
@@ -63,9 +79,35 @@ const inferBiomarkerTypeFromLabType = (labType?: string) => {
   return 'blood';
 };
 
+const enrichExtractedRowForReview = (row: any, labType?: string) => {
+  const withNames = enrichBiomarkerNameFieldsOnLoad(row);
+  return {
+    ...withNames,
+    biomarker_type:
+      withNames.biomarker_type || inferBiomarkerTypeFromLabType(labType),
+    original_value: preferNonEmpty(withNames.original_value, withNames.value),
+    original_unit:
+      withNames.original_unit !== undefined
+        ? withNames.original_unit
+        : withNames.unit,
+  };
+};
+
+const sortReviewBiomarkerRows = (rows: any[]) =>
+  rows.slice().sort((a: any, b: any) => {
+    const nameA = (a.original_biomarker_name || a.biomarker || '').toString();
+    const nameB = (b.original_biomarker_name || b.biomarker || '').toString();
+    return nameA.localeCompare(nameB, undefined, {
+      sensitivity: 'base',
+    });
+  });
+
 interface UploadTestProps {
   memberId: any;
-  onGenderate: (file_id: string | undefined) => void;
+  onGenderate: (
+    file_id: string | undefined,
+    options?: { silent?: boolean },
+  ) => void;
   isShare?: boolean;
   showReport: boolean;
   onDiscard: () => void;
@@ -101,9 +143,22 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [isSaveClicked, setisSaveClicked] = useState(false);
   const [uploadPhase, setUploadPhase] = useState('uploading');
   const [reviewSummary, setReviewSummary] = useState<any>(null);
+  const [reviewFindings, setReviewFindings] = useState<ReviewFinding[]>([]);
+  const [reviewFindingsLoading, setReviewFindingsLoading] = useState(false);
   // console.log(extractedBiomarkers);
   const [isUploadFromComboBar, setIsUploadFromComboBar] = useState(false);
   const stepOnePollInFlightRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const skipExtractionProgressRef = useRef(false);
+  const [reopeningExistingFile, setReopeningExistingFile] = useState(false);
+  const backendRowErrorsRef = useRef<Record<string, string>>({});
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
   useEffect(() => {
     subscribe('uploadTestShow-stepTwo', (data: any) => {
       if (isDemo) return;
@@ -112,9 +167,19 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       setIsUploadFromComboBar(true);
       // If editing an existing file, preload it so polling fetches its biomarkers
       if (editFileId) {
+        skipExtractionProgressRef.current = true;
+        setReopeningExistingFile(true);
         setIsTrueEditMode(true);
         setstep(1);
         setInitialLabMenu('Upload File');
+        setExtractedBiomarkers([]);
+        setRowErrors({});
+        setAddedRowErrors({});
+        setReviewSummary(null);
+        setUploadPhase('review_ready');
+        setProgressBiomarkerUpload(100);
+        setExtractedCount(undefined);
+        setbiomarkerLoading(true);
         setUploadedFile({
           file_id: editFileId,
           file: new File([], fileName),
@@ -123,6 +188,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         });
         setPolling(true);
       } else {
+        skipExtractionProgressRef.current = false;
+        setReopeningExistingFile(false);
         setIsTrueEditMode(false);
         // Just clicked 'Add File or Biomarker' from combo bar
         setstep(2); // Go to PDF vs Manual choice
@@ -131,6 +198,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   }, [isDemo]);
   const [biomarkerLoading, setbiomarkerLoading] = useState(false);
   const [progressBiomarkerUpload, setProgressBiomarkerUpload] = useState(0);
+  const [extractedCount, setExtractedCount] = useState<number | undefined>();
+  const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());
+  const [recheckLoading, setRecheckLoading] = useState(false);
+
   useEffect(() => {
     const activeFileId = uploadedFile?.file_id;
     if (!activeFileId) return;
@@ -138,67 +209,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     let intervalId: NodeJS.Timeout;
     const showReviewLoading = () =>
       new Promise((resolve) => setTimeout(resolve, 900));
-
-    const toUtcDateTimestamp = (date: Date | string | null | undefined) => {
-      if (!date) return null;
-      const parsed = date instanceof Date ? date : new Date(date);
-      if (Number.isNaN(parsed.getTime())) return null;
-      return Date.UTC(
-        parsed.getFullYear(),
-        parsed.getMonth(),
-        parsed.getDate(),
-      ).toString();
-    };
-
-    const preferNonEmpty = (...values: any[]) => {
-      const found = values.find(
-        (value) =>
-          value !== undefined && value !== null && String(value).trim() !== '',
-      );
-      return found ?? '';
-    };
-
-    const validateRowsBeforeDisplay = async (
-      biomarkers: any[],
-      labType: string,
-      dateOfTest?: string | null,
-    ) => {
-      const timestamp =
-        toUtcDateTimestamp(dateOfTest) ??
-        toUtcDateTimestamp(modifiedDateOfTest);
-
-      if (!timestamp || biomarkers.length === 0 || labType === 'ultrasound') {
-        setRowErrors({});
-        setAddedRowErrors({});
-        return;
-      }
-
-      try {
-        await Application.validateBiomarkers({
-          modified_biomarkers_list: mapExtractedBiomarkersForValidation(
-            biomarkers,
-            labType,
-          ),
-          added_biomarkers_list: [],
-          modified_biomarkers_date_of_test: timestamp,
-          added_biomarkers_date_of_test: timestamp,
-          modified_lab_type: labType,
-          modified_file_id: activeFileId,
-          member_id: memberId,
-        });
-        setRowErrors({});
-        setAddedRowErrors({});
-      } catch (err: any) {
-        const detail = err?.detail ?? err?.response?.data?.detail;
-        if (detail) {
-          applyValidationErrors(detail, biomarkers);
-        } else {
-          setRowErrors({});
-          setAddedRowErrors({});
-          console.error('Initial biomarker review validation failed:', err);
-        }
-      }
-    };
 
     const processStepOneData = async (data: any) => {
       setProgressBiomarkerUpload(data.progress);
@@ -215,6 +225,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       );
       if (data.date_of_test) {
         setModifiedDateOfTest(new Date(data.date_of_test));
+      }
+
+      if (
+        Array.isArray(data.extracted_biomarkers) &&
+        data.extracted_biomarkers.length > 0
+      ) {
+        setExtractedCount(data.extracted_biomarkers.length);
       }
 
       // Terminal extraction error — stop polling and surface a readable error
@@ -238,6 +255,21 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         return;
       }
 
+      // Background validation still running — keep polling unless reopening an existing file.
+      const reopenExistingFile =
+        skipExtractionProgressRef.current || Boolean(data.is_edited);
+      if (
+        !reopenExistingFile &&
+        (data.status === 'validating_review' ||
+          (data.progress === 100 &&
+            data.extracted_biomarkers?.length > 0 &&
+            !data.validation?.ready))
+      ) {
+        setUploadPhase('validating_review');
+        setbiomarkerLoading(true);
+        return;
+      }
+
       // Handle ultrasound reports — skip biomarkers table
       if (data.lab_type === 'ultrasound') {
         setPolling(false);
@@ -248,60 +280,50 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         return;
       }
 
-      const sorted = (data.extracted_biomarkers || [])
-        .map((b: any) => {
-          const withNames = enrichBiomarkerNameFieldsOnLoad(b);
-          return {
-            ...withNames,
-            biomarker_type:
-              withNames.biomarker_type ||
-              inferBiomarkerTypeFromLabType(data.lab_type),
-            original_value: preferNonEmpty(
-              withNames.original_value,
-              withNames.value,
-            ),
-            original_unit:
-              withNames.original_unit !== undefined
-                ? withNames.original_unit
-                : withNames.unit,
-          };
-        })
-        .slice()
-        .sort((a: any, b: any) => {
-          const nameA = (
-            a.original_biomarker_name ||
-            a.biomarker ||
-            ''
-          ).toString();
-          const nameB = (
-            b.original_biomarker_name ||
-            b.biomarker ||
-            ''
-          ).toString();
-          return nameA.localeCompare(nameB, undefined, {
-            sensitivity: 'base',
-          });
-        });
+      // Keep backend row order for validation indices; sort only for display.
+      // Enforce unique biomarker ids so rows sharing a base name don't collide.
+      const enrichedRows = ensureUniqueBiomarkerIds(
+        (data.extracted_biomarkers || []).map((b: any) =>
+          enrichExtractedRowForReview(b, data.lab_type),
+        ),
+      );
 
-      // Stop polling + show biomarkers immediately
-      if (data.extracted_biomarkers && data.extracted_biomarkers.length > 0) {
-        setPolling(false);
-        setUploadPhase('validating_review');
-        setbiomarkerLoading(true);
-        await showReviewLoading();
-
+      // Show biomarkers once validation is ready, or immediately when editing/reopening.
+      if (
+        data.extracted_biomarkers &&
+        data.extracted_biomarkers.length > 0 &&
+        (data.validation?.ready || reopenExistingFile)
+      ) {
         if (data.validation?.ready) {
-          applyValidationErrors(data.validation, sorted);
-        } else {
-          await validateRowsBeforeDisplay(
-            sorted,
-            data.lab_type || 'more_info',
-            data.date_of_test || null,
-          );
+          setPolling(false);
+          skipExtractionProgressRef.current = false;
+          setReopeningExistingFile(false);
         }
 
-        setExtractedBiomarkers(sorted);
-        setUploadPhase(data.status || 'review_ready');
+        if (!reopenExistingFile && data.validation?.ready) {
+          setUploadPhase('validating_review');
+          setbiomarkerLoading(true);
+          await showReviewLoading();
+        }
+
+        const errorMaps = data.validation?.ready
+          ? buildValidationErrorsMaps(
+              data.validation,
+              enrichedRows,
+              addedBiomarkers,
+            )
+          : { modifiedErrors: {}, addedErrors: {} };
+        backendRowErrorsRef.current = errorMaps.modifiedErrors;
+        setRowErrors(errorMaps.modifiedErrors);
+        setAddedRowErrors(errorMaps.addedErrors);
+
+        const displayRows = sortReviewBiomarkerRows(enrichedRows);
+        setExtractedBiomarkers(displayRows);
+        setUploadPhase(
+          reopenExistingFile && !data.validation?.ready
+            ? 'review_ready'
+            : data.status || 'review_ready',
+        );
         setbiomarkerLoading(false);
         if (data.is_edited) {
           setisSaveClicked(false);
@@ -312,7 +334,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const fetchData = async () => {
       if (stepOnePollInFlightRef.current) return;
       stepOnePollInFlightRef.current = true;
-      setbiomarkerLoading(true);
+      if (!skipExtractionProgressRef.current) {
+        setbiomarkerLoading(true);
+      }
       try {
         const res = await Application.checkLabStepOne({
           file_id: activeFileId,
@@ -329,6 +353,23 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
         if (errData && errData.extracted_biomarkers !== undefined) {
           await processStepOneData(errData);
+        } else if (
+          err?.response?.status === 504 ||
+          err?.code === 'ECONNABORTED'
+        ) {
+          setPolling(false);
+          setbiomarkerLoading(false);
+          setUploadPhase('failed');
+          setUploadedFile((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  status: 'error',
+                  errorMessage:
+                    'Lab review validation timed out. Please refresh and try again, or contact support if this persists.',
+                }
+              : prev,
+          );
         } else {
           console.error('Error checking lab step one:', err);
         }
@@ -362,6 +403,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const handleDeleteFile = (fileId?: string) => {
     if (isDemo) return;
+    skipExtractionProgressRef.current = false;
+    setReopeningExistingFile(false);
     setExtractedBiomarkers([]);
     setfileType('more_info');
     setPolling(true);
@@ -505,6 +548,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       }
 
       // Validation passed: proceed with upload
+      skipExtractionProgressRef.current = false;
+      setReopeningExistingFile(false);
+      setIsTrueEditMode(false);
       const newFile: FileUpload = {
         file_id: '',
         file,
@@ -641,10 +687,23 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setAddedDateOfTest(date);
   };
 
-  const handleSaveLabReport = async () => {
+  const handleSaveLabReport = async (
+    rowsOverride?: any[],
+    options?: { skipAddedBiomarkers?: boolean; skipAutoSaveMappings?: boolean },
+  ) => {
     if (isDemo) {
       throw new Error('Demo version cannot add or edit data.');
     }
+    const rawBiomarkerSource = rowsOverride ?? extractedBiomarkers;
+    const biomarkerSource = buildBiomarkerRowsForValidation(
+      rawBiomarkerSource,
+      fileType,
+    ).map((resolved, index) => ({
+      ...(rawBiomarkerSource[index] || {}),
+      ...resolved,
+    }));
+    const skipAdded = Boolean(options?.skipAddedBiomarkers);
+    const skipAutoSave = Boolean(options?.skipAutoSaveMappings);
     // ✅ For ultrasound reports, call API with empty lists
     if (fileType === 'ultrasound') {
       const modifiedTimestamp = modifiedDateOfTest
@@ -687,90 +746,93 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       : null;
 
     // Map over all extractedBiomarkers to create the required API structure
-    const mappedExtractedBiomarkers = extractedBiomarkers.map((b) => ({
-      biomarker_id: b.biomarker_id,
-      biomarker: b.biomarker,
-      biomarker_type: b.biomarker_type,
-      original_biomarker_name: b.original_biomarker_name,
-      original_value: preferNonEmpty(b.original_value, b.value),
-      original_unit: b.original_unit,
-      value: b.value,
-      unit: b.unit,
-      'sub-value': b['sub-value'],
-      header_1: b['header_1'],
-      more_info: b['more_info'],
-      list_of_genes: b['list_of_genes'],
-      your_result: b['your_result'],
-    }));
+    const mappedExtractedBiomarkers = biomarkerSource.map((b) => {
+      const value = stringifyLabField(
+        preferNonEmpty(b.original_value, b.value),
+      );
+      const unit = stringifyLabField(preferNonEmpty(b.original_unit, b.unit));
+      return {
+        biomarker_id: stringifyLabField(b.biomarker_id),
+        biomarker: stringifyLabField(b.biomarker),
+        biomarker_type: stringifyLabField(b.biomarker_type || 'blood'),
+        original_biomarker_name: stringifyLabField(b.original_biomarker_name),
+        original_value: value,
+        original_unit: unit,
+        value,
+        unit,
+        'sub-value': b['sub-value'],
+        header_1: b['header_1'],
+        more_info: b['more_info'],
+        list_of_genes: b['list_of_genes'],
+        your_result: b['your_result'],
+      };
+    });
 
-    await autoSaveBiomarkerMappings();
+    if (!skipAutoSave) {
+      await autoSaveBiomarkerMappings(biomarkerSource);
+    }
 
     return Application.SaveLabReport({
       member_id: memberId,
       modified_biomarkers: {
-        biomarkers_list: mappedExtractedBiomarkers, // Send the full, mapped list
+        biomarkers_list: mappedExtractedBiomarkers,
         date_of_test: modifiedTimestamp,
         lab_type: fileType,
         file_id: uploadedFile?.file_id || '',
       },
       added_biomarkers: {
-        biomarkers_list: addedBiomarkers,
-        date_of_test: addedTimestamp,
+        biomarkers_list: skipAdded ? [] : addedBiomarkers,
+        date_of_test: skipAdded ? '' : addedTimestamp,
         lab_type: 'more_info',
-        // file_id: uploadedFile?.file_id || '',
       },
     });
   };
-  const [rowErrors, setRowErrors] = React.useState<Record<number, string>>({});
+  const [rowErrors, setRowErrors] = React.useState<Record<string, string>>({});
   const [addedrowErrors, setAddedRowErrors] = React.useState<
     Record<number, string>
   >({});
   const [btnLoading, setBtnLoading] = useState(false);
+  const [reviewCatalog, setReviewCatalog] = useState<any[]>([]);
+
+  useEffect(() => {
+    BiomarkersApi.getBiomarkersList({ include_all: true })
+      .then((res) => {
+        setReviewCatalog(mapChartBoundsToReviewCatalog(res?.data));
+      })
+      .catch(() => {});
+  }, []);
+
+  const refreshReviewCatalog = () => {
+    BiomarkersApi.getBiomarkersList({ include_all: true })
+      .then((res) => {
+        setReviewCatalog(mapChartBoundsToReviewCatalog(res?.data));
+      })
+      .catch(() => {});
+  };
 
   const mapExtractedBiomarkersForValidation = (
     biomarkers: any[],
     labType: string,
-  ) =>
-    biomarkers.map((b, index) => {
-      const base = {
-        biomarker_id: b.biomarker_id || `${labType}-${index}`,
-        biomarker: b.biomarker,
-        biomarker_type:
-          b.biomarker_type || inferBiomarkerTypeFromLabType(labType),
-        value: preferNonEmpty(b.original_value, b.value),
-        unit: b.unit,
-        original_biomarker_name: b.original_biomarker_name,
-        original_value: preferNonEmpty(b.original_value, b.value),
-        original_unit: preferNonEmpty(b.original_unit, b.unit),
-      };
-      if (labType === 'gut') return { ...base, 'sub-value': b['sub-value'] };
-      if (labType === 'dna') {
-        return {
-          ...base,
-          header_1: b['header_1'],
-          more_info: b['more_info'],
-          list_of_genes: b['list_of_genes'],
-          your_result: b['your_result'],
-        };
-      }
-      return base;
-    });
+  ) => buildBiomarkerRowsForValidation(biomarkers, labType);
 
   const formatValidationErrorForDisplay = (
     item: any,
     biomarkers: any[],
     rowIndex: number,
   ) => {
+    if (item?.display_detail) {
+      return String(item.display_detail);
+    }
+
     const row = biomarkers?.[rowIndex] || {};
     const name =
       item?.extracted_biomarker ||
+      item?.original_biomarker_name ||
       item?.biomarker ||
       row.original_biomarker_name ||
       row.biomarker ||
       `Row ${rowIndex + 1}`;
-    const message = String(
-      item?.display_detail || item?.detail || 'Invalid biomarker',
-    );
+    const message = String(item?.detail || 'Invalid biomarker');
 
     if (message.toLowerCase().startsWith(String(name).toLowerCase())) {
       return message;
@@ -792,20 +854,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     return `${name}${context ? ` (${context})` : ''}: ${message}`;
   };
 
-  const resolveValidationErrorRowIndex = (
-    item: any,
-    biomarkers: any[],
-    fallbackIndex: number,
-  ) => {
-    const errorName = String(item?.extracted_biomarker || item?.biomarker || '')
-      .trim()
-      .toLowerCase();
-    const errorValue = String(item?.value ?? '')
-      .trim()
-      .toLowerCase();
-    const errorUnit = String(item?.unit ?? '')
-      .trim()
-      .toLowerCase();
+  const resolveValidationErrorRowIndex = (item: any, biomarkers: any[]) => {
     const errorBiomarkerId = String(item?.biomarker_id || '').trim();
 
     if (errorBiomarkerId) {
@@ -815,6 +864,26 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       );
       if (idMatchIndex !== -1) return idMatchIndex;
     }
+
+    const idx = Number(item?.index);
+    if (Number.isInteger(idx) && idx >= 0 && idx < biomarkers.length) {
+      return idx;
+    }
+
+    const errorName = String(
+      item?.extracted_biomarker ||
+        item?.original_biomarker_name ||
+        item?.biomarker ||
+        '',
+    )
+      .trim()
+      .toLowerCase();
+    const errorValue = String(item?.value ?? '')
+      .trim()
+      .toLowerCase();
+    const errorUnit = String(item?.unit ?? '')
+      .trim()
+      .toLowerCase();
 
     if (errorName) {
       const exactMatchIndexes = biomarkers
@@ -861,12 +930,32 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       if (nameOnlyMatchIndexes.length === 1) return nameOnlyMatchIndexes[0];
     }
 
-    return Number.isInteger(item?.index) ? item.index : fallbackIndex;
+    return -1;
   };
 
-  const applyValidationErrors = (
+  const resolveValidationErrorRowKey = (item: any, biomarkers: any[]) => {
+    const errorBiomarkerId = String(item?.biomarker_id || '').trim();
+    if (errorBiomarkerId) {
+      const idMatchIndex = biomarkers.findIndex(
+        (row: any) =>
+          String(row?.biomarker_id || '').trim() === errorBiomarkerId,
+      );
+      if (idMatchIndex !== -1) {
+        return reviewRowErrorKey(biomarkers[idMatchIndex], idMatchIndex);
+      }
+    }
+
+    const rowIndex = resolveValidationErrorRowIndex(item, biomarkers);
+    if (rowIndex < 0) {
+      return '';
+    }
+    return reviewRowErrorKey(biomarkers[rowIndex], rowIndex);
+  };
+
+  const buildValidationErrorsMaps = (
     detail: any,
-    contextBiomarkers = extractedBiomarkers,
+    contextBiomarkers: any[],
+    contextAddedBiomarkers: any[],
   ) => {
     let parsedDetail: any = {};
 
@@ -881,7 +970,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       parsedDetail = detail || {};
     }
 
-    const modifiedErrors: Record<number, string> = {};
+    const modifiedErrors: Record<string, string> = {};
     const addedErrors: Record<number, string> = {};
     const isUnitError = (item: any) => {
       const message = String(
@@ -895,28 +984,27 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     };
 
     const modifiedItems = parsedDetail.modified_biomarkers_list || [];
-    const modifiedUnitErrorRows = new Set<number>();
-    modifiedItems.forEach((item: any, fallbackIndex: number) => {
-      const rowIndex = resolveValidationErrorRowIndex(
-        item,
-        contextBiomarkers,
-        fallbackIndex,
-      );
+    const modifiedUnitErrorRows = new Set<string>();
+    modifiedItems.forEach((item: any) => {
+      const rowKey = resolveValidationErrorRowKey(item, contextBiomarkers);
+      if (!rowKey) {
+        return;
+      }
       if (isUnitError(item)) {
-        modifiedUnitErrorRows.add(rowIndex);
+        modifiedUnitErrorRows.add(rowKey);
       }
     });
 
-    modifiedItems.forEach((item: any, fallbackIndex: number) => {
-      const rowIndex = resolveValidationErrorRowIndex(
-        item,
-        contextBiomarkers,
-        fallbackIndex,
-      );
-      if (modifiedUnitErrorRows.has(rowIndex) && !isUnitError(item)) {
+    modifiedItems.forEach((item: any) => {
+      const rowIndex = resolveValidationErrorRowIndex(item, contextBiomarkers);
+      const rowKey = resolveValidationErrorRowKey(item, contextBiomarkers);
+      if (!rowKey || rowIndex < 0) {
         return;
       }
-      modifiedErrors[rowIndex] = formatValidationErrorForDisplay(
+      if (modifiedUnitErrorRows.has(rowKey) && !isUnitError(item)) {
+        return;
+      }
+      modifiedErrors[rowKey] = formatValidationErrorForDisplay(
         item,
         contextBiomarkers,
         rowIndex,
@@ -925,45 +1013,139 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
     const addedItems = parsedDetail.added_biomarkers_list || [];
     const addedUnitErrorRows = new Set<number>();
-    addedItems.forEach((item: any, fallbackIndex: number) => {
+    addedItems.forEach((item: any) => {
       const rowIndex = resolveValidationErrorRowIndex(
         item,
-        addedBiomarkers,
-        fallbackIndex,
+        contextAddedBiomarkers,
       );
+      if (rowIndex < 0) {
+        return;
+      }
       if (isUnitError(item)) {
         addedUnitErrorRows.add(rowIndex);
       }
     });
 
-    addedItems.forEach((item: any, fallbackIndex: number) => {
+    addedItems.forEach((item: any) => {
       const rowIndex = resolveValidationErrorRowIndex(
         item,
-        addedBiomarkers,
-        fallbackIndex,
+        contextAddedBiomarkers,
       );
+      if (rowIndex < 0) {
+        return;
+      }
       if (addedUnitErrorRows.has(rowIndex) && !isUnitError(item)) {
         return;
       }
       addedErrors[rowIndex] = formatValidationErrorForDisplay(
         item,
-        addedBiomarkers,
+        contextAddedBiomarkers,
         rowIndex,
       );
     });
 
+    return { modifiedErrors, addedErrors };
+  };
+
+  const applyValidationErrors = (
+    detail: any,
+    contextBiomarkers = extractedBiomarkers,
+  ) => {
+    const { modifiedErrors, addedErrors } = buildValidationErrorsMaps(
+      detail,
+      contextBiomarkers,
+      addedBiomarkers,
+    );
     setRowErrors(modifiedErrors);
     setAddedRowErrors(addedErrors);
   };
 
-  const autoSaveBiomarkerMappings = async () => {
+  const applyPersistedReviewFindings = (
+    findings: ReviewFinding[],
+    contextBiomarkers = extractedBiomarkers,
+    backendErrors: Record<string, string> | null = null,
+  ) => {
+    const openFindings = findings.filter(
+      (finding) =>
+        finding.status === 'pending' || finding.status === 'reviewed',
+    );
+    if (!contextBiomarkers.length) return;
+
+    const persistedItems = openFindings.map((finding) => ({
+      ...(typeof (finding as any).payload === 'object'
+        ? (finding as any).payload
+        : {}),
+      biomarker_id: finding.biomarker_id,
+      code: finding.finding_type,
+      detail: finding.detail,
+      display_detail: finding.display_detail || finding.detail,
+      extracted_biomarker: finding.extracted_biomarker,
+    }));
+
+    const { modifiedErrors } = buildValidationErrorsMaps(
+      { modified_biomarkers_list: persistedItems },
+      contextBiomarkers,
+      addedBiomarkers,
+    );
+
+    const authoritativeErrors =
+      backendErrors !== null ? backendErrors : backendRowErrorsRef.current;
+
+    const rowForErrorKey = (rowKey: string) => {
+      const match = contextBiomarkers
+        .map((row: any, index: number) => ({
+          row,
+          key: reviewRowErrorKey(row, index),
+        }))
+        .find(({ key }) => key === rowKey);
+      return match?.row;
+    };
+
+    const shouldSkipPersistedError = (rowKey: string, message: string) => {
+      if (Object.prototype.hasOwnProperty.call(authoritativeErrors, rowKey)) {
+        return true;
+      }
+      const row = rowForErrorKey(rowKey);
+      if (!row || !String(row.biomarker || '').trim()) {
+        return false;
+      }
+      const reason = inferReviewReasonFromErrorText(message);
+      if (
+        reason === 'biomarker_not_found' ||
+        reason === 'unmatched' ||
+        String(message || '')
+          .toLowerCase()
+          .includes('not recognized')
+      ) {
+        return true;
+      }
+      return false;
+    };
+
+    if (backendErrors !== null || Object.keys(authoritativeErrors).length > 0) {
+      const merged = { ...authoritativeErrors };
+      Object.entries(modifiedErrors).forEach(([rowKey, message]) => {
+        if (shouldSkipPersistedError(rowKey, message)) {
+          return;
+        }
+        merged[rowKey] = message;
+      });
+      setRowErrors(merged);
+      return;
+    }
+
+    setRowErrors(modifiedErrors);
+  };
+
+  const autoSaveBiomarkerMappings = async (rowsOverride?: any[]) => {
     if (isDemo) return;
+    const rows = rowsOverride ?? extractedBiomarkers;
     const uniqueMappings = new Map<
       string,
       { extracted: string; system: string }
     >();
 
-    extractedBiomarkers.forEach((row: any) => {
+    rows.forEach((row: any) => {
       const system = String(row.biomarker || '').trim();
       if (!system) return;
 
@@ -981,25 +1163,304 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
     if (uniqueMappings.size === 0) return;
 
-    await Promise.allSettled(
-      Array.from(uniqueMappings.values()).map(({ extracted, system }) =>
-        Application.add_mapping({
-          extracted_biomarker: extracted,
-          system_biomarker: system,
-        }),
+    const mappings = Array.from(uniqueMappings.values());
+    const batchSize = 8;
+    for (let i = 0; i < mappings.length; i += batchSize) {
+      const batch = mappings.slice(i, i + batchSize);
+      await Promise.allSettled(
+        batch.map(({ extracted, system }) =>
+          Application.add_mapping({
+            extracted_biomarker: extracted,
+            system_biomarker: system,
+          }),
+        ),
+      );
+    }
+  };
+
+  // Advisory review: continue with every row the user has not explicitly
+  // excluded (ready + review). Review items are saved and become persisted
+  // findings the user can resolve later in Edit Mode; they no longer block.
+  const buildContinueRows = () =>
+    extractedBiomarkers.filter((row, index) => {
+      const { category } = categorizeReviewRow(
+        row,
+        rowErrors,
+        suppressedSet,
+        index,
+      );
+      return category !== 'excluded';
+    });
+
+  const parseApiErrorDetail = (err: any) =>
+    err?.detail ?? err?.response?.data?.detail ?? err;
+
+  const isLabSaveGatewayTimeout = (err: any) =>
+    err?.response?.status === 504 ||
+    err?.code === 'ECONNABORTED' ||
+    err?.error?.code === '504' ||
+    String(err?.error?.message || err?.message || '')
+      .toLowerCase()
+      .includes('deployment');
+
+  const labSaveGatewayTimeoutMessage =
+    'Save timed out at the gateway. Your biomarkers may still be processing — refresh and check step two, or try again in a moment.';
+
+  const buildLabValidationPayload = () => {
+    const modifiedTimestamp = modifiedDateOfTest
+      ? Date.UTC(
+          modifiedDateOfTest.getFullYear(),
+          modifiedDateOfTest.getMonth(),
+          modifiedDateOfTest.getDate(),
+        ).toString()
+      : '';
+    const addedTimestamp = addedDateOfTest
+      ? Date.UTC(
+          addedDateOfTest.getFullYear(),
+          addedDateOfTest.getMonth(),
+          addedDateOfTest.getDate(),
+        ).toString()
+      : '';
+
+    return {
+      modified_biomarkers_list: mapExtractedBiomarkersForValidation(
+        extractedBiomarkers,
+        fileType,
       ),
+      added_biomarkers_list: addedBiomarkers,
+      modified_biomarkers_date_of_test: modifiedTimestamp,
+      added_biomarkers_date_of_test: addedTimestamp,
+      modified_lab_type: fileType,
+      modified_file_id: uploadedFile?.file_id ?? '',
+      member_id: memberId,
+    };
+  };
+
+  const validateAndSaveLabReport = async () => {
+    await Application.validateBiomarkers(buildLabValidationPayload());
+    return handleSaveLabReport();
+  };
+
+  const handleLabSaveError = (err: any) => {
+    if (isLabSaveGatewayTimeout(err)) {
+      showError('Could not save biomarkers', labSaveGatewayTimeoutMessage);
+      return;
+    }
+    const detail = parseApiErrorDetail(err);
+    if (detail) {
+      if (typeof detail === 'string') {
+        try {
+          const parsed = JSON.parse(detail);
+          applyValidationErrors(parsed);
+          return;
+        } catch {
+          if (detail.includes('biomarkers_list')) {
+            applyValidationErrors(detail);
+            return;
+          }
+        }
+      }
+      if (typeof detail === 'object') {
+        applyValidationErrors(detail);
+        return;
+      }
+      showError('Could not save biomarkers', String(detail));
+      return;
+    }
+    console.error('API error:', err);
+    showError(
+      'Could not save biomarkers',
+      'An unexpected error occurred. Please try again.',
     );
+  };
+
+  const completeReviewContinue = async () => {
+    setBtnLoading(true);
+    setPolling(false);
+
+    // Advisory review: save everything not explicitly excluded. Review items
+    // are saved and recorded as findings the user can resolve later in Edit.
+    const continueRows = buildContinueRows();
+    const reviewItemCount = continueRows.filter((row, index) => {
+      const { category } = categorizeReviewRow(
+        row,
+        rowErrors,
+        suppressedSet,
+        index,
+      );
+      return category !== 'ready';
+    }).length;
+
+    if (continueRows.length === 0) {
+      showError(
+        'Could not save biomarkers',
+        'There are no biomarkers to save. Add or include at least one biomarker.',
+      );
+      setBtnLoading(false);
+      return;
+    }
+
+    try {
+      if (reviewCatalog.length === 0) {
+        showError(
+          'Could not save biomarkers',
+          'Biomarker catalog is still loading. Please try again in a moment.',
+        );
+        return;
+      }
+
+      // Note: no pre-`validateBiomarkers` gate. process_lab_report runs the
+      // full review validation and (in advisory mode) records findings instead
+      // of raising, so the user is never blocked here.
+      const res = await handleSaveLabReport(continueRows, {
+        skipAddedBiomarkers: true,
+        skipAutoSaveMappings: true,
+      });
+
+      const savedFileId =
+        res?.data?.modified_biomarkers_file_id ||
+        res?.data?.added_biomarkers_file_id ||
+        uploadedFile?.file_id;
+
+      showSuccess(
+        `${continueRows.length} biomarkers saved.`,
+        reviewItemCount > 0
+          ? `${reviewItemCount} item(s) need review — fix them anytime in Edit. Updating your health plan...`
+          : 'Updating your health plan...',
+      );
+      publish('syncReport', { silent: true });
+      publish('checkProgress', {
+        type: 'file',
+        file_id: savedFileId,
+        action_type: 'uploaded',
+        process_status: false,
+      });
+      onGenderate(savedFileId, { silent: true });
+
+      void loadReviewFindings(savedFileId, backendRowErrorsRef.current);
+      void autoSaveBiomarkerMappings(continueRows);
+    } catch (err: any) {
+      console.error('Review continue save failed:', err);
+      if (isLabSaveGatewayTimeout(err)) {
+        showError('Could not save biomarkers', labSaveGatewayTimeoutMessage);
+        return;
+      }
+      const detail = parseApiErrorDetail(err);
+      if (detail) {
+        applyValidationErrors(detail);
+      }
+      const message =
+        typeof detail === 'string' && !detail.trim().startsWith('{')
+          ? detail
+          : 'Something went wrong while saving. Please try again.';
+      showError('Could not save biomarkers', message);
+    } finally {
+      setBtnLoading(false);
+    }
+  };
+
+  const loadReviewFindings = async (
+    fileIdOverride?: string,
+    backendErrors: Record<string, string> | null = null,
+  ) => {
+    const fileId = fileIdOverride || uploadedFile?.file_id;
+    if (!fileId) return;
+    setReviewFindingsLoading(true);
+    try {
+      const res = await Application.getLabReviewFindings({ file_id: fileId });
+      if (!isMountedRef.current) return;
+      const findings = Array.isArray(res?.data?.findings)
+        ? res.data.findings
+        : [];
+      setReviewFindings(findings);
+      applyPersistedReviewFindings(
+        findings,
+        extractedBiomarkers,
+        backendErrors,
+      );
+    } catch (err: any) {
+      console.error('Failed to load review findings:', err);
+    } finally {
+      if (isMountedRef.current) setReviewFindingsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fid = uploadedFile?.file_id;
+    if (!fid) return;
+    if (isTrueEditMode || uploadPhase === 'review_ready') {
+      void loadReviewFindings(fid, backendRowErrorsRef.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uploadedFile?.file_id, isTrueEditMode, uploadPhase]);
+
+  const handleRecheck = async () => {
+    const fileId = uploadedFile?.file_id;
+    if (!fileId || recheckLoading || stepOnePollInFlightRef.current) return;
+    setRecheckLoading(true);
+    stepOnePollInFlightRef.current = true;
+    try {
+      const res = await Application.checkLabStepOne({ file_id: fileId });
+      setfileType(res.data.lab_type || 'more_info');
+      setReviewSummary(res.data.summary || null);
+      if (
+        Array.isArray(res.data.extracted_biomarkers) &&
+        res.data.extracted_biomarkers.length > 0
+      ) {
+        setExtractedCount(res.data.extracted_biomarkers.length);
+      }
+      if (res.data.date_of_test) {
+        setModifiedDateOfTest(new Date(res.data.date_of_test));
+      }
+      if (
+        res.data.extracted_biomarkers &&
+        res.data.extracted_biomarkers.length > 0 &&
+        res.data.validation?.ready
+      ) {
+        const enrichedRows = ensureUniqueBiomarkerIds(
+          (res.data.extracted_biomarkers || []).map((b: any) =>
+            enrichExtractedRowForReview(b, res.data.lab_type),
+          ),
+        );
+        const errorMaps = buildValidationErrorsMaps(
+          res.data.validation,
+          enrichedRows,
+          addedBiomarkers,
+        );
+        backendRowErrorsRef.current = errorMaps.modifiedErrors;
+        setRowErrors(errorMaps.modifiedErrors);
+        setAddedRowErrors(errorMaps.addedErrors);
+        setExtractedBiomarkers(sortReviewBiomarkerRows(enrichedRows));
+        setUploadPhase(res.data.status || 'review_ready');
+        setProgressBiomarkerUpload(res.data.progress ?? 100);
+        void loadReviewFindings(fileId, errorMaps.modifiedErrors);
+      }
+    } catch (err: any) {
+      console.error('Re-check failed:', err);
+    } finally {
+      stepOnePollInFlightRef.current = false;
+      setRecheckLoading(false);
+    }
   };
 
   const onSave = () => {
     if (isDemo) return;
-    // ✅ For ultrasound reports, just close the modal and go to step 0
-    // The API call will happen when clicking "Save & Continue to Health Plan"
+    const isReviewContinueFlow = Boolean(
+      uploadedFile?.file_id &&
+        extractedBiomarkers.length > 0 &&
+        fileType !== 'ultrasound',
+    );
+
     if (fileType === 'ultrasound') {
       setisSaveClicked(true);
       setstep(0);
       setRowErrors({});
       setAddedRowErrors({});
+      return;
+    }
+
+    if (isReviewContinueFlow) {
+      completeReviewContinue();
       return;
     }
 
@@ -1010,14 +1471,15 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           modifiedDateOfTest.getMonth(),
           modifiedDateOfTest.getDate(),
         ).toString()
-      : null;
+      : '';
     const addedTimestamp = addedDateOfTest
       ? Date.UTC(
           addedDateOfTest.getFullYear(),
           addedDateOfTest.getMonth(),
           addedDateOfTest.getDate(),
         ).toString()
-      : null;
+      : '';
+
     Application.validateBiomarkers({
       modified_biomarkers_list: mapExtractedBiomarkersForValidation(
         extractedBiomarkers,
@@ -1032,7 +1494,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     })
       .then(async () => {
         await autoSaveBiomarkerMappings();
-        // 200 response
         setisSaveClicked(true);
         setstep(0);
         setRowErrors({});
@@ -1040,7 +1501,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       })
       .catch((err: any) => {
         console.log(err);
-        const detail = err?.detail ?? err?.response?.data?.detail;
+        const detail = err?.detail ?? err?.response?.data?.detail ?? err;
         if (detail) {
           applyValidationErrors(detail);
         } else {
@@ -1048,7 +1509,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         }
       })
       .finally(() => {
-        setBtnLoading(false);
+        if (isMountedRef.current) {
+          setBtnLoading(false);
+        }
       });
   };
   const resolveActiveButtonReportAnalyse = () => {
@@ -1119,7 +1582,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     <>
       <Joyride
         steps={steps}
-        run={run}
+        run={run && step === 0}
         continuous
         showSkipButton
         disableOverlayClose
@@ -1220,11 +1683,15 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       disabled={isDemo || !resolveActiveButtonReportAnalyse()}
                       onClick={() => {
                         if (isDemo) return;
+                        if (uploadedFile != null && fileType !== 'ultrasound') {
+                          void completeReviewContinue();
+                          return;
+                        }
                         if (
                           uploadedFile != null ||
                           addedBiomarkers.length != 0
                         ) {
-                          handleSaveLabReport()
+                          validateAndSaveLabReport()
                             .then((res) => {
                               if (
                                 res.data.modified_biomarkers_file_id != null &&
@@ -1241,11 +1708,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                               } else {
                                 onGenderate(undefined);
                               }
-                              console.log(res);
                             })
-                            .catch((err) => {
-                              console.log(err);
-                            });
+                            .catch(handleLabSaveError);
                           onGenderate('customBiomarker');
                         } else {
                           onGenderate(undefined);
@@ -1409,11 +1873,15 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       disabled={isDemo || !resolveActiveButtonReportAnalyse()}
                       onClick={() => {
                         if (isDemo) return;
+                        if (uploadedFile != null && fileType !== 'ultrasound') {
+                          void completeReviewContinue();
+                          return;
+                        }
                         if (
                           uploadedFile != null ||
                           addedBiomarkers.length != 0
                         ) {
-                          handleSaveLabReport()
+                          validateAndSaveLabReport()
                             .then((res) => {
                               if (
                                 res.data.modified_biomarkers_file_id != null &&
@@ -1430,11 +1898,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                               } else {
                                 onGenderate(undefined);
                               }
-                              console.log(res);
                             })
-                            .catch((err) => {
-                              console.log(err);
-                            });
+                            .catch(handleLabSaveError);
                           onGenderate('customBiomarker');
                         } else {
                           onGenderate(undefined);
@@ -1537,6 +2002,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               setstep(2); // Regular add mode, go back to step 2
             }
             // Clear all data
+            skipExtractionProgressRef.current = false;
+            setReopeningExistingFile(false);
             setIsTrueEditMode(false);
             setUploadedFile(null);
             setModifiedDateOfTest(new Date());
@@ -1580,6 +2047,19 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           onClose={() => {
             setUploadedFile(null);
           }}
+          fileId={uploadedFile?.file_id}
+          onRecheck={handleRecheck}
+          recheckLoading={recheckLoading}
+          extractedCount={extractedCount}
+          onSuppressedSetChange={setSuppressedSet}
+          reopeningExistingFile={reopeningExistingFile}
+          reviewCatalog={reviewCatalog}
+          onReviewCatalogRefresh={refreshReviewCatalog}
+          reviewFindings={reviewFindings}
+          reviewFindingsLoading={reviewFindingsLoading}
+          onReloadReviewFindings={() =>
+            loadReviewFindings(undefined, backendRowErrorsRef.current)
+          }
         />
       )}
     </>

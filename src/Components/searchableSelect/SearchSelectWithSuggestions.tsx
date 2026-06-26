@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import {
   computePosition,
@@ -186,13 +187,15 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
       if (
-        selectWrapperRef.current &&
-        !selectWrapperRef.current.contains(e.target as Node)
+        selectWrapperRef.current?.contains(target) ||
+        dropdownRef.current?.contains(target)
       ) {
-        setIsOpen(false);
-        setSearchTerm('');
+        return;
       }
+      setIsOpen(false);
+      setSearchTerm('');
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -295,164 +298,172 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
         />
       </div>
 
-      {/* Dropdown */}
-      {isOpen && (
-        <div
-          ref={dropdownRef}
-          style={{ position: 'fixed', width: buttonRef.current?.offsetWidth }}
-          className={`absolute flex flex-col z-[9999] ${
-            isSetting
-              ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
-              : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
-          } overflow-auto max-h-[280px] md:max-h-[320px]`}
-        >
-          {/* Search */}
+      {/* Dropdown — portaled so it escapes table overflow/stacking contexts */}
+      {isOpen &&
+        createPortal(
           <div
-            className={`${openDirection === 'bottom' ? 'top-0 order-first' : 'bottom-0 order-last'} sticky bg-inherit p-2`}
+            ref={dropdownRef}
+            style={{
+              position: 'fixed',
+              zIndex: 9990,
+              width: buttonRef.current?.offsetWidth,
+            }}
+            className={`flex flex-col ${
+              isSetting
+                ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50'
+                : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'
+            } overflow-auto max-h-[280px] md:max-h-[320px]`}
           >
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full border border-Gray-50 rounded-md px-2 py-1 text-[10px] text-Text-Primary focus:outline-none bg-white"
-            />
-          </div>
+            {/* Search */}
+            <div
+              className={`${openDirection === 'bottom' ? 'top-0 order-first' : 'bottom-0 order-last'} sticky bg-inherit p-2`}
+            >
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full border border-Gray-50 rounded-md px-2 py-1 text-[10px] text-Text-Primary focus:outline-none bg-white"
+              />
+            </div>
 
-          {/* Suggestions section — always visible when suggestions exist */}
-          {visibleSuggestions.length > 0 && (
-            <div className="order-2">
-              <div
-                className={`px-3 py-1 text-[9px] font-semibold uppercase tracking-wide border-b ${
-                  isError
-                    ? 'text-orange-600 bg-orange-50 border-orange-100'
-                    : 'text-Text-Secondary bg-blue-50 border-blue-100'
-                }`}
-              >
-                {isError ? 'Suggestions' : 'Suggested Match'}
+            {/* Suggestions section — always visible when suggestions exist */}
+            {visibleSuggestions.length > 0 && (
+              <div className="order-2">
+                <div
+                  className={`px-3 py-1 text-[9px] font-semibold uppercase tracking-wide border-b ${
+                    isError
+                      ? 'text-orange-600 bg-orange-50 border-orange-100'
+                      : 'text-Text-Secondary bg-blue-50 border-blue-100'
+                  }`}
+                >
+                  {isError ? 'Suggestions' : 'Suggested Match'}
+                </div>
+                {isError && (
+                  <div className="px-3 py-1 text-[9px] text-orange-600 bg-orange-50 border-b border-orange-100 italic">
+                    No exact match found — closest options shown below
+                  </div>
+                )}
+                <ul role="listbox">
+                  {groupedSuggestions.map((group) => (
+                    <li key={`group-${group.area}`}>
+                      <div className="px-3 py-1 text-[8px] font-semibold uppercase tracking-wide text-Text-Secondary bg-white border-b border-Gray-50">
+                        {group.area}
+                      </div>
+                      {group.matches.map((s) => (
+                        <div
+                          key={`suggestion-${group.area}-${optionIdentity(s)}`}
+                          className={`py-1.5 px-3 cursor-pointer text-[10px] text-Text-Primary text-start flex items-start justify-between gap-2 border-b border-Gray-50 ${
+                            selectedValue === s.system_biomarker
+                              ? 'bg-blue-50 font-medium'
+                              : 'hover:bg-blue-50'
+                          }`}
+                          onClick={() => handleOptionClick(s.system_biomarker)}
+                          role="option"
+                          aria-selected={selectedValue === s.system_biomarker}
+                          title={s.reason}
+                        >
+                          <span className="flex-1 min-w-0">
+                            <div className="text-wrap">
+                              {s.system_biomarker}
+                            </div>
+                            <div className="text-[8px] text-Text-Secondary mt-0.5">
+                              {unitTypeLabel(s.unit, s.value_type)}
+                            </div>
+                          </span>
+                          <span
+                            className={`shrink-0 text-[8px] font-semibold px-1.5 py-0.5 rounded-full ${confidenceBadge(s.confidence)}`}
+                          >
+                            {s.confidence}%
+                          </span>
+                        </div>
+                      ))}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              {isError && (
-                <div className="px-3 py-1 text-[9px] text-orange-600 bg-orange-50 border-b border-orange-100 italic">
-                  No exact match found — closest options shown below
+            )}
+
+            {isSuggestionsLoading && (
+              <div className="order-2 px-3 py-2 text-[9px] text-blue-700 bg-blue-50 border-b border-blue-100 flex items-center gap-2">
+                <span className="inline-block h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+                Finding similar biomarkers...
+              </div>
+            )}
+
+            {/* No suggestions notice */}
+            {isError &&
+              !isSuggestionsLoading &&
+              visibleSuggestions.length === 0 &&
+              !searchTerm && (
+                <div className="order-2 px-3 py-2 text-[9px] text-orange-600 bg-orange-50 border-b border-orange-100 italic">
+                  No exact match found — search or create a new biomarker
                 </div>
               )}
-              <ul role="listbox">
-                {groupedSuggestions.map((group) => (
-                  <li key={`group-${group.area}`}>
+
+            {/* Create New Biomarker action */}
+            {onCreateNew && (
+              <div className="order-3 border-t border-Gray-50">
+                <button
+                  type="button"
+                  className="w-full text-left py-1.5 px-3 text-[10px] text-Primary-DeepTeal font-medium hover:bg-teal-50 flex items-center gap-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsOpen(false);
+                    onCreateNew();
+                  }}
+                >
+                  <span className="text-base leading-none">+</span>
+                  Create New Biomarker
+                </button>
+              </div>
+            )}
+
+            {/* Divider before full list */}
+            {(visibleSuggestions.length > 0 || onCreateNew) && (
+              <div className="order-4 border-t border-Gray-50 pt-1 pb-0.5 px-3 text-[9px] font-semibold text-Text-Secondary uppercase tracking-wide">
+                All Biomarkers
+              </div>
+            )}
+
+            {/* Full option list */}
+            <ul role="listbox" className="order-5">
+              {filteredOptions.length > 0 ? (
+                groupedOptions.map((group) => (
+                  <li key={`option-group-${group.area}`}>
                     <div className="px-3 py-1 text-[8px] font-semibold uppercase tracking-wide text-Text-Secondary bg-white border-b border-Gray-50">
                       {group.area}
                     </div>
-                    {group.matches.map((s) => (
+                    {group.matches.map((option) => (
                       <div
-                        key={`suggestion-${group.area}-${optionIdentity(s)}`}
-                        className={`py-1.5 px-3 cursor-pointer text-[10px] text-Text-Primary text-start flex items-start justify-between gap-2 border-b border-Gray-50 ${
-                          selectedValue === s.system_biomarker
-                            ? 'bg-blue-50 font-medium'
-                            : 'hover:bg-blue-50'
+                        key={optionIdentity(option)}
+                        className={`py-1 px-3 text-wrap w-full cursor-pointer text-[10px] text-start border-b border-Gray-50 ${
+                          selectedValue === option.biomarker
+                            ? 'bg-blue-50 font-medium text-Primary-DeepTeal'
+                            : 'text-Text-Primary hover:bg-gray-50'
                         }`}
-                        onClick={() => handleOptionClick(s.system_biomarker)}
+                        onClick={() => handleOptionClick(option.biomarker)}
                         role="option"
-                        aria-selected={selectedValue === s.system_biomarker}
-                        title={s.reason}
+                        aria-selected={selectedValue === option.biomarker}
                       >
-                        <span className="flex-1 min-w-0">
-                          <div className="text-wrap">{s.system_biomarker}</div>
-                          <div className="text-[8px] text-Text-Secondary mt-0.5">
-                            {unitTypeLabel(s.unit, s.value_type)}
-                          </div>
-                        </span>
-                        <span
-                          className={`shrink-0 text-[8px] font-semibold px-1.5 py-0.5 rounded-full ${confidenceBadge(s.confidence)}`}
-                        >
-                          {s.confidence}%
-                        </span>
+                        <div>{option.biomarker}</div>
+                        <div className="text-[8px] text-Text-Secondary mt-0.5">
+                          {unitTypeLabel(option.unit, option.value_type)}
+                        </div>
                       </div>
                     ))}
                   </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {isSuggestionsLoading && (
-            <div className="order-2 px-3 py-2 text-[9px] text-blue-700 bg-blue-50 border-b border-blue-100 flex items-center gap-2">
-              <span className="inline-block h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-              Finding similar biomarkers...
-            </div>
-          )}
-
-          {/* No suggestions notice */}
-          {isError &&
-            !isSuggestionsLoading &&
-            visibleSuggestions.length === 0 &&
-            !searchTerm && (
-              <div className="order-2 px-3 py-2 text-[9px] text-orange-600 bg-orange-50 border-b border-orange-100 italic">
-                No exact match found — search or create a new biomarker
-              </div>
-            )}
-
-          {/* Create New Biomarker action */}
-          {onCreateNew && (
-            <div className="order-3 border-t border-Gray-50">
-              <button
-                type="button"
-                className="w-full text-left py-1.5 px-3 text-[10px] text-Primary-DeepTeal font-medium hover:bg-teal-50 flex items-center gap-2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsOpen(false);
-                  onCreateNew();
-                }}
-              >
-                <span className="text-base leading-none">+</span>
-                Create New Biomarker
-              </button>
-            </div>
-          )}
-
-          {/* Divider before full list */}
-          {(visibleSuggestions.length > 0 || onCreateNew) && (
-            <div className="order-4 border-t border-Gray-50 pt-1 pb-0.5 px-3 text-[9px] font-semibold text-Text-Secondary uppercase tracking-wide">
-              All Biomarkers
-            </div>
-          )}
-
-          {/* Full option list */}
-          <ul role="listbox" className="order-5">
-            {filteredOptions.length > 0 ? (
-              groupedOptions.map((group) => (
-                <li key={`option-group-${group.area}`}>
-                  <div className="px-3 py-1 text-[8px] font-semibold uppercase tracking-wide text-Text-Secondary bg-white border-b border-Gray-50">
-                    {group.area}
-                  </div>
-                  {group.matches.map((option) => (
-                    <div
-                      key={optionIdentity(option)}
-                      className={`py-1 px-3 text-wrap w-full cursor-pointer text-[10px] text-start border-b border-Gray-50 ${
-                        selectedValue === option.biomarker
-                          ? 'bg-blue-50 font-medium text-Primary-DeepTeal'
-                          : 'text-Text-Primary hover:bg-gray-50'
-                      }`}
-                      onClick={() => handleOptionClick(option.biomarker)}
-                      role="option"
-                      aria-selected={selectedValue === option.biomarker}
-                    >
-                      <div>{option.biomarker}</div>
-                      <div className="text-[8px] text-Text-Secondary mt-0.5">
-                        {unitTypeLabel(option.unit, option.value_type)}
-                      </div>
-                    </div>
-                  ))}
+                ))
+              ) : (
+                <li className="py-2 px-4 text-[10px] text-Text-Secondary">
+                  No results found
                 </li>
-              ))
-            ) : (
-              <li className="py-2 px-4 text-[10px] text-Text-Secondary">
-                No results found
-              </li>
-            )}
-          </ul>
-        </div>
-      )}
+              )}
+            </ul>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };

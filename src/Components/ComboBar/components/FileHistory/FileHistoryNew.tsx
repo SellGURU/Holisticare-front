@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import Circleloader from '../../../CircleLoader';
 import Application from '../../../../api/app';
 import { useParams } from 'react-router-dom';
 import { publish, subscribe, unsubscribe } from '../../../../utils/event';
 import FileUploadProgressList from './FileUploadProgressList';
 import useIsDemo from '../../../../hooks/useIsDemo';
+
+const FILE_LIST_REQUEST_TIMEOUT_MS = 30000;
 
 interface FileHistoryNewProps {
   handleCloseSlideOutPanel: () => void;
@@ -21,10 +23,21 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const { id } = useParams<{ id: string }>();
-  const getFileList = (id: string) => {
+  const requestSeqRef = useRef(0);
+
+  const getFileList = useCallback((memberId: string) => {
+    const requestSeq = ++requestSeqRef.current;
     setIsLoading(true);
-    Application.getFilleList({ member_id: id })
+
+    const timeoutId = window.setTimeout(() => {
+      if (requestSeq === requestSeqRef.current) {
+        setIsLoading(false);
+      }
+    }, FILE_LIST_REQUEST_TIMEOUT_MS);
+
+    Application.getFilleList({ member_id: memberId })
       .then((res) => {
+        if (requestSeq !== requestSeqRef.current) return;
         if (res.data) {
           setUploadedFiles(res.data);
         } else {
@@ -32,49 +45,53 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         }
       })
       .catch((err) => {
+        if (requestSeq !== requestSeqRef.current) return;
         console.error(err);
       })
       .finally(() => {
-        setIsLoading(false);
+        window.clearTimeout(timeoutId);
+        if (requestSeq === requestSeqRef.current) {
+          setIsLoading(false);
+        }
       });
-  };
+  }, []);
+
   useEffect(() => {
     if (id) {
-      // alert('getFileList');
       getFileList(id);
     }
-  }, [id, isOpen]);
+  }, [id, isOpen, getFileList]);
 
-  // const handleCompletedProgress = (data: any) => {
-  //   if (data.detail.file_id && data.detail.type == 'uploaded') {
-  //     // alert('handleCompletedProgress');
-  //     setUnsyncedIdes([...unsyncedIdes, data.detail.file_id]);
-  //     setUploadedFiles((prev: any) =>
-  //       prev.map((el: any) =>
-  //         el.file_id === data.detail.file_id ? { ...el, isNeedSync: true } : el,
-  //       ),
-  //     );
-  //   }
-  // };
   useEffect(() => {
-    // subscribe('completedProgress', handleCompletedProgress);
-    subscribe('syncReport', () => {
+    const handleSyncReport = () => {
       if (id) {
         getFileList(id);
       }
-    });
-    return () => {
-      unsubscribe('syncReport', () => {
-        if (id) {
-          getFileList(id);
-        }
-      });
     };
-  }, []);
+
+    subscribe('syncReport', handleSyncReport);
+    return () => {
+      unsubscribe('syncReport', handleSyncReport);
+    };
+  }, [id, getFileList]);
+
+  useEffect(() => {
+    const handleCompletedProgress = (data: any) => {
+      if (data?.detail?.type === 'uploaded' && id) {
+        getFileList(id);
+      }
+    };
+
+    subscribe('completedProgress', handleCompletedProgress);
+    return () => {
+      unsubscribe('completedProgress', handleCompletedProgress);
+    };
+  }, [id, getFileList]);
+
   return (
-    <>
+    <div className="w-full relative">
       {isLoading && (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+        <div className="absolute inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-10 rounded-[12px] min-h-[120px]">
           <Circleloader></Circleloader>
         </div>
       )}
@@ -82,7 +99,6 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         <div
           onClick={() => {
             if (isDemo) return;
-            // fileInputRef.current?.click();
             publish('uploadTestShow', {
               isShow: true,
             });
@@ -114,7 +130,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         </div>
         <FileUploadProgressList uploadedFiles={uploadedFiles} />
       </div>
-    </>
+    </div>
   );
 };
 

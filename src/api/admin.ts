@@ -3,7 +3,7 @@ import axios from 'axios';
 import { resolveBaseEndPoint } from './base';
 import { getAdminToken } from '../store/adminToken';
 
-const baseUrl = resolveBaseEndPoint();
+const getBaseUrl = () => resolveBaseEndPoint();
 
 const withAuthHeaders = (contentType = 'application/json') => ({
   Authorization: `Bearer ${getAdminToken() || ''}`,
@@ -16,7 +16,7 @@ class AdminApi {
     data.append('username', username);
     data.append('password', password);
 
-    return axios.post(`${baseUrl}/admin/auth/token`, data, {
+    return axios.post(`${getBaseUrl()}/admin/auth/token`, data, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -24,14 +24,14 @@ class AdminApi {
   }
 
   static checkAuth() {
-    return axios.get(`${baseUrl}/admin/login-auth`, {
+    return axios.get(`${getBaseUrl()}/admin/login-auth`, {
       headers: withAuthHeaders(),
     });
   }
 
   static logout() {
     return axios.post(
-      `${baseUrl}/admin/auth/log_out`,
+      `${getBaseUrl()}/admin/auth/log_out`,
       {},
       {
         headers: withAuthHeaders(),
@@ -40,13 +40,13 @@ class AdminApi {
   }
 
   static getClinics() {
-    return axios.get(`${baseUrl}/admin/marketing/clinics`, {
+    return axios.get(`${getBaseUrl()}/admin/marketing/clinics`, {
       headers: withAuthHeaders(),
     });
   }
 
   static listClinics() {
-    return axios.get(`${baseUrl}/admin/clinics`, {
+    return axios.get(`${getBaseUrl()}/admin/clinics`, {
       headers: withAuthHeaders(),
     });
   }
@@ -55,19 +55,19 @@ class AdminApi {
     id: number,
     data: { plan_type?: 'demo' | 'paying'; is_disabled?: boolean },
   ) {
-    return axios.patch(`${baseUrl}/admin/clinics/${id}`, data, {
+    return axios.patch(`${getBaseUrl()}/admin/clinics/${id}`, data, {
       headers: withAuthHeaders(),
     });
   }
 
   static getAnalytics(data: any) {
-    return axios.post(`${baseUrl}/admin/marketing/analytics`, data, {
+    return axios.post(`${getBaseUrl()}/admin/marketing/analytics`, data, {
       headers: withAuthHeaders(),
     });
   }
 
   static getConfig() {
-    return axios.get(`${baseUrl}/admin/config`, {
+    return axios.get(`${getBaseUrl()}/admin/config`, {
       headers: withAuthHeaders(),
     });
   }
@@ -77,7 +77,7 @@ class AdminApi {
     search?: string;
     status_code?: number;
   }) {
-    return axios.get(`${baseUrl}/admin/logs/backend-errors`, {
+    return axios.get(`${getBaseUrl()}/admin/logs/backend-errors`, {
       headers: withAuthHeaders(),
       params,
     });
@@ -94,9 +94,11 @@ class AdminApi {
     model?: string;
     date_from?: string;
     date_to?: string;
+    category?: string;
+    max_scan_bytes?: number;
     include_summary?: boolean;
   }) {
-    return axios.get(`${baseUrl}/admin/logs/llm-calls`, {
+    return axios.get(`${getBaseUrl()}/admin/logs/llm-calls`, {
       headers: withAuthHeaders(),
       params,
     });
@@ -104,7 +106,7 @@ class AdminApi {
 
   static getJsonManagerClinics() {
     return axios.post(
-      `${baseUrl}/admin/custom_biomarker/clinics`,
+      `${getBaseUrl()}/admin/custom_biomarker/clinics`,
       {},
       {
         headers: withAuthHeaders(),
@@ -113,20 +115,28 @@ class AdminApi {
   }
 
   static loadClinicJsonConfigs(data: any) {
-    return axios.post(`${baseUrl}/admin/custom_biomarker/load_configs`, data, {
-      headers: withAuthHeaders(),
-    });
+    return axios.post(
+      `${getBaseUrl()}/admin/custom_biomarker/load_configs`,
+      data,
+      {
+        headers: withAuthHeaders(),
+      },
+    );
   }
 
   static saveClinicJsonConfig(data: any) {
-    return axios.post(`${baseUrl}/admin/custom_biomarker/save_config`, data, {
-      headers: withAuthHeaders(),
-    });
+    return axios.post(
+      `${getBaseUrl()}/admin/custom_biomarker/save_config`,
+      data,
+      {
+        headers: withAuthHeaders(),
+      },
+    );
   }
 
   static updateConfig(config_data: any) {
     return axios.post(
-      `${baseUrl}/admin/config`,
+      `${getBaseUrl()}/admin/config`,
       { config_data },
       {
         headers: withAuthHeaders(),
@@ -144,7 +154,7 @@ class AdminApi {
     search?: string;
     only_active?: boolean;
   }) {
-    return axios.get(`${baseUrl}/admin/llm/prompts`, {
+    return axios.get(`${getBaseUrl()}/admin/llm/prompts`, {
       headers: withAuthHeaders(),
       params,
     });
@@ -152,7 +162,7 @@ class AdminApi {
 
   static getLlmPrompt(key: string) {
     return axios.get(
-      `${baseUrl}/admin/llm/prompts/${encodeURIComponent(key)}`,
+      `${getBaseUrl()}/admin/llm/prompts/${encodeURIComponent(key)}`,
       {
         headers: withAuthHeaders(),
       },
@@ -161,7 +171,7 @@ class AdminApi {
 
   static updateLlmPrompt(key: string, payload: any) {
     return axios.put(
-      `${baseUrl}/admin/llm/prompts/${encodeURIComponent(key)}`,
+      `${getBaseUrl()}/admin/llm/prompts/${encodeURIComponent(key)}`,
       payload,
       { headers: withAuthHeaders() },
     );
@@ -169,7 +179,7 @@ class AdminApi {
 
   static toggleLlmPrompt(key: string, is_active: boolean) {
     return axios.post(
-      `${baseUrl}/admin/llm/prompts/${encodeURIComponent(key)}/toggle`,
+      `${getBaseUrl()}/admin/llm/prompts/${encodeURIComponent(key)}/toggle`,
       { is_active },
       { headers: withAuthHeaders() },
     );
@@ -177,7 +187,7 @@ class AdminApi {
 
   static testLlmPrompt(key: string, payload: any) {
     return axios.post(
-      `${baseUrl}/admin/llm/prompts/${encodeURIComponent(key)}/test`,
+      `${getBaseUrl()}/admin/llm/prompts/${encodeURIComponent(key)}/test`,
       payload,
       { headers: withAuthHeaders() },
     );
@@ -185,7 +195,7 @@ class AdminApi {
 
   static reseedLlmPrompts() {
     return axios.post(
-      `${baseUrl}/admin/llm/prompts/_reseed`,
+      `${getBaseUrl()}/admin/llm/prompts/_reseed`,
       {},
       { headers: withAuthHeaders() },
     );
@@ -193,14 +203,14 @@ class AdminApi {
 
   static invalidateLlmPromptCache(key?: string) {
     return axios.post(
-      `${baseUrl}/admin/llm/prompts/_invalidate`,
+      `${getBaseUrl()}/admin/llm/prompts/_invalidate`,
       key ? { key } : {},
       { headers: withAuthHeaders() },
     );
   }
 
   static getLlmPromptCacheStats() {
-    return axios.get(`${baseUrl}/admin/llm/prompts/_cache`, {
+    return axios.get(`${getBaseUrl()}/admin/llm/prompts/_cache`, {
       headers: withAuthHeaders(),
     });
   }

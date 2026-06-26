@@ -28,6 +28,9 @@ type ProgressItem = FileProgress | QuestionnaireProgress | RefreshProgress;
 
 type ProgressData = ProgressItem[];
 
+const BURST_POLL_INTERVAL_MS = 3000;
+const BURST_POLL_MAX_MS = 180000;
+
 const formatDateTime = (date: Date): string => {
   const year = date.getUTCFullYear();
   const month = String(date.getUTCMonth() + 1).padStart(2, '0');
@@ -38,10 +41,18 @@ const formatDateTime = (date: Date): string => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
+const hasInflightOperations = (progress: {
+  files: any[];
+  questionnaires: any[];
+  refresh: any[];
+}) =>
+  [...progress.files, ...progress.questionnaires, ...progress.refresh].some(
+    (item) => item.process_status === false,
+  );
+
 const UnderProgressController = ({
   member_id,
 }: UnderProgressControllerProps) => {
-  // const [fromDate, setfromDate] = useState<Date>(new Date());
   const fromDate = useRef<Date>(new Date());
   const lastNeedCheckProgressRef = useRef<Date | null>(null);
   const currentMemberIdRef = useRef<string>(member_id);
@@ -50,8 +61,41 @@ const UnderProgressController = ({
     questionnaires: [],
     refresh: [],
   });
-  // const [idHaveAction, SetIdHaveAction] = useState<Array<string>>([]);
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const burstPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const burstPollStartedRef = useRef<number | null>(null);
+
+  const stopBurstPoll = () => {
+    if (burstPollRef.current) {
+      clearInterval(burstPollRef.current);
+      burstPollRef.current = null;
+    }
+    burstPollStartedRef.current = null;
+  };
+
+  const getProgress = () => {
+    Application.getProgress(member_id, formatDateTime(fromDate.current))
+      .then((res) => {
+        SetAllprogress(res.data);
+      })
+      .catch(() => {});
+  };
+
+  const startBurstPoll = () => {
+    stopBurstPoll();
+    burstPollStartedRef.current = Date.now();
+    getProgress();
+    burstPollRef.current = setInterval(() => {
+      if (
+        burstPollStartedRef.current &&
+        Date.now() - burstPollStartedRef.current > BURST_POLL_MAX_MS
+      ) {
+        stopBurstPoll();
+        return;
+      }
+      getProgress();
+    }, BURST_POLL_INTERVAL_MS);
+  };
 
   const needCheckProgress = () => {
     const lastDate = lastNeedCheckProgressRef.current;
@@ -69,74 +113,6 @@ const UnderProgressController = ({
       .catch(() => {});
   };
 
-  const getProgress = () => {
-    Application.getProgress(member_id, formatDateTime(fromDate.current))
-      .then((res) => {
-        SetAllprogress(res.data);
-      })
-      .catch(() => {});
-  };
-
-  // const checkUploadedFile = (file: any) => {
-  //   // publish('openProgressModal', {
-  //   //   file_id: file.file_id,
-  //   // });
-  //   Application.checkStepTwoUpload({
-  //     file_id: file.file_id,
-  //     member_id: member_id,
-  //   })
-  //     .then((res) => {
-  //       if (res.data.step_two == true) {
-  //         publish('completedProgress', { file_id: file.file_id });
-  //         // publish('StepTwoSuccess', { file_id: file.file_id });
-  //         SetAllprogress({
-  //           ...allprogress,
-  //           files: allprogress.files.filter(
-  //             (f: any) => f.file_id !== file.file_id,
-  //           ),
-  //         });
-  //       } else {
-  //         const timeoutId = setTimeout(() => {
-  //           checkUploadedFile(file);
-  //         }, 15000);
-  //         timeoutsRef.current.push(timeoutId);
-  //       }
-  //     })
-  //     .catch(() => {
-  //       const timeoutId = setTimeout(() => {
-  //         checkUploadedFile(file);
-  //       }, 15000);
-  //       timeoutsRef.current.push(timeoutId);
-  //     });
-  // };
-  // const checkDeleteFile = (file: any) => {
-  //   Application.checkDeleteLabReport({
-  //     file_id: file.file_id,
-  //     member_id: member_id,
-  //   })
-  //     .then((res) => {
-  //       if (res.data.deleted == true) {
-  //         publish('completedProgress', { file_id: file.file_id });
-  //         SetAllprogress({
-  //           ...allprogress,
-  //           files: allprogress.files.filter(
-  //             (f: any) => f.file_id !== file.file_id,
-  //           ),
-  //         });
-  //       } else {
-  //         const timeoutId = setTimeout(() => {
-  //           checkDeleteFile(file);
-  //         }, 15000);
-  //         timeoutsRef.current.push(timeoutId);
-  //       }
-  //     })
-  //     .catch(() => {
-  //       const timeoutId = setTimeout(() => {
-  //         checkDeleteFile(file);
-  //       }, 15000);
-  //       timeoutsRef.current.push(timeoutId);
-  //     });
-  // };
   const resolveFileController = (files: any[]) => {
     files.forEach((file) => {
       if (file.process_status == true) {
@@ -204,54 +180,52 @@ const UnderProgressController = ({
           }),
         ),
       ];
-      // if (activeUi) {
       publish('openProgressModal', {
         data: progressArray,
       });
-      // }
       if (progressArray.length == 0) {
         publish('allProgressCompleted', {});
       }
     }
   };
   useEffect(() => {
-    // Update current member_id ref
     currentMemberIdRef.current = member_id;
 
-    // Store the member_id for this effect run to check in callbacks
     const effectMemberId = member_id;
 
-    // getProgress();
     needCheckProgress();
     const interval = setInterval(() => {
       needCheckProgress();
     }, 30000);
 
-    // Store callback references for proper cleanup
     const handleCheckProgress = (data?: any) => {
-      // Extra safety: check if member_id still matches to avoid stale callbacks
       if (currentMemberIdRef.current !== effectMemberId) {
         return;
       }
 
-      if (data) {
-        if (data.detail.type === 'file') {
-          SetAllprogress((prev: any) => ({
+      startBurstPoll();
+
+      if (data?.detail?.type === 'file') {
+        SetAllprogress((prev: any) => {
+          const fileId = data.detail.file_id;
+          const filesWithoutDuplicate = prev.files.filter(
+            (f: any) => f.file_id !== fileId,
+          );
+          return {
             ...prev,
-            files: [...prev.files, data.detail],
-          }));
-        }
-        setTimeout(() => {
-          getProgress();
-        }, 2000);
+            files: [...filesWithoutDuplicate, data.detail],
+          };
+        });
       } else {
         getProgress();
       }
     };
 
-    const handleSyncReport = () => {
-      // Extra safety: check if member_id still matches
+    const handleSyncReport = (data?: any) => {
       if (currentMemberIdRef.current !== effectMemberId) {
+        return;
+      }
+      if (data?.detail?.silent === true) {
         return;
       }
       fromDate.current = new Date();
@@ -267,10 +241,9 @@ const UnderProgressController = ({
         refresh: [],
       });
       clearInterval(interval);
-      // Use the same callback references for unsubscribe
+      stopBurstPoll();
       unsubscribe('checkProgress', handleCheckProgress);
       unsubscribe('syncReport', handleSyncReport);
-      // publish('clearAllProgress', {});       lastNeedCheckProgressRef.current = null;
       timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
       timeoutsRef.current = [];
     };
@@ -278,6 +251,9 @@ const UnderProgressController = ({
   }, [member_id]);
   useEffect(() => {
     controllProgress();
+    if (!hasInflightOperations(allprogress)) {
+      stopBurstPoll();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allprogress]);
   return <></>;

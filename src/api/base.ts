@@ -6,7 +6,7 @@ const baseProductEndPoint =
 const baseTestEndPoint =
   'https://vercel-backend-one-roan.vercel.app/holisticare_test';
 
-const defaultLocalApiUrl = 'http://127.0.0.1:3902';
+const defaultLocalApiUrl = 'http://127.0.0.1:3800';
 
 const baseLocalEndpoint =
   (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ||
@@ -16,7 +16,16 @@ const baseProductUrl = 'https://holisticare.vercel.app';
 
 const baseTestUrl = 'https://holisticare-develop.vercel.app';
 
-let env: 'test' | 'production' | 'local' = 'production';
+type AppEnv = 'local' | 'test' | 'production';
+
+const parseAppEnv = (value: string | undefined): AppEnv => {
+  if (value === 'test' || value === 'production' || value === 'local') {
+    return value;
+  }
+  return 'production';
+};
+
+const env: AppEnv = parseAppEnv(import.meta.env.VITE_ENV);
 
 const resolveBaseEndPoint = () => {
   if (env == 'local') {

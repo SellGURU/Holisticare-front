@@ -6,18 +6,23 @@ import SearchSelectWithSuggestions, {
   BiomarkerSuggestion,
 } from '../../searchableSelect/SearchSelectWithSuggestions';
 import SelectWithCreate from '../../Select/SelectWithCreate';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Application from '../../../api/app';
 import {
   collectMappingNameVariations,
   resolveExactBiomarkerName,
   resolveNormalizedBiomarkerName,
 } from './biomarkerNameFields';
+import {
+  normalizeBiomarkerNameForMatch,
+  pickCatalogEntryForRow,
+  type CategorizeReviewRowResult,
+} from './biomarkerReviewCompat';
 
 interface BiomarkerRowProps {
   refRenceEl: any;
   index: number;
-  showOnlyErrors: boolean;
+  showOnlyErrors?: boolean;
   biomarker: any;
   errorText: string;
   isHaveError: boolean;
@@ -35,55 +40,17 @@ interface BiomarkerRowProps {
   onCreateNewBiomarker?: () => void;
   onCreateNewUnit?: () => void;
   onBiomarkerMenuOpen?: () => void;
+  onDropdownOpen?: () => void;
+  useReviewUx?: boolean;
+  rowCategory?: CategorizeReviewRowResult['category'];
+  reviewMessage?: string;
+  onExcludeReview?: () => void;
+  onRestoreExcluded?: () => void;
+  onMappingDirtyChange?: (dirty: boolean) => void;
+  excludedReason?: string;
+  excludedAt?: string;
+  hiddenByFilter?: boolean;
 }
-
-const inferExtractedValueKind = (value: unknown, unit?: string) => {
-  const text = String(value ?? '').trim();
-  const unitText = String(unit ?? '')
-    .trim()
-    .toLowerCase();
-  if (!text) return 'unknown';
-  if (/\d/.test(text)) return 'numeric';
-  if (unitText === '%' || unitText === 'percent' || unitText === 'ratio') {
-    return 'numeric';
-  }
-  return 'string';
-};
-
-const inferSystemValueKind = (valueType?: string, unit?: string) => {
-  const type = String(valueType ?? '')
-    .trim()
-    .toLowerCase();
-  const unitText = String(unit ?? '').trim();
-  if (
-    ['string', 'text', 'categorical', 'qualitative', 'boolean', 'choice'].some(
-      (token) => type.includes(token),
-    )
-  ) {
-    return 'string';
-  }
-  if (
-    ['number', 'numeric', 'integer', 'float', 'decimal', 'range'].some(
-      (token) => type.includes(token),
-    )
-  ) {
-    return 'numeric';
-  }
-  if (unitText) return 'numeric';
-  return 'unknown';
-};
-
-const isValueTypeCompatible = (
-  extractedValue: unknown,
-  extractedUnit: string,
-  systemValueType?: string,
-  systemUnit?: string,
-) => {
-  const extractedKind = inferExtractedValueKind(extractedValue, extractedUnit);
-  const systemKind = inferSystemValueKind(systemValueType, systemUnit);
-  if (extractedKind === 'unknown' || systemKind === 'unknown') return true;
-  return extractedKind === systemKind;
-};
 
 const preferNonEmpty = (...values: unknown[]) => {
   const found = values.find(
@@ -93,7 +60,16 @@ const preferNonEmpty = (...values: unknown[]) => {
   return found ?? '';
 };
 
-const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
+const extractApiError = (err: unknown, fallback: string): string => {
+  if (!err) return fallback;
+  if (typeof err === 'string') return err;
+  const record = err as Record<string, unknown>;
+  if (typeof record.detail === 'string') return record.detail;
+  if (typeof record.message === 'string') return record.message;
+  return fallback;
+};
+
+export default function BiomarkerRow({
   index,
   updateAndStandardize,
   showOnlyErrors,
@@ -111,13 +87,38 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   onCreateNewBiomarker,
   onCreateNewUnit,
   onBiomarkerMenuOpen,
-}) => {
+  onDropdownOpen,
+  useReviewUx = false,
+  rowCategory = 'ready',
+  reviewMessage = '',
+  onExcludeReview,
+  onRestoreExcluded,
+  onMappingDirtyChange,
+  excludedReason,
+  excludedAt,
+  hiddenByFilter = false,
+}: BiomarkerRowProps) {
   const [isChanged, setIsChenged] = useState(false);
   const [isMapped, setIsMapped] = useState(false);
+  const [savedMappings, setSavedMappings] = useState<
+    Array<{ extracted_biomarker: string; system_biomarker: string }>
+  >([]);
   const [mappingStatus, setMappingStatus] = useState<any>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isSavingMapping, setIsSavingMapping] = useState(false);
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
   const [unitOptions, setUnitOptions] = useState<string[]>([]);
   const [copiedExactName, setCopiedExactName] = useState(false);
+
+  const markMappingDirty = () => {
+    setIsChenged(true);
+    onMappingDirtyChange?.(true);
+  };
+
+  const clearMappingDirty = () => {
+    setIsChenged(false);
+    onMappingDirtyChange?.(false);
+  };
   const normalizedName = resolveNormalizedBiomarkerName(biomarker);
   const pdfNameFromDocument = resolveExactBiomarkerName(biomarker);
   const showPdfNameLine = pdfNameFromDocument.length > 0;
@@ -126,9 +127,6 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
     biomarker.value,
   );
   const valueText = String(displayValue).trim();
-  const extractedUnitText = String(
-    biomarker.original_unit ?? biomarker.unit ?? '',
-  ).trim();
   const isTextValueWithoutUnit = valueText.length > 0 && !/\d/.test(valueText);
 
   const copyExactPdfName = async () => {
@@ -183,6 +181,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   );
   const isExtractedUnitError = Boolean(
     !isTextValueWithoutUnit &&
+      biomarker.biomarker &&
       (hasUnitError ||
         normalizedErrorText.includes('unit') ||
         normalizedErrorText.includes('cannot be provided')),
@@ -191,38 +190,26 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
   // Build the effective suggestions list:
   // For successfully mapped rows, include the current mapping as a top suggestion
   // so the user can easily return to it after exploring other options.
-  const compatibleSystemOptions = allAvilableBiomarkers.filter((option) =>
-    isValueTypeCompatible(
-      valueText,
-      extractedUnitText,
-      option.value_type,
-      option.unit,
-    ),
+  const rowTypeOptions = allAvilableBiomarkers;
+  const compatibleSuggestions = suggestionMatches.reduce<BiomarkerSuggestion[]>(
+    (acc, suggestion) => {
+      const key = suggestion.system_biomarker.toLowerCase();
+      if (!acc.some((item) => item.system_biomarker.toLowerCase() === key)) {
+        acc.push(suggestion);
+      }
+      return acc;
+    },
+    [],
   );
-  const compatibleSuggestions = suggestionMatches.filter((suggestion) =>
-    isValueTypeCompatible(
-      valueText,
-      extractedUnitText,
-      suggestion.value_type,
-      suggestion.unit,
-    ),
-  );
-  const isCurrentSystemAllowed =
-    !biomarker.biomarker ||
-    compatibleSystemOptions.some(
-      (option) =>
-        option.biomarker.toLowerCase() ===
-        String(biomarker.biomarker || '').toLowerCase(),
-    );
 
   const effectiveSuggestions: BiomarkerSuggestion[] = (() => {
     const list = [...compatibleSuggestions];
     const currentBiomarker = biomarker.biomarker;
     const currentUnit = biomarker.unit || biomarker.original_unit || '';
-    const currentMeta = compatibleSystemOptions.find(
+    const currentMeta = rowTypeOptions.find(
       (option) =>
-        option.biomarker.toLowerCase() ===
-          String(currentBiomarker || '').toLowerCase() &&
+        normalizeBiomarkerNameForMatch(option.biomarker) ===
+          normalizeBiomarkerNameForMatch(currentBiomarker) &&
         String(option.unit || '').toLowerCase() ===
           String(currentUnit || '').toLowerCase(),
     );
@@ -232,9 +219,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
       !hasBiomarkerError &&
       !list.some(
         (s) =>
-          s.system_biomarker.toLowerCase() === currentBiomarker.toLowerCase() &&
-          String(s.unit || '').toLowerCase() ===
-            String(currentUnit || '').toLowerCase(),
+          s.system_biomarker.toLowerCase() === currentBiomarker.toLowerCase(),
       )
     ) {
       list.unshift({
@@ -250,10 +235,10 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
     return list;
   })();
 
-  const matchingSystemOptions = compatibleSystemOptions.filter(
+  const matchingSystemOptions = rowTypeOptions.filter(
     (option) =>
-      option.biomarker.toLowerCase() ===
-      (biomarker.biomarker || '').toLowerCase(),
+      normalizeBiomarkerNameForMatch(option.biomarker) ===
+      normalizeBiomarkerNameForMatch(biomarker.biomarker),
   );
   const selectedSystemMeta =
     matchingSystemOptions.find(
@@ -281,7 +266,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
     if (unitOptions.length === 1) {
       return unitOptions[0];
     }
-    return selectedSystemMeta?.unit || '';
+    return '';
   })();
 
   useEffect(() => {
@@ -340,7 +325,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
     selectedSystemMeta?.unit,
   ]);
 
-  const getMappingAliases = () => {
+  const mappingAliases = useMemo(() => {
     const system = String(biomarker.biomarker || '').trim();
     if (!system) return [];
 
@@ -350,35 +335,154 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
         extracted_biomarker: extracted,
         system_biomarker: system,
       }));
+  }, [
+    biomarker.biomarker,
+    biomarker.original_biomarker_name,
+    biomarker.normalized_biomarker_name,
+    biomarker.extracted_biomarker_name,
+  ]);
+  const pdfBiomarkerName = resolveExactBiomarkerName(biomarker);
+  const systemBiomarkerName = String(biomarker.biomarker || '').trim();
+  const saveMappingPayloads = useMemo(() => {
+    if (mappingAliases.length > 0) return mappingAliases;
+    if (!pdfBiomarkerName || !systemBiomarkerName) return [];
+    return [
+      {
+        extracted_biomarker: pdfBiomarkerName,
+        system_biomarker: systemBiomarkerName,
+      },
+    ];
+  }, [mappingAliases, pdfBiomarkerName, systemBiomarkerName]);
+  const namesAlreadyMatch =
+    pdfBiomarkerName.length > 0 &&
+    systemBiomarkerName.length > 0 &&
+    pdfBiomarkerName.toLowerCase() === systemBiomarkerName.toLowerCase();
+  const showSaveButton =
+    systemBiomarkerName.length > 0 &&
+    (isChanged || isMapped) &&
+    !namesAlreadyMatch;
+  const saveTooltipId = `save-mapping-${biomarker.biomarker_id || index}`;
+
+  const handleSaveMapping = async () => {
+    if (isSavingMapping) return;
+
+    if (isMapped) {
+      const mappingsToRemove =
+        savedMappings.length > 0 ? savedMappings : saveMappingPayloads;
+      if (mappingsToRemove.length === 0) {
+        setSaveError('No saved mapping to remove.');
+        return;
+      }
+
+      setIsSavingMapping(true);
+      setSaveError(null);
+      try {
+        for (const mapping of mappingsToRemove) {
+          await Application.remove_mapping(mapping);
+        }
+        setIsMapped(false);
+        setSavedMappings([]);
+        setMappingStatus('removed');
+        setTimeout(() => setMappingStatus(null), 5000);
+      } catch (err) {
+        setSaveError(extractApiError(err, 'Failed to remove mapping.'));
+      } finally {
+        setIsSavingMapping(false);
+      }
+      return;
+    }
+
+    if (namesAlreadyMatch) {
+      setIsMapped(true);
+      clearMappingDirty();
+      return;
+    }
+
+    if (saveMappingPayloads.length === 0) {
+      setSaveError('Select a system biomarker before saving.');
+      return;
+    }
+
+    setIsSavingMapping(true);
+    setSaveError(null);
+    try {
+      for (const mapping of saveMappingPayloads) {
+        await Application.add_mapping(mapping);
+      }
+      setIsMapped(true);
+      setSavedMappings(saveMappingPayloads);
+      clearMappingDirty();
+      setMappingStatus('added');
+      setTimeout(() => setMappingStatus(null), 5000);
+    } catch (err) {
+      setSaveError(extractApiError(err, 'Failed to save mapping.'));
+    } finally {
+      setIsSavingMapping(false);
+    }
   };
+
+  const rowBorderClass = useReviewUx
+    ? rowCategory === 'ready'
+      ? 'border-l-4 border-l-[#12B76A]'
+      : rowCategory === 'review'
+        ? 'border-l-4 border-l-[#F59E0B] bg-[#FFFBEB]/60'
+        : rowCategory === 'excluded'
+          ? 'border-l-4 border-l-Gray-100 bg-Gray-15 opacity-80'
+          : ''
+    : '';
+
+  const rowBackgroundClass = useReviewUx
+    ? rowCategory === 'ready'
+      ? index % 2 === 0
+        ? 'bg-white hover:bg-[#F1F7F8]'
+        : 'bg-[#F8FAFB] hover:bg-[#F1F7F8]'
+      : rowCategory === 'review'
+        ? 'hover:bg-[#FFF7ED]'
+        : 'hover:bg-Gray-25'
+    : isErrorHandled
+      ? 'bg-[#ECFDF3]'
+      : isHaveError
+        ? 'bg-[#FFD8E480]'
+        : index % 2 === 0
+          ? 'bg-white hover:bg-[#F1F7F8]'
+          : 'bg-[#F8FAFB] hover:bg-[#F1F7F8]';
+
+  if (hiddenByFilter) {
+    return null;
+  }
 
   return (
     <>
       <div
         ref={refRenceEl}
         key={biomarker.biomarker_id}
-        className={`${showOnlyErrors && !isHaveError ? 'hidden' : ''} ${
-          isErrorHandled
-            ? 'bg-[#ECFDF3]'
-            : isHaveError
-              ? 'bg-[#FFD8E480]'
-              : index % 2 === 0
-                ? 'bg-white'
-                : 'bg-[#F8FAFB]'
-        } grid px-4 py-2 border-b border-Gray-50 items-start text-[8px] md:text-xs text-Text-Primary`}
+        className={`${!useReviewUx && showOnlyErrors && !isHaveError ? 'hidden' : ''} ${rowBorderClass} ${rowBackgroundClass} group grid px-4 py-2 border-b border-Gray-50 items-start text-[8px] md:text-xs text-Text-Primary transition-colors duration-150`}
         style={{
           gridTemplateColumns:
-            'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) 52px',
+            'minmax(180px,1.25fr) minmax(110px,0.8fr) minmax(220px,1.4fr) minmax(95px,0.7fr) minmax(110px,0.8fr) minmax(108px,1fr)',
         }}
       >
         {/* Column 1: Extracted Biomarker */}
         <div className="min-w-0 pt-1">
           <div className="flex min-h-[40px] flex-col justify-center gap-1">
             <div className="flex min-w-0 items-center gap-1 font-medium">
+              {useReviewUx && rowCategory === 'ready' ? (
+                <span className="text-[#12B76A] shrink-0" aria-hidden>
+                  ✓
+                </span>
+              ) : null}
               <TooltipTextAuto maxWidth="180px">
-                {normalizedName || '—'}
+                <span
+                  className={
+                    rowCategory === 'excluded'
+                      ? 'italic text-Text-Secondary'
+                      : ''
+                  }
+                >
+                  {normalizedName || '—'}
+                </span>
               </TooltipTextAuto>
-              {isHaveError && (
+              {!useReviewUx && isHaveError && (
                 <>
                   <img
                     data-tooltip-id={`tooltip-${index}`}
@@ -445,8 +549,10 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
               updateAndStandardize(biomarker.biomarker_id, {
                 biomarker_type: nextType,
               });
-              setIsChenged(true);
+              markMappingDirty();
               setIsMapped(false);
+              setSavedMappings([]);
+              setSaveError(null);
             }}
             className="h-7 w-full max-w-[100px] rounded-xl border border-Gray-50 bg-white px-2 text-center text-[8px] text-Text-Primary outline-none focus:border-Primary-DeepTeal md:text-[10px]"
           >
@@ -465,37 +571,39 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
             isLarge
             isSetting
             value={
-              (isSystemBiomarkerError && !isErrorHandled) ||
-              !isCurrentSystemAllowed
+              isSystemBiomarkerError && !isErrorHandled && !biomarker.biomarker
                 ? ''
-                : biomarker.biomarker
+                : biomarker.biomarker || ''
             }
             placeholder={
               isSystemBiomarkerError && !isErrorHandled
                 ? '...'
-                : !isCurrentSystemAllowed
-                  ? 'Select for this type'
-                  : 'Select an option'
+                : 'Select an option'
             }
-            options={compatibleSystemOptions}
+            options={rowTypeOptions}
             isError={isSystemBiomarkerError && !isErrorHandled}
             suggestions={effectiveSuggestions}
             isSuggestionsLoading={isSuggestionsLoading}
             onCreateNew={onCreateNewBiomarker}
-            onMenuOpen={onBiomarkerMenuOpen}
+            onMenuOpen={() => {
+              onDropdownOpen?.();
+              onBiomarkerMenuOpen?.();
+            }}
             onChange={(val: string) => {
-              const selectedOption = compatibleSystemOptions.find(
-                (option) =>
-                  option.biomarker.toLowerCase() === val.toLowerCase() &&
-                  String(option.unit || '').trim(),
+              const catalogEntry = pickCatalogEntryForRow(
+                allAvilableBiomarkers,
+                {
+                  ...biomarker,
+                  biomarker: val,
+                },
               );
               const nextFields: Partial<any> = { biomarker: val };
               if (!isTextValueWithoutUnit) {
                 const extractedUnit = String(
                   preferNonEmpty(biomarker.original_unit, biomarker.unit) || '',
                 ).trim();
-                if (!extractedUnit && selectedOption?.unit) {
-                  nextFields.original_unit = selectedOption.unit;
+                if (!extractedUnit && catalogEntry?.unit) {
+                  nextFields.original_unit = catalogEntry.unit;
                 } else if (
                   !extractedUnit &&
                   biomarker.possible_values?.units?.length === 1
@@ -504,13 +612,15 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                 }
               }
               updateAndStandardize(biomarker.biomarker_id, nextFields);
-              setIsChenged(true);
+              markMappingDirty();
               setIsMapped(false);
+              setSavedMappings([]);
+              setSaveError(null);
             }}
           />
-          <div className="mt-1 flex min-h-[20px] flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[9px] text-Text-Secondary">
+          <div className="mt-1 flex min-h-[20px] flex-col items-center justify-center gap-0.5 text-[9px] text-Text-Secondary">
             {biomarker.biomarker ? (
-              <>
+              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
                 {selectedSystemMeta?.benchmark_area && (
                   <span className="truncate">
                     {selectedSystemMeta.benchmark_area}
@@ -523,7 +633,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                     ? ` | ${selectedSystemMeta.value_type}`
                     : ''}
                 </span>
-              </>
+              </div>
             ) : (
               <span>
                 Select a system biomarker to see area and default unit.
@@ -559,17 +669,26 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                 placeholder={
                   isExtractedUnitError && !isErrorHandled
                     ? 'Select unit'
-                    : 'Select an option'
+                    : !displayUnit
+                      ? 'Select unit'
+                      : 'Select an option'
                 }
                 validation={isExtractedUnitError && !isErrorHandled}
                 options={unitOptions}
-                onMenuOpen={fetchUnits}
+                onMenuOpen={() => {
+                  onDropdownOpen?.();
+                  void fetchUnits();
+                }}
                 onCreateNew={biomarker.biomarker ? onCreateNewUnit : undefined}
                 onChange={(val: string) => {
                   const actualUnit = val === '(no unit)' ? '' : val;
                   updateAndStandardize(biomarker.biomarker_id, {
                     original_unit: actualUnit,
                   });
+                  markMappingDirty();
+                  setIsMapped(false);
+                  setSavedMappings([]);
+                  setSaveError(null);
                 }}
               />
             )}
@@ -578,9 +697,9 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
 
         {/* Column 6: Actions */}
         <div
-          className={`flex pt-1 items-start ${
-            isChanged || isMapped ? 'justify-end' : 'justify-center'
-          } gap-2`}
+          className={`flex min-w-0 flex-col items-center justify-start gap-1 pt-1 ${
+            showSaveButton ? 'items-end' : 'items-center'
+          }`}
         >
           {isConfirmDelete ? (
             <div className="flex items-center justify-end w-full gap-1">
@@ -593,7 +712,7 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
                   handleConfirmDelete();
                   setIsConfirmDelete(false);
                   setIsMapped(false);
-                  setIsChenged(false);
+                  clearMappingDirty();
                 }}
               />
               <img
@@ -604,89 +723,134 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
               />
             </div>
           ) : (
-            <div className="relative flex items-center justify-end gap-1 h-full">
+            <div className="relative flex w-full flex-col items-end gap-1">
               {mappingStatus === 'added' && (
-                <div className="absolute right-0 bottom-full mb-1 z-30 w-[175px] h-5 rounded-[16px] bg-[#DEF7EC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex items-center justify-center text-nowrap gap-1 animate-fadeOut">
+                <div className="absolute right-0 bottom-full z-30 mb-1 flex w-[210px] items-center justify-center gap-1 rounded-[16px] bg-[#DEF7EC] px-[10px] py-1 text-[8px] text-Text-Primary shadow-100 animate-fadeOut">
                   <img src="/icons/tick-circle-green-new.svg" alt="" />
                   Mapping saved for future uploads.
                 </div>
               )}
               {mappingStatus === 'removed' && (
-                <div className="absolute right-0 bottom-full mb-1 z-30 h-5 w-[220px] rounded-[16px] bg-[#F9DEDC] text-[8px] text-Text-Primary shadow-100 py-1 px-[10px] flex justify-center text-nowrap items-center gap-1 animate-fadeOut">
+                <div className="absolute right-0 bottom-full z-30 mb-1 flex w-[230px] items-center justify-center gap-1 rounded-[16px] bg-[#F9DEDC] px-[10px] py-1 text-[8px] text-Text-Primary shadow-100 animate-fadeOut">
                   <img src="/icons/info-circle-orange.svg" alt="" />
-                  This mapping will only be used for this upload.
+                  Mapping removed for this clinic.
                 </div>
               )}
-              {(isChanged || isMapped) && (
-                <div
-                  className={`cursor-pointer shrink-0 flex items-center gap-1 rounded-full px-2 py-0.5 text-[8px] font-medium transition-all ${
-                    isMapped
-                      ? 'bg-green-100 text-green-700 hover:bg-red-50 hover:text-red-600'
-                      : 'bg-gray-100 text-Text-Secondary hover:bg-green-50 hover:text-green-700'
-                  }`}
-                  title={
-                    isMapped
-                      ? `Mapping saved: "${biomarker.original_biomarker_name}" → "${biomarker.biomarker}". Click to remove.`
-                      : `Save mapping: "${biomarker.original_biomarker_name}" → "${biomarker.biomarker}" for future uploads.`
-                  }
-                  onClick={async () => {
-                    const mappingAliases = getMappingAliases();
-                    if (mappingAliases.length === 0) return;
 
-                    if (isMapped) {
-                      Promise.allSettled(
-                        mappingAliases.map((mapping) =>
-                          Application.remove_mapping(mapping),
-                        ),
-                      )
-                        .then(() => {
-                          setIsMapped(false);
-                          setMappingStatus('removed');
-                          setTimeout(() => setMappingStatus(null), 5000);
-                        })
-                        .catch(() => {});
-                    } else {
-                      Promise.allSettled(
-                        mappingAliases.map((mapping) =>
-                          Application.add_mapping(mapping),
-                        ),
-                      )
-                        .then(() => {
-                          setIsMapped(true);
-                          setMappingStatus('added');
-                          setTimeout(() => setMappingStatus(null), 5000);
-                        })
-                        .catch(() => {});
-                    }
-                  }}
-                >
-                  <img
-                    src={
-                      isMapped ? '/icons/save-2-fill.svg' : '/icons/save-2.svg'
-                    }
-                    alt=""
-                    className="w-3.5 h-3.5"
-                  />
-                  <span className="hidden sm:inline">
-                    {isMapped ? 'Mapped' : 'Save'}
-                  </span>
-                </div>
-              )}
-              <div
-                className={`shrink-0 ${isChanged || isMapped ? 'pl-0' : 'pl-4 sm:pl-6'}`}
-              >
-                <img
-                  src="/icons/trash-blue.svg"
-                  alt="Delete"
-                  className="cursor-pointer w-4 h-4 shrink-0"
-                  onClick={() => setIsConfirmDelete(true)}
-                />
+              <div className="flex items-center justify-end gap-1 flex-wrap">
+                {useReviewUx && rowCategory === 'excluded' ? (
+                  <button
+                    type="button"
+                    onClick={() => onRestoreExcluded?.()}
+                    className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Primary-DeepTeal hover:bg-Primary-DeepTeal/10"
+                  >
+                    ↩ Restore
+                  </button>
+                ) : (
+                  <>
+                    {showSaveButton && (
+                      <>
+                        <button
+                          type="button"
+                          disabled={isSavingMapping}
+                          data-tooltip-id={saveTooltipId}
+                          className={`flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[8px] font-medium transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
+                            isMapped
+                              ? 'bg-green-100 text-green-700 hover:bg-red-50 hover:text-red-600'
+                              : 'bg-gray-100 text-Text-Secondary hover:bg-green-50 hover:text-green-700'
+                          }`}
+                          onClick={() => void handleSaveMapping()}
+                        >
+                          <img
+                            src={
+                              isMapped
+                                ? '/icons/save-2-fill.svg'
+                                : '/icons/save-2.svg'
+                            }
+                            alt=""
+                            className="h-3.5 w-3.5"
+                          />
+                          <span className="leading-tight">
+                            {isSavingMapping
+                              ? 'Saving...'
+                              : isMapped
+                                ? 'Saved'
+                                : 'Save'}
+                          </span>
+                        </button>
+                        <Tooltip
+                          id={saveTooltipId}
+                          place="top"
+                          className="!bg-[#E8F4F6] !bg-opacity-100 !max-w-[260px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 !z-[99999]"
+                        >
+                          {isMapped ? (
+                            <>
+                              Mapping saved: &quot;{pdfBiomarkerName}&quot; →
+                              &quot;{systemBiomarkerName}&quot;. Click to
+                              remove.
+                            </>
+                          ) : (
+                            <>
+                              Save PDF name mapping for your clinic: &quot;
+                              {pdfBiomarkerName}&quot; → &quot;
+                              {systemBiomarkerName}&quot;.
+                            </>
+                          )}
+                        </Tooltip>
+                      </>
+                    )}
+
+                    {useReviewUx ? (
+                      <button
+                        type="button"
+                        onClick={() => onExcludeReview?.()}
+                        className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Text-Secondary hover:bg-Gray-50"
+                        title="Move to excluded list"
+                      >
+                        Exclude ✗
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="shrink-0 rounded p-0.5 hover:bg-Gray-50"
+                        title="Remove this biomarker row"
+                        onClick={() => setIsConfirmDelete(true)}
+                      >
+                        <img
+                          src="/icons/trash-blue.svg"
+                          alt="Delete row"
+                          className="h-4 w-4"
+                        />
+                      </button>
+                    )}
+                  </>
+                )}
               </div>
+              {saveError && (
+                <p className="max-w-[140px] rounded-md bg-[#F9DEDC] px-2 py-1 text-right text-[8px] leading-tight text-Red">
+                  {saveError}
+                </p>
+              )}
             </div>
           )}
         </div>
 
-        {isHaveError && (
+        {useReviewUx && rowCategory === 'review' && reviewMessage ? (
+          <div className="col-span-full px-0 pb-1 pt-0 text-left text-[10px] leading-snug text-[#B45309] break-words">
+            ⚠ {reviewMessage}
+          </div>
+        ) : null}
+        {useReviewUx && rowCategory === 'excluded' ? (
+          <div className="col-span-full px-0 pb-1 pt-0 text-left text-[10px] leading-snug text-Text-Secondary break-words">
+            {excludedReason ? (
+              <span className="mr-2 rounded-full bg-Gray-50 px-2 py-0.5">
+                {excludedReason}
+              </span>
+            ) : null}
+            {excludedAt ? <span>Excluded {excludedAt}</span> : null}
+          </div>
+        ) : null}
+        {!useReviewUx && isHaveError && (
           <div className="col-span-full px-0 pb-1 pt-0 text-left text-Red font-normal text-[10px] leading-snug break-words">
             <span>{errorText}</span>
             {isErrorHandled && (
@@ -699,6 +863,4 @@ const BiomarkerRow: React.FC<BiomarkerRowProps> = ({
       </div>
     </>
   );
-};
-
-export default BiomarkerRow;
+}

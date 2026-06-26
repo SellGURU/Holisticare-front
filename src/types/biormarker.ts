@@ -22,6 +22,7 @@ export interface ApiBiomarkerData {
   Definition?: string;
   unit?: string;
   biomarker_type?: string;
+  biomarker_uid?: string;
   thresholds?: {
     male?: Record<string, ApiThresholdRange[]>;
     female?: Record<string, ApiThresholdRange[]>;
@@ -46,6 +47,7 @@ export interface FormBiomarkerData {
   Definition?: string;
   unit?: string;
   biomarker_type?: string;
+  biomarker_uid?: string;
   thresholds?: {
     male?: FormThresholds[];
     female?: FormThresholds[];

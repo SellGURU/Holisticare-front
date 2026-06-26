@@ -14,8 +14,8 @@ class BiomarkersApi extends Api {
     return this.post('/custom_biomarker/admin/save_config', data);
   };
 
-  static getBiomarkersList = () => {
-    return this.post('/custom_biomarker/chart_bounds', {});
+  static getBiomarkersList = (data: { include_all?: boolean } = {}) => {
+    return this.post('/custom_biomarker/chart_bounds', data);
   };
 
   static getBiomarkerTypes = () => {
@@ -28,6 +28,17 @@ class BiomarkersApi extends Api {
 
   static addBiomarkersList = (data: any) => {
     return this.post('/custom_biomarker/add_biomarker', data);
+  };
+
+  static deleteBiomarker = (data: {
+    original_biomarker_name?: string;
+    original_biomarker_index?: number;
+    original_biomarker_uid?: string;
+    original_biomarker_type?: string;
+    original_unit?: string;
+    original_benchmark_area?: string;
+  }) => {
+    return this.post('/custom_biomarker/delete_biomarker', data);
   };
 
   static getUnitMapping = () => {

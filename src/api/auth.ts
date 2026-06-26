@@ -22,10 +22,9 @@ class Auth extends Api {
     //     }
     //   }, 500);
     // });
-    const data = {
-      username: username,
-      password: password,
-    };
+    const data = new URLSearchParams();
+    data.append('username', username);
+    data.append('password', password);
 
     return this.post('/auth/token', data, {
       headers: {

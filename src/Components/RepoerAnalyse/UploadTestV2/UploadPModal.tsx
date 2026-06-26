@@ -5,6 +5,8 @@ import SpinnerLoader from '../../SpinnerLoader';
 import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
+import { removeRowErrorKey, reviewRowErrorKey } from './biomarkerReviewCompat';
+import ReviewFindingsPanel, { ReviewFinding } from './ReviewFindingsPanel';
 
 interface UploadPModalProps {
   initialMode?: string;
@@ -41,6 +43,18 @@ interface UploadPModalProps {
   btnLoading: boolean;
   setrowErrors: any;
   progressBiomarkerUpload: number;
+  fileId?: string;
+  onRecheck?: () => void;
+  recheckLoading?: boolean;
+  reviewCounts?: { ready: number; review: number; excluded: number };
+  extractedCount?: number;
+  onSuppressedSetChange?: (keys: Set<string>) => void;
+  reopeningExistingFile?: boolean;
+  reviewCatalog?: any[];
+  onReviewCatalogRefresh?: () => void;
+  reviewFindings?: ReviewFinding[];
+  reviewFindingsLoading?: boolean;
+  onReloadReviewFindings?: () => void;
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -78,7 +92,28 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   AddedRowErrors,
   setrowErrors,
   progressBiomarkerUpload,
+  fileId,
+  onRecheck,
+  recheckLoading,
+  reviewCounts,
+  extractedCount,
+  onSuppressedSetChange,
+  reopeningExistingFile = false,
+  reviewCatalog = [],
+  onReviewCatalogRefresh,
+  reviewFindings = [],
+  reviewFindingsLoading = false,
+  onReloadReviewFindings,
 }) => {
+  const isReviewWithFile = Boolean(
+    uploadedFile?.file_id || uploadedFile?.status === 'completed',
+  );
+  const [reviewCountsLocal, setReviewCountsLocal] = useState({
+    ready: 0,
+    review: 0,
+    excluded: 0,
+  });
+  const effectiveReviewCounts = reviewCounts ?? reviewCountsLocal;
   const [activeMenu, setactiveMenu] = useState(
     isEditMode ? 'Upload File' : initialMode || 'Upload File',
   );
@@ -113,7 +148,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   }, [isEditMode, fileType, loading, uploadedFile]);
 
   useEffect(() => {
-    if (!shouldAutoSwitch) return;
+    if (!shouldAutoSwitch || isReviewWithFile) return;
 
     const rowErrorCount = rowErrors ? Object.keys(rowErrors).length : 0;
     const addedErrorCount = AddedRowErrors
@@ -128,7 +163,13 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
     }
 
     setShouldAutoSwitch(false);
-  }, [rowErrors, AddedRowErrors, shouldAutoSwitch]);
+  }, [rowErrors, AddedRowErrors, shouldAutoSwitch, isReviewWithFile]);
+
+  useEffect(() => {
+    if (isReviewWithFile) {
+      setactiveMenu('Upload File');
+    }
+  }, [isReviewWithFile]);
 
   const [showReview, setshowReview] = useState(false);
   useEffect(() => {
@@ -181,42 +222,83 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               </div>
               Lab Data & Biomarkers
             </div>
-            <ButtonPrimary
-              disabled={
-                (extractedBiomarkers.length == 0 &&
-                  addedBiomarkers.length == 0 &&
-                  fileType !== 'ultrasound') ||
-                btnLoading
-              }
-              onClick={() => {
-                onSave();
-                setShouldAutoSwitch(true);
-              }}
-              ClassName=" w-[100px] xs:w-[127px] md:w-[167px]"
-            >
-              {btnLoading ? (
-                <>
-                  {' '}
-                  <SpinnerLoader></SpinnerLoader>
-                  Continue
-                </>
-              ) : (
-                <div
-                  className="flex gap-2 justify-center text-[10px] xs:text-xs"
-                  data-tour="continue-btn"
+            <div className="flex items-center gap-2">
+              {isReviewWithFile &&
+              (reviewFindingsLoading || reviewFindings.length > 0) ? (
+                <ReviewFindingsPanel
+                  layout="modal"
+                  findings={reviewFindings}
+                  loading={reviewFindingsLoading}
+                  onFindingUpdated={onReloadReviewFindings}
+                />
+              ) : null}
+              {onRecheck && fileId && isReviewWithFile ? (
+                <ButtonPrimary
+                  type="button"
+                  outLine
+                  disabled={recheckLoading || btnLoading}
+                  onClick={() => onRecheck()}
+                  ClassName="min-w-[100px] xs:min-w-[127px] disabled:!bg-transparent disabled:!text-Primary-DeepTeal disabled:!border-Primary-DeepTeal disabled:opacity-100"
+                  title="Re-run validation for this file"
+                  aria-busy={recheckLoading}
                 >
-                  <img
-                    className="size-4"
-                    src="/icons/arrow-right-white.svg"
-                    alt=""
-                  />
-                  Continue{' '}
-                </div>
-              )}
-            </ButtonPrimary>
+                  {recheckLoading ? (
+                    <>
+                      <SpinnerLoader />
+                      Re-check
+                    </>
+                  ) : (
+                    <div className="flex gap-2 justify-center text-[10px] xs:text-xs">
+                      <img className="size-4" src="/icons/refresh.svg" alt="" />
+                      Re-check
+                    </div>
+                  )}
+                </ButtonPrimary>
+              ) : null}
+              <ButtonPrimary
+                disabled={
+                  (extractedBiomarkers.length == 0 &&
+                    addedBiomarkers.length == 0 &&
+                    fileType !== 'ultrasound') ||
+                  btnLoading
+                }
+                onClick={() => {
+                  onSave();
+                  if (!isReviewWithFile) {
+                    setShouldAutoSwitch(true);
+                  }
+                }}
+                ClassName=" w-[100px] xs:w-[127px] md:w-[167px]"
+                title={
+                  isReviewWithFile && (effectiveReviewCounts?.review ?? 0) > 0
+                    ? `${effectiveReviewCounts.review} item(s) need review. You can continue now and fix them later in Edit.`
+                    : undefined
+                }
+              >
+                {btnLoading ? (
+                  <>
+                    {' '}
+                    <SpinnerLoader></SpinnerLoader>
+                    Continue
+                  </>
+                ) : (
+                  <div
+                    className="flex gap-2 justify-center text-[10px] xs:text-xs"
+                    data-tour="continue-btn"
+                  >
+                    <img
+                      className="size-4"
+                      src="/icons/arrow-right-white.svg"
+                      alt=""
+                    />
+                    Continue{' '}
+                  </div>
+                )}
+              </ButtonPrimary>
+            </div>
           </div>
-          <div className="flex w-full justify-end mt-3 md:mt-4 shrink-0">
-            {showReview && activeErrorCount > 0 ? (
+          {!isReviewWithFile && showReview && activeErrorCount > 0 ? (
+            <div className="flex w-full justify-end mt-3 md:mt-4 shrink-0">
               <div className="bg-[#FFD8E4] text-[10px] text-Text-Primary w-full max-w-[320px] rounded-[20px] min-h-[36px] py-2 px-4 flex justify-between items-center gap-3">
                 <div className="flex items-center gap-1 min-w-0 flex-1 flex-wrap">
                   <img
@@ -243,123 +325,185 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   alt=""
                 />
               </div>
-            ) : null}
-          </div>
-          <div
-            className={`w-full flex-1 min-h-0 flex flex-col mt-3 gap-2 overflow-hidden ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
-          >
-            <FileUploaderSection
-              isEditMode={isEditMode}
-              isShare={isShare}
-              errorMessage={errorMessage}
-              handleFileChange={handleFileChange}
-              uploadedFile={uploadedFile}
-              handleDeleteFile={handleDeleteFile}
-              formatFileSize={formatFileSize}
-              fileInputRef={fileInputRef}
-              onClose={onClose}
-              onDownload={onDownload}
-            />
-            {/* Show empty state for ultrasound reports */}
-            {fileType === 'ultrasound' ? (
-              <div className="w-full h-full flex flex-col items-center justify-center py-12 px-4">
-                <img
-                  src="/icons/document-upload-new.svg"
-                  alt="Ultrasound Report"
-                  className="size-16 mb-4 opacity-60"
-                />
-                <div className="text-lg font-medium text-Text-Primary mb-2">
-                  Ultrasound Report Uploaded
-                </div>
-                <div className="text-sm text-gray-500 text-center max-w-md">
-                  This is an ultrasound/imaging report. Biomarker extraction is
-                  not applicable for this type of report. The report content
-                  will be included in your health plan.
-                </div>
-                <div className="mt-4 px-4 py-2 bg-Primary-DeepTeal/10 rounded-full text-sm text-Primary-DeepTeal font-medium">
-                  Click "Continue" to proceed to Health Plan
-                </div>
-              </div>
-            ) : uploadedFile || fileType !== 'more_info' ? (
-              <BiomarkersSection
-                rowErrors={rowErrors}
-                setrowErrors={setrowErrors}
-                loading={loading}
-                uploadPhase={uploadPhase}
-                reviewSummary={reviewSummary}
-                progressBiomarkerUpload={progressBiomarkerUpload}
-                fileType={fileType}
-                dateOfTest={modifiedDateOfTest}
-                setDateOfTest={handleModifiedDateOfTestChange}
+            </div>
+          ) : null}
+          {isReviewWithFile ? (
+            <div className="w-full flex-1 min-h-0 flex flex-col mt-3 gap-2 overflow-hidden">
+              <FileUploaderSection
+                isEditMode={isEditMode}
+                isShare={isShare}
+                errorMessage={errorMessage}
+                handleFileChange={handleFileChange}
                 uploadedFile={uploadedFile}
-                biomarkers={extractedBiomarkers}
-                onChange={(updated) => setExtractedBiomarkers(updated)}
-                showOnlyErrors={showOnlyErrors}
-                setShowOnlyErrors={setShowOnlyErrors}
+                handleDeleteFile={handleDeleteFile}
+                formatFileSize={formatFileSize}
+                fileInputRef={fileInputRef}
+                onClose={onClose}
+                onDownload={onDownload}
               />
-            ) : null}
-          </div>
-          <div className={activeMenu !== 'Add Biomarker' ? 'hidden' : ''}>
-            <AddBiomarker
-              biomarkers={
-                isEditMode && fileType === 'more_info'
-                  ? extractedBiomarkers
-                  : addedBiomarkers
-              }
-              rowErrors={
-                isEditMode && fileType === 'more_info'
-                  ? rowErrors
-                  : AddedRowErrors
-              }
-              onAddBiomarker={(newBio) => {
-                if (isEditMode && fileType === 'more_info') {
-                  setExtractedBiomarkers([...extractedBiomarkers, newBio]);
-                } else {
-                  handleAddBiomarker(newBio);
-                }
-              }}
-              onTrashClick={handleTrashClick}
-              onConfirm={(index) => {
-                if (isEditMode && fileType === 'more_info') {
-                  setExtractedBiomarkers(
-                    extractedBiomarkers.filter((_, i) => i !== index),
-                  );
-
-                  // Shift row errors to match new positions
-                  if (rowErrors) {
-                    const newErrors: Record<number, string> = {};
-                    Object.keys(rowErrors).forEach((key) => {
-                      const idx = Number(key);
-                      if (idx < index) {
-                        newErrors[idx] = rowErrors[idx];
-                      } else if (idx > index) {
-                        newErrors[idx - 1] = rowErrors[idx];
-                      }
-                    });
-                    setrowErrors(newErrors);
+              {fileType === 'ultrasound' ? (
+                <div className="w-full h-full flex flex-col items-center justify-center py-12 px-4">
+                  <img
+                    src="/icons/document-upload-new.svg"
+                    alt="Ultrasound Report"
+                    className="size-16 mb-4 opacity-60"
+                  />
+                  <div className="text-lg font-medium text-Text-Primary mb-2">
+                    Ultrasound Report Uploaded
+                  </div>
+                  <div className="text-sm text-gray-500 text-center max-w-md">
+                    This is an ultrasound/imaging report. Biomarker extraction
+                    is not applicable for this type of report. The report
+                    content will be included in your health plan.
+                  </div>
+                  <div className="mt-4 px-4 py-2 bg-Primary-DeepTeal/10 rounded-full text-sm text-Primary-DeepTeal font-medium">
+                    Click "Continue" to proceed to Health Plan
+                  </div>
+                </div>
+              ) : (
+                <BiomarkersSection
+                  isEditMode={isEditMode}
+                  rowErrors={rowErrors}
+                  setrowErrors={setrowErrors}
+                  loading={loading}
+                  uploadPhase={uploadPhase}
+                  reviewSummary={reviewSummary}
+                  progressBiomarkerUpload={progressBiomarkerUpload}
+                  fileType={fileType}
+                  dateOfTest={modifiedDateOfTest}
+                  setDateOfTest={handleModifiedDateOfTestChange}
+                  uploadedFile={uploadedFile}
+                  biomarkers={extractedBiomarkers}
+                  onChange={(updated) => setExtractedBiomarkers(updated)}
+                  useReviewUx
+                  onReviewCountsChange={setReviewCountsLocal}
+                  onSuppressedSetChange={onSuppressedSetChange}
+                  extractedCount={extractedCount}
+                  reopeningExistingFile={reopeningExistingFile}
+                  reviewCatalog={reviewCatalog}
+                  onReviewCatalogRefresh={onReviewCatalogRefresh}
+                  recheckLoading={recheckLoading}
+                />
+              )}
+            </div>
+          ) : (
+            <>
+              <div
+                className={`w-full flex-1 min-h-0 flex flex-col mt-3 gap-2 overflow-hidden ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
+              >
+                <FileUploaderSection
+                  isEditMode={isEditMode}
+                  isShare={isShare}
+                  errorMessage={errorMessage}
+                  handleFileChange={handleFileChange}
+                  uploadedFile={uploadedFile}
+                  handleDeleteFile={handleDeleteFile}
+                  formatFileSize={formatFileSize}
+                  fileInputRef={fileInputRef}
+                  onClose={onClose}
+                  onDownload={onDownload}
+                />
+                {fileType === 'ultrasound' ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center py-12 px-4">
+                    <img
+                      src="/icons/document-upload-new.svg"
+                      alt="Ultrasound Report"
+                      className="size-16 mb-4 opacity-60"
+                    />
+                    <div className="text-lg font-medium text-Text-Primary mb-2">
+                      Ultrasound Report Uploaded
+                    </div>
+                    <div className="text-sm text-gray-500 text-center max-w-md">
+                      This is an ultrasound/imaging report. Biomarker extraction
+                      is not applicable for this type of report. The report
+                      content will be included in your health plan.
+                    </div>
+                    <div className="mt-4 px-4 py-2 bg-Primary-DeepTeal/10 rounded-full text-sm text-Primary-DeepTeal font-medium">
+                      Click "Continue" to proceed to Health Plan
+                    </div>
+                  </div>
+                ) : uploadedFile || fileType !== 'more_info' ? (
+                  <BiomarkersSection
+                    isEditMode={isEditMode}
+                    rowErrors={rowErrors}
+                    setrowErrors={setrowErrors}
+                    loading={loading}
+                    uploadPhase={uploadPhase}
+                    reviewSummary={reviewSummary}
+                    progressBiomarkerUpload={progressBiomarkerUpload}
+                    fileType={fileType}
+                    dateOfTest={modifiedDateOfTest}
+                    setDateOfTest={handleModifiedDateOfTestChange}
+                    uploadedFile={uploadedFile}
+                    biomarkers={extractedBiomarkers}
+                    onChange={(updated) => setExtractedBiomarkers(updated)}
+                    showOnlyErrors={showOnlyErrors}
+                    setShowOnlyErrors={setShowOnlyErrors}
+                    reviewCatalog={reviewCatalog}
+                    onReviewCatalogRefresh={onReviewCatalogRefresh}
+                    recheckLoading={recheckLoading}
+                  />
+                ) : null}
+              </div>
+              <div className={activeMenu !== 'Add Biomarker' ? 'hidden' : ''}>
+                <AddBiomarker
+                  biomarkers={
+                    isEditMode && fileType === 'more_info'
+                      ? extractedBiomarkers
+                      : addedBiomarkers
                   }
+                  rowErrors={
+                    isEditMode && fileType === 'more_info'
+                      ? rowErrors
+                      : AddedRowErrors
+                  }
+                  onAddBiomarker={(newBio) => {
+                    if (isEditMode && fileType === 'more_info') {
+                      setExtractedBiomarkers([...extractedBiomarkers, newBio]);
+                    } else {
+                      handleAddBiomarker(newBio);
+                    }
+                  }}
+                  onTrashClick={handleTrashClick}
+                  onConfirm={(index) => {
+                    if (isEditMode && fileType === 'more_info') {
+                      const deletedRow = extractedBiomarkers[index];
+                      const deletedRowKey = deletedRow
+                        ? reviewRowErrorKey(deletedRow, index)
+                        : '';
+                      setExtractedBiomarkers(
+                        extractedBiomarkers.filter((_, i) => i !== index),
+                      );
 
-                  handleCancel();
-                } else {
-                  handleConfirm(index);
-                }
-              }}
-              onCancel={handleCancel}
-              deleteIndex={deleteIndex}
-              dateOfTest={
-                isEditMode && fileType === 'more_info'
-                  ? modifiedDateOfTest
-                  : addedDateOfTest
-              }
-              setDateOfTest={
-                isEditMode && fileType === 'more_info'
-                  ? handleModifiedDateOfTestChange
-                  : handleAddedDateOfTestChange
-              }
-              showOnlyErrors={showOnlyErrors}
-              setShowOnlyErrors={setShowOnlyErrors}
-            ></AddBiomarker>
-          </div>
+                      if (deletedRowKey && rowErrors) {
+                        setrowErrors((prev: Record<string, string>) =>
+                          removeRowErrorKey(prev || {}, deletedRowKey),
+                        );
+                      }
+
+                      handleCancel();
+                    } else {
+                      handleConfirm(index);
+                    }
+                  }}
+                  onCancel={handleCancel}
+                  deleteIndex={deleteIndex}
+                  dateOfTest={
+                    isEditMode && fileType === 'more_info'
+                      ? modifiedDateOfTest
+                      : addedDateOfTest
+                  }
+                  setDateOfTest={
+                    isEditMode && fileType === 'more_info'
+                      ? handleModifiedDateOfTestChange
+                      : handleAddedDateOfTestChange
+                  }
+                  showOnlyErrors={showOnlyErrors}
+                  setShowOnlyErrors={setShowOnlyErrors}
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
