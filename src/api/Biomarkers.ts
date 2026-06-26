@@ -30,6 +30,17 @@ class BiomarkersApi extends Api {
     return this.post('/custom_biomarker/add_biomarker', data);
   };
 
+  static deleteBiomarker = (data: {
+    original_biomarker_name?: string;
+    original_biomarker_index?: number;
+    original_biomarker_uid?: string;
+    original_biomarker_type?: string;
+    original_unit?: string;
+    original_benchmark_area?: string;
+  }) => {
+    return this.post('/custom_biomarker/delete_biomarker', data);
+  };
+
   static getUnitMapping = () => {
     return this.post('/custom_biomarker/unit_mapping', {});
   };

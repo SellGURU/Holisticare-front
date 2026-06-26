@@ -158,6 +158,52 @@ export const applySavedBiomarkerUpdate = (
       trim(savedBiomarker?.biomarker_uid) || trim(meta.biomarkerUid),
   });
 
+export const isCustomBiomarker = (item: any) =>
+  trim(item?.source).toLowerCase() === 'custom';
+
+export const removeBiomarkerByIdentity = (
+  biomarkers: any[],
+  meta: BiomarkerIdentityMeta,
+) => {
+  const uid = trim(meta.biomarkerUid);
+  if (uid) {
+    const filtered = biomarkers.filter(
+      (item) => trim(item?.biomarker_uid) !== uid,
+    );
+    if (filtered.length !== biomarkers.length) {
+      return filtered;
+    }
+  }
+
+  const identityKey = [
+    trim(meta.originalBiomarkerName).toLowerCase(),
+    trim(meta.originalUnit).toLowerCase(),
+    trim(meta.originalBenchmarkArea).toLowerCase(),
+    normalizeBiomarkerType(meta.originalBiomarkerType),
+  ].join('|');
+
+  const matchingIndexes = biomarkers
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => buildBiomarkerIdentityKey(item) === identityKey)
+    .map(({ index }) => index);
+
+  if (matchingIndexes.length === 1) {
+    return biomarkers.filter((_, index) => index !== matchingIndexes[0]);
+  }
+
+  const index = meta.originalBiomarkerIndex;
+  if (
+    Number.isInteger(index) &&
+    index >= 0 &&
+    index < biomarkers.length &&
+    matchingIndexes.length === 0
+  ) {
+    return biomarkers.filter((_, itemIndex) => itemIndex !== index);
+  }
+
+  return biomarkers;
+};
+
 const normalizeName = (value: unknown) => trim(value).toLowerCase();
 
 export const getDuplicateBiomarkerNames = (biomarkers: any[]) => {
