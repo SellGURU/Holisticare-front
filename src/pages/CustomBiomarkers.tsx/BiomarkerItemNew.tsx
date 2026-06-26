@@ -285,7 +285,12 @@ const BiomarkerRow = ({
               className="flex h-7 w-7 items-center justify-center rounded-full border border-Gray-50 bg-white hover:border-Primary-DeepTeal"
               title="Delete biomarker"
             >
-              <SvgIcon color="#005F73" src="./icons/delete.svg" width="18" height="18" />
+              <SvgIcon
+                color="#005F73"
+                src="./icons/delete.svg"
+                width="18"
+                height="18"
+              />
             </button>
           ) : null}
         </div>
