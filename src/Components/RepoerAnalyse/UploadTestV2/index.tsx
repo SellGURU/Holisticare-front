@@ -1280,7 +1280,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     if (isDemo) return;
     const readyRow = { ...row, validation_status: 'ready' };
     const rowsForSave = buildContinueRows().map((existingRow) =>
-      existingRow.biomarker_id === readyRow.biomarker_id ? readyRow : existingRow,
+      existingRow.biomarker_id === readyRow.biomarker_id
+        ? readyRow
+        : existingRow,
     );
     try {
       setCompileState('saving');
@@ -1292,10 +1294,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         res?.data?.modified_biomarkers_file_id ||
         res?.data?.added_biomarkers_file_id ||
         uploadedFile?.file_id;
-      showSuccess(
-        'Biomarker saved.',
-        'Refreshing health plan...',
-      );
+      showSuccess('Biomarker saved.', 'Refreshing health plan...');
       triggerSilentCompile(savedFileId);
       setCompileState('done');
     } catch (err: any) {

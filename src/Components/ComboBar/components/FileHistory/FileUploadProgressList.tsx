@@ -18,10 +18,7 @@ const FileUploadProgressList: FC<FileUploadProgressListProps> = ({
       const bottomSpacing = 55;
 
       const offset =
-        topSpacing +
-        addFileButtonHeight +
-        gapBetweenItems +
-        bottomSpacing;
+        topSpacing + addFileButtonHeight + gapBetweenItems + bottomSpacing;
 
       const height = window.innerHeight - offset;
       setContainerMaxHeight(height);

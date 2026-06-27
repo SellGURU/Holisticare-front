@@ -670,7 +670,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     const handleUploadTestShow = (data: any) => {
       const detail = data?.detail || {};
       const shouldOpenOverlay = Boolean(
-        detail.file_id || detail.mode === 'manual' || detail.mode === 'review_ready',
+        detail.file_id ||
+          detail.mode === 'manual' ||
+          detail.mode === 'review_ready',
       );
       if (!shouldOpenOverlay) return;
 

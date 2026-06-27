@@ -253,8 +253,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-[11px] font-medium text-Primary-DeepTeal">
-                    {file.uploadPhase === 'processing' ||
-                    file.headerProcessing
+                    {file.uploadPhase === 'processing' || file.headerProcessing
                       ? 'Background processing'
                       : 'Uploading file'}
                   </div>

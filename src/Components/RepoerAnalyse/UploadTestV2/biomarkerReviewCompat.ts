@@ -50,7 +50,11 @@ const formatDateOfTestTimestamp = (dateOfTest?: unknown) => {
   if (!dateOfTest) return '';
   const date = new Date(String(dateOfTest));
   if (Number.isNaN(date.getTime())) return '';
-  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()).toString();
+  return Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  ).toString();
 };
 
 const thresholdValueIsNumeric = (value: unknown) => {
@@ -543,7 +547,9 @@ const resolveStepOneValidationRowIndex = (item: any, rows: any[]) => {
       const rowNames = [row?.original_biomarker_name, row?.biomarker].map(
         normalizeKey,
       );
-      const rowValue = normalizeKey(preferNonEmpty(row?.original_value, row?.value));
+      const rowValue = normalizeKey(
+        preferNonEmpty(row?.original_value, row?.value),
+      );
       const rowUnit = normalizeKey(row?.original_unit ?? row?.unit);
 
       return (
@@ -580,8 +586,9 @@ const buildStepOneRowErrors = (validation: any, rows: any[]) => {
     const rowIndex = resolveStepOneValidationRowIndex(item, rows);
     if (rowIndex < 0) return;
     const row = rows[rowIndex];
-    rowErrors[reviewRowErrorKey(row, rowIndex)] =
-      String(item?.display_detail || item?.detail || 'Review required').trim();
+    rowErrors[reviewRowErrorKey(row, rowIndex)] = String(
+      item?.display_detail || item?.detail || 'Review required',
+    ).trim();
   });
 
   return rowErrors;

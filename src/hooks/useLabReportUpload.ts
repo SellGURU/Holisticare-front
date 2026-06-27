@@ -84,7 +84,9 @@ const isGatewayTimeout = (error: unknown) => {
   return (
     responseRecord.status === 504 ||
     errorRecord.code === 'ECONNABORTED' ||
-    String(errorRecord.message || '').toLowerCase().includes('timeout')
+    String(errorRecord.message || '')
+      .toLowerCase()
+      .includes('timeout')
   );
 };
 

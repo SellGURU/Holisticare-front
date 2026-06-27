@@ -442,9 +442,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     if (!useReviewUx || categoryFilterInitialized.current) return;
     if (!reviewBiomarkers.length || reviewMetadataPending) return;
     categoryFilterInitialized.current = true;
-    setCategoryFilter(
-      reviewCategoryCounts.review > 0 ? 'review' : 'ready',
-    );
+    setCategoryFilter(reviewCategoryCounts.review > 0 ? 'review' : 'ready');
   }, [
     useReviewUx,
     reviewBiomarkers.length,

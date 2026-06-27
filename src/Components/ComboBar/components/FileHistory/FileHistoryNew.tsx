@@ -156,19 +156,19 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       let tempIdToRemove: string | undefined;
       setInlineUploads((prev) =>
         prev.map((fileUpload) =>
-          fileUpload.file_id === fileId ||
-          fileUpload.upload_temp_id === fileId
+          fileUpload.file_id === fileId || fileUpload.upload_temp_id === fileId
             ? (() => {
-                tempIdToRemove = fileUpload.upload_temp_id || fileUpload.file_id;
+                tempIdToRemove =
+                  fileUpload.upload_temp_id || fileUpload.file_id;
                 return {
-                ...fileUpload,
-                status: 'background',
-                uploadPhase: 'processing',
-                headerProcessing: true,
-                reviewHandoff: true,
-                progressBiomarker: 100,
-                process_done: false,
-              };
+                  ...fileUpload,
+                  status: 'background',
+                  uploadPhase: 'processing',
+                  headerProcessing: true,
+                  reviewHandoff: true,
+                  progressBiomarker: 100,
+                  process_done: false,
+                };
               })()
             : fileUpload,
         ),
@@ -304,7 +304,9 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       fileUpload.status === 'success' || fileUpload.status === 'background',
   );
   const withReviewMeta = (fileUpload: any) => {
-    const meta = fileUpload?.file_id ? fileReviewMeta[fileUpload.file_id] : null;
+    const meta = fileUpload?.file_id
+      ? fileReviewMeta[fileUpload.file_id]
+      : null;
     return meta ? { ...fileUpload, ...meta } : fileUpload;
   };
   const mergedUploadedFiles = [
@@ -372,7 +374,11 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       }
       let uploadPhase = data.status || 'ocr_processing';
 
-      if (uploadPhase === 'ocr_processing' && extractedCount && extractedCount > 0) {
+      if (
+        uploadPhase === 'ocr_processing' &&
+        extractedCount &&
+        extractedCount > 0
+      ) {
         uploadPhase = 'ocr_processing';
       } else if (
         uploadPhase === 'validating_review' ||
@@ -404,18 +410,15 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       updateInlineUpload(tempId, {
         uploadPhase,
         headerProcessing: true,
-        progressBiomarker: data.progress ?? activeProcessingUpload.progressBiomarker,
+        progressBiomarker:
+          data.progress ?? activeProcessingUpload.progressBiomarker,
         extractedCount: reviewCounts?.extracted ?? extractedCount,
         reviewCount: reviewCounts?.review,
         excludedCount: reviewCounts?.excluded,
         reviewCountsReady: Boolean(reviewCounts),
       });
 
-      if (
-        data.validation?.ready &&
-        extractedCount &&
-        extractedCount > 0
-      ) {
+      if (data.validation?.ready && extractedCount && extractedCount > 0) {
         if (
           processLabReportInFlightRef.current.has(fileId) ||
           processLabReportSucceededRef.current.has(fileId)
@@ -670,68 +673,75 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
               </div>
             ) : null}
             <div className="relative z-[1] flex w-full flex-col items-center justify-center">
-            {isInlineUploadBusy && activeInlineUpload?.status === 'error' ? (
-              <div className="flex w-full flex-col items-center justify-center gap-2 py-4 text-center">
-                <div className="flex size-11 items-center justify-center rounded-full border border-[#F3B8C8] bg-[#FFF5F8]">
-                  <img src="/icons/info-circle-red.svg" alt="" className="size-6" />
+              {isInlineUploadBusy && activeInlineUpload?.status === 'error' ? (
+                <div className="flex w-full flex-col items-center justify-center gap-2 py-4 text-center">
+                  <div className="flex size-11 items-center justify-center rounded-full border border-[#F3B8C8] bg-[#FFF5F8]">
+                    <img
+                      src="/icons/info-circle-red.svg"
+                      alt=""
+                      className="size-6"
+                    />
+                  </div>
+                  <div className="text-[12px] font-semibold text-[#B42318]">
+                    Upload failed
+                  </div>
+                  <div className="max-w-[280px] text-[10px] leading-4 text-Text-Secondary">
+                    {activeInlineUpload.errorMessage ||
+                      'This file could not be uploaded. Please try another file.'}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      removeInlineUpload(
+                        activeInlineUpload.upload_temp_id ||
+                          activeInlineUpload.file_id,
+                      )
+                    }
+                    className="mt-1 rounded-full border border-Gray-50 bg-white px-3 py-1.5 text-[10px] font-medium text-Primary-DeepTeal shadow-100 hover:bg-backgroundColor-Main"
+                  >
+                    Try another file
+                  </button>
                 </div>
-                <div className="text-[12px] font-semibold text-[#B42318]">
-                  Upload failed
+              ) : isInlineUploadBusy &&
+                activeInlineUpload?.status === 'success' ? (
+                <div className="flex w-full flex-col items-center justify-center gap-2 py-4 text-center">
+                  <div className="flex size-11 items-center justify-center rounded-full bg-Primary-EmeraldGreen/15">
+                    <img
+                      src="/icons/tick-circle-green-new.svg"
+                      alt=""
+                      className="size-7"
+                    />
+                  </div>
+                  <div className="text-[12px] font-semibold text-Primary-DeepTeal">
+                    Upload successful
+                  </div>
+                  <div className="text-[10px] leading-4 text-Text-Quadruple">
+                    Biomarkers are ready for review.
+                  </div>
                 </div>
-                <div className="max-w-[280px] text-[10px] leading-4 text-Text-Secondary">
-                  {activeInlineUpload.errorMessage ||
-                    'This file could not be uploaded. Please try another file.'}
-                </div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    removeInlineUpload(
-                      activeInlineUpload.upload_temp_id ||
-                        activeInlineUpload.file_id,
-                    )
-                  }
-                  className="mt-1 rounded-full border border-Gray-50 bg-white px-3 py-1.5 text-[10px] font-medium text-Primary-DeepTeal shadow-100 hover:bg-backgroundColor-Main"
-                >
-                  Try another file
-                </button>
-              </div>
-            ) : isInlineUploadBusy && activeInlineUpload?.status === 'success' ? (
-              <div className="flex w-full flex-col items-center justify-center gap-2 py-4 text-center">
-                <div className="flex size-11 items-center justify-center rounded-full bg-Primary-EmeraldGreen/15">
-                  <img
-                    src="/icons/tick-circle-green-new.svg"
-                    alt=""
-                    className="size-7"
-                  />
-                </div>
-                <div className="text-[12px] font-semibold text-Primary-DeepTeal">
-                  Upload successful
-                </div>
-                <div className="text-[10px] leading-4 text-Text-Quadruple">
-                  Biomarkers are ready for review.
-                </div>
-              </div>
-            ) : isInlineUploadBusy && activeInlineUpload ? (
-              <ProgressLoading
-                maxProgress={inlineProgressMax}
-                phase={inlineUploadPhase}
-                extractedCount={activeInlineUpload.extractedCount}
-                reviewCount={activeInlineUpload.reviewCount}
-                excludedCount={activeInlineUpload.excludedCount}
-                headerProcessing={Boolean(activeInlineUpload.headerProcessing)}
-                compact
-              />
-            ) : (
-              <>
-                <img src="/icons/upload-test.svg" alt="" className="size-9" />
-                <div className="mt-2 text-[11px] font-medium text-Text-Primary">
-                  Upload File
-                </div>
-                <div className="mt-1 text-[9px] leading-4 text-Text-Secondary">
-                  Drag/drop or click
-                </div>
-              </>
-            )}
+              ) : isInlineUploadBusy && activeInlineUpload ? (
+                <ProgressLoading
+                  maxProgress={inlineProgressMax}
+                  phase={inlineUploadPhase}
+                  extractedCount={activeInlineUpload.extractedCount}
+                  reviewCount={activeInlineUpload.reviewCount}
+                  excludedCount={activeInlineUpload.excludedCount}
+                  headerProcessing={Boolean(
+                    activeInlineUpload.headerProcessing,
+                  )}
+                  compact
+                />
+              ) : (
+                <>
+                  <img src="/icons/upload-test.svg" alt="" className="size-9" />
+                  <div className="mt-2 text-[11px] font-medium text-Text-Primary">
+                    Upload File
+                  </div>
+                  <div className="mt-1 text-[9px] leading-4 text-Text-Secondary">
+                    Drag/drop or click
+                  </div>
+                </>
+              )}
             </div>
           </div>
           {!isInlineUploadBusy ? (

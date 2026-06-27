@@ -83,9 +83,7 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
   const activeIndex = resolveActiveIndex(phase);
   const activeStep = STEPS[activeIndex];
   const showReviewSummary =
-    activeIndex === 2 &&
-    reviewCount != null &&
-    excludedCount != null;
+    activeIndex === 2 && reviewCount != null && excludedCount != null;
 
   const activeHint =
     activeIndex === 2 && headerProcessing
@@ -164,7 +162,9 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
               {idx < STEPS.length - 1 ? (
                 <div
                   className={`mx-0.5 mb-4 h-px flex-1 transition-colors ${
-                    idx < activeIndex ? 'bg-Primary-EmeraldGreen' : 'bg-Gray-100'
+                    idx < activeIndex
+                      ? 'bg-Primary-EmeraldGreen'
+                      : 'bg-Gray-100'
                   }`}
                 />
               ) : null}

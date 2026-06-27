@@ -168,7 +168,9 @@ const ActionSection: FC<ActionSectionProps> = ({
                   disabled={isDeleted}
                   onClick={() => setIsOptionsOpen((prev) => !prev)}
                   className={`flex size-8 items-center justify-center rounded-full border border-Gray-50 bg-white text-lg leading-none text-Primary-DeepTeal shadow-100 transition-colors hover:bg-backgroundColor-Main ${
-                    isDeleted ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                    isDeleted
+                      ? 'cursor-not-allowed opacity-50'
+                      : 'cursor-pointer'
                   }`}
                   aria-label="File options"
                 >
