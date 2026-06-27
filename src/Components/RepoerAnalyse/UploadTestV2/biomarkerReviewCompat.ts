@@ -40,6 +40,19 @@ const preferNonEmpty = (...values: unknown[]) => {
   return found ?? '';
 };
 
+const stringifyLabField = (value: unknown) => {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value);
+};
+
+const formatDateOfTestTimestamp = (dateOfTest?: unknown) => {
+  if (!dateOfTest) return '';
+  const date = new Date(String(dateOfTest));
+  if (Number.isNaN(date.getTime())) return '';
+  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()).toString();
+};
+
 const thresholdValueIsNumeric = (value: unknown) => {
   if (value === null || value === undefined) return false;
   if (typeof value === 'number') return true;
@@ -302,6 +315,67 @@ export const buildBiomarkerRowsForValidation = (
     return base;
   });
 
+export const buildProcessLabReportPayload = ({
+  memberId,
+  fileId,
+  labType,
+  rows,
+  dateOfTest,
+}: {
+  memberId: string | number;
+  fileId: string;
+  labType?: string;
+  rows: any[];
+  dateOfTest?: unknown;
+}) => {
+  const resolvedLabType = labType || 'more_info';
+  const resolvedRows = buildBiomarkerRowsForValidation(
+    Array.isArray(rows) ? rows : [],
+    resolvedLabType,
+  ).map((resolved, index) => ({
+    ...(rows[index] || {}),
+    ...resolved,
+  }));
+
+  const mappedRows = resolvedRows.map((row) => {
+    const value = stringifyLabField(
+      preferNonEmpty(row.original_value, row.value),
+    );
+    const unit = stringifyLabField(preferNonEmpty(row.original_unit, row.unit));
+    return {
+      biomarker_id: stringifyLabField(row.biomarker_id),
+      biomarker: stringifyLabField(row.biomarker),
+      biomarker_type: stringifyLabField(row.biomarker_type || 'blood'),
+      original_biomarker_name: stringifyLabField(row.original_biomarker_name),
+      original_value: value,
+      original_unit: unit,
+      value,
+      unit,
+      'sub-value': row['sub-value'],
+      header_1: row['header_1'],
+      more_info: row['more_info'],
+      list_of_genes: row['list_of_genes'],
+      your_result: row['your_result'],
+      validation_status: stringifyLabField(row.validation_status || 'ready'),
+    };
+  });
+
+  return {
+    member_id: memberId,
+    modified_biomarkers: {
+      biomarkers_list: mappedRows,
+      date_of_test: formatDateOfTestTimestamp(dateOfTest),
+      lab_type: resolvedLabType,
+      file_id: fileId || '',
+    },
+    added_biomarkers: {
+      biomarkers_list: [],
+      date_of_test: '',
+      lab_type: 'more_info',
+    },
+  };
+};
+
 export type ReviewRowCategory = 'ready' | 'review' | 'excluded';
 export type ReviewReason =
   | 'unmatched'
@@ -438,6 +512,102 @@ export const countReviewRowCategories = (
   return { ready, review, excluded };
 };
 
+const resolveStepOneValidationRowIndex = (item: any, rows: any[]) => {
+  const errorBiomarkerId = trim(item?.biomarker_id);
+
+  if (errorBiomarkerId) {
+    const idMatchIndex = rows.findIndex(
+      (row: any) => trim(row?.biomarker_id) === errorBiomarkerId,
+    );
+    if (idMatchIndex !== -1) return idMatchIndex;
+  }
+
+  const idx = Number(item?.index);
+  if (Number.isInteger(idx) && idx >= 0 && idx < rows.length) {
+    return idx;
+  }
+
+  const errorName = normalizeKey(
+    item?.extracted_biomarker ||
+      item?.original_biomarker_name ||
+      item?.biomarker,
+  );
+  const errorValue = normalizeKey(item?.value);
+  const errorUnit = normalizeKey(item?.unit);
+
+  if (!errorName) return -1;
+
+  const exactMatchIndexes = rows
+    .map((row: any, index: number) => ({ row, index }))
+    .filter(({ row }: any) => {
+      const rowNames = [row?.original_biomarker_name, row?.biomarker].map(
+        normalizeKey,
+      );
+      const rowValue = normalizeKey(preferNonEmpty(row?.original_value, row?.value));
+      const rowUnit = normalizeKey(row?.original_unit ?? row?.unit);
+
+      return (
+        rowNames.includes(errorName) &&
+        (!errorValue || rowValue === errorValue) &&
+        (!errorUnit || rowUnit === errorUnit)
+      );
+    })
+    .map(({ index }: any) => index);
+
+  if (exactMatchIndexes.length === 1) return exactMatchIndexes[0];
+
+  const nameOnlyMatchIndexes = rows
+    .map((row: any, index: number) => ({ row, index }))
+    .filter(({ row }: any) =>
+      [row?.original_biomarker_name, row?.biomarker]
+        .map(normalizeKey)
+        .includes(errorName),
+    )
+    .map(({ index }: any) => index);
+
+  if (nameOnlyMatchIndexes.length === 1) return nameOnlyMatchIndexes[0];
+  return -1;
+};
+
+const buildStepOneRowErrors = (validation: any, rows: any[]) => {
+  const rowErrors: Record<string, string> = {};
+  const items = [
+    ...(validation?.modified_biomarkers_list || []),
+    ...(validation?.added_biomarkers_list || []),
+  ];
+
+  items.forEach((item: any) => {
+    const rowIndex = resolveStepOneValidationRowIndex(item, rows);
+    if (rowIndex < 0) return;
+    const row = rows[rowIndex];
+    rowErrors[reviewRowErrorKey(row, rowIndex)] =
+      String(item?.display_detail || item?.detail || 'Review required').trim();
+  });
+
+  return rowErrors;
+};
+
+export const countReviewCategoriesFromStepOneData = (
+  data: {
+    extracted_biomarkers?: any[];
+    validation?: any;
+  },
+  suppressedItems: SuppressedBiomarkerItem[] = [],
+) => {
+  const rows = Array.isArray(data.extracted_biomarkers)
+    ? data.extracted_biomarkers
+    : [];
+  const validation = data.validation || {};
+  const { suppressedSet } = buildSuppressedStateFromItems(suppressedItems);
+  const reviewRows = mergeSuppressedRowsIntoReview(rows, suppressedItems);
+  const rowErrors = buildStepOneRowErrors(validation, reviewRows);
+
+  return {
+    ...countReviewRowCategories(reviewRows, rowErrors, suppressedSet),
+    extracted: rows.length,
+  };
+};
+
 export const getReviewRowMessage = (
   result: CategorizeReviewRowResult,
   _row: any,
@@ -462,11 +632,11 @@ export const getReviewRowMessage = (
 export const rowMatchesCategoryFilter = (
   categoryFilter: CategoryFilter,
   category: ReviewRowCategory,
-  reviewCount: number,
+  _reviewCount: number,
 ) => {
   if (categoryFilter === 'all') return true;
   if (categoryFilter === 'default') {
-    return category === 'review' || (category === 'ready' && reviewCount === 0);
+    return category === 'review';
   }
   return category === categoryFilter;
 };

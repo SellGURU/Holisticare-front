@@ -9,8 +9,8 @@ import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
 import Joyride, { CallBackProps, Step } from 'react-joyride';
 import { TutorialReminderToast } from './showTutorialReminderToast';
-import { uploadBlobToAzure } from '../../../services/uploadBlobService';
 import useIsDemo from '../../../hooks/useIsDemo';
+import { useLabReportUpload } from '../../../hooks/useLabReportUpload';
 import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
@@ -126,6 +126,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   isLoadingQuestionnaires,
 }) => {
   const isDemo = useIsDemo();
+  const { uploadLabReportFile } = useLabReportUpload();
   const fileInputRef = useRef<any>(null);
   const [step, setstep] = useState(0);
   const [initialLabMenu, setInitialLabMenu] = useState('Upload File');
@@ -150,6 +151,15 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const isMountedRef = useRef(true);
   const skipExtractionProgressRef = useRef(false);
   const [reopeningExistingFile, setReopeningExistingFile] = useState(false);
+  const backendRowErrorsRef = useRef<Record<string, string>>({});
+  const autoSaveFileRef = useRef<string | null>(null);
+  const reviewHydratedFileRef = useRef<string | null>(null);
+  const [reviewHydrating, setReviewHydrating] = useState(false);
+  const [compileState, setCompileState] = useState<
+    'idle' | 'saving' | 'done' | 'error'
+  >('idle');
+  const [lastSavedFileId, setLastSavedFileId] = useState<string | undefined>();
+  const autoSavedMappingKeysRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -162,12 +172,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       if (isDemo) return;
       const editFileId = data?.detail?.file_id;
       const fileName = data?.detail?.file_name || '';
+      const mode = data?.detail?.mode;
       setIsUploadFromComboBar(true);
       // If editing an existing file, preload it so polling fetches its biomarkers
       if (editFileId) {
-        skipExtractionProgressRef.current = true;
-        setReopeningExistingFile(true);
-        setIsTrueEditMode(true);
+        const isInlineReviewReady = mode === 'review_ready';
+        skipExtractionProgressRef.current = !isInlineReviewReady;
+        setReopeningExistingFile(!isInlineReviewReady);
+        setIsTrueEditMode(!isInlineReviewReady);
+        reviewHydratedFileRef.current = null;
+        setReviewHydrating(!isInlineReviewReady);
         setstep(1);
         setInitialLabMenu('Upload File');
         setExtractedBiomarkers([]);
@@ -185,12 +199,22 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           status: 'completed',
         });
         setPolling(true);
-      } else {
+      } else if (mode === 'manual') {
         skipExtractionProgressRef.current = false;
         setReopeningExistingFile(false);
         setIsTrueEditMode(false);
-        // Just clicked 'Add File or Biomarker' from combo bar
-        setstep(2); // Go to PDF vs Manual choice
+        setInitialLabMenu('Add Biomarker');
+        setUploadedFile(null);
+        setExtractedBiomarkers([]);
+        setRowErrors({});
+        setAddedRowErrors({});
+        setReviewSummary(null);
+        setUploadPhase('uploading');
+        setbiomarkerLoading(false);
+        setstep(1);
+      } else {
+        // New file uploads are handled inline in the ComboBar.
+        return;
       }
     });
   }, [isDemo]);
@@ -296,6 +320,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           setPolling(false);
           skipExtractionProgressRef.current = false;
           setReopeningExistingFile(false);
+        } else if (reopenExistingFile) {
+          // Edited/reopened reports don't need ongoing step-one polling; it was
+          // resetting rowErrors to {} every interval and making counts jump.
+          setPolling(false);
+          skipExtractionProgressRef.current = false;
+          setReopeningExistingFile(false);
         }
 
         if (!reopenExistingFile && data.validation?.ready) {
@@ -304,15 +334,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           await showReviewLoading();
         }
 
-        const errorMaps = data.validation?.ready
-          ? buildValidationErrorsMaps(
-              data.validation,
-              enrichedRows,
-              addedBiomarkers,
-            )
-          : { modifiedErrors: {}, addedErrors: {} };
-        setRowErrors(errorMaps.modifiedErrors);
-        setAddedRowErrors(errorMaps.addedErrors);
+        if (data.validation?.ready) {
+          const errorMaps = buildValidationErrorsMaps(
+            data.validation,
+            enrichedRows,
+            addedBiomarkers,
+          );
+          backendRowErrorsRef.current = errorMaps.modifiedErrors;
+          setRowErrors(errorMaps.modifiedErrors);
+          setAddedRowErrors(errorMaps.addedErrors);
+        } else if (!reopenExistingFile) {
+          backendRowErrorsRef.current = {};
+          setRowErrors({});
+          setAddedRowErrors({});
+        }
 
         const displayRows = sortReviewBiomarkerRows(enrichedRows);
         setExtractedBiomarkers(displayRows);
@@ -321,6 +356,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             ? 'review_ready'
             : data.status || 'review_ready',
         );
+
+        const shouldHydrateFindings =
+          activeFileId &&
+          (reopenExistingFile || data.validation?.ready) &&
+          reviewHydratedFileRef.current !== activeFileId;
+        if (shouldHydrateFindings) {
+          setReviewHydrating(true);
+          try {
+            await loadReviewFindings(
+              activeFileId,
+              backendRowErrorsRef.current,
+              displayRows,
+            );
+            reviewHydratedFileRef.current = activeFileId;
+          } finally {
+            if (isMountedRef.current) setReviewHydrating(false);
+          }
+        }
+
         setbiomarkerLoading(false);
         if (data.is_edited) {
           setisSaveClicked(false);
@@ -445,118 +499,17 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       })
       .catch((err) => console.error('Download failed', err));
   };
-  const sendToBackend = async (file: File, azureUrl: string) => {
-    if (isDemo) return;
-    await Application.addLabReport(
-      {
-        member_id: memberId,
-        report: {
-          'file name': file.name,
-          blob_url: azureUrl,
-        },
-      },
-      (progressEvent: any) => {
-        const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total,
-        );
-        const backendProgress = 50 + percentCompleted / 2;
-
-        setUploadedFile((prev) =>
-          prev
-            ? {
-                ...prev,
-                progress: backendProgress,
-                uploadedSize: progressEvent.loaded,
-              }
-            : prev,
-        );
-      },
-    )
-      .then((res) => {
-        setUploadedFile((prev) =>
-          prev
-            ? {
-                ...prev,
-                status: 'completed',
-                file_id: res.data.file_id,
-                azureUrl,
-                warning: res.status == 206,
-              }
-            : prev,
-        );
-      })
-      .catch((err) => {
-        if (err == 'Network Error') {
-          setUploadedFile((prev) =>
-            prev ? { ...prev, status: 'completed' } : prev,
-          );
-        } else {
-          setUploadPhase('failed');
-          setUploadedFile((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  status: 'error',
-                  errorMessage:
-                    err?.response?.data?.message ||
-                    err?.detail ||
-                    'Failed to upload file. Please try again.',
-                }
-              : prev,
-          );
-        }
-      });
-  };
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDemo) return;
     const files = e.target.files;
     if (files && files[0]) {
       const file = files[0];
-      const fileName = file.name;
-      const fileExtension = fileName.split('.').pop()?.toLowerCase();
-
-      const supportedFormats = [
-        'pdf',
-        'docx',
-        'doc',
-        'png',
-        'jpg',
-        'jpeg',
-        'webp',
-      ];
-
-      if (!fileExtension || !supportedFormats.includes(fileExtension)) {
-        // Validation failed: set error state without calling API
-        const newFile: FileUpload = {
-          file_id: '',
-          file,
-          progress: 0,
-          status: 'error',
-          errorMessage:
-            'Unsupported format. Allowed: PDF, DOC, DOCX, PNG, JPG, JPEG, WEBP.',
-        };
-        setUploadedFile(newFile);
-        setUploadPhase('failed');
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
-        return; // Stop execution here
-      }
 
       // Validation passed: proceed with upload
       skipExtractionProgressRef.current = false;
       setReopeningExistingFile(false);
       setIsTrueEditMode(false);
-      const newFile: FileUpload = {
-        file_id: '',
-        file,
-        progress: 0.5,
-        status: 'uploading',
-        uploadedSize: 0,
-      };
-
-      setUploadedFile(newFile);
+      setPolling(true);
       setReviewSummary(null);
       setExtractedBiomarkers([]);
       setRowErrors({});
@@ -564,55 +517,17 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       setUploadPhase('uploading');
       setbiomarkerLoading(true);
 
-      try {
-        // Step 1: Upload to Azure
-        // const azureUrl = await uploadToAzure(file, (progress) => {
-        //   const uploadedBytes = Math.floor((progress / 100) * file.size);
-        //   setUploadedFile((prev) =>
-        //     prev
-        //       ? { ...prev, progress: progress / 2, uploadedSize: uploadedBytes }
-        //       : prev,
-        //   );
-        // });
-        uploadBlobToAzure({
-          containerKey: 'reports',
-          file: file,
-          name: fileName,
-          onProgress: (progress) => {
-            const uploadedBytes = Math.floor((progress / 100) * file.size);
-            setUploadedFile((prev) =>
-              prev
-                ? {
-                    ...prev,
-                    progress: progress / 2,
-                    uploadedSize: uploadedBytes,
-                  }
-                : prev,
-            );
-          },
-        })
-          .then((azureUrl) => {
-            sendToBackend(file, azureUrl);
-          })
-          .catch(() => {});
-
-        // Step 2: Send to backend
-        // await sendToBackend(file, azureUrl);
-      } catch (error: any) {
-        setUploadPhase('failed');
-        setUploadedFile((prev) =>
-          prev
-            ? {
-                ...prev,
-                status: 'error',
-                errorMessage:
-                  error?.response?.data?.message ||
-                  error?.message ||
-                  'Failed to upload file. Please try again.',
-              }
-            : prev,
-        );
-      }
+      await uploadLabReportFile({
+        memberId,
+        file,
+        onStateChange: (fileUpload) => {
+          setUploadedFile(fileUpload);
+          if (fileUpload.status === 'error') {
+            setUploadPhase('failed');
+            setbiomarkerLoading(false);
+          }
+        },
+      });
     }
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -683,6 +598,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const handleAddedDateOfTestChange = (date: Date | null) => {
     setAddedDateOfTest(date);
   };
+
+  const shouldBulkAutoSaveMappings = () =>
+    !isTrueEditMode && !reopeningExistingFile;
 
   const handleSaveLabReport = async (
     rowsOverride?: any[],
@@ -762,10 +680,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         more_info: b['more_info'],
         list_of_genes: b['list_of_genes'],
         your_result: b['your_result'],
+        validation_status: stringifyLabField(b.validation_status || 'ready'),
       };
     });
 
-    if (!skipAutoSave) {
+    if (!skipAutoSave && shouldBulkAutoSaveMappings()) {
       await autoSaveBiomarkerMappings(biomarkerSource);
     }
 
@@ -1060,6 +979,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const applyPersistedReviewFindings = (
     findings: ReviewFinding[],
     contextBiomarkers = extractedBiomarkers,
+    backendErrors: Record<string, string> | null = null,
   ) => {
     const openFindings = findings.filter(
       (finding) =>
@@ -1083,15 +1003,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       contextBiomarkers,
       addedBiomarkers,
     );
-    setRowErrors(modifiedErrors);
+    setRowErrors({ ...(backendErrors ?? {}), ...modifiedErrors });
   };
 
   const autoSaveBiomarkerMappings = async (rowsOverride?: any[]) => {
     if (isDemo) return;
+    if (!shouldBulkAutoSaveMappings()) return;
     const rows = rowsOverride ?? extractedBiomarkers;
     const uniqueMappings = new Map<
       string,
-      { extracted: string; system: string }
+      { extracted: string; system: string; key: string }
     >();
 
     rows.forEach((row: any) => {
@@ -1100,19 +1021,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
       collectMappingNameVariations(row).forEach((extracted) => {
         if (extracted.toLowerCase() === system.toLowerCase()) return;
-        uniqueMappings.set(
-          `${extracted.toLowerCase()}|${system.toLowerCase()}`,
-          {
-            extracted,
-            system,
-          },
-        );
+        const key = `${extracted.toLowerCase()}|${system.toLowerCase()}`;
+        if (autoSavedMappingKeysRef.current.has(key)) return;
+        uniqueMappings.set(key, {
+          extracted,
+          system,
+          key,
+        });
       });
     });
 
     if (uniqueMappings.size === 0) return;
 
     const mappings = Array.from(uniqueMappings.values());
+    mappings.forEach(({ key }) => autoSavedMappingKeysRef.current.add(key));
     const batchSize = 8;
     for (let i = 0; i < mappings.length; i += batchSize) {
       const batch = mappings.slice(i, i + batchSize);
@@ -1127,19 +1049,22 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
   };
 
-  // Advisory review: continue with every row the user has not explicitly
-  // excluded (ready + review). Review items are saved and become persisted
-  // findings the user can resolve later in Edit Mode; they no longer block.
+  // Persist ready/review state with each row; downstream reads only consume
+  // rows saved as ready.
   const buildContinueRows = () =>
-    extractedBiomarkers.filter((row, index) => {
+    extractedBiomarkers.flatMap((row, index) => {
       const { category } = categorizeReviewRow(
         row,
         rowErrors,
         suppressedSet,
         index,
       );
-      return category !== 'excluded';
+      if (category === 'excluded') return [];
+      return [{ ...row, validation_status: category }];
     });
+
+  const buildReadyRows = () =>
+    buildContinueRows().filter((row) => row.validation_status === 'ready');
 
   const parseApiErrorDetail = (err: any) =>
     err?.detail ?? err?.response?.data?.detail ?? err;
@@ -1286,8 +1211,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       });
       onGenderate(savedFileId, { silent: true });
 
-      void loadReviewFindings(savedFileId);
-      void autoSaveBiomarkerMappings(continueRows);
+      void loadReviewFindings(savedFileId, backendRowErrorsRef.current);
+      if (shouldBulkAutoSaveMappings()) {
+        void autoSaveBiomarkerMappings(continueRows);
+      }
     } catch (err: any) {
       console.error('Review continue save failed:', err);
       if (isLabSaveGatewayTimeout(err)) {
@@ -1308,20 +1235,103 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
   };
 
-  const loadReviewFindings = async (fileIdOverride?: string) => {
+  const triggerSilentCompile = (savedFileId?: string) => {
+    setLastSavedFileId(savedFileId);
+    publish('syncReport', { silent: true });
+    publish('checkProgress', {
+      type: 'file',
+      file_id: savedFileId,
+      action_type: 'uploaded',
+      process_status: false,
+    });
+    onGenderate(savedFileId, { silent: true });
+  };
+
+  const autoSaveAndCompile = async (rows: any[]) => {
+    if (!rows.length) {
+      setCompileState('done');
+      return;
+    }
+    if (reviewCatalog.length === 0) return;
+    setCompileState('saving');
+    try {
+      const res = await handleSaveLabReport(rows, {
+        skipAddedBiomarkers: true,
+        skipAutoSaveMappings: true,
+      });
+      const savedFileId =
+        res?.data?.modified_biomarkers_file_id ||
+        res?.data?.added_biomarkers_file_id ||
+        uploadedFile?.file_id;
+      triggerSilentCompile(savedFileId);
+      void loadReviewFindings(savedFileId, backendRowErrorsRef.current);
+      if (shouldBulkAutoSaveMappings()) {
+        void autoSaveBiomarkerMappings(rows);
+      }
+      setCompileState('done');
+    } catch (err: any) {
+      console.error('Auto save and compile failed:', err);
+      setCompileState('error');
+      handleLabSaveError(err);
+    }
+  };
+
+  const handleRowReadySave = async (row: any) => {
+    if (isDemo) return;
+    const readyRow = { ...row, validation_status: 'ready' };
+    const rowsForSave = buildContinueRows().map((existingRow) =>
+      existingRow.biomarker_id === readyRow.biomarker_id ? readyRow : existingRow,
+    );
+    try {
+      setCompileState('saving');
+      const res = await handleSaveLabReport(rowsForSave, {
+        skipAddedBiomarkers: true,
+        skipAutoSaveMappings: true,
+      });
+      const savedFileId =
+        res?.data?.modified_biomarkers_file_id ||
+        res?.data?.added_biomarkers_file_id ||
+        uploadedFile?.file_id;
+      showSuccess(
+        'Biomarker saved.',
+        'Refreshing health plan...',
+      );
+      triggerSilentCompile(savedFileId);
+      setCompileState('done');
+    } catch (err: any) {
+      console.error('Row ready save failed:', err);
+      setCompileState('error');
+      handleLabSaveError(err);
+    }
+  };
+
+  const loadReviewFindings = async (
+    fileIdOverride?: string,
+    backendErrors: Record<string, string> | null = null,
+    contextBiomarkers?: any[],
+  ) => {
     const fileId = fileIdOverride || uploadedFile?.file_id;
-    if (!fileId) return;
+    if (!fileId) return [];
     setReviewFindingsLoading(true);
     try {
       const res = await Application.getLabReviewFindings({ file_id: fileId });
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current) return [];
       const findings = Array.isArray(res?.data?.findings)
         ? res.data.findings
         : [];
       setReviewFindings(findings);
-      applyPersistedReviewFindings(findings);
+      const biomarkersForContext = contextBiomarkers ?? extractedBiomarkers;
+      if (biomarkersForContext.length) {
+        applyPersistedReviewFindings(
+          findings,
+          biomarkersForContext,
+          backendErrors,
+        );
+      }
+      return findings;
     } catch (err: any) {
       console.error('Failed to load review findings:', err);
+      return [];
     } finally {
       if (isMountedRef.current) setReviewFindingsLoading(false);
     }
@@ -1329,17 +1339,47 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   useEffect(() => {
     const fid = uploadedFile?.file_id;
-    if (!fid) return;
-    if (isTrueEditMode || uploadPhase === 'review_ready') {
-      void loadReviewFindings(fid);
+    if (
+      !fid ||
+      fileType === 'ultrasound' ||
+      uploadPhase !== 'review_ready' ||
+      reopeningExistingFile ||
+      isTrueEditMode ||
+      extractedBiomarkers.length === 0 ||
+      reviewCatalog.length === 0 ||
+      autoSaveFileRef.current === fid
+    ) {
+      return;
     }
+
+    autoSaveFileRef.current = fid;
+    setCompileState('saving');
+    const rowsToSave = buildContinueRows();
+    if (buildReadyRows().length === 0) {
+      setCompileState('done');
+      void handleSaveLabReport(rowsToSave, {
+        skipAddedBiomarkers: true,
+        skipAutoSaveMappings: true,
+      });
+      return;
+    }
+    void autoSaveAndCompile(rowsToSave);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uploadedFile?.file_id, isTrueEditMode, uploadPhase]);
+  }, [
+    uploadedFile?.file_id,
+    fileType,
+    uploadPhase,
+    reopeningExistingFile,
+    isTrueEditMode,
+    extractedBiomarkers,
+    reviewCatalog.length,
+  ]);
 
   const handleRecheck = async () => {
     const fileId = uploadedFile?.file_id;
     if (!fileId || recheckLoading || stepOnePollInFlightRef.current) return;
     setRecheckLoading(true);
+    setReviewHydrating(true);
     stepOnePollInFlightRef.current = true;
     try {
       const res = await Application.checkLabStepOne({ file_id: fileId });
@@ -1371,15 +1411,19 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         );
         setRowErrors(errorMaps.modifiedErrors);
         setAddedRowErrors(errorMaps.addedErrors);
-        setExtractedBiomarkers(sortReviewBiomarkerRows(enrichedRows));
+        const displayRows = sortReviewBiomarkerRows(enrichedRows);
+        setExtractedBiomarkers(displayRows);
         setUploadPhase(res.data.status || 'review_ready');
         setProgressBiomarkerUpload(res.data.progress ?? 100);
+        await loadReviewFindings(fileId, errorMaps.modifiedErrors, displayRows);
+        reviewHydratedFileRef.current = fileId;
       }
     } catch (err: any) {
       console.error('Re-check failed:', err);
     } finally {
       stepOnePollInFlightRef.current = false;
       setRecheckLoading(false);
+      setReviewHydrating(false);
     }
   };
 
@@ -1433,7 +1477,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       member_id: memberId,
     })
       .then(async () => {
-        await autoSaveBiomarkerMappings();
+        if (shouldBulkAutoSaveMappings()) {
+          await autoSaveBiomarkerMappings();
+        }
         setisSaveClicked(true);
         setstep(0);
         setRowErrors({});
@@ -1454,6 +1500,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         }
       });
   };
+
+  const handleSaveClose = () => {
+    if (lastSavedFileId || uploadedFile?.file_id) {
+      publish('checkProgress', {
+        type: 'file',
+        file_id: lastSavedFileId || uploadedFile?.file_id,
+        action_type: 'uploaded',
+        process_status: false,
+      });
+    }
+    publish('syncReport', { silent: true });
+    setstep(0);
+  };
+
   const resolveActiveButtonReportAnalyse = () => {
     if (showReport) {
       return true;
@@ -1650,7 +1710,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                               }
                             })
                             .catch(handleLabSaveError);
-                          onGenderate('customBiomarker');
                         } else {
                           onGenderate(undefined);
                         }
@@ -1687,7 +1746,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                     <div
                       onClick={() => {
                         if (isDemo) return;
-                        setstep(2);
+                        setInitialLabMenu('Upload File');
+                        setstep(1);
                       }}
                       title={
                         isDemo
@@ -1832,7 +1892,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                                 );
                               } else if (
                                 res.data.added_biomarkers_file_id != null &&
-                                res.data.added_biomarkers_file_id != null
+                                res.data.added_biomarkers_file_id != ''
                               ) {
                                 onGenderate(res.data.added_biomarkers_file_id);
                               } else {
@@ -1840,7 +1900,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                               }
                             })
                             .catch(handleLabSaveError);
-                          onGenderate('customBiomarker');
                         } else {
                           onGenderate(undefined);
                         }
@@ -1855,75 +1914,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             </div>
           )}
         </>
-      ) : step === 2 ? (
-        <div className="w-full rounded-[16px] md:h-[89vh] top-4 flex justify-center absolute left-0 text-Text-Primary">
-          <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
-          <div className="z-10 relative px-2 flex flex-col items-center justify-center h-[calc(100vh-60px)] w-full max-w-4xl">
-            <div className="w-full relative flex items-center justify-center mb-8">
-              <div
-                onClick={() => {
-                  if (isUploadFromComboBar) {
-                    onDiscard();
-                  } else {
-                    setstep(0);
-                  }
-                }}
-                className="absolute left-0 cursor-pointer size-8 md:size-10 rounded-full p-2 bg-white border border-Gray-50 shadow-100 flex items-center justify-center hover:bg-gray-50"
-              >
-                <img
-                  src="/icons/arrow-back.svg"
-                  className="w-5 h-5"
-                  alt="Back"
-                />
-              </div>
-              <div className="text-center text-xl md:text-2xl font-semibold text-Text-Primary">
-                Select Input Method
-              </div>
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-6 w-full justify-center px-4 md:px-6">
-              <div
-                onClick={() => {
-                  setInitialLabMenu('Upload File');
-                  setstep(1);
-                }}
-                className="cursor-pointer bg-white w-full md:w-[350px] h-[240px] rounded-2xl border p-6 flex flex-col items-center justify-center gap-[16px] shadow-100 border-Gray-50 hover:shadow-200 hover:-translate-y-1 transition-all"
-              >
-                <img
-                  src="/icons/document-upload-new.svg"
-                  className="w-[60px] h-[60px] mb-2"
-                  alt="Upload"
-                />
-                <div className="text-base font-semibold text-Text-Primary">
-                  Upload Lab Report
-                </div>
-                <div className="text-sm text-Text-Secondary mt-1 text-center">
-                  Upload a PDF, DOC, DOCX, or image file (PNG/JPG/JPEG/WEBP) to
-                  automatically extract biomarkers.
-                </div>
-              </div>
-              <div
-                onClick={() => {
-                  setInitialLabMenu('Add Biomarker');
-                  setstep(1);
-                }}
-                className="cursor-pointer bg-white w-full md:w-[350px] h-[240px] rounded-2xl border p-6 flex flex-col items-center justify-center gap-[16px] shadow-100 border-Gray-50 hover:shadow-200 hover:-translate-y-1 transition-all"
-              >
-                <img
-                  src="/icons/task-square-new.svg"
-                  className="w-[60px] h-[60px] mb-2"
-                  alt="Manual"
-                />
-                <div className="text-base font-semibold text-Text-Primary">
-                  Enter Manually
-                </div>
-                <div className="text-sm text-Text-Secondary mt-1 text-center">
-                  Type your biomarkers directly into an editable grid.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       ) : (
         <UploadPModal
           initialMode={initialLabMenu}
@@ -1936,15 +1926,17 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               if (isTrueEditMode) {
                 onDiscard(); // Was editing, just discard
               } else {
-                setstep(2); // Was not editing, go back to step 2
+                setstep(0);
               }
             } else {
-              setstep(2); // Regular add mode, go back to step 2
+              setstep(0);
             }
             // Clear all data
             skipExtractionProgressRef.current = false;
             setReopeningExistingFile(false);
             setIsTrueEditMode(false);
+            reviewHydratedFileRef.current = null;
+            setReviewHydrating(false);
             setUploadedFile(null);
             setModifiedDateOfTest(new Date());
             setAddedDateOfTest(new Date());
@@ -1965,6 +1957,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           fileType={fileType}
           uploadedFile={uploadedFile}
           onSave={onSave}
+          onSaveClose={handleSaveClose}
           isShare={isShare || false}
           errorMessage={uploadedFile?.errorMessage || errorMessage}
           handleFileChange={handleFileChange}
@@ -1997,7 +1990,12 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           onReviewCatalogRefresh={refreshReviewCatalog}
           reviewFindings={reviewFindings}
           reviewFindingsLoading={reviewFindingsLoading}
-          onReloadReviewFindings={() => loadReviewFindings()}
+          onReloadReviewFindings={() =>
+            loadReviewFindings(undefined, backendRowErrorsRef.current)
+          }
+          compileState={compileState}
+          onRowReadySave={handleRowReadySave}
+          reviewHydrating={reviewHydrating}
         />
       )}
     </>

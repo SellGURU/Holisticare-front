@@ -47,6 +47,7 @@ interface BiomarkerRowProps {
   onExcludeReview?: () => void;
   onRestoreExcluded?: () => void;
   onMappingDirtyChange?: (dirty: boolean) => void;
+  onRowReadySave?: (row: any) => void;
   excludedReason?: string;
   excludedAt?: string;
   hiddenByFilter?: boolean;
@@ -94,6 +95,7 @@ export default function BiomarkerRow({
   onExcludeReview,
   onRestoreExcluded,
   onMappingDirtyChange,
+  onRowReadySave,
   excludedReason,
   excludedAt,
   hiddenByFilter = false,
@@ -361,7 +363,22 @@ export default function BiomarkerRow({
     systemBiomarkerName.length > 0 &&
     (isChanged || isMapped) &&
     !namesAlreadyMatch;
+  const showReadySaveButton =
+    useReviewUx &&
+    rowCategory === 'ready' &&
+    !isMapped &&
+    Boolean(onRowReadySave);
+  const shouldShowSaveButton = showSaveButton || showReadySaveButton;
   const saveTooltipId = `save-mapping-${biomarker.biomarker_id || index}`;
+
+  const handleSaveClick = async () => {
+    if (showSaveButton) {
+      await handleSaveMapping();
+    }
+    if (!isMapped && rowCategory === 'ready') {
+      onRowReadySave?.(biomarker);
+    }
+  };
 
   const handleSaveMapping = async () => {
     if (isSavingMapping) return;
@@ -746,7 +763,7 @@ export default function BiomarkerRow({
                   </button>
                 ) : (
                   <>
-                    {showSaveButton && (
+                    {shouldShowSaveButton && (
                       <>
                         <button
                           type="button"
@@ -757,7 +774,7 @@ export default function BiomarkerRow({
                               ? 'bg-green-100 text-green-700 hover:bg-red-50 hover:text-red-600'
                               : 'bg-gray-100 text-Text-Secondary hover:bg-green-50 hover:text-green-700'
                           }`}
-                          onClick={() => void handleSaveMapping()}
+                          onClick={() => void handleSaveClick()}
                         >
                           <img
                             src={

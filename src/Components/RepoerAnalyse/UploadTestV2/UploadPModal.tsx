@@ -6,7 +6,7 @@ import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
 import { removeRowErrorKey, reviewRowErrorKey } from './biomarkerReviewCompat';
-import ReviewFindingsPanel, { ReviewFinding } from './ReviewFindingsPanel';
+import { ReviewFinding } from './ReviewFindingsPanel';
 
 interface UploadPModalProps {
   initialMode?: string;
@@ -14,6 +14,7 @@ interface UploadPModalProps {
   OnBack: () => void;
   uploadedFile: FileUpload | null;
   onSave: () => void;
+  onSaveClose?: () => void;
   isShare: boolean;
   errorMessage: string;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -55,6 +56,9 @@ interface UploadPModalProps {
   reviewFindings?: ReviewFinding[];
   reviewFindingsLoading?: boolean;
   onReloadReviewFindings?: () => void;
+  compileState?: 'idle' | 'saving' | 'done' | 'error';
+  onRowReadySave?: (row: any) => void;
+  reviewHydrating?: boolean;
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -64,6 +68,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   OnBack,
   uploadedFile,
   onSave,
+  onSaveClose,
   isShare,
   errorMessage,
   handleFileChange,
@@ -101,9 +106,12 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   reopeningExistingFile = false,
   reviewCatalog = [],
   onReviewCatalogRefresh,
-  reviewFindings = [],
-  reviewFindingsLoading = false,
-  onReloadReviewFindings,
+  reviewFindings: _reviewFindings = [],
+  reviewFindingsLoading: _reviewFindingsLoading = false,
+  onReloadReviewFindings: _onReloadReviewFindings,
+  compileState = 'idle',
+  onRowReadySave,
+  reviewHydrating,
 }) => {
   const isReviewWithFile = Boolean(
     uploadedFile?.file_id || uploadedFile?.status === 'completed',
@@ -254,7 +262,11 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   btnLoading
                 }
                 onClick={() => {
-                  onSave();
+                  if (isReviewWithFile && onSaveClose) {
+                    onSaveClose();
+                  } else {
+                    onSave();
+                  }
                   if (!isReviewWithFile) {
                     setShouldAutoSwitch(true);
                   }
@@ -262,7 +274,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 ClassName=" w-[100px] xs:w-[127px] md:w-[167px]"
                 title={
                   isReviewWithFile && (effectiveReviewCounts?.review ?? 0) > 0
-                    ? `${effectiveReviewCounts.review} item(s) need review. You can continue now and fix them later in Edit.`
+                    ? `${effectiveReviewCounts.review} item(s) need review. Ready items are saved automatically; fix review items anytime in Edit.`
                     : undefined
                 }
               >
@@ -270,7 +282,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   <>
                     {' '}
                     <SpinnerLoader></SpinnerLoader>
-                    Continue
+                    Save & Close
                   </>
                 ) : (
                   <div
@@ -282,7 +294,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                       src="/icons/arrow-right-white.svg"
                       alt=""
                     />
-                    Continue{' '}
+                    Save & Close{' '}
                   </div>
                 )}
               </ButtonPrimary>
@@ -352,43 +364,45 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   </div>
                 </div>
               ) : (
-                <>
-                  {isReviewWithFile &&
-                  (reviewFindingsLoading || reviewFindings.length > 0) ? (
-                    <ReviewFindingsPanel
-                      findings={reviewFindings}
-                      loading={reviewFindingsLoading}
-                      onFindingUpdated={onReloadReviewFindings}
-                    />
-                  ) : null}
-                  <BiomarkersSection
-                    isEditMode={isEditMode}
-                    rowErrors={rowErrors}
-                    setrowErrors={setrowErrors}
-                    loading={loading}
-                    uploadPhase={uploadPhase}
-                    reviewSummary={reviewSummary}
-                    progressBiomarkerUpload={progressBiomarkerUpload}
-                    fileType={fileType}
-                    dateOfTest={modifiedDateOfTest}
-                    setDateOfTest={handleModifiedDateOfTestChange}
-                    uploadedFile={uploadedFile}
-                    biomarkers={extractedBiomarkers}
-                    onChange={(updated) => setExtractedBiomarkers(updated)}
-                    useReviewUx
-                    onReviewCountsChange={setReviewCountsLocal}
-                    onSuppressedSetChange={onSuppressedSetChange}
-                    extractedCount={extractedCount}
-                    reopeningExistingFile={reopeningExistingFile}
-                    reviewCatalog={reviewCatalog}
-                    onReviewCatalogRefresh={onReviewCatalogRefresh}
-                    recheckLoading={recheckLoading}
-                  />
-                </>
+                <BiomarkersSection
+                  isEditMode={isEditMode}
+                  rowErrors={rowErrors}
+                  setrowErrors={setrowErrors}
+                  loading={loading}
+                  uploadPhase={uploadPhase}
+                  reviewSummary={reviewSummary}
+                  progressBiomarkerUpload={progressBiomarkerUpload}
+                  fileType={fileType}
+                  dateOfTest={modifiedDateOfTest}
+                  setDateOfTest={handleModifiedDateOfTestChange}
+                  uploadedFile={uploadedFile}
+                  biomarkers={extractedBiomarkers}
+                  onChange={(updated) => setExtractedBiomarkers(updated)}
+                  useReviewUx
+                  onReviewCountsChange={setReviewCountsLocal}
+                  onSuppressedSetChange={onSuppressedSetChange}
+                  extractedCount={extractedCount}
+                  reopeningExistingFile={reopeningExistingFile}
+                  reviewCatalog={reviewCatalog}
+                  onReviewCatalogRefresh={onReviewCatalogRefresh}
+                  recheckLoading={recheckLoading}
+                  compileState={compileState}
+                  onRowReadySave={onRowReadySave}
+                  reviewHydrating={reviewHydrating}
+                />
               )}
             </div>
           ) : (
             <>
+              <div className="mb-3 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setactiveMenu('Add Biomarker')}
+                  className={`text-[10px] md:text-xs font-medium text-Primary-DeepTeal underline ${activeMenu === 'Add Biomarker' ? 'hidden' : ''}`}
+                >
+                  Enter Manually
+                </button>
+              </div>
               <div
                 className={`w-full flex-1 min-h-0 flex flex-col mt-3 gap-2 overflow-hidden ${activeMenu !== 'Upload File' ? 'hidden' : ''}`}
               >
@@ -443,6 +457,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     reviewCatalog={reviewCatalog}
                     onReviewCatalogRefresh={onReviewCatalogRefresh}
                     recheckLoading={recheckLoading}
+                    compileState={compileState}
+                    onRowReadySave={onRowReadySave}
                   />
                 ) : null}
               </div>
