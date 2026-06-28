@@ -11,7 +11,7 @@ import {
 } from '../../../../hooks/useLabReportUpload';
 import ProgressLoading from '../../../RepoerAnalyse/UploadTestV2/ProgressLoading';
 import {
-  buildProcessLabReportPayload,
+  buildProcessLabReportPayloadFromStepOne,
   countReviewCategoriesFromStepOneData,
 } from '../../../RepoerAnalyse/UploadTestV2/biomarkerReviewCompat';
 import type { SuppressedBiomarkerItem } from '../../../RepoerAnalyse/UploadTestV2/biomarkerReviewCompat';
@@ -20,6 +20,7 @@ const STEP_ONE_POLL_INTERVAL_MS = 10000;
 
 type FileReviewMeta = {
   extractedCount?: number;
+  readyCount?: number;
   reviewCount?: number;
   excludedCount?: number;
   reviewCountsReady?: boolean;
@@ -42,6 +43,9 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   const [inlineUploads, setInlineUploads] = useState<any[]>([]);
   const [fileReviewMeta, setFileReviewMeta] = useState<
     Record<string, FileReviewMeta>
+  >({});
+  const [liveReviewMeta, setLiveReviewMeta] = useState<
+    Record<string, { ready: number; review: number; excluded: number }>
   >({});
   const [isDragging, setIsDragging] = useState(false);
   const { id } = useParams<{ id: string }>();
@@ -68,6 +72,16 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     [],
   );
 
+  const clearFileReviewMeta = useCallback((fileId: string | undefined) => {
+    if (!fileId) return;
+    setFileReviewMeta((prev) => {
+      if (!prev[fileId]) return prev;
+      const next = { ...prev };
+      delete next[fileId];
+      return next;
+    });
+  }, []);
+
   const getSuppressedItems = useCallback(async () => {
     if (suppressedItemsRef.current) return suppressedItemsRef.current;
     try {
@@ -80,6 +94,36 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       return [];
     }
   }, []);
+
+  const syncReviewCountsForFile = useCallback(
+    async (
+      targetFileId: string,
+      data: any,
+    ): Promise<ReturnType<typeof countReviewCategoriesFromStepOneData> | null> => {
+      const extractedCount = Array.isArray(data?.extracted_biomarkers)
+        ? data.extracted_biomarkers.length
+        : undefined;
+      if (!data?.validation?.ready || !extractedCount) {
+        return null;
+      }
+
+      const suppressedItems = await getSuppressedItems();
+      const reviewCounts = countReviewCategoriesFromStepOneData(
+        data,
+        suppressedItems,
+      );
+      cacheFileReviewMeta(targetFileId, {
+        extractedCount: reviewCounts.extracted,
+        readyCount: reviewCounts.ready,
+        reviewCount: reviewCounts.review,
+        excludedCount: reviewCounts.excluded,
+        reviewCountsReady: true,
+      });
+
+      return reviewCounts;
+    },
+    [cacheFileReviewMeta, getSuppressedItems],
+  );
 
   const getFileList = useCallback((memberId: string) => {
     const requestSeq = ++requestSeqRef.current;
@@ -179,6 +223,31 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     subscribe('uploadTestShow', handleUploadTestShow);
     return () => {
       unsubscribe('uploadTestShow', handleUploadTestShow);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleLiveCounts = (data: any) => {
+      const fileId = data?.detail?.file_id;
+      const counts = data?.detail?.counts;
+      if (!fileId || !counts) return;
+      setLiveReviewMeta((prev) => ({ ...prev, [fileId]: counts }));
+    };
+    const handleLiveCountsClear = (data: any) => {
+      const fileId = data?.detail?.file_id;
+      if (!fileId) return;
+      setLiveReviewMeta((prev) => {
+        if (!prev[fileId]) return prev;
+        const next = { ...prev };
+        delete next[fileId];
+        return next;
+      });
+    };
+    subscribe('reviewCountsLive', handleLiveCounts);
+    subscribe('reviewCountsLiveClear', handleLiveCountsClear);
+    return () => {
+      unsubscribe('reviewCountsLive', handleLiveCounts);
+      unsubscribe('reviewCountsLiveClear', handleLiveCountsClear);
     };
   }, []);
 
@@ -304,9 +373,19 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       fileUpload.status === 'success' || fileUpload.status === 'background',
   );
   const withReviewMeta = (fileUpload: any) => {
-    const meta = fileUpload?.file_id
-      ? fileReviewMeta[fileUpload.file_id]
-      : null;
+    const fid = fileUpload?.file_id;
+    const meta = fid ? fileReviewMeta[fid] : null;
+    const live = fid ? liveReviewMeta[fid] : null;
+    if (live) {
+      return {
+        ...fileUpload,
+        ...(meta ?? {}),
+        readyCount: live.ready,
+        reviewCount: live.review,
+        excludedCount: live.excluded,
+        reviewCountsReady: true,
+      };
+    }
     return meta ? { ...fileUpload, ...meta } : fileUpload;
   };
   const mergedUploadedFiles = [
@@ -391,21 +470,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         uploadPhase = 'processing';
       }
 
-      const reviewCounts =
-        data.validation?.ready && extractedCount
-          ? countReviewCategoriesFromStepOneData(
-              data,
-              await getSuppressedItems(),
-            )
-          : null;
-      if (reviewCounts) {
-        cacheFileReviewMeta(fileId, {
-          extractedCount: reviewCounts.extracted,
-          reviewCount: reviewCounts.review,
-          excludedCount: reviewCounts.excluded,
-          reviewCountsReady: true,
-        });
-      }
+      const reviewCounts = await syncReviewCountsForFile(fileId, data);
 
       updateInlineUpload(tempId, {
         uploadPhase,
@@ -413,12 +478,22 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         progressBiomarker:
           data.progress ?? activeProcessingUpload.progressBiomarker,
         extractedCount: reviewCounts?.extracted ?? extractedCount,
+        readyCount: reviewCounts?.ready,
         reviewCount: reviewCounts?.review,
         excludedCount: reviewCounts?.excluded,
         reviewCountsReady: Boolean(reviewCounts),
       });
 
       if (data.validation?.ready && extractedCount && extractedCount > 0) {
+        // Flag review rows on the card so the user knows to fix them.
+        // Auto-save still proceeds — ready rows are processed and review rows are
+        // filtered by the backend pipeline (FIX D). This allows the ready portion
+        // of the file to be saved immediately while giving the user a prompt to
+        // open the modal and address the review rows afterward.
+        if ((reviewCounts?.review ?? 0) > 0) {
+          updateInlineUpload(tempId, { needsManualReview: true });
+        }
+
         if (
           processLabReportInFlightRef.current.has(fileId) ||
           processLabReportSucceededRef.current.has(fileId)
@@ -436,13 +511,15 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         });
 
         try {
+          const suppressedItems = await getSuppressedItems();
           const saveResponse = await Application.SaveLabReport(
-            buildProcessLabReportPayload({
+            buildProcessLabReportPayloadFromStepOne({
               memberId: id,
               fileId,
               labType: data.lab_type || 'more_info',
-              rows: data.extracted_biomarkers,
               dateOfTest: data.date_of_test,
+              data,
+              suppressedItems,
             }),
           );
           const savedFileId =
@@ -451,17 +528,36 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
             fileId;
 
           processLabReportSucceededRef.current.add(fileId);
+          processLabReportSucceededRef.current.add(savedFileId);
+          clearFileReviewMeta(fileId);
           if (savedFileId !== fileId) {
-            processLabReportSucceededRef.current.add(savedFileId);
-            if (reviewCounts) {
-              cacheFileReviewMeta(savedFileId, {
-                extractedCount: reviewCounts.extracted,
-                reviewCount: reviewCounts.review,
-                excludedCount: reviewCounts.excluded,
-                reviewCountsReady: true,
-              });
-            }
+            clearFileReviewMeta(savedFileId);
           }
+
+          try {
+            const refreshed = await Application.checkLabStepOne({
+              file_id: savedFileId,
+            });
+            const refreshedData = refreshed?.data || {};
+            const refreshedCounts = await syncReviewCountsForFile(
+              savedFileId,
+              refreshedData,
+            );
+            updateInlineUpload(tempId, {
+              file_id: savedFileId,
+              extractedCount:
+                refreshedCounts?.extracted ??
+                reviewCounts?.extracted ??
+                extractedCount,
+              readyCount: refreshedCounts?.ready ?? reviewCounts?.ready,
+              reviewCount: refreshedCounts?.review,
+              excludedCount: refreshedCounts?.excluded,
+              reviewCountsReady: Boolean(refreshedCounts),
+            });
+          } catch {
+            // Keep pre-refresh inline counts if the post-save poll fails.
+          }
+
           publish('checkProgress', {
             type: 'file',
             file_id: savedFileId,
@@ -551,6 +647,8 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     getFileList,
     cacheFileReviewMeta,
     getSuppressedItems,
+    syncReviewCountsForFile,
+    clearFileReviewMeta,
   ]);
 
   const fetchReviewMetaForFile = useCallback(
@@ -570,25 +668,14 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           cacheFileReviewMeta(fileId, { extractedCount });
         }
 
-        if (data.validation?.ready && extractedCount) {
-          const reviewCounts = countReviewCategoriesFromStepOneData(
-            data,
-            await getSuppressedItems(),
-          );
-          cacheFileReviewMeta(fileId, {
-            extractedCount: reviewCounts.extracted,
-            reviewCount: reviewCounts.review,
-            excludedCount: reviewCounts.excluded,
-            reviewCountsReady: true,
-          });
-        }
+        await syncReviewCountsForFile(fileId, data);
       } catch {
         // File cards can render without counts if historical review data is unavailable.
       } finally {
         reviewMetaFetchInFlightRef.current.delete(fileId);
       }
     },
-    [cacheFileReviewMeta, fileReviewMeta, getSuppressedItems],
+    [cacheFileReviewMeta, fileReviewMeta, syncReviewCountsForFile],
   );
 
   useEffect(() => {
@@ -723,7 +810,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
                 <ProgressLoading
                   maxProgress={inlineProgressMax}
                   phase={inlineUploadPhase}
-                  extractedCount={activeInlineUpload.extractedCount}
+                  readyCount={activeInlineUpload.readyCount}
                   reviewCount={activeInlineUpload.reviewCount}
                   excludedCount={activeInlineUpload.excludedCount}
                   headerProcessing={Boolean(

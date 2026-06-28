@@ -126,6 +126,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setUserInfoData(res.data);
           publish('userInfoData', res.data);
           setIsHaveReport(res.data.show_report);
+          if (res.data.show_report === false) {
+            setShowUploadTest(true);
+          }
           setHasWearableData(res.data.has_wearable_data);
           setQuestionnaires(res.data.questionnaires);
           if (res.data.has_minimum_data == false) {
@@ -1418,15 +1421,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         //   }, 4000);
                         // }
                       } else {
+                        setShowUploadTest(false);
+                        setIsHaveReport(true);
+                        setISGenerateLoading(false);
                         setTimeout(() => {
                           fetchPatentDataWithState();
-                          // publish('QuestionaryTrackingCall', {});
                           fetchData();
                           setTimeout(() => {
                             publish('checkProgress', {});
                           }, 400);
-                          // setISGenerateLoading(false);
-                        }, 5000);
+                        }, 500);
                       }
                     }}
                     memberId={resolvedMemberID}

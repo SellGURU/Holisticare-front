@@ -151,6 +151,10 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       // setUpdated(true);
       handleItemClick('Questionnaire Tracking');
     });
+    subscribe('openLabDataSidePanel', () => {
+      setActiveItem('Lab Data & Biomarkers');
+      setIsSlideOutPanel(true);
+    });
   }, []);
   // Refs for modal and button to close it when clicking outside
   const modalRef = useRef<HTMLDivElement>(null);

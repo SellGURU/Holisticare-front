@@ -59,6 +59,8 @@ interface UploadPModalProps {
   compileState?: 'idle' | 'saving' | 'done' | 'error';
   onRowReadySave?: (row: any) => void;
   reviewHydrating?: boolean;
+  onLiveCountsChange?: (counts: { ready: number; review: number; excluded: number }) => void;
+  onDirtyIdsChange?: (ids: string[]) => void;
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -112,6 +114,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   compileState = 'idle',
   onRowReadySave,
   reviewHydrating,
+  onLiveCountsChange,
+  onDirtyIdsChange,
 }) => {
   const isReviewWithFile = Boolean(
     uploadedFile?.file_id || uploadedFile?.status === 'completed',
@@ -122,6 +126,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
     excluded: 0,
   });
   const effectiveReviewCounts = reviewCounts ?? reviewCountsLocal;
+  const handleReviewCountsChange = (counts: { ready: number; review: number; excluded: number }) => {
+    setReviewCountsLocal(counts);
+    onLiveCountsChange?.(counts);
+  };
   const [activeMenu, setactiveMenu] = useState(
     isEditMode ? 'Upload File' : initialMode || 'Upload File',
   );
@@ -379,7 +387,8 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   biomarkers={extractedBiomarkers}
                   onChange={(updated) => setExtractedBiomarkers(updated)}
                   useReviewUx
-                  onReviewCountsChange={setReviewCountsLocal}
+                  onReviewCountsChange={handleReviewCountsChange}
+                  onDirtyIdsChange={onDirtyIdsChange}
                   onSuppressedSetChange={onSuppressedSetChange}
                   extractedCount={extractedCount}
                   reopeningExistingFile={reopeningExistingFile}

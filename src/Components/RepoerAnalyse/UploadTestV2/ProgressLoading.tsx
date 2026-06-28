@@ -4,6 +4,7 @@ interface ProgressLoadingProps {
   maxProgress: number;
   phase?: string;
   extractedCount?: number;
+  readyCount?: number;
   reviewCount?: number;
   excludedCount?: number;
   headerProcessing?: boolean;
@@ -57,6 +58,7 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
   maxProgress,
   phase = 'ocr_processing',
   extractedCount,
+  readyCount,
   reviewCount,
   excludedCount,
   headerProcessing = false,
@@ -194,18 +196,27 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
         <p className="mt-1.5 text-[10px] leading-4 text-Text-Quadruple">
           {activeHint}
         </p>
-        {extractedCount != null && extractedCount > 0 ? (
+        {readyCount != null ||
+        (extractedCount != null && extractedCount > 0) ? (
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            <span className="rounded-full bg-Primary-DeepTeal/10 px-2 py-0.5 text-[9px] font-medium text-Primary-DeepTeal">
-              {extractedCount} Biomarkers
-            </span>
+            {readyCount != null ? (
+              <span className="rounded-full bg-[#DEF7EC] px-2 py-0.5 text-[9px] font-medium text-[#027A48]">
+                {readyCount} Ready
+              </span>
+            ) : (
+              <span className="rounded-full bg-Primary-DeepTeal/10 px-2 py-0.5 text-[9px] font-medium text-Primary-DeepTeal">
+                {extractedCount} Biomarkers
+              </span>
+            )}
             {showReviewSummary &&
             reviewCount != null &&
             excludedCount != null ? (
               <>
-                <span className="rounded-full bg-[#FFF8E8] px-2 py-0.5 text-[9px] font-medium text-[#B54708]">
-                  {reviewCount} Need Review
-                </span>
+                {reviewCount > 0 ? (
+                  <span className="rounded-full bg-[#FFF8E8] px-2 py-0.5 text-[9px] font-medium text-[#B54708]">
+                    {reviewCount} Need Review
+                  </span>
+                ) : null}
                 <span className="rounded-full bg-Gray-50 px-2 py-0.5 text-[9px] font-medium text-Text-Secondary">
                   {excludedCount} Excluded
                 </span>

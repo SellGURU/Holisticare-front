@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 // import { uploadToAzure } from '../../../help';
-import { publish, subscribe } from '../../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
@@ -223,6 +223,24 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [extractedCount, setExtractedCount] = useState<number | undefined>();
   const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());
   const [recheckLoading, setRecheckLoading] = useState(false);
+  const [hasComboBarFile, setHasComboBarFile] = useState(false);
+
+  useEffect(() => {
+    const handleCheckProgress = (data: any) => {
+      if (data?.detail?.type === 'file') {
+        setHasComboBarFile(true);
+      }
+    };
+    const handleSyncReport = () => {
+      setHasComboBarFile(true);
+    };
+    subscribe('checkProgress', handleCheckProgress);
+    subscribe('syncReport', handleSyncReport);
+    return () => {
+      unsubscribe('checkProgress', handleCheckProgress);
+      unsubscribe('syncReport', handleSyncReport);
+    };
+  }, []);
 
   useEffect(() => {
     const activeFileId = uploadedFile?.file_id;
@@ -1247,15 +1265,21 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     onGenderate(savedFileId, { silent: true });
   };
 
-  const autoSaveAndCompile = async (rows: any[]) => {
-    if (!rows.length) {
+  const autoSaveAndCompile = async () => {
+    const rowsToSave = buildContinueRows();
+    const readyRows = buildReadyRows();
+    if (!rowsToSave.length) {
       setCompileState('done');
       return;
     }
     if (reviewCatalog.length === 0) return;
+    if (!readyRows.length) {
+      setCompileState('done');
+      return;
+    }
     setCompileState('saving');
     try {
-      const res = await handleSaveLabReport(rows, {
+      const res = await handleSaveLabReport(rowsToSave, {
         skipAddedBiomarkers: true,
         skipAutoSaveMappings: true,
       });
@@ -1266,7 +1290,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       triggerSilentCompile(savedFileId);
       void loadReviewFindings(savedFileId, backendRowErrorsRef.current);
       if (shouldBulkAutoSaveMappings()) {
-        void autoSaveBiomarkerMappings(rows);
+        void autoSaveBiomarkerMappings(rowsToSave);
       }
       setCompileState('done');
     } catch (err: any) {
@@ -1362,7 +1386,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       });
       return;
     }
-    void autoSaveAndCompile(rowsToSave);
+    void autoSaveAndCompile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     uploadedFile?.file_id,
@@ -1435,6 +1459,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     );
 
     if (fileType === 'ultrasound') {
+      clearLiveReviewCounts();
       setisSaveClicked(true);
       setstep(0);
       setRowErrors({});
@@ -1479,6 +1504,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         if (shouldBulkAutoSaveMappings()) {
           await autoSaveBiomarkerMappings();
         }
+        clearLiveReviewCounts();
         setisSaveClicked(true);
         setstep(0);
         setRowErrors({});
@@ -1500,7 +1526,13 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       });
   };
 
+  const clearLiveReviewCounts = (fileId?: string) => {
+    const fid = fileId || uploadedFile?.file_id;
+    if (fid) publish('reviewCountsLiveClear', { file_id: fid });
+  };
+
   const handleSaveClose = () => {
+    clearLiveReviewCounts();
     if (lastSavedFileId || uploadedFile?.file_id) {
       publish('checkProgress', {
         type: 'file',
@@ -1521,6 +1553,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       return true;
     }
     if (uploadedFile != null) {
+      return true;
+    }
+    if (hasComboBarFile) {
       return true;
     }
     if (
@@ -1745,8 +1780,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                     <div
                       onClick={() => {
                         if (isDemo) return;
-                        setInitialLabMenu('Upload File');
-                        setstep(1);
+                        publish('openLabDataSidePanel', {});
                       }}
                       title={
                         isDemo
@@ -1905,7 +1939,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       }}
                     >
                       <img src="/icons/tick-square.svg" alt="" />
-                      Save & Continue to Health Plan
+                      Continue to Health Plan
                     </ButtonSecondary>
                   </div>
                 </div>
@@ -1921,6 +1955,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           setrowErrors={setRowErrors}
           AddedRowErrors={addedrowErrors}
           OnBack={() => {
+            clearLiveReviewCounts();
             if (isUploadFromComboBar) {
               if (isTrueEditMode) {
                 onDiscard(); // Was editing, just discard
@@ -1995,6 +2030,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           compileState={compileState}
           onRowReadySave={handleRowReadySave}
           reviewHydrating={reviewHydrating}
+          onLiveCountsChange={(counts) => {
+            const fid = uploadedFile?.file_id;
+            if (fid) {
+              publish('reviewCountsLive', { file_id: fid, counts });
+            }
+          }}
+          onDirtyIdsChange={(_ids) => {
+            // Phase 1 groundwork: dirty ids are tracked but not yet sent to backend.
+            // Phase 2 will include them in re-check / save payloads.
+          }}
         />
       )}
     </>

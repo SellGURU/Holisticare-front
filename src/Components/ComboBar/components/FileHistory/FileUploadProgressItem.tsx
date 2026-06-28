@@ -5,14 +5,14 @@ import { formatDate } from './help';
 import ActionSection from './FileBoxItem/ActionSection';
 import { useParams } from 'react-router-dom';
 // import { ButtonSecondary } from '../../../Button/ButtosSecondary';
-// import { publish } from '../../../../utils/event';
+import { publish } from '../../../../utils/event';
 
 interface FileUploadProgressItemProps {
   file: any;
 }
 
 type FileReviewBadgesProps = {
-  extractedCount?: number;
+  readyCount?: number;
   reviewCount?: number;
   excludedCount?: number;
   reviewCountsReady?: boolean;
@@ -20,25 +20,25 @@ type FileReviewBadgesProps = {
 };
 
 const FileReviewBadges: FC<FileReviewBadgesProps> = ({
-  extractedCount,
+  readyCount,
   reviewCount,
   excludedCount,
   reviewCountsReady = false,
   className = '',
 }) => {
-  const hasCounts = extractedCount != null || reviewCountsReady;
+  const hasCounts = readyCount != null || reviewCountsReady;
   if (!hasCounts) return null;
 
   return (
     <div className={`flex flex-wrap gap-1.5 ${className}`}>
-      {extractedCount != null ? (
-        <span className="rounded-full bg-Primary-DeepTeal/10 px-2 py-0.5 text-[9px] font-medium text-Primary-DeepTeal">
-          {extractedCount} Biomarkers
+      {readyCount != null ? (
+        <span className="rounded-full bg-[#DEF7EC] px-2 py-0.5 text-[9px] font-medium text-[#027A48]">
+          {readyCount} Ready
         </span>
       ) : null}
-      {reviewCountsReady ? (
+      {reviewCountsReady && reviewCount != null && reviewCount > 0 ? (
         <span className="rounded-full bg-[#FFF8E8] px-2 py-0.5 text-[9px] font-medium text-[#B54708]">
-          {reviewCount ?? 0} Need Review
+          {reviewCount} Need Review
         </span>
       ) : null}
       {reviewCountsReady ? (
@@ -55,7 +55,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
     'uploading' | 'upload' | 'deleting'
   >('upload');
   const { id } = useParams<{ id: string }>();
-  const extractedCount = file.extractedCount ?? file.extracted_count;
+  const readyCount = file.readyCount ?? file.ready_count;
   const reviewCount = file.reviewCount ?? file.review_count;
   const excludedCount = file.excludedCount ?? file.excluded_count;
   const reviewCountsReady =
@@ -137,12 +137,26 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
           </div>
         </div>
         <FileReviewBadges
-          extractedCount={extractedCount}
+          readyCount={readyCount}
           reviewCount={reviewCount}
           excludedCount={excludedCount}
           reviewCountsReady={reviewCountsReady}
           className="relative z-[1] mt-3"
         />
+        {file.needsManualReview && (reviewCount ?? 0) > 0 && (
+          <button
+            className="relative z-[1] mt-2 w-full cursor-pointer rounded-lg border border-[#F79009] bg-[#FFF8E8] px-3 py-1.5 text-left text-[9px] font-medium text-[#B54708] transition-opacity hover:opacity-80"
+            onClick={() => {
+              publish('uploadTestShow', {
+                isShow: true,
+                file_id: file.file_id,
+                file_name: file.file_name || file.name || 'Uploaded Document.pdf',
+              });
+            }}
+          >
+            {reviewCount} row{(reviewCount ?? 0) !== 1 ? 's' : ''} need review — click to fix them
+          </button>
+        )}
         {/* {fileStatus === 'deleted' && (
           <>
             <div className="flex flex-col mt-3">

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import FileUploadProgressItem from './FileUploadProgressItem';
 
 interface FileUploadProgressListProps {
@@ -9,32 +9,9 @@ interface FileUploadProgressListProps {
 const FileUploadProgressList: FC<FileUploadProgressListProps> = ({
   uploadedFiles,
 }) => {
-  const [containerMaxHeight, setContainerMaxHeight] = useState<number>(0);
-  useEffect(() => {
-    const calculateHeight = () => {
-      const topSpacing = 80;
-      const addFileButtonHeight = 32;
-      const gapBetweenItems = 12;
-      const bottomSpacing = 55;
-
-      const offset =
-        topSpacing + addFileButtonHeight + gapBetweenItems + bottomSpacing;
-
-      const height = window.innerHeight - offset;
-      setContainerMaxHeight(height);
-    };
-
-    calculateHeight();
-
-    window.addEventListener('resize', calculateHeight);
-    return () => {
-      window.removeEventListener('resize', calculateHeight);
-    };
-  }, []);
   return (
     <div
-      className="flex justify-center w-full items-start overflow-auto"
-      style={{ maxHeight: containerMaxHeight }}
+      className="flex justify-center w-full items-start"
     >
       <div className="mt-1 w-full space-y-2">
         {uploadedFiles.map((fileUpload, index) => (

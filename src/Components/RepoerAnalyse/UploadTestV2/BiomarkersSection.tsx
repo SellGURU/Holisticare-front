@@ -137,6 +137,7 @@ interface BiomarkersSectionProps {
   compileState?: 'idle' | 'saving' | 'done' | 'error';
   onRowReadySave?: (row: any) => void;
   reviewHydrating?: boolean;
+  onDirtyIdsChange?: (ids: string[]) => void;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -166,8 +167,43 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   compileState = 'idle',
   onRowReadySave,
   reviewHydrating = false,
+  onDirtyIdsChange,
 }) => {
   const isDemo = useIsDemo();
+
+  const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set());
+  const markDirty = (id: string) => {
+    if (!id) return;
+    setDirtyIds((prev) => {
+      if (prev.has(id)) return prev;
+      return new Set(prev).add(id);
+    });
+  };
+  const clearDirtyIds = () => setDirtyIds(new Set());
+
+  // Propagate dirty ids to parent
+  useEffect(() => {
+    onDirtyIdsChange?.(Array.from(dirtyIds));
+  }, [dirtyIds, onDirtyIdsChange]);
+
+  // Clear dirty tracking after a successful re-check (recheckLoading flips false)
+  const prevRecheckLoading = useRef(recheckLoading);
+  useEffect(() => {
+    if (prevRecheckLoading.current && !recheckLoading) {
+      clearDirtyIds();
+    }
+    prevRecheckLoading.current = recheckLoading;
+  }, [recheckLoading]);
+
+  // Clear dirty tracking after save
+  const prevCompileState = useRef(compileState);
+  useEffect(() => {
+    if (prevCompileState.current !== 'done' && compileState === 'done') {
+      clearDirtyIds();
+    }
+    prevCompileState.current = compileState;
+  }, [compileState]);
+
   // const [changedRows, setChangedRows] = useState<string[]>([]);
   // const [mappedRows, setMappedRows] = useState<string[]>([]);
   // const [mappingStatus, setMappingStatus] = useState<
@@ -217,6 +253,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   const handleValueChange = (id: string, newValue: string) => {
     if (isDemo) return;
+    markDirty(id);
     // update local state immediately so UI feels responsive
     const updated = biomarkers.map((b) =>
       b.biomarker_id === id ? { ...b, original_value: newValue } : b,
@@ -460,6 +497,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   const handleExcludeReviewRow = async (row: any) => {
     if (isDemo) return;
+    markDirty(row?.biomarker_id);
     const extractedName =
       resolveExactBiomarkerName(row) ||
       row.original_biomarker_name ||
@@ -509,6 +547,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   const handleRestoreExcludedRow = async (row: any) => {
     if (isDemo) return;
+    markDirty(row?.biomarker_id);
     const matchedItem = suppressedItems.find((item) =>
       suppressedItemMatchesRow(item, row),
     );
@@ -814,6 +853,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     id: string,
     updatedField: Partial<any>,
   ) => {
+    markDirty(id);
     // update local state immediately
     let updated = biomarkers.map((b) =>
       b.biomarker_id === id

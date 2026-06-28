@@ -319,6 +319,62 @@ export const buildBiomarkerRowsForValidation = (
     return base;
   });
 
+export const buildCategorizedRowsFromStepOneData = (
+  data: {
+    extracted_biomarkers?: any[];
+    validation?: any;
+  },
+  suppressedItems: SuppressedBiomarkerItem[] = [],
+) => {
+  const rows = Array.isArray(data.extracted_biomarkers)
+    ? data.extracted_biomarkers
+    : [];
+  const validation = data.validation || {};
+  const { suppressedSet } = buildSuppressedStateFromItems(suppressedItems);
+  const reviewRows = mergeSuppressedRowsIntoReview(rows, suppressedItems);
+  const rowErrors = buildStepOneRowErrors(validation, reviewRows);
+
+  return reviewRows.flatMap((row, index) => {
+    if (String(row?.validation_status || '').trim().toLowerCase() === 'skip') {
+      return [{ ...row, validation_status: 'skip' }];
+    }
+    const { category } = categorizeReviewRow(
+      row,
+      rowErrors,
+      suppressedSet,
+      index,
+    );
+    if (category === 'excluded') return [];
+    return [{ ...row, validation_status: category }];
+  });
+};
+
+export const buildProcessLabReportPayloadFromStepOne = ({
+  memberId,
+  fileId,
+  labType,
+  dateOfTest,
+  data,
+  suppressedItems = [],
+}: {
+  memberId: string | number;
+  fileId: string;
+  labType?: string;
+  dateOfTest?: unknown;
+  data: {
+    extracted_biomarkers?: any[];
+    validation?: any;
+  };
+  suppressedItems?: SuppressedBiomarkerItem[];
+}) =>
+  buildProcessLabReportPayload({
+    memberId,
+    fileId,
+    labType,
+    dateOfTest,
+    rows: buildCategorizedRowsFromStepOneData(data, suppressedItems),
+  });
+
 export const buildProcessLabReportPayload = ({
   memberId,
   fileId,
@@ -360,7 +416,9 @@ export const buildProcessLabReportPayload = ({
       more_info: row['more_info'],
       list_of_genes: row['list_of_genes'],
       your_result: row['your_result'],
-      validation_status: stringifyLabField(row.validation_status || 'ready'),
+      validation_status: stringifyLabField(
+        String(row.validation_status || '').trim() || 'ready',
+      ),
     };
   });
 
@@ -609,8 +667,16 @@ export const countReviewCategoriesFromStepOneData = (
   const reviewRows = mergeSuppressedRowsIntoReview(rows, suppressedItems);
   const rowErrors = buildStepOneRowErrors(validation, reviewRows);
 
+  const { ready, review, excluded } = countReviewRowCategories(
+    reviewRows,
+    rowErrors,
+    suppressedSet,
+  );
+
   return {
-    ...countReviewRowCategories(reviewRows, rowErrors, suppressedSet),
+    ready,
+    review,
+    excluded,
     extracted: rows.length,
   };
 };
