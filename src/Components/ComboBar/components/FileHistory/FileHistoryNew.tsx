@@ -82,9 +82,7 @@ const clearInflightUpload = (memberId: string, fileId: string) => {
   if (!fileId) return;
   writeInflightUploads(
     memberId,
-    readInflightUploads(memberId).filter(
-      (record) => record.file_id !== fileId,
-    ),
+    readInflightUploads(memberId).filter((record) => record.file_id !== fileId),
   );
 };
 
