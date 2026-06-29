@@ -129,7 +129,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           // Only show the "Provide Data to Generate Health Plan" selection
           // screen the first time per client. Once the client's first view is
           // done on the backend (first_time_view === true), don't show it again.
-          if (res.data.show_report === false && res.data.first_time_view !== true) {
+          if (
+            res.data.show_report === false &&
+            res.data.first_time_view !== true
+          ) {
             setShowUploadTest(true);
           }
           setHasWearableData(res.data.has_wearable_data);
