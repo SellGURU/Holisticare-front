@@ -59,7 +59,11 @@ interface UploadPModalProps {
   compileState?: 'idle' | 'saving' | 'done' | 'error';
   onRowReadySave?: (row: any) => void;
   reviewHydrating?: boolean;
-  onLiveCountsChange?: (counts: { ready: number; review: number; excluded: number }) => void;
+  onLiveCountsChange?: (counts: {
+    ready: number;
+    review: number;
+    excluded: number;
+  }) => void;
   onDirtyIdsChange?: (ids: string[]) => void;
 }
 
@@ -126,7 +130,11 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
     excluded: 0,
   });
   const effectiveReviewCounts = reviewCounts ?? reviewCountsLocal;
-  const handleReviewCountsChange = (counts: { ready: number; review: number; excluded: number }) => {
+  const handleReviewCountsChange = (counts: {
+    ready: number;
+    review: number;
+    excluded: number;
+  }) => {
     setReviewCountsLocal(counts);
     onLiveCountsChange?.(counts);
   };

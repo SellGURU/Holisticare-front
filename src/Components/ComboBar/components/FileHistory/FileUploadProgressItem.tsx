@@ -150,11 +150,13 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
               publish('uploadTestShow', {
                 isShow: true,
                 file_id: file.file_id,
-                file_name: file.file_name || file.name || 'Uploaded Document.pdf',
+                file_name:
+                  file.file_name || file.name || 'Uploaded Document.pdf',
               });
             }}
           >
-            {reviewCount} row{(reviewCount ?? 0) !== 1 ? 's' : ''} need review — click to fix them
+            {reviewCount} row{(reviewCount ?? 0) !== 1 ? 's' : ''} need review —
+            click to fix them
           </button>
         )}
         {/* {fileStatus === 'deleted' && (

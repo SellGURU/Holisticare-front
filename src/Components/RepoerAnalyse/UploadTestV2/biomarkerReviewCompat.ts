@@ -335,7 +335,11 @@ export const buildCategorizedRowsFromStepOneData = (
   const rowErrors = buildStepOneRowErrors(validation, reviewRows);
 
   return reviewRows.flatMap((row, index) => {
-    if (String(row?.validation_status || '').trim().toLowerCase() === 'skip') {
+    if (
+      String(row?.validation_status || '')
+        .trim()
+        .toLowerCase() === 'skip'
+    ) {
       return [{ ...row, validation_status: 'skip' }];
     }
     const { category } = categorizeReviewRow(

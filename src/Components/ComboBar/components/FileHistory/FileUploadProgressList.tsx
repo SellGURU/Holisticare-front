@@ -10,9 +10,7 @@ const FileUploadProgressList: FC<FileUploadProgressListProps> = ({
   uploadedFiles,
 }) => {
   return (
-    <div
-      className="flex justify-center w-full items-start"
-    >
+    <div className="flex justify-center w-full items-start">
       <div className="mt-1 w-full space-y-2">
         {uploadedFiles.map((fileUpload, index) => (
           <div key={fileUpload.file_id + '-' + index}>

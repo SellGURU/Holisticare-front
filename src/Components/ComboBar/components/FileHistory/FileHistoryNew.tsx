@@ -18,6 +18,76 @@ import type { SuppressedBiomarkerItem } from '../../../RepoerAnalyse/UploadTestV
 
 const STEP_ONE_POLL_INTERVAL_MS = 10000;
 
+// In-flight uploads are persisted to localStorage so that a refresh / navigation
+// during the OCR ("Extracting") phase can reconnect. The server file list
+// (get_list_lab_report) only returns files once they are saved (status=true or
+// modified_biomarkers set), so a file still being extracted is invisible there;
+// localStorage bridges that gap until the file is saved or fails.
+const INFLIGHT_UPLOADS_KEY = 'hc_inflight_lab_uploads';
+const INFLIGHT_UPLOAD_TTL_MS = 60 * 60 * 1000; // prune records older than 1h
+
+type InflightUploadRecord = {
+  file_id: string;
+  file_name: string;
+  date_uploaded: string;
+  addedAt: number;
+};
+
+const inflightStorageKey = (memberId: string) =>
+  `${INFLIGHT_UPLOADS_KEY}_${memberId}`;
+
+const readInflightUploads = (memberId: string): InflightUploadRecord[] => {
+  try {
+    const raw = localStorage.getItem(inflightStorageKey(memberId));
+    const parsed = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(parsed)) return [];
+    const cutoff = Date.now() - INFLIGHT_UPLOAD_TTL_MS;
+    return parsed.filter(
+      (record) =>
+        record &&
+        typeof record.file_id === 'string' &&
+        (typeof record.addedAt !== 'number' || record.addedAt > cutoff),
+    );
+  } catch {
+    return [];
+  }
+};
+
+const writeInflightUploads = (
+  memberId: string,
+  records: InflightUploadRecord[],
+) => {
+  try {
+    localStorage.setItem(
+      inflightStorageKey(memberId),
+      JSON.stringify(records.slice(0, 10)),
+    );
+  } catch {
+    // Ignore quota / serialization errors - reconnect is best-effort.
+  }
+};
+
+const persistInflightUpload = (
+  memberId: string,
+  record: InflightUploadRecord,
+) => {
+  const next = readInflightUploads(memberId).filter(
+    (existing) => existing.file_id !== record.file_id,
+  );
+  next.unshift(record);
+  writeInflightUploads(memberId, next);
+};
+
+const clearInflightUpload = (memberId: string, fileId: string) => {
+  if (!fileId) return;
+  writeInflightUploads(
+    memberId,
+    readInflightUploads(memberId).filter(
+      (record) => record.file_id !== fileId,
+    ),
+  );
+};
+
 type FileReviewMeta = {
   extractedCount?: number;
   readyCount?: number;
@@ -56,6 +126,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   const reviewMetaFetchInFlightRef = useRef<Set<string>>(new Set());
   const processLabReportInFlightRef = useRef<Set<string>>(new Set());
   const processLabReportSucceededRef = useRef<Set<string>>(new Set());
+  const reconnectAttemptedRef = useRef<Set<string>>(new Set());
 
   const cacheFileReviewMeta = useCallback(
     (fileId: string | undefined, meta: Partial<FileReviewMeta>) => {
@@ -99,7 +170,9 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     async (
       targetFileId: string,
       data: any,
-    ): Promise<ReturnType<typeof countReviewCategoriesFromStepOneData> | null> => {
+    ): Promise<ReturnType<
+      typeof countReviewCategoriesFromStepOneData
+    > | null> => {
       const extractedCount = Array.isArray(data?.extracted_biomarkers)
         ? data.extracted_biomarkers.length
         : undefined;
@@ -175,6 +248,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       if (data?.detail?.type === 'uploaded' && id) {
         const completedFileId = data?.detail?.file_id;
         if (completedFileId) {
+          clearInflightUpload(id, completedFileId);
           setInlineUploads((prev) =>
             prev.filter(
               (fileUpload) =>
@@ -299,6 +373,16 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         onStateChange: (fileUpload) => {
           const isCompleted = fileUpload.status === 'completed';
           const isError = fileUpload.status === 'error';
+          if (isCompleted && fileUpload.file_id) {
+            // Upload reached add_lab_report (file is now on the server and OCR
+            // is running). Persist it so a refresh during extraction reconnects.
+            persistInflightUpload(id, {
+              file_id: fileUpload.file_id,
+              file_name: file.name,
+              date_uploaded: new Date().toISOString(),
+              addedAt: Date.now(),
+            });
+          }
           updateInlineUpload(tempId, {
             ...fileUpload,
             file_id: fileUpload.file_id || tempId,
@@ -430,6 +514,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
 
     const finishProcessing = () => {
       stopPolling();
+      clearInflightUpload(id, fileId);
       removeInlineUpload(tempId);
       getFileList(id);
     };
@@ -494,6 +579,34 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           updateInlineUpload(tempId, { needsManualReview: true });
         }
 
+        // Reconnect after refresh/navigation: this file was already saved
+        // (modified biomarkers persisted server-side), so the compile is
+        // already running/queued. Show status only and never re-submit
+        // process_lab_report.
+        if (
+          data.is_edited === true &&
+          !processLabReportInFlightRef.current.has(fileId)
+        ) {
+          processLabReportSucceededRef.current.add(fileId);
+          // File is saved and now appears in the server file list, so the
+          // list-based reconnect + global progress tracker take over.
+          clearInflightUpload(id, fileId);
+          updateInlineUpload(tempId, {
+            status: 'background',
+            uploadPhase: 'processing',
+            headerProcessing: true,
+            progressBiomarker: 100,
+            process_done: false,
+          });
+          publish('checkProgress', {
+            type: 'file',
+            file_id: fileId,
+            action_type: 'uploaded',
+            process_status: false,
+          });
+          return true;
+        }
+
         if (
           processLabReportInFlightRef.current.has(fileId) ||
           processLabReportSucceededRef.current.has(fileId)
@@ -529,6 +642,8 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
 
           processLabReportSucceededRef.current.add(fileId);
           processLabReportSucceededRef.current.add(savedFileId);
+          clearInflightUpload(id, fileId);
+          clearInflightUpload(id, savedFileId);
           clearFileReviewMeta(fileId);
           if (savedFileId !== fileId) {
             clearFileReviewMeta(savedFileId);
@@ -574,6 +689,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           });
           getFileList(id);
         } catch (error: any) {
+          clearInflightUpload(id, fileId);
           updateInlineUpload(tempId, {
             status: 'error',
             uploadPhase: 'failed',
@@ -708,6 +824,94 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     isOpen,
     uploadedFiles,
   ]);
+
+  // Reconnect to in-flight uploads after a refresh / navigation. The upload
+  // and OCR continue server-side independently of the browser, but the inline
+  // "processing" card state lives only in memory and is lost on unmount. Here
+  // we rebuild that state from the server file list so the existing polling
+  // loop re-attaches, shows current status, and (only if not yet saved)
+  // triggers the existing compile - instead of the file appearing lost.
+  useEffect(() => {
+    if (!isOpen || !id || uploadedFiles.length === 0) return;
+
+    const candidates = uploadedFiles.filter(
+      (fileUpload) =>
+        fileUpload?.file_id &&
+        fileUpload.process_done !== true &&
+        !reconnectAttemptedRef.current.has(fileUpload.file_id),
+    );
+    if (candidates.length === 0) return;
+
+    candidates.forEach((fileUpload) =>
+      reconnectAttemptedRef.current.add(fileUpload.file_id),
+    );
+
+    setInlineUploads((prev) => {
+      const existingIds = new Set(prev.map((fileUpload) => fileUpload.file_id));
+      const resumed = candidates
+        .filter((fileUpload) => !existingIds.has(fileUpload.file_id))
+        .map((fileUpload) => ({
+          file: null,
+          file_id: fileUpload.file_id,
+          upload_temp_id: fileUpload.file_id,
+          file_name: fileUpload.file_name,
+          date_uploaded: fileUpload.date_uploaded || new Date().toISOString(),
+          progress: 100,
+          uploadedSize: 0,
+          status: 'processing',
+          uploadPhase: 'ocr_processing',
+          progressBiomarker: 50,
+          action_type: 'uploaded',
+          process_done: false,
+          reconnected: true,
+        }));
+      if (resumed.length === 0) return prev;
+      return [...resumed, ...prev];
+    });
+  }, [isOpen, id, uploadedFiles]);
+
+  // Reconnect to uploads interrupted during the OCR/extraction phase. These
+  // files are NOT in get_list_lab_report yet (not saved), so we recover them
+  // from localStorage and let the existing polling loop re-attach to
+  // check_lab_report_step_one (which reports extraction progress).
+  useEffect(() => {
+    if (!id) return;
+    const records = readInflightUploads(id);
+    if (records.length === 0) return;
+
+    const toSeed = records.filter(
+      (record) =>
+        record.file_id && !reconnectAttemptedRef.current.has(record.file_id),
+    );
+    if (toSeed.length === 0) return;
+
+    toSeed.forEach((record) =>
+      reconnectAttemptedRef.current.add(record.file_id),
+    );
+
+    setInlineUploads((prev) => {
+      const existingIds = new Set(prev.map((fileUpload) => fileUpload.file_id));
+      const resumed = toSeed
+        .filter((record) => !existingIds.has(record.file_id))
+        .map((record) => ({
+          file: null,
+          file_id: record.file_id,
+          upload_temp_id: record.file_id,
+          file_name: record.file_name,
+          date_uploaded: record.date_uploaded || new Date().toISOString(),
+          progress: 100,
+          uploadedSize: 0,
+          status: 'processing',
+          uploadPhase: 'ocr_processing',
+          progressBiomarker: 10,
+          action_type: 'uploaded',
+          process_done: false,
+          reconnected: true,
+        }));
+      if (resumed.length === 0) return prev;
+      return [...resumed, ...prev];
+    });
+  }, [id]);
 
   return (
     <div className="w-full relative">
