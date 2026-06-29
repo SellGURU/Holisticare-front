@@ -29,6 +29,17 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   onDownload: _onDownload,
 }) => {
   const isDemo = useIsDemo();
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (isDemo || isShare || uploadedFile) return;
+    const files = event.dataTransfer.files;
+    if (!files || files.length === 0) return;
+    handleFileChange({
+      target: { files },
+      currentTarget: { files },
+    } as React.ChangeEvent<HTMLInputElement>);
+  };
+
   if (uploadedFile) {
     const fileName = uploadedFile?.file?.name || '';
     const fileSize = formatFileSize(uploadedFile?.file?.size || 0);
@@ -102,6 +113,8 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
       >
         File Uploader
         <div
+          onDragOver={(event) => event.preventDefault()}
+          onDrop={handleDrop}
           onClick={() => {
             if (isDemo) return;
             if (!isShare && !uploadedFile) {
@@ -109,13 +122,13 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
             }
           }}
           title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
-          className={`mt-1 rounded-2xl h-[120px] w-full py-4 px-6 bg-white border shadow-100 border-Gray-50 flex flex-col items-center justify-center ${isDemo ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+          className={`mt-1 rounded-2xl h-[120px] w-full py-4 px-6 bg-white border border-dashed shadow-100 border-Gray-50 flex flex-col items-center justify-center ${isDemo ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:border-Primary-DeepTeal'}`}
         >
           <div className="w-full flex justify-center">
             <img src="/icons/upload-test.svg" alt="" />
           </div>
           <div className=" text-[10px] md:text-[12px] text-Text-Primary text-center mt-3">
-            Drag and drop your test file here or click to upload.
+            Drag & Drop your lab report here, or Browse.
           </div>
           <div className="text-[#888888] font-medium text-[10px] md:text-[12px] text-center">
             {`Accepted formats: .pdf, .doc, .docx, .png, .jpg, .jpeg, .webp.`}

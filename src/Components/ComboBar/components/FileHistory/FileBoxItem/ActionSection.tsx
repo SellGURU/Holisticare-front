@@ -23,6 +23,7 @@ const ActionSection: FC<ActionSectionProps> = ({
 }) => {
   const isDemo = useIsDemo();
   const [isSureRemove, setIsSureRemove] = useState(false);
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [loadingDelete] = useState<boolean>(false);
   const downloadFile = () => {
     // If file_id exists, we fetch from API (covers both normal + manual)
@@ -112,30 +113,46 @@ const ActionSection: FC<ActionSectionProps> = ({
     }, 400);
     onDelete();
   };
+  const handleEdit = () => {
+    if (isDemo || isDeleted) return;
+    if (onEdit) onEdit();
+    publish('uploadTestShow', {
+      isShow: true,
+      file_id: file.file_id,
+      file_name: file.file_name || file.name || 'Uploaded Document.pdf',
+    });
+    setIsOptionsOpen(false);
+  };
+
   return (
-    <div className="w-[80px]">
+    <div className="relative z-[60] flex justify-end">
       <div
-        className={`flex justify-center flex-wrap sm:flex-nowrap gap-[4px] xs:gap-1 items-center ${
+        className={`flex items-center justify-end ${
           isDeleted ? 'opacity-50' : ''
         }`}
       >
         {isSureRemove ? (
           <>
-            <div className="h-[24px]"></div>
-            <div className="flex items-center absolute justify-start gap-2 confirm-animation">
-              <div className="text-Text-Quadruple text-xs">Sure?</div>
-              <img
-                src="/icons/tick-circle-green.svg"
-                alt=""
-                className="w-[20px] h-[20px] cursor-pointer transition-transform hover:scale-110"
-                onClick={() => handleDelete()}
-              />
-              <img
-                src="/icons/close-circle-red.svg"
-                alt=""
-                className="w-[20px] h-[20px] cursor-pointer transition-transform hover:scale-110"
-                onClick={() => setIsSureRemove(false)}
-              />
+            <div className="absolute right-0 top-9 z-[70] w-[150px] rounded-xl border border-Gray-50 bg-white p-2 shadow-100 confirm-animation">
+              <div className="mb-2 text-[10px] font-medium text-Text-Primary">
+                Delete this file?
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setIsSureRemove(false)}
+                  className="rounded-lg border border-Gray-50 bg-white px-2 py-1.5 text-[9px] font-medium text-Text-Secondary hover:bg-backgroundColor-Main"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete()}
+                  className="rounded-lg bg-Primary-DeepTeal px-2 py-1.5 text-[9px] font-medium text-white hover:opacity-90"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </>
         ) : (
@@ -145,63 +162,84 @@ const ActionSection: FC<ActionSectionProps> = ({
                 <BeatLoader color="#6CC24A" size={10} />
               </div>
             ) : (
-              <div className="flex items-center justify-center flex-wrap sm:flex-nowrap gap-[4px] xs:gap-1 confirm-animation">
-                {/* Download */}
-                <img
-                  onClick={() => {
-                    if (!isDeleted) {
-                      downloadFile();
-                    }
-                  }}
-                  className="cursor-pointer w-[18px] h-[18px] sm:w-5 sm:h-5"
-                  src="/icons/import.svg"
-                  alt="Download"
-                />
-                {/* Edit */}
-                {file.file_id && file.process_done !== false && (
-                  <img
-                    onClick={() => {
-                      if (isDemo) return;
-                      if (!isDeleted) {
-                        if (onEdit) onEdit();
-                        publish('uploadTestShow', {
-                          isShow: true,
-                          file_id: file.file_id,
-                          file_name:
-                            file.file_name ||
-                            file.name ||
-                            'Uploaded Document.pdf',
-                        });
+              <>
+                <button
+                  type="button"
+                  disabled={isDeleted}
+                  onClick={() => setIsOptionsOpen((prev) => !prev)}
+                  className={`flex size-8 items-center justify-center rounded-full border border-Gray-50 bg-white text-lg leading-none text-Primary-DeepTeal shadow-100 transition-colors hover:bg-backgroundColor-Main ${
+                    isDeleted
+                      ? 'cursor-not-allowed opacity-50'
+                      : 'cursor-pointer'
+                  }`}
+                  aria-label="File options"
+                >
+                  ⋯
+                </button>
+                {isOptionsOpen ? (
+                  <div className="absolute right-0 top-9 z-[70] min-w-[132px] overflow-hidden rounded-xl border border-Gray-50 bg-white py-1 shadow-100 confirm-animation">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!isDeleted) {
+                          downloadFile();
+                          setIsOptionsOpen(false);
+                        }
+                      }}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-[10px] text-Text-Primary hover:bg-backgroundColor-Main"
+                    >
+                      <img src="/icons/import.svg" alt="" className="size-4" />
+                      Download
+                    </button>
+                    {file.file_id && file.process_done !== false ? (
+                      <button
+                        type="button"
+                        onClick={handleEdit}
+                        disabled={isDemo}
+                        title={
+                          isDemo
+                            ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                            : 'Edit biomarkers'
+                        }
+                        className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[10px] text-Text-Primary hover:bg-backgroundColor-Main ${
+                          isDemo ? 'cursor-not-allowed opacity-50' : ''
+                        }`}
+                      >
+                        <img
+                          src="/icons/edit-2-green.svg"
+                          alt=""
+                          className="size-4"
+                        />
+                        Edit
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isDemo) return;
+                        setIsOptionsOpen(false);
+                        setIsSureRemove(true);
+                      }}
+                      disabled={isDemo}
+                      title={
+                        isDemo
+                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                          : undefined
                       }
-                    }}
-                    className={`${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} w-[18px] h-[18px] sm:w-5 sm:h-5`}
-                    src="/icons/edit-2-green.svg"
-                    alt="Edit"
-                    title={
-                      isDemo
-                        ? 'Demo version cannot add or edit data. Upgrade for full access.'
-                        : 'Edit biomarkers'
-                    }
-                  />
-                )}
-                {/* Delete */}
-                <img
-                  onClick={() => {
-                    if (isDemo) return;
-                    if (!isDeleted) {
-                      setIsSureRemove(true);
-                    }
-                  }}
-                  src="/icons/delete-green.svg"
-                  alt="Delete"
-                  title={
-                    isDemo
-                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
-                      : undefined
-                  }
-                  className={`${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} w-[18px] h-[18px] sm:w-5 sm:h-5`}
-                />
-              </div>
+                      className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[10px] text-Text-Primary hover:bg-backgroundColor-Main ${
+                        isDemo ? 'cursor-not-allowed opacity-50' : ''
+                      }`}
+                    >
+                      <img
+                        src="/icons/delete-green.svg"
+                        alt=""
+                        className="size-4"
+                      />
+                      Delete
+                    </button>
+                  </div>
+                ) : null}
+              </>
             )}
           </>
         )}

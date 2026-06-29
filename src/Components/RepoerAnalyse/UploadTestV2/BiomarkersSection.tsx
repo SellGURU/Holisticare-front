@@ -134,6 +134,10 @@ interface BiomarkersSectionProps {
   onReviewCatalogRefresh?: () => void;
   isEditMode?: boolean;
   recheckLoading?: boolean;
+  compileState?: 'idle' | 'saving' | 'done' | 'error';
+  onRowReadySave?: (row: any) => void;
+  reviewHydrating?: boolean;
+  onDirtyIdsChange?: (ids: string[]) => void;
 }
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
@@ -160,8 +164,46 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   onReviewCatalogRefresh,
   isEditMode,
   recheckLoading = false,
+  compileState = 'idle',
+  onRowReadySave,
+  reviewHydrating = false,
+  onDirtyIdsChange,
 }) => {
   const isDemo = useIsDemo();
+
+  const [dirtyIds, setDirtyIds] = useState<Set<string>>(new Set());
+  const markDirty = (id: string) => {
+    if (!id) return;
+    setDirtyIds((prev) => {
+      if (prev.has(id)) return prev;
+      return new Set(prev).add(id);
+    });
+  };
+  const clearDirtyIds = () => setDirtyIds(new Set());
+
+  // Propagate dirty ids to parent
+  useEffect(() => {
+    onDirtyIdsChange?.(Array.from(dirtyIds));
+  }, [dirtyIds, onDirtyIdsChange]);
+
+  // Clear dirty tracking after a successful re-check (recheckLoading flips false)
+  const prevRecheckLoading = useRef(recheckLoading);
+  useEffect(() => {
+    if (prevRecheckLoading.current && !recheckLoading) {
+      clearDirtyIds();
+    }
+    prevRecheckLoading.current = recheckLoading;
+  }, [recheckLoading]);
+
+  // Clear dirty tracking after save
+  const prevCompileState = useRef(compileState);
+  useEffect(() => {
+    if (prevCompileState.current !== 'done' && compileState === 'done') {
+      clearDirtyIds();
+    }
+    prevCompileState.current = compileState;
+  }, [compileState]);
+
   // const [changedRows, setChangedRows] = useState<string[]>([]);
   // const [mappedRows, setMappedRows] = useState<string[]>([]);
   // const [mappingStatus, setMappingStatus] = useState<
@@ -211,6 +253,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   const handleValueChange = (id: string, newValue: string) => {
     if (isDemo) return;
+    markDirty(id);
     // update local state immediately so UI feels responsive
     const updated = biomarkers.map((b) =>
       b.biomarker_id === id ? { ...b, original_value: newValue } : b,
@@ -318,6 +361,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     new Set(),
   );
   const previousRowErrorKeysRef = useRef<string[]>([]);
+  const extractionSuccessFileRef = useRef<string | null>(null);
+  const [showExtractionSuccess, setShowExtractionSuccess] = useState(false);
+  const [suppressedHydrated, setSuppressedHydrated] = useState(!useReviewUx);
 
   const handleMappingDirtyChange = (biomarkerId: string, dirty: boolean) => {
     if (!biomarkerId) return;
@@ -357,18 +403,58 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const sessionFileId = uploadedFile?.file_id;
 
   useEffect(() => {
+    if (
+      !useReviewUx ||
+      loading ||
+      recheckLoading ||
+      reopeningExistingFile ||
+      isEditMode ||
+      reviewHydrating ||
+      !sessionFileId ||
+      !biomarkers.length ||
+      extractionSuccessFileRef.current === sessionFileId
+    ) {
+      return;
+    }
+
+    extractionSuccessFileRef.current = sessionFileId;
+    setShowExtractionSuccess(true);
+    const timeoutId = setTimeout(() => {
+      setShowExtractionSuccess(false);
+    }, 1500);
+    return () => clearTimeout(timeoutId);
+  }, [
+    useReviewUx,
+    loading,
+    recheckLoading,
+    reopeningExistingFile,
+    isEditMode,
+    reviewHydrating,
+    sessionFileId,
+    biomarkers.length,
+  ]);
+
+  useEffect(() => {
     categoryFilterInitialized.current = false;
-    setCategoryFilter('default');
+    setCategoryFilter('review');
     setPendingMappingRowIds(new Set());
     previousRowErrorKeysRef.current = [];
   }, [sessionFileId]);
 
   useEffect(() => {
-    if (!useReviewUx || !sessionFileId) return;
+    if (!useReviewUx || !sessionFileId) {
+      setSuppressedHydrated(true);
+      return;
+    }
+    setSuppressedHydrated(false);
     Application.listSuppressedBiomarkers()
       .then((res) => syncSuppressedFromApi(res?.data?.suppressed || []))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setSuppressedHydrated(true));
   }, [useReviewUx, sessionFileId]);
+
+  const reviewMetadataPending =
+    useReviewUx && (reviewHydrating || !suppressedHydrated);
 
   const reviewBiomarkers = useMemo(
     () => mergeSuppressedRowsIntoReview(biomarkers, suppressedItems),
@@ -391,10 +477,15 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   useEffect(() => {
     if (!useReviewUx || categoryFilterInitialized.current) return;
-    if (!reviewBiomarkers.length) return;
+    if (!reviewBiomarkers.length || reviewMetadataPending) return;
     categoryFilterInitialized.current = true;
-    setCategoryFilter('default');
-  }, [useReviewUx, reviewBiomarkers.length, reviewCategoryCounts.review]);
+    setCategoryFilter(reviewCategoryCounts.review > 0 ? 'review' : 'ready');
+  }, [
+    useReviewUx,
+    reviewBiomarkers.length,
+    reviewCategoryCounts.review,
+    reviewMetadataPending,
+  ]);
 
   const rowCategoryResults = useMemo(
     () =>
@@ -406,6 +497,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   const handleExcludeReviewRow = async (row: any) => {
     if (isDemo) return;
+    markDirty(row?.biomarker_id);
     const extractedName =
       resolveExactBiomarkerName(row) ||
       row.original_biomarker_name ||
@@ -455,6 +547,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
   const handleRestoreExcludedRow = async (row: any) => {
     if (isDemo) return;
+    markDirty(row?.biomarker_id);
     const matchedItem = suppressedItems.find((item) =>
       suppressedItemMatchesRow(item, row),
     );
@@ -777,6 +870,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     id: string,
     updatedField: Partial<any>,
   ) => {
+    markDirty(id);
     // update local state immediately
     let updated = biomarkers.map((b) =>
       b.biomarker_id === id
@@ -1214,6 +1308,32 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               </>
             )}
           </div>
+        ) : reviewMetadataPending ? (
+          <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] w-full flex-col items-center justify-center gap-3 px-4 text-center">
+            <Circleloader />
+            <div className="text-xs font-medium text-Text-Primary">
+              Preparing review grid…
+            </div>
+            <div className="text-[10px] text-Text-Quadruple">
+              Loading review status and exclusions.
+            </div>
+          </div>
+        ) : showExtractionSuccess ? (
+          <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] w-full flex-col items-center justify-center gap-3 px-4 text-center">
+            <div className="flex size-12 items-center justify-center rounded-full bg-[#DEF7EC]">
+              <img
+                src="/icons/tick-circle-green-new.svg"
+                alt=""
+                className="size-7"
+              />
+            </div>
+            <div className="text-sm font-medium text-Text-Primary">
+              {extractedCount ?? biomarkers.length} biomarkers extracted
+            </div>
+            <div className="text-[10px] text-Text-Quadruple">
+              Preparing your review grid...
+            </div>
+          </div>
         ) : biomarkers.length === 0 ? (
           <div className="flex min-h-[240px] h-[clamp(240px,38vh,420px)] items-center justify-center flex-col text-xs font-medium text-Text-Primary">
             <img src="/icons/EmptyState-biomarkers.svg" alt="" />
@@ -1228,6 +1348,28 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   <span className="text-[10px] md:text-xs font-semibold text-Text-Primary whitespace-nowrap">
                     Biomarkers
                   </span>
+                  <span className="text-[9px] md:text-[10px] text-Text-Secondary whitespace-nowrap">
+                    {reviewCategoryCounts.ready} Ready ·{' '}
+                    {reviewCategoryCounts.review} Review ·{' '}
+                    {reviewCategoryCounts.excluded} Excluded
+                  </span>
+                  {compileState !== 'idle' ? (
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[9px] md:text-[10px] font-medium whitespace-nowrap ${
+                        compileState === 'done'
+                          ? 'bg-[#DEF7EC] text-green-800'
+                          : compileState === 'error'
+                            ? 'bg-[#FFF5F8] text-Red'
+                            : 'bg-Primary-DeepTeal/10 text-Primary-DeepTeal'
+                      }`}
+                    >
+                      {compileState === 'done'
+                        ? 'Done'
+                        : compileState === 'error'
+                          ? 'Save/compile needs retry'
+                          : 'Saving and compiling health plan...'}
+                    </span>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => setCategoryFilter('ready')}
@@ -1529,6 +1671,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             onMappingDirtyChange={(dirty) =>
                               handleMappingDirtyChange(b.biomarker_id, dirty)
                             }
+                            onRowReadySave={onRowReadySave}
                             allAvilableBiomarkers={rowAvailableBiomarkers}
                             biomarkerTypes={biomarkerTypes}
                             formatBiomarkerTypeLabel={formatBiomarkerTypeLabel}

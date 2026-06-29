@@ -126,8 +126,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setUserInfoData(res.data);
           publish('userInfoData', res.data);
           setIsHaveReport(res.data.show_report);
+          if (res.data.show_report === false) {
+            setShowUploadTest(true);
+          }
           setHasWearableData(res.data.has_wearable_data);
-          setShowUploadTest(!res.data.first_time_view);
           setQuestionnaires(res.data.questionnaires);
           if (res.data.has_minimum_data == false) {
             setDisableGenerate(true);
@@ -164,7 +166,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setQuestionnaires(res.data.questionnaires);
           setIsLoadingQuestionnaires(false);
           setIsHaveReport(res.data.show_report);
-          setShowUploadTest(!res.data.first_time_view);
         })
         .catch((err) => {
           console.error('Error getting patient info', err);
@@ -205,7 +206,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         .then((res) => {
           setUserInfoData(res.data);
           setIsHaveReport(res.data.show_report);
-          setShowUploadTest(!res.data.first_time_view);
           if (res.data.first_time_view == true) {
             setActiveCheckProgress(true);
           }
@@ -671,17 +671,26 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [, setSearchParams] = useSearchParams();
   useEffect(() => {
     const handleUploadTestShow = (data: any) => {
+      const detail = data?.detail || {};
+      const shouldOpenOverlay = Boolean(
+        detail.file_id ||
+          detail.mode === 'manual' ||
+          detail.mode === 'review_ready',
+      );
+      if (!shouldOpenOverlay) return;
+
       setSearchParams({ ['section']: 'Client Summary' });
       document.getElementById('Client Summary')?.scrollIntoView({
         behavior: 'instant',
       });
       setTimeout(() => {
         publish('uploadTestShow-stepTwo', {
-          file_id: data?.detail?.file_id,
-          file_name: data?.detail?.file_name,
+          file_id: detail.file_id,
+          file_name: detail.file_name,
+          mode: detail.mode,
         });
       }, 4);
-      setShowUploadTest(data.detail.isShow);
+      setShowUploadTest(detail.isShow);
     };
 
     subscribe('uploadTestShow', handleUploadTestShow);
@@ -1357,6 +1366,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         setShowUploadTest(false);
                         return;
                       }
+                      if (file_id === 'customBiomarker') {
+                        setShowUploadTest(false);
+                        setISGenerateLoading(false);
+                        setTimeout(() => {
+                          fetchPatentDataWithState();
+                          fetchData();
+                          publish('checkProgress', {});
+                        }, 400);
+                        return;
+                      }
                       const silentContinue =
                         options?.silent === true && Boolean(file_id);
                       if (!silentContinue) {
@@ -1402,15 +1421,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         //   }, 4000);
                         // }
                       } else {
+                        setShowUploadTest(false);
+                        setIsHaveReport(true);
+                        setISGenerateLoading(false);
                         setTimeout(() => {
                           fetchPatentDataWithState();
-                          // publish('QuestionaryTrackingCall', {});
                           fetchData();
                           setTimeout(() => {
                             publish('checkProgress', {});
                           }, 400);
-                          // setISGenerateLoading(false);
-                        }, 5000);
+                        }, 500);
                       }
                     }}
                     memberId={resolvedMemberID}
