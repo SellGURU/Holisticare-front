@@ -5,7 +5,6 @@ import ChoosingDaysWeek from './ChoosingDaysWeek';
 import MonthShows from './MonthShows';
 import {
   isScheduleMissing,
-  normalizeScheduleType,
   TaskValidationError,
   validateActionPlanTasks,
 } from '../actionPlanValidation';
