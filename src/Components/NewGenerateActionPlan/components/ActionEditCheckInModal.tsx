@@ -4,7 +4,10 @@ import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import Checkbox from '../../checkbox';
 import MainModal from '../../MainModal';
 import ScheduleFrequencyGuide from './ScheduleFrequencyGuide';
-import { isScheduleMissing, normalizeScheduleType } from '../actionPlanValidation';
+import {
+  isScheduleMissing,
+  normalizeScheduleType,
+} from '../actionPlanValidation';
 
 interface ActionEditCheckInModalProps {
   isOpen: boolean;
@@ -181,161 +184,161 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
               )}
             </div>
             <div className="grid grid-cols-3 gap-2">
-            <label
-              htmlFor="daily"
-              className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
-                frequencyType === 'daily'
-                  ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
-                  : 'border-Gray-50 bg-white text-Text-Quadruple'
-              }`}
-            >
-              <input
-                type="radio"
-                id="daily"
-                name="frequency"
-                value="daily"
-                checked={frequencyType === 'daily'}
-                onChange={(e) => {
-                  setFrequencyType(e.target.value);
-                  setSelectedDays([]);
-                  setSelectedDaysMonth([]);
-                  setFrequencyError('');
-                }}
-                className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
-              />
-              <span className="text-xs font-medium">Daily</span>
-            </label>
-            <label
-              htmlFor="weekly"
-              className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
-                frequencyType === 'weekly'
-                  ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
-                  : 'border-Gray-50 bg-white text-Text-Quadruple'
-              }`}
-            >
-              <input
-                type="radio"
-                id="weekly"
-                name="frequency"
-                value="weekly"
-                checked={frequencyType === 'weekly'}
-                onChange={(e) => {
-                  setFrequencyType(e.target.value);
-                  if (frequencyType == 'weekly') {
-                    setSelectedDaysMonth([]);
-                  } else {
+              <label
+                htmlFor="daily"
+                className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
+                  frequencyType === 'daily'
+                    ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
+                    : 'border-Gray-50 bg-white text-Text-Quadruple'
+                }`}
+              >
+                <input
+                  type="radio"
+                  id="daily"
+                  name="frequency"
+                  value="daily"
+                  checked={frequencyType === 'daily'}
+                  onChange={(e) => {
+                    setFrequencyType(e.target.value);
                     setSelectedDays([]);
-                  }
-                  setFrequencyError('');
-                }}
-                className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
-              />
-              <span className="text-xs font-medium">Weekly</span>
-            </label>
-            <label
-              htmlFor="monthly"
-              className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
-                frequencyType === 'monthly'
-                  ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
-                  : 'border-Gray-50 bg-white text-Text-Quadruple'
-              }`}
-            >
-              <input
-                type="radio"
-                id="monthly"
-                name="frequency"
-                value="monthly"
-                checked={frequencyType === 'monthly'}
-                onChange={(e) => {
-                  setFrequencyType(e.target.value);
-                  if (frequencyType == 'monthly') {
-                    setSelectedDays([]);
-                  } else {
                     setSelectedDaysMonth([]);
-                  }
-                  setFrequencyError('');
-                }}
-                className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
-              />
-              <span className="text-xs font-medium">Monthly</span>
-            </label>
-          </div>
-          {frequencyError && (
-            <div className="text-Red text-xs mt-3">{frequencyError}</div>
-          )}
-          {frequencyType === 'weekly' && (
-            <div className="mt-3">
-              <div className="text-xs text-Text-Quadruple">
-                Please select the days of the week you prefer:
+                    setFrequencyError('');
+                  }}
+                  className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
+                />
+                <span className="text-xs font-medium">Daily</span>
+              </label>
+              <label
+                htmlFor="weekly"
+                className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
+                  frequencyType === 'weekly'
+                    ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
+                    : 'border-Gray-50 bg-white text-Text-Quadruple'
+                }`}
+              >
+                <input
+                  type="radio"
+                  id="weekly"
+                  name="frequency"
+                  value="weekly"
+                  checked={frequencyType === 'weekly'}
+                  onChange={(e) => {
+                    setFrequencyType(e.target.value);
+                    if (frequencyType == 'weekly') {
+                      setSelectedDaysMonth([]);
+                    } else {
+                      setSelectedDays([]);
+                    }
+                    setFrequencyError('');
+                  }}
+                  className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
+                />
+                <span className="text-xs font-medium">Weekly</span>
+              </label>
+              <label
+                htmlFor="monthly"
+                className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
+                  frequencyType === 'monthly'
+                    ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
+                    : 'border-Gray-50 bg-white text-Text-Quadruple'
+                }`}
+              >
+                <input
+                  type="radio"
+                  id="monthly"
+                  name="frequency"
+                  value="monthly"
+                  checked={frequencyType === 'monthly'}
+                  onChange={(e) => {
+                    setFrequencyType(e.target.value);
+                    if (frequencyType == 'monthly') {
+                      setSelectedDays([]);
+                    } else {
+                      setSelectedDaysMonth([]);
+                    }
+                    setFrequencyError('');
+                  }}
+                  className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
+                />
+                <span className="text-xs font-medium">Monthly</span>
+              </label>
+            </div>
+            {frequencyError && (
+              <div className="text-Red text-xs mt-3">{frequencyError}</div>
+            )}
+            {frequencyType === 'weekly' && (
+              <div className="mt-3">
+                <div className="text-xs text-Text-Quadruple">
+                  Please select the days of the week you prefer:
+                </div>
+                <div className="mt-1 flex">
+                  {days.map((day, index) => (
+                    <div
+                      key={index}
+                      onClick={() => toggleDaySelection(day)}
+                      className={`cursor-pointer capitalize border border-Gray-50 ${index == days.length - 1 && 'rounded-r-[4px]'} ${index == 0 && 'rounded-l-[4px]'} py-2 px-2 text-xs text-center ${
+                        selectedDays.includes(day)
+                          ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                          : 'text-Text-Secondary bg-backgroundColor-Card'
+                      }`}
+                    >
+                      {day}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="mt-1 flex">
-                {days.map((day, index) => (
-                  <div
-                    key={index}
-                    onClick={() => toggleDaySelection(day)}
-                    className={`cursor-pointer capitalize border border-Gray-50 ${index == days.length - 1 && 'rounded-r-[4px]'} ${index == 0 && 'rounded-l-[4px]'} py-2 px-2 text-xs text-center ${
-                      selectedDays.includes(day)
-                        ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
-                        : 'text-Text-Secondary bg-backgroundColor-Card'
-                    }`}
-                  >
-                    {day}
+            )}
+            {frequencyType === 'monthly' && (
+              <div className="mt-3">
+                <div className="text-xs text-Text-Quadruple">
+                  Please select the days of the month you prefer:
+                </div>
+                <div className="mt-1 flex flex-col">
+                  <div className="flex">
+                    {dayMonth.slice(0, 15).map((day, index) => (
+                      <div
+                        key={index}
+                        onClick={() =>
+                          toggleDayMonthSelection(
+                            adjustDateToNextMonthIfPast(day),
+                          )
+                        }
+                        className={`w-[24px] h-[32px] flex items-center justify-center cursor-pointer capitalize border border-b-0 border-Gray-50 ${index == dayMonth.slice(0, 15).length - 1 && 'rounded-tr-[8px]'} ${index == 0 && 'rounded-tl-[8px]'} text-xs text-center ${
+                          selectedDaysMonth.includes(
+                            adjustDateToNextMonthIfPast(day),
+                          )
+                            ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                            : 'text-Text-Secondary bg-backgroundColor-Card'
+                        }`}
+                      >
+                        {day.split('-')[2]}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {frequencyType === 'monthly' && (
-            <div className="mt-3">
-              <div className="text-xs text-Text-Quadruple">
-                Please select the days of the month you prefer:
-              </div>
-              <div className="mt-1 flex flex-col">
-                <div className="flex">
-                  {dayMonth.slice(0, 15).map((day, index) => (
-                    <div
-                      key={index}
-                      onClick={() =>
-                        toggleDayMonthSelection(
-                          adjustDateToNextMonthIfPast(day),
-                        )
-                      }
-                      className={`w-[24px] h-[32px] flex items-center justify-center cursor-pointer capitalize border border-b-0 border-Gray-50 ${index == dayMonth.slice(0, 15).length - 1 && 'rounded-tr-[8px]'} ${index == 0 && 'rounded-tl-[8px]'} text-xs text-center ${
-                        selectedDaysMonth.includes(
-                          adjustDateToNextMonthIfPast(day),
-                        )
-                          ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
-                          : 'text-Text-Secondary bg-backgroundColor-Card'
-                      }`}
-                    >
-                      {day.split('-')[2]}
-                    </div>
-                  ))}
-                </div>
-                <div className="flex">
-                  {dayMonth.slice(15).map((day, index) => (
-                    <div
-                      key={index}
-                      onClick={() =>
-                        toggleDayMonthSelection(
-                          adjustDateToNextMonthIfPast(day),
-                        )
-                      }
-                      className={`w-[24px] h-[32px] flex items-center justify-center cursor-pointer capitalize border border-Gray-50 ${index == dayMonth.slice(15).length - 1 && 'rounded-br-[8px]'} ${index == 0 && 'rounded-bl-[8px]'} text-xs text-center ${
-                        selectedDaysMonth.includes(
-                          adjustDateToNextMonthIfPast(day),
-                        )
-                          ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
-                          : 'text-Text-Secondary bg-backgroundColor-Card'
-                      }`}
-                    >
-                      {day.split('-')[2]}
-                    </div>
-                  ))}
+                  <div className="flex">
+                    {dayMonth.slice(15).map((day, index) => (
+                      <div
+                        key={index}
+                        onClick={() =>
+                          toggleDayMonthSelection(
+                            adjustDateToNextMonthIfPast(day),
+                          )
+                        }
+                        className={`w-[24px] h-[32px] flex items-center justify-center cursor-pointer capitalize border border-Gray-50 ${index == dayMonth.slice(15).length - 1 && 'rounded-br-[8px]'} ${index == 0 && 'rounded-bl-[8px]'} text-xs text-center ${
+                          selectedDaysMonth.includes(
+                            adjustDateToNextMonthIfPast(day),
+                          )
+                            ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                            : 'text-Text-Secondary bg-backgroundColor-Card'
+                        }`}
+                      >
+                        {day.split('-')[2]}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
           </ScheduleFrequencyGuide>
         </div>
         <div className="mb-4">

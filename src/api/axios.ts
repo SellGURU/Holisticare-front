@@ -210,7 +210,10 @@ axios.interceptors.response.use(
       });
     }
 
-    if (error.response?.status === 406 && isPatientNotFoundMessage(backendMessage)) {
+    if (
+      error.response?.status === 406 &&
+      isPatientNotFoundMessage(backendMessage)
+    ) {
       handlePatientNotFound();
       return Promise.reject({
         ...error.response.data,

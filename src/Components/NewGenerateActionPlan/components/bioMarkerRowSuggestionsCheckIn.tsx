@@ -71,7 +71,10 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
   const needsScheduleGuide = showScheduleError;
   const visibleValidationErrors = (validationErrors || []).filter(
     (error) =>
-      !(isScheduleMissing(value?.Frequency_Type) && error.field === 'Frequency_Type'),
+      !(
+        isScheduleMissing(value?.Frequency_Type) &&
+        error.field === 'Frequency_Type'
+      ),
   );
   const openEditModal = () => {
     setHighlightScheduleOnEdit(needsScheduleGuide);
@@ -164,7 +167,9 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
                           src="/icons/danger-new.svg"
                           color={showScheduleError ? '#FC5474' : '#FFAB2C'}
                         />
-                        {showScheduleError ? 'Schedule required' : 'No schedule yet'}
+                        {showScheduleError
+                          ? 'Schedule required'
+                          : 'No schedule yet'}
                       </div>
                       {showScheduleError && (
                         <div

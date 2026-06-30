@@ -8,7 +8,11 @@ import ConflictsModal from './components/ConflictsModal';
 import FilePreviewModal from './components/FilePreviewModal';
 import MonthShows from './components/MonthShows';
 import { resolveCategoryIcon } from '../../help';
-import { TaskValidationError, isScheduleMissing, validateActionPlanTasks } from './actionPlanValidation';
+import {
+  TaskValidationError,
+  isScheduleMissing,
+  validateActionPlanTasks,
+} from './actionPlanValidation';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -100,10 +104,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     if (validationErrors && validationErrors.length > 0) {
       return true;
     }
-    if (
-      (isScheduleMissing(value.Frequency_Type)) &&
-      checkValid
-    ) {
+    if (isScheduleMissing(value.Frequency_Type) && checkValid) {
       return true;
     } else {
       return false;
@@ -119,7 +120,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   );
   const visibleValidationErrors = (validationErrors || []).filter(
     (error) =>
-      !(isScheduleMissing(value?.Frequency_Type) && error.field === 'Frequency_Type'),
+      !(
+        isScheduleMissing(value?.Frequency_Type) &&
+        error.field === 'Frequency_Type'
+      ),
   );
   const openEditModal = () => {
     setHighlightScheduleOnEdit(needsScheduleGuide);
@@ -314,7 +318,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         src="/icons/danger-new.svg"
                         color={isinvalid() ? '#FC5474' : '#FFAB2C'}
                       />
-                      {checkValid || (validationErrors && validationErrors.length > 0)
+                      {checkValid ||
+                      (validationErrors && validationErrors.length > 0)
                         ? 'Schedule required'
                         : 'No schedule yet'}
                     </div>

@@ -12,8 +12,7 @@ export type TaskValidationError = {
 const FIELD_USER_COPY: Record<string, { message: string; fixHint: string }> = {
   Frequency_Type: {
     message: 'Schedule is required',
-    fixHint:
-      'Open the task, click Edit, and choose Daily, Weekly, or Monthly',
+    fixHint: 'Open the task, click Edit, and choose Daily, Weekly, or Monthly',
   },
   Frequency_Dates: {
     message: 'Pick which days this task runs',
@@ -43,8 +42,12 @@ export const buildTaskIdentity = (task: any): string =>
 
 const VALID_SCHEDULE_TYPES = new Set(['daily', 'weekly', 'monthly']);
 
-export const normalizeScheduleType = (frequencyType: unknown): string | null => {
-  const normalized = String(frequencyType ?? '').trim().toLowerCase();
+export const normalizeScheduleType = (
+  frequencyType: unknown,
+): string | null => {
+  const normalized = String(frequencyType ?? '')
+    .trim()
+    .toLowerCase();
   return VALID_SCHEDULE_TYPES.has(normalized) ? normalized : null;
 };
 
@@ -166,7 +169,12 @@ export const validateActionPlanTasks = (
         return;
       }
 
-      if (field === 'Value' && value !== null && value !== undefined && value !== '') {
+      if (
+        field === 'Value' &&
+        value !== null &&
+        value !== undefined &&
+        value !== ''
+      ) {
         const numeric = Number(value);
         if (!Number.isInteger(numeric) || numeric < 0) {
           pushError(
@@ -284,7 +292,9 @@ export const groupErrorsByTaskKey = (
   }, {});
 };
 
-export const buildValidationSummary = (errors: TaskValidationError[]): string => {
+export const buildValidationSummary = (
+  errors: TaskValidationError[],
+): string => {
   if (errors.length === 0) return '';
 
   const uniqueTitles = Array.from(

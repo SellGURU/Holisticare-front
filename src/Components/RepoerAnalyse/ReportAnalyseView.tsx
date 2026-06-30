@@ -634,8 +634,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [ActionPlanPrint, setActionPlanPrint] = useState(null);
   const [HelthPrint, setHelthPlanPrint] = useState(null);
 
-  const detailedAnalysisLoading =
-    clientSummaryLoading || referenceLoading;
+  const detailedAnalysisLoading = clientSummaryLoading || referenceLoading;
   const resolveBioMarkers = () => {
     // const refData: Array<any> = [];
     // referenceData?.biomarkers.forEach((el: any) => {
@@ -1015,334 +1014,339 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         </div>
       ) : null}
       <>
-          {showUploadTest && (
-            <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
-          )}
-          <div
-            ref={scrollContainerRef}
-            onScrollCapture={() => {
-              handleScroll();
-            }}
-            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
-          >
-            {accessManager.filter((el) => el.name == 'Client Summary')[0]
-              .checked == true && (
-              <>
-                {clientSummaryLoading && !ClientSummaryBoxs ? (
-                  <ClientSummarySkeleton />
-                ) : (
-              <div className="flex flex-col xl:flex-row gap-6 xl:gap-14 ">
-                <div className="min-w-[430px] w-full xl:w-[330px] relative xl:min-h-[750px]">
-                  <div>
-                    <div
-                      id="Client Summary"
-                      className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center "
-                    >
-                      Client Summary
-                      <div className="ml-4 invisible">
-                        <Legends isGray></Legends>
+        {showUploadTest && (
+          <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
+        )}
+        <div
+          ref={scrollContainerRef}
+          onScrollCapture={() => {
+            handleScroll();
+          }}
+          className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
+        >
+          {accessManager.filter((el) => el.name == 'Client Summary')[0]
+            .checked == true && (
+            <>
+              {clientSummaryLoading && !ClientSummaryBoxs ? (
+                <ClientSummarySkeleton />
+              ) : (
+                <div className="flex flex-col xl:flex-row gap-6 xl:gap-14 ">
+                  <div className="min-w-[430px] w-full xl:w-[330px] relative xl:min-h-[750px]">
+                    <div>
+                      <div
+                        id="Client Summary"
+                        className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center "
+                      >
+                        Client Summary
+                        <div className="ml-4 invisible">
+                          <Legends isGray></Legends>
+                        </div>
                       </div>
-                    </div>
-                    {ClientSummaryBoxs && (
-                      <div className="text-Text-Secondary text-[12px]">
-                        Total of {ClientSummaryBoxs?.total_subcategory || 0}{' '}
-                        biomarkers in {ClientSummaryBoxs?.total_category || 0}{' '}
-                        categories
-                      </div>
-                    )}
-                  </div>
-                  <div className="relative hidden xl:block">
-                    <img className="" src="/human.png" alt="" />
-                    <div>{memoizedPoints}</div>
-                  </div>
-                </div>
-
-                <div className="flex-grow w-full mt-0 ">
-                  <div
-                    className={`w-full flex justify-between items-center ${
-                      isSticky
-                        ? 'fixed top-9 h-[50px] bg-[#E9F0F2] left-0 px-5 z-50 '
-                        : ''
-                    }`}
-                  >
-                    {' '}
-                    <div className="flex justify-start items-center">
-                      {userInfoData?.picture && (
-                        <div className="size-6 border border-Primary-DeepTeal flex items-center justify-center mr-1  rounded-full">
-                          <img
-                            className="rounded-full"
-                            onError={(e: any) => {
-                              e.target.src = `https://ui-avatars.com/api/?name=${userInfoData?.name}`; // Set fallback image
-                            }}
-                            src={userInfoData?.picture}
-                            alt=""
-                          />
+                      {ClientSummaryBoxs && (
+                        <div className="text-Text-Secondary text-[12px]">
+                          Total of {ClientSummaryBoxs?.total_subcategory || 0}{' '}
+                          biomarkers in {ClientSummaryBoxs?.total_category || 0}{' '}
+                          categories
                         </div>
                       )}
+                    </div>
+                    <div className="relative hidden xl:block">
+                      <img className="" src="/human.png" alt="" />
+                      <div>{memoizedPoints}</div>
+                    </div>
+                  </div>
 
-                      <div className="text-xs md:text-[14px] font-medium text-Text-Primary">
-                        <TooltipTextAuto
-                          maxWidth="180px"
-                          tooltipPlace="bottom"
-                          tooltipClassName="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999] !break-words"
-                        >
-                          {userInfoData?.name}
-                        </TooltipTextAuto>
-                      </div>
+                  <div className="flex-grow w-full mt-0 ">
+                    <div
+                      className={`w-full flex justify-between items-center ${
+                        isSticky
+                          ? 'fixed top-9 h-[50px] bg-[#E9F0F2] left-0 px-5 z-50 '
+                          : ''
+                      }`}
+                    >
+                      {' '}
+                      <div className="flex justify-start items-center">
+                        {userInfoData?.picture && (
+                          <div className="size-6 border border-Primary-DeepTeal flex items-center justify-center mr-1  rounded-full">
+                            <img
+                              className="rounded-full"
+                              onError={(e: any) => {
+                                e.target.src = `https://ui-avatars.com/api/?name=${userInfoData?.name}`; // Set fallback image
+                              }}
+                              src={userInfoData?.picture}
+                              alt=""
+                            />
+                          </div>
+                        )}
 
-                      {userInfoData && (
-                        <>
-                          {userInfoData.sex && (
-                            <>
-                              <div className=" text-[10px] md:text-[12px] text-Text-Secondary ml-3 flex gap-1">
-                                <span className="hidden md:block">Gender:</span>
-                                {userInfoData.sex}{' '}
+                        <div className="text-xs md:text-[14px] font-medium text-Text-Primary">
+                          <TooltipTextAuto
+                            maxWidth="180px"
+                            tooltipPlace="bottom"
+                            tooltipClassName="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999] !break-words"
+                          >
+                            {userInfoData?.name}
+                          </TooltipTextAuto>
+                        </div>
+
+                        {userInfoData && (
+                          <>
+                            {userInfoData.sex && (
+                              <>
+                                <div className=" text-[10px] md:text-[12px] text-Text-Secondary ml-3 flex gap-1">
+                                  <span className="hidden md:block">
+                                    Gender:
+                                  </span>
+                                  {userInfoData.sex}{' '}
+                                </div>
+                                <div className="w-[0.75px] mx-2 md:mx-1 h-[24px] bg-Text-Triarty"></div>
+                              </>
+                            )}
+                            {userInfoData.age && (
+                              <div className="text-[10px] md:text-[12px] text-Text-Secondary  flex gap-1">
+                                <span className="hidden md:block"> Age:</span>
+                                {userInfoData.age}
                               </div>
-                              <div className="w-[0.75px] mx-2 md:mx-1 h-[24px] bg-Text-Triarty"></div>
-                            </>
-                          )}
-                          {userInfoData.age && (
-                            <div className="text-[10px] md:text-[12px] text-Text-Secondary  flex gap-1">
-                              <span className="hidden md:block"> Age:</span>
-                              {userInfoData.age}
+                            )}
+                          </>
+                        )}
+                      </div>
+                      <div className="hidden md:block">
+                        {' '}
+                        <InfoToltip isShare={isShare} />
+                      </div>
+                    </div>
+                    <div
+                      className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
+                      style={{ lineHeight: '24px' }}
+                    >
+                      <MarkdownText text={ClientSummaryBoxs?.client_summary} />
+                      {/* {ClientSummaryBoxs?.client_summary} */}
+                    </div>
+                    <div className="w-full mt-4 grid gap-4 grid-cols-1 xl:grid-cols-2">
+                      {resolveCategories().map((el: any) => {
+                        return (
+                          <SummaryBox isActive={false} data={el}></SummaryBox>
+                        );
+                      })}
+                    </div>
+                    {resolveCategories().length == 0 &&
+                      !clientSummaryLoading && (
+                        <>
+                          <div className="flex justify-center items-center w-full">
+                            <div className="flex flex-col items-center justify-center">
+                              <img
+                                src="/icons/Empty/biomarkerEmpty.svg"
+                                alt=""
+                                className="w-[219px]"
+                              />
+                              <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
+                                No Biomarkers Available Yet!
+                              </div>
                             </div>
-                          )}
+                          </div>
                         </>
                       )}
-                    </div>
-                    <div className="hidden md:block">
-                      {' '}
-                      <InfoToltip isShare={isShare} />
-                    </div>
                   </div>
-                  <div
-                    className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
-                    style={{ lineHeight: '24px' }}
-                  >
-                    <MarkdownText text={ClientSummaryBoxs?.client_summary} />
-                    {/* {ClientSummaryBoxs?.client_summary} */}
-                  </div>
-                  <div className="w-full mt-4 grid gap-4 grid-cols-1 xl:grid-cols-2">
-                    {resolveCategories().map((el: any) => {
-                      return (
-                        <SummaryBox isActive={false} data={el}></SummaryBox>
-                      );
-                    })}
-                  </div>
-                  {resolveCategories().length == 0 &&
-                    !clientSummaryLoading && (
-                    <>
-                      <div className="flex justify-center items-center w-full">
-                        <div className="flex flex-col items-center justify-center">
-                          <img
-                            src="/icons/Empty/biomarkerEmpty.svg"
-                            alt=""
-                            className="w-[219px]"
-                          />
-                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
-                            No Biomarkers Available Yet!
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
                 </div>
-              </div>
-                )}
-              </>
-            )}
-            {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
-              .checked == true && (
-              <>
-                <div className=" my-[200px] xl:min-h-[700px] text-light-primary-text dark:text-primary-text ">
-                  <div>
-                    <div
-                      id="Need Focus Biomarker"
-                      className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 "
-                    >
-                      "Need Focus" Biomarkers
-                    </div>
-                    <div className="text-Text-Secondary text-[12px]">
-                      {referenceData?.total_biomarker_note || '' || ''}
-                    </div>
+              )}
+            </>
+          )}
+          {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
+            .checked == true && (
+            <>
+              <div className=" my-[200px] xl:min-h-[700px] text-light-primary-text dark:text-primary-text ">
+                <div>
+                  <div
+                    id="Need Focus Biomarker"
+                    className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 "
+                  >
+                    "Need Focus" Biomarkers
                   </div>
-                  {referenceLoading && !referenceData ? (
-                    <NeedFocusSkeleton />
-                  ) : (
+                  <div className="text-Text-Secondary text-[12px]">
+                    {referenceData?.total_biomarker_note || '' || ''}
+                  </div>
+                </div>
+                {referenceLoading && !referenceData ? (
+                  <NeedFocusSkeleton />
+                ) : (
                   <>
-                  <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
-                    {resolveBioMarkers()
-                      .filter((val: any) => val.outofref == true)
-                      .map((el: any, index: number) => {
+                    <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
+                      {resolveBioMarkers()
+                        .filter((val: any) => val.outofref == true)
+                        .map((el: any, index: number) => {
+                          return (
+                            <>
+                              <RefrenceBox
+                                data={el}
+                                index={index}
+                              ></RefrenceBox>
+                            </>
+                          );
+                        })}
+                    </div>
+                    {resolveBioMarkers().filter(
+                      (val: any) => val.outofref == true,
+                    ).length == 0 &&
+                      !referenceLoading && (
+                        <>
+                          <div className="flex justify-center items-center mt-10 w-full">
+                            <div className="flex flex-col items-center justify-center">
+                              <img
+                                src="/icons/Empty/needsfocusEmpty.svg"
+                                alt=""
+                                className="w-[219px]"
+                              />
+                              <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
+                                No Concerning Biomarkers Available Yet!
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                  </>
+                )}
+                {/* <CustomCanvasChart></CustomCanvasChart> */}
+              </div>
+            </>
+          )}
+          {accessManager.filter((el) => el.name == 'Concerning Result')[0]
+            .checked == true && (
+            <>
+              <div className="my-10 min-h-[700px]">
+                <div className="w-full mb-3 flex items-center justify-between">
+                  <div
+                    id="Concerning Result"
+                    className="sectionScrollEl TextStyle-Headline-4 text-Text-Primary"
+                  >
+                    Concerning Result
+                  </div>
+                  <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
+                    {/* Total of 30 Treatment in 4 category */}
+                  </div>
+                  {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
+                </div>
+                {concerningLoading && !ConcerningResultIsLoaded ? (
+                  <ConcerningResultSkeleton />
+                ) : ResolveConceringData().length > 0 ? (
+                  <>
+                    <div className=" hidden xl:block">
+                      <div className="w-full bg-gray-100 rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center font-medium">
+                        <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">
+                          Name
+                        </div>
+                        <div className="TextStyle-Headline-6 text-Text-Primary w-[120px] text-center">
+                          Result
+                        </div>
+                        <div className="TextStyle-Headline-6 text-Text-Primary   w-[120px] text-center">
+                          Units
+                        </div>
+                        <div className="TextStyle-Headline-6 text-Text-Primary  w-[180px] text-center">
+                          Lab Ref Range
+                        </div>
+                        {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
+                          Baseline
+                        </div> */}
+                        <div className="TextStyle-Headline-6 text-Text-Primary w-[150px] text-center">
+                          Optimal Range
+                        </div>
+                        {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
+                          Changes
+                        </div> */}
+                      </div>
+                      {ResolveConceringData().map((el: any) => {
                         return (
                           <>
-                            <RefrenceBox data={el} index={index}></RefrenceBox>
+                            <ConceringRow data={el}></ConceringRow>
                           </>
                         );
                       })}
-                  </div>
-                  {resolveBioMarkers().filter(
-                    (val: any) => val.outofref == true,
-                  ).length == 0 &&
-                    !referenceLoading && (
-                    <>
-                      <div className="flex justify-center items-center mt-10 w-full">
-                        <div className="flex flex-col items-center justify-center">
-                          <img
-                            src="/icons/Empty/needsfocusEmpty.svg"
-                            alt=""
-                            className="w-[219px]"
-                          />
-                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
-                            No Concerning Biomarkers Available Yet!
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                  </>
-                  )}
-                  {/* <CustomCanvasChart></CustomCanvasChart> */}
-                </div>
-              </>
-            )}
-            {accessManager.filter((el) => el.name == 'Concerning Result')[0]
-              .checked == true && (
-              <>
-                <div className="my-10 min-h-[700px]">
-                  <div className="w-full mb-3 flex items-center justify-between">
-                    <div
-                      id="Concerning Result"
-                      className="sectionScrollEl TextStyle-Headline-4 text-Text-Primary"
-                    >
-                      Concerning Result
                     </div>
-                    <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
-                      {/* Total of 30 Treatment in 4 category */}
-                    </div>
-                    {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
-                  </div>
-                  {concerningLoading && !ConcerningResultIsLoaded ? (
-                    <ConcerningResultSkeleton />
-                  ) : ResolveConceringData().length > 0 ? (
-                    <>
-                      <div className=" hidden xl:block">
-                        <div className="w-full bg-gray-100 rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center font-medium">
-                          <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">
-                            Name
-                          </div>
-                          <div className="TextStyle-Headline-6 text-Text-Primary w-[120px] text-center">
-                            Result
-                          </div>
-                          <div className="TextStyle-Headline-6 text-Text-Primary   w-[120px] text-center">
-                            Units
-                          </div>
-                          <div className="TextStyle-Headline-6 text-Text-Primary  w-[180px] text-center">
-                            Lab Ref Range
-                          </div>
-                          {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
-                          Baseline
-                        </div> */}
-                          <div className="TextStyle-Headline-6 text-Text-Primary w-[150px] text-center">
-                            Optimal Range
-                          </div>
-                          {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
-                          Changes
-                        </div> */}
-                        </div>
-                        {ResolveConceringData().map((el: any) => {
-                          return (
-                            <>
-                              <ConceringRow data={el}></ConceringRow>
-                            </>
-                          );
-                        })}
-                      </div>
-                      <div className="flex xl:hidden flex-col gap-3">
-                        {ResolveConceringData().map((el: any) => {
-                          return (
-                            <>
-                              <AccordionItem data={el}></AccordionItem>
-                            </>
-                          );
-                        })}
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex justify-center items-center mt-10 w-full">
-                        <div className="flex flex-col items-center justify-center">
-                          <img
-                            src="/icons/Empty/conceningEmpty.svg"
-                            alt=""
-                            className="w-[219px]"
-                          />
-                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
-                            No Concerning Results Available Yet!
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </>
-            )}
-            {accessManager.filter((el) => el.name == 'Detailed Analysis')[0]
-              .checked == true && (
-              <div className="my-[200px] min-h-[700px]">
-                <div>
-                  <div
-                    id="Detailed Analysis"
-                    className="sectionScrollEl text-Text-Primary TextStyle-Headline-4"
-                  >
-                    Detailed Analysis
-                  </div>
-                  <div className="TextStyle-Body-2 text-Text-Secondary mt-2">
-                    {referenceData?.detailed_analysis_note || ''}
-                  </div>
-                </div>
-                {detailedAnalysisLoading &&
-                (!ClientSummaryBoxs || !referenceData) ? (
-                  <DetailedAnalysisSkeleton />
-                ) : resolveCategories().length > 0 ? (
-                  <>
-                    <div className="mt-6 hidden xl:block">
-                      {resolveCategories().map((el: any, index: number) => {
+                    <div className="flex xl:hidden flex-col gap-3">
+                      {ResolveConceringData().map((el: any) => {
                         return (
-                          <DetiledAnalyse
-                            refrences={resolveBioMarkers().filter(
-                              (val: any) => val.subcategory == el.subcategory,
-                            )}
-                            data={el}
-                            key={index}
-                          ></DetiledAnalyse>
-                        );
-                      })}
-                    </div>
-                    <div className="mt-6 block xl:hidden">
-                      {resolveCategories().map((el: any, index: number) => {
-                        return (
-                          // <DetiledAcordin
-                          //   refrences={resolveBioMarkers().filter(
-                          //     (val: any) => val.subcategory == el.subcategory,
-                          //   )}
-                          //   data={el}
-                          //   key={index}
-                          // ></DetiledAcordin>
-                          <NewDetailedAcordin
-                            refrences={resolveBioMarkers().filter(
-                              (val: any) => val.subcategory == el.subcategory,
-                            )}
-                            data={el}
-                            key={index}
-                          ></NewDetailedAcordin>
+                          <>
+                            <AccordionItem data={el}></AccordionItem>
+                          </>
                         );
                       })}
                     </div>
                   </>
                 ) : (
                   <>
-                    {!detailedAnalysisLoading && (
+                    <div className="flex justify-center items-center mt-10 w-full">
+                      <div className="flex flex-col items-center justify-center">
+                        <img
+                          src="/icons/Empty/conceningEmpty.svg"
+                          alt=""
+                          className="w-[219px]"
+                        />
+                        <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
+                          No Concerning Results Available Yet!
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </>
+          )}
+          {accessManager.filter((el) => el.name == 'Detailed Analysis')[0]
+            .checked == true && (
+            <div className="my-[200px] min-h-[700px]">
+              <div>
+                <div
+                  id="Detailed Analysis"
+                  className="sectionScrollEl text-Text-Primary TextStyle-Headline-4"
+                >
+                  Detailed Analysis
+                </div>
+                <div className="TextStyle-Body-2 text-Text-Secondary mt-2">
+                  {referenceData?.detailed_analysis_note || ''}
+                </div>
+              </div>
+              {detailedAnalysisLoading &&
+              (!ClientSummaryBoxs || !referenceData) ? (
+                <DetailedAnalysisSkeleton />
+              ) : resolveCategories().length > 0 ? (
+                <>
+                  <div className="mt-6 hidden xl:block">
+                    {resolveCategories().map((el: any, index: number) => {
+                      return (
+                        <DetiledAnalyse
+                          refrences={resolveBioMarkers().filter(
+                            (val: any) => val.subcategory == el.subcategory,
+                          )}
+                          data={el}
+                          key={index}
+                        ></DetiledAnalyse>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-6 block xl:hidden">
+                    {resolveCategories().map((el: any, index: number) => {
+                      return (
+                        // <DetiledAcordin
+                        //   refrences={resolveBioMarkers().filter(
+                        //     (val: any) => val.subcategory == el.subcategory,
+                        //   )}
+                        //   data={el}
+                        //   key={index}
+                        // ></DetiledAcordin>
+                        <NewDetailedAcordin
+                          refrences={resolveBioMarkers().filter(
+                            (val: any) => val.subcategory == el.subcategory,
+                          )}
+                          data={el}
+                          key={index}
+                        ></NewDetailedAcordin>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <>
+                  {!detailedAnalysisLoading && (
                     <div className="flex justify-center items-center mt-10 w-full">
                       <div className="flex flex-col items-center justify-center">
                         <img
@@ -1355,45 +1359,45 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         </div>
                       </div>
                     </div>
-                    )}
-                  </>
-                )}
-              </div>
-            )}
-            {accessManager.filter((el) => el.name == 'Holistic Plan')[0]
-              .checked == true && (
-              <div className="my-[200px] min-h-[700px]">
-                <div className="w-full flex items-center justify-between">
-                  <div
-                    id="Holistic Plan"
-                    className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary"
-                  >
-                    Holistic Plan
-                  </div>
-                  {TreatMentPlanData?.length > 0 && isHaveReport && !isShare ? (
-                    // <HolisticShare
-                    //   isHtmlReportExists={isHtmlReportExists}
-                    //   isShareModalSuccess={isShareModalSuccess}
-                    //   dateShare={dateShare}
-                    //   handleGetHtmlReport={handleGetHtmlReport}
-                    //   loadingHtmlReport={loadingHtmlReport}
-                    // />
-                    <HolisticPlanShareAndDownload
-                      handleGetHtmlReport={handleGetHtmlReport}
-                      loadingHtmlReport={loadingHtmlReport}
-                      isHtmlReportExists={isHtmlReportExists}
-                      htmlReportPollState={htmlReportPollState}
-                      onRetryHtmlReport={retryHtmlReportBuild}
-                    />
-                  ) : (
-                    ''
                   )}
-                  {/* <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip> */}
-                  {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
+                </>
+              )}
+            </div>
+          )}
+          {accessManager.filter((el) => el.name == 'Holistic Plan')[0]
+            .checked == true && (
+            <div className="my-[200px] min-h-[700px]">
+              <div className="w-full flex items-center justify-between">
+                <div
+                  id="Holistic Plan"
+                  className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary"
+                >
+                  Holistic Plan
                 </div>
-                {treatmentLoading && !treatmentPlanLoaded ? (
-                  <HolisticPlanSkeleton />
+                {TreatMentPlanData?.length > 0 && isHaveReport && !isShare ? (
+                  // <HolisticShare
+                  //   isHtmlReportExists={isHtmlReportExists}
+                  //   isShareModalSuccess={isShareModalSuccess}
+                  //   dateShare={dateShare}
+                  //   handleGetHtmlReport={handleGetHtmlReport}
+                  //   loadingHtmlReport={loadingHtmlReport}
+                  // />
+                  <HolisticPlanShareAndDownload
+                    handleGetHtmlReport={handleGetHtmlReport}
+                    loadingHtmlReport={loadingHtmlReport}
+                    isHtmlReportExists={isHtmlReportExists}
+                    htmlReportPollState={htmlReportPollState}
+                    onRetryHtmlReport={retryHtmlReportBuild}
+                  />
                 ) : (
+                  ''
+                )}
+                {/* <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip> */}
+                {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
+              </div>
+              {treatmentLoading && !treatmentPlanLoaded ? (
+                <HolisticPlanSkeleton />
+              ) : (
                 <TreatmentPlan
                   disableGenerate={disableGenerate}
                   isShare={isShare}
@@ -1405,43 +1409,43 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
                   setDateShare={() => {}}
                 />
-                )}
-              </div>
-            )}
-            <div className="my-10 hidden">
-              <div className="w-full mb-3 flex items-center justify-between">
-                <div
-                  id="Treatment Plan"
-                  className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium"
-                >
-                  Action Plan
-                </div>
-                <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
-                  {/* Total of 30 Treatment in 4 category */}
-                </div>
-                {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
-              </div>
-              {caldenderData != null && (
-                <div>
-                  {/* <CalenderComponent data={caldenderData}></CalenderComponent>  */}
-                </div>
               )}
             </div>
-            {accessManager.filter((el) => el.name == 'Action Plan')[0]
-              .checked == true && (
+          )}
+          <div className="my-10 hidden">
+            <div className="w-full mb-3 flex items-center justify-between">
+              <div
+                id="Treatment Plan"
+                className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium"
+              >
+                Action Plan
+              </div>
+              <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
+                {/* Total of 30 Treatment in 4 category */}
+              </div>
+              {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
+            </div>
+            {caldenderData != null && (
+              <div>
+                {/* <CalenderComponent data={caldenderData}></CalenderComponent>  */}
+              </div>
+            )}
+          </div>
+          {accessManager.filter((el) => el.name == 'Action Plan')[0].checked ==
+            true && (
+            <div
+              id="Action Plan"
+              className="mt-[200px] mb-[50px] min-h-[650px]"
+            >
               <div
                 id="Action Plan"
-                className="mt-[200px] mb-[50px] min-h-[650px]"
+                className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary mb-4"
               >
-                <div
-                  id="Action Plan"
-                  className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary mb-4"
-                >
-                  Action Plan
-                </div>
-                {actionPlanLoading && caldenderData == null ? (
-                  <ActionPlanSkeleton />
-                ) : (
+                Action Plan
+              </div>
+              {actionPlanLoading && caldenderData == null ? (
+                <ActionPlanSkeleton />
+              ) : (
                 <ActionPlan
                   isShare={isShare}
                   setActionPrintData={(values: any) => {
@@ -1454,164 +1458,164 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   isHolisticPlanEmpty={isHolisticPlanEmpty}
                   disableGenerate={disableGenerate}
                 />
-                )}
-              </div>
-            )}
-            {isHaveReport && (
-              // <div className="hidden print:block" id="printDiv">
-              //   <PrintReport
-              //     helthPlan={ActionPlanPrint}
-              //     ActionPlan={HelthPrint}
-              //     usrInfoData={userInfoData}
-              //     ResolveConceringData={ResolveConceringData}
-              //     caldenderData={caldenderData}
-              //     TreatMentPlanData={TreatMentPlanData}
-              //     resolveSubCategories={resolveSubCategories}
-              //     resolveBioMarkers={resolveBioMarkers}
-              //     referenceData={referenceData}
-              //     resolveCategories={resolveCategories}
-              //     ClientSummaryBoxs={ClientSummaryBoxs}
-              //   ></PrintReport>
-              // </div>
-              <div className="hidden print:block" id="printDiv">
-                <PrintReportV2
-                  ClientSummaryBoxs={ClientSummaryBoxs}
-                  usrInfoData={userInfoData}
-                  resolveCategories={resolveCategories}
-                  referenceData={referenceData}
-                  resolveBioMarkers={resolveBioMarkers}
-                  ResolveConceringData={ResolveConceringData}
-                  resolveSubCategories={() => []}
-                  helthPlan={ActionPlanPrint}
-                  TreatMentPlanData={TreatMentPlanData}
-                  ActionPlan={HelthPrint}
-                  caldenderData={caldenderData}
-                />
-                {/* <></> */}
-              </div>
-            )}
-            {showUploadTest && (
-              <>
-                {isGenerateLoading ? (
-                  <>
-                    <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-                      {' '}
-                      <Circleloader></Circleloader>
-                      <div className="text-Text-Primary TextStyle-Body-1 mt-3 text-center">
-                        We're analyzing your test results to create a detailed
-                        health plan. This may take a moment.
-                      </div>
+              )}
+            </div>
+          )}
+          {isHaveReport && (
+            // <div className="hidden print:block" id="printDiv">
+            //   <PrintReport
+            //     helthPlan={ActionPlanPrint}
+            //     ActionPlan={HelthPrint}
+            //     usrInfoData={userInfoData}
+            //     ResolveConceringData={ResolveConceringData}
+            //     caldenderData={caldenderData}
+            //     TreatMentPlanData={TreatMentPlanData}
+            //     resolveSubCategories={resolveSubCategories}
+            //     resolveBioMarkers={resolveBioMarkers}
+            //     referenceData={referenceData}
+            //     resolveCategories={resolveCategories}
+            //     ClientSummaryBoxs={ClientSummaryBoxs}
+            //   ></PrintReport>
+            // </div>
+            <div className="hidden print:block" id="printDiv">
+              <PrintReportV2
+                ClientSummaryBoxs={ClientSummaryBoxs}
+                usrInfoData={userInfoData}
+                resolveCategories={resolveCategories}
+                referenceData={referenceData}
+                resolveBioMarkers={resolveBioMarkers}
+                ResolveConceringData={ResolveConceringData}
+                resolveSubCategories={() => []}
+                helthPlan={ActionPlanPrint}
+                TreatMentPlanData={TreatMentPlanData}
+                ActionPlan={HelthPrint}
+                caldenderData={caldenderData}
+              />
+              {/* <></> */}
+            </div>
+          )}
+          {showUploadTest && (
+            <>
+              {isGenerateLoading ? (
+                <>
+                  <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+                    {' '}
+                    <Circleloader></Circleloader>
+                    <div className="text-Text-Primary TextStyle-Body-1 mt-3 text-center">
+                      We're analyzing your test results to create a detailed
+                      health plan. This may take a moment.
                     </div>
-                  </>
-                ) : (
-                  <UploadTestV2
-                    has_wearable_data={has_wearable_data}
-                    isLoadingQuestionnaires={isLoadingQuestionnaires}
-                    questionnaires={questionnaires}
-                    onDiscard={() => {
+                  </div>
+                </>
+              ) : (
+                <UploadTestV2
+                  has_wearable_data={has_wearable_data}
+                  isLoadingQuestionnaires={isLoadingQuestionnaires}
+                  questionnaires={questionnaires}
+                  onDiscard={() => {
+                    setShowUploadTest(false);
+                  }}
+                  isShare={isShare}
+                  showReport={isHaveReport}
+                  onGenderate={(
+                    file_id: string | undefined,
+                    options?: { silent?: boolean },
+                  ) => {
+                    if (file_id == 'discard') {
                       setShowUploadTest(false);
-                    }}
-                    isShare={isShare}
-                    showReport={isHaveReport}
-                    onGenderate={(
-                      file_id: string | undefined,
-                      options?: { silent?: boolean },
-                    ) => {
-                      if (file_id == 'discard') {
-                        setShowUploadTest(false);
-                        return;
-                      }
-                      if (file_id === 'customBiomarker') {
-                        setShowUploadTest(false);
-                        setISGenerateLoading(false);
+                      return;
+                    }
+                    if (file_id === 'customBiomarker') {
+                      setShowUploadTest(false);
+                      setISGenerateLoading(false);
+                      setTimeout(() => {
+                        fetchPatentDataWithState();
+                        fetchData();
+                        publish('checkProgress', {});
+                      }, 400);
+                      return;
+                    }
+                    const silentContinue =
+                      options?.silent === true && Boolean(file_id);
+                    if (!silentContinue) {
+                      setISGenerateLoading(true);
+                    }
+                    Application.first_view_report(resolvedMemberID)
+                      .then((res) => {
+                        console.log(res);
+                      })
+                      .catch((err) => {
+                        console.error('Error first view report:', err);
+                      });
+                    setActiveCheckProgress(true);
+                    console.log(file_id);
+                    if (file_id) {
+                      // publish('openProgressModal',{});
+                      setShowUploadTest(false);
+                      setIsHaveReport(true);
+                      setCheckedStepTwo(false);
+                      setISGenerateLoading(false);
+                      setTimeout(() => {
+                        publish('checkProgress', {
+                          type: 'file',
+                          file_id: file_id,
+                          action_type: 'uploaded',
+                          process_status: false,
+                        });
+                      }, 400);
+                      // if (file_id !== 'customBiomarker') {
+                      //   setTimeout(() => {
+                      //     publish('checkProgress', {
+                      //       date: new Date().toISOString(),
+                      //       file_id: file_id,
+                      //       file_name: 'Manual Entry',
+                      //       action_type: 'uploaded',
+                      //       type: 'file',
+                      //     });
+                      //   }, 4000);
+                      // }
+                      // if (file_id !== 'customBiomarker') {
+                      //   setTimeout(() => {
+                      //     checkStepTwo(file_id);
+                      //   }, 4000);
+                      // }
+                    } else {
+                      setShowUploadTest(false);
+                      setIsHaveReport(true);
+                      setISGenerateLoading(false);
+                      setTimeout(() => {
+                        fetchPatentDataWithState();
+                        fetchData();
                         setTimeout(() => {
-                          fetchPatentDataWithState();
-                          fetchData();
                           publish('checkProgress', {});
                         }, 400);
-                        return;
-                      }
-                      const silentContinue =
-                        options?.silent === true && Boolean(file_id);
-                      if (!silentContinue) {
-                        setISGenerateLoading(true);
-                      }
-                      Application.first_view_report(resolvedMemberID)
-                        .then((res) => {
-                          console.log(res);
-                        })
-                        .catch((err) => {
-                          console.error('Error first view report:', err);
-                        });
-                      setActiveCheckProgress(true);
-                      console.log(file_id);
-                      if (file_id) {
-                        // publish('openProgressModal',{});
-                        setShowUploadTest(false);
-                        setIsHaveReport(true);
-                        setCheckedStepTwo(false);
-                        setISGenerateLoading(false);
-                        setTimeout(() => {
-                          publish('checkProgress', {
-                            type: 'file',
-                            file_id: file_id,
-                            action_type: 'uploaded',
-                            process_status: false,
-                          });
-                        }, 400);
-                        // if (file_id !== 'customBiomarker') {
-                        //   setTimeout(() => {
-                        //     publish('checkProgress', {
-                        //       date: new Date().toISOString(),
-                        //       file_id: file_id,
-                        //       file_name: 'Manual Entry',
-                        //       action_type: 'uploaded',
-                        //       type: 'file',
-                        //     });
-                        //   }, 4000);
-                        // }
-                        // if (file_id !== 'customBiomarker') {
-                        //   setTimeout(() => {
-                        //     checkStepTwo(file_id);
-                        //   }, 4000);
-                        // }
-                      } else {
-                        setShowUploadTest(false);
-                        setIsHaveReport(true);
-                        setISGenerateLoading(false);
-                        setTimeout(() => {
-                          fetchPatentDataWithState();
-                          fetchData();
-                          setTimeout(() => {
-                            publish('checkProgress', {});
-                          }, 400);
-                        }, 500);
-                      }
-                    }}
-                    memberId={resolvedMemberID}
-                  ></UploadTestV2>
-                  // <UploadTest
-                  //   isShare={isShare}
-                  //   showReport={isHaveReport}
-                  //   onGenderate={() => {
-                  //     setISGenerateLoading(true);
-                  //     Application.first_view_report(resolvedMemberID).then(
-                  //       (res) => {
-                  //         console.log(res);
-                  //       },
-                  //     );
-                  //     setTimeout(() => {
-                  //       fetchPatentDataWithState();
-                  //       // publish('QuestionaryTrackingCall', {});
-                  //       // fetchData();
-                  //     }, 5000);
-                  //   }}
-                  //   memberId={resolvedMemberID}
-                  // ></UploadTest>
-                )}
-              </>
-            )}
-          </div>
+                      }, 500);
+                    }
+                  }}
+                  memberId={resolvedMemberID}
+                ></UploadTestV2>
+                // <UploadTest
+                //   isShare={isShare}
+                //   showReport={isHaveReport}
+                //   onGenderate={() => {
+                //     setISGenerateLoading(true);
+                //     Application.first_view_report(resolvedMemberID).then(
+                //       (res) => {
+                //         console.log(res);
+                //       },
+                //     );
+                //     setTimeout(() => {
+                //       fetchPatentDataWithState();
+                //       // publish('QuestionaryTrackingCall', {});
+                //       // fetchData();
+                //     }, 5000);
+                //   }}
+                //   memberId={resolvedMemberID}
+                // ></UploadTest>
+              )}
+            </>
+          )}
+        </div>
       </>
     </>
   );

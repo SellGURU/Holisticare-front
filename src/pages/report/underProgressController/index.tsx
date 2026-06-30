@@ -138,10 +138,13 @@ const UnderProgressController = ({
   const resolveFileController = (files: any[]) => {
     files.forEach((file) => {
       if (file.process_status == true) {
-        publishCompletedProgressOnce(`file:${file.file_id}:${file.action_type}`, {
-          file_id: file.file_id,
-          type: file.action_type,
-        });
+        publishCompletedProgressOnce(
+          `file:${file.file_id}:${file.action_type}`,
+          {
+            file_id: file.file_id,
+            type: file.action_type,
+          },
+        );
       }
     });
   };

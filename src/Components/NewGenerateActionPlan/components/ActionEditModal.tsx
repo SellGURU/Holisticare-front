@@ -1272,13 +1272,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </label>
                   </div>
                   {isScheduleMissing(frequencyType) &&
-                  (showValidation || showScheduleGuide) && (
-                    <span className="text-[10px] mt-2 block text-red-500">
-                      {showScheduleGuide
-                        ? 'Select Daily, Weekly, or Monthly above.'
-                        : 'This field is required.'}
-                    </span>
-                  )}
+                    (showValidation || showScheduleGuide) && (
+                      <span className="text-[10px] mt-2 block text-red-500">
+                        {showScheduleGuide
+                          ? 'Select Daily, Weekly, or Monthly above.'
+                          : 'This field is required.'}
+                      </span>
+                    )}
                   {frequencyType === 'weekly' &&
                     selectedDays.length === 0 &&
                     showValidation && (

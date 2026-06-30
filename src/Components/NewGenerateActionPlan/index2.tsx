@@ -306,9 +306,7 @@ const GenerateActionPlan = () => {
         .catch((err) => {
           const detail = err?.detail ?? err?.response?.data?.detail ?? '';
           if (
-            String(detail)
-              .toLowerCase()
-              .includes('there is an active draft')
+            String(detail).toLowerCase().includes('there is an active draft')
           ) {
             Application.ActionPlanBlockList({ member_id: id })
               .then((res: any) => {
