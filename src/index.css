@@ -779,6 +779,36 @@ input:-webkit-autofill:active {
   }
 }
 
+@keyframes scheduleGuidePulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(252, 84, 116, 0.45);
+    border-color: #fc5474;
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(252, 84, 116, 0.12);
+    border-color: #ff7a93;
+  }
+}
+
+@keyframes scheduleGuideNudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-schedule-guide-pulse {
+  animation: scheduleGuidePulse 1.6s ease-in-out infinite;
+}
+
+.animate-schedule-guide-nudge {
+  animation: scheduleGuideNudge 1.2s ease-in-out infinite;
+}
+
 .animate-spin-slow {
   animation: spin-slow 2s linear infinite;
 }

@@ -17,6 +17,15 @@ import SemiCircularProgressBar from './components/SemiCircularProgressBar';
 import CircularProgressBar from './components/CircularProgressBar';
 // import { AlertModal } from '../AlertModal';
 import useIsDemo from '../../hooks/useIsDemo';
+import { showError } from '../GlobalToast';
+import {
+  buildTaskIdentity,
+  groupErrorsByTaskKey,
+  mapBackendTaskErrors,
+  scrollToFirstTaskError,
+  TaskValidationError,
+  validateActionPlanTasks,
+} from './actionPlanValidation';
 
 const GenerateActionPlan = () => {
   const isDemo = useIsDemo();
@@ -54,13 +63,6 @@ const GenerateActionPlan = () => {
     };
   }, []);
 
-  const buildTaskIdentity = useCallback((task: any) => {
-    return (
-      task?.task_directory_id ||
-      `${task?.Task_Type || ''}|${task?.Category || ''}|${task?.Check_in_id || ''}|${task?.Title || ''}`
-    );
-  }, []);
-
   const removeSelectedTasks = useCallback(
     (availableTasks: any[] = [], selectedTasks: any[] = []) => {
       const selectedKeys = new Set(selectedTasks.map(buildTaskIdentity));
@@ -72,7 +74,7 @@ const GenerateActionPlan = () => {
   );
 
   const loadAvailableTasks = useCallback(
-    (selectedTasks: any[] = []) => {
+    (selectedTasks: any[] = [], options?: { isEditMode?: boolean }) => {
       setIsLoadingPlans(true);
       Application.getActionPlanTaskDirectoryNew({
         member_id: id,
@@ -86,6 +88,13 @@ const GenerateActionPlan = () => {
         })
         .catch(() => {
           if (!isMountedRef.current) return;
+          if (options?.isEditMode) {
+            showError(
+              'Could not load available tasks',
+              'Your draft is still loaded. Try refreshing the page to add more tasks.',
+            );
+            return;
+          }
           setActionPlanError(true);
         })
         .finally(() => {
@@ -118,18 +127,31 @@ const GenerateActionPlan = () => {
         setPlanObjective(res.data.plan_objective);
 
         setIsWeighted(true);
-        loadAvailableTasks(res.data.tasks);
+        loadAvailableTasks(res.data.tasks, { isEditMode: true });
         setActionPlanError(false);
       })
-      .catch(() => {
-        // if (!isMountedRef.current) return;
-        // setActionPlanError(true);
-        // timeoutRef.current = setTimeout(() => {
-        //   if (isMountedRef.current) {
-        //     getSavedPaln(planId);
-        //   }
-        // }, 5000);
-        // navigate(-1);
+      .catch((err) => {
+        const detail = err?.detail ?? err?.response?.data?.detail ?? '';
+        const message = typeof detail === 'string' ? detail : detail?.message;
+        if (err?.code === 'PATIENT_NOT_FOUND') {
+          if (!isMountedRef.current) return;
+          setActionPlanError(true);
+          return;
+        }
+        if (
+          String(message || '')
+            .toLowerCase()
+            .includes('block')
+        ) {
+          showError(
+            'Action plan is no longer available',
+            'This draft or saved plan may have changed. Returning to the Action Plan list.',
+          );
+          navigate('/report/' + id + '/a?section=Action Plan');
+          return;
+        }
+        if (!isMountedRef.current) return;
+        setActionPlanError(true);
       })
       .finally(() => {
         if (isMountedRef.current) {
@@ -160,13 +182,62 @@ const GenerateActionPlan = () => {
   const [planObjective, setPlanObjective] = useState(
     'Personalized Action Plan',
   );
+  const prepareDataForBackend = useCallback((data: any) => {
+    return [...data.checkIn, ...data.category];
+  }, []);
+  const [taskValidationErrors, setTaskValidationErrors] = useState<
+    Record<string, TaskValidationError[]>
+  >({});
+  const [checkSave, setCheckSave] = useState(false);
+
+  const applyActionPlanValidationErrors = useCallback(
+    (errors: TaskValidationError[]) => {
+      if (errors.length === 0) return;
+      setCheckSave(true);
+      setTaskValidationErrors(groupErrorsByTaskKey(errors));
+      scrollToFirstTaskError(errors);
+    },
+    [],
+  );
+
+  const clearTaskValidation = useCallback((task: any) => {
+    const key = buildTaskIdentity(task);
+    setTaskValidationErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }, []);
+
+  const handleActionPlanSaveError = useCallback(
+    (err: any, flattenedData: any[]) => {
+      const detail = err?.detail ?? err?.response?.data?.detail ?? err?.message;
+      const backendErrors = mapBackendTaskErrors(detail, flattenedData);
+      if (backendErrors.length > 0) {
+        applyActionPlanValidationErrors(backendErrors);
+        return;
+      }
+      const message =
+        typeof detail === 'string'
+          ? detail
+          : typeof detail?.message === 'string'
+            ? detail.message
+            : 'Please review your action plan and try again.';
+      setCheckSave(true);
+      showError('Could not save action plan', message);
+    },
+    [applyActionPlanValidationErrors],
+  );
+
   const saveChanges = () => {
     if (isDemo) return;
-    setCheckSave(true);
-    const prepareDataForBackend = (data: any) => {
-      return [...data.checkIn, ...data.category];
-    };
     const flattenedData = prepareDataForBackend(actions);
+    const clientErrors = validateActionPlanTasks(flattenedData);
+    if (clientErrors.length > 0) {
+      applyActionPlanValidationErrors(clientErrors);
+      return;
+    }
 
     setISLoadingSaveChanges(true);
     Application.getActionPlanBlockSaveTasksNew({
@@ -179,18 +250,19 @@ const GenerateActionPlan = () => {
       is_update: isDarft === false,
     })
       .then(() => {
-        // navigate(-1);
+        setTaskValidationErrors({});
+        setCheckSave(false);
         navigate('/report/' + id + '/a?section=Action Plan');
-        // alert('Tasks saved successfully!');
+      })
+      .catch((err) => {
+        handleActionPlanSaveError(err, flattenedData);
       })
       .finally(() => {
         setISLoadingSaveChanges(false);
-      })
-      .catch(() => {});
+      });
   };
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);
-  const [checkSave, setCheckSave] = useState(false);
   const [actionPlanId, setActionPlanId] = useState<string | null>(null);
 
   // Read planId from URL query parameter
@@ -231,8 +303,25 @@ const GenerateActionPlan = () => {
           setIsDarft(true);
           // console.log('Action plan saved successfully');
         })
-        .catch(() => {
-          // console.log('Action plan save failed');
+        .catch((err) => {
+          const detail = err?.detail ?? err?.response?.data?.detail ?? '';
+          if (
+            String(detail)
+              .toLowerCase()
+              .includes('there is an active draft')
+          ) {
+            Application.ActionPlanBlockList({ member_id: id })
+              .then((res: any) => {
+                const latestDraft = [...(res.data || [])]
+                  .reverse()
+                  .find((plan: any) => plan.state === 'Draft');
+                if (latestDraft?.id) {
+                  setActionPlanId(latestDraft.id);
+                  getSavedPaln(latestDraft.id);
+                }
+              })
+              .catch(() => {});
+          }
         });
     }
   };
@@ -389,6 +478,8 @@ const GenerateActionPlan = () => {
                   setCalendarView={setCalendarView}
                   plans={[]}
                   handleShowConflictsModal={handleShowConflictsModal}
+                  taskValidationErrors={taskValidationErrors}
+                  onClearTaskValidation={clearTaskValidation}
                 />
                 <div className=" hidden lg:block absolute right-5 top-[75px] z-50">
                   <ComboBar isHolisticPlan></ComboBar>

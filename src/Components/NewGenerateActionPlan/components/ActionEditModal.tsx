@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
@@ -18,6 +18,11 @@ import { MultiTextField, TextField } from '../../UnitComponents';
 import SelectBoxField from '../../UnitComponents/SelectBoxField';
 import TextAreaField from '../../UnitComponents/TextAreaField';
 import PeptideDoseScheduleStepAction from './PeptideDoseScheduleStepAction';
+import ScheduleFrequencyGuide from './ScheduleFrequencyGuide';
+import {
+  isScheduleMissing,
+  normalizeScheduleType,
+} from '../actionPlanValidation';
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -26,6 +31,7 @@ interface ActionEditModalProps {
   isAdd?: boolean;
   defalts?: any;
   onSubmit: (data: any) => void;
+  highlightSchedule?: boolean;
 }
 
 const ActionEditModal: React.FC<ActionEditModalProps> = ({
@@ -35,6 +41,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   onSubmit,
   // onAddNotes,
   isAdd,
+  highlightSchedule = false,
 }) => {
   useEffect(() => {
     Application.HolisticPlanCategories({})
@@ -177,7 +184,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   // const [baseScore, setBaseScore] = useState(
   //   defalts?.Base_Score === 0 ? defalts?.Base_Score : 5,
   // );
-  const [frequencyType, setFrequencyType] = useState(defalts?.Frequency_Type);
+  const [frequencyType, setFrequencyType] = useState<string | null>(
+    normalizeScheduleType(defalts?.Frequency_Type),
+  );
   useEffect(() => {
     if (defalts) {
       if (defalts.Frequency_Type == 'weekly') {
@@ -205,7 +214,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setNotes(defalts['Client Notes'] || []);
       // setDescription(defalts.Description || '');
       // setBaseScore(defalts.Base_Score === 0 ? defalts.Base_Score : 5);
-      setFrequencyType(defalts?.Frequency_Type || null);
+      setFrequencyType(normalizeScheduleType(defalts?.Frequency_Type));
       setAddData({
         Type: defalts?.Activity_Filters?.Type || [],
         Terms: defalts?.Activity_Filters?.Terms || [],
@@ -245,6 +254,22 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setDoseSchedules(defalts.Dose_Schedules);
     }
   }, [defalts, isOpen]);
+
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    setFrequencyType(normalizeScheduleType(defalts?.Frequency_Type));
+  }, [isOpen, defalts?.Frequency_Type]);
+
+  const showScheduleGuide = Boolean(
+    highlightSchedule && isOpen && isScheduleMissing(frequencyType),
+  );
+
+  useEffect(() => {
+    if (isOpen && highlightSchedule && isScheduleMissing(frequencyType)) {
+      setShowValidation(true);
+    }
+  }, [isOpen, highlightSchedule, frequencyType]);
+
   const [, setIsExerciseStepValid] = useState(false);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
@@ -1160,10 +1185,24 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     )}
                   </div>
                 )} */}
-                <div className="mb-4">
-                  <label className="text-xs font-medium">Frequency</label>
-                  <div className="flex items-center gap-6 mt-2">
-                    <div className="flex items-center gap-1">
+                <ScheduleFrequencyGuide active={showScheduleGuide}>
+                  <div className="mb-2 flex items-center justify-between">
+                    <label className="text-xs font-medium">Frequency</label>
+                    {showScheduleGuide && (
+                      <span className="rounded-full bg-[#FFF0F2] px-2 py-0.5 text-[10px] font-medium text-[#FC5474]">
+                        Required to save
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <label
+                      htmlFor="daily"
+                      className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
+                        frequencyType === 'daily'
+                          ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
+                          : 'border-Gray-50 bg-white text-Text-Quadruple'
+                      }`}
+                    >
                       <input
                         type="radio"
                         id="daily"
@@ -1177,14 +1216,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         }}
                         className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
                       />
-                      <label
-                        htmlFor="daily"
-                        className={`text-xs cursor-pointer ${frequencyType === 'daily' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
-                      >
-                        Daily
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-1">
+                      <span className="text-xs font-medium">Daily</span>
+                    </label>
+                    <label
+                      htmlFor="weekly"
+                      className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
+                        frequencyType === 'weekly'
+                          ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
+                          : 'border-Gray-50 bg-white text-Text-Quadruple'
+                      }`}
+                    >
                       <input
                         type="radio"
                         id="weekly"
@@ -1201,14 +1242,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         }}
                         className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
                       />
-                      <label
-                        htmlFor="weekly"
-                        className={`text-xs cursor-pointer ${frequencyType === 'weekly' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
-                      >
-                        Weekly
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-1">
+                      <span className="text-xs font-medium">Weekly</span>
+                    </label>
+                    <label
+                      htmlFor="monthly"
+                      className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
+                        frequencyType === 'monthly'
+                          ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
+                          : 'border-Gray-50 bg-white text-Text-Quadruple'
+                      }`}
+                    >
                       <input
                         type="radio"
                         id="monthly"
@@ -1225,17 +1268,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         }}
                         className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
                       />
-                      <label
-                        htmlFor="monthly"
-                        className={`text-xs cursor-pointer ${frequencyType === 'monthly' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
-                      >
-                        Monthly
-                      </label>
-                    </div>
+                      <span className="text-xs font-medium">Monthly</span>
+                    </label>
                   </div>
-                  {!frequencyType && showValidation && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      This field is required.
+                  {isScheduleMissing(frequencyType) &&
+                  (showValidation || showScheduleGuide) && (
+                    <span className="text-[10px] mt-2 block text-red-500">
+                      {showScheduleGuide
+                        ? 'Select Daily, Weekly, or Monthly above.'
+                        : 'This field is required.'}
                     </span>
                   )}
                   {frequencyType === 'weekly' &&
@@ -1317,7 +1358,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       </div>
                     </div>
                   )}
-                </div>
+                </ScheduleFrequencyGuide>
                 {/* <div className="mb-4">
                   <label className="text-xs font-medium">Times</label>
                   <div className="flex w-full mt-2 gap-6">

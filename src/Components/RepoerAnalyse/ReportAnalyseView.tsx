@@ -43,6 +43,14 @@ import { UploadTestV2 } from './UploadTestV2';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
 import MarkdownText from '../markdownText';
 import NewDetailedAcordin from './Boxs/newDetailedAcordin';
+import {
+  ActionPlanSkeleton,
+  ClientSummarySkeleton,
+  ConcerningResultSkeleton,
+  DetailedAnalysisSkeleton,
+  HolisticPlanSkeleton,
+  NeedFocusSkeleton,
+} from './SectionSkeletons';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -52,6 +60,11 @@ interface ReportAnalyseViewprops {
   setActiveCheckProgress: (status: boolean) => void;
   setFirst_time_view?: (status: boolean) => void;
 }
+
+/** Wait for backend reprocessing to finish before hitting overview APIs. */
+const REPORT_REFRESH_DELAY_MS = 2000;
+/** Minimum gap between automatic report section refetches. */
+const REPORT_FETCH_COOLDOWN_MS = 5000;
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   memberID,
@@ -64,6 +77,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const { id, name } = useParams<{ id: string; name: string }>();
   const resolvedMemberID = id ? parseInt(id) : memberID;
   const [loading, setLoading] = useState(true);
+  const [clientSummaryLoading, setClientSummaryLoading] = useState(false);
+  const [referenceLoading, setReferenceLoading] = useState(false);
+  const [concerningLoading, setConcerningLoading] = useState(false);
+  const [treatmentLoading, setTreatmentLoading] = useState(false);
+  const [actionPlanLoading, setActionPlanLoading] = useState(false);
+  const [treatmentPlanLoaded, setTreatmentPlanLoaded] = useState(false);
   const [caldenderData, setCalenderData] = useState<any>(null);
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
@@ -94,6 +113,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   //     });
   //   }
   // }, [isHaveReport, resolvedMemberID]);
+  const startSectionLoading = () => {
+    setClientSummaryLoading(true);
+    setReferenceLoading(true);
+    setConcerningLoading(true);
+    setTreatmentLoading(true);
+    if (isShare) {
+      setActionPlanLoading(true);
+    }
+  };
+
   const fetchPatentData = () => {
     if (isShare) {
       Application.getPatientsInfoShare(
@@ -106,14 +135,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setUserInfoData(res.data);
           setIsHaveReport(true);
           setShowUploadTest(false);
+          setLoading(false);
+          startSectionLoading();
 
           setTimeout(() => {
-            // if (res.data.show_report == true) {
             fetchShareData();
-            // }
           }, 2000);
         })
-        .catch(() => {});
+        .catch(() => {
+          setLoading(false);
+        });
     } else {
       Application.getPatientsInfo({
         member_id: resolvedMemberID,
@@ -126,6 +157,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setUserInfoData(res.data);
           publish('userInfoData', res.data);
           setIsHaveReport(res.data.show_report);
+          setLoading(false);
           // Only show the "Provide Data to Generate Health Plan" selection
           // screen the first time per client. Once the client's first view is
           // done on the backend (first_time_view === true), don't show it again.
@@ -147,6 +179,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           } else {
             setActiveCheckProgress(false);
           }
+          if (
+            res.data.show_report == true ||
+            res.data.first_time_view == true
+          ) {
+            startSectionLoading();
+          }
           setTimeout(() => {
             if (
               res.data.show_report == true ||
@@ -158,6 +196,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         })
         .catch((err) => {
           console.error('Error getting patient info', err);
+          setLoading(false);
         });
     }
   };
@@ -199,12 +238,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setUserInfoData(res.data);
           setIsHaveReport(true);
           setShowUploadTest(false);
+          setLoading(false);
+          startSectionLoading();
           setTimeout(() => {
             fetchShareData();
-            // }
           }, 2000);
         })
-        .catch(() => {});
+        .catch(() => {
+          setLoading(false);
+        });
     } else {
       Application.getPatientsInfo({
         member_id: resolvedMemberID,
@@ -212,8 +254,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         .then((res) => {
           setUserInfoData(res.data);
           setIsHaveReport(res.data.show_report);
+          setShowUploadTest(false);
+          setDisableGenerate(res.data.has_minimum_data === false);
+          setLoading(false);
           if (res.data.first_time_view == true) {
             setActiveCheckProgress(true);
+          }
+          if (res.data.show_report == true) {
+            startSectionLoading();
           }
           setTimeout(() => {
             if (res.data.show_report == true) {
@@ -224,11 +272,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         })
         .catch((err) => {
           console.error('Error getting patient info', err);
+          setLoading(false);
         });
     }
   };
 
   const fetchData = () => {
+    startSectionLoading();
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
         setReferenceData(res.data);
@@ -248,20 +298,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
         clearUsedPositions();
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        setReferenceLoading(false);
+      });
     Application.getClientSummaryCategories({
       member_id: resolvedMemberID,
     })
       .then((res) => {
-        // setClientSummaryBoxs(mydata);
-
         setISGenerateLoading(false);
-        // console.log(res.data);
         setClientSummaryBoxs(res.data);
       })
       .catch(() => {})
       .finally(() => {
         setISGenerateLoading(false);
+        setClientSummaryLoading(false);
       });
     Application.getConceringResults({ member_id: resolvedMemberID })
       .then((res) => {
@@ -272,17 +323,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         } else {
           publish('ConcerningResultStatus', { isempty: false });
         }
-        // setConcerningResult(conceringResultData);
       })
       .catch(() => {
-        // setConcerningResult([]);
+        setConcerningResultIsLoaded(true);
+      })
+      .finally(() => {
+        setConcerningLoading(false);
       });
     getTreatmentPlanData();
   };
   const getTreatmentPlanData = () => {
+    setTreatmentLoading(true);
     Application.getOverviewtplan({ member_id: resolvedMemberID })
       .then((res) => {
         setTreatmentPlanData(res.data);
+        setTreatmentPlanLoaded(true);
         if (res.data.length == 0) {
           publish('HolisticPlanStatus', { isempty: true });
         } else {
@@ -292,9 +347,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       })
       .catch((err) => {
         console.error('Error getting treatment plan data:', err);
+        setTreatmentPlanLoaded(true);
+      })
+      .finally(() => {
+        setTreatmentLoading(false);
       });
   };
   const fetchShareData = () => {
+    startSectionLoading();
     Application.getClientSummaryOutofrefsShare(
       {
         member_id: memberID,
@@ -314,12 +374,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         ) {
           publish('NeedsFocusBiomarkerStatus', { isempty: true });
         }
-        //  else {
-        //   publish('NeedsFocusBiomarkerStatus', { isempty: false });
-        // }
-        // setReferenceData(referencedataMoch);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        setReferenceLoading(false);
+      });
     Application.getClientSummaryCategoriesShare(
       {
         member_id: memberID,
@@ -328,13 +387,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     )
       .then((res) => {
         setClientSummaryBoxs(res.data);
-        // setClientSummaryBoxs(mydata);
-
         setISGenerateLoading(false);
       })
       .catch(() => {})
       .finally(() => {
         setISGenerateLoading(false);
+        setClientSummaryLoading(false);
       });
     Application.getConceringResultsShare(
       {
@@ -350,9 +408,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         } else {
           publish('ConcerningResultStatus', { isempty: false });
         }
-        // setConcerningResult(conceringResultData);
       })
-      .catch(() => {});
+      .catch(() => {
+        setConcerningResultIsLoaded(true);
+      })
+      .finally(() => {
+        setConcerningLoading(false);
+      });
+    setTreatmentLoading(true);
     Application.getOverviewtplanShare(
       {
         member_id: memberID,
@@ -361,13 +424,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     )
       .then((res) => {
         setTreatmentPlanData(res.data.details);
+        setTreatmentPlanLoaded(true);
         if (res.data.details.length == 0) {
           publish('HolisticPlanStatus', { isempty: true });
         } else {
           publish('HolisticPlanStatus', { isempty: false });
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        setTreatmentPlanLoaded(true);
+      })
+      .finally(() => {
+        setTreatmentLoading(false);
+      });
+    setActionPlanLoading(true);
     Application.getCaldenderdataShare(
       {
         member_id: memberID,
@@ -375,7 +445,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     )
       .then((res) => {
-        // Please don't touch.
         setCalenderData(res.data);
         if (res.data.length == 0) {
           publish('ActionPlanStatus', { isempty: true });
@@ -383,7 +452,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           publish('ActionPlanStatus', { isempty: false });
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        setActionPlanLoading(false);
+      });
   };
   const navigate = useNavigate();
   const [callSync, setCallSync] = useState(false);
@@ -411,22 +483,68 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     };
   }, [isHaveReport, location.pathname, location.search, navigate]);
 
+  const refreshReportDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const lastReportFetchAtRef = useRef(0);
+
+  const scheduleReportDataFetch = () => {
+    const now = Date.now();
+    const elapsedSinceLastFetch = now - lastReportFetchAtRef.current;
+    const cooldownRemaining = Math.max(
+      0,
+      REPORT_FETCH_COOLDOWN_MS - elapsedSinceLastFetch,
+    );
+    const delayMs = Math.max(REPORT_REFRESH_DELAY_MS, cooldownRemaining);
+
+    if (refreshReportDebounceRef.current) {
+      clearTimeout(refreshReportDebounceRef.current);
+    }
+    refreshReportDebounceRef.current = setTimeout(() => {
+      lastReportFetchAtRef.current = Date.now();
+      startSectionLoading();
+      fetchData();
+    }, delayMs);
+  };
+
+  const refreshReportSections = () => {
+    setIsHaveReport(true);
+    setShowUploadTest(false);
+    Application.getPatientsInfo({
+      member_id: resolvedMemberID,
+    })
+      .then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(res.data.show_report || res.data.first_time_view);
+        setHasWearableData(res.data.has_wearable_data);
+        setQuestionnaires(res.data.questionnaires);
+        setDisableGenerate(res.data.has_minimum_data === false);
+      })
+      .catch((err) => {
+        console.error('Error refreshing patient info after progress:', err);
+      });
+    scheduleReportDataFetch();
+  };
+
   useEffect(() => {
-    const handleCompletedProgress = (data: any) => {
-      if (data?.detail?.type === 'uploaded') {
-        fetchData();
+    return () => {
+      if (refreshReportDebounceRef.current) {
+        clearTimeout(refreshReportDebounceRef.current);
       }
     };
+  }, []);
+
+  useEffect(() => {
     const handleAllProgressCompleted = () => {
-      fetchData();
+      setDisableGenerate(false);
+      refreshReportSections();
     };
-    subscribe('completedProgress', handleCompletedProgress);
     subscribe('allProgressCompleted', handleAllProgressCompleted);
     return () => {
-      unsubscribe('completedProgress', handleCompletedProgress);
       unsubscribe('allProgressCompleted', handleAllProgressCompleted);
     };
-  }, [resolvedMemberID]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedMemberID, isShare]);
   const [accessManager, setAccessManager] = useState<
     Array<{
       name: string;
@@ -487,12 +605,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setConcerningResultIsLoaded(true);
       setConcerningResult(conceringResultData);
       setTreatmentPlanData(treatmentPlanData);
+      setTreatmentPlanLoaded(true);
       setCalenderData(calenderDataMoch);
+      setClientSummaryLoading(false);
+      setReferenceLoading(false);
+      setConcerningLoading(false);
+      setTreatmentLoading(false);
+      setActionPlanLoading(false);
+      setLoading(false);
     } else {
       setReferenceData(null);
       setClientSummaryBoxs(null);
       setConcerningResult([]);
+      setConcerningResultIsLoaded(false);
       setTreatmentPlanData([]);
+      setTreatmentPlanLoaded(false);
       setCalenderData([]);
     }
   }, [isHaveReport]);
@@ -506,23 +633,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const [ActionPlanPrint, setActionPlanPrint] = useState(null);
   const [HelthPrint, setHelthPlanPrint] = useState(null);
-  useEffect(() => {
-    if (
-      ClientSummaryBoxs != null &&
-      referenceData != null &&
-      ConcerningResultIsLoaded
-    ) {
-      setLoading(false);
-    }
-  }, [
-    ClientSummaryBoxs,
-    referenceData,
-    ConcerningResultIsLoaded,
-    TreatMentPlanData,
-    caldenderData,
-    isHaveReport,
-    ConcerningResult,
-  ]);
+
+  const detailedAnalysisLoading =
+    clientSummaryLoading || referenceLoading;
   const resolveBioMarkers = () => {
     // const refData: Array<any> = [];
     // referenceData?.biomarkers.forEach((el: any) => {
@@ -572,7 +685,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     const params = new URLSearchParams(location.search);
     const section = params.get('section');
     if (!loading && section) {
-      // Ensure loading is complete
       const element = document.getElementById(section);
       if (element) {
         setTimeout(() => {
@@ -585,7 +697,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         console.warn(`Element with ID '${section}' not found.`);
       }
     }
-  }, [location, loading]); // Add 'loading' to dependencies
+  }, [
+    location,
+    loading,
+    clientSummaryLoading,
+    referenceLoading,
+    concerningLoading,
+    treatmentLoading,
+    actionPlanLoading,
+  ]);
   const [showUploadTest, setShowUploadTest] = useState(false);
   useEffect(() => {
     if (isActive) {
@@ -893,8 +1013,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-30 backdrop-blur-md z-20">
           <Circleloader></Circleloader>
         </div>
-      ) : (
-        <>
+      ) : null}
+      <>
           {showUploadTest && (
             <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
           )}
@@ -907,6 +1027,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           >
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
+              <>
+                {clientSummaryLoading && !ClientSummaryBoxs ? (
+                  <ClientSummarySkeleton />
+                ) : (
               <div className="flex flex-col xl:flex-row gap-6 xl:gap-14 ">
                 <div className="min-w-[430px] w-full xl:w-[330px] relative xl:min-h-[750px]">
                   <div>
@@ -1005,7 +1129,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       );
                     })}
                   </div>
-                  {resolveCategories().length == 0 && (
+                  {resolveCategories().length == 0 &&
+                    !clientSummaryLoading && (
                     <>
                       <div className="flex justify-center items-center w-full">
                         <div className="flex flex-col items-center justify-center">
@@ -1023,6 +1148,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   )}
                 </div>
               </div>
+                )}
+              </>
             )}
             {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
               .checked == true && (
@@ -1039,6 +1166,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       {referenceData?.total_biomarker_note || '' || ''}
                     </div>
                   </div>
+                  {referenceLoading && !referenceData ? (
+                    <NeedFocusSkeleton />
+                  ) : (
+                  <>
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
                     {resolveBioMarkers()
                       .filter((val: any) => val.outofref == true)
@@ -1052,7 +1183,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                   {resolveBioMarkers().filter(
                     (val: any) => val.outofref == true,
-                  ).length == 0 && (
+                  ).length == 0 &&
+                    !referenceLoading && (
                     <>
                       <div className="flex justify-center items-center mt-10 w-full">
                         <div className="flex flex-col items-center justify-center">
@@ -1067,6 +1199,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         </div>
                       </div>
                     </>
+                  )}
+                  </>
                   )}
                   {/* <CustomCanvasChart></CustomCanvasChart> */}
                 </div>
@@ -1088,7 +1222,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                   </div>
-                  {ResolveConceringData().length > 0 ? (
+                  {concerningLoading && !ConcerningResultIsLoaded ? (
+                    <ConcerningResultSkeleton />
+                  ) : ResolveConceringData().length > 0 ? (
                     <>
                       <div className=" hidden xl:block">
                         <div className="w-full bg-gray-100 rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center font-medium">
@@ -1165,7 +1301,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     {referenceData?.detailed_analysis_note || ''}
                   </div>
                 </div>
-                {resolveCategories().length > 0 ? (
+                {detailedAnalysisLoading &&
+                (!ClientSummaryBoxs || !referenceData) ? (
+                  <DetailedAnalysisSkeleton />
+                ) : resolveCategories().length > 0 ? (
                   <>
                     <div className="mt-6 hidden xl:block">
                       {resolveCategories().map((el: any, index: number) => {
@@ -1203,6 +1342,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </>
                 ) : (
                   <>
+                    {!detailedAnalysisLoading && (
                     <div className="flex justify-center items-center mt-10 w-full">
                       <div className="flex flex-col items-center justify-center">
                         <img
@@ -1215,6 +1355,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         </div>
                       </div>
                     </div>
+                    )}
                   </>
                 )}
               </div>
@@ -1250,6 +1391,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {/* <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip> */}
                   {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                 </div>
+                {treatmentLoading && !treatmentPlanLoaded ? (
+                  <HolisticPlanSkeleton />
+                ) : (
                 <TreatmentPlan
                   disableGenerate={disableGenerate}
                   isShare={isShare}
@@ -1261,6 +1405,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
                   setDateShare={() => {}}
                 />
+                )}
               </div>
             )}
             <div className="my-10 hidden">
@@ -1294,6 +1439,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 >
                   Action Plan
                 </div>
+                {actionPlanLoading && caldenderData == null ? (
+                  <ActionPlanSkeleton />
+                ) : (
                 <ActionPlan
                   isShare={isShare}
                   setActionPrintData={(values: any) => {
@@ -1306,6 +1454,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   isHolisticPlanEmpty={isHolisticPlanEmpty}
                   disableGenerate={disableGenerate}
                 />
+                )}
               </div>
             )}
             {isHaveReport && (
@@ -1463,8 +1612,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               </>
             )}
           </div>
-        </>
-      )}
+      </>
     </>
   );
 };

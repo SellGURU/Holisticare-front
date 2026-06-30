@@ -1,5 +1,6 @@
 import BioMarkerRowSuggestions from '../bioMarkerRowSuggestions';
 import BioMarkerRowSuggestionsCheckIn from './bioMarkerRowSuggestionsCheckIn';
+import { TaskValidationError } from '../actionPlanValidation';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ActionCardProps {
@@ -9,6 +10,9 @@ interface ActionCardProps {
   index: number;
   checkIn?: boolean;
   checkValid: boolean;
+  taskKey: string;
+  validationErrors?: TaskValidationError[];
+  onClearTaskValidation?: (task: any) => void;
   // conflicts?: string[];
 }
 const ActionCard: React.FC<ActionCardProps> = ({
@@ -18,6 +22,9 @@ const ActionCard: React.FC<ActionCardProps> = ({
   index,
   checkIn,
   checkValid,
+  taskKey,
+  validationErrors,
+  onClearTaskValidation,
   // conflicts,
 }) => {
   return (
@@ -27,6 +34,9 @@ const ActionCard: React.FC<ActionCardProps> = ({
           index={index}
           checkValid={checkValid}
           value={data}
+          taskKey={taskKey}
+          validationErrors={validationErrors}
+          onClearTaskValidation={onClearTaskValidation}
           // isInvalid={conflicts ? conflicts.includes(data.Category) : false}
           onRemove={onRemove}
           setValues={setActions}
@@ -37,6 +47,9 @@ const ActionCard: React.FC<ActionCardProps> = ({
           value={data}
           onRemove={onRemove}
           checkValid={checkValid}
+          taskKey={taskKey}
+          validationErrors={validationErrors}
+          onClearTaskValidation={onClearTaskValidation}
           setValues={setActions}
         />
       )}

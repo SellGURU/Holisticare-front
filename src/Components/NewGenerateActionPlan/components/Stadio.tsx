@@ -17,6 +17,10 @@ import { Tooltip } from 'react-tooltip';
 import { resolveCategoryName, splitInstructions } from '../../../help';
 import Sort from './Sort';
 import { Box } from 'lucide-react';
+import {
+  buildTaskIdentity,
+  TaskValidationError,
+} from '../actionPlanValidation';
 
 interface StadioProps {
   data: {
@@ -33,6 +37,8 @@ interface StadioProps {
   plans: any;
   isCheckSave: boolean;
   handleShowConflictsModal: () => void;
+  taskValidationErrors?: Record<string, TaskValidationError[]>;
+  onClearTaskValidation?: (task: any) => void;
 }
 
 interface HolisticPlanProps {
@@ -55,6 +61,8 @@ const Stadio: FC<StadioProps> = ({
   plans,
   handleShowConflictsModal,
   isCheckSave,
+  taskValidationErrors = {},
+  onClearTaskValidation,
 }) => {
   console.log(data);
 
@@ -71,6 +79,14 @@ const Stadio: FC<StadioProps> = ({
     'Checkin',
   ];
   console.log(actions);
+
+  const validationBannerItems = useMemo(() => {
+    return Object.values(taskValidationErrors).flat();
+  }, [taskValidationErrors]);
+
+  const validationTaskCount = useMemo(() => {
+    return Object.keys(taskValidationErrors).length;
+  }, [taskValidationErrors]);
 
   const [searchValue, setSearchValue] = useState('');
   const [isAutoGenerate, setIsAutoGenerate] = useState(false);
@@ -756,8 +772,28 @@ const Stadio: FC<StadioProps> = ({
               </div>
             ) : (
               <>
+                {validationBannerItems.length > 0 && (
+                  <div className="mb-3 rounded-2xl border border-red-200 bg-[#FFF5F5] px-4 py-3 text-Text-Primary">
+                    <div className="text-sm font-medium text-[#FC5474]">
+                      {validationTaskCount === 1
+                        ? '1 item needs attention before saving'
+                        : `${validationTaskCount} items need attention before saving`}
+                    </div>
+                    <ul className="mt-2 list-disc pl-5 text-xs text-Text-Primary space-y-1">
+                      {validationBannerItems.slice(0, 5).map((error, idx) => (
+                        <li key={`${error.taskKey}-${error.field}-${idx}`}>
+                          <span className="font-medium">
+                            {error.taskTitle || 'Task'}:
+                          </span>{' '}
+                          {error.message}. {error.fixHint}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <div className="flex flex-col gap-3 md:py-3 md:min-h-[420px] ">
                   {actions.checkIn.map((act: any, index: number) => {
+                    const taskKey = buildTaskIdentity(act);
                     return (
                       <>
                         <ActionCard
@@ -765,14 +801,18 @@ const Stadio: FC<StadioProps> = ({
                           checkValid={isCheckSave}
                           onRemove={() => removeFromActions(act)}
                           setActions={setActions}
-                          key={index}
+                          key={taskKey}
                           index={index}
                           checkIn={true}
+                          taskKey={taskKey}
+                          validationErrors={taskValidationErrors[taskKey]}
+                          onClearTaskValidation={onClearTaskValidation}
                         />
                       </>
                     );
                   })}
                   {actions.category.map((act: any, index: number) => {
+                    const taskKey = buildTaskIdentity(act);
                     return (
                       <>
                         <ActionCard
@@ -780,8 +820,11 @@ const Stadio: FC<StadioProps> = ({
                           checkValid={isCheckSave}
                           onRemove={() => removeFromActions(act)}
                           setActions={setActions}
-                          key={index}
+                          key={taskKey}
                           index={index}
+                          taskKey={taskKey}
+                          validationErrors={taskValidationErrors[taskKey]}
+                          onClearTaskValidation={onClearTaskValidation}
                           // conflicts={checkHaveConflicts()}
                         />
                       </>

@@ -8,6 +8,7 @@ import ConflictsModal from './components/ConflictsModal';
 import FilePreviewModal from './components/FilePreviewModal';
 import MonthShows from './components/MonthShows';
 import { resolveCategoryIcon } from '../../help';
+import { TaskValidationError, isScheduleMissing, validateActionPlanTasks } from './actionPlanValidation';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -15,6 +16,9 @@ interface BioMarkerRowSuggestionsProps {
   index: number;
   onRemove: () => void;
   checkValid: boolean;
+  taskKey: string;
+  validationErrors?: TaskValidationError[];
+  onClearTaskValidation?: (task: any) => void;
   // isInvalid?: boolean;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
@@ -23,6 +27,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   index,
   onRemove,
   checkValid,
+  taskKey,
+  validationErrors,
+  onClearTaskValidation,
 }) => {
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
@@ -52,6 +59,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
   const [showBasedOn, setShowBasedOn] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [highlightScheduleOnEdit, setHighlightScheduleOnEdit] = useState(false);
   const [showFilePreviewModal, setShowFilePreviewModal] = useState(false);
   const [newValue, setNewValue] = useState(null);
   useEffect(() => {
@@ -89,14 +97,45 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   //   }
   // };
   const isinvalid = () => {
+    if (validationErrors && validationErrors.length > 0) {
+      return true;
+    }
     if (
-      (!value.Frequency_Type || value.Frequency_Type.length === 0) &&
+      (isScheduleMissing(value.Frequency_Type)) &&
       checkValid
     ) {
       return true;
     } else {
       return false;
     }
+  };
+  const scheduleHint =
+    checkValid || (validationErrors && validationErrors.length > 0)
+      ? 'Click Edit → choose Daily, Weekly, or Monthly'
+      : 'Set a schedule when you are ready';
+  const needsScheduleGuide = Boolean(
+    isScheduleMissing(value?.Frequency_Type) &&
+      (checkValid || (validationErrors && validationErrors.length > 0)),
+  );
+  const visibleValidationErrors = (validationErrors || []).filter(
+    (error) =>
+      !(isScheduleMissing(value?.Frequency_Type) && error.field === 'Frequency_Type'),
+  );
+  const openEditModal = () => {
+    setHighlightScheduleOnEdit(needsScheduleGuide);
+    setShowEditModal(true);
+  };
+  const handleScheduleActionKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+  ) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openEditModal();
+    }
+  };
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setHighlightScheduleOnEdit(false);
   };
   function hasAnyExerciseFiles(data: any[]): boolean {
     return (
@@ -150,6 +189,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       <div className="w-full h-auto  p-2 lg:px-6 lg:py-1 break-all ">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
           <div
+            data-task-key={taskKey}
             className={`w-full bg-backgroundColor-Card relative   px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${isinvalid() ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
           >
             <div className="flex items-center flex-wrap gap-4 text-nowrap  justify-between  w-full">
@@ -259,16 +299,38 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     Daily
                   </div>
                 )}
-                {!value.Frequency_Type || value.Frequency_Type.length === 0 ? (
-                  <div
-                    className="flex items-center gap-1 text-[10px] md:text-xs"
-                    style={{ color: isinvalid() ? '#FC5474' : '#FFAB2C' }}
-                  >
-                    <SvgIcon
-                      src="/icons/danger-new.svg"
-                      color={isinvalid() ? '#FC5474' : '#FFAB2C'}
-                    />
-                    No Scheduled
+                {isScheduleMissing(value.Frequency_Type) ? (
+                  <div className="flex flex-col items-start gap-0.5">
+                    <div
+                      className="flex items-center gap-1 text-[10px] md:text-xs cursor-pointer underline underline-offset-2 hover:opacity-80"
+                      style={{ color: isinvalid() ? '#FC5474' : '#FFAB2C' }}
+                      onClick={openEditModal}
+                      onKeyDown={handleScheduleActionKeyDown}
+                      role="button"
+                      tabIndex={0}
+                      title="Click to open Edit and set a schedule"
+                    >
+                      <SvgIcon
+                        src="/icons/danger-new.svg"
+                        color={isinvalid() ? '#FC5474' : '#FFAB2C'}
+                      />
+                      {checkValid || (validationErrors && validationErrors.length > 0)
+                        ? 'Schedule required'
+                        : 'No schedule yet'}
+                    </div>
+                    {(checkValid ||
+                      (validationErrors && validationErrors.length > 0)) && (
+                      <div
+                        className="text-[10px] text-[#FC5474] pl-4 cursor-pointer underline underline-offset-2 hover:opacity-80"
+                        onClick={openEditModal}
+                        onKeyDown={handleScheduleActionKeyDown}
+                        role="button"
+                        tabIndex={0}
+                        title="Click to fix schedule"
+                      >
+                        Click to fix — {scheduleHint}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   ''
@@ -295,7 +357,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     src="/icons/edit.svg"
                     alt=""
                     className="w-[24px] h-[24px] cursor-pointer"
-                    onClick={() => setShowEditModal(true)}
+                    onClick={openEditModal}
                   />
                   <img
                     src="/icons/trash-red.svg"
@@ -326,6 +388,23 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </>
               )}
             </div>
+            {visibleValidationErrors.length > 0 && (
+              <div className="w-full mt-2 px-1 space-y-1">
+                {visibleValidationErrors.map((error, errIdx) => (
+                  <div
+                    key={`${error.field}-${errIdx}`}
+                    className="text-xs text-[#FC5474] cursor-pointer underline underline-offset-2 hover:opacity-80"
+                    onClick={openEditModal}
+                    onKeyDown={handleScheduleActionKeyDown}
+                    role="button"
+                    tabIndex={0}
+                    title="Click to open Edit and fix this issue"
+                  >
+                    {error.message}. Click to fix — {error.fixHint}
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
                 {primaryPractitionerComment.length > 0 && (
@@ -854,8 +933,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       />
       <ActionEditModal
         isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
+        onClose={closeEditModal}
         defalts={newValue}
+        highlightSchedule={highlightScheduleOnEdit || needsScheduleGuide}
         onAddNotes={() => {}}
         onSubmit={(editedData) => {
           setValues((prevData: any) => {
@@ -896,12 +976,15 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               };
 
               updatedData.category[categoryIndex] = updatedItem;
+              if (validateActionPlanTasks([updatedItem]).length === 0) {
+                onClearTaskValidation?.(updatedItem);
+              }
             }
 
             return updatedData;
           });
 
-          setShowEditModal(false);
+          closeEditModal();
         }}
       />
     </>

@@ -58,6 +58,17 @@ const resetHealthFailureCount = () => {
   healthFailureWindowStart = 0;
 };
 
+const isPatientNotFoundMessage = (message: unknown) =>
+  String(message || '')
+    .trim()
+    .toLowerCase() === 'no such patient was found.';
+
+const handlePatientNotFound = () => {
+  // Normalize this common backend response without globally moving the user or
+  // showing a misleading toast. Individual screens decide whether this means
+  // "empty widget", "show retry", or "not found".
+};
+
 const recordHealthFailure = () => {
   const now = Date.now();
   if (
@@ -196,6 +207,15 @@ axios.interceptors.response.use(
           backendMessage ||
           'Your clinic is on the Demo plan. Upgrade to access this feature.',
         code: 'DEMO_RESTRICTED',
+      });
+    }
+
+    if (error.response?.status === 406 && isPatientNotFoundMessage(backendMessage)) {
+      handlePatientNotFound();
+      return Promise.reject({
+        ...error.response.data,
+        detail: backendMessage,
+        code: 'PATIENT_NOT_FOUND',
       });
     }
 

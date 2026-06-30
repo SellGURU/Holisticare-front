@@ -3,6 +3,12 @@ import SvgIcon from '../../../utils/svgIcon';
 import ActionEditCheckInModal from './ActionEditCheckInModal';
 import ChoosingDaysWeek from './ChoosingDaysWeek';
 import MonthShows from './MonthShows';
+import {
+  isScheduleMissing,
+  normalizeScheduleType,
+  TaskValidationError,
+  validateActionPlanTasks,
+} from '../actionPlanValidation';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsCheckInProps {
@@ -11,10 +17,22 @@ interface BioMarkerRowSuggestionsCheckInProps {
   index: number;
   onRemove: () => void;
   checkValid: boolean;
+  taskKey: string;
+  validationErrors?: TaskValidationError[];
+  onClearTaskValidation?: (task: any) => void;
 }
 const BioMarkerRowSuggestionsCheckIn: React.FC<
   BioMarkerRowSuggestionsCheckInProps
-> = ({ value, setValues, index, onRemove, checkValid }) => {
+> = ({
+  value,
+  setValues,
+  index,
+  onRemove,
+  checkValid,
+  taskKey,
+  validationErrors,
+  onClearTaskValidation,
+}) => {
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
   );
@@ -34,17 +52,51 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
   const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
   // const [showBasedOn, setShowBasedOn] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [highlightScheduleOnEdit, setHighlightScheduleOnEdit] = useState(false);
   const [newValue, setNewValue] = useState(null);
   useEffect(() => {
     setNewValue(value);
   }, [value]);
+
+  const hasValidationErrors = Boolean(
+    validationErrors && validationErrors.length > 0,
+  );
+  const showScheduleError = Boolean(
+    (isScheduleMissing(value?.Frequency_Type) && checkValid) ||
+      hasValidationErrors,
+  );
+  const scheduleHint = showScheduleError
+    ? 'Click Edit → choose Daily, Weekly, or Monthly'
+    : 'Set a schedule when you are ready';
+  const needsScheduleGuide = showScheduleError;
+  const visibleValidationErrors = (validationErrors || []).filter(
+    (error) =>
+      !(isScheduleMissing(value?.Frequency_Type) && error.field === 'Frequency_Type'),
+  );
+  const openEditModal = () => {
+    setHighlightScheduleOnEdit(needsScheduleGuide);
+    setShowEditModal(true);
+  };
+  const handleScheduleActionKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+  ) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openEditModal();
+    }
+  };
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setHighlightScheduleOnEdit(false);
+  };
 
   return (
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
           <div
-            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex justify-start text-Text-Primary items-center border ${!value.Frequency_Type && checkValid ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
+            data-task-key={taskKey}
+            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex justify-start text-Text-Primary items-center border ${showScheduleError ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
           >
             <div className="flex flex-col justify-start w-full">
               <div className="flex items-center justify-between w-full">
@@ -95,20 +147,58 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
                       Daily
                     </div>
                   )}
-                  {!value.Frequency_Type && (
-                    <div
-                      className="flex items-center gap-1 text-xs"
-                      style={{ color: !checkValid ? '#FFAB2C' : '#FC5474' }}
-                    >
-                      <SvgIcon
-                        src="/icons/danger-new.svg"
-                        color={!checkValid ? '#FFAB2C' : '#FC5474'}
-                      />
-                      No Scheduled
+                  {isScheduleMissing(value.Frequency_Type) && (
+                    <div className="flex flex-col items-end gap-0.5">
+                      <div
+                        className="flex items-center gap-1 text-xs cursor-pointer underline underline-offset-2 hover:opacity-80"
+                        style={{
+                          color: showScheduleError ? '#FC5474' : '#FFAB2C',
+                        }}
+                        onClick={openEditModal}
+                        onKeyDown={handleScheduleActionKeyDown}
+                        role="button"
+                        tabIndex={0}
+                        title="Click to open Edit and set a schedule"
+                      >
+                        <SvgIcon
+                          src="/icons/danger-new.svg"
+                          color={showScheduleError ? '#FC5474' : '#FFAB2C'}
+                        />
+                        {showScheduleError ? 'Schedule required' : 'No schedule yet'}
+                      </div>
+                      {showScheduleError && (
+                        <div
+                          className="text-[10px] text-[#FC5474] cursor-pointer underline underline-offset-2 hover:opacity-80"
+                          onClick={openEditModal}
+                          onKeyDown={handleScheduleActionKeyDown}
+                          role="button"
+                          tabIndex={0}
+                          title="Click to fix schedule"
+                        >
+                          Click to fix — {scheduleHint}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
+              {visibleValidationErrors.length > 0 && (
+                <div className="w-full mt-2 space-y-1">
+                  {visibleValidationErrors.map((error, errIdx) => (
+                    <div
+                      key={`${error.field}-${errIdx}`}
+                      className="text-xs text-[#FC5474] cursor-pointer underline underline-offset-2 hover:opacity-80"
+                      onClick={openEditModal}
+                      onKeyDown={handleScheduleActionKeyDown}
+                      role="button"
+                      tabIndex={0}
+                      title="Click to open Edit and fix this issue"
+                    >
+                      {error.message}. Click to fix — {error.fixHint}
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="flex justify-between w-full mt-1.5">
                 <div className="flex w-[min-content] flex-grow-[1] mt-1 gap-5">
                   <div className={`flex items-start`}>
@@ -148,7 +238,7 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
                     src="/icons/edit.svg"
                     alt=""
                     className="w-[24px] h-[24px] cursor-pointer"
-                    onClick={() => setShowEditModal(true)}
+                    onClick={openEditModal}
                   />
                   <img
                     src="/icons/trash-red.svg"
@@ -180,8 +270,9 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
       </div>
       <ActionEditCheckInModal
         isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
+        onClose={closeEditModal}
         defalts={newValue}
+        highlightSchedule={highlightScheduleOnEdit || needsScheduleGuide}
         onSubmit={(editedData) => {
           setValues((prevData: any) => {
             const updatedData = { ...prevData };
@@ -207,13 +298,16 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
                 };
 
                 updatedData.checkIn[checkInIndex] = updatedItem;
+                if (validateActionPlanTasks([updatedItem]).length === 0) {
+                  onClearTaskValidation?.(updatedItem);
+                }
               }
             }
 
             return updatedData;
           });
 
-          setShowEditModal(false);
+          closeEditModal();
         }}
       />
     </>

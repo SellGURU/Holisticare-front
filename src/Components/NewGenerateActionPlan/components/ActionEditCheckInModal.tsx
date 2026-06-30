@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import Checkbox from '../../checkbox';
 import MainModal from '../../MainModal';
+import ScheduleFrequencyGuide from './ScheduleFrequencyGuide';
+import { isScheduleMissing, normalizeScheduleType } from '../actionPlanValidation';
 
 interface ActionEditCheckInModalProps {
   isOpen: boolean;
   onClose: () => void;
   defalts?: any;
   onSubmit: (data: any) => void;
+  highlightSchedule?: boolean;
 }
 
 const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
@@ -16,6 +19,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
   defalts,
   onClose,
   onSubmit,
+  highlightSchedule = false,
 }) => {
   const [selectedDays, setSelectedDays] = useState<string[]>(
     defalts?.Frequency_Dates || [],
@@ -63,7 +67,9 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
   const [selectedTimes, setSelectedTimes] = useState<string[]>(
     defalts ? defalts.Times : [],
   );
-  const [frequencyType, setFrequencyType] = useState(defalts?.Frequency_Type);
+  const [frequencyType, setFrequencyType] = useState<string | null>(
+    normalizeScheduleType(defalts?.Frequency_Type),
+  );
   useEffect(() => {
     if (defalts) {
       if (defalts.Frequency_Type == 'weekly') {
@@ -76,11 +82,27 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
         setSelectedDays([]);
         setSelectedDaysMonth([]);
       }
-      setFrequencyType(defalts?.Frequency_Type || null);
+      setFrequencyType(normalizeScheduleType(defalts?.Frequency_Type));
       // setEstimatedTime(defalts?.Estimated_time || '');
       setSelectedTimes(defalts.Times || []);
     }
   }, [defalts]);
+
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    setFrequencyType(normalizeScheduleType(defalts?.Frequency_Type));
+  }, [isOpen, defalts?.Frequency_Type]);
+
+  const showScheduleGuide = Boolean(
+    highlightSchedule && isOpen && isScheduleMissing(frequencyType),
+  );
+
+  useEffect(() => {
+    if (isOpen && highlightSchedule && isScheduleMissing(frequencyType)) {
+      setFrequencyError('Choose Daily, Weekly, or Monthly to continue.');
+    }
+  }, [isOpen, highlightSchedule, frequencyType]);
+
   const modalRef = useRef(null);
 
   useModalAutoClose({
@@ -100,7 +122,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
   };
 
   const handleApply = () => {
-    if (!frequencyType) {
+    if (isScheduleMissing(frequencyType)) {
       setFrequencyError('This field is required.');
       return;
     }
@@ -148,10 +170,25 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">Edit Check-In</div>
         </h2>
-        <div className="mb-4 mt-4">
-          <label className="text-xs font-medium">Frequency</label>
-          <div className="flex items-center gap-6 mt-2">
-            <div className="flex items-center gap-1">
+        <div className="mt-4">
+          <ScheduleFrequencyGuide active={showScheduleGuide}>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="text-xs font-medium">Frequency</label>
+              {showScheduleGuide && (
+                <span className="rounded-full bg-[#FFF0F2] px-2 py-0.5 text-[10px] font-medium text-[#FC5474]">
+                  Required to save
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+            <label
+              htmlFor="daily"
+              className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
+                frequencyType === 'daily'
+                  ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
+                  : 'border-Gray-50 bg-white text-Text-Quadruple'
+              }`}
+            >
               <input
                 type="radio"
                 id="daily"
@@ -166,14 +203,16 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                 }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
-              <label
-                htmlFor="daily"
-                className={`text-xs cursor-pointer ${frequencyType === 'daily' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
-              >
-                Daily
-              </label>
-            </div>
-            <div className="flex items-center gap-1">
+              <span className="text-xs font-medium">Daily</span>
+            </label>
+            <label
+              htmlFor="weekly"
+              className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
+                frequencyType === 'weekly'
+                  ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
+                  : 'border-Gray-50 bg-white text-Text-Quadruple'
+              }`}
+            >
               <input
                 type="radio"
                 id="weekly"
@@ -191,14 +230,16 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                 }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
-              <label
-                htmlFor="weekly"
-                className={`text-xs cursor-pointer ${frequencyType === 'weekly' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
-              >
-                Weekly
-              </label>
-            </div>
-            <div className="flex items-center gap-1">
+              <span className="text-xs font-medium">Weekly</span>
+            </label>
+            <label
+              htmlFor="monthly"
+              className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:border-Primary-DeepTeal ${
+                frequencyType === 'monthly'
+                  ? 'border-Primary-DeepTeal bg-[#DEF7EC] text-Primary-DeepTeal shadow-sm'
+                  : 'border-Gray-50 bg-white text-Text-Quadruple'
+              }`}
+            >
               <input
                 type="radio"
                 id="monthly"
@@ -216,13 +257,8 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                 }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
-              <label
-                htmlFor="monthly"
-                className={`text-xs cursor-pointer ${frequencyType === 'monthly' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
-              >
-                Monthly
-              </label>
-            </div>
+              <span className="text-xs font-medium">Monthly</span>
+            </label>
           </div>
           {frequencyError && (
             <div className="text-Red text-xs mt-3">{frequencyError}</div>
@@ -300,6 +336,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
               </div>
             </div>
           )}
+          </ScheduleFrequencyGuide>
         </div>
         <div className="mb-4">
           <label className="text-xs font-medium">Times</label>

@@ -120,6 +120,14 @@ export const ActionPlan: FC<ActionPlanProps> = ({
           }
         })
         .catch((err) => {
+          if (err?.code === 'PATIENT_NOT_FOUND') {
+            setCardData([]);
+            setActiveAction(null);
+            setActionPrintData([]);
+            setCalendarPrintData([]);
+            publish('ActionPlanStatus', { isempty: true });
+            return;
+          }
           console.error('Error getting action plan list:', err);
         });
     }

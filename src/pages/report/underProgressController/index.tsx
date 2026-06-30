@@ -28,8 +28,9 @@ type ProgressItem = FileProgress | QuestionnaireProgress | RefreshProgress;
 
 type ProgressData = ProgressItem[];
 
-const BURST_POLL_INTERVAL_MS = 3000;
+const BURST_POLL_INTERVAL_MS = 5000;
 const BURST_POLL_MAX_MS = 180000;
+const ALL_PROGRESS_COMPLETED_DELAY_MS = 1500;
 
 const formatDateTime = (date: Date): string => {
   const year = date.getUTCFullYear();
@@ -64,6 +65,21 @@ const UnderProgressController = ({
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
   const burstPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const burstPollStartedRef = useRef<number | null>(null);
+  const hadInflightOperationsRef = useRef(false);
+  const completedProgressKeysRef = useRef<Set<string>>(new Set());
+  const allProgressCompletedTimeoutRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+
+  const scheduleAllProgressCompleted = () => {
+    if (allProgressCompletedTimeoutRef.current) {
+      clearTimeout(allProgressCompletedTimeoutRef.current);
+    }
+    allProgressCompletedTimeoutRef.current = setTimeout(() => {
+      publish('allProgressCompleted', {});
+      allProgressCompletedTimeoutRef.current = null;
+    }, ALL_PROGRESS_COMPLETED_DELAY_MS);
+  };
 
   const stopBurstPoll = () => {
     if (burstPollRef.current) {
@@ -113,10 +129,16 @@ const UnderProgressController = ({
       .catch(() => {});
   };
 
+  const publishCompletedProgressOnce = (key: string, payload: any) => {
+    if (completedProgressKeysRef.current.has(key)) return;
+    completedProgressKeysRef.current.add(key);
+    publish('completedProgress', payload);
+  };
+
   const resolveFileController = (files: any[]) => {
     files.forEach((file) => {
       if (file.process_status == true) {
-        publish('completedProgress', {
+        publishCompletedProgressOnce(`file:${file.file_id}:${file.action_type}`, {
           file_id: file.file_id,
           type: file.action_type,
         });
@@ -126,10 +148,13 @@ const UnderProgressController = ({
   const resolveQuestionnaireController = (questionnaires: any[]) => {
     questionnaires.forEach((file) => {
       if (file.process_status == true) {
-        publish('completedProgress', {
-          file_id: file.f_unique_id,
-          type: file.action_type,
-        });
+        publishCompletedProgressOnce(
+          `questionnaire:${file.f_unique_id}:${file.action_type}`,
+          {
+            file_id: file.f_unique_id,
+            type: file.action_type,
+          },
+        );
       }
     });
   };
@@ -183,13 +208,12 @@ const UnderProgressController = ({
       publish('openProgressModal', {
         data: progressArray,
       });
-      if (progressArray.length == 0) {
-        publish('allProgressCompleted', {});
-      }
     }
   };
   useEffect(() => {
     currentMemberIdRef.current = member_id;
+    completedProgressKeysRef.current.clear();
+    hadInflightOperationsRef.current = false;
 
     const effectMemberId = member_id;
 
@@ -244,6 +268,10 @@ const UnderProgressController = ({
       stopBurstPoll();
       unsubscribe('checkProgress', handleCheckProgress);
       unsubscribe('syncReport', handleSyncReport);
+      if (allProgressCompletedTimeoutRef.current) {
+        clearTimeout(allProgressCompletedTimeoutRef.current);
+        allProgressCompletedTimeoutRef.current = null;
+      }
       timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
       timeoutsRef.current = [];
     };
@@ -251,7 +279,20 @@ const UnderProgressController = ({
   }, [member_id]);
   useEffect(() => {
     controllProgress();
-    if (!hasInflightOperations(allprogress)) {
+    const inflight = hasInflightOperations(allprogress);
+    const hasTrackedOperations =
+      allprogress.files.length > 0 ||
+      allprogress.questionnaires.length > 0 ||
+      allprogress.refresh.length > 0;
+
+    if (inflight) {
+      hadInflightOperationsRef.current = true;
+    } else if (hadInflightOperationsRef.current && hasTrackedOperations) {
+      scheduleAllProgressCompleted();
+      hadInflightOperationsRef.current = false;
+    }
+
+    if (!inflight) {
       stopBurstPoll();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
