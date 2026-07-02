@@ -364,6 +364,11 @@ class Application extends Api {
     return response;
   }
 
+  static getOverviewProcessingSnapshot(data: { member_id: number }) {
+    const response = this.post('/overview/processing_snapshot', data);
+    return response;
+  }
+
   // share
   static getClientSummaryOutofrefsShare(data: any, key: any) {
     const response = this.post(
@@ -1105,7 +1110,22 @@ class Application extends Api {
   static SaveLabReport = (data: any) => {
     return this.post('/patients/process_lab_report', data, {
       timeout: 180000,
+      validateStatus: (status) => status === 200 || status === 202,
     });
+  };
+  static getLabJobStatus = (memberId: number, jobId: string) => {
+    return this.get(
+      `/patients/member/${memberId}/lab-job/${jobId}/status`,
+    );
+  };
+  static getLatestLabJob = (memberId: number) => {
+    return this.get(`/patients/member/${memberId}/lab-job/latest`);
+  };
+  static retryLabJob = (memberId: number, jobId: string) => {
+    return this.post(
+      `/patients/member/${memberId}/lab-job/${jobId}/retry`,
+      {},
+    );
   };
   static getBiomarkerName = (data: any) => {
     return this.post('/clinic/get_biomarkers_list', data);

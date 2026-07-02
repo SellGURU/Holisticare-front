@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PortalLink from '../PortalLink';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../api/app';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
@@ -288,20 +289,26 @@ export const TopBar: FC<TopBarProps> = ({
     <div className="w-full flex items-center text-nowrap justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">
       {!isShare ? (
         <div className="flex gap-2 items-center ">
-          <img onClick={() => navigate('/')} src="/icons/home.svg" alt="" />
+          <PortalLink to="/">
+            <img src="/icons/home.svg" alt="" />
+          </PortalLink>
           {resolveNav().map((el, index: number) => {
             return (
               <>
-                <div
-                  onClick={() => {
-                    if (index != resolveNav().length - 1) {
-                      navigate(el.url);
-                    }
-                  }}
-                  className={`text-[10px] md:text-xs font-medium ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} ${index == resolveNav().length - 1 ? 'opacity-50' : ''} cursor-pointer ml-1`}
-                >
-                  {el.name}
-                </div>
+                {index != resolveNav().length - 1 ? (
+                  <PortalLink
+                    to={el.url}
+                    className={`text-[10px] md:text-xs font-medium ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} cursor-pointer ml-1`}
+                  >
+                    {el.name}
+                  </PortalLink>
+                ) : (
+                  <div
+                    className={`text-[10px] md:text-xs font-medium ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} opacity-50 ml-1`}
+                  >
+                    {el.name}
+                  </div>
+                )}
                 {index != resolveNav().length - 1 && (
                   <img
                     className="w-5 h-5"

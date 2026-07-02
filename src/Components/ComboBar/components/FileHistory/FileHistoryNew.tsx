@@ -15,6 +15,7 @@ import {
   countReviewCategoriesFromStepOneData,
 } from '../../../RepoerAnalyse/UploadTestV2/biomarkerReviewCompat';
 import type { SuppressedBiomarkerItem } from '../../../RepoerAnalyse/UploadTestV2/biomarkerReviewCompat';
+import { isAsyncProcessingEnabled } from '../../../../utils/asyncProcessing';
 
 const STEP_ONE_POLL_INTERVAL_MS = 10000;
 
@@ -500,13 +501,15 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     const tempId = activeProcessingUpload?.upload_temp_id;
     if (!fileId || !tempId || !id) return;
 
-    let intervalId: number;
     let isStopped = false;
+    const pollTimerRef = {
+      id: undefined as ReturnType<typeof window.setInterval> | undefined,
+    };
 
     const stopPolling = () => {
       isStopped = true;
-      if (intervalId) {
-        window.clearInterval(intervalId);
+      if (pollTimerRef.id != null) {
+        window.clearInterval(pollTimerRef.id);
       }
     };
 
@@ -623,69 +626,81 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
 
         try {
           const suppressedItems = await getSuppressedItems();
-          const saveResponse = await Application.SaveLabReport(
-            buildProcessLabReportPayloadFromStepOne({
-              memberId: id,
-              fileId,
-              labType: data.lab_type || 'more_info',
-              dateOfTest: data.date_of_test,
-              data,
-              suppressedItems,
-            }),
-          );
-          const savedFileId =
-            saveResponse?.data?.modified_biomarkers_file_id ||
-            saveResponse?.data?.added_biomarkers_file_id ||
-            fileId;
-
-          processLabReportSucceededRef.current.add(fileId);
-          processLabReportSucceededRef.current.add(savedFileId);
-          clearInflightUpload(id, fileId);
-          clearInflightUpload(id, savedFileId);
-          clearFileReviewMeta(fileId);
-          if (savedFileId !== fileId) {
-            clearFileReviewMeta(savedFileId);
-          }
-
-          try {
-            const refreshed = await Application.checkLabStepOne({
-              file_id: savedFileId,
-            });
-            const refreshedData = refreshed?.data || {};
-            const refreshedCounts = await syncReviewCountsForFile(
-              savedFileId,
-              refreshedData,
-            );
-            updateInlineUpload(tempId, {
-              file_id: savedFileId,
-              extractedCount:
-                refreshedCounts?.extracted ??
-                reviewCounts?.extracted ??
-                extractedCount,
-              readyCount: refreshedCounts?.ready ?? reviewCounts?.ready,
-              reviewCount: refreshedCounts?.review,
-              excludedCount: refreshedCounts?.excluded,
-              reviewCountsReady: Boolean(refreshedCounts),
-            });
-          } catch {
-            // Keep pre-refresh inline counts if the post-save poll fails.
-          }
-
-          publish('checkProgress', {
-            type: 'file',
-            file_id: savedFileId,
-            action_type: 'uploaded',
-            process_status: false,
+          const payload = buildProcessLabReportPayloadFromStepOne({
+            memberId: id,
+            fileId,
+            labType: data.lab_type || 'more_info',
+            dateOfTest: data.date_of_test,
+            data,
+            suppressedItems,
           });
-          updateInlineUpload(tempId, {
-            file_id: savedFileId,
-            status: 'background',
-            uploadPhase: 'processing',
-            headerProcessing: true,
-            progressBiomarker: 100,
-            process_done: false,
-          });
-          getFileList(id);
+
+          const fireCompile = async (): Promise<string> => {
+            const saveResponse = await Application.SaveLabReport(payload);
+            const savedFileId =
+              saveResponse?.data?.modified_biomarkers_file_id ||
+              saveResponse?.data?.added_biomarkers_file_id ||
+              saveResponse?.data?.file_id ||
+              fileId;
+            const jobId = saveResponse?.data?.job_id;
+
+            processLabReportSucceededRef.current.add(fileId);
+            processLabReportSucceededRef.current.add(savedFileId);
+            clearInflightUpload(id, fileId);
+            clearInflightUpload(id, savedFileId);
+            clearFileReviewMeta(fileId);
+            if (savedFileId !== fileId) {
+              clearFileReviewMeta(savedFileId);
+            }
+
+            if (jobId && isAsyncProcessingEnabled()) {
+              publish('labJobStarted', {
+                job_id: jobId,
+                member_id: id,
+                file_id: savedFileId,
+              });
+              return savedFileId;
+            }
+
+            publish('checkProgress', {
+              type: 'file',
+              file_id: savedFileId,
+              action_type: 'uploaded',
+              process_status: false,
+            });
+            return savedFileId;
+          };
+
+          void fireCompile()
+            .then((savedFileId) => {
+              updateInlineUpload(tempId, {
+                file_id: savedFileId,
+                status: 'background',
+                uploadPhase: 'processing',
+                headerProcessing: true,
+                progressBiomarker: 100,
+                process_done: false,
+              });
+              getFileList(id);
+            })
+            .catch((error) => {
+              console.error('Background compile failed:', error);
+              clearInflightUpload(id, fileId);
+              updateInlineUpload(tempId, {
+                status: 'error',
+                uploadPhase: 'failed',
+                process_done: true,
+                errorMessage:
+                  error?.response?.data?.detail ||
+                  error?.response?.data?.message ||
+                  error?.message ||
+                  'Could not process this lab report. Please try another file.',
+              });
+            })
+            .finally(() => {
+              processLabReportInFlightRef.current.delete(fileId);
+            });
+          return true;
         } catch (error: any) {
           clearInflightUpload(id, fileId);
           updateInlineUpload(tempId, {
@@ -696,9 +711,8 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
               error?.response?.data?.detail ||
               error?.response?.data?.message ||
               error?.message ||
-              'Could not process this lab report. Please try another file.',
+              'Could not prepare lab report for processing.',
           });
-        } finally {
           processLabReportInFlightRef.current.delete(fileId);
         }
         return true;
@@ -746,7 +760,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     };
 
     void poll();
-    intervalId = window.setInterval(() => {
+    pollTimerRef.id = window.setInterval(() => {
       void poll();
     }, STEP_ONE_POLL_INTERVAL_MS);
 

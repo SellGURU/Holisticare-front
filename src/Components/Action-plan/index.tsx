@@ -39,6 +39,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
 }) => {
   const isDemo = useIsDemo();
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [actionPlanData, setActionPlanData] = useState<any>(calenderDataUper);
   useEffect(() => {
     if (calenderDataUper) {
@@ -85,7 +86,6 @@ export const ActionPlan: FC<ActionPlanProps> = ({
     CardData.length > 0 ? CardData[0] : null,
   );
   // const [showTargeting, setshowTargeting] = useState(false)
-  const navigate = useNavigate();
   // useEffect(() => {
   //   console.log(activeAction);
   // });

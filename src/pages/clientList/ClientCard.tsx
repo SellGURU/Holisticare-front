@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router-dom';
+import PortalLink from '../../Components/PortalLink/index.tsx';
+import { isModifiedNavigationEvent } from '../../utils/navigation';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import { FC, useEffect, useRef, useState } from 'react';
 import Application from '../../api/app.ts';
@@ -34,7 +35,6 @@ const ClientCard: FC<ClientCardProps> = ({
   onAssign,
   onClientUpdated,
 }) => {
-  const navigate = useNavigate();
   const isDemo = useIsDemo();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
@@ -1100,10 +1100,11 @@ const ClientCard: FC<ClientCardProps> = ({
               />
             )}
           </div>
-          <div
-            onClick={() => {
-              if (window.innerWidth < 768) {
-                navigate(`/report/${client.member_id}/${client.name}`);
+          <PortalLink
+            to={`/report/${client.member_id}/${client.name}`}
+            onClick={(event) => {
+              if (window.innerWidth >= 768 && !isModifiedNavigationEvent(event)) {
+                event.preventDefault();
               }
             }}
             className="pl-2 flex flex-col mt-4 cursor-default"
@@ -1130,7 +1131,7 @@ const ClientCard: FC<ClientCardProps> = ({
             <div className="text-Text-Secondary text-[10px] sm:text-[12px] text-nowrap cursor-default">
               ID: {client.member_id}
             </div>
-          </div>
+          </PortalLink>
           <div className="flex md:hidden flex-col w-full items-end justify-end ml-4">
             <ButtonPrimary
               onClick={(e) => {
@@ -1267,11 +1268,9 @@ const ClientCard: FC<ClientCardProps> = ({
                 </div> */}
 
                 <div className="hidden w-full md:flex justify-end items-center">
-                  <ButtonPrimary
-                    onClick={() => {
-                      navigate(`/report/${client.member_id}/${client.name}`);
-                    }}
-                    size="small"
+                  <PortalLink
+                    to={`/report/${client.member_id}/${client.name}`}
+                    className="text-[12px] flex items-center justify-center gap-1 bg-Primary-DeepTeal border-gray-50 text-white rounded-3xl border px-4 py-[2px]"
                   >
                     <SvgIcon
                       color="#FFFFFF"
@@ -1282,7 +1281,7 @@ const ClientCard: FC<ClientCardProps> = ({
                     <div className="text-[10px] font-medium sm:text-xs ml-[0.5px]">
                       Health Plan
                     </div>
-                  </ButtonPrimary>
+                  </PortalLink>
                 </div>
               </div>
             </div>

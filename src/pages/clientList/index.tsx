@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect, useRef, useState } from 'react';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
-import { useNavigate } from 'react-router-dom';
+import PortalLink from '../../Components/PortalLink/index.tsx';
 import Application from '../../api/app.ts';
 import { subscribe } from '../../utils/event.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
@@ -71,7 +71,6 @@ const ClientList = () => {
   );
   const [search, setSearch] = useState<string>('');
 
-  const navigate = useNavigate();
   const getPatients = () => {
     Application.getPatients()
       .then((res) => {
@@ -384,18 +383,19 @@ const ClientList = () => {
                 <div className="text-Text-Primary font-medium opacity-[87%]">
                   Client List
                 </div>
-                <ButtonSecondary
-                  style={{ borderRadius: '20px' }}
-                  disabled={isDemo}
-                  onClick={() => {
-                    if (isDemo) return;
-                    navigate('/addClient');
+                <PortalLink
+                  to="/addClient"
+                  onClick={(event) => {
+                    if (isDemo) event.preventDefault();
                   }}
+                  aria-disabled={isDemo}
                   title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
+                  className={`text-[12px] flex items-center justify-center gap-1 bg-Primary-EmeraldGreen text-white border border-gray-50 rounded-[12px] px-6 py-[6px] ${isDemo ? 'pointer-events-none opacity-50' : ''}`}
+                  style={{ borderRadius: '20px' }}
                 >
                   <img className="mr-1" src="/icons/user-add2.svg" alt="" />
                   Add Client
-                </ButtonSecondary>
+                </PortalLink>
               </div>
               <div className="w-full invisible h-[1px] bg-white my-3"></div>
               <div className="w-full select-none flex flex-col ss:flex-row gap-2 justify-between mb-3">
@@ -694,14 +694,14 @@ const ClientList = () => {
                   No clients found.
                 </div>
                 <div className="mt-2.5">
-                  <ButtonSecondary
-                    disabled={isDemo}
-                    onClick={() => {
-                      if (isDemo) return;
-                      navigate('/addClient');
+                  <PortalLink
+                    to="/addClient"
+                    onClick={(event) => {
+                      if (isDemo) event.preventDefault();
                     }}
+                    aria-disabled={isDemo}
                     title={isDemo ? 'Demo plan - upgrade to enable' : undefined}
-                    ClassName="border border-white rounded-[20px] w-[191px]"
+                    className={`text-[12px] flex items-center justify-center gap-1 bg-Primary-EmeraldGreen text-white border border-white rounded-[20px] w-[191px] px-6 py-[6px] ${isDemo ? 'pointer-events-none opacity-50' : ''}`}
                   >
                     <div className="flex gap-1 text-white text-xs font-medium">
                       <img
@@ -711,7 +711,7 @@ const ClientList = () => {
                       />
                       Add Client
                     </div>
-                  </ButtonSecondary>
+                  </PortalLink>
                 </div>
               </div>
             </>

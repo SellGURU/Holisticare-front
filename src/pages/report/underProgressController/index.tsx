@@ -65,6 +65,7 @@ const UnderProgressController = ({
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
   const burstPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const burstPollStartedRef = useRef<number | null>(null);
+  const overviewPollTriggeredRef = useRef(false);
   const hadInflightOperationsRef = useRef(false);
   const completedProgressKeysRef = useRef<Set<string>>(new Set());
   const allProgressCompletedTimeoutRef = useRef<ReturnType<
@@ -290,9 +291,15 @@ const UnderProgressController = ({
 
     if (inflight) {
       hadInflightOperationsRef.current = true;
+      if (!overviewPollTriggeredRef.current) {
+        overviewPollTriggeredRef.current = true;
+        publish('checkProgress', { source: 'inflight_start' });
+      }
     } else if (hadInflightOperationsRef.current && hasTrackedOperations) {
       scheduleAllProgressCompleted();
       hadInflightOperationsRef.current = false;
+    } else if (!inflight && !hasTrackedOperations) {
+      overviewPollTriggeredRef.current = false;
     }
 
     if (!inflight) {

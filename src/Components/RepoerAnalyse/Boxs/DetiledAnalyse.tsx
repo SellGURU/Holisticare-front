@@ -15,16 +15,26 @@ import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
 import { SourceTag } from '../../source-badge';
 import MarkdownText from '../../markdownText';
+import ChartLoadingPlaceholder, {
+  isPreviewSource,
+  shouldShowChartLoading,
+} from '../ChartLoadingPlaceholder';
+import CategoryStats from './CategoryStats';
 
 interface DetiledAnalyseProps {
   data: any;
   refrences: any;
+  isScoringComplete?: boolean;
+  isDescriptionReady?: boolean;
+  isProcessing?: boolean;
 }
 
 const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   data,
   refrences,
-  // index,
+  isScoringComplete = true,
+  isDescriptionReady = true,
+  isProcessing = false,
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isCheced, setIsCheced] = useState(false);
@@ -46,7 +56,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   //         return '#FC5474'
   //     }
   // }
-  const [active, setActive] = useState<any>(refrences[0]);
+  const [active, setActive] = useState<any>(undefined);
   subscribe('openDetiledCard', (ev) => {
     if (ev.detail.id == data.subcategory) {
       setIsOpen(true);
@@ -113,24 +123,57 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   const sortedReferences = useMemo(() => {
     if (!refrences || refrences.length === 0) return [];
     return [...refrences];
-    // return [...refrences].sort((a, b) => {
-    //   const aNeedFocus = isNeedFocus(a);
-    //   const bNeedFocus = isNeedFocus(b);
-
-    //   // Needs Focus first
-    //   if (aNeedFocus && !bNeedFocus) return -1;
-    //   if (!aNeedFocus && bNeedFocus) return 1;
-
-    //   // Optional: secondary sort (alphabetical)
-    //   return a.name.localeCompare(b.name);
-    // });
   }, [refrences]);
+
+  // Auto-select first biomarker when category data loads or updates (e.g. poll refresh).
+  useEffect(() => {
+    if (!sortedReferences.length) {
+      setActive(undefined);
+      setActiveBOx(0);
+      return;
+    }
+
+    setActive((current) => {
+      if (current?.name) {
+        const updated = sortedReferences.find((r) => r.name === current.name);
+        if (updated) return updated;
+      }
+      const withChart = sortedReferences.find((r) => !shouldShowChartLoading(r));
+      return withChart ?? sortedReferences[0];
+    });
+  }, [sortedReferences]);
+
+  useEffect(() => {
+    if (!active?.name) {
+      setActiveBOx(0);
+      return;
+    }
+    const idx = sortedReferences.findIndex((r) => r.name === active.name);
+    if (idx >= 0) setActiveBOx(idx);
+  }, [active?.name, sortedReferences]);
+
+  useEffect(() => {
+    if (!selectGroup || !sortedReferences.length) return;
+    const idx = sortedReferences.findIndex((r) => r.name === selectGroup);
+    if (idx >= 0) {
+      setActiveBOx(idx);
+      setActive(sortedReferences[idx]);
+    }
+    setSelectGroup(null);
+  }, [selectGroup, sortedReferences]);
+
+  const showChartLoading = shouldShowChartLoading(active);
+  const categoryProcessing = isProcessing || !isScoringComplete;
 
   return (
     <>
       <div
         id={data.subcategory}
-        className="w-full mb-4 py-4 px-6 bg-white border border-Gray-50 shadow-100 rounded-[6px] "
+        className={`w-full mb-4 py-4 px-6 bg-white border shadow-100 rounded-[6px] ${
+          categoryProcessing
+            ? 'border-dashed border-Primary-100 opacity-90'
+            : 'border-Gray-50'
+        }`}
       >
         <div
           onClick={() => {
@@ -140,19 +183,25 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
         >
           <div className="flex items-center ">
             <div
-              className="w-10 h-10 items-center rounded-full flex justify-center"
-              style={{
-                background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
-                  data.status[1] + data.status[0]
-                }% ${data.status[1] + data.status[2] + data.status[0]}%,#BA5225 ${
-                  data.status[2] + data.status[1] + data.status[0]
-                }% ${data.status[3] + data.status[2] + data.status[1] + data.status[0]}%,#B2302E ${
-                  data.status[3] +
-                  data.status[2] +
-                  data.status[1] +
-                  data.status[0]
-                }% 100%)`,
-              }}
+              className={`w-10 h-10 items-center rounded-full flex justify-center ${
+                categoryProcessing ? 'animate-pulse bg-Gray-100' : ''
+              }`}
+              style={
+                categoryProcessing
+                  ? undefined
+                  : {
+                      background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
+                        data.status[1] + data.status[0]
+                      }% ${data.status[1] + data.status[2] + data.status[0]}%,#BA5225 ${
+                        data.status[2] + data.status[1] + data.status[0]
+                      }% ${data.status[3] + data.status[2] + data.status[1] + data.status[0]}%,#B2302E ${
+                        data.status[3] +
+                        data.status[2] +
+                        data.status[1] +
+                        data.status[0]
+                      }% 100%)`,
+                    }
+              }
             >
               <div
                 className="w-[35px] h-[35px]  flex justify-center bg-white items-center  rounded-full"
@@ -173,15 +222,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
 
                 {/* {isOpen && <Legends></Legends>} */}
               </div>
-              <div className="flex justify-start items-center">
-                <div className="TextStyle-Body-3 text-Text-Secondary">
-                  {data?.num_of_biomarkers} Biomarkers
-                </div>
-                <div className="TextStyle-Body-3 text-Text-Secondary ml-2">
-                  {data?.out_of_ref}{' '}
-                  {data.out_of_ref > 1 ? '"Needs Focus"' : '"Need Focus"'}{' '}
-                </div>
-              </div>
+              <CategoryStats
+                numOfBiomarkers={data?.num_of_biomarkers}
+                outOfRef={data?.out_of_ref}
+                isProcessing={categoryProcessing}
+              />
             </div>
           </div>
           <div
@@ -199,25 +244,32 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
         </div>
         {isOpen && (
           <>
-            <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
-              Description
-            </div>
-            <div className="  text-Text-Primary opacity-90 TextStyle-Body-2 mt-2 text-justify">
-              <MarkdownText text={data.description} />
-              {/* {data.description} */}
-            </div>
+            {data.description ? (
+              <>
+                <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
+                  Description
+                </div>
+                <div className="  text-Text-Primary opacity-90 TextStyle-Body-2 mt-2 text-justify">
+                  <MarkdownText text={data.description} />
+                </div>
+              </>
+            ) : !isDescriptionReady ? (
+              <div className="mt-4">
+                <ChartLoadingPlaceholder
+                  variant="text"
+                  label="Generating description…"
+                />
+              </div>
+            ) : null}
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               {refrences.length > 0 && (
                 <>
                   <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
                     {sortedReferences.map((value: any, index: number) => {
-                      if (selectGroup == value.name) {
-                        setActiveBOx(index);
-                        setSelectGroup(null);
-                      }
                       return (
                         <>
                           <div
+                            key={`${value.name}-${index}`}
                             onClick={() => {
                               setActiveBOx(index);
                               setActive(value);
@@ -348,7 +400,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                             )}
                           </div>
                           <div className="flex items-center gap-4">
-                            {active?.source && (
+                            {active?.source && !isPreviewSource(active.source) && (
                               <SourceTag source={active.source} />
                             )}
                             {/* {active?.unit != '' && (
@@ -377,25 +429,17 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                         </div>
                         {active && (
                           <>
-                            {/* <StatusBarChartV2
-                              data={active.chart_bounds}
-                              mapingData={Object.fromEntries(
-                                Object.entries(active.chart_bounds).map(
-                                  ([key, valuess]: any) => [key, valuess.label],
-                                ),
-                              )}
-                              status={active.status}
-                              unit={active.unit}
-                              values={active.values}
-                            ></StatusBarChartV2> */}
-                            <StatusBarChartV3
-                              status={active.status}
-                              unit={active.unit}
-                              values={active.values}
-                              data={active.chart_bounds}
-                            ></StatusBarChartV3>
+                            {showChartLoading ? (
+                              <ChartLoadingPlaceholder variant="status-bar" className="pt-2" />
+                            ) : (
+                              <StatusBarChartV3
+                                status={active.status}
+                                unit={active.unit}
+                                values={active.values}
+                                data={active.chart_bounds}
+                              ></StatusBarChartV3>
+                            )}
                           </>
-                          // <StatusBarChart data={active}></StatusBarChart>
                         )}
                       </div>
                     </div>
@@ -435,29 +479,20 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                           </div>
                         </div>
                         <div className="mt-0 relative">
-                          {active && (
-                            <HistoricalChart
-                              chartId={data.subcategory}
-                              statusBar={active?.chart_bounds}
-                              sources={active?.historical_sources}
-                              dataStatus={active.status}
-                              dataPoints={[...active.values]}
-                              labels={[...active.date]}
-                              unit={active?.unit}
-                            ></HistoricalChart>
-                            // <StatusChart
-                            //   isStringValues={isChartDataEmpty}
-                            //   mode={
-                            //     active.chart_bounds['Needs Focus'].length > 1 &&
-                            //     active.chart_bounds['Ok'].length > 1
-                            //       ? 'multi'
-                            //       : 'line'
-                            //   }
-                            //   statusBar={active?.chart_bounds}
-                            //   labels={[...active.date].reverse()}
-                            //   dataPoints={[...active.values].reverse()}
-                            // ></StatusChart>
-                          )}
+                          {active &&
+                            (showChartLoading ? (
+                              <ChartLoadingPlaceholder variant="historical" />
+                            ) : (
+                              <HistoricalChart
+                                chartId={data.subcategory}
+                                statusBar={active?.chart_bounds}
+                                sources={active?.historical_sources}
+                                dataStatus={active.status}
+                                dataPoints={[...active.values]}
+                                labels={[...active.date]}
+                                unit={active?.unit}
+                              ></HistoricalChart>
+                            ))}
                         </div>
                       </div>
                     </div>

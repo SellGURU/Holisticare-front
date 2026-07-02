@@ -8,8 +8,6 @@ import Toggle from '../Boxs/Toggle';
 import BiomarkerRow from './BiomarkerRow';
 import ProgressLoading from './ProgressLoading';
 import Circleloader from '../../CircleLoader';
-import Joyride, { CallBackProps, Step } from 'react-joyride';
-import { TutorialReminderToast } from './showTutorialReminderToast';
 import CreateBiomarkerModal from './CreateBiomarkerModal';
 import CreateUnitModal from './CreateUnitModal';
 import BiomarkersApi from '../../../api/Biomarkers';
@@ -71,40 +69,6 @@ const formatBiomarkerTypeLabel = (value: string) =>
   String(value || '')
     .replace(/[_-]+/g, ' ')
     .replace(/\b\w/g, (char) => char.toUpperCase());
-
-const biomarkersSteps: Step[] = [
-  {
-    target: '[data-tour="biomarker-table"]',
-    content:
-      'This table shows all biomarkers automatically extracted from the uploaded lab report.',
-    placement: 'left-start',
-  },
-  {
-    target: '[data-tour="extracted-biomarker"]',
-    content:
-      'This column displays the biomarker name detected from the uploaded document.',
-  },
-  {
-    target: '[data-tour="system-biomarker"]',
-    content:
-      'Select the correct system biomarker. Its default system unit is shown there too so you can compare it against the extracted lab unit.',
-  },
-  {
-    target: '[data-tour="extracted-value"]',
-    content:
-      'This is the value extracted from the lab report. Please verify its accuracy.',
-  },
-  {
-    target: '[data-tour="extracted-unit"]',
-    content:
-      'Ensure the unit matches the original lab report before proceeding.',
-  },
-  {
-    target: '[data-tour="delete-biomarker"]',
-    content:
-      'Use Exclude to move a biomarker off the analysis list, or Restore it from the Excluded filter.',
-  },
-];
 
 interface BiomarkersSectionProps {
   biomarkers: any[];
@@ -1173,74 +1137,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     return () => unsubscribe('RESET_MAPPING_ROWS', listener);
   }, []);
-  // Tutorial (Joyride tour + reminder toast) is disabled for this screen.
-  const [run, setRun] = useState(false);
-  const [showReminder, setShowReminder] = useState(false);
   const [errorsExpanded, setErrorsExpanded] = useState(false);
-  const handleViewTutorial = (value: boolean) => {
-    if (value) {
-      localStorage.setItem('showTutorialAgain', 'true');
-    } else {
-      localStorage.setItem('showTutorialAgain', 'false');
-    }
-  };
-  const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status } = data;
-
-    if (status === 'finished' || status === 'skipped') {
-      localStorage.setItem('biomarkersTourSeen', 'true');
-      setRun(false);
-    }
-  };
-
-  const dismissTutorialReminder = () => {
-    if (!showReminder) return;
-    setShowReminder(false);
-    localStorage.setItem('tutorialSeen', 'true');
-  };
 
   return (
     <>
-      {run && (
-        <Joyride
-          steps={biomarkersSteps}
-          run={run}
-          continuous
-          scrollToFirstStep
-          showSkipButton
-          disableOverlayClose
-          styles={{
-            options: {
-              arrowColor: '#fff',
-              backgroundColor: '#fff',
-              primaryColor: '#0f766e',
-              textColor: '#1f2937',
-              zIndex: 10000,
-            },
-            tooltip: {
-              borderRadius: '12px',
-              padding: '16px',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
-            },
-          }}
-          callback={handleJoyrideCallback}
-          locale={{
-            last: 'Done',
-          }}
-        />
-      )}
-      <TutorialReminderToast
-        visible={showReminder}
-        onViewTutorial={(value) => {
-          handleViewTutorial(value);
-          setRun(value);
-        }}
-        setRun={setRun}
-        onClose={() => {
-          setShowReminder(false);
-          localStorage.setItem('tutorialSeen', 'true');
-        }}
-      />
       <div
         // style={{ height: window.innerHeight - 400 + 'px' }}
         className={`w-full flex-1 min-h-0 ${uploadedFile ? 'flex flex-col' : 'hidden'} rounded-2xl border border-Gray-50 p-2 md:p-3 shadow-300 text-xs text-Text-Primary overflow-hidden`}
@@ -1684,7 +1584,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             isSuggestionsLoading={Boolean(
                               suggestionsLoading[suggestionKey],
                             )}
-                            onDropdownOpen={dismissTutorialReminder}
                             onBiomarkerMenuOpen={() => {
                               fetchBiomarkerSuggestions([b]);
                             }}

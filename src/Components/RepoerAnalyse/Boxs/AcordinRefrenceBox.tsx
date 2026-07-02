@@ -3,18 +3,25 @@ import { SourceTag } from '../../source-badge';
 import Toggle from './Toggle';
 import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
 import HistoricalChart from '../HistoricalChart';
+import ChartLoadingPlaceholder, {
+  isPreviewSource,
+  shouldShowChartLoading,
+} from '../ChartLoadingPlaceholder';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface AcordinRefrenceBoxProps {
   biomarker: any;
   key: string;
+  isScoringComplete?: boolean;
 }
 const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
   biomarker,
   key,
+  isScoringComplete = true,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
   const [showHistoricalChart, setShowHistoricalChart] = useState(false);
+  const showChartLoading = shouldShowChartLoading(biomarker);
   return (
     <>
       <div
@@ -62,7 +69,7 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
                 </div>
                 <div className="  cursor-pointer  ">
                   <div className="flex gap-2  justify-end items-center">
-                    {biomarker.source && (
+                    {biomarker.source && !isPreviewSource(biomarker.source) && (
                       <SourceTag source={biomarker.source} />
                     )}
                     <div className="  md:TextStyle-Headline-6 text-[8px]  md:text-Text-Primary">
@@ -85,28 +92,35 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
               {showHistoricalChart ? (
                 <>
                   <div className="mt-5">
-                    <HistoricalChart
-                      unit={biomarker?.unit}
-                      chartId={biomarker.name}
-                      sources={biomarker?.historical_sources}
-                      statusBar={biomarker?.chart_bounds}
-                      dataStatus={biomarker.status}
-                      dataPoints={[...biomarker.values]}
-                      labels={[...biomarker.date]}
-                    ></HistoricalChart>
+                    {showChartLoading ? (
+                      <ChartLoadingPlaceholder variant="historical" />
+                    ) : (
+                      <HistoricalChart
+                        unit={biomarker?.unit}
+                        chartId={biomarker.name}
+                        sources={biomarker?.historical_sources}
+                        statusBar={biomarker?.chart_bounds}
+                        dataStatus={biomarker.status}
+                        dataPoints={[...biomarker.values]}
+                        labels={[...biomarker.date]}
+                      ></HistoricalChart>
+                    )}
                   </div>
                 </>
               ) : (
                 <>
                   <div className="mt-10">
-                    {biomarker && (
-                      <StatusBarChartV3
-                        status={biomarker.status}
-                        unit={biomarker.unit}
-                        values={biomarker.values}
-                        data={biomarker.chart_bounds}
-                      ></StatusBarChartV3>
-                    )}
+                    {biomarker &&
+                      (showChartLoading ? (
+                        <ChartLoadingPlaceholder variant="status-bar" className="pt-2" />
+                      ) : (
+                        <StatusBarChartV3
+                          status={biomarker.status}
+                          unit={biomarker.unit}
+                          values={biomarker.values}
+                          data={biomarker.chart_bounds}
+                        ></StatusBarChartV3>
+                      ))}
                   </div>
                 </>
               )}

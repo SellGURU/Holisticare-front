@@ -1,5 +1,11 @@
 const resolveStatusArray = (status: Array<number>) => {
-  if (status.length === 0) return 'CriticalRange';
+  if (!status || status.length === 0) {
+    return undefined;
+  }
+  const total = status.reduce((sum, value) => sum + (Number(value) || 0), 0);
+  if (total <= 0) {
+    return undefined;
+  }
 
   if (status[4] > 0) {
     return 'CriticalRange';

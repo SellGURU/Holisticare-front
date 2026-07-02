@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef, useEffect } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import PortalLink from '../PortalLink';
 import { Tooltip } from 'react-tooltip';
 import SpinnerLoader from '../SpinnerLoader';
 // import ConfirmModal from "./sections/ConfirmModal";
@@ -31,7 +32,6 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   isActive,
 }) => {
   // const { status, title, subtitle, progress, time, cardID } = el;
-  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
   const resolveStatusColor = () => {
@@ -195,20 +195,17 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 />
                 Calendar
               </div> */}
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (!isDisabled) {
-                    navigate(
-                      `/report/Generate-Action-Plan/${id}?planId=${el.id}`,
-                    );
-                  }
+              <PortalLink
+                to={`/report/Generate-Action-Plan/${id}?planId=${el.id}`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (isDisabled) event.preventDefault();
                 }}
-                className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray ${isDisabled ? 'pointer-events-none opacity-50' : 'cursor-pointer'}`}
               >
                 <img src="/icons/edit-green.svg" alt="" />
                 Edit
-              </div>
+              </PortalLink>
               <div
                 onClick={(e) => {
                   e.stopPropagation();

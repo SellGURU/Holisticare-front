@@ -98,8 +98,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const [NeedFocusData, setNeedFocusData] = useState<Array<any>>([]);
   const [clientSummary, setclientSummary] = useState('second');
 
-  const navigate = useNavigate();
   const [clientGools, setClientGools]: any = useState({});
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [activeTreatment, setActiveTreatmnet] = useState('');
   useEffect(() => {

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import BioMarkerBox from './BiomarkerBox';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BioMarkerRowSuggestions from './BiomarkerRow';
 import Toggle from '../../../Components/Toggle';
 // import StatusChart from "@/pages/RepoerAnalyse/StatusChart"
@@ -23,7 +24,6 @@ import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 import EditModal from './EditModal';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import { MainModal } from '../../../Components';
-import { useNavigate } from 'react-router-dom';
 interface CategoryOrderProps {
   isActionPlan?: boolean;
   data: any;
@@ -42,6 +42,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   openGoal,
 }) => {
   console.log(memberId);
+  const navigate = useNavigate();
 
   const [isLoading] = useState(false);
   const [active, setActive] = useState<string>('Recommendation');
@@ -200,7 +201,6 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   };
   const [showAddModal, setshowAddModal] = useState(false);
   const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
-  const navigate = useNavigate();
   return (
     <>
       {isActionPlan ? (

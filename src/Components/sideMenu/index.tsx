@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { version } from '../../../package.json';
 
 import { menus } from './menu';
 import { subscribe } from '../../utils/event';
+import PortalLink from '../PortalLink';
 interface sideMenuProps {
   onClose: () => void;
 }
 const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
-  const navigate = useNavigate();
   const location = useLocation();
 
   const [activeMenu, setActiveMenu] = useState(() => {
@@ -40,9 +40,8 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
       setActiveMenu(currentActiveItem);
     }
   }, [location.pathname, activeMenu, showPlayground]);
-  const changeMenu = (menu: any) => {
+  const selectMenu = (menu: any) => {
     setActiveMenu(menu);
-    navigate(menu.url);
     onClose();
   };
   const [height, setHeight] = useState(window.innerHeight - 145);
@@ -126,18 +125,11 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                       !dontPermisionsToRender(menu.name) ? (
                         <div className=" my-2  w-full flex pl-5  items-center">
                           {' '}
-                          <div
+                          <PortalLink
+                            to={menu.url}
                             onClick={() => {
-                              changeMenu(menu);
+                              selectMenu(menu);
                             }}
-                            // style={{
-                            //   background: `
-                            //   linear-gradient(transparent, transparent) padding-box,
-                            //   linear-gradient(to right, #005F73, #6CC24A) border-box
-                            //   `,
-                            //   border: "1px solid transparent",
-                            //   borderRadius: "16px",
-                            // }}
                             className={` cursor-pointer flex border rounded-[20px]  border-Primary-DeepTeal flex-row  items-center gap-x-2 w-[133px] justify-center text-center text-[8px] h-sm:text-[9px] text-white font-semibold py-[2px] px-3 ${
                               activeMenu.name === menu.name
                                 ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]'
@@ -168,7 +160,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                             </div>
                             {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
                             {/* { activeMenu.name === graph.name && graph.name} */}
-                          </div>
+                          </PortalLink>
                         </div>
                       ) : (
                         <>
@@ -176,35 +168,61 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                             <></>
                           ) : (
                             <div className="" key={menu.name}>
-                              <div
-                                onClick={() => {
-                                  if (menu.active) {
-                                    changeMenu(menu);
-                                  }
-                                }}
-                                className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
-                                  activeMenu.name === menu.name
-                                    ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
-                                    : 'bg-white'
-                                } ${!menu.active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} text-[8px] h-sm:text-[10px] `}
-                              >
-                                <div
-                                  className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
+                              {menu.active ? (
+                                <PortalLink
+                                  to={menu.url}
+                                  onClick={() => {
+                                    selectMenu(menu);
+                                  }}
+                                  className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
                                     activeMenu.name === menu.name
-                                      ? 'text-Primary-DeepTeal'
-                                      : 'text-Text-Primary'
-                                  }`}
-                                />
-                                <div
-                                  className={`${
-                                    activeMenu.name === menu.name
-                                      ? 'text-Primary-DeepTeal'
-                                      : 'text-Text-Primary block '
-                                  }`}
+                                      ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
+                                      : 'bg-white'
+                                  } cursor-pointer text-[8px] h-sm:text-[10px] `}
                                 >
-                                  {menu.name}
+                                  <div
+                                    className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
+                                      activeMenu.name === menu.name
+                                        ? 'text-Primary-DeepTeal'
+                                        : 'text-Text-Primary'
+                                    }`}
+                                  />
+                                  <div
+                                    className={`${
+                                      activeMenu.name === menu.name
+                                        ? 'text-Primary-DeepTeal'
+                                        : 'text-Text-Primary block '
+                                    }`}
+                                  >
+                                    {menu.name}
+                                  </div>
+                                </PortalLink>
+                              ) : (
+                                <div
+                                  className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
+                                    activeMenu.name === menu.name
+                                      ? ' bg-[#E6EEF5] border-r-2 border-Primary-DeepTeal'
+                                      : 'bg-white'
+                                  } opacity-50 cursor-not-allowed text-[8px] h-sm:text-[10px] `}
+                                >
+                                  <div
+                                    className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
+                                      activeMenu.name === menu.name
+                                        ? 'text-Primary-DeepTeal'
+                                        : 'text-Text-Primary'
+                                    }`}
+                                  />
+                                  <div
+                                    className={`${
+                                      activeMenu.name === menu.name
+                                        ? 'text-Primary-DeepTeal'
+                                        : 'text-Text-Primary block '
+                                    }`}
+                                  >
+                                    {menu.name}
+                                  </div>
                                 </div>
-                              </div>
+                              )}
                             </div>
                           )}
                         </>

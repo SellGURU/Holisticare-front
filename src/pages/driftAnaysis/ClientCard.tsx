@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, FC, SetStateAction } from 'react';
-import { useNavigate } from 'react-router-dom';
+import PortalLink from '../../Components/PortalLink';
 import SvgIcon from '../../utils/svgIcon';
 import { Tooltip } from 'react-tooltip';
 
@@ -29,7 +29,6 @@ export const ClientCard: FC<ClientCardProps> = ({
   isSwitch,
   status,
 }) => {
-  const navigate = useNavigate();
   const getStatusStyles = (status: string) => {
     switch (status.toLowerCase()) {
       case 'normal':
@@ -145,13 +144,12 @@ export const ClientCard: FC<ClientCardProps> = ({
           )}
         </div>
         <div className={` ${isSwitch && 'hidden'} flex flex-col gap-4`}>
-          <div
-            onClick={() => navigate(`/report/${memberID}/${name}`)}
-            className="cursor-pointer bg-white border border-Gray-50 shadow-100 w-8 h-8   rounded-full p-2"
+          <PortalLink
+            to={`/report/${memberID}/${name}`}
+            className="cursor-pointer bg-white border border-Gray-50 shadow-100 w-8 h-8 rounded-full p-2 flex items-center justify-center"
           >
-            {' '}
             <SvgIcon src="/icons/export.svg" color="#005F73" />
-          </div>
+          </PortalLink>
         </div>
       </div>
     </div>

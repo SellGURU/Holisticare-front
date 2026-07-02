@@ -5,16 +5,28 @@ interface PointProps {
   left: number;
   onClick?: () => void;
   name: string;
+  isProcessing?: boolean;
   status?:
     | 'CriticalRange'
     | 'DiseaseRange'
     | 'BorderlineRange'
     | 'HealthyRange'
-    | 'OptimalRange';
+    | 'OptimalRange'
+    | undefined;
 }
 
-const Point: React.FC<PointProps> = ({ top, left, onClick, status, name }) => {
+const Point: React.FC<PointProps> = ({
+  top,
+  left,
+  onClick,
+  status,
+  name,
+  isProcessing = false,
+}) => {
   const resolveColor = () => {
+    if (isProcessing) {
+      return '#CBD5E1';
+    }
     if (status == 'CriticalRange') {
       return '#B2302E';
     }
@@ -30,7 +42,7 @@ const Point: React.FC<PointProps> = ({ top, left, onClick, status, name }) => {
     if (status == 'OptimalRange') {
       return '#37B45E';
     }
-    return '#B2302E';
+    return '#CCCCCC';
   };
   return (
     <>
@@ -38,13 +50,19 @@ const Point: React.FC<PointProps> = ({ top, left, onClick, status, name }) => {
         <div
           data-tooltip-id="point"
           data-tooltip-content={name}
-          className={`absolute cursor-pointer  w-[12px] h-[12px] rounded-full`}
+          className={`absolute cursor-pointer w-[12px] h-[12px] rounded-full ${
+            isProcessing ? 'animate-pulse' : ''
+          }`}
           style={{ top: top, left: left, backgroundColor: resolveColor() }}
         ></div>
         <div
           data-tooltip-id="point"
-          data-tooltip-content={name}
-          className={`absolute cursor-pointer   ${status == 'CriticalRange' ? 'bg-[#FF3E5D] w-[20px] h-[20px] animate-ping' : 'bg-primary-color'}  rounded-full`}
+          data-tooltip-content={isProcessing ? `${name} — analyzing` : name}
+          className={`absolute cursor-pointer ${
+            !isProcessing && status == 'CriticalRange'
+              ? 'bg-[#FF3E5D] w-[20px] h-[20px] animate-ping'
+              : 'bg-primary-color'
+          } rounded-full`}
           style={{ top: top - 5, left: left - 4 }}
         ></div>
       </div>

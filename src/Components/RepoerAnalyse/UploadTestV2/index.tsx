@@ -4,11 +4,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 // import { uploadToAzure } from '../../../help';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
+import { isAsyncProcessingEnabled } from '../../../utils/asyncProcessing';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
-import Joyride, { CallBackProps, Step } from 'react-joyride';
-import { TutorialReminderToast } from './showTutorialReminderToast';
 import useIsDemo from '../../../hooks/useIsDemo';
 import { useLabReportUpload } from '../../../hooks/useLabReportUpload';
 import {
@@ -38,23 +37,6 @@ import { ReviewFinding } from './ReviewFindingsPanel';
 //   warning?: boolean;
 //   showReport?: boolean;
 // }
-
-const steps: Step[] = [
-  {
-    target: '#health-plan-title',
-    content:
-      'Here you can generate a personalized health plan for your client.',
-    placement: 'bottom',
-  },
-  {
-    target: '#upload-biomarkers-card',
-    content: 'Upload lab reports or manually add biomarkers.',
-  },
-  {
-    target: '#questionnaire-card',
-    content: 'Fill lifestyle and medical information for better accuracy.',
-  },
-];
 
 const preferNonEmpty = (...values: any[]) => {
   const found = values.find(
@@ -1253,8 +1235,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
   };
 
-  const triggerSilentCompile = (savedFileId?: string) => {
+  const triggerSilentCompile = (
+    savedFileId?: string,
+    compileResponse?: { job_id?: string },
+  ) => {
     setLastSavedFileId(savedFileId);
+    if (compileResponse?.job_id && isAsyncProcessingEnabled()) {
+      publish('labJobStarted', {
+        job_id: compileResponse.job_id,
+        member_id: memberId,
+        file_id: savedFileId,
+      });
+      onGenderate(savedFileId, { silent: true });
+      return;
+    }
     publish('syncReport', { silent: true });
     publish('checkProgress', {
       type: 'file',
@@ -1287,7 +1281,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         res?.data?.modified_biomarkers_file_id ||
         res?.data?.added_biomarkers_file_id ||
         uploadedFile?.file_id;
-      triggerSilentCompile(savedFileId);
+      triggerSilentCompile(savedFileId, { job_id: res?.data?.job_id });
       void loadReviewFindings(savedFileId, backendRowErrorsRef.current);
       if (shouldBulkAutoSaveMappings()) {
         void autoSaveBiomarkerMappings(rowsToSave);
@@ -1319,7 +1313,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         res?.data?.added_biomarkers_file_id ||
         uploadedFile?.file_id;
       showSuccess('Biomarker saved.', 'Refreshing health plan...');
-      triggerSilentCompile(savedFileId);
+      triggerSilentCompile(savedFileId, { job_id: res?.data?.job_id });
       setCompileState('done');
     } catch (err: any) {
       console.error('Row ready save failed:', err);
@@ -1571,89 +1565,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     return false;
   };
 
-  const [run, setRun] = useState(false);
-  const [showReminder, setShowReminder] = useState(false);
-
-  useEffect(() => {
-    const tutorialSeen = localStorage.getItem('tutorialSeen');
-    if (tutorialSeen === 'true') {
-      return;
-    }
-    const hasSeenTour = localStorage.getItem('healthPlanTutorialSeen');
-
-    if (hasSeenTour === 'true') {
-      setShowReminder(true);
-    }
-  }, []);
-  useEffect(() => {
-    const showTutorialAgain = localStorage.getItem('showTutorialAgain');
-    if (showTutorialAgain === 'true') {
-      setRun(true);
-      return;
-    }
-    const seen = localStorage.getItem('healthPlanTutorialSeen');
-    if (!seen) {
-      setRun(true);
-      localStorage.setItem('healthPlanTutorialSeen', 'true');
-    }
-  }, []);
-  const handleViewTutorial = (value: boolean) => {
-    if (value) {
-      localStorage.setItem('showTutorialAgain', 'true');
-    } else {
-      localStorage.setItem('showTutorialAgain', 'false');
-    }
-  };
-  const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status } = data;
-
-    if (status === 'finished' || status === 'skipped') {
-      localStorage.setItem('healthPlanTutorialSeen', 'true');
-      setRun(false);
-    }
-  };
-
   return (
     <>
-      <Joyride
-        steps={steps}
-        run={run && step === 0}
-        continuous
-        showSkipButton
-        disableOverlayClose
-        styles={{
-          options: {
-            arrowColor: '#fff',
-            backgroundColor: '#fff',
-            primaryColor: '#0f766e',
-            textColor: '#1f2937',
-            zIndex: 10000,
-          },
-          tooltip: {
-            borderRadius: '12px',
-            padding: '16px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
-          },
-        }}
-        callback={handleJoyrideCallback}
-        locale={{
-          last: 'Done',
-        }}
-      />
-
-      <TutorialReminderToast
-        visible={showReminder}
-        onViewTutorial={(value) => {
-          handleViewTutorial(value);
-          setRun(value);
-        }}
-        setRun={setRun}
-        onClose={() => {
-          setShowReminder(false);
-          localStorage.setItem('tutorialSeen', 'true');
-        }}
-      />
-
       {deleteLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
@@ -2037,7 +1950,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               publish('reviewCountsLive', { file_id: fid, counts });
             }
           }}
-          onDirtyIdsChange={(_ids) => {
+          onDirtyIdsChange={() => {
             // Phase 1 groundwork: dirty ids are tracked but not yet sent to backend.
             // Phase 2 will include them in re-check / save payloads.
           }}

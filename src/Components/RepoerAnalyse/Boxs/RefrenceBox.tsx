@@ -13,12 +13,21 @@ import HistoricalChart from '../HistoricalChart';
 // import StatusBarChartV2 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartV2';
 import StatusBarChartv3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
 import { SourceTag } from '../../source-badge';
+import ChartLoadingPlaceholder, {
+  isPreviewSource,
+  shouldShowChartLoading,
+} from '../ChartLoadingPlaceholder';
 interface RefrenceBoxProps {
   data: any;
   index: number;
+  isScoringComplete?: boolean;
 }
 
-const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
+const RefrenceBox: React.FC<RefrenceBoxProps> = ({
+  data,
+  index,
+  isScoringComplete = true,
+}) => {
   const [isCheced, setIsCheced] = useState(false);
   const isLongName = data.name.length > 23;
   // console.log(data.name);
@@ -28,7 +37,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
   // const dataPoints = [50, 75, 60, 90, 80, 100, 95];
 
   const isChartDataEmpty = false;
-  console.log(data);
+  const showChartLoading = shouldShowChartLoading(data);
 
   return (
     <>
@@ -126,7 +135,9 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
             className={`text-Text-Primary font-medium text-[10px] md:text-xs flex w-full justify-between items-center ${isCheced && 'invisible'}`}
           >
             Current Value
-            {data?.source && <SourceTag source={data.source} />}
+            {data?.source && !isPreviewSource(data.source) && (
+              <SourceTag source={data.source} />
+            )}
           </div>
           <div className=" hidden justify-end items-center gap-2">
             <div className="invisible">
@@ -148,49 +159,34 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
         {isCheced ? (
           <>
             <div className="mt-1 relative">
-              <HistoricalChart
-                unit={data?.unit}
-                chartId={data.name}
-                sources={data?.historical_sources}
-                statusBar={data.chart_bounds}
-                dataPoints={[...data.values].reverse()}
-                dataStatus={[...data.status].reverse()}
-                labels={[...data.date].reverse()}
-              ></HistoricalChart>
-              {/* <StatusChart
-                mode={
-                  data.chart_bounds['Needs Focus'].length > 1 &&
-                  data.chart_bounds['Ok'].length > 1
-                    ? 'multi'
-                    : 'line'
-                }
-                statusBar={data.chart_bounds}
-                labels={[...data.date].reverse()}
-                dataPoints={[...data.values].reverse()}
-              ></StatusChart> */}
+              {showChartLoading ? (
+                <ChartLoadingPlaceholder variant="historical" className="h-[80px]" />
+              ) : (
+                <HistoricalChart
+                  unit={data?.unit}
+                  chartId={data.name}
+                  sources={data?.historical_sources}
+                  statusBar={data.chart_bounds}
+                  dataPoints={[...data.values].reverse()}
+                  dataStatus={[...data.status].reverse()}
+                  labels={[...data.date].reverse()}
+                ></HistoricalChart>
+              )}
             </div>
           </>
         ) : (
           <>
             <div className="mt-14">
-              {/* <StatusBarChart data={data}></StatusBarChart> */}
-              {/* <StatusBarChartV2
-                status={data.status}
-                unit={data.unit}
-                values={data.values}
-                data={data.chart_bounds}
-                mapingData={Object.fromEntries(
-                  Object.entries(data.chart_bounds).map(
-                    ([key, valuess]: any) => [key, valuess.label],
-                  ),
-                )}
-              ></StatusBarChartV2> */}
-              <StatusBarChartv3
-                status={data.status}
-                unit={data.unit}
-                values={data.values}
-                data={data.chart_bounds}
-              ></StatusBarChartv3>
+              {showChartLoading ? (
+                <ChartLoadingPlaceholder variant="status-bar" className="pt-2" />
+              ) : (
+                <StatusBarChartv3
+                  status={data.status}
+                  unit={data.unit}
+                  values={data.values}
+                  data={data.chart_bounds}
+                ></StatusBarChartv3>
+              )}
             </div>
           </>
         )}

@@ -1,3 +1,4 @@
+import SpinnerLoader from '../SpinnerLoader';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import resolveAnalyseIcon from './resolveAnalyseIcon';
 
@@ -5,8 +6,14 @@ import resolveAnalyseIcon from './resolveAnalyseIcon';
 interface SummaryBoxProps {
   data: any;
   isActive?: boolean;
+  /** True while backend scoring/LLM is still running — counts are not final. */
+  isProcessing?: boolean;
 }
-const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
+const SummaryBox: React.FC<SummaryBoxProps> = ({
+  data,
+  isActive,
+  isProcessing = false,
+}) => {
   // const resolveStatusColor =() => {
   //     if(data.status == 'Normal') {
   //         return '#06C78D'
@@ -29,19 +36,27 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
         }}
         className={`w-full flex cursor-pointer justify-start items-center ${
           isActive ? 'border ' : ''
-        } h-[64px] p-4 rounded-[6px] bg-white border-gray-50 shadow-100 `}
+        } h-[64px] p-4 rounded-[6px] bg-white border-gray-50 shadow-100 ${
+          isProcessing ? 'opacity-75 border-dashed border-Primary-100' : ''
+        }`}
       >
         <div
-          className="w-10 h-10 items-center rounded-full flex justify-center"
-          style={{
-            background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
-              data.status[1] + data.status[0]
-            }% ${data.status[1] + data.status[2] + data.status[0]}%,#BA5225 ${
-              data.status[2] + data.status[1] + data.status[0]
-            }% ${data.status[3] + data.status[2] + data.status[1] + data.status[0]}%,#B2302E ${
-              data.status[3] + data.status[2] + data.status[1] + data.status[0]
-            }% 100%)`,
-          }}
+          className={`w-10 h-10 items-center rounded-full flex justify-center ${
+            isProcessing ? 'animate-pulse bg-Gray-100' : ''
+          }`}
+          style={
+            isProcessing
+              ? undefined
+              : {
+                  background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
+                    data.status[1] + data.status[0]
+                  }% ${data.status[1] + data.status[2] + data.status[0]}%,#BA5225 ${
+                    data.status[2] + data.status[1] + data.status[0]
+                  }% ${data.status[3] + data.status[2] + data.status[1] + data.status[0]}%,#B2302E ${
+                    data.status[3] + data.status[2] + data.status[1] + data.status[0]
+                  }% 100%)`,
+                }
+          }
         >
           <div
             className="w-[35px] h-[35px]  flex justify-center bg-white items-center  rounded-full"
@@ -68,9 +83,18 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
               </span>{' '}
               {data.num_of_biomarkers > 1 ? 'Biomarkers' : 'Biomarker'}
             </div>
-            <div className=" text-Text-Secondary ml-2 text-[10px]">
-              <span className="text-Text-Secondary">{data.out_of_ref}</span>{' '}
-              {data.out_of_ref > 1 ? '"Need Focus"' : '"Need Focus"'}{' '}
+            <div className="text-Text-Secondary ml-2 text-[10px]">
+              {isProcessing ? (
+                <span className="inline-flex items-center gap-1 text-Text-Triarty">
+                  <SpinnerLoader color="#9CA3AF" />
+                  Analyzing…
+                </span>
+              ) : (
+                <>
+                  <span className="text-Text-Secondary">{data.out_of_ref}</span>{' '}
+                  {data.out_of_ref > 1 ? '"Need Focus"' : '"Need Focus"'}{' '}
+                </>
+              )}
             </div>
           </div>
         </div>

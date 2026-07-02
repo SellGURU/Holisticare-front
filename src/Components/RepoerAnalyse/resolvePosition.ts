@@ -2,8 +2,8 @@
 const usedPositions: { [key: string]: Set<number> } = {};
 
 // Function to clear used positions
-export const clearUsedPositions = (name?: string) => {
-  if (name) {
+export const clearUsedPositions = (name?: string | null) => {
+  if (name && typeof name === 'string') {
     // Clear positions for specific name
     const baseName = name.replace(/\d+/g, '').trim();
     usedPositions[baseName] = new Set();
@@ -15,7 +15,12 @@ export const clearUsedPositions = (name?: string) => {
   }
 };
 
-const resolvePosition = (name: string) => {
+const DEFAULT_POSITION = { top: 250, left: 160 };
+
+const resolvePosition = (name: string | null | undefined) => {
+  if (!name || typeof name !== 'string') {
+    return DEFAULT_POSITION;
+  }
   // Remove any numbers from the input name
   const baseName = name.replace(/\d+/g, '').trim();
 

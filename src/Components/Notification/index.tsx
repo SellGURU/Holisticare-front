@@ -4,8 +4,8 @@ import Toggle from '../Toggle';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import NotificationApi from '../../api/Notification';
 import { AppContext } from '../../store/app';
+import PortalLink from '../PortalLink';
 import Circleloader from '../CircleLoader';
-import { useNavigate } from 'react-router-dom';
 interface NotificationProps {
   setisUnReadNotif: (value: boolean) => void;
   refrence: any;
@@ -182,23 +182,9 @@ export const Notification: React.FC<NotificationProps> = ({
   };
   console.log(patientsList);
 
-  const navigate = useNavigate();
   useEffect(() => {
     fetchNotifications();
   }, [fetchNotifications]);
-  const handleProceedClick = (notif: NotificationItem) => {
-    // Mark as read when proceeding
-    // handleNotificationClick(notif.notification_id);
-
-    if (
-      notif.proceed_type?.type === 'redirect' &&
-      notif.proceed_type.destination
-    ) {
-      // Use navigate to redirect
-      navigate(`/${notif.proceed_type.destination}`);
-    }
-    // If type is 'read_only' or destination is missing, do nothing (just mark as read)
-  };
   return (
     <div
       ref={refrence}
@@ -253,16 +239,25 @@ export const Notification: React.FC<NotificationProps> = ({
                   <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#005F73] to-[#6CC24A]"></span>
                 )}
                 {/* Removed 'action' as it's not in the provided API response, add back if needed */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent the parent div's onClick from firing
-                    handleProceedClick(notif);
-                  }}
-                  className={` ${notif.proceed_type?.type === 'redirect' ? '' : 'invisible'} flex gap-1 items-center text-Primary-DeepTeal text-xs font-medium self-start`}
-                >
-                  Proceed
-                  <img src="/icons/arrow-right-small 2.svg" alt="" />
-                </button>
+                {notif.proceed_type?.type === 'redirect' &&
+                notif.proceed_type.destination ? (
+                  <PortalLink
+                    to={`/${notif.proceed_type.destination}`}
+                    onClick={(event) => event.stopPropagation()}
+                    className="flex gap-1 items-center text-Primary-DeepTeal text-xs font-medium self-start"
+                  >
+                    Proceed
+                    <img src="/icons/arrow-right-small 2.svg" alt="" />
+                  </PortalLink>
+                ) : (
+                  <button
+                    type="button"
+                    className="invisible flex gap-1 items-center text-Primary-DeepTeal text-xs font-medium self-start"
+                  >
+                    Proceed
+                    <img src="/icons/arrow-right-small 2.svg" alt="" />
+                  </button>
+                )}
               </div>
             </div>
           ))

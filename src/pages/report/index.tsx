@@ -23,6 +23,38 @@ const Report = () => {
   const [, setActiveCheckProgress] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [, setUserInfoData] = useState<any>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    Application.getLatestLabJob(Number(id))
+      .then((res) => {
+        const data = res?.data;
+        if (
+          data?.job_id &&
+          data?.overall_status &&
+          ['queued', 'running'].includes(data.overall_status)
+        ) {
+          publish('labJobStarted', {
+            job_id: data.job_id,
+            member_id: id,
+            file_id: data.file_id,
+          });
+          return;
+        }
+      })
+      .catch(() => {
+        // fall through to patient-info partial check
+      });
+
+    Application.getPatientsInfo({ member_id: Number(id) })
+      .then((res) => {
+        if (res.data?.has_partial_report && !res.data?.show_report) {
+          publish('checkProgress', { resume: true });
+        }
+      })
+      .catch(() => {});
+  }, [id]);
+
   useEffect(() => {
     subscribe('userInfoData', (data: any) => {
       setUserInfoData(data.detail);
