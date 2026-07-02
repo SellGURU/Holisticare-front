@@ -133,12 +133,14 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
       return;
     }
 
-    setActive((current) => {
+    setActive((current: any) => {
       if (current?.name) {
         const updated = sortedReferences.find((r) => r.name === current.name);
         if (updated) return updated;
       }
-      const withChart = sortedReferences.find((r) => !shouldShowChartLoading(r));
+      const withChart = sortedReferences.find(
+        (r) => !shouldShowChartLoading(r),
+      );
       return withChart ?? sortedReferences[0];
     });
   }, [sortedReferences]);
@@ -400,9 +402,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                             )}
                           </div>
                           <div className="flex items-center gap-4">
-                            {active?.source && !isPreviewSource(active.source) && (
-                              <SourceTag source={active.source} />
-                            )}
+                            {active?.source &&
+                              !isPreviewSource(active.source) && (
+                                <SourceTag source={active.source} />
+                              )}
                             {/* {active?.unit != '' && (
                               <div className="relative z-50 mr-0">
                                 <UnitPopUp unit={active?.unit}></UnitPopUp>
@@ -430,7 +433,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                         {active && (
                           <>
                             {showChartLoading ? (
-                              <ChartLoadingPlaceholder variant="status-bar" className="pt-2" />
+                              <ChartLoadingPlaceholder
+                                variant="status-bar"
+                                className="pt-2"
+                              />
                             ) : (
                               <StatusBarChartV3
                                 status={active.status}

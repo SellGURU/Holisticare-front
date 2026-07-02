@@ -1103,7 +1103,10 @@ const ClientCard: FC<ClientCardProps> = ({
           <PortalLink
             to={`/report/${client.member_id}/${client.name}`}
             onClick={(event) => {
-              if (window.innerWidth >= 768 && !isModifiedNavigationEvent(event)) {
+              if (
+                window.innerWidth >= 768 &&
+                !isModifiedNavigationEvent(event)
+              ) {
                 event.preventDefault();
               }
             }}

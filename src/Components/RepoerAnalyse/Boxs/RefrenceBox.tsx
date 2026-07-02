@@ -26,7 +26,7 @@ interface RefrenceBoxProps {
 const RefrenceBox: React.FC<RefrenceBoxProps> = ({
   data,
   index,
-  isScoringComplete = true,
+  isScoringComplete: _isScoringComplete = true,
 }) => {
   const [isCheced, setIsCheced] = useState(false);
   const isLongName = data.name.length > 23;
@@ -160,7 +160,10 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({
           <>
             <div className="mt-1 relative">
               {showChartLoading ? (
-                <ChartLoadingPlaceholder variant="historical" className="h-[80px]" />
+                <ChartLoadingPlaceholder
+                  variant="historical"
+                  className="h-[80px]"
+                />
               ) : (
                 <HistoricalChart
                   unit={data?.unit}
@@ -178,7 +181,10 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({
           <>
             <div className="mt-14">
               {showChartLoading ? (
-                <ChartLoadingPlaceholder variant="status-bar" className="pt-2" />
+                <ChartLoadingPlaceholder
+                  variant="status-bar"
+                  className="pt-2"
+                />
               ) : (
                 <StatusBarChartv3
                   status={data.status}

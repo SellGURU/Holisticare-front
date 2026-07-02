@@ -11,7 +11,6 @@ import SelectBox from '../../Components/SelectBox/index.tsx';
 import Table from '../../Components/table.tsx/index.tsx';
 import ClientCard from './ClientCard.tsx';
 // import ConfirmModal from './ConfirmModal.tsx';
-import { ButtonSecondary } from '../../Components/Button/ButtosSecondary.tsx';
 import Circleloader from '../../Components/CircleLoader/index.tsx';
 import Toggle from '../../Components/Toggle/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';

@@ -16,7 +16,7 @@ interface AcordinRefrenceBoxProps {
 const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
   biomarker,
   key,
-  isScoringComplete = true,
+  isScoringComplete: _isScoringComplete = true,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
@@ -112,7 +112,10 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
                   <div className="mt-10">
                     {biomarker &&
                       (showChartLoading ? (
-                        <ChartLoadingPlaceholder variant="status-bar" className="pt-2" />
+                        <ChartLoadingPlaceholder
+                          variant="status-bar"
+                          className="pt-2"
+                        />
                       ) : (
                         <StatusBarChartV3
                           status={biomarker.status}

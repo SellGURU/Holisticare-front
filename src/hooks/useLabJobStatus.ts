@@ -90,7 +90,9 @@ export const useLabJobStatus = ({
         );
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to poll job status');
+      setError(
+        err instanceof Error ? err.message : 'Failed to poll job status',
+      );
     } finally {
       setLoading(false);
     }
@@ -143,6 +145,9 @@ export const useLabJobStatus = ({
     retryJob,
     refresh: pollOnce,
     isPolling:
-      enabled && isAsyncProcessingEnabled() && !terminalRef.current && !isLabJobTerminal(status),
+      enabled &&
+      isAsyncProcessingEnabled() &&
+      !terminalRef.current &&
+      !isLabJobTerminal(status),
   };
 };

@@ -1110,22 +1110,17 @@ class Application extends Api {
   static SaveLabReport = (data: any) => {
     return this.post('/patients/process_lab_report', data, {
       timeout: 180000,
-      validateStatus: (status) => status === 200 || status === 202,
+      validateStatus: (status: number) => status === 200 || status === 202,
     });
   };
   static getLabJobStatus = (memberId: number, jobId: string) => {
-    return this.get(
-      `/patients/member/${memberId}/lab-job/${jobId}/status`,
-    );
+    return this.get(`/patients/member/${memberId}/lab-job/${jobId}/status`);
   };
   static getLatestLabJob = (memberId: number) => {
     return this.get(`/patients/member/${memberId}/lab-job/latest`);
   };
   static retryLabJob = (memberId: number, jobId: string) => {
-    return this.post(
-      `/patients/member/${memberId}/lab-job/${jobId}/retry`,
-      {},
-    );
+    return this.post(`/patients/member/${memberId}/lab-job/${jobId}/retry`, {});
   };
   static getBiomarkerName = (data: any) => {
     return this.post('/clinic/get_biomarkers_list', data);

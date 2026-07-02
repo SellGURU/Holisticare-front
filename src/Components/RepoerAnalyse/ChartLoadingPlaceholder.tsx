@@ -60,7 +60,11 @@ const StatusBarChartSkeleton = ({ className = '' }: { className?: string }) => (
   </div>
 );
 
-const HistoricalChartSkeleton = ({ className = '' }: { className?: string }) => (
+const HistoricalChartSkeleton = ({
+  className = '',
+}: {
+  className?: string;
+}) => (
   <div
     className={`w-full animate-pulse ${className}`}
     role="status"

@@ -503,7 +503,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
 
     let isStopped = false;
     const pollTimerRef = {
-      id: undefined as ReturnType<typeof window.setInterval> | undefined,
+      id: undefined as number | undefined,
     };
 
     const stopPolling = () => {

@@ -32,7 +32,6 @@ import { publish, subscribe, unsubscribe } from '../../utils/event';
 // import { ButtonPrimary } from '../Button/ButtonPrimary';
 import Circleloader from '../CircleLoader';
 import InfoToltip from '../InfoToltip';
-import SpinnerLoader from '../SpinnerLoader';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 // import DetiledAcordin from './Boxs/detailedAcordin';
@@ -64,9 +63,7 @@ const canLoadOverviewSections = (info: {
   first_time_view?: boolean;
   has_partial_report?: boolean;
 }) =>
-  Boolean(
-    info.show_report || info.first_time_view || info.has_partial_report,
-  );
+  Boolean(info.show_report || info.first_time_view || info.has_partial_report);
 
 const applyOverviewProcessingMeta = (
   data: Record<string, unknown>,
@@ -94,7 +91,10 @@ const applyOverviewProcessingMeta = (
   if (typeof data.biomarkers_total === 'number') {
     setters.setBiomarkersTotal(data.biomarkers_total);
   }
-  if (typeof data.scoring_complete === 'boolean' && setters.setScoringComplete) {
+  if (
+    typeof data.scoring_complete === 'boolean' &&
+    setters.setScoringComplete
+  ) {
     setters.setScoringComplete(data.scoring_complete);
   }
   if (
@@ -174,7 +174,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   //   if (!isHaveReport) {
   //     publish('reportStatus', {
   //       isHaveReport: false,
-  //       memberId: resolvedMemberID,
+  //       memberId: resolvedMemberID ?? undefined,
   //     });
   //   }
   // }, [isHaveReport, resolvedMemberID]);
@@ -636,7 +636,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     retryJob,
     isPolling: labJobPolling,
   } = useLabJobStatus({
-    memberId: resolvedMemberID,
+    memberId: resolvedMemberID ?? undefined,
     enabled: asyncProcessing && !isShare,
     onTerminal: () => {
       setDisableGenerate(false);
@@ -646,7 +646,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   });
 
   useOverviewPoll({
-    memberId: resolvedMemberID,
+    memberId: resolvedMemberID ?? undefined,
     enabled: !isShare,
     onPollStart: () => {
       setISGenerateLoading(false);
@@ -717,7 +717,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   });
 
   useEffect(() => {
-    if (labJobStatus?.overall_status === 'running' || labJobStatus?.overall_status === 'queued') {
+    if (
+      labJobStatus?.overall_status === 'running' ||
+      labJobStatus?.overall_status === 'queued'
+    ) {
       setOverviewProcessing(true);
     }
     const scoringTask = labJobStatus?.tasks?.category_scoring;
@@ -847,7 +850,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setTreatmentLoading(false);
       setActionPlanLoading(false);
       setLoading(false);
-    } else if (!isHaveReport && !hasPartialReport && !overviewProcessing && !labJobPolling) {
+    } else if (
+      !isHaveReport &&
+      !hasPartialReport &&
+      !overviewProcessing &&
+      !labJobPolling
+    ) {
       setReferenceData(referencedataMoch);
       setClientSummaryBoxs(mydata);
       setConcerningResultIsLoaded(true);
@@ -876,13 +884,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const detailedAnalysisLoading = clientSummaryLoading || referenceLoading;
   const needFocusBiomarkers = useMemo(
-    () => (referenceData?.biomarkers || []).filter((val: any) => val.outofref == true),
+    () =>
+      (referenceData?.biomarkers || []).filter(
+        (val: any) => val.outofref == true,
+      ),
     [referenceData],
   );
   const hasReferenceBiomarkers = (referenceData?.biomarkers?.length ?? 0) > 0;
   const hasCategoryCards = (ClientSummaryBoxs?.subcategories?.length ?? 0) > 0;
   const isOverviewLiveLoading =
-    overviewProcessing || labJobPolling || referenceLoading || clientSummaryLoading;
+    overviewProcessing ||
+    labJobPolling ||
+    referenceLoading ||
+    clientSummaryLoading;
   const awaitingOverviewData =
     overviewProcessing &&
     !hasReferenceBiomarkers &&
@@ -901,7 +915,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       categoriesPartial.some(
         (name) => name.toLowerCase() === subcategory.toLowerCase(),
       ),
-    ) || !overviewProcessing || dataPhase === 'complete';
+    ) ||
+    !overviewProcessing ||
+    dataPhase === 'complete';
   const showNeedFocusSkeleton =
     !hasReferenceBiomarkers &&
     needFocusBiomarkers.length === 0 &&
@@ -913,19 +929,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     !isOverviewLiveLoading &&
     !awaitingOverviewData &&
     needFocusBiomarkers.length === 0;
-  const showConcerningSkeleton =
-    concerningLoading && !ConcerningResultIsLoaded;
+  const showConcerningSkeleton = concerningLoading && !ConcerningResultIsLoaded;
   const showClientSummarySkeleton =
     awaitingOverviewData ||
     (!clientSummaryReady &&
       overviewProcessing &&
-      (clientSummaryLoading && !hasCategoryCards && !hasReferenceBiomarkers));
+      clientSummaryLoading &&
+      !hasCategoryCards &&
+      !hasReferenceBiomarkers);
   const showDetailedAnalysisSkeleton =
     awaitingOverviewData ||
     (!isScoringComplete && overviewProcessing && !hasReferenceBiomarkers) ||
     (detailedAnalysisLoading && !hasReferenceBiomarkers && !hasCategoryCards);
-  const showOverviewCounts =
-    hasCategoryCards || hasReferenceBiomarkers;
+  const showOverviewCounts = hasCategoryCards || hasReferenceBiomarkers;
   const resolveBioMarkers = () => {
     // const refData: Array<any> = [];
     // referenceData?.biomarkers.forEach((el: any) => {
@@ -1002,12 +1018,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       if (showUploadTest) {
         publish('reportStatus', {
           isHaveReport: false,
-          memberId: resolvedMemberID,
+          memberId: resolvedMemberID ?? undefined,
         });
       } else {
         publish('reportStatus', {
           isHaveReport: true,
-          memberId: resolvedMemberID,
+          memberId: resolvedMemberID ?? undefined,
         });
       }
     }
@@ -1503,21 +1519,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       })}
                     </div>
                     {showNeedFocusEmpty && (
-                        <>
-                          <div className="flex justify-center items-center mt-10 w-full">
-                            <div className="flex flex-col items-center justify-center">
-                              <img
-                                src="/icons/Empty/needsfocusEmpty.svg"
-                                alt=""
-                                className="w-[219px]"
-                              />
-                              <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
-                                No Concerning Biomarkers Available Yet!
-                              </div>
+                      <>
+                        <div className="flex justify-center items-center mt-10 w-full">
+                          <div className="flex flex-col items-center justify-center">
+                            <img
+                              src="/icons/Empty/needsfocusEmpty.svg"
+                              alt=""
+                              className="w-[219px]"
+                            />
+                            <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
+                              No Concerning Biomarkers Available Yet!
                             </div>
                           </div>
-                        </>
-                      )}
+                        </div>
+                      </>
+                    )}
                   </>
                 )}
                 {/* <CustomCanvasChart></CustomCanvasChart> */}
