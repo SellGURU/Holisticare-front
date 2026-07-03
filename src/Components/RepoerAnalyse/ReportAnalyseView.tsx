@@ -165,11 +165,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [categoriesPartial, setCategoriesPartial] = useState<string[]>([]);
   const [has_wearable_data, setHasWearableData] = useState(false);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
+  const [showUploadTest, setShowUploadTest] = useState(false);
+  const closeUploadTestOverlay = () => {
+    setShowUploadTest(false);
+    publish('uploadTestHide', {});
+  };
   const [questionnaires, setQuestionnaires] = useState([]);
   // const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   useEffect(() => {
     if (!isActive) {
-      setShowUploadTest(false);
+      closeUploadTestOverlay();
     }
   }, [isActive]);
   // const [isShareModalSuccess, setIsShareModalSuccess] = useState(false);
@@ -211,7 +216,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         .then((res) => {
           setUserInfoData(res.data);
           setIsHaveReport(true);
-          setShowUploadTest(false);
+          closeUploadTestOverlay();
           setLoading(false);
           startSectionLoading();
 
@@ -311,7 +316,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         .then((res) => {
           setUserInfoData(res.data);
           setIsHaveReport(true);
-          setShowUploadTest(false);
+          closeUploadTestOverlay();
           setLoading(false);
           startSectionLoading();
           setTimeout(() => {
@@ -329,7 +334,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setUserInfoData(res.data);
           setIsHaveReport(res.data.show_report);
           setHasPartialReport(Boolean(res.data.has_partial_report));
-          setShowUploadTest(false);
+          closeUploadTestOverlay();
           setDisableGenerate(res.data.has_minimum_data === false);
           setLoading(false);
           if (res.data.first_time_view == true) {
@@ -651,7 +656,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const refreshReportSections = () => {
     setIsHaveReport(true);
-    setShowUploadTest(false);
+    closeUploadTestOverlay();
     if (labDeleteRefreshPendingRef.current) {
       clearReportSections();
       labDeleteRefreshPendingRef.current = false;
@@ -1113,7 +1118,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     treatmentLoading,
     actionPlanLoading,
   ]);
-  const [showUploadTest, setShowUploadTest] = useState(false);
   useEffect(() => {
     if (isActive) {
       if (showUploadTest) {
@@ -1208,7 +1212,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       const shouldOpenOverlay = Boolean(
         detail.file_id ||
           detail.mode === 'manual' ||
-          detail.mode === 'review_ready',
+          detail.mode === 'review_ready' ||
+          detail.mode === 'edit',
       );
       if (!shouldOpenOverlay) return;
 
@@ -1259,7 +1264,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   useEffect(() => {
     if (checkedSteptwo) {
       setTimeout(() => {
-        setShowUploadTest(false);
+        closeUploadTestOverlay();
       }, 3000);
     }
   }, [checkedSteptwo]);
@@ -1969,7 +1974,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   isLoadingQuestionnaires={isLoadingQuestionnaires}
                   questionnaires={questionnaires}
                   onDiscard={() => {
-                    setShowUploadTest(false);
+                    closeUploadTestOverlay();
                   }}
                   isShare={isShare}
                   showReport={isHaveReport}
@@ -1978,11 +1983,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     options?: { silent?: boolean },
                   ) => {
                     if (file_id == 'discard') {
-                      setShowUploadTest(false);
+                      closeUploadTestOverlay();
                       return;
                     }
                     if (file_id === 'customBiomarker') {
-                      setShowUploadTest(false);
+                      closeUploadTestOverlay();
                       setISGenerateLoading(false);
                       setTimeout(() => {
                         fetchPatentDataWithState();
@@ -2007,7 +2012,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     console.log(file_id);
                     if (file_id) {
                       // publish('openProgressModal',{});
-                      setShowUploadTest(false);
+                      closeUploadTestOverlay();
                       setIsHaveReport(true);
                       setCheckedStepTwo(false);
                       setISGenerateLoading(false);
@@ -2036,7 +2041,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       //   }, 4000);
                       // }
                     } else {
-                      setShowUploadTest(false);
+                      closeUploadTestOverlay();
                       setIsHaveReport(true);
                       setISGenerateLoading(false);
                       setTimeout(() => {

@@ -228,6 +228,14 @@ const mappingHasIdentityFields = (mapping: any) =>
       trim(mapping?.benchmark_area),
   );
 
+/** Unit-mapping rows use `unit` as the imported (from) unit, not catalog identity. */
+const unitMappingHasIdentityFields = (mapping: any) =>
+  Boolean(
+    trim(mapping?.biomarker_uid) ||
+      trim(mapping?.biomarker_type) ||
+      trim(mapping?.benchmark_area),
+  );
+
 export const buildMappingIdentityKeyFromEntry = (entry: any) =>
   [
     normalizeName(entry?.standard_name || entry?.biomarker),
@@ -328,7 +336,7 @@ export const unitMappingMatchesBiomarker = (
     return true;
   }
 
-  if (mappingHasIdentityFields(mapping)) {
+  if (unitMappingHasIdentityFields(mapping)) {
     return (
       buildMappingIdentityKeyFromEntry({
         standard_name: mapping?.biomarker,
@@ -501,7 +509,7 @@ export const migrateLegacyUnitMappingsForDuplicates = (
   let changed = false;
 
   mappings.forEach((legacyMapping) => {
-    if (mappingHasIdentityFields(legacyMapping)) return;
+    if (unitMappingHasIdentityFields(legacyMapping)) return;
 
     const legacyName = normalizeName(legacyMapping?.biomarker);
     if (!legacyName || !duplicateNames.has(legacyName)) return;
@@ -513,7 +521,7 @@ export const migrateLegacyUnitMappingsForDuplicates = (
     duplicates.forEach((biomarker) => {
       const identityKey = buildBiomarkerIdentityKey(biomarker);
       const alreadyHasDedicatedEntry = nextMappings.some((mapping) => {
-        if (!mappingHasIdentityFields(mapping)) return false;
+        if (!unitMappingHasIdentityFields(mapping)) return false;
         return (
           buildMappingIdentityKeyFromEntry({
             standard_name: mapping?.biomarker,

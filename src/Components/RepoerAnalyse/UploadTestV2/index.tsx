@@ -235,7 +235,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const processStepOneData = async (data: any) => {
       setProgressBiomarkerUpload(data.progress);
       setfileType(data.lab_type || 'more_info');
-      setUploadPhase(data.status || 'ocr_processing');
+      if (!skipExtractionProgressRef.current) {
+        setUploadPhase(data.status || 'ocr_processing');
+      }
       setReviewSummary(data.summary || null);
       setUploadedFile((prev) =>
         prev

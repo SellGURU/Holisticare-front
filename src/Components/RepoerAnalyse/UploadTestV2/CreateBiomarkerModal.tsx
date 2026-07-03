@@ -4,6 +4,7 @@ import SpinnerLoader from '../../SpinnerLoader';
 import Application from '../../../api/app';
 import BiomarkersApi from '../../../api/Biomarkers';
 import BenchmarkAreaSelect from '../../BenchmarkAreaSelect';
+import { findCatalogBiomarkerDuplicate } from './biomarkerReviewCompat';
 
 interface Props {
   extractedName: string;
@@ -92,6 +93,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
   const [benchmarkAreaOptionsByType, setBenchmarkAreaOptionsByType] = useState<
     Record<string, string[]>
   >({});
+  const [catalogBiomarkers, setCatalogBiomarkers] = useState<any[]>([]);
   const [aiSuggestedBenchmarkArea, setAiSuggestedBenchmarkArea] = useState('');
 
   useEffect(() => {
@@ -100,6 +102,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
     BiomarkersApi.getBiomarkersList()
       .then((res: any) => {
         if (!isMounted || !Array.isArray(res?.data)) return;
+        setCatalogBiomarkers(res.data);
         const optionsByType: Record<string, string[]> = {};
         res.data.forEach((item: any) => {
           const type = String(item?.biomarker_type || 'blood').trim();
@@ -400,6 +403,19 @@ const CreateBiomarkerModal: React.FC<Props> = ({
       }
     }
 
+    const duplicateExisting = findCatalogBiomarkerDuplicate(
+      catalogBiomarkers,
+      draft.Biomarker,
+      draft.biomarker_type,
+    );
+    if (duplicateExisting) {
+      const existingUnit = duplicateExisting.unit || 'unknown';
+      setErrorMsg(
+        `A biomarker with this name already exists (unit: ${existingUnit}). Select it from the catalog or add a unit mapping instead of creating a duplicate.`,
+      );
+      return;
+    }
+
     setSaving(true);
     try {
       await BiomarkersApi.addBiomarkersList({
@@ -409,6 +425,13 @@ const CreateBiomarkerModal: React.FC<Props> = ({
       onCreated(draft.Biomarker);
       onClose();
     } catch (err: any) {
+      const status = err?.response?.status;
+      if (status === 504) {
+        setErrorMsg(
+          'Save timed out — the biomarker catalog may still be updating. Refresh Custom Biomarkers to confirm, or try again.',
+        );
+        return;
+      }
       const detail =
         err?.response?.data?.detail ||
         err?.detail ||

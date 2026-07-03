@@ -16,6 +16,7 @@ import {
 import {
   normalizeBiomarkerNameForMatch,
   pickCatalogEntryForRow,
+  shouldBlockCreateNewBiomarker,
   type CategorizeReviewRowResult,
 } from './biomarkerReviewCompat';
 
@@ -236,6 +237,19 @@ export default function BiomarkerRow({
     }
     return list;
   })();
+
+  const extractedNameForCreate = String(
+    preferNonEmpty(
+      biomarker.original_biomarker_name,
+      biomarker.biomarker,
+    ) || '',
+  ).trim();
+  const blockCreateNewBiomarker = shouldBlockCreateNewBiomarker({
+    catalog: rowTypeOptions,
+    extractedName: extractedNameForCreate,
+    biomarkerType: biomarker.biomarker_type || 'blood',
+    suggestions: effectiveSuggestions,
+  });
 
   const matchingSystemOptions = rowTypeOptions.filter(
     (option) =>
@@ -601,7 +615,9 @@ export default function BiomarkerRow({
             isError={isSystemBiomarkerError && !isErrorHandled}
             suggestions={effectiveSuggestions}
             isSuggestionsLoading={isSuggestionsLoading}
-            onCreateNew={onCreateNewBiomarker}
+            onCreateNew={
+              blockCreateNewBiomarker ? undefined : onCreateNewBiomarker
+            }
             onMenuOpen={() => {
               onDropdownOpen?.();
               onBiomarkerMenuOpen?.();
@@ -653,7 +669,9 @@ export default function BiomarkerRow({
               </div>
             ) : (
               <span>
-                Select a system biomarker to see area and default unit.
+                {blockCreateNewBiomarker
+                  ? 'This biomarker already exists in your catalog — select it or add a unit mapping.'
+                  : 'Select a system biomarker to see area and default unit.'}
               </span>
             )}
           </div>

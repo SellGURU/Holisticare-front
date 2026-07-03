@@ -140,6 +140,7 @@ const ActionSection: FC<ActionSectionProps> = ({
     if (onEdit) onEdit();
     publish('uploadTestShow', {
       isShow: true,
+      mode: 'edit',
       file_id: file.file_id,
       file_name: file.file_name || file.name || 'Uploaded Document.pdf',
     });

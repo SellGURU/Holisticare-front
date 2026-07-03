@@ -27,7 +27,9 @@ class BiomarkersApi extends Api {
   };
 
   static addBiomarkersList = (data: any) => {
-    return this.post('/custom_biomarker/add_biomarker', data);
+    return this.post('/custom_biomarker/add_biomarker', data, {
+      timeout: 180000,
+    });
   };
 
   static deleteBiomarker = (data: {

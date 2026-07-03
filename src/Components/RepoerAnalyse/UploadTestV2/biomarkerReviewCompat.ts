@@ -922,3 +922,45 @@ export const resolveUnitForStandardize = (catalog: any[], row: any) => {
   const catalogEntry = pickCatalogEntryForRow(catalog, row);
   return trim(catalogEntry?.unit);
 };
+
+/** Returns catalog row when name+type already exists (ignores unit — blocks duplicate creates). */
+export const findCatalogBiomarkerDuplicate = (
+  catalog: any[],
+  name: string,
+  biomarkerType = 'blood',
+) => {
+  const normalizedName = normalizeBiomarkerNameForMatch(name);
+  if (!normalizedName) return null;
+  const normalizedType = String(biomarkerType || 'blood').toLowerCase();
+  return (
+    catalog.find(
+      (item) =>
+        normalizeBiomarkerNameForMatch(item?.Biomarker || item?.biomarker) ===
+          normalizedName &&
+        String(item?.biomarker_type || 'blood').toLowerCase() === normalizedType,
+    ) || null
+  );
+};
+
+const HIGH_CONFIDENCE_SUGGESTION_THRESHOLD = 80;
+
+/** Hide Create New when catalog or suggestions already identify the biomarker. */
+export const shouldBlockCreateNewBiomarker = (params: {
+  catalog: any[];
+  extractedName: string;
+  biomarkerType?: string;
+  suggestions?: Array<{ system_biomarker: string; confidence: number }>;
+}) => {
+  const { catalog, extractedName, biomarkerType = 'blood', suggestions = [] } =
+    params;
+  if (findCatalogBiomarkerDuplicate(catalog, extractedName, biomarkerType)) {
+    return true;
+  }
+  const normalizedExtracted = normalizeBiomarkerNameForMatch(extractedName);
+  return suggestions.some(
+    (suggestion) =>
+      suggestion.confidence >= HIGH_CONFIDENCE_SUGGESTION_THRESHOLD &&
+      normalizeBiomarkerNameForMatch(suggestion.system_biomarker) ===
+        normalizedExtracted,
+  );
+};

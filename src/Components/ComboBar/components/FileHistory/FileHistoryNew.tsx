@@ -117,6 +117,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     Record<string, { ready: number; review: number; excluded: number }>
   >({});
   const [isDragging, setIsDragging] = useState(false);
+  const [labEditOverlayOpen, setLabEditOverlayOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const requestSeqRef = useRef(0);
@@ -281,7 +282,16 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   useEffect(() => {
     const handleUploadTestShow = (data: any) => {
       const fileId = data?.detail?.file_id;
+      const mode = data?.detail?.mode;
       if (!fileId) return;
+
+      if (mode === 'edit') {
+        setLabEditOverlayOpen(true);
+        return;
+      }
+
+      if (mode !== 'review_ready') return;
+
       let tempIdToRemove: string | undefined;
       setInlineUploads((prev) =>
         prev.map((fileUpload) =>
@@ -308,6 +318,16 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     subscribe('uploadTestShow', handleUploadTestShow);
     return () => {
       unsubscribe('uploadTestShow', handleUploadTestShow);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleUploadTestHide = () => {
+      setLabEditOverlayOpen(false);
+    };
+    subscribe('uploadTestHide', handleUploadTestHide);
+    return () => {
+      unsubscribe('uploadTestHide', handleUploadTestHide);
     };
   }, []);
 
@@ -449,10 +469,20 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       !String(fileUpload.file_id).startsWith('inline-'),
   );
   const isInlineUploadBusy = Boolean(activeInlineUpload);
+  const showInlineExtractProgress =
+    isInlineUploadBusy &&
+    activeInlineUpload &&
+    !labEditOverlayOpen &&
+    (activeInlineUpload.status === 'uploading' ||
+      activeInlineUpload.status === 'processing' ||
+      activeInlineUpload.status === 'success' ||
+      activeInlineUpload.status === 'error');
+  const showUploadZoneIdle = !showInlineExtractProgress;
   const showInlineUploadSplash =
-    activeInlineUpload?.status === 'uploading' ||
-    activeInlineUpload?.status === 'processing' ||
-    activeInlineUpload?.status === 'success';
+    !labEditOverlayOpen &&
+    (activeInlineUpload?.status === 'uploading' ||
+      activeInlineUpload?.status === 'processing' ||
+      activeInlineUpload?.status === 'success');
   const activeInlineFileId =
     activeInlineUpload?.file_id &&
     !String(activeInlineUpload.file_id).startsWith('inline-')
@@ -946,25 +976,25 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           <div
             onDragEnter={(event) => {
               event.preventDefault();
-              if (!isDemo && !isInlineUploadBusy) setIsDragging(true);
+              if (!isDemo && showUploadZoneIdle) setIsDragging(true);
             }}
             onDragOver={(event) => {
               event.preventDefault();
-              if (!isDemo && !isInlineUploadBusy) setIsDragging(true);
+              if (!isDemo && showUploadZoneIdle) setIsDragging(true);
             }}
             onDragLeave={(event) => {
               event.preventDefault();
               setIsDragging(false);
             }}
             onDrop={(event) => {
-              if (isInlineUploadBusy) {
+              if (!showUploadZoneIdle) {
                 event.preventDefault();
                 return;
               }
               handleDrop(event);
             }}
             onClick={() => {
-              if (isDemo || isInlineUploadBusy) return;
+              if (isDemo || !showUploadZoneIdle) return;
               fileInputRef.current?.click();
             }}
             title={
@@ -973,13 +1003,13 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
                 : undefined
             }
             className={`relative overflow-hidden flex flex-col items-center justify-center rounded-2xl border bg-white text-center shadow-100 transition-colors ${
-              isInlineUploadBusy
+              showInlineExtractProgress
                 ? 'col-span-2 min-h-0 border-Primary-DeepTeal bg-[#F6FAFB] px-4 py-4'
                 : 'min-h-[112px] border-dashed border-Gray-50 px-3 py-3'
             } ${
               isDemo
                 ? 'cursor-not-allowed opacity-60'
-                : isInlineUploadBusy
+                : showInlineExtractProgress
                   ? 'cursor-wait'
                   : 'cursor-pointer hover:border-Primary-DeepTeal'
             } ${isDragging ? 'border-Primary-DeepTeal bg-[#F6FAFB]' : ''}`}
@@ -990,7 +1020,8 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
               </div>
             ) : null}
             <div className="relative z-[1] flex w-full flex-col items-center justify-center">
-              {isInlineUploadBusy && activeInlineUpload?.status === 'error' ? (
+              {showInlineExtractProgress &&
+              activeInlineUpload?.status === 'error' ? (
                 <div className="flex w-full flex-col items-center justify-center gap-2 py-4 text-center">
                   <div className="flex size-11 items-center justify-center rounded-full border border-[#F3B8C8] bg-[#FFF5F8]">
                     <img
@@ -1019,7 +1050,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
                     Try another file
                   </button>
                 </div>
-              ) : isInlineUploadBusy &&
+              ) : showInlineExtractProgress &&
                 activeInlineUpload?.status === 'success' ? (
                 <div className="flex w-full flex-col items-center justify-center gap-2 py-4 text-center">
                   <div className="flex size-11 items-center justify-center rounded-full bg-Primary-EmeraldGreen/15">
@@ -1036,7 +1067,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
                     Biomarkers are ready for review.
                   </div>
                 </div>
-              ) : isInlineUploadBusy && activeInlineUpload ? (
+              ) : showInlineExtractProgress && activeInlineUpload ? (
                 <ProgressLoading
                   maxProgress={inlineProgressMax}
                   phase={inlineUploadPhase}
@@ -1061,7 +1092,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
               )}
             </div>
           </div>
-          {!isInlineUploadBusy ? (
+          {showUploadZoneIdle ? (
             <button
               type="button"
               disabled={isDemo}
@@ -1095,7 +1126,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
               ',',
             )}
             multiple
-            disabled={isDemo || isInlineUploadBusy}
+            disabled={isDemo || !showUploadZoneIdle}
             onChange={handleFileChange}
             id="uploadFileBoxes"
             className="w-full absolute invisible h-full left-0 top-0"
