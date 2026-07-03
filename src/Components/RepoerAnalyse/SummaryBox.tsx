@@ -16,7 +16,6 @@ interface SummaryBoxProps {
 const SummaryBox: React.FC<SummaryBoxProps> = ({
   data,
   isActive,
-  isProcessing = false,
   needFocusAnalyzing,
   ringLoading,
 }) => {

@@ -406,7 +406,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         });
         setISGenerateLoading(false);
         if (shouldApplyCategoryResponse(data)) {
-          setClientSummaryBoxs((prev) =>
+          setClientSummaryBoxs((prev: any) =>
             applyClientSummaryCategories(prev, data),
           );
         }
@@ -621,7 +621,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     if (
       detail?.member_id &&
       resolvedMemberID &&
-      detail.member_id !== resolvedMemberID
+      detail.member_id !== String(resolvedMemberID)
     ) {
       return;
     }
@@ -742,7 +742,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setCategoriesPartial,
       });
       if (shouldApplyCategoryResponse(data)) {
-        setClientSummaryBoxs((prev) =>
+        setClientSummaryBoxs((prev: any) =>
           applyClientSummaryCategories(prev, data),
         );
       }
@@ -1565,7 +1565,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           ))}
                         </div>
                       ) : (
-                        <MarkdownText text={ClientSummaryBoxs?.client_summary} />
+                        <MarkdownText
+                          text={ClientSummaryBoxs?.client_summary}
+                        />
                       )}
                     </div>
                     {showClientSummaryContentSkeleton ? (

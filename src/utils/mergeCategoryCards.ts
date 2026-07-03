@@ -94,10 +94,7 @@ export const mergeCategoryCard = (existing: any, incoming: any): any => {
 };
 
 /** Merge poll responses without regressing already-ready category cards. */
-export const mergeClientSummaryCategories = (
-  prev: any,
-  incoming: any,
-): any => {
+export const mergeClientSummaryCategories = (prev: any, incoming: any): any => {
   if (!prev) return incoming;
   if (!incoming) return prev;
 

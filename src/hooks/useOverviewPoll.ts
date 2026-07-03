@@ -19,7 +19,7 @@ export type OverviewSnapshot = {
   scoring_complete?: boolean;
   client_summary_ready?: boolean;
   categories_partial?: string[];
-    categories_status?: Array<{
+  categories_status?: Array<{
     name: string;
     values_ready?: boolean;
     flags_ready?: boolean;
@@ -72,7 +72,8 @@ export function useOverviewPoll({
       const snapshot = (snapRes.data || {}) as OverviewSnapshot;
       onSnapshot(snapshot);
 
-      if (!snapshot.processing &&
+      if (
+        !snapshot.processing &&
         (snapshot.data_phase === 'complete' ||
           snapshot.data_phase === 'extracted_only')
       ) {
@@ -147,7 +148,9 @@ export function useOverviewPoll({
       lastRevisionRef.current = null;
       lastScoredRef.current = null;
     };
-    const handleStart = (event?: { detail?: { member_id?: string | number } }) => {
+    const handleStart = (event?: {
+      detail?: { member_id?: string | number };
+    }) => {
       if (!progressEventMatchesMember(memberId, event?.detail)) return;
       startPolling();
     };
