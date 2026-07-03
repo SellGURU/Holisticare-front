@@ -129,10 +129,9 @@ const legacyProteinMapping = {
   conversion_factor: 0.1,
 };
 
-const migrated = migrateLegacyUnitMappingsForDuplicates(
-  duplicateRows,
-  [legacyProteinMapping],
-);
+const migrated = migrateLegacyUnitMappingsForDuplicates(duplicateRows, [
+  legacyProteinMapping,
+]);
 
 assert.equal(
   migrated.length,

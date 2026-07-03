@@ -239,10 +239,8 @@ export default function BiomarkerRow({
   })();
 
   const extractedNameForCreate = String(
-    preferNonEmpty(
-      biomarker.original_biomarker_name,
-      biomarker.biomarker,
-    ) || '',
+    preferNonEmpty(biomarker.original_biomarker_name, biomarker.biomarker) ||
+      '',
   ).trim();
   const blockCreateNewBiomarker = shouldBlockCreateNewBiomarker({
     catalog: rowTypeOptions,

@@ -937,7 +937,8 @@ export const findCatalogBiomarkerDuplicate = (
       (item) =>
         normalizeBiomarkerNameForMatch(item?.Biomarker || item?.biomarker) ===
           normalizedName &&
-        String(item?.biomarker_type || 'blood').toLowerCase() === normalizedType,
+        String(item?.biomarker_type || 'blood').toLowerCase() ===
+          normalizedType,
     ) || null
   );
 };
@@ -951,8 +952,12 @@ export const shouldBlockCreateNewBiomarker = (params: {
   biomarkerType?: string;
   suggestions?: Array<{ system_biomarker: string; confidence: number }>;
 }) => {
-  const { catalog, extractedName, biomarkerType = 'blood', suggestions = [] } =
-    params;
+  const {
+    catalog,
+    extractedName,
+    biomarkerType = 'blood',
+    suggestions = [],
+  } = params;
   if (findCatalogBiomarkerDuplicate(catalog, extractedName, biomarkerType)) {
     return true;
   }
