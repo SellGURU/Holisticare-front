@@ -14,6 +14,8 @@ interface NewDetailedAcordinProps {
   isScoringComplete?: boolean;
   isDescriptionReady?: boolean;
   isProcessing?: boolean;
+  needFocusAnalyzing?: boolean;
+  ringLoading?: boolean;
 }
 const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
   data,
@@ -21,9 +23,14 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
   isScoringComplete = true,
   isDescriptionReady = true,
   isProcessing = false,
+  needFocusAnalyzing,
+  ringLoading,
 }) => {
   const [isOpen, setIsOpen] = useState(true);
-  const categoryProcessing = isProcessing || !isScoringComplete;
+  const showNeedFocusAnalyzing =
+    needFocusAnalyzing ?? (isProcessing || !isScoringComplete);
+  const showRingLoading = ringLoading ?? (isProcessing || !isScoringComplete);
+  const categoryProcessing = showRingLoading;
 
   return (
     <>
@@ -79,7 +86,7 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
               <CategoryStats
                 numOfBiomarkers={data?.num_of_biomarkers}
                 outOfRef={data?.out_of_ref}
-                isProcessing={categoryProcessing}
+                isProcessing={showNeedFocusAnalyzing}
                 biomarkerLabel="biomarkers"
                 needFocusQuoted={false}
               />

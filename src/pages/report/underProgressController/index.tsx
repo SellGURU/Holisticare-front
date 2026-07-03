@@ -293,7 +293,10 @@ const UnderProgressController = ({
       hadInflightOperationsRef.current = true;
       if (!overviewPollTriggeredRef.current) {
         overviewPollTriggeredRef.current = true;
-        publish('checkProgress', { source: 'inflight_start' });
+        publish('checkProgress', {
+          source: 'inflight_start',
+          member_id,
+        });
       }
     } else if (hadInflightOperationsRef.current && hasTrackedOperations) {
       scheduleAllProgressCompleted();

@@ -100,6 +100,9 @@ export const useLabJobStatus = ({
 
   useEffect(() => {
     if (!enabled || !isAsyncProcessingEnabled() || !memberId) return;
+    setStatus(null);
+    setJobId(externalJobId ?? null);
+    setError(null);
     terminalRef.current = false;
     pollStartedRef.current = Date.now();
     pollIntervalRef.current = BASE_POLL_MS;

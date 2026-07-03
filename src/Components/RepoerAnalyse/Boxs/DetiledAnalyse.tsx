@@ -27,6 +27,8 @@ interface DetiledAnalyseProps {
   isScoringComplete?: boolean;
   isDescriptionReady?: boolean;
   isProcessing?: boolean;
+  needFocusAnalyzing?: boolean;
+  ringLoading?: boolean;
 }
 
 const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
@@ -35,6 +37,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   isScoringComplete = true,
   isDescriptionReady = true,
   isProcessing = false,
+  needFocusAnalyzing,
+  ringLoading,
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isCheced, setIsCheced] = useState(false);
@@ -165,7 +169,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   }, [selectGroup, sortedReferences]);
 
   const showChartLoading = shouldShowChartLoading(active);
-  const categoryProcessing = isProcessing || !isScoringComplete;
+  const showNeedFocusAnalyzing =
+    needFocusAnalyzing ?? (isProcessing || !isScoringComplete);
+  const showRingLoading = ringLoading ?? (isProcessing || !isScoringComplete);
+  const categoryProcessing = showRingLoading;
 
   return (
     <>
@@ -227,7 +234,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
               <CategoryStats
                 numOfBiomarkers={data?.num_of_biomarkers}
                 outOfRef={data?.out_of_ref}
-                isProcessing={categoryProcessing}
+                isProcessing={showNeedFocusAnalyzing}
               />
             </div>
           </div>

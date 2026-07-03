@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import Application from '../../../../../api/app';
 import { BeatLoader } from 'react-spinners';
 import { publish } from '../../../../../utils/event';
@@ -88,30 +88,52 @@ const ActionSection: FC<ActionSectionProps> = ({
     URL.revokeObjectURL(blobUrl);
   };
 
+  const deletePollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  const pollDeleteCompletion = (fileId: string) => {
+    const checkDelete = async () => {
+      try {
+        const res = await Application.checkDeleteLabReport({
+          file_id: fileId,
+          member_id: memberId,
+        });
+        if (res.status === 200 && res.data?.deleted === true) {
+          publish('DeleteSuccess', { member_id: memberId, file_id: fileId });
+        } else {
+          deletePollTimeoutRef.current = setTimeout(checkDelete, 1000);
+        }
+      } catch (err) {
+        console.error(err);
+        deletePollTimeoutRef.current = setTimeout(checkDelete, 1000);
+      }
+    };
+    checkDelete();
+  };
+
   const handleDelete = () => {
     if (isDemo) return;
-    // setLoadingDelete(true);
     setIsSureRemove(false);
+    const fileId = file.file_id;
+
+    onDelete();
 
     Application.deleteFileHistory({
-      file_id: file.file_id,
+      file_id: fileId,
       member_id: memberId,
     })
       .then(() => {
-        console.log('delete file success');
-        // setLoadingDelete(false);
-        // setisDeleted(true);
-
-        // onDelete();
-        // onDeleteSuccess();
+        publish('labReportDeleted', { member_id: memberId, file_id: fileId });
+        pollDeleteCompletion(fileId);
       })
       .catch((err) => {
         console.error(err);
       });
+
     setTimeout(() => {
       publish('checkProgress', {});
     }, 400);
-    onDelete();
   };
   const handleEdit = () => {
     if (isDemo || isDeleted) return;

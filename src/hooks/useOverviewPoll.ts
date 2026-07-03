@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
 import Application from '../api/app';
 import { subscribe, unsubscribe } from '../utils/event';
-import type { OverviewDataPhase } from '../utils/asyncProcessing';
+import {
+  progressEventMatchesMember,
+  type OverviewDataPhase,
+} from '../utils/asyncProcessing';
 
 const OVERVIEW_POLL_INTERVAL_MS = 2000;
 
@@ -16,6 +19,13 @@ export type OverviewSnapshot = {
   scoring_complete?: boolean;
   client_summary_ready?: boolean;
   categories_partial?: string[];
+    categories_status?: Array<{
+    name: string;
+    values_ready?: boolean;
+    flags_ready?: boolean;
+    description_ready?: boolean;
+  }>;
+  active_preview_file_id?: string;
   progress_pct?: number;
 };
 
@@ -62,7 +72,10 @@ export function useOverviewPoll({
       const snapshot = (snapRes.data || {}) as OverviewSnapshot;
       onSnapshot(snapshot);
 
-      if (!snapshot.processing && snapshot.data_phase === 'complete') {
+      if (!snapshot.processing &&
+        (snapshot.data_phase === 'complete' ||
+          snapshot.data_phase === 'extracted_only')
+      ) {
         stopPolling();
         return;
       }
@@ -120,19 +133,34 @@ export function useOverviewPoll({
   }, [enabled, memberId, onPollStart, pollTick]);
 
   useEffect(() => {
+    lastRevisionRef.current = null;
+    lastScoredRef.current = null;
+    stopPolling();
+  }, [memberId, stopPolling]);
+
+  useEffect(() => {
     if (!enabled) {
       stopPolling();
       return;
     }
-    const handleStart = () => startPolling();
+    const handlePollReset = () => {
+      lastRevisionRef.current = null;
+      lastScoredRef.current = null;
+    };
+    const handleStart = (event?: { detail?: { member_id?: string | number } }) => {
+      if (!progressEventMatchesMember(memberId, event?.detail)) return;
+      startPolling();
+    };
     subscribe('checkProgress', handleStart);
     subscribe('labJobStarted', handleStart as EventListener);
+    subscribe('overviewPollReset', handlePollReset);
     return () => {
       stopPolling();
       unsubscribe('checkProgress', handleStart);
       unsubscribe('labJobStarted', handleStart as EventListener);
+      unsubscribe('overviewPollReset', handlePollReset);
     };
-  }, [enabled, startPolling, stopPolling]);
+  }, [enabled, memberId, startPolling, stopPolling]);
 
   useEffect(() => {
     return () => stopPolling();

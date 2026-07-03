@@ -216,7 +216,19 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   }, []);
 
   useEffect(() => {
-    if (id) {
+    if (!id) return;
+    setInlineUploads([]);
+    setFileReviewMeta({});
+    setLiveReviewMeta({});
+    reconnectAttemptedRef.current.clear();
+    processLabReportInFlightRef.current.clear();
+    processLabReportSucceededRef.current.clear();
+    stepOnePollInFlightRef.current = false;
+    getFileList(id);
+  }, [id, getFileList]);
+
+  useEffect(() => {
+    if (id && isOpen) {
       getFileList(id);
     }
   }, [id, isOpen, getFileList]);
@@ -602,6 +614,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           publish('checkProgress', {
             type: 'file',
             file_id: fileId,
+            member_id: id,
             action_type: 'uploaded',
             process_status: false,
           });
@@ -665,6 +678,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
             publish('checkProgress', {
               type: 'file',
               file_id: savedFileId,
+              member_id: id,
               action_type: 'uploaded',
               process_status: false,
             });

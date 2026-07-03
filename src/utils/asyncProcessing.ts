@@ -34,7 +34,29 @@ export const clearPersistedLabJobId = (memberId: string | number): void => {
   }
 };
 
-export type OverviewDataPhase = 'preview' | 'scoring' | 'insights' | 'complete';
+/** True when a global progress event belongs to the active client. */
+export const progressEventMatchesMember = (
+  memberId: string | number | null | undefined,
+  detail?: { member_id?: string | number } | null,
+): boolean => {
+  if (memberId == null) return false;
+  if (detail?.member_id == null) return true;
+  return String(detail.member_id) === String(memberId);
+};
+
+export type OverviewDataPhase =
+  | 'preview'
+  | 'scoring'
+  | 'insights'
+  | 'complete'
+  | 'extracted_only';
+
+export type CategoryCardStatus = {
+  name: string;
+  values_ready?: boolean;
+  flags_ready?: boolean;
+  description_ready?: boolean;
+};
 
 export type OverviewProcessingMeta = {
   processing?: boolean;
@@ -45,9 +67,48 @@ export type OverviewProcessingMeta = {
   scoring_complete?: boolean;
   client_summary_ready?: boolean;
   categories_partial?: string[];
+  categories_status?: CategoryCardStatus[];
   categories_ready?: boolean;
   summary_ready?: boolean;
   progress_pct?: number;
+  active_preview_file_id?: string;
+};
+
+/** True while need-focus counts are not yet scored for this card. */
+export const categoryNeedFocusAnalyzing = (
+  card: {
+    out_of_ref?: number | null;
+    description_pending?: boolean;
+    values_ready?: boolean;
+    flags_ready?: boolean;
+    flags_source?: string;
+    partial?: boolean;
+    source?: string;
+  },
+  scoringComplete: boolean,
+): boolean => {
+  if (card.out_of_ref != null) return false;
+  if (scoringComplete || card.flags_source === 'scored') return false;
+  if (card.flags_ready === true) return false;
+  return card.values_ready === false;
+};
+
+/** True while the status ring should show a loading pulse. */
+export const categoryRingLoading = (
+  card: {
+    status?: number[] | null;
+    values_ready?: boolean;
+    flags_ready?: boolean;
+    flags_source?: string;
+    partial?: boolean;
+    source?: string;
+  },
+  scoringComplete: boolean,
+): boolean => {
+  if (Array.isArray(card.status)) return false;
+  if (scoringComplete || card.flags_source === 'scored') return false;
+  if (card.flags_ready === true) return false;
+  return card.values_ready === false;
 };
 
 export type LabJobTaskStatus = {

@@ -45,6 +45,7 @@ import NewDetailedAcordin from './Boxs/newDetailedAcordin';
 import {
   ActionPlanSkeleton,
   ClientSummarySkeleton,
+  ClientSummaryContentSkeleton,
   ConcerningResultSkeleton,
   DetailedAnalysisSkeleton,
   HolisticPlanSkeleton,
@@ -53,7 +54,15 @@ import {
 import { useLabJobStatus } from '../../hooks/useLabJobStatus';
 import { useOverviewPoll } from '../../hooks/useOverviewPoll';
 import {
+  applyClientSummaryCategories,
+  shouldApplyCategoryResponse,
+  shouldApplyReferenceResponse,
+} from '../../utils/mergeCategoryCards';
+import {
+  categoryNeedFocusAnalyzing,
+  categoryRingLoading,
   isAsyncProcessingEnabled,
+  progressEventMatchesMember,
   taskIsDone,
   type OverviewDataPhase,
 } from '../../utils/asyncProcessing';
@@ -79,7 +88,10 @@ const applyOverviewProcessingMeta = (
 ) => {
   if (data.processing) {
     setters.setOverviewProcessing(true);
-  } else if (!data.processing && data.data_phase === 'complete') {
+  } else if (
+    !data.processing &&
+    (data.data_phase === 'complete' || data.data_phase === 'extracted_only')
+  ) {
     setters.setOverviewProcessing(false);
   }
   if (typeof data.data_phase === 'string') {
@@ -357,7 +369,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setCategoriesPartial,
         });
         const biomarkers = data.biomarkers || [];
-        if (biomarkers.length > 0 || !data.processing) {
+        if (shouldApplyReferenceResponse(data)) {
           setReferenceData(data);
         }
         if (biomarkers.length === 0) {
@@ -393,9 +405,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setCategoriesPartial,
         });
         setISGenerateLoading(false);
-        const subcategories = data.subcategories || [];
-        if (subcategories.length > 0 || !data.processing) {
-          setClientSummaryBoxs(data);
+        if (shouldApplyCategoryResponse(data)) {
+          setClientSummaryBoxs((prev) =>
+            applyClientSummaryCategories(prev, data),
+          );
         }
       })
       .catch(() => {})
@@ -590,6 +603,32 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     null,
   );
   const lastReportFetchAtRef = useRef(0);
+  const labDeleteRefreshPendingRef = useRef(false);
+
+  const clearReportSections = () => {
+    setClientSummaryBoxs(null);
+    setReferenceData(null);
+    setConcerningResult([]);
+    setConcerningResultIsLoaded(false);
+    lastReportFetchAtRef.current = 0;
+    publish('overviewPollReset', {});
+  };
+
+  const handleLabReportDeleted = (detail?: {
+    member_id?: string;
+    file_id?: string;
+  }) => {
+    if (
+      detail?.member_id &&
+      resolvedMemberID &&
+      detail.member_id !== resolvedMemberID
+    ) {
+      return;
+    }
+    labDeleteRefreshPendingRef.current = true;
+    clearReportSections();
+    fetchData();
+  };
 
   const scheduleReportDataFetch = () => {
     const now = Date.now();
@@ -613,6 +652,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const refreshReportSections = () => {
     setIsHaveReport(true);
     setShowUploadTest(false);
+    if (labDeleteRefreshPendingRef.current) {
+      clearReportSections();
+      labDeleteRefreshPendingRef.current = false;
+    }
     Application.getPatientsInfo({
       member_id: resolvedMemberID,
     })
@@ -674,7 +717,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setCategoriesPartial,
       });
       const biomarkers = (data.biomarkers as any[]) || [];
-      if (biomarkers.length > 0 || !data.processing) {
+      if (shouldApplyReferenceResponse(data)) {
         setReferenceData(data);
         if (biomarkers.length === 0) {
           publish('DetailedAnalysisStatus', { isempty: true });
@@ -698,9 +741,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setClientSummaryReady,
         setCategoriesPartial,
       });
-      const subcategories = (data.subcategories as any[]) || [];
-      if (subcategories.length > 0 || !data.processing) {
-        setClientSummaryBoxs(data);
+      if (shouldApplyCategoryResponse(data)) {
+        setClientSummaryBoxs((prev) =>
+          applyClientSummaryCategories(prev, data),
+        );
       }
       setISGenerateLoading(false);
       setClientSummaryLoading(false);
@@ -758,6 +802,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   useEffect(() => {
     const handleLabJobStarted = (event: CustomEvent) => {
       const detail = event.detail || {};
+      if (!progressEventMatchesMember(resolvedMemberID, detail)) return;
       if (detail.job_id) {
         setActiveJobId(detail.job_id);
       }
@@ -768,7 +813,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return () => {
       unsubscribe('labJobStarted', handleLabJobStarted as EventListener);
     };
-  }, [setActiveJobId]);
+  }, [resolvedMemberID, setActiveJobId]);
 
   useEffect(() => {
     const handleAllProgressCompleted = () => {
@@ -781,6 +826,27 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolvedMemberID]);
+
+  useEffect(() => {
+    if (isShare) return;
+    const handleDeleteSuccess = () => {
+      labDeleteRefreshPendingRef.current = false;
+      handleLabReportDeleted();
+    };
+    const handleLabReportDeletedEvent = (event: CustomEvent) => {
+      handleLabReportDeleted(event.detail);
+    };
+    subscribe('DeleteSuccess', handleDeleteSuccess);
+    subscribe('labReportDeleted', handleLabReportDeletedEvent as EventListener);
+    return () => {
+      unsubscribe('DeleteSuccess', handleDeleteSuccess);
+      unsubscribe(
+        'labReportDeleted',
+        handleLabReportDeletedEvent as EventListener,
+      );
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isShare, resolvedMemberID]);
 
   const [accessManager, setAccessManager] = useState<
     Array<{
@@ -814,6 +880,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     },
   ]);
   useEffect(() => {
+    setOverviewProcessing(false);
+    setDataPhase('complete');
+    setScoringCompleteFlag(false);
+    setBiomarkersScored(null);
+    setBiomarkersTotal(null);
+    setClientSummaryReady(false);
+    setCategoriesPartial([]);
+    setReferenceData(null);
+    setClientSummaryBoxs(null);
+    setConcerningResult([]);
+    setConcerningResultIsLoaded(false);
+    setClientSummaryLoading(true);
+    setReferenceLoading(true);
+    setConcerningLoading(true);
     setLoading(true);
     fetchPatentData();
     if (callSync) {
@@ -901,7 +981,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     overviewProcessing &&
     !hasReferenceBiomarkers &&
     !hasCategoryCards &&
-    dataPhase !== 'complete';
+    dataPhase !== 'complete' &&
+    dataPhase !== 'extracted_only';
   const isScoringComplete =
     scoringCompleteFlag ||
     dataPhase === 'insights' ||
@@ -918,6 +999,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     ) ||
     !overviewProcessing ||
     dataPhase === 'complete';
+  const resolveCategoryCardUi = (el: any) => {
+    const descPending =
+      el.description_pending ??
+      (overviewProcessing && !isCategoryDescriptionReady(el.subcategory));
+    return {
+      needFocusAnalyzing: categoryNeedFocusAnalyzing(el, isScoringComplete),
+      ringLoading: categoryRingLoading(el, isScoringComplete),
+      descriptionReady:
+        el.description_ready ??
+        (Boolean(el.description) || isCategoryDescriptionReady(el.subcategory)),
+      descriptionPending: descPending,
+    };
+  };
   const showNeedFocusSkeleton =
     !hasReferenceBiomarkers &&
     needFocusBiomarkers.length === 0 &&
@@ -937,11 +1031,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       clientSummaryLoading &&
       !hasCategoryCards &&
       !hasReferenceBiomarkers);
+  const showClientSummaryContentSkeleton =
+    !hasCategoryCards &&
+    (clientSummaryLoading ||
+      ClientSummaryBoxs === null ||
+      (overviewProcessing && dataPhase !== 'complete'));
   const showDetailedAnalysisSkeleton =
     awaitingOverviewData ||
     (!isScoringComplete && overviewProcessing && !hasReferenceBiomarkers) ||
     (detailedAnalysisLoading && !hasReferenceBiomarkers && !hasCategoryCards);
   const showOverviewCounts = hasCategoryCards || hasReferenceBiomarkers;
+  const isBodyFigureLoading =
+    !hasCategoryCards && showClientSummaryContentSkeleton;
   const resolveBioMarkers = () => {
     // const refData: Array<any> = [];
     // referenceData?.biomarkers.forEach((el: any) => {
@@ -1136,12 +1237,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const memoizedPoints = useMemo(() => {
     return resolveCategories().map((el: any, index: number) => {
       const curretPositionBox = resolvePosition(el.position);
+      const cardUi = resolveCategoryCardUi(el);
       return (
         <Point
           key={`${el.subcategory}-${index}`}
           name={el.subcategory}
           status={resolveStatusArray(el.status)}
-          isProcessing={!isScoringComplete}
+          isProcessing={cardUi.ringLoading}
           onClick={() => {
             document.getElementById(el.subcategory)?.scrollIntoView({
               behavior: 'smooth',
@@ -1377,7 +1479,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     <div className="relative hidden xl:block">
                       <img
-                        className={!isScoringComplete ? 'opacity-60' : ''}
+                        className={isBodyFigureLoading ? 'opacity-60' : ''}
                         src="/human.png"
                         alt=""
                       />
@@ -1449,23 +1551,43 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
                       style={{ lineHeight: '24px' }}
                     >
-                      <MarkdownText text={ClientSummaryBoxs?.client_summary} />
-                      {/* {ClientSummaryBoxs?.client_summary} */}
+                      {showClientSummaryContentSkeleton ? (
+                        <div className="animate-pulse space-y-2">
+                          {Array.from({ length: 3 }).map((_, i) => (
+                            <div
+                              key={i}
+                              className="h-2.5 rounded bg-Gray-100"
+                              style={{
+                                width: i === 2 ? '75%' : '100%',
+                                animationDelay: `${i * 50}ms`,
+                              }}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <MarkdownText text={ClientSummaryBoxs?.client_summary} />
+                      )}
                     </div>
-                    <div className="w-full mt-4 grid gap-4 grid-cols-1 xl:grid-cols-2">
-                      {resolveCategories().map((el: any) => {
-                        return (
-                          <SummaryBox
-                            key={el.subcategory}
-                            isActive={false}
-                            data={el}
-                            isProcessing={!isScoringComplete}
-                          ></SummaryBox>
-                        );
-                      })}
-                    </div>
+                    {showClientSummaryContentSkeleton ? (
+                      <ClientSummaryContentSkeleton />
+                    ) : (
+                      <div className="w-full mt-4 grid gap-4 grid-cols-1 xl:grid-cols-2">
+                        {resolveCategories().map((el: any) => {
+                          const cardUi = resolveCategoryCardUi(el);
+                          return (
+                            <SummaryBox
+                              key={el.subcategory}
+                              isActive={false}
+                              data={el}
+                              needFocusAnalyzing={cardUi.needFocusAnalyzing}
+                              ringLoading={cardUi.ringLoading}
+                            ></SummaryBox>
+                          );
+                        })}
+                      </div>
+                    )}
                     {resolveCategories().length == 0 &&
-                      !clientSummaryLoading && (
+                      !showClientSummaryContentSkeleton && (
                         <>
                           <div className="flex justify-center items-center w-full">
                             <div className="flex flex-col items-center justify-center">
@@ -1641,6 +1763,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 <>
                   <div className="mt-6 hidden xl:block">
                     {resolveCategories().map((el: any, index: number) => {
+                      const cardUi = resolveCategoryCardUi(el);
                       return (
                         <DetiledAnalyse
                           refrences={resolveBioMarkers().filter(
@@ -1648,11 +1771,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           )}
                           data={el}
                           isScoringComplete={isScoringComplete}
-                          isProcessing={!isScoringComplete}
-                          isDescriptionReady={
-                            Boolean(el.description) ||
-                            isCategoryDescriptionReady(el.subcategory)
-                          }
+                          needFocusAnalyzing={cardUi.needFocusAnalyzing}
+                          ringLoading={cardUi.ringLoading}
+                          isDescriptionReady={cardUi.descriptionReady}
                           key={index}
                         ></DetiledAnalyse>
                       );
@@ -1660,25 +1781,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                   <div className="mt-6 block xl:hidden">
                     {resolveCategories().map((el: any, index: number) => {
+                      const cardUi = resolveCategoryCardUi(el);
                       return (
-                        // <DetiledAcordin
-                        //   refrences={resolveBioMarkers().filter(
-                        //     (val: any) => val.subcategory == el.subcategory,
-                        //   )}
-                        //   data={el}
-                        //   key={index}
-                        // ></DetiledAcordin>
                         <NewDetailedAcordin
                           refrences={resolveBioMarkers().filter(
                             (val: any) => val.subcategory == el.subcategory,
                           )}
                           data={el}
                           isScoringComplete={isScoringComplete}
-                          isProcessing={!isScoringComplete}
-                          isDescriptionReady={
-                            Boolean(el.description) ||
-                            isCategoryDescriptionReady(el.subcategory)
-                          }
+                          needFocusAnalyzing={cardUi.needFocusAnalyzing}
+                          ringLoading={cardUi.ringLoading}
+                          isDescriptionReady={cardUi.descriptionReady}
                           key={index}
                         ></NewDetailedAcordin>
                       );

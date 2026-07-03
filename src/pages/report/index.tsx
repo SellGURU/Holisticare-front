@@ -49,7 +49,7 @@ const Report = () => {
     Application.getPatientsInfo({ member_id: Number(id) })
       .then((res) => {
         if (res.data?.has_partial_report && !res.data?.show_report) {
-          publish('checkProgress', { resume: true });
+          publish('checkProgress', { resume: true, member_id: id });
         }
       })
       .catch(() => {});

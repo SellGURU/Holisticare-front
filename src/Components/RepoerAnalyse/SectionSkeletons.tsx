@@ -11,6 +11,25 @@ const SkeletonBar = ({
   />
 );
 
+/** Right-panel category cards lazy load while categories API is in flight. */
+export const ClientSummaryContentSkeleton = () => (
+  <div className="w-full mt-4 grid gap-4 grid-cols-1 xl:grid-cols-2 animate-pulse">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <div
+        key={i}
+        className="h-[64px] rounded-[6px] border border-Gray-25 bg-white shadow-100 p-4 flex items-center gap-3"
+        style={{ animationDelay: `${i * 60}ms` }}
+      >
+        <div className="size-10 rounded-full bg-Gray-100 shrink-0" />
+        <div className="flex-1 space-y-2">
+          <SkeletonBar className="w-2/3 h-3" />
+          <SkeletonBar className="w-1/2" delay={40} />
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 export const ClientSummarySkeleton = () => (
   <div className="flex flex-col xl:flex-row gap-6 xl:gap-14 animate-pulse">
     <div className="min-w-[430px] w-full xl:w-[330px] relative xl:min-h-[750px]">
@@ -27,30 +46,7 @@ export const ClientSummarySkeleton = () => (
         <SkeletonBar className="w-20" delay={60} />
         <SkeletonBar className="w-12" delay={120} />
       </div>
-      <div className="space-y-2 mt-4">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <SkeletonBar
-            key={i}
-            className={i === 5 ? 'w-3/4' : 'w-full'}
-            delay={i * 40}
-          />
-        ))}
-      </div>
-      <div className="w-full mt-6 grid gap-4 grid-cols-1 xl:grid-cols-2">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div
-            key={i}
-            className="rounded-xl border border-Gray-25 bg-Gray-15 p-4 flex items-center gap-3"
-            style={{ animationDelay: `${i * 60}ms` }}
-          >
-            <div className="size-10 rounded-full bg-Gray-100 shrink-0" />
-            <div className="flex-1 space-y-2">
-              <SkeletonBar className="w-2/3" />
-              <SkeletonBar className="w-1/2" delay={40} />
-            </div>
-          </div>
-        ))}
-      </div>
+      <ClientSummaryContentSkeleton />
     </div>
   </div>
 );
