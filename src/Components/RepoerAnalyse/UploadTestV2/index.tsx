@@ -4,7 +4,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 // import { uploadToAzure } from '../../../help';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
-import { isAsyncProcessingEnabled } from '../../../utils/asyncProcessing';
+import {
+  isAsyncProcessingEnabled,
+  progressEventMatchesMember,
+} from '../../../utils/asyncProcessing';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Circleloader from '../../CircleLoader';
 import UploadPModal from './UploadPModal';
@@ -83,6 +86,11 @@ const sortReviewBiomarkerRows = (rows: any[]) =>
     });
   });
 
+const formatProgressFromDate = (date: Date): string => {
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+};
+
 interface UploadTestProps {
   memberId: any;
   onGenderate: (
@@ -142,6 +150,22 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   >('idle');
   const [lastSavedFileId, setLastSavedFileId] = useState<string | undefined>();
   const autoSavedMappingKeysRef = useRef<Set<string>>(new Set());
+  const wasBackgroundProcessingRef = useRef(false);
+  const pendingProcessingFileIdRef = useRef<string | undefined>();
+  const autoContinueTriggeredRef = useRef(false);
+  const stepRef = useRef(step);
+  const hasComboBarFileRef = useRef(false);
+  const lastSavedFileIdRef = useRef<string | undefined>();
+  const compileStateRef = useRef(compileState);
+  const uploadedFileRef = useRef(uploadedFile);
+  const extractedBiomarkersRef = useRef(extractedBiomarkers);
+  const fileTypeRef = useRef(fileType);
+  stepRef.current = step;
+  lastSavedFileIdRef.current = lastSavedFileId;
+  compileStateRef.current = compileState;
+  uploadedFileRef.current = uploadedFile;
+  extractedBiomarkersRef.current = extractedBiomarkers;
+  fileTypeRef.current = fileType;
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -206,6 +230,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());
   const [recheckLoading, setRecheckLoading] = useState(false);
   const [hasComboBarFile, setHasComboBarFile] = useState(false);
+  hasComboBarFileRef.current = hasComboBarFile;
 
   useEffect(() => {
     const handleCheckProgress = (data: any) => {
@@ -1261,6 +1286,224 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     onGenderate(savedFileId, { silent: true });
   };
 
+  const clickContinueToHealthPlan = () => {
+    if (isDemo) return;
+    if (uploadedFile != null && fileType !== 'ultrasound') {
+      void completeReviewContinue();
+      return;
+    }
+    if (uploadedFile != null || addedBiomarkers.length !== 0) {
+      validateAndSaveLabReport()
+        .then((res) => {
+          if (
+            res.data.modified_biomarkers_file_id != null &&
+            res.data.modified_biomarkers_file_id != ''
+          ) {
+            onGenderate(res.data.modified_biomarkers_file_id);
+          } else if (
+            res.data.added_biomarkers_file_id != null &&
+            res.data.added_biomarkers_file_id != ''
+          ) {
+            onGenderate(res.data.added_biomarkers_file_id);
+          } else {
+            onGenderate(undefined);
+          }
+        })
+        .catch(handleLabSaveError);
+      return;
+    }
+    onGenderate(undefined);
+  };
+
+  const runAutoContinueToHealthPlan = () => {
+    if (autoContinueTriggeredRef.current || isDemo) return;
+    if (stepRef.current !== 0) return;
+
+    const canContinue =
+      Boolean(pendingProcessingFileIdRef.current) ||
+      Boolean(lastSavedFileIdRef.current) ||
+      hasComboBarFileRef.current ||
+      Boolean(uploadedFileRef.current) ||
+      extractedBiomarkersRef.current.length > 0 ||
+      questionnaires.length > 0 ||
+      has_wearable_data ||
+      showReport;
+    if (!canContinue) return;
+
+    autoContinueTriggeredRef.current = true;
+    wasBackgroundProcessingRef.current = false;
+    showSuccess(
+      'Processing complete',
+      'Closing upload form and loading client summary...',
+    );
+    clickContinueToHealthPlan();
+  };
+
+  useEffect(() => {
+    const handleProcessingStarted = (data: any) => {
+      const detail = data?.detail || {};
+      if (!progressEventMatchesMember(memberId, detail)) return;
+      if (detail.file_id) {
+        pendingProcessingFileIdRef.current = String(detail.file_id);
+      }
+      if (detail.process_status === false || detail.job_id) {
+        wasBackgroundProcessingRef.current = true;
+        autoContinueTriggeredRef.current = false;
+      }
+    };
+
+    const handleProcessingComplete = (data: any) => {
+      const detail = data?.detail || {};
+      if (
+        detail.member_id != null &&
+        !progressEventMatchesMember(memberId, detail)
+      ) {
+        return;
+      }
+      if (detail.file_id) {
+        pendingProcessingFileIdRef.current = String(detail.file_id);
+      }
+      runAutoContinueToHealthPlan();
+    };
+
+    subscribe('checkProgress', handleProcessingStarted);
+    subscribe('labJobStarted', handleProcessingStarted);
+    subscribe('allProgressCompleted', handleProcessingComplete);
+    subscribe('completedProgress', handleProcessingComplete);
+    subscribe('healthPlanProcessingComplete', handleProcessingComplete);
+    return () => {
+      unsubscribe('checkProgress', handleProcessingStarted);
+      unsubscribe('labJobStarted', handleProcessingStarted);
+      unsubscribe('allProgressCompleted', handleProcessingComplete);
+      unsubscribe('completedProgress', handleProcessingComplete);
+      unsubscribe('healthPlanProcessingComplete', handleProcessingComplete);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memberId, isDemo]);
+
+  useEffect(() => {
+    if (step !== 0 || isDemo || !memberId) return;
+    if (
+      !hasComboBarFile &&
+      !uploadedFile?.file_id &&
+      !lastSavedFileId &&
+      !wasBackgroundProcessingRef.current
+    ) {
+      return;
+    }
+
+    let cancelled = false;
+    let sawInflight = wasBackgroundProcessingRef.current;
+    let readyPollStreak = 0;
+    const mountedAt = Date.now();
+    const progressFromDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    const pollBackgroundProcessing = async () => {
+      if (cancelled || autoContinueTriggeredRef.current) return;
+      try {
+        let asyncJobRunning = false;
+        if (isAsyncProcessingEnabled()) {
+          try {
+            const latest = await Application.getLatestLabJob(Number(memberId));
+            const jobId = latest?.data?.job_id;
+            if (jobId) {
+              const statusRes = await Application.getLabJobStatus(
+                Number(memberId),
+                jobId,
+              );
+              const overallStatus = statusRes?.data?.overall_status;
+              if (
+                overallStatus === 'queued' ||
+                overallStatus === 'running' ||
+                overallStatus === 'awaiting_review'
+              ) {
+                asyncJobRunning = true;
+                sawInflight = true;
+                wasBackgroundProcessingRef.current = true;
+                readyPollStreak = 0;
+                if (statusRes?.data?.file_id) {
+                  pendingProcessingFileIdRef.current = String(
+                    statusRes.data.file_id,
+                  );
+                }
+              } else if (overallStatus === 'done') {
+                if (statusRes?.data?.file_id) {
+                  pendingProcessingFileIdRef.current = String(
+                    statusRes.data.file_id,
+                  );
+                }
+                runAutoContinueToHealthPlan();
+                return;
+              }
+            }
+          } catch {
+            // Fall back to legacy progress polling below.
+          }
+        }
+
+        if (asyncJobRunning) return;
+
+        const res = await Application.getProgress(
+          String(memberId),
+          formatProgressFromDate(progressFromDate),
+        );
+        const files = Array.isArray(res?.data?.files) ? res.data.files : [];
+        const inflight = files.some(
+          (file: any) => file?.process_status === false,
+        );
+        const activeFile =
+          files.find((file: any) => file?.process_status === false) ||
+          files[0];
+        if (activeFile?.file_id) {
+          pendingProcessingFileIdRef.current = String(activeFile.file_id);
+        }
+
+        if (inflight) {
+          sawInflight = true;
+          wasBackgroundProcessingRef.current = true;
+          readyPollStreak = 0;
+          return;
+        }
+
+        readyPollStreak += 1;
+
+        if (sawInflight || wasBackgroundProcessingRef.current) {
+          runAutoContinueToHealthPlan();
+          return;
+        }
+
+        if (!hasComboBarFileRef.current) return;
+        if (Date.now() - mountedAt < 4000) return;
+        if (readyPollStreak < 2) return;
+
+        runAutoContinueToHealthPlan();
+      } catch {
+        // Ignore polling errors; event-based completion still works.
+      }
+    };
+
+    void pollBackgroundProcessing();
+    const intervalId = window.setInterval(pollBackgroundProcessing, 2500);
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    step,
+    memberId,
+    isDemo,
+    hasComboBarFile,
+    uploadedFile?.file_id,
+    lastSavedFileId,
+  ]);
+
+  useEffect(() => {
+    if (step === 1) {
+      autoContinueTriggeredRef.current = false;
+    }
+  }, [step]);
+
   const autoSaveAndCompile = async () => {
     const rowsToSave = buildContinueRows();
     const readyRows = buildReadyRows();
@@ -1632,37 +1875,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       }}
                       disabled={isDemo || !resolveActiveButtonReportAnalyse()}
                       onClick={() => {
-                        if (isDemo) return;
-                        if (uploadedFile != null && fileType !== 'ultrasound') {
-                          void completeReviewContinue();
-                          return;
-                        }
-                        if (
-                          uploadedFile != null ||
-                          addedBiomarkers.length != 0
-                        ) {
-                          validateAndSaveLabReport()
-                            .then((res) => {
-                              if (
-                                res.data.modified_biomarkers_file_id != null &&
-                                res.data.modified_biomarkers_file_id != ''
-                              ) {
-                                onGenderate(
-                                  res.data.modified_biomarkers_file_id,
-                                );
-                              } else if (
-                                res.data.added_biomarkers_file_id != null &&
-                                res.data.added_biomarkers_file_id != ''
-                              ) {
-                                onGenderate(res.data.added_biomarkers_file_id);
-                              } else {
-                                onGenderate(undefined);
-                              }
-                            })
-                            .catch(handleLabSaveError);
-                        } else {
-                          onGenderate(undefined);
-                        }
+                        clickContinueToHealthPlan();
                       }}
                     >
                       <img src="/icons/tick-square.svg" alt="" />
@@ -1821,37 +2034,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                       }}
                       disabled={isDemo || !resolveActiveButtonReportAnalyse()}
                       onClick={() => {
-                        if (isDemo) return;
-                        if (uploadedFile != null && fileType !== 'ultrasound') {
-                          void completeReviewContinue();
-                          return;
-                        }
-                        if (
-                          uploadedFile != null ||
-                          addedBiomarkers.length != 0
-                        ) {
-                          validateAndSaveLabReport()
-                            .then((res) => {
-                              if (
-                                res.data.modified_biomarkers_file_id != null &&
-                                res.data.modified_biomarkers_file_id != ''
-                              ) {
-                                onGenderate(
-                                  res.data.modified_biomarkers_file_id,
-                                );
-                              } else if (
-                                res.data.added_biomarkers_file_id != null &&
-                                res.data.added_biomarkers_file_id != ''
-                              ) {
-                                onGenderate(res.data.added_biomarkers_file_id);
-                              } else {
-                                onGenderate(undefined);
-                              }
-                            })
-                            .catch(handleLabSaveError);
-                        } else {
-                          onGenderate(undefined);
-                        }
+                        clickContinueToHealthPlan();
                       }}
                     >
                       <img src="/icons/tick-square.svg" alt="" />

@@ -166,6 +166,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [has_wearable_data, setHasWearableData] = useState(false);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [showUploadTest, setShowUploadTest] = useState(false);
+  const showUploadTestRef = useRef(showUploadTest);
+  showUploadTestRef.current = showUploadTest;
   const closeUploadTestOverlay = () => {
     setShowUploadTest(false);
     publish('uploadTestHide', {});
@@ -686,10 +688,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   } = useLabJobStatus({
     memberId: resolvedMemberID ?? undefined,
     enabled: asyncProcessing && !isShare,
-    onTerminal: () => {
+    onTerminal: (status) => {
+      publish('healthPlanProcessingComplete', {
+        member_id: resolvedMemberID,
+        file_id: status?.file_id,
+      });
       setDisableGenerate(false);
       setISGenerateLoading(false);
-      refreshReportSections();
+      if (!showUploadTestRef.current) {
+        refreshReportSections();
+      }
     },
   });
 
@@ -822,8 +830,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   useEffect(() => {
     const handleAllProgressCompleted = () => {
+      publish('healthPlanProcessingComplete', {
+        member_id: resolvedMemberID,
+      });
       setDisableGenerate(false);
-      refreshReportSections();
+      if (!showUploadTestRef.current) {
+        refreshReportSections();
+      }
     };
     subscribe('allProgressCompleted', handleAllProgressCompleted);
     return () => {
@@ -2049,6 +2062,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         fetchData();
                         setTimeout(() => {
                           publish('checkProgress', {});
+                          document.getElementById('Client Summary')?.scrollIntoView({
+                            behavior: 'smooth',
+                          });
                         }, 400);
                       }, 500);
                     }
