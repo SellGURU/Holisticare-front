@@ -1452,8 +1452,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           (file: any) => file?.process_status === false,
         );
         const activeFile =
-          files.find((file: any) => file?.process_status === false) ||
-          files[0];
+          files.find((file: any) => file?.process_status === false) || files[0];
         if (activeFile?.file_id) {
           pendingProcessingFileIdRef.current = String(activeFile.file_id);
         }

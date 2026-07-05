@@ -2062,9 +2062,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         fetchData();
                         setTimeout(() => {
                           publish('checkProgress', {});
-                          document.getElementById('Client Summary')?.scrollIntoView({
-                            behavior: 'smooth',
-                          });
+                          document
+                            .getElementById('Client Summary')
+                            ?.scrollIntoView({
+                              behavior: 'smooth',
+                            });
                         }, 400);
                       }, 500);
                     }
