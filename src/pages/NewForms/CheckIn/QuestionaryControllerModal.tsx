@@ -173,7 +173,6 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             setGenderRestriction={setGenderRestriction}
             gender={gender}
             setGender={setGender}
-            textErrorMessage={textErrorMessage}
           />
         );
       // case 'Reposition':
@@ -222,7 +221,6 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             setGenderRestriction={setGenderRestriction}
             gender={gender}
             setGender={setGender}
-            textErrorMessage={textErrorMessage}
           />
         );
     }
@@ -516,7 +514,6 @@ interface AddQuestionaryProps {
   setGenderRestriction: (value: boolean) => void;
   gender: string;
   setGender: (value: string) => void;
-  textErrorMessage: string;
 }
 
 const AddQuestionary: FC<AddQuestionaryProps> = ({
@@ -546,7 +543,6 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
   setGenderRestriction,
   gender,
   setGender,
-  textErrorMessage,
 }) => {
   const [questions, setQuestions] =
     useState<Array<QuestionaryType>>(upQuestions);
