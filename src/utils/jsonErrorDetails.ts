@@ -45,6 +45,35 @@ const unwrapErrorPayload = (error: unknown): any => {
   return parsedCandidate;
 };
 
+export const formatApiErrorMessage = (
+  error: unknown,
+  fallback = 'Something went wrong. Please try again.',
+): string => {
+  const rawDetail = unwrapErrorPayload(error);
+
+  if (Array.isArray(rawDetail)) {
+    const messages = rawDetail
+      .map((item: unknown) => {
+        if (item && typeof item === 'object') {
+          const entry = item as Record<string, unknown>;
+          if (typeof entry.msg === 'string') {
+            const loc = entry.loc;
+            const field =
+              Array.isArray(loc) && loc.length > 0
+                ? String(loc[loc.length - 1])
+                : '';
+            return field ? `${field}: ${entry.msg}` : entry.msg;
+          }
+        }
+        return stringifyDetail(item);
+      })
+      .filter(Boolean);
+    return messages.join('\n') || fallback;
+  }
+
+  return stringifyDetail(rawDetail) || fallback;
+};
+
 export const getJsonPositionDetails = (
   rawJson: string,
   message: string,

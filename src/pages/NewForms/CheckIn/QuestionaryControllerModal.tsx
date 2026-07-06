@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { BeatLoader } from 'react-spinners';
 import FormsApi from '../../../api/Forms';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
@@ -157,14 +157,10 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             jsonError={questionsJsonError}
             setJsonError={setQuestionsJsonError}
             onChangeChecked={(value: boolean) => {
-              setChecked(value);
+              setChecked(Boolean(value));
             }}
-            onChangeMinutes={(value: number) => {
-              setMinutes(value);
-            }}
-            onChangeSeconds={(value: number) => {
-              setSeconds(value);
-            }}
+            onChangeMinutes={setMinutes}
+            onChangeSeconds={setSeconds}
             upChecked={checked}
             upMinutes={minutes}
             upSeconds={seconds}
@@ -210,14 +206,10 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             jsonError={questionsJsonError}
             setJsonError={setQuestionsJsonError}
             onChangeChecked={(value: boolean) => {
-              setChecked(value);
+              setChecked(Boolean(value));
             }}
-            onChangeMinutes={(value: number) => {
-              setMinutes(value);
-            }}
-            onChangeSeconds={(value: number) => {
-              setSeconds(value);
-            }}
+            onChangeMinutes={setMinutes}
+            onChangeSeconds={setSeconds}
             upChecked={checked}
             upMinutes={minutes}
             upSeconds={seconds}
@@ -273,12 +265,12 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     onSave({
       title: titleForm.length > 0 ? titleForm : templateData.title,
       questions: mergeScoringIntoQuestions(questions, scoring),
-      share_with_client: checked,
+      share_with_client: Boolean(checked),
       time: getTimeInMilliseconds(),
       consent_text: consentText,
-      show_consent: requireClientConsent,
+      show_consent: Boolean(requireClientConsent),
       description: descriptionForm,
-      default_questionnaire: autoAssign,
+      default_questionnaire: Boolean(autoAssign),
       gender_target: genderRestriction ? gender : 'both',
     });
     // FormsApi.addCheckin({
@@ -304,19 +296,22 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           setDescriptionForm(res.data.description || '');
           setConsentText(res.data.consent_text || '');
           setRequireClientConsent(res.data.consent_text?.length > 0);
-          setAutoAssign(res.data.default_questionnaire);
+          setAutoAssign(Boolean(res.data.default_questionnaire));
           setGenderRestriction(res.data.gender_target != 'both');
           setGender(
             res.data.gender_target == 'both'
               ? 'female'
               : res.data.gender_target,
           );
-          const totalMs = res.data.time;
+          const totalMs =
+            res.data.time != null
+              ? res.data.time
+              : loaded.questions.length * 2 * 1000;
           const mins = Math.floor(totalMs / 60000);
           const secs = Math.floor((totalMs % 60000) / 1000);
           setMinutes(mins);
           setSeconds(secs);
-          setChecked(res.data.share_with_client);
+          setChecked(Boolean(res.data.share_with_client));
           setLoading(false);
         })
         .catch((err) => {
@@ -426,6 +421,11 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             Add question to continue.
           </div>
         )}
+        {textErrorMessage && (
+          <div className="text-xs text-Red shrink-0 px-2 whitespace-pre-line">
+            {textErrorMessage}
+          </div>
+        )}
         <div
           className={`w-full flex shrink-0 ${step === 0 ? 'justify-end' : 'justify-between'} items-center p-2 ${
             AddquestionStep == 1 && 'hidden'
@@ -500,8 +500,8 @@ interface AddQuestionaryProps {
   setJsonError: (message: string) => void;
   step: number;
   onChangeChecked: (value: boolean) => void;
-  onChangeMinutes: (value: number) => void;
-  onChangeSeconds: (value: number) => void;
+  onChangeMinutes: Dispatch<SetStateAction<number>>;
+  onChangeSeconds: Dispatch<SetStateAction<number>>;
   upChecked: boolean;
   upMinutes: number;
   upSeconds: number;
@@ -552,23 +552,10 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
     useState<Array<QuestionaryType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState(-1);
-  const [checked, setChecked] = useState(false);
-  const [mintues, setMintues] = useState(5);
-  const [seconds, setSeconds] = useState(15);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-  useEffect(() => {
-    onChangeMinutes(mintues);
-    onChangeSeconds(seconds);
-  }, [mintues, seconds]);
   useEffect(() => {
     onChange(questions);
   }, [questions]);
-  useEffect(() => {
-    setQuestions(upQuestions);
-    setChecked(upChecked);
-    setMintues(upMinutes);
-    setSeconds(upSeconds);
-  }, [upQuestions, upChecked, upMinutes, upSeconds]);
   useEffect(() => {
     setQuestions(upQuestions);
   }, [upQuestions]);
@@ -589,9 +576,6 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
       return newList;
     });
   };
-  useEffect(() => {
-    onChange(questions);
-  }, [questions]);
   const renderViewModeToggle = () => (
     <div className="w-full flex items-center justify-end gap-2 mb-3">
       <button
@@ -784,19 +768,15 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
         </>
       ) : (
         <div className="w-full">
-          {textErrorMessage && (
-            <div className="text-xs text-Red">{textErrorMessage}</div>
-          )}
           <div className="text-Text-Quadruple text-xs mt-4">
             The estimated time to complete this form is shown below. If you
             wish, you can edit this and provide your own estimate.
           </div>
           <div className="flex items-center mt-4">
             <Checkbox
-              checked={checked}
+              checked={Boolean(upChecked)}
               onChange={() => {
-                setChecked((pre) => !pre);
-                onChangeChecked(!checked);
+                onChangeChecked(!Boolean(upChecked));
               }}
               borderColor="border-Text-Quadruple"
               width="w-3.5"
@@ -806,10 +786,10 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
           </div>
           <div className="w-full flex items-center justify-center mt-4 mb-5">
             <TimerPicker
-              minutes={mintues}
-              setMinutes={setMintues}
-              seconds={seconds}
-              setSeconds={setSeconds}
+              minutes={upMinutes}
+              setMinutes={onChangeMinutes}
+              seconds={upSeconds}
+              setSeconds={onChangeSeconds}
             />
           </div>
           <div className="text-xs text-Text-Primary font-medium">

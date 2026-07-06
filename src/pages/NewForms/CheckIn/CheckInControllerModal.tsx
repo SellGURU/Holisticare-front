@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { BeatLoader } from 'react-spinners';
 import FormsApi from '../../../api/Forms';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
@@ -75,14 +75,10 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
               setQuestions(values);
             }}
             onChangeChecked={(value: boolean) => {
-              setChecked(value);
+              setChecked(Boolean(value));
             }}
-            onChangeMinutes={(value: number) => {
-              setMinutes(value);
-            }}
-            onChangeSeconds={(value: number) => {
-              setSeconds(value);
-            }}
+            onChangeMinutes={setMinutes}
+            onChangeSeconds={setSeconds}
             upChecked={checked}
             upMinutes={minutes}
             upSeconds={seconds}
@@ -114,14 +110,10 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
               setQuestions(values);
             }}
             onChangeChecked={(value: boolean) => {
-              setChecked(value);
+              setChecked(Boolean(value));
             }}
-            onChangeMinutes={(value: number) => {
-              setMinutes(value);
-            }}
-            onChangeSeconds={(value: number) => {
-              setSeconds(value);
-            }}
+            onChangeMinutes={setMinutes}
+            onChangeSeconds={setSeconds}
             upChecked={checked}
             upMinutes={minutes}
             upSeconds={seconds}
@@ -145,7 +137,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
     onSave({
       title: titleForm,
       questions: questions,
-      share_with_client: checked,
+      share_with_client: Boolean(checked),
       time: getTimeInMilliseconds(),
     });
     // FormsApi.addCheckin({
@@ -162,12 +154,15 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
         .then((res) => {
           setQuestions(res.data.questions);
           setTitleForm(res.data.title);
-          const totalMs = res.data.time;
+          const totalMs =
+            res.data.time != null
+              ? res.data.time
+              : (res.data.questions || []).length * 2 * 1000;
           const mins = Math.floor(totalMs / 60000);
           const secs = Math.floor((totalMs % 60000) / 1000);
           setMinutes(mins);
           setSeconds(secs);
-          setChecked(res.data.share_with_client);
+          setChecked(Boolean(res.data.share_with_client));
           setLoading(false);
         })
         .catch((err) => {
@@ -290,8 +285,8 @@ interface AddCheckInProps {
   upQuestions: Array<checkinType>;
   step: number;
   onChangeChecked: (value: boolean) => void;
-  onChangeMinutes: (value: number) => void;
-  onChangeSeconds: (value: number) => void;
+  onChangeMinutes: Dispatch<SetStateAction<number>>;
+  onChangeSeconds: Dispatch<SetStateAction<number>>;
   upChecked: boolean;
   upMinutes: number;
   upSeconds: number;
@@ -320,23 +315,13 @@ const AddCheckIn: FC<AddCheckInProps> = ({
 
   const [addMore, setAddMore] = useState(false);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState(-1);
-  const [checked, setChecked] = useState(false);
-  const [mintues, setMintues] = useState(5);
-  const [seconds, setSeconds] = useState(15);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-  useEffect(() => {
-    onChangeMinutes(mintues);
-    onChangeSeconds(seconds);
-  }, [mintues, seconds]);
   useEffect(() => {
     onChange(questions);
   }, [questions]);
   useEffect(() => {
     setQuestions(upQuestions);
-    setChecked(upChecked);
-    setMintues(upMinutes);
-    setSeconds(upSeconds);
-  }, [upQuestions, upChecked, upMinutes, upSeconds]);
+  }, [upQuestions]);
 
   const moveItem = (index: number, direction: 'up' | 'down') => {
     setQuestions((prevList: any) => {
@@ -355,9 +340,6 @@ const AddCheckIn: FC<AddCheckInProps> = ({
       return newList;
     });
   };
-  useEffect(() => {
-    onChange(questions);
-  }, [questions]);
 
   return (
     <>
@@ -498,10 +480,9 @@ const AddCheckIn: FC<AddCheckInProps> = ({
           </div>
           <div className="flex items-center mt-4">
             <Checkbox
-              checked={checked}
+              checked={Boolean(upChecked)}
               onChange={() => {
-                setChecked((pre) => !pre);
-                onChangeChecked(!checked);
+                onChangeChecked(!Boolean(upChecked));
               }}
               borderColor="border-Text-Quadruple"
               width="w-3.5"
@@ -511,10 +492,10 @@ const AddCheckIn: FC<AddCheckInProps> = ({
           </div>
           <div className="w-full flex items-center justify-center mt-4 mb-5">
             <TimerPicker
-              minutes={mintues}
-              setMinutes={setMintues}
-              seconds={seconds}
-              setSeconds={setSeconds}
+              minutes={upMinutes}
+              setMinutes={onChangeMinutes}
+              seconds={upSeconds}
+              setSeconds={onChangeSeconds}
             />
           </div>
         </div>

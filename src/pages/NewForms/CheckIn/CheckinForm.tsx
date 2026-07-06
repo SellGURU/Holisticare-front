@@ -11,6 +11,7 @@ import CheckInPreview from './CheckInPreview';
 import TemplateQuestinary from './TemplateQuestionary';
 import QuestionaryControllerModal from './QuestionaryControllerModal';
 import Circleloader from '../../../Components/CircleLoader';
+import { formatApiErrorMessage } from '../../../utils/jsonErrorDetails';
 interface CheckInFormProps {
   isQuestionary?: boolean;
   search?: string;
@@ -97,7 +98,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           setShowAddModal(false);
         })
         .catch((err) => {
-          console.error('Error editing checkin:', err);
+          setErrorCheckIn(formatApiErrorMessage(err));
           setLoading(false);
         });
     } else {
@@ -109,7 +110,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           setEditFormId('');
         })
         .catch((err) => {
-          setErrorCheckIn(err.detail);
+          setErrorCheckIn(formatApiErrorMessage(err));
         });
     }
   };
@@ -145,10 +146,11 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           setTextErrorMessage('');
         })
         .catch((err) => {
-          if (err.detail === 'A form with the same title already exists.') {
-            setErrorQuestionary(err.detail);
+          const message = formatApiErrorMessage(err);
+          if (message === 'A form with the same title already exists.') {
+            setErrorQuestionary(message);
           } else {
-            setTextErrorMessage(err.detail);
+            setTextErrorMessage(message);
           }
         });
     } else {
@@ -164,10 +166,11 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           setTextErrorMessage('');
         })
         .catch((err) => {
-          if (err.detail === 'A form with the same title already exists.') {
-            setErrorQuestionary(err.detail);
+          const message = formatApiErrorMessage(err);
+          if (message === 'A form with the same title already exists.') {
+            setErrorQuestionary(message);
           } else {
-            setTextErrorMessage(err.detail);
+            setTextErrorMessage(message);
           }
         });
     }
