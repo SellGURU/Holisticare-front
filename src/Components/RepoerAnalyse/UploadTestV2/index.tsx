@@ -1681,7 +1681,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           ),
         );
         const priorById = new Map(
-          extractedBiomarkers.map((row) => [String(row?.biomarker_id || ''), row]),
+          extractedBiomarkers.map((row) => [
+            String(row?.biomarker_id || ''),
+            row,
+          ]),
         );
         const mergedRows = enrichedRows.map((row: any) => {
           const id = String(row?.biomarker_id || '');

@@ -203,7 +203,7 @@ const ecwMisresolvedRow = {
 };
 const ecwUnitMismatchErrors = {
   'ecw-liters-1':
-    "ECW (value \"23.6\", unit \"Liters\"): Unit 'Liters' differs from system default '%'. No conversion mapping found.",
+    'ECW (value "23.6", unit "Liters"): Unit \'Liters\' differs from system default \'%\'. No conversion mapping found.',
 };
 
 const ecwReviewResult = categorizeReviewRow(

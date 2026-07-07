@@ -26,11 +26,8 @@ export const formatClientSummarySubtitle = (
 ) =>
   `${total} biomarker${total === 1 ? '' : 's'} in ${categories} categor${categories === 1 ? 'y' : 'ies'}`;
 
-export const formatReadyBadge = (count: number) =>
-  `${count} ready to save`;
+export const formatReadyBadge = (count: number) => `${count} ready to save`;
 
-export const formatReviewBadge = (count: number) =>
-  `${count} need review`;
+export const formatReviewBadge = (count: number) => `${count} need review`;
 
-export const formatExcludedBadge = (count: number) =>
-  `${count} excluded`;
+export const formatExcludedBadge = (count: number) => `${count} excluded`;

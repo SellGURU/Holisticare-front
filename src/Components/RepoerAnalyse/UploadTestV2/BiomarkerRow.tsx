@@ -126,7 +126,9 @@ export default function BiomarkerRow({
   };
 
   useEffect(() => {
-    baselineSystemBiomarkerRef.current = String(biomarker.biomarker || '').trim();
+    baselineSystemBiomarkerRef.current = String(
+      biomarker.biomarker || '',
+    ).trim();
   }, [biomarker.biomarker_id]);
 
   const normalizedName = resolveNormalizedBiomarkerName(biomarker);
@@ -401,9 +403,7 @@ export default function BiomarkerRow({
     setSaveError(null);
     try {
       const shouldSaveClinicMapping =
-        !namesAlreadyMatch &&
-        !isMapped &&
-        saveMappingPayloads.length > 0;
+        !namesAlreadyMatch && !isMapped && saveMappingPayloads.length > 0;
 
       if (shouldSaveClinicMapping) {
         await handleSaveMapping();
@@ -841,9 +841,9 @@ export default function BiomarkerRow({
                           place="top"
                           className="!bg-[#E8F4F6] !bg-opacity-100 !max-w-[260px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 !z-[99999]"
                         >
-                          Saves clinic PDF→system name mapping when names differ,
-                          and persists this row&apos;s biomarker, value, and unit.
-                          Does not navigate to the health plan.
+                          Saves clinic PDF→system name mapping when names
+                          differ, and persists this row&apos;s biomarker, value,
+                          and unit. Does not navigate to the health plan.
                         </Tooltip>
                       </>
                     )}

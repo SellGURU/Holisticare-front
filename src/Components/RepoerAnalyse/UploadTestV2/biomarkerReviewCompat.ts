@@ -883,14 +883,15 @@ const normalizeUnitKey = (unit: unknown) =>
 
 const VOLUME_UNIT_KEYS = new Set(['l', 'liter', 'liters']);
 
-const unitsMatchForCatalogPick = (extractedUnit: string, catalogUnit: string) => {
+const unitsMatchForCatalogPick = (
+  extractedUnit: string,
+  catalogUnit: string,
+) => {
   const extracted = normalizeUnitKey(extractedUnit);
   const catalog = normalizeUnitKey(catalogUnit);
   if (!extracted || !catalog) return false;
   if (extracted === catalog) return true;
-  return (
-    VOLUME_UNIT_KEYS.has(extracted) && VOLUME_UNIT_KEYS.has(catalog)
-  );
+  return VOLUME_UNIT_KEYS.has(extracted) && VOLUME_UNIT_KEYS.has(catalog);
 };
 
 const MASS_CONCENTRATION_UNITS = new Set([
