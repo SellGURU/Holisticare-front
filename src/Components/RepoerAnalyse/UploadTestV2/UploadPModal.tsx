@@ -75,7 +75,6 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   OnBack,
   uploadedFile,
   onSave,
-  onSaveClose,
   isShare,
   errorMessage,
   handleFileChange,

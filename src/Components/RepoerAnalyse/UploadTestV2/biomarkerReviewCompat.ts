@@ -928,8 +928,8 @@ export const pickCatalogEntryForRow = (catalog: any[], row: any) => {
   if (extractedUnit) {
     const exact = candidates.find((entry) =>
       unitsMatchForCatalogPick(
-        preferNonEmpty(row.original_unit, row.unit),
-        entry.unit,
+        trim(preferNonEmpty(row.original_unit, row.unit)),
+        trim(entry.unit),
       ),
     );
     if (exact) return exact;

@@ -101,7 +101,7 @@ export default function BiomarkerRow({
   excludedAt,
   hiddenByFilter = false,
 }: BiomarkerRowProps) {
-  const [isChanged, setIsChenged] = useState(false);
+  const [, setIsChenged] = useState(false);
   const [isMapped, setIsMapped] = useState(false);
   const [savedMappings, setSavedMappings] = useState<
     Array<{ extracted_biomarker: string; system_biomarker: string }>
