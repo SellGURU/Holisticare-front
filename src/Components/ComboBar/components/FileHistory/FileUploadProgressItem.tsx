@@ -4,6 +4,11 @@ import TooltipTextAuto from '../../../TooltipText/TooltipTextAuto';
 import { formatDate } from './help';
 import ActionSection from './FileBoxItem/ActionSection';
 import { useParams } from 'react-router-dom';
+import {
+  formatExcludedBadge,
+  formatReadyBadge,
+  formatReviewBadge,
+} from '../../../RepoerAnalyse/UploadTestV2/biomarkerCountCopy';
 // import { ButtonSecondary } from '../../../Button/ButtosSecondary';
 import { publish } from '../../../../utils/event';
 
@@ -33,17 +38,17 @@ const FileReviewBadges: FC<FileReviewBadgesProps> = ({
     <div className={`flex flex-wrap gap-1.5 ${className}`}>
       {readyCount != null ? (
         <span className="rounded-full bg-[#DEF7EC] px-2 py-0.5 text-[9px] font-medium text-[#027A48]">
-          {readyCount} Ready
+          {formatReadyBadge(readyCount)}
         </span>
       ) : null}
       {reviewCountsReady && reviewCount != null && reviewCount > 0 ? (
         <span className="rounded-full bg-[#FFF8E8] px-2 py-0.5 text-[9px] font-medium text-[#B54708]">
-          {reviewCount} Need Review
+          {formatReviewBadge(reviewCount)}
         </span>
       ) : null}
       {reviewCountsReady ? (
         <span className="rounded-full bg-Gray-50 px-2 py-0.5 text-[9px] font-medium text-Text-Secondary">
-          {excludedCount ?? 0} Excluded
+          {formatExcludedBadge(excludedCount ?? 0)}
         </span>
       ) : null}
     </div>

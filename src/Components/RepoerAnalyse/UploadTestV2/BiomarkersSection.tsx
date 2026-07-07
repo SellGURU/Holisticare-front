@@ -42,6 +42,15 @@ import {
   type CategoryFilter,
   type SuppressedBiomarkerItem,
 } from './biomarkerReviewCompat';
+import {
+  LAB_PANEL_HELPER,
+  LAB_PANEL_TITLE,
+  formatExcludedBadge,
+  formatLabPanelSubtitle,
+  formatReadyBadge,
+  formatReviewBadge,
+  reviewUniverseTotal,
+} from './biomarkerCountCopy';
 
 const DEFAULT_BIOMARKER_TYPES = [
   'blood',
@@ -1245,13 +1254,23 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             <div className="shrink-0 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-Gray-50 bg-gradient-to-r from-[#F6FAFB] to-white px-3 py-2 shadow-100">
               {useReviewUx ? (
                 <>
-                  <span className="text-[10px] md:text-xs font-semibold text-Text-Primary whitespace-nowrap">
-                    Biomarkers
-                  </span>
+                  <div className="flex min-w-0 flex-col gap-0.5">
+                    <span className="text-[10px] md:text-xs font-semibold text-Text-Primary whitespace-nowrap">
+                      {LAB_PANEL_TITLE}
+                    </span>
+                    <span className="text-[9px] md:text-[10px] text-Text-Secondary whitespace-nowrap">
+                      {formatLabPanelSubtitle(
+                        reviewUniverseTotal(reviewCategoryCounts),
+                      )}
+                    </span>
+                    <span className="text-[9px] text-Text-Quadruple leading-snug max-w-[320px]">
+                      {LAB_PANEL_HELPER}
+                    </span>
+                  </div>
                   <span className="text-[9px] md:text-[10px] text-Text-Secondary whitespace-nowrap">
-                    {reviewCategoryCounts.ready} Ready ·{' '}
-                    {reviewCategoryCounts.review} Review ·{' '}
-                    {reviewCategoryCounts.excluded} Excluded
+                    {formatReadyBadge(reviewCategoryCounts.ready)} ·{' '}
+                    {formatReviewBadge(reviewCategoryCounts.review)} ·{' '}
+                    {formatExcludedBadge(reviewCategoryCounts.excluded)}
                   </span>
                   {compileState !== 'idle' ? (
                     <span
@@ -1279,7 +1298,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         : 'bg-white text-Text-Secondary border border-Gray-50 hover:bg-Gray-15'
                     }`}
                   >
-                    ✓ Ready ({reviewCategoryCounts.ready})
+                    ✓ Ready to save ({reviewCategoryCounts.ready})
                   </button>
                   <button
                     type="button"
@@ -1291,7 +1310,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         : 'bg-white text-Text-Secondary border border-Gray-50 hover:bg-Gray-15'
                     }`}
                   >
-                    ⚠ Review ({reviewCategoryCounts.review})
+                    ⚠ Need review ({reviewCategoryCounts.review})
                   </button>
                   <button
                     type="button"
@@ -1310,6 +1329,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       {reviewSummary.duplicate_count !== 1 ? 's' : ''}
                     </span>
                   )}
+                  <span className="text-[9px] md:text-[10px] text-Text-Quadruple whitespace-nowrap">
+                    Value and unit changes are saved when you click Save &amp;
+                    Update Health Plan (top right).
+                  </span>
                 </>
               ) : (
                 <>
@@ -1453,9 +1476,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                       {useReviewUx ? (
                         <>
                           <span className="font-medium text-Primary-DeepTeal">
-                            Ready
+                            Ready to save
                           </span>{' '}
-                          rows are included in analysis. Use{' '}
+                          rows can be processed into the Health Plan after you
+                          save. Use{' '}
                           <span className="font-medium text-Primary-DeepTeal">
                             Exclude
                           </span>{' '}
@@ -1669,12 +1693,15 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               {useReviewUx && biomarkers.length > 0 ? (
                 <div className="shrink-0 z-10 border-t border-Gray-50 bg-[#F8FAFB] px-4 py-2.5 text-[10px] text-Text-Secondary">
                   <div className="font-medium text-Text-Primary">
-                    ✓ {reviewCategoryCounts.ready} Ready · ⚠{' '}
-                    {reviewCategoryCounts.review} will be skipped · —{' '}
-                    {reviewCategoryCounts.excluded} Excluded
+                    ✓ {formatReadyBadge(reviewCategoryCounts.ready)} · ⚠{' '}
+                    {formatReviewBadge(reviewCategoryCounts.review)} will be
+                    skipped · —{' '}
+                    {formatExcludedBadge(reviewCategoryCounts.excluded)}
                   </div>
                   <div className="mt-0.5 text-[9px] text-Text-Quadruple">
-                    Only Ready biomarkers will be included in analysis.
+                    The Health Plan count may differ from the extracted file
+                    count — only processed biomarkers appear in Scored in Health
+                    Plan.
                   </div>
                 </div>
               ) : null}

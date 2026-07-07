@@ -65,6 +65,7 @@ interface UploadPModalProps {
     excluded: number;
   }) => void;
   onDirtyIdsChange?: (ids: string[]) => void;
+  unsavedBiomarkerCount?: number;
 }
 
 const UploadPModal: React.FC<UploadPModalProps> = ({
@@ -120,6 +121,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   reviewHydrating,
   onLiveCountsChange,
   onDirtyIdsChange,
+  unsavedBiomarkerCount = 0,
 }) => {
   const isReviewWithFile = Boolean(
     uploadedFile?.file_id || uploadedFile?.status === 'completed',
@@ -239,7 +241,18 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
               data-tour="lab-title"
             >
               <div
-                onClick={() => OnBack()}
+                onClick={() => {
+                  if (
+                    isReviewWithFile &&
+                    unsavedBiomarkerCount > 0 &&
+                    !window.confirm(
+                      'You have unsaved biomarker edits. Leave without saving?',
+                    )
+                  ) {
+                    return;
+                  }
+                  OnBack();
+                }}
                 className="cursor-pointer size-6 md:size-8 rounded-md p-1 bg-white border border-Gray-50 shadow-100 flex items-center justify-center"
               >
                 <img src="/icons/arrow-back.svg" alt="" />
@@ -278,27 +291,29 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   btnLoading
                 }
                 onClick={() => {
-                  if (isReviewWithFile && onSaveClose) {
-                    onSaveClose();
-                  } else {
-                    onSave();
-                  }
+                  onSave();
                   if (!isReviewWithFile) {
                     setShouldAutoSwitch(true);
                   }
                 }}
-                ClassName=" w-[100px] xs:w-[127px] md:w-[167px]"
+                ClassName={
+                  isReviewWithFile
+                    ? 'min-w-[120px] xs:min-w-[160px] md:min-w-[200px]'
+                    : ' w-[100px] xs:w-[127px] md:w-[167px]'
+                }
                 title={
-                  isReviewWithFile && (effectiveReviewCounts?.review ?? 0) > 0
-                    ? `${effectiveReviewCounts.review} item(s) need review. Ready items are saved automatically; fix review items anytime in Edit.`
-                    : undefined
+                  isReviewWithFile
+                    ? 'Saves biomarker edits and updates the health plan.'
+                    : (effectiveReviewCounts?.review ?? 0) > 0
+                      ? `${effectiveReviewCounts.review} item(s) need review. Ready-to-save items are saved automatically; fix review items anytime in Edit.`
+                      : undefined
                 }
               >
                 {btnLoading ? (
                   <>
                     {' '}
                     <SpinnerLoader></SpinnerLoader>
-                    Save & Close
+                    {isReviewWithFile ? 'Saving…' : 'Save & Close'}
                   </>
                 ) : (
                   <div
@@ -310,7 +325,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                       src="/icons/arrow-right-white.svg"
                       alt=""
                     />
-                    Save & Close{' '}
+                    {isReviewWithFile
+                      ? 'Save & Update Health Plan'
+                      : 'Save & Close'}
                   </div>
                 )}
               </ButtonPrimary>
@@ -376,7 +393,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     content will be included in your health plan.
                   </div>
                   <div className="mt-4 px-4 py-2 bg-Primary-DeepTeal/10 rounded-full text-sm text-Primary-DeepTeal font-medium">
-                    Click "Continue" to proceed to Health Plan
+                    Click &quot;Save &amp; Update Health Plan&quot; to proceed
                   </div>
                 </div>
               ) : (
@@ -451,7 +468,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                       content will be included in your health plan.
                     </div>
                     <div className="mt-4 px-4 py-2 bg-Primary-DeepTeal/10 rounded-full text-sm text-Primary-DeepTeal font-medium">
-                      Click "Continue" to proceed to Health Plan
+                      Click &quot;Save &amp; Update Health Plan&quot; to proceed
                     </div>
                   </div>
                 ) : uploadedFile || fileType !== 'more_info' ? (

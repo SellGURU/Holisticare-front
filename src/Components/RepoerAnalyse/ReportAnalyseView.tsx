@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
+import {
+  CLIENT_SUMMARY_HELPER,
+  CLIENT_SUMMARY_TITLE,
+  formatClientSummarySubtitle,
+} from './UploadTestV2/biomarkerCountCopy';
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
 import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
@@ -1482,17 +1487,23 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         id="Client Summary"
                         className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center "
                       >
-                        Client Summary
+                        {CLIENT_SUMMARY_TITLE}
                         <div className="ml-4 invisible">
                           <Legends isGray></Legends>
                         </div>
                       </div>
                       {ClientSummaryBoxs && showOverviewCounts && (
-                        <div className="text-Text-Secondary text-[12px]">
-                          Total of {ClientSummaryBoxs?.total_subcategory || 0}{' '}
-                          biomarkers in {ClientSummaryBoxs?.total_category || 0}{' '}
-                          categories
-                        </div>
+                        <>
+                          <div className="text-Text-Secondary text-[12px]">
+                            {formatClientSummarySubtitle(
+                              ClientSummaryBoxs?.total_subcategory || 0,
+                              ClientSummaryBoxs?.total_category || 0,
+                            )}
+                          </div>
+                          <div className="text-Text-Quadruple text-[11px] mt-0.5 leading-snug">
+                            {CLIENT_SUMMARY_HELPER}
+                          </div>
+                        </>
                       )}
                     </div>
                     <div className="relative hidden xl:block">

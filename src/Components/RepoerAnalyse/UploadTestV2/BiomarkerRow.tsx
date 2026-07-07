@@ -6,7 +6,7 @@ import SearchSelectWithSuggestions, {
   BiomarkerSuggestion,
 } from '../../searchableSelect/SearchSelectWithSuggestions';
 import SelectWithCreate from '../../Select/SelectWithCreate';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Application from '../../../api/app';
 import {
   collectMappingNameVariations,
@@ -48,7 +48,7 @@ interface BiomarkerRowProps {
   onExcludeReview?: () => void;
   onRestoreExcluded?: () => void;
   onMappingDirtyChange?: (dirty: boolean) => void;
-  onRowReadySave?: (row: any) => void;
+  onRowReadySave?: (row: any) => void | Promise<void>;
   excludedReason?: string;
   excludedAt?: string;
   hiddenByFilter?: boolean;
@@ -109,6 +109,8 @@ export default function BiomarkerRow({
   const [mappingStatus, setMappingStatus] = useState<any>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSavingMapping, setIsSavingMapping] = useState(false);
+  const [isSavingRow, setIsSavingRow] = useState(false);
+  const baselineSystemBiomarkerRef = useRef('');
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
   const [unitOptions, setUnitOptions] = useState<string[]>([]);
   const [copiedExactName, setCopiedExactName] = useState(false);
@@ -122,6 +124,11 @@ export default function BiomarkerRow({
     setIsChenged(false);
     onMappingDirtyChange?.(false);
   };
+
+  useEffect(() => {
+    baselineSystemBiomarkerRef.current = String(biomarker.biomarker || '').trim();
+  }, [biomarker.biomarker_id]);
+
   const normalizedName = resolveNormalizedBiomarkerName(biomarker);
   const pdfNameFromDocument = resolveExactBiomarkerName(biomarker);
   const showPdfNameLine = pdfNameFromDocument.length > 0;
@@ -274,12 +281,8 @@ export default function BiomarkerRow({
     if (effectiveExtractedUnit) {
       return effectiveExtractedUnit;
     }
-    if (biomarker.possible_values?.units?.length === 1) {
-      return biomarker.possible_values.units[0];
-    }
-    if (unitOptions.length === 1) {
-      return unitOptions[0];
-    }
+    // Never show a catalog/possible unit as if already selected when the row
+    // has no extracted unit — that misleads users into thinking validation passed.
     return '';
   })();
 
@@ -371,24 +374,48 @@ export default function BiomarkerRow({
     pdfBiomarkerName.length > 0 &&
     systemBiomarkerName.length > 0 &&
     pdfBiomarkerName.toLowerCase() === systemBiomarkerName.toLowerCase();
-  const showSaveButton =
-    systemBiomarkerName.length > 0 &&
-    (isChanged || isMapped) &&
-    !namesAlreadyMatch;
-  const showReadySaveButton =
+  const isSystemBiomarkerDirty =
+    normalizeBiomarkerNameForMatch(systemBiomarkerName) !==
+    normalizeBiomarkerNameForMatch(baselineSystemBiomarkerRef.current);
+  const shouldShowSaveButton =
     useReviewUx &&
-    rowCategory === 'ready' &&
-    !isMapped &&
-    Boolean(onRowReadySave);
-  const shouldShowSaveButton = showSaveButton || showReadySaveButton;
-  const saveTooltipId = `save-mapping-${biomarker.biomarker_id || index}`;
+    rowCategory !== 'excluded' &&
+    Boolean(onRowReadySave) &&
+    systemBiomarkerName.length > 0 &&
+    isSystemBiomarkerDirty;
+  const saveTooltipId = `save-row-${biomarker.biomarker_id || index}`;
+
+  const revertToBaselineSystemBiomarker = () => {
+    updateAndStandardize(biomarker.biomarker_id, {
+      biomarker: baselineSystemBiomarkerRef.current,
+    });
+    setIsMapped(false);
+    setSavedMappings([]);
+    setSaveError(null);
+    clearMappingDirty();
+  };
 
   const handleSaveClick = async () => {
-    if (showSaveButton) {
-      await handleSaveMapping();
-    }
-    if (!isMapped && rowCategory === 'ready') {
-      onRowReadySave?.(biomarker);
+    if (!onRowReadySave || isSavingRow) return;
+    setIsSavingRow(true);
+    setSaveError(null);
+    try {
+      const shouldSaveClinicMapping =
+        !namesAlreadyMatch &&
+        !isMapped &&
+        saveMappingPayloads.length > 0;
+
+      if (shouldSaveClinicMapping) {
+        await handleSaveMapping();
+      }
+
+      await onRowReadySave(biomarker);
+      baselineSystemBiomarkerRef.current = systemBiomarkerName;
+      clearMappingDirty();
+    } catch (err) {
+      setSaveError(extractApiError(err, 'Failed to save biomarker.'));
+    } finally {
+      setIsSavingRow(false);
     }
   };
 
@@ -415,6 +442,7 @@ export default function BiomarkerRow({
         setTimeout(() => setMappingStatus(null), 5000);
       } catch (err) {
         setSaveError(extractApiError(err, 'Failed to remove mapping.'));
+        throw err;
       } finally {
         setIsSavingMapping(false);
       }
@@ -429,7 +457,7 @@ export default function BiomarkerRow({
 
     if (saveMappingPayloads.length === 0) {
       setSaveError('Select a system biomarker before saving.');
-      return;
+      throw new Error('Select a system biomarker before saving.');
     }
 
     setIsSavingMapping(true);
@@ -445,6 +473,7 @@ export default function BiomarkerRow({
       setTimeout(() => setMappingStatus(null), 5000);
     } catch (err) {
       setSaveError(extractApiError(err, 'Failed to save mapping.'));
+      throw err;
     } finally {
       setIsSavingMapping(false);
     }
@@ -731,7 +760,7 @@ export default function BiomarkerRow({
         {/* Column 6: Actions */}
         <div
           className={`flex min-w-0 flex-col items-center justify-start gap-1 pt-1 ${
-            showSaveButton ? 'items-end' : 'items-center'
+            shouldShowSaveButton ? 'items-end' : 'items-center'
           }`}
         >
           {isConfirmDelete ? (
@@ -785,30 +814,26 @@ export default function BiomarkerRow({
                       <>
                         <button
                           type="button"
-                          disabled={isSavingMapping}
+                          disabled={isSavingRow}
+                          onClick={revertToBaselineSystemBiomarker}
+                          className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Text-Secondary hover:bg-Gray-15 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          Undo
+                        </button>
+                        <button
+                          type="button"
+                          disabled={isSavingRow}
                           data-tooltip-id={saveTooltipId}
-                          className={`flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[8px] font-medium transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
-                            isMapped
-                              ? 'bg-green-100 text-green-700 hover:bg-red-50 hover:text-red-600'
-                              : 'bg-gray-100 text-Text-Secondary hover:bg-green-50 hover:text-green-700'
-                          }`}
+                          className="flex shrink-0 items-center gap-1 rounded-full bg-[#E8F4F6] px-2 py-0.5 text-[8px] font-medium text-Primary-DeepTeal ring-1 ring-Primary-DeepTeal/30 transition-all hover:bg-[#DEF7EC] disabled:cursor-not-allowed disabled:opacity-60"
                           onClick={() => void handleSaveClick()}
                         >
                           <img
-                            src={
-                              isMapped
-                                ? '/icons/save-2-fill.svg'
-                                : '/icons/save-2.svg'
-                            }
+                            src="/icons/save-2.svg"
                             alt=""
                             className="h-3.5 w-3.5"
                           />
                           <span className="leading-tight">
-                            {isSavingMapping
-                              ? 'Saving...'
-                              : isMapped
-                                ? 'Saved'
-                                : 'Save'}
+                            {isSavingRow ? 'Saving...' : 'Save'}
                           </span>
                         </button>
                         <Tooltip
@@ -816,19 +841,9 @@ export default function BiomarkerRow({
                           place="top"
                           className="!bg-[#E8F4F6] !bg-opacity-100 !max-w-[260px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 !z-[99999]"
                         >
-                          {isMapped ? (
-                            <>
-                              Mapping saved: &quot;{pdfBiomarkerName}&quot; →
-                              &quot;{systemBiomarkerName}&quot;. Click to
-                              remove.
-                            </>
-                          ) : (
-                            <>
-                              Save PDF name mapping for your clinic: &quot;
-                              {pdfBiomarkerName}&quot; → &quot;
-                              {systemBiomarkerName}&quot;.
-                            </>
-                          )}
+                          Saves clinic PDF→system name mapping when names differ,
+                          and persists this row&apos;s biomarker, value, and unit.
+                          Does not navigate to the health plan.
                         </Tooltip>
                       </>
                     )}

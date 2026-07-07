@@ -1,4 +1,9 @@
 import { useEffect, useState } from 'react';
+import {
+  formatExcludedBadge,
+  formatReadyBadge,
+  formatReviewBadge,
+} from './biomarkerCountCopy';
 
 interface ProgressLoadingProps {
   maxProgress: number;
@@ -201,7 +206,7 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
             {readyCount != null ? (
               <span className="rounded-full bg-[#DEF7EC] px-2 py-0.5 text-[9px] font-medium text-[#027A48]">
-                {readyCount} Ready
+                {formatReadyBadge(readyCount)}
               </span>
             ) : (
               <span className="rounded-full bg-Primary-DeepTeal/10 px-2 py-0.5 text-[9px] font-medium text-Primary-DeepTeal">
@@ -214,11 +219,11 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
               <>
                 {reviewCount > 0 ? (
                   <span className="rounded-full bg-[#FFF8E8] px-2 py-0.5 text-[9px] font-medium text-[#B54708]">
-                    {reviewCount} Need Review
+                    {formatReviewBadge(reviewCount)}
                   </span>
                 ) : null}
                 <span className="rounded-full bg-Gray-50 px-2 py-0.5 text-[9px] font-medium text-Text-Secondary">
-                  {excludedCount} Excluded
+                  {formatExcludedBadge(excludedCount)}
                 </span>
               </>
             ) : null}
@@ -304,10 +309,10 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
                 excludedCount != null ? (
                   <span className="ml-auto flex items-center gap-1 whitespace-nowrap">
                     <span className="rounded-full bg-[#FFF8E8] px-2 py-0.5 text-[9px] font-medium text-[#B54708]">
-                      {reviewCount} Need Review
+                      {formatReviewBadge(reviewCount)}
                     </span>
                     <span className="rounded-full bg-Gray-50 px-2 py-0.5 text-[9px] font-medium text-Text-Secondary">
-                      {excludedCount} Excluded
+                      {formatExcludedBadge(excludedCount)}
                     </span>
                   </span>
                 ) : null}

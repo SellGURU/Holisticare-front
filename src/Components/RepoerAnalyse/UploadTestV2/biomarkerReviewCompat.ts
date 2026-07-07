@@ -236,6 +236,39 @@ export const reviewRowErrorKey = (row: any, index: number) => {
   return `row-${index}`;
 };
 
+/** Ignore stale backend/finding errors after the user fixed the row in this session. */
+export const resolveEffectiveRowError = (
+  row: any,
+  rowErrors: Record<string, string>,
+  index: number,
+) => {
+  if (row?.review_error_handled === true) {
+    return '';
+  }
+  const rowKey = reviewRowErrorKey(row, index);
+  return rowKey ? String(rowErrors[rowKey] || '').trim() : '';
+};
+
+/** Drop persisted findings for rows the user already fixed or excluded locally. */
+export const filterPersistedReviewFindingItems = (
+  items: any[],
+  contextBiomarkers: any[],
+  suppressedSet: Set<string> = new Set(),
+) =>
+  items.filter((item) => {
+    const biomarkerId = trim(item?.biomarker_id);
+    const row =
+      (biomarkerId
+        ? contextBiomarkers.find(
+            (candidate) => trim(candidate?.biomarker_id) === biomarkerId,
+          )
+        : null) || null;
+    if (!row) return true;
+    if (row.review_error_handled === true) return false;
+    if (isRowSuppressed(row, suppressedSet)) return false;
+    return true;
+  });
+
 export const removeRowErrorKey = (
   errors: Record<string, string>,
   key: string,
@@ -540,9 +573,8 @@ export const categorizeReviewRow = (
     return { category: 'review', reviewReason: 'unmatched' };
   }
 
-  const rowKey = reviewRowErrorKey(row, index);
-  const errorText = rowErrors[rowKey] || '';
-  if (errorText.trim()) {
+  const errorText = resolveEffectiveRowError(row, rowErrors, index);
+  if (errorText) {
     const reviewReason =
       inferReviewReasonFromErrorText(errorText) || 'unmatched';
     if (
@@ -849,6 +881,18 @@ const normalizeUnitKey = (unit: unknown) =>
     .replace(/[μµ×]/g, (char) => (char === '×' ? 'x' : 'u'))
     .replace(/\s+/g, '');
 
+const VOLUME_UNIT_KEYS = new Set(['l', 'liter', 'liters']);
+
+const unitsMatchForCatalogPick = (extractedUnit: string, catalogUnit: string) => {
+  const extracted = normalizeUnitKey(extractedUnit);
+  const catalog = normalizeUnitKey(catalogUnit);
+  if (!extracted || !catalog) return false;
+  if (extracted === catalog) return true;
+  return (
+    VOLUME_UNIT_KEYS.has(extracted) && VOLUME_UNIT_KEYS.has(catalog)
+  );
+};
+
 const MASS_CONCENTRATION_UNITS = new Set([
   'g/l',
   'g/dl',
@@ -881,8 +925,11 @@ export const pickCatalogEntryForRow = (catalog: any[], row: any) => {
   );
 
   if (extractedUnit) {
-    const exact = candidates.find(
-      (entry) => normalizeUnitKey(entry.unit) === extractedUnit,
+    const exact = candidates.find((entry) =>
+      unitsMatchForCatalogPick(
+        preferNonEmpty(row.original_unit, row.unit),
+        entry.unit,
+      ),
     );
     if (exact) return exact;
 

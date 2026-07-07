@@ -17,12 +17,14 @@ import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
   ensureUniqueBiomarkerIds,
+  pinBiomarkerNameFields,
 } from './biomarkerNameFields';
 import {
   buildBiomarkerRowsForValidation,
   mapChartBoundsToReviewCatalog,
   reviewRowErrorKey,
   categorizeReviewRow,
+  filterPersistedReviewFindingItems,
 } from './biomarkerReviewCompat';
 import BiomarkersApi from '../../../api/Biomarkers';
 import { showError, showSuccess } from '../../GlobalToast';
@@ -230,6 +232,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());
   const [recheckLoading, setRecheckLoading] = useState(false);
   const [hasComboBarFile, setHasComboBarFile] = useState(false);
+  const [dirtyBiomarkerIds, setDirtyBiomarkerIds] = useState<string[]>([]);
   hasComboBarFileRef.current = hasComboBarFile;
 
   useEffect(() => {
@@ -1014,16 +1017,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     );
     if (!contextBiomarkers.length) return;
 
-    const persistedItems = openFindings.map((finding) => ({
-      ...(typeof (finding as any).payload === 'object'
-        ? (finding as any).payload
-        : {}),
-      biomarker_id: finding.biomarker_id,
-      code: finding.finding_type,
-      detail: finding.detail,
-      display_detail: finding.display_detail || finding.detail,
-      extracted_biomarker: finding.extracted_biomarker,
-    }));
+    const persistedItems = filterPersistedReviewFindingItems(
+      openFindings.map((finding) => ({
+        ...(typeof (finding as any).payload === 'object'
+          ? (finding as any).payload
+          : {}),
+        biomarker_id: finding.biomarker_id,
+        code: finding.finding_type,
+        detail: finding.detail,
+        display_detail: finding.display_detail || finding.detail,
+        extracted_biomarker: finding.extracted_biomarker,
+      })),
+      contextBiomarkers,
+      suppressedSet,
+    );
 
     const { modifiedErrors } = buildValidationErrorsMaps(
       { modified_biomarkers_list: persistedItems },
@@ -1547,7 +1554,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         : existingRow,
     );
     try {
-      setCompileState('saving');
       const res = await handleSaveLabReport(rowsForSave, {
         skipAddedBiomarkers: true,
         skipAutoSaveMappings: true,
@@ -1556,13 +1562,22 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         res?.data?.modified_biomarkers_file_id ||
         res?.data?.added_biomarkers_file_id ||
         uploadedFile?.file_id;
-      showSuccess('Biomarker saved.', 'Refreshing health plan...');
-      triggerSilentCompile(savedFileId, { job_id: res?.data?.job_id });
-      setCompileState('done');
+      setExtractedBiomarkers((prev) =>
+        prev.map((existingRow) =>
+          existingRow.biomarker_id === readyRow.biomarker_id
+            ? readyRow
+            : existingRow,
+        ),
+      );
+      if (savedFileId) {
+        setLastSavedFileId(savedFileId);
+      }
+      showSuccess('Biomarker saved.');
+      publish('syncReport', { silent: true });
     } catch (err: any) {
       console.error('Row ready save failed:', err);
-      setCompileState('error');
       handleLabSaveError(err);
+      throw err;
     }
   };
 
@@ -1665,15 +1680,41 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             enrichExtractedRowForReview(b, res.data.lab_type),
           ),
         );
+        const priorById = new Map(
+          extractedBiomarkers.map((row) => [String(row?.biomarker_id || ''), row]),
+        );
+        const mergedRows = enrichedRows.map((row: any) => {
+          const id = String(row?.biomarker_id || '');
+          const prior = priorById.get(id);
+          if (!prior || !dirtyBiomarkerIds.includes(id)) {
+            return row;
+          }
+          return pinBiomarkerNameFields(
+            {
+              ...row,
+              ...prior,
+              biomarker_id: id,
+            },
+            prior,
+          );
+        });
         const errorMaps = buildValidationErrorsMaps(
           res.data.validation,
-          enrichedRows,
+          mergedRows,
           addedBiomarkers,
         );
+        mergedRows.forEach((row: any, index: number) => {
+          if (row?.review_error_handled === true) {
+            const rowKey = reviewRowErrorKey(row, index);
+            if (rowKey) {
+              delete errorMaps.modifiedErrors[rowKey];
+            }
+          }
+        });
         backendRowErrorsRef.current = errorMaps.modifiedErrors;
         setRowErrors(errorMaps.modifiedErrors);
         setAddedRowErrors(errorMaps.addedErrors);
-        const displayRows = sortReviewBiomarkerRows(enrichedRows);
+        const displayRows = sortReviewBiomarkerRows(mergedRows);
         setExtractedBiomarkers(displayRows);
         setUploadPhase(res.data.status || 'review_ready');
         setProgressBiomarkerUpload(res.data.progress ?? 100);
@@ -2134,10 +2175,8 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
               publish('reviewCountsLive', { file_id: fid, counts });
             }
           }}
-          onDirtyIdsChange={() => {
-            // Phase 1 groundwork: dirty ids are tracked but not yet sent to backend.
-            // Phase 2 will include them in re-check / save payloads.
-          }}
+          onDirtyIdsChange={setDirtyBiomarkerIds}
+          unsavedBiomarkerCount={dirtyBiomarkerIds.length}
         />
       )}
     </>
