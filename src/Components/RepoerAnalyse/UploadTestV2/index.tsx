@@ -1653,79 +1653,140 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const handleRecheck = async () => {
     const fileId = uploadedFile?.file_id;
-    if (!fileId || recheckLoading || stepOnePollInFlightRef.current) return;
+    if (
+      !fileId ||
+      recheckLoading ||
+      btnLoading ||
+      stepOnePollInFlightRef.current
+    ) {
+      return;
+    }
+
+    const RECHECK_POLL_INTERVAL_MS = 2000;
+    const RECHECK_POLL_TIMEOUT_MS = 90000;
+
+    const sleep = (ms: number) =>
+      new Promise<void>((resolve) => {
+        setTimeout(resolve, ms);
+      });
+
+    const applyRecheckReadyResponse = async (data: any) => {
+      setfileType(data.lab_type || 'more_info');
+      setReviewSummary(data.summary || null);
+      if (
+        Array.isArray(data.extracted_biomarkers) &&
+        data.extracted_biomarkers.length > 0
+      ) {
+        setExtractedCount(data.extracted_biomarkers.length);
+      }
+      if (data.date_of_test) {
+        setModifiedDateOfTest(new Date(data.date_of_test));
+      }
+      if (
+        !data.extracted_biomarkers ||
+        data.extracted_biomarkers.length === 0 ||
+        !data.validation?.ready
+      ) {
+        return false;
+      }
+
+      const enrichedRows = ensureUniqueBiomarkerIds(
+        (data.extracted_biomarkers || []).map((b: any) =>
+          enrichExtractedRowForReview(b, data.lab_type),
+        ),
+      );
+      const priorById = new Map(
+        extractedBiomarkers.map((row) => [
+          String(row?.biomarker_id || ''),
+          row,
+        ]),
+      );
+      const mergedRows = enrichedRows.map((row: any) => {
+        const id = String(row?.biomarker_id || '');
+        const prior = priorById.get(id);
+        if (!prior || !dirtyBiomarkerIds.includes(id)) {
+          return row;
+        }
+        return pinBiomarkerNameFields(
+          {
+            ...row,
+            ...prior,
+            biomarker_id: id,
+          },
+          prior,
+        );
+      });
+      const errorMaps = buildValidationErrorsMaps(
+        data.validation,
+        mergedRows,
+        addedBiomarkers,
+      );
+      mergedRows.forEach((row: any, index: number) => {
+        if (row?.review_error_handled === true) {
+          const rowKey = reviewRowErrorKey(row, index);
+          if (rowKey) {
+            delete errorMaps.modifiedErrors[rowKey];
+          }
+        }
+      });
+      backendRowErrorsRef.current = errorMaps.modifiedErrors;
+      setRowErrors(errorMaps.modifiedErrors);
+      setAddedRowErrors(errorMaps.addedErrors);
+      const displayRows = sortReviewBiomarkerRows(mergedRows);
+      setExtractedBiomarkers(displayRows);
+      setUploadPhase(data.status || 'review_ready');
+      setProgressBiomarkerUpload(data.progress ?? 100);
+      await loadReviewFindings(fileId, errorMaps.modifiedErrors, displayRows);
+      reviewHydratedFileRef.current = fileId;
+      return true;
+    };
+
     setRecheckLoading(true);
     setReviewHydrating(true);
     stepOnePollInFlightRef.current = true;
+    const pollDeadline = Date.now() + RECHECK_POLL_TIMEOUT_MS;
     try {
-      const res = await Application.checkLabStepOne({ file_id: fileId });
-      setfileType(res.data.lab_type || 'more_info');
-      setReviewSummary(res.data.summary || null);
-      if (
-        Array.isArray(res.data.extracted_biomarkers) &&
-        res.data.extracted_biomarkers.length > 0
+      let res = await Application.checkLabStepOne({
+        file_id: fileId,
+        force_revalidate: true,
+      });
+
+      while (
+        !res.data.validation?.ready &&
+        Date.now() < pollDeadline &&
+        res.data.status !== 'failed' &&
+        res.data.lab_type !== 'error'
       ) {
-        setExtractedCount(res.data.extracted_biomarkers.length);
+        await sleep(RECHECK_POLL_INTERVAL_MS);
+        res = await Application.checkLabStepOne({ file_id: fileId });
       }
-      if (res.data.date_of_test) {
-        setModifiedDateOfTest(new Date(res.data.date_of_test));
+
+      if (res.data.validation?.ready) {
+        await applyRecheckReadyResponse(res.data);
+        return;
       }
-      if (
-        res.data.extracted_biomarkers &&
-        res.data.extracted_biomarkers.length > 0 &&
-        res.data.validation?.ready
-      ) {
-        const enrichedRows = ensureUniqueBiomarkerIds(
-          (res.data.extracted_biomarkers || []).map((b: any) =>
-            enrichExtractedRowForReview(b, res.data.lab_type),
-          ),
+
+      if (Date.now() >= pollDeadline) {
+        showError(
+          'Re-check timed out',
+          'Validation is still running. Your edits are unchanged. Wait a moment and click Re-check again, or refresh the page.',
         );
-        const priorById = new Map(
-          extractedBiomarkers.map((row) => [
-            String(row?.biomarker_id || ''),
-            row,
-          ]),
+        return;
+      }
+
+      if (res.data.status === 'failed' || res.data.lab_type === 'error') {
+        showError(
+          'Re-check failed',
+          res.data.error ||
+            'Lab review validation failed. Your edits are unchanged.',
         );
-        const mergedRows = enrichedRows.map((row: any) => {
-          const id = String(row?.biomarker_id || '');
-          const prior = priorById.get(id);
-          if (!prior || !dirtyBiomarkerIds.includes(id)) {
-            return row;
-          }
-          return pinBiomarkerNameFields(
-            {
-              ...row,
-              ...prior,
-              biomarker_id: id,
-            },
-            prior,
-          );
-        });
-        const errorMaps = buildValidationErrorsMaps(
-          res.data.validation,
-          mergedRows,
-          addedBiomarkers,
-        );
-        mergedRows.forEach((row: any, index: number) => {
-          if (row?.review_error_handled === true) {
-            const rowKey = reviewRowErrorKey(row, index);
-            if (rowKey) {
-              delete errorMaps.modifiedErrors[rowKey];
-            }
-          }
-        });
-        backendRowErrorsRef.current = errorMaps.modifiedErrors;
-        setRowErrors(errorMaps.modifiedErrors);
-        setAddedRowErrors(errorMaps.addedErrors);
-        const displayRows = sortReviewBiomarkerRows(mergedRows);
-        setExtractedBiomarkers(displayRows);
-        setUploadPhase(res.data.status || 'review_ready');
-        setProgressBiomarkerUpload(res.data.progress ?? 100);
-        await loadReviewFindings(fileId, errorMaps.modifiedErrors, displayRows);
-        reviewHydratedFileRef.current = fileId;
       }
     } catch (err: any) {
       console.error('Re-check failed:', err);
+      showError(
+        'Re-check failed',
+        'Could not refresh validation. Your edits are unchanged. Please try again.',
+      );
     } finally {
       stepOnePollInFlightRef.current = false;
       setRecheckLoading(false);
