@@ -1026,8 +1026,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const resolveCategoryCardUi = (el: any) => {
     const categoryDescReady = isCategoryDescriptionReady(el.subcategory);
     const descPending =
-      el.description_pending ??
-      (overviewProcessing && !categoryDescReady);
+      el.description_pending ?? (overviewProcessing && !categoryDescReady);
     return {
       needFocusAnalyzing: categoryNeedFocusAnalyzing(el, isScoringComplete),
       ringLoading: categoryRingLoading(el, isScoringComplete),
