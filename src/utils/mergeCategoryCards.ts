@@ -80,6 +80,12 @@ export const mergeCategoryCard = (existing: any, incoming: any): any => {
     merged.description = existing.description;
     merged.description_ready = true;
     merged.description_pending = false;
+  } else if (incoming.description_pending && !incoming.description_ready) {
+    merged.description = existing.description_ready
+      ? existing.description
+      : (existing.description ?? '');
+    merged.description_ready = existing.description_ready ?? false;
+    merged.description_pending = true;
   }
 
   if (incoming.flags_ready === true || existing.flags_ready === true) {

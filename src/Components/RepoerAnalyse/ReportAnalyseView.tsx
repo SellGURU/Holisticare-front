@@ -46,6 +46,7 @@ import { UploadTestV2 } from './UploadTestV2';
 // import HolisticShare from './components/HolisticShare';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
 import MarkdownText from '../markdownText';
+import ChartLoadingPlaceholder from './ChartLoadingPlaceholder';
 import NewDetailedAcordin from './Boxs/newDetailedAcordin';
 import {
   ActionPlanSkeleton,
@@ -1023,15 +1024,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     !overviewProcessing ||
     dataPhase === 'complete';
   const resolveCategoryCardUi = (el: any) => {
+    const categoryDescReady = isCategoryDescriptionReady(el.subcategory);
     const descPending =
       el.description_pending ??
-      (overviewProcessing && !isCategoryDescriptionReady(el.subcategory));
+      (overviewProcessing && !categoryDescReady);
     return {
       needFocusAnalyzing: categoryNeedFocusAnalyzing(el, isScoringComplete),
       ringLoading: categoryRingLoading(el, isScoringComplete),
       descriptionReady:
         el.description_ready ??
-        (Boolean(el.description) || isCategoryDescriptionReady(el.subcategory)),
+        (!overviewProcessing || dataPhase === 'complete' || categoryDescReady),
       descriptionPending: descPending,
     };
   };
@@ -1059,6 +1061,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     (clientSummaryLoading ||
       ClientSummaryBoxs === null ||
       (overviewProcessing && dataPhase !== 'complete'));
+  const showClientSummaryTextLoading =
+    overviewProcessing && !clientSummaryReady;
   const showDetailedAnalysisSkeleton =
     awaitingOverviewData ||
     (!isScoringComplete && overviewProcessing && !hasReferenceBiomarkers) ||
@@ -1580,19 +1584,27 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
                       style={{ lineHeight: '24px' }}
                     >
-                      {showClientSummaryContentSkeleton ? (
-                        <div className="animate-pulse space-y-2">
-                          {Array.from({ length: 3 }).map((_, i) => (
-                            <div
-                              key={i}
-                              className="h-2.5 rounded bg-Gray-100"
-                              style={{
-                                width: i === 2 ? '75%' : '100%',
-                                animationDelay: `${i * 50}ms`,
-                              }}
-                            />
-                          ))}
-                        </div>
+                      {showClientSummaryContentSkeleton ||
+                      showClientSummaryTextLoading ? (
+                        showClientSummaryTextLoading ? (
+                          <ChartLoadingPlaceholder
+                            variant="text"
+                            label="Generating summary…"
+                          />
+                        ) : (
+                          <div className="animate-pulse space-y-2">
+                            {Array.from({ length: 3 }).map((_, i) => (
+                              <div
+                                key={i}
+                                className="h-2.5 rounded bg-Gray-100"
+                                style={{
+                                  width: i === 2 ? '75%' : '100%',
+                                  animationDelay: `${i * 50}ms`,
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )
                       ) : (
                         <MarkdownText
                           text={ClientSummaryBoxs?.client_summary}

@@ -1,91 +1,106 @@
-import React, { useEffect } from 'react';
-// import Api from '../../api/api';
+import React, { useEffect, useState } from 'react';
 import Auth from '../../api/auth';
+import { isBrowserOffline } from '../../utils/networkStatus';
 
 const MaintenancePage: React.FC = () => {
-  //   const [checkingStatus, setCheckingStatus] = useState(false);
-  //   const [lastCheck, setLastCheck] = useState<Date | null>(null);
+  const [checkingStatus, setCheckingStatus] = useState(false);
+  const [isOffline, setIsOffline] = useState(isBrowserOffline);
 
   const checkServerStatus = async () => {
+    if (isBrowserOffline()) {
+      return;
+    }
+
+    setCheckingStatus(true);
     try {
       const response = await Auth.helthNoAuth();
       if (response.status === 200 && response.data) {
         window.location.href = '/';
       }
     } catch {
-      console.log('Server still under maintenance');
+      console.log('Server still unavailable');
+    } finally {
+      setCheckingStatus(false);
     }
   };
 
   useEffect(() => {
-    // Check immediately when page loads
-    checkServerStatus();
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
 
-    // Set up interval to check every 30 seconds
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    checkServerStatus();
     const interval = setInterval(checkServerStatus, 30000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <div className="text-center">
-            <div className="mx-auto h-12 w-12 text-yellow-500">
-              <svg
-                className="h-12 w-12"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
-            </div>
-            <h2 className="mt-6 text-xl font-extrabold text-gray-900">
-              System Maintenance
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Sorry for the pause! We're deploying a new version to enhance your
-              experience.
+    <div className="flex min-h-screen w-full items-center justify-center bg-[#F8FAFB] px-6 py-12">
+      <div className="w-full max-w-md rounded-2xl border border-Gray-50 bg-white p-8 text-center shadow-sm">
+        {isOffline ? (
+          <>
+            <svg
+              className="mx-auto mb-4 h-12 w-12 text-amber-500"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.5 16.5a5 5 0 017 0M2 8.82a15 15 0 0118 0M5 12.55a11 11 0 0114 0M12 20h.01"
+              />
+              <path strokeLinecap="round" d="M4 4l16 16" />
+            </svg>
+            <h1 className="text-lg font-semibold text-Text-Primary">
+              No internet connection
+            </h1>
+            <p className="mt-2 text-sm text-Text-Secondary">
+              Please reconnect to the internet. We&apos;ll check the service
+              again once you&apos;re back online.
             </p>
-            <div className="mt-6">
-              <div className="flex justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
-              </div>
-              <p className="mt-4 text-sm text-gray-500">
-                Back in a few minutes!
-              </p>
-
-              {/* Auto-check status */}
-              {/* <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                <p className="text-xs text-blue-600">
-                  {checkingStatus ? 'Checking server status...' : 'Auto-checking every 30 seconds'}
-                </p>
-                {lastCheck && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Last checked: {lastCheck.toLocaleTimeString()}
-                  </p>
-                )}
-              </div> */}
-
-              {/* Manual refresh button */}
-              {/* <button
-                onClick={checkServerStatus}
-                disabled={checkingStatus}
-                className="mt-3 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {checkingStatus ? 'Checking...' : 'Check Now'}
-              </button> */}
+          </>
+        ) : (
+          <>
+            <img
+              src="/icons/server-down.svg"
+              alt=""
+              className="mx-auto mb-4 h-28 w-28"
+            />
+            <h1 className="text-lg font-semibold text-Text-Primary">
+              Service temporarily unavailable
+            </h1>
+            <p className="mt-2 text-sm text-Text-Secondary">
+              Our servers are having trouble right now. We&apos;re working on it
+              and will restore access as soon as possible.
+            </p>
+            <div className="mt-6 flex justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-Primary-DeepTeal" />
             </div>
-          </div>
-        </div>
+            <p className="mt-4 text-xs text-Text-Secondary">
+              {checkingStatus
+                ? 'Checking server status...'
+                : 'Auto-checking every 30 seconds'}
+            </p>
+            <button
+              type="button"
+              onClick={checkServerStatus}
+              disabled={checkingStatus}
+              className="mt-6 rounded-xl bg-Primary-DeepTeal px-4 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {checkingStatus ? 'Checking...' : 'Try again'}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

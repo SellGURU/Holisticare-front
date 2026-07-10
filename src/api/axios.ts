@@ -2,8 +2,14 @@
 import axios from 'axios';
 import ActivityLogger from '../utils/activty-logger';
 import { toast } from 'react-toastify';
-import { showError, showSuccess } from '../Components/GlobalToast';
+import { showError, showSuccess, showWarning } from '../Components/GlobalToast';
 import Auth from './auth';
+import {
+  isAxiosNetworkError,
+  isBrowserOffline,
+  isCanceledRequest,
+  isServerHttpError,
+} from '../utils/networkStatus';
 
 const logger = ActivityLogger.getInstance();
 
@@ -13,8 +19,7 @@ const MAINTENANCE_FAILURE_WINDOW_MS = 10000;
 let healthFailureCount = 0;
 let healthFailureWindowStart = 0;
 let maintenanceCheckInFlight = false;
-
-const SERVER_DOWN_STATUSES = new Set([500, 502, 503, 504]);
+let lastNetworkWarningAt = 0;
 
 const LAB_UPLOAD_ENDPOINTS = [
   '/patients/check_lab_report_step_one',
@@ -31,26 +36,26 @@ const isLabUploadRequest = (config: any) => {
   return LAB_UPLOAD_ENDPOINTS.some((endpoint) => url.includes(endpoint));
 };
 
-const isCanceledRequest = (error: any) =>
-  error.code === 'ERR_CANCELED' ||
-  error.name === 'CanceledError' ||
-  error.message === 'canceled';
-
-const isPotentialServerOutage = (error: any) => {
+const shouldCheckServerHealth = (error: any) => {
   if (isHealthCheckRequest(error.config)) {
     return false;
   }
   if (isCanceledRequest(error)) {
     return false;
   }
+  if (isBrowserOffline()) {
+    return false;
+  }
+
   const status = error.response?.status;
-  if (status && SERVER_DOWN_STATUSES.has(status)) {
+  if (status && isServerHttpError(status)) {
     if (isLabUploadRequest(error.config)) {
       return false;
     }
     return true;
   }
-  return error.message === 'Network Error' || error.code === 'ERR_NETWORK';
+
+  return isAxiosNetworkError(error);
 };
 
 const resetHealthFailureCount = () => {
@@ -84,10 +89,23 @@ const recordHealthFailure = () => {
   return healthFailureCount >= MAINTENANCE_FAILURE_THRESHOLD;
 };
 
+const maybeShowNetworkWarning = () => {
+  const now = Date.now();
+  if (now - lastNetworkWarningAt < 10000) {
+    return;
+  }
+  lastNetworkWarningAt = now;
+  showWarning(
+    'Connection problem',
+    'Please check your internet connection and try again.',
+  );
+};
+
 const checkHealthAndRedirect = async () => {
   if (
     window.location.href.includes('/maintenance') ||
-    maintenanceCheckInFlight
+    maintenanceCheckInFlight ||
+    isBrowserOffline()
   ) {
     return;
   }
@@ -171,10 +189,17 @@ axios.interceptors.response.use(
       payload: config.data,
     });
 
+    if (isBrowserOffline() && isAxiosNetworkError(error)) {
+      return Promise.reject(error.message || 'Network Error');
+    }
+
     if (
-      isPotentialServerOutage(error) &&
+      shouldCheckServerHealth(error) &&
       !window.location.href.includes('/maintenance')
     ) {
+      if (isAxiosNetworkError(error)) {
+        maybeShowNetworkWarning();
+      }
       void checkHealthAndRedirect();
       return Promise.reject(error);
     }

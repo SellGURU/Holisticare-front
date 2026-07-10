@@ -107,7 +107,7 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
         </div>
         {isOpen && (
           <>
-            {data.description ? (
+            {isDescriptionReady && data.description ? (
               <>
                 <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
                   Description
