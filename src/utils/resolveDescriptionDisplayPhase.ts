@@ -35,7 +35,10 @@ export function resolveDescriptionDisplayPhase(
       return { phase: 'loading', nextCommittedText: null };
     }
     if (input.committedText) {
-      return { phase: 'ready_unchanged', nextCommittedText: input.committedText };
+      return {
+        phase: 'ready_unchanged',
+        nextCommittedText: input.committedText,
+      };
     }
     return { phase: 'loading', nextCommittedText: null };
   }

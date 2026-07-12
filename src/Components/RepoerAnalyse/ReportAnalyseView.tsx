@@ -3,9 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
 import {
-  CLIENT_SUMMARY_HELPER,
   CLIENT_SUMMARY_TITLE,
-  formatClientSummarySubtitle,
+  resolveOverviewBiomarkerTotals,
 } from './UploadTestV2/biomarkerCountCopy';
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
@@ -70,8 +69,11 @@ import {
   isAsyncProcessingEnabled,
   progressEventMatchesMember,
   taskIsDone,
+  type CategoryCardStatus,
   type OverviewDataPhase,
 } from '../../utils/asyncProcessing';
+import { reconcileOverviewUiState } from '../../utils/reconcileOverviewUiState';
+import { logDescriptionRender } from '../../utils/descriptionDebug';
 
 const canLoadOverviewSections = (info: {
   show_report?: boolean;
@@ -90,9 +92,15 @@ const applyOverviewProcessingMeta = (
     setScoringComplete?: (v: boolean) => void;
     setClientSummaryReady?: (v: boolean) => void;
     setCategoriesPartial?: (v: string[]) => void;
+    setCategoriesStatus?: (v: CategoryCardStatus[]) => void;
   },
 ) => {
-  if (data.processing) {
+  const awaitingReview = Boolean(data.awaiting_user_review);
+  const isStale = Boolean(data.stale || data.processing_error);
+
+  if (isStale || awaitingReview) {
+    setters.setOverviewProcessing(false);
+  } else if (data.processing) {
     setters.setOverviewProcessing(true);
   } else if (
     !data.processing &&
@@ -123,6 +131,9 @@ const applyOverviewProcessingMeta = (
   }
   if (Array.isArray(data.categories_partial) && setters.setCategoriesPartial) {
     setters.setCategoriesPartial(data.categories_partial as string[]);
+  }
+  if (Array.isArray(data.categories_status) && setters.setCategoriesStatus) {
+    setters.setCategoriesStatus(data.categories_status as CategoryCardStatus[]);
   }
 };
 interface ReportAnalyseViewprops {
@@ -169,6 +180,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [scoringCompleteFlag, setScoringCompleteFlag] = useState(false);
   const [clientSummaryReady, setClientSummaryReady] = useState(false);
   const [categoriesPartial, setCategoriesPartial] = useState<string[]>([]);
+  const [categoriesStatus, setCategoriesStatus] = useState<
+    CategoryCardStatus[]
+  >([]);
+  const [overviewPollTimedOut, setOverviewPollTimedOut] = useState(false);
+  const [lastCategoryRefetchRevision, setLastCategoryRefetchRevision] =
+    useState<string | null>(null);
+  const [descriptionEpoch, setDescriptionEpoch] = useState(0);
+  const descriptionPollLogCountRef = useRef(0);
   const [has_wearable_data, setHasWearableData] = useState(false);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [showUploadTest, setShowUploadTest] = useState(false);
@@ -663,6 +682,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const refreshReportSections = () => {
+    setDescriptionEpoch((e) => e + 1);
+    descriptionPollLogCountRef.current = 0;
     setIsHaveReport(true);
     closeUploadTestOverlay();
     if (labDeleteRefreshPendingRef.current) {
@@ -713,6 +734,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     onPollStart: () => {
       setISGenerateLoading(false);
       setOverviewProcessing(true);
+      setDescriptionEpoch((e) => e + 1);
+      descriptionPollLogCountRef.current = 0;
     },
     onSnapshot: (snapshot) => {
       applyOverviewProcessingMeta(snapshot as Record<string, unknown>, {
@@ -723,7 +746,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setScoringComplete: setScoringCompleteFlag,
         setClientSummaryReady,
         setCategoriesPartial,
+        setCategoriesStatus,
       });
+      if (snapshot.data_revision) {
+        setLastCategoryRefetchRevision(snapshot.data_revision);
+      }
+    },
+    onPollTimeout: () => {
+      setOverviewPollTimedOut(true);
+      setOverviewProcessing(false);
     },
     onReferenceData: (data) => {
       applyOverviewProcessingMeta(data, {
@@ -760,6 +791,24 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setClientSummaryReady,
         setCategoriesPartial,
       });
+      if (data.processing && descriptionPollLogCountRef.current < 3) {
+        descriptionPollLogCountRef.current += 1;
+        const subs = (data.subcategories as any[]) ?? [];
+        logDescriptionRender('R1_categoriesPoll', {
+          pollIndex: descriptionPollLogCountRef.current,
+          processing: data.processing,
+          data_revision: data.data_revision,
+          cards: subs.map((card) => ({
+            subcategory: card.subcategory,
+            description_ready: card.description_ready,
+            description_pending: card.description_pending,
+            has_pending_key:
+              card != null &&
+              Object.prototype.hasOwnProperty.call(card, 'description_pending'),
+            description_len: String(card.description || '').length,
+          })),
+        });
+      }
       if (shouldApplyCategoryResponse(data)) {
         setClientSummaryBoxs((prev: any) =>
           applyClientSummaryCategories(prev, data),
@@ -1015,25 +1064,62 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       biomarkersScored != null &&
       biomarkersTotal > 0 &&
       biomarkersScored >= biomarkersTotal);
-  const isCategoryDescriptionReady = (subcategory: string) =>
-    Boolean(
-      categoriesPartial.some(
-        (name) => name.toLowerCase() === subcategory.toLowerCase(),
-      ),
-    ) ||
-    !overviewProcessing ||
-    dataPhase === 'complete';
+  const overviewSnapshotForReconcile = useMemo(
+    () => ({
+      processing: overviewProcessing,
+      data_phase: dataPhase,
+      client_summary_ready: clientSummaryReady,
+      categories_partial: categoriesPartial,
+      categories_status: categoriesStatus,
+      data_revision: lastCategoryRefetchRevision || undefined,
+    }),
+    [
+      overviewProcessing,
+      dataPhase,
+      clientSummaryReady,
+      categoriesPartial,
+      categoriesStatus,
+      lastCategoryRefetchRevision,
+    ],
+  );
+
   const resolveCategoryCardUi = (el: any) => {
-    const categoryDescReady = isCategoryDescriptionReady(el.subcategory);
-    const descPending =
-      el.description_pending ?? (overviewProcessing && !categoryDescReady);
+    const statusEntry = categoriesStatus.find(
+      (entry) =>
+        entry.name?.toLowerCase() ===
+        String(el.subcategory || '').toLowerCase(),
+    );
+    const reconciled = reconcileOverviewUiState(
+      overviewSnapshotForReconcile,
+      el,
+      statusEntry,
+      {
+        overviewProcessing,
+        dataPhase,
+        lastCategoryRefetchRevision,
+      },
+    );
+    logDescriptionRender('resolveCategoryCardUi', {
+      subcategory: el.subcategory,
+      description_ready: el.description_ready,
+      description_pending: el.description_pending,
+      has_pending_key:
+        el != null &&
+        Object.prototype.hasOwnProperty.call(el, 'description_pending'),
+      description_len: String(el.description || '').length,
+      reconciled_descriptionReady: reconciled.descriptionReady,
+      reconciled_descriptionPending: reconciled.descriptionPending,
+      overviewProcessing,
+      dataPhase,
+    });
     return {
       needFocusAnalyzing: categoryNeedFocusAnalyzing(el, isScoringComplete),
       ringLoading: categoryRingLoading(el, isScoringComplete),
-      descriptionReady:
-        el.description_ready ??
-        (!overviewProcessing || dataPhase === 'complete' || categoryDescReady),
-      descriptionPending: descPending,
+      descriptionReady: reconciled.descriptionReady,
+      strictDescriptionReady: reconciled.strictDescriptionReady,
+      descriptionPending: reconciled.descriptionPending,
+      showTimeoutBanner: reconciled.showTimeoutBanner,
+      descriptionFailed: reconciled.descriptionFailed,
     };
   };
   const showNeedFocusSkeleton =
@@ -1061,12 +1147,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       ClientSummaryBoxs === null ||
       (overviewProcessing && dataPhase !== 'complete'));
   const showClientSummaryTextLoading =
-    overviewProcessing && !clientSummaryReady;
+    overviewProcessing && !clientSummaryReady && dataPhase !== 'extracted_only';
   const showDetailedAnalysisSkeleton =
     awaitingOverviewData ||
     (!isScoringComplete && overviewProcessing && !hasReferenceBiomarkers) ||
     (detailedAnalysisLoading && !hasReferenceBiomarkers && !hasCategoryCards);
   const showOverviewCounts = hasCategoryCards || hasReferenceBiomarkers;
+  const overviewBiomarkerTotals = useMemo(
+    () => resolveOverviewBiomarkerTotals(referenceData, ClientSummaryBoxs),
+    [referenceData, ClientSummaryBoxs],
+  );
   const isBodyFigureLoading =
     !hasCategoryCards && showClientSummaryContentSkeleton;
   const resolveBioMarkers = () => {
@@ -1477,6 +1567,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 </button>
               </div>
             )}
+          {overviewPollTimedOut && (
+            <div className="mb-4 rounded-[6px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              Overview processing is taking longer than expected. Showing the
+              latest available data.
+            </div>
+          )}
           {accessManager.filter((el) => el.name == 'Client Summary')[0]
             .checked == true && (
             <>
@@ -1496,17 +1592,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         </div>
                       </div>
                       {ClientSummaryBoxs && showOverviewCounts && (
-                        <>
-                          <div className="text-Text-Secondary text-[12px]">
-                            {formatClientSummarySubtitle(
-                              ClientSummaryBoxs?.total_subcategory || 0,
-                              ClientSummaryBoxs?.total_category || 0,
-                            )}
-                          </div>
-                          <div className="text-Text-Quadruple text-[11px] mt-0.5 leading-snug">
-                            {CLIENT_SUMMARY_HELPER}
-                          </div>
-                        </>
+                        <div className="text-Text-Secondary text-[12px]">
+                          {overviewBiomarkerTotals.subtitle}
+                        </div>
                       )}
                     </div>
                     <div className="relative hidden xl:block">
@@ -1796,7 +1884,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   Detailed Analysis
                 </div>
                 <div className="TextStyle-Body-2 text-Text-Secondary mt-2">
-                  {referenceData?.detailed_analysis_note || ''}
+                  {overviewBiomarkerTotals.detailedNote ||
+                    referenceData?.detailed_analysis_note ||
+                    ''}
                 </div>
               </div>
               {showDetailedAnalysisSkeleton ? (
@@ -1804,7 +1894,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               ) : resolveCategories().length > 0 || hasReferenceBiomarkers ? (
                 <>
                   <div className="mt-6 hidden xl:block">
-                    {resolveCategories().map((el: any, index: number) => {
+                    {resolveCategories().map((el: any) => {
                       const cardUi = resolveCategoryCardUi(el);
                       return (
                         <DetiledAnalyse
@@ -1815,14 +1905,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           isScoringComplete={isScoringComplete}
                           needFocusAnalyzing={cardUi.needFocusAnalyzing}
                           ringLoading={cardUi.ringLoading}
-                          isDescriptionReady={cardUi.descriptionReady}
-                          key={index}
+                          strictDescriptionReady={cardUi.strictDescriptionReady}
+                          descriptionPending={el.description_pending}
+                          overviewProcessing={overviewProcessing}
+                          dataRevision={lastCategoryRefetchRevision}
+                          descriptionEpoch={descriptionEpoch}
+                          key={el.subcategory}
                         ></DetiledAnalyse>
                       );
                     })}
                   </div>
                   <div className="mt-6 block xl:hidden">
-                    {resolveCategories().map((el: any, index: number) => {
+                    {resolveCategories().map((el: any) => {
                       const cardUi = resolveCategoryCardUi(el);
                       return (
                         <NewDetailedAcordin
@@ -1833,8 +1927,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           isScoringComplete={isScoringComplete}
                           needFocusAnalyzing={cardUi.needFocusAnalyzing}
                           ringLoading={cardUi.ringLoading}
-                          isDescriptionReady={cardUi.descriptionReady}
-                          key={index}
+                          strictDescriptionReady={cardUi.strictDescriptionReady}
+                          descriptionPending={el.description_pending}
+                          overviewProcessing={overviewProcessing}
+                          dataRevision={lastCategoryRefetchRevision}
+                          descriptionEpoch={descriptionEpoch}
+                          key={el.subcategory}
                         ></NewDetailedAcordin>
                       );
                     })}

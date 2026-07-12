@@ -93,6 +93,20 @@ export const categoryNeedFocusAnalyzing = (
   return card.values_ready === false;
 };
 
+export const hasCategoryStatusRing = (status: unknown): status is number[] =>
+  Array.isArray(status) && status.length >= 5;
+
+export const categoryStatusRingMissing = (card: {
+  status?: unknown;
+}): boolean => !hasCategoryStatusRing(card.status);
+
+export const resolveShowRingLoading = (
+  data: { status?: unknown },
+  ringLoading?: boolean,
+  fallback = false,
+): boolean =>
+  categoryStatusRingMissing(data) || Boolean(ringLoading ?? fallback);
+
 /** True while the status ring should show a loading pulse. */
 export const categoryRingLoading = (
   card: {
@@ -105,7 +119,7 @@ export const categoryRingLoading = (
   },
   scoringComplete: boolean,
 ): boolean => {
-  if (Array.isArray(card.status)) return false;
+  if (categoryStatusRingMissing(card)) return true;
   if (scoringComplete || card.flags_source === 'scored') return false;
   if (card.flags_ready === true) return false;
   return card.values_ready === false;

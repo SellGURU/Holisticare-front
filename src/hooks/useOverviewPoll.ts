@@ -7,6 +7,7 @@ import {
 } from '../utils/asyncProcessing';
 
 const OVERVIEW_POLL_INTERVAL_MS = 2000;
+const OVERVIEW_POLL_MAX_MS = 10 * 60 * 1000;
 
 export type OverviewSnapshot = {
   processing?: boolean;
@@ -27,6 +28,12 @@ export type OverviewSnapshot = {
   }>;
   active_preview_file_id?: string;
   progress_pct?: number;
+  stale?: boolean;
+  processing_error?: string | null;
+  awaiting_user_review?: boolean;
+  job_id?: string | null;
+  job_status?: string | null;
+  tasks?: Record<string, string>;
 };
 
 type UseOverviewPollOptions = {
@@ -37,6 +44,7 @@ type UseOverviewPollOptions = {
   onCategoriesData: (data: Record<string, unknown>) => void;
   onConcerningData: (data: Record<string, unknown>) => void;
   onPollStart?: () => void;
+  onPollTimeout?: () => void;
 };
 
 export function useOverviewPoll({
@@ -47,12 +55,15 @@ export function useOverviewPoll({
   onCategoriesData,
   onConcerningData,
   onPollStart,
+  onPollTimeout,
 }: UseOverviewPollOptions) {
   const inFlightRef = useRef(false);
   const pollingRef = useRef(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastRevisionRef = useRef<string | null>(null);
   const lastScoredRef = useRef<number | null>(null);
+  const pollStartedAtRef = useRef<number | null>(null);
+  const consecutiveErrorsRef = useRef(0);
 
   const stopPolling = useCallback(() => {
     pollingRef.current = false;
@@ -71,13 +82,29 @@ export function useOverviewPoll({
       });
       const snapshot = (snapRes.data || {}) as OverviewSnapshot;
       onSnapshot(snapshot);
+      consecutiveErrorsRef.current = 0;
+
+      if (snapshot.stale || snapshot.processing_error) {
+        stopPolling();
+        return;
+      }
 
       if (
         !snapshot.processing &&
         (snapshot.data_phase === 'complete' ||
-          snapshot.data_phase === 'extracted_only')
+          snapshot.data_phase === 'extracted_only' ||
+          snapshot.awaiting_user_review)
       ) {
         stopPolling();
+        return;
+      }
+
+      if (
+        pollStartedAtRef.current != null &&
+        Date.now() - pollStartedAtRef.current > OVERVIEW_POLL_MAX_MS
+      ) {
+        stopPolling();
+        onPollTimeout?.();
         return;
       }
 
@@ -103,7 +130,11 @@ export function useOverviewPoll({
         onConcerningData(conRes.data || {});
       }
     } catch {
-      // keep polling — transient errors should not stop the loop
+      consecutiveErrorsRef.current += 1;
+      if (consecutiveErrorsRef.current >= 5) {
+        stopPolling();
+        onPollTimeout?.();
+      }
     } finally {
       inFlightRef.current = false;
     }
@@ -114,6 +145,7 @@ export function useOverviewPoll({
     onConcerningData,
     onReferenceData,
     onSnapshot,
+    onPollTimeout,
     stopPolling,
   ]);
 
@@ -122,6 +154,8 @@ export function useOverviewPoll({
     onPollStart?.();
     if (!pollingRef.current) {
       pollingRef.current = true;
+      pollStartedAtRef.current = Date.now();
+      consecutiveErrorsRef.current = 0;
       lastRevisionRef.current = null;
       lastScoredRef.current = null;
       void pollTick();

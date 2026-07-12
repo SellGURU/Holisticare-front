@@ -1,6 +1,11 @@
 import SpinnerLoader from '../SpinnerLoader';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import resolveAnalyseIcon from './resolveAnalyseIcon';
+import { categoryStatusRingMissing } from '../../utils/asyncProcessing';
+import {
+  buildCategoryStatusRingBackground,
+  CATEGORY_STATUS_RING_PLACEHOLDER,
+} from '../../utils/categoryStatusRingStyle';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface SummaryBoxProps {
@@ -21,9 +26,9 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({
 }) => {
   const biomarkerCountMissing = data.num_of_biomarkers == null;
   const needFocusMissing = data.out_of_ref == null;
-  const ringMissing = data.status == null || !Array.isArray(data.status);
+  const ringMissing = categoryStatusRingMissing(data);
   const showNeedFocusAnalyzing = needFocusAnalyzing ?? needFocusMissing;
-  const showRingLoading = ringLoading ?? ringMissing;
+  const showRingLoading = ringMissing || Boolean(ringLoading);
   // const resolveStatusColor =() => {
   //     if(data.status == 'Normal') {
   //         return '#06C78D'
@@ -58,16 +63,11 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({
             showRingLoading
               ? undefined
               : {
-                  background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
-                    data.status[1] + data.status[0]
-                  }% ${data.status[1] + data.status[2] + data.status[0]}%,#BA5225 ${
-                    data.status[2] + data.status[1] + data.status[0]
-                  }% ${data.status[3] + data.status[2] + data.status[1] + data.status[0]}%,#B2302E ${
-                    data.status[3] +
-                    data.status[2] +
-                    data.status[1] +
-                    data.status[0]
-                  }% 100%)`,
+                  background:
+                    buildCategoryStatusRingBackground(
+                      data.status,
+                      'summary6',
+                    ) ?? CATEGORY_STATUS_RING_PLACEHOLDER,
                 }
           }
         >

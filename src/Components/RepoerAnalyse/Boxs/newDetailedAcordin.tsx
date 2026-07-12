@@ -3,16 +3,26 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import Legends from '../Legends';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import MarkdownText from '../../markdownText';
+import DescriptionSkeleton from '../DescriptionSkeleton';
+import { useCategoryDescriptionDisplay } from '../../../hooks/useCategoryDescriptionDisplay';
 import AcordinRefrenceBox from './AcordinRefrenceBox';
-import ChartLoadingPlaceholder from '../ChartLoadingPlaceholder';
 import CategoryStats from './CategoryStats';
+import { resolveShowRingLoading } from '../../../utils/asyncProcessing';
+import {
+  buildCategoryStatusRingBackground,
+  CATEGORY_STATUS_RING_PLACEHOLDER,
+} from '../../../utils/categoryStatusRingStyle';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface NewDetailedAcordinProps {
   data: any;
   refrences: any;
   isScoringComplete?: boolean;
-  isDescriptionReady?: boolean;
+  strictDescriptionReady?: boolean;
+  descriptionPending?: boolean;
+  overviewProcessing?: boolean;
+  dataRevision?: string | null;
+  descriptionEpoch?: number;
   isProcessing?: boolean;
   needFocusAnalyzing?: boolean;
   ringLoading?: boolean;
@@ -21,15 +31,33 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
   data,
   refrences,
   isScoringComplete = true,
-  isDescriptionReady = true,
+  strictDescriptionReady = false,
+  descriptionPending,
+  overviewProcessing = false,
+  dataRevision = null,
+  descriptionEpoch = 0,
   isProcessing = false,
   needFocusAnalyzing,
   ringLoading,
 }) => {
   const [isOpen, setIsOpen] = useState(true);
+  const { phase: descriptionPhase, displayedDescription } =
+    useCategoryDescriptionDisplay({
+      categoryKey: String(data?.subcategory ?? ''),
+      descriptionReady: strictDescriptionReady,
+      descriptionText: data?.description,
+      overviewProcessing,
+      descriptionPending,
+      dataRevision,
+      descriptionEpoch,
+    });
   const showNeedFocusAnalyzing =
     needFocusAnalyzing ?? (isProcessing || !isScoringComplete);
-  const showRingLoading = ringLoading ?? (isProcessing || !isScoringComplete);
+  const showRingLoading = resolveShowRingLoading(
+    data,
+    ringLoading,
+    isProcessing || !isScoringComplete,
+  );
   const categoryProcessing = showRingLoading;
 
   return (
@@ -52,16 +80,11 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
                 categoryProcessing
                   ? undefined
                   : {
-                      background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
-                        data.status[1] + data.status[0]
-                      }% ${data.status[1] + data.status[2] + data.status[0]}%,#BA5225 ${
-                        data.status[2] + data.status[1] + data.status[0]
-                      }% ${data.status[3] + data.status[2] + data.status[1] + data.status[0]}%,#B2302E ${
-                        data.status[3] +
-                        data.status[2] +
-                        data.status[1] +
-                        data.status[0]
-                      }% 100%)`,
+                      background:
+                        buildCategoryStatusRingBackground(
+                          data.status,
+                          'summary6',
+                        ) ?? CATEGORY_STATUS_RING_PLACEHOLDER,
                     }
               }
             >
@@ -107,22 +130,17 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
         </div>
         {isOpen && (
           <>
-            {isDescriptionReady && data.description ? (
+            {descriptionPhase === 'loading' ? (
+              <DescriptionSkeleton />
+            ) : displayedDescription ? (
               <>
                 <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
                   Description
                 </div>
                 <div className=" md:h-[30px] overflow-y-auto text-Text-Secondary TextStyle-Body-2 mt-2 text-justify">
-                  <MarkdownText text={data.description} />
+                  <MarkdownText text={displayedDescription} />
                 </div>
               </>
-            ) : !isDescriptionReady ? (
-              <div className="mt-4">
-                <ChartLoadingPlaceholder
-                  variant="text"
-                  label="Generating description…"
-                />
-              </div>
             ) : null}
             <div className="w-full  flex items-start gap-2  bg-backgroundColor-Card  rounded-[12px] min-h-[30px] mt-4">
               {refrences.length == 0 && (

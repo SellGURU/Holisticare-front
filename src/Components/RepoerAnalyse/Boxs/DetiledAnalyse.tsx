@@ -15,17 +15,28 @@ import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
 import { SourceTag } from '../../source-badge';
 import MarkdownText from '../../markdownText';
+import DescriptionSkeleton from '../DescriptionSkeleton';
+import { useCategoryDescriptionDisplay } from '../../../hooks/useCategoryDescriptionDisplay';
 import ChartLoadingPlaceholder, {
   isPreviewSource,
   shouldShowChartLoading,
 } from '../ChartLoadingPlaceholder';
 import CategoryStats from './CategoryStats';
+import { resolveShowRingLoading } from '../../../utils/asyncProcessing';
+import {
+  buildCategoryStatusRingBackground,
+  CATEGORY_STATUS_RING_PLACEHOLDER,
+} from '../../../utils/categoryStatusRingStyle';
 
 interface DetiledAnalyseProps {
   data: any;
   refrences: any;
   isScoringComplete?: boolean;
-  isDescriptionReady?: boolean;
+  strictDescriptionReady?: boolean;
+  descriptionPending?: boolean;
+  overviewProcessing?: boolean;
+  dataRevision?: string | null;
+  descriptionEpoch?: number;
   isProcessing?: boolean;
   needFocusAnalyzing?: boolean;
   ringLoading?: boolean;
@@ -35,7 +46,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   data,
   refrences,
   isScoringComplete = true,
-  isDescriptionReady = true,
+  strictDescriptionReady = false,
+  descriptionPending,
+  overviewProcessing = false,
+  dataRevision = null,
+  descriptionEpoch = 0,
   isProcessing = false,
   needFocusAnalyzing,
   ringLoading,
@@ -76,6 +91,16 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   // }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
   const [showGeneInsights, setShowGeneInsights] = useState(false);
+  const { phase: descriptionPhase, displayedDescription } =
+    useCategoryDescriptionDisplay({
+      categoryKey: String(data?.subcategory ?? ''),
+      descriptionReady: strictDescriptionReady,
+      descriptionText: data?.description,
+      overviewProcessing,
+      descriptionPending,
+      dataRevision,
+      descriptionEpoch,
+    });
   // const resolveColor = (key: string) => {
 
   //   if (key == 'Needs Focus') {
@@ -171,7 +196,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   const showChartLoading = shouldShowChartLoading(active);
   const showNeedFocusAnalyzing =
     needFocusAnalyzing ?? (isProcessing || !isScoringComplete);
-  const showRingLoading = ringLoading ?? (isProcessing || !isScoringComplete);
+  const showRingLoading = resolveShowRingLoading(
+    data,
+    ringLoading,
+    isProcessing || !isScoringComplete,
+  );
   const categoryProcessing = showRingLoading;
 
   return (
@@ -199,16 +228,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                 categoryProcessing
                   ? undefined
                   : {
-                      background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
-                        data.status[1] + data.status[0]
-                      }% ${data.status[1] + data.status[2] + data.status[0]}%,#BA5225 ${
-                        data.status[2] + data.status[1] + data.status[0]
-                      }% ${data.status[3] + data.status[2] + data.status[1] + data.status[0]}%,#B2302E ${
-                        data.status[3] +
-                        data.status[2] +
-                        data.status[1] +
-                        data.status[0]
-                      }% 100%)`,
+                      background:
+                        buildCategoryStatusRingBackground(
+                          data.status,
+                          'summary6',
+                        ) ?? CATEGORY_STATUS_RING_PLACEHOLDER,
                     }
               }
             >
@@ -253,22 +277,17 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
         </div>
         {isOpen && (
           <>
-            {isDescriptionReady && data.description ? (
+            {descriptionPhase === 'loading' ? (
+              <DescriptionSkeleton />
+            ) : displayedDescription ? (
               <>
                 <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
                   Description
                 </div>
                 <div className="  text-Text-Primary opacity-90 TextStyle-Body-2 mt-2 text-justify">
-                  <MarkdownText text={data.description} />
+                  <MarkdownText text={displayedDescription} />
                 </div>
               </>
-            ) : !isDescriptionReady ? (
-              <div className="mt-4">
-                <ChartLoadingPlaceholder
-                  variant="text"
-                  label="Generating description…"
-                />
-              </div>
             ) : null}
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               {refrences.length > 0 && (
@@ -357,6 +376,12 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                         <div className="flex mb-[74px] mt-[-8px] justify-between items-center">
                           <div className="  flex justify-start items-center TextStyle-Headline-6 text-Text-Primary">
                             Current Value
+                            {active?.values?.[0] ? (
+                              <span className="ml-2 text-Primary-DeepTeal text-[12px]">
+                                {active.values[0]}
+                                {active.unit ? ` ${active.unit}` : ''}
+                              </span>
+                            ) : null}
                             <div
                               onMouseEnter={() => {
                                 setShowMoreInfo(true);
@@ -450,6 +475,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                                 unit={active.unit}
                                 values={active.values}
                                 data={active.chart_bounds}
+                                valueType={active.value_type}
+                                valueKind={active.value_kind}
+                                matchedBoundIndex={active.matched_bound_index}
                               ></StatusBarChartV3>
                             )}
                           </>

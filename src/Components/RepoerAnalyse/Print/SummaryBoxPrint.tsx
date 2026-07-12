@@ -1,4 +1,5 @@
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
+import { resolveCategoryStatusRingBackground } from '../../../utils/categoryStatusRingStyle';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface SummaryBoxPrintProps {
@@ -19,11 +20,10 @@ const SummaryBoxPrint: React.FC<SummaryBoxPrintProps> = ({ data }) => {
         <div
           className="w-10 h-10 items-center rounded-full flex justify-center"
           style={{
-            background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
-              data.status[1] + data.status[0]
-            }% ${data.status[1] + data.status[2] + data.status[0]}%,#B2302E ${
-              data.status[2] + data.status[1] + data.status[0]
-            }% 100%)`,
+            background: resolveCategoryStatusRingBackground(
+              data.status,
+              'print4',
+            ),
           }}
         >
           <div

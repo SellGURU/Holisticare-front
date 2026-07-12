@@ -59,10 +59,11 @@ export const mergeCategoryCard = (existing: any, incoming: any): any => {
 
   const merged = { ...existing, ...incoming };
 
-  merged.num_of_biomarkers = Math.max(
-    existing.num_of_biomarkers ?? 0,
-    incoming.num_of_biomarkers ?? 0,
-  );
+  if (incoming.num_of_biomarkers != null) {
+    merged.num_of_biomarkers = incoming.num_of_biomarkers;
+  } else if (existing.num_of_biomarkers != null) {
+    merged.num_of_biomarkers = existing.num_of_biomarkers;
+  }
 
   if (incoming.out_of_ref != null) {
     merged.out_of_ref = incoming.out_of_ref;
@@ -76,16 +77,19 @@ export const mergeCategoryCard = (existing: any, incoming: any): any => {
     merged.status = existing.status;
   }
 
-  if (existing.description_ready && !incoming.description_ready) {
-    merged.description = existing.description;
+  if (!incoming.description_ready) {
+    const explicitlyNotPending = incoming.description_pending === false;
+    merged.description =
+      existing?.description_ready && explicitlyNotPending
+        ? existing.description
+        : '';
+    merged.description_ready = false;
+    merged.description_pending =
+      incoming.description_pending === false ? false : true;
+  } else {
+    merged.description = incoming.description ?? existing?.description ?? '';
     merged.description_ready = true;
     merged.description_pending = false;
-  } else if (incoming.description_pending && !incoming.description_ready) {
-    merged.description = existing.description_ready
-      ? existing.description
-      : (existing.description ?? '');
-    merged.description_ready = existing.description_ready ?? false;
-    merged.description_pending = true;
   }
 
   if (incoming.flags_ready === true || existing.flags_ready === true) {
@@ -140,26 +144,24 @@ export const mergeClientSummaryCategories = (prev: any, incoming: any): any => {
     })
     .filter(Boolean);
 
-  const prevTotal = prev.total_subcategory ?? 0;
-  const nextTotal = incoming.total_subcategory ?? 0;
   const mergedTotal = mergedSubs.reduce(
     (sum, card) => sum + (card.num_of_biomarkers ?? 0),
     0,
   );
+  const resolvedTotal =
+    incoming.total_subcategory != null
+      ? incoming.total_subcategory
+      : mergedTotal;
+  const resolvedCategories =
+    incoming.total_category != null
+      ? incoming.total_category
+      : mergedSubs.length;
 
   return {
     ...prev,
     ...incoming,
     subcategories: mergedSubs,
-    total_subcategory: useIncrementalMerge
-      ? Math.max(prevTotal, nextTotal, mergedTotal)
-      : Math.max(nextTotal, mergedTotal),
-    total_category: useIncrementalMerge
-      ? Math.max(
-          prev.total_category ?? 0,
-          incoming.total_category ?? 0,
-          mergedSubs.length,
-        )
-      : Math.max(incoming.total_category ?? 0, mergedSubs.length),
+    total_subcategory: resolvedTotal,
+    total_category: resolvedCategories,
   };
 };

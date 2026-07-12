@@ -2,12 +2,12 @@
 
 ## Confirmed culprits
 
-| # | Source | Mechanism |
-|---|--------|-----------|
-| **F1** | `mergeCategoryCards.ts` L80-83 | Forced `description_ready=true` + old text during re-process |
-| **B** | `DetiledAnalyse` / `newDetailedAcordin` | Direct render of `data.description` without commit gate (v3.2 fixed) |
-| **F2** | `resolveDescriptionDisplayPhase` | Processing hold showed old committed during re-generate |
-| **F3** | `useCategoryDescriptionDisplay` | No epoch reset on upload start |
+| #      | Source                                  | Mechanism                                                            |
+| ------ | --------------------------------------- | -------------------------------------------------------------------- |
+| **F1** | `mergeCategoryCards.ts` L80-83          | Forced `description_ready=true` + old text during re-process         |
+| **B**  | `DetiledAnalyse` / `newDetailedAcordin` | Direct render of `data.description` without commit gate (v3.2 fixed) |
+| **F2** | `resolveDescriptionDisplayPhase`        | Processing hold showed old committed during re-generate              |
+| **F3** | `useCategoryDescriptionDisplay`         | No epoch reset on upload start                                       |
 
 ## v3.3.1 fixes
 
@@ -34,4 +34,3 @@ DevTools filter: `[description-debug`
 yarn test:merge-category
 yarn test:description-phase
 ```
-

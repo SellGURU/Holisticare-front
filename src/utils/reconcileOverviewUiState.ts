@@ -1,7 +1,4 @@
-import type {
-  CategoryCardStatus,
-  OverviewDataPhase,
-} from './asyncProcessing';
+import type { CategoryCardStatus, OverviewDataPhase } from './asyncProcessing';
 
 export type OverviewRootCause =
   | 'OV-A'
@@ -55,7 +52,10 @@ export type ReconciledUi = {
   descriptionFailed: boolean;
 };
 
-const normalizeName = (value?: string) => String(value || '').trim().toLowerCase();
+const normalizeName = (value?: string) =>
+  String(value || '')
+    .trim()
+    .toLowerCase();
 
 export const quickOverviewDiagnosis = (
   snapshotDone: boolean,
@@ -92,7 +92,10 @@ export const classifyMismatchRootCause = (
     return 'OV-B';
   }
 
-  if (snapshot.data_phase === 'extracted_only' && !snapshot.awaiting_user_review) {
+  if (
+    snapshot.data_phase === 'extracted_only' &&
+    !snapshot.awaiting_user_review
+  ) {
     return 'OV-H';
   }
 
@@ -106,11 +109,19 @@ export const classifyMismatchRootCause = (
     return 'OV-E';
   }
 
-  if (snapshot.job_status && tasks.category_detail === 'done' && !cardReadyFromSnapshot) {
+  if (
+    snapshot.job_status &&
+    tasks.category_detail === 'done' &&
+    !cardReadyFromSnapshot
+  ) {
     return 'OV-A';
   }
 
-  if (snapshot.processing === false && !cardReadyFromSnapshot && !card.description) {
+  if (
+    snapshot.processing === false &&
+    !cardReadyFromSnapshot &&
+    !card.description
+  ) {
     return 'OV-C';
   }
 
@@ -142,7 +153,8 @@ const snapshotIsDone = (snapshot: OverviewSnapshotLike): boolean =>
   !snapshot.processing &&
   !snapshot.stale &&
   !snapshot.awaiting_user_review &&
-  (snapshot.data_phase === 'complete' || snapshot.data_phase === 'extracted_only');
+  (snapshot.data_phase === 'complete' ||
+    snapshot.data_phase === 'extracted_only');
 
 const categoryReadyFromSignals = (
   card: CategoryCardLike,
@@ -188,7 +200,9 @@ export const reconcileOverviewUiState = (
 
   const hasFallbackDescription = Boolean(String(card.description || '').trim());
   const overviewProcessing = Boolean(
-    (snapshot.processing && !snapshot.awaiting_user_review && !snapshot.stale) ||
+    (snapshot.processing &&
+      !snapshot.awaiting_user_review &&
+      !snapshot.stale) ||
       ctx.overviewProcessing,
   );
 
@@ -227,6 +241,7 @@ export const reconcileOverviewUiState = (
     rootCauseCategory,
     mismatchDetail,
     recommendedAction: rootCauseAction(rootCauseCategory),
-    descriptionFailed: Boolean(card.description_failed) || rootCauseCategory === 'OV-B',
+    descriptionFailed:
+      Boolean(card.description_failed) || rootCauseCategory === 'OV-B',
   };
 };

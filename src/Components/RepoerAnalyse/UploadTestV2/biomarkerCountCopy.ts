@@ -3,10 +3,7 @@ export const LAB_PANEL_TITLE = 'Extracted from file';
 export const LAB_PANEL_HELPER =
   'These counts include everything extracted from the uploaded file, including items that still need review or were excluded.';
 
-export const CLIENT_SUMMARY_TITLE = 'Scored in Health Plan';
-
-export const CLIENT_SUMMARY_HELPER =
-  'This count includes only biomarkers that were processed and included in the Health Plan.';
+export const CLIENT_SUMMARY_TITLE = 'Client summary';
 
 export type ReviewCategoryCounts = {
   ready: number;
@@ -25,6 +22,38 @@ export const formatClientSummarySubtitle = (
   categories: number,
 ) =>
   `${total} biomarker${total === 1 ? '' : 's'} in ${categories} categor${categories === 1 ? 'y' : 'ies'}`;
+
+export const formatDetailedAnalysisNote = (total: number, categories: number) =>
+  `Total of ${total} Biomarker${total === 1 ? '' : 's'} in ${categories} Categor${categories === 1 ? 'y' : 'ies'}`;
+
+export const resolveOverviewBiomarkerTotals = (
+  referenceData: any,
+  clientSummary: any,
+) => {
+  const biomarkers = referenceData?.biomarkers ?? [];
+  const referenceTotal =
+    referenceData?.total_biomarkers ??
+    (biomarkers.length > 0 ? biomarkers.length : null);
+  const summaryTotal = clientSummary?.total_subcategory ?? null;
+  const total =
+    referenceTotal != null && referenceTotal >= 0
+      ? referenceTotal
+      : (summaryTotal ?? 0);
+
+  const referenceCategories = referenceData?.total_categories ?? null;
+  const summaryCategories = clientSummary?.total_category ?? null;
+  const categories =
+    referenceCategories != null && referenceCategories >= 0
+      ? referenceCategories
+      : (summaryCategories ?? 0);
+
+  return {
+    total,
+    categories,
+    subtitle: formatClientSummarySubtitle(total, categories),
+    detailedNote: formatDetailedAnalysisNote(total, categories),
+  };
+};
 
 export const formatReadyBadge = (count: number) => `${count} ready to save`;
 

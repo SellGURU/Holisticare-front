@@ -1,4 +1,11 @@
 import TooltipText from '../../Components/TooltipText';
+import {
+  inferValueKind,
+  resolvePinPercent,
+  resolveStatusMarkerMode,
+  sortChartBounds,
+  type ChartBound,
+} from '../../utils/chartBoundMatching';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface StatusBarChartv3Props {
@@ -7,6 +14,9 @@ interface StatusBarChartv3Props {
   values?: Array<any>;
   unit?: string;
   status?: Array<any>;
+  valueType?: string;
+  valueKind?: 'numeric' | 'qualitative';
+  matchedBoundIndex?: number | null;
 }
 
 const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
@@ -15,6 +25,9 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
   values,
   unit,
   status,
+  valueType,
+  valueKind: valueKindProp,
+  matchedBoundIndex,
 }) => {
   // console.log(data);
   const resolveColor = (key: string) => {
@@ -36,10 +49,18 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     return '#FBAD37';
   };
 
-  const createGradient = (data: any[], index: number) => {
-    const sortedData = sortByRange(data);
-    const currentItem = sortedData[index];
-    const nextItem = sortedData[index + 1];
+  const bounds = (Array.isArray(data) ? data : []) as ChartBound[];
+  const valueKind = inferValueKind(
+    bounds,
+    values?.[0],
+    valueType,
+    valueKindProp,
+  );
+  const sortedBounds = sortChartBounds(bounds, valueKind);
+
+  const createGradient = (index: number) => {
+    const currentItem = sortedBounds[index];
+    const nextItem = sortedBounds[index + 1];
 
     const currentColor = currentItem.color || resolveColor(currentItem.status);
 
@@ -97,136 +118,39 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     return '';
   };
 
-  const sortByRange = (data: any) => {
-    // console.log(data);
-    return data.sort((a: any, b: any) => {
-      const lowA = parseFloat(a.low ?? '');
-      const lowB = parseFloat(b.low ?? '');
-
-      const aLow = isNaN(lowA) ? -Infinity : lowA;
-      const bLow = isNaN(lowB) ? -Infinity : lowB;
-
-      if (aLow !== bLow) return aLow - bLow;
-
-      const highA = parseFloat(a.high ?? '');
-      const highB = parseFloat(b.high ?? '');
-
-      const aHigh = isNaN(highA) ? Infinity : highA;
-      const bHigh = isNaN(highB) ? Infinity : highB;
-
-      return aHigh - bHigh;
-    });
-  };
-  const resolvePercentLeft = (el: any) => {
-    if (!values) return;
-    const value = values[0];
-    // اگر low مقدار null بود، یعنی بازه از منفی بی‌نهایت شروع می‌شود
-    if (el.low == null && el.high != null) {
-      // اگر مقدار کاربر کمتر از high باشد، درصد را نزدیک 0 قرار بده
-      if (Number(value) <= Number(el.high)) {
-        const percent = ((value - 0) / (el.high - 0)) * 100 - 3;
-        if (percent <= 10) return 10;
-        if (percent > 80) return 80;
-        return percent;
-      }
-
-      // اگر بیشتر بود، درصد را نزدیک 100 قرار بده
-      return 80;
-    }
-    // اگر high مقدار null بود، یعنی بازه تا مثبت بی‌نهایت ادامه دارد
-    if (el.high == null && el.low != null) {
-      // اگر مقدار کاربر بیشتر از low باشد، درصد را نزدیک 100 قرار بده
-      if (
-        Number(value) >= Number(el.low) * 1.5 &&
-        Number(value) < Number(el.low) * 2
-      )
-        return 30;
-      if (
-        Number(value) >= Number(el.low) * 2 &&
-        Number(value) < Number(el.low) * 3
-      )
-        return 50;
-      if (Number(value) >= Number(el.low) * 3) return 80;
-      // اگر کمتر بود، درصد را نزدیک 0 قرار بده
-      return 10;
-    }
-
-    // هم low هم high داره
-    if (el.high !== null && el.low !== null) {
-      const percent = ((value - el.low) / (el.high - el.low)) * 100;
-      if (percent <= 10) return 10;
-      if (percent > 90) return 90;
-      return percent;
-    }
-
-    // fallback
-    return 50;
-  };
-
-  const valueInStatusSegment = (el: any, numValue: number): boolean => {
-    const low = el.low === null ? null : Number(el.low);
-    const high = el.high === null ? null : Number(el.high);
-
-    if (low != null && high != null) {
-      return numValue >= low && numValue <= high;
-    }
-    if (low == null && high != null) {
-      return numValue <= high;
-    }
-    if (high == null && low != null) {
-      return numValue >= low;
-    }
-    return false;
-  };
-
-  // Helper function to determine marker mode
-  const getStatusMarkerMode = (
-    el: any,
-    status: any,
-    values: any,
-    data: any,
-  ): 'unique' | 'inRange' | 'none' => {
-    if (!status || !data || !values?.[0]) return 'none';
-
-    const currentStatus = status[0];
-    const numValue = Number(values[0]);
-    const sameStatusRanges = sortByRange(data).filter(
-      (item: any) => item.status === currentStatus,
-    );
-
-    if (sameStatusRanges.length === 1) {
-      return currentStatus === el.status ? 'unique' : 'none';
-    }
-
-    if (currentStatus !== el.status) {
-      if (el.high != null && numValue === Number(el.high)) {
-        const claimedByStatus = sameStatusRanges.some(
-          (range: any) => range.low != null && numValue === Number(range.low),
-        );
-        if (claimedByStatus) return 'none';
-      }
-      return 'none';
-    }
-
-    return valueInStatusSegment(el, numValue) ? 'inRange' : 'none';
-  };
-
   return (
     <div className="w-full relative flex select-none">
-      {sortByRange(data).map((el: any, index: number) => {
+      {sortedBounds.map((el: ChartBound, index: number) => {
+        const markerMode = resolveStatusMarkerMode(
+          el,
+          status,
+          values,
+          sortedBounds,
+          valueKind,
+          matchedBoundIndex,
+        );
+        const pinPercent = resolvePinPercent(
+          values?.[0],
+          el,
+          sortedBounds,
+          valueKind,
+          matchedBoundIndex,
+        );
         return (
           <>
             <div
-              className={` relative  h-[8px] ${index == data.length - 1 && 'rounded-r-[8px] '} ${index == 0 && 'rounded-l-[8px]'}`}
+              className={` relative  h-[8px] ${index == sortedBounds.length - 1 && 'rounded-r-[8px] '} ${index == 0 && 'rounded-l-[8px]'}`}
               style={{
-                width: 100 / data.length + '%',
-                background: createGradient(data, index),
+                width: 100 / sortedBounds.length + '%',
+                background: createGradient(index),
               }}
             >
               <div
                 className={`absolute w-full px-1 ${isCustom ? 'text-[#888888]' : 'text-Primary-DeepTeal'}  flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]`}
               >
-                <TooltipText tooltipValue={el.label}>{el.label}</TooltipText>
+                <TooltipText tooltipValue={el.label ?? ''}>
+                  <span>{el.label ?? ''}</span>
+                </TooltipText>
               </div>
               <div
                 className={`absolute w-full px-1 ${isCustom ? 'text-[#B0B0B0]' : 'text-Primary-DeepTeal'}  flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]`}
@@ -238,18 +162,12 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
                 {el.label != '' && <>)</>}
               </div>
               {(() => {
-                const markerMode = getStatusMarkerMode(
-                  el,
-                  status,
-                  values,
-                  data,
-                );
                 if (markerMode === 'unique' || markerMode === 'inRange') {
                   return (
                     <div
                       className={`absolute  top-[2px]  z-[8]`}
                       style={{
-                        left: resolvePercentLeft(el) + '%',
+                        left: pinPercent + '%',
                       }}
                     >
                       <div className="w-1 h-1  rotate-45 bg-Primary-DeepTeal"></div>

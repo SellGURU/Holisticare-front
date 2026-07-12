@@ -191,6 +191,9 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({
                   unit={data.unit}
                   values={data.values}
                   data={data.chart_bounds}
+                  valueType={data.value_type}
+                  valueKind={data.value_kind}
+                  matchedBoundIndex={data.matched_bound_index}
                 ></StatusBarChartv3>
               )}
             </div>

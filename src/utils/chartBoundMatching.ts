@@ -50,7 +50,9 @@ export const inferValueKind = (
 };
 
 const normalizeQualitativeKey = (value: unknown): string => {
-  const raw = String(value ?? '').trim().toLowerCase();
+  const raw = String(value ?? '')
+    .trim()
+    .toLowerCase();
   if (!raw) return '';
   for (const [canonical, synonyms] of Object.entries(QUALITATIVE_SYNONYMS)) {
     if (synonyms.includes(raw) || raw === canonical) return canonical;
@@ -82,7 +84,9 @@ export const valueMatchesChartBound = (
   const highNum =
     high == null || high === '' || !isNumericLike(high) ? null : Number(high);
   if (lowNum == null && highNum == null) return false;
-  return (lowNum == null || num >= lowNum) && (highNum == null || num <= highNum);
+  return (
+    (lowNum == null || num >= lowNum) && (highNum == null || num <= highNum)
+  );
 };
 
 export const findMatchingChartBoundIndex = (
@@ -99,10 +103,7 @@ export const findMatchingChartBoundIndex = (
   }
   for (let index = 0; index < bounds.length; index += 1) {
     const bound = bounds[index];
-    if (
-      valueMatchesChartBound(value, bound.low, bound.high) &&
-      bound.status
-    ) {
+    if (valueMatchesChartBound(value, bound.low, bound.high) && bound.status) {
       return index;
     }
   }
@@ -133,17 +134,12 @@ export const resolvePinPercent = (
   preferredIndex?: number | null,
 ): number => {
   if (valueKind === 'qualitative') {
-    const index = findMatchingChartBoundIndex(
-      value,
-      allBounds,
-      preferredIndex,
-    );
+    const index = findMatchingChartBoundIndex(value, allBounds, preferredIndex);
     if (index < 0) return 50;
     return ((index + 0.5) / allBounds.length) * 100;
   }
 
-  const low =
-    bound.low == null || bound.low === '' ? null : Number(bound.low);
+  const low = bound.low == null || bound.low === '' ? null : Number(bound.low);
   const high =
     bound.high == null || bound.high === '' ? null : Number(bound.high);
   const num = Number(value);
@@ -160,7 +156,12 @@ export const resolvePinPercent = (
     if (num >= low * 3) return 80;
     return 10;
   }
-  if (low != null && high != null && !Number.isNaN(low) && !Number.isNaN(high)) {
+  if (
+    low != null &&
+    high != null &&
+    !Number.isNaN(low) &&
+    !Number.isNaN(high)
+  ) {
     const percent = ((num - low) / (high - low)) * 100;
     if (percent <= 10) return 10;
     if (percent > 90) return 90;
@@ -192,7 +193,9 @@ export const resolveStatusMarkerMode = (
   const currentStatus = status[0];
   const numValue = Number(values[0]);
   const sorted = sortChartBounds(bounds, 'numeric');
-  const sameStatusRanges = sorted.filter((item) => item.status === currentStatus);
+  const sameStatusRanges = sorted.filter(
+    (item) => item.status === currentStatus,
+  );
 
   if (sameStatusRanges.length === 1) {
     return currentStatus === el.status ? 'unique' : 'none';

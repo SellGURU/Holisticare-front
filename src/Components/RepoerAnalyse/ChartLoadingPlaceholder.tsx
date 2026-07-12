@@ -1,3 +1,5 @@
+import DescriptionSkeleton from './DescriptionSkeleton';
+
 export const isBiomarkerChartReady = (biomarker: unknown): boolean => {
   if (!biomarker || typeof biomarker !== 'object') return false;
   const bounds = (biomarker as { chart_bounds?: unknown }).chart_bounds;
@@ -90,27 +92,7 @@ const HistoricalChartSkeleton = ({
   </div>
 );
 
-const TextLoadingSkeleton = ({
-  label = 'Loading…',
-  className = '',
-}: {
-  label?: string;
-  className?: string;
-}) => (
-  <div
-    className={`animate-pulse space-y-2 ${className}`}
-    role="status"
-    aria-label={label}
-  >
-    <div className="h-2.5 w-full rounded bg-Gray-100" />
-    <div className="h-2.5 w-5/6 rounded bg-Gray-100" style={pulse(60)} />
-    <div className="h-2.5 w-4/6 rounded bg-Gray-100" style={pulse(120)} />
-    <span className="sr-only">{label}</span>
-  </div>
-);
-
 const ChartLoadingPlaceholder = ({
-  label = 'Loading chart…',
   className = '',
   variant = 'status-bar',
 }: ChartLoadingPlaceholderProps) => {
@@ -118,7 +100,7 @@ const ChartLoadingPlaceholder = ({
     return <HistoricalChartSkeleton className={className} />;
   }
   if (variant === 'text') {
-    return <TextLoadingSkeleton label={label} className={className} />;
+    return <DescriptionSkeleton className={className} />;
   }
   return <StatusBarChartSkeleton className={className} />;
 };

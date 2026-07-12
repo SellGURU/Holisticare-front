@@ -1,4 +1,5 @@
 import resolveAnalyseIcon from '../../resolveAnalyseIcon';
+import { resolveCategoryStatusRingBackground } from '../../../../utils/categoryStatusRingStyle';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface DetailedAnalyseCategoryProps {
@@ -27,11 +28,10 @@ const DetailedAnalyseCategory: React.FC<DetailedAnalyseCategoryProps> = ({
           <div
             className="w-10 h-10 items-center rounded-full flex justify-center"
             style={{
-              background: `conic-gradient(#7F39FB 0% ${data.status[0]}%,#06C78D ${data.status[0]}% ${data.status[1] + data.status[0]}%,#FBAD37 ${
-                data.status[1] + data.status[0]
-              }% ${data.status[1] + data.status[2] + data.status[0]}%,#FC5474 ${
-                data.status[2] + data.status[1] + data.status[0]
-              }% 100%)`,
+              background: resolveCategoryStatusRingBackground(
+                data.status,
+                'printPurple',
+              ),
             }}
           >
             <div
