@@ -65,7 +65,9 @@ const AddModal: FC<AddModalProps> = ({
 }) => {
   const { requestClose } = useModalCloseContext();
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
-  const [draft, setDraft] = useState<any>(() => buildAddModalInitialDraft(data));
+  const [draft, setDraft] = useState<any>(() =>
+    buildAddModalInitialDraft(data),
+  );
   const [jsonText, setJsonText] = useState('');
   const [jsonError, setJsonError] = useState('');
   const draftRef = useRef(draft);

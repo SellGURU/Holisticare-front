@@ -232,7 +232,13 @@ export const resolveGlobalPinPercent = (
   preferredIndex?: number | null,
 ): number => {
   if (valueKind === 'qualitative') {
-    return resolvePinPercent(value, bound, allBounds, valueKind, preferredIndex);
+    return resolvePinPercent(
+      value,
+      bound,
+      allBounds,
+      valueKind,
+      preferredIndex,
+    );
   }
   const segmentCount = allBounds.length;
   if (segmentCount <= 0) return 50;
@@ -259,7 +265,11 @@ export const resolveGlobalStatusPin = (
 
   const sortedBounds = sortChartBounds(bounds, valueKind);
 
-  for (let segmentIndex = 0; segmentIndex < sortedBounds.length; segmentIndex += 1) {
+  for (
+    let segmentIndex = 0;
+    segmentIndex < sortedBounds.length;
+    segmentIndex += 1
+  ) {
     const el = sortedBounds[segmentIndex];
     const mode = resolveStatusMarkerMode(
       el,
@@ -287,7 +297,9 @@ export const resolveGlobalStatusPin = (
     };
   }
 
-  const statusIndex = sortedBounds.findIndex((bound) => bound.status === status[0]);
+  const statusIndex = sortedBounds.findIndex(
+    (bound) => bound.status === status[0],
+  );
   if (statusIndex < 0) return null;
 
   const fallbackBound = sortedBounds[statusIndex];

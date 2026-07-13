@@ -8,7 +8,8 @@ function isEmptyThresholdRange(range: any): boolean {
 
   const label = String(range.label || '').trim();
   const status = String(range.status || '').trim();
-  const hasLow = range.low !== null && range.low !== undefined && range.low !== '';
+  const hasLow =
+    range.low !== null && range.low !== undefined && range.low !== '';
   const hasHigh =
     range.high !== null && range.high !== undefined && range.high !== '';
 
@@ -39,8 +40,7 @@ function normalizeThresholds(thresholds: any) {
         .map((range) => ({
           label: String(range.label || '').trim(),
           status: String(range.status || '').trim(),
-          low:
-            range.low === '' || range.low === undefined ? null : range.low,
+          low: range.low === '' || range.low === undefined ? null : range.low,
           high:
             range.high === '' || range.high === undefined ? null : range.high,
           color: String(range.color || '').trim(),

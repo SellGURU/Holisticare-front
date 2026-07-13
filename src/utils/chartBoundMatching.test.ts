@@ -14,9 +14,19 @@ const glutathioneBounds: ChartBound[] = [
 ];
 
 const qualitativeBounds: ChartBound[] = [
-  { low: 'negative', high: 'negative', status: 'OptimalRange', label: 'Negative' },
+  {
+    low: 'negative',
+    high: 'negative',
+    status: 'OptimalRange',
+    label: 'Negative',
+  },
   { low: 'trace', high: 'trace', status: 'BorderlineRange', label: 'Trace' },
-  { low: 'positive', high: 'positive', status: 'DiseaseRange', label: 'Positive' },
+  {
+    low: 'positive',
+    high: 'positive',
+    status: 'DiseaseRange',
+    label: 'Positive',
+  },
   { low: '1+', high: '4+', status: 'CriticalRange', label: 'High' },
 ];
 
@@ -90,23 +100,39 @@ describe('resolveGlobalStatusPin', () => {
     expect(pin).not.toBeNull();
     expect(pin?.segmentIndex).toBe(0);
     expect(
-      qualitativeBounds.map((bound, index) =>
-        resolveStatusMarkerMode(
-          bound,
-          index,
-          ['OptimalRange'],
-          ['negative'],
-          qualitativeBounds,
-          'qualitative',
-          0,
-        ),
-      ).filter((mode) => mode !== 'none'),
+      qualitativeBounds
+        .map((bound, index) =>
+          resolveStatusMarkerMode(
+            bound,
+            index,
+            ['OptimalRange'],
+            ['negative'],
+            qualitativeBounds,
+            'qualitative',
+            0,
+          ),
+        )
+        .filter((mode) => mode !== 'none'),
     ).toHaveLength(1);
   });
 
   it('returns null when value and status are missing', () => {
-    expect(resolveGlobalStatusPin(undefined, undefined, glutathioneBounds, 'numeric')).toBeNull();
-    expect(resolveGlobalStatusPin(['OptimalRange'], [], glutathioneBounds, 'numeric')).toBeNull();
+    expect(
+      resolveGlobalStatusPin(
+        undefined,
+        undefined,
+        glutathioneBounds,
+        'numeric',
+      ),
+    ).toBeNull();
+    expect(
+      resolveGlobalStatusPin(
+        ['OptimalRange'],
+        [],
+        glutathioneBounds,
+        'numeric',
+      ),
+    ).toBeNull();
   });
 
   it('falls back to status segment when numeric value matches no bound', () => {
@@ -127,8 +153,6 @@ describe('resolveGlobalStatusPin', () => {
   });
 
   it('findMatchingChartBoundIndex honors preferred index for backend matched_bound_index', () => {
-    expect(
-      findMatchingChartBoundIndex('830', glutathioneBounds, 2),
-    ).toBe(2);
+    expect(findMatchingChartBoundIndex('830', glutathioneBounds, 2)).toBe(2);
   });
 });
