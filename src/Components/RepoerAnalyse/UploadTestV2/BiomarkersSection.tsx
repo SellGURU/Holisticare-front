@@ -823,7 +823,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     // only update if something actually changed
     if (JSON.stringify(updated) !== JSON.stringify(biomarkers)) {
       updated.forEach((row) => {
-        const prior = biomarkers.find((b) => b.biomarker_id === row.biomarker_id);
+        const prior = biomarkers.find(
+          (b) => b.biomarker_id === row.biomarker_id,
+        );
         if (
           prior &&
           String(prior.original_unit ?? '') !== String(row.original_unit ?? '')
@@ -868,7 +870,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     },
     biomarkerId?: string,
   ): Promise<
-    { success: true; data: any } | { success: false; error: string; rawError?: any }
+    | { success: true; data: any }
+    | { success: false; error: string; rawError?: any }
   > => {
     try {
       const res = await Application.standardizeBiomarkers(payload);
@@ -1687,7 +1690,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         );
                         const rowAvailableBiomarkers =
                           rowCatalogContext.systemBiomarkerOptions;
-                        const selectedSystemMeta = rowCatalogContext.catalogEntry;
+                        const selectedSystemMeta =
+                          rowCatalogContext.catalogEntry;
                         const rowErrorKey = reviewRowErrorKey(b, originalIndex);
                         const categoryResult =
                           rowCategoryResults[originalIndex] ||
@@ -1724,13 +1728,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               b.biomarker_id,
                             )}
                             clinicDefaultUnit={
-                              rowCatalogContext.clinicDefaultUnit || b.unit || ''
+                              rowCatalogContext.clinicDefaultUnit ||
+                              b.unit ||
+                              ''
                             }
                             catalogUnits={rowCatalogContext.allCatalogUnits}
                             specimenHint={rowCatalogContext.specimenHint}
                             onUseClinicDefault={() => {
                               const defaultUnit =
-                                rowCatalogContext.clinicDefaultUnit || b.unit || '';
+                                rowCatalogContext.clinicDefaultUnit ||
+                                b.unit ||
+                                '';
                               const extractedUnit =
                                 b.original_unit || b.unit || '';
                               if (

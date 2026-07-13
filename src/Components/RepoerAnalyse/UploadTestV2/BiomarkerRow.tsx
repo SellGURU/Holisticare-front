@@ -803,7 +803,9 @@ export default function BiomarkerRow({
                     onDropdownOpen?.();
                     void fetchUnits();
                   }}
-                  onCreateNew={biomarker.biomarker ? onCreateNewUnit : undefined}
+                  onCreateNew={
+                    biomarker.biomarker ? onCreateNewUnit : undefined
+                  }
                   onChange={(val: string) => {
                     const actualUnit = val === '(no unit)' ? '' : val;
                     logUnitOnChange(biomarker.biomarker_id, actualUnit);

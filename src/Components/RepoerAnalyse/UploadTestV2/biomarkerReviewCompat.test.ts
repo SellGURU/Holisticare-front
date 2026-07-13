@@ -77,7 +77,7 @@ describe('getReviewRowMessage', () => {
 
   it('formats unit_mismatch with a user-friendly message', () => {
     const detail =
-      "Protein Total (value \"7.0\", unit \"g/dL\"): Unit 'g/dL' differs from system default 'mg/l'.";
+      'Protein Total (value "7.0", unit "g/dL"): Unit \'g/dL\' differs from system default \'mg/l\'.';
     const message = getReviewRowMessage(
       { category: 'review', reviewReason: 'unit_mismatch' },
       { biomarker: 'Protein Total' },
@@ -143,7 +143,9 @@ describe('inferSpecimenTypeHintFromExtractedName', () => {
 
   it('does not misclassify Urea or BUN as urine', () => {
     expect(inferSpecimenTypeHintFromExtractedName('Urea')).toBeNull();
-    expect(inferSpecimenTypeHintFromExtractedName('Blood Urea Nitrogen')).toBeNull();
+    expect(
+      inferSpecimenTypeHintFromExtractedName('Blood Urea Nitrogen'),
+    ).toBeNull();
     expect(inferSpecimenTypeHintFromExtractedName('BUN')).toBeNull();
   });
 });

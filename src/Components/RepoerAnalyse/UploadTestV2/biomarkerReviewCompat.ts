@@ -1083,7 +1083,8 @@ export const buildSystemBiomarkerOptionsForRow = (
   const primary = catalog
     .filter(
       (option) =>
-        normalizeKey(option.biomarker_type || 'blood') === normalizeKey(rowType),
+        normalizeKey(option.biomarker_type || 'blood') ===
+        normalizeKey(rowType),
     )
     .map((option) => ({ ...option }));
 
@@ -1094,8 +1095,7 @@ export const buildSystemBiomarkerOptionsForRow = (
   const hintedType = normalizeKey(specimenHint);
   const crossType = catalog
     .filter(
-      (option) =>
-        normalizeKey(option.biomarker_type || 'blood') === hintedType,
+      (option) => normalizeKey(option.biomarker_type || 'blood') === hintedType,
     )
     .map((option) => ({ ...option, cross_type_hint: true }));
 

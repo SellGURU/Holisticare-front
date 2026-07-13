@@ -249,7 +249,9 @@ export function logStandardizeFailure(
   errorMessage: string,
 ): void {
   const errRecord =
-    error && typeof error === 'object' ? (error as Record<string, unknown>) : {};
+    error && typeof error === 'object'
+      ? (error as Record<string, unknown>)
+      : {};
   const status =
     errRecord.status ??
     (errRecord.response as Record<string, unknown> | undefined)?.status ??
@@ -291,7 +293,9 @@ export function buildSnapshotMeta(
     source: completed.source,
     fetched_at: completed.fetched_at ?? Date.now(),
     sent_at: completed.sent_at,
-    biomarker_ids: rows.map((r) => String(r?.biomarker_id || '')).filter(Boolean),
+    biomarker_ids: rows
+      .map((r) => String(r?.biomarker_id || ''))
+      .filter(Boolean),
   };
 }
 
