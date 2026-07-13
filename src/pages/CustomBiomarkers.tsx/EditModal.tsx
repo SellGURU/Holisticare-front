@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useMemo, useState, useCallback } from 'react';
+import { FC, useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import SpinnerLoader from '../../Components/SpinnerLoader';
+import { useModalCloseContext } from '../../context/ModalCloseContext';
+import { isFormDirty } from '../../hooks/useFormDirty';
+import { useRegisterModalDirtyChecker } from '../../hooks/useRegisterModalDirtyChecker';
 import { ApiBiomarkerData } from '../../types/biormarker';
 import BenchmarkAreaSelect from '../../Components/BenchmarkAreaSelect';
+import { normalizeBiomarkerDraft } from './biomarkerFormUtils';
 
 const ALLOWED_STATUSES = [
   { value: 'OptimalRange', label: 'Optimal Range', color: '#22C55E' },
@@ -45,12 +49,12 @@ const EditModal: FC<EditModalProps> = ({
   benchmarkAreaOptions,
   benchmarkAreaOptionsByType = {},
   biomarkerTypeOptions,
-  onCancel,
   onSave,
   loading,
   errorDetails,
   setErrorDetails,
 }) => {
+  const { requestClose } = useModalCloseContext();
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
   const [draft, setDraft] = useState<any>({
     ...data,
@@ -58,15 +62,36 @@ const EditModal: FC<EditModalProps> = ({
   });
   const [jsonText, setJsonText] = useState('');
   const [jsonError, setJsonError] = useState('');
+  const draftRef = useRef(draft);
+  const viewModeRef = useRef(viewMode);
+  const jsonTextRef = useRef(jsonText);
+  const initialJsonTextRef = useRef('');
+  const initialRef = useRef({ ...data });
 
-  // Do not JSON.stringify the full document on open — that blocks the main thread for large
-  // threshold trees. The Raw JSON view builds a string only when the user opens that tab.
+  draftRef.current = draft;
+  viewModeRef.current = viewMode;
+  jsonTextRef.current = jsonText;
+
   useEffect(() => {
+    initialRef.current = { ...data };
+    initialJsonTextRef.current = '';
     setDraft({ ...data });
     setViewMode('form');
     setJsonText('');
     setJsonError('');
   }, [data]);
+
+  useRegisterModalDirtyChecker(() => {
+    if (viewModeRef.current === 'json') {
+      if (jsonTextRef.current.trim() !== initialJsonTextRef.current.trim()) {
+        return true;
+      }
+    }
+
+    return isFormDirty(draftRef.current, initialRef.current, (value) =>
+      normalizeBiomarkerDraft(value, 'edit'),
+    );
+  });
 
   const updateDraft = (field: string, value: any) => {
     setDraft((prev: any) => ({ ...prev, [field]: value }));
@@ -474,7 +499,8 @@ const EditModal: FC<EditModalProps> = ({
                 : 'bg-white text-Text-Secondary border-Gray-50 hover:border-Primary-DeepTeal'
             }`}
             onClick={() => {
-              setJsonText(JSON.stringify(draft, null, 2));
+              initialJsonTextRef.current = JSON.stringify(draft, null, 2);
+              setJsonText(initialJsonTextRef.current);
               setViewMode('json');
             }}
           >
@@ -607,7 +633,7 @@ const EditModal: FC<EditModalProps> = ({
       {/* Footer */}
       <div className="px-6 py-4 border-t border-Gray-50 flex items-center justify-end gap-4">
         <div
-          onClick={onCancel}
+          onClick={requestClose}
           className="TextStyle-Headline-5 cursor-pointer text-Disable"
         >
           Cancel

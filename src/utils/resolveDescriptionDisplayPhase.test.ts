@@ -67,4 +67,42 @@ describe('resolveDescriptionDisplayPhase', () => {
     expect(result.phase).toBe('loading');
     expect(result.nextCommittedText).toBeNull();
   });
+
+  it('shows loading during reprocessing even with failOpen', () => {
+    const result = resolveDescriptionDisplayPhase({
+      descriptionReady: false,
+      descriptionText: 'Catalog fallback text',
+      committedText: null,
+      overviewProcessing: true,
+      isReprocessing: true,
+      failOpen: true,
+    });
+    expect(result.phase).toBe('loading');
+    expect(result.nextCommittedText).toBeNull();
+  });
+
+  it('fail-opens to catalog text only when permanently missing', () => {
+    const result = resolveDescriptionDisplayPhase({
+      descriptionReady: false,
+      descriptionText: 'Catalog fallback text',
+      committedText: null,
+      overviewProcessing: false,
+      isReprocessing: false,
+      failOpen: true,
+    });
+    expect(result.phase).toBe('ready_unchanged');
+    expect(result.nextCommittedText).toBe('Catalog fallback text');
+  });
+
+  it('does not fail-open when fallback text is whitespace only', () => {
+    const result = resolveDescriptionDisplayPhase({
+      descriptionReady: false,
+      descriptionText: '   ',
+      committedText: null,
+      overviewProcessing: false,
+      failOpen: true,
+    });
+    expect(result.phase).toBe('loading');
+    expect(result.nextCommittedText).toBeNull();
+  });
 });

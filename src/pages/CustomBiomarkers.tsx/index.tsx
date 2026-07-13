@@ -537,7 +537,7 @@ const CustomBiomarkers = () => {
         </div>
       )}
 
-      <MainModal isOpen={activeAdd} onClose={closeModalAdd}>
+      <MainModal isOpen={activeAdd} onClose={closeModalAdd} enableDiscardConfirm>
         <AddModal
           onCancel={closeModalAdd}
           onSave={(values: any) => onsave(values)}

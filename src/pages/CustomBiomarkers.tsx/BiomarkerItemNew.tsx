@@ -308,7 +308,7 @@ const BiomarkerRow = ({
         cancelText="Cancel"
       />
 
-      <MainModal isOpen={activeEdit} onClose={closeModalEdit}>
+      <MainModal isOpen={activeEdit} onClose={closeModalEdit} enableDiscardConfirm>
         <Suspense
           fallback={
             <div className="flex min-h-[200px] w-[90vw] max-w-[620px] items-center justify-center rounded-[16px] bg-white md:w-[620px]">

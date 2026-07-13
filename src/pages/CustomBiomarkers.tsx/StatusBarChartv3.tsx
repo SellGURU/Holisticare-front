@@ -1,8 +1,7 @@
 import TooltipText from '../../Components/TooltipText';
 import {
   inferValueKind,
-  resolvePinPercent,
-  resolveStatusMarkerMode,
+  resolveGlobalStatusPin,
   sortChartBounds,
   type ChartBound,
 } from '../../utils/chartBoundMatching';
@@ -57,6 +56,13 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     valueKindProp,
   );
   const sortedBounds = sortChartBounds(bounds, valueKind);
+  const globalPin = resolveGlobalStatusPin(
+    status,
+    values,
+    sortedBounds,
+    valueKind,
+    matchedBoundIndex,
+  );
 
   const createGradient = (index: number) => {
     const currentItem = sortedBounds[index];
@@ -121,21 +127,6 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
   return (
     <div className="w-full relative flex select-none">
       {sortedBounds.map((el: ChartBound, index: number) => {
-        const markerMode = resolveStatusMarkerMode(
-          el,
-          status,
-          values,
-          sortedBounds,
-          valueKind,
-          matchedBoundIndex,
-        );
-        const pinPercent = resolvePinPercent(
-          values?.[0],
-          el,
-          sortedBounds,
-          valueKind,
-          matchedBoundIndex,
-        );
         return (
           <>
             <div
@@ -161,43 +152,35 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
                 </TooltipText>
                 {el.label != '' && <>)</>}
               </div>
-              {(() => {
-                if (markerMode === 'unique' || markerMode === 'inRange') {
-                  return (
-                    <div
-                      className={`absolute  top-[2px]  z-[8]`}
-                      style={{
-                        left: pinPercent + '%',
-                      }}
-                    >
-                      <div className="w-1 h-1  rotate-45 bg-Primary-DeepTeal"></div>
-                      <div className="w-[2px] h-[9px] ml-[1.3px] bg-Primary-DeepTeal"></div>
-                      <div
-                        className="text-[10px] w-max flex justify-center ml-[0px] items-center gap-[2px] text-Primary-DeepTeal"
-                        style={{
-                          marginLeft:
-                            index == 0
-                              ? '0px'
-                              : '-' +
-                                ((values?.[0]?.length || 0) +
-                                  (unit?.length || 0)) *
-                                  6.3 +
-                                'px',
-                        }}
-                      >
-                        <span className="opacity-40">You: </span>
-                        {values && values[0]}{' '}
-                        <span className="opacity-70">{unit}</span>
-                      </div>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
             </div>
           </>
         );
       })}
+      {globalPin?.show ? (
+        <div
+          className="pointer-events-none absolute top-[2px] z-[8]"
+          style={{
+            left: `${globalPin.leftPercent}%`,
+          }}
+        >
+          <div className="w-1 h-1 rotate-45 bg-Primary-DeepTeal"></div>
+          <div className="w-[2px] h-[9px] ml-[1.3px] bg-Primary-DeepTeal"></div>
+          <div
+            className="text-[10px] w-max flex justify-center ml-[0px] items-center gap-[2px] text-Primary-DeepTeal"
+            style={{
+              marginLeft:
+                globalPin.segmentIndex === 0
+                  ? '0px'
+                  : '-' +
+                    ((values?.[0]?.length || 0) + (unit?.length || 0)) * 6.3 +
+                    'px',
+            }}
+          >
+            <span className="opacity-40">You: </span>
+            {values && values[0]} <span className="opacity-70">{unit}</span>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

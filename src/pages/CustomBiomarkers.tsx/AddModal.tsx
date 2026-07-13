@@ -1,8 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useMemo, useState, useCallback } from 'react';
+import { FC, useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import SpinnerLoader from '../../Components/SpinnerLoader';
+import { useModalCloseContext } from '../../context/ModalCloseContext';
+import { isFormDirty } from '../../hooks/useFormDirty';
+import { useRegisterModalDirtyChecker } from '../../hooks/useRegisterModalDirtyChecker';
 import { ApiBiomarkerData } from '../../types/biormarker';
 import BenchmarkAreaSelect from '../../Components/BenchmarkAreaSelect';
+import {
+  buildAddModalInitialDraft,
+  normalizeBiomarkerDraft,
+} from './biomarkerFormUtils';
 
 const ALLOWED_STATUSES = [
   { value: 'OptimalRange', label: 'Optimal Range', color: '#22C55E' },
@@ -41,7 +48,6 @@ interface AddModalProps {
 
 const AddModal: FC<AddModalProps> = ({
   data,
-  onCancel,
   onSave,
   loading,
   errorDetails,
@@ -57,19 +63,20 @@ const AddModal: FC<AddModalProps> = ({
   ],
   benchmarkAreaOptionsByType = {},
 }) => {
+  const { requestClose } = useModalCloseContext();
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
-  const [draft, setDraft] = useState<any>({
-    'Benchmark areas': data['Benchmark areas'] || '',
-    Biomarker: data.Biomarker || '',
-    Definition: data.Definition || '',
-    unit: data.unit || '',
-    biomarker_type: (data as any).biomarker_type || 'blood',
-    source: 'Custom',
-    show_in_maual_entry: true,
-    thresholds: data.thresholds || { male: {}, female: {} },
-  });
+  const [draft, setDraft] = useState<any>(() => buildAddModalInitialDraft(data));
   const [jsonText, setJsonText] = useState('');
   const [jsonError, setJsonError] = useState('');
+  const draftRef = useRef(draft);
+  const viewModeRef = useRef(viewMode);
+  const jsonTextRef = useRef(jsonText);
+  const initialJsonTextRef = useRef('');
+  const initialRef = useRef(buildAddModalInitialDraft(data));
+
+  draftRef.current = draft;
+  viewModeRef.current = viewMode;
+  jsonTextRef.current = jsonText;
 
   const selectedType = String(draft.biomarker_type || 'blood');
   const filteredBenchmarkAreaOptions = useMemo(
@@ -78,19 +85,27 @@ const AddModal: FC<AddModalProps> = ({
   );
 
   useEffect(() => {
-    const d = {
-      'Benchmark areas': data['Benchmark areas'] || '',
-      Biomarker: data.Biomarker || '',
-      Definition: data.Definition || '',
-      unit: data.unit || '',
-      biomarker_type: (data as any).biomarker_type || 'blood',
-      source: 'Custom',
-      show_in_maual_entry: true,
-      thresholds: data.thresholds || { male: {}, female: {} },
-    };
-    setDraft(d);
-    setJsonText(JSON.stringify(d, null, 2));
+    const nextDraft = buildAddModalInitialDraft(data);
+    const nextJsonText = JSON.stringify(nextDraft, null, 2);
+    initialRef.current = nextDraft;
+    initialJsonTextRef.current = nextJsonText;
+    setDraft(nextDraft);
+    setJsonText(nextJsonText);
+    setViewMode('form');
+    setJsonError('');
   }, [data]);
+
+  useRegisterModalDirtyChecker(() => {
+    if (viewModeRef.current === 'json') {
+      if (jsonTextRef.current.trim() !== initialJsonTextRef.current.trim()) {
+        return true;
+      }
+    }
+
+    return isFormDirty(draftRef.current, initialRef.current, (value) =>
+      normalizeBiomarkerDraft(value, 'add'),
+    );
+  });
 
   const updateDraft = (field: string, value: any) => {
     const updated = { ...draft, [field]: value };
@@ -609,7 +624,7 @@ const AddModal: FC<AddModalProps> = ({
       {/* Footer */}
       <div className="px-6 py-4 border-t border-Gray-50 flex items-center justify-end gap-4">
         <div
-          onClick={onCancel}
+          onClick={requestClose}
           className="TextStyle-Headline-5 cursor-pointer text-Disable"
         >
           Cancel

@@ -34,6 +34,7 @@ interface DetiledAnalyseProps {
   isScoringComplete?: boolean;
   strictDescriptionReady?: boolean;
   descriptionPending?: boolean;
+  permanentlyMissingFailOpen?: boolean;
   overviewProcessing?: boolean;
   dataRevision?: string | null;
   descriptionEpoch?: number;
@@ -48,6 +49,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   isScoringComplete = true,
   strictDescriptionReady = false,
   descriptionPending,
+  permanentlyMissingFailOpen = false,
   overviewProcessing = false,
   dataRevision = null,
   descriptionEpoch = 0,
@@ -98,6 +100,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
       descriptionText: data?.description,
       overviewProcessing,
       descriptionPending,
+      failOpen: permanentlyMissingFailOpen,
       dataRevision,
       descriptionEpoch,
     });

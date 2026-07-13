@@ -20,6 +20,7 @@ interface NewDetailedAcordinProps {
   isScoringComplete?: boolean;
   strictDescriptionReady?: boolean;
   descriptionPending?: boolean;
+  permanentlyMissingFailOpen?: boolean;
   overviewProcessing?: boolean;
   dataRevision?: string | null;
   descriptionEpoch?: number;
@@ -33,6 +34,7 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
   isScoringComplete = true,
   strictDescriptionReady = false,
   descriptionPending,
+  permanentlyMissingFailOpen = false,
   overviewProcessing = false,
   dataRevision = null,
   descriptionEpoch = 0,
@@ -48,6 +50,7 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
       descriptionText: data?.description,
       overviewProcessing,
       descriptionPending,
+      failOpen: permanentlyMissingFailOpen,
       dataRevision,
       descriptionEpoch,
     });

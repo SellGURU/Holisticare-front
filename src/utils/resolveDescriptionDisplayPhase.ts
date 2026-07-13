@@ -34,6 +34,13 @@ export function resolveDescriptionDisplayPhase(
     if (input.isReprocessing) {
       return { phase: 'loading', nextCommittedText: null };
     }
+    const fallbackText = String(input.descriptionText || '').trim();
+    if (input.failOpen && fallbackText) {
+      return {
+        phase: 'ready_unchanged',
+        nextCommittedText: fallbackText,
+      };
+    }
     if (input.committedText) {
       return {
         phase: 'ready_unchanged',

@@ -1118,6 +1118,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       descriptionReady: reconciled.descriptionReady,
       strictDescriptionReady: reconciled.strictDescriptionReady,
       descriptionPending: reconciled.descriptionPending,
+      permanentlyMissingFailOpen: reconciled.permanentlyMissingFailOpen,
       showTimeoutBanner: reconciled.showTimeoutBanner,
       descriptionFailed: reconciled.descriptionFailed,
     };
@@ -1906,7 +1907,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           needFocusAnalyzing={cardUi.needFocusAnalyzing}
                           ringLoading={cardUi.ringLoading}
                           strictDescriptionReady={cardUi.strictDescriptionReady}
-                          descriptionPending={el.description_pending}
+                          descriptionPending={cardUi.descriptionPending}
+                          permanentlyMissingFailOpen={
+                            cardUi.permanentlyMissingFailOpen
+                          }
                           overviewProcessing={overviewProcessing}
                           dataRevision={lastCategoryRefetchRevision}
                           descriptionEpoch={descriptionEpoch}
@@ -1928,7 +1932,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           needFocusAnalyzing={cardUi.needFocusAnalyzing}
                           ringLoading={cardUi.ringLoading}
                           strictDescriptionReady={cardUi.strictDescriptionReady}
-                          descriptionPending={el.description_pending}
+                          descriptionPending={cardUi.descriptionPending}
+                          permanentlyMissingFailOpen={
+                            cardUi.permanentlyMissingFailOpen
+                          }
                           overviewProcessing={overviewProcessing}
                           dataRevision={lastCategoryRefetchRevision}
                           descriptionEpoch={descriptionEpoch}

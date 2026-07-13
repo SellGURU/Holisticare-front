@@ -44,6 +44,7 @@ export type ReconciledUi = {
   descriptionReady: boolean;
   strictDescriptionReady: boolean;
   descriptionPending: boolean;
+  permanentlyMissingFailOpen: boolean;
   showTimeoutBanner: boolean;
   isMismatch: boolean;
   rootCauseCategory: OverviewRootCause | null;
@@ -182,6 +183,46 @@ const categoryReadyFromSignals = (
   return false;
 };
 
+export const isPermanentlyMissingDescription = (
+  snapshot: OverviewSnapshotLike,
+  card: CategoryCardLike,
+): boolean => {
+  if (snapshot.processing || snapshot.awaiting_user_review) {
+    return false;
+  }
+  if (card.description_pending === true) {
+    return false;
+  }
+  if (Boolean(card.description_ready)) {
+    return false;
+  }
+
+  const name = normalizeName(card.subcategory);
+  const inPartial = (snapshot.categories_partial || []).some(
+    (entry) => normalizeName(entry) === name,
+  );
+  if (inPartial) {
+    return false;
+  }
+
+  const tasks = snapshot.tasks || {};
+  const categoryDetailDone =
+    tasks.category_detail === 'done' || snapshot.job_id == null;
+  const jobTerminal =
+    !snapshot.processing &&
+    !snapshot.awaiting_user_review &&
+    (snapshot.data_phase === 'complete' ||
+      snapshot.job_status === 'done' ||
+      snapshot.stale === true ||
+      snapshot.job_id == null);
+
+  return (
+    jobTerminal &&
+    categoryDetailDone &&
+    Boolean(String(card.description || '').trim())
+  );
+};
+
 export const reconcileOverviewUiState = (
   snapshot: OverviewSnapshotLike,
   card: CategoryCardLike,
@@ -216,6 +257,11 @@ export const reconcileOverviewUiState = (
   const descriptionPending =
     overviewProcessing && !descriptionReady && !showTimeoutBanner;
 
+  const permanentlyMissingFailOpen = isPermanentlyMissingDescription(
+    snapshot,
+    card,
+  );
+
   const mismatchDetail = isMismatch
     ? quickOverviewDiagnosis(true, false, Boolean(snapshot.stale))
     : '';
@@ -236,6 +282,7 @@ export const reconcileOverviewUiState = (
       descriptionReady || (showTimeoutBanner && hasFallbackDescription),
     strictDescriptionReady: Boolean(card.description_ready),
     descriptionPending,
+    permanentlyMissingFailOpen,
     showTimeoutBanner,
     isMismatch,
     rootCauseCategory,

@@ -7,6 +7,7 @@ export function useCategoryDescriptionDisplay(params: {
   descriptionText: string | null | undefined;
   overviewProcessing: boolean;
   descriptionPending?: boolean;
+  failOpen?: boolean;
   dataRevision?: string | null;
   descriptionEpoch?: number;
 }) {
@@ -47,6 +48,7 @@ export function useCategoryDescriptionDisplay(params: {
     committedText,
     overviewProcessing: params.overviewProcessing,
     isReprocessing,
+    failOpen: params.failOpen,
   });
 
   useEffect(() => {

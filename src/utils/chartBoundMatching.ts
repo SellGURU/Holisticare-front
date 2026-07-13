@@ -170,24 +170,34 @@ export const resolvePinPercent = (
   return 50;
 };
 
+export type StatusMarkerMode = 'unique' | 'inRange' | 'none';
+
+export type GlobalStatusPin = {
+  show: boolean;
+  leftPercent: number;
+  mode: 'unique' | 'inRange';
+  segmentIndex: number;
+};
+
 export const resolveStatusMarkerMode = (
   el: ChartBound,
+  segmentIndex: number,
   status: string[] | undefined,
   values: unknown[] | undefined,
   bounds: ChartBound[],
   valueKind: ValueKind,
   preferredIndex?: number | null,
-): 'unique' | 'inRange' | 'none' => {
+): StatusMarkerMode => {
   if (!status?.[0] || !values?.[0] || !bounds.length) return 'none';
 
   if (valueKind === 'qualitative') {
-    const index = findMatchingChartBoundIndex(
+    const matchedIndex = findMatchingChartBoundIndex(
       values[0],
       bounds,
       preferredIndex,
     );
-    if (index < 0) return 'none';
-    return bounds[index]?.status === status[0] ? 'unique' : 'inRange';
+    if (matchedIndex < 0 || segmentIndex !== matchedIndex) return 'none';
+    return bounds[matchedIndex]?.status === status[0] ? 'unique' : 'inRange';
   }
 
   const currentStatus = status[0];
@@ -211,4 +221,87 @@ export const resolveStatusMarkerMode = (
   if (low == null && high != null) return numValue <= high ? 'inRange' : 'none';
   if (high == null && low != null) return numValue >= low ? 'inRange' : 'none';
   return 'none';
+};
+
+export const resolveGlobalPinPercent = (
+  segmentIndex: number,
+  value: unknown,
+  bound: ChartBound,
+  allBounds: ChartBound[],
+  valueKind: ValueKind,
+  preferredIndex?: number | null,
+): number => {
+  if (valueKind === 'qualitative') {
+    return resolvePinPercent(value, bound, allBounds, valueKind, preferredIndex);
+  }
+  const segmentCount = allBounds.length;
+  if (segmentCount <= 0) return 50;
+  const withinSegment = resolvePinPercent(
+    value,
+    bound,
+    allBounds,
+    valueKind,
+    preferredIndex,
+  );
+  const segmentWidth = 100 / segmentCount;
+  return segmentIndex * segmentWidth + (withinSegment / 100) * segmentWidth;
+};
+
+/** Resolve a single patient-value pin for the full status bar (never per-segment duplicates). */
+export const resolveGlobalStatusPin = (
+  status: string[] | undefined,
+  values: unknown[] | undefined,
+  bounds: ChartBound[],
+  valueKind: ValueKind,
+  preferredIndex?: number | null,
+): GlobalStatusPin | null => {
+  if (!status?.[0] || !values?.[0] || !bounds.length) return null;
+
+  const sortedBounds = sortChartBounds(bounds, valueKind);
+
+  for (let segmentIndex = 0; segmentIndex < sortedBounds.length; segmentIndex += 1) {
+    const el = sortedBounds[segmentIndex];
+    const mode = resolveStatusMarkerMode(
+      el,
+      segmentIndex,
+      status,
+      values,
+      sortedBounds,
+      valueKind,
+      preferredIndex,
+    );
+    if (mode === 'none') continue;
+
+    return {
+      show: true,
+      leftPercent: resolveGlobalPinPercent(
+        segmentIndex,
+        values[0],
+        el,
+        sortedBounds,
+        valueKind,
+        preferredIndex,
+      ),
+      mode,
+      segmentIndex,
+    };
+  }
+
+  const statusIndex = sortedBounds.findIndex((bound) => bound.status === status[0]);
+  if (statusIndex < 0) return null;
+
+  const fallbackBound = sortedBounds[statusIndex];
+  return {
+    show: true,
+    leftPercent: resolveGlobalPinPercent(
+      statusIndex,
+      values[0],
+      fallbackBound,
+      sortedBounds,
+      valueKind,
+      preferredIndex,
+    ),
+    mode: 'unique',
+    segmentIndex: statusIndex,
+  };
 };
