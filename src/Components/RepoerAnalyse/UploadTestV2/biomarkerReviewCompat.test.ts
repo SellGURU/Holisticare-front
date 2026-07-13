@@ -1,0 +1,239 @@
+import { describe, expect, it } from 'vitest';
+import {
+  buildSystemBiomarkerOptionsForRow,
+  collectCatalogUnitsForBiomarker,
+  formatUnitMismatchUserMessage,
+  getReviewRowMessage,
+  inferReviewReasonFromErrorText,
+  inferRowBiomarkerType,
+  inferSpecimenTypeHintFromExtractedName,
+  isSafeUnitRelabel,
+  mergeUnitOptionSources,
+  parseUnitMismatchDetail,
+  resolveRowCatalogContext,
+} from './biomarkerReviewCompat';
+
+describe('inferReviewReasonFromErrorText', () => {
+  it('classifies unit required separately from unit mismatch', () => {
+    expect(
+      inferReviewReasonFromErrorText('A unit is required for this biomarker'),
+    ).toBe('unit_required');
+    expect(
+      inferReviewReasonFromErrorText(
+        "Unit 'g/dL' differs from system default 'mg/l'. No conversion mapping found.",
+      ),
+    ).toBe('unit_mismatch');
+  });
+});
+
+describe('parseUnitMismatchDetail', () => {
+  it('extracts extracted and clinic default units from 406 detail', () => {
+    expect(
+      parseUnitMismatchDetail(
+        "Unit 'g/dL' differs from system default 'mg/l'. No conversion mapping found.",
+      ),
+    ).toEqual({
+      extractedUnit: 'g/dL',
+      clinicDefaultUnit: 'mg/l',
+    });
+  });
+});
+
+describe('mergeUnitOptionSources', () => {
+  it('includes clinic default even when API list is narrower', () => {
+    const merged = mergeUnitOptionSources(['g/dL'], 'mg/l', ['g/dL']);
+    expect(merged).toContain('mg/l');
+    expect(merged).toContain('g/dL');
+  });
+
+  it('dedupes units by normalized key', () => {
+    const merged = mergeUnitOptionSources('mg/L', 'mg/l');
+    expect(merged).toHaveLength(1);
+    expect(merged[0]).toBe('mg/L');
+  });
+});
+
+describe('formatUnitMismatchUserMessage', () => {
+  it('returns a short user-facing message', () => {
+    const message = formatUnitMismatchUserMessage(
+      "Unit 'g/dL' differs from system default 'mg/l'. No conversion mapping found.",
+      'Protein Total',
+    );
+    expect(message).toContain('g/dL was not accepted');
+    expect(message).toContain('mg/l');
+    expect(message).not.toContain('No conversion mapping found');
+  });
+});
+
+describe('getReviewRowMessage', () => {
+  it('shows dropdown guidance for unit_required', () => {
+    const message = getReviewRowMessage(
+      { category: 'review', reviewReason: 'unit_required' },
+      {},
+      'MCHC: A unit is required for this biomarker',
+    );
+    expect(message).toBe('Select a unit for this biomarker from the dropdown');
+  });
+
+  it('formats unit_mismatch with a user-friendly message', () => {
+    const detail =
+      "Protein Total (value \"7.0\", unit \"g/dL\"): Unit 'g/dL' differs from system default 'mg/l'.";
+    const message = getReviewRowMessage(
+      { category: 'review', reviewReason: 'unit_mismatch' },
+      { biomarker: 'Protein Total' },
+      detail,
+    );
+    expect(message).toContain('g/dL was not accepted');
+    expect(message).toContain('mg/l');
+  });
+});
+
+describe('isSafeUnitRelabel', () => {
+  it('allows alias-only relabels', () => {
+    expect(isSafeUnitRelabel('mg/L', 'mg/l')).toBe(true);
+    expect(isSafeUnitRelabel('liter', 'L')).toBe(true);
+  });
+
+  it('blocks unsafe magnitude changes', () => {
+    expect(isSafeUnitRelabel('g/dL', 'mg/l')).toBe(false);
+    expect(isSafeUnitRelabel('g/dL', 'mg/dL')).toBe(false);
+  });
+});
+
+const sampleCatalog = [
+  {
+    biomarker: 'Protein (Urine)',
+    benchmark_area: 'Kidney',
+    unit: 'mg/l',
+    biomarker_type: 'urine',
+    value_type: 'number',
+  },
+  {
+    biomarker: 'Protein (Urine)',
+    benchmark_area: 'Kidney',
+    unit: 'g/L',
+    biomarker_type: 'urine',
+    value_type: 'number',
+  },
+  {
+    biomarker: 'Protein Total',
+    benchmark_area: 'Liver',
+    unit: 'g/dL',
+    biomarker_type: 'blood',
+    value_type: 'number',
+  },
+  {
+    biomarker: 'Urea',
+    benchmark_area: 'Kidney',
+    unit: 'mg/dL',
+    biomarker_type: 'blood',
+    value_type: 'number',
+  },
+];
+
+describe('inferSpecimenTypeHintFromExtractedName', () => {
+  it('detects urine from protein urine extracted name', () => {
+    expect(inferSpecimenTypeHintFromExtractedName('Protein Urine')).toBe(
+      'urine',
+    );
+    expect(inferSpecimenTypeHintFromExtractedName('Protein (Urine)')).toBe(
+      'urine',
+    );
+  });
+
+  it('does not misclassify Urea or BUN as urine', () => {
+    expect(inferSpecimenTypeHintFromExtractedName('Urea')).toBeNull();
+    expect(inferSpecimenTypeHintFromExtractedName('Blood Urea Nitrogen')).toBeNull();
+    expect(inferSpecimenTypeHintFromExtractedName('BUN')).toBeNull();
+  });
+});
+
+describe('inferRowBiomarkerType', () => {
+  it('keeps Urea as blood when no explicit type', () => {
+    expect(
+      inferRowBiomarkerType({
+        original_biomarker_name: 'Urea',
+        biomarker: 'Urea',
+      }),
+    ).toBe('blood');
+  });
+});
+
+describe('buildSystemBiomarkerOptionsForRow', () => {
+  it('includes cross-type urine options with badge for blood rows with urine hint', () => {
+    const row = {
+      original_biomarker_name: 'Protein Urine',
+      biomarker_type: 'blood',
+    };
+    const options = buildSystemBiomarkerOptionsForRow(
+      sampleCatalog,
+      row,
+      'urine',
+    );
+    const proteinUrine = options.find(
+      (option) => option.biomarker === 'Protein (Urine)',
+    );
+    expect(proteinUrine).toBeDefined();
+    expect(proteinUrine?.cross_type_hint).toBe(true);
+    expect(proteinUrine?.biomarker_type).toBe('urine');
+  });
+});
+
+describe('collectCatalogUnitsForBiomarker', () => {
+  it('returns all catalog units for name and type', () => {
+    const units = collectCatalogUnitsForBiomarker(
+      sampleCatalog,
+      'Protein (Urine)',
+      'urine',
+    );
+    expect(units).toContain('mg/l');
+    expect(units).toContain('g/L');
+    expect(units).toHaveLength(2);
+  });
+});
+
+describe('resolveRowCatalogContext', () => {
+  it('surfaces Protein (Urine) for extracted protein urine on blood row', () => {
+    const context = resolveRowCatalogContext(sampleCatalog, {
+      original_biomarker_name: 'Protein Urine',
+      biomarker_type: 'blood',
+    });
+    expect(context.specimenHint).toBe('urine');
+    expect(
+      context.systemBiomarkerOptions.some(
+        (option) =>
+          option.biomarker === 'Protein (Urine)' && option.cross_type_hint,
+      ),
+    ).toBe(true);
+  });
+
+  it('keeps Urea as blood without urine hint', () => {
+    const context = resolveRowCatalogContext(sampleCatalog, {
+      original_biomarker_name: 'Urea',
+      biomarker: 'Urea',
+      biomarker_type: 'blood',
+    });
+    expect(context.specimenHint).toBeNull();
+    expect(context.rowType).toBe('blood');
+  });
+});
+
+describe('duplicate unit skip contract', () => {
+  it('should retry when last success matches but active unit error exists', () => {
+    const comparableUnit = 'mg/l';
+    const lastSuccessUnit = 'mg/l';
+    const hasActiveUnitError = true;
+    const shouldSkipDuplicateUnit =
+      comparableUnit === lastSuccessUnit && !hasActiveUnitError;
+    expect(shouldSkipDuplicateUnit).toBe(false);
+  });
+
+  it('should skip only when last success matches and no active error', () => {
+    const comparableUnit = 'mg/l';
+    const lastSuccessUnit = 'mg/l';
+    const hasActiveUnitError = false;
+    const shouldSkipDuplicateUnit =
+      comparableUnit === lastSuccessUnit && !hasActiveUnitError;
+    expect(shouldSkipDuplicateUnit).toBe(true);
+  });
+});

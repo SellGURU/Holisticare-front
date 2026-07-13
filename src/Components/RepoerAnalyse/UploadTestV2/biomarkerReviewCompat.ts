@@ -480,6 +480,7 @@ export type ReviewReason =
   | 'unmatched'
   | 'biomarker_not_found'
   | 'value_mismatch'
+  | 'unit_required'
   | 'unit_mismatch'
   | 'suggest_delete';
 
@@ -517,6 +518,15 @@ export const inferReviewReasonFromErrorText = (
     msg.includes('must be a text value')
   ) {
     return 'value_mismatch';
+  }
+  if (
+    msg.includes('unit') &&
+    (msg.includes('required') ||
+      msg.includes('is required') ||
+      msg.includes('must select') ||
+      msg.includes('must provide'))
+  ) {
+    return 'unit_required';
   }
   if (
     msg.includes('unit') &&
@@ -734,18 +744,71 @@ export const getReviewRowMessage = (
 ): string => {
   if (result.category !== 'review') return '';
 
-  if (errorText?.trim()) {
-    return errorText.trim();
-  }
-
   if (result.reviewReason === 'unmatched') {
     return 'Unmatched — please select a system biomarker';
+  }
+  if (result.reviewReason === 'unit_required') {
+    return 'Select a unit for this biomarker from the dropdown';
+  }
+  if (result.reviewReason === 'unit_mismatch') {
+    if (errorText?.trim()) {
+      return formatUnitMismatchUserMessage(
+        errorText.trim(),
+        _row?.original_biomarker_name || _row?.biomarker,
+      );
+    }
+    return 'Unit does not match clinic default — define a mapping or select a compatible unit';
   }
   if (result.reviewReason === 'suggest_delete') {
     return 'Suggested for removal';
   }
 
+  if (errorText?.trim()) {
+    return errorText.trim();
+  }
+
   return '';
+};
+
+/** True when switching to clinic default is a safe relabel (same magnitude, e.g. mg/L vs mg/l). */
+export const isSafeUnitRelabel = (
+  extractedUnit: string,
+  clinicUnit: string,
+): boolean => {
+  const extracted = trim(extractedUnit);
+  const clinic = trim(clinicUnit);
+  if (!extracted || !clinic) return false;
+  const normalizedExtracted = normalizeUnitKey(extracted);
+  const normalizedClinic = normalizeUnitKey(clinic);
+  if (!normalizedExtracted || !normalizedClinic) return false;
+  if (normalizedExtracted === normalizedClinic) return true;
+  return unitsMatchForCatalogPick(extracted, clinic);
+};
+
+export const parseUnitMismatchDetail = (
+  detail: string,
+): { extractedUnit?: string; clinicDefaultUnit?: string } | null => {
+  const text = String(detail || '');
+  const match = text.match(
+    /Unit\s+'([^']+)'\s+differs\s+from\s+system\s+default\s+'([^']+)'/i,
+  );
+  if (!match) return null;
+  return {
+    extractedUnit: match[1],
+    clinicDefaultUnit: match[2],
+  };
+};
+
+export const formatUnitMismatchUserMessage = (
+  detail: string,
+  biomarkerName?: string,
+): string => {
+  const parsed = parseUnitMismatchDetail(detail);
+  const name = trim(biomarkerName) || 'This biomarker';
+  if (!parsed?.extractedUnit || !parsed?.clinicDefaultUnit) {
+    return 'Unit was not accepted — define a mapping or select a compatible unit.';
+  }
+  return `${parsed.extractedUnit} was not accepted. ${name} uses ${parsed.clinicDefaultUnit} — create a unit mapping or select ${parsed.clinicDefaultUnit} and check the numeric value.`;
 };
 
 export const rowMatchesCategoryFilter = (
@@ -894,6 +957,33 @@ const unitsMatchForCatalogPick = (
   return VOLUME_UNIT_KEYS.has(extracted) && VOLUME_UNIT_KEYS.has(catalog);
 };
 
+/** Merge unit lists, dedupe by normalized key, preserve first-seen casing. */
+export const mergeUnitOptionSources = (
+  ...sourceLists: Array<string | string[] | undefined | null>
+): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  const add = (raw: unknown) => {
+    const text = trim(raw);
+    if (!text) return;
+    const key = normalizeUnitKey(text);
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    result.push(text);
+  };
+
+  for (const source of sourceLists) {
+    if (Array.isArray(source)) {
+      source.forEach(add);
+    } else {
+      add(source);
+    }
+  }
+
+  return result;
+};
+
 const MASS_CONCENTRATION_UNITS = new Set([
   'g/l',
   'g/dl',
@@ -902,6 +992,150 @@ const MASS_CONCENTRATION_UNITS = new Set([
   'mmol/l',
   'umol/l',
 ]);
+
+const URINE_SPECIMEN_TOKENS = [
+  'urine',
+  'urinalysis',
+  'uacr',
+  'albumin creatinine ratio',
+  'cast',
+  'casts',
+  'sediment',
+  'epithelial',
+  'leukocyte esterase',
+  'nitrite',
+  'urobilinogen',
+  'microalbumin',
+  'rbc cast',
+  'wbc urine',
+];
+
+const STOOL_SPECIMEN_TOKENS = ['stool', 'fecal', 'faecal', 'calprotectin'];
+
+const SALIVA_SPECIMEN_TOKENS = ['saliva', 'salivary'];
+
+const specimenTokensMatch = (normalizedText: string, tokens: string[]) =>
+  tokens.some((token) => normalizedText.includes(token));
+
+/** Infer specimen type from extracted name using fixed catalog tokens (not raw substring). */
+export const inferSpecimenTypeHintFromExtractedName = (
+  extractedName: unknown,
+): string | null => {
+  const normalized = normalizeKey(extractedName);
+  if (!normalized) return null;
+
+  if (specimenTokensMatch(normalized, URINE_SPECIMEN_TOKENS)) {
+    return 'urine';
+  }
+  if (specimenTokensMatch(normalized, STOOL_SPECIMEN_TOKENS)) {
+    return 'stool';
+  }
+  if (specimenTokensMatch(normalized, SALIVA_SPECIMEN_TOKENS)) {
+    return 'saliva';
+  }
+  return null;
+};
+
+/** All catalog units for a biomarker name + type (not only the first matching rule). */
+export const collectCatalogUnitsForBiomarker = (
+  catalog: any[],
+  biomarkerName: string,
+  biomarkerType: string,
+): string[] => {
+  const normalizedName = normalizeBiomarkerNameForMatch(biomarkerName);
+  const normalizedType = normalizeKey(biomarkerType || 'blood');
+  if (!normalizedName || !catalog.length) return [];
+
+  const seen = new Set<string>();
+  const units: string[] = [];
+  catalog.forEach((entry) => {
+    if (
+      normalizeBiomarkerNameForMatch(entry.biomarker) !== normalizedName ||
+      normalizeKey(entry.biomarker_type || 'blood') !== normalizedType
+    ) {
+      return;
+    }
+    const unit = trim(entry.unit);
+    const key = normalizeUnitKey(unit);
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    units.push(unit);
+  });
+  return units;
+};
+
+export type RowCatalogBiomarkerOption = {
+  biomarker: string;
+  benchmark_area?: string;
+  unit?: string;
+  value_type?: string;
+  biomarker_type?: string;
+  cross_type_hint?: boolean;
+};
+
+/** Primary row-type options plus cross-type catalog entries (badge only, no auto-select). */
+export const buildSystemBiomarkerOptionsForRow = (
+  catalog: any[],
+  row: any,
+  specimenHint: string | null,
+): RowCatalogBiomarkerOption[] => {
+  const rowType = inferRowBiomarkerType(row);
+  const primary = catalog
+    .filter(
+      (option) =>
+        normalizeKey(option.biomarker_type || 'blood') === normalizeKey(rowType),
+    )
+    .map((option) => ({ ...option }));
+
+  if (!specimenHint || normalizeKey(specimenHint) === normalizeKey(rowType)) {
+    return primary;
+  }
+
+  const hintedType = normalizeKey(specimenHint);
+  const crossType = catalog
+    .filter(
+      (option) =>
+        normalizeKey(option.biomarker_type || 'blood') === hintedType,
+    )
+    .map((option) => ({ ...option, cross_type_hint: true }));
+
+  return [...primary, ...crossType];
+};
+
+export const resolveRowCatalogContext = (
+  catalog: any[],
+  row: any,
+  _suggestions?: Array<{ system_biomarker: string; confidence: number }>,
+) => {
+  const rowType = inferRowBiomarkerType(row);
+  const specimenHint = inferSpecimenTypeHintFromExtractedName(
+    preferNonEmpty(
+      row?.original_biomarker_name,
+      row?.extracted_biomarker_name,
+      row?.biomarker,
+    ),
+  );
+  const systemBiomarkerOptions = buildSystemBiomarkerOptionsForRow(
+    catalog,
+    row,
+    specimenHint,
+  );
+  const catalogEntry = pickCatalogEntryForRow(catalog, row);
+  const clinicDefaultUnit = trim(catalogEntry?.unit);
+  const biomarkerName = trim(row?.biomarker);
+  const allCatalogUnits = biomarkerName
+    ? collectCatalogUnitsForBiomarker(catalog, biomarkerName, rowType)
+    : [];
+
+  return {
+    rowType,
+    specimenHint,
+    catalogEntry,
+    clinicDefaultUnit,
+    allCatalogUnits,
+    systemBiomarkerOptions,
+  };
+};
 
 /** Pick the best catalog row when duplicate biomarker names exist (UI hint only). */
 export const pickCatalogEntryForRow = (catalog: any[], row: any) => {

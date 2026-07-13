@@ -38,10 +38,19 @@ import {
   inferRowBiomarkerType,
   normalizeBiomarkerNameForMatch,
   pickCatalogEntryForRow,
+  resolveRowCatalogContext,
   resolveUnitForStandardize,
+  isSafeUnitRelabel,
   type CategoryFilter,
   type SuppressedBiomarkerItem,
 } from './biomarkerReviewCompat';
+import {
+  logLabUnitDebug,
+  logRowErrorsMutation,
+  logStandardizeFailure,
+  logStandardizeRequest,
+  logStandardizeSuccess,
+} from '../../../utils/labUnitDebug';
 import {
   LAB_PANEL_HELPER,
   LAB_PANEL_TITLE,
@@ -334,6 +343,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     new Set(),
   );
   const previousRowErrorKeysRef = useRef<string[]>([]);
+  const standardizeGenerationRef = useRef<Record<string, number>>({});
+  const lastSentUnitByIdRef = useRef<Record<string, string>>({});
+  const lastSuccessUnitByIdRef = useRef<Record<string, string>>({});
+  const [standardizingBiomarkerIds, setStandardizingBiomarkerIds] = useState<
+    Set<string>
+  >(new Set());
   const extractionSuccessFileRef = useRef<string | null>(null);
   const [showExtractionSuccess, setShowExtractionSuccess] = useState(false);
   const [suppressedHydrated, setSuppressedHydrated] = useState(!useReviewUx);
@@ -807,19 +822,59 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
     // only update if something actually changed
     if (JSON.stringify(updated) !== JSON.stringify(biomarkers)) {
+      updated.forEach((row) => {
+        const prior = biomarkers.find((b) => b.biomarker_id === row.biomarker_id);
+        if (
+          prior &&
+          String(prior.original_unit ?? '') !== String(row.original_unit ?? '')
+        ) {
+          logLabUnitDebug('auto-fill-unit', {
+            biomarker_id: row.biomarker_id,
+            previous_original_unit: prior.original_unit,
+            new_original_unit: row.original_unit,
+            source: 'BiomarkersSection.useEffect',
+            hypothesis: 'observe-no-standardize',
+          });
+        }
+      });
       onChange(updated);
     }
   }, [effectiveCatalog, biomarkers, onChange]);
-  const standardizeBiomarkers = async (payload: {
-    biomarker: string;
-    value: string;
-    unit: string;
-    bio_type: string;
-  }): Promise<
-    { success: true; data: any } | { success: false; error: string }
+  const bumpStandardizeGeneration = (biomarkerId: string) => {
+    standardizeGenerationRef.current[biomarkerId] =
+      (standardizeGenerationRef.current[biomarkerId] || 0) + 1;
+    return standardizeGenerationRef.current[biomarkerId];
+  };
+
+  const setStandardizingBiomarker = (biomarkerId: string, active: boolean) => {
+    setStandardizingBiomarkerIds((prev) => {
+      const next = new Set(prev);
+      if (active) {
+        next.add(biomarkerId);
+      } else {
+        next.delete(biomarkerId);
+      }
+      return next;
+    });
+  };
+
+  const standardizeBiomarkers = async (
+    payload: {
+      biomarker: string;
+      value: string;
+      unit: string;
+      bio_type: string;
+      biomarker_type?: string;
+    },
+    biomarkerId?: string,
+  ): Promise<
+    { success: true; data: any } | { success: false; error: string; rawError?: any }
   > => {
     try {
       const res = await Application.standardizeBiomarkers(payload);
+      if (biomarkerId) {
+        logStandardizeSuccess(biomarkerId, payload, res.data);
+      }
       return { success: true, data: res.data };
     } catch (err: any) {
       // Axios interceptor rejects with error.response.data directly, so err is {detail: "..."}
@@ -834,8 +889,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       } else if (err?.message) {
         errorMessage = err.message;
       }
+      if (biomarkerId) {
+        logStandardizeFailure(biomarkerId, payload, err, errorMessage);
+      }
       console.error('standardizeBiomarkers error:', errorMessage);
-      return { success: false, error: errorMessage };
+      return { success: false, error: errorMessage, rawError: err };
     }
   };
 
@@ -915,12 +973,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       return;
     }
 
-    if (rowKey) {
-      setrowErrors((prev: Record<string, string>) =>
-        removeRowErrorKey(prev, rowKey),
-      );
-    }
-
     const rawValue = String(
       preferNonEmpty(current.original_value, current.value),
     );
@@ -954,11 +1006,82 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       biomarker_type: String(current.biomarker_type || 'blood'),
     };
 
+    logStandardizeRequest(id, payload, {
+      original_unit: current.original_unit,
+      unit: current.unit,
+      unitForStandardize,
+      updatedField,
+    });
+
+    const isOnlyUnitFieldUpdate =
+      Object.keys(updatedField).length === 1 &&
+      Object.prototype.hasOwnProperty.call(updatedField, 'original_unit');
+    const comparableUnit = String(unitForStandardize || '').trim();
+    const hasActiveUnitError = Boolean(rowKey && currentRowErrors[rowKey]);
+    const lastSuccessUnit = lastSuccessUnitByIdRef.current[id] ?? '';
+    const shouldSkipDuplicateUnit =
+      isOnlyUnitFieldUpdate &&
+      comparableUnit &&
+      comparableUnit === lastSuccessUnit &&
+      !hasActiveUnitError;
+    const isInflightDuplicateUnit =
+      isOnlyUnitFieldUpdate &&
+      comparableUnit &&
+      standardizingBiomarkerIds.has(id) &&
+      comparableUnit === (lastSentUnitByIdRef.current[id] ?? '');
+
+    if (
+      !textValueDoesNotNeedUnit &&
+      (shouldSkipDuplicateUnit || isInflightDuplicateUnit)
+    ) {
+      logLabUnitDebug('standardize-skip-duplicate-unit', {
+        biomarker_id: id,
+        unit: comparableUnit,
+        lastSuccessUnit,
+        hasActiveUnitError,
+        isInflightDuplicateUnit,
+      });
+      onChange(updated);
+      return;
+    }
+
+    const generation = bumpStandardizeGeneration(id);
+    if (!textValueDoesNotNeedUnit && comparableUnit) {
+      lastSentUnitByIdRef.current[id] = comparableUnit;
+    }
+
     const hadExistingError = Boolean(rowKey && currentRowErrors[rowKey]);
-    const result = await standardizeBiomarkers(payload);
+    setStandardizingBiomarker(id, true);
+    let result: Awaited<ReturnType<typeof standardizeBiomarkers>>;
+    try {
+      result = await standardizeBiomarkers(payload, id);
+    } finally {
+      if (standardizeGenerationRef.current[id] === generation) {
+        setStandardizingBiomarker(id, false);
+      }
+    }
+
+    if (standardizeGenerationRef.current[id] !== generation) {
+      logLabUnitDebug('standardize-stale-discard', {
+        biomarker_id: id,
+        generation,
+        latest_generation: standardizeGenerationRef.current[id],
+        sent_unit: comparableUnit,
+      });
+      return;
+    }
 
     if (result.success) {
+      if (!textValueDoesNotNeedUnit && comparableUnit) {
+        lastSuccessUnitByIdRef.current[id] = comparableUnit;
+      }
       if (rowKey) {
+        logRowErrorsMutation('remove-key', {
+          source: 'standardize',
+          biomarker_id: id,
+          row_key: rowKey,
+          phase: 'success-clear',
+        });
         setrowErrors((prev: Record<string, string>) =>
           removeRowErrorKey(prev, rowKey),
         );
@@ -976,6 +1099,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                 // "Neutrophils %") and edit both rows at once.
                 biomarker_id: id,
                 review_error_handled: hadExistingError,
+                unit_change_rejected: false,
               },
               prior,
             )
@@ -984,13 +1108,31 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     } else {
       if (rowKey) {
         const row = updated.find((b) => b.biomarker_id === id) || current;
+        const formatted = formatRowError(row, result.error);
+        logRowErrorsMutation('set', {
+          source: 'standardize',
+          biomarker_id: id,
+          row_key: rowKey,
+          phase: 'failure-restore',
+          error_preview: formatted,
+          request_unit_sent: payload.unit,
+          raw_error: result.rawError,
+        });
         setrowErrors((prev: Record<string, string>) => ({
           ...prev,
-          [rowKey]: formatRowError(row, result.error),
+          [rowKey]: formatted,
         }));
       }
       updated = updated.map((b) =>
-        b.biomarker_id === id ? { ...b, review_error_handled: false } : b,
+        b.biomarker_id === id
+          ? {
+              ...b,
+              review_error_handled: false,
+              unit_change_rejected: isOnlyUnitFieldUpdate
+                ? true
+                : b.unit_change_rejected,
+            }
+          : b,
       );
     }
 
@@ -1538,23 +1680,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           b.biomarker_id ||
                           `${b.original_biomarker_name || b.biomarker || ''}-${b.original_value || b.value || ''}-${b.original_unit || b.unit || ''}`;
                         const rowSuggestions = suggestions[suggestionKey];
-                        const rowType = String(b.biomarker_type || 'blood')
-                          .trim()
-                          .toLowerCase();
-                        const rowAvailableBiomarkers = effectiveCatalog.filter(
-                          (option) =>
-                            String(option.biomarker_type || 'blood')
-                              .trim()
-                              .toLowerCase() === rowType,
+                        const rowCatalogContext = resolveRowCatalogContext(
+                          effectiveCatalog,
+                          b,
+                          rowSuggestions?.matches,
                         );
-                        const selectedSystemMeta = effectiveCatalog.find(
-                          (option) =>
-                            normalizeBiomarkerNameForMatch(option.biomarker) ===
-                              normalizeBiomarkerNameForMatch(b.biomarker) &&
-                            String(option.biomarker_type || 'blood')
-                              .trim()
-                              .toLowerCase() === rowType,
-                        );
+                        const rowAvailableBiomarkers =
+                          rowCatalogContext.systemBiomarkerOptions;
+                        const selectedSystemMeta = rowCatalogContext.catalogEntry;
                         const rowErrorKey = reviewRowErrorKey(b, originalIndex);
                         const categoryResult =
                           rowCategoryResults[originalIndex] ||
@@ -1586,6 +1719,29 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             useReviewUx={useReviewUx}
                             rowCategory={categoryResult.category}
                             reviewMessage={reviewMessage}
+                            reviewReason={categoryResult.reviewReason}
+                            isStandardizingUnit={standardizingBiomarkerIds.has(
+                              b.biomarker_id,
+                            )}
+                            clinicDefaultUnit={
+                              rowCatalogContext.clinicDefaultUnit || b.unit || ''
+                            }
+                            catalogUnits={rowCatalogContext.allCatalogUnits}
+                            specimenHint={rowCatalogContext.specimenHint}
+                            onUseClinicDefault={() => {
+                              const defaultUnit =
+                                rowCatalogContext.clinicDefaultUnit || b.unit || '';
+                              const extractedUnit =
+                                b.original_unit || b.unit || '';
+                              if (
+                                defaultUnit &&
+                                isSafeUnitRelabel(extractedUnit, defaultUnit)
+                              ) {
+                                updateAndStandardize(b.biomarker_id, {
+                                  original_unit: defaultUnit,
+                                });
+                              }
+                            }}
                             excludedReason={excludedMetaEntry?.reason}
                             excludedAt={excludedMetaEntry?.excludedAt}
                             onExcludeReview={() => handleExcludeReviewRow(b)}
@@ -1748,8 +1904,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           suggestions={createUnitFor.suggestionMatches}
           onClose={() => setCreateUnitFor(null)}
           onCreated={(newUnit) => {
-            // Auto-select the new unit on the triggering row
             if (createUnitFor.biomarkerId) {
+              delete lastSentUnitByIdRef.current[createUnitFor.biomarkerId];
               updateAndStandardize(createUnitFor.biomarkerId, {
                 original_unit: newUnit,
               });

@@ -17,8 +17,13 @@ import {
   normalizeBiomarkerNameForMatch,
   pickCatalogEntryForRow,
   shouldBlockCreateNewBiomarker,
+  isSafeUnitRelabel,
+  mergeUnitOptionSources,
+  parseUnitMismatchDetail,
   type CategorizeReviewRowResult,
+  type ReviewReason,
 } from './biomarkerReviewCompat';
+import { logUnitOnChange } from '../../../utils/labUnitDebug';
 
 interface BiomarkerRowProps {
   refRenceEl: any;
@@ -45,6 +50,12 @@ interface BiomarkerRowProps {
   useReviewUx?: boolean;
   rowCategory?: CategorizeReviewRowResult['category'];
   reviewMessage?: string;
+  reviewReason?: ReviewReason;
+  isStandardizingUnit?: boolean;
+  clinicDefaultUnit?: string;
+  catalogUnits?: string[];
+  specimenHint?: string | null;
+  onUseClinicDefault?: () => void;
   onExcludeReview?: () => void;
   onRestoreExcluded?: () => void;
   onMappingDirtyChange?: (dirty: boolean) => void;
@@ -93,6 +104,12 @@ export default function BiomarkerRow({
   useReviewUx = false,
   rowCategory = 'ready',
   reviewMessage = '',
+  reviewReason,
+  isStandardizingUnit = false,
+  clinicDefaultUnit = '',
+  catalogUnits = [],
+  specimenHint = null,
+  onUseClinicDefault,
   onExcludeReview,
   onRestoreExcluded,
   onMappingDirtyChange,
@@ -112,7 +129,7 @@ export default function BiomarkerRow({
   const [isSavingRow, setIsSavingRow] = useState(false);
   const baselineSystemBiomarkerRef = useRef('');
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
-  const [unitOptions, setUnitOptions] = useState<string[]>([]);
+  const [fetchedApiUnits, setFetchedApiUnits] = useState<string[]>([]);
   const [copiedExactName, setCopiedExactName] = useState(false);
 
   const markMappingDirty = () => {
@@ -152,21 +169,13 @@ export default function BiomarkerRow({
     }
   };
 
-  const buildUnitOptions = (units: string[]) => {
-    const normalized = units
-      .map((u: string) => (u === '' ? '(no unit)' : u))
-      .filter((u, idx, list) => list.indexOf(u) === idx);
-    setUnitOptions(normalized);
-    return normalized;
-  };
-
   const fetchUnits = async () => {
     try {
       const res = await Application.getAllBiomarkerUnits({
         biomarker_name: biomarker.biomarker,
       });
       if (res && Array.isArray(res.data.units)) {
-        buildUnitOptions(res.data.units);
+        setFetchedApiUnits(res.data.units);
       }
     } catch (err) {
       console.log(err);
@@ -198,6 +207,8 @@ export default function BiomarkerRow({
         normalizedErrorText.includes('unit') ||
         normalizedErrorText.includes('cannot be provided')),
   );
+  const isUnitRequiredError = reviewReason === 'unit_required';
+  const isUnitMismatchError = reviewReason === 'unit_mismatch';
 
   // Build the effective suggestions list:
   // For successfully mapped rows, include the current mapping as a top suggestion
@@ -283,35 +294,77 @@ export default function BiomarkerRow({
     if (effectiveExtractedUnit) {
       return effectiveExtractedUnit;
     }
-    // Never show a catalog/possible unit as if already selected when the row
-    // has no extracted unit — that misleads users into thinking validation passed.
     return '';
   })();
+
+  const unitOptions = useMemo(() => {
+    const parsed = parseUnitMismatchDetail(errorText);
+    return mergeUnitOptionSources(
+      effectiveExtractedUnit,
+      clinicDefaultUnit,
+      parsed?.extractedUnit,
+      parsed?.clinicDefaultUnit,
+      biomarker.possible_values?.units,
+      fetchedApiUnits,
+      catalogUnits,
+      selectedSystemMeta?.unit,
+    ).map((unit) => (unit === '' ? '(no unit)' : unit));
+  }, [
+    effectiveExtractedUnit,
+    clinicDefaultUnit,
+    errorText,
+    biomarker.possible_values?.units,
+    fetchedApiUnits,
+    catalogUnits,
+    selectedSystemMeta?.unit,
+  ]);
+
+  const showSafeClinicDefaultAction = Boolean(
+    isUnitMismatchError &&
+      clinicDefaultUnit &&
+      onUseClinicDefault &&
+      isSafeUnitRelabel(effectiveExtractedUnit, clinicDefaultUnit),
+  );
+  const showSelectClinicDefaultAction = Boolean(
+    isUnitMismatchError &&
+      !isErrorHandled &&
+      clinicDefaultUnit &&
+      onUseClinicDefault &&
+      !showSafeClinicDefaultAction &&
+      !isSafeUnitRelabel(effectiveExtractedUnit, clinicDefaultUnit),
+  );
+  const unitChangeRejected = Boolean(biomarker.unit_change_rejected);
+  const showUnitRejectedBadge = Boolean(
+    isUnitMismatchError &&
+      !isErrorHandled &&
+      (unitChangeRejected || isHaveError),
+  );
+  const currentUnitInOptions = unitOptions.some(
+    (option) =>
+      option !== '(no unit)' &&
+      (option === displayUnit ||
+        isSafeUnitRelabel(option, displayUnit) ||
+        option.toLowerCase() === displayUnit.toLowerCase()),
+  );
+  const unitDropdownValue =
+    isUnitMismatchError &&
+    !isErrorHandled &&
+    showUnitRejectedBadge &&
+    !currentUnitInOptions
+      ? ''
+      : isExtractedUnitError &&
+          !isErrorHandled &&
+          !effectiveExtractedUnit &&
+          unitOptions.length !== 1
+        ? ''
+        : displayUnit;
 
   useEffect(() => {
     if (!biomarker.biomarker || isTextValueWithoutUnit) {
       return;
     }
-
-    const seedUnits = [
-      ...(Array.isArray(biomarker.possible_values?.units)
-        ? biomarker.possible_values.units
-        : []),
-      selectedSystemMeta?.unit || '',
-    ].filter(
-      (unit) =>
-        unit !== undefined && unit !== null && String(unit).trim() !== '',
-    );
-    if (seedUnits.length > 0) {
-      buildUnitOptions(seedUnits);
-    } else {
-      void fetchUnits();
-    }
-  }, [
-    biomarker.biomarker,
-    biomarker.possible_values?.units?.join('|'),
-    selectedSystemMeta?.unit,
-  ]);
+    void fetchUnits();
+  }, [biomarker.biomarker]);
 
   useEffect(() => {
     if (isTextValueWithoutUnit || !biomarker.biomarker) {
@@ -599,7 +652,7 @@ export default function BiomarkerRow({
         </div>
 
         {/* Column 2: Biomarker Type */}
-        <div className="flex min-w-0 justify-center pt-1">
+        <div className="flex min-w-0 flex-col items-center justify-start gap-0.5 pt-1">
           <select
             value={biomarker.biomarker_type || 'blood'}
             onChange={(event) => {
@@ -620,6 +673,13 @@ export default function BiomarkerRow({
               </option>
             ))}
           </select>
+          {specimenHint &&
+            String(biomarker.biomarker_type || 'blood').toLowerCase() !==
+              specimenHint && (
+              <span className="max-w-[100px] text-center text-[7px] leading-tight text-orange-600">
+                Switch type to {formatBiomarkerTypeLabel(specimenHint)}
+              </span>
+            )}
         </div>
 
         {/* Column 3: System Biomarker with suggestions */}
@@ -710,49 +770,58 @@ export default function BiomarkerRow({
         </div>
 
         {/* Column 5: Extracted Unit with create action */}
-        <div className="flex min-w-0 justify-center pt-1">
-          <div className="w-full max-w-[100px] 2xl:max-w-[140px]">
+        <div className="flex min-w-0 flex-col items-center justify-start gap-0.5 pt-1">
+          <div className="relative w-full max-w-[100px] 2xl:max-w-[140px]">
             {isTextValueWithoutUnit ? (
               <div className="flex min-h-[28px] items-center justify-center rounded-2xl border border-Gray-50 bg-[#FDFDFD] px-3 py-1 text-center text-[8px] text-Text-Secondary md:text-[10px]">
                 Not required
               </div>
             ) : (
-              <SelectWithCreate
-                isLarge
-                isSetting
-                value={
-                  isExtractedUnitError &&
-                  !isErrorHandled &&
-                  !effectiveExtractedUnit &&
-                  unitOptions.length !== 1
-                    ? ''
-                    : displayUnit
-                }
-                placeholder={
-                  isExtractedUnitError && !isErrorHandled
-                    ? 'Select unit'
-                    : !displayUnit
-                      ? 'Select unit'
-                      : 'Select an option'
-                }
-                validation={isExtractedUnitError && !isErrorHandled}
-                options={unitOptions}
-                onMenuOpen={() => {
-                  onDropdownOpen?.();
-                  void fetchUnits();
-                }}
-                onCreateNew={biomarker.biomarker ? onCreateNewUnit : undefined}
-                onChange={(val: string) => {
-                  const actualUnit = val === '(no unit)' ? '' : val;
-                  updateAndStandardize(biomarker.biomarker_id, {
-                    original_unit: actualUnit,
-                  });
-                  markMappingDirty();
-                  setIsMapped(false);
-                  setSavedMappings([]);
-                  setSaveError(null);
-                }}
-              />
+              <>
+                <SelectWithCreate
+                  isLarge
+                  isSetting
+                  disabled={isStandardizingUnit}
+                  value={unitDropdownValue}
+                  placeholder={
+                    showUnitRejectedBadge
+                      ? 'Select a valid unit'
+                      : isUnitRequiredError && !isErrorHandled
+                        ? 'Select unit'
+                        : isExtractedUnitError && !isErrorHandled
+                          ? 'Select unit'
+                          : !displayUnit
+                            ? 'Select unit'
+                            : 'Select an option'
+                  }
+                  validation={
+                    (isExtractedUnitError && !isErrorHandled) ||
+                    showUnitRejectedBadge
+                  }
+                  options={unitOptions}
+                  onMenuOpen={() => {
+                    onDropdownOpen?.();
+                    void fetchUnits();
+                  }}
+                  onCreateNew={biomarker.biomarker ? onCreateNewUnit : undefined}
+                  onChange={(val: string) => {
+                    const actualUnit = val === '(no unit)' ? '' : val;
+                    logUnitOnChange(biomarker.biomarker_id, actualUnit);
+                    updateAndStandardize(biomarker.biomarker_id, {
+                      original_unit: actualUnit,
+                    });
+                    markMappingDirty();
+                    setIsMapped(false);
+                    setSavedMappings([]);
+                    setSaveError(null);
+                  }}
+                />
+                {isStandardizingUnit ? (
+                  <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center">
+                    <div className="h-3 w-3 animate-spin rounded-full border border-Primary-DeepTeal border-t-transparent" />
+                  </div>
+                ) : null}
+              </>
             )}
           </div>
         </div>
@@ -884,8 +953,54 @@ export default function BiomarkerRow({
         </div>
 
         {useReviewUx && rowCategory === 'review' && reviewMessage ? (
-          <div className="col-span-full px-0 pb-1 pt-0 text-left text-[10px] leading-snug text-[#B45309] break-words">
-            ⚠ {reviewMessage}
+          <div className="col-span-full px-0 pb-1 pt-0 text-left text-[10px] leading-snug break-words">
+            <div
+              className={
+                isUnitRequiredError
+                  ? 'text-[#B45309]'
+                  : isUnitMismatchError
+                    ? 'text-[#B45309]'
+                    : 'text-[#B45309]'
+              }
+            >
+              ⚠ {reviewMessage}
+            </div>
+            {isUnitMismatchError && !isErrorHandled ? (
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                {onCreateNewUnit ? (
+                  <button
+                    type="button"
+                    className="rounded-full border border-Primary-DeepTeal px-2.5 py-0.5 text-[9px] font-medium text-Primary-DeepTeal transition-colors hover:bg-Primary-DeepTeal/10"
+                    onClick={onCreateNewUnit}
+                  >
+                    Define unit mapping
+                  </button>
+                ) : null}
+                {showSafeClinicDefaultAction ? (
+                  <button
+                    type="button"
+                    className="rounded-full border border-Gray-50 bg-white px-2.5 py-0.5 text-[9px] font-medium text-Text-Primary transition-colors hover:bg-Gray-15"
+                    onClick={onUseClinicDefault}
+                  >
+                    Use clinic default ({clinicDefaultUnit})
+                  </button>
+                ) : null}
+                {showSelectClinicDefaultAction ? (
+                  <button
+                    type="button"
+                    className="rounded-full border border-Primary-DeepTeal px-2.5 py-0.5 text-[9px] font-medium text-Primary-DeepTeal transition-colors hover:bg-Primary-DeepTeal/10"
+                    onClick={onUseClinicDefault}
+                  >
+                    Select {clinicDefaultUnit} (clinic default)
+                  </button>
+                ) : null}
+                {showSelectClinicDefaultAction ? (
+                  <span className="text-[9px] text-Text-Secondary">
+                    Check the numeric value after switching unit.
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         ) : null}
         {useReviewUx && rowCategory === 'excluded' ? (

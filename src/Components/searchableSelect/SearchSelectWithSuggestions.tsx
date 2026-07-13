@@ -25,6 +25,7 @@ export interface BiomarkerOption {
   unit?: string;
   value_type?: string;
   biomarker_type?: string;
+  cross_type_hint?: boolean;
 }
 
 type Props = {
@@ -79,6 +80,12 @@ const unitTypeLabel = (unit?: string, valueType?: string) => {
   if (cleanUnit) return `Unit/type: ${cleanUnit}`;
   if (cleanType) return `Type: ${cleanType}`;
   return 'Unit/type: no unit';
+};
+
+const formatTypeBadgeLabel = (biomarkerType?: string) => {
+  const text = String(biomarkerType || '').trim();
+  if (!text) return '';
+  return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
 const SearchSelectWithSuggestions: React.FC<Props> = ({
@@ -447,7 +454,14 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
                         role="option"
                         aria-selected={selectedValue === option.biomarker}
                       >
-                        <div>{option.biomarker}</div>
+                        <div className="flex items-center gap-1.5">
+                          <span>{option.biomarker}</span>
+                          {option.cross_type_hint && option.biomarker_type && (
+                            <span className="rounded border border-orange-200 bg-orange-50 px-1 py-0.5 text-[7px] font-medium uppercase tracking-wide text-orange-700">
+                              {formatTypeBadgeLabel(option.biomarker_type)}
+                            </span>
+                          )}
+                        </div>
                         <div className="text-[8px] text-Text-Secondary mt-0.5">
                           {unitTypeLabel(option.unit, option.value_type)}
                         </div>

@@ -25,10 +25,26 @@ import {
   reviewRowErrorKey,
   categorizeReviewRow,
   filterPersistedReviewFindingItems,
+  inferRowBiomarkerType,
+  inferReviewReasonFromErrorText,
 } from './biomarkerReviewCompat';
 import BiomarkersApi from '../../../api/Biomarkers';
 import { showError, showSuccess } from '../../GlobalToast';
 import { ReviewFinding } from './ReviewFindingsPanel';
+import {
+  buildSnapshotMeta,
+  completeLabUnitRequest,
+  computeSnapshotAgeVsOnChange,
+  createLabUnitRequest,
+  getLabUnitDebugContext,
+  logLabUnitDebug,
+  logRowErrorsMutation,
+  setLabUnitDebugContext,
+  summarizeContextBiomarkers,
+  summarizeStepOneResponse,
+  type LabUnitRequestMeta,
+  type LabUnitSnapshotMeta,
+} from '../../../utils/labUnitDebug';
 // import SpinnerLoader from '../../SpinnerLoader';
 
 // interface FileUpload {
@@ -70,7 +86,9 @@ const enrichExtractedRowForReview = (row: any, labType?: string) => {
   return {
     ...withNames,
     biomarker_type:
-      withNames.biomarker_type || inferBiomarkerTypeFromLabType(labType),
+      withNames.biomarker_type ||
+      inferRowBiomarkerType(withNames) ||
+      inferBiomarkerTypeFromLabType(labType),
     original_value: preferNonEmpty(withNames.original_value, withNames.value),
     original_unit:
       withNames.original_unit !== undefined
@@ -144,6 +162,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const skipExtractionProgressRef = useRef(false);
   const [reopeningExistingFile, setReopeningExistingFile] = useState(false);
   const backendRowErrorsRef = useRef<Record<string, string>>({});
+  const backendRowErrorsMetaRef = useRef<LabUnitSnapshotMeta | null>(null);
+  const contextBiomarkersMetaRef = useRef<LabUnitSnapshotMeta | null>(null);
+  const pollingRef = useRef(polling);
+  const currentStepOneRequestRef = useRef<LabUnitRequestMeta | null>(null);
   const autoSaveFileRef = useRef<string | null>(null);
   const reviewHydratedFileRef = useRef<string | null>(null);
   const [reviewHydrating, setReviewHydrating] = useState(false);
@@ -175,6 +197,16 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       isMountedRef.current = false;
     };
   }, []);
+
+  useEffect(() => {
+    pollingRef.current = polling;
+    setLabUnitDebugContext({
+      polling,
+      isTrueEditMode,
+      reopeningExistingFile,
+      stepOnePollInFlight: stepOnePollInFlightRef.current,
+    });
+  }, [polling, isTrueEditMode, reopeningExistingFile]);
   useEffect(() => {
     subscribe('uploadTestShow-stepTwo', (data: any) => {
       if (isDemo) return;
@@ -371,15 +403,40 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             addedBiomarkers,
           );
           backendRowErrorsRef.current = errorMaps.modifiedErrors;
+          const stepOneCompleted = currentStepOneRequestRef.current;
+          if (stepOneCompleted) {
+            backendRowErrorsMetaRef.current = buildSnapshotMeta(
+              stepOneCompleted,
+              enrichedRows,
+            );
+          }
+          logRowErrorsMutation('set', {
+            source: 'step-one-poll',
+            request_id: stepOneCompleted?.request_id,
+            fetched_at: stepOneCompleted?.fetched_at,
+            error_count: Object.keys(errorMaps.modifiedErrors).length,
+            error_keys: Object.keys(errorMaps.modifiedErrors),
+            raw_step_one: summarizeStepOneResponse(data),
+            polling: pollingRef.current,
+          });
           setRowErrors(errorMaps.modifiedErrors);
           setAddedRowErrors(errorMaps.addedErrors);
         } else if (!reopenExistingFile) {
           backendRowErrorsRef.current = {};
+          backendRowErrorsMetaRef.current = null;
+          logRowErrorsMutation('clear', {
+            source: 'step-one-poll',
+            request_id: currentStepOneRequestRef.current?.request_id,
+            reason: 'validation_not_ready_non_reopen',
+          });
           setRowErrors({});
           setAddedRowErrors({});
         }
 
         const displayRows = sortReviewBiomarkerRows(enrichedRows);
+        contextBiomarkersMetaRef.current = currentStepOneRequestRef.current
+          ? buildSnapshotMeta(currentStepOneRequestRef.current, displayRows)
+          : null;
         setExtractedBiomarkers(displayRows);
         setUploadPhase(
           reopenExistingFile && !data.validation?.ready
@@ -415,12 +472,27 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const fetchData = async () => {
       if (stepOnePollInFlightRef.current) return;
       stepOnePollInFlightRef.current = true;
+      setLabUnitDebugContext({ stepOnePollInFlight: true });
+      const req = createLabUnitRequest('step-one-poll');
+      logLabUnitDebug('step-one-poll:send', {
+        request_id: req.request_id,
+        file_id: activeFileId,
+        polling: pollingRef.current,
+      });
       if (!skipExtractionProgressRef.current) {
         setbiomarkerLoading(true);
       }
       try {
         const res = await Application.checkLabStepOne({
           file_id: activeFileId,
+        });
+        currentStepOneRequestRef.current = completeLabUnitRequest(req, {
+          raw_step_one: summarizeStepOneResponse(res.data),
+          polling_at_receive: pollingRef.current,
+          will_stop_polling_hint:
+            Boolean(res.data?.validation?.ready) ||
+            skipExtractionProgressRef.current ||
+            Boolean(res.data?.is_edited),
         });
         await processStepOneData(res.data);
       } catch (err: any) {
@@ -433,6 +505,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             : (err?.response?.data ?? null); // standard axios error shape
 
         if (errData && errData.extracted_biomarkers !== undefined) {
+          currentStepOneRequestRef.current = completeLabUnitRequest(req, {
+            raw_step_one: summarizeStepOneResponse(errData),
+            polling_at_receive: pollingRef.current,
+            via_error_path: true,
+          });
           await processStepOneData(errData);
         } else if (
           err?.response?.status === 504 ||
@@ -456,6 +533,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         }
       } finally {
         stepOnePollInFlightRef.current = false;
+        setLabUnitDebugContext({ stepOnePollInFlight: false });
       }
     };
 
@@ -1002,6 +1080,11 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       contextBiomarkers,
       addedBiomarkers,
     );
+    logRowErrorsMutation('set', {
+      source: 'validate-api',
+      error_count: Object.keys(modifiedErrors).length,
+      error_keys: Object.keys(modifiedErrors),
+    });
     setRowErrors(modifiedErrors);
     setAddedRowErrors(addedErrors);
   };
@@ -1010,6 +1093,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     findings: ReviewFinding[],
     contextBiomarkers = extractedBiomarkers,
     backendErrors: Record<string, string> | null = null,
+    findingsMeta: LabUnitSnapshotMeta | null = null,
   ) => {
     const openFindings = findings.filter(
       (finding) =>
@@ -1037,7 +1121,51 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       contextBiomarkers,
       addedBiomarkers,
     );
-    setRowErrors({ ...(backendErrors ?? {}), ...modifiedErrors });
+
+    const snapshotAge = computeSnapshotAgeVsOnChange(
+      findingsMeta?.fetched_at ?? backendRowErrorsMetaRef.current?.fetched_at,
+      getLabUnitDebugContext().lastUnitOnChangeAt,
+    );
+    const snapshotOlderThanOnChange =
+      snapshotAge.is_snapshot_older_than_onChange === true;
+
+    const filteredModifiedErrors = { ...modifiedErrors };
+    contextBiomarkers.forEach((row, index) => {
+      const id = String(row?.biomarker_id || '').trim();
+      const rowKey = reviewRowErrorKey(row, index);
+      const errorText = filteredModifiedErrors[rowKey];
+      if (!errorText) return;
+
+      const reason = inferReviewReasonFromErrorText(errorText);
+      const isUnitError =
+        reason === 'unit_mismatch' || reason === 'unit_required';
+      if (!isUnitError) return;
+
+      if (id && dirtyBiomarkerIds.includes(id)) {
+        delete filteredModifiedErrors[rowKey];
+        return;
+      }
+      if (snapshotOlderThanOnChange) {
+        delete filteredModifiedErrors[rowKey];
+      }
+    });
+
+    const merged = { ...(backendErrors ?? {}), ...filteredModifiedErrors };
+    logRowErrorsMutation('merge', {
+      source: 'findings-merge',
+      findings_request_id: findingsMeta?.request_id,
+      findings_fetched_at: findingsMeta?.fetched_at,
+      backend_errors_meta: backendRowErrorsMetaRef.current,
+      context_biomarkers_meta: contextBiomarkersMetaRef.current,
+      context_snapshot: summarizeContextBiomarkers(contextBiomarkers),
+      backend_errors_keys: Object.keys(backendErrors ?? {}),
+      findings_errors_keys: Object.keys(modifiedErrors),
+      filtered_findings_errors_keys: Object.keys(filteredModifiedErrors),
+      merged_error_keys: Object.keys(merged),
+      dirty_biomarker_ids: dirtyBiomarkerIds,
+      ...snapshotAge,
+    });
+    setRowErrors(merged);
   };
 
   const autoSaveBiomarkerMappings = async (rowsOverride?: any[]) => {
@@ -1588,9 +1716,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   ) => {
     const fileId = fileIdOverride || uploadedFile?.file_id;
     if (!fileId) return [];
+    const req = createLabUnitRequest('findings');
+    logLabUnitDebug('findings:send', {
+      request_id: req.request_id,
+      file_id: fileId,
+      polling: pollingRef.current,
+      backend_errors_meta: backendRowErrorsMetaRef.current,
+    });
     setReviewFindingsLoading(true);
     try {
       const res = await Application.getLabReviewFindings({ file_id: fileId });
+      const findingsMeta = buildSnapshotMeta(
+        completeLabUnitRequest(req, {
+          findings_count: Array.isArray(res?.data?.findings)
+            ? res.data.findings.length
+            : 0,
+          polling_at_receive: pollingRef.current,
+        }),
+        contextBiomarkers ?? extractedBiomarkers,
+      );
       if (!isMountedRef.current) return [];
       const findings = Array.isArray(res?.data?.findings)
         ? res.data.findings
@@ -1602,6 +1746,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           findings,
           biomarkersForContext,
           backendErrors,
+          findingsMeta,
         );
       }
       return findings;
@@ -1730,6 +1875,20 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         }
       });
       backendRowErrorsRef.current = errorMaps.modifiedErrors;
+      if (currentStepOneRequestRef.current) {
+        backendRowErrorsMetaRef.current = buildSnapshotMeta(
+          currentStepOneRequestRef.current,
+          mergedRows,
+        );
+      }
+      logRowErrorsMutation('set', {
+        source: 'recheck',
+        request_id: currentStepOneRequestRef.current?.request_id,
+        fetched_at: currentStepOneRequestRef.current?.fetched_at,
+        error_count: Object.keys(errorMaps.modifiedErrors).length,
+        raw_step_one: summarizeStepOneResponse(data),
+        polling: pollingRef.current,
+      });
       setRowErrors(errorMaps.modifiedErrors);
       setAddedRowErrors(errorMaps.addedErrors);
       const displayRows = sortReviewBiomarkerRows(mergedRows);
@@ -1744,10 +1903,22 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setRecheckLoading(true);
     setReviewHydrating(true);
     stepOnePollInFlightRef.current = true;
+    setLabUnitDebugContext({ stepOnePollInFlight: true });
     const pollDeadline = Date.now() + RECHECK_POLL_TIMEOUT_MS;
     try {
+      const recheckReq = createLabUnitRequest('step-one-recheck');
+      logLabUnitDebug('step-one-recheck:send', {
+        request_id: recheckReq.request_id,
+        file_id: fileId,
+        polling: pollingRef.current,
+      });
       let res = await Application.checkLabStepOne({
         file_id: fileId,
+        force_revalidate: true,
+      });
+      currentStepOneRequestRef.current = completeLabUnitRequest(recheckReq, {
+        raw_step_one: summarizeStepOneResponse(res.data),
+        polling_at_receive: pollingRef.current,
         force_revalidate: true,
       });
 
@@ -1758,7 +1929,19 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         res.data.lab_type !== 'error'
       ) {
         await sleep(RECHECK_POLL_INTERVAL_MS);
+        const loopReq = createLabUnitRequest('step-one-recheck');
+        logLabUnitDebug('step-one-recheck:send', {
+          request_id: loopReq.request_id,
+          file_id: fileId,
+          polling: pollingRef.current,
+          loop: true,
+        });
         res = await Application.checkLabStepOne({ file_id: fileId });
+        currentStepOneRequestRef.current = completeLabUnitRequest(loopReq, {
+          raw_step_one: summarizeStepOneResponse(res.data),
+          polling_at_receive: pollingRef.current,
+          loop: true,
+        });
       }
 
       if (res.data.validation?.ready) {
@@ -1789,6 +1972,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       );
     } finally {
       stepOnePollInFlightRef.current = false;
+      setLabUnitDebugContext({ stepOnePollInFlight: false });
       setRecheckLoading(false);
       setReviewHydrating(false);
     }

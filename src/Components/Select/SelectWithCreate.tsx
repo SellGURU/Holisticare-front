@@ -22,6 +22,7 @@ type Props = {
   onMenuOpen?: () => void;
   onCreateNew?: () => void;
   createLabel?: string;
+  disabled?: boolean;
 };
 
 const SelectWithCreate: React.FC<Props> = ({
@@ -37,6 +38,7 @@ const SelectWithCreate: React.FC<Props> = ({
   onMenuOpen,
   onCreateNew,
   createLabel = 'Create New Unit',
+  disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || '');
@@ -102,6 +104,7 @@ const SelectWithCreate: React.FC<Props> = ({
   }, []);
 
   const handleSelectClick = () => {
+    if (disabled) return;
     setIsOpen(!isOpen);
   };
 
@@ -120,7 +123,7 @@ const SelectWithCreate: React.FC<Props> = ({
       ref={selectWrapperRef}
       className={`relative inline-block ${isSmall ? 'w-[101px]' : ''} ${
         isLarge ? 'w-full' : 'w-[142px]'
-      } text-nowrap cursor-pointer font-normal`}
+      } text-nowrap font-normal ${disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
     >
       {/* Trigger */}
       <div
@@ -131,11 +134,12 @@ const SelectWithCreate: React.FC<Props> = ({
           isSetting
             ? 'bg-[#FDFDFD] rounded-2xl border border-Gray-50 py-1 px-3'
             : 'bg-backgroundColor-Secondary border-none py-[10px] px-3 shadow-100 rounded-[8px]'
-        } cursor-pointer w-full ${isOpen ? 'rounded-b-none' : ''} pr-8 leading-tight focus:outline-none text-[8px] md:text-[10px] ${displayedValueColorClass}`}
+        } ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'} w-full ${isOpen ? 'rounded-b-none' : ''} pr-8 leading-tight focus:outline-none text-[8px] md:text-[10px] ${displayedValueColorClass}`}
         onClick={handleSelectClick}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        tabIndex={0}
+        aria-disabled={disabled}
+        tabIndex={disabled ? -1 : 0}
       >
         <span className="text-Text-Primary md:text-xs">
           <TooltipTextAuto maxWidth={isSmall ? '100px' : '110px'}>
