@@ -398,11 +398,7 @@ describe('missing_value merged into Need review', () => {
   });
 
   it('includes missing_value rows in the default Need review filter', () => {
-    expect(
-      rowMatchesCategoryFilter('default', 'review', 1),
-    ).toBe(true);
-    expect(
-      rowMatchesCategoryFilter('review', 'review', 1),
-    ).toBe(true);
+    expect(rowMatchesCategoryFilter('default', 'review', 1)).toBe(true);
+    expect(rowMatchesCategoryFilter('review', 'review', 1)).toBe(true);
   });
 });
