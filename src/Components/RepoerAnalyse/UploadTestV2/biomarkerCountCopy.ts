@@ -8,12 +8,11 @@ export const CLIENT_SUMMARY_TITLE = 'Client summary';
 export type ReviewCategoryCounts = {
   ready: number;
   review: number;
-  incomplete: number;
   excluded: number;
 };
 
 export const reviewUniverseTotal = (counts: ReviewCategoryCounts) =>
-  counts.ready + counts.review + counts.incomplete + counts.excluded;
+  counts.ready + counts.review + counts.excluded;
 
 export const formatLabPanelSubtitle = (total: number) =>
   `${total} biomarker${total === 1 ? '' : 's'} found in this lab file`;
@@ -59,8 +58,5 @@ export const resolveOverviewBiomarkerTotals = (
 export const formatReadyBadge = (count: number) => `${count} ready to save`;
 
 export const formatReviewBadge = (count: number) => `${count} need review`;
-
-export const formatIncompleteBadge = (count: number) =>
-  `${count} need value`;
 
 export const formatExcludedBadge = (count: number) => `${count} excluded`;

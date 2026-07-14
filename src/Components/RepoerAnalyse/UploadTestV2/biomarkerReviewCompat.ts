@@ -475,14 +475,15 @@ export const buildProcessLabReportPayload = ({
   };
 };
 
-export type ReviewRowCategory = 'ready' | 'review' | 'incomplete' | 'excluded';
+export type ReviewRowCategory = 'ready' | 'review' | 'excluded';
 export type ReviewReason =
   | 'unmatched'
   | 'biomarker_not_found'
   | 'value_mismatch'
   | 'unit_required'
   | 'unit_mismatch'
-  | 'suggest_delete';
+  | 'suggest_delete'
+  | 'missing_value';
 
 export type CategorizeReviewRowResult = {
   category: ReviewRowCategory;
@@ -494,7 +495,6 @@ export type CategoryFilter =
   | 'all'
   | 'ready'
   | 'review'
-  | 'incomplete'
   | 'excluded';
 
 export const inferReviewReasonFromErrorText = (
@@ -651,7 +651,7 @@ export const categorizeReviewRow = (
       rowHasExtractedUnit(row) &&
       reviewReason === 'value_mismatch'
     ) {
-      return { category: 'incomplete' };
+      return { category: 'review', reviewReason: 'missing_value' };
     }
     return {
       category: 'review',
@@ -663,18 +663,18 @@ export const categorizeReviewRow = (
     skipReason === 'empty_value_with_unit' ||
     (!rowHasExtractedValue(row) && rowHasExtractedUnit(row))
   ) {
-    return { category: 'incomplete' };
+    return { category: 'review', reviewReason: 'missing_value' };
   }
 
   if (row?.suggest_delete === true) {
     if (!rowHasExtractedValue(row) && rowHasExtractedUnit(row)) {
-      return { category: 'incomplete' };
+      return { category: 'review', reviewReason: 'missing_value' };
     }
     return { category: 'review', reviewReason: 'suggest_delete' };
   }
 
   if (!rowHasExtractedValue(row)) {
-    return { category: 'incomplete' };
+    return { category: 'review', reviewReason: 'missing_value' };
   }
 
   return { category: 'ready' };
@@ -721,7 +721,6 @@ export const countReviewRowCategories = (
 ) => {
   let ready = 0;
   let review = 0;
-  let incomplete = 0;
   let excluded = 0;
   rows.forEach((row, index) => {
     const { category } = categorizeReviewRow(
@@ -732,10 +731,9 @@ export const countReviewRowCategories = (
     );
     if (category === 'ready') ready += 1;
     else if (category === 'review') review += 1;
-    else if (category === 'incomplete') incomplete += 1;
     else excluded += 1;
   });
-  return { ready, review, incomplete, excluded };
+  return { ready, review, excluded };
 };
 
 const resolveStepOneValidationRowIndex = (item: any, rows: any[]) => {
@@ -831,7 +829,7 @@ export const countReviewCategoriesFromStepOneData = (
   const reviewRows = mergeSuppressedRowsIntoReview(rows, suppressedItems);
   const rowErrors = buildStepOneRowErrors(validation, reviewRows);
 
-  const { ready, review, incomplete, excluded } = countReviewRowCategories(
+  const { ready, review, excluded } = countReviewRowCategories(
     reviewRows,
     rowErrors,
     suppressedSet,
@@ -840,7 +838,6 @@ export const countReviewCategoriesFromStepOneData = (
   return {
     ready,
     review,
-    incomplete,
     excluded,
     extracted: rows.length,
   };
@@ -851,12 +848,11 @@ export const getReviewRowMessage = (
   _row: any,
   errorText?: string,
 ): string => {
-  if (result.category === 'incomplete') {
-    return 'No value found in the PDF — enter manually if this test is in the report';
-  }
-
   if (result.category !== 'review') return '';
 
+  if (result.reviewReason === 'missing_value') {
+    return 'No value found in the PDF — enter manually if this test is in the report';
+  }
   if (result.reviewReason === 'unmatched') {
     return 'Unmatched — please select a system biomarker';
   }
@@ -931,7 +927,7 @@ export const rowMatchesCategoryFilter = (
 ) => {
   if (categoryFilter === 'all') return true;
   if (categoryFilter === 'default') {
-    return category === 'review' || category === 'incomplete';
+    return category === 'review';
   }
   return category === categoryFilter;
 };

@@ -14,6 +14,7 @@ import {
   mergeUnitOptionSources,
   parseUnitMismatchDetail,
   resolveRowCatalogContext,
+  rowMatchesCategoryFilter,
   standardizeResponseIndicatesSkip,
 } from './biomarkerReviewCompat';
 
@@ -362,5 +363,46 @@ describe('categorizeReviewRow skip fallback', () => {
       0,
     );
     expect(category.category).toBe('excluded');
+  });
+});
+
+describe('missing_value merged into Need review', () => {
+  it('categorizes unit-without-value rows as review with missing_value', () => {
+    const result = categorizeReviewRow(
+      {
+        biomarker: 'Vitamin D',
+        original_biomarker_name: 'Vitamin D',
+        original_unit: 'nmol/L',
+        unit: 'nmol/L',
+        value: '',
+        original_value: '',
+      },
+      {},
+      new Set(),
+      0,
+    );
+    expect(result).toEqual({
+      category: 'review',
+      reviewReason: 'missing_value',
+    });
+  });
+
+  it('shows the manual entry message for missing_value rows', () => {
+    const message = getReviewRowMessage(
+      { category: 'review', reviewReason: 'missing_value' },
+      { biomarker: 'Vitamin D' },
+    );
+    expect(message).toBe(
+      'No value found in the PDF — enter manually if this test is in the report',
+    );
+  });
+
+  it('includes missing_value rows in the default Need review filter', () => {
+    expect(
+      rowMatchesCategoryFilter('default', 'review', 1),
+    ).toBe(true);
+    expect(
+      rowMatchesCategoryFilter('review', 'review', 1),
+    ).toBe(true);
   });
 });
