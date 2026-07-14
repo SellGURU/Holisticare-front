@@ -56,6 +56,7 @@ import LlmPromptCatalog from '../pages/admin/LlmPromptCatalog.tsx';
 import LlmCallLog from '../pages/admin/LlmCallLog.tsx';
 import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
 import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
+import RookCsvComparison from '../pages/admin/RookCsvComparison.tsx';
 import RouteErrorFallback from './RouteErrorFallback';
 
 const router = createBrowserRouter([
@@ -258,6 +259,12 @@ const router = createBrowserRouter([
     path: '/admin/json-uploading',
     element: (
       <AdminProtectedRoute Component={AdminJsonUploading}></AdminProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/rook-csv-comparison',
+    element: (
+      <AdminProtectedRoute Component={RookCsvComparison}></AdminProtectedRoute>
     ),
   },
   {

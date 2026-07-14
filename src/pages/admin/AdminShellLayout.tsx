@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Database,
   FileCog,
+  FileDiff,
   FolderKanban,
   LayoutDashboard,
   Menu,
@@ -53,6 +54,11 @@ const navigationSections = [
       { to: '/admin/clinics', label: 'Clinics', icon: Building2 },
       { to: '/admin/llm-prompts', label: 'LLM Prompts', icon: Brain },
       { to: '/admin/llm-calls', label: 'LLM Calls', icon: Activity },
+      {
+        to: '/admin/rook-csv-comparison',
+        label: 'ROOK CSV Comparison',
+        icon: FileDiff,
+      },
     ],
   },
 ];

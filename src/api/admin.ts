@@ -214,6 +214,20 @@ class AdminApi {
       headers: withAuthHeaders(),
     });
   }
+
+  // ==========================================================================
+  // ROOK CSV Comparison Tool (diagnostic, read-only)
+  // ==========================================================================
+
+  static compareRookCsv(formData: FormData) {
+    return axios.post(`${getBaseUrl()}/admin/compare-rook-csv`, formData, {
+      headers: {
+        Authorization: `Bearer ${getAdminToken() || ''}`,
+        // Content-Type intentionally omitted: axios sets the multipart
+        // boundary itself when given a FormData body.
+      },
+    });
+  }
 }
 
 export default AdminApi;
