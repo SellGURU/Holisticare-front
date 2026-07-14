@@ -475,7 +475,7 @@ export const buildProcessLabReportPayload = ({
   };
 };
 
-export type ReviewRowCategory = 'ready' | 'review' | 'excluded';
+export type ReviewRowCategory = 'ready' | 'review' | 'incomplete' | 'excluded';
 export type ReviewReason =
   | 'unmatched'
   | 'biomarker_not_found'
@@ -494,6 +494,7 @@ export type CategoryFilter =
   | 'all'
   | 'ready'
   | 'review'
+  | 'incomplete'
   | 'excluded';
 
 export const inferReviewReasonFromErrorText = (
@@ -568,6 +569,32 @@ export const isRowSuppressed = (row: any, suppressedSet: Set<string>) => {
   );
 };
 
+export const isPhantomSuppressedRow = (row: any) =>
+  row?.is_suppressed_only === true ||
+  String(row?.biomarker_id || '').startsWith('suppressed-');
+
+export const rowHasExtractedValue = (row: any) =>
+  Boolean(trim(preferNonEmpty(row?.original_value, row?.value)));
+
+export const rowHasExtractedUnit = (row: any) =>
+  Boolean(trim(preferNonEmpty(row?.original_unit, row?.unit)));
+
+const NON_RESULT_UNIT_LABELS = new Set([
+  'see below',
+  'see comment',
+  'see comments',
+  'comment',
+  'comments',
+  'note',
+  'notes',
+  'reported separately',
+  'n/a',
+  'na',
+]);
+
+const isNonResultUnitLabel = (unit: unknown) =>
+  NON_RESULT_UNIT_LABELS.has(trim(unit).toLowerCase());
+
 /** Categorize a review row using backend resolution and validation signals only. */
 export const categorizeReviewRow = (
   row: any,
@@ -575,12 +602,36 @@ export const categorizeReviewRow = (
   suppressedSet: Set<string>,
   index: number,
 ): CategorizeReviewRowResult => {
-  if (isRowSuppressed(row, suppressedSet)) {
+  if (isPhantomSuppressedRow(row) || isRowSuppressed(row, suppressedSet)) {
+    return { category: 'excluded' };
+  }
+
+  if (
+    String(row?.validation_status || '')
+      .trim()
+      .toLowerCase() === 'skip'
+  ) {
+    return { category: 'excluded' };
+  }
+
+  const extractedUnit = trim(preferNonEmpty(row?.original_unit, row?.unit));
+  if (extractedUnit && isNonResultUnitLabel(extractedUnit)) {
     return { category: 'excluded' };
   }
 
   if (!trim(row?.biomarker)) {
     return { category: 'review', reviewReason: 'unmatched' };
+  }
+
+  const skipReason = trim(row?.skip_reason).toLowerCase();
+  if (
+    skipReason === 'duplicate_biomarker_row' ||
+    skipReason === 'non_result_row' ||
+    skipReason === 'qualitative_on_numeric' ||
+    skipReason === 'qualitative_on_numeric_urine' ||
+    skipReason === 'test_not_ordered'
+  ) {
+    return { category: 'excluded' };
   }
 
   const errorText = resolveEffectiveRowError(row, rowErrors, index);
@@ -595,17 +646,72 @@ export const categorizeReviewRow = (
     ) {
       return { category: 'ready' };
     }
+    if (
+      !rowHasExtractedValue(row) &&
+      rowHasExtractedUnit(row) &&
+      reviewReason === 'value_mismatch'
+    ) {
+      return { category: 'incomplete' };
+    }
     return {
       category: 'review',
       reviewReason,
     };
   }
 
+  if (
+    skipReason === 'empty_value_with_unit' ||
+    (!rowHasExtractedValue(row) && rowHasExtractedUnit(row))
+  ) {
+    return { category: 'incomplete' };
+  }
+
   if (row?.suggest_delete === true) {
+    if (!rowHasExtractedValue(row) && rowHasExtractedUnit(row)) {
+      return { category: 'incomplete' };
+    }
     return { category: 'review', reviewReason: 'suggest_delete' };
   }
 
+  if (!rowHasExtractedValue(row)) {
+    return { category: 'incomplete' };
+  }
+
   return { category: 'ready' };
+};
+
+/** True when standardize returned an advisory skip payload (HTTP 200 with skip metadata). */
+export const standardizeResponseIndicatesSkip = (
+  data: Record<string, unknown> | null | undefined,
+): boolean => {
+  if (!data || typeof data !== 'object') return false;
+  if (data.suggest_delete === true) return true;
+  if (trim(data.validation_status).toLowerCase() === 'skip') return true;
+  if (trim(data.skip_reason)) return true;
+  return false;
+};
+
+/** Explicit cleared skip fields after a valid (non-skip) standardize response. */
+export const clearedSkipMetadataAfterValidStandardize = () =>
+  ({
+    skip_reason: null,
+    suggest_delete: false,
+    validation_status: 'ready',
+  }) as const;
+
+/** Merge standardize success into a row; clears stale skip metadata only for valid results. */
+export const mergeRowAfterStandardizeSuccess = (
+  existingRow: Record<string, unknown>,
+  standardizeData: Record<string, unknown>,
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> => {
+  const skipStillApplies = standardizeResponseIndicatesSkip(standardizeData);
+  return {
+    ...existingRow,
+    ...standardizeData,
+    ...(skipStillApplies ? {} : clearedSkipMetadataAfterValidStandardize()),
+    ...overrides,
+  };
 };
 
 export const countReviewRowCategories = (
@@ -615,6 +721,7 @@ export const countReviewRowCategories = (
 ) => {
   let ready = 0;
   let review = 0;
+  let incomplete = 0;
   let excluded = 0;
   rows.forEach((row, index) => {
     const { category } = categorizeReviewRow(
@@ -625,9 +732,10 @@ export const countReviewRowCategories = (
     );
     if (category === 'ready') ready += 1;
     else if (category === 'review') review += 1;
+    else if (category === 'incomplete') incomplete += 1;
     else excluded += 1;
   });
-  return { ready, review, excluded };
+  return { ready, review, incomplete, excluded };
 };
 
 const resolveStepOneValidationRowIndex = (item: any, rows: any[]) => {
@@ -723,7 +831,7 @@ export const countReviewCategoriesFromStepOneData = (
   const reviewRows = mergeSuppressedRowsIntoReview(rows, suppressedItems);
   const rowErrors = buildStepOneRowErrors(validation, reviewRows);
 
-  const { ready, review, excluded } = countReviewRowCategories(
+  const { ready, review, incomplete, excluded } = countReviewRowCategories(
     reviewRows,
     rowErrors,
     suppressedSet,
@@ -732,6 +840,7 @@ export const countReviewCategoriesFromStepOneData = (
   return {
     ready,
     review,
+    incomplete,
     excluded,
     extracted: rows.length,
   };
@@ -742,6 +851,10 @@ export const getReviewRowMessage = (
   _row: any,
   errorText?: string,
 ): string => {
+  if (result.category === 'incomplete') {
+    return 'No value found in the PDF — enter manually if this test is in the report';
+  }
+
   if (result.category !== 'review') return '';
 
   if (result.reviewReason === 'unmatched') {
@@ -818,7 +931,7 @@ export const rowMatchesCategoryFilter = (
 ) => {
   if (categoryFilter === 'all') return true;
   if (categoryFilter === 'default') {
-    return category === 'review';
+    return category === 'review' || category === 'incomplete';
   }
   return category === categoryFilter;
 };
@@ -918,25 +1031,11 @@ export const sortReviewBiomarkerRows = (rows: any[]) =>
     });
   });
 
-/** Append display-only rows for DB-suppressed biomarkers missing from the file payload. */
+/** Match-only: mark existing rows excluded via suppressedSet; never append phantoms. */
 export const mergeSuppressedRowsIntoReview = (
   biomarkers: any[],
-  suppressedItems: SuppressedBiomarkerItem[],
-) => {
-  if (!Array.isArray(suppressedItems) || suppressedItems.length === 0) {
-    return biomarkers;
-  }
-  const phantoms: any[] = [];
-  for (const item of suppressedItems) {
-    const hasRow = biomarkers.some((row) =>
-      suppressedItemMatchesRow(item, row),
-    );
-    if (hasRow) continue;
-    phantoms.push(buildRowFromSuppressedItem(item));
-  }
-  if (phantoms.length === 0) return biomarkers;
-  return sortReviewBiomarkerRows([...biomarkers, ...phantoms]);
-};
+  _suppressedItems: SuppressedBiomarkerItem[],
+) => biomarkers;
 
 const normalizeUnitKey = (unit: unknown) =>
   trim(unit)

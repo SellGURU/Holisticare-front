@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildSystemBiomarkerOptionsForRow,
+  categorizeReviewRow,
+  clearedSkipMetadataAfterValidStandardize,
   collectCatalogUnitsForBiomarker,
   formatUnitMismatchUserMessage,
   getReviewRowMessage,
@@ -8,9 +10,11 @@ import {
   inferRowBiomarkerType,
   inferSpecimenTypeHintFromExtractedName,
   isSafeUnitRelabel,
+  mergeRowAfterStandardizeSuccess,
   mergeUnitOptionSources,
   parseUnitMismatchDetail,
   resolveRowCatalogContext,
+  standardizeResponseIndicatesSkip,
 } from './biomarkerReviewCompat';
 
 describe('inferReviewReasonFromErrorText', () => {
@@ -237,5 +241,126 @@ describe('duplicate unit skip contract', () => {
     const shouldSkipDuplicateUnit =
       comparableUnit === lastSuccessUnit && !hasActiveUnitError;
     expect(shouldSkipDuplicateUnit).toBe(true);
+  });
+});
+
+describe('mergeRowAfterStandardizeSuccess', () => {
+  const staleLpPla2Row = {
+    biomarker_id: '267eeb7c',
+    biomarker: 'Lipoprotein-Associated Phospholipase A2 Activity',
+    original_biomarker_name: 'Lipoprotein Associated Phospholipase A2',
+    biomarker_type: 'blood',
+    value: '80.0',
+    original_value: '80.0',
+    unit: 'See Below',
+    original_unit: 'See Below',
+    skip_reason: 'non_result_row',
+    suggest_delete: true,
+    validation_status: 'skip',
+  };
+
+  it('clears stale skip metadata after valid standardize (Lp-PLA2 See Below -> nmol/min/mL -> Ready)', () => {
+    const validStandardizeResponse = {
+      biomarker: 'Lipoprotein-Associated Phospholipase A2 Activity',
+      value: '80.0',
+      unit: 'nmol/min/mL',
+      original_value: '80.0',
+      original_unit: 'nmol/min/mL',
+    };
+
+    expect(standardizeResponseIndicatesSkip(validStandardizeResponse)).toBe(
+      false,
+    );
+
+    const merged = mergeRowAfterStandardizeSuccess(
+      staleLpPla2Row,
+      validStandardizeResponse,
+      { biomarker_id: '267eeb7c' },
+    );
+
+    expect(merged).toMatchObject(clearedSkipMetadataAfterValidStandardize());
+    expect(merged.unit).toBe('nmol/min/mL');
+    expect(merged.original_unit).toBe('nmol/min/mL');
+
+    const category = categorizeReviewRow(merged, {}, new Set(), 0);
+    expect(category.category).toBe('ready');
+  });
+
+  it('does not clear skip metadata when standardize response still indicates skip', () => {
+    const skipStandardizeResponse = {
+      biomarker: 'Lipoprotein-Associated Phospholipase A2 Activity',
+      value: '80.0',
+      unit: 'See Below',
+      original_value: '80.0',
+      original_unit: 'See Below',
+      suggest_delete: true,
+      validation_status: 'skip',
+      skip_reason: 'non_result_row',
+    };
+
+    expect(standardizeResponseIndicatesSkip(skipStandardizeResponse)).toBe(
+      true,
+    );
+
+    const merged = mergeRowAfterStandardizeSuccess(
+      staleLpPla2Row,
+      skipStandardizeResponse,
+    );
+
+    expect(merged.skip_reason).toBe('non_result_row');
+    expect(merged.suggest_delete).toBe(true);
+    expect(merged.validation_status).toBe('skip');
+
+    const category = categorizeReviewRow(merged, {}, new Set(), 0);
+    expect(category.category).toBe('excluded');
+  });
+
+  it('treats null skip_reason the same as missing after valid standardize', () => {
+    const merged = mergeRowAfterStandardizeSuccess(
+      { ...staleLpPla2Row, skip_reason: undefined },
+      {
+        value: '80.0',
+        unit: 'nmol/min/mL',
+        original_value: '80.0',
+        original_unit: 'nmol/min/mL',
+      },
+    );
+    expect(merged.skip_reason).toBeNull();
+    expect(categorizeReviewRow(merged, {}, new Set(), 0).category).toBe(
+      'ready',
+    );
+  });
+});
+
+describe('categorizeReviewRow skip fallback', () => {
+  it('excludes rows with validation_status skip even when skip_reason is null', () => {
+    const category = categorizeReviewRow(
+      {
+        biomarker: 'Lipoprotein-Associated Phospholipase A2 Activity',
+        value: '80.0',
+        unit: 'See Below',
+        validation_status: 'skip',
+        skip_reason: null,
+      },
+      { 0: 'A unit is required for this biomarker' },
+      new Set(),
+      0,
+    );
+    expect(category.category).toBe('excluded');
+  });
+
+  it('excludes rows with non-result unit labels even without skip_reason', () => {
+    const category = categorizeReviewRow(
+      {
+        biomarker: 'Lipoprotein-Associated Phospholipase A2 Activity',
+        value: '80.0',
+        unit: 'See Below',
+        original_unit: 'See Below',
+      },
+      {},
+      new Set(),
+      0,
+    );
+    expect(category.category).toBe('excluded');
   });
 });

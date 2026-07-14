@@ -27,6 +27,7 @@ import {
   filterPersistedReviewFindingItems,
   inferRowBiomarkerType,
   inferReviewReasonFromErrorText,
+  isPhantomSuppressedRow,
 } from './biomarkerReviewCompat';
 import BiomarkersApi from '../../../api/Biomarkers';
 import { showError, showSuccess } from '../../GlobalToast';
@@ -1215,6 +1216,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   // rows saved as ready.
   const buildContinueRows = () =>
     extractedBiomarkers.flatMap((row, index) => {
+      if (isPhantomSuppressedRow(row)) return [];
       const { category } = categorizeReviewRow(
         row,
         rowErrors,

@@ -41,6 +41,7 @@ import {
   resolveRowCatalogContext,
   resolveUnitForStandardize,
   isSafeUnitRelabel,
+  mergeRowAfterStandardizeSuccess,
   type CategoryFilter,
   type SuppressedBiomarkerItem,
 } from './biomarkerReviewCompat';
@@ -55,6 +56,7 @@ import {
   LAB_PANEL_HELPER,
   LAB_PANEL_TITLE,
   formatExcludedBadge,
+  formatIncompleteBadge,
   formatLabPanelSubtitle,
   formatReadyBadge,
   formatReviewBadge,
@@ -467,11 +469,18 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     if (!useReviewUx || categoryFilterInitialized.current) return;
     if (!reviewBiomarkers.length || reviewMetadataPending) return;
     categoryFilterInitialized.current = true;
-    setCategoryFilter(reviewCategoryCounts.review > 0 ? 'review' : 'ready');
+    setCategoryFilter(
+      reviewCategoryCounts.review > 0
+        ? 'review'
+        : reviewCategoryCounts.incomplete > 0
+          ? 'incomplete'
+          : 'ready',
+    );
   }, [
     useReviewUx,
     reviewBiomarkers.length,
     reviewCategoryCounts.review,
+    reviewCategoryCounts.incomplete,
     reviewMetadataPending,
   ]);
 
@@ -1093,17 +1102,15 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       updated = updated.map((b) =>
         b.biomarker_id === id
           ? pinBiomarkerNameFields(
-              {
-                ...b,
-                ...result.data,
-                // Keep the row's stable id; the standardize response derives
-                // biomarker_id from content and could otherwise collide with
-                // another row sharing a base name (e.g. "Neutrophils" vs
-                // "Neutrophils %") and edit both rows at once.
-                biomarker_id: id,
-                review_error_handled: hadExistingError,
-                unit_change_rejected: false,
-              },
+              mergeRowAfterStandardizeSuccess(
+                b,
+                result.data ?? {},
+                {
+                  biomarker_id: id,
+                  review_error_handled: hadExistingError,
+                  unit_change_rejected: false,
+                },
+              ) as typeof b,
               prior,
             )
           : b,
@@ -1415,6 +1422,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   <span className="text-[9px] md:text-[10px] text-Text-Secondary whitespace-nowrap">
                     {formatReadyBadge(reviewCategoryCounts.ready)} ·{' '}
                     {formatReviewBadge(reviewCategoryCounts.review)} ·{' '}
+                    {formatIncompleteBadge(reviewCategoryCounts.incomplete)} ·{' '}
                     {formatExcludedBadge(reviewCategoryCounts.excluded)}
                   </span>
                   {compileState !== 'idle' ? (
@@ -1456,6 +1464,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                     }`}
                   >
                     ⚠ Need review ({reviewCategoryCounts.review})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCategoryFilter('incomplete')}
+                    className={`rounded-full px-2.5 py-0.5 text-[9px] md:text-[10px] font-medium transition-colors ${
+                      categoryFilter === 'incomplete'
+                        ? 'bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]'
+                        : 'bg-white text-Text-Secondary border border-Gray-50 hover:bg-Gray-15'
+                    }`}
+                  >
+                    ○ No value found ({reviewCategoryCounts.incomplete})
                   </button>
                   <button
                     type="button"
@@ -1827,6 +1846,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           {useReviewUx
                             ? categoryFilter === 'excluded'
                               ? 'No excluded biomarkers. Items you exclude will appear here.'
+                              : categoryFilter === 'incomplete'
+                                ? 'No biomarkers need a manual value for this filter.'
                               : categoryFilter === 'review' ||
                                   categoryFilter === 'default'
                                 ? 'No biomarkers need review.'
@@ -1859,7 +1880,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   <div className="font-medium text-Text-Primary">
                     ✓ {formatReadyBadge(reviewCategoryCounts.ready)} · ⚠{' '}
                     {formatReviewBadge(reviewCategoryCounts.review)} will be
-                    skipped · —{' '}
+                    skipped · ○{' '}
+                    {formatIncompleteBadge(reviewCategoryCounts.incomplete)}{' '}
+                    skipped unless filled · —{' '}
                     {formatExcludedBadge(reviewCategoryCounts.excluded)}
                   </div>
                   <div className="mt-0.5 text-[9px] text-Text-Quadruple">
