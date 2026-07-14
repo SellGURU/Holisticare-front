@@ -268,7 +268,9 @@ const RookCsvComparison = () => {
             >
               <UploadCloud size={20} className="text-Text-Secondary" />
               <span className="text-[12px] text-Text-Primary">
-                {file ? file.name : 'Drag & drop a .csv file, or click to browse'}
+                {file
+                  ? file.name
+                  : 'Drag & drop a .csv file, or click to browse'}
               </span>
               <input
                 ref={fileInputRef}
@@ -316,8 +318,7 @@ const RookCsvComparison = () => {
                 <AlertTriangle size={14} className="mt-0.5 shrink-0" />
                 <span>
                   {unmatchedRow.uploaded_count} uploaded item(s) had no
-                  recognizable date column and could not be matched to any
-                  date.{' '}
+                  recognizable date column and could not be matched to any date.{' '}
                   <button
                     type="button"
                     className="font-medium underline"
@@ -331,9 +332,9 @@ const RookCsvComparison = () => {
 
             {resultRows.length === 0 ? (
               <div className="py-6 text-center text-[12px] text-Text-Secondary">
-                No overlapping data to compare for this range (nothing
-                uploaded and nothing stored, or all dates matched with zero
-                counts on both sides).
+                No overlapping data to compare for this range (nothing uploaded
+                and nothing stored, or all dates matched with zero counts on
+                both sides).
               </div>
             ) : (
               <div className="overflow-x-auto">
