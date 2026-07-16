@@ -1170,6 +1170,7 @@ class Application extends Api {
     return this.post('/patients/suppress_biomarker', data);
   };
   static unsuppressBiomarker = (data: {
+    id?: number;
     extracted_name: string;
     biomarker_type?: string;
   }) => {
