@@ -166,7 +166,6 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
                       return (
                         <AcordinRefrenceBox
                           biomarker={biomarker}
-                          isScoringComplete={isScoringComplete}
                           key={index + '-refrence-box'}
                         />
                       );

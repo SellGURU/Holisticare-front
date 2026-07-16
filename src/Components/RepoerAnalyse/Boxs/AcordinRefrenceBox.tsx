@@ -11,12 +11,10 @@ import ChartLoadingPlaceholder, {
 interface AcordinRefrenceBoxProps {
   biomarker: any;
   key: string;
-  isScoringComplete?: boolean;
 }
 const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
   biomarker,
   key,
-  isScoringComplete: _isScoringComplete = true,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
