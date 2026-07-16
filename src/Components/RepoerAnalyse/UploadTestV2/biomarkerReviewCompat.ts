@@ -1054,16 +1054,18 @@ export const suppressedItemMatchesRow = (
   );
 };
 
+export type UnsuppressBiomarkerRequest = {
+  id?: number;
+  extracted_name: string;
+  biomarker_type?: string;
+};
+
 /** Payload for unsuppress API — prefer stored suppression record over re-inferred row fields. */
 export const buildUnsuppressPayloadFromRow = (
   row: any,
   matchedItem?: SuppressedBiomarkerItem | null,
-) => {
-  const payload: {
-    id?: number;
-    extracted_name?: string;
-    biomarker_type?: string;
-  } = {
+): UnsuppressBiomarkerRequest => {
+  const payload: UnsuppressBiomarkerRequest = {
     extracted_name:
       matchedItem?.extracted_name ||
       resolveExactBiomarkerName(row) ||
