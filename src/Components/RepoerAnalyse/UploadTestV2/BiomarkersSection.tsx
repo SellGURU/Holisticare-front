@@ -450,7 +450,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     useReviewUx && (reviewHydrating || !suppressedHydrated);
 
   const reviewBiomarkers = useMemo(
-    () => mergeSuppressedRowsIntoReview(biomarkers, suppressedItems),
+    () => mergeSuppressedRowsIntoReview(biomarkers),
     [biomarkers, suppressedItems],
   );
 
@@ -1220,11 +1220,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             }
             const category =
               rowCategoryResults[originalIndex]?.category || 'ready';
-            return rowMatchesCategoryFilter(
-              categoryFilter,
-              category,
-              reviewCategoryCounts.review,
-            );
+            return rowMatchesCategoryFilter(categoryFilter, category);
           }
 
           if (showOnlyErrors) {
@@ -1693,7 +1689,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         const rowCatalogContext = resolveRowCatalogContext(
                           effectiveCatalog,
                           b,
-                          rowSuggestions?.matches,
                         );
                         const rowAvailableBiomarkers =
                           rowCatalogContext.systemBiomarkerOptions;

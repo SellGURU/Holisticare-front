@@ -366,7 +366,7 @@ export const buildCategorizedRowsFromStepOneData = (
     : [];
   const validation = data.validation || {};
   const { suppressedSet } = buildSuppressedStateFromItems(suppressedItems);
-  const reviewRows = mergeSuppressedRowsIntoReview(rows, suppressedItems);
+  const reviewRows = mergeSuppressedRowsIntoReview(rows);
   const rowErrors = buildStepOneRowErrors(validation, reviewRows);
 
   return reviewRows.flatMap((row, index) => {
@@ -881,7 +881,7 @@ export const countReviewCategoriesFromStepOneData = (
     : [];
   const validation = data.validation || {};
   const { suppressedSet } = buildSuppressedStateFromItems(suppressedItems);
-  const reviewRows = mergeSuppressedRowsIntoReview(rows, suppressedItems);
+  const reviewRows = mergeSuppressedRowsIntoReview(rows);
   const rowErrors = buildStepOneRowErrors(validation, reviewRows);
 
   const { ready, review, excluded } = countReviewRowCategories(
@@ -978,7 +978,6 @@ export const formatUnitMismatchUserMessage = (
 export const rowMatchesCategoryFilter = (
   categoryFilter: CategoryFilter,
   category: ReviewRowCategory,
-  _reviewCount: number,
 ) => {
   if (categoryFilter === 'all') return true;
   if (categoryFilter === 'default') {
@@ -1109,10 +1108,7 @@ export const sortReviewBiomarkerRows = (rows: any[]) =>
   });
 
 /** Match-only: mark existing rows excluded via suppressedSet; never append phantoms. */
-export const mergeSuppressedRowsIntoReview = (
-  biomarkers: any[],
-  _suppressedItems: SuppressedBiomarkerItem[],
-) => biomarkers;
+export const mergeSuppressedRowsIntoReview = (biomarkers: any[]) => biomarkers;
 
 const normalizeUnitKey = (unit: unknown) =>
   trim(unit)
@@ -1278,11 +1274,7 @@ export const buildSystemBiomarkerOptionsForRow = (
   return [...primary, ...crossType];
 };
 
-export const resolveRowCatalogContext = (
-  catalog: any[],
-  row: any,
-  _suggestions?: Array<{ system_biomarker: string; confidence: number }>,
-) => {
+export const resolveRowCatalogContext = (catalog: any[], row: any) => {
   const rowType = inferRowBiomarkerType(row);
   const specimenHint = inferSpecimenTypeHintFromExtractedName(
     preferNonEmpty(
