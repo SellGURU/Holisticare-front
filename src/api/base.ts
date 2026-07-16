@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 // test address
 const baseProductEndPoint =
   'https://vercel-backend-one-roan.vercel.app/holisticare';

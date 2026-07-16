@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, FC, useEffect, useState } from 'react';
 import CheckBoxSelection from './CheckBoxSelection';
 import MultiChoceSelection from './MultichoiceSelection';

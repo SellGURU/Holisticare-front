@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // import Application from '../../api/app';
 // import { useConstructor } from '../../help';
 // import { useState } from 'react';

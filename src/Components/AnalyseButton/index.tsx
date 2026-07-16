@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRef, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 import { ButtonSecondary } from '../Button/ButtosSecondary';

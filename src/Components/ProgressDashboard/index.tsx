@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import WellnessSummary from './WellnessSummary';
 import ScoreProgression from './ScoreProgression';

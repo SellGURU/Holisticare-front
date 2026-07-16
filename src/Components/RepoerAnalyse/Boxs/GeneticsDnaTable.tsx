@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface GeneticsData {
   gene_name: string;
   rsID: string;

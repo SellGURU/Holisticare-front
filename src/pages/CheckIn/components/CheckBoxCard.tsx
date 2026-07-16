@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition */
 import { useEffect, useState } from 'react';
 
 interface CheckBoxCardProps {
