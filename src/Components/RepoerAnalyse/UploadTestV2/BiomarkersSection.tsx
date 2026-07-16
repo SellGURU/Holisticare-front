@@ -541,7 +541,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const applyLocalRestoreToRow = (row: any) => {
     const patch = buildLocalRestorePatchForExcludedRow();
     if (row.is_suppressed_only) {
-      const { is_suppressed_only: _phantom, ...restoredRow } = row;
+      const { is_suppressed_only: _, ...restoredRow } = row;
       onChange([...biomarkers, { ...restoredRow, ...patch }]);
       return;
     }
