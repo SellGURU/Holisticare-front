@@ -11,6 +11,7 @@ import {
 } from '../../../RepoerAnalyse/UploadTestV2/biomarkerCountCopy';
 // import { ButtonSecondary } from '../../../Button/ButtosSecondary';
 import { publish } from '../../../../utils/event';
+import { isManualLabEntry } from '../../../../utils/manualEntry';
 
 interface FileUploadProgressItemProps {
   file: any;
@@ -57,9 +58,10 @@ const FileReviewBadges: FC<FileReviewBadgesProps> = ({
 
 const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
   const [fileStatus, setFileStatus] = useState<
-    'uploading' | 'upload' | 'deleting'
+    'uploading' | 'upload' | 'deleting' | 'processing'
   >('upload');
   const { id } = useParams<{ id: string }>();
+  const isManual = isManualLabEntry(file);
   const readyCount = file.readyCount ?? file.ready_count;
   const reviewCount = file.reviewCount ?? file.review_count;
   const excludedCount = file.excludedCount ?? file.excluded_count;
@@ -71,6 +73,8 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
     if (file.action_type === 'uploaded') {
       if (file.process_done === true) {
         setFileStatus('upload');
+      } else if (isManual) {
+        setFileStatus('processing');
       } else {
         setFileStatus('uploading');
       }
@@ -80,18 +84,20 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
         setFileStatus('deleting');
       }
     }
-  }, [file.action_type, file.process_done]);
+  }, [file.action_type, file.process_done, isManual]);
+  const showBusyOverlay =
+    fileStatus === 'deleting' ||
+    fileStatus === 'uploading' ||
+    fileStatus === 'processing';
   return (
     <>
       <div
         className={`relative mb-2 w-full overflow-visible rounded-2xl border border-Gray-50 bg-white p-3 text-[10px] text-Text-Primary shadow-100 ${
-          fileStatus === 'deleting' || fileStatus === 'uploading'
-            ? 'bg-[#F6FAFB]'
-            : ''
+          showBusyOverlay ? 'bg-[#F6FAFB]' : ''
         }`}
         style={{ borderColor: file.status == 'error' ? '#ff0005' : '#e9edf5 ' }}
       >
-        {fileStatus === 'deleting' || fileStatus === 'uploading' ? (
+        {showBusyOverlay ? (
           <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-2xl">
             <div className="h-full w-1/2 animate-[progressShimmer_1.6s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-Primary-EmeraldGreen/20 to-transparent" />
           </div>
@@ -99,7 +105,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
         <div className="relative z-[40] flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1 select-none">
             <div className="mb-1 text-[9px] font-medium uppercase tracking-wide text-Text-Quadruple">
-              File
+              {isManual ? 'Manual Entry' : 'File'}
             </div>
             <div className="text-[11px] font-medium text-Text-Primary">
               <TooltipTextAuto
@@ -108,6 +114,11 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
               >
                 {file.file_name}
               </TooltipTextAuto>
+              {fileStatus === 'processing' ? (
+                <div className="mt-0.5 text-[9px] font-medium text-Primary-DeepTeal">
+                  Updating health plan…
+                </div>
+              ) : null}
             </div>
           </div>
           <ActionSection
@@ -154,9 +165,12 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
             onClick={() => {
               publish('uploadTestShow', {
                 isShow: true,
+                mode: isManual ? 'edit_manual' : 'edit',
                 file_id: file.file_id,
                 file_name:
-                  file.file_name || file.name || 'Uploaded Document.pdf',
+                  file.file_name ||
+                  file.name ||
+                  (isManual ? 'Manual Entry' : 'Uploaded Document.pdf'),
               });
             }}
           >

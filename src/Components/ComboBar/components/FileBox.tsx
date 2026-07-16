@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../../api/app';
 import { publish } from '../../../utils/event';
+import { isManualLabEntry } from '../../../utils/manualEntry';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 
@@ -252,10 +253,15 @@ const FileBox: React.FC<FileBoxProps> = ({
                       <img
                         onClick={() => {
                           if (!isDeleted) {
+                            const manual = isManualLabEntry(el);
                             publish('uploadTestShow', {
                               isShow: true,
+                              mode: manual ? 'edit_manual' : 'edit',
                               file_id: el.file_id,
-                              file_name: el.file_name || el.file?.name || '',
+                              file_name:
+                                el.file_name ||
+                                el.file?.name ||
+                                (manual ? 'Manual Entry' : ''),
                             });
                           }
                         }}

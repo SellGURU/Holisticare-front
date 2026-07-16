@@ -1,6 +1,24 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+export type ManualEntryLike = {
+  file_name?: string | null;
+  name?: string | null;
+  type?: string | null;
+  is_manual?: boolean | null;
+};
+
+/** Shared detector for Manual Entry vs uploaded lab files. Do not use lab_type alone. */
+export function isManualLabEntry(file?: ManualEntryLike | null): boolean {
+  if (!file) return false;
+  if (file.is_manual === true) return true;
+  if (String(file.type || '').toLowerCase() === 'manual') return true;
+  const name = String(file.file_name || file.name || '')
+    .trim()
+    .toLowerCase();
+  return name === 'manual entry';
+}
+
 type ManualEntryApiResponse = {
   type: 'manual';
   data: Array<{
