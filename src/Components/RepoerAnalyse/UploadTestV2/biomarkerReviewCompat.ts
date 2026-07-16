@@ -596,7 +596,9 @@ export const findSuppressedItemForRow = (
   row: any,
   items: SuppressedBiomarkerItem[],
 ): SuppressedBiomarkerItem | undefined => {
-  const direct = (items || []).find((item) => suppressedItemMatchesRow(item, row));
+  const direct = (items || []).find((item) =>
+    suppressedItemMatchesRow(item, row),
+  );
   if (direct) return direct;
 
   const rowKeys = new Set(buildSuppressionKeysForRow(row));
@@ -1068,8 +1070,7 @@ export const buildUnsuppressPayloadFromRow = (
       row.original_biomarker_name ||
       row.biomarker ||
       '',
-    biomarker_type:
-      matchedItem?.biomarker_type || inferRowBiomarkerType(row),
+    biomarker_type: matchedItem?.biomarker_type || inferRowBiomarkerType(row),
   };
   if (matchedItem?.id != null) {
     payload.id = matchedItem.id;
