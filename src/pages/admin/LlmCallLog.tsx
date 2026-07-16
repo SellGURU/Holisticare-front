@@ -1,70 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Activity, Eye, FilterX, RefreshCw, Search, X } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Activity, Eye, FilterX, Hash, RefreshCw, Search } from 'lucide-react';
 import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
 import AdminShellLayout from './AdminShellLayout';
-
-interface LlmCallSummaryRow {
-  function_name: string;
-  count: number;
-  avg_duration_ms: number | null;
-  success_count: number;
-  failed_count: number;
-  last_called: string | null;
-}
-
-interface LlmCallEntry {
-  timestamp: string | null;
-  function_name: string | null;
-  clinic_id: string | number | null;
-  patient_id: string | number | null;
-  request_payload: string | null;
-  response_payload: string | null;
-  status: string | null;
-  error_message: string | null;
-  duration_ms: number | null;
-  model: string | null;
-  prompt_key?: string | null;
-  category?: string | null;
-  source?: string | null;
-  log_source?: string | null;
-}
-
-type SummarySortKey =
-  | 'function_name'
-  | 'count'
-  | 'avg_duration_ms'
-  | 'last_called';
-
-interface LlmCallFilters {
-  searchTerm: string;
-  statusFilter: string;
-  nameFilter: string;
-  clinicIdFilter: string;
-  patientIdFilter: string;
-  modelFilter: string;
-  categoryFilter: string;
-  dateFrom: string;
-  dateTo: string;
-}
-
-const PAGE_SIZE = 50;
-const SEARCH_DEBOUNCE_MS = 400;
-
-const EMPTY_FILTERS: LlmCallFilters = {
-  searchTerm: '',
-  statusFilter: '',
-  nameFilter: '',
-  clinicIdFilter: '',
-  patientIdFilter: '',
-  modelFilter: '',
-  categoryFilter: '',
-  dateFrom: '',
-  dateTo: '',
-};
+import type { LlmCallEntry } from '../../types/llmAdmin';
+import LlmCallDetailDrawer from './llm-calls/LlmCallDetailDrawer';
+import {
+  EMPTY_FILTERS,
+  buildRequestParams,
+  filtersFromSearchParams,
+  syncSearchParams,
+  type LlmCallFilters,
+} from './llm-calls/callLogUtils';
 
 const FRIENDLY_FUNCTION_LABELS: Record<string, string> = {
   'ocr.detect_file_type': 'OCR: Detect file type',
@@ -123,6 +73,24 @@ const isPipelineEntry = (entry: LlmCallEntry): boolean =>
   (entry.category || '').toLowerCase() === 'ocr_pipeline' ||
   (entry.function_name || '').startsWith('ocr.pipeline.');
 
+interface LlmCallSummaryRow {
+  function_name: string;
+  count: number;
+  avg_duration_ms: number | null;
+  success_count: number;
+  failed_count: number;
+  last_called: string | null;
+}
+
+type SummarySortKey =
+  | 'function_name'
+  | 'count'
+  | 'avg_duration_ms'
+  | 'last_called';
+
+const PAGE_SIZE = 50;
+const SEARCH_DEBOUNCE_MS = 400;
+
 const formatDate = (iso: string | null | undefined): string => {
   if (!iso) return '—';
   try {
@@ -137,16 +105,6 @@ const formatDuration = (ms: number | null | undefined): string => {
   return `${ms.toLocaleString()} ms`;
 };
 
-const prettyPrintPayload = (payload: string | null | undefined): string => {
-  if (!payload) return '—';
-  try {
-    const parsed = JSON.parse(payload);
-    return JSON.stringify(parsed, null, 2);
-  } catch {
-    return payload;
-  }
-};
-
 const statusBadgeClass = (status: string | null | undefined): string => {
   if ((status || '').toLowerCase() === 'success') {
     return 'bg-emerald-50 text-emerald-700';
@@ -157,58 +115,21 @@ const statusBadgeClass = (status: string | null | undefined): string => {
   return 'bg-gray-100 text-gray-700';
 };
 
-const toIsoDateStart = (dateValue: string): string | undefined => {
-  if (!dateValue) return undefined;
-  return `${dateValue}T00:00:00`;
-};
-
-const toIsoDateEnd = (dateValue: string): string | undefined => {
-  if (!dateValue) return undefined;
-  return `${dateValue}T23:59:59`;
-};
-
-const buildRequestParams = (
-  filters: LlmCallFilters,
-  offset: number,
-  includeSummary: boolean,
-): Record<string, string | number | boolean> => {
-  const params: Record<string, string | number | boolean> = {
-    limit: PAGE_SIZE,
-    offset,
-    include_summary: includeSummary,
-  };
-
-  if (filters.searchTerm.trim()) params.search = filters.searchTerm.trim();
-  if (filters.statusFilter) params.status = filters.statusFilter;
-  if (filters.nameFilter.trim()) params.name = filters.nameFilter.trim();
-  if (filters.clinicIdFilter.trim()) {
-    params.clinic_id = filters.clinicIdFilter.trim();
-  }
-  if (filters.patientIdFilter.trim()) {
-    params.patient_id = filters.patientIdFilter.trim();
-  }
-  if (filters.modelFilter.trim()) params.model = filters.modelFilter.trim();
-  if (filters.categoryFilter) params.category = filters.categoryFilter;
-
-  const dateFrom = toIsoDateStart(filters.dateFrom);
-  const dateTo = toIsoDateEnd(filters.dateTo);
-  if (dateFrom) params.date_from = dateFrom;
-  if (dateTo) params.date_to = dateTo;
-
-  return params;
-};
-
 const LlmCallLog = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [loadingPage, setLoadingPage] = useState(true);
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [entries, setEntries] = useState<LlmCallEntry[]>([]);
   const [summary, setSummary] = useState<LlmCallSummaryRow[]>([]);
-  const [filters, setFilters] = useState<LlmCallFilters>(EMPTY_FILTERS);
-  const [appliedFilters, setAppliedFilters] =
-    useState<LlmCallFilters>(EMPTY_FILTERS);
+  const [filters, setFilters] = useState<LlmCallFilters>(() =>
+    filtersFromSearchParams(searchParams),
+  );
+  const [appliedFilters, setAppliedFilters] = useState<LlmCallFilters>(() =>
+    filtersFromSearchParams(searchParams),
+  );
   const [totalCount, setTotalCount] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [summarySortKey, setSummarySortKey] = useState<SummarySortKey>('count');
@@ -289,6 +210,9 @@ const LlmCallLog = () => {
   const applyFilters = useCallback(
     (nextFilters: LlmCallFilters, showRefreshState = true) => {
       setAppliedFilters(nextFilters);
+      setSearchParams(syncSearchParams(nextFilters, searchParams), {
+        replace: true,
+      });
       return fetchLogs({
         nextFilters,
         offset: 0,
@@ -297,7 +221,7 @@ const LlmCallLog = () => {
         showRefreshState,
       });
     },
-    [fetchLogs],
+    [fetchLogs, searchParams, setSearchParams],
   );
 
   const loadMore = useCallback(() => {
@@ -316,7 +240,9 @@ const LlmCallLog = () => {
       setLoadingPage(true);
       try {
         await AdminApi.checkAuth();
-        await applyFilters(EMPTY_FILTERS, false);
+        const initial = filtersFromSearchParams(searchParams);
+        setFilters(initial);
+        await applyFilters(initial, false);
       } catch (err: any) {
         const status = err?.response?.status;
         if (status === 401 || status === 403) {
@@ -345,6 +271,8 @@ const LlmCallLog = () => {
         filters.patientIdFilter === appliedFilters.patientIdFilter &&
         filters.modelFilter === appliedFilters.modelFilter &&
         filters.categoryFilter === appliedFilters.categoryFilter &&
+        filters.flowFilter === appliedFilters.flowFilter &&
+        filters.promptHashFilter === appliedFilters.promptHashFilter &&
         filters.dateFrom === appliedFilters.dateFrom &&
         filters.dateTo === appliedFilters.dateTo
       ) {
@@ -585,6 +513,34 @@ const LlmCallLog = () => {
 
             <label className="block">
               <span className="mb-1 block text-[11px] text-Text-Secondary">
+                Flow ID
+              </span>
+              <input
+                type="text"
+                value={filters.flowFilter}
+                onChange={(e) => updateFilter('flowFilter', e.target.value)}
+                placeholder="compile, action_plan..."
+                className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-[12px]"
+              />
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-[11px] text-Text-Secondary">
+                Prompt hash
+              </span>
+              <input
+                type="text"
+                value={filters.promptHashFilter}
+                onChange={(e) =>
+                  updateFilter('promptHashFilter', e.target.value)
+                }
+                placeholder="12-char hash prefix"
+                className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-[12px]"
+              />
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-[11px] text-Text-Secondary">
                 Date from
               </span>
               <input
@@ -784,6 +740,17 @@ const LlmCallLog = () => {
                             {entry.model}
                           </span>
                         ) : null}
+                        {entry.primary_flow_id ? (
+                          <span className="rounded-full bg-teal-50 px-2 py-1 text-[10px] text-teal-700">
+                            {entry.primary_flow_id}
+                          </span>
+                        ) : null}
+                        {entry.prompt_hash ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-[10px] text-indigo-700">
+                            <Hash size={10} />
+                            {entry.prompt_hash}
+                          </span>
+                        ) : null}
                       </div>
                       <div className="text-[12px] font-medium text-Text-Primary">
                         {friendlyFunctionLabel(
@@ -848,77 +815,13 @@ const LlmCallLog = () => {
       </div>
 
       {selectedEntry ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="flex max-h-[90vh] w-full max-w-5xl flex-col rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-Gray-50 px-4 py-3">
-              <div>
-                <h3 className="text-[14px] font-semibold text-Text-Primary">
-                  {friendlyFunctionLabel(
-                    selectedEntry.function_name,
-                    selectedEntry.prompt_key,
-                  )}
-                </h3>
-                <p className="text-[11px] text-Text-Secondary">
-                  {formatDate(selectedEntry.timestamp)} ·{' '}
-                  {formatDuration(selectedEntry.duration_ms)}
-                  {selectedEntry.model ? ` · ${selectedEntry.model}` : ''}
-                  {selectedEntry.log_source
-                    ? ` · ${selectedEntry.log_source}`
-                    : ''}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedEntry(null)}
-                className="rounded-full p-2 text-Text-Secondary hover:bg-[#F8FAFB]"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {isPipelineEntry(selectedEntry) ? (
-              <div className="flex-1 overflow-auto p-4">
-                <h4 className="mb-2 text-[12px] font-semibold text-Text-Primary">
-                  Pipeline event
-                </h4>
-                <pre className="max-h-[60vh] overflow-auto rounded-xl bg-[#F8FAFB] p-3 text-[11px] leading-5 text-Text-Primary">
-                  {prettyPrintPayload(selectedEntry.request_payload)}
-                </pre>
-                {(selectedEntry.status || '').toLowerCase() === 'failed' &&
-                selectedEntry.error_message ? (
-                  <div className="mt-3 rounded-xl border border-red-100 bg-red-50 p-3 text-[11px] text-red-700">
-                    {selectedEntry.error_message}
-                  </div>
-                ) : null}
-              </div>
-            ) : (
-              <div className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2">
-                <div>
-                  <h4 className="mb-2 text-[12px] font-semibold text-Text-Primary">
-                    Input (messages)
-                  </h4>
-                  <pre className="max-h-[60vh] overflow-auto rounded-xl bg-[#F8FAFB] p-3 text-[11px] leading-5 text-Text-Primary">
-                    {prettyPrintPayload(selectedEntry.request_payload)}
-                  </pre>
-                </div>
-                <div>
-                  <h4 className="mb-2 text-[12px] font-semibold text-Text-Primary">
-                    Output (response)
-                  </h4>
-                  <pre className="max-h-[60vh] overflow-auto rounded-xl bg-[#F8FAFB] p-3 text-[11px] leading-5 text-Text-Primary">
-                    {prettyPrintPayload(selectedEntry.response_payload)}
-                  </pre>
-                  {(selectedEntry.status || '').toLowerCase() === 'failed' &&
-                  selectedEntry.error_message ? (
-                    <div className="mt-3 rounded-xl border border-red-100 bg-red-50 p-3 text-[11px] text-red-700">
-                      {selectedEntry.error_message}
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <LlmCallDetailDrawer
+          entry={selectedEntry}
+          onClose={() => setSelectedEntry(null)}
+          friendlyFunctionLabel={friendlyFunctionLabel}
+          formatDate={formatDate}
+          formatDuration={formatDuration}
+        />
       ) : null}
     </AdminShellLayout>
   );
