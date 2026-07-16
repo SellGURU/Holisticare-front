@@ -1372,14 +1372,6 @@ const NewGenerateHolisticPlan = () => {
                   )
                 )}
               </div>
-              {/* <CategoryOrder
-                            setData={setTratmentPlanData}
-                            data={treatmentPlanData}
-                            isActionPlan={isActionPlan}
-                            memberId={id}
-                            openAnayze={() => setSHowAnalyse(true)}
-                            openGoal={() => setSHowClientGoals(true)}
-                            ></CategoryOrder> */}
             </div>
 
             <div className="w-full mt-6 flex gap-4 justify-center ">
