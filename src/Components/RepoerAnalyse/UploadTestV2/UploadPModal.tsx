@@ -6,7 +6,6 @@ import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
 import { removeRowErrorKey, reviewRowErrorKey } from './biomarkerReviewCompat';
-import { ReviewFinding } from './ReviewFindingsPanel';
 
 interface UploadPModalProps {
   initialMode?: string;
@@ -53,9 +52,6 @@ interface UploadPModalProps {
   reopeningExistingFile?: boolean;
   reviewCatalog?: any[];
   onReviewCatalogRefresh?: () => void;
-  reviewFindings?: ReviewFinding[];
-  reviewFindingsLoading?: boolean;
-  onReloadReviewFindings?: () => void;
   compileState?: 'idle' | 'saving' | 'done' | 'error';
   onRowReadySave?: (row: any) => void;
   reviewHydrating?: boolean;
@@ -112,9 +108,6 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   reopeningExistingFile = false,
   reviewCatalog = [],
   onReviewCatalogRefresh,
-  reviewFindings: _reviewFindings = [],
-  reviewFindingsLoading: _reviewFindingsLoading = false,
-  onReloadReviewFindings: _onReloadReviewFindings,
   compileState = 'idle',
   onRowReadySave,
   reviewHydrating,

@@ -154,8 +154,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [isSaveClicked, setisSaveClicked] = useState(false);
   const [uploadPhase, setUploadPhase] = useState('uploading');
   const [reviewSummary, setReviewSummary] = useState<any>(null);
-  const [reviewFindings, setReviewFindings] = useState<ReviewFinding[]>([]);
-  const [reviewFindingsLoading, setReviewFindingsLoading] = useState(false);
   // console.log(extractedBiomarkers);
   const [isUploadFromComboBar, setIsUploadFromComboBar] = useState(false);
   const stepOnePollInFlightRef = useRef(false);
@@ -1725,7 +1723,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       polling: pollingRef.current,
       backend_errors_meta: backendRowErrorsMetaRef.current,
     });
-    setReviewFindingsLoading(true);
     try {
       const res = await Application.getLabReviewFindings({ file_id: fileId });
       const findingsMeta = buildSnapshotMeta(
@@ -1741,7 +1738,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       const findings = Array.isArray(res?.data?.findings)
         ? res.data.findings
         : [];
-      setReviewFindings(findings);
       const biomarkersForContext = contextBiomarkers ?? extractedBiomarkers;
       if (biomarkersForContext.length) {
         applyPersistedReviewFindings(
@@ -1755,8 +1751,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     } catch (err: any) {
       console.error('Failed to load review findings:', err);
       return [];
-    } finally {
-      if (isMountedRef.current) setReviewFindingsLoading(false);
     }
   };
 
@@ -2411,11 +2405,6 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           reopeningExistingFile={reopeningExistingFile}
           reviewCatalog={reviewCatalog}
           onReviewCatalogRefresh={refreshReviewCatalog}
-          reviewFindings={reviewFindings}
-          reviewFindingsLoading={reviewFindingsLoading}
-          onReloadReviewFindings={() =>
-            loadReviewFindings(undefined, backendRowErrorsRef.current)
-          }
           compileState={compileState}
           onRowReadySave={handleRowReadySave}
           reviewHydrating={reviewHydrating}
