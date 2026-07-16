@@ -1473,8 +1473,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       return;
     }
     if (uploadedFile != null || addedBiomarkers.length !== 0) {
-      const isManualCreate =
-        !uploadedFile && labOverlayMode === 'manual';
+      const isManualCreate = !uploadedFile && labOverlayMode === 'manual';
       validateAndSaveLabReport()
         .then((res) => {
           const savedFileId =
@@ -2094,10 +2093,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
             res?.data?.modified_biomarkers_file_id ||
             res?.data?.added_biomarkers_file_id ||
             uploadedFile?.file_id;
-          showSuccess(
-            'Manual entry saved.',
-            'Updating your health plan...',
-          );
+          showSuccess('Manual entry saved.', 'Updating your health plan...');
           triggerSilentCompile(
             savedFileId,
             { job_id: res?.data?.job_id },

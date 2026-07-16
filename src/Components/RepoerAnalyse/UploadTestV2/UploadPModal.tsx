@@ -557,10 +557,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                               row?.biomarker ||
                               row?.original_biomarker_name ||
                               '',
-                            value:
-                              row?.value ??
-                              row?.original_value ??
-                              '',
+                            value: row?.value ?? row?.original_value ?? '',
                             unit: row?.unit ?? row?.original_unit ?? '',
                           }))
                         : addedBiomarkers
