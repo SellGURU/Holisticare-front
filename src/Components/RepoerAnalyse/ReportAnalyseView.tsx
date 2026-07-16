@@ -1762,11 +1762,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       {needFocusBiomarkers.map((el: any, index: number) => {
                         return (
                           <>
-                            <RefrenceBox
-                              data={el}
-                              index={index}
-                              isScoringComplete={isScoringComplete}
-                            ></RefrenceBox>
+                            <RefrenceBox data={el} index={index}></RefrenceBox>
                           </>
                         );
                       })}

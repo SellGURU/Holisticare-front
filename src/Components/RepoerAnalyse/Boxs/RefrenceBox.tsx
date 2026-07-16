@@ -20,14 +20,9 @@ import ChartLoadingPlaceholder, {
 interface RefrenceBoxProps {
   data: any;
   index: number;
-  isScoringComplete?: boolean;
 }
 
-const RefrenceBox: React.FC<RefrenceBoxProps> = ({
-  data,
-  index,
-  isScoringComplete: _isScoringComplete = true,
-}) => {
+const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
   const [isCheced, setIsCheced] = useState(false);
   const isLongName = data.name.length > 23;
   // console.log(data.name);
