@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { resolveExactBiomarkerName } from './biomarkerNameFields';
+
 const trim = (value: unknown) => String(value ?? '').trim();
 
 const normalizeKey = (value: unknown) => trim(value).toLowerCase();
@@ -569,6 +571,46 @@ export const isRowSuppressed = (row: any, suppressedSet: Set<string>) => {
   );
 };
 
+export const isManuallySuppressedRow = isRowSuppressed;
+
+const buildSuppressionKeysForItem = (item: SuppressedBiomarkerItem) => {
+  const keys = new Set<string>();
+  const type = normalizeKey(item?.biomarker_type || 'blood');
+  const extractedKey = normalizeBiomarkerNameForMatch(
+    item?.extracted_name || '',
+  );
+  if (extractedKey) {
+    keys.add(`${extractedKey}|${type}`);
+  }
+  const systemKey = normalizeBiomarkerNameForMatch(
+    item?.system_biomarker || '',
+  );
+  if (systemKey) {
+    keys.add(`${systemKey}|${type}`);
+  }
+  return keys;
+};
+
+/** Find the clinic suppression record for a review row (direct match, then key overlap). */
+export const findSuppressedItemForRow = (
+  row: any,
+  items: SuppressedBiomarkerItem[],
+): SuppressedBiomarkerItem | undefined => {
+  const direct = (items || []).find((item) => suppressedItemMatchesRow(item, row));
+  if (direct) return direct;
+
+  const rowKeys = new Set(buildSuppressionKeysForRow(row));
+  if (!rowKeys.size) return undefined;
+
+  return (items || []).find((item) => {
+    const itemKeys = buildSuppressionKeysForItem(item);
+    for (const key of itemKeys) {
+      if (rowKeys.has(key)) return true;
+    }
+    return false;
+  });
+};
+
 export const isPhantomSuppressedRow = (row: any) =>
   row?.is_suppressed_only === true ||
   String(row?.biomarker_id || '').startsWith('suppressed-');
@@ -606,7 +648,10 @@ export const categorizeReviewRow = (
     return { category: 'excluded' };
   }
 
+  const userRestored = row?.restored_from_excluded === true;
+
   if (
+    !userRestored &&
     String(row?.validation_status || '')
       .trim()
       .toLowerCase() === 'skip'
@@ -615,7 +660,7 @@ export const categorizeReviewRow = (
   }
 
   const extractedUnit = trim(preferNonEmpty(row?.original_unit, row?.unit));
-  if (extractedUnit && isNonResultUnitLabel(extractedUnit)) {
+  if (!userRestored && extractedUnit && isNonResultUnitLabel(extractedUnit)) {
     return { category: 'excluded' };
   }
 
@@ -625,11 +670,12 @@ export const categorizeReviewRow = (
 
   const skipReason = trim(row?.skip_reason).toLowerCase();
   if (
-    skipReason === 'duplicate_biomarker_row' ||
-    skipReason === 'non_result_row' ||
-    skipReason === 'qualitative_on_numeric' ||
-    skipReason === 'qualitative_on_numeric_urine' ||
-    skipReason === 'test_not_ordered'
+    !userRestored &&
+    (skipReason === 'duplicate_biomarker_row' ||
+      skipReason === 'non_result_row' ||
+      skipReason === 'qualitative_on_numeric' ||
+      skipReason === 'qualitative_on_numeric_urine' ||
+      skipReason === 'test_not_ordered')
   ) {
     return { category: 'excluded' };
   }
@@ -697,6 +743,13 @@ export const clearedSkipMetadataAfterValidStandardize = () =>
     skip_reason: null,
     suggest_delete: false,
     validation_status: 'ready',
+  }) as const;
+
+/** Patch applied when user restores an auto- or manually-excluded row back into review. */
+export const buildLocalRestorePatchForExcludedRow = () =>
+  ({
+    ...clearedSkipMetadataAfterValidStandardize(),
+    restored_from_excluded: true,
   }) as const;
 
 /** Merge standardize success into a row; clears stale skip metadata only for valid results. */
@@ -997,6 +1050,31 @@ export const suppressedItemMatchesRow = (
     rowKey === itemSystemKey ||
     (itemSystemKey !== '|' && rowSystemKey === itemSystemKey)
   );
+};
+
+/** Payload for unsuppress API — prefer stored suppression record over re-inferred row fields. */
+export const buildUnsuppressPayloadFromRow = (
+  row: any,
+  matchedItem?: SuppressedBiomarkerItem | null,
+) => {
+  const payload: {
+    id?: number;
+    extracted_name?: string;
+    biomarker_type?: string;
+  } = {
+    extracted_name:
+      matchedItem?.extracted_name ||
+      resolveExactBiomarkerName(row) ||
+      row.original_biomarker_name ||
+      row.biomarker ||
+      '',
+    biomarker_type:
+      matchedItem?.biomarker_type || inferRowBiomarkerType(row),
+  };
+  if (matchedItem?.id != null) {
+    payload.id = matchedItem.id;
+  }
+  return payload;
 };
 
 export const buildRowFromSuppressedItem = (item: SuppressedBiomarkerItem) => {

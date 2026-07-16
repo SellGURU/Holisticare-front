@@ -33,6 +33,10 @@ import {
   buildSuppressedRowKey,
   buildSuppressionKeysForRow,
   buildSuppressedStateFromItems,
+  buildLocalRestorePatchForExcludedRow,
+  buildUnsuppressPayloadFromRow,
+  findSuppressedItemForRow,
+  isManuallySuppressedRow,
   mergeSuppressedRowsIntoReview,
   suppressedItemMatchesRow,
   inferRowBiomarkerType,
@@ -534,25 +538,36 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     }
   };
 
+  const applyLocalRestoreToRow = (row: any) => {
+    const patch = buildLocalRestorePatchForExcludedRow();
+    if (row.is_suppressed_only) {
+      const { is_suppressed_only: _phantom, ...restoredRow } = row;
+      onChange([...biomarkers, { ...restoredRow, ...patch }]);
+      return;
+    }
+    onChange(
+      biomarkers.map((item) =>
+        item.biomarker_id === row.biomarker_id ? { ...item, ...patch } : item,
+      ),
+    );
+  };
+
   const handleRestoreExcludedRow = async (row: any) => {
     if (isDemo) return;
     markDirty(row?.biomarker_id);
-    const matchedItem = suppressedItems.find((item) =>
-      suppressedItemMatchesRow(item, row),
-    );
-    const extractedName =
-      matchedItem?.extracted_name ||
-      resolveExactBiomarkerName(row) ||
-      row.original_biomarker_name ||
-      row.biomarker ||
-      '';
-    const biomarkerType = inferRowBiomarkerType(row);
+    const matchedItem = findSuppressedItemForRow(row, suppressedItems);
+    const manuallySuppressed = isManuallySuppressedRow(row, suppressedSet);
     const suppressionKeys = buildSuppressionKeysForRow(row);
+
+    if (!manuallySuppressed) {
+      applyLocalRestoreToRow(row);
+      return;
+    }
+
     try {
-      const res = await Application.unsuppressBiomarker({
-        extracted_name: extractedName,
-        biomarker_type: biomarkerType,
-      });
+      const res = await Application.unsuppressBiomarker(
+        buildUnsuppressPayloadFromRow(row, matchedItem),
+      );
       if (res?.data?.status === 'not_found') {
         showError(
           'Could not restore biomarker',
@@ -578,10 +593,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       setSuppressedItems((prev) =>
         prev.filter((item) => !suppressedItemMatchesRow(item, row)),
       );
-      if (row.is_suppressed_only) {
-        const { is_suppressed_only: _phantom, ...restoredRow } = row;
-        onChange([...biomarkers, restoredRow]);
-      }
+      applyLocalRestoreToRow(row);
     } catch (err) {
       console.error('Failed to restore biomarker:', err);
       showError(

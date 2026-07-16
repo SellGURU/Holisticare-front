@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildSystemBiomarkerOptionsForRow,
+  buildUnsuppressPayloadFromRow,
+  buildLocalRestorePatchForExcludedRow,
   categorizeReviewRow,
+  findSuppressedItemForRow,
   clearedSkipMetadataAfterValidStandardize,
   collectCatalogUnitsForBiomarker,
   formatUnitMismatchUserMessage,
@@ -163,6 +166,86 @@ describe('inferRowBiomarkerType', () => {
         biomarker: 'Urea',
       }),
     ).toBe('blood');
+  });
+});
+
+describe('buildUnsuppressPayloadFromRow', () => {
+  it('uses stored suppression biomarker_type when row type changed after exclude', () => {
+    const matchedItem = {
+      id: 42,
+      extracted_name: 'Some Marker',
+      biomarker_type: 'blood',
+    };
+    const row = {
+      original_biomarker_name: 'Some Marker',
+      biomarker: 'Glucose',
+      biomarker_type: 'urine',
+    };
+
+    expect(buildUnsuppressPayloadFromRow(row, matchedItem)).toEqual({
+      id: 42,
+      extracted_name: 'Some Marker',
+      biomarker_type: 'blood',
+    });
+  });
+
+  it('falls back to inferred row fields when no matched suppression item', () => {
+    const row = {
+      original_biomarker_name: 'Protein Urine',
+      biomarker: 'Protein (Urine)',
+      biomarker_type: 'urine',
+    };
+
+    expect(buildUnsuppressPayloadFromRow(row, null)).toEqual({
+      extracted_name: 'Protein Urine',
+      biomarker_type: 'urine',
+    });
+  });
+});
+
+describe('findSuppressedItemForRow', () => {
+  it('finds suppression item via overlapping suppression keys', () => {
+    const items = [
+      {
+        id: 7,
+        extracted_name: 'omega-3 fatty acids',
+        biomarker_type: 'blood',
+      },
+    ];
+    const row = {
+      original_biomarker_name: 'Omega-3 Fatty Acids',
+      biomarker_type: 'blood',
+    };
+
+    expect(findSuppressedItemForRow(row, items)).toEqual(items[0]);
+  });
+});
+
+describe('buildLocalRestorePatchForExcludedRow', () => {
+  it('clears skip metadata and marks row as user restored', () => {
+    expect(buildLocalRestorePatchForExcludedRow()).toEqual({
+      skip_reason: null,
+      suggest_delete: false,
+      validation_status: 'ready',
+      restored_from_excluded: true,
+    });
+  });
+});
+
+describe('categorizeReviewRow restored_from_excluded', () => {
+  it('returns review instead of excluded for auto-skipped rows after local restore', () => {
+    const row = {
+      biomarker: '',
+      original_biomarker_name: 'Omega-3 Fatty Acids',
+      validation_status: 'skip',
+      skip_reason: 'non_result_row',
+      restored_from_excluded: true,
+    };
+
+    expect(categorizeReviewRow(row, {}, new Set(), 0)).toEqual({
+      category: 'review',
+      reviewReason: 'unmatched',
+    });
   });
 });
 
