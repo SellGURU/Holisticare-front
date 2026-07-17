@@ -10,6 +10,7 @@ import { SlideOutPanel } from '../SlideOutPanel';
 import Application from '../../api/app';
 import { useParams } from 'react-router-dom';
 import { formatRelativeDate } from '../../utils/formatRelativeDate';
+import { isManualLabEntry } from '../../utils/manualEntry';
 // import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 // import Tooltip from '../../../'; // فرضی
 interface CompileButtonProps {
@@ -80,6 +81,18 @@ const CompileButton: FC<CompileButtonProps> = ({
         return {
           title: 'File deletion in progress…',
           description: 'The file is being deleted.',
+        };
+      }
+      if (isManualLabEntry(item)) {
+        if (item.process_status == true) {
+          return {
+            title: 'Health plan updated successfully!',
+            description: 'Your manual entry changes are reflected in the plan.',
+          };
+        }
+        return {
+          title: 'Updating health plan…',
+          description: 'Your manual entry is being applied to the health plan.',
         };
       }
       if (item.process_status == true) {

@@ -3,7 +3,10 @@ import { FC, useRef, useState } from 'react';
 import Application from '../../../../../api/app';
 import { BeatLoader } from 'react-spinners';
 import { publish } from '../../../../../utils/event';
-import { downloadManualEntryPdfFromApi } from '../../../../../utils/manualEntry';
+import {
+  downloadManualEntryPdfFromApi,
+  isManualLabEntry,
+} from '../../../../../utils/manualEntry';
 import useIsDemo from '../../../../../hooks/useIsDemo';
 interface ActionSectionProps {
   file: any;
@@ -138,11 +141,15 @@ const ActionSection: FC<ActionSectionProps> = ({
   const handleEdit = () => {
     if (isDemo || isDeleted) return;
     if (onEdit) onEdit();
+    const manual = isManualLabEntry(file);
     publish('uploadTestShow', {
       isShow: true,
-      mode: 'edit',
+      mode: manual ? 'edit_manual' : 'edit',
       file_id: file.file_id,
-      file_name: file.file_name || file.name || 'Uploaded Document.pdf',
+      file_name:
+        file.file_name ||
+        file.name ||
+        (manual ? 'Manual Entry' : 'Uploaded Document.pdf'),
     });
     setIsOptionsOpen(false);
   };

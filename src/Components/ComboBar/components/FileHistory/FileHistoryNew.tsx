@@ -21,6 +21,7 @@ import {
 } from '../../../RepoerAnalyse/UploadTestV2/biomarkerReviewCompat';
 import type { SuppressedBiomarkerItem } from '../../../RepoerAnalyse/UploadTestV2/biomarkerReviewCompat';
 import { isAsyncProcessingEnabled } from '../../../../utils/asyncProcessing';
+import { isManualLabEntry } from '../../../../utils/manualEntry';
 
 const STEP_ONE_POLL_INTERVAL_MS = 10000;
 
@@ -290,7 +291,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       const mode = data?.detail?.mode;
       if (!fileId) return;
 
-      if (mode === 'edit') {
+      if (mode === 'edit' || mode === 'edit_manual') {
         setLabEditOverlayOpen(true);
         return;
       }
@@ -948,6 +949,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       (fileUpload) =>
         fileUpload?.file_id &&
         fileUpload.process_done !== true &&
+        !isManualLabEntry(fileUpload) &&
         !reconnectAttemptedRef.current.has(fileUpload.file_id),
     );
     if (candidates.length === 0) return;

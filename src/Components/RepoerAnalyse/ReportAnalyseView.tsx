@@ -1324,6 +1324,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       const shouldOpenOverlay = Boolean(
         detail.file_id ||
           detail.mode === 'manual' ||
+          detail.mode === 'edit_manual' ||
           detail.mode === 'review_ready' ||
           detail.mode === 'edit',
       );
