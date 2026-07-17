@@ -2,16 +2,31 @@ import { useCallback } from 'react';
 import Application from '../api/app';
 import { uploadBlobToAzure } from '../services/uploadBlobService';
 import { publish } from '../utils/event';
+import {
+  isSupportedLabReportFile,
+  labReportUploadErrorMessage,
+  unsupportedLabReportFile,
+  validateLabReportFile,
+} from '../utils/labReportUploadHelpers';
+import {
+  shouldContinueStepOnePolling,
+  stepOneHasExtractedBiomarkers,
+  stepOneResponseData,
+} from '../utils/labReportStepOne';
 
-export const SUPPORTED_LAB_REPORT_FORMATS = [
-  'pdf',
-  'docx',
-  'doc',
-  'png',
-  'jpg',
-  'jpeg',
-  'webp',
-];
+export {
+  SUPPORTED_LAB_REPORT_FORMATS,
+  isSupportedLabReportFile,
+  unsupportedLabReportFile,
+  validateLabReportFile,
+} from '../utils/labReportUploadHelpers';
+export {
+  shouldContinueStepOnePolling,
+  resolveStepOneWarningMessage,
+  stepOneHasExtractedBiomarkers,
+  isStepOneTerminalEmptyOrFailed,
+  stepOneTerminalUserMessage,
+} from '../utils/labReportStepOne';
 
 const STEP_ONE_POLL_INTERVAL_MS = 10000;
 
@@ -45,38 +60,8 @@ type UploadCallbacks = {
   autoOpenReviewOnReady?: boolean;
 };
 
-const fileExtension = (fileName: string) =>
-  fileName.split('.').pop()?.toLowerCase() || '';
-
-export const isSupportedLabReportFile = (file: File) =>
-  SUPPORTED_LAB_REPORT_FORMATS.includes(fileExtension(file.name));
-
-export const unsupportedLabReportFile = (file: File): FileUpload => ({
-  file_id: '',
-  file,
-  progress: 0,
-  status: 'error',
-  errorMessage:
-    'Unsupported format. Allowed: PDF, DOC, DOCX, PNG, JPG, JPEG, WEBP.',
-});
-
 const asRecord = (value: unknown): Record<string, unknown> =>
   value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
-
-const stepOneResponseData = (response: unknown) =>
-  asRecord(asRecord(response).data);
-
-const shouldContinueStepOnePolling = (data: Record<string, unknown>) => {
-  const validation = asRecord(data.validation);
-  if (data.error || data.lab_type === 'error') return false;
-  if (data.lab_type === 'ultrasound') return false;
-  if (validation.ready === true) return false;
-  return true;
-};
-
-const stepOneHasExtractedBiomarkers = (data: Record<string, unknown>) =>
-  Array.isArray(data.extracted_biomarkers) &&
-  data.extracted_biomarkers.length > 0;
 
 const isGatewayTimeout = (error: unknown) => {
   const errorRecord = asRecord(error);
@@ -144,19 +129,6 @@ const startStepOnePolling = (
   }, STEP_ONE_POLL_INTERVAL_MS);
 };
 
-export const labReportUploadErrorMessage = (error: unknown) => {
-  const errorRecord = asRecord(error);
-  const responseRecord = asRecord(errorRecord.response);
-  const dataRecord = asRecord(responseRecord.data);
-  return (
-    dataRecord.message ||
-    dataRecord.detail ||
-    errorRecord.detail ||
-    errorRecord.message ||
-    'Failed to upload file. Please try again.'
-  ).toString();
-};
-
 export const useLabReportUpload = () => {
   const uploadLabReportFile = useCallback(
     async ({
@@ -168,6 +140,20 @@ export const useLabReportUpload = () => {
       publishProgressEvents = false,
       autoOpenReviewOnReady = true,
     }: UploadCallbacks): Promise<LabReportUploadResult> => {
+      const preflight = validateLabReportFile(file);
+      if (!preflight.ok) {
+        const invalidFile: FileUpload = {
+          file_id: '',
+          file,
+          progress: 0,
+          status: 'error',
+          errorMessage: preflight.message,
+        };
+        onStateChange?.(invalidFile);
+        onError?.(invalidFile, new Error(preflight.message));
+        return { fileUpload: invalidFile };
+      }
+
       if (!isSupportedLabReportFile(file)) {
         const invalidFile = unsupportedLabReportFile(file);
         onStateChange?.(invalidFile);

@@ -14,6 +14,12 @@ import UploadPModal from './UploadPModal';
 import useIsDemo from '../../../hooks/useIsDemo';
 import { useLabReportUpload } from '../../../hooks/useLabReportUpload';
 import {
+  isStepOneTerminalEmptyOrFailed,
+  resolveStepOneWarningMessage,
+  stepOneTerminalUserMessage,
+} from '../../../utils/labReportStepOne';
+import { validateLabReportFile } from '../../../utils/labReportUploadHelpers';
+import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
   ensureUniqueBiomarkerIds,
@@ -144,6 +150,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const [isTrueEditMode, setIsTrueEditMode] = useState(false);
   // const [activeMenu, setactiveMenu] = useState('Upload File');
   const [uploadedFile, setUploadedFile] = useState<FileUpload | null>(null); // ✅ single file
+  const [uploadWarningMessage, setUploadWarningMessage] = useState('');
   const [errorMessage] = useState<string>('');
   const [, setQuestionaryLength] = useState(false);
 
@@ -298,14 +305,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         setUploadPhase(data.status || 'ocr_processing');
       }
       setReviewSummary(data.summary || null);
-      setUploadedFile((prev) =>
-        prev
-          ? {
-              ...prev,
-              warning: Boolean(data.warning),
-            }
-          : prev,
-      );
+      const warningMessage = resolveStepOneWarningMessage(data);
+      if (warningMessage) {
+        setUploadWarningMessage(warningMessage);
+      }
+      setUploadedFile((prev) => {
+        const base: FileUpload =
+          prev ||
+          ({
+            file_id: String(data.file_id || activeFileId || ''),
+            file: new File([], 'Lab Report'),
+            progress: data.progress ?? 1,
+            status: 'completed',
+          } as FileUpload);
+        return {
+          ...base,
+          warning: Boolean(warningMessage),
+          warningMessage: warningMessage || (base as any).warningMessage,
+        };
+      });
       if (data.date_of_test) {
         setModifiedDateOfTest(new Date(data.date_of_test));
       }
@@ -332,6 +350,23 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
                 errorMessage:
                   data.error ||
                   'Failed to extract biomarkers from this file. Please try a different file.',
+              }
+            : prev,
+        );
+        return;
+      }
+
+      if (isStepOneTerminalEmptyOrFailed(data)) {
+        setPolling(false);
+        setbiomarkerLoading(false);
+        setExtractedBiomarkers([]);
+        setUploadPhase(data.status === 'empty' ? 'empty' : 'failed');
+        setUploadedFile((prev) =>
+          prev
+            ? {
+                ...prev,
+                status: data.status === 'empty' ? 'error' : 'error',
+                errorMessage: stepOneTerminalUserMessage(data),
               }
             : prev,
         );
@@ -570,6 +605,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     setRowErrors({});
     setAddedRowErrors({});
     setReviewSummary(null);
+    setUploadWarningMessage('');
     setUploadPhase('uploading');
     publish('RESET_MAPPING_ROWS', {});
     setbiomarkerLoading(false);
@@ -611,6 +647,25 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     const files = e.target.files;
     if (files && files[0]) {
       const file = files[0];
+      const preflight = validateLabReportFile(file);
+      if (!preflight.ok) {
+        setUploadWarningMessage('');
+        setPolling(false);
+        setbiomarkerLoading(false);
+        setExtractedBiomarkers([]);
+        setUploadPhase('failed');
+        setUploadedFile({
+          file_id: '',
+          file,
+          progress: 0,
+          status: 'error',
+          errorMessage: preflight.message,
+        });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
 
       // Validation passed: proceed with upload
       skipExtractionProgressRef.current = false;
@@ -618,6 +673,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       setIsTrueEditMode(false);
       setPolling(true);
       setReviewSummary(null);
+      setUploadWarningMessage('');
       setExtractedBiomarkers([]);
       setRowErrors({});
       setAddedRowErrors({});
@@ -2377,6 +2433,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           onSaveClose={handleSaveClose}
           isShare={isShare || false}
           errorMessage={uploadedFile?.errorMessage || errorMessage}
+          uploadWarningMessage={uploadWarningMessage}
           handleFileChange={handleFileChange}
           handleDeleteFile={handleDeleteFile}
           onDownload={handleDownloadFile}

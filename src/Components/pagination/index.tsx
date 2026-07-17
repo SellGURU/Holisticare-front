@@ -89,7 +89,7 @@ const Pagination: React.FC<PaginationProps> = ({
             ? 'opacity-40 cursor-not-allowed'
             : 'hover:bg-gray-100 hover:text-[#005F73] active:bg-gray-200'
         }`}
-        aria-label="صفحه قبلی"
+        aria-label="Previous page"
       >
         <svg
           className="w-3 h-3"
@@ -115,7 +115,7 @@ const Pagination: React.FC<PaginationProps> = ({
                 ? 'bg-[#005F73] text-white shadow-md scale-105 border border-[#005F73]'
                 : 'bg-white text-Text-Primary border border-gray-200 hover:bg-gray-50 hover:border-gray-300 active:bg-gray-100'
             }`}
-            aria-label={`صفحه ${page}`}
+            aria-label={`Page ${page}`}
             aria-current={page === currentPage ? 'page' : undefined}
           >
             {page}
@@ -137,7 +137,7 @@ const Pagination: React.FC<PaginationProps> = ({
             ? 'opacity-40 cursor-not-allowed'
             : 'hover:bg-gray-100 hover:text-[#005F73] active:bg-gray-200'
         }`}
-        aria-label="صفحه بعدی"
+        aria-label="Next page"
       >
         <svg
           className="w-3 h-3"

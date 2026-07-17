@@ -5,11 +5,16 @@ import { useParams } from 'react-router-dom';
 import { publish, subscribe, unsubscribe } from '../../../../utils/event';
 import FileUploadProgressList from './FileUploadProgressList';
 import useIsDemo from '../../../../hooks/useIsDemo';
+import { useLabReportUpload } from '../../../../hooks/useLabReportUpload';
 import {
+  isStepOneTerminalEmptyOrFailed,
+  resolveStepOneWarningMessage,
+  stepOneTerminalUserMessage,
   SUPPORTED_LAB_REPORT_FORMATS,
-  useLabReportUpload,
-} from '../../../../hooks/useLabReportUpload';
+} from '../../../../utils/labReportStepOne';
+import { validateLabReportFile } from '../../../../utils/labReportUploadHelpers';
 import ProgressLoading from '../../../RepoerAnalyse/UploadTestV2/ProgressLoading';
+import { LabUploadWarningBanner } from '../../../RepoerAnalyse/UploadTestV2/LabUploadWarningBanner';
 import {
   buildProcessLabReportPayloadFromStepOne,
   countReviewCategoriesFromStepOneData,
@@ -377,6 +382,30 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
 
     const selectedFiles = Array.from(files);
     for (const file of selectedFiles) {
+      const preflight = validateLabReportFile(file);
+      if (!preflight.ok) {
+        const tempId = `inline-${file.name}-${file.lastModified}-${Date.now()}`;
+        setInlineUploads((prev) => [
+          {
+            file,
+            file_id: tempId,
+            upload_temp_id: tempId,
+            file_name: file.name,
+            date_uploaded: new Date().toISOString(),
+            progress: 0,
+            uploadedSize: 0,
+            status: 'error',
+            uploadPhase: 'failed',
+            progressBiomarker: 0,
+            action_type: 'uploaded',
+            process_done: true,
+            errorMessage: preflight.message,
+          },
+          ...prev,
+        ]);
+        continue;
+      }
+
       const tempId = `inline-${file.name}-${file.lastModified}-${Date.now()}`;
       setInlineUploads((prev) => [
         {
@@ -573,6 +602,23 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         return true;
       }
 
+      const warningMessage = resolveStepOneWarningMessage(data);
+
+      if (isStepOneTerminalEmptyOrFailed(data)) {
+        updateInlineUpload(tempId, {
+          status: 'error',
+          uploadPhase: data.status === 'empty' ? 'empty' : 'failed',
+          process_done: true,
+          headerProcessing: false,
+          progressBiomarker: data.progress ?? 90,
+          warning: Boolean(data.warning),
+          warningMessage,
+          errorMessage: stepOneTerminalUserMessage(data),
+        });
+        window.setTimeout(finishProcessing, 3000);
+        return true;
+      }
+
       const extractedCount = Array.isArray(data.extracted_biomarkers)
         ? data.extracted_biomarkers.length
         : undefined;
@@ -610,6 +656,8 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         reviewCount: reviewCounts?.review,
         excludedCount: reviewCounts?.excluded,
         reviewCountsReady: Boolean(reviewCounts),
+        warning: Boolean(data.warning),
+        warningMessage,
       });
 
       if (data.validation?.ready && extractedCount && extractedCount > 0) {
@@ -640,6 +688,8 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
             headerProcessing: true,
             progressBiomarker: 100,
             process_done: false,
+            warning: Boolean(warningMessage),
+            warningMessage,
           });
           publish('checkProgress', {
             type: 'file',
@@ -665,6 +715,8 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           headerProcessing: true,
           progressBiomarker: 100,
           process_done: false,
+          warning: Boolean(warningMessage),
+          warningMessage,
         });
 
         try {
@@ -724,6 +776,8 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
                 headerProcessing: true,
                 progressBiomarker: 100,
                 process_done: false,
+                warning: Boolean(warningMessage),
+                warningMessage,
               });
               getFileList(id);
             })
@@ -1066,6 +1120,10 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
                   <div className="text-[10px] leading-4 text-Text-Quadruple">
                     Biomarkers are ready for review.
                   </div>
+                  <LabUploadWarningBanner
+                    message={activeInlineUpload.warningMessage}
+                    className="mt-2 w-full max-w-[360px] text-left"
+                  />
                 </div>
               ) : showInlineExtractProgress && activeInlineUpload ? (
                 <ProgressLoading
@@ -1077,6 +1135,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
                   headerProcessing={Boolean(
                     activeInlineUpload.headerProcessing,
                   )}
+                  warningMessage={activeInlineUpload.warningMessage}
                   compact
                 />
               ) : (

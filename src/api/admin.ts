@@ -95,6 +95,8 @@ class AdminApi {
     date_from?: string;
     date_to?: string;
     category?: string;
+    flow_id?: string;
+    prompt_hash?: string;
     max_scan_bytes?: number;
     include_summary?: boolean;
   }) {
@@ -150,14 +152,49 @@ class AdminApi {
 
   static listLlmPrompts(params?: {
     category?: string;
-    owner?: string;
+    owner_service?: string;
     search?: string;
+    include_inactive?: boolean;
     only_active?: boolean;
   }) {
     return axios.get(`${getBaseUrl()}/admin/llm/prompts`, {
       headers: withAuthHeaders(),
       params,
     });
+  }
+
+  static getLlmAdminCapabilities() {
+    return axios.get(`${getBaseUrl()}/admin/llm/prompts/_capabilities`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static getBusinessFlows() {
+    return axios.get(`${getBaseUrl()}/admin/business-flows`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static getLlmPromptSnapshot(promptHash: string) {
+    return axios.get(
+      `${getBaseUrl()}/admin/llm/prompts/_snapshots/${encodeURIComponent(promptHash)}`,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static getLlmPromptHistory(key: string, limit = 50) {
+    return axios.get(
+      `${getBaseUrl()}/admin/llm/prompts/${encodeURIComponent(key)}/history`,
+      { headers: withAuthHeaders(), params: { limit } },
+    );
+  }
+
+  static restoreLlmPrompt(key: string, historyId: number) {
+    return axios.post(
+      `${getBaseUrl()}/admin/llm/prompts/${encodeURIComponent(key)}/restore/${historyId}`,
+      {},
+      { headers: withAuthHeaders() },
+    );
   }
 
   static getLlmPrompt(key: string) {

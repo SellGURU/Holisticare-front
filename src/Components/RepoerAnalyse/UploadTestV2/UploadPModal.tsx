@@ -5,6 +5,7 @@ import SpinnerLoader from '../../SpinnerLoader';
 import { AddBiomarker } from './AddBiomarker';
 import BiomarkersSection from './BiomarkersSection';
 import FileUploaderSection from './FileUploaderSection';
+import { LabUploadWarningBanner } from './LabUploadWarningBanner';
 import { removeRowErrorKey, reviewRowErrorKey } from './biomarkerReviewCompat';
 
 interface UploadPModalProps {
@@ -16,6 +17,7 @@ interface UploadPModalProps {
   onSaveClose?: () => void;
   isShare: boolean;
   errorMessage: string;
+  uploadWarningMessage?: string;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleDeleteFile: (file: any) => void;
   formatFileSize: (bytes: number) => string;
@@ -73,6 +75,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
   onSave,
   isShare,
   errorMessage,
+  uploadWarningMessage,
   handleFileChange,
   handleDeleteFile,
   formatFileSize,
@@ -361,6 +364,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 isEditMode={isEditMode}
                 isShare={isShare}
                 errorMessage={errorMessage}
+                uploadWarningMessage={uploadWarningMessage}
                 handleFileChange={handleFileChange}
                 uploadedFile={uploadedFile}
                 handleDeleteFile={handleDeleteFile}
@@ -368,6 +372,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 fileInputRef={fileInputRef}
                 onClose={onClose}
                 onDownload={onDownload}
+              />
+              <LabUploadWarningBanner
+                message={uploadWarningMessage}
+                className="shrink-0"
               />
               {fileType === 'ultrasound' ? (
                 <div className="w-full h-full flex flex-col items-center justify-center py-12 px-4">
@@ -436,6 +444,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   isEditMode={isEditMode}
                   isShare={isShare}
                   errorMessage={errorMessage}
+                  uploadWarningMessage={uploadWarningMessage}
                   handleFileChange={handleFileChange}
                   uploadedFile={uploadedFile}
                   handleDeleteFile={handleDeleteFile}
@@ -443,6 +452,10 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                   fileInputRef={fileInputRef}
                   onClose={onClose}
                   onDownload={onDownload}
+                />
+                <LabUploadWarningBanner
+                  message={uploadWarningMessage}
+                  className="shrink-0"
                 />
                 {fileType === 'ultrasound' ? (
                   <div className="w-full h-full flex flex-col items-center justify-center py-12 px-4">

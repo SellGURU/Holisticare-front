@@ -2,10 +2,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import useIsDemo from '../../../hooks/useIsDemo';
+import {
+  LabUploadWarningBanner,
+  resolveUploadWarningText,
+} from './LabUploadWarningBanner';
 
 interface FileUploaderSectionProps {
   isShare: boolean | undefined;
   errorMessage: string;
+  uploadWarningMessage?: string;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   uploadedFile: any | null; // ✅ single file instead of list
   handleDeleteFile: (file: any) => void;
@@ -19,6 +24,7 @@ interface FileUploaderSectionProps {
 const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
   isShare,
   errorMessage,
+  uploadWarningMessage,
   handleFileChange,
   uploadedFile,
   handleDeleteFile,
@@ -44,7 +50,16 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
     const fileName = uploadedFile?.file?.name || '';
     const fileSize = formatFileSize(uploadedFile?.file?.size || 0);
     const isComplete = uploadedFile.status === 'completed';
-    const hasWarning = Boolean(uploadedFile.warning);
+    const hasWarning = Boolean(
+      resolveUploadWarningText(
+        uploadWarningMessage,
+        uploadedFile?.warningMessage as string | undefined,
+      ),
+    );
+    const warningText = resolveUploadWarningText(
+      uploadWarningMessage,
+      uploadedFile?.warningMessage as string | undefined,
+    );
     return (
       <div className="w-full shrink-0">
         <div className="flex items-center gap-2 md:gap-3 rounded-xl border border-Gray-50 bg-white px-3 py-1.5">
@@ -98,6 +113,7 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
             {errorMessage}
           </div>
         )}
+        <LabUploadWarningBanner message={warningText} className="mt-1" />
       </div>
     );
   }

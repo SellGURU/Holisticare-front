@@ -9,6 +9,7 @@ import {
   formatReadyBadge,
   formatReviewBadge,
 } from '../../../RepoerAnalyse/UploadTestV2/biomarkerCountCopy';
+import { LabUploadWarningBanner } from '../../../RepoerAnalyse/UploadTestV2/LabUploadWarningBanner';
 // import { ButtonSecondary } from '../../../Button/ButtosSecondary';
 import { publish } from '../../../../utils/event';
 
@@ -147,6 +148,10 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
           excludedCount={excludedCount}
           reviewCountsReady={reviewCountsReady}
           className="relative z-[1] mt-3"
+        />
+        <LabUploadWarningBanner
+          message={file.warningMessage}
+          className="relative z-[1] mt-2"
         />
         {file.needsManualReview && (reviewCount ?? 0) > 0 && (
           <button

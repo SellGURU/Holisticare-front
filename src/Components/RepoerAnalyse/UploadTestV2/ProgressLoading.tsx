@@ -4,6 +4,7 @@ import {
   formatReadyBadge,
   formatReviewBadge,
 } from './biomarkerCountCopy';
+import { LabUploadWarningBanner } from './LabUploadWarningBanner';
 
 interface ProgressLoadingProps {
   maxProgress: number;
@@ -14,6 +15,7 @@ interface ProgressLoadingProps {
   excludedCount?: number;
   headerProcessing?: boolean;
   compact?: boolean;
+  warningMessage?: string | null;
 }
 
 type StepKey = 'uploading' | 'ocr_processing' | 'processing';
@@ -68,6 +70,7 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
   excludedCount,
   headerProcessing = false,
   compact = false,
+  warningMessage,
 }) => {
   const [progress, setProgress] = useState(0);
   const isFailed = phase === 'failed';
@@ -238,6 +241,10 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
             </span>
           </div>
         ) : null}
+        <LabUploadWarningBanner
+          message={warningMessage}
+          className="mt-2 w-full text-left"
+        />
       </div>
 
       {!compact ? (

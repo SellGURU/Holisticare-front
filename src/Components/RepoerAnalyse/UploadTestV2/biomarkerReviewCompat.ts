@@ -49,14 +49,17 @@ const stringifyLabField = (value: unknown) => {
 };
 
 const formatDateOfTestTimestamp = (dateOfTest?: unknown) => {
-  if (!dateOfTest) return '';
+  const toUtcMidnightMs = (date: Date) =>
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()).toString();
+
+  if (!dateOfTest) {
+    return toUtcMidnightMs(new Date());
+  }
   const date = new Date(String(dateOfTest));
-  if (Number.isNaN(date.getTime())) return '';
-  return Date.UTC(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-  ).toString();
+  if (Number.isNaN(date.getTime())) {
+    return toUtcMidnightMs(new Date());
+  }
+  return toUtcMidnightMs(date);
 };
 
 const thresholdValueIsNumeric = (value: unknown) => {

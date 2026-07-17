@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildProcessLabReportPayload,
   buildSystemBiomarkerOptionsForRow,
   buildUnsuppressPayloadFromRow,
   buildLocalRestorePatchForExcludedRow,
@@ -483,5 +484,32 @@ describe('missing_value merged into Need review', () => {
   it('includes missing_value rows in the default Need review filter', () => {
     expect(rowMatchesCategoryFilter('default', 'review')).toBe(true);
     expect(rowMatchesCategoryFilter('review', 'review')).toBe(true);
+  });
+});
+
+describe('buildProcessLabReportPayload', () => {
+  it('defaults date_of_test to today when OCR date is missing', () => {
+    const todayMs = Date.UTC(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      new Date().getDate(),
+    ).toString();
+
+    const payload = buildProcessLabReportPayload({
+      memberId: 123,
+      fileId: 'abc',
+      labType: 'more_info',
+      rows: [
+        {
+          biomarker_id: 'id1',
+          biomarker: 'Glucose',
+          value: '90',
+          unit: 'mg/dL',
+          validation_status: 'ready',
+        },
+      ],
+    });
+
+    expect(payload.modified_biomarkers.date_of_test).toBe(todayMs);
   });
 });
