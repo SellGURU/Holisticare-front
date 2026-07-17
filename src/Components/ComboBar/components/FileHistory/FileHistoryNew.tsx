@@ -123,7 +123,6 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     Record<string, { ready: number; review: number; excluded: number }>
   >({});
   const [isDragging, setIsDragging] = useState(false);
-  const [labEditOverlayOpen, setLabEditOverlayOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const requestSeqRef = useRef(0);
@@ -292,7 +291,6 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       if (!fileId) return;
 
       if (mode === 'edit' || mode === 'edit_manual') {
-        setLabEditOverlayOpen(true);
         return;
       }
 
@@ -324,16 +322,6 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     subscribe('uploadTestShow', handleUploadTestShow);
     return () => {
       unsubscribe('uploadTestShow', handleUploadTestShow);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleUploadTestHide = () => {
-      setLabEditOverlayOpen(false);
-    };
-    subscribe('uploadTestHide', handleUploadTestHide);
-    return () => {
-      unsubscribe('uploadTestHide', handleUploadTestHide);
     };
   }, []);
 
@@ -502,17 +490,15 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   const showInlineExtractProgress =
     isInlineUploadBusy &&
     activeInlineUpload &&
-    !labEditOverlayOpen &&
     (activeInlineUpload.status === 'uploading' ||
       activeInlineUpload.status === 'processing' ||
       activeInlineUpload.status === 'success' ||
       activeInlineUpload.status === 'error');
   const showUploadZoneIdle = !showInlineExtractProgress;
   const showInlineUploadSplash =
-    !labEditOverlayOpen &&
-    (activeInlineUpload?.status === 'uploading' ||
-      activeInlineUpload?.status === 'processing' ||
-      activeInlineUpload?.status === 'success');
+    activeInlineUpload?.status === 'uploading' ||
+    activeInlineUpload?.status === 'processing' ||
+    activeInlineUpload?.status === 'success';
   const activeInlineFileId =
     activeInlineUpload?.file_id &&
     !String(activeInlineUpload.file_id).startsWith('inline-')
