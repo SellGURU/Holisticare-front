@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildProcessLabReportPayload,
+  parseLabDateOfTest,
   buildSystemBiomarkerOptionsForRow,
   buildUnsuppressPayloadFromRow,
   buildLocalRestorePatchForExcludedRow,
@@ -484,6 +485,25 @@ describe('missing_value merged into Need review', () => {
   it('includes missing_value rows in the default Need review filter', () => {
     expect(rowMatchesCategoryFilter('default', 'review')).toBe(true);
     expect(rowMatchesCategoryFilter('review', 'review')).toBe(true);
+  });
+});
+
+describe('parseLabDateOfTest', () => {
+  it('parses UTC ms timestamp strings from the API', () => {
+    const ms = Date.UTC(2024, 1, 11).toString();
+    const parsed = parseLabDateOfTest(ms);
+    expect(parsed.getFullYear()).toBe(2024);
+    expect(parsed.getMonth()).toBe(1);
+    expect(parsed.getDate()).toBe(11);
+  });
+
+  it('defaults missing or invalid values to today', () => {
+    const today = new Date();
+    expect(parseLabDateOfTest(undefined).getDate()).toBe(today.getDate());
+    expect(parseLabDateOfTest('not-a-date').getDate()).toBe(today.getDate());
+    expect(parseLabDateOfTest(new Date('invalid')).getDate()).toBe(
+      today.getDate(),
+    );
   });
 });
 

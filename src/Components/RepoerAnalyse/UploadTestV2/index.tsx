@@ -35,6 +35,7 @@ import {
   inferRowBiomarkerType,
   inferReviewReasonFromErrorText,
   isPhantomSuppressedRow,
+  parseLabDateOfTest,
 } from './biomarkerReviewCompat';
 import BiomarkersApi from '../../../api/Biomarkers';
 import { showError, showSuccess } from '../../GlobalToast';
@@ -356,9 +357,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           warningMessage: warningMessage || (base as any).warningMessage,
         };
       });
-      if (data.date_of_test) {
-        setModifiedDateOfTest(new Date(data.date_of_test));
-      }
+      setModifiedDateOfTest(parseLabDateOfTest(data.date_of_test));
 
       if (
         Array.isArray(data.extracted_biomarkers) &&
@@ -1938,9 +1937,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       ) {
         setExtractedCount(data.extracted_biomarkers.length);
       }
-      if (data.date_of_test) {
-        setModifiedDateOfTest(new Date(data.date_of_test));
-      }
+      setModifiedDateOfTest(parseLabDateOfTest(data.date_of_test));
       if (
         !data.extracted_biomarkers ||
         data.extracted_biomarkers.length === 0 ||
@@ -2567,7 +2564,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           onDownload={handleDownloadFile}
           formatFileSize={formatFileSize}
           fileInputRef={fileInputRef}
-          modifiedDateOfTest={modifiedDateOfTest || new Date()}
+          modifiedDateOfTest={parseLabDateOfTest(modifiedDateOfTest)}
           handleModifiedDateOfTestChange={handleModifiedDateOfTestChange}
           extractedBiomarkers={extractedBiomarkers}
           setExtractedBiomarkers={setExtractedBiomarkers}

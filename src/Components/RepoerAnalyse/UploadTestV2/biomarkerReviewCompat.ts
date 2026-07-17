@@ -48,18 +48,47 @@ const stringifyLabField = (value: unknown) => {
   return String(value);
 };
 
-const formatDateOfTestTimestamp = (dateOfTest?: unknown) => {
-  const toUtcMidnightMs = (date: Date) =>
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()).toString();
+const localDateAtMidnight = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-  if (!dateOfTest) {
-    return toUtcMidnightMs(new Date());
+const todayLocalDate = () => localDateAtMidnight(new Date());
+
+export const parseLabDateOfTest = (dateOfTest?: unknown): Date => {
+  if (dateOfTest instanceof Date) {
+    return Number.isNaN(dateOfTest.getTime())
+      ? todayLocalDate()
+      : localDateAtMidnight(dateOfTest);
   }
-  const date = new Date(String(dateOfTest));
-  if (Number.isNaN(date.getTime())) {
-    return toUtcMidnightMs(new Date());
+
+  if (dateOfTest === null || dateOfTest === undefined) {
+    return todayLocalDate();
   }
-  return toUtcMidnightMs(date);
+
+  const raw = String(dateOfTest).trim();
+  if (!raw) {
+    return todayLocalDate();
+  }
+
+  if (/^\d+$/.test(raw)) {
+    const parsed = new Date(Number(raw));
+    return Number.isNaN(parsed.getTime())
+      ? todayLocalDate()
+      : localDateAtMidnight(parsed);
+  }
+
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime())
+    ? todayLocalDate()
+    : localDateAtMidnight(parsed);
+};
+
+const formatDateOfTestTimestamp = (dateOfTest?: unknown) => {
+  const date = parseLabDateOfTest(dateOfTest);
+  return Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  ).toString();
 };
 
 const thresholdValueIsNumeric = (value: unknown) => {
