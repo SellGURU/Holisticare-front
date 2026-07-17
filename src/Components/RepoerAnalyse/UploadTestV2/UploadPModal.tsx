@@ -397,7 +397,7 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 isEditMode={isEditMode}
                 isShare={isShare}
                 errorMessage={errorMessage}
-                uploadWarningMessage={uploadWarningMessage}
+                uploadWarningMessage={isEditMode ? undefined : uploadWarningMessage}
                 handleFileChange={handleFileChange}
                 uploadedFile={uploadedFile}
                 handleDeleteFile={handleDeleteFile}
@@ -406,10 +406,12 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 onClose={onClose}
                 onDownload={onDownload}
               />
-              <LabUploadWarningBanner
-                message={uploadWarningMessage}
-                className="shrink-0"
-              />
+              {!isEditMode ? (
+                <LabUploadWarningBanner
+                  message={uploadWarningMessage}
+                  className="shrink-0"
+                />
+              ) : null}
               {fileType === 'ultrasound' ? (
                 <div className="w-full h-full flex flex-col items-center justify-center py-12 px-4">
                   <img
@@ -480,7 +482,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     isEditMode={isEditMode}
                     isShare={isShare}
                     errorMessage={errorMessage}
-                    uploadWarningMessage={uploadWarningMessage}
+                    uploadWarningMessage={
+                      isEditMode ? undefined : uploadWarningMessage
+                    }
                     handleFileChange={handleFileChange}
                     uploadedFile={uploadedFile}
                     handleDeleteFile={handleDeleteFile}
@@ -489,10 +493,12 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                     onClose={onClose}
                     onDownload={onDownload}
                   />
-                  <LabUploadWarningBanner
-                    message={uploadWarningMessage}
-                    className="shrink-0"
-                  />
+                  {!isEditMode ? (
+                    <LabUploadWarningBanner
+                      message={uploadWarningMessage}
+                      className="shrink-0"
+                    />
+                  ) : null}
                   {fileType === 'ultrasound' ? (
                     <div className="w-full h-full flex flex-col items-center justify-center py-12 px-4">
                       <img

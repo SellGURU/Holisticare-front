@@ -50,16 +50,13 @@ const FileUploaderSection: React.FC<FileUploaderSectionProps> = ({
     const fileName = uploadedFile?.file?.name || '';
     const fileSize = formatFileSize(uploadedFile?.file?.size || 0);
     const isComplete = uploadedFile.status === 'completed';
-    const hasWarning = Boolean(
-      resolveUploadWarningText(
-        uploadWarningMessage,
-        uploadedFile?.warningMessage as string | undefined,
-      ),
-    );
-    const warningText = resolveUploadWarningText(
-      uploadWarningMessage,
-      uploadedFile?.warningMessage as string | undefined,
-    );
+    const warningText = isEditMode
+      ? null
+      : resolveUploadWarningText(
+          uploadWarningMessage,
+          uploadedFile?.warningMessage as string | undefined,
+        );
+    const hasWarning = Boolean(warningText);
     return (
       <div className="w-full shrink-0">
         <div className="flex items-center gap-2 md:gap-3 rounded-xl border border-Gray-50 bg-white px-3 py-1.5">
