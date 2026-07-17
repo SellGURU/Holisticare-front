@@ -397,7 +397,9 @@ const UploadPModal: React.FC<UploadPModalProps> = ({
                 isEditMode={isEditMode}
                 isShare={isShare}
                 errorMessage={errorMessage}
-                uploadWarningMessage={isEditMode ? undefined : uploadWarningMessage}
+                uploadWarningMessage={
+                  isEditMode ? undefined : uploadWarningMessage
+                }
                 handleFileChange={handleFileChange}
                 uploadedFile={uploadedFile}
                 handleDeleteFile={handleDeleteFile}
