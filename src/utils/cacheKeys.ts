@@ -1,8 +1,4 @@
-import {
-  invalidate,
-  listPageCacheKeys,
-  removeCachedKey,
-} from './pageCache';
+import { invalidate, listPageCacheKeys, removeCachedKey } from './pageCache';
 
 export const HEALTH_PLAN_TTL_MS = 2 * 60 * 1000;
 

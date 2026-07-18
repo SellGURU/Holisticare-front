@@ -279,10 +279,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setIsHaveReport(data.show_report);
           setHasPartialReport(Boolean(data.has_partial_report));
           setLoading(false);
-          if (
-            data.show_report === false &&
-            data.first_time_view !== true
-          ) {
+          if (data.show_report === false && data.first_time_view !== true) {
             setShowUploadTest(true);
           }
           setHasWearableData(data.has_wearable_data);

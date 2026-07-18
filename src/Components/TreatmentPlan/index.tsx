@@ -119,10 +119,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           if (data.length == 0) {
             setIsHolisticPlanEmpty(true);
           } else {
-            if (
-              data[data.length - 1].state == 'Draft' &&
-              data.length == 1
-            ) {
+            if (data[data.length - 1].state == 'Draft' && data.length == 1) {
               setIsHolisticPlanEmpty(true);
             }
             setIsHolisticPlanEmpty(false);
@@ -137,9 +134,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             setIsShareModalSuccess(
               data[data.length - 1].shared_report_with_client,
             );
-            setDateShare(
-              data[data.length - 1].shared_report_with_client_date,
-            );
+            setDateShare(data[data.length - 1].shared_report_with_client_date);
           }
           setTimeout(() => {
             const container: any = document.getElementById('scrollContainer');
