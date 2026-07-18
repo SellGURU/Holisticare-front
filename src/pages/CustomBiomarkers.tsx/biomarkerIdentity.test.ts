@@ -37,7 +37,9 @@ describe('dedupeCatalogBiomarkersList', () => {
     ]);
 
     expect(deduped).toHaveLength(2);
-    expect(deduped.filter((item) => item.Biomarker === 'ABO Group')).toHaveLength(1);
+    expect(
+      deduped.filter((item) => item.Biomarker === 'ABO Group'),
+    ).toHaveLength(1);
     expect(deduped.find((item) => item.Biomarker === 'ABO Group')?.source).toBe(
       'custom',
     );
