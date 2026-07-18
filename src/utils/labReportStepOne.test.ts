@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  isStepOneDeletedResponse,
   isStepOneTerminalEmptyOrFailed,
   resolveStepOneWarningMessage,
   shouldContinueStepOnePolling,
@@ -107,5 +108,19 @@ describe('resolveStepOneWarningMessage', () => {
 
   it('returns null when warning is false', () => {
     expect(resolveStepOneWarningMessage({ warning: false })).toBeNull();
+  });
+});
+
+describe('isStepOneDeletedResponse', () => {
+  it('detects deleted step-one payload on 404', () => {
+    expect(
+      isStepOneDeletedResponse({
+        response: { status: 404, data: { status: 'deleted' } },
+      }),
+    ).toBe(true);
+  });
+
+  it('detects explicit deleted data argument', () => {
+    expect(isStepOneDeletedResponse(null, { status: 'deleted' })).toBe(true);
   });
 });

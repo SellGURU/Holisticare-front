@@ -162,6 +162,7 @@ const FileUploadProgressItem: FC<FileUploadProgressItemProps> = ({ file }) => {
         />
         <LabUploadWarningBanner
           message={file.warningMessage}
+          variant="compact"
           className="relative z-[1] mt-2"
         />
         {file.needsManualReview && (reviewCount ?? 0) > 0 && (

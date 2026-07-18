@@ -3,13 +3,31 @@ import type { FC, ReactNode } from 'react';
 type LabUploadWarningBannerProps = {
   message?: string | null;
   className?: string;
+  variant?: 'default' | 'compact';
 };
 
 export const LabUploadWarningBanner: FC<LabUploadWarningBannerProps> = ({
   message,
   className = '',
+  variant = 'default',
 }) => {
   if (!message?.trim()) return null;
+
+  if (variant === 'compact') {
+    return (
+      <p
+        className={`flex items-start gap-1 text-[9px] leading-4 text-[#B54708]/90 ${className}`}
+        role="status"
+      >
+        <img
+          className="size-3 mt-0.5 shrink-0 opacity-80"
+          src="/icons/danger-fill.svg"
+          alt=""
+        />
+        <span>{message}</span>
+      </p>
+    );
+  }
 
   return (
     <div

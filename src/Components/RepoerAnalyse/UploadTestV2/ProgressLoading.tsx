@@ -8,6 +8,7 @@ import { LabUploadWarningBanner } from './LabUploadWarningBanner';
 
 interface ProgressLoadingProps {
   maxProgress: number;
+  initialProgress?: number;
   phase?: string;
   extractedCount?: number;
   readyCount?: number;
@@ -16,6 +17,7 @@ interface ProgressLoadingProps {
   headerProcessing?: boolean;
   compact?: boolean;
   warningMessage?: string | null;
+  onCancel?: () => void;
 }
 
 type StepKey = 'uploading' | 'ocr_processing' | 'processing';
@@ -63,6 +65,7 @@ const resolveBarClass = (progress: number) => {
 
 const ProgressLoading: React.FC<ProgressLoadingProps> = ({
   maxProgress,
+  initialProgress = 0,
   phase = 'ocr_processing',
   extractedCount,
   readyCount,
@@ -71,24 +74,34 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
   headerProcessing = false,
   compact = false,
   warningMessage,
+  onCancel,
 }) => {
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(() =>
+    Math.max(0, Math.min(initialProgress, maxProgress >= 100 ? 100 : 95)),
+  );
   const isFailed = phase === 'failed';
+  const isCancelled = phase === 'cancelled';
 
   useEffect(() => {
-    if (isFailed) return;
+    setProgress((prev) => Math.max(prev, initialProgress));
+  }, [initialProgress]);
+
+  useEffect(() => {
+    if (isFailed || isCancelled) return;
     const interval = setInterval(() => {
       setProgress((prev) => {
-        const target = maxProgress >= 100 ? 100 : 95;
-        if (prev >= target) return prev;
-        const remaining = target - prev;
+        const baseline = Math.max(prev, initialProgress);
+        const target = Math.max(maxProgress, baseline);
+        const cappedTarget = target >= 100 ? 100 : 95;
+        if (baseline >= cappedTarget) return baseline;
+        const remaining = cappedTarget - baseline;
         const increment = Math.max(remaining * 0.012, 0.06);
-        return Math.min(prev + increment, target);
+        return Math.min(baseline + increment, cappedTarget);
       });
     }, 200);
 
     return () => clearInterval(interval);
-  }, [maxProgress, isFailed]);
+  }, [maxProgress, initialProgress, isFailed, isCancelled]);
 
   const activeIndex = resolveActiveIndex(phase);
   const activeStep = STEPS[activeIndex];
@@ -108,6 +121,16 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
         : STEPS[activeIndex].label === 'Extract'
           ? 'Extracting biomarkers'
           : 'Checking & validating';
+
+  if (isCancelled) {
+    return (
+      <div className="w-full max-w-[360px] flex flex-col items-center gap-2 text-center">
+        <div className="text-sm font-medium text-Text-Secondary">
+          Upload cancelled
+        </div>
+      </div>
+    );
+  }
 
   if (isFailed) {
     return (
@@ -184,11 +207,11 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
       </div>
 
       <div className="w-full">
-        <div className="mb-1.5 flex items-center justify-between">
-          <span className="text-[12px] font-medium text-Text-Primary">
+        <div className="mb-1.5 flex items-center justify-between gap-2">
+          <span className="min-w-0 text-[12px] font-medium text-Text-Primary">
             {activeTitle}
           </span>
-          <span className="text-[11px] font-semibold text-Primary-DeepTeal tabular-nums">
+          <span className="shrink-0 text-[11px] font-semibold text-Primary-DeepTeal tabular-nums">
             {progress.toFixed(0)}%
           </span>
         </div>
@@ -243,7 +266,8 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
         ) : null}
         <LabUploadWarningBanner
           message={warningMessage}
-          className="mt-2 w-full text-left"
+          variant={compact ? 'compact' : 'default'}
+          className={compact ? 'mt-1.5' : 'mt-2 w-full text-left'}
         />
       </div>
 
@@ -327,6 +351,18 @@ const ProgressLoading: React.FC<ProgressLoadingProps> = ({
             );
           })}
         </ol>
+      ) : null}
+
+      {onCancel ? (
+        <div className="mt-1 w-full border-t border-Gray-50 pt-3">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="w-full cursor-pointer rounded-xl border border-Gray-50 bg-white px-3 py-2 text-[10px] font-medium text-Text-Secondary shadow-100 transition-colors hover:border-[#FECDCA] hover:bg-[#FFF5F8] hover:text-[#B42318]"
+          >
+            Cancel upload
+          </button>
+        </div>
       ) : null}
     </div>
   );

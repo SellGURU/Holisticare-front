@@ -58,6 +58,7 @@ type UploadCallbacks = {
   onError?: (fileUpload: FileUpload, error: unknown) => void;
   publishProgressEvents?: boolean;
   autoOpenReviewOnReady?: boolean;
+  signal?: AbortSignal;
 };
 
 const asRecord = (value: unknown): Record<string, unknown> =>
@@ -139,6 +140,7 @@ export const useLabReportUpload = () => {
       onError,
       publishProgressEvents = false,
       autoOpenReviewOnReady = true,
+      signal,
     }: UploadCallbacks): Promise<LabReportUploadResult> => {
       const preflight = validateLabReportFile(file);
       if (!preflight.ok) {
@@ -195,6 +197,7 @@ export const useLabReportUpload = () => {
             },
           },
           (progressEvent: ProgressEventLike) => {
+            if (signal?.aborted) return;
             const percentCompleted = Math.round(
               (progressEvent.loaded * 100) / (progressEvent.total || 1),
             );
@@ -205,7 +208,12 @@ export const useLabReportUpload = () => {
             };
             onStateChange?.(currentFile);
           },
+          signal,
         )) as LabReportUploadResponse;
+
+        if (signal?.aborted) {
+          return { fileUpload: currentFile };
+        }
 
         currentFile = {
           ...currentFile,

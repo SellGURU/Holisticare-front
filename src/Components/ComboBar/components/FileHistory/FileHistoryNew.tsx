@@ -14,14 +14,34 @@ import {
 } from '../../../../utils/labReportStepOne';
 import { validateLabReportFile } from '../../../../utils/labReportUploadHelpers';
 import ProgressLoading from '../../../RepoerAnalyse/UploadTestV2/ProgressLoading';
-import { LabUploadWarningBanner } from '../../../RepoerAnalyse/UploadTestV2/LabUploadWarningBanner';
 import {
   buildProcessLabReportPayloadFromStepOne,
   countReviewCategoriesFromStepOneData,
 } from '../../../RepoerAnalyse/UploadTestV2/biomarkerReviewCompat';
 import type { SuppressedBiomarkerItem } from '../../../RepoerAnalyse/UploadTestV2/biomarkerReviewCompat';
 import { isAsyncProcessingEnabled } from '../../../../utils/asyncProcessing';
-import { isManualLabEntry } from '../../../../utils/manualEntry';
+import {
+  buildMultiFileTrimmedMessage,
+  cancelSession,
+  clearSession,
+  createSession,
+  getAbortController,
+  isActiveUploadZonePhase,
+  isPendingCancel,
+  mergeStepOne,
+  readSession,
+  shouldShowUploadZone,
+  UPLOAD_SESSION_BUSY_MESSAGE,
+  writeSession,
+  type UploadZoneSession,
+} from '../../../../utils/labUploadSession';
+import { isStepOneDeletedResponse } from '../../../../utils/labReportStepOne';
+import {
+  filterCancelledFiles,
+  isUploadCancelled,
+  markUploadCancelled,
+} from '../../../../utils/labUploadCancelRegistry';
+import { shouldContinueUploadPoll } from '../../../../utils/labUploadPollGuard';
 
 const STEP_ONE_POLL_INTERVAL_MS = 10000;
 
@@ -115,7 +135,15 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   const isDemo = useIsDemo();
   const { uploadLabReportFile } = useLabReportUpload();
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-  const [inlineUploads, setInlineUploads] = useState<any[]>([]);
+  const [uploadZoneSession, setUploadZoneSession] =
+    useState<UploadZoneSession | null>(null);
+  const [uploadZoneError, setUploadZoneError] = useState<string | null>(null);
+  const [uploadBannerMessage, setUploadBannerMessage] = useState<string | null>(
+    null,
+  );
+  const [localUploadProgress, setLocalUploadProgress] = useState(0);
+  const [backgroundCards, setBackgroundCards] = useState<any[]>([]);
+  const uploadZoneSessionRef = useRef<UploadZoneSession | null>(null);
   const [fileReviewMeta, setFileReviewMeta] = useState<
     Record<string, FileReviewMeta>
   >({});
@@ -175,6 +203,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     async (
       targetFileId: string,
       data: any,
+      sessionId?: string,
     ): Promise<ReturnType<
       typeof countReviewCategoriesFromStepOneData
     > | null> => {
@@ -186,6 +215,10 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       }
 
       const suppressedItems = await getSuppressedItems();
+      if (isUploadCancelled(sessionId, targetFileId)) {
+        return null;
+      }
+
       const reviewCounts = countReviewCategoriesFromStepOneData(
         data,
         suppressedItems,
@@ -210,7 +243,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       .then((res) => {
         if (requestSeq !== requestSeqRef.current) return;
         if (res.data) {
-          setUploadedFiles(res.data);
+          setUploadedFiles(filterCancelledFiles(res.data));
         } else {
           throw new Error('Unexpected data format');
         }
@@ -221,9 +254,30 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       });
   }, []);
 
+  const syncUploadZoneSession = useCallback(
+    (next: UploadZoneSession | null) => {
+      uploadZoneSessionRef.current = next;
+      setUploadZoneSession(next);
+      if (id) {
+        void writeSession(id, next);
+      }
+    },
+    [id],
+  );
+
   useEffect(() => {
     if (!id) return;
-    setInlineUploads([]);
+    const restored = readSession(id);
+    if (restored && isUploadCancelled(restored.sessionId, restored.fileId)) {
+      void clearSession(id, restored.fileId);
+      syncUploadZoneSession(null);
+    } else {
+      syncUploadZoneSession(restored);
+    }
+    setBackgroundCards([]);
+    setUploadZoneError(null);
+    setUploadBannerMessage(null);
+    setLocalUploadProgress(0);
     setFileReviewMeta({});
     setLiveReviewMeta({});
     reconnectAttemptedRef.current.clear();
@@ -231,7 +285,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     processLabReportSucceededRef.current.clear();
     stepOnePollInFlightRef.current = false;
     getFileList(id);
-  }, [id, getFileList]);
+  }, [id, getFileList, syncUploadZoneSession]);
 
   useEffect(() => {
     if (id && isOpen) {
@@ -241,7 +295,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
 
   useEffect(() => {
     const handleSyncReport = () => {
-      setInlineUploads((prev) =>
+      setBackgroundCards((prev) =>
         prev.filter(
           (fileUpload) =>
             !fileUpload.reviewHandoff &&
@@ -261,12 +315,50 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
   }, [id, getFileList]);
 
   useEffect(() => {
+    const handleLabReportDeleted = (data: any) => {
+      const memberId = data?.detail?.member_id;
+      const fileId = data?.detail?.file_id;
+      if (!id || memberId !== id || !fileId) return;
+
+      markUploadCancelled(undefined, fileId);
+
+      const active = uploadZoneSessionRef.current;
+      if (active && (active.fileId === fileId || active.sessionId === fileId)) {
+        void cancelSession(id, active, {
+          fileId: active.fileId || fileId,
+          deleteFileHistoryFn: (targetId) =>
+            Application.deleteFileHistory({
+              file_id: targetId,
+              member_id: id,
+            }),
+        }).then(() => {
+          syncUploadZoneSession(null);
+          setUploadZoneError(null);
+        });
+      } else {
+        void clearSession(id, fileId);
+      }
+
+      reconnectAttemptedRef.current.delete(fileId);
+      setBackgroundCards((prev) =>
+        prev.filter((row) => row.file_id !== fileId),
+      );
+      getFileList(id);
+    };
+
+    subscribe('labReportDeleted', handleLabReportDeleted);
+    return () => {
+      unsubscribe('labReportDeleted', handleLabReportDeleted);
+    };
+  }, [id, getFileList, syncUploadZoneSession]);
+
+  useEffect(() => {
     const handleCompletedProgress = (data: any) => {
       if (data?.detail?.type === 'uploaded' && id) {
         const completedFileId = data?.detail?.file_id;
         if (completedFileId) {
           clearInflightUpload(id, completedFileId);
-          setInlineUploads((prev) =>
+          setBackgroundCards((prev) =>
             prev.filter(
               (fileUpload) =>
                 fileUpload.file_id !== completedFileId &&
@@ -296,27 +388,21 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
 
       if (mode !== 'review_ready') return;
 
-      let tempIdToRemove: string | undefined;
-      setInlineUploads((prev) =>
+      setBackgroundCards((prev) =>
         prev.map((fileUpload) =>
           fileUpload.file_id === fileId || fileUpload.upload_temp_id === fileId
-            ? (() => {
-                tempIdToRemove =
-                  fileUpload.upload_temp_id || fileUpload.file_id;
-                return {
-                  ...fileUpload,
-                  status: 'background',
-                  uploadPhase: 'processing',
-                  headerProcessing: true,
-                  reviewHandoff: true,
-                  progressBiomarker: 100,
-                  process_done: false,
-                };
-              })()
+            ? {
+                ...fileUpload,
+                status: 'background',
+                uploadPhase: 'processing',
+                headerProcessing: true,
+                reviewHandoff: true,
+                progressBiomarker: 100,
+                process_done: false,
+              }
             : fileUpload,
         ),
       );
-      void tempIdToRemove;
     };
 
     subscribe('uploadTestShow', handleUploadTestShow);
@@ -350,112 +436,166 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     };
   }, []);
 
-  const updateInlineUpload = (tempId: string, patch: any) => {
-    setInlineUploads((prev) =>
-      prev.map((fileUpload) =>
-        fileUpload.upload_temp_id === tempId || fileUpload.file_id === tempId
-          ? { ...fileUpload, ...patch }
-          : fileUpload,
-      ),
-    );
+  const handoffToBackgroundCard = (row: any) => {
+    if (isUploadCancelled(undefined, row?.file_id)) return;
+    setBackgroundCards((prev) => {
+      const without = prev.filter((item) => item.file_id !== row.file_id);
+      return [row, ...without];
+    });
   };
 
-  const removeInlineUpload = (tempId: string) => {
-    setInlineUploads((prev) =>
-      prev.filter((fileUpload) => fileUpload.upload_temp_id !== tempId),
-    );
+  const handleCancelUpload = () => {
+    if (!id || !uploadZoneSession) return;
+    const session = uploadZoneSession;
+    const fileId = session.fileId;
+
+    markUploadCancelled(session.sessionId, fileId);
+    if (fileId) {
+      processLabReportInFlightRef.current.delete(fileId);
+      setBackgroundCards((prev) =>
+        prev.filter((row) => row.file_id !== fileId),
+      );
+    }
+
+    void cancelSession(id, session, {
+      fileId,
+      deleteFileHistoryFn: (targetId) =>
+        Application.deleteFileHistory({
+          file_id: targetId,
+          member_id: id,
+        }),
+    })
+      .then(() => {
+        syncUploadZoneSession(null);
+        setUploadZoneError(null);
+        setLocalUploadProgress(0);
+        if (fileId) {
+          clearInflightUpload(id, fileId);
+          publish('labReportDeleted', { member_id: id, file_id: fileId });
+        }
+        getFileList(id);
+      })
+      .catch((error: any) => {
+        setUploadZoneError(
+          error?.response?.data?.detail ||
+            error?.response?.data?.message ||
+            error?.message ||
+            'Could not cancel this upload. Please try again.',
+        );
+      });
   };
 
   const uploadFiles = async (files: FileList | File[]) => {
     if (isDemo || !id) return;
 
     const selectedFiles = Array.from(files);
-    for (const file of selectedFiles) {
-      const preflight = validateLabReportFile(file);
-      if (!preflight.ok) {
-        const tempId = `inline-${file.name}-${file.lastModified}-${Date.now()}`;
-        setInlineUploads((prev) => [
-          {
-            file,
-            file_id: tempId,
-            upload_temp_id: tempId,
-            file_name: file.name,
-            date_uploaded: new Date().toISOString(),
-            progress: 0,
-            uploadedSize: 0,
-            status: 'error',
-            uploadPhase: 'failed',
-            progressBiomarker: 0,
-            action_type: 'uploaded',
-            process_done: true,
-            errorMessage: preflight.message,
-          },
-          ...prev,
-        ]);
-        continue;
-      }
-
-      const tempId = `inline-${file.name}-${file.lastModified}-${Date.now()}`;
-      setInlineUploads((prev) => [
-        {
-          file,
-          file_id: tempId,
-          upload_temp_id: tempId,
-          file_name: file.name,
-          date_uploaded: new Date().toISOString(),
-          progress: 0.5,
-          uploadedSize: 0,
-          status: 'uploading',
-          uploadPhase: 'uploading',
-          progressBiomarker: 0,
-          action_type: 'uploaded',
-          process_done: false,
-        },
-        ...prev,
-      ]);
-
-      void uploadLabReportFile({
-        memberId: id,
-        file,
-        publishProgressEvents: false,
-        autoOpenReviewOnReady: false,
-        onStateChange: (fileUpload) => {
-          const isCompleted = fileUpload.status === 'completed';
-          const isError = fileUpload.status === 'error';
-          if (isCompleted && fileUpload.file_id) {
-            // Upload reached add_lab_report (file is now on the server and OCR
-            // is running). Persist it so a refresh during extraction reconnects.
-            persistInflightUpload(id, {
-              file_id: fileUpload.file_id,
-              file_name: file.name,
-              date_uploaded: new Date().toISOString(),
-              addedAt: Date.now(),
-            });
-          }
-          updateInlineUpload(tempId, {
-            ...fileUpload,
-            file_id: fileUpload.file_id || tempId,
-            file_name: file.name,
-            date_uploaded: new Date().toISOString(),
-            action_type: 'uploaded',
-            process_done: isError,
-            status: isCompleted ? 'processing' : fileUpload.status,
-            uploadPhase: isError
-              ? 'failed'
-              : isCompleted
-                ? 'ocr_processing'
-                : 'uploading',
-            headerProcessing: isCompleted,
-            progressBiomarker: isCompleted
-              ? 50
-              : Math.min(Math.round(fileUpload.progress || 0), 45),
-          });
-        },
-        onComplete: () => {
-          getFileList(id);
-        },
-      });
+    const active = uploadZoneSessionRef.current;
+    if (active && isActiveUploadZonePhase(active.phase)) {
+      setUploadBannerMessage(UPLOAD_SESSION_BUSY_MESSAGE);
+      return;
     }
+
+    const file = selectedFiles[0];
+    if (!file) return;
+
+    if (selectedFiles.length > 1) {
+      setUploadBannerMessage(
+        buildMultiFileTrimmedMessage(file.name, selectedFiles.length - 1),
+      );
+    } else {
+      setUploadBannerMessage(null);
+    }
+
+    setUploadZoneError(null);
+
+    const preflight = validateLabReportFile(file);
+    if (!preflight.ok) {
+      setUploadZoneError(preflight.message);
+      return;
+    }
+
+    const session = createSession(file.name);
+    syncUploadZoneSession(session);
+    setLocalUploadProgress(0);
+
+    void uploadLabReportFile({
+      memberId: id,
+      file,
+      publishProgressEvents: false,
+      autoOpenReviewOnReady: false,
+      signal: getAbortController(session.sessionId)?.signal,
+      onStateChange: (fileUpload) => {
+        const isCompleted = fileUpload.status === 'completed';
+        const isError = fileUpload.status === 'error';
+
+        if (isCompleted && fileUpload.file_id) {
+          const sessionId = uploadZoneSessionRef.current?.sessionId;
+          if (
+            sessionId &&
+            (isPendingCancel(sessionId) ||
+              isUploadCancelled(sessionId, fileUpload.file_id))
+          ) {
+            markUploadCancelled(sessionId, fileUpload.file_id);
+            void Application.deleteFileHistory({
+              file_id: fileUpload.file_id,
+              member_id: id,
+            }).finally(() => {
+              void clearSession(id, fileUpload.file_id);
+              syncUploadZoneSession(null);
+              clearInflightUpload(id, fileUpload.file_id);
+            });
+            return;
+          }
+
+          persistInflightUpload(id, {
+            file_id: fileUpload.file_id,
+            file_name: file.name,
+            date_uploaded: new Date().toISOString(),
+            addedAt: Date.now(),
+          });
+
+          const nextSession: UploadZoneSession = {
+            ...session,
+            fileId: fileUpload.file_id,
+            phase: 'ocr_processing',
+            serverProgress: 50,
+            uiProgress: Math.max(session.uiProgress, 50),
+            updatedAt: Date.now(),
+          };
+          syncUploadZoneSession(nextSession);
+          setLocalUploadProgress(45);
+          return;
+        }
+
+        if (isError) {
+          syncUploadZoneSession({
+            ...session,
+            phase: 'failed',
+            updatedAt: Date.now(),
+          });
+          setUploadZoneError(
+            fileUpload.errorMessage ||
+              'This file could not be uploaded. Please try another file.',
+          );
+          return;
+        }
+
+        if (fileUpload.status === 'uploading') {
+          const progress = Math.min(Math.round(fileUpload.progress || 0), 45);
+          setLocalUploadProgress(progress);
+          syncUploadZoneSession({
+            ...session,
+            phase: 'uploading',
+            serverProgress: progress,
+            uiProgress: Math.max(session.uiProgress, progress),
+            updatedAt: Date.now(),
+          });
+        }
+      },
+      onComplete: () => {
+        getFileList(id);
+      },
+    });
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -473,45 +613,26 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     }
   };
 
-  const activeInlineUpload = inlineUploads.find(
-    (fileUpload) =>
-      fileUpload.status === 'uploading' ||
-      fileUpload.status === 'processing' ||
-      fileUpload.status === 'success' ||
-      fileUpload.status === 'error',
-  );
-  const activeProcessingUpload = inlineUploads.find(
-    (fileUpload) =>
-      fileUpload.status === 'processing' &&
-      fileUpload.file_id &&
-      !String(fileUpload.file_id).startsWith('inline-'),
-  );
-  const isInlineUploadBusy = Boolean(activeInlineUpload);
   const showInlineExtractProgress =
-    isInlineUploadBusy &&
-    activeInlineUpload &&
-    (activeInlineUpload.status === 'uploading' ||
-      activeInlineUpload.status === 'processing' ||
-      activeInlineUpload.status === 'success' ||
-      activeInlineUpload.status === 'error');
+    shouldShowUploadZone(uploadZoneSession) || Boolean(uploadZoneError);
   const showUploadZoneIdle = !showInlineExtractProgress;
   const showInlineUploadSplash =
-    activeInlineUpload?.status === 'uploading' ||
-    activeInlineUpload?.status === 'processing' ||
-    activeInlineUpload?.status === 'success';
-  const activeInlineFileId =
-    activeInlineUpload?.file_id &&
-    !String(activeInlineUpload.file_id).startsWith('inline-')
-      ? activeInlineUpload.file_id
-      : null;
-  const inlineFileIds = new Set(
-    inlineUploads
-      .map((fileUpload) => fileUpload.file_id)
-      .filter((fileId) => fileId && !String(fileId).startsWith('inline-')),
-  );
-  const listInlineUploads = inlineUploads.filter(
+    uploadZoneSession?.phase === 'uploading' ||
+    uploadZoneSession?.phase === 'ocr_processing' ||
+    uploadZoneSession?.phase === 'saving';
+  const activeZoneFileId = uploadZoneSession?.fileId ?? null;
+  const zoneFileIds = activeZoneFileId
+    ? new Set<string>([activeZoneFileId])
+    : new Set<string>();
+  const listBackgroundCards = backgroundCards.filter(
     (fileUpload) =>
-      fileUpload.status === 'success' || fileUpload.status === 'background',
+      (fileUpload.status === 'success' || fileUpload.status === 'background') &&
+      !isUploadCancelled(undefined, fileUpload.file_id),
+  );
+  const backgroundFileIds = new Set(
+    listBackgroundCards
+      .map((fileUpload) => fileUpload.file_id)
+      .filter((fileId): fileId is string => Boolean(fileId)),
   );
   const withReviewMeta = (fileUpload: any) => {
     const fid = fileUpload?.file_id;
@@ -530,34 +651,45 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     return meta ? { ...fileUpload, ...meta } : fileUpload;
   };
   const mergedUploadedFiles = [
-    ...listInlineUploads.map(withReviewMeta),
-    ...uploadedFiles
+    ...listBackgroundCards.map(withReviewMeta),
+    ...filterCancelledFiles(uploadedFiles)
       .filter(
         (fileUpload) =>
-          (!activeInlineFileId || fileUpload.file_id !== activeInlineFileId) &&
-          !inlineFileIds.has(fileUpload.file_id),
+          (!activeZoneFileId || fileUpload.file_id !== activeZoneFileId) &&
+          !zoneFileIds.has(fileUpload.file_id) &&
+          !backgroundFileIds.has(fileUpload.file_id),
       )
       .map(withReviewMeta),
   ];
-  const inlineUploadPhase =
-    activeInlineUpload?.uploadPhase === 'validating_review' ||
-    activeInlineUpload?.uploadPhase === 'review_ready'
+  const uploadZonePhase =
+    uploadZoneSession?.phase === 'saving'
       ? 'processing'
-      : activeInlineUpload?.uploadPhase ||
-        (activeInlineUpload?.status === 'uploading'
-          ? 'uploading'
-          : 'processing');
+      : uploadZoneSession?.phase === 'failed'
+        ? 'failed'
+        : uploadZoneSession?.phase || 'uploading';
   const inlineProgressMax =
-    activeInlineUpload?.status === 'uploading'
-      ? Math.min(Math.round(activeInlineUpload.progress || 0), 45)
-      : typeof activeInlineUpload?.progressBiomarker === 'number'
-        ? activeInlineUpload.progressBiomarker
+    uploadZoneSession?.phase === 'uploading'
+      ? Math.min(localUploadProgress, 45)
+      : typeof uploadZoneSession?.uiProgress === 'number'
+        ? uploadZoneSession.uiProgress
         : 50;
 
+  const handleDismissUploadError = () => {
+    syncUploadZoneSession(null);
+    setUploadZoneError(null);
+    setLocalUploadProgress(0);
+    if (id && uploadZoneSession?.fileId) {
+      void clearSession(id, uploadZoneSession.fileId);
+    }
+  };
+
   useEffect(() => {
-    const fileId = activeProcessingUpload?.file_id;
-    const tempId = activeProcessingUpload?.upload_temp_id;
-    if (!fileId || !tempId || !id) return;
+    const session = uploadZoneSessionRef.current;
+    const fileId = session?.fileId;
+    if (!fileId || !id || !session) return;
+    if (session.phase !== 'ocr_processing' && session.phase !== 'saving')
+      return;
+    if (isUploadCancelled(session.sessionId, fileId)) return;
 
     let isStopped = false;
     const pollTimerRef = {
@@ -571,38 +703,100 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       }
     };
 
-    const finishProcessing = () => {
+    const patchSession = (patch: Partial<UploadZoneSession>) => {
+      const current = uploadZoneSessionRef.current;
+      if (!shouldContinueUploadPoll(session.sessionId, fileId, current)) {
+        return;
+      }
+      syncUploadZoneSession({
+        ...current!,
+        ...patch,
+        updatedAt: Date.now(),
+      });
+    };
+
+    const abortPollIfCancelled = () => {
+      if (
+        !shouldContinueUploadPoll(
+          session.sessionId,
+          fileId,
+          uploadZoneSessionRef.current,
+        )
+      ) {
+        stopPolling();
+        return true;
+      }
+      return false;
+    };
+
+    const finishZone = () => {
       stopPolling();
       clearInflightUpload(id, fileId);
-      removeInlineUpload(tempId);
+      syncUploadZoneSession(null);
+      void clearSession(id, fileId);
+      getFileList(id);
+    };
+
+    const handoffZoneToBackground = (row: Record<string, unknown>) => {
+      if (abortPollIfCancelled()) return;
+      stopPolling();
+      clearInflightUpload(id, fileId);
+      handoffToBackgroundCard({
+        file: null,
+        file_id: row.file_id ?? fileId,
+        file_name: row.file_name ?? session.fileName,
+        date_uploaded: new Date().toISOString(),
+        progress: 100,
+        uploadedSize: 0,
+        status: 'background',
+        uploadPhase: row.uploadPhase ?? 'processing',
+        progressBiomarker: 100,
+        action_type: 'uploaded',
+        process_done: false,
+        headerProcessing: true,
+        reviewHandoff: Boolean(row.reviewHandoff),
+        needsManualReview: Boolean(row.needsManualReview),
+        readyCount: row.readyCount,
+        reviewCount: row.reviewCount,
+        excludedCount: row.excludedCount,
+        warningMessage: row.warningMessage,
+      });
+      syncUploadZoneSession(null);
+      void clearSession(id, fileId);
       getFileList(id);
     };
 
     const applyStepOneData = async (data: any) => {
+      if (abortPollIfCancelled()) return true;
+
+      const current = uploadZoneSessionRef.current;
+      if (!current) return true;
+
       if (data.error || data.lab_type === 'error') {
-        updateInlineUpload(tempId, {
-          status: 'error',
-          uploadPhase: 'failed',
-          process_done: true,
-        });
-        window.setTimeout(finishProcessing, 3000);
+        setUploadZoneError(
+          stepOneTerminalUserMessage(data) ||
+            'Could not extract biomarkers from this file.',
+        );
+        patchSession({ phase: 'failed' });
+        window.setTimeout(finishZone, 3000);
         return true;
       }
 
       const warningMessage = resolveStepOneWarningMessage(data);
 
       if (isStepOneTerminalEmptyOrFailed(data)) {
-        updateInlineUpload(tempId, {
-          status: 'error',
-          uploadPhase: data.status === 'empty' ? 'empty' : 'failed',
-          process_done: true,
-          headerProcessing: false,
-          progressBiomarker: data.progress ?? 90,
-          warning: Boolean(data.warning),
+        setUploadZoneError(stepOneTerminalUserMessage(data));
+        patchSession({
+          phase: 'failed',
+          serverProgress:
+            typeof data.progress === 'number' ? data.progress : 90,
+          uiProgress: Math.max(
+            current.uiProgress,
+            typeof data.progress === 'number' ? data.progress : 90,
+          ),
           warningMessage,
-          errorMessage: stepOneTerminalUserMessage(data),
         });
-        window.setTimeout(finishProcessing, 3000);
+        window.setTimeout(finishZone, 3000);
         return true;
       }
 
@@ -612,70 +806,42 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       if (extractedCount != null) {
         cacheFileReviewMeta(fileId, { extractedCount });
       }
-      let uploadPhase = data.status || 'ocr_processing';
 
-      if (
-        uploadPhase === 'ocr_processing' &&
-        extractedCount &&
-        extractedCount > 0
-      ) {
-        uploadPhase = 'ocr_processing';
-      } else if (
-        uploadPhase === 'validating_review' ||
-        uploadPhase === 'review_ready' ||
-        (data.progress === 100 &&
-          extractedCount &&
-          extractedCount > 0 &&
-          !data.validation?.ready)
-      ) {
-        uploadPhase = 'processing';
-      }
+      const reviewCounts = await syncReviewCountsForFile(
+        fileId,
+        data,
+        session.sessionId,
+      );
+      if (abortPollIfCancelled()) return true;
 
-      const reviewCounts = await syncReviewCountsForFile(fileId, data);
-
-      updateInlineUpload(tempId, {
-        uploadPhase,
-        headerProcessing: true,
-        progressBiomarker:
-          data.progress ?? activeProcessingUpload.progressBiomarker,
-        extractedCount: reviewCounts?.extracted ?? extractedCount,
+      const liveSession = uploadZoneSessionRef.current;
+      const merged = mergeStepOne(liveSession, {
+        ...data,
+        warning_message: warningMessage,
         readyCount: reviewCounts?.ready,
         reviewCount: reviewCounts?.review,
         excludedCount: reviewCounts?.excluded,
-        reviewCountsReady: Boolean(reviewCounts),
-        warning: Boolean(data.warning),
-        warningMessage,
       });
+      if (!merged || abortPollIfCancelled()) return true;
+      syncUploadZoneSession(merged);
 
       if (data.validation?.ready && extractedCount && extractedCount > 0) {
-        // Flag review rows on the card so the user knows to fix them.
-        // Auto-save still proceeds — ready rows are processed and review rows are
-        // filtered by the backend pipeline (FIX D). This allows the ready portion
-        // of the file to be saved immediately while giving the user a prompt to
-        // open the modal and address the review rows afterward.
-        if ((reviewCounts?.review ?? 0) > 0) {
-          updateInlineUpload(tempId, { needsManualReview: true });
-        }
+        const needsManualReview = (reviewCounts?.review ?? 0) > 0;
 
-        // Reconnect after refresh/navigation: this file was already saved
-        // (modified biomarkers persisted server-side), so the compile is
-        // already running/queued. Show status only and never re-submit
-        // process_lab_report.
         if (
           data.is_edited === true &&
           !processLabReportInFlightRef.current.has(fileId)
         ) {
+          if (abortPollIfCancelled()) return true;
           processLabReportSucceededRef.current.add(fileId);
-          // File is saved and now appears in the server file list, so the
-          // list-based reconnect + global progress tracker take over.
           clearInflightUpload(id, fileId);
-          updateInlineUpload(tempId, {
-            status: 'background',
+          handoffZoneToBackground({
+            file_id: fileId,
             uploadPhase: 'processing',
-            headerProcessing: true,
-            progressBiomarker: 100,
-            process_done: false,
-            warning: Boolean(warningMessage),
+            reviewHandoff: true,
+            readyCount: reviewCounts?.ready,
+            reviewCount: reviewCounts?.review,
+            excludedCount: reviewCounts?.excluded,
             warningMessage,
           });
           publish('checkProgress', {
@@ -696,18 +862,23 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
         }
 
         processLabReportInFlightRef.current.add(fileId);
-        updateInlineUpload(tempId, {
-          status: 'processing',
-          uploadPhase: 'processing',
-          headerProcessing: true,
-          progressBiomarker: 100,
-          process_done: false,
-          warning: Boolean(warningMessage),
+        patchSession({
+          phase: 'saving',
+          serverProgress: 100,
+          uiProgress: Math.max(merged.uiProgress, 100),
+          readyCount: reviewCounts?.ready,
+          reviewCount: reviewCounts?.review,
+          excludedCount: reviewCounts?.excluded,
           warningMessage,
         });
 
         try {
           const suppressedItems = await getSuppressedItems();
+          if (abortPollIfCancelled()) {
+            processLabReportInFlightRef.current.delete(fileId);
+            return true;
+          }
+
           const payload = buildProcessLabReportPayloadFromStepOne({
             memberId: id,
             fileId,
@@ -718,7 +889,15 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           });
 
           const fireCompile = async (): Promise<string> => {
+            if (abortPollIfCancelled()) {
+              throw new Error('upload_cancelled');
+            }
+
             const saveResponse = await Application.SaveLabReport(payload);
+            if (abortPollIfCancelled()) {
+              throw new Error('upload_cancelled');
+            }
+
             const savedFileId =
               saveResponse?.data?.modified_biomarkers_file_id ||
               saveResponse?.data?.added_biomarkers_file_id ||
@@ -756,31 +935,31 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
 
           void fireCompile()
             .then((savedFileId) => {
-              updateInlineUpload(tempId, {
+              if (abortPollIfCancelled()) return;
+              handoffZoneToBackground({
                 file_id: savedFileId,
-                status: 'background',
                 uploadPhase: 'processing',
-                headerProcessing: true,
-                progressBiomarker: 100,
-                process_done: false,
-                warning: Boolean(warningMessage),
+                needsManualReview,
+                readyCount: reviewCounts?.ready,
+                reviewCount: reviewCounts?.review,
+                excludedCount: reviewCounts?.excluded,
                 warningMessage,
               });
-              getFileList(id);
             })
             .catch((error) => {
+              if (String(error?.message) === 'upload_cancelled') {
+                processLabReportInFlightRef.current.delete(fileId);
+                return;
+              }
               console.error('Background compile failed:', error);
               clearInflightUpload(id, fileId);
-              updateInlineUpload(tempId, {
-                status: 'error',
-                uploadPhase: 'failed',
-                process_done: true,
-                errorMessage:
-                  error?.response?.data?.detail ||
+              setUploadZoneError(
+                error?.response?.data?.detail ||
                   error?.response?.data?.message ||
                   error?.message ||
                   'Could not process this lab report. Please try another file.',
-              });
+              );
+              patchSession({ phase: 'failed' });
             })
             .finally(() => {
               processLabReportInFlightRef.current.delete(fileId);
@@ -788,23 +967,20 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           return true;
         } catch (error: any) {
           clearInflightUpload(id, fileId);
-          updateInlineUpload(tempId, {
-            status: 'error',
-            uploadPhase: 'failed',
-            process_done: true,
-            errorMessage:
-              error?.response?.data?.detail ||
+          setUploadZoneError(
+            error?.response?.data?.detail ||
               error?.response?.data?.message ||
               error?.message ||
               'Could not prepare lab report for processing.',
-          });
+          );
+          patchSession({ phase: 'failed' });
           processLabReportInFlightRef.current.delete(fileId);
         }
         return true;
       }
 
       if (data.lab_type === 'ultrasound') {
-        finishProcessing();
+        finishZone();
         return true;
       }
 
@@ -814,6 +990,10 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     const poll = async () => {
       if (isStopped) return;
       if (stepOnePollInFlightRef.current) return;
+      if (isPendingCancel(session.sessionId)) {
+        stopPolling();
+        return;
+      }
       stepOnePollInFlightRef.current = true;
       try {
         const res = await Application.checkLabStepOne({ file_id: fileId });
@@ -825,6 +1005,11 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
             ? err
             : (err?.response?.data ?? null);
 
+        if (isStepOneDeletedResponse(err, errData)) {
+          finishZone();
+          return;
+        }
+
         if (errData?.extracted_biomarkers !== undefined) {
           const done = await applyStepOneData(errData);
           if (done) stopPolling();
@@ -832,12 +1017,11 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           err?.response?.status === 504 ||
           err?.code === 'ECONNABORTED'
         ) {
-          updateInlineUpload(tempId, {
-            status: 'error',
-            uploadPhase: 'failed',
-            process_done: true,
-          });
-          window.setTimeout(finishProcessing, 3000);
+          setUploadZoneError(
+            'The server took too long to respond. Please try again.',
+          );
+          patchSession({ phase: 'failed' });
+          window.setTimeout(finishZone, 3000);
         }
       } finally {
         stepOnePollInFlightRef.current = false;
@@ -854,14 +1038,16 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       stepOnePollInFlightRef.current = false;
     };
   }, [
-    activeProcessingUpload?.file_id,
-    activeProcessingUpload?.upload_temp_id,
+    uploadZoneSession?.fileId,
+    uploadZoneSession?.phase,
+    uploadZoneSession?.sessionId,
     id,
     getFileList,
     cacheFileReviewMeta,
     getSuppressedItems,
     syncReviewCountsForFile,
     clearFileReviewMeta,
+    syncUploadZoneSession,
   ]);
 
   const fetchReviewMetaForFile = useCallback(
@@ -897,7 +1083,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       (fileUpload) =>
         fileUpload?.file_id &&
         fileUpload.process_done === true &&
-        fileUpload.file_id !== activeInlineFileId &&
+        fileUpload.file_id !== activeZoneFileId &&
         !fileReviewMeta[fileUpload.file_id]?.reviewCountsReady,
     );
     if (filesMissingMeta.length === 0) return;
@@ -915,105 +1101,21 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       cancelled = true;
     };
   }, [
-    activeInlineFileId,
+    activeZoneFileId,
     fetchReviewMetaForFile,
     fileReviewMeta,
     isOpen,
     uploadedFiles,
   ]);
 
-  // Reconnect to in-flight uploads after a refresh / navigation. The upload
-  // and OCR continue server-side independently of the browser, but the inline
-  // "processing" card state lives only in memory and is lost on unmount. Here
-  // we rebuild that state from the server file list so the existing polling
-  // loop re-attaches, shows current status, and (only if not yet saved)
-  // triggers the existing compile - instead of the file appearing lost.
-  useEffect(() => {
-    if (!isOpen || !id || uploadedFiles.length === 0) return;
-
-    const candidates = uploadedFiles.filter(
-      (fileUpload) =>
-        fileUpload?.file_id &&
-        fileUpload.process_done !== true &&
-        !isManualLabEntry(fileUpload) &&
-        !reconnectAttemptedRef.current.has(fileUpload.file_id),
-    );
-    if (candidates.length === 0) return;
-
-    candidates.forEach((fileUpload) =>
-      reconnectAttemptedRef.current.add(fileUpload.file_id),
-    );
-
-    setInlineUploads((prev) => {
-      const existingIds = new Set(prev.map((fileUpload) => fileUpload.file_id));
-      const resumed = candidates
-        .filter((fileUpload) => !existingIds.has(fileUpload.file_id))
-        .map((fileUpload) => ({
-          file: null,
-          file_id: fileUpload.file_id,
-          upload_temp_id: fileUpload.file_id,
-          file_name: fileUpload.file_name,
-          date_uploaded: fileUpload.date_uploaded || new Date().toISOString(),
-          progress: 100,
-          uploadedSize: 0,
-          status: 'processing',
-          uploadPhase: 'ocr_processing',
-          progressBiomarker: 50,
-          action_type: 'uploaded',
-          process_done: false,
-          reconnected: true,
-        }));
-      if (resumed.length === 0) return prev;
-      return [...resumed, ...prev];
-    });
-  }, [isOpen, id, uploadedFiles]);
-
-  // Reconnect to uploads interrupted during the OCR/extraction phase. These
-  // files are NOT in get_list_lab_report yet (not saved), so we recover them
-  // from localStorage and let the existing polling loop re-attach to
-  // check_lab_report_step_one (which reports extraction progress).
-  useEffect(() => {
-    if (!id) return;
-    const records = readInflightUploads(id);
-    if (records.length === 0) return;
-
-    const toSeed = records.filter(
-      (record) =>
-        record.file_id && !reconnectAttemptedRef.current.has(record.file_id),
-    );
-    if (toSeed.length === 0) return;
-
-    toSeed.forEach((record) =>
-      reconnectAttemptedRef.current.add(record.file_id),
-    );
-
-    setInlineUploads((prev) => {
-      const existingIds = new Set(prev.map((fileUpload) => fileUpload.file_id));
-      const resumed = toSeed
-        .filter((record) => !existingIds.has(record.file_id))
-        .map((record) => ({
-          file: null,
-          file_id: record.file_id,
-          upload_temp_id: record.file_id,
-          file_name: record.file_name,
-          date_uploaded: record.date_uploaded || new Date().toISOString(),
-          progress: 100,
-          uploadedSize: 0,
-          status: 'processing',
-          uploadPhase: 'ocr_processing',
-          progressBiomarker: 10,
-          action_type: 'uploaded',
-          process_done: false,
-          reconnected: true,
-        }));
-      if (resumed.length === 0) return prev;
-      return [...resumed, ...prev];
-    });
-  }, [id]);
-
   return (
     <div className="w-full relative">
       <div className="w-full">
+        {uploadBannerMessage ? (
+          <div className="mb-2 rounded-xl border border-[#FEDF89] bg-[#FFFAEB] px-3 py-2 text-[10px] leading-4 text-[#B54708]">
+            {uploadBannerMessage}
+          </div>
+        ) : null}
         <div className="mb-3 grid grid-cols-2 gap-2 rounded-2xl border border-Gray-50 bg-white p-3 shadow-200">
           <div
             onDragEnter={(event) => {
@@ -1052,7 +1154,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
               isDemo
                 ? 'cursor-not-allowed opacity-60'
                 : showInlineExtractProgress
-                  ? 'cursor-wait'
+                  ? 'cursor-default'
                   : 'cursor-pointer hover:border-Primary-DeepTeal'
             } ${isDragging ? 'border-Primary-DeepTeal bg-[#F6FAFB]' : ''}`}
           >
@@ -1063,7 +1165,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
             ) : null}
             <div className="relative z-[1] flex w-full flex-col items-center justify-center">
               {showInlineExtractProgress &&
-              activeInlineUpload?.status === 'error' ? (
+              (uploadZoneError || uploadZoneSession?.phase === 'failed') ? (
                 <div className="flex w-full flex-col items-center justify-center gap-2 py-4 text-center">
                   <div className="flex size-11 items-center justify-center rounded-full border border-[#F3B8C8] bg-[#FFF5F8]">
                     <img
@@ -1076,55 +1178,36 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
                     Upload failed
                   </div>
                   <div className="max-w-[280px] text-[10px] leading-4 text-Text-Secondary">
-                    {activeInlineUpload.errorMessage ||
+                    {uploadZoneError ||
                       'This file could not be uploaded. Please try another file.'}
                   </div>
                   <button
                     type="button"
-                    onClick={() =>
-                      removeInlineUpload(
-                        activeInlineUpload.upload_temp_id ||
-                          activeInlineUpload.file_id,
-                      )
-                    }
+                    onClick={handleDismissUploadError}
                     className="mt-1 rounded-full border border-Gray-50 bg-white px-3 py-1.5 text-[10px] font-medium text-Primary-DeepTeal shadow-100 hover:bg-backgroundColor-Main"
                   >
                     Try another file
                   </button>
                 </div>
-              ) : showInlineExtractProgress &&
-                activeInlineUpload?.status === 'success' ? (
-                <div className="flex w-full flex-col items-center justify-center gap-2 py-4 text-center">
-                  <div className="flex size-11 items-center justify-center rounded-full bg-Primary-EmeraldGreen/15">
-                    <img
-                      src="/icons/tick-circle-green-new.svg"
-                      alt=""
-                      className="size-7"
-                    />
-                  </div>
-                  <div className="text-[12px] font-semibold text-Primary-DeepTeal">
-                    Upload successful
-                  </div>
-                  <div className="text-[10px] leading-4 text-Text-Quadruple">
-                    Biomarkers are ready for review.
-                  </div>
-                  <LabUploadWarningBanner
-                    message={activeInlineUpload.warningMessage}
-                    className="mt-2 w-full max-w-[360px] text-left"
-                  />
-                </div>
-              ) : showInlineExtractProgress && activeInlineUpload ? (
+              ) : showInlineExtractProgress && uploadZoneSession ? (
                 <ProgressLoading
                   maxProgress={inlineProgressMax}
-                  phase={inlineUploadPhase}
-                  readyCount={activeInlineUpload.readyCount}
-                  reviewCount={activeInlineUpload.reviewCount}
-                  excludedCount={activeInlineUpload.excludedCount}
-                  headerProcessing={Boolean(
-                    activeInlineUpload.headerProcessing,
-                  )}
-                  warningMessage={activeInlineUpload.warningMessage}
+                  initialProgress={uploadZoneSession.uiProgress}
+                  phase={uploadZonePhase}
+                  readyCount={uploadZoneSession.readyCount}
+                  reviewCount={uploadZoneSession.reviewCount}
+                  excludedCount={uploadZoneSession.excludedCount}
+                  headerProcessing={
+                    uploadZoneSession.phase === 'saving' ||
+                    uploadZoneSession.phase === 'ocr_processing'
+                  }
+                  warningMessage={uploadZoneSession.warningMessage}
                   compact
+                  onCancel={
+                    uploadZoneSession.phase !== 'failed'
+                      ? handleCancelUpload
+                      : undefined
+                  }
                 />
               ) : (
                 <>

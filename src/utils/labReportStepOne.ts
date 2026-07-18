@@ -99,3 +99,15 @@ export const resolveStepOneWarningMessage = (
 
 export const stepOneHasWarning = (data: Record<string, unknown>) =>
   Boolean(resolveStepOneWarningMessage(data));
+
+export const isStepOneDeletedResponse = (
+  error: unknown,
+  data?: Record<string, unknown> | null,
+) => {
+  const record =
+    data ??
+    asStepOneRecord(asStepOneRecord(asStepOneRecord(error).response).data);
+  if (record.status === 'deleted') return true;
+  const response = asStepOneRecord(asStepOneRecord(error).response);
+  return response.status === 404 && record.status === 'deleted';
+};
