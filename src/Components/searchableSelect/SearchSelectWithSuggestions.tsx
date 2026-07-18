@@ -378,9 +378,7 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
                                 : 'cursor-pointer text-Text-Primary hover:bg-blue-50'
                               : 'cursor-not-allowed bg-Gray-15 text-Text-Secondary opacity-60'
                           }`}
-                          onClick={() =>
-                            handleOptionClick(s.system_biomarker)
-                          }
+                          onClick={() => handleOptionClick(s.system_biomarker)}
                           role="option"
                           aria-selected={selectedValue === s.system_biomarker}
                           title={s.reason}

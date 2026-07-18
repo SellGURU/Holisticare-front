@@ -482,14 +482,15 @@ export default function BiomarkerRow({
     pdfBiomarkerName.length > 0 &&
     systemBiomarkerName.length > 0 &&
     pdfBiomarkerName.toLowerCase() === systemBiomarkerName.toLowerCase();
-  const { shouldShowSaveUndo: shouldShowSaveButton } = resolveRowSaveActionState({
-    useReviewUx,
-    rowCategory,
-    hasRowReadySaveHandler: Boolean(onRowReadySave),
-    systemBiomarkerName,
-    baselineSystemBiomarker,
-    isUserMappingDirty,
-  });
+  const { shouldShowSaveUndo: shouldShowSaveButton } =
+    resolveRowSaveActionState({
+      useReviewUx,
+      rowCategory,
+      hasRowReadySaveHandler: Boolean(onRowReadySave),
+      systemBiomarkerName,
+      baselineSystemBiomarker,
+      isUserMappingDirty,
+    });
   const saveTooltipId = `save-row-${biomarker.biomarker_id || index}`;
 
   const handleSaveClick = async () => {

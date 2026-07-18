@@ -539,7 +539,11 @@ describe('buildProcessLabReportPayload', () => {
 
 describe('isSystemBiomarkerValidForRow', () => {
   const catalog = [
-    { biomarker: '25-Hydroxyvitamin D', biomarker_type: 'blood', unit: 'ng/mL' },
+    {
+      biomarker: '25-Hydroxyvitamin D',
+      biomarker_type: 'blood',
+      unit: 'ng/mL',
+    },
     { biomarker: 'Maximum Power', biomarker_type: 'activity', unit: 'W' },
   ];
 

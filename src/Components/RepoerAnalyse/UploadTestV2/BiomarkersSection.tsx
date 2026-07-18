@@ -223,7 +223,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   };
 
   const rowMatchesSearchFilter = (row: any, searchTerm: string) => {
-    const term = String(searchTerm || '').trim().toLowerCase();
+    const term = String(searchTerm || '')
+      .trim()
+      .toLowerCase();
     if (!term) return true;
 
     const searchableText = [
@@ -234,7 +236,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       preferNonEmpty(row?.original_value, row?.value),
       preferNonEmpty(row?.original_unit, row?.unit),
     ]
-      .map((value) => String(value || '').trim().toLowerCase())
+      .map((value) =>
+        String(value || '')
+          .trim()
+          .toLowerCase(),
+      )
       .filter(Boolean)
       .join(' ');
 

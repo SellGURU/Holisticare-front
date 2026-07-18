@@ -1501,7 +1501,9 @@ export const formatBiomarkerNotRecognizedMessage = (
   return `Select a valid system biomarker for ${typeLabel} tests from the System Biomarker list.`;
 };
 
-export const isBiomarkerNotRecognizedErrorText = (message: unknown): boolean => {
+export const isBiomarkerNotRecognizedErrorText = (
+  message: unknown,
+): boolean => {
   const msg = String(message || '').toLowerCase();
   return (
     msg.includes('not recognized by the system') ||
@@ -1520,7 +1522,9 @@ export const mapBiomarkerRecognitionErrorMessage = (
   return formatBiomarkerNotRecognizedMessage(row, trim(row?.biomarker));
 };
 
-export const filterSuggestionsForRowCatalog = <T extends { system_biomarker: string }>(
+export const filterSuggestionsForRowCatalog = <
+  T extends { system_biomarker: string },
+>(
   catalog: any[],
   row: any,
   suggestions: T[],
