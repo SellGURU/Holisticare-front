@@ -23,6 +23,10 @@ import {
   resolveNormalizedBiomarkerName,
 } from './biomarkerNameFields';
 import {
+  applyHydrationMappingBaselines,
+  registerMappingDirty,
+} from './biomarkerRowSaveState';
+import {
   isTextValueWithoutUnit,
   removeRowErrorKey,
   reviewRowErrorKey,
@@ -40,7 +44,6 @@ import {
   mergeSuppressedRowsIntoReview,
   suppressedItemMatchesRow,
   inferRowBiomarkerType,
-  normalizeBiomarkerNameForMatch,
   pickCatalogEntryForRow,
   resolveRowCatalogContext,
   resolveUnitForStandardize,
@@ -48,6 +51,10 @@ import {
   mergeRowAfterStandardizeSuccess,
   type CategoryFilter,
   type SuppressedBiomarkerItem,
+  mapBiomarkerRecognitionErrorMessage,
+  isBiomarkerNotRecognizedErrorText,
+  formatBiomarkerNotRecognizedMessage,
+  isSystemBiomarkerValidForRow,
 } from './biomarkerReviewCompat';
 import {
   logLabUnitDebug,
@@ -215,7 +222,30 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     );
   };
 
+  const rowMatchesSearchFilter = (row: any, searchTerm: string) => {
+    const term = String(searchTerm || '').trim().toLowerCase();
+    if (!term) return true;
+
+    const searchableText = [
+      resolveExactBiomarkerName(row),
+      row?.biomarker,
+      row?.normalized_biomarker_name,
+      row?.extracted_biomarker_name,
+      preferNonEmpty(row?.original_value, row?.value),
+      preferNonEmpty(row?.original_unit, row?.unit),
+    ]
+      .map((value) => String(value || '').trim().toLowerCase())
+      .filter(Boolean)
+      .join(' ');
+
+    return searchableText.includes(term);
+  };
+
   const formatRowError = (row: any, message: string) => {
+    if (isBiomarkerNotRecognizedErrorText(message)) {
+      return mapBiomarkerRecognitionErrorMessage(row, message);
+    }
+
     const name = row?.original_biomarker_name || row?.biomarker || 'This row';
     const text = String(message || 'Invalid biomarker');
     if (text.toLowerCase().startsWith(String(name).toLowerCase())) {
@@ -334,6 +364,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     DEFAULT_BIOMARKER_TYPES,
   );
   const [typeFilter, setTypeFilter] = useState('');
+  const [searchFilter, setSearchFilter] = useState('');
   const [categoryFilter, setCategoryFilter] =
     useState<CategoryFilter>('default');
   const [suppressedSet, setSuppressedSet] = useState<Set<string>>(new Set());
@@ -347,6 +378,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const [pendingMappingRowIds, setPendingMappingRowIds] = useState<Set<string>>(
     new Set(),
   );
+  const pendingMappingRowIdsRef = useRef<Set<string>>(new Set());
+  const rowMappingBaselinesRef = useRef<Record<string, string>>({});
+  const prevReviewHydratingRef = useRef(reviewHydrating);
   const previousRowErrorKeysRef = useRef<string[]>([]);
   const standardizeGenerationRef = useRef<Record<string, number>>({});
   const lastSentUnitByIdRef = useRef<Record<string, string>>({});
@@ -358,15 +392,31 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const [showExtractionSuccess, setShowExtractionSuccess] = useState(false);
   const [suppressedHydrated, setSuppressedHydrated] = useState(!useReviewUx);
 
+  const commitRowMappingBaseline = (
+    biomarkerId: string,
+    systemBiomarker: string,
+  ) => {
+    const id = String(biomarkerId || '').trim();
+    if (!id) return;
+    rowMappingBaselinesRef.current = {
+      ...rowMappingBaselinesRef.current,
+      [id]: String(systemBiomarker || '').trim(),
+    };
+  };
+
+  const getRowMappingBaseline = (row: any) => {
+    const id = String(row?.biomarker_id || '').trim();
+    if (id && rowMappingBaselinesRef.current[id] !== undefined) {
+      return rowMappingBaselinesRef.current[id];
+    }
+    return String(row?.biomarker || '').trim();
+  };
+
   const handleMappingDirtyChange = (biomarkerId: string, dirty: boolean) => {
     if (!biomarkerId) return;
     setPendingMappingRowIds((prev) => {
-      const next = new Set(prev);
-      if (dirty) {
-        next.add(biomarkerId);
-      } else {
-        next.delete(biomarkerId);
-      }
+      const next = registerMappingDirty(prev, biomarkerId, dirty);
+      pendingMappingRowIdsRef.current = next;
       return next;
     });
   };
@@ -430,9 +480,26 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   useEffect(() => {
     categoryFilterInitialized.current = false;
     setCategoryFilter('review');
+    setTypeFilter('');
+    setSearchFilter('');
     setPendingMappingRowIds(new Set());
+    pendingMappingRowIdsRef.current = new Set();
+    rowMappingBaselinesRef.current = {};
     previousRowErrorKeysRef.current = [];
   }, [sessionFileId]);
+
+  useEffect(() => {
+    const wasHydrating = prevReviewHydratingRef.current;
+    prevReviewHydratingRef.current = reviewHydrating;
+    if (!useReviewUx || wasHydrating !== true || reviewHydrating !== false) {
+      return;
+    }
+    rowMappingBaselinesRef.current = applyHydrationMappingBaselines(
+      biomarkers,
+      rowMappingBaselinesRef.current,
+      pendingMappingRowIdsRef.current,
+    );
+  }, [useReviewUx, reviewHydrating, biomarkers]);
 
   useEffect(() => {
     if (!useReviewUx || !sessionFileId) {
@@ -959,12 +1026,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       );
     }
 
-    const isInCatalogForType = effectiveCatalog.some(
-      (option) =>
-        normalizeBiomarkerNameForMatch(option.biomarker) ===
-          normalizeBiomarkerNameForMatch(current.biomarker) &&
-        String(option.biomarker_type || 'blood').toLowerCase() ===
-          String(current.biomarker_type || 'blood').toLowerCase(),
+    const isInCatalogForType = isSystemBiomarkerValidForRow(
+      effectiveCatalog,
+      current,
+      String(current.biomarker || ''),
     );
 
     // Show selection immediately while standardize runs in the background.
@@ -978,7 +1043,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           ...prev,
           [rowKey]: formatRowError(
             current,
-            'Please select a valid system biomarker for this type and extracted value.',
+            formatBiomarkerNotRecognizedMessage(
+              current,
+              String(current.biomarker || ''),
+            ),
           ),
         }));
       }
@@ -1214,6 +1282,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
               .toLowerCase() === String(typeFilter).trim().toLowerCase();
           if (!typeOk) return false;
 
+          if (!rowMatchesSearchFilter(biomarker, searchFilter)) {
+            return false;
+          }
+
           if (useReviewUx) {
             if (pendingMappingRowIds.has(biomarker.biomarker_id)) {
               return true;
@@ -1232,6 +1304,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     [
       reviewBiomarkers,
       typeFilter,
+      searchFilter,
       useReviewUx,
       rowCategoryResults,
       categoryFilter,
@@ -1519,6 +1592,23 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
 
               <div className="flex-1" />
 
+              <div className="relative min-w-[140px] max-w-[220px] flex-1 sm:flex-none">
+                <input
+                  type="search"
+                  value={searchFilter}
+                  onChange={(event) => setSearchFilter(event.target.value)}
+                  placeholder="Search biomarkers..."
+                  aria-label="Search biomarkers"
+                  className="h-7 w-full rounded-lg border border-Gray-50 bg-white pl-7 pr-2 text-[9px] text-Text-Primary outline-none transition-colors placeholder:text-Text-Quadruple hover:border-Gray-100 focus:border-Primary-DeepTeal md:text-[10px]"
+                />
+                <img
+                  src="/icons/search-normal.svg"
+                  alt=""
+                  aria-hidden
+                  className="pointer-events-none absolute left-2 top-1/2 size-3.5 -translate-y-1/2 opacity-60"
+                />
+              </div>
+
               <select
                 value={typeFilter}
                 onChange={(event) => setTypeFilter(event.target.value)}
@@ -1761,7 +1851,15 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             onMappingDirtyChange={(dirty) =>
                               handleMappingDirtyChange(b.biomarker_id, dirty)
                             }
+                            baselineSystemBiomarker={getRowMappingBaseline(b)}
+                            isUserMappingDirty={pendingMappingRowIds.has(
+                              b.biomarker_id,
+                            )}
+                            onRowMappingBaselineCommit={
+                              commitRowMappingBaseline
+                            }
                             onRowReadySave={onRowReadySave}
+                            validationCatalog={effectiveCatalog}
                             allAvilableBiomarkers={rowAvailableBiomarkers}
                             biomarkerTypes={biomarkerTypes}
                             formatBiomarkerTypeLabel={formatBiomarkerTypeLabel}
@@ -1841,6 +1939,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           type="button"
                           onClick={() => {
                             setTypeFilter('');
+                            setSearchFilter('');
                             if (useReviewUx) {
                               setCategoryFilter('all');
                             } else {

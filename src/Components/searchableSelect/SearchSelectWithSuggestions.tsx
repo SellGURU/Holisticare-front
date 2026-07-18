@@ -41,6 +41,8 @@ type Props = {
   isSuggestionsLoading?: boolean;
   onCreateNew?: () => void;
   onMenuOpen?: () => void;
+  isOptionSelectable?: (option: string) => boolean;
+  hiddenSuggestionsNote?: string;
 };
 
 const confidenceBadge = (confidence: number) => {
@@ -101,6 +103,8 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
   isSuggestionsLoading = false,
   onCreateNew,
   onMenuOpen,
+  isOptionSelectable,
+  hiddenSuggestionsNote,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || '');
@@ -218,11 +222,17 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
   };
 
   const handleOptionClick = (option: string) => {
+    if (isOptionSelectable && !isOptionSelectable(option)) {
+      return;
+    }
     setSelectedValue(option);
     onChange(option);
     setIsOpen(false);
     setSearchTerm('');
   };
+
+  const optionIsSelectable = (option: string) =>
+    !isOptionSelectable || isOptionSelectable(option);
 
   const displayedValue = selectedValue || '';
   const showPlaceholder = !displayedValue;
@@ -361,12 +371,16 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
                       {group.matches.map((s) => (
                         <div
                           key={`suggestion-${group.area}-${optionIdentity(s)}`}
-                          className={`py-1.5 px-3 cursor-pointer text-[10px] text-Text-Primary text-start flex items-start justify-between gap-2 border-b border-Gray-50 ${
-                            selectedValue === s.system_biomarker
-                              ? 'bg-blue-50 font-medium'
-                              : 'hover:bg-blue-50'
+                          className={`py-1.5 px-3 text-[10px] text-start flex items-start justify-between gap-2 border-b border-Gray-50 ${
+                            optionIsSelectable(s.system_biomarker)
+                              ? selectedValue === s.system_biomarker
+                                ? 'bg-blue-50 font-medium cursor-pointer text-Text-Primary'
+                                : 'cursor-pointer text-Text-Primary hover:bg-blue-50'
+                              : 'cursor-not-allowed bg-Gray-15 text-Text-Secondary opacity-60'
                           }`}
-                          onClick={() => handleOptionClick(s.system_biomarker)}
+                          onClick={() =>
+                            handleOptionClick(s.system_biomarker)
+                          }
                           role="option"
                           aria-selected={selectedValue === s.system_biomarker}
                           title={s.reason}
@@ -391,6 +405,12 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
                 </ul>
               </div>
             )}
+
+            {hiddenSuggestionsNote ? (
+              <div className="order-2 px-3 py-1.5 text-[9px] italic text-Text-Secondary bg-Gray-15 border-b border-Gray-50">
+                {hiddenSuggestionsNote}
+              </div>
+            ) : null}
 
             {isSuggestionsLoading && (
               <div className="order-2 px-3 py-2 text-[9px] text-blue-700 bg-blue-50 border-b border-blue-100 flex items-center gap-2">
@@ -445,10 +465,12 @@ const SearchSelectWithSuggestions: React.FC<Props> = ({
                     {group.matches.map((option) => (
                       <div
                         key={optionIdentity(option)}
-                        className={`py-1 px-3 text-wrap w-full cursor-pointer text-[10px] text-start border-b border-Gray-50 ${
-                          selectedValue === option.biomarker
-                            ? 'bg-blue-50 font-medium text-Primary-DeepTeal'
-                            : 'text-Text-Primary hover:bg-gray-50'
+                        className={`py-1 px-3 text-wrap w-full text-[10px] text-start border-b border-Gray-50 ${
+                          optionIsSelectable(option.biomarker)
+                            ? selectedValue === option.biomarker
+                              ? 'bg-blue-50 font-medium text-Primary-DeepTeal cursor-pointer'
+                              : 'text-Text-Primary hover:bg-gray-50 cursor-pointer'
+                            : 'cursor-not-allowed bg-Gray-15 text-Text-Secondary opacity-60'
                         }`}
                         onClick={() => handleOptionClick(option.biomarker)}
                         role="option"

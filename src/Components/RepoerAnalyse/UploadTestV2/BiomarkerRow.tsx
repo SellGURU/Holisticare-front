@@ -6,13 +6,14 @@ import SearchSelectWithSuggestions, {
   BiomarkerSuggestion,
 } from '../../searchableSelect/SearchSelectWithSuggestions';
 import SelectWithCreate from '../../Select/SelectWithCreate';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Application from '../../../api/app';
 import {
   collectMappingNameVariations,
   resolveExactBiomarkerName,
   resolveNormalizedBiomarkerName,
 } from './biomarkerNameFields';
+import { resolveRowSaveActionState } from './biomarkerRowSaveState';
 import {
   normalizeBiomarkerNameForMatch,
   pickCatalogEntryForRow,
@@ -22,6 +23,11 @@ import {
   parseUnitMismatchDetail,
   type CategorizeReviewRowResult,
   type ReviewReason,
+  isSystemBiomarkerValidForRow,
+  formatBiomarkerNotRecognizedMessage,
+  mapBiomarkerRecognitionErrorMessage,
+  filterSuggestionsForRowCatalog,
+  isBiomarkerNotRecognizedErrorText,
 } from './biomarkerReviewCompat';
 import { logUnitOnChange } from '../../../utils/labUnitDebug';
 
@@ -33,6 +39,7 @@ interface BiomarkerRowProps {
   errorText: string;
   isHaveError: boolean;
   allAvilableBiomarkers: Array<BiomarkerOption>;
+  validationCatalog?: Array<BiomarkerOption>;
   biomarkerTypes: string[];
   formatBiomarkerTypeLabel: (value: string) => string;
   renderValueField: (biomarker: any) => any;
@@ -60,6 +67,12 @@ interface BiomarkerRowProps {
   onRestoreExcluded?: () => void;
   onMappingDirtyChange?: (dirty: boolean) => void;
   onRowReadySave?: (row: any) => void | Promise<void>;
+  baselineSystemBiomarker?: string;
+  isUserMappingDirty?: boolean;
+  onRowMappingBaselineCommit?: (
+    biomarkerId: string,
+    systemBiomarker: string,
+  ) => void;
   excludedReason?: string;
   excludedAt?: string;
   hiddenByFilter?: boolean;
@@ -75,9 +88,20 @@ const preferNonEmpty = (...values: unknown[]) => {
 
 const extractApiError = (err: unknown, fallback: string): string => {
   if (!err) return fallback;
-  if (typeof err === 'string') return err;
+  if (typeof err === 'string') {
+    try {
+      const parsed = JSON.parse(err);
+      if (typeof parsed?.detail === 'string') return parsed.detail;
+    } catch {
+      return err;
+    }
+    return err;
+  }
   const record = err as Record<string, unknown>;
-  if (typeof record.detail === 'string') return record.detail;
+  const response = record.response as Record<string, unknown> | undefined;
+  const responseData = response?.data as Record<string, unknown> | undefined;
+  const nestedDetail = responseData?.detail ?? record.detail;
+  if (typeof nestedDetail === 'string') return nestedDetail;
   if (typeof record.message === 'string') return record.message;
   return fallback;
 };
@@ -91,6 +115,7 @@ export default function BiomarkerRow({
   errorText,
   isHaveError,
   allAvilableBiomarkers,
+  validationCatalog,
   biomarkerTypes,
   formatBiomarkerTypeLabel,
   refRenceEl,
@@ -114,6 +139,9 @@ export default function BiomarkerRow({
   onRestoreExcluded,
   onMappingDirtyChange,
   onRowReadySave,
+  baselineSystemBiomarker = '',
+  isUserMappingDirty = false,
+  onRowMappingBaselineCommit,
   excludedReason,
   excludedAt,
   hiddenByFilter = false,
@@ -125,9 +153,11 @@ export default function BiomarkerRow({
   >([]);
   const [mappingStatus, setMappingStatus] = useState<any>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [systemBiomarkerBlockError, setSystemBiomarkerBlockError] = useState<
+    string | null
+  >(null);
   const [isSavingMapping, setIsSavingMapping] = useState(false);
   const [isSavingRow, setIsSavingRow] = useState(false);
-  const baselineSystemBiomarkerRef = useRef('');
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
   const [fetchedApiUnits, setFetchedApiUnits] = useState<string[]>([]);
   const [copiedExactName, setCopiedExactName] = useState(false);
@@ -141,12 +171,6 @@ export default function BiomarkerRow({
     setIsChenged(false);
     onMappingDirtyChange?.(false);
   };
-
-  useEffect(() => {
-    baselineSystemBiomarkerRef.current = String(
-      biomarker.biomarker || '',
-    ).trim();
-  }, [biomarker.biomarker_id]);
 
   const normalizedName = resolveNormalizedBiomarkerName(biomarker);
   const pdfNameFromDocument = resolveExactBiomarkerName(biomarker);
@@ -194,12 +218,6 @@ export default function BiomarkerRow({
   );
   const isErrorHandled = Boolean(isHaveError && biomarker.review_error_handled);
   const normalizedErrorText = String(errorText || '').toLowerCase();
-  const isSystemBiomarkerError = Boolean(
-    hasBiomarkerError ||
-      normalizedErrorText.includes('invalid biomarker type') ||
-      normalizedErrorText.includes('biomarker is not recognized') ||
-      normalizedErrorText.includes('biomarker name'),
-  );
   const isExtractedUnitError = Boolean(
     !isTextValueWithoutUnit &&
       biomarker.biomarker &&
@@ -214,6 +232,34 @@ export default function BiomarkerRow({
   // For successfully mapped rows, include the current mapping as a top suggestion
   // so the user can easily return to it after exploring other options.
   const rowTypeOptions = allAvilableBiomarkers;
+  const catalogForValidation = validationCatalog?.length
+    ? validationCatalog
+    : allAvilableBiomarkers;
+  const isSystemBiomarkerSelectable = (optionName: string) =>
+    isSystemBiomarkerValidForRow(catalogForValidation, biomarker, optionName);
+  const isSystemBiomarkerError = Boolean(
+    hasBiomarkerError ||
+      systemBiomarkerBlockError ||
+      (biomarker.biomarker &&
+        !isSystemBiomarkerSelectable(biomarker.biomarker)) ||
+      normalizedErrorText.includes('invalid biomarker type') ||
+      normalizedErrorText.includes('biomarker is not recognized') ||
+      normalizedErrorText.includes('biomarker name') ||
+      isBiomarkerNotRecognizedErrorText(errorText),
+  );
+  const invalidCurrentSystemBiomarkerMessage =
+    biomarker.biomarker && !isSystemBiomarkerSelectable(biomarker.biomarker)
+      ? formatBiomarkerNotRecognizedMessage(
+          biomarker,
+          String(biomarker.biomarker),
+        )
+      : '';
+  const systemBiomarkerInlineMessage =
+    systemBiomarkerBlockError ||
+    invalidCurrentSystemBiomarkerMessage ||
+    (isSystemBiomarkerError && !isErrorHandled && errorText
+      ? mapBiomarkerRecognitionErrorMessage(biomarker, errorText)
+      : '');
   const compatibleSuggestions = suggestionMatches.reduce<BiomarkerSuggestion[]>(
     (acc, suggestion) => {
       const key = suggestion.system_biomarker.toLowerCase();
@@ -224,9 +270,16 @@ export default function BiomarkerRow({
     },
     [],
   );
+  const rowValidSuggestions = filterSuggestionsForRowCatalog(
+    catalogForValidation,
+    biomarker,
+    compatibleSuggestions,
+  );
+  const hiddenCrossTypeSuggestionCount =
+    compatibleSuggestions.length - rowValidSuggestions.length;
 
   const effectiveSuggestions: BiomarkerSuggestion[] = (() => {
-    const list = [...compatibleSuggestions];
+    const list = [...rowValidSuggestions];
     const currentBiomarker = biomarker.biomarker;
     const currentUnit = biomarker.unit || biomarker.original_unit || '';
     const currentMeta = rowTypeOptions.find(
@@ -429,26 +482,15 @@ export default function BiomarkerRow({
     pdfBiomarkerName.length > 0 &&
     systemBiomarkerName.length > 0 &&
     pdfBiomarkerName.toLowerCase() === systemBiomarkerName.toLowerCase();
-  const isSystemBiomarkerDirty =
-    normalizeBiomarkerNameForMatch(systemBiomarkerName) !==
-    normalizeBiomarkerNameForMatch(baselineSystemBiomarkerRef.current);
-  const shouldShowSaveButton =
-    useReviewUx &&
-    rowCategory !== 'excluded' &&
-    Boolean(onRowReadySave) &&
-    systemBiomarkerName.length > 0 &&
-    isSystemBiomarkerDirty;
+  const { shouldShowSaveUndo: shouldShowSaveButton } = resolveRowSaveActionState({
+    useReviewUx,
+    rowCategory,
+    hasRowReadySaveHandler: Boolean(onRowReadySave),
+    systemBiomarkerName,
+    baselineSystemBiomarker,
+    isUserMappingDirty,
+  });
   const saveTooltipId = `save-row-${biomarker.biomarker_id || index}`;
-
-  const revertToBaselineSystemBiomarker = () => {
-    updateAndStandardize(biomarker.biomarker_id, {
-      biomarker: baselineSystemBiomarkerRef.current,
-    });
-    setIsMapped(false);
-    setSavedMappings([]);
-    setSaveError(null);
-    clearMappingDirty();
-  };
 
   const handleSaveClick = async () => {
     if (!onRowReadySave || isSavingRow) return;
@@ -463,10 +505,11 @@ export default function BiomarkerRow({
       }
 
       await onRowReadySave(biomarker);
-      baselineSystemBiomarkerRef.current = systemBiomarkerName;
+      onRowMappingBaselineCommit?.(biomarker.biomarker_id, systemBiomarkerName);
       clearMappingDirty();
     } catch (err) {
-      setSaveError(extractApiError(err, 'Failed to save biomarker.'));
+      const detail = extractApiError(err, 'Failed to save biomarker.');
+      setSaveError(mapBiomarkerRecognitionErrorMessage(biomarker, detail));
     } finally {
       setIsSavingRow(false);
     }
@@ -657,6 +700,12 @@ export default function BiomarkerRow({
             value={biomarker.biomarker_type || 'blood'}
             onChange={(event) => {
               const nextType = event.target.value;
+              const currentType = String(biomarker.biomarker_type || 'blood')
+                .trim()
+                .toLowerCase();
+              if (String(nextType).trim().toLowerCase() === currentType) {
+                return;
+              }
               updateAndStandardize(biomarker.biomarker_id, {
                 biomarker_type: nextType,
               });
@@ -702,6 +751,12 @@ export default function BiomarkerRow({
             isError={isSystemBiomarkerError && !isErrorHandled}
             suggestions={effectiveSuggestions}
             isSuggestionsLoading={isSuggestionsLoading}
+            isOptionSelectable={isSystemBiomarkerSelectable}
+            hiddenSuggestionsNote={
+              hiddenCrossTypeSuggestionCount > 0
+                ? 'Some suggested names belong to other test types and were hidden.'
+                : undefined
+            }
             onCreateNew={
               blockCreateNewBiomarker ? undefined : onCreateNewBiomarker
             }
@@ -710,6 +765,20 @@ export default function BiomarkerRow({
               onBiomarkerMenuOpen?.();
             }}
             onChange={(val: string) => {
+              if (
+                normalizeBiomarkerNameForMatch(val) ===
+                normalizeBiomarkerNameForMatch(biomarker.biomarker)
+              ) {
+                return;
+              }
+              if (!isSystemBiomarkerSelectable(val)) {
+                setSystemBiomarkerBlockError(
+                  formatBiomarkerNotRecognizedMessage(biomarker, val),
+                );
+                setSaveError(null);
+                return;
+              }
+              setSystemBiomarkerBlockError(null);
               const catalogEntry = pickCatalogEntryForRow(
                 allAvilableBiomarkers,
                 {
@@ -761,6 +830,11 @@ export default function BiomarkerRow({
                   : 'Select a system biomarker to see area and default unit.'}
               </span>
             )}
+            {useReviewUx && systemBiomarkerInlineMessage ? (
+              <p className="mt-1 max-w-[260px] text-center text-[9px] leading-snug text-orange-700">
+                {systemBiomarkerInlineMessage}
+              </p>
+            ) : null}
           </div>
         </div>
 
@@ -808,6 +882,17 @@ export default function BiomarkerRow({
                   }
                   onChange={(val: string) => {
                     const actualUnit = val === '(no unit)' ? '' : val;
+                    const currentUnit = String(
+                      preferNonEmpty(biomarker.original_unit, biomarker.unit) ||
+                        '',
+                    )
+                      .trim()
+                      .toLowerCase();
+                    if (
+                      String(actualUnit).trim().toLowerCase() === currentUnit
+                    ) {
+                      return;
+                    }
                     logUnitOnChange(biomarker.biomarker_id, actualUnit);
                     updateAndStandardize(biomarker.biomarker_id, {
                       original_unit: actualUnit,
@@ -883,14 +968,6 @@ export default function BiomarkerRow({
                   <>
                     {shouldShowSaveButton && (
                       <>
-                        <button
-                          type="button"
-                          disabled={isSavingRow}
-                          onClick={revertToBaselineSystemBiomarker}
-                          className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Text-Secondary hover:bg-Gray-15 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                          Undo
-                        </button>
                         <button
                           type="button"
                           disabled={isSavingRow}

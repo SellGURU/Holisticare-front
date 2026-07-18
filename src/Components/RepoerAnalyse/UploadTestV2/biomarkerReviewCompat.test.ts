@@ -21,6 +21,9 @@ import {
   resolveRowCatalogContext,
   rowMatchesCategoryFilter,
   standardizeResponseIndicatesSkip,
+  isSystemBiomarkerValidForRow,
+  formatBiomarkerNotRecognizedMessage,
+  filterSuggestionsForRowCatalog,
 } from './biomarkerReviewCompat';
 
 describe('inferReviewReasonFromErrorText', () => {
@@ -531,5 +534,60 @@ describe('buildProcessLabReportPayload', () => {
     });
 
     expect(payload.modified_biomarkers.date_of_test).toBe(todayMs);
+  });
+});
+
+describe('isSystemBiomarkerValidForRow', () => {
+  const catalog = [
+    { biomarker: '25-Hydroxyvitamin D', biomarker_type: 'blood', unit: 'ng/mL' },
+    { biomarker: 'Maximum Power', biomarker_type: 'activity', unit: 'W' },
+  ];
+
+  it('accepts a catalog match for the row biomarker type', () => {
+    const row = { biomarker_type: 'blood' };
+    expect(
+      isSystemBiomarkerValidForRow(catalog, row, '25-Hydroxyvitamin D'),
+    ).toBe(true);
+  });
+
+  it('rejects cross-type catalog entries for the row', () => {
+    const row = { biomarker_type: 'blood' };
+    expect(isSystemBiomarkerValidForRow(catalog, row, 'Maximum Power')).toBe(
+      false,
+    );
+  });
+});
+
+describe('formatBiomarkerNotRecognizedMessage', () => {
+  it('includes selected name and row type label', () => {
+    expect(
+      formatBiomarkerNotRecognizedMessage(
+        { biomarker_type: 'blood' },
+        'Maximum Power',
+      ),
+    ).toContain('Maximum Power');
+    expect(
+      formatBiomarkerNotRecognizedMessage(
+        { biomarker_type: 'blood' },
+        'Maximum Power',
+      ),
+    ).toContain('Blood');
+  });
+});
+
+describe('filterSuggestionsForRowCatalog', () => {
+  it('removes cross-type suggestions', () => {
+    const catalog = [
+      { biomarker: 'Vitamin D', biomarker_type: 'blood', unit: 'ng/mL' },
+      { biomarker: 'Maximum Power', biomarker_type: 'activity', unit: 'W' },
+    ];
+    const row = { biomarker_type: 'blood' };
+    const filtered = filterSuggestionsForRowCatalog(catalog, row, [
+      { system_biomarker: 'Vitamin D' },
+      { system_biomarker: 'Maximum Power' },
+    ]);
+    expect(filtered.map((item) => item.system_biomarker)).toEqual([
+      'Vitamin D',
+    ]);
   });
 });

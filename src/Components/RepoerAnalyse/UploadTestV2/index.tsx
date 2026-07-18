@@ -24,6 +24,7 @@ import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
   ensureUniqueBiomarkerIds,
+  preserveBiomarkerIds,
   pinBiomarkerNameFields,
 } from './biomarkerNameFields';
 import {
@@ -502,7 +503,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         contextBiomarkersMetaRef.current = currentStepOneRequestRef.current
           ? buildSnapshotMeta(currentStepOneRequestRef.current, displayRows)
           : null;
-        setExtractedBiomarkers(displayRows);
+        setExtractedBiomarkers((prev) =>
+          sortReviewBiomarkerRows(preserveBiomarkerIds(prev, displayRows)),
+        );
         setUploadPhase(
           reopenExistingFile && !data.validation?.ready
             ? 'review_ready'
@@ -2003,7 +2006,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       setRowErrors(errorMaps.modifiedErrors);
       setAddedRowErrors(errorMaps.addedErrors);
       const displayRows = sortReviewBiomarkerRows(mergedRows);
-      setExtractedBiomarkers(displayRows);
+      setExtractedBiomarkers((prev) =>
+        sortReviewBiomarkerRows(preserveBiomarkerIds(prev, displayRows)),
+      );
       setUploadPhase(data.status || 'review_ready');
       setProgressBiomarkerUpload(data.progress ?? 100);
       await loadReviewFindings(fileId, errorMaps.modifiedErrors, displayRows);

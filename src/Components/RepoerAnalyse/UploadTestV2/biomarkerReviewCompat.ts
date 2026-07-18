@@ -1451,3 +1451,80 @@ export const shouldBlockCreateNewBiomarker = (params: {
         normalizedExtracted,
   );
 };
+
+const BIOMARKER_TYPE_DISPLAY: Record<string, string> = {
+  blood: 'Blood',
+  urine: 'Urine',
+  dna: 'DNA',
+  gut: 'Gut',
+  saliva: 'Saliva',
+  stool: 'Stool',
+  activity: 'Activity',
+  other: 'Other',
+};
+
+const formatRowBiomarkerTypeLabel = (row: any) => {
+  const type = inferRowBiomarkerType(row);
+  if (BIOMARKER_TYPE_DISPLAY[type]) return BIOMARKER_TYPE_DISPLAY[type];
+  return type
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+/** True when system biomarker name exists in clinic catalog for the row specimen type. */
+export const isSystemBiomarkerValidForRow = (
+  catalog: any[],
+  row: any,
+  systemBiomarkerName: string,
+): boolean => {
+  const name = trim(systemBiomarkerName);
+  if (!name || !Array.isArray(catalog) || catalog.length === 0) return false;
+
+  const rowType = inferRowBiomarkerType(row);
+  return catalog.some(
+    (option) =>
+      normalizeBiomarkerNameForMatch(option.biomarker) ===
+        normalizeBiomarkerNameForMatch(name) &&
+      String(option.biomarker_type || 'blood').toLowerCase() === rowType,
+  );
+};
+
+export const formatBiomarkerNotRecognizedMessage = (
+  row: any,
+  selectedName?: string,
+): string => {
+  const name = trim(selectedName || row?.biomarker);
+  const typeLabel = formatRowBiomarkerTypeLabel(row);
+  if (name) {
+    return `"${name}" is not in your clinic catalog for ${typeLabel} tests. Choose a name from the System Biomarker list for this row type, or change Type to match the biomarker category.`;
+  }
+  return `Select a valid system biomarker for ${typeLabel} tests from the System Biomarker list.`;
+};
+
+export const isBiomarkerNotRecognizedErrorText = (message: unknown): boolean => {
+  const msg = String(message || '').toLowerCase();
+  return (
+    msg.includes('not recognized by the system') ||
+    msg.includes('not recognized') ||
+    msg.includes('please select a valid system biomarker for this type')
+  );
+};
+
+export const mapBiomarkerRecognitionErrorMessage = (
+  row: any,
+  rawMessage: string,
+): string => {
+  if (!isBiomarkerNotRecognizedErrorText(rawMessage)) {
+    return rawMessage;
+  }
+  return formatBiomarkerNotRecognizedMessage(row, trim(row?.biomarker));
+};
+
+export const filterSuggestionsForRowCatalog = <T extends { system_biomarker: string }>(
+  catalog: any[],
+  row: any,
+  suggestions: T[],
+): T[] =>
+  suggestions.filter((suggestion) =>
+    isSystemBiomarkerValidForRow(catalog, row, suggestion.system_biomarker),
+  );
