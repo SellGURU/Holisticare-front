@@ -20,6 +20,8 @@ import React, {
 import chroma from 'chroma-js';
 // import { ApplicationMock } from "@/api";
 import Application from '../../api/app.ts';
+import { getCached } from '../../utils/pageCache';
+import { PORTAL_CACHE_KEYS } from '../../utils/cacheKeys';
 import ActivityMenu from '../../Components/ActivityMenu/index.tsx';
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary.tsx';
 import Circleloader from '../../Components/CircleLoader/index.tsx';
@@ -404,13 +406,15 @@ const AiKnowledge = () => {
   // ];
   const fetchGraphData = async () => {
     try {
-      await Application.getgraphData()
-        .then((res) => {
-          if (res.data.nodes) {
-            setGraphData(res.data);
+      await getCached(PORTAL_CACHE_KEYS.aiKnowledgeGraph, () =>
+        Application.getgraphData().then((res) => res.data),
+      )
+        .then((data) => {
+          if (data.nodes) {
+            setGraphData(data);
             // setisLoading(false);
             setActiveFilters([
-              ...new Set(res.data?.nodes.map((e: any) => e.category2)),
+              ...new Set(data?.nodes.map((e: any) => e.category2)),
             ] as Array<string>);
           }
         })

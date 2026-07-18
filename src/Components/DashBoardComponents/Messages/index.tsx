@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Application from '../../../api/app';
+import { getCached, hasCached } from '../../../utils/pageCache';
+import { PORTAL_CACHE_KEYS } from '../../../utils/cacheKeys';
 import Circleloader from '../../CircleLoader';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Toggle from '../../Toggle';
@@ -67,10 +69,15 @@ const MessageList: React.FC<MessageListProps> = ({
   }, [id, onSelectMessage]);
 
   const messagesUsersList = () => {
-    Application.messagesUsersList()
-      .then((res) => {
-        setMessages(res.data);
-        // setMessagesSearched(res.data);
+    const cacheKey = PORTAL_CACHE_KEYS.messagesUsers;
+    if (!hasCached(cacheKey)) {
+      setIsLoading(true);
+    }
+    getCached(cacheKey, () =>
+      Application.messagesUsersList().then((res) => res.data),
+    )
+      .then((data) => {
+        setMessages(data);
       })
       .catch((err) => {
         console.error('Error getting messages users list:', err);
@@ -80,7 +87,6 @@ const MessageList: React.FC<MessageListProps> = ({
       });
   };
   useEffect(() => {
-    setIsLoading(true);
     messagesUsersList();
   }, []);
   const applyFilters = () => {

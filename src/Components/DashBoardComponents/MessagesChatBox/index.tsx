@@ -3,6 +3,8 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
 import Application from '../../../api/app';
+import { getCached } from '../../../utils/pageCache';
+import { invalidateMessagesForMember, PORTAL_CACHE_KEYS } from '../../../utils/cacheKeys';
 import Circleloader from '../../CircleLoader';
 import InputMentions from './InputMentions';
 import MainModal from '../../MainModal';
@@ -86,10 +88,15 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setIsLoading(true);
       setOneLoadingUser(false);
     }
-    Application.userMessagesList({ member_id: member_id })
-      .then((res) => {
-        setMessages(res.data.reverse());
-        setAllMessages(res.data.reverse());
+    getCached(PORTAL_CACHE_KEYS.messagesThread(member_id), () =>
+      Application.userMessagesList({ member_id: member_id }).then(
+        (res) => res.data,
+      ),
+    )
+      .then((data) => {
+        const ordered = [...data].reverse();
+        setMessages(ordered);
+        setAllMessages(ordered);
       })
       .catch(() => {})
       .finally(() => {
@@ -98,9 +105,14 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
   };
   const aiMessagesList = (member_id: number) => {
     setIsLoading(true);
-    Application.userMessagesList({ member_id: member_id, message_from: 'ai' })
-      .then((res) => {
-        setAiMessages(res.data);
+    getCached(PORTAL_CACHE_KEYS.messagesThreadAi(member_id), () =>
+      Application.userMessagesList({
+        member_id: member_id,
+        message_from: 'ai',
+      }).then((res) => res.data),
+    )
+      .then((data) => {
+        setAiMessages(data);
       })
       .catch(() => {})
       .finally(() => {
@@ -182,6 +194,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setImages([]);
       try {
         await Application.sendMessage(newMessage);
+        invalidateMessagesForMember(parseInt(memberId));
         userMessagesList(parseInt(memberId));
         if (onMessageSent) {
           onMessageSent(parseInt(memberId));

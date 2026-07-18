@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Circleloader from '../../Components/CircleLoader';
 import { Dropdown } from '../../Components/DropDown';
 import DashboardApi from '../../api/Dashboard';
+import { getCached } from '../../utils/pageCache';
 import { Tooltip } from 'react-tooltip';
 import './Actions.css';
 import PortalLink from '../../Components/PortalLink';
@@ -33,11 +34,13 @@ const Actions: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState('Week');
 
   useEffect(() => {
-    DashboardApi.getActionsList({
-      time_filter: selectedOption,
-    })
-      .then((res) => {
-        setActions(res.data);
+    getCached(`portal:dashboard:actions:${selectedOption}`, () =>
+      DashboardApi.getActionsList({
+        time_filter: selectedOption,
+      }).then((res) => res.data),
+    )
+      .then((data) => {
+        setActions(data);
       })
       .catch((err) => {
         console.error('Error getting actions list:', err);

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { useRef, useState } from 'react';
 // import useModalAutoClose from '../../hooks/UseModalAutoClose';
-import Auth from '../../api/auth';
+import { portalLogout } from '../../utils/portalLogout';
 
 interface LogOutModalProps {
   refrence: any;
@@ -50,14 +50,10 @@ const LogOutModal: React.FC<LogOutModalProps> = ({ refrence, customTheme }) => {
         <div className="flex justify-center">
           <div
             onClick={() => {
-              Auth.logOut();
-              localStorage.clear();
-              window.location.reload();
+              portalLogout();
             }}
             onTouchEnd={() => {
-              Auth.logOut();
-              localStorage.clear();
-              window.location.reload();
+              portalLogout();
             }}
             className="flex gap-1 cursor-pointer"
           >

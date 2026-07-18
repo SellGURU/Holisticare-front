@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import Application from '../../api/app';
+import { invalidatePatientLists } from '../../utils/cacheKeys';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import MainTopBar from '../../Components/MainTopBar';
 import SimpleDatePicker from '../../Components/SimpleDatePicker';
@@ -143,6 +144,7 @@ const AddClient = () => {
 
     Application.addClient(payload)
       .then((res) => {
+        invalidatePatientLists();
         setIsAdded(true);
         setMemberID(res.data.member_id);
       })

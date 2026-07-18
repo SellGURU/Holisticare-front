@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import CircularProgressBar from '../../charts/CircularProgressBar';
 import DashboardApi from '../../../api/Dashboard';
+import { getCached } from '../../../utils/pageCache';
+import { PORTAL_CACHE_KEYS } from '../../../utils/cacheKeys';
 import './Clients.css';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 
@@ -17,9 +19,11 @@ const RecentCheckIns: React.FC = () => {
   const [Clients, setClients] = useState<client[]>([]);
 
   useEffect(() => {
-    DashboardApi.getCLientsList({})
-      .then((res) => {
-        setClients(res.data.client_list);
+    getCached(PORTAL_CACHE_KEYS.dashboardClients, () =>
+      DashboardApi.getCLientsList({}).then((res) => res.data),
+    )
+      .then((data) => {
+        setClients(data.client_list);
       })
       .catch((err) => {
         console.error('Error getting clients list:', err);

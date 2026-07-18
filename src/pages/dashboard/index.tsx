@@ -11,6 +11,7 @@ import {
 import Actions from './Actions';
 import RecentCheckIns from './RecentCheckIns';
 import DashboardApi from '../../api/Dashboard';
+import { getCached } from '../../utils/pageCache';
 
 const DashBoard = () => {
   const [reports, setReports] = useState<{ title: string; number: number }[]>(
@@ -26,9 +27,11 @@ const DashBoard = () => {
 
   // End Add Task Section
   useEffect(() => {
-    DashboardApi.getClientsStats({})
-      .then((res) => {
-        setReports(res.data);
+    getCached('portal:dashboard:client-stats', () =>
+      DashboardApi.getClientsStats({}).then((res) => res.data),
+    )
+      .then((data) => {
+        setReports(data);
       })
       .catch((err) => {
         console.error('Error getting clients stats:', err);

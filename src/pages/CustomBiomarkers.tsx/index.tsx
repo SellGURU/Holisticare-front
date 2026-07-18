@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
+import { getCached } from '../../utils/pageCache';
 import Circleloader from '../../Components/CircleLoader';
 import SearchBox from '../../Components/SearchBox';
 import BiomarkerRow from './BiomarkerItemNew';
@@ -103,17 +104,23 @@ const CustomBiomarkers = () => {
 
   const getBiomarkers = () => {
     setIsLoading(true);
-    BiomarkersApi.getBiomarkerTypes()
-      .then((res) => {
-        const nextTypes = res?.data?.types;
+    getCached('portal:biomarkers:types', () =>
+      BiomarkersApi.getBiomarkerTypes().then((res) => res.data),
+    )
+      .then((data) => {
+        const nextTypes = data?.types;
         if (Array.isArray(nextTypes) && nextTypes.length > 0) {
           setBiomarkerTypes(nextTypes.map((type: any) => String(type)));
         }
       })
       .catch(() => {});
-    BiomarkersApi.getBiomarkersList({ include_all: true })
-      .then((res) => {
-        setBiomarkers(prepareBiomarkersCatalogList(res.data));
+    getCached('portal:biomarkers:list', () =>
+      BiomarkersApi.getBiomarkersList({ include_all: true }).then(
+        (res) => res.data,
+      ),
+    )
+      .then((data) => {
+        setBiomarkers(prepareBiomarkersCatalogList(data));
       })
       .catch((err) => {
         console.error('Error getting biomarkers:', err);
@@ -124,17 +131,19 @@ const CustomBiomarkers = () => {
   };
 
   const loadMappings = () => {
-    BiomarkersApi.getUnitMapping()
-      .then((res) => {
-        const d = res.data;
+    getCached('portal:biomarkers:unit-mapping', () =>
+      BiomarkersApi.getUnitMapping().then((res) => res.data),
+    )
+      .then((d) => {
         setUnitMappingData(d);
         setUnitMappings(d?.biomarker_specific || []);
       })
       .catch(() => {});
 
-    BiomarkersApi.getBiomarkerMapping()
-      .then((res) => {
-        const data = res.data;
+    getCached('portal:biomarkers:biomarker-mapping', () =>
+      BiomarkersApi.getBiomarkerMapping().then((res) => res.data),
+    )
+      .then((data) => {
         if (data?.mappings && Array.isArray(data.mappings)) {
           setBiomarkerMappings(data.mappings);
         } else if (Array.isArray(data)) {

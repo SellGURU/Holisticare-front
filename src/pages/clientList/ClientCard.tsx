@@ -3,6 +3,7 @@ import { isModifiedNavigationEvent } from '../../utils/navigation';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import { FC, useEffect, useRef, useState } from 'react';
 import Application from '../../api/app.ts';
+import { invalidatePatientLists } from '../../utils/cacheKeys';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary.tsx';
@@ -785,6 +786,7 @@ const ClientCard: FC<ClientCardProps> = ({
               member_id: client.member_id,
             })
               .then(() => {
+                invalidatePatientLists();
                 onarchive(client.member_id);
               })
               .catch((err) => {
@@ -795,6 +797,7 @@ const ClientCard: FC<ClientCardProps> = ({
               member_id: client.member_id,
             })
               .then(() => {
+                invalidatePatientLists();
                 onarchive(client.member_id);
               })
               .catch((err) => {
@@ -818,7 +821,7 @@ const ClientCard: FC<ClientCardProps> = ({
             member_id: client.member_id,
           })
             .then(() => {
-              // setshowModal(false);
+              invalidatePatientLists();
             })
             .catch((err) => {
               console.error('Error deleting patient:', err);

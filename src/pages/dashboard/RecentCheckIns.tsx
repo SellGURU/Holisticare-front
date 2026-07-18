@@ -7,6 +7,7 @@ import './RecentCheckIns.css';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { Dropdown } from '../../Components/DropDown';
 import DashboardApi from '../../api/Dashboard';
+import { getCached } from '../../utils/pageCache';
 import { Tooltip } from 'react-tooltip';
 import SvgIcon from '../../utils/svgIcon';
 import { SurveyResponsesView } from '../surveysView/survey-responses-view';
@@ -99,11 +100,13 @@ const RecentCheckIns = () => {
     },
   });
   useEffect(() => {
-    DashboardApi.getCheckinList({
-      time_filter: selectedOption,
-    })
-      .then((res) => {
-        setCheckIns(res.data);
+    getCached(`portal:dashboard:checkins:${selectedOption}`, () =>
+      DashboardApi.getCheckinList({
+        time_filter: selectedOption,
+      }).then((res) => res.data),
+    )
+      .then((data) => {
+        setCheckIns(data);
       })
       .catch((err) => {
         console.error('Error getting checkin list:', err);

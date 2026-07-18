@@ -4,6 +4,7 @@ import ActivityLogger from '../utils/activty-logger';
 import { toast } from 'react-toastify';
 import { showError, showSuccess, showWarning } from '../Components/GlobalToast';
 import Auth from './auth';
+import { portalSessionExpired } from '../utils/portalSessionExpired';
 import {
   isAxiosNetworkError,
   isBrowserOffline,
@@ -147,8 +148,7 @@ axios.interceptors.response.use(
     }
 
     if (response.status === 401 || response.data.detail === 'Invalid token.') {
-      localStorage.clear();
-      window.location.reload();
+      portalSessionExpired();
     }
 
     if (
@@ -213,8 +213,7 @@ axios.interceptors.response.use(
         !window.location.href.includes('/html-previewer')) ||
       error.response?.data?.detail === 'Invalid token.'
     ) {
-      localStorage.clear();
-      window.location.reload();
+      portalSessionExpired();
     }
 
     if (error.code === 'ERR_NETWORK') {

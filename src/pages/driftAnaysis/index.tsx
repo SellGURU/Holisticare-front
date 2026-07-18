@@ -5,6 +5,8 @@ import StatusMenu from '../../Components/StatusMenu';
 import { useEffect, useRef, useState } from 'react';
 import { ClientCard } from './ClientCard';
 import Application from '../../api/app';
+import { getCached } from '../../utils/pageCache';
+import { PORTAL_CACHE_KEYS } from '../../utils/cacheKeys';
 // import { Button } from "symphony-ui";
 // import GenerateReportTable from "./GenerateReportTable";
 // import ReportTable from "./ReportsTable";
@@ -149,10 +151,12 @@ const DriftAnaysis = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await Application.aiStudio_patients();
-        setPatients(response.data.patients_list_data);
+        const data = await getCached(PORTAL_CACHE_KEYS.driftPatients, () =>
+          Application.aiStudio_patients().then((response) => response.data),
+        );
+        setPatients(data.patients_list_data);
         if (!searchParams.get('activeMemberId')) {
-          setActiveMemberID(response.data.patients_list_data[0].member_id);
+          setActiveMemberID(data.patients_list_data[0].member_id);
         }
       } catch (err) {
         console.log(err);

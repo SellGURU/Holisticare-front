@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, PropsWithChildren, useState } from 'react';
 import PackageManager from '../model/Packages/PackageManager';
+import { clearPortalSession } from '../utils/clearPortalSession';
 
 interface AppContextProp {
   permisions: any;
@@ -69,11 +70,13 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
   );
 
   const logOut = () => {
+    clearPortalSession();
     setToken('');
     setPermisions({});
+    setPatientsList([]);
+    setTreatmentId(null);
     setClinicPlan('paying');
     setClinicStatus('active');
-    localStorage.clear();
   };
   const contextValue: AppContextProp = {
     token: token,
