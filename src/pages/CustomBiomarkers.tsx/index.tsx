@@ -14,10 +14,9 @@ import useIsDemo from '../../hooks/useIsDemo';
 
 import DefaultData from './default.json';
 import {
-  ensureBiomarkerUid,
   migrateLegacyMappingsForDuplicates,
   migrateLegacyUnitMappingsForDuplicates,
-  normalizeBiomarkersList,
+  prepareBiomarkersCatalogList,
 } from './biomarkerIdentity';
 
 type SortKey = 'Biomarker' | 'Benchmark areas' | 'biomarker_type' | 'unit';
@@ -69,7 +68,6 @@ const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
-  const [searchValue, setSearchValue] = useState('');
   const [panelFilter, setPanelFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('Biomarker');
@@ -91,7 +89,7 @@ const CustomBiomarkers = () => {
   const mappingsMigrationDone = useRef(false);
 
   const changeBiomarkersValue = (values: any) => {
-    setBiomarkers(normalizeBiomarkersList(values));
+    setBiomarkers(prepareBiomarkersCatalogList(values));
   };
 
   const openModalAdd = () => {
@@ -115,7 +113,7 @@ const CustomBiomarkers = () => {
       .catch(() => {});
     BiomarkersApi.getBiomarkersList({ include_all: true })
       .then((res) => {
-        setBiomarkers(normalizeBiomarkersList(res.data));
+        setBiomarkers(prepareBiomarkersCatalogList(res.data));
       })
       .catch((err) => {
         console.error('Error getting biomarkers:', err);
@@ -150,14 +148,6 @@ const CustomBiomarkers = () => {
     getBiomarkers();
     loadMappings();
   }, []);
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      setSearchValue(searchInput);
-    }, 180);
-
-    return () => window.clearTimeout(timeout);
-  }, [searchInput]);
 
   useEffect(() => {
     if (biomarkers.length > 0) {
@@ -237,8 +227,8 @@ const CustomBiomarkers = () => {
   };
 
   const normalizedSearchValue = useMemo(
-    () => normalizeSearchTerm(searchValue),
-    [searchValue],
+    () => normalizeSearchTerm(searchInput),
+    [searchInput],
   );
 
   const getBiomarkerSearchScore = (item: any) => {
@@ -366,7 +356,6 @@ const CustomBiomarkers = () => {
 
   const clearFilters = () => {
     setSearchInput('');
-    setSearchValue('');
     setPanelFilter('');
     setTypeFilter('');
   };
@@ -376,7 +365,7 @@ const CustomBiomarkers = () => {
     BiomarkersApi.addBiomarkersList({ new_biomarker: values })
       .then(() => {
         closeModalAdd();
-        setBiomarkers((pre) => [...pre, ensureBiomarkerUid(values)]);
+        getBiomarkers();
       })
       .catch((error) => {
         setErrorDetails(
@@ -487,16 +476,13 @@ const CustomBiomarkers = () => {
               {filteredBiomarkerEntries.map(
                 ({ item: value, originalIndex }, index: number) => (
                   <BiomarkerRow
-                    key={
-                      value?.biomarker_uid ||
-                      `${value?.Biomarker || 'biomarker'}-${originalIndex}`
-                    }
+                    key={`${value?.biomarker_uid || value?.Biomarker || 'biomarker'}-${originalIndex}`}
                     rowIndex={index}
                     biomarkerIndex={originalIndex}
                     data={value}
                     biomarkers={biomarkers}
                     changeBiomarkersValue={changeBiomarkersValue}
-                    searchTerm={searchValue}
+                    searchTerm={searchInput}
                     benchmarkAreaOptions={benchmarkAreaOptions}
                     benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
                     biomarkerTypeOptions={biomarkerTypeOptions}

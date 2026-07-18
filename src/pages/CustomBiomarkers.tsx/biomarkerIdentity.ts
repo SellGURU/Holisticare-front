@@ -11,6 +11,11 @@ export type BiomarkerIdentityMeta = {
 
 const trim = (value: unknown) => String(value ?? '').trim();
 
+const normalizeName = (value: unknown) => trim(value).toLowerCase();
+
+export const isCustomBiomarker = (item: any) =>
+  trim(item?.source).toLowerCase() === 'custom';
+
 const BIOMARKER_TYPE_OPTIONS = [
   'blood',
   'urine',
@@ -77,6 +82,102 @@ export const normalizeBiomarkersList = (items: any[]) =>
   (Array.isArray(items) ? items : []).map((item) =>
     ensureBiomarkerUid(structuredClone(item)),
   );
+
+const hasConfiguredThresholds = (item: any) => {
+  const thresholds = item?.thresholds;
+  if (!thresholds || typeof thresholds !== 'object') return false;
+
+  for (const ageGroups of Object.values(thresholds)) {
+    if (!ageGroups || typeof ageGroups !== 'object') continue;
+    for (const entries of Object.values(ageGroups as Record<string, unknown>)) {
+      if (!Array.isArray(entries)) continue;
+      for (const entry of entries) {
+        if (entry?.low != null || entry?.high != null) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+};
+
+const scoreCatalogBiomarkerEntry = (item: any) => {
+  let score = 0;
+  if (isCustomBiomarker(item)) score += 1000;
+  if (hasConfiguredThresholds(item)) score += 100;
+  if (trim(item?.Definition)) score += 10;
+  if (trim(item?.biomarker_uid)) score += 5;
+  return score;
+};
+
+const pickPreferredCatalogBiomarker = (entries: any[]) => {
+  if (entries.length === 1) return entries[0];
+
+  return entries.reduce((best, current) =>
+    scoreCatalogBiomarkerEntry(current) > scoreCatalogBiomarkerEntry(best)
+      ? current
+      : best,
+  );
+};
+
+/** Collapse duplicate catalog rows that share the same biomarker identity. */
+export const dedupeCatalogBiomarkersList = (items: any[]) => {
+  const normalizedItems = Array.isArray(items) ? items : [];
+  const groupedByIdentity = new Map<string, any[]>();
+  const identityOrder: string[] = [];
+
+  normalizedItems.forEach((item) => {
+    const identityKey = buildBiomarkerIdentityKey(item);
+    if (!groupedByIdentity.has(identityKey)) {
+      groupedByIdentity.set(identityKey, []);
+      identityOrder.push(identityKey);
+    }
+    groupedByIdentity.get(identityKey)?.push(item);
+  });
+
+  const dedupedByIdentity = identityOrder.map((identityKey) =>
+    pickPreferredCatalogBiomarker(groupedByIdentity.get(identityKey) || []),
+  );
+
+  const groupedByName = new Map<string, any[]>();
+  const nameOrder: string[] = [];
+
+  dedupedByIdentity.forEach((item) => {
+    const nameKey = normalizeName(item?.Biomarker);
+    if (!nameKey) {
+      nameOrder.push(`__unnamed__:${nameOrder.length}`);
+      groupedByName.set(nameOrder[nameOrder.length - 1], [item]);
+      return;
+    }
+
+    if (!groupedByName.has(nameKey)) {
+      groupedByName.set(nameKey, []);
+      nameOrder.push(nameKey);
+    }
+    groupedByName.get(nameKey)?.push(item);
+  });
+
+  return nameOrder.flatMap((nameKey) => {
+    const entries = groupedByName.get(nameKey) || [];
+    if (entries.length <= 1) return entries;
+
+    const configuredEntries = entries.filter(hasConfiguredThresholds);
+    if (configuredEntries.length === 0) {
+      return [pickPreferredCatalogBiomarker(entries)];
+    }
+
+    const stubs = entries.filter((item) => !hasConfiguredThresholds(item));
+    if (stubs.length === 0) {
+      return entries;
+    }
+
+    return entries.filter((item) => hasConfiguredThresholds(item));
+  });
+};
+
+export const prepareBiomarkersCatalogList = (items: any[]) =>
+  dedupeCatalogBiomarkersList(normalizeBiomarkersList(items));
 
 export const buildBiomarkerIdentityMeta = (
   item: any,
@@ -158,9 +259,6 @@ export const applySavedBiomarkerUpdate = (
       trim(savedBiomarker?.biomarker_uid) || trim(meta.biomarkerUid),
   });
 
-export const isCustomBiomarker = (item: any) =>
-  trim(item?.source).toLowerCase() === 'custom';
-
 export const removeBiomarkerByIdentity = (
   biomarkers: any[],
   meta: BiomarkerIdentityMeta,
@@ -203,8 +301,6 @@ export const removeBiomarkerByIdentity = (
 
   return biomarkers;
 };
-
-const normalizeName = (value: unknown) => trim(value).toLowerCase();
 
 export const getDuplicateBiomarkerNames = (biomarkers: any[]) => {
   const counts = new Map<string, number>();
