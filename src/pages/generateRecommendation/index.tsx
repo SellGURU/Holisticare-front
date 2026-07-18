@@ -8,6 +8,7 @@ import { Overview } from './components/Overview';
 import { SetOrders } from './components/SetOrders';
 // import mocktemtment from './treatmentMoch.json'
 import Application from '../../api/app';
+import { invalidateHealthPlanCache } from '../../utils/cacheKeys';
 import Circleloader from '../../Components/CircleLoader';
 import SvgIcon from '../../utils/svgIcon';
 import { AppContext } from '../../store/app';
@@ -520,6 +521,9 @@ export const GenerateRecommendation = () => {
             throw new Error('Rescore job did not return a job_id');
           }
           const res = await pollHolisticRescoreJob(jobId);
+          if (id) {
+            invalidateHealthPlanCache(id);
+          }
           const rescoredKeyAreas = toType2(
             res?.key_areas_to_address ??
               remappedPlan?.key_areas_to_address ??
@@ -673,6 +677,9 @@ export const GenerateRecommendation = () => {
       );
 
       await Application.saveHolisticPlan(savePayload);
+      if (id) {
+        invalidateHealthPlanCache(id);
+      }
       setTreatmentId(treatmentPlanData.treatment_id);
       navigate(
         `/report/Generate-Holistic-Plan/${id}/${resolveTreatmentId() + '?isUpdate=' + (treatment_id && treatment_id?.length > 1 ? 'true' : 'false')}`,

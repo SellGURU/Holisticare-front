@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../api/app';
+import { invalidateHealthPlanCache } from '../../utils/cacheKeys';
 import { ComboBar, MainModal } from '../../Components';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
@@ -179,6 +180,9 @@ const NewGenerateHolisticPlan = () => {
       }
 
       const res = await pollHolisticRescoreJob(jobId);
+      if (id) {
+        invalidateHealthPlanCache(id);
+      }
       const rescoredKeyAreas = toType2(
         res?.key_areas_to_address ??
           remappedPlan?.key_areas_to_address ??
@@ -252,6 +256,9 @@ const NewGenerateHolisticPlan = () => {
         member_id: id,
         is_update: isUpdate,
       });
+      if (id) {
+        invalidateHealthPlanCache(id);
+      }
       sessionStorage.setItem('isHtmlReportExists', 'false');
       publish('reckecHtmlReport', {});
       shouldNavigate = true;

@@ -4,6 +4,12 @@ import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
+import {
+  HEALTH_PLAN_CACHE_KEYS,
+  HEALTH_PLAN_TTL_MS,
+  invalidateHealthPlanCache,
+} from '../../utils/cacheKeys';
+import { getCached } from '../../utils/pageCache';
 import { AppContext } from '../../store/app';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { SlideOutPanel } from '../SlideOutPanel';
@@ -102,40 +108,43 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const { id } = useParams<{ id: string }>();
   const [activeTreatment, setActiveTreatmnet] = useState('');
   useEffect(() => {
-    if (!isShare) {
-      Application.showHistory({
-        member_id: id,
-      })
-        .then((res) => {
-          if (res.data.length == 0) {
+    if (!isShare && id) {
+      getCached(
+        HEALTH_PLAN_CACHE_KEYS.treatmentPlanList(id),
+        () =>
+          Application.showHistory({ member_id: id }).then((res) => res.data),
+        HEALTH_PLAN_TTL_MS,
+      )
+        .then((data) => {
+          if (data.length == 0) {
             setIsHolisticPlanEmpty(true);
           } else {
             if (
-              res.data[res.data.length - 1].state == 'Draft' &&
-              res.data.length == 1
+              data[data.length - 1].state == 'Draft' &&
+              data.length == 1
             ) {
               setIsHolisticPlanEmpty(true);
             }
             setIsHolisticPlanEmpty(false);
           }
-          setCardData(res.data);
-          setPrintActionPlan(res.data);
-          if (res.data.length > 0) {
-            setActiveTreatmnet(res.data[res.data.length - 1].t_plan_id);
+          setCardData(data);
+          setPrintActionPlan(data);
+          if (data.length > 0) {
+            setActiveTreatmnet(data[data.length - 1].t_plan_id);
             publish('holisticPlanactiveChange', {
-              data: res.data[res.data.length - 1],
+              data: data[data.length - 1],
             });
             setIsShareModalSuccess(
-              res.data[res.data.length - 1].shared_report_with_client,
+              data[data.length - 1].shared_report_with_client,
             );
             setDateShare(
-              res.data[res.data.length - 1].shared_report_with_client_date,
+              data[data.length - 1].shared_report_with_client_date,
             );
           }
           setTimeout(() => {
             const container: any = document.getElementById('scrollContainer');
             if (container) {
-              container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+              container.scrollLeft = container.scrollWidth;
             }
           }, 500);
         })
@@ -170,18 +179,23 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     };
   }, []);
   useEffect(() => {
-    if (activeTreatment != '' && !isShare) {
-      Application.getTreatmentPlanDetail({
-        treatment_id: activeTreatment,
-        member_id: id,
-      })
-        .then((res) => {
-          setTreatmentPlanData(res.data.details);
-          if (res.data.client_goals != null) {
-            setClientGools(res.data.client_goals);
+    if (activeTreatment != '' && !isShare && id) {
+      getCached(
+        HEALTH_PLAN_CACHE_KEYS.treatmentPlanDetail(id, activeTreatment),
+        () =>
+          Application.getTreatmentPlanDetail({
+            treatment_id: activeTreatment,
+            member_id: id,
+          }).then((res) => res.data),
+        HEALTH_PLAN_TTL_MS,
+      )
+        .then((data) => {
+          setTreatmentPlanData(data.details);
+          if (data.client_goals != null) {
+            setClientGools(data.client_goals);
           }
-          setNeedFocusData(res.data.need_focus_benchmarks);
-          setclientSummary(res.data.medical_summary);
+          setNeedFocusData(data.need_focus_benchmarks);
+          setclientSummary(data.medical_summary);
         })
         .catch((err) => {
           console.error('Error getting treatment plan detail:', err);
@@ -203,6 +217,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       member_id: id,
     })
       .then(() => {
+        if (id) {
+          invalidateHealthPlanCache(id);
+        }
         publish('reckecHtmlReport', {});
       })
       .catch(() => {});

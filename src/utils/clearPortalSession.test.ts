@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { clearPortalSession } from './clearPortalSession';
+import { HEALTH_PLAN_CACHE_KEYS } from './cacheKeys';
 import { hasCached, getCached, __resetPageCacheForTests } from './pageCache';
 
 class MemoryStorage implements Storage {
@@ -92,6 +93,9 @@ describe('clearPortalSession', () => {
     sessionStorage.setItem('isHtmlReportExists', 'true');
 
     await getCached('portal:patients', () => Promise.resolve({ list: [] }));
+    await getCached(HEALTH_PLAN_CACHE_KEYS.patientInfo('member-123'), () =>
+      Promise.resolve({ member_id: 'member-123' }),
+    );
 
     expect(() => {
       clearPortalSession();
@@ -108,5 +112,8 @@ describe('clearPortalSession', () => {
     expect(sessionStorage.getItem('lab_job_id_789')).toBeNull();
     expect(sessionStorage.getItem('isHtmlReportExists')).toBeNull();
     expect(hasCached('portal:patients')).toBe(false);
+    expect(hasCached(HEALTH_PLAN_CACHE_KEYS.patientInfo('member-123'))).toBe(
+      false,
+    );
   });
 });

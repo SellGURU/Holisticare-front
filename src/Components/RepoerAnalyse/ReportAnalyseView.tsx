@@ -74,6 +74,12 @@ import {
 } from '../../utils/asyncProcessing';
 import { reconcileOverviewUiState } from '../../utils/reconcileOverviewUiState';
 import { logDescriptionRender } from '../../utils/descriptionDebug';
+import {
+  HEALTH_PLAN_CACHE_KEYS,
+  HEALTH_PLAN_TTL_MS,
+  invalidateHealthPlanCache,
+} from '../../utils/cacheKeys';
+import { getCached } from '../../utils/pageCache';
 
 const canLoadOverviewSections = (info: {
   show_report?: boolean;
@@ -254,46 +260,48 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         .catch(() => {
           setLoading(false);
         });
-    } else {
-      Application.getPatientsInfo({
-        member_id: resolvedMemberID,
-      })
-        .then((res) => {
+    } else if (resolvedMemberID != null) {
+      getCached(
+        HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID),
+        () =>
+          Application.getPatientsInfo({
+            member_id: resolvedMemberID,
+          }).then((res) => res.data),
+        HEALTH_PLAN_TTL_MS,
+      )
+        .then((data) => {
           if (setFirst_time_view) {
-            setFirst_time_view?.(res.data.first_time_view);
+            setFirst_time_view?.(data.first_time_view);
           }
 
-          setUserInfoData(res.data);
-          publish('userInfoData', res.data);
-          setIsHaveReport(res.data.show_report);
-          setHasPartialReport(Boolean(res.data.has_partial_report));
+          setUserInfoData(data);
+          publish('userInfoData', data);
+          setIsHaveReport(data.show_report);
+          setHasPartialReport(Boolean(data.has_partial_report));
           setLoading(false);
-          // Only show the "Provide Data to Generate Health Plan" selection
-          // screen the first time per client. Once the client's first view is
-          // done on the backend (first_time_view === true), don't show it again.
           if (
-            res.data.show_report === false &&
-            res.data.first_time_view !== true
+            data.show_report === false &&
+            data.first_time_view !== true
           ) {
             setShowUploadTest(true);
           }
-          setHasWearableData(res.data.has_wearable_data);
-          setQuestionnaires(res.data.questionnaires);
-          if (res.data.has_minimum_data == false) {
+          setHasWearableData(data.has_wearable_data);
+          setQuestionnaires(data.questionnaires);
+          if (data.has_minimum_data == false) {
             setDisableGenerate(true);
           } else {
             setDisableGenerate(false);
           }
-          if (res.data.first_time_view == true) {
+          if (data.first_time_view == true) {
             setActiveCheckProgress(true);
           } else {
             setActiveCheckProgress(false);
           }
-          const shouldLoadOverview = canLoadOverviewSections(res.data);
+          const shouldLoadOverview = canLoadOverviewSections(data);
           if (shouldLoadOverview) {
             startSectionLoading();
           }
-          if (res.data.has_partial_report && !res.data.show_report) {
+          if (data.has_partial_report && !data.show_report) {
             setOverviewProcessing(true);
           }
           if (shouldLoadOverview) {
@@ -387,10 +395,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const fetchReferenceData = () => {
+    if (resolvedMemberID == null) return;
     setReferenceLoading(true);
-    Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
-      .then((res) => {
-        const data = res.data || {};
+    getCached(
+      HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(resolvedMemberID),
+      () =>
+        Application.getClientSummaryOutofrefs({
+          member_id: resolvedMemberID,
+        }).then((res) => res.data),
+      HEALTH_PLAN_TTL_MS,
+    )
+      .then((data) => {
         applyOverviewProcessingMeta(data, {
           setOverviewProcessing,
           setDataPhase,
@@ -421,12 +436,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const fetchClientSummaryCategories = () => {
+    if (resolvedMemberID == null) return;
     setClientSummaryLoading(true);
-    Application.getClientSummaryCategories({
-      member_id: resolvedMemberID,
-    })
-      .then((res) => {
-        const data = res.data || {};
+    getCached(
+      HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(resolvedMemberID),
+      () =>
+        Application.getClientSummaryCategories({
+          member_id: resolvedMemberID,
+        }).then((res) => res.data),
+      HEALTH_PLAN_TTL_MS,
+    )
+      .then((data) => {
         applyOverviewProcessingMeta(data, {
           setOverviewProcessing,
           setDataPhase,
@@ -451,10 +471,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const fetchConcerningResults = () => {
+    if (resolvedMemberID == null) return;
     setConcerningLoading(true);
-    Application.getConceringResults({ member_id: resolvedMemberID })
-      .then((res) => {
-        const table = res.data.table || [];
+    getCached(
+      HEALTH_PLAN_CACHE_KEYS.concerningResults(resolvedMemberID),
+      () =>
+        Application.getConceringResults({
+          member_id: resolvedMemberID,
+        }).then((res) => res.data),
+      HEALTH_PLAN_TTL_MS,
+    )
+      .then((data) => {
+        const table = data.table || [];
         if (table.length > 0 || !overviewProcessing) {
           setConcerningResult(table);
           setConcerningResultIsLoaded(true);
@@ -481,12 +509,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     getTreatmentPlanData();
   };
   const getTreatmentPlanData = () => {
+    if (resolvedMemberID == null) return;
     setTreatmentLoading(true);
-    Application.getOverviewtplan({ member_id: resolvedMemberID })
-      .then((res) => {
-        setTreatmentPlanData(res.data);
+    getCached(
+      HEALTH_PLAN_CACHE_KEYS.overviewTreatmentPlan(resolvedMemberID),
+      () =>
+        Application.getOverviewtplan({
+          member_id: resolvedMemberID,
+        }).then((res) => res.data),
+      HEALTH_PLAN_TTL_MS,
+    )
+      .then((data) => {
+        setTreatmentPlanData(data);
         setTreatmentPlanLoaded(true);
-        if (res.data.length == 0) {
+        if (data.length == 0) {
           publish('HolisticPlanStatus', { isempty: true });
         } else {
           publish('HolisticPlanStatus', { isempty: false });
@@ -618,6 +654,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       if (detail.silent === true) {
         return;
       }
+      if (resolvedMemberID) {
+        invalidateHealthPlanCache(resolvedMemberID);
+      }
       setCallSync(true);
       if (location.search) {
         navigate(location.pathname, { replace: true });
@@ -682,6 +721,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const refreshReportSections = () => {
+    if (resolvedMemberID == null) return;
+    invalidateHealthPlanCache(resolvedMemberID);
     setDescriptionEpoch((e) => e + 1);
     descriptionPollLogCountRef.current = 0;
     setIsHaveReport(true);
@@ -690,16 +731,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       clearReportSections();
       labDeleteRefreshPendingRef.current = false;
     }
-    Application.getPatientsInfo({
-      member_id: resolvedMemberID,
-    })
-      .then((res) => {
-        setUserInfoData(res.data);
-        setIsHaveReport(res.data.show_report || res.data.first_time_view);
-        setHasPartialReport(Boolean(res.data.has_partial_report));
-        setHasWearableData(res.data.has_wearable_data);
-        setQuestionnaires(res.data.questionnaires);
-        setDisableGenerate(res.data.has_minimum_data === false);
+    getCached(
+      HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID),
+      () =>
+        Application.getPatientsInfo({
+          member_id: resolvedMemberID,
+        }).then((res) => res.data),
+      HEALTH_PLAN_TTL_MS,
+    )
+      .then((data) => {
+        setUserInfoData(data);
+        setIsHaveReport(data.show_report || data.first_time_view);
+        setHasPartialReport(Boolean(data.has_partial_report));
+        setHasWearableData(data.has_wearable_data);
+        setQuestionnaires(data.questionnaires);
+        setDisableGenerate(data.has_minimum_data === false);
       })
       .catch((err) => {
         console.error('Error refreshing patient info after progress:', err);

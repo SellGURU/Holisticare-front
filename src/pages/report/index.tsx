@@ -5,16 +5,15 @@ import { TopBar } from '../../Components/topBar';
 import ReportSideMenu from '../../Components/reportSideMenu/newSideMenu';
 import { ComboBar } from '../../Components';
 import { useState, useEffect, useRef } from 'react';
-import { subscribe, unsubscribe } from '../../utils/event';
+import { subscribe, unsubscribe, publish } from '../../utils/event';
+import { invalidateHealthPlanCache } from '../../utils/cacheKeys';
 import Draggable from 'react-draggable';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import ProgressDashboardView from '../../Components/ProgressDashboard/ProgressDashboardView';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
 import UnderProgressController from './underProgressController';
 import { useParams } from 'react-router-dom';
-// import ProgressUiModal from './underProgressController/ProgressUiModal';
 import Application from '../../api/app';
-import { publish } from '../../utils/event';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
@@ -259,6 +258,7 @@ const Report = () => {
                 if (id) {
                   Application.refreshData(id, false)
                     .then(() => {
+                      invalidateHealthPlanCache(id);
                       setshowRefreshModal(false);
                       publish('SyncRefresh', {});
                       publish('disableGenerate', {});

@@ -56,6 +56,15 @@ export function hasCached(key: string): boolean {
   return store.has(key);
 }
 
+export function listPageCacheKeys(): string[] {
+  return [...store.keys()];
+}
+
+export function removeCachedKey(key: string): void {
+  store.delete(key);
+  inFlight.delete(key);
+}
+
 export function invalidate(keyPrefix?: string): void {
   if (!keyPrefix) {
     store.clear();

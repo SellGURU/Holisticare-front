@@ -8,6 +8,7 @@ import SpinnerLoader from '../SpinnerLoader';
 import { GitPullRequest, Merge, RefreshCcw } from 'lucide-react';
 import { SlideOutPanel } from '../SlideOutPanel';
 import Application from '../../api/app';
+import { invalidateHealthPlanCache } from '../../utils/cacheKeys';
 import { useParams } from 'react-router-dom';
 import { formatRelativeDate } from '../../utils/formatRelativeDate';
 import { isManualLabEntry } from '../../utils/manualEntry';
@@ -269,6 +270,7 @@ const CompileButton: FC<CompileButtonProps> = ({
       Application.checkRefreshProgress(id as string)
         .then((res) => {
           if (res?.data?.status) {
+            invalidateHealthPlanCache(id);
             setIsCompiling(false);
             setNeedCompile(false);
             setshowProgressModal(false);
@@ -339,6 +341,9 @@ const CompileButton: FC<CompileButtonProps> = ({
         const hasRefresh = progressData.some(
           (item) => item.category === 'refresh',
         );
+        if (hasRefresh && id) {
+          invalidateHealthPlanCache(id);
+        }
         checkRefrashData();
         publish('syncReport', {
           fullReload: hasRefresh,
