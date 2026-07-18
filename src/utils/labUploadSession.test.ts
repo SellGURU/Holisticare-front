@@ -53,8 +53,9 @@ describe('labUploadSession', () => {
       },
       { progress: 72 },
     );
-    expect(merged.uiProgress).toBe(72);
-    expect(merged.serverProgress).toBe(72);
+    expect(merged).not.toBeNull();
+    expect(merged!.uiProgress).toBe(72);
+    expect(merged!.serverProgress).toBe(72);
   });
 
   it('mergeStepOne is no-op when phase is cancelled', () => {
@@ -175,9 +176,10 @@ describe('labUploadSession', () => {
       status: 'review_ready',
     });
 
-    expect(merged.phase).toBe('cancelled');
-    expect(merged.uiProgress).toBe(25);
-    expect(merged.serverProgress).toBe(25);
+    expect(merged).not.toBeNull();
+    expect(merged!.phase).toBe('cancelled');
+    expect(merged!.uiProgress).toBe(25);
+    expect(merged!.serverProgress).toBe(25);
   });
 
   it('clearSession removes persisted session', async () => {
