@@ -4,7 +4,10 @@ import { useSearchParams } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
 import Application from '../../../api/app';
 import { getCached } from '../../../utils/pageCache';
-import { invalidateMessagesForMember, PORTAL_CACHE_KEYS } from '../../../utils/cacheKeys';
+import {
+  invalidateMessagesForMember,
+  PORTAL_CACHE_KEYS,
+} from '../../../utils/cacheKeys';
 import Circleloader from '../../CircleLoader';
 import InputMentions from './InputMentions';
 import MainModal from '../../MainModal';

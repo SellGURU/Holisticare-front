@@ -77,9 +77,7 @@ const ClientList = () => {
     if (!hasCached(cacheKey)) {
       setIsLoading(true);
     }
-    getCached(cacheKey, () =>
-      Application.getPatients().then((res) => res.data),
-    )
+    getCached(cacheKey, () => Application.getPatients().then((res) => res.data))
       .then((data) => {
         setClientList(data.patients_list_data);
         setFilteredClientList(data.patients_list_data);
