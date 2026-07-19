@@ -9,6 +9,7 @@ import {
   validateLabReportFile,
 } from '../utils/labReportUploadHelpers';
 import {
+  isStepOneDeletedResponse,
   shouldContinueStepOnePolling,
   stepOneHasExtractedBiomarkers,
   stepOneResponseData,
@@ -116,7 +117,7 @@ const startStepOnePolling = (
         stop();
       }
     } catch (error: unknown) {
-      if (isGatewayTimeout(error)) {
+      if (isStepOneDeletedResponse(error) || isGatewayTimeout(error)) {
         stop();
       }
     } finally {

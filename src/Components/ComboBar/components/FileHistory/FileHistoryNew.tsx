@@ -1006,7 +1006,15 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
             : (err?.response?.data ?? null);
 
         if (isStepOneDeletedResponse(err, errData)) {
-          finishZone();
+          if (isUploadCancelled(session.sessionId, fileId)) {
+            finishZone();
+            return;
+          }
+          setUploadZoneError(
+            'Upload could not continue. Please try again.',
+          );
+          patchSession({ phase: 'failed' });
+          window.setTimeout(finishZone, 3000);
           return;
         }
 
