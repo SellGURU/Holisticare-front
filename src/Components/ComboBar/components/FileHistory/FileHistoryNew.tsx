@@ -1010,9 +1010,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
             finishZone();
             return;
           }
-          setUploadZoneError(
-            'Upload could not continue. Please try again.',
-          );
+          setUploadZoneError('Upload could not continue. Please try again.');
           patchSession({ phase: 'failed' });
           window.setTimeout(finishZone, 3000);
           return;
