@@ -55,6 +55,10 @@ import {
   isBiomarkerNotRecognizedErrorText,
   formatBiomarkerNotRecognizedMessage,
   isSystemBiomarkerValidForRow,
+  resolveValueInputMode,
+  GUT_VALUE_OPTIONS,
+  DNA_VALUE_OPTIONS,
+  isBiomarkerTypeChangePatch,
 } from './biomarkerReviewCompat';
 import {
   logLabUnitDebug,
@@ -359,12 +363,6 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   //   );
   //   onChange(updated);
   // };
-  const dnaOptions = [
-    'Moderately Compromised Outcome',
-    'Enhanced Outcome',
-    'Compromised Outcome',
-    'Moderately Enhanced Outcome',
-  ];
   const effectiveCatalog = reviewCatalog;
   const [biomarkerTypes, setBiomarkerTypes] = useState<string[]>(
     DEFAULT_BIOMARKER_TYPES,
@@ -815,27 +813,28 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     systemUnit: string;
     suggestionMatches: BiomarkerSuggestion[];
   } | null>(null);
-  const gutOptions = ['Good for GUT', 'Bad for GUT'];
   const renderValueField = (b: any) => {
-    if (fileType.toLowerCase() === 'dna') {
+    const valueMode = resolveValueInputMode(b);
+    if (valueMode === 'dna') {
       return (
         <Select
           isSmall
           isSetting
           value={preferNonEmpty(b.original_value, b.value)}
-          options={dnaOptions}
+          options={[...DNA_VALUE_OPTIONS]}
           onChange={(val: string) =>
             updateAndStandardize(b.biomarker_id, { original_value: val })
           }
         />
       );
-    } else if (fileType.toLowerCase() === 'gut') {
+    }
+    if (valueMode === 'gut') {
       return (
         <Select
           isSmall
           isSetting
           value={preferNonEmpty(b.original_value, b.value)}
-          options={gutOptions}
+          options={[...GUT_VALUE_OPTIONS]}
           onChange={(val: string) =>
             updateAndStandardize(b.biomarker_id, { original_value: val })
           }
@@ -1015,10 +1014,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       onChange(updated);
       return;
     }
-    if (
-      Object.keys(updatedField).length === 1 &&
-      Object.prototype.hasOwnProperty.call(updatedField, 'biomarker_type')
-    ) {
+    if (isBiomarkerTypeChangePatch(updatedField)) {
       onChange(updated);
       return;
     }

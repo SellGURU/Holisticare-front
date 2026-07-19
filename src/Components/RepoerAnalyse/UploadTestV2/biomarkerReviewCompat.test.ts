@@ -14,6 +14,11 @@ import {
   inferReviewReasonFromErrorText,
   inferRowBiomarkerType,
   inferSpecimenTypeHintFromExtractedName,
+  buildBiomarkerTypeChangePatch,
+  isBiomarkerTypeChangePatch,
+  isLegacyGutOrDnaValue,
+  isValueValidForInputMode,
+  resolveValueInputMode,
   isSafeUnitRelabel,
   mergeRowAfterStandardizeSuccess,
   mergeUnitOptionSources,
@@ -171,6 +176,114 @@ describe('inferRowBiomarkerType', () => {
         biomarker: 'Urea',
       }),
     ).toBe('blood');
+  });
+});
+
+describe('resolveValueInputMode', () => {
+  it('uses row biomarker_type blood on gut file instead of file-level gut', () => {
+    expect(
+      resolveValueInputMode({
+        biomarker_type: 'blood',
+        original_biomarker_name: 'Akkermansia muciniphila',
+      }),
+    ).toBe('default');
+  });
+
+  it('returns gut when row type is gut', () => {
+    expect(
+      resolveValueInputMode({
+        biomarker_type: 'gut',
+        original_biomarker_name: 'Akkermansia muciniphila',
+      }),
+    ).toBe('gut');
+  });
+});
+
+describe('isValueValidForInputMode', () => {
+  it('rejects gut legacy values in default mode', () => {
+    expect(isValueValidForInputMode('Good for GUT', 'default')).toBe(false);
+    expect(isValueValidForInputMode('5.2', 'default')).toBe(true);
+  });
+
+  it('rejects numeric values in gut mode', () => {
+    expect(isValueValidForInputMode('5.2', 'gut')).toBe(false);
+    expect(isValueValidForInputMode('Good for GUT', 'gut')).toBe(true);
+  });
+});
+
+describe('isLegacyGutOrDnaValue', () => {
+  it('detects gut and dna option strings', () => {
+    expect(isLegacyGutOrDnaValue('Good for GUT')).toBe(true);
+    expect(isLegacyGutOrDnaValue('Enhanced Outcome')).toBe(true);
+    expect(isLegacyGutOrDnaValue('1.2')).toBe(false);
+  });
+});
+
+describe('buildBiomarkerTypeChangePatch', () => {
+  it('clears gut value when switching to blood', () => {
+    expect(
+      buildBiomarkerTypeChangePatch(
+        {
+          biomarker_type: 'gut',
+          original_value: 'Good for GUT',
+          value: 'Good for GUT',
+        },
+        'blood',
+      ),
+    ).toEqual({
+      biomarker_type: 'blood',
+      original_value: '',
+      value: '',
+    });
+  });
+
+  it('clears numeric value when switching to gut', () => {
+    expect(
+      buildBiomarkerTypeChangePatch(
+        {
+          biomarker_type: 'blood',
+          original_value: '5.2',
+          value: '5.2',
+        },
+        'gut',
+      ),
+    ).toEqual({
+      biomarker_type: 'gut',
+      original_value: '',
+      value: '',
+    });
+  });
+
+  it('keeps numeric blood value when type stays blood', () => {
+    expect(
+      buildBiomarkerTypeChangePatch(
+        {
+          biomarker_type: 'blood',
+          original_value: '5.2',
+          value: '5.2',
+        },
+        'blood',
+      ),
+    ).toEqual({ biomarker_type: 'blood' });
+  });
+});
+
+describe('isBiomarkerTypeChangePatch', () => {
+  it('matches type-only and type with cleared value fields', () => {
+    expect(isBiomarkerTypeChangePatch({ biomarker_type: 'blood' })).toBe(true);
+    expect(
+      isBiomarkerTypeChangePatch({
+        biomarker_type: 'blood',
+        original_value: '',
+        value: '',
+      }),
+    ).toBe(true);
+    expect(
+      isBiomarkerTypeChangePatch({
+        biomarker_type: 'blood',
+        original_value: '5.2',
+      }),
+    ).toBe(false);
   });
 });
 

@@ -258,6 +258,95 @@ export const inferRowBiomarkerType = (row: any) => {
   });
 };
 
+export const GUT_VALUE_OPTIONS = ['Good for GUT', 'Bad for GUT'] as const;
+
+export const DNA_VALUE_OPTIONS = [
+  'Moderately Compromised Outcome',
+  'Enhanced Outcome',
+  'Compromised Outcome',
+  'Moderately Enhanced Outcome',
+] as const;
+
+export type ValueInputMode = 'dna' | 'gut' | 'default';
+
+export const resolveValueInputMode = (row: any): ValueInputMode => {
+  const type = inferRowBiomarkerType(row);
+  if (type === 'dna') return 'dna';
+  if (type === 'gut') return 'gut';
+  return 'default';
+};
+
+export const isLegacyGutOrDnaValue = (value: unknown) => {
+  const text = trim(value);
+  if (!text) return false;
+  return (
+    (GUT_VALUE_OPTIONS as readonly string[]).includes(text) ||
+    (DNA_VALUE_OPTIONS as readonly string[]).includes(text)
+  );
+};
+
+export const isValueValidForInputMode = (
+  value: unknown,
+  mode: ValueInputMode,
+  catalogEntry?: {
+    value_type?: string;
+    categorical_values?: string[];
+  } | null,
+) => {
+  const text = trim(value);
+  if (!text) return true;
+
+  if (mode === 'gut') {
+    return (GUT_VALUE_OPTIONS as readonly string[]).includes(text);
+  }
+  if (mode === 'dna') {
+    return (DNA_VALUE_OPTIONS as readonly string[]).includes(text);
+  }
+
+  if (isLegacyGutOrDnaValue(text)) return false;
+
+  const categoricals = catalogEntry?.categorical_values || [];
+  if (catalogEntry?.value_type === 'string' && categoricals.length > 0) {
+    return categoricals.includes(text);
+  }
+
+  return true;
+};
+
+export const buildBiomarkerTypeChangePatch = (
+  row: any,
+  nextType: string,
+  catalog?: any[],
+): Record<string, string> => {
+  const patch: Record<string, string> = { biomarker_type: nextType };
+  const prevMode = resolveValueInputMode(row);
+  const nextRow = { ...row, biomarker_type: nextType };
+  const nextMode = resolveValueInputMode(nextRow);
+  if (prevMode === nextMode) return patch;
+
+  const currentValue = preferNonEmpty(row.original_value, row.value);
+  const catalogEntry =
+    catalog?.length && trim(nextRow?.biomarker)
+      ? pickCatalogEntryForRow(catalog, nextRow)
+      : null;
+  if (!isValueValidForInputMode(currentValue, nextMode, catalogEntry)) {
+    patch.original_value = '';
+    patch.value = '';
+  }
+  return patch;
+};
+
+export const isBiomarkerTypeChangePatch = (patch: Record<string, unknown>) => {
+  const keys = Object.keys(patch);
+  if (!keys.includes('biomarker_type')) return false;
+  return keys.every(
+    (key) =>
+      key === 'biomarker_type' ||
+      (key === 'original_value' && trim(patch.original_value) === '') ||
+      (key === 'value' && trim(patch.value) === ''),
+  );
+};
+
 export const isTextValueWithoutUnit = (value: unknown) => {
   const text = trim(value);
   if (!text) return false;

@@ -28,6 +28,7 @@ import {
   mapBiomarkerRecognitionErrorMessage,
   filterSuggestionsForRowCatalog,
   isBiomarkerNotRecognizedErrorText,
+  buildBiomarkerTypeChangePatch,
 } from './biomarkerReviewCompat';
 import { logUnitOnChange } from '../../../utils/labUnitDebug';
 
@@ -707,9 +708,14 @@ export default function BiomarkerRow({
               if (String(nextType).trim().toLowerCase() === currentType) {
                 return;
               }
-              updateAndStandardize(biomarker.biomarker_id, {
-                biomarker_type: nextType,
-              });
+              updateAndStandardize(
+                biomarker.biomarker_id,
+                buildBiomarkerTypeChangePatch(
+                  biomarker,
+                  nextType,
+                  validationCatalog,
+                ),
+              );
               markMappingDirty();
               setIsMapped(false);
               setSavedMappings([]);
