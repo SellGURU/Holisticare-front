@@ -7,6 +7,10 @@ import { useRegisterModalDirtyChecker } from '../../hooks/useRegisterModalDirtyC
 import { ApiBiomarkerData } from '../../types/biormarker';
 import BenchmarkAreaSelect from '../../Components/BenchmarkAreaSelect';
 import { normalizeBiomarkerDraft } from './biomarkerFormUtils';
+import {
+  findCatalogNameTypeDuplicate,
+  normalizeBiomarkerType,
+} from './biomarkerIdentity';
 
 const ALLOWED_STATUSES = [
   { value: 'OptimalRange', label: 'Optimal Range', color: '#22C55E' },
@@ -42,6 +46,8 @@ interface EditModalProps {
   loading: boolean;
   errorDetails: string;
   setErrorDetails: (errorDetails: string) => void;
+  existingBiomarkers?: any[];
+  biomarkerIndex?: number;
 }
 
 const EditModal: FC<EditModalProps> = ({
@@ -53,6 +59,8 @@ const EditModal: FC<EditModalProps> = ({
   loading,
   errorDetails,
   setErrorDetails,
+  existingBiomarkers = [],
+  biomarkerIndex,
 }) => {
   const { requestClose } = useModalCloseContext();
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
@@ -289,11 +297,30 @@ const EditModal: FC<EditModalProps> = ({
       setErrorDetails('Please fix the JSON errors before saving.');
       return;
     }
+    const excludeUid = String(
+      draft.biomarker_uid || data.biomarker_uid || '',
+    ).trim();
+    const duplicate = findCatalogNameTypeDuplicate(
+      existingBiomarkers,
+      draft.Biomarker,
+      draft.biomarker_type,
+      {
+        excludeUid: excludeUid || undefined,
+        excludeIndex: excludeUid ? undefined : biomarkerIndex,
+      },
+    );
+    if (duplicate) {
+      const typeLabel = formatBiomarkerTypeLabel(
+        normalizeBiomarkerType(draft.biomarker_type),
+      );
+      setErrorDetails(
+        `A biomarker with this name already exists for type ${typeLabel}.`,
+      );
+      return;
+    }
     onSave({
       ...draft,
-      biomarker_uid: String(
-        draft.biomarker_uid || data.biomarker_uid || '',
-      ).trim(),
+      biomarker_uid: excludeUid,
     });
   };
 

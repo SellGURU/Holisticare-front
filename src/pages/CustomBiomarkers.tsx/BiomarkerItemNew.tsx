@@ -16,7 +16,11 @@ import {
   isCustomBiomarker,
   removeBiomarkerByIdentity,
 } from './biomarkerIdentity';
+import { removeCachedKey } from '../../utils/pageCache';
 
+const invalidateBiomarkersListCache = () => {
+  removeCachedKey('portal:biomarkers:list');
+};
 const EditModal = lazy(() => import('./EditModal'));
 
 interface BiomarkerRowProps {
@@ -143,6 +147,7 @@ const BiomarkerRow = ({
       .then((response) => {
         const payload = response?.data || {};
         closeModalDelete();
+        invalidateBiomarkersListCache();
         changeBiomarkersValue(removeBiomarkerByIdentity(biomarkers, meta));
         if (payload.unit_mapping?.biomarker_specific) {
           onUnitMappingsLocalChange?.(payload.unit_mapping.biomarker_specific);
@@ -186,6 +191,7 @@ const BiomarkerRow = ({
         const payload = response?.data || {};
         const savedBiomarker = payload.updated_biomarker || values;
         closeModalEdit();
+        invalidateBiomarkersListCache();
         changeBiomarkersValue(
           applySavedBiomarkerUpdate(biomarkers, meta, savedBiomarker),
         );
@@ -328,6 +334,8 @@ const BiomarkerRow = ({
             benchmarkAreaOptions={benchmarkAreaOptions}
             benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
             biomarkerTypeOptions={biomarkerTypeOptions}
+            existingBiomarkers={biomarkers}
+            biomarkerIndex={biomarkerIndex}
             loading={loading}
             errorDetails={errorDetails}
             setErrorDetails={setErrorDetails}

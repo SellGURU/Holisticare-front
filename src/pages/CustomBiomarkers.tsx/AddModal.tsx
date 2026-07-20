@@ -10,6 +10,10 @@ import {
   buildAddModalInitialDraft,
   normalizeBiomarkerDraft,
 } from './biomarkerFormUtils';
+import {
+  findCatalogNameTypeDuplicate,
+  normalizeBiomarkerType,
+} from './biomarkerIdentity';
 
 const ALLOWED_STATUSES = [
   { value: 'OptimalRange', label: 'Optimal Range', color: '#22C55E' },
@@ -44,6 +48,7 @@ interface AddModalProps {
   setErrorDetails: (errorDetails: string) => void;
   biomarkerTypeOptions?: string[];
   benchmarkAreaOptionsByType?: Record<string, string[]>;
+  existingBiomarkers?: any[];
 }
 
 const AddModal: FC<AddModalProps> = ({
@@ -62,6 +67,7 @@ const AddModal: FC<AddModalProps> = ({
     'other',
   ],
   benchmarkAreaOptionsByType = {},
+  existingBiomarkers = [],
 }) => {
   const { requestClose } = useModalCloseContext();
   const [viewMode, setViewMode] = useState<'form' | 'json'>('form');
@@ -288,6 +294,20 @@ const AddModal: FC<AddModalProps> = ({
     }
     if (viewMode === 'json' && jsonError) {
       setErrorDetails('Please fix the JSON errors before saving.');
+      return;
+    }
+    const duplicate = findCatalogNameTypeDuplicate(
+      existingBiomarkers,
+      draft.Biomarker,
+      draft.biomarker_type,
+    );
+    if (duplicate) {
+      const typeLabel = formatBiomarkerTypeLabel(
+        normalizeBiomarkerType(draft.biomarker_type),
+      );
+      setErrorDetails(
+        `A biomarker with this name already exists for type ${typeLabel}.`,
+      );
       return;
     }
     onSave(draft);

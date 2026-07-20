@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
-import { getCached } from '../../utils/pageCache';
+import { getCached, removeCachedKey } from '../../utils/pageCache';
 import Circleloader from '../../Components/CircleLoader';
 import SearchBox from '../../Components/SearchBox';
 import BiomarkerRow from './BiomarkerItemNew';
@@ -102,8 +102,13 @@ const CustomBiomarkers = () => {
     setErrorDetails('');
   };
 
-  const getBiomarkers = () => {
-    setIsLoading(true);
+  const getBiomarkers = (options?: { force?: boolean }) => {
+    const force = Boolean(options?.force);
+    if (force) {
+      removeCachedKey('portal:biomarkers:list');
+    } else {
+      setIsLoading(true);
+    }
     getCached('portal:biomarkers:types', () =>
       BiomarkersApi.getBiomarkerTypes().then((res) => res.data),
     )
@@ -374,7 +379,7 @@ const CustomBiomarkers = () => {
     BiomarkersApi.addBiomarkersList({ new_biomarker: values })
       .then(() => {
         closeModalAdd();
-        getBiomarkers();
+        getBiomarkers({ force: true });
       })
       .catch((error) => {
         setErrorDetails(
@@ -543,6 +548,7 @@ const CustomBiomarkers = () => {
           data={DefaultData}
           biomarkerTypeOptions={biomarkerTypeOptions}
           benchmarkAreaOptionsByType={benchmarkAreaOptionsByType}
+          existingBiomarkers={biomarkers}
           loading={loading}
           errorDetails={errorDetails}
           setErrorDetails={setErrorDetails}
