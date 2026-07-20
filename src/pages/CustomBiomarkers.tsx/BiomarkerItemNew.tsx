@@ -177,7 +177,6 @@ const BiomarkerRow = ({
     BiomarkersApi.saveBiomarkersList({
       updated_biomarker: values,
       original_biomarker_name: meta.originalBiomarkerName,
-      original_biomarker_index: meta.originalBiomarkerIndex,
       original_biomarker_uid: meta.biomarkerUid,
       original_biomarker_type: meta.originalBiomarkerType,
       original_unit: meta.originalUnit,
