@@ -140,7 +140,6 @@ interface BiomarkersSectionProps {
 
 const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   biomarkers,
-  fileType,
   onChange,
   uploadedFile,
   dateOfTest,
