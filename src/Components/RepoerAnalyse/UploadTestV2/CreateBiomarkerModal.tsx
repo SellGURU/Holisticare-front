@@ -410,8 +410,11 @@ const CreateBiomarkerModal: React.FC<Props> = ({
     );
     if (duplicateExisting) {
       const existingUnit = duplicateExisting.unit || 'unknown';
+      const typeKey = String(draft.biomarker_type || 'blood').toLowerCase();
+      const typeLabel =
+        typeKey.charAt(0).toUpperCase() + typeKey.slice(1).replace(/_/g, ' ');
       setErrorMsg(
-        `A biomarker with this name already exists (unit: ${existingUnit}). Select it from the catalog or add a unit mapping instead of creating a duplicate.`,
+        `A biomarker with this name already exists for type ${typeLabel} (unit: ${existingUnit}). Select it from the catalog or add a unit mapping instead of creating a duplicate.`,
       );
       return;
     }

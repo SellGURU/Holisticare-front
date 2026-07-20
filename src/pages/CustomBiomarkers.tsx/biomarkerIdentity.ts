@@ -58,6 +58,38 @@ export const buildBiomarkerIdentityKey = (item: any) =>
     normalizeBiomarkerType(item?.biomarker_type),
   ].join('|');
 
+/** True when catalog already has the same display name + biomarker_type. */
+export const findCatalogNameTypeDuplicate = (
+  catalog: any[],
+  name: string,
+  biomarkerType: unknown,
+  options?: { excludeUid?: string; excludeIndex?: number },
+) => {
+  const normalizedName = normalizeName(name);
+  if (!normalizedName) return null;
+  const normalizedType = normalizeBiomarkerType(biomarkerType);
+  const excludeUid = trim(options?.excludeUid);
+  const excludeIndex = options?.excludeIndex;
+
+  return (
+    (catalog || []).find((item, index) => {
+      if (excludeUid && trim(item?.biomarker_uid) === excludeUid) {
+        return false;
+      }
+      if (
+        excludeIndex != null &&
+        Number.isInteger(excludeIndex) &&
+        index === excludeIndex
+      ) {
+        return false;
+      }
+      return (
+        normalizeName(item?.Biomarker) === normalizedName &&
+        normalizeBiomarkerType(item?.biomarker_type) === normalizedType
+      );
+    }) || null
+  );
+};
 export const createBiomarkerUid = () => {
   if (
     typeof crypto !== 'undefined' &&

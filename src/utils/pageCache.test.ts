@@ -4,6 +4,7 @@ import {
   getCached,
   hasCached,
   invalidate,
+  removeCachedKey,
 } from './pageCache';
 
 describe('pageCache', () => {
@@ -61,5 +62,23 @@ describe('pageCache', () => {
 
     expect(hasCached('portal:patients')).toBe(false);
     expect(hasCached('portal:messages:users')).toBe(true);
+  });
+
+  it('removeCachedKey forces a fresh biomarkers list fetch after add', async () => {
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce([{ Biomarker: 'Old' }])
+      .mockResolvedValueOnce([{ Biomarker: 'Old' }, { Biomarker: 'New' }]);
+
+    const first = await getCached('portal:biomarkers:list', fetcher);
+    expect(first).toHaveLength(1);
+    expect(hasCached('portal:biomarkers:list')).toBe(true);
+
+    removeCachedKey('portal:biomarkers:list');
+    expect(hasCached('portal:biomarkers:list')).toBe(false);
+
+    const second = await getCached('portal:biomarkers:list', fetcher);
+    expect(second).toHaveLength(2);
+    expect(fetcher).toHaveBeenCalledTimes(2);
   });
 });
