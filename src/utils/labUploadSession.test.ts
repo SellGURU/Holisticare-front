@@ -15,8 +15,29 @@ import {
 const MEMBER_ID = 'member-123';
 const STORAGE_KEY = `hc_lab_upload_zone_session_${MEMBER_ID}`;
 
+function installLocalStorageMock() {
+  const store = new Map<string, string>();
+  const localStorageMock = {
+    getItem: (key: string) => (store.has(key) ? store.get(key)! : null),
+    setItem: (key: string, value: string) => {
+      store.set(key, String(value));
+    },
+    removeItem: (key: string) => {
+      store.delete(key);
+    },
+    clear: () => {
+      store.clear();
+    },
+  };
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: localStorageMock,
+    configurable: true,
+  });
+}
+
 describe('labUploadSession', () => {
   beforeEach(() => {
+    installLocalStorageMock();
     localStorage.clear();
     __resetUploadSessionRuntimeForTests();
   });
@@ -114,6 +135,10 @@ describe('labUploadSession', () => {
       fileId: 'file-abc',
       deleteFileHistoryFn: deleteFn,
     });
+
+    // cancelSession awaits writeSession before setPendingCancel — flush that tick.
+    await Promise.resolve();
+    await Promise.resolve();
 
     expect(isPendingCancel(session.sessionId)).toBe(true);
     resolveDelete();
