@@ -28,6 +28,15 @@ const HistoricalChart = ({
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(10);
   const [page, setPage] = useState(0);
 
+  // Oldest → newest (left → right), regardless of caller/API order
+  const sortedIndices = labels
+    .map((_, index) => index)
+    .sort((a, b) => String(labels[a]).localeCompare(String(labels[b])));
+  const sortedDataPoints = sortedIndices.map((i) => dataPoints[i]);
+  const sortedDataStatus = sortedIndices.map((i) => dataStatus[i]);
+  const sortedLabels = sortedIndices.map((i) => labels[i]);
+  const sortedSources = sortedIndices.map((i) => sources?.[i]);
+
   // اصلاح: فقط یک بار هنگام mount
   useEffect(() => {
     const svg = document.getElementById('historical-chart-svg');
@@ -36,15 +45,15 @@ const HistoricalChart = ({
     }
   }, []);
 
-  const totalPages = Math.ceil(dataPoints.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sortedDataPoints.length / ITEMS_PER_PAGE);
 
   // محاسبه start و end درست با Math.min برای جلوگیری از overflow
   const start = page * ITEMS_PER_PAGE;
-  const end = Math.min(start + ITEMS_PER_PAGE, dataPoints.length);
+  const end = Math.min(start + ITEMS_PER_PAGE, sortedDataPoints.length);
 
-  const visibleDataPoints = dataPoints.slice(start, end);
-  const visibleLabels = labels.slice(start, end);
-  // const visibleStatus = dataStatus.slice(start, end);
+  const visibleDataPoints = sortedDataPoints.slice(start, end);
+  const visibleLabels = sortedLabels.slice(start, end);
+  // const visibleStatus = sortedDataStatus.slice(start, end);
 
   const resolveColor = (key: string, color?: string) => {
     if (color && color != '') {
@@ -191,12 +200,12 @@ const HistoricalChart = ({
           </defs>
           {visibleDataPoints.map((_point, index) => {
             const realIndex = start + index;
-            if (realIndex === dataPoints.length - 1) return null;
+            if (realIndex === sortedDataPoints.length - 1) return null;
 
-            const currentStatus = dataStatus[realIndex];
-            const nextStatus = dataStatus[realIndex + 1];
-            const currentValue = dataPoints[realIndex];
-            const nextValue = dataPoints[realIndex + 1];
+            const currentStatus = sortedDataStatus[realIndex];
+            const nextStatus = sortedDataStatus[realIndex + 1];
+            const currentValue = sortedDataPoints[realIndex];
+            const nextValue = sortedDataPoints[realIndex + 1];
 
             const x1 = index * 43.4 + 10;
             const x2 = (index + 1) * 43.4 + 10;
@@ -240,7 +249,7 @@ const HistoricalChart = ({
                   const tooltipId = `point-${chartId}-${realIndex}`;
                   const markerMode = getStatusMarkerMode(
                     el,
-                    dataStatus[realIndex],
+                    sortedDataStatus[realIndex],
                     point,
                     statusBar,
                   );
@@ -270,9 +279,9 @@ const HistoricalChart = ({
                           className="!bg-Red !w-fit !leading-5 !text-nowrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                         >
                           <div className="flex items-center gap-2">
-                            {sources?.[realIndex] && (
+                            {sortedSources?.[realIndex] && (
                               <SourceTag
-                                source={sources?.[realIndex]}
+                                source={sortedSources?.[realIndex]}
                                 isSmall
                               />
                             )}

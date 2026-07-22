@@ -1208,13 +1208,11 @@ const NewGenerateHolisticPlan = () => {
                                                 }
                                                 dataPoints={[
                                                   ...activeEl.values,
-                                                ].reverse()}
+                                                ]}
                                                 dataStatus={[
                                                   ...activeEl.status,
-                                                ].reverse()}
-                                                labels={[
-                                                  ...activeEl.date,
-                                                ].reverse()}
+                                                ]}
+                                                labels={[...activeEl.date]}
                                               ></HistoricalChart>
                                               {/* <HistoricalChart
                                                       statusBar={
@@ -1329,13 +1327,9 @@ const NewGenerateHolisticPlan = () => {
                                       chartId={activeEl.name}
                                       sources={activeEl?.historical_sources}
                                       statusBar={activeEl.chart_bounds}
-                                      dataPoints={[
-                                        ...activeEl.values,
-                                      ].reverse()}
-                                      dataStatus={[
-                                        ...activeEl.status,
-                                      ].reverse()}
-                                      labels={[...activeEl.date].reverse()}
+                                      dataPoints={[...activeEl.values]}
+                                      dataStatus={[...activeEl.status]}
+                                      labels={[...activeEl.date]}
                                     ></HistoricalChart>
                                   </div>
                                 </div>
