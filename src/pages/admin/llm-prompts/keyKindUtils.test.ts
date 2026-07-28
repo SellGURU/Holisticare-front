@@ -94,9 +94,37 @@ describe('keyKindUtils', () => {
         key: 'main.agent_file.intervention_selection',
         key_kind: undefined,
       }),
+      sampleRow({
+        id: 5,
+        key: 'main.agent_file.report_prompt_from_ocr',
+        key_kind: undefined,
+      }),
     ];
     expect(filterRowsByKeyKind(rows)).toHaveLength(1);
     expect(countLlmPromptRows(rows)).toBe(1);
+  });
+
+  it('hides report_prompt_from_ocr as non_llm_template even when Indexed text present', () => {
+    const row = sampleRow({
+      key: 'main.agent_file.report_prompt_from_ocr',
+      key_kind: undefined,
+      system_prompt: 'builder text that is not an LLM call',
+      effective_source: 'runtime',
+    });
+    expect(isLlmPromptRow(row)).toBe(false);
+    expect(getPromptIndexBadge(row).label).toBe(
+      'Non-LLM (template/deterministic)',
+    );
+  });
+
+  it('keeps detect_file_type as llm_prompt', () => {
+    const row = sampleRow({
+      key: 'main.agent_file.detect_file_type',
+      key_kind: 'llm_prompt',
+      has_db_override: true,
+    });
+    expect(isLlmPromptRow(row)).toBe(true);
+    expect(getPromptIndexBadge(row).label).toBe('DB override');
   });
 
   it('uses key_kind badge instead of Settings only for non_llm_template', () => {

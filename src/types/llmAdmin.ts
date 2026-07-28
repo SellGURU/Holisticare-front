@@ -65,6 +65,8 @@ export interface BusinessFlowStep {
   async_background?: boolean;
   blocking?: boolean;
   trigger?: string;
+  role?: string;
+  scope?: string;
   inputs?: string[];
   prompt?: {
     display_name?: string;
@@ -82,6 +84,7 @@ export interface BusinessFlow {
   execution_mode: string;
   steps?: BusinessFlowStep[];
   composite_of?: string[];
+  is_composite?: boolean;
   orchestrator?: Record<string, string>;
 }
 

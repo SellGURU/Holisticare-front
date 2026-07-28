@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   AlertTriangle,
   CheckCircle2,
   Database,
   Eye,
   Filter,
+  Link2,
   RefreshCw,
   Save,
   Search,
@@ -19,17 +20,26 @@ import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
 import AdminShellLayout from './AdminShellLayout';
 import type {
+  BusinessFlow,
   BusinessFlowsResponse,
   FlowTabId,
   LlmAdminCapabilities,
   PromptRow,
 } from '../../types/llmAdmin';
 import FlowTabsNav from './llm-prompts/FlowTabsNav';
+import PipelineFlowModal, {
+  type PipelineModalTarget,
+} from './llm-prompts/PipelineFlowModal';
 import PromptHistoryPanel from './llm-prompts/PromptHistoryPanel';
 import {
   buildFlowTabs,
+  callLogDeepLink,
   confirmDiscardDirty,
   filterPromptRowsByFlow,
+  isCompositeFlow,
+  isDeadOrphanPromptKey,
+  listCompositeFlows,
+  resolveLogFlowId,
 } from './llm-prompts/businessFlowUtils';
 import FieldDisclaimerBadge from './llm-prompts/FieldDisclaimerBadge';
 import {
@@ -123,6 +133,11 @@ const LlmPromptCatalog = () => {
     useState<BusinessFlowsResponse | null>(null);
   const [flowTab, setFlowTab] = useState<FlowTabId>('all');
   const [editorPanel, setEditorPanel] = useState<'edit' | 'history'>('edit');
+  const [pipelineModal, setPipelineModal] = useState<{
+    open: boolean;
+    target: PipelineModalTarget | null;
+  }>({ open: false, target: null });
+  const [compositePickerOpen, setCompositePickerOpen] = useState(false);
 
   const handleAuthFailure = () => {
     removeAdminToken();
@@ -210,6 +225,11 @@ const LlmPromptCatalog = () => {
 
   const flowTabs = useMemo(() => buildFlowTabs(businessFlows), [businessFlows]);
 
+  const compositeFlows = useMemo(
+    () => listCompositeFlows(businessFlows),
+    [businessFlows],
+  );
+
   const activeFlow = useMemo(() => {
     if (
       !businessFlows ||
@@ -226,6 +246,31 @@ const LlmPromptCatalog = () => {
     if (dirty && !confirmDiscardDirty()) return;
     setFlowTab(nextTab);
     setDirty(false);
+  };
+
+  const openAtomicPipeline = (flow: BusinessFlow) => {
+    setPipelineModal({ open: true, target: { kind: 'atomic', flow } });
+  };
+
+  const openCompositePipeline = (flow: BusinessFlow) => {
+    setCompositePickerOpen(false);
+    setPipelineModal({ open: true, target: { kind: 'composite', flow } });
+  };
+
+  const handleViewPipeline = (flow: BusinessFlow) => {
+    if (isCompositeFlow(flow)) {
+      openCompositePipeline(flow);
+      return;
+    }
+    openAtomicPipeline(flow);
+  };
+
+  const handleViewCompositePipelines = () => {
+    if (compositeFlows.length === 1) {
+      openCompositePipeline(compositeFlows[0]);
+      return;
+    }
+    setCompositePickerOpen((v) => !v);
   };
 
   useEffect(() => {
@@ -474,13 +519,41 @@ const LlmPromptCatalog = () => {
 
           <div className="mt-3 space-y-2">
             {capabilities?.business_flow_tabs && businessFlows ? (
-              <FlowTabsNav
-                tabs={flowTabs}
-                activeTab={flowTab}
-                onTabChange={handleFlowTabChange}
-                activeFlow={activeFlow}
-                allFlows={businessFlows?.flows || []}
-              />
+              <div className="space-y-2">
+                {compositeFlows.length ? (
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={handleViewCompositePipelines}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-Gray-50 bg-white px-3 py-1.5 text-[11px] text-Text-Primary hover:border-Primary-DeepTeal/40"
+                    >
+                      <Link2 className="h-3.5 w-3.5 text-Primary-DeepTeal" />
+                      View Composite Pipelines
+                    </button>
+                    {compositePickerOpen && compositeFlows.length > 1 ? (
+                      <div className="absolute left-0 top-9 z-20 min-w-[200px] rounded-xl border border-Gray-50 bg-white p-2 shadow-lg">
+                        {compositeFlows.map((flow) => (
+                          <button
+                            key={flow.flow_id}
+                            type="button"
+                            onClick={() => openCompositePipeline(flow)}
+                            className="block w-full rounded-lg px-2 py-1.5 text-left text-[11px] text-Text-Primary hover:bg-slate-50"
+                          >
+                            {flow.label || flow.flow_id}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+                <FlowTabsNav
+                  tabs={flowTabs}
+                  activeTab={flowTab}
+                  onTabChange={handleFlowTabChange}
+                  activeFlow={activeFlow}
+                  onViewPipeline={handleViewPipeline}
+                />
+              </div>
             ) : null}
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-Text-Secondary" />
@@ -543,12 +616,24 @@ const LlmPromptCatalog = () => {
             {filteredRows.map((r) => {
               const active = r.key === selectedKey;
               const indexBadge = getPromptIndexBadge(r);
+              const logFlowId = resolveLogFlowId(
+                r.key,
+                activeFlow?.flow_id,
+                businessFlows?.flows || [],
+              );
               return (
-                <button
+                <div
                   key={r.key}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => selectPrompt(r.key)}
-                  className={`mb-2 w-full rounded-[14px] border px-3 py-2 text-left transition ${
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      selectPrompt(r.key);
+                    }
+                  }}
+                  className={`mb-2 w-full cursor-pointer rounded-[14px] border px-3 py-2 text-left transition ${
                     active
                       ? 'border-Primary-DeepTeal bg-[#EFF7F7]'
                       : 'border-Gray-50 bg-white hover:border-Primary-DeepTeal/40'
@@ -567,26 +652,31 @@ const LlmPromptCatalog = () => {
                   <div className="mt-0.5 truncate font-mono text-[10px] text-Text-Secondary">
                     {r.key}
                   </div>
-                  <div className="mt-1 flex flex-wrap gap-1 text-[10px]">
-                    <span className="rounded-full bg-[#F1F5F9] px-2 py-0.5 text-Text-Secondary">
-                      {r.category}
-                    </span>
-                    <span className="rounded-full bg-[#F1F5F9] px-2 py-0.5 text-Text-Secondary">
-                      {r.owner_service}
-                    </span>
-                    <span className="rounded-full bg-[#F1F5F9] px-2 py-0.5 text-Text-Secondary">
-                      {r.model_tier}
-                    </span>
-                    <span className="rounded-full bg-[#F1F5F9] px-2 py-0.5 text-Text-Secondary">
-                      {r.response_format}
-                    </span>
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px]">
                     <span
                       className={`rounded-full px-2 py-0.5 ${indexBadge.className}`}
                     >
                       {indexBadge.label}
                     </span>
+                    {isDeadOrphanPromptKey(r.key) ? (
+                      <span
+                        className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-amber-800"
+                        title="Zero runtime callers — kept visible for admin inventory"
+                      >
+                        DEAD / Orphan — zero callers
+                      </span>
+                    ) : null}
+                    {logFlowId ? (
+                      <Link
+                        to={callLogDeepLink(logFlowId, r.key)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-Primary-DeepTeal hover:underline"
+                      >
+                        Logs
+                      </Link>
+                    ) : null}
                   </div>
-                </button>
+                </div>
               );
             })}
             {!loadingList && filteredRows.length === 0 && (
@@ -787,12 +877,131 @@ const LlmPromptCatalog = () => {
                 />
               ) : (
                 <>
-                  {/* Model / tuning */}
+                  {/* Prompt text — always open */}
                   <div className="rounded-[16px] border border-Gray-50 bg-white p-3">
-                    <div className="flex items-center gap-2 text-Text-Primary">
-                      <Database className="h-4 w-4" />
-                      <div className="TextStyle-Headline-6">Model & tuning</div>
+                    <div className="TextStyle-Headline-6 text-Text-Primary">
+                      Prompt text
                     </div>
+                    <div className="mt-3">
+                      <label className="text-[11px] text-Text-Secondary">
+                        System prompt
+                      </label>
+                    </div>
+                    <textarea
+                      value={editor.system_prompt || ''}
+                      onChange={(e) =>
+                        patchEditor({ system_prompt: e.target.value })
+                      }
+                      spellCheck={false}
+                      className="mt-2 min-h-[240px] w-full resize-y rounded-[12px] border border-Gray-50 bg-[#0F172A] p-3 font-mono text-[12px] text-[#E2E8F0] outline-none"
+                      placeholder="Edit the live system prompt text for this key…"
+                    />
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <div>
+                        <label className="text-[11px] text-Text-Secondary">
+                          Developer prompt (optional)
+                        </label>
+                        <textarea
+                          value={editor.developer_prompt || ''}
+                          onChange={(e) =>
+                            patchEditor({
+                              developer_prompt: e.target.value || null,
+                            })
+                          }
+                          spellCheck={false}
+                          className="mt-1 min-h-[120px] w-full resize-y rounded-[12px] border border-Gray-50 bg-white p-3 font-mono text-[12px] outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-Text-Secondary">
+                          User prompt template (optional)
+                        </label>
+                        <textarea
+                          value={editor.user_prompt_template || ''}
+                          onChange={(e) =>
+                            patchEditor({
+                              user_prompt_template: e.target.value || null,
+                            })
+                          }
+                          spellCheck={false}
+                          className="mt-1 min-h-[120px] w-full resize-y rounded-[12px] border border-Gray-50 bg-white p-3 font-mono text-[12px] outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Prompt roles meta — collapsed */}
+                  <details className="rounded-[16px] border border-Gray-50 bg-white p-3">
+                    <summary className="cursor-pointer TextStyle-Headline-6 text-Text-Primary">
+                      Prompt roles
+                    </summary>
+                    <div className="mt-2 text-[11px] text-Text-Secondary">
+                      {editorHasContent
+                        ? 'This prompt is currently managed by the database and any save will update the live active version.'
+                        : editorHasPromptText
+                          ? 'This prompt is currently being resolved from code. Editing and saving it here will create the first DB-managed override.'
+                          : 'No inline prompt text is available for preview yet. You can still edit settings or add prompt text manually.'}
+                    </div>
+                    {promptIndexBadge ? (
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px]">
+                        <span
+                          className={`rounded-full px-2 py-0.5 ${promptIndexBadge.className}`}
+                        >
+                          {promptIndexBadge.label}
+                        </span>
+                        {editor.runtime_resolution &&
+                        editor.runtime_resolution !== 'unresolved' ? (
+                          <span className="rounded-full bg-[#F1F5F9] px-2 py-0.5 text-Text-Secondary">
+                            via {editor.runtime_resolution.replace(/_/g, ' ')}
+                          </span>
+                        ) : null}
+                      </div>
+                    ) : null}
+                    {editor.prompt_extraction_source === 'fc_agent' &&
+                    editor.prompt_is_dynamic_or_partial ? (
+                      <FieldDisclaimerBadge type="partial_template" />
+                    ) : null}
+                    {editor.prompt_extraction_source ===
+                    'legacy_helper_fallback' ? (
+                      <FieldDisclaimerBadge type="legacy_indexed" />
+                    ) : null}
+                    <div className="mt-2 flex flex-wrap gap-1 text-[10px]">
+                      <span
+                        className={`rounded-full px-2 py-0.5 ${
+                          primaryPromptRole === 'system'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-[#F1F5F9] text-Text-Secondary'
+                        }`}
+                      >
+                        system
+                      </span>
+                      <span
+                        className={`rounded-full px-2 py-0.5 ${
+                          primaryPromptRole === 'developer'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-[#F1F5F9] text-Text-Secondary'
+                        }`}
+                      >
+                        developer
+                      </span>
+                      <span
+                        className={`rounded-full px-2 py-0.5 ${
+                          primaryPromptRole === 'user_template'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-[#F1F5F9] text-Text-Secondary'
+                        }`}
+                      >
+                        user template
+                      </span>
+                    </div>
+                  </details>
+
+                  {/* Model / tuning — collapsed */}
+                  <details className="rounded-[16px] border border-Gray-50 bg-white p-3">
+                    <summary className="flex cursor-pointer items-center gap-2 text-Text-Primary">
+                      <Database className="h-4 w-4" />
+                      <span className="TextStyle-Headline-6">Model & tuning</span>
+                    </summary>
                     <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                       <div>
                         <label className="text-[11px] text-Text-Secondary">
@@ -930,222 +1139,115 @@ const LlmPromptCatalog = () => {
                         </select>
                       </div>
                     </div>
-                  </div>
+                  </details>
 
-                  {/* Prompts */}
-                  <div className="rounded-[16px] border border-Gray-50 bg-white p-3">
-                    <div className="TextStyle-Headline-6 text-Text-Primary">
-                      Prompt roles
-                    </div>
-                    <div className="mt-1 text-[11px] text-Text-Secondary">
-                      {editorHasContent
-                        ? 'This prompt is currently managed by the database and any save will update the live active version.'
-                        : editorHasPromptText
-                          ? 'This prompt is currently being resolved from code. Editing and saving it here will create the first DB-managed override.'
-                          : 'No inline prompt text is available for preview yet. You can still edit settings or add prompt text manually.'}
-                    </div>
-                    {promptIndexBadge ? (
-                      <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px]">
-                        <span
-                          className={`rounded-full px-2 py-0.5 ${promptIndexBadge.className}`}
-                        >
-                          {promptIndexBadge.label}
-                        </span>
-                        {editor.runtime_resolution &&
-                        editor.runtime_resolution !== 'unresolved' ? (
-                          <span className="rounded-full bg-[#F1F5F9] px-2 py-0.5 text-Text-Secondary">
-                            via {editor.runtime_resolution.replace(/_/g, ' ')}
-                          </span>
+                  {/* Tools + extra — collapsed */}
+                  <details className="rounded-[16px] border border-Gray-50 bg-white p-3">
+                    <summary className="cursor-pointer TextStyle-Headline-6 text-Text-Primary">
+                      tools_json / extra_settings_json
+                    </summary>
+                    <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <div className="text-[12px] font-medium text-Text-Primary">
+                            tools_json
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const parsed = parseJsonMaybe(toolsText, true);
+                              if (parsed.error) {
+                                setToolsError(parsed.error);
+                              } else {
+                                setToolsError('');
+                                setToolsText(
+                                  parsed.value == null
+                                    ? 'null'
+                                    : JSON.stringify(parsed.value, null, 2),
+                                );
+                              }
+                            }}
+                            className="rounded-full border border-Gray-50 bg-white px-2 py-1 text-[11px] text-Text-Primary"
+                          >
+                            Format & validate
+                          </button>
+                        </div>
+                        {isFcPromptKey(editor.key) ? (
+                          <>
+                            <FieldDisclaimerBadge type="fc_orphan" />
+                            {isFcDynamicSchemaKey(editor.key) ? (
+                              <FieldDisclaimerBadge type="dynamic_schema" />
+                            ) : null}
+                          </>
                         ) : null}
-                      </div>
-                    ) : null}
-                    {editor.prompt_extraction_source === 'fc_agent' &&
-                    editor.prompt_is_dynamic_or_partial ? (
-                      <FieldDisclaimerBadge type="partial_template" />
-                    ) : null}
-                    {editor.prompt_extraction_source ===
-                    'legacy_helper_fallback' ? (
-                      <FieldDisclaimerBadge type="legacy_indexed" />
-                    ) : null}
-                    <div className="mt-2 flex flex-wrap gap-1 text-[10px]">
-                      <span
-                        className={`rounded-full px-2 py-0.5 ${
-                          primaryPromptRole === 'system'
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : 'bg-[#F1F5F9] text-Text-Secondary'
-                        }`}
-                      >
-                        system
-                      </span>
-                      <span
-                        className={`rounded-full px-2 py-0.5 ${
-                          primaryPromptRole === 'developer'
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : 'bg-[#F1F5F9] text-Text-Secondary'
-                        }`}
-                      >
-                        developer
-                      </span>
-                      <span
-                        className={`rounded-full px-2 py-0.5 ${
-                          primaryPromptRole === 'user_template'
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : 'bg-[#F1F5F9] text-Text-Secondary'
-                        }`}
-                      >
-                        user template
-                      </span>
-                    </div>
-                    <div className="mt-3">
-                      <label className="text-[11px] text-Text-Secondary">
-                        System prompt
-                      </label>
-                    </div>
-                    <textarea
-                      value={editor.system_prompt || ''}
-                      onChange={(e) =>
-                        patchEditor({ system_prompt: e.target.value })
-                      }
-                      spellCheck={false}
-                      className="mt-2 min-h-[240px] w-full resize-y rounded-[12px] border border-Gray-50 bg-[#0F172A] p-3 font-mono text-[12px] text-[#E2E8F0] outline-none"
-                      placeholder="Edit the live system prompt text for this key…"
-                    />
-                    <div className="mt-3 grid gap-3 md:grid-cols-2">
-                      <div>
-                        <label className="text-[11px] text-Text-Secondary">
-                          Developer prompt (optional)
-                        </label>
                         <textarea
-                          value={editor.developer_prompt || ''}
-                          onChange={(e) =>
-                            patchEditor({
-                              developer_prompt: e.target.value || null,
-                            })
-                          }
+                          value={toolsText}
+                          onChange={(e) => {
+                            setToolsText(e.target.value);
+                            setDirty(true);
+                          }}
                           spellCheck={false}
-                          className="mt-1 min-h-[120px] w-full resize-y rounded-[12px] border border-Gray-50 bg-white p-3 font-mono text-[12px] outline-none"
+                          className="mt-2 min-h-[200px] w-full resize-y rounded-[12px] border border-Gray-50 bg-[#0F172A] p-3 font-mono text-[12px] text-[#E2E8F0] outline-none"
+                          placeholder="null  // or an OpenAI-style tools array"
                         />
+                        <div className="mt-1 text-[11px]">
+                          {toolsError ? (
+                            <span className="text-red-500">{toolsError}</span>
+                          ) : (
+                            <span className="text-Text-Secondary">
+                              Accepts <code>null</code> or a JSON array of
+                              OpenAI tool definitions.
+                            </span>
+                          )}
+                        </div>
                       </div>
+
                       <div>
-                        <label className="text-[11px] text-Text-Secondary">
-                          User prompt template (optional)
-                        </label>
+                        <div className="flex items-center justify-between">
+                          <div className="text-[12px] font-medium text-Text-Primary">
+                            extra_settings_json
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const parsed = parseJsonMaybe(extraText, true);
+                              if (parsed.error) {
+                                setExtraError(parsed.error);
+                              } else {
+                                setExtraError('');
+                                setExtraText(
+                                  parsed.value == null
+                                    ? 'null'
+                                    : JSON.stringify(parsed.value, null, 2),
+                                );
+                              }
+                            }}
+                            className="rounded-full border border-Gray-50 bg-white px-2 py-1 text-[11px] text-Text-Primary"
+                          >
+                            Format & validate
+                          </button>
+                        </div>
+                        <FieldDisclaimerBadge type="extra_orphan" />
                         <textarea
-                          value={editor.user_prompt_template || ''}
-                          onChange={(e) =>
-                            patchEditor({
-                              user_prompt_template: e.target.value || null,
-                            })
-                          }
+                          value={extraText}
+                          readOnly
                           spellCheck={false}
-                          className="mt-1 min-h-[120px] w-full resize-y rounded-[12px] border border-Gray-50 bg-white p-3 font-mono text-[12px] outline-none"
+                          className="mt-2 min-h-[200px] w-full resize-y rounded-[12px] border border-Gray-50 bg-[#0F172A] p-3 font-mono text-[12px] text-[#E2E8F0] outline-none opacity-90"
+                          placeholder="null  // or a JSON object"
                         />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Tools + extra */}
-                  <div className="grid gap-3 lg:grid-cols-2">
-                    <div className="rounded-[16px] border border-Gray-50 bg-white p-3">
-                      <div className="flex items-center justify-between">
-                        <div className="TextStyle-Headline-6 text-Text-Primary">
-                          tools_json
+                        <div className="mt-1 text-[11px]">
+                          {extraError ? (
+                            <span className="text-red-500">{extraError}</span>
+                          ) : (
+                            <span className="text-Text-Secondary">
+                              Free-form JSON. Accessible via{' '}
+                              <code>PromptConfig.extra</code>.
+                            </span>
+                          )}
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const parsed = parseJsonMaybe(toolsText, true);
-                            if (parsed.error) {
-                              setToolsError(parsed.error);
-                            } else {
-                              setToolsError('');
-                              setToolsText(
-                                parsed.value == null
-                                  ? 'null'
-                                  : JSON.stringify(parsed.value, null, 2),
-                              );
-                            }
-                          }}
-                          className="rounded-full border border-Gray-50 bg-white px-2 py-1 text-[11px] text-Text-Primary"
-                        >
-                          Format & validate
-                        </button>
-                      </div>
-                      {isFcPromptKey(editor.key) ? (
-                        <>
-                          <FieldDisclaimerBadge type="fc_orphan" />
-                          {isFcDynamicSchemaKey(editor.key) ? (
-                            <FieldDisclaimerBadge type="dynamic_schema" />
-                          ) : null}
-                        </>
-                      ) : null}
-                      <textarea
-                        value={toolsText}
-                        onChange={(e) => {
-                          setToolsText(e.target.value);
-                          setDirty(true);
-                        }}
-                        spellCheck={false}
-                        className="mt-2 min-h-[200px] w-full resize-y rounded-[12px] border border-Gray-50 bg-[#0F172A] p-3 font-mono text-[12px] text-[#E2E8F0] outline-none"
-                        placeholder="null  // or an OpenAI-style tools array"
-                      />
-                      <div className="mt-1 text-[11px]">
-                        {toolsError ? (
-                          <span className="text-red-500">{toolsError}</span>
-                        ) : (
-                          <span className="text-Text-Secondary">
-                            Accepts <code>null</code> or a JSON array of OpenAI
-                            tool definitions.
-                          </span>
-                        )}
                       </div>
                     </div>
-
-                    <div className="rounded-[16px] border border-Gray-50 bg-white p-3">
-                      <div className="flex items-center justify-between">
-                        <div className="TextStyle-Headline-6 text-Text-Primary">
-                          extra_settings_json
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const parsed = parseJsonMaybe(extraText, true);
-                            if (parsed.error) {
-                              setExtraError(parsed.error);
-                            } else {
-                              setExtraError('');
-                              setExtraText(
-                                parsed.value == null
-                                  ? 'null'
-                                  : JSON.stringify(parsed.value, null, 2),
-                              );
-                            }
-                          }}
-                          className="rounded-full border border-Gray-50 bg-white px-2 py-1 text-[11px] text-Text-Primary"
-                        >
-                          Format & validate
-                        </button>
-                      </div>
-                      <FieldDisclaimerBadge type="extra_orphan" />
-                      <textarea
-                        value={extraText}
-                        readOnly
-                        spellCheck={false}
-                        className="mt-2 min-h-[200px] w-full resize-y rounded-[12px] border border-Gray-50 bg-[#0F172A] p-3 font-mono text-[12px] text-[#E2E8F0] outline-none opacity-90"
-                        placeholder="null  // or a JSON object"
-                      />
-                      <div className="mt-1 text-[11px]">
-                        {extraError ? (
-                          <span className="text-red-500">{extraError}</span>
-                        ) : (
-                          <span className="text-Text-Secondary">
-                            Free-form JSON. Accessible via{' '}
-                            <code>PromptConfig.extra</code>.
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  </details>
 
                   {/* Test console */}
                   {showTest && (
@@ -1188,6 +1290,12 @@ const LlmPromptCatalog = () => {
           )}
         </div>
       </div>
+      <PipelineFlowModal
+        open={pipelineModal.open}
+        target={pipelineModal.target}
+        allFlows={businessFlows?.flows || []}
+        onClose={() => setPipelineModal({ open: false, target: null })}
+      />
     </AdminShellLayout>
   );
 };

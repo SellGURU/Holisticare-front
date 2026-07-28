@@ -19,7 +19,6 @@ import {
 const FRIENDLY_FUNCTION_LABELS: Record<string, string> = {
   'ocr.detect_file_type': 'OCR: Detect file type',
   'ocr.document_analysis': 'OCR: Document analysis',
-  'ocr.lab_parsing': 'OCR: Lab parsing',
   azure_get_completion_result: 'OCR: Detect file type (legacy name)',
   azure_get_completion_result_for_ocr: 'OCR: Document analysis (legacy name)',
   'ocr.pipeline.start': 'OCR pipeline: Start',
