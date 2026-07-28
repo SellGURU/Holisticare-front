@@ -92,9 +92,7 @@ describe('PipelineFlowModal helpers', () => {
     expect(holisticStageCaption('scoring')).toBe(
       'Rescore or Lab-import → Scoring',
     );
-    expect(holisticStageCaption('intervention')).toBe(
-      'Finish → Intervention',
-    );
+    expect(holisticStageCaption('intervention')).toBe('Finish → Intervention');
     expect(pipelineModalTitle('composite', holistic)).toBe('Holistic Plan');
     expect(pipelineModalTitle('atomic', compile)).toBe('Pipeline: Compile');
   });
@@ -120,9 +118,9 @@ describe('PipelineFlowModal helpers', () => {
         },
       ],
     };
-    expect(orderedHolisticStageSteps('scoring', scoring).map((s) => s.key)).toEqual([
-      'micro.agent.scoring_fc',
-    ]);
+    expect(
+      orderedHolisticStageSteps('scoring', scoring).map((s) => s.key),
+    ).toEqual(['micro.agent.scoring_fc']);
     expect(actionPlanPipelineNote(actionPlan)).toMatch(/action_score/);
     expect(actionPlanPipelineNote(compile)).toBeNull();
   });

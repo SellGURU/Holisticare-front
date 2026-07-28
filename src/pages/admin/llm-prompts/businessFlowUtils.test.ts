@@ -223,9 +223,9 @@ describe('businessFlowUtils', () => {
     expect(keys?.has('main.agent_file.intervention_selection')).toBe(true);
     expect(keys?.has('main.agent_file.process_other_interventions')).toBe(true);
     expect(keys?.has('main.html.intervention_enhanced')).toBe(true);
-    expect(isDeadOrphanPromptKey('main.agent_file.intervention_selection')).toBe(
-      true,
-    );
+    expect(
+      isDeadOrphanPromptKey('main.agent_file.intervention_selection'),
+    ).toBe(true);
   });
 
   it('filters Holistic Plan keys to exclude action_plan scoring helpers and dead intervention', () => {
@@ -316,7 +316,11 @@ describe('businessFlowUtils', () => {
 
   it('resolves log flow id from active tab then membership', () => {
     expect(
-      resolveLogFlowId('micro.agent.client_insight', 'compile', sampleFlows.flows),
+      resolveLogFlowId(
+        'micro.agent.client_insight',
+        'compile',
+        sampleFlows.flows,
+      ),
     ).toBe('compile');
     expect(
       resolveLogFlowId('micro.agent.client_insight', null, sampleFlows.flows),

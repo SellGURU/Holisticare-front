@@ -233,8 +233,8 @@ const PipelineFlowModal = ({
               {isHolisticComposite ? (
                 <div className="rounded-[12px] border border-slate-100 bg-slate-50 px-3 py-2 text-[11px] text-slate-700">
                   Stages are label-level composite_of only. Compile runs via
-                  run_pipeline_v2; Scoring via Rescore / lab-import; Intervention
-                  via practitioner Finish.
+                  run_pipeline_v2; Scoring via Rescore / lab-import;
+                  Intervention via practitioner Finish.
                 </div>
               ) : (
                 <div className="inline-block rounded-full bg-slate-100 px-3 py-1.5 text-[11px] text-slate-700">

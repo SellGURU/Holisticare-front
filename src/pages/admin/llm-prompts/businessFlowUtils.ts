@@ -57,9 +57,7 @@ export const HOLISTIC_STAGE_CAPTIONS: Record<string, string> = {
 };
 
 /** Live Holistic Finish key only (dead/html intervention keys go to Other). */
-const HOLISTIC_INTERVENTION_KEYS = new Set([
-  'micro.agent.client_intervention',
-]);
+const HOLISTIC_INTERVENTION_KEYS = new Set(['micro.agent.client_intervention']);
 
 export interface FlowTab {
   id: FlowTabId;
@@ -92,7 +90,9 @@ function tabGroupForFlowId(flowId: string): FlowTabGroup {
 
 function isCatalogLlmStep(step: BusinessFlowStep): boolean {
   const kind = (step.kind || 'llm').toLowerCase();
-  return kind !== 'log_event' && kind !== 'non_llm_template' && Boolean(step.key);
+  return (
+    kind !== 'log_event' && kind !== 'non_llm_template' && Boolean(step.key)
+  );
 }
 
 /** Holistic-owned steps from a scoring child flow (exclude action_plan-scoped helpers). */
@@ -251,12 +251,11 @@ export function orderedHolisticStageSteps(
   return steps.filter(isCatalogLlmStep);
 }
 
-export function holisticStageCaption(childId: string, child?: BusinessFlow): string {
-  return (
-    HOLISTIC_STAGE_CAPTIONS[childId] ||
-    child?.label ||
-    childId
-  );
+export function holisticStageCaption(
+  childId: string,
+  child?: BusinessFlow,
+): string {
+  return HOLISTIC_STAGE_CAPTIONS[childId] || child?.label || childId;
 }
 
 export function actionPlanPipelineNote(flow: BusinessFlow): string | null {

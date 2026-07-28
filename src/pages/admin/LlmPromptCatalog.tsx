@@ -1000,7 +1000,9 @@ const LlmPromptCatalog = () => {
                   <details className="rounded-[16px] border border-Gray-50 bg-white p-3">
                     <summary className="flex cursor-pointer items-center gap-2 text-Text-Primary">
                       <Database className="h-4 w-4" />
-                      <span className="TextStyle-Headline-6">Model & tuning</span>
+                      <span className="TextStyle-Headline-6">
+                        Model & tuning
+                      </span>
                     </summary>
                     <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                       <div>
