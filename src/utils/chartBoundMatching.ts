@@ -317,3 +317,107 @@ export const resolveGlobalStatusPin = (
     segmentIndex: statusIndex,
   };
 };
+
+export type HistoricalBandLayoutEntry = {
+  top: number;
+  height: number;
+  bound: ChartBound;
+};
+
+const BAND_WEIGHT_EPSILON = 1;
+
+export const getBandNumericWeight = (
+  bound: ChartBound,
+  valueKind: ValueKind,
+): number => {
+  if (valueKind === 'qualitative') return 1;
+
+  const low =
+    bound.low == null || bound.low === '' ? null : Number(bound.low);
+  const high =
+    bound.high == null || bound.high === '' ? null : Number(bound.high);
+
+  if (
+    low != null &&
+    high != null &&
+    !Number.isNaN(low) &&
+    !Number.isNaN(high)
+  ) {
+    return Math.max(high - low, BAND_WEIGHT_EPSILON);
+  }
+  if (low == null && high != null && !Number.isNaN(high)) {
+    return Math.max(high, BAND_WEIGHT_EPSILON);
+  }
+  if (high == null && low != null && !Number.isNaN(low)) {
+    return Math.max(low, BAND_WEIGHT_EPSILON);
+  }
+  return 1;
+};
+
+export const buildHistoricalBandLayout = (
+  bounds: ChartBound[],
+  valueKind: ValueKind,
+  plotHeight: number,
+): HistoricalBandLayoutEntry[] => {
+  const sortedAsc = sortChartBounds(bounds, valueKind);
+  const displayOrder = [...sortedAsc].reverse();
+  const weights = displayOrder.map((b) => getBandNumericWeight(b, valueKind));
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0) || 1;
+  let top = 0;
+
+  return displayOrder.map((bound, index) => {
+    const height = (weights[index] / totalWeight) * plotHeight;
+    const entry = { top, height, bound };
+    top += height;
+    return entry;
+  });
+};
+
+export const findHistoricalBandLayoutEntry = (
+  value: unknown,
+  status: string,
+  layout: HistoricalBandLayoutEntry[],
+  boundsAsc: ChartBound[],
+): HistoricalBandLayoutEntry | null => {
+  const matchIndex = findMatchingChartBoundIndex(value, boundsAsc);
+  if (matchIndex >= 0) {
+    const displayIndex = boundsAsc.length - 1 - matchIndex;
+    return layout[displayIndex] ?? null;
+  }
+
+  return (
+    layout.find(
+      (entry) =>
+        entry.bound.status?.toLowerCase() === status?.toLowerCase(),
+    ) ?? null
+  );
+};
+
+/** Vertical pixel position for a historical chart point (0 = top of plot). */
+export const getHistoricalPointY = (
+  value: unknown,
+  status: string,
+  layout: HistoricalBandLayoutEntry[],
+  boundsAsc: ChartBound[],
+  valueKind: ValueKind,
+): number => {
+  const entry = findHistoricalBandLayoutEntry(
+    value,
+    status,
+    layout,
+    boundsAsc,
+  );
+  if (!entry) return 0;
+
+  if (valueKind === 'qualitative') {
+    return entry.top + entry.height / 2;
+  }
+
+  const pinPercent = resolvePinPercent(
+    value,
+    entry.bound,
+    boundsAsc,
+    valueKind,
+  );
+  return entry.top + ((100 - pinPercent) / 100) * entry.height;
+};

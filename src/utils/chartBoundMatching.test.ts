@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildHistoricalBandLayout,
+  findHistoricalBandLayoutEntry,
   findMatchingChartBoundIndex,
+  getHistoricalPointY,
   resolveGlobalStatusPin,
   resolveStatusMarkerMode,
+  sortChartBounds,
   type ChartBound,
 } from './chartBoundMatching';
 
@@ -154,5 +158,50 @@ describe('resolveGlobalStatusPin', () => {
 
   it('findMatchingChartBoundIndex honors preferred index for backend matched_bound_index', () => {
     expect(findMatchingChartBoundIndex('830', glutathioneBounds, 2)).toBe(2);
+  });
+});
+
+describe('historical chart layout', () => {
+  const wideHealthyBand: ChartBound[] = [
+    { low: 0, high: 10, status: 'DiseaseRange', label: 'Low' },
+    { low: 10, high: 200, status: 'HealthyRange', label: 'Healthy' },
+    { low: 200, high: 300, status: 'OptimalRange', label: 'Optimal' },
+  ];
+
+  it('assigns more vertical space to wider numeric bands', () => {
+    const layout = buildHistoricalBandLayout(wideHealthyBand, 'numeric', 70);
+    const healthy = layout.find((e) => e.bound.status === 'HealthyRange');
+    const disease = layout.find((e) => e.bound.status === 'DiseaseRange');
+    expect(healthy).toBeDefined();
+    expect(disease).toBeDefined();
+    expect(healthy!.height).toBeGreaterThan(disease!.height);
+  });
+
+  it('places different numeric values at different Y within the same band', () => {
+    const layout = buildHistoricalBandLayout(wideHealthyBand, 'numeric', 70);
+    const boundsAsc = sortChartBounds(wideHealthyBand, 'numeric');
+    const y150 = getHistoricalPointY(150, 'HealthyRange', layout, boundsAsc, 'numeric');
+    const y155 = getHistoricalPointY(155, 'HealthyRange', layout, boundsAsc, 'numeric');
+    expect(y150).not.toBe(y155);
+  });
+
+  it('centers qualitative values in their band row', () => {
+    const layout = buildHistoricalBandLayout(qualitativeBounds, 'qualitative', 70);
+    const boundsAsc = sortChartBounds(qualitativeBounds, 'qualitative');
+    const entry = findHistoricalBandLayoutEntry(
+      'negative',
+      'OptimalRange',
+      layout,
+      boundsAsc,
+    );
+    expect(entry).toBeDefined();
+    const y = getHistoricalPointY(
+      'negative',
+      'OptimalRange',
+      layout,
+      boundsAsc,
+      'qualitative',
+    );
+    expect(y).toBeCloseTo(entry!.top + entry!.height / 2, 5);
   });
 });
