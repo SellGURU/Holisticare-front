@@ -9,6 +9,7 @@ export type KeyKind =
 /** Mirrors backend KEY_KIND_OVERRIDES — used when API omits key_kind. */
 export const FRONTEND_KEY_KIND_BY_KEY: Record<string, KeyKind> = {
   'main.agent_file.block_description': 'non_llm_template',
+  'main.agent_file.report_prompt_from_ocr': 'non_llm_template',
   'main.messaging.get_completion_default': 'settings_only_intentional',
   'main.agent_file.intervention_selection': 'orphan_legacy',
 };

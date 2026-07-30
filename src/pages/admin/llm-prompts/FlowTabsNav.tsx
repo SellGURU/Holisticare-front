@@ -1,159 +1,137 @@
-import { Link } from 'react-router-dom';
-import { ArrowRightLeft, GitBranch, Layers } from 'lucide-react';
-import type {
-  BusinessFlow,
-  BusinessFlowStep,
-  FlowTabId,
-} from '../../../types/llmAdmin';
-import { callLogDeepLink, type FlowTab } from './businessFlowUtils';
+import { Waypoints } from 'lucide-react';
+import type { BusinessFlow, FlowTabId } from '../../../types/llmAdmin';
+import {
+  isCompositeFlow,
+  showsPipelineButton,
+  type FlowTab,
+  type FlowTabGroup,
+} from './businessFlowUtils';
 
 interface FlowTabsNavProps {
   tabs: FlowTab[];
   activeTab: FlowTabId;
   onTabChange: (tabId: FlowTabId) => void;
   activeFlow?: BusinessFlow | null;
-  allFlows?: BusinessFlow[];
+  onViewPipeline?: (flow: BusinessFlow) => void;
 }
 
-const modeIcon = (mode?: string) => {
-  if (mode === 'parallel' || mode === 'composite') return Layers;
-  if (mode === 'conditional') return ArrowRightLeft;
-  return GitBranch;
+const GROUP_LABELS: Record<FlowTabGroup, string> = {
+  pipelines: 'Pipelines',
+  conflict_detection: 'Conflict Detection',
+  conversations: 'Conversations',
+  other: 'Other',
 };
 
-const StepRow = ({
-  step,
-  flowId,
+const GROUP_ORDER: Array<FlowTabGroup | undefined> = [
+  undefined,
+  'pipelines',
+  'conflict_detection',
+  'conversations',
+  'other',
+];
+
+const TabPill = ({
+  tab,
+  active,
+  onTabChange,
 }: {
-  step: BusinessFlowStep;
-  flowId: string;
-}) => {
-  const isLog = (step.kind || 'llm').toLowerCase() === 'log_event';
-  return (
-    <li className="rounded-xl border border-Gray-50 bg-white px-3 py-2">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[11px] font-medium text-Text-Primary">
-          {step.step_id}
-        </span>
-        <span
-          className={`rounded-full px-2 py-0.5 text-[10px] ${
-            isLog ? 'bg-slate-100 text-slate-600' : 'bg-teal-50 text-teal-700'
-          }`}
-        >
-          {step.kind || 'llm'}
-        </span>
-        {step.conditional ? (
-          <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] text-amber-700">
-            conditional: {step.conditional}
-          </span>
-        ) : null}
-        {step.parallel_fanout ? (
-          <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] text-indigo-700">
-            fan-out: {step.parallel_fanout}
-          </span>
-        ) : null}
-        {step.async_background ? (
-          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600">
-            async
-          </span>
-        ) : null}
-      </div>
-      <div className="mt-1 font-mono text-[10px] text-Text-Secondary">
-        {step.key}
-      </div>
-      {!isLog ? (
-        <Link
-          to={callLogDeepLink(flowId, step.key)}
-          className="mt-1 inline-block text-[10px] text-Primary-DeepTeal hover:underline"
-        >
-          View logs
-        </Link>
-      ) : null}
-    </li>
-  );
-};
+  tab: FlowTab;
+  active: boolean;
+  onTabChange: (tabId: FlowTabId) => void;
+}) => (
+  <button
+    type="button"
+    onClick={() => onTabChange(tab.id)}
+    className={`rounded-full px-3 py-1.5 text-[11px] transition ${
+      active
+        ? 'bg-Primary-DeepTeal text-white'
+        : 'border border-Gray-50 bg-white text-Text-Primary hover:border-Primary-DeepTeal/40'
+    }`}
+  >
+    {tab.label}
+  </button>
+);
 
 const FlowTabsNav = ({
   tabs,
   activeTab,
   onTabChange,
   activeFlow,
-  allFlows = [],
-}: FlowTabsNavProps) => (
-  <div className="space-y-3">
-    <div className="flex flex-wrap gap-2">
-      {tabs.map((tab) => {
-        const active = tab.id === activeTab;
-        return (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => onTabChange(tab.id)}
-            className={`rounded-full px-3 py-1.5 text-[11px] transition ${
-              active
-                ? 'bg-Primary-DeepTeal text-white'
-                : 'border border-Gray-50 bg-white text-Text-Primary hover:border-Primary-DeepTeal/40'
-            }`}
-          >
-            {tab.label}
-          </button>
-        );
-      })}
-    </div>
+  onViewPipeline,
+}: FlowTabsNavProps) => {
+  const ungrouped = tabs.filter((t) => !t.group);
+  const groupedSections = GROUP_ORDER.filter(
+    (g): g is FlowTabGroup => g !== undefined,
+  )
+    .map((group) => ({
+      group,
+      tabs: tabs.filter((t) => t.group === group),
+    }))
+    .filter((section) => section.tabs.length > 0);
 
-    {activeFlow ? (
-      <div className="rounded-[14px] border border-Gray-50 bg-[#F8FAFB] p-3">
-        <div className="flex items-center gap-2 text-[12px] font-medium text-Text-Primary">
-          {(() => {
-            const Icon = modeIcon(activeFlow.execution_mode);
-            return <Icon className="h-4 w-4 text-Primary-DeepTeal" />;
-          })()}
-          {activeFlow.label || activeFlow.flow_id}
-          <span className="rounded-full bg-white px-2 py-0.5 text-[10px] text-Text-Secondary">
-            {activeFlow.execution_mode}
-          </span>
-        </div>
+  const showPipeline =
+    Boolean(activeFlow) &&
+    Boolean(onViewPipeline) &&
+    activeFlow != null &&
+    showsPipelineButton(activeFlow);
 
-        {activeFlow.composite_of?.length ? (
-          <div className="mt-3 space-y-4">
-            {activeFlow.composite_of.map((childId) => {
-              const child = allFlows.find((flow) => flow.flow_id === childId);
-              if (!child) return null;
-              return (
-                <div key={childId}>
-                  <div className="mb-2 text-[11px] font-medium text-Text-Primary">
-                    {child.label || child.flow_id}
-                    <span className="ml-2 rounded-full bg-white px-2 py-0.5 text-[10px] text-Text-Secondary">
-                      {child.execution_mode}
-                    </span>
-                  </div>
-                  <ol className="space-y-2">
-                    {(child.steps || []).map((step) => (
-                      <StepRow
-                        key={`${childId}-${step.step_id}`}
-                        step={step}
-                        flowId={childId}
-                      />
-                    ))}
-                  </ol>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <ol className="mt-3 space-y-2">
-            {(activeFlow.steps || []).map((step) => (
-              <StepRow
-                key={step.step_id}
-                step={step}
-                flowId={activeFlow.flow_id}
+  return (
+    <div className="space-y-3">
+      <div className="space-y-2">
+        {ungrouped.length ? (
+          <div className="flex flex-wrap gap-2">
+            {ungrouped.map((tab) => (
+              <TabPill
+                key={tab.id}
+                tab={tab}
+                active={tab.id === activeTab}
+                onTabChange={onTabChange}
               />
             ))}
-          </ol>
-        )}
+          </div>
+        ) : null}
+        {groupedSections.map(({ group, tabs: sectionTabs }) => (
+          <div key={group}>
+            <div className="mb-1 text-[10px] font-medium uppercase tracking-wide text-Text-Secondary">
+              {GROUP_LABELS[group]}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {sectionTabs.map((tab) => (
+                <TabPill
+                  key={tab.id}
+                  tab={tab}
+                  active={tab.id === activeTab}
+                  onTabChange={onTabChange}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
-    ) : null}
-  </div>
-);
+
+      {showPipeline && activeFlow && onViewPipeline ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[11px] text-Text-Secondary">
+            {activeFlow.label || activeFlow.flow_id}
+          </span>
+          <button
+            type="button"
+            title={
+              isCompositeFlow(activeFlow)
+                ? 'View Holistic Plan stages (separately triggered)'
+                : 'Steps run in order — click to view pipeline'
+            }
+            aria-label="View pipeline flow"
+            onClick={() => onViewPipeline(activeFlow)}
+            className="inline-flex items-center gap-1 rounded-full border border-Gray-50 bg-white px-2.5 py-1 text-[10px] text-Text-Secondary hover:border-Primary-DeepTeal/40 hover:text-Primary-DeepTeal"
+          >
+            <Waypoints className="h-3.5 w-3.5" />
+            View pipeline
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+};
 
 export default FlowTabsNav;
