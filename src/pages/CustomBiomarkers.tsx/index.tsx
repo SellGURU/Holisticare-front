@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import BiomarkersApi from '../../api/Biomarkers';
+import {
+  invalidateLabEntryBiomarkerUnitsCache,
+  LAB_ENTRY_BIOMARKER_NAMES_INVALIDATED,
+  PORTAL_CACHE_KEYS,
+} from '../../utils/cacheKeys';
+import { publish } from '../../utils/event';
 import { getCached, removeCachedKey } from '../../utils/pageCache';
 import Circleloader from '../../Components/CircleLoader';
 import SearchBox from '../../Components/SearchBox';
@@ -106,6 +112,9 @@ const CustomBiomarkers = () => {
     const force = Boolean(options?.force);
     if (force) {
       removeCachedKey('portal:biomarkers:list');
+      removeCachedKey(PORTAL_CACHE_KEYS.labEntryBiomarkerNames);
+      invalidateLabEntryBiomarkerUnitsCache();
+      publish(LAB_ENTRY_BIOMARKER_NAMES_INVALIDATED, null);
     } else {
       setIsLoading(true);
     }

@@ -41,6 +41,12 @@ export const PORTAL_CACHE_KEYS = {
   messagesThreadAi: (memberId: string | number) =>
     `portal:messages:thread:${memberId}:ai`,
   aiKnowledgeGraph: 'portal:ai-knowledge:graph',
+  /** Manual lab entry dropdown (`get_biomarkers_list`). */
+  labEntryBiomarkerNames: 'portal:lab-entry:biomarker-names',
+  labEntryBiomarkerUnits: (biomarkerName: string) =>
+    `portal:lab-entry:biomarker-units:${encodeURIComponent(
+      biomarkerName.trim(),
+    )}`,
 } as const;
 
 export function invalidatePatientLists(): void {
@@ -54,3 +60,10 @@ export function invalidateMessagesForMember(memberId: string | number): void {
   invalidate(PORTAL_CACHE_KEYS.messagesThreadAi(memberId));
   invalidate(PORTAL_CACHE_KEYS.messagesUsers);
 }
+
+export function invalidateLabEntryBiomarkerUnitsCache(): void {
+  invalidate('portal:lab-entry:biomarker-units:');
+}
+
+export const LAB_ENTRY_BIOMARKER_NAMES_INVALIDATED =
+  'lab-entry-biomarker-names-invalidated';

@@ -4,6 +4,7 @@ import {
   getCached,
   hasCached,
   invalidate,
+  peekCached,
   removeCachedKey,
 } from './pageCache';
 
@@ -62,6 +63,13 @@ describe('pageCache', () => {
 
     expect(hasCached('portal:patients')).toBe(false);
     expect(hasCached('portal:messages:users')).toBe(true);
+  });
+
+  it('peekCached returns stored data without fetching', async () => {
+    const fetcher = vi.fn().mockResolvedValue(['A']);
+    await getCached('portal:peek', fetcher);
+    expect(peekCached<string[]>('portal:peek')).toEqual(['A']);
+    expect(peekCached('portal:missing')).toBeUndefined();
   });
 
   it('removeCachedKey forces a fresh biomarkers list fetch after add', async () => {

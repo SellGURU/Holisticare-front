@@ -42,6 +42,7 @@ import {
   markUploadCancelled,
 } from '../../../../utils/labUploadCancelRegistry';
 import { shouldContinueUploadPoll } from '../../../../utils/labUploadPollGuard';
+import { sortLabFilesByTestDateDesc } from './help';
 
 const STEP_ONE_POLL_INTERVAL_MS = 10000;
 
@@ -243,7 +244,9 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
       .then((res) => {
         if (requestSeq !== requestSeqRef.current) return;
         if (res.data) {
-          setUploadedFiles(filterCancelledFiles(res.data));
+          setUploadedFiles(
+            sortLabFilesByTestDateDesc(filterCancelledFiles(res.data)),
+          );
         } else {
           throw new Error('Unexpected data format');
         }
@@ -650,7 +653,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
     }
     return meta ? { ...fileUpload, ...meta } : fileUpload;
   };
-  const mergedUploadedFiles = [
+  const mergedUploadedFiles = sortLabFilesByTestDateDesc([
     ...listBackgroundCards.map(withReviewMeta),
     ...filterCancelledFiles(uploadedFiles)
       .filter(
@@ -660,7 +663,7 @@ const FileHistoryNew: FC<FileHistoryNewProps> = ({
           !backgroundFileIds.has(fileUpload.file_id),
       )
       .map(withReviewMeta),
-  ];
+  ]);
   const uploadZonePhase =
     uploadZoneSession?.phase === 'saving'
       ? 'processing'

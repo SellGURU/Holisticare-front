@@ -21,6 +21,12 @@ import {
 } from '../../../utils/labReportStepOne';
 import { validateLabReportFile } from '../../../utils/labReportUploadHelpers';
 import {
+  invalidateLabEntryBiomarkerUnitsCache,
+  LAB_ENTRY_BIOMARKER_NAMES_INVALIDATED,
+  PORTAL_CACHE_KEYS,
+} from '../../../utils/cacheKeys';
+import { removeCachedKey } from '../../../utils/pageCache';
+import {
   collectMappingNameVariations,
   enrichBiomarkerNameFieldsOnLoad,
   ensureUniqueBiomarkerIds,
@@ -921,6 +927,9 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   }, []);
 
   const refreshReviewCatalog = () => {
+    removeCachedKey(PORTAL_CACHE_KEYS.labEntryBiomarkerNames);
+    invalidateLabEntryBiomarkerUnitsCache();
+    publish(LAB_ENTRY_BIOMARKER_NAMES_INVALIDATED, null);
     BiomarkersApi.getBiomarkersList({ include_all: true })
       .then((res) => {
         setReviewCatalog(mapChartBoundsToReviewCatalog(res?.data));

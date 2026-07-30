@@ -5,6 +5,9 @@ import SimpleDatePicker from '../../SimpleDatePicker';
 import Select from '../../Select';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
+import { PORTAL_CACHE_KEYS, LAB_ENTRY_BIOMARKER_NAMES_INVALIDATED } from '../../../utils/cacheKeys';
+import { getCached, hasCached, peekCached } from '../../../utils/pageCache';
+import { subscribe, unsubscribe } from '../../../utils/event';
 // import { Tooltip } from 'react-tooltip';
 import SearchSelect from '../../searchableSelect';
 import Toggle from '../Boxs/Toggle';
@@ -58,35 +61,101 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
     setValue('');
     setUnit('');
   };
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [listLoading, setListLoading] = useState(false);
+
+  const sortBiomarkerNames = (list: string[]) =>
+    [...list].sort((a, b) => a.localeCompare(b));
+
+  const fetchBiomarkerNames = () =>
+    Application.getBiomarkerName({}).then((res) =>
+      sortBiomarkerNames(res.data.biomarkers_list || []),
+    );
+
   useEffect(() => {
-    setloading(true);
-    Application.getBiomarkerName({})
-      .then((res) => {
-        const sorted = [...res.data.biomarkers_list].sort((a: any, b: any) =>
-          a.localeCompare(b),
-        );
-        setAvalibaleBiomarkers(sorted);
-        setloading(false);
-      })
-      .catch(() => {});
+    let cancelled = false;
+    const cacheKey = PORTAL_CACHE_KEYS.labEntryBiomarkerNames;
+
+    const applyNames = (sorted: string[]) => {
+      if (!cancelled) setAvalibaleBiomarkers(sorted);
+    };
+
+    const loadNames = (showLoader: boolean) => {
+      const cached = peekCached<string[]>(cacheKey);
+      if (cached?.length) {
+        applyNames(cached);
+      }
+      if (showLoader && !hasCached(cacheKey)) {
+        setListLoading(true);
+      }
+
+      void fetchBiomarkerNames()
+        .then((sorted) => {
+          applyNames(sorted);
+          void getCached(cacheKey, () => Promise.resolve(sorted));
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (!cancelled) setListLoading(false);
+        });
+    };
+
+    loadNames(true);
+
+    const onInvalidate = () => {
+      loadNames(false);
+    };
+    subscribe(LAB_ENTRY_BIOMARKER_NAMES_INVALIDATED, onInvalidate);
+
+    return () => {
+      cancelled = true;
+      unsubscribe(LAB_ENTRY_BIOMARKER_NAMES_INVALIDATED, onInvalidate);
+    };
   }, []);
+
   useEffect(() => {
-    if (biomarkerName) {
-      setloading(true);
+    if (!biomarkerName) {
+      setUnitsList([]);
+      return;
+    }
+
+    let cancelled = false;
+    const cacheKey = PORTAL_CACHE_KEYS.labEntryBiomarkerUnits(biomarkerName);
+
+    const cachedUnits = peekCached<string[]>(cacheKey);
+    if (cachedUnits) {
+      setUnitsList(cachedUnits);
+    }
+
+    const needsFullScreenLoader = !hasCached(cacheKey);
+    if (needsFullScreenLoader) {
+      setLoading(true);
+    }
+
+    const fetchUnits = () =>
       Application.getBiomarkerUnit({
         biomarker_name: biomarkerName,
+      }).then((res) => {
+        const transformedUnits = (res.data.units || []).map((u: string) =>
+          u === '' ? '(no unit)' : u,
+        );
+        return transformedUnits;
+      });
+
+    void fetchUnits()
+      .then((transformedUnits) => {
+        if (cancelled) return;
+        setUnitsList(transformedUnits);
+        void getCached(cacheKey, () => Promise.resolve(transformedUnits));
       })
-        .then((res) => {
-          // Transform empty string to "(no unit)" for display
-          const transformedUnits = (res.data.units || []).map((u: string) =>
-            u === '' ? '(no unit)' : u,
-          );
-          setUnitsList(transformedUnits);
-          setloading(false);
-        })
-        .catch(() => {});
-    }
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled && needsFullScreenLoader) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [biomarkerName]);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tableRef = useRef<HTMLDivElement | null>(null);
@@ -125,7 +194,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
       // style={{ height: window.innerHeight - 235 + 'px' }}
       className="w-full rounded-2xl border p-2 md:p-4 border-Gray-50 shadow-200 md:h-[calc(100vh-235px)] mt-4 overflow-y-auto overflow-x-hidden"
     >
-      {loading && (
+      {(loading || listLoading) && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
         </div>

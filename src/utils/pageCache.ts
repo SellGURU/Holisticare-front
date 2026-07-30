@@ -56,6 +56,11 @@ export function hasCached(key: string): boolean {
   return store.has(key);
 }
 
+export function peekCached<T>(key: string): T | undefined {
+  const entry = store.get(key) as CacheEntry<T> | undefined;
+  return entry?.data;
+}
+
 export function listPageCacheKeys(): string[] {
   return [...store.keys()];
 }
