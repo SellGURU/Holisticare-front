@@ -165,9 +165,9 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
                   chartId={data.name}
                   sources={data?.historical_sources}
                   statusBar={data.chart_bounds}
-                  dataPoints={[...data.values].reverse()}
-                  dataStatus={[...data.status].reverse()}
-                  labels={[...data.date].reverse()}
+                  dataPoints={[...data.values]}
+                  dataStatus={[...data.status]}
+                  labels={[...data.date]}
                 ></HistoricalChart>
               )}
             </div>

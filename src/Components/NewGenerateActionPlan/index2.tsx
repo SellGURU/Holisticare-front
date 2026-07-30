@@ -133,8 +133,9 @@ const GenerateActionPlan = () => {
       .catch((err) => {
         const detail = err?.detail ?? err?.response?.data?.detail ?? '';
         const message = typeof detail === 'string' ? detail : detail?.message;
+        if (!isMountedRef.current) return;
+        setIsLoadingPlans(false);
         if (err?.code === 'PATIENT_NOT_FOUND') {
-          if (!isMountedRef.current) return;
           setActionPlanError(true);
           return;
         }
@@ -150,7 +151,12 @@ const GenerateActionPlan = () => {
           navigate('/report/' + id + '/a?section=Action Plan');
           return;
         }
-        if (!isMountedRef.current) return;
+        showError(
+          'Could not load action plan',
+          typeof message === 'string' && message
+            ? message
+            : 'Something went wrong while loading this plan. Please try again.',
+        );
         setActionPlanError(true);
       })
       .finally(() => {
@@ -442,8 +448,27 @@ const GenerateActionPlan = () => {
           </div>
         </div>
 
-        {(isLoadingPlans || actionPlanError) && (
+        {isLoadingPlans && (
           <LoaderBox text="We're generating your Action Plan. This may take a moment." />
+        )}
+        {!isLoadingPlans && actionPlanError && (
+          <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20 px-6">
+            <div className="TextStyle-Headline-5 text-Text-Primary mb-2 text-center">
+              Could not load action plan
+            </div>
+            <div className="text-Text-Secondary TextStyle-Body-1 mb-6 text-center max-w-md">
+              Something went wrong while loading this plan. You can go back and
+              try again.
+            </div>
+            <ButtonPrimary
+              ClassName="h-[33px] w-[160px] text-xs"
+              onClick={() =>
+                navigate('/report/' + id + '/a?section=Action Plan')
+              }
+            >
+              Back to Action Plan
+            </ButtonPrimary>
+          </div>
         )}
         {isLoadingCalendarView && <LoaderBox />}
 

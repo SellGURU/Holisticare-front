@@ -37,6 +37,15 @@ const HistoricalChart = ({
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(10);
   const [page, setPage] = useState(0);
 
+  // Oldest → newest (left → right), regardless of caller/API order
+  const sortedIndices = labels
+    .map((_, index) => index)
+    .sort((a, b) => String(labels[a]).localeCompare(String(labels[b])));
+  const sortedDataPoints = sortedIndices.map((i) => dataPoints[i]);
+  const sortedDataStatus = sortedIndices.map((i) => dataStatus[i]);
+  const sortedLabels = sortedIndices.map((i) => labels[i]);
+  const sortedSources = sortedIndices.map((i) => sources?.[i]);
+
   useEffect(() => {
     const svg = document.getElementById(`historical-chart-svg-${chartId}`);
     if (svg) {
@@ -44,13 +53,13 @@ const HistoricalChart = ({
     }
   }, [chartId]);
 
-  const totalPages = Math.ceil(dataPoints.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sortedDataPoints.length / ITEMS_PER_PAGE);
 
   const start = page * ITEMS_PER_PAGE;
-  const end = Math.min(start + ITEMS_PER_PAGE, dataPoints.length);
+  const end = Math.min(start + ITEMS_PER_PAGE, sortedDataPoints.length);
 
-  const visibleDataPoints = dataPoints.slice(start, end);
-  const visibleLabels = labels.slice(start, end);
+  const visibleDataPoints = sortedDataPoints.slice(start, end);
+  const visibleLabels = sortedLabels.slice(start, end);
 
   const bounds = useMemo(
     () => (Array.isArray(statusBar) ? statusBar : []) as ChartBound[],
@@ -58,8 +67,8 @@ const HistoricalChart = ({
   );
 
   const valueKind = useMemo(
-    () => inferValueKind(bounds, dataPoints[0]),
-    [bounds, dataPoints],
+    () => inferValueKind(bounds, sortedDataPoints[0]),
+    [bounds, sortedDataPoints],
   );
 
   const boundsAsc = useMemo(
@@ -125,12 +134,12 @@ const HistoricalChart = ({
           >
             {visibleDataPoints.map((_point, index) => {
               const realIndex = start + index;
-              if (realIndex === dataPoints.length - 1) return null;
+              if (realIndex === sortedDataPoints.length - 1) return null;
 
-              const currentStatus = dataStatus[realIndex];
-              const nextStatus = dataStatus[realIndex + 1];
-              const currentValue = dataPoints[realIndex];
-              const nextValue = dataPoints[realIndex + 1];
+              const currentStatus = sortedDataStatus[realIndex];
+              const nextStatus = sortedDataStatus[realIndex + 1];
+              const currentValue = sortedDataPoints[realIndex];
+              const nextValue = sortedDataPoints[realIndex + 1];
 
               const x1 = getPointX(index);
               const x2 = getPointX(index + 1);
@@ -194,7 +203,7 @@ const HistoricalChart = ({
             {visibleDataPoints.map((point, index) => {
               const realIndex = start + index;
               const tooltipId = `point-${chartId}-${realIndex}`;
-              const status = dataStatus[realIndex];
+              const status = sortedDataStatus[realIndex];
               const y = getPointY(point, status);
               const x = getPointX(index);
               const dotColor = getPointColor(point, status);
@@ -220,8 +229,11 @@ const HistoricalChart = ({
                       className="!bg-Red !w-fit !leading-5 !text-nowrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                     >
                       <div className="flex items-center gap-2">
-                        {sources?.[realIndex] && (
-                          <SourceTag source={sources?.[realIndex]} isSmall />
+                        {sortedSources?.[realIndex] && (
+                          <SourceTag
+                            source={sortedSources?.[realIndex]}
+                            isSmall
+                          />
                         )}
                         value: {point} {unit}
                       </div>
