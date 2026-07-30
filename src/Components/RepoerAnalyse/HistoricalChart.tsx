@@ -116,10 +116,7 @@ const HistoricalChart = ({
   return (
     <>
       <div className="w-full h-full relative pr-4 ">
-        <div
-          className="relative w-full"
-          style={{ height: CHART_PLOT_HEIGHT }}
-        >
+        <div className="relative w-full" style={{ height: CHART_PLOT_HEIGHT }}>
           <svg
             id={`historical-chart-svg-${chartId}`}
             className="absolute w-full h-full top-0 left-3"

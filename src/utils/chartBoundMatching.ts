@@ -332,8 +332,7 @@ export const getBandNumericWeight = (
 ): number => {
   if (valueKind === 'qualitative') return 1;
 
-  const low =
-    bound.low == null || bound.low === '' ? null : Number(bound.low);
+  const low = bound.low == null || bound.low === '' ? null : Number(bound.low);
   const high =
     bound.high == null || bound.high === '' ? null : Number(bound.high);
 
@@ -387,8 +386,7 @@ export const findHistoricalBandLayoutEntry = (
 
   return (
     layout.find(
-      (entry) =>
-        entry.bound.status?.toLowerCase() === status?.toLowerCase(),
+      (entry) => entry.bound.status?.toLowerCase() === status?.toLowerCase(),
     ) ?? null
   );
 };
@@ -401,12 +399,7 @@ export const getHistoricalPointY = (
   boundsAsc: ChartBound[],
   valueKind: ValueKind,
 ): number => {
-  const entry = findHistoricalBandLayoutEntry(
-    value,
-    status,
-    layout,
-    boundsAsc,
-  );
+  const entry = findHistoricalBandLayoutEntry(value, status, layout, boundsAsc);
   if (!entry) return 0;
 
   if (valueKind === 'qualitative') {

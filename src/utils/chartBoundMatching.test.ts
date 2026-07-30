@@ -180,13 +180,29 @@ describe('historical chart layout', () => {
   it('places different numeric values at different Y within the same band', () => {
     const layout = buildHistoricalBandLayout(wideHealthyBand, 'numeric', 70);
     const boundsAsc = sortChartBounds(wideHealthyBand, 'numeric');
-    const y150 = getHistoricalPointY(150, 'HealthyRange', layout, boundsAsc, 'numeric');
-    const y155 = getHistoricalPointY(155, 'HealthyRange', layout, boundsAsc, 'numeric');
+    const y150 = getHistoricalPointY(
+      150,
+      'HealthyRange',
+      layout,
+      boundsAsc,
+      'numeric',
+    );
+    const y155 = getHistoricalPointY(
+      155,
+      'HealthyRange',
+      layout,
+      boundsAsc,
+      'numeric',
+    );
     expect(y150).not.toBe(y155);
   });
 
   it('centers qualitative values in their band row', () => {
-    const layout = buildHistoricalBandLayout(qualitativeBounds, 'qualitative', 70);
+    const layout = buildHistoricalBandLayout(
+      qualitativeBounds,
+      'qualitative',
+      70,
+    );
     const boundsAsc = sortChartBounds(qualitativeBounds, 'qualitative');
     const entry = findHistoricalBandLayoutEntry(
       'negative',
