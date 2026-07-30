@@ -52,7 +52,7 @@ export const AddBiomarker: React.FC<AddBiomarkerProps> = ({
   const [biomarkerName, setBiomarkerName] = useState('');
   const [value, setValue] = useState('');
   const [unit, setUnit] = useState('');
-  const [unitsList, setUnitsList] = useState([]);
+  const [unitsList, setUnitsList] = useState<string[]>([]);
   const [avalibaleBiomarkers, setAvalibaleBiomarkers] = useState<any[]>([]);
   const handleAdd = () => {
     if (!biomarkerName || !value) return; // only biomarker + value are required
