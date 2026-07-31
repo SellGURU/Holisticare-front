@@ -22,7 +22,10 @@ export const stripLabFootnoteMarkers = (value: unknown) =>
   trim(value).replace(/\^\{\d+\}/g, '');
 
 /** Exact OCR / PDF label — never fall back to system `biomarker`. */
-export const resolveExactBiomarkerName = (row: BiomarkerNameRow): string => {
+export const resolveExactBiomarkerName = (
+  row: BiomarkerNameRow | null | undefined,
+): string => {
+  if (!row) return '';
   const original = trim(row.original_biomarker_name);
   if (original) return original;
   return trim(row.extracted_biomarker_name);
@@ -30,8 +33,9 @@ export const resolveExactBiomarkerName = (row: BiomarkerNameRow): string => {
 
 /** Canonical normalized name for the bold headline (frozen after first resolve). */
 export const resolveNormalizedBiomarkerName = (
-  row: BiomarkerNameRow,
+  row: BiomarkerNameRow | null | undefined,
 ): string => {
+  if (!row) return '';
   const normalized = stripLabFootnoteMarkers(row.normalized_biomarker_name);
   if (normalized) return normalized;
   const extracted = stripLabFootnoteMarkers(row.extracted_biomarker_name);

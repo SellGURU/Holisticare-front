@@ -561,13 +561,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     [reviewBiomarkers, currentRowErrors, suppressedSet],
   );
 
-  const resolveExcludeDisplayName = (row: any) =>
-    String(
-      resolveExactBiomarkerName(row) ||
-        row?.original_biomarker_name ||
-        row?.biomarker ||
-        'this biomarker',
-    ).trim() || 'this biomarker';
+  const resolveExcludeDisplayName = (row: any) => {
+    if (!row) return 'this biomarker';
+    return (
+      String(
+        resolveExactBiomarkerName(row) ||
+          row.original_biomarker_name ||
+          row.biomarker ||
+          'this biomarker',
+      ).trim() || 'this biomarker'
+    );
+  };
 
   const handleExcludeReviewRow = async (row: any) => {
     if (isDemo) return;
@@ -2050,15 +2054,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         />
       )}
 
-      <ConfirmModal
-        isOpen={Boolean(excludeConfirmRow)}
-        onClose={() => setExcludeConfirmRow(null)}
-        onConfirm={confirmExcludeReviewRow}
-        heading="Exclude for entire clinic"
-        message={`Exclude "${resolveExcludeDisplayName(excludeConfirmRow)}" for this entire clinic? It will be hidden from every future lab report for every patient until you restore it from Custom Biomarkers → Excluded Biomarkers.`}
-        confirmText="Exclude for clinic"
-        cancelText="Cancel"
-      />
+      {excludeConfirmRow ? (
+        <ConfirmModal
+          isOpen
+          onClose={() => setExcludeConfirmRow(null)}
+          onConfirm={confirmExcludeReviewRow}
+          heading="Exclude for entire clinic"
+          message={`Exclude "${resolveExcludeDisplayName(excludeConfirmRow)}" for this entire clinic? It will be hidden from every future lab report for every patient until you restore it from Custom Biomarkers → Excluded Biomarkers.`}
+          confirmText="Exclude for clinic"
+          cancelText="Cancel"
+        />
+      ) : null}
     </>
   );
 };
