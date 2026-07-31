@@ -335,7 +335,12 @@ export const buildBiomarkerTypeChangePatch = (
   if (catalogEntry && nextMode === 'text' && currentUnit && !nextDefaultUnit) {
     patch.original_unit = '';
     patch.unit = '';
-  } else if (catalogEntry && nextMode !== 'text' && !currentUnit && nextDefaultUnit) {
+  } else if (
+    catalogEntry &&
+    nextMode !== 'text' &&
+    !currentUnit &&
+    nextDefaultUnit
+  ) {
     patch.original_unit = nextDefaultUnit;
   }
 
