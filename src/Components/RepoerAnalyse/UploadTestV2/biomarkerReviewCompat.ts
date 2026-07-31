@@ -332,12 +332,13 @@ export const buildBiomarkerTypeChangePatch = (
   // or when the row has no unit and the new type has a catalog default.
   const nextDefaultUnit = trim(catalogEntry?.unit);
   const currentUnit = trim(preferNonEmpty(row.original_unit, row.unit));
-  if (catalogEntry && nextMode === 'text' && currentUnit && !nextDefaultUnit) {
+  const qualitativeCatalog = catalogEntry?.value_type === 'string';
+  if (catalogEntry && qualitativeCatalog && currentUnit && !nextDefaultUnit) {
     patch.original_unit = '';
     patch.unit = '';
   } else if (
     catalogEntry &&
-    nextMode !== 'text' &&
+    !qualitativeCatalog &&
     !currentUnit &&
     nextDefaultUnit
   ) {
