@@ -1015,9 +1015,9 @@ export default function BiomarkerRow({
                         type="button"
                         onClick={() => onExcludeReview?.()}
                         className="rounded-md border border-Gray-100 px-2 py-0.5 text-[8px] font-medium text-Text-Secondary hover:bg-Gray-50"
-                        title="Move to excluded list"
+                        title="Hide this label for every patient at this clinic on future uploads"
                       >
-                        Exclude ✗
+                        Exclude (all patients)
                       </button>
                     ) : (
                       <button

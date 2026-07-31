@@ -12,6 +12,7 @@ import CreateBiomarkerModal from './CreateBiomarkerModal';
 import CreateUnitModal from './CreateUnitModal';
 import BiomarkersApi from '../../../api/Biomarkers';
 import { showError } from '../../GlobalToast';
+import ConfirmModal from '../../confitmModal';
 import type {
   BiomarkerOption,
   BiomarkerSuggestion,
@@ -395,6 +396,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const extractionSuccessFileRef = useRef<string | null>(null);
   const [showExtractionSuccess, setShowExtractionSuccess] = useState(false);
   const [suppressedHydrated, setSuppressedHydrated] = useState(!useReviewUx);
+  const [excludeConfirmRow, setExcludeConfirmRow] = useState<any | null>(null);
 
   const commitRowMappingBaseline = (
     biomarkerId: string,
@@ -559,6 +561,14 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     [reviewBiomarkers, currentRowErrors, suppressedSet],
   );
 
+  const resolveExcludeDisplayName = (row: any) =>
+    String(
+      resolveExactBiomarkerName(row) ||
+        row?.original_biomarker_name ||
+        row?.biomarker ||
+        'this biomarker',
+    ).trim() || 'this biomarker';
+
   const handleExcludeReviewRow = async (row: any) => {
     if (isDemo) return;
     markDirty(row?.biomarker_id);
@@ -606,6 +616,19 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         'Could not exclude biomarker',
         'Please try again or contact support.',
       );
+    }
+  };
+
+  const requestExcludeReviewRow = (row: any) => {
+    if (isDemo) return;
+    setExcludeConfirmRow(row);
+  };
+
+  const confirmExcludeReviewRow = () => {
+    const row = excludeConfirmRow;
+    setExcludeConfirmRow(null);
+    if (row) {
+      void handleExcludeReviewRow(row);
     }
   };
 
@@ -1721,10 +1744,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           rows can be processed into the Health Plan after you
                           save. Use{' '}
                           <span className="font-medium text-Primary-DeepTeal">
-                            Exclude
+                            Exclude (all patients)
                           </span>{' '}
-                          to move biomarkers off the list instead of deleting
-                          them.
+                          only for labels you never want again — it hides that
+                          name clinic-wide on every future upload. Restore from
+                          Custom Biomarkers → Excluded Biomarkers.
                         </>
                       ) : (
                         <>
@@ -1846,7 +1870,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             }}
                             excludedReason={excludedMetaEntry?.reason}
                             excludedAt={excludedMetaEntry?.excludedAt}
-                            onExcludeReview={() => handleExcludeReviewRow(b)}
+                            onExcludeReview={() => requestExcludeReviewRow(b)}
                             onRestoreExcluded={() =>
                               handleRestoreExcludedRow(b)
                             }
@@ -2025,6 +2049,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           }}
         />
       )}
+
+      <ConfirmModal
+        isOpen={Boolean(excludeConfirmRow)}
+        onClose={() => setExcludeConfirmRow(null)}
+        onConfirm={confirmExcludeReviewRow}
+        heading="Exclude for entire clinic"
+        message={`Exclude "${resolveExcludeDisplayName(excludeConfirmRow)}" for this entire clinic? It will be hidden from every future lab report for every patient until you restore it from Custom Biomarkers → Excluded Biomarkers.`}
+        confirmText="Exclude for clinic"
+        cancelText="Cancel"
+      />
     </>
   );
 };
