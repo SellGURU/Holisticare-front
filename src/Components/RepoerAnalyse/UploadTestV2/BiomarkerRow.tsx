@@ -219,12 +219,19 @@ export default function BiomarkerRow({
   );
   const isErrorHandled = Boolean(isHaveError && biomarker.review_error_handled);
   const normalizedErrorText = String(errorText || '').toLowerCase();
+  // Prefer structured review reasons. Do not treat value_mismatch copy that
+  // merely mentions unit "mg/dL" as a unit-field error.
   const isExtractedUnitError = Boolean(
     !isTextValueWithoutUnit &&
       biomarker.biomarker &&
-      (hasUnitError ||
-        normalizedErrorText.includes('unit') ||
-        normalizedErrorText.includes('cannot be provided')),
+      (reviewReason === 'unit_required' ||
+        reviewReason === 'unit_mismatch' ||
+        hasUnitError ||
+        (normalizedErrorText.includes('extracted unit') &&
+          !normalizedErrorText.includes('must be a text value') &&
+          !normalizedErrorText.includes('must be a number')) ||
+        (normalizedErrorText.includes('cannot be provided') &&
+          !normalizedErrorText.includes('must be a text value'))),
   );
   const isUnitRequiredError = reviewReason === 'unit_required';
   const isUnitMismatchError = reviewReason === 'unit_mismatch';

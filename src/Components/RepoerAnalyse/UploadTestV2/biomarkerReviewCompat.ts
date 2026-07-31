@@ -322,16 +322,29 @@ export const buildBiomarkerTypeChangePatch = (
   const prevMode = resolveValueInputMode(row);
   const nextRow = { ...row, biomarker_type: nextType };
   const nextMode = resolveValueInputMode(nextRow);
-  if (prevMode === nextMode) return patch;
 
-  const currentValue = preferNonEmpty(row.original_value, row.value);
   const catalogEntry =
     catalog?.length && trim(nextRow?.biomarker)
       ? pickCatalogEntryForRow(catalog, nextRow)
       : null;
-  if (!isValueValidForInputMode(currentValue, nextMode, catalogEntry)) {
-    patch.original_value = '';
-    patch.value = '';
+
+  // Rematch unit when switching into a qualitative empty-unit catalog (urine dipstick),
+  // or when the row has no unit and the new type has a catalog default.
+  const nextDefaultUnit = trim(catalogEntry?.unit);
+  const currentUnit = trim(preferNonEmpty(row.original_unit, row.unit));
+  if (catalogEntry && nextMode === 'text' && currentUnit && !nextDefaultUnit) {
+    patch.original_unit = '';
+    patch.unit = '';
+  } else if (catalogEntry && nextMode !== 'text' && !currentUnit && nextDefaultUnit) {
+    patch.original_unit = nextDefaultUnit;
+  }
+
+  if (prevMode !== nextMode) {
+    const currentValue = preferNonEmpty(row.original_value, row.value);
+    if (!isValueValidForInputMode(currentValue, nextMode, catalogEntry)) {
+      patch.original_value = '';
+      patch.value = '';
+    }
   }
   return patch;
 };
@@ -342,6 +355,8 @@ export const isBiomarkerTypeChangePatch = (patch: Record<string, unknown>) => {
   return keys.every(
     (key) =>
       key === 'biomarker_type' ||
+      key === 'original_unit' ||
+      key === 'unit' ||
       (key === 'original_value' && trim(patch.original_value) === '') ||
       (key === 'value' && trim(patch.value) === ''),
   );
