@@ -191,7 +191,10 @@ const SuppressedBiomarkersSection = () => {
                   key={key}
                   className="grid min-w-[780px] grid-cols-[1.4fr_1fr_90px_1.1fr_100px] gap-2 border-b border-Gray-50 px-4 py-2.5 text-[11px] text-Text-Primary last:border-b-0"
                 >
-                  <span className="truncate font-medium" title={item.extracted_name}>
+                  <span
+                    className="truncate font-medium"
+                    title={item.extracted_name}
+                  >
                     {item.extracted_name || '—'}
                   </span>
                   <span
@@ -237,7 +240,9 @@ const SuppressedBiomarkersSection = () => {
         heading="Restore excluded biomarker"
         message={`Restore "${pendingRestore?.extracted_name || 'this biomarker'}" for this clinic? It will appear again in future lab report reviews.`}
         confirmText={
-          restoringId && pendingRestore && restoringId === itemKey(pendingRestore)
+          restoringId &&
+          pendingRestore &&
+          restoringId === itemKey(pendingRestore)
             ? 'Restoring...'
             : 'Restore'
         }
