@@ -108,4 +108,69 @@ test.describe('Portal cleanup smoke (offline mocks)', () => {
     await expect(page.getByText('Questionnaire').first()).toBeVisible();
     await expect(page.getByText('Check-in').first()).toBeVisible();
   });
+
+  test('P6: settings shell renders', async ({ page }) => {
+    await loginAsCoach(page);
+    await expect(page.getByText(FIXTURE_PATIENT.name).first()).toBeVisible({
+      timeout: 20_000,
+    });
+
+    await page.goto('/setting');
+    await expect(page.getByText('Setting').first()).toBeVisible({
+      timeout: 20_000,
+    });
+    await expect(page.getByText('Clinic Preferences').first()).toBeVisible();
+  });
+
+  test('P7: logout clears session and returns to login', async ({ page }) => {
+    await loginAsCoach(page);
+    await expect(page.getByText(FIXTURE_PATIENT.name).first()).toBeVisible({
+      timeout: 20_000,
+    });
+
+    // Seed brand so top-bar renders a clickable clinic control (not BeatLoader).
+    await page.evaluate(() => {
+      localStorage.setItem(
+        'brandInfoData',
+        JSON.stringify({
+          name: 'Cleanup Clinic',
+          selectedImage: '/icons/topbar-logo2.svg',
+          headLine: 'Cleanup fixture brand',
+        }),
+      );
+    });
+    await page.reload();
+    await expect(page.getByText(FIXTURE_PATIENT.name).first()).toBeVisible({
+      timeout: 20_000,
+    });
+
+    await page
+      .locator('div.TextStyle-Body-2.cursor-pointer')
+      .filter({ hasText: 'Cleanup Clinic' })
+      .last()
+      .click();
+    const logOut = page.getByText('Log out', { exact: true }).last();
+    await expect(logOut).toBeAttached({ timeout: 10_000 });
+    await logOut.click({ force: true });
+    await expect(page).toHaveURL(/\/login/, { timeout: 20_000 });
+    await expect(page.locator('#login-form').first()).toBeVisible();
+  });
+
+  test('P8: action-plan route shell loads for fixture patient', async ({
+    page,
+  }) => {
+    await loginAsCoach(page);
+    await expect(page.getByText(FIXTURE_PATIENT.name).first()).toBeVisible({
+      timeout: 20_000,
+    });
+
+    await page.goto(
+      `/report/Generate-Action-Plan/${FIXTURE_PATIENT.member_id}`,
+    );
+    // Shell assertion: authenticated app did not bounce to login.
+    await expect(page).not.toHaveURL(/\/login/);
+    await expect(page).toHaveURL(
+      new RegExp(`/report/Generate-Action-Plan/${FIXTURE_PATIENT.member_id}`),
+    );
+  });
 });

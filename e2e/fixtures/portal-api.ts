@@ -154,6 +154,28 @@ async function handleApi(route: Route) {
     });
   }
 
+  if (
+    path.includes('show_brand') ||
+    path.includes('settings_show_logo') ||
+    path.includes('show_logo')
+  ) {
+    return json(route, {
+      auto_copmile: false,
+      brand_elements: {
+        logo: '/icons/topbar-logo2.svg',
+        name: 'Cleanup Clinic',
+        headline: 'Cleanup fixture brand',
+        clinic_plan: 'paying',
+        clinic_status: 'active',
+        knowledge_playground: false,
+      },
+    });
+  }
+
+  if (path.includes('/auth/logout') || path.includes('/logout')) {
+    return json(route, { ok: true });
+  }
+
   // Deterministic default for other local API calls used by shells.
   if (method === 'GET') {
     return json(route, {});
