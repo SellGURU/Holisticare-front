@@ -292,24 +292,6 @@ export const groupErrorsByTaskKey = (
   }, {});
 };
 
-export const buildValidationSummary = (
-  errors: TaskValidationError[],
-): string => {
-  if (errors.length === 0) return '';
-
-  const uniqueTitles = Array.from(
-    new Set(errors.map((e) => e.taskTitle).filter(Boolean)),
-  );
-
-  if (uniqueTitles.length === 1) {
-    const first = errors[0];
-    return `${uniqueTitles[0]}: ${first.message.toLowerCase()} (${first.fixHint})`;
-  }
-
-  const count = uniqueTitles.length || errors.length;
-  return `${count} item${count === 1 ? '' : 's'} need attention before saving. Scroll to highlighted cards and click Edit to fix them.`;
-};
-
 export const scrollToFirstTaskError = (errors: TaskValidationError[]) => {
   const first = errors.find((e) => e.taskKey);
   if (!first?.taskKey) return;

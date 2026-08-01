@@ -65,7 +65,7 @@ export const getClinicWorkspaceRecord = (
   );
 };
 
-export const saveClinicWorkspaceRecord = (record: ClinicWorkspaceRecord) => {
+const saveClinicWorkspaceRecord = (record: ClinicWorkspaceRecord) => {
   const records = readWorkspaceRecords();
   records[record.clinicEmail] = {
     ...record,

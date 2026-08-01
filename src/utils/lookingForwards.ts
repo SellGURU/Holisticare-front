@@ -97,13 +97,6 @@ export function forApiPayload(data: unknown): KeyAreasType2 {
   return toType2(data);
 }
 
-/** For coverage list: [{ "Issue 1: ...": false }, ...]. */
-export function toCoverageDetails(
-  type2: KeyAreasType2,
-): Record<string, boolean>[] {
-  return type2ToFlatList(type2).map((issue) => ({ [issue]: false }));
-}
-
 /** Extract a map of issue text → category key from a type2 structure. */
 export function extractCategoryMap(
   type2: KeyAreasType2,

@@ -1,4 +1,4 @@
-export const DESCRIPTION_DEBUG =
+const DESCRIPTION_DEBUG =
   import.meta.env.DEV && import.meta.env.VITE_DESCRIPTION_DEBUG === '1';
 
 export function logDescriptionRender(

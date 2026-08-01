@@ -83,12 +83,6 @@ export const scoreToTone = (score: number | null | undefined) => {
   return 'Low';
 };
 
-export const deltaLabel = (value: number | null | undefined) => {
-  if (value == null) return 'No comparison';
-  if (value === 0) return 'No change';
-  return `${value > 0 ? '+' : ''}${value.toFixed(1)} vs previous`;
-};
-
 export const sourceLabel = (source: string | null | undefined) => {
   if (source === 'rook') return 'Wearable';
   if (source === 'calculated') return 'Compiled scores';

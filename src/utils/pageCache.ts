@@ -6,7 +6,7 @@ type CacheEntry<T> = {
 const store = new Map<string, CacheEntry<unknown>>();
 const inFlight = new Map<string, Promise<unknown>>();
 
-export const DEFAULT_TTL_MS = 5 * 60 * 1000;
+const DEFAULT_TTL_MS = 5 * 60 * 1000;
 
 const revalidateInBackground = <T>(
   key: string,

@@ -2,7 +2,7 @@
 export const isAsyncProcessingEnabled = (): boolean =>
   import.meta.env.VITE_ENABLE_ASYNC_PROCESSING === 'true';
 
-export const labJobSessionKey = (memberId: string | number): string =>
+const labJobSessionKey = (memberId: string | number): string =>
   `lab_job_id_${memberId}`;
 
 export const persistLabJobId = (
