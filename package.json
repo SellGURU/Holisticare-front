@@ -9,6 +9,8 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "yarn format",
     "test:unit": "vitest run",
+    "test:e2e:cleanup": "playwright test e2e/cleanup-smoke.spec.ts",
+    "cleanup:verify:web": "yarn test:e2e:cleanup",
     "test:description-phase": "npx tsx scripts/run-description-phase-tests.ts",
     "test:merge-category": "npx tsx scripts/run-merge-category-tests.ts",
     "test:category-ring": "npx tsx scripts/run-category-ring-loading-tests.ts",
@@ -72,14 +74,12 @@
     "sigma": "^3.0.0-beta.26",
     "symphony-ui": "^1.0.16",
     "tailwind-merge": "^3.3.1",
-    "tanstack": "^1.0.0",
     "uuid": "^13.0.0",
-    "yop": "^0.0.0",
     "yup": "^1.6.1"
   },
   "devDependencies": {
-    "axios-mock-adapter": "^1.22.0",
     "@eslint/js": "^9.18.0",
+    "@playwright/test": "^1.54.2",
     "@types/node": "^22.13.10",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
@@ -87,6 +87,7 @@
     "@typescript-eslint/parser": "^8.20.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "axios-mock-adapter": "^1.22.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
@@ -101,7 +102,7 @@
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.20.0",
     "vite": "^6.0.1",
-    "vitest": "^3.2.4",
-    "vite-plugin-pwa": "^0.21.1"
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^3.2.4"
   }
 }
