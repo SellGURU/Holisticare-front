@@ -73,8 +73,7 @@ function sanitizeThresholdRange(range: any) {
     color = STATUS_COLORS[status] || STATUS_COLORS.OptimalRange;
   }
 
-  let low =
-    range?.low === '' || range?.low === undefined ? null : range?.low;
+  let low = range?.low === '' || range?.low === undefined ? null : range?.low;
   let high =
     range?.high === '' || range?.high === undefined ? null : range?.high;
 

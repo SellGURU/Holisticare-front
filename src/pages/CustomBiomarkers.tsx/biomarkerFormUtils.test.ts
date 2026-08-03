@@ -50,8 +50,8 @@ describe('prepareBiomarkerForApi', () => {
     expect(maleRanges?.[0].status).toBe('OptimalRange');
     expect(maleRanges?.[0].low).toBe(0);
     expect(maleRanges?.[0].high).toBe(100);
-    expect(Object.keys(payload.thresholds?.female || {}).length).toBeGreaterThan(
-      0,
-    );
+    expect(
+      Object.keys(payload.thresholds?.female || {}).length,
+    ).toBeGreaterThan(0);
   });
 });
