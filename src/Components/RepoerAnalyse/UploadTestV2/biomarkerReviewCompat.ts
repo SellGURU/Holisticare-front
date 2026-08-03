@@ -1215,7 +1215,11 @@ export const suppressedItemMatchesRow = (
   // Only compare system names when both sides have a real biomarker name.
   // Empty system biomarkers used to collapse to `|blood` and match every unmatched blood row.
   if (rowSystemKey && rowSystemKey === itemKey) return true;
-  if (itemSystemKey && isValidSuppressionKey(rowKey) && rowKey === itemSystemKey)
+  if (
+    itemSystemKey &&
+    isValidSuppressionKey(rowKey) &&
+    rowKey === itemSystemKey
+  )
     return true;
   if (rowSystemKey && itemSystemKey && rowSystemKey === itemSystemKey)
     return true;

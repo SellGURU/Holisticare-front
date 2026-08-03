@@ -734,7 +734,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       }
       return suppressedItemMatchesRow(item, row);
     };
-    setSuppressedItems((prev) => prev.filter((item) => !shouldRemoveItem(item)));
+    setSuppressedItems((prev) =>
+      prev.filter((item) => !shouldRemoveItem(item)),
+    );
     setRawSuppressedItems((prev) =>
       prev.filter((item) => !shouldRemoveItem(item)),
     );
@@ -1496,7 +1498,10 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       } catch (bulkErr) {
         // Fall back to the proven single-exclude endpoint (works even if
         // bulk route is missing / backend not restarted / bulk fails).
-        console.warn('Bulk exclude failed, falling back to single excludes', bulkErr);
+        console.warn(
+          'Bulk exclude failed, falling back to single excludes',
+          bulkErr,
+        );
         for (const item of items) {
           await Application.suppressBiomarker(item);
         }
@@ -1507,9 +1512,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     } catch (err: any) {
       console.error('Exclude all failed:', err);
       const detail =
-        err?.response?.data?.detail ||
-        err?.message ||
-        'Please try again.';
+        err?.response?.data?.detail || err?.message || 'Please try again.';
       showError(
         'Could not exclude biomarkers',
         typeof detail === 'string' ? detail : 'Please try again.',

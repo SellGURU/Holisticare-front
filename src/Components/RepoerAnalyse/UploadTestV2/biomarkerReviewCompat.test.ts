@@ -411,7 +411,12 @@ describe('categorizeReviewRow restored_from_excluded', () => {
 describe('filterSuppressedItemsForCurrentLab', () => {
   it('keeps only suppressions that match biomarkers in the current lab file', () => {
     const items = [
-      { id: 1, extracted_name: 'ldl', biomarker_type: 'blood', scope: 'clinic' },
+      {
+        id: 1,
+        extracted_name: 'ldl',
+        biomarker_type: 'blood',
+        scope: 'clinic',
+      },
       {
         id: 2,
         extracted_name: 'not-in-file',
