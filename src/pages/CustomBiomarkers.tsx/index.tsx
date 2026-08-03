@@ -20,6 +20,7 @@ import MappingsModal from './MappingsModal';
 import SuppressedBiomarkersSection from './SuppressedBiomarkersSection';
 import useIsDemo from '../../hooks/useIsDemo';
 
+import { prepareBiomarkerForApi } from './biomarkerFormUtils';
 import DefaultData from './default.json';
 import {
   migrateLegacyMappingsForDuplicates,
@@ -386,18 +387,31 @@ const CustomBiomarkers = () => {
 
   const onsave = (values: any) => {
     setLoading(true);
-    BiomarkersApi.addBiomarkersList({ new_biomarker: values })
+    const new_biomarker = prepareBiomarkerForApi(values, 'add');
+    BiomarkersApi.addBiomarkersList({ new_biomarker })
       .then(() => {
         closeModalAdd();
         getBiomarkers({ force: true });
       })
       .catch((error) => {
-        setErrorDetails(
+        const rawDetail =
           error?.response?.data?.detail ||
-            error?.detail ||
-            error?.message ||
-            'Unable to add biomarker.',
-        );
+          error?.detail ||
+          error?.message ||
+          'Unable to add biomarker.';
+        const detail =
+          typeof rawDetail === 'string'
+            ? rawDetail
+            : Array.isArray(rawDetail)
+              ? rawDetail
+                  .map((item) =>
+                    typeof item === 'string'
+                      ? item
+                      : item?.msg || JSON.stringify(item),
+                  )
+                  .join(' ')
+              : JSON.stringify(rawDetail);
+        setErrorDetails(detail);
       })
       .finally(() => {
         setLoading(false);

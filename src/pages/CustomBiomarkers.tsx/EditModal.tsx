@@ -6,7 +6,10 @@ import { isFormDirty } from '../../hooks/useFormDirty';
 import { useRegisterModalDirtyChecker } from '../../hooks/useRegisterModalDirtyChecker';
 import { ApiBiomarkerData } from '../../types/biormarker';
 import BenchmarkAreaSelect from '../../Components/BenchmarkAreaSelect';
-import { normalizeBiomarkerDraft } from './biomarkerFormUtils';
+import {
+  normalizeBiomarkerDraft,
+  prepareBiomarkerForApi,
+} from './biomarkerFormUtils';
 import {
   findCatalogNameTypeDuplicate,
   normalizeBiomarkerType,
@@ -318,10 +321,15 @@ const EditModal: FC<EditModalProps> = ({
       );
       return;
     }
-    onSave({
-      ...draft,
-      biomarker_uid: excludeUid,
-    });
+    onSave(
+      prepareBiomarkerForApi(
+        {
+          ...draft,
+          biomarker_uid: excludeUid,
+        },
+        'edit',
+      ),
+    );
   };
 
   const renderThresholdGender = (gender: 'male' | 'female') => {

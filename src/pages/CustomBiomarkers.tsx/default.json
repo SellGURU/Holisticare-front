@@ -4,27 +4,7 @@
   "Definition": "",
   "unit": "",
   "thresholds": {
-    "male": {
-      "18-100": [
-        {
-          "label": "",
-          "status": "",
-          "low": null,
-          "high": null,
-          "color": ""
-        }
-      ]
-    },
-    "female": {
-      "18-100": [
-        {
-          "label": "",
-          "status": "",
-          "low": null,
-          "high": null,
-          "color": ""
-        }
-      ]
-    }
+    "male": {},
+    "female": {}
   }
 }

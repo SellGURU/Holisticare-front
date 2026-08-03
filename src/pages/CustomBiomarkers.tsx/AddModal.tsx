@@ -9,6 +9,7 @@ import BenchmarkAreaSelect from '../../Components/BenchmarkAreaSelect';
 import {
   buildAddModalInitialDraft,
   normalizeBiomarkerDraft,
+  prepareBiomarkerForApi,
 } from './biomarkerFormUtils';
 import {
   findCatalogNameTypeDuplicate,
@@ -310,7 +311,7 @@ const AddModal: FC<AddModalProps> = ({
       );
       return;
     }
-    onSave(draft);
+    onSave(prepareBiomarkerForApi(draft, 'add'));
   };
 
   const renderThresholdGender = (gender: 'male' | 'female') => {

@@ -5,6 +5,7 @@ import Application from '../../../api/app';
 import BiomarkersApi from '../../../api/Biomarkers';
 import BenchmarkAreaSelect from '../../BenchmarkAreaSelect';
 import { findCatalogBiomarkerDuplicate } from './biomarkerReviewCompat';
+import { prepareBiomarkerForApi } from '../../../pages/CustomBiomarkers.tsx/biomarkerFormUtils';
 
 interface Props {
   extractedName: string;
@@ -422,7 +423,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
     setSaving(true);
     try {
       await BiomarkersApi.addBiomarkersList({
-        new_biomarker: draft,
+        new_biomarker: prepareBiomarkerForApi(draft, 'add'),
         name_variations: nameVariations,
       });
       onCreated(draft.Biomarker);
