@@ -17,7 +17,6 @@ import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
 import ChartModal from './ChartModal';
 import MappingsModal from './MappingsModal';
-import SuppressedBiomarkersSection from './SuppressedBiomarkersSection';
 import useIsDemo from '../../hooks/useIsDemo';
 
 import { prepareBiomarkerForApi } from './biomarkerFormUtils';
@@ -499,7 +498,6 @@ const CustomBiomarkers = () => {
         </div>
       ) : (
         <div className="min-h-full w-full px-2 pt-[150px] pb-8 md:px-6">
-          <SuppressedBiomarkersSection />
           <div className="overflow-hidden rounded-2xl border border-Gray-50 bg-white shadow-100">
             <div className="overflow-x-auto">
               <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_156px] gap-3 border-b border-Gray-50 bg-gray-50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-Text-Secondary">

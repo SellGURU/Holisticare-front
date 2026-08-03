@@ -1752,7 +1752,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           </span>{' '}
                           only for labels you never want again — it hides that
                           name clinic-wide on every future upload. Restore from
-                          Custom Biomarkers → Excluded Biomarkers.
+                          the Excluded list in lab upload review.
                         </>
                       ) : (
                         <>
@@ -2060,7 +2060,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           onClose={() => setExcludeConfirmRow(null)}
           onConfirm={confirmExcludeReviewRow}
           heading="Exclude for entire clinic"
-          message={`Exclude "${resolveExcludeDisplayName(excludeConfirmRow)}" for this entire clinic? It will be hidden from every future lab report for every patient until you restore it from Custom Biomarkers → Excluded Biomarkers.`}
+          message={`Exclude "${resolveExcludeDisplayName(excludeConfirmRow)}" for this entire clinic? It will be hidden from every future lab report for every patient until you restore it from the Excluded list in lab upload review.`}
           confirmText="Exclude for clinic"
           cancelText="Cancel"
         />

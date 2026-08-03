@@ -4,6 +4,7 @@ import {
   AiKnowledge,
   SignUp,
   HtmlViewer,
+  PatientResourceViewer,
   Playground,
   Messages,
   Setting,
@@ -298,6 +299,10 @@ const router = createBrowserRouter([
   {
     path: '/surveys-view/:member-id/:q-id/:f-id',
     element: <SurveyResponsesPage></SurveyResponsesPage>,
+  },
+  {
+    path: '/patient-resource',
+    element: <PatientResourceViewer />,
   },
   {
     path: '/html-previewer/:id',

@@ -15,6 +15,7 @@ import ForgetPassword from './forgetPassword';
 import Messages from './messages';
 import Setting from './settings';
 import HtmlViewer from './HtmlViewer';
+import PatientResourceViewer from './PatientResourceViewer';
 import Playground from './playground';
 import { GenerateRecommendation } from './generateRecommendation';
 
@@ -24,6 +25,7 @@ export {
   Messages,
   Setting,
   HtmlViewer,
+  PatientResourceViewer,
   Playground,
   ForgetPassword,
   AiKnowledge,
