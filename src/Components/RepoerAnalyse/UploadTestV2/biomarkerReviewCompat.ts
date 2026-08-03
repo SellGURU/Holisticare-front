@@ -19,17 +19,25 @@ export const normalizeBiomarkerNameForMatch = (value: unknown) =>
     .replace(/\bhba1c\b/g, 'hb a1c')
     .replace(/\ba1c\b/g, 'a1c');
 
+/** True when key has a non-empty name part (rejects shared empties like `|blood`). */
+export const isValidSuppressionKey = (key: string) => {
+  const pipe = key.indexOf('|');
+  if (pipe <= 0) return false;
+  return Boolean(key.slice(0, pipe).trim());
+};
+
 /** All suppression-set keys that can mark a row as excluded (extracted + system). */
 export const buildSuppressionKeysForRow = (row: any): string[] => {
   const keys = new Set<string>();
   const extractedKey = buildSuppressedRowKey(row);
-  if (extractedKey && extractedKey !== '|') {
+  if (isValidSuppressionKey(extractedKey)) {
     keys.add(extractedKey);
   }
   const type = normalizeKey(inferRowBiomarkerType(row));
-  const systemKey = `${normalizeBiomarkerNameForMatch(row?.biomarker)}|${type}`;
-  if (systemKey !== '|') {
-    keys.add(systemKey);
+  const systemName = normalizeBiomarkerNameForMatch(row?.biomarker);
+  // Never add empty-name keys like `|blood` — they collide across all unmatched rows.
+  if (systemName) {
+    keys.add(`${systemName}|${type}`);
   }
   return [...keys];
 };
@@ -705,12 +713,11 @@ export const buildSuppressedRowKey = (row: any) => {
 
 export const isRowSuppressed = (row: any, suppressedSet: Set<string>) => {
   const key = buildSuppressedRowKey(row);
-  if (!key || key === '|') return false;
-  const systemKey = `${normalizeBiomarkerNameForMatch(row?.biomarker)}|${normalizeKey(inferRowBiomarkerType(row))}`;
-  return (
-    suppressedSet.has(key) ||
-    (systemKey !== '|' && suppressedSet.has(systemKey))
-  );
+  if (isValidSuppressionKey(key) && suppressedSet.has(key)) return true;
+  const systemName = normalizeBiomarkerNameForMatch(row?.biomarker);
+  if (!systemName) return false;
+  const systemKey = `${systemName}|${normalizeKey(inferRowBiomarkerType(row))}`;
+  return suppressedSet.has(systemKey);
 };
 
 export const isManuallySuppressedRow = isRowSuppressed;
@@ -867,6 +874,12 @@ export const categorizeReviewRow = (
     return { category: 'review', reviewReason: 'missing_value' };
   }
 
+  // After restore from Excluded, keep the row in Need review so staff re-check
+  // before it is treated as ready-to-save again.
+  if (userRestored) {
+    return { category: 'review', reviewReason: 'unmatched' };
+  }
+
   return { category: 'ready' };
 };
 
@@ -892,7 +905,9 @@ export const clearedSkipMetadataAfterValidStandardize = () =>
 /** Patch applied when user restores an auto- or manually-excluded row back into review. */
 export const buildLocalRestorePatchForExcludedRow = () =>
   ({
-    ...clearedSkipMetadataAfterValidStandardize(),
+    skip_reason: null,
+    suggest_delete: false,
+    validation_status: 'review',
     restored_from_excluded: true,
   }) as const;
 
@@ -1135,6 +1150,8 @@ export type SuppressedBiomarkerItem = {
   biomarker_type?: string;
   reason?: string | null;
   excluded_at?: string | null;
+  scope?: 'clinic' | 'file' | string | null;
+  file_id?: string | null;
 };
 
 export const formatSuppressionReason = (reason?: string | null) => {
@@ -1185,20 +1202,32 @@ export const suppressedItemMatchesRow = (
   if (!extractedKey) return false;
   const itemKey = `${extractedKey}|${type}`;
   const rowKey = buildSuppressedRowKey(row);
-  if (rowKey === itemKey) return true;
-  const rowSystemKey = `${normalizeBiomarkerNameForMatch(row?.biomarker)}|${normalizeKey(inferRowBiomarkerType(row))}`;
-  const itemSystemKey = `${normalizeBiomarkerNameForMatch(item?.system_biomarker || '')}|${type}`;
-  return (
-    rowSystemKey === itemKey ||
-    rowKey === itemSystemKey ||
-    (itemSystemKey !== '|' && rowSystemKey === itemSystemKey)
+  if (isValidSuppressionKey(rowKey) && rowKey === itemKey) return true;
+
+  const rowSystemName = normalizeBiomarkerNameForMatch(row?.biomarker);
+  const itemSystemName = normalizeBiomarkerNameForMatch(
+    item?.system_biomarker || '',
   );
+  const rowType = normalizeKey(inferRowBiomarkerType(row));
+  const rowSystemKey = rowSystemName ? `${rowSystemName}|${rowType}` : '';
+  const itemSystemKey = itemSystemName ? `${itemSystemName}|${type}` : '';
+
+  // Only compare system names when both sides have a real biomarker name.
+  // Empty system biomarkers used to collapse to `|blood` and match every unmatched blood row.
+  if (rowSystemKey && rowSystemKey === itemKey) return true;
+  if (itemSystemKey && isValidSuppressionKey(rowKey) && rowKey === itemSystemKey)
+    return true;
+  if (rowSystemKey && itemSystemKey && rowSystemKey === itemSystemKey)
+    return true;
+  return false;
 };
 
 export type UnsuppressBiomarkerRequest = {
   id?: number;
   extracted_name: string;
   biomarker_type?: string;
+  scope?: 'clinic' | 'file';
+  file_id?: string | null;
 };
 
 /** Payload for unsuppress API — prefer stored suppression record over re-inferred row fields. */
@@ -1206,6 +1235,8 @@ export const buildUnsuppressPayloadFromRow = (
   row: any,
   matchedItem?: SuppressedBiomarkerItem | null,
 ): UnsuppressBiomarkerRequest => {
+  const scope =
+    matchedItem?.scope === 'file' ? ('file' as const) : ('clinic' as const);
   const payload: UnsuppressBiomarkerRequest = {
     extracted_name:
       matchedItem?.extracted_name ||
@@ -1214,11 +1245,44 @@ export const buildUnsuppressPayloadFromRow = (
       row.biomarker ||
       '',
     biomarker_type: matchedItem?.biomarker_type || inferRowBiomarkerType(row),
+    scope,
+    file_id: matchedItem?.file_id || null,
   };
   if (matchedItem?.id != null) {
     payload.id = matchedItem.id;
   }
   return payload;
+};
+
+/** Keep clinic exclusions + file exclusions for the active lab file only. */
+export const filterSuppressedItemsForSession = (
+  items: SuppressedBiomarkerItem[],
+  sessionFileId?: string | null,
+) =>
+  (items || []).filter((item) => {
+    const scope = String(item?.scope || 'clinic').toLowerCase();
+    if (scope !== 'file') return true;
+    if (!sessionFileId) return false;
+    return String(item?.file_id || '') === String(sessionFileId);
+  });
+
+/**
+ * Only suppressions that match a biomarker row in the current lab file.
+ * Clinic-wide exclusions for names not present in this upload stay in the DB
+ * but must not clutter this file's Excluded list.
+ */
+export const filterSuppressedItemsForCurrentLab = (
+  items: SuppressedBiomarkerItem[],
+  biomarkers: any[],
+  sessionFileId?: string | null,
+) => {
+  const scoped = filterSuppressedItemsForSession(items, sessionFileId);
+  if (!Array.isArray(biomarkers) || biomarkers.length === 0) {
+    return [];
+  }
+  return scoped.filter((item) =>
+    biomarkers.some((row) => suppressedItemMatchesRow(item, row)),
+  );
 };
 
 export const buildRowFromSuppressedItem = (item: SuppressedBiomarkerItem) => {

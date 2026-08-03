@@ -6,7 +6,11 @@ import {
   buildUnsuppressPayloadFromRow,
   buildLocalRestorePatchForExcludedRow,
   categorizeReviewRow,
+  filterSuppressedItemsForCurrentLab,
   findSuppressedItemForRow,
+  buildSuppressionKeysForRow,
+  isRowSuppressed,
+  suppressedItemMatchesRow,
   clearedSkipMetadataAfterValidStandardize,
   collectCatalogUnitsForBiomarker,
   formatUnitMismatchUserMessage,
@@ -304,6 +308,8 @@ describe('buildUnsuppressPayloadFromRow', () => {
       id: 42,
       extracted_name: 'Some Marker',
       biomarker_type: 'blood',
+      scope: 'clinic',
+      file_id: null,
     });
   });
 
@@ -317,6 +323,25 @@ describe('buildUnsuppressPayloadFromRow', () => {
     expect(buildUnsuppressPayloadFromRow(row, null)).toEqual({
       extracted_name: 'Protein Urine',
       biomarker_type: 'urine',
+      scope: 'clinic',
+      file_id: null,
+    });
+  });
+
+  it('preserves file scope from matched suppression item', () => {
+    const matchedItem = {
+      id: 9,
+      extracted_name: 'LDL',
+      biomarker_type: 'blood',
+      scope: 'file',
+      file_id: 'abc-123',
+    };
+    expect(buildUnsuppressPayloadFromRow({}, matchedItem)).toEqual({
+      id: 9,
+      extracted_name: 'LDL',
+      biomarker_type: 'blood',
+      scope: 'file',
+      file_id: 'abc-123',
     });
   });
 });
@@ -340,11 +365,11 @@ describe('findSuppressedItemForRow', () => {
 });
 
 describe('buildLocalRestorePatchForExcludedRow', () => {
-  it('clears skip metadata and marks row as user restored', () => {
+  it('clears skip metadata and marks row as user restored into need review', () => {
     expect(buildLocalRestorePatchForExcludedRow()).toEqual({
       skip_reason: null,
       suggest_delete: false,
-      validation_status: 'ready',
+      validation_status: 'review',
       restored_from_excluded: true,
     });
   });
@@ -364,6 +389,109 @@ describe('categorizeReviewRow restored_from_excluded', () => {
       category: 'review',
       reviewReason: 'unmatched',
     });
+  });
+
+  it('returns review instead of ready for previously ready rows after restore', () => {
+    const row = {
+      biomarker: 'LDL',
+      original_biomarker_name: 'LDL',
+      original_value: '100',
+      original_unit: 'mg/dL',
+      validation_status: 'review',
+      restored_from_excluded: true,
+    };
+
+    expect(categorizeReviewRow(row, {}, new Set(), 0)).toEqual({
+      category: 'review',
+      reviewReason: 'unmatched',
+    });
+  });
+});
+
+describe('filterSuppressedItemsForCurrentLab', () => {
+  it('keeps only suppressions that match biomarkers in the current lab file', () => {
+    const items = [
+      { id: 1, extracted_name: 'ldl', biomarker_type: 'blood', scope: 'clinic' },
+      {
+        id: 2,
+        extracted_name: 'not-in-file',
+        biomarker_type: 'blood',
+        scope: 'clinic',
+      },
+      {
+        id: 3,
+        extracted_name: 'glucose',
+        biomarker_type: 'blood',
+        scope: 'file',
+        file_id: 'file-a',
+      },
+    ];
+    const biomarkers = [
+      {
+        original_biomarker_name: 'LDL',
+        biomarker: 'LDL',
+        biomarker_type: 'blood',
+      },
+    ];
+
+    expect(
+      filterSuppressedItemsForCurrentLab(items, biomarkers, 'file-a'),
+    ).toEqual([items[0]]);
+  });
+});
+
+describe('unmatched empty system biomarker suppression matching', () => {
+  const unmatchedA = {
+    original_biomarker_name: '1-Methylhistidine',
+    biomarker: '',
+    biomarker_type: 'blood',
+  };
+  const unmatchedB = {
+    original_biomarker_name: 'Alpha-Aminoadipic Acid',
+    biomarker: '',
+    biomarker_type: 'blood',
+  };
+  const itemA = {
+    id: 1,
+    extracted_name: '1-methylhistidine',
+    system_biomarker: null,
+    biomarker_type: 'blood',
+    scope: 'clinic' as const,
+  };
+  const itemB = {
+    id: 2,
+    extracted_name: 'alpha-aminoadipic acid',
+    system_biomarker: null,
+    biomarker_type: 'blood',
+    scope: 'clinic' as const,
+  };
+
+  it('does not build shared empty keys like |blood for unmatched rows', () => {
+    expect(buildSuppressionKeysForRow(unmatchedA)).toEqual([
+      '1-methylhistidine|blood',
+    ]);
+    expect(buildSuppressionKeysForRow(unmatchedA)).not.toContain('|blood');
+  });
+
+  it('does not treat one unmatched blood suppress as matching every unmatched blood row', () => {
+    expect(suppressedItemMatchesRow(itemA, unmatchedA)).toBe(true);
+    expect(suppressedItemMatchesRow(itemA, unmatchedB)).toBe(false);
+    expect(suppressedItemMatchesRow(itemB, unmatchedA)).toBe(false);
+  });
+
+  it('keeps other unmatched rows suppressed when only one extracted key is cleared', () => {
+    const set = new Set([
+      '1-methylhistidine|blood',
+      'alpha-aminoadipic acid|blood',
+    ]);
+    set.delete('1-methylhistidine|blood');
+    expect(isRowSuppressed(unmatchedA, set)).toBe(false);
+    expect(isRowSuppressed(unmatchedB, set)).toBe(true);
+  });
+
+  it('finds only the matching suppress record for an unmatched row', () => {
+    expect(findSuppressedItemForRow(unmatchedA, [itemA, itemB])).toEqual(itemA);
+    expect(findSuppressedItemForRow(unmatchedB, [itemA, itemB])).toEqual(itemB);
   });
 });
 

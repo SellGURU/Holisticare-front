@@ -1166,6 +1166,8 @@ class Application extends Api {
     system_biomarker?: string | null;
     biomarker_type?: string;
     reason?: string;
+    scope?: 'clinic' | 'file';
+    file_id?: string | null;
   }) => {
     return this.post('/patients/suppress_biomarker', data);
   };
@@ -1173,11 +1175,45 @@ class Application extends Api {
     id?: number;
     extracted_name: string;
     biomarker_type?: string;
+    scope?: 'clinic' | 'file';
+    file_id?: string | null;
+    reason?: string | null;
   }) => {
     return this.post('/patients/unsuppress_biomarker', data);
   };
   static listSuppressedBiomarkers = () => {
     return this.post('/patients/list_suppressed_biomarkers', {});
+  };
+  static listBiomarkerExclusionHistory = (data: {
+    extracted_name?: string;
+    biomarker_type?: string;
+    limit?: number;
+  }) => {
+    return this.post('/patients/review/biomarkers/exclusion-history', data);
+  };
+  static bulkExcludeBiomarkers = (data: {
+    items: Array<{
+      extracted_name: string;
+      system_biomarker?: string | null;
+      biomarker_type?: string;
+      reason?: string;
+      scope?: 'clinic' | 'file';
+      file_id?: string | null;
+    }>;
+    reason?: string;
+    scope?: 'clinic' | 'file';
+    file_id?: string | null;
+  }) => {
+    return this.post('/patients/review/biomarkers/bulk_exclude', data, {
+      timeout: 120000,
+    });
+  };
+  static getBiomarkerExclusionPlanImpact = (data: {
+    extracted_name: string;
+    system_biomarker?: string | null;
+    biomarker_type?: string;
+  }) => {
+    return this.post('/patients/review/biomarkers/plan_impact', data);
   };
   static getLabReviewFindings = (data: {
     file_id: string;

@@ -41,6 +41,7 @@ import {
   buildLocalRestorePatchForExcludedRow,
   buildUnsuppressPayloadFromRow,
   findSuppressedItemForRow,
+  filterSuppressedItemsForCurrentLab,
   isManuallySuppressedRow,
   mergeSuppressedRowsIntoReview,
   suppressedItemMatchesRow,
@@ -396,7 +397,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const extractionSuccessFileRef = useRef<string | null>(null);
   const [showExtractionSuccess, setShowExtractionSuccess] = useState(false);
   const [suppressedHydrated, setSuppressedHydrated] = useState(!useReviewUx);
+  const [rawSuppressedItems, setRawSuppressedItems] = useState<
+    SuppressedBiomarkerItem[]
+  >([]);
   const [excludeConfirmRow, setExcludeConfirmRow] = useState<any | null>(null);
+  const [excludeAllConfirmOpen, setExcludeAllConfirmOpen] = useState(false);
+  const [excludeAllRunning, setExcludeAllRunning] = useState(false);
 
   const commitRowMappingBaseline = (
     biomarkerId: string,
@@ -440,16 +446,29 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     }
   };
 
-  const syncSuppressedFromApi = (items: SuppressedBiomarkerItem[]) => {
+  const sessionFileId = uploadedFile?.file_id;
+
+  const applySuppressedItemsForCurrentLab = (
+    items: SuppressedBiomarkerItem[],
+    labRows: any[] = biomarkers,
+  ) => {
+    const scoped = filterSuppressedItemsForCurrentLab(
+      items,
+      labRows,
+      sessionFileId,
+    );
     const { suppressedSet: nextSet, suppressedMeta: nextMeta } =
-      buildSuppressedStateFromItems(items, formatExcludedDate);
-    setSuppressedItems(items || []);
+      buildSuppressedStateFromItems(scoped, formatExcludedDate);
+    setSuppressedItems(scoped);
     setSuppressedSet(nextSet);
     setSuppressedMeta(nextMeta);
     onSuppressedSetChange?.(nextSet);
   };
 
-  const sessionFileId = uploadedFile?.file_id;
+  const syncSuppressedFromApi = (items: SuppressedBiomarkerItem[]) => {
+    setRawSuppressedItems(items || []);
+    applySuppressedItemsForCurrentLab(items || [], biomarkers);
+  };
 
   useEffect(() => {
     if (
@@ -518,6 +537,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       .catch(() => {})
       .finally(() => setSuppressedHydrated(true));
   }, [useReviewUx, sessionFileId]);
+
+  // Re-scope clinic suppressions to names that exist in this lab file only.
+  useEffect(() => {
+    if (!useReviewUx) return;
+    applySuppressedItemsForCurrentLab(rawSuppressedItems, biomarkers);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional re-filter on lab rows
+  }, [useReviewUx, biomarkers, rawSuppressedItems, sessionFileId]);
 
   const reviewMetadataPending =
     useReviewUx && (reviewHydrating || !suppressedHydrated);
@@ -603,16 +629,22 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           excludedAt: formatExcludedDate(res?.data?.excluded_at),
         },
       }));
+      const nextItem = {
+        id: res?.data?.id,
+        extracted_name: extractedName,
+        system_biomarker: row.biomarker || null,
+        biomarker_type: biomarkerType,
+        reason: 'Excluded manually',
+        excluded_at: res?.data?.excluded_at,
+        scope: 'clinic' as const,
+      };
       setSuppressedItems((prev) => [
         ...prev.filter((item) => !suppressedItemMatchesRow(item, row)),
-        {
-          id: res?.data?.id,
-          extracted_name: extractedName,
-          system_biomarker: row.biomarker || null,
-          biomarker_type: biomarkerType,
-          reason: 'Excluded manually',
-          excluded_at: res?.data?.excluded_at,
-        },
+        nextItem,
+      ]);
+      setRawSuppressedItems((prev) => [
+        ...prev.filter((item) => !suppressedItemMatchesRow(item, row)),
+        nextItem,
       ]);
     } catch (err) {
       console.error('Failed to exclude biomarker:', err);
@@ -650,53 +682,127 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     );
   };
 
+  const clearLocalSuppressionForRow = (
+    row: any,
+    matchedItem?: SuppressedBiomarkerItem | null,
+  ) => {
+    const suppressionKeys = buildSuppressionKeysForRow(row);
+    if (matchedItem?.extracted_name) {
+      const type = String(
+        matchedItem.biomarker_type || inferRowBiomarkerType(row) || 'blood',
+      )
+        .trim()
+        .toLowerCase();
+      const extracted = String(matchedItem.extracted_name).trim().toLowerCase();
+      if (extracted) suppressionKeys.push(`${extracted}|${type}`);
+      const system = String(matchedItem.system_biomarker || '')
+        .trim()
+        .toLowerCase();
+      if (system) suppressionKeys.push(`${system}|${type}`);
+    }
+    setSuppressedSet((prev) => {
+      const next = new Set(prev);
+      suppressionKeys.forEach((key) => next.delete(key));
+      onSuppressedSetChange?.(next);
+      return next;
+    });
+    setSuppressedMeta((prev) => {
+      const next = { ...prev };
+      suppressionKeys.forEach((key) => {
+        delete next[key];
+      });
+      return next;
+    });
+    const shouldRemoveItem = (item: SuppressedBiomarkerItem) => {
+      if (matchedItem?.id != null && item?.id != null) {
+        return Number(item.id) === Number(matchedItem.id);
+      }
+      if (matchedItem?.extracted_name) {
+        const sameName =
+          String(item?.extracted_name || '')
+            .trim()
+            .toLowerCase() ===
+          String(matchedItem.extracted_name).trim().toLowerCase();
+        const sameType =
+          String(item?.biomarker_type || 'blood')
+            .trim()
+            .toLowerCase() ===
+          String(matchedItem.biomarker_type || 'blood')
+            .trim()
+            .toLowerCase();
+        return sameName && sameType;
+      }
+      return suppressedItemMatchesRow(item, row);
+    };
+    setSuppressedItems((prev) => prev.filter((item) => !shouldRemoveItem(item)));
+    setRawSuppressedItems((prev) =>
+      prev.filter((item) => !shouldRemoveItem(item)),
+    );
+  };
+
   const handleRestoreExcludedRow = async (row: any) => {
     if (isDemo) return;
-    markDirty(row?.biomarker_id);
-    const matchedItem = findSuppressedItemForRow(row, suppressedItems);
-    const manuallySuppressed = isManuallySuppressedRow(row, suppressedSet);
-    const suppressionKeys = buildSuppressionKeysForRow(row);
+    // Auto-skip / OCR exclusions that are not clinic suppress records:
+    // restore locally into Need review only (they belong to this lab file).
+    const matchedItem = findSuppressedItemForRow(row, [
+      ...suppressedItems,
+      ...rawSuppressedItems,
+    ]);
+    const manuallySuppressed =
+      Boolean(matchedItem) || isManuallySuppressedRow(row, suppressedSet);
 
     if (!manuallySuppressed) {
+      markDirty(row?.biomarker_id);
       applyLocalRestoreToRow(row);
       return;
     }
 
+    // Row must belong to this lab extraction — never restore orphan clinic
+    // suppressions that are not in the current file.
+    const inCurrentLab = biomarkers.some(
+      (item) =>
+        item?.biomarker_id === row?.biomarker_id ||
+        suppressedItemMatchesRow(
+          {
+            extracted_name:
+              resolveExactBiomarkerName(row) ||
+              row?.original_biomarker_name ||
+              row?.biomarker,
+            biomarker_type: inferRowBiomarkerType(row),
+            system_biomarker: row?.biomarker,
+          },
+          item,
+        ),
+    );
+    if (!inCurrentLab && !row?.is_suppressed_only) {
+      // Drop from local excluded view only
+      clearLocalSuppressionForRow(row, matchedItem);
+      return;
+    }
+
+    markDirty(row?.biomarker_id);
     try {
-      const res = await Application.unsuppressBiomarker(
-        buildUnsuppressPayloadFromRow(row, matchedItem),
-      );
-      if (res?.data?.status === 'not_found') {
-        showError(
-          'Could not restore biomarker',
-          'No exclusion record found for this row. Refreshing the list.',
-        );
-        const listRes = await Application.listSuppressedBiomarkers();
-        syncSuppressedFromApi(listRes?.data?.suppressed || []);
-        return;
-      }
-      setSuppressedSet((prev) => {
-        const next = new Set(prev);
-        suppressionKeys.forEach((key) => next.delete(key));
-        onSuppressedSetChange?.(next);
-        return next;
-      });
-      setSuppressedMeta((prev) => {
-        const next = { ...prev };
-        suppressionKeys.forEach((key) => {
-          delete next[key];
+      const payload = buildUnsuppressPayloadFromRow(row, matchedItem);
+      let res = await Application.unsuppressBiomarker(payload);
+      // Retry by name if id-based restore missed (schema / scope mismatch)
+      if (res?.data?.status === 'not_found' && payload.extracted_name) {
+        res = await Application.unsuppressBiomarker({
+          extracted_name: payload.extracted_name,
+          biomarker_type: payload.biomarker_type,
+          scope: 'clinic',
         });
-        return next;
-      });
-      setSuppressedItems((prev) =>
-        prev.filter((item) => !suppressedItemMatchesRow(item, row)),
-      );
+      }
+      // Even if server record is already gone, restore locally into Need review.
+      clearLocalSuppressionForRow(row, matchedItem);
       applyLocalRestoreToRow(row);
     } catch (err) {
       console.error('Failed to restore biomarker:', err);
+      // Still restore into this lab's Need review so the UI is not stuck.
+      clearLocalSuppressionForRow(row, matchedItem);
+      applyLocalRestoreToRow(row);
       showError(
-        'Could not restore biomarker',
-        'Please try again or contact support.',
+        'Restored locally',
+        'Could not update the clinic exclusion record, but the row is back in Need review for this lab.',
       );
     }
   };
@@ -1343,6 +1449,77 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       currentRowErrors,
     ],
   );
+
+  const excludeAllCandidateRows = useMemo(() => {
+    if (!useReviewUx) return [];
+    return visibleBiomarkerEntries
+      .filter(
+        ({ originalIndex }) =>
+          (rowCategoryResults[originalIndex]?.category || 'ready') !==
+          'excluded',
+      )
+      .map(({ biomarker }) => biomarker);
+  }, [useReviewUx, visibleBiomarkerEntries, rowCategoryResults]);
+
+  const handleExcludeAllVisible = async () => {
+    if (isDemo || !excludeAllCandidateRows.length) return;
+    setExcludeAllRunning(true);
+    try {
+      const items = excludeAllCandidateRows
+        .map((row) => ({
+          extracted_name: String(
+            resolveExactBiomarkerName(row) ||
+              row.original_biomarker_name ||
+              row.biomarker ||
+              '',
+          ).trim(),
+          system_biomarker: row.biomarker || null,
+          biomarker_type: inferRowBiomarkerType(row),
+          reason: 'Excluded manually',
+        }))
+        .filter((item) => Boolean(item.extracted_name));
+
+      if (!items.length) {
+        showError(
+          'Nothing to exclude',
+          'No biomarkers with a valid name were found in this list.',
+        );
+        return;
+      }
+
+      try {
+        await Application.bulkExcludeBiomarkers({
+          items,
+          reason: 'Excluded manually',
+          scope: 'clinic',
+        });
+      } catch (bulkErr) {
+        // Fall back to the proven single-exclude endpoint (works even if
+        // bulk route is missing / backend not restarted / bulk fails).
+        console.warn('Bulk exclude failed, falling back to single excludes', bulkErr);
+        for (const item of items) {
+          await Application.suppressBiomarker(item);
+        }
+      }
+
+      const listRes = await Application.listSuppressedBiomarkers();
+      syncSuppressedFromApi(listRes?.data?.suppressed || []);
+    } catch (err: any) {
+      console.error('Exclude all failed:', err);
+      const detail =
+        err?.response?.data?.detail ||
+        err?.message ||
+        'Please try again.';
+      showError(
+        'Could not exclude biomarkers',
+        typeof detail === 'string' ? detail : 'Please try again.',
+      );
+    } finally {
+      setExcludeAllRunning(false);
+      setExcludeAllConfirmOpen(false);
+    }
+  };
+
   // const handleMappingToggle = async (id: string) => {
   //   const row = biomarkers.filter((b) => b.biomarker_id === id)[0];
   //   const extracted = row.original_biomarker_name;
@@ -1573,6 +1750,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                   >
                     — Excluded ({reviewCategoryCounts.excluded})
                   </button>
+                  {categoryFilter !== 'excluded' &&
+                  excludeAllCandidateRows.length > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => setExcludeAllConfirmOpen(true)}
+                      disabled={excludeAllRunning || isDemo}
+                      className="rounded-full border border-Gray-100 bg-white px-2.5 py-0.5 text-[9px] md:text-[10px] font-medium text-Text-Secondary hover:bg-Gray-15 disabled:opacity-50"
+                    >
+                      Exclude all ({excludeAllCandidateRows.length})
+                    </button>
+                  ) : null}
                   {(reviewSummary?.duplicate_count ?? 0) > 0 && (
                     <span className="flex items-center gap-1 rounded-full bg-orange-50 border border-orange-200 px-2 py-0.5 text-[9px] md:text-[10px] text-orange-600 font-medium whitespace-nowrap">
                       {reviewSummary.duplicate_count} duplicate
@@ -1748,11 +1936,13 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                           rows can be processed into the Health Plan after you
                           save. Use{' '}
                           <span className="font-medium text-Primary-DeepTeal">
-                            Exclude (all patients)
+                            Exclude
                           </span>{' '}
-                          only for labels you never want again — it hides that
-                          name clinic-wide on every future upload. Restore from
-                          the Excluded list in lab upload review.
+                          to hide a label from future uploads, or{' '}
+                          <span className="font-medium text-Primary-DeepTeal">
+                            Exclude all
+                          </span>{' '}
+                          for the current list. Restore anytime from Excluded.
                         </>
                       ) : (
                         <>
@@ -2059,9 +2249,27 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
           isOpen
           onClose={() => setExcludeConfirmRow(null)}
           onConfirm={confirmExcludeReviewRow}
-          heading="Exclude for entire clinic"
-          message={`Exclude "${resolveExcludeDisplayName(excludeConfirmRow)}" for this entire clinic? It will be hidden from every future lab report for every patient until you restore it from the Excluded list in lab upload review.`}
-          confirmText="Exclude for clinic"
+          heading="Exclude biomarker"
+          message={`Exclude "${resolveExcludeDisplayName(excludeConfirmRow)}" from future lab uploads? You can restore it later from the Excluded list.`}
+          confirmText="Exclude"
+          cancelText="Cancel"
+        />
+      ) : null}
+
+      {excludeAllConfirmOpen ? (
+        <ConfirmModal
+          isOpen
+          onClose={() => setExcludeAllConfirmOpen(false)}
+          onConfirm={() => {
+            void handleExcludeAllVisible();
+          }}
+          heading="Exclude all in this list"
+          message={`Exclude all ${excludeAllCandidateRows.length} biomarkers currently shown? You can restore them later from the Excluded list.`}
+          confirmText={
+            excludeAllRunning
+              ? 'Excluding…'
+              : `Exclude all (${excludeAllCandidateRows.length})`
+          }
           cancelText="Cancel"
         />
       ) : null}
