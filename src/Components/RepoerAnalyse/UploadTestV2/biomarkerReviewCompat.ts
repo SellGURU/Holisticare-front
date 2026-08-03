@@ -1536,8 +1536,7 @@ export const findCatalogBiomarkerDuplicate = (
       if (
         normalizeBiomarkerNameForMatch(item?.Biomarker || item?.biomarker) !==
           normalizedName ||
-        String(item?.biomarker_type || 'blood').toLowerCase() !==
-          normalizedType
+        String(item?.biomarker_type || 'blood').toLowerCase() !== normalizedType
       ) {
         return false;
       }
