@@ -307,6 +307,7 @@ const EditModal: FC<EditModalProps> = ({
       existingBiomarkers,
       draft.Biomarker,
       draft.biomarker_type,
+      draft.unit,
       {
         excludeUid: excludeUid || undefined,
         excludeIndex: excludeUid ? undefined : biomarkerIndex,
@@ -316,8 +317,9 @@ const EditModal: FC<EditModalProps> = ({
       const typeLabel = formatBiomarkerTypeLabel(
         normalizeBiomarkerType(draft.biomarker_type),
       );
+      const unitLabel = String(duplicate.unit || draft.unit || '').trim() || '—';
       setErrorDetails(
-        `A biomarker with this name already exists for type ${typeLabel}.`,
+        `A biomarker with this name, type ${typeLabel}, and unit (${unitLabel}) already exists. Use a different unit or edit the existing entry.`,
       );
       return;
     }

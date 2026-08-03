@@ -1515,23 +1515,41 @@ export const resolveUnitForStandardize = (catalog: any[], row: any) => {
   return trim(catalogEntry?.unit);
 };
 
-/** Returns catalog row when name+type already exists (ignores unit — blocks duplicate creates). */
+/** Returns catalog row when name+type+unit already exists (unit optional for legacy callers). */
 export const findCatalogBiomarkerDuplicate = (
   catalog: any[],
   name: string,
   biomarkerType = 'blood',
+  unit?: string,
 ) => {
   const normalizedName = normalizeBiomarkerNameForMatch(name);
   if (!normalizedName) return null;
   const normalizedType = String(biomarkerType || 'blood').toLowerCase();
+  const normalizedUnit =
+    unit === undefined
+      ? undefined
+      : String(unit || '')
+          .trim()
+          .toLowerCase();
   return (
-    catalog.find(
-      (item) =>
-        normalizeBiomarkerNameForMatch(item?.Biomarker || item?.biomarker) ===
-          normalizedName &&
-        String(item?.biomarker_type || 'blood').toLowerCase() ===
-          normalizedType,
-    ) || null
+    catalog.find((item) => {
+      if (
+        normalizeBiomarkerNameForMatch(item?.Biomarker || item?.biomarker) !==
+          normalizedName ||
+        String(item?.biomarker_type || 'blood').toLowerCase() !==
+          normalizedType
+      ) {
+        return false;
+      }
+      if (normalizedUnit === undefined) {
+        return true;
+      }
+      return (
+        String(item?.unit || '')
+          .trim()
+          .toLowerCase() === normalizedUnit
+      );
+    }) || null
   );
 };
 

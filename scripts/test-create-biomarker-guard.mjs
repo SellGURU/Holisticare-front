@@ -27,18 +27,21 @@ const mchcDuplicate = findCatalogBiomarkerDuplicate(
   catalog,
   'Mean Corpuscular Hemoglobin Concentration',
   'blood',
+  'g/L',
 );
-assert.ok(mchcDuplicate, 'MCHC should match catalog by name+type');
+assert.ok(mchcDuplicate, 'MCHC should match catalog by name+type+unit');
 assert.equal(mchcDuplicate.unit, 'g/L');
 
 const mchcDifferentUnit = findCatalogBiomarkerDuplicate(
   catalog,
   'Mean Corpuscular Hemoglobin Concentration',
   'blood',
+  'g/dL',
 );
-assert.ok(
+assert.equal(
   mchcDifferentUnit,
-  'Duplicate guard must block even when create unit differs (g/dL vs g/L)',
+  null,
+  'Same name+type with a different unit should not count as duplicate',
 );
 
 assert.equal(

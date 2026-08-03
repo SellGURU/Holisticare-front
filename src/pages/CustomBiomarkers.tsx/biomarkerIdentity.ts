@@ -13,6 +13,9 @@ const trim = (value: unknown) => String(value ?? '').trim();
 
 const normalizeName = (value: unknown) => trim(value).toLowerCase();
 
+export const normalizeUnitForCatalogMatch = (value: unknown) =>
+  trim(value).toLowerCase();
+
 export const isCustomBiomarker = (item: any) =>
   trim(item?.source).toLowerCase() === 'custom';
 
@@ -58,16 +61,18 @@ export const buildBiomarkerIdentityKey = (item: any) =>
     normalizeBiomarkerType(item?.biomarker_type),
   ].join('|');
 
-/** True when catalog already has the same display name + biomarker_type. */
+/** True when catalog already has the same name + type + unit (case-insensitive). */
 export const findCatalogNameTypeDuplicate = (
   catalog: any[],
   name: string,
   biomarkerType: unknown,
+  unit?: unknown,
   options?: { excludeUid?: string; excludeIndex?: number },
 ) => {
   const normalizedName = normalizeName(name);
   if (!normalizedName) return null;
   const normalizedType = normalizeBiomarkerType(biomarkerType);
+  const normalizedUnit = normalizeUnitForCatalogMatch(unit);
   const excludeUid = trim(options?.excludeUid);
   const excludeIndex = options?.excludeIndex;
 
@@ -85,7 +90,8 @@ export const findCatalogNameTypeDuplicate = (
       }
       return (
         normalizeName(item?.Biomarker) === normalizedName &&
-        normalizeBiomarkerType(item?.biomarker_type) === normalizedType
+        normalizeBiomarkerType(item?.biomarker_type) === normalizedType &&
+        normalizeUnitForCatalogMatch(item?.unit) === normalizedUnit
       );
     }) || null
   );

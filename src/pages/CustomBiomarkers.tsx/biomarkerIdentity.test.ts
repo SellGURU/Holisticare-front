@@ -126,44 +126,63 @@ describe('findCatalogNameTypeDuplicate', () => {
     ).toBeNull();
   });
 
-  it('detects same name and same type', () => {
+  it('detects same name, same type, and same unit', () => {
     const match = findCatalogNameTypeDuplicate(
       catalog,
       '3-Methylhistidine',
       'urine',
+      'mmol/mol creatinine',
     );
     expect(match?.biomarker_uid).toBe('uid-urine');
   });
 
-  it('matches case-insensitively on name', () => {
+  it('allows same name and type when unit differs', () => {
+    expect(
+      findCatalogNameTypeDuplicate(
+        catalog,
+        '3-Methylhistidine',
+        'blood',
+        'mmol/mol creatinine',
+      ),
+    ).toBeNull();
+  });
+
+  it('matches case-insensitively on name and unit', () => {
     const match = findCatalogNameTypeDuplicate(
       catalog,
       '3-methylhistidine',
       'Blood',
+      'µmol/dL',
     );
     expect(match?.biomarker_uid).toBe('uid-blood');
   });
 
   it('excludes the current row by uid when editing', () => {
     expect(
-      findCatalogNameTypeDuplicate(catalog, '3-Methylhistidine', 'blood', {
-        excludeUid: 'uid-blood',
-      }),
+      findCatalogNameTypeDuplicate(
+        catalog,
+        '3-Methylhistidine',
+        'blood',
+        'µmol/dL',
+        {
+          excludeUid: 'uid-blood',
+        },
+      ),
     ).toBeNull();
   });
 
   it('excludes the current row by index when uid is missing', () => {
     const withoutUid = [
-      { Biomarker: 'Protein', biomarker_type: 'blood' },
-      { Biomarker: 'Protein', biomarker_type: 'urine' },
+      { Biomarker: 'Protein', biomarker_type: 'blood', unit: 'g/dL' },
+      { Biomarker: 'Protein', biomarker_type: 'urine', unit: 'mg/dL' },
     ];
     expect(
-      findCatalogNameTypeDuplicate(withoutUid, 'Protein', 'blood', {
+      findCatalogNameTypeDuplicate(withoutUid, 'Protein', 'blood', 'g/dL', {
         excludeIndex: 0,
       }),
     ).toBeNull();
     expect(
-      findCatalogNameTypeDuplicate(withoutUid, 'Protein', 'urine', {
+      findCatalogNameTypeDuplicate(withoutUid, 'Protein', 'urine', 'mg/dL', {
         excludeIndex: 0,
       })?.biomarker_type,
     ).toBe('urine');

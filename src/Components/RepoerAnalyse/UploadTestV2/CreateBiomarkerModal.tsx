@@ -408,6 +408,7 @@ const CreateBiomarkerModal: React.FC<Props> = ({
       catalogBiomarkers,
       draft.Biomarker,
       draft.biomarker_type,
+      draft.unit,
     );
     if (duplicateExisting) {
       const existingUnit = duplicateExisting.unit || 'unknown';
