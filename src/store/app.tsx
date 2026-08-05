@@ -96,12 +96,7 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     logout: logOut,
     isLoggedId: !!token,
 
-    login: (
-      token: string,
-      permisins?: any,
-      email?: string,
-      role?: string,
-    ) => {
+    login: (token: string, permisins?: any, email?: string, role?: string) => {
       setToken(token);
       setPermisions(permisins);
       setAccountRole(role || '');
