@@ -10,8 +10,10 @@ import { BeatLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
 import { Notification } from '../Notification';
 import NotificationApi from '../../api/Notification';
+import { useApp } from '../../hooks';
 const MainTopBar = () => {
   const navigate = useNavigate();
+  const { accountRole, setAccountRole } = useApp();
   // const navigate = useNavigate();
   const [visibleClinic, setVisibleClinic] = useState(false);
   const [isUnReadNotif, setisUnReadNotif] = useState(false);
@@ -68,10 +70,16 @@ const MainTopBar = () => {
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo()
       .then((res) => {
+        const responseAccountRole =
+          res.data.brand_elements.account_role || accountRole;
+        if (responseAccountRole) {
+          setAccountRole(responseAccountRole);
+        }
         if (
-          res.data.brand_elements.name === null ||
-          res.data.brand_elements.name === '' ||
-          res.data.brand_elements.logo === null
+          responseAccountRole.toLowerCase() !== 'staff' &&
+          (res.data.brand_elements.name === null ||
+            res.data.brand_elements.name === '' ||
+            res.data.brand_elements.logo === null)
         ) {
           navigate('/register-profile');
           return;

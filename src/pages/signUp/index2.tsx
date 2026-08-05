@@ -69,8 +69,17 @@ const SignUp = () => {
           return Auth.login(formik.values.email, formik.values.password);
         })
         .then((res) => {
-          appContext.login(res.data.access_token, res.data.permission);
-          navigate('/register-profile');
+          appContext.login(
+            res.data.access_token,
+            res.data.permission,
+            formik.values.email,
+            res.data.account_role,
+          );
+          navigate(
+            res.data.account_role?.toLowerCase() === 'staff'
+              ? '/'
+              : '/register-profile',
+          );
         })
         .catch((error) => {
           if (

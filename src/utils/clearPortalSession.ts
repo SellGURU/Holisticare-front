@@ -18,6 +18,7 @@ export const PORTAL_USER_LOCAL_STORAGE_KEYS = [
   'google_oauth_token',
   'google_user_data',
   'user',
+  'accountRole',
   'adminToken',
   'adminPermissions',
 ] as const;

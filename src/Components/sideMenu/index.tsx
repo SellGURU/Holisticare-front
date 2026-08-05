@@ -6,11 +6,13 @@ import { version } from '../../../package.json';
 import { menus } from './menu';
 import { subscribe } from '../../utils/event';
 import PortalLink from '../PortalLink';
+import { useApp } from '../../hooks';
 interface sideMenuProps {
   onClose: () => void;
 }
 const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
   const location = useLocation();
+  const { permisions, accountRole } = useApp();
 
   const [activeMenu, setActiveMenu] = useState(() => {
     return (
@@ -20,7 +22,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     );
   });
   const [showPlayground, setShowPlayground] = useState(false);
-  const [permissions, setPermissions] = useState<any>({});
+  const [permissions, setPermissions] = useState<any>(permisions || {});
   subscribe('knowledge_playground-Show', () => {
     // alert("show playground");
     setShowPlayground(true);
@@ -68,7 +70,10 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     if (name === 'Package' && permissions.packages === false) {
       return true;
     }
-    if (name === 'Staff' && permissions.staff === false) {
+    if (
+      name === 'Staff' &&
+      (accountRole.toLowerCase() === 'staff' || permissions.staff === false)
+    ) {
       return true;
     }
     if (name === 'Setting' && permissions.setting === false) {

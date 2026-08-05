@@ -3,8 +3,6 @@ import { useContext, useEffect, useRef, useState } from 'react';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import PortalLink from '../../Components/PortalLink/index.tsx';
 import Application from '../../api/app.ts';
-import { getCached, hasCached } from '../../utils/pageCache';
-import { PORTAL_CACHE_KEYS } from '../../utils/cacheKeys';
 import { subscribe } from '../../utils/event.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
 import FilterModal from '../../Components/FilterModal/index.tsx';
@@ -73,11 +71,9 @@ const ClientList = () => {
   const [search, setSearch] = useState<string>('');
 
   const getPatients = () => {
-    const cacheKey = PORTAL_CACHE_KEYS.patients;
-    if (!hasCached(cacheKey)) {
-      setIsLoading(true);
-    }
-    getCached(cacheKey, () => Application.getPatients().then((res) => res.data))
+    setIsLoading(true);
+    Application.getPatients()
+      .then((res) => res.data)
       .then((data) => {
         setClientList(data.patients_list_data);
         setFilteredClientList(data.patients_list_data);

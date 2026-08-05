@@ -7,7 +7,14 @@ interface AppContextProp {
   permisions: any;
   token: string | null;
   isLoggedId: boolean;
-  login: (token: string, permisions?: any, email?: string) => void;
+  accountRole: string;
+  setAccountRole: (role: string) => void;
+  login: (
+    token: string,
+    permisions?: any,
+    email?: string,
+    accountRole?: string,
+  ) => void;
   logout: () => void;
   PackageManager: PackageManager;
   treatmentId: string | null;
@@ -24,6 +31,8 @@ interface AppContextProp {
 export const AppContext = createContext<AppContextProp>({
   token: null,
   isLoggedId: false,
+  accountRole: '',
+  setAccountRole: () => {},
   login: () => {},
   permisions: {},
   logout: () => {},
@@ -62,6 +71,9 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     JSON.parse(localStorage.getItem('permisins') || '{}'),
   );
   const [patientsList, setPatientsList] = useState<any[]>([]);
+  const [accountRole, setAccountRole] = useState(
+    localStorage.getItem('accountRole') || '',
+  );
   const [clinicPlan, setClinicPlan] = useState(
     localStorage.getItem('clinicPlan') || 'paying',
   );
@@ -73,6 +85,7 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     clearPortalSession();
     setToken('');
     setPermisions({});
+    setAccountRole('');
     setPatientsList([]);
     setTreatmentId(null);
     setClinicPlan('paying');
@@ -83,12 +96,24 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     logout: logOut,
     isLoggedId: !!token,
 
-    login: (token: string, permisins?: any, email?: string) => {
+    login: (
+      token: string,
+      permisins?: any,
+      email?: string,
+      role?: string,
+    ) => {
       setToken(token);
       setPermisions(permisins);
+      setAccountRole(role || '');
       localStorage.setItem('permisins', JSON.stringify(permisins));
       localStorage.setItem('token', token);
       localStorage.setItem('email', email || '');
+      localStorage.setItem('accountRole', role || '');
+    },
+    accountRole,
+    setAccountRole: (role: string) => {
+      setAccountRole(role);
+      localStorage.setItem('accountRole', role);
     },
     permisions: permisions,
     PackageManager: new PackageManager(),

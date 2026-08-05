@@ -39,11 +39,20 @@ const AuthWithGoogle = ({ mode }: { mode: 'login' | 'register' }) => {
   const Login = (data: any) => {
     Application.LoginWithGooglge(data)
       .then((res) => {
-        appContext.login(res.data.access_token, res.data.permission);
+        appContext.login(
+          res.data.access_token,
+          res.data.permission,
+          data.email,
+          res.data.account_role,
+        );
         if (mode == 'login') {
           navigate('/');
         } else {
-          navigate('/register-profile');
+          navigate(
+            res.data.account_role?.toLowerCase() === 'staff'
+              ? '/'
+              : '/register-profile',
+          );
         }
       })
       .catch((err) => {
