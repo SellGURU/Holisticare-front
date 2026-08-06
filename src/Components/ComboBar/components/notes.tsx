@@ -402,15 +402,20 @@ export const Notes = () => {
                             <p className="text-[12px] break-words">{el.note}</p>
                           )}
                           {el.has_attachment && (
-                            <div className="flex items-center gap-1 mt-1">
-                              <img
-                                className="size-3.5"
-                                src="/icons/attach-svgrepo-com 1.svg"
-                                alt=""
-                              />
-                              <span className="text-[10px] text-Text-Secondary truncate max-w-[160px]">
-                                {el.attachment_file_name}
-                              </span>
+                            <div className="flex items-center flex-wrap gap-1.5 mt-1.5">
+                              <div className="flex items-center gap-1.5 px-2 py-1 bg-Primary-DeepTeal/10 border border-Primary-DeepTeal/30 rounded-md">
+                                <img
+                                  className="size-4 shrink-0"
+                                  src="/icons/attach-svgrepo-com 1.svg"
+                                  alt=""
+                                />
+                                <span className="text-[11px] font-medium text-Primary-DeepTeal">
+                                  File:
+                                </span>
+                                <span className="text-[11px] font-medium text-Primary-DeepTeal truncate max-w-[160px]">
+                                  {el.attachment_file_name}
+                                </span>
+                              </div>
                               {el.attachment_extraction_status === 'failed' && (
                                 <span
                                   className="text-[10px] text-amber-600"
