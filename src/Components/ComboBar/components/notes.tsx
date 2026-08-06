@@ -479,19 +479,24 @@ export const Notes = () => {
                               </div>
                             ) : (
                               <>
-                                <img
-                                  className={`size-5 ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-                                  src="/icons/edit-green.svg"
-                                  alt="Edit"
-                                  title={
-                                    isDemo
-                                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
-                                      : undefined
-                                  }
-                                  onClick={() =>
-                                    handleEditClick(index, el.note)
-                                  }
-                                />
+                                {/* Editing only makes sense for text notes -
+                                    a file-attachment note has no text body
+                                    to edit. */}
+                                {!el.has_attachment && (
+                                  <img
+                                    className={`size-5 ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                                    src="/icons/edit-green.svg"
+                                    alt="Edit"
+                                    title={
+                                      isDemo
+                                        ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                                        : undefined
+                                    }
+                                    onClick={() =>
+                                      handleEditClick(index, el.note)
+                                    }
+                                  />
+                                )}
                                 <img
                                   className={`size-5 ${isDemo ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                                   src="/icons/trash-red.svg"
