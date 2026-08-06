@@ -27,6 +27,9 @@ export const Notes = () => {
   const [isSavingNote, setIsSavingNote] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // A note is either written text OR an attached file - never both, never
+  // neither. See doc/EXPERT_NOTE_FILE_ATTACHMENT_PLAN.md.
+  const [noteMode, setNoteMode] = useState<'text' | 'file'>('text');
   const getNotes = (Id: any) => {
     setLoading(true);
     Application.getNotes({ member_id: Id })
@@ -128,15 +131,37 @@ export const Notes = () => {
     setAttachmentError(null);
     setUploadProgress(null);
   };
+  const handleNoteModeChange = (mode: 'text' | 'file') => {
+    if (isDemo || mode === noteMode) return;
+    setAttachmentError(null);
+    if (mode === 'file') {
+      // Switching to File mode: a note can't have both text and a file, so
+      // clear whatever was typed.
+      setCommentText('');
+    } else {
+      // Switching to Text mode: clear any attached file for the same reason.
+      setAttachedFile(null);
+      setUploadProgress(null);
+    }
+    setNoteMode(mode);
+  };
   const handleSaveNote = async () => {
     if (isDemo) return;
+    if (noteMode === 'text' && !commentText.trim()) {
+      setAttachmentError('Please write a note.');
+      return;
+    }
+    if (noteMode === 'file' && !attachedFile) {
+      setAttachmentError('Please attach a file.');
+      return;
+    }
     setIsSavingNote(true);
     setLoading(true);
     try {
       let attachment:
         | { blob_url: string; file_name: string; file_type: string }
         | undefined;
-      if (attachedFile) {
+      if (noteMode === 'file' && attachedFile) {
         setUploadProgress(0);
         const blobUrl = await uploadBlobToAzure({
           file: attachedFile,
@@ -152,7 +177,8 @@ export const Notes = () => {
       }
       await Application.addNote({
         member_id: id,
-        note: commentText,
+        // Exactly one of note text / attachment is ever sent - never both.
+        note: noteMode === 'text' ? commentText : '',
         ...(attachment ? { attachment } : {}),
       });
       setShowAddNote(false);
@@ -160,6 +186,7 @@ export const Notes = () => {
       setAttachedFile(null);
       setUploadProgress(null);
       setAttachmentError(null);
+      setNoteMode('text');
       getNotes(id);
     } catch (error) {
       console.error('Error adding note:', error);
@@ -201,68 +228,104 @@ export const Notes = () => {
       {showAddNote && (
         <div className="flex justify-center items-center mb-6">
           <div className="w-full ">
-            <div className="text-[12px] font-medium text-Text-Primary ">
-              Note
+            <div className="flex items-center gap-1 mb-2">
+              <button
+                type="button"
+                disabled={isDemo}
+                onClick={() => handleNoteModeChange('text')}
+                className={`text-[11px] font-medium px-3 py-1 rounded-full border ${
+                  noteMode === 'text'
+                    ? 'bg-Primary-DeepTeal text-white border-Primary-DeepTeal'
+                    : 'bg-white text-Primary-DeepTeal border-Gray-50'
+                } ${isDemo ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+              >
+                Text
+              </button>
+              <button
+                type="button"
+                disabled={isDemo}
+                onClick={() => handleNoteModeChange('file')}
+                className={`text-[11px] font-medium px-3 py-1 rounded-full border ${
+                  noteMode === 'file'
+                    ? 'bg-Primary-DeepTeal text-white border-Primary-DeepTeal'
+                    : 'bg-white text-Primary-DeepTeal border-Gray-50'
+                } ${isDemo ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+              >
+                File
+              </button>
             </div>
-            <textarea
-              value={commentText}
-              onChange={(e) => {
-                setCommentText(e.target.value);
-              }}
-              placeholder="Provide expert commentary on the patient's condition"
-              className="min-h-[215px] font-light text-[12px] p-2 border border-Gray-50 text-justify mt-1 rounded-[16px] bg-backgroundColor-Card w-full resize-y outline-none"
-            />
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,.docx,.txt"
-              className="hidden"
-              onChange={handleFileSelected}
-            />
-            <div className="flex items-center justify-between mt-2 gap-2">
-              {attachedFile ? (
-                <div className="flex items-center gap-2 min-w-0">
-                  <img
-                    className="size-4 shrink-0"
-                    src="/icons/attach-svgrepo-com 1.svg"
-                    alt=""
-                  />
-                  <span className="text-[11px] text-Text-Primary truncate max-w-[140px]">
-                    {attachedFile.name}
-                  </span>
-                  {uploadProgress !== null && uploadProgress < 100 && (
-                    <span className="text-[10px] text-Text-Secondary">
-                      {uploadProgress}%
-                    </span>
-                  )}
-                  {!isSavingNote && (
-                    <img
-                      className="size-4 shrink-0 cursor-pointer"
-                      src="/icons/cansel-close-circle.svg"
-                      alt="Remove attachment"
-                      onClick={handleRemoveAttachment}
-                    />
+            {noteMode === 'text' ? (
+              <>
+                <div className="text-[12px] font-medium text-Text-Primary ">
+                  Note
+                </div>
+                <textarea
+                  value={commentText}
+                  onChange={(e) => {
+                    setCommentText(e.target.value);
+                  }}
+                  placeholder="Provide expert commentary on the patient's condition"
+                  className="min-h-[215px] font-light text-[12px] p-2 border border-Gray-50 text-justify mt-1 rounded-[16px] bg-backgroundColor-Card w-full resize-y outline-none"
+                />
+              </>
+            ) : (
+              <>
+                <div className="text-[12px] font-medium text-Text-Primary ">
+                  Attachment
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.docx,.txt"
+                  className="hidden"
+                  onChange={handleFileSelected}
+                />
+                <div className="flex items-center justify-between mt-2 gap-2 min-h-[40px] border border-dashed border-Gray-50 rounded-[16px] px-3">
+                  {attachedFile ? (
+                    <div className="flex items-center gap-2 min-w-0 py-2">
+                      <img
+                        className="size-4 shrink-0"
+                        src="/icons/attach-svgrepo-com 1.svg"
+                        alt=""
+                      />
+                      <span className="text-[11px] text-Text-Primary truncate max-w-[140px]">
+                        {attachedFile.name}
+                      </span>
+                      {uploadProgress !== null && uploadProgress < 100 && (
+                        <span className="text-[10px] text-Text-Secondary">
+                          {uploadProgress}%
+                        </span>
+                      )}
+                      {!isSavingNote && (
+                        <img
+                          className="size-4 shrink-0 cursor-pointer"
+                          src="/icons/cansel-close-circle.svg"
+                          alt="Remove attachment"
+                          onClick={handleRemoveAttachment}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <div
+                      className={`flex items-center gap-1 text-[11px] text-Primary-DeepTeal py-2 ${isDemo ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      onClick={handleAttachFileClick}
+                      title={
+                        isDemo
+                          ? 'Demo version cannot add or edit data. Upgrade for full access.'
+                          : 'Attach a PDF, DOCX, or TXT file (max 10 MB)'
+                      }
+                    >
+                      <img
+                        className="size-4"
+                        src="/icons/attach-svgrepo-com 1.svg"
+                        alt=""
+                      />
+                      Attach File
+                    </div>
                   )}
                 </div>
-              ) : (
-                <div
-                  className={`flex items-center gap-1 text-[11px] text-Primary-DeepTeal ${isDemo ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                  onClick={handleAttachFileClick}
-                  title={
-                    isDemo
-                      ? 'Demo version cannot add or edit data. Upgrade for full access.'
-                      : 'Attach a PDF, DOCX, or TXT file (max 10 MB)'
-                  }
-                >
-                  <img
-                    className="size-4"
-                    src="/icons/attach-svgrepo-com 1.svg"
-                    alt=""
-                  />
-                  Attach File
-                </div>
-              )}
-            </div>
+              </>
+            )}
             {attachmentError && (
               <div className="text-[11px] text-red-500 mt-1">
                 {attachmentError}
@@ -277,6 +340,7 @@ export const Notes = () => {
                   setAttachedFile(null);
                   setAttachmentError(null);
                   setUploadProgress(null);
+                  setNoteMode('text');
                 }}
                 style={{
                   height: '24px',
@@ -334,7 +398,9 @@ export const Notes = () => {
                           <div className="text-[#005F73] text-xs">
                             {el.writer}
                           </div>
-                          <p className="text-[12px] break-words">{el.note}</p>
+                          {el.note && (
+                            <p className="text-[12px] break-words">{el.note}</p>
+                          )}
                           {el.has_attachment && (
                             <div className="flex items-center gap-1 mt-1">
                               <img
