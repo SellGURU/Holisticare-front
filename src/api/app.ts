@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Api from './api';
+import { NoteAttachmentInput } from '../types/expertNote';
 // import allBiomarkers from './--moch--/data/Allbiomarkers.json';
 // import AllBloodtests from './--moch--/data/AllBloodtests.json'
 // import Allactivities from './--moch--/data/Allactivities.json'
@@ -541,7 +542,7 @@ class Application extends Api {
     );
     return response;
   };
-  static getNotes = (data: any) => {
+  static getNotes = (data: { member_id: string | number | undefined }) => {
     const response = this.post(`/health_profile/notes/show_notes`, data);
     return response;
   };
@@ -554,7 +555,11 @@ class Application extends Api {
       note_unique_id: id,
     });
   };
-  static addNote = (data: any) => {
+  static addNote = (data: {
+    member_id: string | number | undefined;
+    note: string;
+    attachment?: NoteAttachmentInput;
+  }) => {
     const response = this.post(`/health_profile/notes/add_notes`, data);
     return response;
   };
