@@ -26,6 +26,12 @@ class FormsApi extends Api {
     return this.post('/forms/check_in/reposition_questions', data);
   };
 
+  static duplicateCheckin = (id: string) => {
+    return this.post('/forms/check_in/duplicate_checkin_form', {
+      unique_id: id,
+    });
+  };
+
   // questionary
 
   static getQuestionaryList = () => {
@@ -57,6 +63,12 @@ class FormsApi extends Api {
 
   static QuestionaryReposition = (data: any) => {
     return this.post('/forms/questionary/reposition_questions', data);
+  };
+
+  static duplicateQuestionary = (id: string) => {
+    return this.post('/forms/questionary/duplicate_questionary_form', {
+      unique_id: id,
+    });
   };
 }
 
