@@ -302,9 +302,7 @@ const Report = () => {
                   );
                 } catch (err) {
                   console.error('Error refreshing data:', err);
-                  setCompileModalError(
-                    'Could not compile. Please try again.',
-                  );
+                  setCompileModalError('Could not compile. Please try again.');
                 } finally {
                   setIsCompilingFromModal(false);
                 }

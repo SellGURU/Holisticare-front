@@ -12,7 +12,10 @@ import { invalidateHealthPlanCache } from './cacheKeys';
 
 export type CompileFromModalResult =
   | { ok: true }
-  | { ok: false; reason: 'refresh_failed' | 'still_stale' | 'timeout' | 'missing_member' };
+  | {
+      ok: false;
+      reason: 'refresh_failed' | 'still_stale' | 'timeout' | 'missing_member';
+    };
 
 const DEFAULT_POLL_MS = 2000;
 const DEFAULT_TIMEOUT_MS = 180_000;
