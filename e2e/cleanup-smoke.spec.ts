@@ -134,7 +134,9 @@ test.describe('Portal cleanup smoke (offline mocks)', () => {
     await questionaryDup;
 
     await page.getByText('Check-in', { exact: true }).click();
-    await expect(page.getByText(FIXTURE_CHECKIN_FORM.title).first()).toBeVisible({
+    await expect(
+      page.getByText(FIXTURE_CHECKIN_FORM.title).first(),
+    ).toBeVisible({
       timeout: 20_000,
     });
 
