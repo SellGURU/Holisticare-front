@@ -1,9 +1,9 @@
-// test address
+// Vercel proxy (vercel_backend) → Azure VM backend
 const baseProductEndPoint =
-  'https://vercel-backend-one-roan.vercel.app/holisticare';
+  'https://vercel-backend-one-roan.vercel.app/service';
 
 const baseTestEndPoint =
-  'https://vercel-backend-one-roan.vercel.app/holisticare_test';
+  'https://vercel-backend-one-roan.vercel.app/service';
 
 const defaultLocalApiUrl = 'http://127.0.0.1:3900';
 
