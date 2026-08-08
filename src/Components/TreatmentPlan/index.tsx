@@ -149,6 +149,26 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     }
   }, []);
   useEffect(() => {
+    const respondWithActivePlan = () => {
+      if (cardData.length === 0) return;
+
+      const card =
+        cardData.find((item) => item.t_plan_id === activeTreatment) ??
+        cardData[cardData.length - 1];
+
+      if (card) {
+        publish('holisticPlanactiveChange', { data: card });
+      }
+    };
+
+    subscribe('requestHolisticPlanActiveState', respondWithActivePlan);
+
+    return () => {
+      unsubscribe('requestHolisticPlanActiveState', respondWithActivePlan);
+    };
+  }, [cardData, activeTreatment]);
+
+  useEffect(() => {
     subscribe('shareModalHolisticPlanSuccess', (data: any) => {
       setCardData((prev: any) => {
         const newData = prev.map((el: any) => {

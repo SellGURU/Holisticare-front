@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { publish, subscribe } from '../../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import SpinnerLoader from '../../SpinnerLoader';
 import SvgIcon from '../../../utils/svgIcon';
@@ -26,9 +26,17 @@ const HolisticPlanShareAndDownload = ({
   const [activeTreatment, setActiveTreatment] = useState<any>(null);
   const [openPublicShare, setOpenPublicShare] = useState(false);
   useEffect(() => {
-    subscribe('holisticPlanactiveChange', (data: any) => {
+    const handleActivePlanChange = (data: any) => {
       setActiveTreatment(data.detail.data);
-    });
+    };
+
+    subscribe('holisticPlanactiveChange', handleActivePlanChange);
+    // TreatmentPlan may publish before this header mounts; ask for the current selection.
+    publish('requestHolisticPlanActiveState', {});
+
+    return () => {
+      unsubscribe('holisticPlanactiveChange', handleActivePlanChange);
+    };
   }, []);
 
   const formatSharedDate = (dateString: string): string => {
