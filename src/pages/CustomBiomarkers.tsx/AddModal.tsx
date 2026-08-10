@@ -9,6 +9,7 @@ import BenchmarkAreaSelect from '../../Components/BenchmarkAreaSelect';
 import {
   buildAddModalInitialDraft,
   normalizeBiomarkerDraft,
+  prepareBiomarkerForApi,
 } from './biomarkerFormUtils';
 import {
   findCatalogNameTypeDuplicate,
@@ -300,17 +301,20 @@ const AddModal: FC<AddModalProps> = ({
       existingBiomarkers,
       draft.Biomarker,
       draft.biomarker_type,
+      draft.unit,
     );
     if (duplicate) {
       const typeLabel = formatBiomarkerTypeLabel(
         normalizeBiomarkerType(draft.biomarker_type),
       );
+      const unitLabel =
+        String(duplicate.unit || draft.unit || '').trim() || '—';
       setErrorDetails(
-        `A biomarker with this name already exists for type ${typeLabel}.`,
+        `A biomarker with this name, type ${typeLabel}, and unit (${unitLabel}) already exists. Use a different unit or edit the existing entry.`,
       );
       return;
     }
-    onSave(draft);
+    onSave(prepareBiomarkerForApi(draft, 'add'));
   };
 
   const renderThresholdGender = (gender: 'male' | 'female') => {

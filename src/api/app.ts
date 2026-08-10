@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Api from './api';
+import { NoteAttachmentInput } from '../types/expertNote';
 // import allBiomarkers from './--moch--/data/Allbiomarkers.json';
 // import AllBloodtests from './--moch--/data/AllBloodtests.json'
 // import Allactivities from './--moch--/data/Allactivities.json'
@@ -541,7 +542,7 @@ class Application extends Api {
     );
     return response;
   };
-  static getNotes = (data: any) => {
+  static getNotes = (data: { member_id: string | number | undefined }) => {
     const response = this.post(`/health_profile/notes/show_notes`, data);
     return response;
   };
@@ -554,7 +555,11 @@ class Application extends Api {
       note_unique_id: id,
     });
   };
-  static addNote = (data: any) => {
+  static addNote = (data: {
+    member_id: string | number | undefined;
+    note: string;
+    attachment?: NoteAttachmentInput;
+  }) => {
     const response = this.post(`/health_profile/notes/add_notes`, data);
     return response;
   };
@@ -1166,6 +1171,8 @@ class Application extends Api {
     system_biomarker?: string | null;
     biomarker_type?: string;
     reason?: string;
+    scope?: 'clinic' | 'file';
+    file_id?: string | null;
   }) => {
     return this.post('/patients/suppress_biomarker', data);
   };
@@ -1173,11 +1180,45 @@ class Application extends Api {
     id?: number;
     extracted_name: string;
     biomarker_type?: string;
+    scope?: 'clinic' | 'file';
+    file_id?: string | null;
+    reason?: string | null;
   }) => {
     return this.post('/patients/unsuppress_biomarker', data);
   };
   static listSuppressedBiomarkers = () => {
     return this.post('/patients/list_suppressed_biomarkers', {});
+  };
+  static listBiomarkerExclusionHistory = (data: {
+    extracted_name?: string;
+    biomarker_type?: string;
+    limit?: number;
+  }) => {
+    return this.post('/patients/review/biomarkers/exclusion-history', data);
+  };
+  static bulkExcludeBiomarkers = (data: {
+    items: Array<{
+      extracted_name: string;
+      system_biomarker?: string | null;
+      biomarker_type?: string;
+      reason?: string;
+      scope?: 'clinic' | 'file';
+      file_id?: string | null;
+    }>;
+    reason?: string;
+    scope?: 'clinic' | 'file';
+    file_id?: string | null;
+  }) => {
+    return this.post('/patients/review/biomarkers/bulk_exclude', data, {
+      timeout: 120000,
+    });
+  };
+  static getBiomarkerExclusionPlanImpact = (data: {
+    extracted_name: string;
+    system_biomarker?: string | null;
+    biomarker_type?: string;
+  }) => {
+    return this.post('/patients/review/biomarkers/plan_impact', data);
   };
   static getLabReviewFindings = (data: {
     file_id: string;

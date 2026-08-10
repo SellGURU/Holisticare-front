@@ -70,6 +70,7 @@ const Login = () => {
             res.data.access_token,
             res.data.permission,
             formik.values.email,
+            res.data.account_role,
           );
           navigate('/');
         })

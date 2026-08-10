@@ -17,9 +17,9 @@ import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
 import ChartModal from './ChartModal';
 import MappingsModal from './MappingsModal';
-import SuppressedBiomarkersSection from './SuppressedBiomarkersSection';
 import useIsDemo from '../../hooks/useIsDemo';
 
+import { prepareBiomarkerForApi } from './biomarkerFormUtils';
 import DefaultData from './default.json';
 import {
   migrateLegacyMappingsForDuplicates,
@@ -386,18 +386,31 @@ const CustomBiomarkers = () => {
 
   const onsave = (values: any) => {
     setLoading(true);
-    BiomarkersApi.addBiomarkersList({ new_biomarker: values })
+    const new_biomarker = prepareBiomarkerForApi(values, 'add');
+    BiomarkersApi.addBiomarkersList({ new_biomarker })
       .then(() => {
         closeModalAdd();
         getBiomarkers({ force: true });
       })
       .catch((error) => {
-        setErrorDetails(
+        const rawDetail =
           error?.response?.data?.detail ||
-            error?.detail ||
-            error?.message ||
-            'Unable to add biomarker.',
-        );
+          error?.detail ||
+          error?.message ||
+          'Unable to add biomarker.';
+        const detail =
+          typeof rawDetail === 'string'
+            ? rawDetail
+            : Array.isArray(rawDetail)
+              ? rawDetail
+                  .map((item) =>
+                    typeof item === 'string'
+                      ? item
+                      : item?.msg || JSON.stringify(item),
+                  )
+                  .join(' ')
+              : JSON.stringify(rawDetail);
+        setErrorDetails(detail);
       })
       .finally(() => {
         setLoading(false);
@@ -485,7 +498,6 @@ const CustomBiomarkers = () => {
         </div>
       ) : (
         <div className="min-h-full w-full px-2 pt-[150px] pb-8 md:px-6">
-          <SuppressedBiomarkersSection />
           <div className="overflow-hidden rounded-2xl border border-Gray-50 bg-white shadow-100">
             <div className="overflow-x-auto">
               <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_156px] gap-3 border-b border-Gray-50 bg-gray-50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-Text-Secondary">

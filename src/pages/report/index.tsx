@@ -6,7 +6,6 @@ import ReportSideMenu from '../../Components/reportSideMenu/newSideMenu';
 import { ComboBar } from '../../Components';
 import { useState, useEffect, useRef } from 'react';
 import { subscribe, unsubscribe, publish } from '../../utils/event';
-import { invalidateHealthPlanCache } from '../../utils/cacheKeys';
 import Draggable from 'react-draggable';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import ProgressDashboardView from '../../Components/ProgressDashboard/ProgressDashboardView';
@@ -14,11 +13,16 @@ import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
 import UnderProgressController from './underProgressController';
 import { useParams } from 'react-router-dom';
 import Application from '../../api/app';
+import { compileFromNeedRefreshModal } from '../../utils/compileFromNeedRefreshModal';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [showRefreshModal, setshowRefreshModal] = useState(false);
+  const [isCompilingFromModal, setIsCompilingFromModal] = useState(false);
+  const [compileModalError, setCompileModalError] = useState<string | null>(
+    null,
+  );
   const [, setActiveCheckProgress] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [, setUserInfoData] = useState<any>(null);
@@ -69,6 +73,7 @@ const Report = () => {
   }, []);
   useEffect(() => {
     subscribe('openRefreshModal', () => {
+      setCompileModalError(null);
       setshowRefreshModal(true);
     });
     subscribe('uploadTestShow', () => {
@@ -225,10 +230,12 @@ const Report = () => {
       <MainModal
         isOpen={showRefreshModal}
         onClose={() => {
+          if (isCompilingFromModal) return;
+          setCompileModalError(null);
           setshowRefreshModal(false);
         }}
       >
-        <div className="w-[500px] h-[208px] rounded-2xl relative py-6 px-8 bg-white shadow-800 text-Text-Primary">
+        <div className="w-[500px] min-h-[208px] rounded-2xl relative py-6 px-8 bg-white shadow-800 text-Text-Primary">
           <div className="w-full flex items-center gap-2 border-b border-Gray-50 pb-2 font-medium text-sm">
             <img src="/icons/danger.svg" alt="" />
             Data needs to be compiled before generating a new plan
@@ -244,34 +251,69 @@ const Report = () => {
             <br /> Please compile the latest data to ensure the plan is
             generated accurately.
           </div>
-          <div className="absolute bottom-6 right-8 flex gap-4">
+          {compileModalError && (
+            <div className="mt-3 text-center text-[11px] text-red-600 leading-5">
+              {compileModalError}
+            </div>
+          )}
+          <div className="mt-8 flex justify-end gap-4">
             <div
-              className="text-[#909090] font-medium text-sm cursor-pointer"
+              className={`text-[#909090] font-medium text-sm ${
+                isCompilingFromModal
+                  ? 'cursor-not-allowed opacity-50'
+                  : 'cursor-pointer'
+              }`}
               onClick={() => {
+                if (isCompilingFromModal) return;
+                setCompileModalError(null);
                 setshowRefreshModal(false);
               }}
             >
               Cancel
             </div>
             <div
-              onClick={() => {
-                if (id) {
-                  Application.refreshData(id, false)
-                    .then(() => {
-                      invalidateHealthPlanCache(id);
-                      setshowRefreshModal(false);
-                      publish('SyncRefresh', {});
-                      publish('disableGenerate', {});
-                      publish('checkProgress', {});
-                    })
-                    .catch((err) => {
-                      console.error('Error refreshing data:', err);
-                    });
+              onClick={async () => {
+                if (!id || isCompilingFromModal) return;
+                setIsCompilingFromModal(true);
+                setCompileModalError(null);
+                publish('disableGenerate', {});
+                publish('checkProgress', {});
+                publish('SyncRefresh', {});
+                try {
+                  const result = await compileFromNeedRefreshModal(id);
+                  if (result.ok) {
+                    setshowRefreshModal(false);
+                    publish('RefreshCompleted', {});
+                    publish('syncReport', { fullReload: true });
+                    return;
+                  }
+                  const messages: Record<string, string> = {
+                    refresh_failed:
+                      'Could not start compile. Please try again.',
+                    timeout:
+                      'Compile is taking longer than expected. Keep this page open, then try Generate again.',
+                    still_stale:
+                      'Compile finished, but client data is still stale. Retry compile, or check that the backend AI service is running.',
+                    missing_member: 'Missing patient id.',
+                  };
+                  setCompileModalError(
+                    messages[result.reason] ||
+                      'Compile did not clear the refresh gate. Please retry.',
+                  );
+                } catch (err) {
+                  console.error('Error refreshing data:', err);
+                  setCompileModalError('Could not compile. Please try again.');
+                } finally {
+                  setIsCompilingFromModal(false);
                 }
               }}
-              className="text-Primary-DeepTeal  cursor-pointer font-medium text-sm"
+              className={`font-medium text-sm ${
+                isCompilingFromModal
+                  ? 'text-Primary-DeepTeal/60 cursor-not-allowed'
+                  : 'text-Primary-DeepTeal cursor-pointer'
+              }`}
             >
-              Compile
+              {isCompilingFromModal ? 'Compiling...' : 'Compile'}
             </div>
           </div>
         </div>

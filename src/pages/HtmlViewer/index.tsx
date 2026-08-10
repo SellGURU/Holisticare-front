@@ -5,6 +5,13 @@ import PublicReport from '../../api/publicReport';
 import { getTokenFromLocalStorage } from '../../store/token';
 import { showSuccess } from '../../Components/GlobalToast';
 import HtmlPreviewer from '../../Components/HtmlPreviewer';
+import { rewriteHolisticPlanResourceLinks } from '../../utils/patientResourceLinks';
+import { sanitizeWellnessReportDisclaimer } from '../../utils/reportDisclaimerSanitize';
+
+const prepareReportHtmlForDisplay = (raw: string, publicView: boolean) => {
+  const cleaned = sanitizeWellnessReportDisclaimer(raw);
+  return publicView ? rewriteHolisticPlanResourceLinks(cleaned) : cleaned;
+};
 
 const HtmlViewer = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,7 +31,8 @@ const HtmlViewer = () => {
     if (!token || !token.trim()) {
       PublicReport.getReportHtml(reportId)
         .then((res) => {
-          setHtml(res.data ?? '');
+          const raw = res.data ?? '';
+          setHtml(prepareReportHtmlForDisplay(raw, true));
           setIsPublicView(true);
         })
         .catch(() => setError('This report is not available.'))
@@ -35,14 +43,15 @@ const HtmlViewer = () => {
     // Logged in: try auth endpoint first, then fallback to public (whitelist)
     Application.getHtmlReport(reportId)
       .then((res) => {
-        setHtml(res.data ?? '');
+        setHtml(prepareReportHtmlForDisplay(res.data ?? '', false));
         setIsPublicView(false);
         setLoading(false);
       })
       .catch(() => {
         PublicReport.getReportHtml(reportId)
           .then((res) => {
-            setHtml(res.data ?? '');
+            const raw = res.data ?? '';
+            setHtml(prepareReportHtmlForDisplay(raw, true));
             setIsPublicView(true);
           })
           .catch(() => setError('This report is not available.'))

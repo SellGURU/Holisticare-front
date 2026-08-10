@@ -12,6 +12,15 @@ class PublicReport extends Api {
       headers: { Accept: 'text/html' },
     });
   }
+
+  static getPatientResourceHtml(sourceUrl: string) {
+    return this.get('/public/patient-resource/html', {
+      noAuth: true,
+      responseType: 'text',
+      headers: { Accept: 'text/html' },
+      params: { url: sourceUrl },
+    });
+  }
 }
 
 export default PublicReport;

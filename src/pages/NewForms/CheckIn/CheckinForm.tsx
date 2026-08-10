@@ -30,6 +30,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [errorCheckIn, setErrorCheckIn] = useState('');
   const [errorQuestionary, setErrorQuestionary] = useState('');
   const [textErrorMessage, setTextErrorMessage] = useState('');
+  const [duplicateError, setDuplicateError] = useState('');
   const getChechins = () => {
     setLoading(true);
     FormsApi.getCheckinList()
@@ -70,6 +71,25 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
       return 'Reposition';
     }
     return 'Edit';
+  };
+  const onDuplicate = (id: string) => {
+    setDuplicateError('');
+    setLoading(true);
+    const request = isQuestionary
+      ? FormsApi.duplicateQuestionary(id)
+      : FormsApi.duplicateCheckin(id);
+    request
+      .then(() => {
+        if (isQuestionary) {
+          getQuestionary();
+        } else {
+          getChechins();
+        }
+      })
+      .catch((err) => {
+        setDuplicateError(formatApiErrorMessage(err));
+        setLoading(false);
+      });
   };
   const onsave = (values: any) => {
     // if (showReposition) {
@@ -214,6 +234,9 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             ) : (
               ''
             )}
+            {duplicateError ? (
+              <div className="mb-2 text-xs text-red-500">{duplicateError}</div>
+            ) : null}
             <TableForm
               classData={checkInList.filter((el) =>
                 el.title.toLowerCase().includes(search?.toLowerCase() || ''),
@@ -249,6 +272,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
                 setShowPreview(true);
                 setEditFormId(id);
               }}
+              onDuplicate={onDuplicate}
               // onReposition={(id) => {
               //   setShowReposition(true);
               //   setEditFormId(id);

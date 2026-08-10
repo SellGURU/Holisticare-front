@@ -4,6 +4,7 @@ import {
   AiKnowledge,
   SignUp,
   HtmlViewer,
+  PatientResourceViewer,
   Playground,
   Messages,
   Setting,
@@ -20,6 +21,7 @@ import {
   NotFound,
 } from '../pages';
 import ProtectedRoute from './protected';
+import RoleProtectedRoute from './roleProtected';
 import Layout from '../layout';
 import { Client } from '../pages/driftAnaysis/Client.tsx';
 import { GenerateRecommendation } from '../pages/generateRecommendation/index.tsx';
@@ -104,7 +106,11 @@ const router = createBrowserRouter([
           },
           {
             path: '/staff',
-            element: <Staff></Staff>,
+            element: (
+              <RoleProtectedRoute allowedRoles={['admin']}>
+                <Staff />
+              </RoleProtectedRoute>
+            ),
           },
           {
             path: '/biomarkers',
@@ -273,7 +279,15 @@ const router = createBrowserRouter([
   },
   {
     path: '/register-profile',
-    element: <SignUpNameLogo></SignUpNameLogo>,
+    element: (
+      <ProtectedRoute
+        Component={() => (
+          <RoleProtectedRoute allowedRoles={['admin']}>
+            <SignUpNameLogo />
+          </RoleProtectedRoute>
+        )}
+      />
+    ),
   },
   {
     path: '/forgetPassword',
@@ -298,6 +312,10 @@ const router = createBrowserRouter([
   {
     path: '/surveys-view/:member-id/:q-id/:f-id',
     element: <SurveyResponsesPage></SurveyResponsesPage>,
+  },
+  {
+    path: '/patient-resource',
+    element: <PatientResourceViewer />,
   },
   {
     path: '/html-previewer/:id',

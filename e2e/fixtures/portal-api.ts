@@ -36,6 +36,26 @@ export const FIXTURE_TOKEN = {
   permission: { role: 'coach', clinic_id: 1 },
 };
 
+export const FIXTURE_CHECKIN_FORM = {
+  title: 'Cleanup Check-in Form',
+  questions: 1,
+  created_on: '08/01/2026',
+  created_by: 'Cleanup Coach',
+  id: 'cleanup-checkin-form-1',
+  time_required: 5,
+};
+
+export const FIXTURE_QUESTIONARY_FORM = {
+  title: 'Cleanup Questionnaire Form',
+  questions: 2,
+  created_on: '08/01/2026',
+  created_by: 'Cleanup Coach',
+  id: 'cleanup-questionary-form-1',
+  time_required: 8,
+  show_consent: false,
+  consent_text: '',
+};
+
 const BLOCKED_HOST_SNIPPETS = [
   'vercel.app',
   'vercel-backend',
@@ -135,6 +155,28 @@ async function handleApi(route: Route) {
       member_id: FIXTURE_PATIENT.member_id,
       name: FIXTURE_PATIENT.name,
       email: FIXTURE_PATIENT.email,
+    });
+  }
+
+  if (path.includes('/forms/check_in/list_checkin_forms')) {
+    return json(route, [FIXTURE_CHECKIN_FORM]);
+  }
+
+  if (path.includes('/forms/questionary/list_questionary_forms')) {
+    return json(route, [FIXTURE_QUESTIONARY_FORM]);
+  }
+
+  if (path.includes('/forms/check_in/duplicate_checkin_form')) {
+    return json(route, {
+      unique_id: 'cleanup-checkin-form-copy',
+      title: `${FIXTURE_CHECKIN_FORM.title} (Copy)`,
+    });
+  }
+
+  if (path.includes('/forms/questionary/duplicate_questionary_form')) {
+    return json(route, {
+      unique_id: 'cleanup-questionary-form-copy',
+      title: `${FIXTURE_QUESTIONARY_FORM.title} (Copy)`,
     });
   }
 

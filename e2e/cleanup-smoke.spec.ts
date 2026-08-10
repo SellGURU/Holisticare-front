@@ -1,7 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 import {
+  FIXTURE_CHECKIN_FORM,
   FIXTURE_DASHBOARD_STATS,
   FIXTURE_PATIENT,
+  FIXTURE_QUESTIONARY_FORM,
   installPortalApiMocks,
 } from './fixtures/portal-api';
 
@@ -107,6 +109,45 @@ test.describe('Portal cleanup smoke (offline mocks)', () => {
     await expect(page.getByText('Custom Form').first()).toBeVisible();
     await expect(page.getByText('Questionnaire').first()).toBeVisible();
     await expect(page.getByText('Check-in').first()).toBeVisible();
+  });
+
+  test('P5b: forms duplicate action calls check-in and questionnaire endpoints', async ({
+    page,
+  }) => {
+    await loginAsCoach(page);
+    await expect(page.getByText(FIXTURE_PATIENT.name).first()).toBeVisible({
+      timeout: 20_000,
+    });
+
+    await page.goto('/forms');
+    await expect(
+      page.getByText(FIXTURE_QUESTIONARY_FORM.title).first(),
+    ).toBeVisible({ timeout: 20_000 });
+
+    const questionaryDup = page.waitForRequest(
+      (req) =>
+        req.url().includes('/forms/questionary/duplicate_questionary_form') &&
+        req.method() === 'POST',
+    );
+    await page.locator('img[src="/icons/more-blue.svg"]').first().click();
+    await page.getByText('Duplicate', { exact: true }).click();
+    await questionaryDup;
+
+    await page.getByText('Check-in', { exact: true }).click();
+    await expect(
+      page.getByText(FIXTURE_CHECKIN_FORM.title).first(),
+    ).toBeVisible({
+      timeout: 20_000,
+    });
+
+    const checkinDup = page.waitForRequest(
+      (req) =>
+        req.url().includes('/forms/check_in/duplicate_checkin_form') &&
+        req.method() === 'POST',
+    );
+    await page.locator('img[src="/icons/more-blue.svg"]').first().click();
+    await page.getByText('Duplicate', { exact: true }).click();
+    await checkinDup;
   });
 
   test('P6: settings shell renders', async ({ page }) => {

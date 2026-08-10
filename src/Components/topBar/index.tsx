@@ -30,7 +30,7 @@ export const TopBar: FC<TopBarProps> = ({
   isShare,
 }) => {
   const navigate = useNavigate();
-  const { setClinicAccess } = useApp();
+  const { setClinicAccess, accountRole, setAccountRole } = useApp();
   const printreport = () => {
     const mywindow: any = window.open('', 'PRINT', 'height=300,width=800');
     mywindow.document.write(`
@@ -183,10 +183,16 @@ export const TopBar: FC<TopBarProps> = ({
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo()
       .then((res) => {
+        const responseAccountRole =
+          res.data.brand_elements.account_role || accountRole;
+        if (responseAccountRole) {
+          setAccountRole(responseAccountRole);
+        }
         if (
-          res.data.brand_elements.name === null ||
-          res.data.brand_elements.name === '' ||
-          res.data.brand_elements.logo === null
+          responseAccountRole.toLowerCase() !== 'staff' &&
+          (res.data.brand_elements.name === null ||
+            res.data.brand_elements.name === '' ||
+            res.data.brand_elements.logo === null)
         ) {
           navigate('/register-profile');
           return;

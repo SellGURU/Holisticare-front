@@ -16,6 +16,7 @@ interface TableProps {
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
+  onDuplicate: (id: string) => void;
   // onReposition: (id: string) => void;
 }
 
@@ -35,6 +36,7 @@ const TableForm: FC<TableProps> = ({
   onDelete,
   onEdit,
   onPreview,
+  onDuplicate,
   // onReposition,
 }) => {
   const [data, setData] = useState(classData);
@@ -127,6 +129,7 @@ const TableForm: FC<TableProps> = ({
                         onDelete={onDelete}
                         onEdit={onEdit}
                         onPreview={onPreview}
+                        onDuplicate={onDuplicate}
                         // onReposition={onReposition}
                         index={index}
                       />

@@ -9,6 +9,7 @@ interface TableRowProps {
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
+  onDuplicate: (id: string) => void;
   // onReposition: (id: string) => void;
   index: number;
 }
@@ -18,6 +19,7 @@ const TableRow: FC<TableRowProps> = ({
   onDelete,
   onEdit,
   onPreview,
+  onDuplicate,
   // onReposition,
   index,
 }) => {
@@ -38,7 +40,7 @@ const TableRow: FC<TableRowProps> = ({
 
   const handleOpenModal = (e: React.MouseEvent<HTMLImageElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const modalHeight = 118;
+    const modalHeight = 158;
     const windowHeight = window.innerHeight;
     const scrollY = window.scrollY || window.pageYOffset;
 
@@ -67,6 +69,11 @@ const TableRow: FC<TableRowProps> = ({
   const handleEdit = (id: string) => {
     setShowModal(false);
     onEdit(id);
+  };
+
+  const handleDuplicate = (id: string) => {
+    setShowModal(false);
+    onDuplicate(id);
   };
 
   // const handleReposition = (id: string) => {
@@ -138,6 +145,13 @@ const TableRow: FC<TableRowProps> = ({
           >
             <img src="/icons/edit-green.svg" className="w-4" alt="" />
             Edit
+          </div>
+          <div
+            className="flex items-center border-b border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 cursor-pointer"
+            onClick={() => handleDuplicate(row.original.id)}
+          >
+            <img src="/icons/copy.svg" className="w-4" alt="" />
+            Duplicate
           </div>
           {sureRemove ? (
             <div className="flex items-center justify-start gap-1">
