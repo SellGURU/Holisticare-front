@@ -33,6 +33,7 @@ import resolveStatusArray from './resolveStatusArray';
 // import { useConstructor } from "@/help"
 import { decodeAccessUser } from '../../help';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
+import { visibilityPollMs } from '../../utils/visibilityPoll';
 // import { ButtonPrimary } from '../Button/ButtonPrimary';
 import Circleloader from '../CircleLoader';
 import InfoToltip from '../InfoToltip';
@@ -1473,7 +1474,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           }
           setIsHtmlReportExists(false);
           setHtmlReportPollState('building');
-          setTimeout(pollHtmlReport, HTML_REPORT_POLL_INTERVAL_MS);
+          setTimeout(pollHtmlReport, visibilityPollMs(HTML_REPORT_POLL_INTERVAL_MS));
         }
       })
       .catch(() => {
@@ -1485,7 +1486,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         }
         setIsHtmlReportExists(false);
         setHtmlReportPollState('building');
-        setTimeout(pollHtmlReport, HTML_REPORT_POLL_INTERVAL_MS);
+        setTimeout(pollHtmlReport, visibilityPollMs(HTML_REPORT_POLL_INTERVAL_MS));
       });
   };
   const retryHtmlReportBuild = () => {

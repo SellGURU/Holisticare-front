@@ -24,6 +24,7 @@ import {
   HEALTH_PLAN_CACHE_KEYS,
   HEALTH_PLAN_TTL_MS,
 } from '../../utils/cacheKeys';
+import { visibilityPollMs } from '../../utils/visibilityPoll';
 
 // import { Tooltip } from 'react-tooltip';
 interface ComboBarProps {
@@ -49,8 +50,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         })
         .catch(() => {});
 
-      // Set up interval to check every minute
-      const intervalId = setInterval(() => {
+      // RP-C07: visibility-aware unread poll (60s visible, 5x when hidden)
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
+      const checkUnread = () => {
         Application.has_unread_message({
           member_id: id,
         })
@@ -58,10 +60,18 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
             setHasUnreadMessage(res.data.has_unread);
           })
           .catch(() => {});
-      }, 60000); // 60000 ms = 1 minute
+      };
+      const scheduleUnread = () => {
+        timeoutId = setTimeout(() => {
+          checkUnread();
+          scheduleUnread();
+        }, visibilityPollMs(60000));
+      };
+      scheduleUnread();
 
-      // Cleanup interval on component unmount
-      return () => clearInterval(intervalId);
+      return () => {
+        if (timeoutId) clearTimeout(timeoutId);
+      };
     }
   }, [id]);
   const itemList = [

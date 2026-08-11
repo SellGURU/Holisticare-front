@@ -5,6 +5,7 @@ import {
   progressEventMatchesMember,
   type OverviewDataPhase,
 } from '../utils/asyncProcessing';
+import { visibilityPollMs } from '../utils/visibilityPoll';
 
 const OVERVIEW_POLL_INTERVAL_MS = 2000;
 const OVERVIEW_POLL_MAX_MS = 10 * 60 * 1000;
@@ -59,7 +60,7 @@ export function useOverviewPoll({
 }: UseOverviewPollOptions) {
   const inFlightRef = useRef(false);
   const pollingRef = useRef(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastRevisionRef = useRef<string | null>(null);
   const lastScoredRef = useRef<number | null>(null);
   const pollStartedAtRef = useRef<number | null>(null);
@@ -68,7 +69,7 @@ export function useOverviewPoll({
   const stopPolling = useCallback(() => {
     pollingRef.current = false;
     if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+      clearTimeout(intervalRef.current);
       intervalRef.current = null;
     }
   }, []);
@@ -149,6 +150,20 @@ export function useOverviewPoll({
     stopPolling,
   ]);
 
+  const scheduleNextPoll = useCallback(() => {
+    if (!pollingRef.current) return;
+    if (intervalRef.current) {
+      clearTimeout(intervalRef.current);
+    }
+    intervalRef.current = setTimeout(() => {
+      void pollTick().finally(() => {
+        if (pollingRef.current) {
+          scheduleNextPoll();
+        }
+      });
+    }, visibilityPollMs(OVERVIEW_POLL_INTERVAL_MS));
+  }, [pollTick]);
+
   const startPolling = useCallback(() => {
     if (!enabled || !memberId) return;
     onPollStart?.();
@@ -158,14 +173,15 @@ export function useOverviewPoll({
       consecutiveErrorsRef.current = 0;
       lastRevisionRef.current = null;
       lastScoredRef.current = null;
-      void pollTick();
-      intervalRef.current = setInterval(() => {
-        void pollTick();
-      }, OVERVIEW_POLL_INTERVAL_MS);
+      void pollTick().finally(() => {
+        if (pollingRef.current) {
+          scheduleNextPoll();
+        }
+      });
       return;
     }
     void pollTick();
-  }, [enabled, memberId, onPollStart, pollTick]);
+  }, [enabled, memberId, onPollStart, pollTick, scheduleNextPoll]);
 
   useEffect(() => {
     lastRevisionRef.current = null;
