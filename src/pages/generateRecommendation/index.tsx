@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useContext, useRef } from 'react';
 import { TopBar } from '../../Components/topBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
@@ -22,6 +22,7 @@ import {
   extractCategoryMap,
 } from '../../utils/lookingForwards';
 import { serializeRescoreSignature } from './rescoreSignature';
+import { useVisibilityAwarePoll } from '../../hooks/useVisibilityAwarePoll';
 
 type CategoryState = {
   name: string;
@@ -129,7 +130,7 @@ export const GenerateRecommendation = () => {
   const planRequestInFlightRef = useRef(false);
   const hasLoadedInitialPlanRef = useRef(false);
   const remapLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const biomarkerPollingRef = useRef<NodeJS.Timeout | null>(null);
+  const [biomarkerPollEnabled, setBiomarkerPollEnabled] = useState(false);
   const lastKeyAreasUpdateFromRemapRef = useRef(false);
   const lastScoredRescoreSignatureRef = useRef<string | null>(null);
 
@@ -287,57 +288,50 @@ export const GenerateRecommendation = () => {
       });
   };
 
-  const startBiomarkerPolling = () => {
-    if (biomarkerPollingRef.current) clearInterval(biomarkerPollingRef.current);
-    if (!id) return;
+  const pollBiomarkerStatus = useCallback(() => {
+    if (!isMountedRef.current || !id) return;
+    Application.pollPerBiomarkerStatus({ member_id: id })
+      .then((res) => {
+        if (res.data?.ready) {
+          setBiomarkerPollEnabled(false);
+          const moreInfos = res.data.more_infos;
+          const biomarkerInsights = res.data.biomarker_insights;
+          setTratmentPlanData((prev: any) => {
+            if (!prev) return prev;
+            const newMoreInfos = moreInfos && moreInfos.length > 0;
+            const newBiomarker =
+              biomarkerInsights && biomarkerInsights.length > 0;
+            if (!newMoreInfos && !newBiomarker) return prev;
+            const moreInfosChanged =
+              newMoreInfos &&
+              JSON.stringify(prev.more_infos) !== JSON.stringify(moreInfos);
+            const shouldFillMissingBiomarkers =
+              newBiomarker &&
+              (!Array.isArray(prev.biomarker_insight) ||
+                prev.biomarker_insight.length === 0);
+            const biomarkerChanged =
+              shouldFillMissingBiomarkers &&
+              JSON.stringify(prev.biomarker_insight) !==
+                JSON.stringify(biomarkerInsights);
+            if (!moreInfosChanged && !biomarkerChanged) return prev;
+            return {
+              ...prev,
+              ...(moreInfosChanged ? { more_infos: moreInfos } : {}),
+              ...(biomarkerChanged
+                ? { biomarker_insight: biomarkerInsights }
+                : {}),
+            };
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('pollPerBiomarkerStatus error:', err);
+      });
+  }, [id]);
 
-    biomarkerPollingRef.current = setInterval(() => {
-      if (!isMountedRef.current) {
-        if (biomarkerPollingRef.current)
-          clearInterval(biomarkerPollingRef.current);
-        return;
-      }
-      Application.pollPerBiomarkerStatus({ member_id: id })
-        .then((res) => {
-          if (res.data?.ready) {
-            if (biomarkerPollingRef.current)
-              clearInterval(biomarkerPollingRef.current);
-            biomarkerPollingRef.current = null;
-            const moreInfos = res.data.more_infos;
-            const biomarkerInsights = res.data.biomarker_insights;
-            setTratmentPlanData((prev: any) => {
-              if (!prev) return prev;
-              const newMoreInfos = moreInfos && moreInfos.length > 0;
-              const newBiomarker =
-                biomarkerInsights && biomarkerInsights.length > 0;
-              if (!newMoreInfos && !newBiomarker) return prev;
-              const moreInfosChanged =
-                newMoreInfos &&
-                JSON.stringify(prev.more_infos) !== JSON.stringify(moreInfos);
-              const shouldFillMissingBiomarkers =
-                newBiomarker &&
-                (!Array.isArray(prev.biomarker_insight) ||
-                  prev.biomarker_insight.length === 0);
-              const biomarkerChanged =
-                shouldFillMissingBiomarkers &&
-                JSON.stringify(prev.biomarker_insight) !==
-                  JSON.stringify(biomarkerInsights);
-              if (!moreInfosChanged && !biomarkerChanged) return prev;
-              return {
-                ...prev,
-                ...(moreInfosChanged ? { more_infos: moreInfos } : {}),
-                ...(biomarkerChanged
-                  ? { biomarker_insight: biomarkerInsights }
-                  : {}),
-              };
-            });
-          }
-        })
-        .catch((err) => {
-          console.error('pollPerBiomarkerStatus error:', err);
-        });
-    }, 5000);
-  };
+  useVisibilityAwarePoll(pollBiomarkerStatus, 5000, biomarkerPollEnabled && !!id, {
+    immediate: false,
+  });
 
   useEffect(() => {
     resolveCoverage();
@@ -406,7 +400,7 @@ export const GenerateRecommendation = () => {
       hasLoadedInitialPlanRef.current = true;
 
       if (isFirstLoad) {
-        startBiomarkerPolling();
+        setBiomarkerPollEnabled(true);
       }
 
       if (retryForSuggestions && !suggestionsDataReady) {
@@ -487,9 +481,7 @@ export const GenerateRecommendation = () => {
       if (remapLoadingTimeoutRef.current) {
         clearTimeout(remapLoadingTimeoutRef.current);
       }
-      if (biomarkerPollingRef.current) {
-        clearInterval(biomarkerPollingRef.current);
-      }
+      setBiomarkerPollEnabled(false);
     };
   }, []);
 

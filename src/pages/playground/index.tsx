@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import PlaygroundList from './PlaygroundList';
 import Application from '../../api/app';
 import PlayGproundShow from './PlayGproundShow';
+import { fetchBrandInfo } from '../../utils/brandInfoCache';
 // import { ButtonPrimary } from "../../Components/Button/ButtonPrimary";
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddPlayGround from './addPlayGround';
@@ -25,9 +26,9 @@ const Playground = () => {
   };
   const navigate = useNavigate();
   const checkAcccessPlayGround = () => {
-    Application.getShowBrandInfo()
+    fetchBrandInfo()
       .then((res) => {
-        if (res.data.brand_elements.knowledge_playground == false) {
+        if (res.brand_elements.knowledge_playground == false) {
           navigate('/');
         }
       })

@@ -7,15 +7,15 @@ import { Zappier } from './components/Zappier';
 import PackagePage from './components/Package';
 import { ClinicPreferences } from './components/ClinicPreferences';
 import { ChangePassword } from '../../Components/changePassword';
-import Application from '../../api/app';
 import { ShowTutorial } from './components/ShowTutorial';
+import { fetchBrandInfo } from '../../utils/brandInfoCache';
 const Setting: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState('Clinic Preferences');
   const [loginWithGoogle, setLoginWithGoogle] = useState(false);
   const getShowBrandInfo = () => {
-    Application.getShowBrandInfo()
+    fetchBrandInfo()
       .then((res) => {
-        setLoginWithGoogle(res.data.brand_elements.login_with_Google);
+        setLoginWithGoogle(Boolean(res.brand_elements.login_with_Google));
       })
       .catch((err) => {
         console.error('Error getting show brand info:', err);

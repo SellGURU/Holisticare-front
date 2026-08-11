@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   __resetPageCacheForTests,
   getCached,
+  getCachedUntilInvalidated,
   hasCached,
   invalidate,
   peekCached,
@@ -88,5 +89,18 @@ describe('pageCache', () => {
     const second = await getCached('portal:biomarkers:list', fetcher);
     expect(second).toHaveLength(2);
     expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+
+  it('getCachedUntilInvalidated does not background revalidate on hit', async () => {
+    const fetcher = vi.fn().mockResolvedValue({ ok: true });
+
+    await getCachedUntilInvalidated('portal:sticky', fetcher);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+
+    const neverResolves = vi.fn(() => new Promise<never>(() => {}));
+    const result = await getCachedUntilInvalidated('portal:sticky', neverResolves);
+
+    expect(result).toEqual({ ok: true });
+    expect(neverResolves).not.toHaveBeenCalled();
   });
 });

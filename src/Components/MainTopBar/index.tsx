@@ -1,16 +1,17 @@
 // import { useNavigate } from "react-router-dom";
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import LogOutModal from '../LogOutModal';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import Auth from '../../api/auth';
 import { publish, subscribe } from '../../utils/event';
-import Application from '../../api/app';
 import { BeatLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
 import { Notification } from '../Notification';
 import NotificationApi from '../../api/Notification';
 import { useApp } from '../../hooks';
+import { useVisibilityAwarePoll } from '../../hooks/useVisibilityAwarePoll';
+import { fetchBrandInfo } from '../../utils/brandInfoCache';
 const MainTopBar = () => {
   const navigate = useNavigate();
   const { accountRole, setAccountRole } = useApp();
@@ -67,48 +68,48 @@ const MainTopBar = () => {
         },
   );
 
-  const getShowBrandInfo = () => {
-    Application.getShowBrandInfo()
+  const getShowBrandInfo = useCallback(() => {
+    fetchBrandInfo()
       .then((res) => {
         const responseAccountRole =
-          res.data.brand_elements.account_role || accountRole;
+          (res.brand_elements.account_role as string) || accountRole;
         if (responseAccountRole) {
           setAccountRole(responseAccountRole);
         }
         if (
           responseAccountRole.toLowerCase() !== 'staff' &&
-          (res.data.brand_elements.name === null ||
-            res.data.brand_elements.name === '' ||
-            res.data.brand_elements.logo === null)
+          (res.brand_elements.name === null ||
+            res.brand_elements.name === '' ||
+            res.brand_elements.logo === null)
         ) {
           navigate('/register-profile');
           return;
         }
         setCustomTheme({
-          headLine: res.data.brand_elements.headline,
-          name: res.data.brand_elements.name,
-          selectedImage: res.data.brand_elements.logo,
+          headLine: res.brand_elements.headline as string,
+          name: res.brand_elements.name as string,
+          selectedImage: res.brand_elements.logo as string | null,
         });
         localStorage.setItem(
           'brandInfoData',
           JSON.stringify({
-            headLine: res.data.brand_elements.headline,
-            name: res.data.brand_elements.name,
-            selectedImage: res.data.brand_elements.logo,
+            headLine: res.brand_elements.headline,
+            name: res.brand_elements.name,
+            selectedImage: res.brand_elements.logo,
           }),
         );
-        if (res.data.brand_elements.knowledge_playground == true) {
+        if (res.brand_elements.knowledge_playground == true) {
           publish(
             'knowledge_playground-Show',
-            res.data.brand_elements.knowledge_playground,
+            res.brand_elements.knowledge_playground,
           );
         }
-        if (res.data.brand_elements.permission) {
-          publish('permissions-show', res.data.brand_elements.permission);
+        if (res.brand_elements.permission) {
+          publish('permissions-show', res.brand_elements.permission);
         }
       })
       .catch(() => {});
-  };
+  }, [accountRole, navigate, setAccountRole]);
 
   useEffect(() => {
     getShowBrandInfo();
@@ -117,28 +118,22 @@ const MainTopBar = () => {
     subscribe('refreshBrandInfo', () => {
       getShowBrandInfo();
     });
-  }, []);
+  }, [getShowBrandInfo]);
 
   console.log(showNotification);
 
-  useEffect(() => {
-    const checkNewNotifications = async () => {
-      try {
-        const response = await NotificationApi.checkNotification();
-        if (response && response.data && response.data.new_notifications) {
-          setisUnReadNotif(true);
-        }
-      } catch (error) {
-        console.error('Error checking for new notifications:', error);
+  const checkNewNotifications = useCallback(async () => {
+    try {
+      const response = await NotificationApi.checkNotification();
+      if (response && response.data && response.data.new_notifications) {
+        setisUnReadNotif(true);
       }
-    };
-
-    checkNewNotifications();
-
-    const intervalId = setInterval(checkNewNotifications, 120000);
-
-    return () => clearInterval(intervalId);
+    } catch (error) {
+      console.error('Error checking for new notifications:', error);
+    }
   }, []);
+
+  useVisibilityAwarePoll(checkNewNotifications, 120000);
   return (
     <>
       <div className="w-full  flex md:hidden justify-between items-center border-b border-white  py-2">

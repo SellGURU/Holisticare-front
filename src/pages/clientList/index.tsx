@@ -4,6 +4,8 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import PortalLink from '../../Components/PortalLink/index.tsx';
 import Application from '../../api/app.ts';
 import { subscribe } from '../../utils/event.ts';
+import { getCached } from '../../utils/pageCache.ts';
+import { PORTAL_CACHE_KEYS } from '../../utils/cacheKeys.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
 import FilterModal from '../../Components/FilterModal/index.tsx';
 import SearchBox from '../../Components/SearchBox/index.tsx';
@@ -33,6 +35,7 @@ type ClientData = {
   archived?: boolean;
   drift_analyzed?: boolean;
   assigned_to?: Array<string>;
+  refresh_in_progress?: boolean;
   'Check-in': string;
   Questionary: string;
   // Add other properties as needed
@@ -72,8 +75,9 @@ const ClientList = () => {
 
   const getPatients = () => {
     setIsLoading(true);
-    Application.getPatients()
-      .then((res) => res.data)
+    getCached(PORTAL_CACHE_KEYS.patients, () =>
+      Application.getPatients().then((res) => res.data),
+    )
       .then((data) => {
         setClientList(data.patients_list_data);
         setFilteredClientList(data.patients_list_data);

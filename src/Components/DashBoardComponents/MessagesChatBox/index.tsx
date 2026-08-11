@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
 import Application from '../../../api/app';
@@ -16,6 +16,7 @@ import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import SvgIcon from '../../../utils/svgIcon';
 import SearchBox from '../../SearchBox';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import { useVisibilityAwarePoll } from '../../../hooks/useVisibilityAwarePoll';
 import { Tooltip } from 'react-tooltip';
 type Message = {
   date: string;
@@ -143,27 +144,26 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       setMessages([]);
     }
   }, [id, usernameParams]);
-  useEffect(() => {
-    if (username && memberId) {
-      const intervalId = setInterval(() => {
-        Application.has_unread_message({
-          member_id: memberId,
-        })
-          .then((res) => {
-            if (res?.data?.has_unread === true) {
-              if (aiMode === true) {
-                aiMessagesList(parseInt(memberId));
-              } else {
-                userMessagesList(parseInt(memberId));
-              }
-            }
-          })
-          .catch(() => {});
-      }, 15000);
+  const pollUnreadMessages = useCallback(() => {
+    if (!username || !memberId) return;
+    Application.has_unread_message({
+      member_id: memberId,
+    })
+      .then((res) => {
+        if (res?.data?.has_unread === true) {
+          if (aiMode === true) {
+            aiMessagesList(parseInt(memberId));
+          } else {
+            userMessagesList(parseInt(memberId));
+          }
+        }
+      })
+      .catch(() => {});
+  }, [aiMode, memberId, username]);
 
-      return () => clearInterval(intervalId);
-    }
-  }, [username, memberId, aiMode]);
+  useVisibilityAwarePoll(pollUnreadMessages, 15000, Boolean(username && memberId), {
+    immediate: false,
+  });
   const [, setSelectedBenchMarks] = useState<Array<string>>([]);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
