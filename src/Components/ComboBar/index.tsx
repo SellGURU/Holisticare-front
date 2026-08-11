@@ -19,6 +19,11 @@ import SvgIcon from '../../utils/svgIcon.tsx';
 import FileHistoryNew from './components/FileHistory/FileHistoryNew.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
 import { motion } from 'framer-motion';
+import { getCached } from '../../utils/pageCache';
+import {
+  HEALTH_PLAN_CACHE_KEYS,
+  HEALTH_PLAN_TTL_MS,
+} from '../../utils/cacheKeys';
 
 // import { Tooltip } from 'react-tooltip';
 interface ComboBarProps {
@@ -82,11 +87,16 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   });
 
   useEffect(() => {
-    Application.getPatientsInfo({
-      member_id: id,
-    })
-      .then((res) => {
-        setPatientInfo(res.data);
+    if (!id) return;
+    // RP-F01: same cache key as report page + ReportAnalyseView
+    getCached(
+      HEALTH_PLAN_CACHE_KEYS.patientInfo(id),
+      () =>
+        Application.getPatientsInfo({ member_id: id }).then((res) => res.data),
+      HEALTH_PLAN_TTL_MS,
+    )
+      .then((data) => {
+        setPatientInfo(data);
       })
       .catch(() => {
         console.error('Error getting patient info');

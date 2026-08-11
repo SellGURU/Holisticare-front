@@ -14,6 +14,11 @@ import UnderProgressController from './underProgressController';
 import { useParams } from 'react-router-dom';
 import Application from '../../api/app';
 import { compileFromNeedRefreshModal } from '../../utils/compileFromNeedRefreshModal';
+import { getCached } from '../../utils/pageCache';
+import {
+  HEALTH_PLAN_CACHE_KEYS,
+  HEALTH_PLAN_TTL_MS,
+} from '../../utils/cacheKeys';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
@@ -49,9 +54,17 @@ const Report = () => {
         // fall through to patient-info partial check
       });
 
-    Application.getPatientsInfo({ member_id: Number(id) })
-      .then((res) => {
-        if (res.data?.has_partial_report && !res.data?.show_report) {
+    // RP-F01: share getCached key with ReportAnalyseView + ComboBar
+    getCached(
+      HEALTH_PLAN_CACHE_KEYS.patientInfo(id),
+      () =>
+        Application.getPatientsInfo({ member_id: Number(id) }).then(
+          (res) => res.data,
+        ),
+      HEALTH_PLAN_TTL_MS,
+    )
+      .then((data) => {
+        if (data?.has_partial_report && !data?.show_report) {
           publish('checkProgress', { resume: true, member_id: id });
         }
       })
@@ -125,6 +138,14 @@ const Report = () => {
   const [activeReportSection, setActiveReportSection] = useState<
     'Health' | 'Progress'
   >('Health');
+  // RP-F12: do not mount Progress (or fetch wellness) until first Progress visit
+  const [progressMounted, setProgressMounted] = useState(false);
+
+  useEffect(() => {
+    if (activeReportSection === 'Progress') {
+      setProgressMounted(true);
+    }
+  }, [activeReportSection]);
 
   useEffect(() => {
     const handleReportStatus = (message: any) => {
@@ -142,14 +163,11 @@ const Report = () => {
     if (first_time_view == true) {
       setActiveReportSection('Health');
     }
-    if (first_time_view == false) {
-      if (isHaveScore) {
-        setActiveReportSection('Progress');
-      } else {
-        setActiveReportSection('Health');
-      }
+    // Returning users stay on Health until Progress tab opens (lazy wellness).
+    if (first_time_view == false && progressMounted && isHaveScore) {
+      setActiveReportSection('Progress');
     }
-  }, [isHaveScore, first_time_view]);
+  }, [isHaveScore, first_time_view, progressMounted]);
   return (
     <div className="w-full h-full">
       <FullScreenModal />
@@ -199,12 +217,14 @@ const Report = () => {
       <div
         className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
       >
-        <ProgressDashboardView
-          isActive={activeReportSection === 'Progress'}
-          onHaveScore={(isHave: boolean) => {
-            setIsHaveScore(isHave);
-          }}
-        />
+        {progressMounted ? (
+          <ProgressDashboardView
+            isActive={activeReportSection === 'Progress'}
+            onHaveScore={(isHave: boolean) => {
+              setIsHaveScore(isHave);
+            }}
+          />
+        ) : null}
       </div>
 
       <div
