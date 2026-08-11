@@ -26,6 +26,7 @@ import {
   TaskValidationError,
   validateActionPlanTasks,
 } from './actionPlanValidation';
+import { createTrailingDebounce } from '../../utils/trailingDebounce';
 
 const GenerateActionPlan = () => {
   const isDemo = useIsDemo();
@@ -330,7 +331,12 @@ const GenerateActionPlan = () => {
     }
   };
   useEffect(() => {
-    autoSaveActionPlan();
+    // AP-F03: trailing debounce autosave (~750ms); cancel on change/unmount.
+    const { call, cancel } = createTrailingDebounce(() => {
+      autoSaveActionPlan();
+    }, 750);
+    call();
+    return cancel;
   }, [actions, duration, planObjective, isLoadingSaveChanges]);
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
