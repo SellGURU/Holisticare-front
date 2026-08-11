@@ -21,21 +21,11 @@ import {
   forApiPayload,
   extractCategoryMap,
 } from '../../utils/lookingForwards';
+import { serializeRescoreSignature } from './rescoreSignature';
 
 type CategoryState = {
   name: string;
   visible: boolean;
-};
-
-const serializeKeyAreas = (value: any) => {
-  const type2 = toType2(value ?? []);
-  const keyAreas = type2['Key areas to address'] || {};
-  return JSON.stringify({
-    critical_urgent: keyAreas.critical_urgent ?? [],
-    important_strategic: keyAreas.important_strategic ?? [],
-    important_long_term: keyAreas.important_long_term ?? [],
-    optional_enhancements: keyAreas.optional_enhancements ?? [],
-  });
 };
 
 const sleep = (ms: number) =>
@@ -141,7 +131,7 @@ export const GenerateRecommendation = () => {
   const remapLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const biomarkerPollingRef = useRef<NodeJS.Timeout | null>(null);
   const lastKeyAreasUpdateFromRemapRef = useRef(false);
-  const lastScoredKeyAreasSignatureRef = useRef<string>('');
+  const lastScoredRescoreSignatureRef = useRef<string | null>(null);
 
   const pollHolisticRescoreJob = async (jobId: string) => {
     for (let attempt = 0; attempt < 90; attempt += 1) {
@@ -409,7 +399,8 @@ export const GenerateRecommendation = () => {
         looking_forwards: type2ToFlatList(keyAreas),
         member_id: id,
       };
-      lastScoredKeyAreasSignatureRef.current = serializeKeyAreas(keyAreas);
+      lastScoredRescoreSignatureRef.current =
+        serializeRescoreSignature(payload);
       setTratmentPlanData(payload);
       setSuggestionsDefualt(data.suggestion_tab);
       hasLoadedInitialPlanRef.current = true;
@@ -506,8 +497,21 @@ export const GenerateRecommendation = () => {
     if (currentStepIndex === 0) {
       if (treatmentPlanData) {
         setisButtonLoading(true);
+        const currentSignature = serializeRescoreSignature(treatmentPlanData);
+        if (
+          currentSignature &&
+          currentSignature === lastScoredRescoreSignatureRef.current
+        ) {
+          console.info(
+            'Step 1 -> Step 2: skipping rescore — inputs unchanged since last score',
+          );
+          resolveCoverage(treatmentPlanData);
+          setCurrentStepIndex((prevIndex) => prevIndex + 1);
+          setisButtonLoading(false);
+          return;
+        }
         console.info(
-          'Step 1 -> Step 2: always rescoring using current Health Planning Issues',
+          'Step 1 -> Step 2: rescoring using current Health Planning Issues',
         );
         try {
           const remappedPlan = await remapIssues(treatmentPlanData);
@@ -544,8 +548,8 @@ export const GenerateRecommendation = () => {
             prev ? { ...prev, ...rescoredPlan } : rescoredPlan,
           );
           setSuggestionsDefualt(rescoredPlan.suggestion_tab ?? []);
-          lastScoredKeyAreasSignatureRef.current =
-            serializeKeyAreas(rescoredKeyAreas);
+          lastScoredRescoreSignatureRef.current =
+            serializeRescoreSignature(rescoredPlan);
           resolveCoverage(rescoredPlan);
           setCurrentStepIndex((prevIndex) => prevIndex + 1);
         } catch (err) {
@@ -553,8 +557,8 @@ export const GenerateRecommendation = () => {
             'Step 1 -> Step 2 rescore failed:',
             (err as any)?.response?.data ?? err,
           );
-          // Advance to step 2 even if rescore fails so the user is not stuck
-          setCurrentStepIndex((prevIndex) => prevIndex + 1);
+          setisButtonLoading(false);
+          return;
         } finally {
           setisButtonLoading(false);
         }
