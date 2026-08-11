@@ -35,6 +35,7 @@ import {
   type KeyAreasType2,
 } from '../../utils/lookingForwards';
 import { publish } from '../../utils/event';
+import { buildResultTabHydration } from './resultTabHydration';
 
 const sleep = (ms: number) =>
   new Promise((resolve) => {
@@ -309,18 +310,16 @@ const NewGenerateHolisticPlan = () => {
     'default',
   );
   const [resultTabData, setResultTabData] = useState<any>(null);
-  useEffect(() => {
-    Application.getResultTab({ member_id: id })
-      .then((res) => {
-        setResultTabData(res.data.result_tab);
-        if (res.data.result_tab && res.data.result_tab.length > 0) {
-          setActiveEl(res.data.result_tab[0]);
-        }
-      })
-      .catch((err) => {
-        console.error('Error getting result tab:', err);
-      });
-  }, [id]);
+  const hydrateResultTabFromPlan = (resultTab: any) => {
+    const { resultTabData: nextTab, activeEl } =
+      buildResultTabHydration(resultTab);
+    if (nextTab !== null && nextTab !== undefined) {
+      setResultTabData(nextTab);
+    }
+    if (activeEl) {
+      setActiveEl(activeEl);
+    }
+  };
 
   // const resoveSubctegoriesSubs = () => {
   //   const subs: any = [];
@@ -392,7 +391,7 @@ const NewGenerateHolisticPlan = () => {
             looking_forwards: type2ToFlatList(keyAreas),
           });
           setClientGools({ ...res.data.client_goals });
-          setActiveEl(res.data.result_tab[0]);
+          hydrateResultTabFromPlan(res.data.result_tab);
           hydrateInterventionSuggestions({
             ...data,
             key_areas_to_address: keyAreas,
@@ -427,6 +426,7 @@ const NewGenerateHolisticPlan = () => {
               looking_forwards: type2ToFlatList(keyAreas),
             };
             setTratmentPlanData(payload);
+            hydrateResultTabFromPlan(data.result_tab);
             hydrateInterventionSuggestions(payload);
           } else {
             console.log('Missing essential data');
