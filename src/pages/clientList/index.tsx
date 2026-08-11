@@ -137,7 +137,7 @@ const ClientList = () => {
         const completedMemberIds = await pollRefreshProgressForMembers(
           memberIds,
           (memberId) =>
-            Application.checkRefreshProgress(memberId)
+            Application.checkRefreshProgress(String(memberId))
               .then((res) => res.data)
               .catch(() => null),
         );

@@ -3,7 +3,6 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PortalLink from '../PortalLink';
 import { BeatLoader } from 'react-spinners';
-import Application from '../../api/app';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
 import { fetchBrandInfo } from '../../utils/brandInfoCache';

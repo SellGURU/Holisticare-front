@@ -37,7 +37,6 @@ const MessageList: React.FC<MessageListProps> = ({
   //   search,
   onSelectMessage,
   messages,
-  setMessages,
 }) => {
   const navigate = useNavigate();
   //   const [filter, setFilter] = useState<string>('All');
