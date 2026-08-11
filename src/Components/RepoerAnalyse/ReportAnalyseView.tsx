@@ -393,9 +393,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const fetchReferenceData = () => {
-    if (resolvedMemberID == null) return;
+    if (resolvedMemberID == null) return Promise.resolve();
     setReferenceLoading(true);
-    getCached(
+    return getCached(
       HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(resolvedMemberID),
       () =>
         Application.getClientSummaryOutofrefs({
@@ -434,9 +434,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const fetchClientSummaryCategories = () => {
-    if (resolvedMemberID == null) return;
+    if (resolvedMemberID == null) return Promise.resolve();
     setClientSummaryLoading(true);
-    getCached(
+    return getCached(
       HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(resolvedMemberID),
       () =>
         Application.getClientSummaryCategories({
@@ -469,9 +469,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const fetchConcerningResults = () => {
-    if (resolvedMemberID == null) return;
+    if (resolvedMemberID == null) return Promise.resolve();
     setConcerningLoading(true);
-    getCached(
+    return getCached(
       HEALTH_PLAN_CACHE_KEYS.concerningResults(resolvedMemberID),
       () =>
         Application.getConceringResults({
@@ -501,10 +501,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const fetchData = () => {
     startSectionLoading();
-    fetchReferenceData();
-    fetchClientSummaryCategories();
-    fetchConcerningResults();
-    getTreatmentPlanData();
+    // B2: defer Holistic Plan until overview triad settles
+    Promise.allSettled([
+      fetchReferenceData(),
+      fetchClientSummaryCategories(),
+      fetchConcerningResults(),
+    ]).then(() => {
+      getTreatmentPlanData();
+    });
   };
   const getTreatmentPlanData = () => {
     if (resolvedMemberID == null) return;
@@ -1474,7 +1478,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           }
           setIsHtmlReportExists(false);
           setHtmlReportPollState('building');
-          setTimeout(pollHtmlReport, visibilityPollMs(HTML_REPORT_POLL_INTERVAL_MS));
+          setTimeout(
+            pollHtmlReport,
+            visibilityPollMs(HTML_REPORT_POLL_INTERVAL_MS),
+          );
         }
       })
       .catch(() => {
@@ -1486,7 +1493,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         }
         setIsHtmlReportExists(false);
         setHtmlReportPollState('building');
-        setTimeout(pollHtmlReport, visibilityPollMs(HTML_REPORT_POLL_INTERVAL_MS));
+        setTimeout(
+          pollHtmlReport,
+          visibilityPollMs(HTML_REPORT_POLL_INTERVAL_MS),
+        );
       });
   };
   const retryHtmlReportBuild = () => {
