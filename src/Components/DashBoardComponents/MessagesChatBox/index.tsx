@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
 import Application from '../../../api/app';
@@ -161,9 +167,14 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       .catch(() => {});
   }, [aiMode, memberId, username]);
 
-  useVisibilityAwarePoll(pollUnreadMessages, 15000, Boolean(username && memberId), {
-    immediate: false,
-  });
+  useVisibilityAwarePoll(
+    pollUnreadMessages,
+    15000,
+    Boolean(username && memberId),
+    {
+      immediate: false,
+    },
+  );
   const [, setSelectedBenchMarks] = useState<Array<string>>([]);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {

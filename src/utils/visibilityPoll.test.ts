@@ -1,8 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  VISIBILITY_HIDDEN_BACKOFF,
-  visibilityPollMs,
-} from './visibilityPoll';
+import { VISIBILITY_HIDDEN_BACKOFF, visibilityPollMs } from './visibilityPoll';
 import { createVisibilityPollScheduler } from './visibilityPollScheduler';
 
 describe('visibilityPollMs (RP-C07)', () => {

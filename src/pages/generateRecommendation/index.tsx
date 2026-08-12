@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useEffect, useState, useContext, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+} from 'react';
 import { TopBar } from '../../Components/topBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
@@ -329,9 +335,14 @@ export const GenerateRecommendation = () => {
       });
   }, [id]);
 
-  useVisibilityAwarePoll(pollBiomarkerStatus, 5000, biomarkerPollEnabled && !!id, {
-    immediate: false,
-  });
+  useVisibilityAwarePoll(
+    pollBiomarkerStatus,
+    5000,
+    biomarkerPollEnabled && !!id,
+    {
+      immediate: false,
+    },
+  );
 
   useEffect(() => {
     resolveCoverage();

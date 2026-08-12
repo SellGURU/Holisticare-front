@@ -1,13 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  invalidatePatientLists,
-  PORTAL_CACHE_KEYS,
-} from './cacheKeys';
-import {
-  __resetPageCacheForTests,
-  getCached,
-  hasCached,
-} from './pageCache';
+import { invalidatePatientLists, PORTAL_CACHE_KEYS } from './cacheKeys';
+import { __resetPageCacheForTests, getCached, hasCached } from './pageCache';
 
 describe('patients cache (RC3-G6)', () => {
   afterEach(() => {

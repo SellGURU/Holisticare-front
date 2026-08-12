@@ -98,7 +98,10 @@ describe('pageCache', () => {
     expect(fetcher).toHaveBeenCalledTimes(1);
 
     const neverResolves = vi.fn(() => new Promise<never>(() => {}));
-    const result = await getCachedUntilInvalidated('portal:sticky', neverResolves);
+    const result = await getCachedUntilInvalidated(
+      'portal:sticky',
+      neverResolves,
+    );
 
     expect(result).toEqual({ ok: true });
     expect(neverResolves).not.toHaveBeenCalled();

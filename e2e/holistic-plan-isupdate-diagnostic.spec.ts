@@ -66,8 +66,11 @@ test.describe('Holistic Plan isUpdate diagnostic @diagnostic', () => {
     const creds = requireCreds();
     test.skip(!creds, 'Blocked-by-access: set E2E_EMAIL / E2E_PASSWORD');
 
-    const samples: Array<{ key: string; status: number; totalMs: number | null }> =
-      [];
+    const samples: Array<{
+      key: string;
+      status: number;
+      totalMs: number | null;
+    }> = [];
     page.on('response', async (res) => {
       const url = res.url();
       let key: string | null = null;
@@ -89,7 +92,10 @@ test.describe('Holistic Plan isUpdate diagnostic @diagnostic', () => {
 
     const target = `/report/Generate-Holistic-Plan/${MEMBER_ID}/${T_PLAN_ID}?isUpdate=true`;
     const t0 = Date.now();
-    await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 120_000 });
+    await page.goto(target, {
+      waitUntil: 'domcontentloaded',
+      timeout: 120_000,
+    });
     // Allow show + remap (+ optional rescore) to finish
     await page.waitForTimeout(15_000);
     const wallMs = Date.now() - t0;

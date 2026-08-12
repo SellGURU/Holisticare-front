@@ -71,7 +71,10 @@ export function createVisibilityPollScheduler(
       active = false;
       clearTimer();
       if (typeof document !== 'undefined') {
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        document.removeEventListener(
+          'visibilitychange',
+          handleVisibilityChange,
+        );
       }
     },
   };

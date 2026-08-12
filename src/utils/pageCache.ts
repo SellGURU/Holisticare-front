@@ -21,7 +21,10 @@ const revalidateInBackground = <T>(
     });
 };
 
-const fetchAndStore = <T>(key: string, fetcher: () => Promise<T>): Promise<T> => {
+const fetchAndStore = <T>(
+  key: string,
+  fetcher: () => Promise<T>,
+): Promise<T> => {
   const pending = inFlight.get(key) as Promise<T> | undefined;
   if (pending) {
     return pending;
