@@ -176,7 +176,7 @@ const ClientList = () => {
 
     // Perform the search within the determined list
     const searchResult = listToSearch.filter((client) =>
-      client.name
+      String(client.name || '')
         .replace(/\s+/g, '')
         .toLowerCase()
         .includes(sanitizedSearchTerm),
@@ -229,11 +229,13 @@ const ClientList = () => {
 
     // Only apply gender filter if at least one gender is selected
     if (filters.gender.male || filters.gender.female) {
-      filtered = filtered.filter(
-        (client) =>
-          (filters.gender.male && client.sex.toLowerCase() === 'male') ||
-          (filters.gender.female && client.sex.toLowerCase() === 'female'),
-      );
+      filtered = filtered.filter((client) => {
+        const sex = String(client.sex || '').toLowerCase();
+        return (
+          (filters.gender.male && sex === 'male') ||
+          (filters.gender.female && sex === 'female')
+        );
+      });
     }
 
     if (filters.driftAnalyzed !== null) {

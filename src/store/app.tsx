@@ -107,8 +107,9 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     },
     accountRole,
     setAccountRole: (role: string) => {
-      setAccountRole(role);
-      localStorage.setItem('accountRole', role);
+      const safeRole = role || '';
+      setAccountRole(safeRole);
+      localStorage.setItem('accountRole', safeRole);
     },
     permisions: permisions,
     PackageManager: new PackageManager(),

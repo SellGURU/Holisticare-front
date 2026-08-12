@@ -133,8 +133,8 @@ const ClientCard: FC<ClientCardProps> = ({
 
   const [showArchiveModal, setshowArchiveModal] = useState(false);
   const [showDeleteModal, setshowDeleteModal] = useState(false);
-  const getStatusStyles = (status: string) => {
-    switch (status.toLowerCase()) {
+  const getStatusStyles = (status: string | null | undefined) => {
+    switch (String(status || '').toLowerCase()) {
       case 'checked':
         return {
           backgroundColor: '#DEF7EC',

@@ -72,12 +72,12 @@ const MainTopBar = () => {
     fetchBrandInfo()
       .then((res) => {
         const responseAccountRole =
-          (res.brand_elements.account_role as string) || accountRole;
+          (res.brand_elements.account_role as string) || accountRole || '';
         if (responseAccountRole) {
           setAccountRole(responseAccountRole);
         }
         if (
-          responseAccountRole.toLowerCase() !== 'staff' &&
+          String(responseAccountRole).toLowerCase() !== 'staff' &&
           (res.brand_elements.name === null ||
             res.brand_elements.name === '' ||
             res.brand_elements.logo === null)

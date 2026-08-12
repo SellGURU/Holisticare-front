@@ -47,11 +47,14 @@ export const SwitchClient: FC<SwitchClientProps> = ({
     return patients.filter((el) => {
       const matchesSearch =
         searchQuery.trim() === '' ||
-        el.name.toLowerCase().includes(searchQuery.toLowerCase());
+        String(el.name || '')
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
 
       const matchesStatus =
         activeStatus === 'All' ||
-        el.status.toLowerCase() === activeStatus.toLowerCase();
+        String(el.status || '').toLowerCase() ===
+          activeStatus.toLowerCase();
 
       return matchesSearch && matchesStatus;
     });
