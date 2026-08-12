@@ -53,8 +53,7 @@ export const SwitchClient: FC<SwitchClientProps> = ({
 
       const matchesStatus =
         activeStatus === 'All' ||
-        String(el.status || '').toLowerCase() ===
-          activeStatus.toLowerCase();
+        String(el.status || '').toLowerCase() === activeStatus.toLowerCase();
 
       return matchesSearch && matchesStatus;
     });
