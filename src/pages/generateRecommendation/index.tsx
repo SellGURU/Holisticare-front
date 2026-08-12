@@ -404,8 +404,16 @@ export const GenerateRecommendation = () => {
         looking_forwards: type2ToFlatList(keyAreas),
         member_id: id,
       };
-      lastScoredRescoreSignatureRef.current =
-        serializeRescoreSignature(payload);
+      // Only treat a plan as "already scored" when suggestions exist.
+      // generate_treatment_plan intentionally returns empty suggestion_tab
+      // (DEFER_SUGGESTIONS_TO_NEXT); stamping the signature here would skip
+      // Step 1→2 rescore and leave Set Orders empty.
+      if (suggestionsDataReady) {
+        lastScoredRescoreSignatureRef.current =
+          serializeRescoreSignature(payload);
+      } else {
+        lastScoredRescoreSignatureRef.current = null;
+      }
       setTratmentPlanData(payload);
       setSuggestionsDefualt(data.suggestion_tab);
       hasLoadedInitialPlanRef.current = true;
@@ -501,7 +509,9 @@ export const GenerateRecommendation = () => {
       if (treatmentPlanData) {
         setisButtonLoading(true);
         const currentSignature = serializeRescoreSignature(treatmentPlanData);
+        const alreadyHasSuggestions = hasSuggestionsData(treatmentPlanData);
         if (
+          alreadyHasSuggestions &&
           currentSignature &&
           currentSignature === lastScoredRescoreSignatureRef.current
         ) {
