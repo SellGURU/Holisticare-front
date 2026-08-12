@@ -40,12 +40,6 @@ const ClientCard: FC<ClientCardProps> = ({
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
-  const [, setRefresh] = useState(client.refresh_in_progress);
-  useEffect(() => {
-    setRefresh(client.refresh_in_progress);
-  }, [client.refresh_in_progress]);
-
-  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
   useModalAutoClose({
     refrence: showModalRefrence,
     buttonRefrence: showModalButtonRefrence,
@@ -137,15 +131,6 @@ const ClientCard: FC<ClientCardProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Cleanup interval on component unmount
-  useEffect(() => {
-    return () => {
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-        refreshIntervalRef.current = null;
-      }
-    };
-  }, []);
   const [showArchiveModal, setshowArchiveModal] = useState(false);
   const [showDeleteModal, setshowDeleteModal] = useState(false);
   const getStatusStyles = (status: string) => {
@@ -387,72 +372,6 @@ const ClientCard: FC<ClientCardProps> = ({
   //   }).then(() => {
   //     setshowAssign(false);
   //   });
-  // };
-
-  const handleCheckRefreshProgress = () => {
-    return Application.checkRefreshProgress(client.member_id)
-      .then((res) => res.data)
-      .catch(() => null);
-  };
-
-  const [, setLastRefreshTime] = useState<Date | null>(null);
-  const [, forceUpdate] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      forceUpdate((x) => x + 1);
-    }, 30000);
-    return () => clearInterval(interval);
-  }, []);
-  // const formatLastRefresh = (date: string) => {
-  //   if (date == 'No Data') return '';
-  //   const lastTime = lastRefreshTime == null ? new Date(date) : lastRefreshTime;
-  //   // if (!lastRefreshTime) return '';
-  //   const now = new Date();
-  //   const diffMs = now.getTime() - lastTime.getTime();
-  //   const diffMinutes = diffMs / 60000;
-
-  //   if (diffMinutes < 1) return 'Just now';
-  //   if (diffMinutes < 5) return '1 min ago';
-  //   if (diffMinutes < 10) return '5 min ago';
-
-  //   return lastTime.toLocaleDateString('en-US', {
-  //     month: 'short',
-  //     day: 'numeric',
-  //     year: 'numeric',
-  //   });
-  // };
-  const handleRefreshProgress = async () => {
-    refreshIntervalRef.current = setInterval(async () => {
-      const result = await handleCheckRefreshProgress();
-
-      if (result?.status) {
-        if (refreshIntervalRef.current) {
-          clearInterval(refreshIntervalRef.current);
-          refreshIntervalRef.current = null;
-        }
-        setRefresh(false);
-        setLastRefreshTime(new Date());
-      }
-    }, 30000);
-  };
-  useEffect(() => {
-    if (client.refresh_in_progress) {
-      handleRefreshProgress();
-    }
-  }, [client.refresh_in_progress]);
-  // const handleRefreshData = () => {
-  //   if (refreshIntervalRef.current) return;
-  //   setRefresh(true);
-
-  //   Application.refreshData(client.member_id)
-  //     .then(() => {
-  //       handleRefreshProgress();
-  //       setRefresh(false);
-  //     })
-  //     .catch(() => {
-  //       setRefresh(false);
-  //     });
   // };
 
   return (

@@ -4,6 +4,16 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import PortalLink from '../../Components/PortalLink/index.tsx';
 import Application from '../../api/app.ts';
 import { subscribe } from '../../utils/event.ts';
+import { getCached } from '../../utils/pageCache.ts';
+import {
+  invalidatePatientLists,
+  PORTAL_CACHE_KEYS,
+} from '../../utils/cacheKeys.ts';
+import { createVisibilityPollScheduler } from '../../utils/visibilityPollScheduler.ts';
+import {
+  dedupeInProgressMemberIds,
+  pollRefreshProgressForMembers,
+} from '../../utils/rosterRefreshPoll.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
 import FilterModal from '../../Components/FilterModal/index.tsx';
 import SearchBox from '../../Components/SearchBox/index.tsx';
@@ -33,6 +43,7 @@ type ClientData = {
   archived?: boolean;
   drift_analyzed?: boolean;
   assigned_to?: Array<string>;
+  refresh_in_progress?: boolean;
   'Check-in': string;
   Questionary: string;
   // Add other properties as needed
@@ -72,8 +83,9 @@ const ClientList = () => {
 
   const getPatients = () => {
     setIsLoading(true);
-    Application.getPatients()
-      .then((res) => res.data)
+    getCached(PORTAL_CACHE_KEYS.patients, () =>
+      Application.getPatients().then((res) => res.data),
+    )
       .then((data) => {
         setClientList(data.patients_list_data);
         setFilteredClientList(data.patients_list_data);
@@ -97,6 +109,46 @@ const ClientList = () => {
     getPatients();
   }, []);
   const { setPatientsList } = useContext(AppContext);
+  const clientListRef = useRef(clientList);
+  clientListRef.current = clientList;
+
+  const patchRefreshCompleted = (memberIds: number[]) => {
+    if (memberIds.length === 0) return;
+    const completed = new Set(memberIds);
+    const patchList = (list: ClientData[]) =>
+      list.map((client) =>
+        completed.has(client.member_id)
+          ? { ...client, refresh_in_progress: false }
+          : client,
+      );
+
+    setClientList((prev) => patchList(prev));
+    setFilteredClientList((prev) => patchList(prev));
+    invalidatePatientLists();
+  };
+
+  useEffect(() => {
+    const scheduler = createVisibilityPollScheduler(
+      30000,
+      async () => {
+        const memberIds = dedupeInProgressMemberIds(clientListRef.current);
+        if (memberIds.length === 0) return;
+
+        const completedMemberIds = await pollRefreshProgressForMembers(
+          memberIds,
+          (memberId) =>
+            Application.checkRefreshProgress(String(memberId))
+              .then((res) => res.data)
+              .catch(() => null),
+        );
+        patchRefreshCompleted(completedMemberIds);
+      },
+      { immediate: false },
+    );
+
+    scheduler.start();
+    return () => scheduler.stop();
+  }, []);
 
   const handleFilterChange = (filter: string) => {
     let sortedList = [...clientList];

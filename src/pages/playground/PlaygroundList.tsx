@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
-import Application from '../../api/app';
 import Circleloader from '../../Components/CircleLoader';
 import { useNavigate } from 'react-router-dom';
 // import Toggle from '../../Components/Toggle';
@@ -38,7 +37,6 @@ const MessageList: React.FC<MessageListProps> = ({
   //   search,
   onSelectMessage,
   messages,
-  setMessages,
 }) => {
   const navigate = useNavigate();
   //   const [filter, setFilter] = useState<string>('All');
@@ -46,8 +44,9 @@ const MessageList: React.FC<MessageListProps> = ({
   const [messagesSearched, setMessagesSearched] = useState<Message[]>(messages);
   useEffect(() => {
     setMessagesSearched(messages);
+    setIsLoading(false);
   }, [messages]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(messages.length === 0);
   //   const [searchParams] = useSearchParams();
   //   const id = searchParams.get('id');
 
@@ -58,23 +57,7 @@ const MessageList: React.FC<MessageListProps> = ({
   //     }
   //   }, [id, onSelectMessage]);
 
-  const messagesUsersList = () => {
-    Application.messagesUsersList()
-      .then((res) => {
-        setMessages(res.data);
-        // setMessagesSearched(res.data);
-      })
-      .catch((err) => {
-        console.error('Error getting messages users list:', err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-  useEffect(() => {
-    setIsLoading(true);
-    messagesUsersList();
-  }, []);
+  // PG-F01: inbox data comes from parent; no duplicate messagesUsersList fetch.
   //   const applyFilters = () => {
   //     let filtered = [...messages];
 

@@ -3,9 +3,9 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PortalLink from '../PortalLink';
 import { BeatLoader } from 'react-spinners';
-import Application from '../../api/app';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
+import { fetchBrandInfo } from '../../utils/brandInfoCache';
 // import { ButtonPrimary } from '../Button/ButtonPrimary';
 import LogOutModal from '../LogOutModal';
 import { SlideOutPanel } from '../SlideOutPanel';
@@ -181,46 +181,48 @@ export const TopBar: FC<TopBarProps> = ({
   const [userInfoData, setUserInfoData] = useState(null);
   const [isAutoCompile, setIsAutoCompile] = useState(false);
   const getShowBrandInfo = () => {
-    Application.getShowBrandInfo()
+    fetchBrandInfo()
       .then((res) => {
         const responseAccountRole =
-          res.data.brand_elements.account_role || accountRole;
+          (res.brand_elements.account_role as string) || accountRole;
         if (responseAccountRole) {
           setAccountRole(responseAccountRole);
         }
         if (
           responseAccountRole.toLowerCase() !== 'staff' &&
-          (res.data.brand_elements.name === null ||
-            res.data.brand_elements.name === '' ||
-            res.data.brand_elements.logo === null)
+          (res.brand_elements.name === null ||
+            res.brand_elements.name === '' ||
+            res.brand_elements.logo === null)
         ) {
           navigate('/register-profile');
           return;
         }
-        setIsAutoCompile(res.data.auto_copmile);
+        setIsAutoCompile(Boolean(res.auto_copmile));
         setCustomTheme({
-          headLine: res.data.brand_elements.headline,
-          name: res.data.brand_elements.name,
-          selectedImage: res.data.brand_elements.logo,
+          headLine: res.brand_elements.headline as string,
+          name: res.brand_elements.name as string,
+          selectedImage: res.brand_elements.logo as string | null,
         });
-        const clinicPlan = res.data.brand_elements.clinic_plan || 'paying';
-        const clinicStatus = res.data.brand_elements.clinic_status || 'active';
+        const clinicPlan =
+          (res.brand_elements.clinic_plan as string) || 'paying';
+        const clinicStatus =
+          (res.brand_elements.clinic_status as string) || 'active';
         setClinicAccess(clinicPlan, clinicStatus);
         localStorage.setItem(
           'brandInfoData',
           JSON.stringify({
-            headLine: res.data.brand_elements.headline,
-            name: res.data.brand_elements.name,
-            selectedImage: res.data.brand_elements.logo,
+            headLine: res.brand_elements.headline,
+            name: res.brand_elements.name,
+            selectedImage: res.brand_elements.logo,
             clinicPlan,
             clinicStatus,
           }),
         );
         // alert(res.data.brand_elements.knowledge_playground);
-        if (res.data.brand_elements.knowledge_playground == true) {
+        if (res.brand_elements.knowledge_playground == true) {
           publish(
             'knowledge_playground-Show',
-            res.data.brand_elements.knowledge_playground,
+            res.brand_elements.knowledge_playground,
           );
         }
         // localStorage.setItem("knowledge_playground", JSON.stringify(res.data.knowledge_playground))

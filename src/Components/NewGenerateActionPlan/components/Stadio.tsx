@@ -21,6 +21,7 @@ import {
   buildTaskIdentity,
   TaskValidationError,
 } from '../actionPlanValidation';
+import { createTrailingDebounce } from '../../../utils/trailingDebounce';
 
 interface StadioProps {
   data: {
@@ -270,7 +271,12 @@ const Stadio: FC<StadioProps> = ({
     }
   };
   useEffect(() => {
-    conflicCheck();
+    // AP-F04: trailing debounce conflict LLM (~750ms); cancel on change/unmount.
+    const { call, cancel } = createTrailingDebounce(() => {
+      conflicCheck();
+    }, 750);
+    call();
+    return cancel;
   }, [actions]);
   // const [sortBy, setSortBy] = useState('System Score');
   // const resolveTaskCheckText = () => {
