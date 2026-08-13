@@ -1,5 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useApp } from '../../../hooks';
+
 type SidebarProps = {
   activeMenu: string;
   setActiveMenu: (menu: string) => void;
@@ -11,9 +13,19 @@ const Sidebar: React.FC<SidebarProps> = ({
   setActiveMenu,
   loginWithGoogle,
 }) => {
+  const { accountRole } = useApp();
+  const isAdmin =
+    String(accountRole || '')
+      .trim()
+      .toLowerCase() === 'admin';
+
   const menuItems = useMemo(
     () => ({
       General: [
+        {
+          title: 'Clinic Profile',
+          isActive: isAdmin,
+        },
         {
           title: 'Clinic Preferences',
           isActive: true,
@@ -52,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         },
       ],
     }),
-    [],
+    [isAdmin, loginWithGoogle],
   );
   const [searchParams, setSearchParams] = useSearchParams();
   const handleMenuClick = (item: string) => {
@@ -67,7 +79,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         .find(
           (item) => item.title.replace(/\s+/g, '-').toLowerCase() === section,
         );
-      if (menuItem) {
+      if (menuItem?.isActive) {
         setActiveMenu(menuItem.title);
       }
     }
@@ -84,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               {subItems.map((item) => (
                 <li
                   key={item.title}
-                  className={`${loginWithGoogle && 'hidden'} ${item.isActive ? 'cursor-pointer' : 'cursor-not-allowed'} font-medium text-sm flex items-center  text-nowrap  ${
+                  className={`${loginWithGoogle && item.title === 'Change Password' ? 'hidden' : ''} ${item.isActive ? 'cursor-pointer' : 'cursor-not-allowed'} font-medium text-sm flex items-center  text-nowrap  ${
                     activeMenu === item.title
                       ? 'text-Primary-DeepTeal '
                       : 'text-[#888888]'
