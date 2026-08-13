@@ -21,19 +21,10 @@ const revalidateInBackground = <T>(
     });
 };
 
-export async function getCached<T>(
+const fetchAndStore = <T>(
   key: string,
   fetcher: () => Promise<T>,
-  _ttlMs: number = DEFAULT_TTL_MS,
-): Promise<T> {
-  void _ttlMs;
-  const existing = store.get(key) as CacheEntry<T> | undefined;
-
-  if (existing) {
-    revalidateInBackground(key, fetcher);
-    return existing.data;
-  }
-
+): Promise<T> => {
   const pending = inFlight.get(key) as Promise<T> | undefined;
   if (pending) {
     return pending;
@@ -50,6 +41,35 @@ export async function getCached<T>(
 
   inFlight.set(key, promise);
   return promise;
+};
+
+export async function getCached<T>(
+  key: string,
+  fetcher: () => Promise<T>,
+  _ttlMs: number = DEFAULT_TTL_MS,
+): Promise<T> {
+  void _ttlMs;
+  const existing = store.get(key) as CacheEntry<T> | undefined;
+
+  if (existing) {
+    revalidateInBackground(key, fetcher);
+    return existing.data;
+  }
+
+  return fetchAndStore(key, fetcher);
+}
+
+/** Cache until explicit invalidate(); dedupes concurrent fetches, no background revalidation. */
+export async function getCachedUntilInvalidated<T>(
+  key: string,
+  fetcher: () => Promise<T>,
+): Promise<T> {
+  const existing = store.get(key) as CacheEntry<T> | undefined;
+  if (existing) {
+    return existing.data;
+  }
+
+  return fetchAndStore(key, fetcher);
 }
 
 export function hasCached(key: string): boolean {

@@ -11,7 +11,9 @@ const RoleProtectedRoute = ({
   allowedRoles,
 }: RoleProtectedRouteProps) => {
   const { accountRole } = useApp();
-  const normalizedRole = accountRole.trim().toLowerCase();
+  const normalizedRole = String(accountRole || '')
+    .trim()
+    .toLowerCase();
 
   if (!allowedRoles.includes(normalizedRole)) {
     return <Navigate to="/" replace />;

@@ -7,6 +7,8 @@ import { ClientCard } from '../../../pages/driftAnaysis/ClientCard';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import { useParams } from 'react-router-dom';
 import Circleloader from '../../CircleLoader';
+import { getCached } from '../../../utils/pageCache';
+import { PORTAL_CACHE_KEYS } from '../../../utils/cacheKeys';
 interface Patient {
   email: string;
   name: string;
@@ -45,11 +47,13 @@ export const SwitchClient: FC<SwitchClientProps> = ({
     return patients.filter((el) => {
       const matchesSearch =
         searchQuery.trim() === '' ||
-        el.name.toLowerCase().includes(searchQuery.toLowerCase());
+        String(el.name || '')
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
 
       const matchesStatus =
         activeStatus === 'All' ||
-        el.status.toLowerCase() === activeStatus.toLowerCase();
+        String(el.status || '').toLowerCase() === activeStatus.toLowerCase();
 
       return matchesSearch && matchesStatus;
     });
@@ -57,9 +61,11 @@ export const SwitchClient: FC<SwitchClientProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       setisLoading(true);
-      Application.getPatients()
-        .then((res) => {
-          setPatients(res.data.patients_list_data);
+      getCached(PORTAL_CACHE_KEYS.patients, () =>
+        Application.getPatients().then((res) => res.data),
+      )
+        .then((data) => {
+          setPatients(data.patients_list_data);
         })
         .catch((err) => {
           console.error('Error getting patients', err);

@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+} from 'react';
 import { TopBar } from '../../Components/topBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
@@ -21,21 +27,12 @@ import {
   forApiPayload,
   extractCategoryMap,
 } from '../../utils/lookingForwards';
+import { serializeRescoreSignature } from './rescoreSignature';
+import { useVisibilityAwarePoll } from '../../hooks/useVisibilityAwarePoll';
 
 type CategoryState = {
   name: string;
   visible: boolean;
-};
-
-const serializeKeyAreas = (value: any) => {
-  const type2 = toType2(value ?? []);
-  const keyAreas = type2['Key areas to address'] || {};
-  return JSON.stringify({
-    critical_urgent: keyAreas.critical_urgent ?? [],
-    important_strategic: keyAreas.important_strategic ?? [],
-    important_long_term: keyAreas.important_long_term ?? [],
-    optional_enhancements: keyAreas.optional_enhancements ?? [],
-  });
 };
 
 const sleep = (ms: number) =>
@@ -139,9 +136,9 @@ export const GenerateRecommendation = () => {
   const planRequestInFlightRef = useRef(false);
   const hasLoadedInitialPlanRef = useRef(false);
   const remapLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const biomarkerPollingRef = useRef<NodeJS.Timeout | null>(null);
+  const [biomarkerPollEnabled, setBiomarkerPollEnabled] = useState(false);
   const lastKeyAreasUpdateFromRemapRef = useRef(false);
-  const lastScoredKeyAreasSignatureRef = useRef<string>('');
+  const lastScoredRescoreSignatureRef = useRef<string | null>(null);
 
   const pollHolisticRescoreJob = async (jobId: string) => {
     for (let attempt = 0; attempt < 90; attempt += 1) {
@@ -297,57 +294,55 @@ export const GenerateRecommendation = () => {
       });
   };
 
-  const startBiomarkerPolling = () => {
-    if (biomarkerPollingRef.current) clearInterval(biomarkerPollingRef.current);
-    if (!id) return;
+  const pollBiomarkerStatus = useCallback(() => {
+    if (!isMountedRef.current || !id) return;
+    Application.pollPerBiomarkerStatus({ member_id: id })
+      .then((res) => {
+        if (res.data?.ready) {
+          setBiomarkerPollEnabled(false);
+          const moreInfos = res.data.more_infos;
+          const biomarkerInsights = res.data.biomarker_insights;
+          setTratmentPlanData((prev: any) => {
+            if (!prev) return prev;
+            const newMoreInfos = moreInfos && moreInfos.length > 0;
+            const newBiomarker =
+              biomarkerInsights && biomarkerInsights.length > 0;
+            if (!newMoreInfos && !newBiomarker) return prev;
+            const moreInfosChanged =
+              newMoreInfos &&
+              JSON.stringify(prev.more_infos) !== JSON.stringify(moreInfos);
+            const shouldFillMissingBiomarkers =
+              newBiomarker &&
+              (!Array.isArray(prev.biomarker_insight) ||
+                prev.biomarker_insight.length === 0);
+            const biomarkerChanged =
+              shouldFillMissingBiomarkers &&
+              JSON.stringify(prev.biomarker_insight) !==
+                JSON.stringify(biomarkerInsights);
+            if (!moreInfosChanged && !biomarkerChanged) return prev;
+            return {
+              ...prev,
+              ...(moreInfosChanged ? { more_infos: moreInfos } : {}),
+              ...(biomarkerChanged
+                ? { biomarker_insight: biomarkerInsights }
+                : {}),
+            };
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('pollPerBiomarkerStatus error:', err);
+      });
+  }, [id]);
 
-    biomarkerPollingRef.current = setInterval(() => {
-      if (!isMountedRef.current) {
-        if (biomarkerPollingRef.current)
-          clearInterval(biomarkerPollingRef.current);
-        return;
-      }
-      Application.pollPerBiomarkerStatus({ member_id: id })
-        .then((res) => {
-          if (res.data?.ready) {
-            if (biomarkerPollingRef.current)
-              clearInterval(biomarkerPollingRef.current);
-            biomarkerPollingRef.current = null;
-            const moreInfos = res.data.more_infos;
-            const biomarkerInsights = res.data.biomarker_insights;
-            setTratmentPlanData((prev: any) => {
-              if (!prev) return prev;
-              const newMoreInfos = moreInfos && moreInfos.length > 0;
-              const newBiomarker =
-                biomarkerInsights && biomarkerInsights.length > 0;
-              if (!newMoreInfos && !newBiomarker) return prev;
-              const moreInfosChanged =
-                newMoreInfos &&
-                JSON.stringify(prev.more_infos) !== JSON.stringify(moreInfos);
-              const shouldFillMissingBiomarkers =
-                newBiomarker &&
-                (!Array.isArray(prev.biomarker_insight) ||
-                  prev.biomarker_insight.length === 0);
-              const biomarkerChanged =
-                shouldFillMissingBiomarkers &&
-                JSON.stringify(prev.biomarker_insight) !==
-                  JSON.stringify(biomarkerInsights);
-              if (!moreInfosChanged && !biomarkerChanged) return prev;
-              return {
-                ...prev,
-                ...(moreInfosChanged ? { more_infos: moreInfos } : {}),
-                ...(biomarkerChanged
-                  ? { biomarker_insight: biomarkerInsights }
-                  : {}),
-              };
-            });
-          }
-        })
-        .catch((err) => {
-          console.error('pollPerBiomarkerStatus error:', err);
-        });
-    }, 5000);
-  };
+  useVisibilityAwarePoll(
+    pollBiomarkerStatus,
+    5000,
+    biomarkerPollEnabled && !!id,
+    {
+      immediate: false,
+    },
+  );
 
   useEffect(() => {
     resolveCoverage();
@@ -409,13 +404,22 @@ export const GenerateRecommendation = () => {
         looking_forwards: type2ToFlatList(keyAreas),
         member_id: id,
       };
-      lastScoredKeyAreasSignatureRef.current = serializeKeyAreas(keyAreas);
+      // Only treat a plan as "already scored" when suggestions exist.
+      // generate_treatment_plan intentionally returns empty suggestion_tab
+      // (DEFER_SUGGESTIONS_TO_NEXT); stamping the signature here would skip
+      // Step 1→2 rescore and leave Set Orders empty.
+      if (suggestionsDataReady) {
+        lastScoredRescoreSignatureRef.current =
+          serializeRescoreSignature(payload);
+      } else {
+        lastScoredRescoreSignatureRef.current = null;
+      }
       setTratmentPlanData(payload);
       setSuggestionsDefualt(data.suggestion_tab);
       hasLoadedInitialPlanRef.current = true;
 
       if (isFirstLoad) {
-        startBiomarkerPolling();
+        setBiomarkerPollEnabled(true);
       }
 
       if (retryForSuggestions && !suggestionsDataReady) {
@@ -496,9 +500,7 @@ export const GenerateRecommendation = () => {
       if (remapLoadingTimeoutRef.current) {
         clearTimeout(remapLoadingTimeoutRef.current);
       }
-      if (biomarkerPollingRef.current) {
-        clearInterval(biomarkerPollingRef.current);
-      }
+      setBiomarkerPollEnabled(false);
     };
   }, []);
 
@@ -506,8 +508,23 @@ export const GenerateRecommendation = () => {
     if (currentStepIndex === 0) {
       if (treatmentPlanData) {
         setisButtonLoading(true);
+        const currentSignature = serializeRescoreSignature(treatmentPlanData);
+        const alreadyHasSuggestions = hasSuggestionsData(treatmentPlanData);
+        if (
+          alreadyHasSuggestions &&
+          currentSignature &&
+          currentSignature === lastScoredRescoreSignatureRef.current
+        ) {
+          console.info(
+            'Step 1 -> Step 2: skipping rescore — inputs unchanged since last score',
+          );
+          resolveCoverage(treatmentPlanData);
+          setCurrentStepIndex((prevIndex) => prevIndex + 1);
+          setisButtonLoading(false);
+          return;
+        }
         console.info(
-          'Step 1 -> Step 2: always rescoring using current Health Planning Issues',
+          'Step 1 -> Step 2: rescoring using current Health Planning Issues',
         );
         try {
           const remappedPlan = await remapIssues(treatmentPlanData);
@@ -544,8 +561,8 @@ export const GenerateRecommendation = () => {
             prev ? { ...prev, ...rescoredPlan } : rescoredPlan,
           );
           setSuggestionsDefualt(rescoredPlan.suggestion_tab ?? []);
-          lastScoredKeyAreasSignatureRef.current =
-            serializeKeyAreas(rescoredKeyAreas);
+          lastScoredRescoreSignatureRef.current =
+            serializeRescoreSignature(rescoredPlan);
           resolveCoverage(rescoredPlan);
           setCurrentStepIndex((prevIndex) => prevIndex + 1);
         } catch (err) {
@@ -553,8 +570,8 @@ export const GenerateRecommendation = () => {
             'Step 1 -> Step 2 rescore failed:',
             (err as any)?.response?.data ?? err,
           );
-          // Advance to step 2 even if rescore fails so the user is not stuck
-          setCurrentStepIndex((prevIndex) => prevIndex + 1);
+          setisButtonLoading(false);
+          return;
         } finally {
           setisButtonLoading(false);
         }

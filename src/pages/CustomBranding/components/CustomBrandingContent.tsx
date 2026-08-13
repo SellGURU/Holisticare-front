@@ -6,6 +6,8 @@ import Application from '../../../api/app';
 import { blobToBase64 } from '../../../help';
 import Circleloader from '../../../Components/CircleLoader';
 import { publish } from '../../../utils/event';
+import { fetchBrandInfo } from '../../../utils/brandInfoCache';
+import { invalidateBrandInfo } from '../../../utils/cacheKeys';
 
 const CustomBrandingContent = () => {
   const [pageLoading, setPageLoading] = useState(true);
@@ -50,23 +52,24 @@ const CustomBrandingContent = () => {
     }));
   };
   const getShowBrandInfo = () => {
-    Application.getShowBrandInfo()
+    fetchBrandInfo()
       .then((res) => {
         setCustomTheme({
-          headLine: res.data.brand_elements.headline,
+          headLine: res.brand_elements.headline as string,
           primaryColor:
-            res.data.brand_elements.primary_color || defaultPrimaryColor,
+            (res.brand_elements.primary_color as string) || defaultPrimaryColor,
           secondaryColor:
-            res.data.brand_elements.secondary_color || defaultSecondaryColor,
-          name: res.data.brand_elements.name,
-          selectedImage: res.data.brand_elements.logo,
-          lastUpdate: res.data.brand_elements.last_update,
+            (res.brand_elements.secondary_color as string) ||
+            defaultSecondaryColor,
+          name: res.brand_elements.name as string,
+          selectedImage: res.brand_elements.logo as string | null,
+          lastUpdate: res.brand_elements.last_update as string,
         });
-        setDefaultLogo(res.data.brand_elements.logo);
-        setDefaultHeadLine(res.data.brand_elements.headline);
-        setDefaultName(res.data.brand_elements.name);
-        setDefaultPrimaryColor(res.data.brand_elements.primary_color);
-        setDefaultSecondaryColor(res.data.brand_elements.secondary_color);
+        setDefaultLogo(res.brand_elements.logo as string);
+        setDefaultHeadLine(res.brand_elements.headline as string);
+        setDefaultName(res.brand_elements.name as string);
+        setDefaultPrimaryColor(res.brand_elements.primary_color as string);
+        setDefaultSecondaryColor(res.brand_elements.secondary_color as string);
         // setDefaultHeadLine()
         setPageLoading(false);
       })
@@ -148,6 +151,7 @@ const CustomBrandingContent = () => {
       };
       Application.saveBrandInfo(data)
         .then(() => {
+          invalidateBrandInfo();
           getShowBrandInfo();
           publish('refreshBrandInfo', {});
           setLoading(false);

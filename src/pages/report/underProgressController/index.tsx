@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Application from '../../../api/app';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
+import { visibilityPollMs } from '../../../utils/visibilityPoll';
 
 interface UnderProgressControllerProps {
   member_id: string;
@@ -222,9 +223,14 @@ const UnderProgressController = ({
     const effectMemberId = member_id;
 
     needCheckProgress();
-    const interval = setInterval(() => {
-      needCheckProgress();
-    }, 30000);
+    let needCheckTimeout: ReturnType<typeof setTimeout> | null = null;
+    const scheduleNeedCheck = () => {
+      needCheckTimeout = setTimeout(() => {
+        needCheckProgress();
+        scheduleNeedCheck();
+      }, visibilityPollMs(30000));
+    };
+    scheduleNeedCheck();
 
     const handleCheckProgress = (data?: any) => {
       if (currentMemberIdRef.current !== effectMemberId) {
@@ -268,7 +274,7 @@ const UnderProgressController = ({
         questionnaires: [],
         refresh: [],
       });
-      clearInterval(interval);
+      clearTimeout(needCheckTimeout!);
       stopBurstPoll();
       unsubscribe('checkProgress', handleCheckProgress);
       unsubscribe('syncReport', handleSyncReport);

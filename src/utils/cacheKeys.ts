@@ -32,6 +32,7 @@ export function invalidateHealthPlanCache(memberId: string | number): void {
 }
 
 export const PORTAL_CACHE_KEYS = {
+  brandInfo: 'portal:brand-info',
   patients: 'portal:patients',
   dashboardClients: 'portal:dashboard:clients',
   driftPatients: 'portal:drift:patients',
@@ -48,6 +49,10 @@ export const PORTAL_CACHE_KEYS = {
       biomarkerName.trim(),
     )}`,
 } as const;
+
+export function invalidateBrandInfo(): void {
+  invalidate(PORTAL_CACHE_KEYS.brandInfo);
+}
 
 export function invalidatePatientLists(): void {
   invalidate(PORTAL_CACHE_KEYS.patients);

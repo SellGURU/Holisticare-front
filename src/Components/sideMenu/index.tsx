@@ -72,7 +72,8 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     }
     if (
       name === 'Staff' &&
-      (accountRole.toLowerCase() === 'staff' || permissions.staff === false)
+      (String(accountRole || '').toLowerCase() === 'staff' ||
+        permissions.staff === false)
     ) {
       return true;
     }
