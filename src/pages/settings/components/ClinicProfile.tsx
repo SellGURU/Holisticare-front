@@ -203,7 +203,9 @@ export const ClinicProfile = () => {
           <div className="w-full flex flex-col gap-6 max-w-[480px]">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center">
-                <div className="text-xs font-medium text-Text-Primary">Logo</div>
+                <div className="text-xs font-medium text-Text-Primary">
+                  Logo
+                </div>
                 <div data-tooltip-id="clinic-profile-logo-tooltip">
                   <img
                     src="/icons/info-circle.svg"
@@ -218,7 +220,9 @@ export const ClinicProfile = () => {
                 >
                   <div className="flex items-center gap-1">
                     Supported files:{' '}
-                    <div className="!text-Text-Primary">PNG, SVG, JPG, JPEG</div>
+                    <div className="!text-Text-Primary">
+                      PNG, SVG, JPG, JPEG
+                    </div>
                   </div>
                   <div className="flex items-center gap-1">
                     Maximum file size:{' '}
@@ -279,7 +283,9 @@ export const ClinicProfile = () => {
 
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center pt-1">
-                <div className="text-xs font-medium text-Text-Primary">Name</div>
+                <div className="text-xs font-medium text-Text-Primary">
+                  Name
+                </div>
                 <div data-tooltip-id="clinic-profile-name-tooltip">
                   <img
                     src="/icons/info-circle.svg"
@@ -309,7 +315,9 @@ export const ClinicProfile = () => {
                   onChange={handleChangeName}
                 />
                 {errorName && (
-                  <div className="text-Red text-[8px] mt-1 ml-3">{errorName}</div>
+                  <div className="text-Red text-[8px] mt-1 ml-3">
+                    {errorName}
+                  </div>
                 )}
               </div>
             </div>
