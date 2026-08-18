@@ -30,13 +30,9 @@ const NewForms = () => {
       <div className="md:px-6 px-2 pt-8 mt-[75px] ">
         <div className="w-full flex mb-16 justify-center items-center flex-col">
           {active === 'Check-in' ? (
-            <>
-              <CheckInForm search={search}></CheckInForm>
-            </>
+            <CheckInForm key="check-in" search={search} />
           ) : (
-            <>
-              <CheckInForm search={search} isQuestionary></CheckInForm>
-            </>
+            <CheckInForm key="questionnaire" search={search} isQuestionary />
           )}
         </div>
       </div>

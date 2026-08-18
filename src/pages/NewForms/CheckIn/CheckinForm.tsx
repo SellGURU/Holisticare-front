@@ -31,27 +31,36 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [errorQuestionary, setErrorQuestionary] = useState('');
   const [textErrorMessage, setTextErrorMessage] = useState('');
   const [duplicateError, setDuplicateError] = useState('');
+  const [listError, setListError] = useState('');
   const getChechins = () => {
     setLoading(true);
+    setListError('');
+    setCheckInList([]);
     FormsApi.getCheckinList()
       .then((res) => {
-        setCheckInList(res.data);
+        setCheckInList(Array.isArray(res.data) ? res.data : []);
         setLoading(false);
       })
       .catch((err) => {
         console.error('Error getting checkin list:', err);
+        setListError(formatApiErrorMessage(err) || 'Failed to load check-in forms.');
+        setCheckInList([]);
         setLoading(false);
       });
   };
   const getQuestionary = () => {
     setLoading(true);
+    setListError('');
+    setCheckInList([]);
     FormsApi.getQuestionaryList()
       .then((res) => {
-        setCheckInList(res.data);
+        setCheckInList(Array.isArray(res.data) ? res.data : []);
         setLoading(false);
       })
       .catch((err) => {
         console.error('Error getting questionary list:', err);
+        setListError(formatApiErrorMessage(err) || 'Failed to load questionnaire forms.');
+        setCheckInList([]);
         setLoading(false);
       });
   };
@@ -279,6 +288,31 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
               // }}
             />
           </div>
+        </>
+      ) : listError ? (
+        <>
+          <img
+            src="/icons/plant-device-floor.svg"
+            alt="plant-device-floor"
+            width="284.53px"
+            height="190px"
+            className="mt-16"
+          />
+          <div className="text-red-500 text-base font-medium mt-9 text-center max-w-md">
+            {listError}
+          </div>
+          <ButtonSecondary
+            ClassName="rounded-[20px] w-[229px] mt-9"
+            onClick={() => {
+              if (isQuestionary) {
+                getQuestionary();
+              } else {
+                getChechins();
+              }
+            }}
+          >
+            Retry
+          </ButtonSecondary>
         </>
       ) : (
         <>
