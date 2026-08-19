@@ -74,9 +74,9 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
     setPrintOptions(data.detail);
   });
   const transformConceringData = () => {
-    const originalData = ResolveConceringData();
+    const originalData = ResolveConceringData() ?? [];
     return originalData.flatMap((item) =>
-      item.biomarkers.map((biomarker: any) => ({
+      (item?.biomarkers ?? []).map((biomarker: any) => ({
         name: biomarker.name,
         Result: biomarker.Result,
         Units: biomarker.Units,
@@ -120,23 +120,28 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
 
   const [pageJson, setPageJson] = useState<Array<any>>([]);
   useEffect(() => {
-    setPageJson(
-      resolveJson({
-        usrInfoData,
-        ClientSummaryBoxs,
-        resolveCategories,
-        referenceData,
-        resolveBioMarkers,
-        transformConceringData,
-        resolveSubCategories,
-        helthPlan,
-        TreatMentPlanData,
-        isActiveSection,
-        ActionPlan,
-        caldenderData,
-      }),
-    );
-  }, [printOptins, helthPlan]);
+    try {
+      setPageJson(
+        resolveJson({
+          usrInfoData,
+          ClientSummaryBoxs,
+          resolveCategories,
+          referenceData,
+          resolveBioMarkers,
+          transformConceringData,
+          resolveSubCategories,
+          helthPlan,
+          TreatMentPlanData,
+          isActiveSection,
+          ActionPlan,
+          caldenderData,
+        }),
+      );
+    } catch (error) {
+      console.error('Failed to build print report JSON:', error);
+      setPageJson([]);
+    }
+  }, [printOptins, helthPlan, TreatMentPlanData]);
   console.log(printOptins);
   console.log(pageJson);
 
