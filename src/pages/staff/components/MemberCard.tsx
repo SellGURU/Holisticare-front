@@ -81,6 +81,11 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
         setSubmitLoading(false);
       });
   };
+  const isAdmin = memberInfo.role.toLowerCase() === 'admin';
+  const isRegistered = memberInfo.registered !== false;
+  const canChangeRole = isRegistered;
+  const canRemove = !isAdmin;
+  const hasActions = canChangeRole || canRemove;
   const handleChangeRole = (userId: string, role: string) => {
     setSubmitLoading(true);
     Application.ChangeRoleUserStaff({ user_id: userId, role: role })
@@ -150,48 +155,43 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
             {memberInfo.score}/10
           </div>
         </div>
-        <div className="w-full h-[1px] bg-Gray-50 mt-2.5"></div>
-        <div className="flex items-center justify-between w-full mt-2">
-          <button
-            className="w-[106px] h-[20px] rounded-[20px] border border-Primary-DeepTeal bg-white text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-center gap-1 shadow-Btn"
-            onClick={handleShowModalChangeRoll}
-          >
-            <img src="/icons/refresh.svg" alt="" />
-            Change Role
-          </button>
-          <div className="flex items-center gap-3">
-            {/* <div data-tooltip-id="remove-tooltip">
-              <img
-                src="/icons/document-text-blue.svg"
-                alt=""
-                className="w-5 h-5 cursor-pointer"
-                onClick={handleShowModalAssignList}
-              />
-            </div> */}
-            {/* <Tooltip
-              id="remove-tooltip"
-              place="top"
-              className="!bg-white !text-Text-Quadruple !text-[10px] !shadow-100 !rounded-[6px] !border !border-gray-50"
-            >
-              Assign List
-            </Tooltip> */}
-            <div data-tooltip-id="assign-tooltip">
-              <img
-                src="/icons/user-minus-blue.svg"
-                alt=""
-                className="w-5 h-5 cursor-pointer"
-                onClick={handleShowModalRemove}
-              />
+        {hasActions ? (
+          <>
+            <div className="w-full h-[1px] bg-Gray-50 mt-2.5"></div>
+            <div className="flex items-center justify-between w-full mt-2">
+              {canChangeRole ? (
+                <button
+                  className="w-[106px] h-[20px] rounded-[20px] border border-Primary-DeepTeal bg-white text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-center gap-1 shadow-Btn"
+                  onClick={handleShowModalChangeRoll}
+                >
+                  <img src="/icons/refresh.svg" alt="" />
+                  Change Role
+                </button>
+              ) : (
+                <div />
+              )}
+              {canRemove ? (
+                <div className="flex items-center gap-3 ml-auto">
+                  <div data-tooltip-id={`remove-${memberInfo.user_id}`}>
+                    <img
+                      src="/icons/user-minus-blue.svg"
+                      alt=""
+                      className="w-5 h-5 cursor-pointer"
+                      onClick={handleShowModalRemove}
+                    />
+                  </div>
+                  <Tooltip
+                    id={`remove-${memberInfo.user_id}`}
+                    place="top"
+                    className="!bg-white !text-Text-Quadruple !text-[10px] !shadow-100 !rounded-[6px] !border !border-gray-50"
+                  >
+                    Remove Member
+                  </Tooltip>
+                </div>
+              ) : null}
             </div>
-            <Tooltip
-              id="assign-tooltip"
-              place="top"
-              className="!bg-white !text-Text-Quadruple !text-[10px] !shadow-100 !rounded-[6px] !border !border-gray-50"
-            >
-              Remove Member
-            </Tooltip>
-          </div>
-        </div>
+          </>
+        ) : null}
       </div>
       <MainModal
         isOpen={showModalRemove}
