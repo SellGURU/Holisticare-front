@@ -140,9 +140,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               data: plans[plans.length - 1],
             });
             setIsShareModalSuccess(
-              data[data.length - 1].shared_report_with_client,
+              plans[plans.length - 1].shared_report_with_client,
             );
-            setDateShare(data[data.length - 1].shared_report_with_client_date);
+            setDateShare(plans[plans.length - 1].shared_report_with_client_date);
           }
           setTimeout(() => {
             const container: any = document.getElementById('scrollContainer');
