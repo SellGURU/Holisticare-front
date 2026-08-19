@@ -522,9 +522,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       HEALTH_PLAN_TTL_MS,
     )
       .then((data) => {
-        setTreatmentPlanData(data);
+        const planCategories = Array.isArray(data) ? data : [];
+        setTreatmentPlanData(planCategories);
         setTreatmentPlanLoaded(true);
-        if (data.length == 0) {
+        if (planCategories.length == 0) {
           publish('HolisticPlanStatus', { isempty: true });
         } else {
           publish('HolisticPlanStatus', { isempty: false });
@@ -609,9 +610,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     )
       .then((res) => {
-        setTreatmentPlanData(res.data.details);
+        const planDetails = Array.isArray(res.data?.details)
+          ? res.data.details
+          : [];
+        setTreatmentPlanData(planDetails);
         setTreatmentPlanLoaded(true);
-        if (res.data.details.length == 0) {
+        if (planDetails.length == 0) {
           publish('HolisticPlanStatus', { isempty: true });
         } else {
           publish('HolisticPlanStatus', { isempty: false });

@@ -26,6 +26,14 @@ type CardData = {
 
 const initialCardData: CardData[] = [];
 
+const normalizePlanCategories = (data: unknown): any[] =>
+  Array.isArray(data) ? data : [];
+
+const categoryDataLength = (categories: any[], activeCategory: string): number =>
+  normalizePlanCategories(
+    categories.find((value: any) => value?.category === activeCategory)?.data,
+  ).length;
+
 interface TreatmentPlanProps {
   treatmentPlanData: any;
   setPrintActionPlan: (value: any) => void;
@@ -91,12 +99,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     null,
   );
   const [aciveTreatmentPlan, setActiveTreatmentplan] = useState('Diet');
-  const [TreatMentPlanData, setTreatmentPlanData] =
-    useState<any>(treatmentPlanData);
+  const [TreatMentPlanData, setTreatmentPlanData] = useState<any[]>(
+    normalizePlanCategories(treatmentPlanData),
+  );
   useEffect(() => {
-    if (treatmentPlanData) {
-      setTreatmentPlanData(treatmentPlanData);
-    }
+    setTreatmentPlanData(normalizePlanCategories(treatmentPlanData));
   }, [treatmentPlanData]);
   const [isAnalysisOpen, setisAnalysisOpen] = useState(false);
   const [isClientGoalOpen, setisClientGoalOpen] = useState(false);
@@ -116,20 +123,21 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         HEALTH_PLAN_TTL_MS,
       )
         .then((data) => {
-          if (data.length == 0) {
+          const plans = Array.isArray(data) ? data : [];
+          if (plans.length == 0) {
             setIsHolisticPlanEmpty(true);
           } else {
-            if (data[data.length - 1].state == 'Draft' && data.length == 1) {
+            if (plans[plans.length - 1].state == 'Draft' && plans.length == 1) {
               setIsHolisticPlanEmpty(true);
             }
             setIsHolisticPlanEmpty(false);
           }
-          setCardData(data);
-          setPrintActionPlan(data);
-          if (data.length > 0) {
-            setActiveTreatmnet(data[data.length - 1].t_plan_id);
+          setCardData(plans);
+          setPrintActionPlan(plans);
+          if (plans.length > 0) {
+            setActiveTreatmnet(plans[plans.length - 1].t_plan_id);
             publish('holisticPlanactiveChange', {
-              data: data[data.length - 1],
+              data: plans[plans.length - 1],
             });
             setIsShareModalSuccess(
               data[data.length - 1].shared_report_with_client,
@@ -185,11 +193,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         HEALTH_PLAN_TTL_MS,
       )
         .then((data) => {
-          setTreatmentPlanData(data.details);
+          setTreatmentPlanData(normalizePlanCategories(data.details));
           if (data.client_goals != null) {
             setClientGools(data.client_goals);
           }
-          setNeedFocusData(data.need_focus_benchmarks);
+          setNeedFocusData(Array.isArray(data.need_focus_benchmarks) ? data.need_focus_benchmarks : []);
           setclientSummary(data.medical_summary);
         })
         .catch((err) => {
@@ -373,9 +381,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           {TreatMentPlanData.length > 0 && (
             <div
               className={`w-full flex flex-wrap gap-6 bg-white min-h-[540px] p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4 ${
-                TreatMentPlanData?.filter(
-                  (value: any) => value.category == aciveTreatmentPlan,
-                )[0]?.data.length < 1 && 'justify-center'
+                categoryDataLength(TreatMentPlanData, aciveTreatmentPlan) < 1 &&
+                'justify-center'
               }`}
             >
               {TreatMentPlanData?.filter(
@@ -391,9 +398,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   </>
                 );
               })}
-              {TreatMentPlanData?.filter(
-                (value: any) => value.category == aciveTreatmentPlan,
-              )[0]?.data.length < 1 && (
+              {categoryDataLength(TreatMentPlanData, aciveTreatmentPlan) < 1 && (
                 <div className="w-full  flex justify-center items-center flex-col">
                   <img src="/icons/no-recommendations.svg" alt="" />
                   <div className="text-Text-Primary text-sm font-medium mt-5">
@@ -785,9 +790,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               {TreatMentPlanData.length > 0 && (
                 <div
                   className={`w-full flex flex-col gap-6 bg-white min-h-[540px] p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4 ${
-                    TreatMentPlanData?.filter(
-                      (value: any) => value.category == aciveTreatmentPlan,
-                    )[0]?.data.length < 1 && 'justify-center'
+                    categoryDataLength(TreatMentPlanData, aciveTreatmentPlan) <
+                      1 && 'justify-center'
                   }`}
                 >
                   {TreatMentPlanData?.filter(
@@ -803,9 +807,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       </>
                     );
                   })}
-                  {TreatMentPlanData?.filter(
-                    (value: any) => value.category == aciveTreatmentPlan,
-                  )[0]?.data.length < 1 && (
+                  {categoryDataLength(TreatMentPlanData, aciveTreatmentPlan) <
+                    1 && (
                     <div className="w-full flex justify-center items-center flex-col">
                       <img src="/icons/no-recommendations.svg" alt="" />
                       <div className="text-Text-Primary text-sm font-medium mt-5">
