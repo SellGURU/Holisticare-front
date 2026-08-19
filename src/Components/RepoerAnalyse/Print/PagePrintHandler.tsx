@@ -30,7 +30,7 @@ const PagePrintHandler: React.FC<PagePrintHandlerProps> = ({
         <PrintHeader usrInfoData={{ name: usrInfoData?.name }} />
         <div className="mt-4"></div>
         <div style={{ zIndex: 60, position: 'relative' }}>
-          {page.renderBoxs.map((el: any) => {
+          {(page?.renderBoxs ?? []).map((el: any) => {
             return (
               <>
                 <ComponentsHandler component={el}></ComponentsHandler>

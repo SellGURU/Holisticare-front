@@ -17,6 +17,10 @@ import TreatmentCard from './TreatmentCard';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
 import { Tooltip } from 'react-tooltip';
 import useIsDemo from '../../hooks/useIsDemo';
+import {
+  normalizePlanItemData,
+  normalizeTreatmentPlanCategories,
+} from '../../utils/treatmentPlanShape';
 
 type CardData = {
   id: number;
@@ -26,11 +30,8 @@ type CardData = {
 
 const initialCardData: CardData[] = [];
 
-const normalizePlanCategories = (data: unknown): any[] =>
-  Array.isArray(data) ? data : [];
-
 const categoryDataLength = (categories: any[], activeCategory: string): number =>
-  normalizePlanCategories(
+  normalizePlanItemData(
     categories.find((value: any) => value?.category === activeCategory)?.data,
   ).length;
 
@@ -100,10 +101,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   );
   const [aciveTreatmentPlan, setActiveTreatmentplan] = useState('Diet');
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any[]>(
-    normalizePlanCategories(treatmentPlanData),
+    normalizeTreatmentPlanCategories(treatmentPlanData),
   );
   useEffect(() => {
-    setTreatmentPlanData(normalizePlanCategories(treatmentPlanData));
+    setTreatmentPlanData(normalizeTreatmentPlanCategories(treatmentPlanData));
   }, [treatmentPlanData]);
   const [isAnalysisOpen, setisAnalysisOpen] = useState(false);
   const [isClientGoalOpen, setisClientGoalOpen] = useState(false);
@@ -193,7 +194,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         HEALTH_PLAN_TTL_MS,
       )
         .then((data) => {
-          setTreatmentPlanData(normalizePlanCategories(data.details));
+          setTreatmentPlanData(normalizeTreatmentPlanCategories(data.details));
           if (data.client_goals != null) {
             setClientGools(data.client_goals);
           }

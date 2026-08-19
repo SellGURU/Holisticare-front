@@ -81,6 +81,7 @@ import {
   invalidateHealthPlanCache,
 } from '../../utils/cacheKeys';
 import { getCached } from '../../utils/pageCache';
+import { normalizeTreatmentPlanCategories } from '../../utils/treatmentPlanShape';
 
 const canLoadOverviewSections = (info: {
   show_report?: boolean;
@@ -522,7 +523,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       HEALTH_PLAN_TTL_MS,
     )
       .then((data) => {
-        const planCategories = Array.isArray(data) ? data : [];
+        const planCategories = normalizeTreatmentPlanCategories(data);
         setTreatmentPlanData(planCategories);
         setTreatmentPlanLoaded(true);
         if (planCategories.length == 0) {
@@ -610,9 +611,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     )
       .then((res) => {
-        const planDetails = Array.isArray(res.data?.details)
-          ? res.data.details
-          : [];
+        const planDetails = normalizeTreatmentPlanCategories(res.data?.details);
         setTreatmentPlanData(planDetails);
         setTreatmentPlanLoaded(true);
         if (planDetails.length == 0) {
@@ -1234,25 +1233,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   //   return refData;
   // };
   const ResolveConceringData = () => {
-    // const refData: Array<any> = [];
-    // if (ConcerningResult.length > 0) {
-    //   ConcerningResult.forEach((el: any) => {
-    //     refData.push(...el.subcategories);
-    //   });
-    // }
-    // return refData;
-    return ConcerningResult;
+    return Array.isArray(ConcerningResult) ? ConcerningResult : [];
   };
 
   const resolveCategories = () => {
-    // const refData: Array<any> = [];
-    // if (ClientSummaryBoxs?.categories) {
-    //   ClientSummaryBoxs?.categories.forEach((el: any) => {
-    //     refData.push(...el.subcategories);
-    //   });
-    // }
-    // return refData;
-    if (ClientSummaryBoxs) {
+    if (ClientSummaryBoxs && Array.isArray(ClientSummaryBoxs.subcategories)) {
       return ClientSummaryBoxs.subcategories;
     }
     return [];

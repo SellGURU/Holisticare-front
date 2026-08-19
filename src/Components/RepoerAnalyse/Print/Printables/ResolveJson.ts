@@ -283,7 +283,7 @@ const addHolisticPlanFoodsLimit = (item: string[]) => {
   });
 };
 const addHolisticPlanBox = (category: any) => {
-  category?.data.map((el: any) => {
+  (category?.data ?? []).map((el: any) => {
     AddTreatmentplanCategory(category);
     addHolisticPlanTitle(el.title);
     addHolisticPlanScientificBasis(el.Based);
@@ -299,7 +299,7 @@ const addHolisticPlanBox = (category: any) => {
 };
 
 const addHolisticPlanTreatmentplanData = (TreatMentPlanData: Array<any>) => {
-  TreatMentPlanData.map((el) => {
+  (TreatMentPlanData ?? []).map((el) => {
     return addHolisticPlanBox(el);
   });
 };
@@ -421,7 +421,7 @@ const AddConcerningResult = (transformConceringData: Array<any>) => {
   addConcerningResultHeaderTable();
   // addBox(120)
   {
-    transformConceringData.map((el) => {
+    (transformConceringData ?? []).map((el) => {
       return addConcerningResultRowTable(el);
     });
   }
@@ -445,7 +445,7 @@ const AddDetailedAnalyse = (
   );
   addBox(16);
   {
-    resolveCategories.map((el) => {
+    (resolveCategories ?? []).map((el) => {
       return addDetailedAnalyseBox(el, resolveSubCategories);
     });
   }
@@ -496,7 +496,7 @@ const AddActionPLanRow = (category: string, item: any, index: number) => {
 };
 const AddActionPLanRowCategory = (category: string, item: Array<any>) => {
   // console.log(category,item)
-  item.map((el: any, index: number) => {
+  (item ?? []).map((el: any, index: number) => {
     return AddActionPLanRow(category, el, index);
   });
 };
