@@ -18,6 +18,7 @@ interface MemberCardProps {
     online: boolean;
     user_name: string;
     available_role: string;
+    registered?: boolean;
   };
   getStaffs: () => void;
 }
@@ -132,6 +133,11 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
               <div className="text-Text-Quadruple text-[10px]">
                 {memberInfo.role}
               </div>
+              {memberInfo.registered === false ? (
+                <div className="w-fit h-[14px] rounded-3xl bg-[#FFD8E4] flex items-center justify-center px-2 text-[8px] text-Text-Primary">
+                  Not Registered
+                </div>
+              ) : null}
             </div>
           </div>
           <div className="flex invisible justify-center text-[10px] text-Text-Quadruple gap-1">

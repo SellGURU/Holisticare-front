@@ -79,6 +79,32 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
     return isValid;
   };
 
+  const extractApiError = (error: unknown): string => {
+    if (!error) {
+      return 'Unable to send invitation. Please try again.';
+    }
+    if (typeof error === 'string') {
+      return error;
+    }
+    if (typeof error === 'object' && error !== null) {
+      const payload = error as { detail?: unknown; message?: unknown };
+      if (typeof payload.detail === 'string' && payload.detail.trim()) {
+        return payload.detail;
+      }
+      if (typeof payload.message === 'string' && payload.message.trim()) {
+        return payload.message;
+      }
+    }
+    return 'Unable to send invitation. Please try again.';
+  };
+
+  const setEmailApiError = (error: unknown) => {
+    setErrors((prev) => ({
+      ...prev,
+      email: extractApiError(error),
+    }));
+  };
+
   const onSave = (values: any) => {
     setLoading(true);
     return Application.inviteStaffMember(values)
@@ -87,17 +113,12 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
         setRole('Staff');
         setStep(3);
         getStaffs();
+        return true;
       })
-      .catch((error: any) => {
+      .catch((error: unknown) => {
         setLoading(false);
         console.log(error);
-        if (error?.detail === 'a user with this e-mail already exists.') {
-          setErrors((prev) => ({
-            ...prev,
-            email: 'This email address is already invited.',
-          }));
-          return false;
-        }
+        setEmailApiError(error);
         return false;
       });
   };
@@ -261,13 +282,8 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                       email: '',
                       role: '',
                     });
-                  } catch (error: any) {
-                    if (error.detail) {
-                      setErrors((prev) => ({
-                        ...prev,
-                        email: 'This email address is already invited.',
-                      }));
-                    }
+                  } catch (error: unknown) {
+                    setEmailApiError(error);
                   }
                 }}
               >

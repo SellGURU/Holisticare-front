@@ -64,6 +64,29 @@ class Auth extends Api {
     });
   }
 
+  static verifyStaffInvitation(token: string) {
+    return this.get(
+      `/staff/invitations/verify?token=${encodeURIComponent(token)}`,
+      { noAuth: true },
+    );
+  }
+
+  static registerStaff(
+    token: string,
+    password: string,
+    passwordConfirmation: string,
+  ) {
+    return this.post(
+      '/staff/register',
+      {
+        token,
+        password,
+        password_confirmation: passwordConfirmation,
+      },
+      { noAuth: true },
+    );
+  }
+
   static logOut() {
     return this.post('/auth/log_out');
   }

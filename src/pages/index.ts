@@ -12,6 +12,7 @@ import DriftAnaysis from './driftAnaysis';
 import AiKnowledge from './ai-knowledge/AiKnowledge';
 import SignUp from './signUp/index2';
 import ForgetPassword from './forgetPassword';
+import StaffRegister from './staff/StaffRegister';
 import Messages from './messages';
 import Setting from './settings';
 import HtmlViewer from './HtmlViewer';
@@ -28,6 +29,7 @@ export {
   PatientResourceViewer,
   Playground,
   ForgetPassword,
+  StaffRegister,
   AiKnowledge,
   SignUp,
   ClientList,

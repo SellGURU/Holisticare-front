@@ -11,11 +11,16 @@ class Api {
       toast.clearWaitingQueue();
       // toast.loading('pending ...')
     }
+    const { noAuth, ...axiosConfig } = config || {};
+    const headers = noAuth
+      ? config?.headers || { 'Content-Type': 'application/json' }
+      : {
+          Authorization: 'Bearer ' + getTokenFromLocalStorage(),
+          'Content-Type': config?.headers?.['Content-Type'] || 'application/json',
+        };
     const response = axios.post(this.base_url + url, data, {
-      headers: {
-        Authorization: 'Bearer ' + getTokenFromLocalStorage(),
-        'Content-Type': config?.headers?.['Content-Type'] || 'application/json',
-      },
+      ...axiosConfig,
+      headers,
       onUploadProgress: (progressEvent: any) => {
         if (config?.onUploadProgress) {
           config.onUploadProgress(progressEvent);

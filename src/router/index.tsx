@@ -10,6 +10,7 @@ import {
   Setting,
   DashBoard,
   ForgetPassword,
+  StaffRegister,
   DriftAnaysis,
   Home,
   Report,
@@ -276,6 +277,10 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <SignUp></SignUp>,
+  },
+  {
+    path: '/staff/register',
+    element: <StaffRegister></StaffRegister>,
   },
   {
     path: '/register-profile',

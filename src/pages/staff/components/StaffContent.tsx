@@ -15,6 +15,7 @@ type StaffMember = {
   user_name: string;
   you_tag: boolean;
   available_role: string;
+  registered?: boolean;
 };
 
 const StaffContent = () => {
@@ -49,6 +50,7 @@ const StaffContent = () => {
       online: boolean;
       user_name: string;
       available_role: string;
+      registered?: boolean;
     }[]
   >([]);
   const [roles, setRoles] = useState([]);

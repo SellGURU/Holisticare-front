@@ -139,30 +139,32 @@ axios.interceptors.response.use(
   (response) => {
     if (response.status === 200 || response.status === 206) toast.dismiss();
 
-    if (response.data.detail && response.status !== 206) {
-      if (response.data.detail.toLowerCase().includes('successfully')) {
-        showSuccess(response.data.detail);
-      } else {
-        showError(response.data.detail);
+    const detail =
+      response.data && typeof response.data === 'object'
+        ? response.data.detail
+        : undefined;
+    const isSuccessDetail =
+      typeof detail === 'string' &&
+      detail.toLowerCase().includes('successfully');
+
+    if (detail && response.status !== 206) {
+      if (isSuccessDetail) {
+        showSuccess(detail);
+      } else if (
+        detail !== 'Invalid token.' &&
+        detail !== 'Not Found' &&
+        response.data.notif !== true
+      ) {
+        showError(detail);
       }
     }
 
-    if (response.status === 401 || response.data.detail === 'Invalid token.') {
+    if (response.status === 401 || detail === 'Invalid token.') {
       portalSessionExpired();
     }
 
-    if (
-      response.data.detail &&
-      response.data.notif !== true &&
-      response.data.detail !== 'Invalid token.' &&
-      response.data.detail !== 'Not Found' &&
-      response.status !== 206
-    ) {
-      showError(response.data.detail);
-    }
-
-    if (response.data && response.data.detail && response.status !== 206) {
-      return Promise.reject(new Error(response.data.detail));
+    if (detail && response.status !== 206 && !isSuccessDetail) {
+      return Promise.reject(new Error(detail));
     }
 
     return response;
