@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { publish, subscribe } from '../../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import SpinnerLoader from '../../SpinnerLoader';
 import SvgIcon from '../../../utils/svgIcon';
@@ -13,6 +13,7 @@ interface HolisticPlanShareAndDownloadProps {
   handleGetHtmlReport: (url?: string) => void;
   htmlReportPollState?: 'building' | 'ready' | 'failed' | 'timed_out';
   onRetryHtmlReport?: () => void;
+  activePlan?: any;
 }
 
 const HolisticPlanShareAndDownload = ({
@@ -21,14 +22,20 @@ const HolisticPlanShareAndDownload = ({
   handleGetHtmlReport,
   htmlReportPollState = 'building',
   onRetryHtmlReport,
+  activePlan = null,
 }: HolisticPlanShareAndDownloadProps) => {
   const { id } = useParams<{ id: string }>();
-  const [activeTreatment, setActiveTreatment] = useState<any>(null);
+  const [eventPlan, setEventPlan] = useState<any>(null);
   const [openPublicShare, setOpenPublicShare] = useState(false);
+  const activeTreatment = activePlan ?? eventPlan;
   useEffect(() => {
-    subscribe('holisticPlanactiveChange', (data: any) => {
-      setActiveTreatment(data.detail.data);
-    });
+    const handleActivePlanChange = (data: any) => {
+      setEventPlan(data.detail.data);
+    };
+    subscribe('holisticPlanactiveChange', handleActivePlanChange);
+    return () => {
+      unsubscribe('holisticPlanactiveChange', handleActivePlanChange);
+    };
   }, []);
 
   const formatSharedDate = (dateString: string): string => {
@@ -238,7 +245,7 @@ const HolisticPlanShareAndDownload = ({
       <div
         className={`flex ${activeTreatment?.shared_report_with_client ? 'items-start' : 'items-center'}  gap-6`}
       >
-        {activeTreatment?.state != 'Draft' && (
+        {activeTreatment && activeTreatment.state != 'Draft' && (
           <>
             {resolveShareButtonHadler()}
             {resolvePublicShareButtonHandler()}

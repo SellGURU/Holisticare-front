@@ -43,6 +43,7 @@ interface TreatmentPlanProps {
   setIsShareModalSuccess: (value: boolean) => void;
   setDateShare: (value: string | null) => void;
   disableGenerate: boolean;
+  onActivePlanChange?: (plan: any | null) => void;
 }
 
 export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
@@ -53,6 +54,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   setIsShareModalSuccess,
   setDateShare,
   disableGenerate,
+  onActivePlanChange,
 }) => {
   const isDemo = useIsDemo();
   const resolveStatusColor = (status: string) => {
@@ -115,6 +117,12 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [activeTreatment, setActiveTreatmnet] = useState('');
+  const emitActivePlan = (plan: any | null, extra: Record<string, unknown> = {}) => {
+    onActivePlanChange?.(plan);
+    if (plan) {
+      publish('holisticPlanactiveChange', { data: plan, ...extra });
+    }
+  };
   useEffect(() => {
     if (!isShare && id) {
       getCached(
@@ -136,14 +144,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           setCardData(plans);
           setPrintActionPlan(plans);
           if (plans.length > 0) {
-            setActiveTreatmnet(plans[plans.length - 1].t_plan_id);
-            publish('holisticPlanactiveChange', {
-              data: plans[plans.length - 1],
-            });
-            setIsShareModalSuccess(
-              plans[plans.length - 1].shared_report_with_client,
-            );
-            setDateShare(plans[plans.length - 1].shared_report_with_client_date);
+            const latestPlan = plans[plans.length - 1];
+            setActiveTreatmnet(latestPlan.t_plan_id);
+            emitActivePlan(latestPlan);
+            setIsShareModalSuccess(latestPlan.shared_report_with_client);
+            setDateShare(latestPlan.shared_report_with_client_date);
+          } else {
+            setActiveTreatmnet('');
+            emitActivePlan(null);
           }
           setTimeout(() => {
             const container: any = document.getElementById('scrollContainer');
@@ -156,7 +164,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           console.error('Error getting treatment plan list:', err);
         });
     }
-  }, []);
+  }, [id, isShare]);
   useEffect(() => {
     subscribe('shareModalHolisticPlanSuccess', (data: any) => {
       setCardData((prev: any) => {
@@ -170,11 +178,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           }
           return el;
         });
-        publish('holisticPlanactiveChange', {
-          data: newData.filter(
+        emitActivePlan(
+          newData.filter(
             (el: any) => el.t_plan_id == data.detail.treatmentId,
           )[0],
-        });
+        );
         return newData;
       });
     });
@@ -243,12 +251,13 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         });
       if (index > 0) {
         setActiveTreatmnet(newCardData[index - 1].t_plan_id);
-        publish('holisticPlanactiveChange', { data: newCardData[index - 1] });
+        emitActivePlan(newCardData[index - 1]);
       } else if (newCardData.length > 0) {
         setActiveTreatmnet(newCardData[0].t_plan_id);
-        publish('holisticPlanactiveChange', { data: newCardData[0] });
+        emitActivePlan(newCardData[0]);
       } else {
         setActiveTreatmnet('');
+        emitActivePlan(null);
       }
       return newCardData;
     });
@@ -508,8 +517,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                         setActiveTreatmnet(card.t_plan_id);
                         setIsShareModalSuccess(card.shared_report_with_client);
                         setDateShare(card.shared_report_with_client_date);
-                        publish('holisticPlanactiveChange', {
-                          data: card,
+                        emitActivePlan(card, {
                           isEnd:
                             isShowDot(card, index) && card.state != 'Draft',
                         });

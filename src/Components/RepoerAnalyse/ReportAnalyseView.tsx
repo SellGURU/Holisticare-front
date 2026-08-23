@@ -1015,6 +1015,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     setClientSummaryBoxs(null);
     setConcerningResult([]);
     setConcerningResultIsLoaded(false);
+    setActiveHolisticPlan(null);
     setClientSummaryLoading(true);
     setReferenceLoading(true);
     setConcerningLoading(true);
@@ -1082,6 +1083,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     useState(false);
   const [referenceData, setReferenceData] = useState<any>(null);
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([]);
+  const [activeHolisticPlan, setActiveHolisticPlan] = useState<any>(null);
 
   const [ActionPlanPrint, setActionPlanPrint] = useState(null);
   const [HelthPrint, setHelthPlanPrint] = useState(null);
@@ -2029,6 +2031,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     isHtmlReportExists={isHtmlReportExists}
                     htmlReportPollState={htmlReportPollState}
                     onRetryHtmlReport={retryHtmlReportBuild}
+                    activePlan={activeHolisticPlan}
                   />
                 ) : (
                   ''
@@ -2049,6 +2052,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   treatmentPlanData={TreatMentPlanData}
                   setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
                   setDateShare={() => {}}
+                  onActivePlanChange={setActiveHolisticPlan}
                 />
               )}
             </div>
