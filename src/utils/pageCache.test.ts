@@ -56,7 +56,7 @@ describe('pageCache', () => {
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 
-  it('invalidate(prefix) removes only matching keys', async () => {
+    it('invalidate(prefix) removes only matching keys', async () => {
     await getCached('portal:patients', () => Promise.resolve(1));
     await getCached('portal:messages:users', () => Promise.resolve(2));
 
@@ -64,6 +64,21 @@ describe('pageCache', () => {
 
     expect(hasCached('portal:patients')).toBe(false);
     expect(hasCached('portal:messages:users')).toBe(true);
+  });
+
+  it('invalidate(portal:healthplan:) clears health plan keys', async () => {
+    await getCached(
+      'portal:healthplan:client-summary-outofrefs:799015431094',
+      () => Promise.resolve({ values: ['28.40'] }),
+    );
+    await getCached('portal:patients', () => Promise.resolve(1));
+
+    invalidate('portal:healthplan:');
+
+    expect(
+      hasCached('portal:healthplan:client-summary-outofrefs:799015431094'),
+    ).toBe(false);
+    expect(hasCached('portal:patients')).toBe(true);
   });
 
   it('peekCached returns stored data without fetching', async () => {

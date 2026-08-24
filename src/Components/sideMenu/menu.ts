@@ -62,6 +62,12 @@ export const menus = [
         icon: 'sidemenu-menu-icon-Form',
         active: true,
       },
+      {
+        name: 'Intelligence Model',
+        url: '/custom-parametric/risk',
+        icon: 'sidemenu-menu-icon-HealthRisk',
+        active: true,
+      },
     ],
   },
   {

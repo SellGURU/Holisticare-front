@@ -14,12 +14,21 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
   const location = useLocation();
   const { permisions, accountRole } = useApp();
 
+  const matchActiveMenu = (path: string) => {
+    const allItems = menus.flatMap((menu) => menu.items);
+    const exact = allItems.find((item) => item.url === path);
+    if (exact) return exact;
+    if (path.startsWith('/custom-parametric')) {
+      return (
+        allItems.find((item) => item.url?.startsWith('/custom-parametric')) ||
+        menus[0].items[0]
+      );
+    }
+    return null;
+  };
+
   const [activeMenu, setActiveMenu] = useState(() => {
-    return (
-      menus
-        .flatMap((menu) => menu.items)
-        .find((item) => item.url === location.pathname) || menus[0].items[0]
-    );
+    return matchActiveMenu(location.pathname) || menus[0].items[0];
   });
   const [showPlayground, setShowPlayground] = useState(false);
   const [permissions, setPermissions] = useState<any>(permisions || {});
@@ -34,9 +43,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
   });
   useEffect(() => {
     const currentActiveItem =
-      menus
-        .flatMap((menu) => menu.items)
-        .find((item) => item.url === location.pathname) || menus[0].items[0];
+      matchActiveMenu(location.pathname) || menus[0].items[0];
 
     if (currentActiveItem.name !== activeMenu.name) {
       setActiveMenu(currentActiveItem);
@@ -87,6 +94,9 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
       return true;
     }
     if (name === 'FHIR Import' && permissions.fhir === false) {
+      return true;
+    }
+    if (name === 'Intelligence Model' && permissions.parametric === false) {
       return true;
     }
     if (name === 'Other' && permissions.other === false) {
