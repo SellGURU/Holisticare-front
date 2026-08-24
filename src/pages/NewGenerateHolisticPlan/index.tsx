@@ -858,7 +858,8 @@ const NewGenerateHolisticPlan = () => {
                     {active == 'Recommendation' && (
                       <>
                         <div>
-                          {(treatmentPlanData?.suggestion_tab?.length ?? 0) > 0 ? (
+                          {(treatmentPlanData?.suggestion_tab?.length ?? 0) >
+                          0 ? (
                             <>
                               {treatmentPlanData['suggestion_tab'].map(
                                 (el: any, suggestionIndex: number) => {

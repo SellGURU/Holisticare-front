@@ -30,7 +30,10 @@ type CardData = {
 
 const initialCardData: CardData[] = [];
 
-const categoryDataLength = (categories: any[], activeCategory: string): number =>
+const categoryDataLength = (
+  categories: any[],
+  activeCategory: string,
+): number =>
   normalizePlanItemData(
     categories.find((value: any) => value?.category === activeCategory)?.data,
   ).length;
@@ -117,7 +120,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [activeTreatment, setActiveTreatmnet] = useState('');
-  const emitActivePlan = (plan: any | null, extra: Record<string, unknown> = {}) => {
+  const emitActivePlan = (
+    plan: any | null,
+    extra: Record<string, unknown> = {},
+  ) => {
     onActivePlanChange?.(plan);
     if (plan) {
       publish('holisticPlanactiveChange', { data: plan, ...extra });
@@ -206,7 +212,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           if (data.client_goals != null) {
             setClientGools(data.client_goals);
           }
-          setNeedFocusData(Array.isArray(data.need_focus_benchmarks) ? data.need_focus_benchmarks : []);
+          setNeedFocusData(
+            Array.isArray(data.need_focus_benchmarks)
+              ? data.need_focus_benchmarks
+              : [],
+          );
           setclientSummary(data.medical_summary);
         })
         .catch((err) => {
@@ -408,7 +418,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   </>
                 );
               })}
-              {categoryDataLength(TreatMentPlanData, aciveTreatmentPlan) < 1 && (
+              {categoryDataLength(TreatMentPlanData, aciveTreatmentPlan) <
+                1 && (
                 <div className="w-full  flex justify-center items-center flex-col">
                   <img src="/icons/no-recommendations.svg" alt="" />
                   <div className="text-Text-Primary text-sm font-medium mt-5">

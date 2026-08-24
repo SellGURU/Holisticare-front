@@ -43,7 +43,9 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
       })
       .catch((err) => {
         console.error('Error getting checkin list:', err);
-        setListError(formatApiErrorMessage(err) || 'Failed to load check-in forms.');
+        setListError(
+          formatApiErrorMessage(err) || 'Failed to load check-in forms.',
+        );
         setCheckInList([]);
         setLoading(false);
       });
@@ -59,7 +61,9 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
       })
       .catch((err) => {
         console.error('Error getting questionary list:', err);
-        setListError(formatApiErrorMessage(err) || 'Failed to load questionnaire forms.');
+        setListError(
+          formatApiErrorMessage(err) || 'Failed to load questionnaire forms.',
+        );
         setCheckInList([]);
         setLoading(false);
       });

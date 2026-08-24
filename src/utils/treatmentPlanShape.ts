@@ -4,7 +4,9 @@ export const normalizePlanItemData = (data: unknown): any[] =>
   Array.isArray(data) ? data : [];
 
 /** Ensures overview/detail treatment plan categories always have array `data`. */
-export const normalizeTreatmentPlanCategories = (categories: unknown): any[] => {
+export const normalizeTreatmentPlanCategories = (
+  categories: unknown,
+): any[] => {
   if (!Array.isArray(categories)) return [];
 
   return categories.map((category) => {

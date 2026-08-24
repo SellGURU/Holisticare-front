@@ -99,11 +99,7 @@ const StaffRegister = () => {
 
       setSubmitError('');
       setIsLoading(true);
-      Auth.registerStaff(
-        token,
-        formik.values.password,
-        formik.values.confirm,
-      )
+      Auth.registerStaff(token, formik.values.password, formik.values.confirm)
         .then(() => Auth.login(verifyState.email, formik.values.password))
         .then((res) => {
           appContext.login(
@@ -224,7 +220,9 @@ const StaffRegister = () => {
           type="password"
         />
         {submitError ? (
-          <div className="text-[12px] text-red-500 text-center">{submitError}</div>
+          <div className="text-[12px] text-red-500 text-center">
+            {submitError}
+          </div>
         ) : null}
         <ButtonSecondary
           ClassName="rounded-[20px]"

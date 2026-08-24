@@ -16,7 +16,8 @@ class Api {
       ? config?.headers || { 'Content-Type': 'application/json' }
       : {
           Authorization: 'Bearer ' + getTokenFromLocalStorage(),
-          'Content-Type': config?.headers?.['Content-Type'] || 'application/json',
+          'Content-Type':
+            config?.headers?.['Content-Type'] || 'application/json',
         };
     const response = axios.post(this.base_url + url, data, {
       ...axiosConfig,
