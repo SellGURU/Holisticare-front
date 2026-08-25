@@ -6,23 +6,76 @@ import {
   type RiskContribution,
 } from './healthRiskAssessments';
 
-function severityTone(severity: string | null | undefined) {
+function severityTone(
+  severity: string | null | undefined,
+  kind: 'risk' | 'score' | 'age' = 'risk',
+) {
   const key = String(severity || '').toLowerCase();
-  if (key.includes('high') || key.includes('critical') || key.includes('severe')) {
+  if (kind === 'age') {
+    if (key.includes('accelerat') || key.includes('poor') || key.includes('high')) {
+      return {
+        ring: '#EF4444',
+        chip: 'bg-red-50 text-red-700',
+        wash: 'from-red-50/80 to-white',
+      };
+    }
+    if (key.includes('older') || key.includes('moderat')) {
+      return {
+        ring: '#F59E0B',
+        chip: 'bg-amber-50 text-amber-800',
+        wash: 'from-amber-50/80 to-white',
+      };
+    }
+    if (key.includes('young')) {
+      return {
+        ring: '#10B981',
+        chip: 'bg-emerald-50 text-emerald-800',
+        wash: 'from-emerald-50/70 to-white',
+      };
+    }
+    return {
+      ring: '#0D9488',
+      chip: 'bg-[#E6F3F1] text-Primary-DeepTeal',
+      wash: 'from-[#F4FBFA] to-white',
+    };
+  }
+  const highIsBad = kind === 'risk';
+  if (key.includes('high') || key.includes('critical') || key.includes('severe') || key.includes('poor')) {
+    if (!highIsBad && (key.includes('high') || key.includes('optimal') || key.includes('excellent') || key.includes('good'))) {
+      return {
+        ring: '#10B981',
+        chip: 'bg-emerald-50 text-emerald-800',
+        wash: 'from-emerald-50/70 to-white',
+      };
+    }
     return {
       ring: '#EF4444',
       chip: 'bg-red-50 text-red-700',
       wash: 'from-red-50/80 to-white',
     };
   }
-  if (key.includes('moderat') || key.includes('medium')) {
+  if (key.includes('moderat') || key.includes('medium') || key.includes('low')) {
+    if (!highIsBad && key.includes('low')) {
+      return {
+        ring: '#F59E0B',
+        chip: 'bg-amber-50 text-amber-800',
+        wash: 'from-amber-50/80 to-white',
+      };
+    }
+    if (highIsBad && key.includes('low')) {
+      return {
+        ring: '#10B981',
+        chip: 'bg-emerald-50 text-emerald-800',
+        wash: 'from-emerald-50/70 to-white',
+      };
+    }
     return {
       ring: '#F59E0B',
       chip: 'bg-amber-50 text-amber-800',
       wash: 'from-amber-50/80 to-white',
     };
   }
-  if (key.includes('low') || key.includes('optimal')) {
+  if (key.includes('optimal') || key.includes('good') || key.includes('excellent')) {
     return {
       ring: '#10B981',
       chip: 'bg-emerald-50 text-emerald-800',
@@ -34,6 +87,19 @@ function severityTone(severity: string | null | undefined) {
     chip: 'bg-[#E6F3F1] text-Primary-DeepTeal',
     wash: 'from-[#F4FBFA] to-white',
   };
+}
+
+function ageRingPercent(item: HealthRiskAssessment): number {
+  const years = Number(item.score);
+  if (!Number.isFinite(years)) return 0;
+  const chrono = (item.evidence || []).find((row) =>
+    /profile\.age|^age$/i.test(String(row.input || '')),
+  );
+  const chronoVal = chrono?.value != null ? Number(chrono.value) : NaN;
+  if (Number.isFinite(chronoVal) && chronoVal > 0) {
+    return Math.max(8, Math.min(100, 50 + (years - chronoVal) * 5));
+  }
+  return Math.max(8, Math.min(100, years));
 }
 
 function Donut({
@@ -110,26 +176,45 @@ function Donut({
 export default function HealthRiskScoreCard({
   item,
   compact = false,
+  kind = 'risk',
 }: {
   item: HealthRiskAssessment;
   compact?: boolean;
+  kind?: 'risk' | 'score' | 'age';
 }) {
-  const tone = severityTone(item.severity);
-  const percent = scoreBarPercent(item.score);
-  const parts = riskContributions(item);
+  const tone = severityTone(item.severity, kind);
+  const percent = kind === 'age' ? ageRingPercent(item) : scoreBarPercent(item.score);
+  const parts = kind === 'age' ? [] : riskContributions(item);
   const evidence = item.evidence || [];
+  const chrono = evidence.find((row) =>
+    /profile\.age|^age$/i.test(String(row.input || '')),
+  );
+  const years =
+    item.score == null || Number.isNaN(Number(item.score))
+      ? null
+      : Number(item.score);
 
   return (
     <article className={`overflow-hidden rounded-2xl border border-Gray-50 bg-gradient-to-br ${tone.wash} ${compact ? 'p-3' : 'p-4'} shadow-[0_8px_24px_rgba(15,23,42,0.04)]`}>
       <div className={`flex items-center ${compact ? 'flex-col text-center gap-2' : 'gap-4'}`}>
         <div className="relative shrink-0">
-          <Donut percent={percent} segments={parts} color={tone.ring} />
+          <Donut
+            percent={percent}
+            segments={kind === 'risk' ? parts : []}
+            color={tone.ring}
+          />
           <div className="absolute inset-0 flex rotate-0 flex-col items-center justify-center">
             <span className="text-[22px] font-semibold leading-none text-Text-Primary">
-              {Math.round(percent)}
+              {kind === 'age'
+                ? years == null
+                  ? '—'
+                  : Math.round(years)
+                : Math.round(percent)}
             </span>
             <span className="mt-0.5 text-[10px] tracking-wide text-Text-Secondary uppercase">
-              % risk
+              {kind === 'age'
+                ? 'years'
+                : `% ${kind === 'score' ? 'score' : 'risk'}`}
             </span>
           </div>
         </div>
@@ -145,8 +230,11 @@ export default function HealthRiskScoreCard({
             </span>
           </div>
           <p className="mt-1 text-[11px] text-Text-Secondary">
-            Score {formatRiskScore(item.score)} · formula screening, not a
-            diagnosis
+            {kind === 'age'
+              ? `${formatRiskScore(item.score)} years${
+                  chrono?.value != null ? ` · chrono ${chrono.value}` : ''
+                } · formula screening, not a diagnosis`
+              : `Score ${formatRiskScore(item.score)} · formula screening, not a diagnosis`}
           </p>
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#EEF2F3]">
             <div
@@ -166,7 +254,7 @@ export default function HealthRiskScoreCard({
                   {row.label}
                 </span>
                 <span className="shrink-0 text-Text-Secondary">
-                  {row.share}%
+                  {kind === 'score' ? `weight ${row.share}%` : `${row.share}%`}
                   {row.value != null
                     ? ` · ${row.value}${row.unit ? ` ${row.unit}` : ''}`
                     : ''}

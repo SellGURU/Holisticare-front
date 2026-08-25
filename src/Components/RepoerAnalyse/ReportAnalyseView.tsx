@@ -46,6 +46,7 @@ import { UploadTestV2 } from './UploadTestV2';
 // import HolisticShare from './components/HolisticShare';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
 import HealthRisksPanel from './HealthRisksPanel';
+import { RISKS_SCORES_AGE_SECTION } from './healthRiskAssessments';
 import MarkdownText from '../markdownText';
 import ChartLoadingPlaceholder from './ChartLoadingPlaceholder';
 import NewDetailedAcordin from './Boxs/newDetailedAcordin';
@@ -988,7 +989,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       checked: true,
     },
     {
-      name: 'Health Risks',
+      name: RISKS_SCORES_AGE_SECTION,
       checked: true,
     },
     {
@@ -1840,7 +1841,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               </div>
             </>
           )}
-          {accessManager.filter((el) => el.name == 'Health Risks')[0]
+          {accessManager.filter((el) => el.name == RISKS_SCORES_AGE_SECTION)[0]
             ?.checked == true &&
             !isShare && (
               <HealthRisksPanel

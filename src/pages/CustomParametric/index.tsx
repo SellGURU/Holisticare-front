@@ -1,4 +1,4 @@
-import { Check, Network } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   MODEL_CATEGORIES,
@@ -90,25 +90,13 @@ const CustomParametric = () => {
         </div>
 
         {selected === 'risk' ? (
-          <RiskDomainsPanel />
+          <RiskDomainsPanel modelKind="RISK" />
+        ) : selected === 'health' ? (
+          <RiskDomainsPanel modelKind="SCORING" />
         ) : selected === 'parametric' ? (
           <ParametricDomainsPanel />
         ) : (
-          <div className="min-h-[400px] rounded-xl border border-gray-200/80 bg-white">
-            <div className="flex min-h-[400px] flex-col items-center justify-center text-center">
-              <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-Gray-25">
-                <Network className="size-6 text-Primary-DeepTeal" />
-              </div>
-              <h3 className="text-sm font-medium text-Text-Primary">
-                {selected === 'age' ? 'Age Clocks' : 'Health Scores'}
-              </h3>
-              <p className="mt-1 max-w-md text-xs text-Text-Quadruple">
-                {selected === 'age'
-                  ? 'Biological age estimation models will be configured here'
-                  : 'Composite health index models will be configured here'}
-              </p>
-            </div>
-          </div>
+          <RiskDomainsPanel modelKind="AGING" />
         )}
       </div>
     </div>

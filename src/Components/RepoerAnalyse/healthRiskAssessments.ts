@@ -8,6 +8,7 @@ export interface HealthRiskAssessment {
   priority?: string | null;
   score?: number | null;
   assessment_status?: string;
+  domain_type?: string;
   evidence?: Array<{
     input?: string;
     value?: number | string | null;
@@ -27,10 +28,51 @@ export function isCalculatedRisk(item: HealthRiskAssessment): boolean {
   return item.assessment_status === 'calculated' && item.score != null;
 }
 
+export const RISKS_SCORES_AGE_SECTION = 'Risks, Scores & Age';
+
+export const RISKS_SCORES_AGE_ALIASES: Record<string, string> = {
+  'Health Risks': RISKS_SCORES_AGE_SECTION,
+  'Health Scores': RISKS_SCORES_AGE_SECTION,
+};
+
+export function resolveReportSection(name: string): string {
+  return RISKS_SCORES_AGE_ALIASES[name] || name;
+}
+
+export function isScoreModel(item: HealthRiskAssessment): boolean {
+  return String(item.domain_type || 'RISK').toUpperCase() === 'SCORING';
+}
+
+export function isAgeModel(item: HealthRiskAssessment): boolean {
+  return String(item.domain_type || '').toUpperCase() === 'AGING';
+}
+
 export function presentRisks(
   assessments: HealthRiskAssessment[],
 ): HealthRiskAssessment[] {
-  return assessments.filter(isCalculatedRisk);
+  return assessments.filter(
+    (item) =>
+      isCalculatedRisk(item) && !isScoreModel(item) && !isAgeModel(item),
+  );
+}
+
+export function presentScores(
+  assessments: HealthRiskAssessment[],
+): HealthRiskAssessment[] {
+  return assessments.filter(
+    (item) =>
+      isCalculatedRisk(item) &&
+      isScoreModel(item) &&
+      Number(item.score) > 0,
+  );
+}
+
+export function presentAges(
+  assessments: HealthRiskAssessment[],
+): HealthRiskAssessment[] {
+  return assessments.filter(
+    (item) => isCalculatedRisk(item) && isAgeModel(item),
+  );
 }
 
 export const FORMULA_ISSUE_MARK =
@@ -58,15 +100,49 @@ export function isElevatedRisk(item: HealthRiskAssessment): boolean {
   return percent != null && percent >= 20;
 }
 
+export function isLowHealthScore(item: HealthRiskAssessment): boolean {
+  if (!isCalculatedRisk(item) || !isScoreModel(item)) return false;
+  const severity = String(item.severity || '').toLowerCase();
+  if (/poor|low|need|deficit|critical|severe/.test(severity)) {
+    if (/high|optimal|excellent|good/.test(severity)) {
+      return /low|poor/.test(severity);
+    }
+    return true;
+  }
+  if (/high|optimal|excellent|good|normal/.test(severity)) return false;
+  const percent = scorePercentValue(item.score);
+  return percent != null && percent < 50;
+}
+
+export function isAcceleratedAge(item: HealthRiskAssessment): boolean {
+  if (!isCalculatedRisk(item) || !isAgeModel(item)) return false;
+  const severity = String(item.severity || '').toLowerCase();
+  return /older|accelerat|high|poor/.test(severity);
+}
+
 export function planAffectingRisks(
   assessments: HealthRiskAssessment[],
 ): HealthRiskAssessment[] {
-  return assessments.filter(isElevatedRisk);
+  return assessments.filter((item) => {
+    if (isScoreModel(item)) return isLowHealthScore(item);
+    if (isAgeModel(item)) return isAcceleratedAge(item);
+    return isElevatedRisk(item);
+  });
 }
 
 export function formulaIssueBody(item: HealthRiskAssessment): string {
   const name = String(item.display_name || item.risk_key || 'Clinic risk').trim();
   const severity = String(item.severity || 'Calculated').trim();
+  if (isAgeModel(item)) {
+    const years = item.score;
+    const ageText =
+      years == null || Number.isNaN(Number(years))
+        ? '—'
+        : Number.isInteger(years) || Math.abs(Number(years) - Math.round(Number(years))) < 0.05
+          ? String(Math.round(Number(years)))
+          : Number(years).toFixed(2);
+    return `${name} — ${severity} (age ${ageText}). ${FORMULA_ISSUE_MARK}`;
+  }
   const percent = scorePercentValue(item.score);
   const scoreText =
     percent == null
@@ -148,11 +224,21 @@ export function mergeFormulaRisksIntoType2(
     if (seen.has(body)) continue;
     seen.add(body);
     const severity = String(item.severity || '').toLowerCase();
-    const cat = /high|severe|critical|urgent/.test(severity)
-      ? 'critical_urgent'
-      : /moderat|medium/.test(severity)
-        ? 'important_strategic'
-        : 'important_long_term';
+    let cat = 'important_long_term';
+    if (isScoreModel(item)) {
+      const percent = scorePercentValue(item.score);
+      cat =
+        /poor|critical|severe/.test(severity) ||
+        (percent != null && percent < 20)
+          ? 'critical_urgent'
+          : 'important_strategic';
+    } else {
+      cat = /high|severe|critical|urgent/.test(severity)
+        ? 'critical_urgent'
+        : /moderat|medium/.test(severity)
+          ? 'important_strategic'
+          : 'important_long_term';
+    }
     formulaRows.push({ cat, body });
   }
 
@@ -219,23 +305,25 @@ export function riskContributions(
     (row) => row.contribution != null || row.share_percent != null,
   );
   if (withShare.length === 0) return [];
-  const total = withShare.reduce(
+  const seen = new Set<string>();
+  const unique = withShare.filter((row) => {
+    const key = String(row.input || 'Input');
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const total = unique.reduce(
     (sum, row) => sum + Number(row.contribution || 0),
     0,
   );
-  return withShare.map((row, index) => {
+  return unique.map((row, index) => {
     const points = Number(row.contribution || 0);
     return {
       label: String(row.input || 'Input'),
       value: row.value ?? null,
       unit: row.unit,
       points,
-      share:
-        row.share_percent != null
-          ? Number(row.share_percent)
-          : total
-            ? Math.round((1000 * points) / total) / 10
-            : 0,
+      share: total ? Math.round((1000 * points) / total) / 10 : 0,
       color: RISK_SEGMENT_COLORS[index % RISK_SEGMENT_COLORS.length],
     };
   });
@@ -268,14 +356,13 @@ export function useHealthRiskAssessments(
         return applyRows(res.data || {});
       })
       .then((rows) => {
-        if (cancelled || rows.some((item) => item.assessment_status === 'calculated')) {
-          return null;
-        }
-        return HealthRiskArchitectureApi.calculateAssessments(memberId);
-      })
-      .then((res) => {
-        if (cancelled || !res) return;
-        applyRows(res.data || {});
+        if (cancelled) return rows;
+        return HealthRiskArchitectureApi.calculateAssessments(memberId)
+          .then((res) => {
+            if (cancelled) return rows;
+            return applyRows(res.data || {});
+          })
+          .catch(() => rows);
       })
       .catch(() => {
         if (!cancelled) {

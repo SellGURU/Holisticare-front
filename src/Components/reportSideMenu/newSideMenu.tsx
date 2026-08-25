@@ -5,6 +5,10 @@ import { publish, subscribe, unsubscribe } from '../../utils/event'; // Adjust t
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import SvgIcon from '../../utils/svgIcon';
 import { decodeAccessUser } from '../../help';
+import {
+  resolveReportSection,
+  RISKS_SCORES_AGE_SECTION,
+} from '../RepoerAnalyse/healthRiskAssessments';
 interface ReportSideMenuProps {
   onClose: () => void;
   isShare?: boolean;
@@ -28,7 +32,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   const menuItems = [
     'Client Summary',
     'Need Focus Biomarker',
-    'Health Risks',
+    RISKS_SCORES_AGE_SECTION,
     'Concerning Result',
     'Detailed Analysis',
     'Holistic Plan',
@@ -59,7 +63,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       checked: true,
     },
     {
-      name: 'Health Risks',
+      name: RISKS_SCORES_AGE_SECTION,
       checked: true,
     },
     {
@@ -103,7 +107,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     const handleNoReportAvailable = () => {
       setDisableClicks(true);
       if (params.get('section')) {
-        setactiveMenu(params.get('section') as string);
+        setactiveMenu(resolveReportSection(params.get('section') as string));
       } else {
         setactiveMenu('Client Summary');
       }
@@ -111,7 +115,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     const handleReportAvailable = () => {
       setDisableClicks(false);
       if (params.get('section')) {
-        setactiveMenu(params.get('section') as string);
+        setactiveMenu(resolveReportSection(params.get('section') as string));
       } else {
         setactiveMenu('Client Summary');
       }
@@ -119,17 +123,16 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     subscribe('noReportAvailable', handleNoReportAvailable);
     subscribe('ReportAvailable', handleReportAvailable);
     subscribe('scrolledSection', (data) => {
-      // console.log(data)
       console.log(data.detail.section);
-      // setSearchParams({["section"]: data.detail.section})
-      setactiveMenu(data.detail.section);
+      setactiveMenu(resolveReportSection(data.detail.section));
     });
   }, []);
   const [, setSearchParams] = useSearchParams();
   const onchangeMenu = (item: string) => {
-    setSearchParams({ ['section']: item });
-    setactiveMenu(item);
-    document.getElementById(item)?.scrollIntoView({
+    const section = resolveReportSection(item);
+    setSearchParams({ ['section']: section });
+    setactiveMenu(section);
+    document.getElementById(section)?.scrollIntoView({
       behavior: 'instant',
     });
   };

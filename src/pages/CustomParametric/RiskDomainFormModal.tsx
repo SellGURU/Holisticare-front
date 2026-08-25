@@ -62,6 +62,40 @@ const EMPTY_FORM: FormState = {
   domainType: 'RISK',
 };
 
+const EMPTY_SCORE_FORM: FormState = {
+  ...EMPTY_FORM,
+  domainType: 'SCORING',
+  formulaCode:
+    'round((1 - status_weight(Biomarker.Hb_A1c, 5.2, 6.5)) * 100, 2)',
+  resultCategories: [
+    { min: 0, max: 20, label: 'Poor', color: 'red' },
+    { min: 20, max: 50, label: 'Low', color: 'amber' },
+    { min: 50, max: 80, label: 'Good', color: 'green' },
+    { min: 80, max: 100, label: 'Optimal', color: 'green' },
+  ],
+};
+
+const EMPTY_AGE_FORM: FormState = {
+  ...EMPTY_FORM,
+  domainType: 'AGING',
+  icon: 'Clock',
+  iconColor: '#6366F1',
+  formulaCode:
+    'round(phenoage(Biomarker.Albumin * 0.0665, Biomarker.Creatinine, Biomarker.Glucose / 18, max(Biomarker.C_Reactive_Protein_high_sensitivity / 10, 0.001), Biomarker.Lymphocytes, Biomarker.Mean_Corpuscular_Volume, Biomarker.Red_Cell_Distribution_Width, Biomarker.Alkaline_Phosphatase, Biomarker.White_Blood_Cells / 1000, Profile.age), 2)',
+  resultCategories: [
+    { min: 0, max: 40, label: 'Younger', color: 'green' },
+    { min: 40, max: 55, label: 'Aligned', color: 'amber' },
+    { min: 55, max: 70, label: 'Older', color: 'red' },
+    { min: 70, max: 120, label: 'Accelerated', color: 'red' },
+  ],
+};
+
+function emptyFormForKind(kind: 'RISK' | 'SCORING' | 'AGING'): FormState {
+  if (kind === 'SCORING') return EMPTY_SCORE_FORM;
+  if (kind === 'AGING') return EMPTY_AGE_FORM;
+  return EMPTY_FORM;
+}
+
 function domainToForm(domain: RiskDomainViewModel): FormState {
   return {
     name: domain.name,
@@ -88,6 +122,7 @@ interface RiskDomainFormModalProps {
   open: boolean;
   mode: RiskDomainFormMode;
   domain?: RiskDomainViewModel | null;
+  modelKind?: 'RISK' | 'SCORING' | 'AGING';
   onClose: () => void;
   onSaved: () => void;
 }
@@ -96,9 +131,13 @@ export default function RiskDomainFormModal({
   open,
   mode,
   domain,
+  modelKind = 'RISK',
   onClose,
   onSaved,
 }: RiskDomainFormModalProps) {
+  const isScore = modelKind === 'SCORING';
+  const isAge = modelKind === 'AGING';
+  const kindLabel = isAge ? 'age clock' : isScore ? 'score' : 'risk';
   const isEdit = mode === 'edit';
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [groupInput, setGroupInput] = useState('');
@@ -117,15 +156,16 @@ export default function RiskDomainFormModal({
     setValidation(null);
     setGroupInput('');
     if (domain && mode === 'edit') {
-      setForm(domainToForm(domain));
+      setForm({ ...domainToForm(domain), domainType: modelKind });
     } else if (domain && mode === 'duplicate') {
       setForm({
         ...domainToForm(domain),
         name: `Copy of ${domain.name}`,
         displayName: `Copy of ${domain.displayName}`,
+        domainType: modelKind,
       });
     } else {
-      setForm(EMPTY_FORM);
+      setForm(emptyFormForKind(modelKind));
     }
     BiomarkersApi.getBiomarkersList({ include_all: true })
       .then((res) => {
@@ -149,7 +189,7 @@ export default function RiskDomainFormModal({
         setCatalog(mapped);
       })
       .catch(() => setCatalog([]));
-  }, [open, domain, mode]);
+  }, [open, domain, mode, modelKind]);
 
   function patch<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -248,10 +288,10 @@ export default function RiskDomainFormModal({
   }
 
   const title = isEdit
-    ? 'Edit risk domain'
+    ? `Edit ${kindLabel} domain`
     : mode === 'duplicate'
-      ? 'Duplicate risk domain'
-      : 'Create risk domain';
+      ? `Duplicate ${kindLabel} domain`
+      : `Create ${kindLabel} domain`;
   const PreviewIcon = HEALTH_RISK_ICONS[form.icon] ?? HEALTH_RISK_DEFAULT_ICON;
   const nameLocked = isEdit && Boolean(domain?.isSystemDefault);
   const bandsInvalid = !form.resultCategories.some(
@@ -275,7 +315,12 @@ export default function RiskDomainFormModal({
       footer={
         <div className="flex w-full flex-wrap items-center justify-between gap-2">
           <p className="text-[11px] text-gray-500">
-            Saved to this clinic's Risk Assessments
+            Saved to this clinic's{' '}
+            {isAge
+              ? 'Age Clocks'
+              : isScore
+                ? 'Health Scores'
+                : 'Risk Assessments'}
           </p>
           <div className="flex gap-2">
             <button
@@ -325,7 +370,13 @@ export default function RiskDomainFormModal({
             <input
               value={form.name}
               onChange={(e) => patch('name', e.target.value)}
-              placeholder="Cardiovascular Risk"
+              placeholder={
+                isAge
+                  ? 'PhenoAge'
+                  : isScore
+                    ? 'Liver Health Score'
+                    : 'Cardiovascular Risk'
+              }
               disabled={nameLocked}
               className={v2FieldClass}
             />
@@ -506,7 +557,13 @@ export default function RiskDomainFormModal({
               catalog={catalog}
               rows={5}
               textareaClassName="min-h-[140px] max-h-[220px] resize-y"
-              placeholder="round(status_weight(Biomarker.LDL_Cholesterol, 100, 130) * 0.30 + status_weight(Biomarker.Triglycerides, 150, 200) * 0.20, 2)"
+              placeholder={
+                isAge
+                  ? 'round(phenoage(Biomarker.Albumin * 0.0665, Biomarker.Creatinine, Biomarker.Glucose / 18, max(Biomarker.C_Reactive_Protein_high_sensitivity / 10, 0.001), Biomarker.Lymphocytes, Biomarker.Mean_Corpuscular_Volume, Biomarker.Red_Cell_Distribution_Width, Biomarker.Alkaline_Phosphatase, Biomarker.White_Blood_Cells / 1000, Profile.age), 2)'
+                  : isScore
+                    ? 'round((1 - status_weight(Biomarker.Hb_A1c, 5.2, 6.5)) * 100, 2)'
+                    : 'round(status_weight(Biomarker.LDL_Cholesterol, 100, 130) * 0.30 + status_weight(Biomarker.Triglycerides, 150, 200) * 0.20, 2)'
+              }
             />
             {validation ? (
               <div

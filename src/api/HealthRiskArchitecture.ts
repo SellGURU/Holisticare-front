@@ -79,6 +79,17 @@ class HealthRiskArchitectureApi extends Api {
   static calculateAssessments(memberId: number) {
     return this.post('/health_risk/calculate', { member_id: memberId });
   }
+
+  static getFormulaLibrary() {
+    return this.get('/health_risk/library');
+  }
+
+  static importFormulaLibrary(template_id: string, is_enabled = true) {
+    return this.post('/health_risk/library/import', {
+      template_id,
+      is_enabled,
+    });
+  }
 }
 
 export default HealthRiskArchitectureApi;

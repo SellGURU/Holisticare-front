@@ -1,19 +1,52 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Loader2, Network, Plus, Search } from 'lucide-react';
+import { BookOpen, Loader2, Network, Plus, Search } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
 import DeleteDomainModal from './DeleteDomainModal';
+import FormulaLibraryModal from './FormulaLibraryModal';
 import RiskDomainCard from './RiskDomainCard';
 import RiskDomainFormModal, {
   type RiskDomainFormMode,
 } from './RiskDomainFormModal';
 import ViewDomainModal from './ViewDomainModal';
 import { apiErrorMessage } from './IntelligenceModal';
+import { v2PrimaryBtnClass } from './intelligenceUi';
 import { mapHealthRiskDomain, type RiskDomainViewModel } from './types';
 
-export default function RiskDomainsPanel() {
+type ModelKind = 'RISK' | 'SCORING' | 'AGING';
+
+const KIND_COPY: Record<
+  ModelKind,
+  { noun: string; nounTitle: string; empty: string }
+> = {
+  RISK: {
+    noun: 'risk',
+    nounTitle: 'Risk',
+    empty: 'Create a formula-based risk domain for this clinic.',
+  },
+  SCORING: {
+    noun: 'score',
+    nounTitle: 'Score',
+    empty: 'Create a formula-based health score for one or more catalog biomarkers.',
+  },
+  AGING: {
+    noun: 'age clock',
+    nounTitle: 'Age Clock',
+    empty: 'Create a formula that estimates biological age in years.',
+  },
+};
+
+export default function RiskDomainsPanel({
+  modelKind = 'RISK',
+}: {
+  modelKind?: ModelKind;
+}) {
+  const copy = KIND_COPY[modelKind];
+  const noun = copy.noun;
+  const nounTitle = copy.nounTitle;
+
   const [rawDomains, setRawDomains] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -30,6 +63,7 @@ export default function RiskDomainsPanel() {
   const [deleteDomain, setDeleteDomain] = useState<RiskDomainViewModel | null>(
     null,
   );
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   const domains = useMemo(
     () => rawDomains.map(mapHealthRiskDomain),
@@ -39,7 +73,7 @@ export default function RiskDomainsPanel() {
   const fetchDomains = () => {
     setLoading(true);
     setLoadError(false);
-    HealthRiskArchitectureApi.getDomains('RISK')
+    HealthRiskArchitectureApi.getDomains(modelKind)
       .then((res) => setRawDomains(Array.isArray(res.data) ? res.data : []))
       .catch(() => {
         setRawDomains([]);
@@ -50,7 +84,7 @@ export default function RiskDomainsPanel() {
 
   useEffect(() => {
     fetchDomains();
-  }, []);
+  }, [modelKind]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -87,7 +121,7 @@ export default function RiskDomainsPanel() {
     setTogglingId(domain.id);
     HealthRiskArchitectureApi.updateDomain(domain.id, {
       is_enabled: next,
-      domain_type: 'RISK',
+      domain_type: modelKind,
     })
       .then(() => fetchDomains())
       .catch((err) => toast.error(apiErrorMessage(err, 'Update failed')))
@@ -95,10 +129,13 @@ export default function RiskDomainsPanel() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+      <div className="min-w-0 flex-1">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 flex-wrap items-center gap-3">
-          <h2 className="text-[16px] font-bold text-gray-900">Risk Domains</h2>
+          <h2 className="text-[16px] font-bold text-gray-900">
+            {nounTitle} Domains
+          </h2>
           {domains.length > 0 ? (
             <span className="rounded bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-400">
               {activeCount} active of {domains.length}
@@ -117,7 +154,7 @@ export default function RiskDomainsPanel() {
           </div>
           <ButtonPrimary size="small" onClick={openCreate}>
             <Plus className="size-3.5" />
-            Create Risk Domain
+            Create {nounTitle} Domain
           </ButtonPrimary>
         </div>
       </div>
@@ -125,27 +162,27 @@ export default function RiskDomainsPanel() {
       {loading ? (
         <div className="flex items-center justify-center gap-2 rounded-xl border border-gray-200/80 bg-white py-16 text-[12px] text-gray-500">
           <Loader2 className="size-4 animate-spin" />
-          Loading risk domains…
+          Loading {noun} domains…
         </div>
       ) : loadError ? (
         <EmptyPanel
-          title="Could not load risk domains"
+          title={`Could not load ${noun} domains`}
           description="Check your connection and try again."
         />
       ) : domains.length === 0 ? (
         <EmptyPanel
-          title="No risk domains yet"
-          description="Create a formula-based risk domain for this clinic."
+          title={`No ${noun} domains yet`}
+          description={copy.empty}
           action={
             <ButtonPrimary size="small" onClick={openCreate}>
               <Plus className="size-3.5" />
-              Create Risk Domain
+              Create {nounTitle} Domain
             </ButtonPrimary>
           }
         />
       ) : filtered.length === 0 ? (
         <EmptyPanel
-          title="No matching risk domains"
+          title={`No matching ${noun} domains`}
           description="Try a different search term."
         />
       ) : (
@@ -167,7 +204,7 @@ export default function RiskDomainsPanel() {
 
           <div className="mt-4 flex flex-col gap-2 px-1 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-[11px] text-gray-400">
-              Showing {filtered.length} of {domains.length} risk domains
+              Showing {filtered.length} of {domains.length} {noun} domains
             </p>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-gray-400">
               <span className="flex items-center gap-1.5">
@@ -187,11 +224,35 @@ export default function RiskDomainsPanel() {
           </div>
         </>
       )}
+      </div>
+
+      <aside className="w-full shrink-0 lg:sticky lg:top-4 lg:w-64">
+        <div className="rounded-xl border border-gray-200/80 bg-white p-4">
+          <div className="mb-3 flex size-10 items-center justify-center rounded-lg bg-Gray-25">
+            <BookOpen className="size-5 text-Primary-DeepTeal" />
+          </div>
+          <h3 className="text-sm font-semibold text-gray-900">
+            Formula Library
+          </h3>
+          <p className="mt-1 text-[12px] leading-snug text-gray-500">
+            Import a ready-made {noun} formula into this clinic.
+          </p>
+          <button
+            type="button"
+            className={`${v2PrimaryBtnClass} mt-3 w-full`}
+            onClick={() => setLibraryOpen(true)}
+          >
+            <BookOpen className="size-3.5" />
+            Open library
+          </button>
+        </div>
+      </aside>
 
       <RiskDomainFormModal
         open={formOpen}
         mode={formMode}
         domain={activeDomain}
+        modelKind={modelKind}
         onClose={() => {
           setFormOpen(false);
           setActiveDomain(null);
@@ -206,6 +267,12 @@ export default function RiskDomainsPanel() {
         domain={deleteDomain}
         onClose={() => setDeleteDomain(null)}
         onDeleted={fetchDomains}
+      />
+      <FormulaLibraryModal
+        open={libraryOpen}
+        initialKind={modelKind}
+        onClose={() => setLibraryOpen(false)}
+        onImported={fetchDomains}
       />
     </div>
   );
