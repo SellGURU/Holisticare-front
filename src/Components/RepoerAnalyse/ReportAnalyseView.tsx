@@ -45,6 +45,7 @@ import PrintReportV2 from './PrintReportV2';
 import { UploadTestV2 } from './UploadTestV2';
 // import HolisticShare from './components/HolisticShare';
 import HolisticPlanShareAndDownload from './components/HolisticPlanShareAndDownload';
+import HealthRisksPanel from './HealthRisksPanel';
 import MarkdownText from '../markdownText';
 import ChartLoadingPlaceholder from './ChartLoadingPlaceholder';
 import NewDetailedAcordin from './Boxs/newDetailedAcordin';
@@ -987,6 +988,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       checked: true,
     },
     {
+      name: 'Health Risks',
+      checked: true,
+    },
+    {
       name: 'Detailed Analysis',
       checked: true,
     },
@@ -1835,6 +1840,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               </div>
             </>
           )}
+          {accessManager.filter((el) => el.name == 'Health Risks')[0]
+            ?.checked == true &&
+            !isShare && (
+              <HealthRisksPanel
+                memberId={resolvedMemberID ?? null}
+                enabled={!isShare}
+              />
+            )}
           {accessManager.filter((el) => el.name == 'Concerning Result')[0]
             .checked == true && (
             <>

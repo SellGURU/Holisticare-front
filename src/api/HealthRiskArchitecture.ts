@@ -71,6 +71,14 @@ class HealthRiskArchitectureApi extends Api {
       catalog_biomarker_uid: options?.catalog_biomarker_uid,
     });
   }
+
+  static getCurrentAssessments(memberId: number) {
+    return this.get(`/health_risk/patients/${memberId}/current`);
+  }
+
+  static calculateAssessments(memberId: number) {
+    return this.post('/health_risk/calculate', { member_id: memberId });
+  }
 }
 
 export default HealthRiskArchitectureApi;

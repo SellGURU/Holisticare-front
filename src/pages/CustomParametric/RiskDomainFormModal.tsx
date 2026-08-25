@@ -7,7 +7,10 @@ import {
   XCircle,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import BiomarkersApi from '../../api/Biomarkers';
 import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
+import FormulaCodeEditor from './FormulaCodeEditor';
+import { formulaHasUnknownBiomarkers } from './formulaBiomarker';
 import IntelligenceModal, { apiErrorMessage } from './IntelligenceModal';
 import {
   v2FieldClass,
@@ -21,7 +24,7 @@ import {
   HEALTH_RISK_ICON_KEYS,
   HEALTH_RISK_ICONS,
 } from './healthRiskIcons';
-import type { RiskDomainViewModel, RiskResultCategory } from './types';
+import type { ClinicBiomarkerOption, RiskDomainViewModel, RiskResultCategory } from './types';
 
 interface FormState {
   name: string;
@@ -49,7 +52,11 @@ const EMPTY_FORM: FormState = {
   timeHorizon: '',
   assignedGroups: [],
   formulaCode: '',
-  resultCategories: [],
+  resultCategories: [
+    { min: 0, max: 33, label: 'Low', color: 'green' },
+    { min: 33, max: 67, label: 'Moderate', color: 'amber' },
+    { min: 67, max: 100, label: 'High', color: 'red' },
+  ],
   isEnabled: true,
   outputType: 'NUMERIC',
   domainType: 'RISK',
@@ -103,6 +110,7 @@ export default function RiskDomainFormModal({
     biomarker_dependencies?: string[];
     biomarkers_not_in_clinic?: string[];
   } | null>(null);
+  const [catalog, setCatalog] = useState<ClinicBiomarkerOption[]>([]);
 
   useEffect(() => {
     if (!open) return;
@@ -119,6 +127,28 @@ export default function RiskDomainFormModal({
     } else {
       setForm(EMPTY_FORM);
     }
+    BiomarkersApi.getBiomarkersList({ include_all: true })
+      .then((res) => {
+        const rows = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data?.chart_bounds)
+            ? res.data.chart_bounds
+            : [];
+        const mapped = rows
+          .map((item: { biomarker_uid?: string; Biomarker?: string; name?: string; unit?: string; ['Benchmark areas']?: string; benchmark_area?: string }) => {
+            const name = String(item?.Biomarker || item?.name || '').trim();
+            if (!name) return null;
+            return {
+              name,
+              unit: item?.unit || '',
+              benchmark_area: item?.['Benchmark areas'] || item?.benchmark_area || '',
+            } as ClinicBiomarkerOption;
+          })
+          .filter(Boolean) as ClinicBiomarkerOption[];
+        mapped.sort((a, b) => a.name.localeCompare(b.name));
+        setCatalog(mapped);
+      })
+      .catch(() => setCatalog([]));
   }, [open, domain, mode]);
 
   function patch<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -173,6 +203,17 @@ export default function RiskDomainFormModal({
 
   function handleSubmit() {
     if (!form.name.trim() || !form.formulaCode.trim()) return;
+    if (
+      !form.resultCategories.some(
+        (band) =>
+          band.label?.trim() &&
+          Number.isFinite(Number(band.min)) &&
+          Number.isFinite(Number(band.max)),
+      )
+    ) {
+      toast.error('Add at least one severity band with a label.');
+      return;
+    }
     setSaving(true);
     const payload = {
       name: form.name.trim(),
@@ -213,6 +254,16 @@ export default function RiskDomainFormModal({
       : 'Create risk domain';
   const PreviewIcon = HEALTH_RISK_ICONS[form.icon] ?? HEALTH_RISK_DEFAULT_ICON;
   const nameLocked = isEdit && Boolean(domain?.isSystemDefault);
+  const bandsInvalid = !form.resultCategories.some(
+    (band) =>
+      band.label?.trim() &&
+      Number.isFinite(Number(band.min)) &&
+      Number.isFinite(Number(band.max)),
+  );
+  const formulaInvalid = formulaHasUnknownBiomarkers(
+    form.formulaCode,
+    catalog.map((item) => item.name),
+  );
 
   return (
     <IntelligenceModal
@@ -240,7 +291,11 @@ export default function RiskDomainFormModal({
               className={v2PrimaryBtnClass}
               onClick={handleSubmit}
               disabled={
-                !form.name.trim() || !form.formulaCode.trim() || saving
+                !form.name.trim() ||
+                !form.formulaCode.trim() ||
+                saving ||
+                formulaInvalid ||
+                bandsInvalid
               }
             >
               {saving ? (
@@ -442,14 +497,16 @@ export default function RiskDomainFormModal({
                 {validating ? 'Validating…' : 'Validate Formula'}
               </button>
             </div>
-            <textarea
+            <FormulaCodeEditor
               value={form.formulaCode}
-              onChange={(e) => patch('formulaCode', e.target.value)}
+              onChange={(next) => {
+                patch('formulaCode', next);
+                setValidation(null);
+              }}
+              catalog={catalog}
               rows={5}
-              className={`${v2TextareaClass} min-h-[120px] max-h-[180px] resize-y font-mono text-[11px] leading-relaxed`}
-              placeholder={
-                "score = 0.0\nscore += status_weight(Biomarker.LDL, {'optimal': 0.0, 'disease': 0.3})\nscore * 100"
-              }
+              textareaClassName="min-h-[140px] max-h-[220px] resize-y"
+              placeholder="round(status_weight(Biomarker.LDL_Cholesterol, 100, 130) * 0.30 + status_weight(Biomarker.Triglycerides, 150, 200) * 0.20, 2)"
             />
             {validation ? (
               <div
@@ -501,8 +558,8 @@ export default function RiskDomainFormModal({
               </button>
             </div>
             {form.resultCategories.length === 0 ? (
-              <p className="text-[10px] text-gray-400">
-                No result bands yet — score will be shown as a raw number.
+              <p className="text-[10px] text-red-600">
+                At least one severity band is required.
               </p>
             ) : (
               <div className="max-h-[120px] space-y-1.5 overflow-y-auto pr-0.5">

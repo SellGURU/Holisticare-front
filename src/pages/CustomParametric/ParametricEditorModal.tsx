@@ -6,12 +6,13 @@ import BiomarkersApi from '../../api/Biomarkers';
 import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
 import { invalidate } from '../../utils/pageCache';
 import CatalogBiomarkerPicker from './CatalogBiomarkerPicker';
+import FormulaCodeEditor from './FormulaCodeEditor';
+import { formulaHasUnknownBiomarkers } from './formulaBiomarker';
 import IntelligenceModal, { apiErrorMessage } from './IntelligenceModal';
 import {
   v2LabelClass,
   v2OutlineBtnClass,
   v2PrimaryBtnClass,
-  v2TextareaClass,
 } from './intelligenceUi';
 import type { ClinicBiomarkerOption, RiskDomainViewModel } from './types';
 
@@ -98,6 +99,10 @@ export default function ParametricEditorModal({
   }, [catalog, attachedSet, domain?.catalogBiomarkerUid]);
 
   const selected = pickerItems.find((item) => item.biomarker_uid === uid);
+  const formulaInvalid = formulaHasUnknownBiomarkers(
+    formulaCode,
+    catalog.map((item) => item.name),
+  );
 
   const handleValidate = () => {
     if (!formulaCode.trim()) return;
@@ -118,7 +123,7 @@ export default function ParametricEditorModal({
   };
 
   const handleSave = () => {
-    if (!uid || !selected) return;
+    if (!uid || !selected || formulaInvalid) return;
     setSaving(true);
     const body: any = {
       name: selected.name,
@@ -166,7 +171,7 @@ export default function ParametricEditorModal({
               type="button"
               className={v2PrimaryBtnClass}
               onClick={handleSave}
-              disabled={!uid || saving || !formulaCode.trim()}
+              disabled={!uid || saving || !formulaCode.trim() || formulaInvalid}
             >
               {saving
                 ? 'Saving…'
@@ -244,17 +249,17 @@ export default function ParametricEditorModal({
               {validating ? 'Validating…' : 'Validate Formula'}
             </button>
           </div>
-          <textarea
-            value={formulaCode}
-            onChange={(e) => setFormulaCode(e.target.value)}
-            rows={8}
-            placeholder={DEFAULT_FORMULA}
-            className={`${v2TextareaClass} min-h-[180px] resize-y font-mono text-[11px] leading-relaxed`}
-          />
-          <p className="text-[11px] text-gray-500">
-            Allowed: numbers, + - * /, ** , min/max/round/abs, Biomarker.Name,
-            Profile.age. Height and Weight are reserved aliases.
-          </p>
+            <FormulaCodeEditor
+              value={formulaCode}
+              onChange={(next) => {
+                setFormulaCode(next);
+                setValidation(null);
+              }}
+              catalog={catalog}
+              placeholder={DEFAULT_FORMULA}
+              rows={8}
+              textareaClassName="min-h-[180px] resize-y"
+            />
           {validation ? (
             validation.syntax_valid ? (
               <p className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-[12px] text-emerald-800">

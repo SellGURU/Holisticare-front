@@ -85,7 +85,10 @@ export default function RiskDomainsPanel() {
 
   const handleToggleActive = (domain: RiskDomainViewModel, next: boolean) => {
     setTogglingId(domain.id);
-    HealthRiskArchitectureApi.updateDomain(domain.id, { is_enabled: next })
+    HealthRiskArchitectureApi.updateDomain(domain.id, {
+      is_enabled: next,
+      domain_type: 'RISK',
+    })
       .then(() => fetchDomains())
       .catch((err) => toast.error(apiErrorMessage(err, 'Update failed')))
       .finally(() => setTogglingId(null));

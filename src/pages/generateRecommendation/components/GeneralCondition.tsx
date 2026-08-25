@@ -1,13 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import SvgIcon from '../../../utils/svgIcon';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 import MarkdownText from '../../../Components/markdownText';
+import {
+  isFormulaRiskIssue,
+  mergeFormulaRisksIntoType2,
+  planAffectingRisks,
+  scoreBarPercent,
+  useHealthRiskAssessments,
+} from '../../../Components/RepoerAnalyse/healthRiskAssessments';
 import {
   toType2,
   buildType2FromListAndCategories,
   CATEGORY_ORDER,
   DEFAULT_CATEGORY_LABELS,
+  type2ToFlatListInIssueOrder,
 } from '../../../utils/lookingForwards';
 
 // Define types for the data structure
@@ -41,6 +50,14 @@ interface CardProps {
     categories: Record<string, string>,
   ) => void;
   initialIssueCategories?: Record<string, string>;
+  isFormulaIssue?: (text: string) => boolean;
+  formulaRisks?: Array<{
+    risk_key?: string;
+    display_name?: string;
+    severity?: string | null;
+    score?: number | null;
+    calculated_at?: string | null;
+  }>;
 }
 
 const ISSUE_CATEGORY_STYLES: Record<
@@ -142,6 +159,42 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
     lookingForwards: false,
   });
   const [tempData, setTempData] = useState<ConditionDataProps>(data);
+  const { id } = useParams<{ id: string }>();
+  const memberId = id ? parseInt(id, 10) : null;
+  const { assessments } = useHealthRiskAssessments(
+    Number.isFinite(memberId) ? memberId : null,
+    Number.isFinite(memberId),
+  );
+  const formulaMergeSigRef = useRef('');
+
+  useEffect(() => {
+    if (editMode.lookingForwards || !assessments.length) return;
+    const currentType2 =
+      initialIssueCategories && Object.keys(initialIssueCategories).length
+        ? buildType2FromListAndCategories(
+            data.lookingForwards || [],
+            initialIssueCategories,
+          )
+        : toType2(data.lookingForwards);
+    const next = mergeFormulaRisksIntoType2(currentType2, assessments);
+    const nextSig = JSON.stringify(next['Key areas to address']);
+    const currentSig = JSON.stringify(currentType2['Key areas to address']);
+    if (nextSig === currentSig || nextSig === formulaMergeSigRef.current) {
+      return;
+    }
+    formulaMergeSigRef.current = nextSig;
+    setData((prev: any) => ({
+      ...prev,
+      looking_forwards: type2ToFlatListInIssueOrder(next),
+      key_areas_to_address: next,
+    }));
+  }, [
+    assessments,
+    data.lookingForwards,
+    editMode.lookingForwards,
+    initialIssueCategories,
+    setData,
+  ]);
 
   const handleEdit = (section: SectionKey): void => {
     if (!editMode[section]) {
@@ -361,6 +414,8 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           onDelete={(index) => handleDelete('lookingForwards', index)}
           onAddNew={(value) => handleAddNew('lookingForwards', value)}
           initialIssueCategories={initialIssueCategories}
+          isFormulaIssue={isFormulaRiskIssue}
+          formulaRisks={planAffectingRisks(assessments)}
         />
       </div>
     </div>
@@ -378,6 +433,8 @@ const Card: React.FC<CardProps> = ({
   onAddNew,
   onSaveWithCategories,
   initialIssueCategories,
+  isFormulaIssue,
+  formulaRisks,
 }) => {
   const textareaRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
   const [currentIndex, setCurrentIndex] = useState<any>(null);
@@ -712,7 +769,7 @@ const Card: React.FC<CardProps> = ({
                 </div>
               ) : (
                 <li
-                  className={`${isHealthPlanning ? 'flex items-center gap-2' : ''} ${item.length > 1 && !isHealthPlanning ? 'list-disc' : ''} text-sm text-justify mt-2 ${
+                  className={`${isHealthPlanning ? 'flex flex-wrap items-center gap-2' : ''} ${item.length > 1 && !isHealthPlanning ? 'list-disc' : ''} text-sm text-justify mt-2 ${
                     isHealthPlanning ? 'marker:text-gray-400' : ''
                   }`}
                 >
@@ -754,6 +811,11 @@ const Card: React.FC<CardProps> = ({
                               }
                             </span>
                           </div>
+                          {isFormulaIssue?.(item) ? (
+                            <span className="shrink-0 rounded-full border border-[#DCEAE6] bg-[#F4FBFA] px-2 py-0.5 text-[10px] font-semibold text-Primary-DeepTeal">
+                              Formula
+                            </span>
+                          ) : null}
                         </>
                       );
                     })()
@@ -781,6 +843,23 @@ const Card: React.FC<CardProps> = ({
           )}
         </ul>
       )}
+      {isHealthPlanning && formulaRisks && formulaRisks.length > 0 ? (
+        <div className="mt-3 space-y-1 border-t border-Gray-50 pt-2">
+          {formulaRisks.map((item) => (
+            <div
+              key={`${item.risk_key}-${item.calculated_at}`}
+              className="flex items-center justify-between gap-2 text-[11px] text-Text-Secondary"
+            >
+              <span className="min-w-0 truncate font-medium text-Text-Primary">
+                {item.display_name || item.risk_key}
+              </span>
+              <span className="shrink-0">
+                {Math.round(scoreBarPercent(item.score))}% · {item.severity}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 };

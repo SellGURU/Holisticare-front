@@ -17,6 +17,8 @@ export const HEALTH_PLAN_CACHE_KEYS = {
     `portal:healthplan:concerning-results:${memberId}`,
   overviewTreatmentPlan: (memberId: string | number) =>
     `portal:healthplan:overview-treatment-plan:${memberId}`,
+  healthRisks: (memberId: string | number) =>
+    `portal:healthplan:health-risks:${memberId}`,
 } as const;
 
 export function invalidateHealthPlanCache(memberId: string | number): void {
