@@ -96,9 +96,6 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     if (name === 'FHIR Import' && permissions.fhir === false) {
       return true;
     }
-    if (name === 'Intelligence Model' && permissions.parametric === false) {
-      return true;
-    }
     if (name === 'Other' && permissions.other === false) {
       return true;
     }

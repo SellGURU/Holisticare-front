@@ -504,14 +504,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const fetchData = () => {
     startSectionLoading();
-    // B2: defer Holistic Plan until overview triad settles
-    Promise.allSettled([
-      fetchReferenceData(),
-      fetchClientSummaryCategories(),
-      fetchConcerningResults(),
-    ]).then(() => {
-      getTreatmentPlanData();
-    });
+    // Wearable-capped overview still takes seconds; treatment_plan does not
+    // assemble biomarker history, so Holistic Plan can load in parallel.
+    fetchReferenceData();
+    fetchClientSummaryCategories();
+    fetchConcerningResults();
+    getTreatmentPlanData();
   };
   const getTreatmentPlanData = () => {
     if (resolvedMemberID == null) return;
