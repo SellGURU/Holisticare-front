@@ -23,6 +23,7 @@ import { validateLabReportFile } from '../../../utils/labReportUploadHelpers';
 import {
   invalidateLabEntryBiomarkerUnitsCache,
   LAB_ENTRY_BIOMARKER_NAMES_INVALIDATED,
+  invalidateHealthPlanCache,
   PORTAL_CACHE_KEYS,
 } from '../../../utils/cacheKeys';
 import { removeCachedKey } from '../../../utils/pageCache';
@@ -837,7 +838,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           ).toString()
         : null;
 
-      return Application.SaveLabReport({
+      const ultrasoundResult = await Application.SaveLabReport({
         member_id: memberId,
         modified_biomarkers: {
           biomarkers_list: [], // Empty list for ultrasound
@@ -851,6 +852,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
           lab_type: 'more_info',
         },
       });
+      if (memberId) {
+        invalidateHealthPlanCache(memberId);
+      }
+      return ultrasoundResult;
     }
 
     const modifiedTimestamp = modifiedDateOfTest
@@ -896,7 +901,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
       await autoSaveBiomarkerMappings(biomarkerSource);
     }
 
-    return Application.SaveLabReport({
+    const saveResult = await Application.SaveLabReport({
       member_id: memberId,
       modified_biomarkers: {
         biomarkers_list: mappedExtractedBiomarkers,
@@ -910,6 +915,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         lab_type: 'more_info',
       },
     });
+    if (memberId) {
+      invalidateHealthPlanCache(memberId);
+    }
+    return saveResult;
   };
   const [rowErrors, setRowErrors] = React.useState<Record<string, string>>({});
   const [addedrowErrors, setAddedRowErrors] = React.useState<
