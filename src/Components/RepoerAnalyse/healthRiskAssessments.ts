@@ -43,8 +43,31 @@ export function shouldShowReportGroup(
   type: ReportDomainType,
   hasItems = false,
 ): boolean {
-  if (activeTypes == null) return hasItems;
+  if (!hasItems) return false;
+  if (activeTypes == null) return false;
   return activeTypes.map((item) => item.toUpperCase()).includes(type);
+}
+
+export function resolveReportActiveTypes(
+  snapshotTypes: string[] | null,
+  fallbackTypes: string[] | null = null,
+): string[] {
+  const normalize = (items: string[]) =>
+    [...new Set(items.map((item) => item.toUpperCase()).filter(Boolean))];
+  if (snapshotTypes != null) return normalize(snapshotTypes);
+  if (fallbackTypes != null) return normalize(fallbackTypes);
+  return [];
+}
+
+export function assessmentsForActiveTypes(
+  rows: HealthRiskAssessment[],
+  activeTypes: string[],
+): HealthRiskAssessment[] {
+  if (!activeTypes.length) return [];
+  const types = new Set(activeTypes.map((item) => item.toUpperCase()));
+  return rows.filter((row) =>
+    types.has(String(row.domain_type || 'RISK').toUpperCase()),
+  );
 }
 
 export function resolveReportSection(name: string): string {
@@ -410,7 +433,7 @@ export function useHealthRiskAssessments(
       .catch(() => {
         if (!cancelled) {
           setAssessments([]);
-          setActiveTypes(null);
+          setActiveTypes([]);
           setError(true);
         }
       })
@@ -427,7 +450,7 @@ export function useHealthRiskAssessments(
 
 interface HealthRiskSnapshot {
   assessments: HealthRiskAssessment[];
-  activeTypes: string[] | null;
+  activeTypes: string[];
 }
 
 const inFlightGets = new Map<string, Promise<HealthRiskSnapshot>>();
@@ -442,15 +465,22 @@ function getCurrentSnapshot(
   const request = HealthRiskArchitectureApi.getCurrentAssessments(memberId)
     .then((res) => {
       const rows = Array.isArray(res.data?.assessments)
-        ? res.data.assessments
+        ? (res.data.assessments as HealthRiskAssessment[])
         : [];
-      const activeTypes = Array.isArray(res.data?.active_types)
+      const snapshotTypes = Array.isArray(res.data?.active_types)
         ? (res.data.active_types as unknown[]).map((item) =>
             String(item).toUpperCase(),
           )
         : null;
+      const activeTypes = resolveReportActiveTypes(
+        snapshotTypes,
+        rows.map((row) => String(row.domain_type || 'RISK')),
+      );
       return {
-        assessments: rows as HealthRiskAssessment[],
+        assessments:
+          snapshotTypes != null
+            ? assessmentsForActiveTypes(rows, activeTypes)
+            : rows,
         activeTypes,
       };
     })

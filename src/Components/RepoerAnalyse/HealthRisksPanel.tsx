@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import Circleloader from '../CircleLoader';
 import { publish } from '../../utils/event';
 import HealthRiskScoreCard from './HealthRiskScoreCard';
 import {
@@ -91,16 +90,14 @@ export default function HealthRisksPanel({
       return;
     }
     if (loading) {
-      publish('RisksScoresAgeStatus', { isempty: false });
+      publish('RisksScoresAgeStatus', { isempty: true });
       return;
     }
-    publish('RisksScoresAgeStatus', {
-      isempty: error ? false : !hasVisibleGroup,
-    });
-  }, [enabled, loading, error, hasVisibleGroup]);
+    publish('RisksScoresAgeStatus', { isempty: !hasVisibleGroup });
+  }, [enabled, loading, hasVisibleGroup]);
 
   if (!enabled) return null;
-  if (!loading && !error && !hasVisibleGroup) return null;
+  if (loading || !hasVisibleGroup) return null;
 
   return (
     <section className="my-16" aria-labelledby="risks-scores-age-heading">
@@ -119,46 +116,33 @@ export default function HealthRisksPanel({
         Screening signal for practitioner review. This is not a diagnosis.
       </p>
 
-      {loading ? (
-        <div
-          className="mt-8 flex min-h-[140px] items-center justify-center rounded-2xl border border-Gray-50 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)]"
-          aria-busy="true"
-          aria-label="Loading risks, scores and age"
-          role="status"
-        >
-          <Circleloader />
-        </div>
-      ) : (
-        <>
-          <ModelGroup
-            title="Health Risks"
-            blurb="Risk assessment from clinic formulas. Missing data is not the same as no risk."
-            empty="No calculated risk snapshot yet. Save lab values that match the clinic formula, then refresh."
-            error={error}
-            items={risks}
-            kind="risk"
-            show={showRisks}
-          />
-          <ModelGroup
-            title="Health Scores"
-            blurb="Composite health index. Low scores need attention. Incomplete formulas are omitted."
-            empty="No health score can be calculated from this patient's current labs. Missing data is not a low score."
-            error={error}
-            items={scores}
-            kind="score"
-            show={showScores}
-          />
-          <ModelGroup
-            title="Age"
-            blurb="Biological age clocks from clinic formulas."
-            empty="No age clock can be calculated from this patient's current labs. Missing data is not a young or old result."
-            error={error}
-            items={ages}
-            kind="age"
-            show={showAges}
-          />
-        </>
-      )}
+      <ModelGroup
+        title="Health Risks"
+        blurb="Risk assessment from clinic formulas. Missing data is not the same as no risk."
+        empty="No calculated risk snapshot yet. Save lab values that match the clinic formula, then refresh."
+        error={error}
+        items={risks}
+        kind="risk"
+        show={showRisks}
+      />
+      <ModelGroup
+        title="Health Scores"
+        blurb="Composite health index. Low scores need attention. Incomplete formulas are omitted."
+        empty="No health score can be calculated from this patient's current labs. Missing data is not a low score."
+        error={error}
+        items={scores}
+        kind="score"
+        show={showScores}
+      />
+      <ModelGroup
+        title="Age"
+        blurb="Biological age clocks from clinic formulas."
+        empty="No age clock can be calculated from this patient's current labs. Missing data is not a young or old result."
+        error={error}
+        items={ages}
+        kind="age"
+        show={showAges}
+      />
     </section>
   );
 }

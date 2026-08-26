@@ -11,6 +11,8 @@ import {
   presentRisks,
   presentScores,
   resolveReportSection,
+  resolveReportActiveTypes,
+  assessmentsForActiveTypes,
   RISKS_SCORES_AGE_SECTION,
   riskContributions,
   scoreBarPercent,
@@ -44,13 +46,42 @@ describe('HealthRisksPanel copy', () => {
   });
 
   it('hides report groups that are not active in Intelligence Model', () => {
-    expect(shouldShowReportGroup(['SCORING'], 'RISK')).toBe(false);
-    expect(shouldShowReportGroup(['SCORING'], 'SCORING')).toBe(true);
-    expect(shouldShowReportGroup(['SCORING'], 'AGING')).toBe(false);
-    expect(shouldShowReportGroup([], 'RISK')).toBe(false);
-    expect(shouldShowReportGroup(['RISK'], 'RISK', false)).toBe(true);
-    expect(shouldShowReportGroup(null, 'RISK')).toBe(false);
-    expect(shouldShowReportGroup(null, 'RISK', true)).toBe(true);
+    expect(shouldShowReportGroup(['SCORING'], 'RISK', true)).toBe(false);
+    expect(shouldShowReportGroup(['SCORING'], 'SCORING', true)).toBe(true);
+    expect(shouldShowReportGroup(['SCORING'], 'AGING', true)).toBe(false);
+    expect(shouldShowReportGroup([], 'RISK', true)).toBe(false);
+    expect(shouldShowReportGroup(['RISK'], 'RISK', false)).toBe(false);
+    expect(shouldShowReportGroup(null, 'RISK', true)).toBe(false);
+    expect(shouldShowReportGroup(['RISK'], 'RISK', true)).toBe(true);
+  });
+
+  it('filters snapshot rows with active_types from /current only', () => {
+    expect(resolveReportActiveTypes(['SCORING'], ['AGING'])).toEqual([
+      'SCORING',
+    ]);
+    expect(resolveReportActiveTypes([], ['SCORING'])).toEqual([]);
+    expect(resolveReportActiveTypes(null, ['AGING'])).toEqual(['AGING']);
+    expect(
+      assessmentsForActiveTypes(
+        [
+          {
+            display_name: 'Lipid Health Score',
+            assessment_status: 'calculated',
+            score: 77,
+            domain_type: 'SCORING',
+            risk_key: 'lipid',
+          },
+          {
+            display_name: 'Kidney Age',
+            assessment_status: 'calculated',
+            score: 66,
+            domain_type: 'AGING',
+            risk_key: 'kidney',
+          },
+        ],
+        ['SCORING'],
+      ).map((item) => item.display_name),
+    ).toEqual(['Lipid Health Score']);
   });
 });
 

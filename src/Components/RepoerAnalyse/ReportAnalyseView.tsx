@@ -1446,25 +1446,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   }, [showUploadTest, resolvedMemberID, isActive]);
 
-  const isInViewport = (element: HTMLElement): boolean => {
-    const rect = element.getBoundingClientRect();
-    return rect.top >= 0 && rect.bottom <= window.innerHeight;
-  };
   const handleScroll = () => {
-    // Select all the sections with the class "content"
     const sections = document.querySelectorAll('.sectionScrollEl');
+    const offset = 140;
+    let activeId = '';
     sections.forEach((section) => {
       const element = section as HTMLElement;
-      if (isInViewport(element)) {
-        const sectionId = element.id;
-        publish('scrolledSection', { section: sectionId });
-        //   if (sectionId !== currentSection) {
-        //     // Update the state and query parameter only if the section changes
-        //     setCurrentSection(sectionId);
-        //     setSearchParams({ section: sectionId }); // Update the URL query parameter
-        //   }
+      if (!element.id) return;
+      if (element.getBoundingClientRect().top <= offset) {
+        activeId = element.id;
       }
     });
+    if (activeId) {
+      publish('scrolledSection', { section: activeId });
+    }
   };
   useEffect(() => {
     if (!loading && isActive) {
