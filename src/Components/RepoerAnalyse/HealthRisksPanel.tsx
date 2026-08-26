@@ -1,3 +1,4 @@
+import Circleloader from '../CircleLoader';
 import HealthRiskScoreCard from './HealthRiskScoreCard';
 import {
   presentAges,
@@ -36,10 +37,13 @@ function ModelGroup({
       <p className="mt-1 text-[12px] text-Text-Secondary">{blurb}</p>
       {loading ? (
         <div
-          className="mt-4 h-24 animate-pulse rounded-xl border border-gray-200 bg-gray-50"
+          className="mt-4 flex min-h-[140px] items-center justify-center rounded-2xl border border-Gray-50 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)]"
           aria-busy="true"
           aria-label={`Loading ${title.toLowerCase()}`}
-        />
+          role="status"
+        >
+          <Circleloader />
+        </div>
       ) : error ? (
         <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700">
           {title} could not be loaded.

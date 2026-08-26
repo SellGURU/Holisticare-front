@@ -706,6 +706,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     labDeleteRefreshPendingRef.current = true;
     clearReportSections();
     fetchData();
+    publish('healthPlanProcessingComplete', {
+      member_id: resolvedMemberID,
+      file_id: detail?.file_id,
+    });
   };
 
   const scheduleReportDataFetch = () => {
@@ -2214,6 +2218,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       setIsHaveReport(true);
                       setCheckedStepTwo(false);
                       setISGenerateLoading(false);
+                      publish('healthPlanProcessingComplete', {
+                        member_id: resolvedMemberID,
+                        file_id,
+                      });
                       setTimeout(() => {
                         publish('checkProgress', {
                           type: 'file',

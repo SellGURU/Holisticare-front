@@ -17,6 +17,7 @@ import TreatmentCard from './TreatmentCard';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
 import { Tooltip } from 'react-tooltip';
 import useIsDemo from '../../hooks/useIsDemo';
+import { clientNeedsCompile } from '../../utils/compileFromNeedRefreshModal';
 import {
   normalizePlanItemData,
   normalizeTreatmentPlanCategories,
@@ -120,6 +121,20 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [activeTreatment, setActiveTreatmnet] = useState('');
+  const openGenerateOrCompileModal = (
+    path: string,
+    beforeNavigate?: () => void,
+  ) => {
+    if (!id) return;
+    void clientNeedsCompile(id).then((needsCompile) => {
+      if (needsCompile) {
+        publish('openRefreshModal', {});
+        return;
+      }
+      beforeNavigate?.();
+      navigate(path);
+    });
+  };
   const emitActivePlan = (
     plan: any | null,
     extra: Record<string, unknown> = {},
@@ -461,18 +476,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   }
                   onClick={() => {
                     if (resolveCanGenerateNew() && id) {
-                      Application.checkClientRefresh(id)
-                        .then((res) => {
-                          if (res.data.need_of_refresh == true) {
-                            publish('openRefreshModal', {});
-                          } else {
-                            setTreatmentId('');
-                            navigate(`/report/Generate-Holistic-Plan/${id}/a`);
-                          }
-                        })
-                        .catch((err) => {
-                          console.error('Error checking client refresh:', err);
-                        });
+                      openGenerateOrCompileModal(
+                        `/report/Generate-Holistic-Plan/${id}/a`,
+                        () => setTreatmentId(''),
+                      );
                     }
 
                     // navigate(`/report/Generate-Recommendation/${id}`);
@@ -581,8 +588,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             onClick={(e) => {
                               e.stopPropagation();
                               if (isDemo) return;
-
-                              navigate(
+                              if (!id) return;
+                              openGenerateOrCompileModal(
                                 `/report/Generate-Holistic-Plan/${id}/${card.t_plan_id}?isUpdate=true`,
                               );
                             }}
@@ -647,18 +654,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     if (isDemo) return;
                     if (resolveCanGenerateNew() && id) {
-                      Application.checkClientRefresh(id)
-                        .then((res) => {
-                          if (res.data.need_of_refresh == true) {
-                            publish('openRefreshModal', {});
-                          } else {
-                            setTreatmentId('');
-                            navigate(`/report/Generate-Holistic-Plan/${id}/a`);
-                          }
-                        })
-                        .catch((err) => {
-                          console.error('Error checking client refresh:', err);
-                        });
+                      openGenerateOrCompileModal(
+                        `/report/Generate-Holistic-Plan/${id}/a`,
+                        () => setTreatmentId(''),
+                      );
 
                       // navigate(`/report/Generate-Recommendation/${id}`);
                       // navigate(`/report/Generate-Holistic-Plan/${id}/a`);

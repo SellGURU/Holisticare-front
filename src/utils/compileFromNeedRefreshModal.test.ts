@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Application from '../api/app';
 import {
+  clientNeedsCompile,
   compileFromNeedRefreshModal,
   waitForRefreshProgress,
 } from './compileFromNeedRefreshModal';
@@ -40,6 +41,34 @@ describe('waitForRefreshProgress', () => {
     await expect(
       waitForRefreshProgress('123', { pollMs: 1, timeoutMs: 20 }),
     ).resolves.toBe('timeout');
+  });
+});
+
+describe('clientNeedsCompile', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns true when the client needs compile', async () => {
+    vi.mocked(Application.checkClientRefresh).mockResolvedValue({
+      data: { need_of_refresh: true },
+    } as never);
+    await expect(clientNeedsCompile('609')).resolves.toBe(true);
+  });
+
+  it('returns false when data is fresh', async () => {
+    vi.mocked(Application.checkClientRefresh).mockResolvedValue({
+      data: { need_of_refresh: false },
+    } as never);
+    await expect(clientNeedsCompile('609')).resolves.toBe(false);
+  });
+
+  it('fails closed when the check errors or member is missing', async () => {
+    vi.mocked(Application.checkClientRefresh).mockRejectedValue(
+      new Error('network'),
+    );
+    await expect(clientNeedsCompile('609')).resolves.toBe(true);
+    await expect(clientNeedsCompile(undefined)).resolves.toBe(true);
   });
 });
 

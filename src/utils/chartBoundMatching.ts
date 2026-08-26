@@ -353,6 +353,44 @@ export const getBandNumericWeight = (
   return 1;
 };
 
+export const formatHistoricalBoundLabel = (bound: ChartBound): string => {
+  const hasHigh = bound.high != null && bound.high !== '';
+  const hasLow = bound.low != null && bound.low !== '';
+  if (hasHigh && hasLow) return `${bound.low}-${bound.high}`;
+  if (!hasLow && hasHigh) return `${bound.high}>`;
+  if (hasLow && !hasHigh) return `${bound.low}<`;
+  return '';
+};
+
+/** Keep range labels near their band, then nudge so thin bands do not overlap. */
+export const placeHistoricalBandLabels = (
+  layout: Array<{ top: number; height: number }>,
+  plotHeight: number,
+): number[] => {
+  const count = layout.length;
+  if (count === 0) return [];
+  const lineHeight = Math.min(11, plotHeight / count);
+  const half = lineHeight / 2;
+  const ys = layout.map((entry) => entry.top + entry.height / 2);
+
+  for (let i = 1; i < count; i += 1) {
+    ys[i] = Math.max(ys[i], ys[i - 1] + lineHeight);
+  }
+  if (ys[count - 1] > plotHeight - half) {
+    ys[count - 1] = plotHeight - half;
+    for (let i = count - 2; i >= 0; i -= 1) {
+      ys[i] = Math.min(ys[i], ys[i + 1] - lineHeight);
+    }
+  }
+  if (ys[0] < half) {
+    ys[0] = half;
+    for (let i = 1; i < count; i += 1) {
+      ys[i] = Math.max(ys[i], ys[i - 1] + lineHeight);
+    }
+  }
+  return ys;
+};
+
 export const buildHistoricalBandLayout = (
   bounds: ChartBound[],
   valueKind: ValueKind,

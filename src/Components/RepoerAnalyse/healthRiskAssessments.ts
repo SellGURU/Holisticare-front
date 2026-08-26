@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
+import { subscribe, unsubscribe } from '../../utils/event';
 
 export interface HealthRiskAssessment {
   risk_key?: string;
@@ -336,33 +337,60 @@ export function useHealthRiskAssessments(
   const [loading, setLoading] = useState(Boolean(enabled && memberId != null));
   const [error, setError] = useState(false);
   const [assessments, setAssessments] = useState<HealthRiskAssessment[]>([]);
+  const [snapshotTick, setSnapshotTick] = useState(0);
+  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
-    if (!enabled || memberId == null) {
+    hasLoadedRef.current = false;
+  }, [memberId]);
+
+  useEffect(() => {
+    if (!enabled) return undefined;
+    const onScoringComplete = (event?: Event) => {
+      const detail = (event as CustomEvent)?.detail ?? {};
+      if (detail.silent === true) return;
+      if (
+        detail.member_id != null &&
+        memberId != null &&
+        Number(detail.member_id) !== Number(memberId)
+      ) {
+        return;
+      }
+      setSnapshotTick((tick) => tick + 1);
+    };
+    const onCompileReload = (event?: Event) => {
+      const detail = (event as CustomEvent)?.detail ?? {};
+      if (detail.silent === true) return;
+      if (detail.fullReload !== true) return;
+      onScoringComplete(event);
+    };
+    subscribe('healthPlanProcessingComplete', onScoringComplete);
+    subscribe('allProgressCompleted', onScoringComplete);
+    subscribe('syncReport', onCompileReload);
+    return () => {
+      unsubscribe('healthPlanProcessingComplete', onScoringComplete);
+      unsubscribe('allProgressCompleted', onScoringComplete);
+      unsubscribe('syncReport', onCompileReload);
+    };
+  }, [enabled, memberId]);
+
+  useEffect(() => {
+    if (!enabled) {
       setLoading(false);
       return;
     }
+    if (memberId == null) {
+      setLoading(true);
+      return;
+    }
     let cancelled = false;
-    setLoading(true);
+    if (!hasLoadedRef.current) setLoading(true);
     setError(false);
-    const applyRows = (payload: { assessments?: HealthRiskAssessment[] }) => {
-      const rows = Array.isArray(payload?.assessments) ? payload.assessments : [];
-      setAssessments(rows);
-      return rows;
-    };
-    HealthRiskArchitectureApi.getCurrentAssessments(memberId)
-      .then((res) => {
-        if (cancelled) return [];
-        return applyRows(res.data || {});
-      })
+    getCurrentSnapshot(memberId, snapshotTick)
       .then((rows) => {
-        if (cancelled) return rows;
-        return HealthRiskArchitectureApi.calculateAssessments(memberId)
-          .then((res) => {
-            if (cancelled) return rows;
-            return applyRows(res.data || {});
-          })
-          .catch(() => rows);
+        if (cancelled) return;
+        hasLoadedRef.current = true;
+        setAssessments(rows);
       })
       .catch(() => {
         if (!cancelled) {
@@ -376,7 +404,30 @@ export function useHealthRiskAssessments(
     return () => {
       cancelled = true;
     };
-  }, [enabled, memberId]);
+  }, [enabled, memberId, snapshotTick]);
 
   return { loading, error, assessments };
+}
+
+const inFlightGets = new Map<string, Promise<HealthRiskAssessment[]>>();
+
+function getCurrentSnapshot(
+  memberId: number,
+  requestKey = 0,
+): Promise<HealthRiskAssessment[]> {
+  const cacheKey = `${memberId}:${requestKey}`;
+  const existing = inFlightGets.get(cacheKey);
+  if (existing) return existing;
+  const request = HealthRiskArchitectureApi.getCurrentAssessments(memberId)
+    .then((res) => {
+      const rows = Array.isArray(res.data?.assessments)
+        ? res.data.assessments
+        : [];
+      return rows as HealthRiskAssessment[];
+    })
+    .finally(() => {
+      inFlightGets.delete(cacheKey);
+    });
+  inFlightGets.set(cacheKey, request);
+  return request;
 }

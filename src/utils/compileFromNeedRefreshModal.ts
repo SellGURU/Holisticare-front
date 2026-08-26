@@ -10,6 +10,18 @@
 import Application from '../api/app';
 import { invalidateHealthPlanCache } from './cacheKeys';
 
+export async function clientNeedsCompile(
+  memberId: string | undefined,
+): Promise<boolean> {
+  if (!memberId) return true;
+  try {
+    const res = await Application.checkClientRefresh(memberId);
+    return res?.data?.need_of_refresh === true;
+  } catch {
+    return true;
+  }
+}
+
 export type CompileFromModalResult =
   | { ok: true }
   | {

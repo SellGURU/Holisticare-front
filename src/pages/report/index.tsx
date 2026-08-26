@@ -11,9 +11,8 @@ import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
 import ProgressDashboardView from '../../Components/ProgressDashboard/ProgressDashboardView';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
 import UnderProgressController from './underProgressController';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
-import { compileFromNeedRefreshModal } from '../../utils/compileFromNeedRefreshModal';
 import { getCached } from '../../utils/pageCache';
 import {
   HEALTH_PLAN_CACHE_KEYS,
@@ -24,13 +23,22 @@ const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [showRefreshModal, setshowRefreshModal] = useState(false);
-  const [isCompilingFromModal, setIsCompilingFromModal] = useState(false);
   const [compileModalError, setCompileModalError] = useState<string | null>(
     null,
   );
   const [, setActiveCheckProgress] = useState(false);
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [, setUserInfoData] = useState<any>(null);
+
+  useEffect(() => {
+    const state = location.state as { openRefreshModal?: boolean } | null;
+    if (!state?.openRefreshModal) return;
+    setCompileModalError(null);
+    setshowRefreshModal(true);
+    navigate(location.pathname, { replace: true, state: {} });
+  }, [location.pathname, location.state, navigate]);
 
   useEffect(() => {
     if (!id) return;
@@ -250,7 +258,6 @@ const Report = () => {
       <MainModal
         isOpen={showRefreshModal}
         onClose={() => {
-          if (isCompilingFromModal) return;
           setCompileModalError(null);
           setshowRefreshModal(false);
         }}
@@ -278,13 +285,8 @@ const Report = () => {
           )}
           <div className="mt-8 flex justify-end gap-4">
             <div
-              className={`text-[#909090] font-medium text-sm ${
-                isCompilingFromModal
-                  ? 'cursor-not-allowed opacity-50'
-                  : 'cursor-pointer'
-              }`}
+              className="text-[#909090] font-medium text-sm cursor-pointer"
               onClick={() => {
-                if (isCompilingFromModal) return;
                 setCompileModalError(null);
                 setshowRefreshModal(false);
               }}
@@ -292,48 +294,25 @@ const Report = () => {
               Cancel
             </div>
             <div
-              onClick={async () => {
-                if (!id || isCompilingFromModal) return;
-                setIsCompilingFromModal(true);
+              onClick={() => {
+                if (!id) return;
                 setCompileModalError(null);
+                setshowRefreshModal(false);
                 publish('disableGenerate', {});
                 publish('checkProgress', {});
                 publish('SyncRefresh', {});
-                try {
-                  const result = await compileFromNeedRefreshModal(id);
-                  if (result.ok) {
-                    setshowRefreshModal(false);
-                    publish('RefreshCompleted', {});
-                    publish('syncReport', { fullReload: true });
-                    return;
-                  }
-                  const messages: Record<string, string> = {
-                    refresh_failed:
-                      'Could not start compile. Please try again.',
-                    timeout:
-                      'Compile is taking longer than expected. Keep this page open, then try Generate again.',
-                    still_stale:
-                      'Compile finished, but client data is still stale. Retry compile, or check that the backend AI service is running.',
-                    missing_member: 'Missing patient id.',
-                  };
-                  setCompileModalError(
-                    messages[result.reason] ||
-                      'Compile did not clear the refresh gate. Please retry.',
-                  );
-                } catch (err) {
-                  console.error('Error refreshing data:', err);
-                  setCompileModalError('Could not compile. Please try again.');
-                } finally {
-                  setIsCompilingFromModal(false);
-                }
+                Application.refreshData(id)
+                  .then(() => {
+                    publish('SyncRefresh', {});
+                    publish('disableGenerate', {});
+                  })
+                  .catch((err) => {
+                    console.error('Error refreshing data:', err);
+                  });
               }}
-              className={`font-medium text-sm ${
-                isCompilingFromModal
-                  ? 'text-Primary-DeepTeal/60 cursor-not-allowed'
-                  : 'text-Primary-DeepTeal cursor-pointer'
-              }`}
+              className="font-medium text-sm text-Primary-DeepTeal cursor-pointer"
             >
-              {isCompilingFromModal ? 'Compiling...' : 'Compile'}
+              Compile
             </div>
           </div>
         </div>

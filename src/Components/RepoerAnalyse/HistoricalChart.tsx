@@ -4,8 +4,10 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   buildHistoricalBandLayout,
   findHistoricalBandLayoutEntry,
+  formatHistoricalBoundLabel,
   getHistoricalPointY,
   inferValueKind,
+  placeHistoricalBandLabels,
   sortChartBounds,
   type ChartBound,
 } from '../../utils/chartBoundMatching';
@@ -81,6 +83,11 @@ const HistoricalChart = ({
     [bounds, valueKind],
   );
 
+  const labelYs = useMemo(
+    () => placeHistoricalBandLabels(bandLayout, CHART_PLOT_HEIGHT),
+    [bandLayout],
+  );
+
   const resolveColor = (key: string, color?: string) => {
     if (color && color != '') {
       return color;
@@ -124,163 +131,183 @@ const HistoricalChart = ({
 
   return (
     <>
-      <div className="w-full h-full relative pr-4 ">
-        <div className="relative w-full" style={{ height: CHART_PLOT_HEIGHT }}>
-          <svg
-            id={`historical-chart-svg-${chartId}`}
-            className="absolute w-full h-full top-0 left-3"
-            style={{ zIndex: 0, overflow: 'visible' }}
-            height={CHART_PLOT_HEIGHT}
-          >
-            {visibleDataPoints.map((_point, index) => {
-              const realIndex = start + index;
-              if (realIndex === sortedDataPoints.length - 1) return null;
-
-              const currentStatus = sortedDataStatus[realIndex];
-              const nextStatus = sortedDataStatus[realIndex + 1];
-              const currentValue = sortedDataPoints[realIndex];
-              const nextValue = sortedDataPoints[realIndex + 1];
-
-              const x1 = getPointX(index);
-              const x2 = getPointX(index + 1);
-              const y1 = getPointY(currentValue, currentStatus);
-              const y2 = getPointY(nextValue, nextStatus);
-
-              return (
-                <line
-                  key={`line-${realIndex}`}
-                  x1={x1}
-                  y1={y1}
-                  x2={x2}
-                  y2={y2}
-                  stroke="#888888"
-                  strokeWidth="1"
-                  strokeDasharray="2,2"
-                />
-              );
-            })}
-          </svg>
-
-          {bandLayout.map((entry, inde) => {
-            const el = entry.bound;
-            return (
-              <div
-                key={`status-${inde}`}
-                className="w-full absolute left-0 right-0"
-                style={{
-                  top: entry.top,
-                  height: entry.height,
-                }}
-              >
-                <div
-                  className="w-full h-full opacity-15"
-                  style={{ backgroundColor: resolveColor(el.status, el.color) }}
-                ></div>
-
-                <div
-                  className="w-full h-full absolute border-r-[5px] pl-2 top-0"
-                  style={{ borderColor: resolveColor(el.status, el.color) }}
-                ></div>
-
-                {el.high ? (
-                  <div className="absolute right-[8px] text-nowrap overflow-hidden text-[8px] bottom-[2px] opacity-35 text-center">
-                    {el.high && el.low != null && <>{el.low + '-' + el.high}</>}
-                    {el.low == null && <>{el.high + '>'}</>}
-                  </div>
-                ) : (
-                  <div className="absolute right-[8px] text-nowrap overflow-hidden text-[8px] bottom-[4px] opacity-35 text-center">
-                    {el.low + '<'}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
+      <div className="w-full h-full relative">
+        <div className="flex w-full items-stretch">
           <div
-            className="absolute top-0 left-3 w-full pointer-events-none"
-            style={{ height: CHART_PLOT_HEIGHT, zIndex: 1 }}
+            className="relative min-w-0 flex-1"
+            style={{ height: CHART_PLOT_HEIGHT }}
           >
-            {visibleDataPoints.map((point, index) => {
-              const realIndex = start + index;
-              const tooltipId = `point-${chartId}-${realIndex}`;
-              const status = sortedDataStatus[realIndex];
-              const y = getPointY(point, status);
-              const x = getPointX(index);
-              const dotColor = getPointColor(point, status);
+            <svg
+              id={`historical-chart-svg-${chartId}`}
+              className="absolute w-full h-full top-0 left-3"
+              style={{ zIndex: 0, overflow: 'visible' }}
+              height={CHART_PLOT_HEIGHT}
+            >
+              {visibleDataPoints.map((_point, index) => {
+                const realIndex = start + index;
+                if (realIndex === sortedDataPoints.length - 1) return null;
 
+                const currentStatus = sortedDataStatus[realIndex];
+                const nextStatus = sortedDataStatus[realIndex + 1];
+                const currentValue = sortedDataPoints[realIndex];
+                const nextValue = sortedDataPoints[realIndex + 1];
+
+                const x1 = getPointX(index);
+                const x2 = getPointX(index + 1);
+                const y1 = getPointY(currentValue, currentStatus);
+                const y2 = getPointY(nextValue, nextStatus);
+
+                return (
+                  <line
+                    key={`line-${realIndex}`}
+                    x1={x1}
+                    y1={y1}
+                    x2={x2}
+                    y2={y2}
+                    stroke="#888888"
+                    strokeWidth="1"
+                    strokeDasharray="2,2"
+                  />
+                );
+              })}
+            </svg>
+
+            {bandLayout.map((entry, inde) => {
+              const el = entry.bound;
               return (
                 <div
-                  key={`point-${realIndex}`}
-                  className="absolute pointer-events-auto"
+                  key={`status-${inde}`}
+                  className="absolute left-0 right-0 overflow-hidden"
                   style={{
-                    left: x,
-                    top: y,
-                    transform: 'translate(-50%, -50%)',
+                    top: entry.top,
+                    height: entry.height,
                   }}
                 >
                   <div
-                    data-tooltip-id={tooltipId}
-                    style={{ backgroundColor: dotColor }}
-                    className="w-2 h-2 border border-gray-50 rounded-full relative"
+                    className="w-full h-full opacity-15"
+                    style={{ backgroundColor: resolveColor(el.status, el.color) }}
+                  ></div>
+                  <div
+                    className="w-full h-full absolute border-r-[5px] top-0"
+                    style={{ borderColor: resolveColor(el.status, el.color) }}
+                  ></div>
+                </div>
+              );
+            })}
+
+            <div
+              className="absolute top-0 left-3 w-full pointer-events-none"
+              style={{ height: CHART_PLOT_HEIGHT, zIndex: 1 }}
+            >
+              {visibleDataPoints.map((point, index) => {
+                const realIndex = start + index;
+                const tooltipId = `point-${chartId}-${realIndex}`;
+                const status = sortedDataStatus[realIndex];
+                const y = getPointY(point, status);
+                const x = getPointX(index);
+                const dotColor = getPointColor(point, status);
+
+                return (
+                  <div
+                    key={`point-${realIndex}`}
+                    className="absolute pointer-events-auto"
+                    style={{
+                      left: x,
+                      top: y,
+                      transform: 'translate(-50%, -50%)',
+                    }}
                   >
-                    <Tooltip
-                      id={tooltipId}
-                      place="top"
-                      className="!bg-Red !w-fit !leading-5 !text-nowrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                    <div
+                      data-tooltip-id={tooltipId}
+                      style={{ backgroundColor: dotColor }}
+                      className="w-2 h-2 border border-gray-50 rounded-full relative"
                     >
-                      <div className="flex items-center gap-2">
-                        {sortedSources?.[realIndex] && (
-                          <SourceTag
-                            source={sortedSources?.[realIndex]}
-                            isSmall
-                          />
-                        )}
-                        value: {point} {unit}
-                      </div>
-                    </Tooltip>
+                      <Tooltip
+                        id={tooltipId}
+                        place="top"
+                        className="!bg-Red !w-fit !leading-5 !text-nowrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                      >
+                        <div className="flex items-center gap-2">
+                          {sortedSources?.[realIndex] && (
+                            <SourceTag
+                              source={sortedSources?.[realIndex]}
+                              isSmall
+                            />
+                          )}
+                          value: {point} {unit}
+                        </div>
+                      </Tooltip>
+                    </div>
                   </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div
+            className="relative shrink-0 w-[44px] sm:w-[52px]"
+            style={{ height: CHART_PLOT_HEIGHT }}
+            aria-hidden={bandLayout.length === 0}
+          >
+            {bandLayout.map((entry, inde) => {
+              const label = formatHistoricalBoundLabel(entry.bound);
+              if (!label) return null;
+              return (
+                <div
+                  key={`label-${inde}`}
+                  title={label}
+                  className="absolute right-0 left-1 text-[8px] sm:text-[9px] leading-none text-[#888888] text-right tabular-nums"
+                  style={{
+                    top: labelYs[inde],
+                    transform: 'translateY(-50%)',
+                  }}
+                >
+                  {label}
                 </div>
               );
             })}
           </div>
         </div>
 
-        <div>
-          <div className="flex relative justify-start items-center w-full ml-2 mt-1">
-            {visibleLabels.map((label, index) => {
-              return (
-                <div key={index} className="text-[8px] w-[45px]">
-                  <div className="flex justify-start text-[#888888] font-medium  items-center">
-                    <div>{label.split('-')[2]}.</div>
-                    <div>{label.split('-')[1]}.</div>
-                  </div>
-                  <div className="text-[#B0B0B0] mt-[-2px] ml-[2px]">
-                    {label.split('-')[0]}
-                  </div>
-                  {index === visibleLabels.length - 1 && totalPages > 1 && (
-                    <div className="absolute top-0 right-[24px] transform translate-x-[20px] flex gap-2 z-10">
-                      <button
-                        disabled={page === 0}
-                        onClick={() => setPage((p) => Math.max(p - 1, 0))}
-                        className="px-2 py-1 text-[10px] border rounded hover:bg-gray-200 disabled:opacity-30"
-                      >
-                        Back
-                      </button>
-                      <button
-                        disabled={page + 1 >= totalPages}
-                        onClick={() =>
-                          setPage((p) => Math.min(p + 1, totalPages - 1))
-                        }
-                        className="px-2 py-1 text-[10px] border rounded hover:bg-gray-200 disabled:opacity-30"
-                      >
-                        Next
-                      </button>
+        <div className="flex w-full">
+          <div className="relative min-w-0 flex-1">
+            <div className="flex relative justify-start items-center w-full ml-2 mt-1">
+              {visibleLabels.map((label, index) => {
+                return (
+                  <div key={index} className="text-[8px] w-[45px]">
+                    <div className="flex justify-start text-[#888888] font-medium  items-center">
+                      <div>{label.split('-')[2]}.</div>
+                      <div>{label.split('-')[1]}.</div>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                    <div className="text-[#B0B0B0] mt-[-2px] ml-[2px]">
+                      {label.split('-')[0]}
+                    </div>
+                    {index === visibleLabels.length - 1 && totalPages > 1 && (
+                      <div className="absolute top-0 right-[24px] transform translate-x-[20px] flex gap-2 z-10">
+                        <button
+                          disabled={page === 0}
+                          onClick={() => setPage((p) => Math.max(p - 1, 0))}
+                          className="px-2 py-1 text-[10px] border rounded hover:bg-gray-200 disabled:opacity-30"
+                        >
+                          Back
+                        </button>
+                        <button
+                          disabled={page + 1 >= totalPages}
+                          onClick={() =>
+                            setPage((p) => Math.min(p + 1, totalPages - 1))
+                          }
+                          className="px-2 py-1 text-[10px] border rounded hover:bg-gray-200 disabled:opacity-30"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
+          <div className="shrink-0 w-[44px] sm:w-[52px]" />
         </div>
       </div>
     </>

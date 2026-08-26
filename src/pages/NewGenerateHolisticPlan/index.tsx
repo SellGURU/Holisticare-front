@@ -36,6 +36,7 @@ import {
 } from '../../utils/lookingForwards';
 import { publish } from '../../utils/event';
 import { buildResultTabHydration } from './resultTabHydration';
+import { clientNeedsCompile } from '../../utils/compileFromNeedRefreshModal';
 
 const sleep = (ms: number) =>
   new Promise((resolve) => {
@@ -75,6 +76,29 @@ const NewGenerateHolisticPlan = () => {
   const [suggestionLoadError, setSuggestionLoadError] = useState<string | null>(
     null,
   );
+  const [compileGateReady, setCompileGateReady] = useState(isDemo);
+
+  useEffect(() => {
+    if (!id || isDemo) {
+      setCompileGateReady(true);
+      return;
+    }
+    let cancelled = false;
+    void clientNeedsCompile(id).then((needsCompile) => {
+      if (cancelled) return;
+      if (needsCompile) {
+        navigate(`/report/${id}/a`, {
+          replace: true,
+          state: { openRefreshModal: true },
+        });
+        return;
+      }
+      setCompileGateReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, isDemo, navigate]);
 
   // getCoverage: run when suggestion_tab or id changes. Send type2 to API.
   useEffect(() => {
@@ -374,6 +398,7 @@ const NewGenerateHolisticPlan = () => {
   }, []);
 
   useEffect(() => {
+    if (!compileGateReady) return;
     if (treatment_id && treatment_id?.length > 1) {
       setisFirstLoading(true);
       Application.showHolisticPlan({
@@ -439,7 +464,7 @@ const NewGenerateHolisticPlan = () => {
           setisFirstLoading(false);
         });
     }
-  }, []);
+  }, [compileGateReady]);
 
   // Handle browser back button
   useEffect(() => {
@@ -569,7 +594,7 @@ const NewGenerateHolisticPlan = () => {
   return (
     <>
       <div className="h-[100vh] overflow-auto">
-        {isFirstLoading && (
+        {(isFirstLoading || (!compileGateReady && !isDemo)) && (
           <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-95 z-20">
             {' '}
             <Circleloader></Circleloader>

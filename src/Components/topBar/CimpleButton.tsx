@@ -281,7 +281,10 @@ const CompileButton: FC<CompileButtonProps> = ({
                   : item,
               ),
             );
-            publish('syncReport', {});
+            publish('healthPlanProcessingComplete', {
+              member_id: Number(id),
+            });
+            publish('syncReport', { fullReload: true });
             checkRefrashData();
           }
         })
@@ -343,6 +346,9 @@ const CompileButton: FC<CompileButtonProps> = ({
         );
         if (hasRefresh && id) {
           invalidateHealthPlanCache(id);
+          publish('healthPlanProcessingComplete', {
+            member_id: Number(id),
+          });
         }
         checkRefrashData();
         publish('syncReport', {

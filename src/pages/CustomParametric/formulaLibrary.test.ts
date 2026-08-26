@@ -23,9 +23,13 @@ describe('splitLibraryByDomainType', () => {
   it('splits Age Clock templates', () => {
     const split = splitLibraryByDomainType([
       { id: 'age.phenoage', domain_type: 'AGING' },
+      { id: 'age.kidney', domain_type: 'AGING' },
       { id: 'score.glycemic', domain_type: 'SCORING' },
     ]);
-    expect(split.age.map((item) => item.id)).toEqual(['age.phenoage']);
+    expect(split.age.map((item) => item.id)).toEqual([
+      'age.phenoage',
+      'age.kidney',
+    ]);
     expect(split.score.map((item) => item.id)).toEqual(['score.glycemic']);
   });
 });

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildHistoricalBandLayout,
+  formatHistoricalBoundLabel,
+  placeHistoricalBandLabels,
   findHistoricalBandLayoutEntry,
   findMatchingChartBoundIndex,
   getHistoricalPointY,
@@ -219,5 +221,37 @@ describe('historical chart layout', () => {
       'qualitative',
     );
     expect(y).toBeCloseTo(entry!.top + entry!.height / 2, 5);
+  });
+
+  it('keeps many thin-band labels from overlapping', () => {
+    const bmiBounds: ChartBound[] = [
+      { low: null, high: 16, status: 'DiseaseRange' },
+      { low: 16, high: 18, status: 'BorderlineRange' },
+      { low: 18, high: 25, status: 'HealthyRange' },
+      { low: 25, high: 30, status: 'BorderlineRange' },
+      { low: 30, high: 35, status: 'DiseaseRange' },
+      { low: 35, high: 40, status: 'DiseaseRange' },
+      { low: 40, high: null, status: 'CriticalRange' },
+    ];
+    const layout = buildHistoricalBandLayout(bmiBounds, 'numeric', 70);
+    const ys = placeHistoricalBandLabels(layout, 70);
+    expect(ys).toHaveLength(7);
+    for (let i = 1; i < ys.length; i += 1) {
+      expect(ys[i] - ys[i - 1]).toBeGreaterThanOrEqual(70 / 7 - 0.01);
+    }
+    expect(ys[0]).toBeGreaterThanOrEqual(0);
+    expect(ys[ys.length - 1]).toBeLessThanOrEqual(70);
+  });
+
+  it('formats open and closed range labels', () => {
+    expect(formatHistoricalBoundLabel({ low: 40, high: null, status: 'High' })).toBe(
+      '40<',
+    );
+    expect(formatHistoricalBoundLabel({ low: null, high: 16, status: 'Low' })).toBe(
+      '16>',
+    );
+    expect(
+      formatHistoricalBoundLabel({ low: 18, high: 25, status: 'Healthy' }),
+    ).toBe('18-25');
   });
 });
