@@ -1135,10 +1135,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         : undefined;
     const cachedConcerning =
       resolvedMemberID != null
-        ? peekCached(
+        ? peekCached<{ table?: any[] }>(
             HEALTH_PLAN_CACHE_KEYS.concerningResults(resolvedMemberID, true),
           ) ||
-          peekCached(
+          peekCached<{ table?: any[] }>(
             HEALTH_PLAN_CACHE_KEYS.concerningResults(resolvedMemberID, false),
           )
         : undefined;
