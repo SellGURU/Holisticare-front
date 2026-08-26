@@ -118,9 +118,18 @@ export function useOverviewPoll({
 
       if (shouldFetchFull) {
         const [refRes, catRes, conRes] = await Promise.all([
-          Application.getClientSummaryOutofrefs({ member_id: memberId }),
-          Application.getClientSummaryCategories({ member_id: memberId }),
-          Application.getConceringResults({ member_id: memberId }),
+          Application.getClientSummaryOutofrefs({
+            member_id: memberId,
+            include_wearable: false,
+          }),
+          Application.getClientSummaryCategories({
+            member_id: memberId,
+            include_wearable: false,
+          }),
+          Application.getConceringResults({
+            member_id: memberId,
+            include_wearable: false,
+          }),
         ]);
         lastRevisionRef.current = revision;
         if (scored !== null) {

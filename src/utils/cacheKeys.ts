@@ -9,12 +9,24 @@ export const HEALTH_PLAN_CACHE_KEYS = {
     `portal:healthplan:treatment-plan-detail:${memberId}:${treatmentId}`,
   patientInfo: (memberId: string | number) =>
     `portal:healthplan:patient-info:${memberId}`,
-  clientSummaryOutofrefs: (memberId: string | number) =>
-    `portal:healthplan:client-summary-outofrefs:${memberId}`,
-  clientSummaryCategories: (memberId: string | number) =>
-    `portal:healthplan:client-summary-categories:${memberId}`,
-  concerningResults: (memberId: string | number) =>
-    `portal:healthplan:concerning-results:${memberId}`,
+  clientSummaryOutofrefs: (
+    memberId: string | number,
+    includeWearable = true,
+  ) =>
+    includeWearable
+      ? `portal:healthplan:client-summary-outofrefs:${memberId}`
+      : `portal:healthplan:client-summary-outofrefs:lab:${memberId}`,
+  clientSummaryCategories: (
+    memberId: string | number,
+    includeWearable = true,
+  ) =>
+    includeWearable
+      ? `portal:healthplan:client-summary-categories:${memberId}`
+      : `portal:healthplan:client-summary-categories:lab:${memberId}`,
+  concerningResults: (memberId: string | number, includeWearable = true) =>
+    includeWearable
+      ? `portal:healthplan:concerning-results:${memberId}`
+      : `portal:healthplan:concerning-results:lab:${memberId}`,
   overviewTreatmentPlan: (memberId: string | number) =>
     `portal:healthplan:overview-treatment-plan:${memberId}`,
   healthRisks: (memberId: string | number) =>

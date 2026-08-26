@@ -1,12 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   __resetPageCacheForTests,
+  __hydrateHealthPlanCacheForTests,
   getCached,
   getCachedUntilInvalidated,
   hasCached,
   invalidate,
   peekCached,
   removeCachedKey,
+  HEALTHPLAN_PAGE_CACHE_STORAGE_KEY,
 } from './pageCache';
 
 describe('pageCache', () => {
@@ -120,5 +122,36 @@ describe('pageCache', () => {
 
     expect(result).toEqual({ ok: true });
     expect(neverResolves).not.toHaveBeenCalled();
+  });
+
+  it('persists health-plan keys to sessionStorage and hydrates them', async () => {
+    const memory: Record<string, string> = {};
+    const session = {
+      getItem: (key: string) => memory[key] ?? null,
+      setItem: (key: string, value: string) => {
+        memory[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete memory[key];
+      },
+    };
+    vi.stubGlobal('sessionStorage', session);
+
+    await getCached('portal:healthplan:client-summary-categories:99', () =>
+      Promise.resolve({ subcategories: [{ subcategory: 'Gut' }] }),
+    );
+    const dumped = memory[HEALTHPLAN_PAGE_CACHE_STORAGE_KEY];
+    expect(dumped).toBeTruthy();
+
+    invalidate();
+    expect(
+      peekCached('portal:healthplan:client-summary-categories:99'),
+    ).toBeUndefined();
+
+    sessionStorage.setItem(HEALTHPLAN_PAGE_CACHE_STORAGE_KEY, dumped);
+    __hydrateHealthPlanCacheForTests();
+    expect(
+      peekCached('portal:healthplan:client-summary-categories:99'),
+    ).toEqual({ subcategories: [{ subcategory: 'Gut' }] });
   });
 });

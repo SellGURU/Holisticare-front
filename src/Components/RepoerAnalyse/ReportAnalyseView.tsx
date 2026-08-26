@@ -82,7 +82,7 @@ import {
   HEALTH_PLAN_TTL_MS,
   invalidateHealthPlanCache,
 } from '../../utils/cacheKeys';
-import { getCached } from '../../utils/pageCache';
+import { getCached, peekCached } from '../../utils/pageCache';
 import { normalizeTreatmentPlanCategories } from '../../utils/treatmentPlanShape';
 
 const canLoadOverviewSections = (info: {
@@ -198,6 +198,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     useState<string | null>(null);
   const [descriptionEpoch, setDescriptionEpoch] = useState(0);
   const descriptionPollLogCountRef = useRef(0);
+  const hasFullOverviewRef = useRef(false);
+  const wasOverviewProcessingRef = useRef(false);
   const [has_wearable_data, setHasWearableData] = useState(false);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [showUploadTest, setShowUploadTest] = useState(false);
@@ -299,9 +301,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             setActiveCheckProgress(false);
           }
           const shouldLoadOverview = canLoadOverviewSections(data);
-          if (shouldLoadOverview) {
-            startSectionLoading();
-          }
           if (data.has_partial_report && !data.show_report) {
             setOverviewProcessing(true);
           }
@@ -377,9 +376,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             setActiveCheckProgress(true);
           }
           const shouldLoadOverview = canLoadOverviewSections(res.data);
-          if (shouldLoadOverview) {
-            startSectionLoading();
-          }
           if (res.data.has_partial_report && !res.data.show_report) {
             setOverviewProcessing(true);
           }
@@ -395,18 +391,27 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   };
 
-  const fetchReferenceData = () => {
+  const fetchReferenceData = (includeWearable = true) => {
     if (resolvedMemberID == null) return Promise.resolve();
-    setReferenceLoading(true);
+    if (!includeWearable) {
+      setReferenceLoading(true);
+    }
     return getCached(
-      HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(resolvedMemberID),
+      HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(
+        resolvedMemberID,
+        includeWearable,
+      ),
       () =>
         Application.getClientSummaryOutofrefs({
           member_id: resolvedMemberID,
+          include_wearable: includeWearable,
         }).then((res) => res.data),
       HEALTH_PLAN_TTL_MS,
     )
       .then((data) => {
+        if (data?.lab_only && hasFullOverviewRef.current) {
+          return;
+        }
         applyOverviewProcessingMeta(data, {
           setOverviewProcessing,
           setDataPhase,
@@ -429,25 +434,39 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           publish('NeedsFocusBiomarkerStatus', { isempty: true });
         }
         clearUsedPositions();
+        if (!data?.lab_only) {
+          hasFullOverviewRef.current = true;
+        }
       })
       .catch(() => {})
       .finally(() => {
-        setReferenceLoading(false);
+        if (!includeWearable) {
+          setReferenceLoading(false);
+        }
       });
   };
 
-  const fetchClientSummaryCategories = () => {
+  const fetchClientSummaryCategories = (includeWearable = true) => {
     if (resolvedMemberID == null) return Promise.resolve();
-    setClientSummaryLoading(true);
+    if (!includeWearable) {
+      setClientSummaryLoading(true);
+    }
     return getCached(
-      HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(resolvedMemberID),
+      HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(
+        resolvedMemberID,
+        includeWearable,
+      ),
       () =>
         Application.getClientSummaryCategories({
           member_id: resolvedMemberID,
+          include_wearable: includeWearable,
         }).then((res) => res.data),
       HEALTH_PLAN_TTL_MS,
     )
       .then((data) => {
+        if (data?.lab_only && hasFullOverviewRef.current) {
+          return;
+        }
         applyOverviewProcessingMeta(data, {
           setOverviewProcessing,
           setDataPhase,
@@ -463,26 +482,40 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             applyClientSummaryCategories(prev, data),
           );
         }
+        if (!data?.lab_only) {
+          hasFullOverviewRef.current = true;
+        }
       })
       .catch(() => {})
       .finally(() => {
         setISGenerateLoading(false);
-        setClientSummaryLoading(false);
+        if (!includeWearable) {
+          setClientSummaryLoading(false);
+        }
       });
   };
 
-  const fetchConcerningResults = () => {
+  const fetchConcerningResults = (includeWearable = true) => {
     if (resolvedMemberID == null) return Promise.resolve();
-    setConcerningLoading(true);
+    if (!includeWearable) {
+      setConcerningLoading(true);
+    }
     return getCached(
-      HEALTH_PLAN_CACHE_KEYS.concerningResults(resolvedMemberID),
+      HEALTH_PLAN_CACHE_KEYS.concerningResults(
+        resolvedMemberID,
+        includeWearable,
+      ),
       () =>
         Application.getConceringResults({
           member_id: resolvedMemberID,
+          include_wearable: includeWearable,
         }).then((res) => res.data),
       HEALTH_PLAN_TTL_MS,
     )
       .then((data) => {
+        if (data?.lab_only && hasFullOverviewRef.current) {
+          return;
+        }
         const table = data.table || [];
         if (table.length > 0 || !overviewProcessing) {
           setConcerningResult(table);
@@ -493,22 +526,50 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             publish('ConcerningResultStatus', { isempty: false });
           }
         }
+        if (!data?.lab_only) {
+          hasFullOverviewRef.current = true;
+        }
       })
       .catch(() => {
         setConcerningResultIsLoaded(true);
       })
       .finally(() => {
-        setConcerningLoading(false);
+        if (!includeWearable) {
+          setConcerningLoading(false);
+        }
       });
   };
 
+  const fetchWearableOverview = () => {
+    fetchReferenceData(true);
+    fetchClientSummaryCategories(true);
+    fetchConcerningResults(true);
+  };
+
   const fetchData = () => {
+    if (resolvedMemberID != null) {
+      const cachedFull = peekCached(
+        HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(resolvedMemberID, true),
+      );
+      if (cachedFull) {
+        hasFullOverviewRef.current = true;
+        fetchReferenceData(true);
+        fetchClientSummaryCategories(true);
+        fetchConcerningResults(true);
+        getTreatmentPlanData();
+        return;
+      }
+    }
     startSectionLoading();
-    // Wearable-capped overview still takes seconds; treatment_plan does not
-    // assemble biomarker history, so Holistic Plan can load in parallel.
-    fetchReferenceData();
-    fetchClientSummaryCategories();
-    fetchConcerningResults();
+    // Lab-only paints Client Summary without waiting on wearable history.
+    // Wearable cards (Activity/Distance) merge in the background.
+    void Promise.all([
+      fetchReferenceData(false),
+      fetchClientSummaryCategories(false),
+      fetchConcerningResults(false),
+    ]).finally(() => {
+      fetchWearableOverview();
+    });
     getTreatmentPlanData();
   };
   const getTreatmentPlanData = () => {
@@ -806,12 +867,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       if (snapshot.data_revision) {
         setLastCategoryRefetchRevision(snapshot.data_revision);
       }
+      if (snapshot.processing) {
+        wasOverviewProcessingRef.current = true;
+      } else if (wasOverviewProcessingRef.current) {
+        wasOverviewProcessingRef.current = false;
+        fetchWearableOverview();
+      }
     },
     onPollTimeout: () => {
       setOverviewPollTimedOut(true);
       setOverviewProcessing(false);
     },
     onReferenceData: (data) => {
+      if (data.lab_only && hasFullOverviewRef.current) {
+        return;
+      }
       applyOverviewProcessingMeta(data, {
         setOverviewProcessing,
         setDataPhase,
@@ -837,6 +907,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setReferenceLoading(false);
     },
     onCategoriesData: (data) => {
+      if (data.lab_only && hasFullOverviewRef.current) {
+        return;
+      }
       applyOverviewProcessingMeta(data, {
         setOverviewProcessing,
         setDataPhase,
@@ -873,6 +946,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setClientSummaryLoading(false);
     },
     onConcerningData: (data) => {
+      if (data.lab_only && hasFullOverviewRef.current) {
+        return;
+      }
       const table = (data.table as any[]) || [];
       if (table.length > 0 || !data.processing) {
         setConcerningResult(table);
@@ -1019,14 +1095,91 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     setBiomarkersTotal(null);
     setClientSummaryReady(false);
     setCategoriesPartial([]);
-    setReferenceData(null);
-    setClientSummaryBoxs(null);
-    setConcerningResult([]);
-    setConcerningResultIsLoaded(false);
     setActiveHolisticPlan(null);
-    setClientSummaryLoading(true);
-    setReferenceLoading(true);
-    setConcerningLoading(true);
+    hasFullOverviewRef.current = false;
+    wasOverviewProcessingRef.current = false;
+
+    const cachedFullCategories =
+      resolvedMemberID != null
+        ? peekCached(
+            HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(
+              resolvedMemberID,
+              true,
+            ),
+          )
+        : undefined;
+    const cachedLabCategories =
+      resolvedMemberID != null
+        ? peekCached(
+            HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(
+              resolvedMemberID,
+              false,
+            ),
+          )
+        : undefined;
+    const cachedCategories = cachedFullCategories || cachedLabCategories;
+    const cachedReference =
+      resolvedMemberID != null
+        ? peekCached(
+            HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(
+              resolvedMemberID,
+              true,
+            ),
+          ) ||
+          peekCached(
+            HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(
+              resolvedMemberID,
+              false,
+            ),
+          )
+        : undefined;
+    const cachedConcerning =
+      resolvedMemberID != null
+        ? peekCached(
+            HEALTH_PLAN_CACHE_KEYS.concerningResults(resolvedMemberID, true),
+          ) ||
+          peekCached(
+            HEALTH_PLAN_CACHE_KEYS.concerningResults(resolvedMemberID, false),
+          )
+        : undefined;
+    const cachedPlan =
+      resolvedMemberID != null
+        ? peekCached(
+            HEALTH_PLAN_CACHE_KEYS.overviewTreatmentPlan(resolvedMemberID),
+          )
+        : undefined;
+
+    if (cachedCategories) {
+      setClientSummaryBoxs(cachedCategories);
+      setClientSummaryLoading(false);
+      if (cachedFullCategories) {
+        hasFullOverviewRef.current = true;
+      }
+    } else {
+      setClientSummaryBoxs(null);
+      setClientSummaryLoading(true);
+    }
+    if (cachedReference) {
+      setReferenceData(cachedReference);
+      setReferenceLoading(false);
+    } else {
+      setReferenceData(null);
+      setReferenceLoading(true);
+    }
+    if (cachedConcerning) {
+      setConcerningResult(cachedConcerning.table || []);
+      setConcerningResultIsLoaded(true);
+      setConcerningLoading(false);
+    } else {
+      setConcerningResult([]);
+      setConcerningResultIsLoaded(false);
+      setConcerningLoading(true);
+    }
+    if (cachedPlan) {
+      setTreatmentPlanData(normalizeTreatmentPlanCategories(cachedPlan));
+      setTreatmentPlanLoaded(true);
+      setTreatmentLoading(false);
+    }
     setLoading(true);
     fetchPatentData();
     if (callSync) {

@@ -7,6 +7,66 @@ const store = new Map<string, CacheEntry<unknown>>();
 const inFlight = new Map<string, Promise<unknown>>();
 
 const DEFAULT_TTL_MS = 5 * 60 * 1000;
+const HEALTHPLAN_PREFIX = 'portal:healthplan:';
+export const HEALTHPLAN_PAGE_CACHE_STORAGE_KEY = 'hc_healthplan_page_cache_v1';
+
+const canUseSessionStorage = (): boolean => {
+  try {
+    return typeof sessionStorage !== 'undefined';
+  } catch {
+    return false;
+  }
+};
+
+const persistHealthPlanCache = (): void => {
+  if (!canUseSessionStorage()) return;
+  const payload: Record<string, CacheEntry<unknown>> = {};
+  for (const [key, entry] of store) {
+    if (key.startsWith(HEALTHPLAN_PREFIX)) {
+      payload[key] = entry;
+    }
+  }
+  try {
+    sessionStorage.setItem(
+      HEALTHPLAN_PAGE_CACHE_STORAGE_KEY,
+      JSON.stringify(payload),
+    );
+  } catch {
+    // Quota or private-mode — keep the in-memory cache only.
+  }
+};
+
+const hydrateHealthPlanCache = (): void => {
+  if (!canUseSessionStorage()) return;
+  try {
+    const raw = sessionStorage.getItem(HEALTHPLAN_PAGE_CACHE_STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as Record<string, CacheEntry<unknown>>;
+    for (const [key, entry] of Object.entries(parsed || {})) {
+      if (key.startsWith(HEALTHPLAN_PREFIX) && entry && 'data' in entry) {
+        store.set(key, {
+          data: entry.data,
+          timestamp: entry.timestamp || Date.now(),
+        });
+      }
+    }
+  } catch {
+    try {
+      sessionStorage.removeItem(HEALTHPLAN_PAGE_CACHE_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+  }
+};
+
+hydrateHealthPlanCache();
+
+const writeStore = <T>(key: string, data: T): void => {
+  store.set(key, { data, timestamp: Date.now() });
+  if (key.startsWith(HEALTHPLAN_PREFIX)) {
+    persistHealthPlanCache();
+  }
+};
 
 const revalidateInBackground = <T>(
   key: string,
@@ -14,7 +74,7 @@ const revalidateInBackground = <T>(
 ): void => {
   void fetcher()
     .then((data) => {
-      store.set(key, { data, timestamp: Date.now() });
+      writeStore(key, data);
     })
     .catch(() => {
       // Keep stale entry on background refresh failure.
@@ -32,7 +92,7 @@ const fetchAndStore = <T>(
 
   const promise = fetcher()
     .then((data) => {
-      store.set(key, { data, timestamp: Date.now() });
+      writeStore(key, data);
       return data;
     })
     .finally(() => {
@@ -88,12 +148,16 @@ export function listPageCacheKeys(): string[] {
 export function removeCachedKey(key: string): void {
   store.delete(key);
   inFlight.delete(key);
+  if (key.startsWith(HEALTHPLAN_PREFIX)) {
+    persistHealthPlanCache();
+  }
 }
 
 export function invalidate(keyPrefix?: string): void {
   if (!keyPrefix) {
     store.clear();
     inFlight.clear();
+    persistHealthPlanCache();
     return;
   }
 
@@ -103,9 +167,21 @@ export function invalidate(keyPrefix?: string): void {
       inFlight.delete(key);
     }
   }
+  persistHealthPlanCache();
 }
 
 export function __resetPageCacheForTests(): void {
   store.clear();
   inFlight.clear();
+  if (canUseSessionStorage()) {
+    try {
+      sessionStorage.removeItem(HEALTHPLAN_PAGE_CACHE_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+  }
+}
+
+export function __hydrateHealthPlanCacheForTests(): void {
+  hydrateHealthPlanCache();
 }

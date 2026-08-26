@@ -4,11 +4,10 @@ import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView'
 import { TopBar } from '../../Components/topBar';
 import ReportSideMenu from '../../Components/reportSideMenu/newSideMenu';
 import { ComboBar } from '../../Components';
-import { useState, useEffect, useRef } from 'react';
+import { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { subscribe, unsubscribe, publish } from '../../utils/event';
 import Draggable from 'react-draggable';
 import FullScreenModal from '../../Components/ComboBar/FullScreenModal';
-import ProgressDashboardView from '../../Components/ProgressDashboard/ProgressDashboardView';
 import { ShareModal } from '../../Components/RepoerAnalyse/ShareModal';
 import UnderProgressController from './underProgressController';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -18,6 +17,10 @@ import {
   HEALTH_PLAN_CACHE_KEYS,
   HEALTH_PLAN_TTL_MS,
 } from '../../utils/cacheKeys';
+
+const ProgressDashboardView = lazy(
+  () => import('../../Components/ProgressDashboard/ProgressDashboardView'),
+);
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
@@ -141,8 +144,8 @@ const Report = () => {
     }
   };
   const [isReportAvailable, setIsReportAvailable] = useState(true);
-  const [first_time_view, setFirst_time_view] = useState<boolean | null>(null);
-  const [isHaveScore, setIsHaveScore] = useState(false);
+  const [, setFirst_time_view] = useState<boolean | null>(null);
+  const [, setIsHaveScore] = useState(false);
   const [activeReportSection, setActiveReportSection] = useState<
     'Health' | 'Progress'
   >('Health');
@@ -167,15 +170,6 @@ const Report = () => {
       unsubscribe('reportStatus', handleReportStatus);
     };
   }, []);
-  useEffect(() => {
-    if (first_time_view == true) {
-      setActiveReportSection('Health');
-    }
-    // Returning users stay on Health until Progress tab opens (lazy wellness).
-    if (first_time_view == false && progressMounted && isHaveScore) {
-      setActiveReportSection('Progress');
-    }
-  }, [isHaveScore, first_time_view, progressMounted]);
   return (
     <div className="w-full h-full">
       <FullScreenModal />
@@ -226,12 +220,14 @@ const Report = () => {
         className={`${activeReportSection === 'Progress' ? 'visible' : 'invisible'} w-full xl:pl-[200px] fixed`}
       >
         {progressMounted ? (
-          <ProgressDashboardView
-            isActive={activeReportSection === 'Progress'}
-            onHaveScore={(isHave: boolean) => {
-              setIsHaveScore(isHave);
-            }}
-          />
+          <Suspense fallback={null}>
+            <ProgressDashboardView
+              isActive={activeReportSection === 'Progress'}
+              onHaveScore={(isHave: boolean) => {
+                setIsHaveScore(isHave);
+              }}
+            />
+          </Suspense>
         ) : null}
       </div>
 

@@ -36,6 +36,12 @@ describe('healthPlanCache', () => {
     expect(HEALTH_PLAN_CACHE_KEYS.treatmentPlanDetail('42', 'tp-9')).toBe(
       'portal:healthplan:treatment-plan-detail:42:tp-9',
     );
+    expect(HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories('42', false)).toBe(
+      'portal:healthplan:client-summary-categories:lab:42',
+    );
+    expect(HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories('42', true)).toBe(
+      'portal:healthplan:client-summary-categories:42',
+    );
   });
 
   it('invalidateHealthPlanCache removes only keys for the given memberId', async () => {

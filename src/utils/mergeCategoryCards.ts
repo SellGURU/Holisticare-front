@@ -41,6 +41,9 @@ export const applyClientSummaryCategories = (prev: any, incoming: any): any => {
 
   const subcategories = incoming?.subcategories ?? [];
   const isEmptyCategories = isAuthoritativeEmptyCategories(incoming);
+  if (incoming?.lab_only && prev && !isEmptyCategories) {
+    return mergeLabOnlyCategories(prev, incoming);
+  }
   if (!prev || isEmptyCategories || subcategories.length === 0) {
     return incoming;
   }
@@ -48,6 +51,49 @@ export const applyClientSummaryCategories = (prev: any, incoming: any): any => {
     return incoming;
   }
   return mergeClientSummaryCategories(prev, incoming);
+};
+
+/** Lab-only follow-up must not drop wearable cards already on screen. */
+export const mergeLabOnlyCategories = (prev: any, incoming: any): any => {
+  const prevSubs: any[] = prev?.subcategories ?? [];
+  const nextSubs: any[] = incoming?.subcategories ?? [];
+  if (prevSubs.length === 0) return incoming;
+
+  const prevByKey = new Map(prevSubs.map((c) => [categoryKey(c), c]));
+  const nextByKey = new Map(nextSubs.map((c) => [categoryKey(c), c]));
+  const orderKeys: string[] = [];
+  const seen = new Set<string>();
+  const pushKey = (key: string) => {
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    orderKeys.push(key);
+  };
+  for (const card of nextSubs) pushKey(categoryKey(card));
+  for (const card of prevSubs) pushKey(categoryKey(card));
+
+  const mergedSubs = orderKeys.map((key) => {
+    const nextCard = nextByKey.get(key);
+    const existing = prevByKey.get(key);
+    return nextCard ? mergeCategoryCard(existing, nextCard) : existing;
+  });
+
+  return {
+    ...prev,
+    ...incoming,
+    lab_only: true,
+    subcategories: mergedSubs,
+    total_subcategory:
+      incoming.total_subcategory != null
+        ? incoming.total_subcategory
+        : mergedSubs.reduce(
+            (sum, card) => sum + (card.num_of_biomarkers ?? 0),
+            0,
+          ),
+    total_category:
+      incoming.total_category != null
+        ? incoming.total_category
+        : mergedSubs.length,
+  };
 };
 
 /** Per-card incremental merge — scored source is never downgraded. */

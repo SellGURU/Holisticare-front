@@ -31,6 +31,7 @@ export const PORTAL_USER_LOCAL_STORAGE_PREFIXES = [
 export const PORTAL_USER_SESSION_STORAGE_KEYS = [
   'isHtmlReportExists',
   'google_oauth_token',
+  'hc_healthplan_page_cache_v1',
 ] as const;
 
 export const PORTAL_USER_SESSION_STORAGE_PREFIXES = ['lab_job_id_'] as const;
