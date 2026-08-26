@@ -36,6 +36,17 @@ export const RISKS_SCORES_AGE_ALIASES: Record<string, string> = {
   'Health Scores': RISKS_SCORES_AGE_SECTION,
 };
 
+export type ReportDomainType = 'RISK' | 'SCORING' | 'AGING';
+
+export function shouldShowReportGroup(
+  activeTypes: string[] | null,
+  type: ReportDomainType,
+  hasItems = false,
+): boolean {
+  if (activeTypes == null) return hasItems;
+  return activeTypes.map((item) => item.toUpperCase()).includes(type);
+}
+
 export function resolveReportSection(name: string): string {
   return RISKS_SCORES_AGE_ALIASES[name] || name;
 }
@@ -337,11 +348,14 @@ export function useHealthRiskAssessments(
   const [loading, setLoading] = useState(Boolean(enabled && memberId != null));
   const [error, setError] = useState(false);
   const [assessments, setAssessments] = useState<HealthRiskAssessment[]>([]);
+  const [activeTypes, setActiveTypes] = useState<string[] | null>(null);
   const [snapshotTick, setSnapshotTick] = useState(0);
   const hasLoadedRef = useRef(false);
 
   useEffect(() => {
     hasLoadedRef.current = false;
+    setActiveTypes(null);
+    setAssessments([]);
   }, [memberId]);
 
   useEffect(() => {
@@ -387,14 +401,16 @@ export function useHealthRiskAssessments(
     if (!hasLoadedRef.current) setLoading(true);
     setError(false);
     getCurrentSnapshot(memberId, snapshotTick)
-      .then((rows) => {
+      .then((snapshot) => {
         if (cancelled) return;
         hasLoadedRef.current = true;
-        setAssessments(rows);
+        setAssessments(snapshot.assessments);
+        setActiveTypes(snapshot.activeTypes);
       })
       .catch(() => {
         if (!cancelled) {
           setAssessments([]);
+          setActiveTypes(null);
           setError(true);
         }
       })
@@ -406,15 +422,20 @@ export function useHealthRiskAssessments(
     };
   }, [enabled, memberId, snapshotTick]);
 
-  return { loading, error, assessments };
+  return { loading, error, assessments, activeTypes };
 }
 
-const inFlightGets = new Map<string, Promise<HealthRiskAssessment[]>>();
+interface HealthRiskSnapshot {
+  assessments: HealthRiskAssessment[];
+  activeTypes: string[] | null;
+}
+
+const inFlightGets = new Map<string, Promise<HealthRiskSnapshot>>();
 
 function getCurrentSnapshot(
   memberId: number,
   requestKey = 0,
-): Promise<HealthRiskAssessment[]> {
+): Promise<HealthRiskSnapshot> {
   const cacheKey = `${memberId}:${requestKey}`;
   const existing = inFlightGets.get(cacheKey);
   if (existing) return existing;
@@ -423,7 +444,15 @@ function getCurrentSnapshot(
       const rows = Array.isArray(res.data?.assessments)
         ? res.data.assessments
         : [];
-      return rows as HealthRiskAssessment[];
+      const activeTypes = Array.isArray(res.data?.active_types)
+        ? (res.data.active_types as unknown[]).map((item) =>
+            String(item).toUpperCase(),
+          )
+        : null;
+      return {
+        assessments: rows as HealthRiskAssessment[],
+        activeTypes,
+      };
     })
     .finally(() => {
       inFlightGets.delete(cacheKey);

@@ -14,6 +14,7 @@ import {
   RISKS_SCORES_AGE_SECTION,
   riskContributions,
   scoreBarPercent,
+  shouldShowReportGroup,
 } from './healthRiskAssessments';
 
 function incompleteCopy(missing: Array<{ token?: string }>) {
@@ -40,6 +41,16 @@ describe('HealthRisksPanel copy', () => {
       RISKS_SCORES_AGE_SECTION,
     );
     expect(resolveReportSection('Client Summary')).toBe('Client Summary');
+  });
+
+  it('hides report groups that are not active in Intelligence Model', () => {
+    expect(shouldShowReportGroup(['SCORING'], 'RISK')).toBe(false);
+    expect(shouldShowReportGroup(['SCORING'], 'SCORING')).toBe(true);
+    expect(shouldShowReportGroup(['SCORING'], 'AGING')).toBe(false);
+    expect(shouldShowReportGroup([], 'RISK')).toBe(false);
+    expect(shouldShowReportGroup(['RISK'], 'RISK', false)).toBe(true);
+    expect(shouldShowReportGroup(null, 'RISK')).toBe(false);
+    expect(shouldShowReportGroup(null, 'RISK', true)).toBe(true);
   });
 });
 

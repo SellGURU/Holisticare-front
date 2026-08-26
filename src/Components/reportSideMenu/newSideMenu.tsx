@@ -39,13 +39,16 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     'Action Plan',
   ];
   const progressMenuItems = ['Wellness Summary', 'Score Progression'];
+  const [hideRisksSection, setHideRisksSection] = useState(false);
 
   const resolveActiveItems = () => {
     if (activeReportSection === 'Progress') {
       return progressMenuItems;
-    } else {
-      return menuItems;
     }
+    if (hideRisksSection) {
+      return menuItems.filter((item) => item !== RISKS_SCORES_AGE_SECTION);
+    }
+    return menuItems;
   };
 
   const [activeMenu, setactiveMenu] = useState('Client Summary');
@@ -158,6 +161,17 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     return () => {
       unsubscribe('reportStatus', handleReportStatus);
       unsubscribe('showReport', handleShowReport);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleRisksScoresAgeStatus = (message: any) => {
+      const eventData = message as CustomEvent<{ isempty: boolean }>;
+      setHideRisksSection(Boolean(eventData.detail.isempty));
+    };
+    subscribe('RisksScoresAgeStatus', handleRisksScoresAgeStatus);
+    return () => {
+      unsubscribe('RisksScoresAgeStatus', handleRisksScoresAgeStatus);
     };
   }, []);
 
