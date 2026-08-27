@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Copy, KeyRound, RefreshCw, Search, ShieldCheck, ShieldOff, X } from 'lucide-react';
+import { Copy, KeyRound, RefreshCw, Search, ShieldCheck, ShieldOff, Smartphone, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
 import AdminShellLayout from './AdminShellLayout';
+import ClinicMobileUsersPanel from './ClinicMobileUsersPanel';
+import {
+  expiryMsFromRemaining,
+  formatCountdown,
+  remainingSecondsFromMs,
+} from './tempPasswordCountdown';
 
 interface ClinicRow {
   clinic_id: number;
@@ -20,6 +26,8 @@ interface ClinicRow {
   user_count: number;
   patient_count: number;
   temp_password_expires_at: string | null;
+  temp_password_remaining_seconds?: number | null;
+  tempExpiresAtMs?: number | null;
 }
 
 interface TempPasswordGrant {
@@ -29,6 +37,9 @@ interface TempPasswordGrant {
   temporary_password: string;
   expires_at: string;
   expires_in_seconds: number;
+  expiresAtMs: number;
+  account_kind?: 'clinic' | 'mobile';
+  display_name?: string;
 }
 
 const formatDate = (value: string | null) => {
@@ -40,17 +51,13 @@ const formatDate = (value: string | null) => {
   }
 };
 
-const remainingSeconds = (expiresAt: string | null) => {
-  if (!expiresAt) return 0;
-  const ms = new Date(expiresAt).getTime() - Date.now();
-  return Math.max(0, Math.ceil(ms / 1000));
-};
-
-const formatCountdown = (seconds: number) => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${String(secs).padStart(2, '0')}`;
-};
+const withLocalExpiry = (clinic: ClinicRow, nowMs = Date.now()): ClinicRow => ({
+  ...clinic,
+  tempExpiresAtMs: expiryMsFromRemaining(
+    clinic.temp_password_remaining_seconds,
+    nowMs,
+  ),
+});
 
 const Clinics = () => {
   const navigate = useNavigate();
@@ -62,6 +69,7 @@ const Clinics = () => {
   const [tempGrant, setTempGrant] = useState<TempPasswordGrant | null>(null);
   const [copied, setCopied] = useState(false);
   const [nowTick, setNowTick] = useState(0);
+  const [mobileClinic, setMobileClinic] = useState<ClinicRow | null>(null);
 
   const handleAuthFailure = () => {
     removeAdminToken();
@@ -72,7 +80,12 @@ const Clinics = () => {
     setLoadingList(true);
     try {
       const res = await AdminApi.listClinics();
-      setClinics(res.data?.clinics || []);
+      const nowMs = Date.now();
+      setClinics(
+        (res.data?.clinics || []).map((clinic: ClinicRow) =>
+          withLocalExpiry(clinic, nowMs),
+        ),
+      );
     } catch (err: any) {
       if (err?.response?.status === 401) {
         handleAuthFailure();
@@ -102,7 +115,7 @@ const Clinics = () => {
 
   const hasActiveTempPassword =
     Boolean(tempGrant) ||
-    clinics.some((clinic) => remainingSeconds(clinic.temp_password_expires_at) > 0);
+    clinics.some((clinic) => remainingSecondsFromMs(clinic.tempExpiresAtMs) > 0);
 
   useEffect(() => {
     if (!hasActiveTempPassword) return undefined;
@@ -121,7 +134,7 @@ const Clinics = () => {
     );
   }, [clinics, search]);
 
-  const tempSecondsLeft = remainingSeconds(tempGrant?.expires_at || null);
+  const tempSecondsLeft = remainingSecondsFromMs(tempGrant?.expiresAtMs);
   void nowTick;
 
   const updateClinic = async (
@@ -171,13 +184,24 @@ const Clinics = () => {
     setUpdatingId(clinic.clinic_id);
     try {
       const res = await AdminApi.grantTempClinicPassword(clinic.clinic_id);
-      const grant = res.data as TempPasswordGrant;
+      const grant = {
+        ...(res.data as Omit<TempPasswordGrant, 'expiresAtMs'>),
+        account_kind: 'clinic' as const,
+        expiresAtMs: expiryMsFromRemaining(
+          res.data?.expires_in_seconds || 60,
+        ) as number,
+      };
       setTempGrant(grant);
       setCopied(false);
       setClinics((current) =>
         current.map((item) =>
           item.clinic_id === clinic.clinic_id
-            ? { ...item, temp_password_expires_at: grant.expires_at }
+            ? {
+                ...item,
+                temp_password_expires_at: grant.expires_at,
+                temp_password_remaining_seconds: grant.expires_in_seconds,
+                tempExpiresAtMs: grant.expiresAtMs,
+              }
             : item,
         ),
       );
@@ -268,8 +292,8 @@ const Clinics = () => {
             <tbody className="divide-y divide-Gray-50">
               {filteredClinics.map((clinic) => {
                 const busy = updatingId === clinic.clinic_id;
-                const activeSeconds = remainingSeconds(
-                  clinic.temp_password_expires_at,
+                const activeSeconds = remainingSecondsFromMs(
+                  clinic.tempExpiresAtMs,
                 );
                 return (
                   <tr key={clinic.clinic_id} className="align-top">
@@ -330,17 +354,28 @@ const Clinics = () => {
                       </button>
                     </td>
                     <td className="px-3 py-3">
-                      <button
-                        type="button"
-                        disabled={busy}
-                        onClick={() => grantTempPassword(clinic)}
-                        className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
-                      >
-                        <KeyRound size={14} />
-                        {activeSeconds > 0
-                          ? `Temp ${formatCountdown(activeSeconds)}`
-                          : 'Temp password'}
-                      </button>
+                      <div className="flex flex-col items-start gap-2">
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => grantTempPassword(clinic)}
+                          className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
+                        >
+                          <KeyRound size={14} />
+                          {activeSeconds > 0
+                            ? `Portal ${formatCountdown(activeSeconds)}`
+                            : 'Portal password'}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => setMobileClinic(clinic)}
+                          className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
+                        >
+                          <Smartphone size={14} />
+                          Mobile users
+                        </button>
+                      </div>
                     </td>
                     <td className="px-3 py-3 text-Text-Secondary">
                       <div>{formatDate(clinic.plan_updated_at)}</div>
@@ -364,10 +399,16 @@ const Clinics = () => {
             <div className="mb-3 flex items-start justify-between gap-3">
               <div>
                 <div className="text-[16px] font-semibold text-Text-Primary">
-                  Temporary clinic login
+                  {tempGrant.account_kind === 'mobile'
+                    ? 'Temporary mobile login'
+                    : 'Temporary clinic login'}
                 </div>
                 <div className="mt-1 text-[12px] text-Text-Secondary">
-                  {tempGrant.clinic_name || `Clinic #${tempGrant.clinic_id}`}
+                  {tempGrant.account_kind === 'mobile'
+                    ? tempGrant.display_name ||
+                      tempGrant.login_email ||
+                      `Clinic #${tempGrant.clinic_id}`
+                    : tempGrant.clinic_name || `Clinic #${tempGrant.clinic_id}`}
                 </div>
               </div>
               <button
@@ -409,6 +450,22 @@ const Clinics = () => {
             </div>
           </div>
         </div>
+      )}
+      {mobileClinic && (
+        <ClinicMobileUsersPanel
+          clinicId={mobileClinic.clinic_id}
+          clinicName={mobileClinic.name}
+          onClose={() => setMobileClinic(null)}
+          onGrant={(payload) => {
+            setCopied(false);
+            setTempGrant({
+              ...payload,
+              expiresAtMs: expiryMsFromRemaining(
+                payload.expires_in_seconds || 60,
+              ) as number,
+            });
+          }}
+        />
       )}
     </AdminShellLayout>
   );

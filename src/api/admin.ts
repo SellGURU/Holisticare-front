@@ -70,6 +70,23 @@ class AdminApi {
     );
   }
 
+  static listClinicMobileUsers(id: number, search = '') {
+    return axios.get(`${getBaseUrl()}/admin/clinics/${id}/mobile-users`, {
+      headers: withAuthHeaders(),
+      params: search ? { search } : undefined,
+    });
+  }
+
+  static grantTempMobilePassword(clinicId: number, mobileUserId: number) {
+    return axios.post(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/mobile-users/${mobileUserId}/temp-password`,
+      {},
+      {
+        headers: withAuthHeaders(),
+      },
+    );
+  }
+
   static getAnalytics(data: any) {
     return axios.post(`${getBaseUrl()}/admin/marketing/analytics`, data, {
       headers: withAuthHeaders(),
