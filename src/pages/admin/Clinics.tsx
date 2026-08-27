@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RefreshCw, Search, ShieldCheck, ShieldOff } from 'lucide-react';
+import { Copy, KeyRound, RefreshCw, Search, ShieldCheck, ShieldOff, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
@@ -19,6 +19,16 @@ interface ClinicRow {
   plan_updated_by: string;
   user_count: number;
   patient_count: number;
+  temp_password_expires_at: string | null;
+}
+
+interface TempPasswordGrant {
+  clinic_id: number;
+  clinic_name: string;
+  login_email: string;
+  temporary_password: string;
+  expires_at: string;
+  expires_in_seconds: number;
 }
 
 const formatDate = (value: string | null) => {
@@ -30,6 +40,18 @@ const formatDate = (value: string | null) => {
   }
 };
 
+const remainingSeconds = (expiresAt: string | null) => {
+  if (!expiresAt) return 0;
+  const ms = new Date(expiresAt).getTime() - Date.now();
+  return Math.max(0, Math.ceil(ms / 1000));
+};
+
+const formatCountdown = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${String(secs).padStart(2, '0')}`;
+};
+
 const Clinics = () => {
   const navigate = useNavigate();
   const [loadingPage, setLoadingPage] = useState(true);
@@ -37,6 +59,9 @@ const Clinics = () => {
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [clinics, setClinics] = useState<ClinicRow[]>([]);
   const [search, setSearch] = useState('');
+  const [tempGrant, setTempGrant] = useState<TempPasswordGrant | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [nowTick, setNowTick] = useState(0);
 
   const handleAuthFailure = () => {
     removeAdminToken();
@@ -75,6 +100,16 @@ const Clinics = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const hasActiveTempPassword =
+    Boolean(tempGrant) ||
+    clinics.some((clinic) => remainingSeconds(clinic.temp_password_expires_at) > 0);
+
+  useEffect(() => {
+    if (!hasActiveTempPassword) return undefined;
+    const timer = window.setInterval(() => setNowTick((value) => value + 1), 1000);
+    return () => window.clearInterval(timer);
+  }, [hasActiveTempPassword]);
+
   const filteredClinics = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return clinics;
@@ -85,6 +120,9 @@ const Clinics = () => {
         .includes(term),
     );
   }, [clinics, search]);
+
+  const tempSecondsLeft = remainingSeconds(tempGrant?.expires_at || null);
+  void nowTick;
 
   const updateClinic = async (
     clinic: ClinicRow,
@@ -118,6 +156,49 @@ const Clinics = () => {
       toast.error(err?.response?.data?.detail || 'Failed to update clinic.');
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const grantTempPassword = async (clinic: ClinicRow) => {
+    if (
+      !window.confirm(
+        `Set a 60-second temporary password for ${clinic.name || `clinic #${clinic.clinic_id}`}? The original password hash will be restored automatically.`,
+      )
+    ) {
+      return;
+    }
+
+    setUpdatingId(clinic.clinic_id);
+    try {
+      const res = await AdminApi.grantTempClinicPassword(clinic.clinic_id);
+      const grant = res.data as TempPasswordGrant;
+      setTempGrant(grant);
+      setCopied(false);
+      setClinics((current) =>
+        current.map((item) =>
+          item.clinic_id === clinic.clinic_id
+            ? { ...item, temp_password_expires_at: grant.expires_at }
+            : item,
+        ),
+      );
+      toast.success('Temporary password is active for 60 seconds.');
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.detail || 'Failed to create a temporary password.',
+      );
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const copyTempPassword = async () => {
+    if (!tempGrant?.temporary_password) return;
+    try {
+      await navigator.clipboard.writeText(tempGrant.temporary_password);
+      setCopied(true);
+      toast.success('Password copied.');
+    } catch {
+      toast.error('Could not copy password.');
     }
   };
 
@@ -180,12 +261,16 @@ const Clinics = () => {
                 <th className="px-3 py-3 font-medium">Patients</th>
                 <th className="px-3 py-3 font-medium">Plan</th>
                 <th className="px-3 py-3 font-medium">Status</th>
+                <th className="px-3 py-3 font-medium">Access</th>
                 <th className="px-3 py-3 font-medium">Updated</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-Gray-50">
               {filteredClinics.map((clinic) => {
                 const busy = updatingId === clinic.clinic_id;
+                const activeSeconds = remainingSeconds(
+                  clinic.temp_password_expires_at,
+                );
                 return (
                   <tr key={clinic.clinic_id} className="align-top">
                     <td className="px-3 py-3">
@@ -244,6 +329,19 @@ const Clinics = () => {
                         {clinic.is_disabled ? 'Disabled' : 'Active'}
                       </button>
                     </td>
+                    <td className="px-3 py-3">
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => grantTempPassword(clinic)}
+                        className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
+                      >
+                        <KeyRound size={14} />
+                        {activeSeconds > 0
+                          ? `Temp ${formatCountdown(activeSeconds)}`
+                          : 'Temp password'}
+                      </button>
+                    </td>
                     <td className="px-3 py-3 text-Text-Secondary">
                       <div>{formatDate(clinic.plan_updated_at)}</div>
                       {clinic.plan_updated_by && (
@@ -259,6 +357,59 @@ const Clinics = () => {
           </table>
         </div>
       </div>
+
+      {tempGrant && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
+          <div className="w-full max-w-md rounded-[20px] bg-white p-5 shadow-2xl">
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <div>
+                <div className="text-[16px] font-semibold text-Text-Primary">
+                  Temporary clinic login
+                </div>
+                <div className="mt-1 text-[12px] text-Text-Secondary">
+                  {tempGrant.clinic_name || `Clinic #${tempGrant.clinic_id}`}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTempGrant(null)}
+                className="rounded-full p-1 text-Text-Secondary"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="rounded-2xl bg-[#F8FAFB] p-3 text-[12px]">
+              <div className="text-Text-Secondary">Email</div>
+              <div className="mt-1 font-medium text-Text-Primary">
+                {tempGrant.login_email || 'No owner email'}
+              </div>
+              <div className="mt-3 text-Text-Secondary">Password</div>
+              <div className="mt-1 flex items-center justify-between gap-2">
+                <code className="break-all font-medium text-Text-Primary">
+                  {tempSecondsLeft > 0
+                    ? tempGrant.temporary_password
+                    : 'Expired and restored'}
+                </code>
+                {tempSecondsLeft > 0 && (
+                  <button
+                    type="button"
+                    onClick={copyTempPassword}
+                    className="inline-flex items-center gap-1 rounded-full border border-Gray-50 bg-white px-3 py-1 text-[11px]"
+                  >
+                    <Copy size={12} />
+                    {copied ? 'Copied' : 'Copy'}
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="mt-3 text-[12px] text-Text-Secondary">
+              {tempSecondsLeft > 0
+                ? `Original password hash is restored in ${formatCountdown(tempSecondsLeft)}.`
+                : 'The original password hash has been restored. Log in now will fail with this temporary password.'}
+            </div>
+          </div>
+        </div>
+      )}
     </AdminShellLayout>
   );
 };

@@ -12,6 +12,11 @@ import { invalidateHealthPlanCache } from '../../utils/cacheKeys';
 import { useParams } from 'react-router-dom';
 import { formatRelativeDate } from '../../utils/formatRelativeDate';
 import { isManualLabEntry } from '../../utils/manualEntry';
+import {
+  COMPILE_FAILED_EVENT,
+  COMPILE_STARTED_EVENT,
+  startCompileFromUi,
+} from '../../utils/compileFromNeedRefreshModal';
 // import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 // import Tooltip from '../../../'; // فرضی
 interface CompileButtonProps {
@@ -40,16 +45,15 @@ const CompileButton: FC<CompileButtonProps> = ({
     setLatestRefresh(userInfoData?.latest_refresh);
   }, [userInfoData]);
   const state = useMemo(() => {
-    if (isLoading) return 'LOADING';
-
     const isProgressing = progressData
       .filter((el) => el.category != 'refresh')
       .some((item) => item.process_status === false);
     const isCompilingprogress = progressData
       .filter((el) => el.category === 'refresh')
       .some((item) => item.process_status === false);
-    if (isProgressing) return 'PROGRESSING';
     if (isCompilingprogress || isCompiling) return 'COMPILING';
+    if (isLoading) return 'LOADING';
+    if (isProgressing) return 'PROGRESSING';
     if (needCompile) return 'READY_TO_COMPILE';
     if (isSyncing) return 'SYNCING';
     if (beRecompile) return 'RECOMPILE';
@@ -251,15 +255,26 @@ const CompileButton: FC<CompileButtonProps> = ({
       setProgressData([]);
       checkRefrashData();
     };
+    const handleCompileStarted = () => {
+      setIsCompiling(true);
+      setNeedCompile(false);
+    };
+    const handleCompileFailed = () => {
+      setIsCompiling(false);
+    };
 
     subscribe('openProgressModal', handleOpenProgressModal);
     subscribe('allProgressCompleted', handleAllProgressCompleted);
     subscribe('syncReport', handleSyncReport);
+    subscribe(COMPILE_STARTED_EVENT, handleCompileStarted);
+    subscribe(COMPILE_FAILED_EVENT, handleCompileFailed);
 
     return () => {
       unsubscribe('openProgressModal', handleOpenProgressModal);
       unsubscribe('allProgressCompleted', handleAllProgressCompleted);
       unsubscribe('syncReport', handleSyncReport);
+      unsubscribe(COMPILE_STARTED_EVENT, handleCompileStarted);
+      unsubscribe(COMPILE_FAILED_EVENT, handleCompileFailed);
     };
   }, []);
 
@@ -368,14 +383,7 @@ const CompileButton: FC<CompileButtonProps> = ({
       hasInFlightUpload
     )
       return;
-    setIsCompiling(true);
-    setNeedCompile(false);
-    Application.refreshData(id)
-      .then(() => {
-        publish('SyncRefresh', {});
-        publish('disableGenerate', {});
-      })
-      .catch(() => {});
+    void startCompileFromUi(id).catch(() => {});
   }, [isAutoCompile, state, isCompiling, id]);
 
   /* ---------- handlers ---------- */
@@ -386,15 +394,7 @@ const CompileButton: FC<CompileButtonProps> = ({
       return;
     }
     if (state == 'READY_TO_COMPILE' || state == 'RECOMPILE') {
-      setIsCompiling(true);
-      setNeedCompile(false);
-      Application.refreshData(id as string)
-        .then(() => {
-          // setLatestRefresh(new Date().toISOString());
-          publish('SyncRefresh', {});
-          publish('disableGenerate', {});
-        })
-        .catch(() => {});
+      void startCompileFromUi(id as string).catch(() => {});
       return;
     }
     if (state == 'COMPILING' || state == 'PROGRESSING') {

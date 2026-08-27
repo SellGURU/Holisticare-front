@@ -9,6 +9,28 @@
 
 import Application from '../api/app';
 import { invalidateHealthPlanCache } from './cacheKeys';
+import { publish } from './event';
+
+export const COMPILE_STARTED_EVENT = 'compileStarted';
+export const COMPILE_FAILED_EVENT = 'compileFailed';
+
+/**
+ * Start a full compile and tell the top-bar Compile button to show Compiling...
+ * Used by the Need Refresh modal so the header updates immediately.
+ */
+export async function startCompileFromUi(memberId: string): Promise<void> {
+  publish(COMPILE_STARTED_EVENT, { member_id: memberId });
+  publish('disableGenerate', {});
+  publish('checkProgress', {});
+  try {
+    await Application.refreshData(memberId);
+    publish('SyncRefresh', {});
+    publish('disableGenerate', {});
+  } catch (err) {
+    publish(COMPILE_FAILED_EVENT, { member_id: memberId });
+    throw err;
+  }
+}
 
 export async function clientNeedsCompile(
   memberId: string | undefined,
@@ -70,7 +92,7 @@ export async function compileFromNeedRefreshModal(
   }
 
   try {
-    await Application.refreshData(memberId);
+    await startCompileFromUi(memberId);
   } catch {
     return { ok: false, reason: 'refresh_failed' };
   }

@@ -60,6 +60,16 @@ class AdminApi {
     });
   }
 
+  static grantTempClinicPassword(id: number) {
+    return axios.post(
+      `${getBaseUrl()}/admin/clinics/${id}/temp-password`,
+      {},
+      {
+        headers: withAuthHeaders(),
+      },
+    );
+  }
+
   static getAnalytics(data: any) {
     return axios.post(`${getBaseUrl()}/admin/marketing/analytics`, data, {
       headers: withAuthHeaders(),

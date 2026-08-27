@@ -17,6 +17,7 @@ import {
   HEALTH_PLAN_CACHE_KEYS,
   HEALTH_PLAN_TTL_MS,
 } from '../../utils/cacheKeys';
+import { startCompileFromUi } from '../../utils/compileFromNeedRefreshModal';
 
 const ProgressDashboardView = lazy(
   () => import('../../Components/ProgressDashboard/ProgressDashboardView'),
@@ -294,17 +295,13 @@ const Report = () => {
                 if (!id) return;
                 setCompileModalError(null);
                 setshowRefreshModal(false);
-                publish('disableGenerate', {});
-                publish('checkProgress', {});
-                publish('SyncRefresh', {});
-                Application.refreshData(id)
-                  .then(() => {
-                    publish('SyncRefresh', {});
-                    publish('disableGenerate', {});
-                  })
-                  .catch((err) => {
-                    console.error('Error refreshing data:', err);
-                  });
+                void startCompileFromUi(id).catch((err) => {
+                  console.error('Error refreshing data:', err);
+                  setCompileModalError(
+                    'Compile could not start. Please try again.',
+                  );
+                  setshowRefreshModal(true);
+                });
               }}
               className="font-medium text-sm text-Primary-DeepTeal cursor-pointer"
             >

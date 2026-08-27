@@ -1,8 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Application from '../api/app';
+import { publish } from './event';
 import {
+  COMPILE_FAILED_EVENT,
+  COMPILE_STARTED_EVENT,
   clientNeedsCompile,
   compileFromNeedRefreshModal,
+  startCompileFromUi,
   waitForRefreshProgress,
 } from './compileFromNeedRefreshModal';
 
@@ -16,6 +20,12 @@ vi.mock('../api/app', () => ({
 
 vi.mock('./cacheKeys', () => ({
   invalidateHealthPlanCache: vi.fn(),
+}));
+
+vi.mock('./event', () => ({
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  unsubscribe: vi.fn(),
 }));
 
 describe('waitForRefreshProgress', () => {
@@ -69,6 +79,36 @@ describe('clientNeedsCompile', () => {
     );
     await expect(clientNeedsCompile('609')).resolves.toBe(true);
     await expect(clientNeedsCompile(undefined)).resolves.toBe(true);
+  });
+});
+
+describe('startCompileFromUi', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('tells the top bar to show Compiling before refresh starts', async () => {
+    const publishSpy = vi.mocked(publish);
+    vi.mocked(Application.refreshData).mockResolvedValue({} as never);
+
+    await startCompileFromUi('609');
+
+    expect(publishSpy.mock.calls[0]).toEqual([
+      COMPILE_STARTED_EVENT,
+      { member_id: '609' },
+    ]);
+    expect(publishSpy).toHaveBeenCalledWith('checkProgress', {});
+    expect(Application.refreshData).toHaveBeenCalledWith('609');
+  });
+
+  it('notifies compileFailed when refresh cannot start', async () => {
+    const publishSpy = vi.mocked(publish);
+    vi.mocked(Application.refreshData).mockRejectedValue(new Error('network'));
+
+    await expect(startCompileFromUi('609')).rejects.toThrow('network');
+    expect(publishSpy).toHaveBeenCalledWith(COMPILE_FAILED_EVENT, {
+      member_id: '609',
+    });
   });
 });
 
