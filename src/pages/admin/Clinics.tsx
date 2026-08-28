@@ -445,8 +445,8 @@ const Clinics = () => {
             </div>
             <div className="mt-3 text-[12px] text-Text-Secondary">
               {tempSecondsLeft > 0
-                ? `Original password hash is restored in ${formatCountdown(tempSecondsLeft)}.`
-                : 'The original password hash has been restored. Log in now will fail with this temporary password.'}
+                ? `Original password is restored in ${formatCountdown(tempSecondsLeft)}. Your current session stays logged in.`
+                : 'The original password has been restored. This session stays valid; the temporary password no longer works for a new login.'}
             </div>
           </div>
         </div>
