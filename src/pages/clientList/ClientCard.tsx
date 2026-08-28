@@ -14,7 +14,51 @@ import MainModal from '../../Components/MainModal/index.tsx';
 import Checkbox from '../../Components/checkbox/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';
 import EllipsedTooltip from '../../Components/LibraryThreePages/components/TableNoPaginate/ElipsedTooltip.tsx';
+import SimpleDatePicker from '../../Components/SimpleDatePicker';
 import useIsDemo from '../../hooks/useIsDemo.ts';
+
+const parseDateOfBirth = (value: unknown): Date | null => {
+  if (value == null || value === '' || value === '-') return null;
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+  const text = String(value).trim();
+  const iso = /^(\d{4})-(\d{2})-(\d{2})/.exec(text);
+  if (iso) {
+    return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
+  }
+  const us = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(text);
+  if (us) {
+    return new Date(Number(us[3]), Number(us[1]) - 1, Number(us[2]));
+  }
+  const parsed = new Date(text);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+};
+
+const pickDateOfBirth = (...values: unknown[]): Date | null => {
+  for (const value of values) {
+    const parsed = parseDateOfBirth(value);
+    if (parsed) return parsed;
+  }
+  return null;
+};
+
+const formatDateOfBirth = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const ageFromDateOfBirth = (date: Date): number => {
+  const today = new Date();
+  let age = today.getFullYear() - date.getFullYear();
+  const monthDiff = today.getMonth() - date.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())) {
+    age -= 1;
+  }
+  return age;
+};
 interface ClientCardProps {
   client: any;
   indexItem: number;
@@ -173,6 +217,14 @@ const ClientCard: FC<ClientCardProps> = ({
     phone_number: '',
     address: '',
   });
+  const [editDateOfBirth, setEditDateOfBirth] = useState<Date | null>(null);
+
+  const applyEditDateOfBirth = (value: unknown) => {
+    const parsed = parseDateOfBirth(value);
+    if (!parsed) return false;
+    setEditDateOfBirth(parsed);
+    return true;
+  };
   // Application.giveClientAccess({ member_id: client.member_id }).then((res) => {
   //   console.log(res);
 
@@ -248,6 +300,9 @@ const ClientCard: FC<ClientCardProps> = ({
       phone_number: '',
       address: '',
     });
+    setEditDateOfBirth(
+      pickDateOfBirth(client.date_of_birth, client.dateOfBirth),
+    );
     setShowEditModal(true);
 
     Application.getClientInfo({ member_id: client.member_id })
@@ -266,6 +321,21 @@ const ClientCard: FC<ClientCardProps> = ({
           address:
             info.Location && info.Location !== '-' ? String(info.Location) : '',
         }));
+        applyEditDateOfBirth(
+          pickDateOfBirth(
+            info.date_of_birth,
+            info.dateOfBirth,
+            res?.data?.date_of_birth,
+          ),
+        );
+      })
+      .catch(() => {});
+
+    Application.getPatientsInfo({ member_id: client.member_id })
+      .then((res) => {
+        applyEditDateOfBirth(
+          pickDateOfBirth(res?.data?.date_of_birth, res?.data?.dateOfBirth),
+        );
       })
       .catch(() => {});
   };
@@ -285,20 +355,44 @@ const ClientCard: FC<ClientCardProps> = ({
       return;
     }
 
-    setIsSavingClientInfo(true);
-    Application.updateClientInfo({
+    if (editDateOfBirth) {
+      const selectedAge = ageFromDateOfBirth(editDateOfBirth);
+      if (selectedAge < 18) {
+        setEditError('Client must be at least 18 years old.');
+        return;
+      }
+      if (selectedAge > 120) {
+        setEditError('Please enter a valid date of birth.');
+        return;
+      }
+    }
+
+    const payload: Record<string, any> = {
       member_id: client.member_id,
       first_name: editForm.first_name.trim(),
       last_name: editForm.last_name.trim(),
       email: editForm.email.trim(),
       phone_number: editForm.phone_number.trim(),
       address: editForm.address.trim(),
-    })
+    };
+    if (editDateOfBirth) {
+      payload.date_of_birth = formatDateOfBirth(editDateOfBirth);
+    }
+
+    setIsSavingClientInfo(true);
+    Application.updateClientInfo(payload)
       .then((res) => {
+        const nextAge = editDateOfBirth
+          ? (res?.data?.age ?? ageFromDateOfBirth(editDateOfBirth))
+          : undefined;
         onClientUpdated(client.member_id, {
           name:
             res?.data?.name || `${editForm.first_name} ${editForm.last_name}`,
           email: res?.data?.email || editForm.email.trim(),
+          ...(nextAge != null ? { age: nextAge } : {}),
+          ...(editDateOfBirth
+            ? { date_of_birth: formatDateOfBirth(editDateOfBirth) }
+            : {}),
         });
         setShowEditModal(false);
       })
@@ -628,6 +722,26 @@ const ClientCard: FC<ClientCardProps> = ({
                 }
                 className="w-full rounded-xl border border-Gray-50 px-3 py-2 text-xs outline-none"
               />
+            </div>
+            <div>
+              <div className="text-xs font-medium mb-1">Date of Birth</div>
+              <div className="rounded-[16px] h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border border-Gray-50 shadow-100 flex items-center">
+                <SimpleDatePicker
+                  placeholder="Select date of birth"
+                  date={editDateOfBirth}
+                  setDate={(date) => {
+                    if (date && !Number.isNaN(date.getTime())) {
+                      setEditDateOfBirth(date);
+                      setEditError('');
+                    }
+                  }}
+                  full
+                  textStyle
+                  selectorStartingYear={new Date().getFullYear() - 120}
+                  selectorEndingYear={new Date().getFullYear() - 18}
+                  ClassName="!w-full !border-0 !bg-transparent !px-0 !py-0 !rounded-none"
+                />
+              </div>
             </div>
             <div>
               <div className="text-xs font-medium mb-1">Email</div>

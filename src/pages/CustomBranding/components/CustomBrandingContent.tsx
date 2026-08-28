@@ -18,6 +18,7 @@ const CustomBrandingContent = () => {
     name: '',
     headLine: '',
     lastUpdate: '',
+    slug: '',
   });
   const [defaultPrimaryColor, setDefaultPrimaryColor] = useState('#6CC24A');
   const [defaultSecondaryColor, setDefaultSecondaryColor] = useState('#005F73');
@@ -64,6 +65,7 @@ const CustomBrandingContent = () => {
           name: res.brand_elements.name as string,
           selectedImage: res.brand_elements.logo as string | null,
           lastUpdate: res.brand_elements.last_update as string,
+          slug: (res.brand_elements.slug as string) || '',
         });
         setDefaultLogo(res.brand_elements.logo as string);
         setDefaultHeadLine(res.brand_elements.headline as string);

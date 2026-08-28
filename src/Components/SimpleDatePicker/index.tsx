@@ -18,6 +18,8 @@ interface DatePickerProps {
   isUploadFile?: boolean;
   key?: string;
   right?: number;
+  selectorStartingYear?: number;
+  selectorEndingYear?: number;
 }
 
 export default function SimpleDatePicker({
@@ -36,6 +38,8 @@ export default function SimpleDatePicker({
   key,
   isUploadFile,
   right,
+  selectorStartingYear,
+  selectorEndingYear,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -68,7 +72,10 @@ export default function SimpleDatePicker({
     : null;
 
   return (
-    <div className="relative inline-block" ref={calendarRef}>
+    <div
+      className={`relative ${full ? 'block w-full' : 'inline-block'}`}
+      ref={calendarRef}
+    >
       <button
         onClick={() => {
           setOpen(!open);
@@ -108,6 +115,8 @@ export default function SimpleDatePicker({
               setOpen(false);
             }}
             shouldHighlightWeekends
+            selectorStartingYear={selectorStartingYear}
+            selectorEndingYear={selectorEndingYear}
           />
         </div>
       )}

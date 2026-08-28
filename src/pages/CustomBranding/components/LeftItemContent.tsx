@@ -2,6 +2,7 @@
 import { FC, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import SpinnerLoader from '../../../Components/SpinnerLoader';
+import { copyText } from '../../../utils/clipboard';
 
 interface LeftItemContentProps {
   customTheme: {
@@ -11,6 +12,7 @@ interface LeftItemContentProps {
     name: string;
     headLine: string;
     lastUpdate: string;
+    slug?: string;
   };
   handleImageUpload: (event: any) => void;
   handleResetTheme: () => void;
@@ -46,6 +48,10 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   const [errorName, setErrorName] = useState('');
   const [errorLogo, setErrorLogo] = useState('');
   const [showSaved, setShowSaved] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const patientAppLink = customTheme.slug
+    ? `https://app.holisticare.io/?clinic=${encodeURIComponent(customTheme.slug)}`
+    : '';
 
   const validateForm = () => {
     // Validate Name
@@ -280,6 +286,36 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               )}
             </div>
           </div>
+          {patientAppLink && (
+            <div className="flex w-full items-start justify-between mt-6 gap-3">
+              <div className="flex flex-col">
+                <div className="text-xs font-medium text-Text-Primary">
+                  Patient app link
+                </div>
+                <div className="text-[10px] text-Text-Quadruple mt-1 max-w-[140px]">
+                  Share this URL so patients see your clinic brand before login.
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-1 min-w-0">
+                <div className="text-[10px] text-Text-Primary break-all text-right max-w-[200px]">
+                  {patientAppLink}
+                </div>
+                <button
+                  type="button"
+                  className="text-[10px] font-medium text-Primary-DeepTeal"
+                  onClick={async () => {
+                    const copied = await copyText(patientAppLink);
+                    if (copied) {
+                      setLinkCopied(true);
+                      window.setTimeout(() => setLinkCopied(false), 2000);
+                    }
+                  }}
+                >
+                  {linkCopied ? 'Copied' : 'Copy link'}
+                </button>
+              </div>
+            </div>
+          )}
           <div className="flex items-center justify-between mt-6">
             <div className="text-xs font-medium text-Text-Primary">
               Primary Color
