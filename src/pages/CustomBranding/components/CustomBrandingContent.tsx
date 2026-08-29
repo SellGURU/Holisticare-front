@@ -117,7 +117,7 @@ const CustomBrandingContent = () => {
       <!-- Main message -->
       <tr>
         <td style="font-size:10px; color:#7C7C7C; text-align:center; padding:16px 48px 0 48px; line-height:1.25rem;">
-          Hey <b>{user_name}</b>, your coach <b>{coach_name}</b> has created an account for you on {clinic_name}. Navigate to the magic link and enter the code to access your dashboard.
+          Hey <b>{user_name}</b>, your coach <b>{coach_name}</b> has created an account for you on {clinic_name}. Open https://app.holisticare.io/?clinic={clinic_slug} and enter the code to access your dashboard.
         </td>
       </tr>
 
@@ -139,6 +139,7 @@ const CustomBrandingContent = () => {
           <a href="{dashboard_link}" style="display:inline-block; background-color:${customTheme.secondaryColor}; color:#333; text-decoration:none; font-size:10px; line-height:24px; padding:0 16px; border-radius:20px; box-shadow:0px 2px 6px rgba(0,0,0,0.1);">
             Access Your Dashboard
           </a>
+          <div style="font-size:10px; color:#7C7C7C; padding-top:8px;">https://app.holisticare.io/?clinic={clinic_slug}</div>
         </td>
       </tr>
 
