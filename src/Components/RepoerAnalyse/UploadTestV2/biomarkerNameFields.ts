@@ -81,6 +81,44 @@ export const pinBiomarkerNameFields = <T extends BiomarkerNameRow>(
     resolveNormalizedBiomarkerName(prior),
 });
 
+export const CONFIRMED_BY_USER_FIELD =
+  'system_biomarker_confirmed_by_user' as const;
+export const RESOLUTION_SOURCE_FIELD = 'resolution_source' as const;
+
+export const withManualReviewProvenance = <T extends Record<string, unknown>>(
+  fields: T,
+): T & {
+  system_biomarker_confirmed_by_user: true;
+  resolution_source: 'manual_review';
+} => ({
+  ...fields,
+  system_biomarker_confirmed_by_user: true,
+  resolution_source: 'manual_review',
+});
+
+export const reviewProvenancePayloadFields = (row: Record<string, unknown>) => {
+  const confirmed = Boolean(row?.[CONFIRMED_BY_USER_FIELD]);
+  const source = String(row?.[RESOLUTION_SOURCE_FIELD] || '').trim();
+  const payload: Record<string, unknown> = {};
+  if (confirmed) {
+    payload[CONFIRMED_BY_USER_FIELD] = true;
+    payload[RESOLUTION_SOURCE_FIELD] = source || 'manual_review';
+  } else if (source) {
+    payload[RESOLUTION_SOURCE_FIELD] = source;
+  }
+  const resolutionStatus = String(row?.resolution_status || '').trim();
+  if (resolutionStatus) {
+    payload.resolution_status = resolutionStatus;
+  }
+  if (row?.eligible_for_chart === false) {
+    payload.eligible_for_chart = false;
+  }
+  if (row?.eligible_for_scoring === false) {
+    payload.eligible_for_scoring = false;
+  }
+  return payload;
+};
+
 export type BiomarkerRowWithId = {
   biomarker_id?: string;
   backend_biomarker_id?: string;

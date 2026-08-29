@@ -33,6 +33,7 @@ import {
   ensureUniqueBiomarkerIds,
   preserveBiomarkerIds,
   pinBiomarkerNameFields,
+  reviewProvenancePayloadFields,
 } from './biomarkerNameFields';
 import {
   buildBiomarkerRowsForValidation,
@@ -894,6 +895,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         list_of_genes: b['list_of_genes'],
         your_result: b['your_result'],
         validation_status: stringifyLabField(b.validation_status || 'ready'),
+        ...reviewProvenancePayloadFields(b),
       };
     });
 

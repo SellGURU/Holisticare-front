@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   dedupeCatalogBiomarkersList,
   findCatalogNameTypeDuplicate,
+  findOrphanMappingsForCard,
 } from './biomarkerIdentity';
 
 describe('dedupeCatalogBiomarkersList', () => {
@@ -186,5 +187,55 @@ describe('findCatalogNameTypeDuplicate', () => {
         excludeIndex: 0,
       })?.biomarker_type,
     ).toBe('urine');
+  });
+});
+
+describe('findOrphanMappingsForCard', () => {
+  it('counts name-matched mappings that do not attach by unit identity', () => {
+    const catalog = [
+      {
+        Biomarker: 'Lymphocytes %',
+        unit: '%',
+        biomarker_type: 'blood',
+        'Benchmark areas': 'Immune',
+        biomarker_uid: 'uid-percent',
+      },
+    ];
+    const mappings = [
+      {
+        standard_name: 'Lymphocytes %',
+        unit: 'cells/µL',
+        biomarker_type: 'blood',
+        benchmark_area: 'Immune',
+        variations: ['Lymphocytes (Absolute)'],
+      },
+    ];
+    expect(findOrphanMappingsForCard(mappings, catalog[0], catalog)).toHaveLength(
+      1,
+    );
+  });
+
+  it('ignores archived mappings', () => {
+    const catalog = [
+      {
+        Biomarker: 'Lymphocytes %',
+        unit: '%',
+        biomarker_type: 'blood',
+        'Benchmark areas': 'Immune',
+      },
+    ];
+    const mappings = [
+      {
+        standard_name: 'Lymphocytes %',
+        unit: 'cells/µL',
+        biomarker_type: 'blood',
+        benchmark_area: 'Immune',
+        disabled: true,
+        archived: true,
+      },
+    ];
+    expect(findOrphanMappingsForCard(mappings, catalog[0], catalog)).toHaveLength(
+      0,
+    );
   });
 });

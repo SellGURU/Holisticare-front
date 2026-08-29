@@ -406,6 +406,24 @@ describe('categorizeReviewRow restored_from_excluded', () => {
       reviewReason: 'unmatched',
     });
   });
+
+  it('keeps percent/count mismatches in review instead of ready', () => {
+    const row = {
+      biomarker: 'Lymphocytes %',
+      original_biomarker_name: 'Lymphocytes (Absolute)',
+      original_value: '2050',
+      original_unit: 'cells/µL',
+      system_biomarker_confirmed_by_user: true,
+      resolution_status: 'unit_target_mismatch',
+      validation_status: 'review',
+      eligible_for_chart: false,
+    };
+
+    expect(categorizeReviewRow(row, {}, new Set(), 0)).toEqual({
+      category: 'review',
+      reviewReason: 'unit_mismatch',
+    });
+  });
 });
 
 describe('filterSuppressedItemsForCurrentLab', () => {

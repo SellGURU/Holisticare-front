@@ -12,6 +12,7 @@ import {
   collectMappingNameVariations,
   resolveExactBiomarkerName,
   resolveNormalizedBiomarkerName,
+  withManualReviewProvenance,
 } from './biomarkerNameFields';
 import { resolveRowSaveActionState } from './biomarkerRowSaveState';
 import {
@@ -800,7 +801,9 @@ export default function BiomarkerRow({
                   biomarker: val,
                 },
               );
-              const nextFields: Partial<any> = { biomarker: val };
+              const nextFields: Partial<any> = withManualReviewProvenance({
+                biomarker: val,
+              });
               if (!isTextValueWithoutUnit) {
                 const extractedUnit = String(
                   preferNonEmpty(biomarker.original_unit, biomarker.unit) || '',

@@ -13,6 +13,7 @@ import {
   buildBiomarkerIdentityMeta,
   filterUnitMappingsForBiomarker,
   findBiomarkerMapping,
+  findOrphanMappingsForCard,
   isCustomBiomarker,
   removeBiomarkerByIdentity,
 } from './biomarkerIdentity';
@@ -109,9 +110,15 @@ const BiomarkerRow = ({
     [biomarkerMappings, data, biomarkers],
   );
 
+  const orphanMappings = useMemo(
+    () => findOrphanMappingsForCard(biomarkerMappings, data, biomarkers),
+    [biomarkerMappings, data, biomarkers],
+  );
+
   const mappingCount =
     relevantUnitMappings.length +
     (relevantBiomarkerMapping?.variations?.length || 0);
+  const orphanCount = orphanMappings.length;
 
   const openModalEdit = () => {
     setEditIdentityMeta(buildBiomarkerIdentityMeta(data, biomarkerIndex));
@@ -264,6 +271,14 @@ const BiomarkerRow = ({
             <span className="rounded-full bg-[#F4F7F7] px-1.5 text-[9px]">
               {mappingCount}
             </span>
+            {orphanCount > 0 ? (
+              <span
+                className="rounded-full bg-[#F4E7E7] px-1.5 text-[9px] text-[#8A1C1C]"
+                title="Name-matched mappings that do not attach to this card identity (unit/UID)"
+              >
+                Orphan {orphanCount}
+              </span>
+            ) : null}
           </button>
         </div>
 

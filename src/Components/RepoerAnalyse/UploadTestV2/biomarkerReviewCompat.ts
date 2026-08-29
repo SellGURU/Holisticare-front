@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { resolveExactBiomarkerName } from './biomarkerNameFields';
+import { resolveExactBiomarkerName, reviewProvenancePayloadFields } from './biomarkerNameFields';
 
 const trim = (value: unknown) => String(value ?? '').trim();
 
@@ -608,6 +608,7 @@ export const buildProcessLabReportPayload = ({
       validation_status: stringifyLabField(
         String(row.validation_status || '').trim() || 'ready',
       ),
+      ...reviewProvenancePayloadFields(row),
     };
   });
 
@@ -878,6 +879,14 @@ export const categorizeReviewRow = (
   // before it is treated as ready-to-save again.
   if (userRestored) {
     return { category: 'review', reviewReason: 'unmatched' };
+  }
+
+  if (
+    String(row?.resolution_status || '')
+      .trim()
+      .toLowerCase() === 'unit_target_mismatch'
+  ) {
+    return { category: 'review', reviewReason: 'unit_mismatch' };
   }
 
   return { category: 'ready' };

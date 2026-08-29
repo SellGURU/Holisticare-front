@@ -22,6 +22,7 @@ import {
   pinBiomarkerNameFields,
   resolveExactBiomarkerName,
   resolveNormalizedBiomarkerName,
+  withManualReviewProvenance,
 } from './biomarkerNameFields';
 import {
   applyHydrationMappingBaselines,
@@ -2217,9 +2218,12 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
             onReviewCatalogRefresh?.();
             // Auto-select the new biomarker on the triggering row
             if (createBiomarkerFor.biomarkerId) {
-              updateAndStandardize(createBiomarkerFor.biomarkerId, {
-                biomarker: newName,
-              });
+              updateAndStandardize(
+                createBiomarkerFor.biomarkerId,
+                withManualReviewProvenance({
+                  biomarker: newName,
+                }),
+              );
             }
             setCreateBiomarkerFor(null);
           }}

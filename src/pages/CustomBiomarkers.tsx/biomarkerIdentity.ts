@@ -440,6 +440,33 @@ export const mappingMatchesBiomarker = (
   return normalizeName(mapping?.standard_name) === biomarkerName;
 };
 
+/** Name matches this catalog card, but unit/UID identity does not attach. */
+export const findOrphanMappingsForCard = (
+  mappings: any[],
+  biomarker: any,
+  allBiomarkers: any[],
+) => {
+  const cardName = normalizeName(biomarker?.Biomarker);
+  if (!cardName || !Array.isArray(mappings) || !mappings.length) {
+    return [];
+  }
+  const duplicateNames = getDuplicateBiomarkerNames(allBiomarkers);
+  return mappings.filter((mapping) => {
+    if (mapping?.disabled === true || mapping?.archived === true) {
+      return false;
+    }
+    if (normalizeName(mapping?.standard_name) !== cardName) {
+      return false;
+    }
+    return !mappingMatchesBiomarker(
+      mapping,
+      biomarker,
+      duplicateNames,
+      allBiomarkers,
+    );
+  });
+};
+
 export const findBiomarkerMapping = (
   mappings: any[],
   biomarker: any,

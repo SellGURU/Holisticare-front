@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { preserveBiomarkerIds } from './biomarkerNameFields';
+import {
+  preserveBiomarkerIds,
+  reviewProvenancePayloadFields,
+  withManualReviewProvenance,
+} from './biomarkerNameFields';
 
 describe('preserveBiomarkerIds', () => {
   it('carries exact biomarker_id matches from previous snapshot', () => {
@@ -64,3 +68,49 @@ describe('preserveBiomarkerIds', () => {
     ]);
   });
 });
+
+describe('manual review provenance', () => {
+  it('marks an explicit dropdown change as confirmed', () => {
+    const next = withManualReviewProvenance({ biomarker: 'Lymphocytes' });
+    expect(next.biomarker).toBe('Lymphocytes');
+    expect(next.system_biomarker_confirmed_by_user).toBe(true);
+    expect(next.resolution_source).toBe('manual_review');
+  });
+
+  it('sends confirmed intent and quarantine flags on Continue', () => {
+    expect(
+      reviewProvenancePayloadFields({
+        biomarker: 'Lymphocytes',
+        system_biomarker_confirmed_by_user: true,
+        resolution_source: 'manual_review',
+      }),
+    ).toEqual({
+      system_biomarker_confirmed_by_user: true,
+      resolution_source: 'manual_review',
+    });
+
+    expect(
+      reviewProvenancePayloadFields({
+        biomarker: 'Lymphocytes %',
+        system_biomarker_confirmed_by_user: true,
+        resolution_source: 'manual_review',
+        resolution_status: 'unit_target_mismatch',
+        eligible_for_chart: false,
+        eligible_for_scoring: false,
+      }),
+    ).toEqual({
+      system_biomarker_confirmed_by_user: true,
+      resolution_source: 'manual_review',
+      resolution_status: 'unit_target_mismatch',
+      eligible_for_chart: false,
+      eligible_for_scoring: false,
+    });
+  });
+
+  it('omits confirmed flag when the reviewer did not set it', () => {
+    expect(reviewProvenancePayloadFields({ biomarker: 'Lymphocytes %' })).toEqual(
+      {},
+    );
+  });
+});
+
