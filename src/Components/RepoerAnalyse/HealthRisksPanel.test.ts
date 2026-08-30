@@ -46,13 +46,12 @@ describe('HealthRisksPanel copy', () => {
   });
 
   it('hides report groups that are not active in Intelligence Model', () => {
-    expect(shouldShowReportGroup(['SCORING'], 'RISK', true)).toBe(false);
-    expect(shouldShowReportGroup(['SCORING'], 'SCORING', true)).toBe(true);
-    expect(shouldShowReportGroup(['SCORING'], 'AGING', true)).toBe(false);
-    expect(shouldShowReportGroup([], 'RISK', true)).toBe(false);
-    expect(shouldShowReportGroup(['RISK'], 'RISK', false)).toBe(false);
-    expect(shouldShowReportGroup(null, 'RISK', true)).toBe(false);
-    expect(shouldShowReportGroup(['RISK'], 'RISK', true)).toBe(true);
+    expect(shouldShowReportGroup(['SCORING'], 'RISK')).toBe(false);
+    expect(shouldShowReportGroup(['SCORING'], 'SCORING')).toBe(true);
+    expect(shouldShowReportGroup(['SCORING'], 'AGING')).toBe(false);
+    expect(shouldShowReportGroup([], 'RISK')).toBe(false);
+    expect(shouldShowReportGroup(['RISK'], 'RISK')).toBe(true);
+    expect(shouldShowReportGroup(null, 'RISK')).toBe(false);
   });
 
   it('filters snapshot rows with active_types from /current only', () => {

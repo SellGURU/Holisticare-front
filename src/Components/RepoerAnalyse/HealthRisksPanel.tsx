@@ -75,29 +75,24 @@ export default function HealthRisksPanel({
   const risks = presentRisks(assessments);
   const scores = presentScores(assessments);
   const ages = presentAges(assessments);
-  const showRisks = shouldShowReportGroup(activeTypes, 'RISK', risks.length > 0);
-  const showScores = shouldShowReportGroup(
-    activeTypes,
-    'SCORING',
-    scores.length > 0,
-  );
-  const showAges = shouldShowReportGroup(activeTypes, 'AGING', ages.length > 0);
-  const hasVisibleGroup = showRisks || showScores || showAges;
+  const showRisks = shouldShowReportGroup(activeTypes, 'RISK');
+  const showScores = shouldShowReportGroup(activeTypes, 'SCORING');
+  const showAges = shouldShowReportGroup(activeTypes, 'AGING');
+  const hasActiveType = Boolean(activeTypes?.length);
 
   useEffect(() => {
     if (!enabled) {
       publish('RisksScoresAgeStatus', { isempty: true });
       return;
     }
-    if (loading) {
-      publish('RisksScoresAgeStatus', { isempty: true });
+    if (loading || activeTypes == null) {
       return;
     }
-    publish('RisksScoresAgeStatus', { isempty: !hasVisibleGroup });
-  }, [enabled, loading, hasVisibleGroup]);
+    publish('RisksScoresAgeStatus', { isempty: !hasActiveType });
+  }, [enabled, loading, activeTypes, hasActiveType]);
 
   if (!enabled) return null;
-  if (loading || !hasVisibleGroup) return null;
+  if (loading || !hasActiveType) return null;
 
   return (
     <section className="my-16" aria-labelledby="risks-scores-age-heading">

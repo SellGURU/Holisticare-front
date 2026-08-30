@@ -41,9 +41,7 @@ export type ReportDomainType = 'RISK' | 'SCORING' | 'AGING';
 export function shouldShowReportGroup(
   activeTypes: string[] | null,
   type: ReportDomainType,
-  hasItems = false,
 ): boolean {
-  if (!hasItems) return false;
   if (activeTypes == null) return false;
   return activeTypes.map((item) => item.toUpperCase()).includes(type);
 }

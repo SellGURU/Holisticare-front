@@ -6,9 +6,20 @@ export const isBiomarkerChartReady = (biomarker: unknown): boolean => {
   return Array.isArray(bounds) && bounds.length > 0;
 };
 
-/** Show chart skeleton only until this biomarker has renderable chart data. */
-export const shouldShowChartLoading = (biomarker: unknown): boolean =>
-  !isBiomarkerChartReady(biomarker);
+export const hasBiomarkerValue = (biomarker: unknown): boolean => {
+  if (!biomarker || typeof biomarker !== 'object') return false;
+  const values = (biomarker as { values?: unknown }).values;
+  if (!Array.isArray(values) || values.length === 0) return false;
+  const first = values[0];
+  return first != null && String(first).trim() !== '';
+};
+
+/** Skeleton only while the row is still arriving. Empty bounds after a value is not loading. */
+export const shouldShowChartLoading = (biomarker: unknown): boolean => {
+  if (isBiomarkerChartReady(biomarker)) return false;
+  if (hasBiomarkerValue(biomarker)) return false;
+  return true;
+};
 
 export const isPreviewSource = (source?: string | null): boolean =>
   source === 'preview' || source === 'preview_evaluated';
