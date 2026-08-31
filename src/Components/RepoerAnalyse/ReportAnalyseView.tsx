@@ -743,6 +743,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const labDeleteRefreshPendingRef = useRef(false);
 
   const clearReportSections = () => {
+    hasFullOverviewRef.current = false;
     setClientSummaryBoxs(null);
     setReferenceData(null);
     setConcerningResult([]);
@@ -761,6 +762,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       detail.member_id !== String(resolvedMemberID)
     ) {
       return;
+    }
+    if (resolvedMemberID) {
+      invalidateHealthPlanCache(resolvedMemberID);
     }
     labDeleteRefreshPendingRef.current = true;
     clearReportSections();

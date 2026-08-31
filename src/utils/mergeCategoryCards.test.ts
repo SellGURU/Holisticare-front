@@ -48,4 +48,24 @@ describe('lab-only category merge', () => {
     };
     expect(mergeLabOnlyCategories(null, incoming)).toEqual(incoming);
   });
+
+  it('replaces stale cards when all lab files were deleted', () => {
+    const prev = {
+      subcategories: [
+        { subcategory: 'Blood', num_of_biomarkers: 10 },
+        { subcategory: 'Immune Health and Inflammation', num_of_biomarkers: 8 },
+      ],
+      total_subcategory: 18,
+      total_category: 2,
+    };
+    const incoming = {
+      processing: false,
+      subcategories: [],
+      total_subcategory: 0,
+      total_category: 0,
+    };
+
+    expect(applyClientSummaryCategories(prev, incoming)).toEqual(incoming);
+    expect(applyClientSummaryCategories(null, incoming)).toEqual(incoming);
+  });
 });

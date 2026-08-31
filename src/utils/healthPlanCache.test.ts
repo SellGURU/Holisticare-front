@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { HEALTH_PLAN_CACHE_KEYS, invalidateHealthPlanCache } from './cacheKeys';
-import { __resetPageCacheForTests, getCached, hasCached } from './pageCache';
+import {
+  __resetPageCacheForTests,
+  getCached,
+  hasCached,
+  peekCached,
+} from './pageCache';
 
 describe('healthPlanCache', () => {
   afterEach(() => {
@@ -94,5 +99,44 @@ describe('healthPlanCache', () => {
     ]);
     expect(fetcher).toHaveBeenCalledTimes(2);
     expect(neverResolves).not.toHaveBeenCalled();
+  });
+
+  it('delete-all-files path: invalidate then refetch, not peek of stale cards', async () => {
+    const memberId = '353797812270';
+    const categoriesKey = HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(
+      memberId,
+      true,
+    );
+    const staleCards = {
+      subcategories: [
+        { subcategory: 'Blood', num_of_biomarkers: 10 },
+        { subcategory: 'Immune Health and Inflammation', num_of_biomarkers: 8 },
+      ],
+      total_subcategory: 18,
+      total_category: 2,
+    };
+    const emptyAfterDelete = {
+      subcategories: [],
+      total_subcategory: 0,
+      total_category: 0,
+    };
+
+    await getCached(categoriesKey, () => Promise.resolve(staleCards));
+    expect(peekCached(categoriesKey)).toEqual(staleCards);
+
+    const unusedFreshFetch = vi.fn().mockResolvedValue(emptyAfterDelete);
+    expect(peekCached(categoriesKey)).toEqual(staleCards);
+    await expect(getCached(categoriesKey, unusedFreshFetch)).resolves.toEqual(
+      staleCards,
+    );
+
+    invalidateHealthPlanCache(memberId);
+    expect(peekCached(categoriesKey)).toBeUndefined();
+    expect(hasCached(categoriesKey)).toBe(false);
+
+    const freshFetch = vi.fn().mockResolvedValue(emptyAfterDelete);
+    const next = await getCached(categoriesKey, freshFetch);
+    expect(freshFetch).toHaveBeenCalledTimes(1);
+    expect(next).toEqual(emptyAfterDelete);
   });
 });
