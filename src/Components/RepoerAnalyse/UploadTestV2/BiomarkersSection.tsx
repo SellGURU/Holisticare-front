@@ -51,6 +51,7 @@ import {
   resolveRowCatalogContext,
   resolveUnitForStandardize,
   isSafeUnitRelabel,
+  extractedUnitMatchesSelectedCatalog,
   mergeRowAfterStandardizeSuccess,
   clearedUnitTargetMismatchFields,
   type CategoryFilter,
@@ -2030,10 +2031,17 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                         const excludedMetaEntry = buildSuppressionKeysForRow(b)
                           .map((key) => suppressedMeta[key])
                           .find(Boolean);
+                        const ignoreStaleUnitError =
+                          extractedUnitMatchesSelectedCatalog(b, {
+                            catalog: effectiveCatalog,
+                          });
+                        const rowErrorText = ignoreStaleUnitError
+                          ? ''
+                          : currentRowErrors[rowErrorKey];
                         const reviewMessage = getReviewRowMessage(
                           categoryResult,
                           b,
-                          currentRowErrors[rowErrorKey],
+                          rowErrorText,
                         );
                         return (
                           <BiomarkerRow
@@ -2041,8 +2049,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             refRenceEl={(el: any) =>
                               (rowRefs.current[originalIndex] = el)
                             }
-                            isHaveError={Boolean(currentRowErrors[rowErrorKey])}
-                            errorText={currentRowErrors[rowErrorKey]}
+                            isHaveError={Boolean(rowErrorText)}
+                            errorText={rowErrorText}
                             biomarker={b}
                             index={originalIndex}
                             showOnlyErrors={showOnlyErrors}

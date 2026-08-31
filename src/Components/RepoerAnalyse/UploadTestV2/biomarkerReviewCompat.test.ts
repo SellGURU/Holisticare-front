@@ -25,6 +25,7 @@ import {
   resolveValueInputMode,
   isSafeUnitRelabel,
   isStaleUnitTargetMismatch,
+  extractedUnitMatchesSelectedCatalog,
   mergeRowAfterStandardizeSuccess,
   mergeUnitOptionSources,
   parseUnitMismatchDetail,
@@ -502,6 +503,88 @@ describe('categorizeReviewRow restored_from_excluded', () => {
         { catalog },
       ),
     ).toBe(false);
+  });
+
+  it('ignores leftover unit-mismatch error text when extracted unit matches the selected card', () => {
+    const catalog = [
+      {
+        biomarker: 'Eosinophils %',
+        biomarker_type: 'blood',
+        unit: '%',
+      },
+      {
+        biomarker: 'Lymphocytes %',
+        biomarker_type: 'blood',
+        unit: '%',
+      },
+    ];
+    const eosinophils = {
+      biomarker_id: 'eos-1',
+      biomarker: 'Eosinophils %',
+      original_biomarker_name: 'Eosinophils %',
+      original_value: '1.6',
+      original_unit: '%',
+      resolution_status: 'unit_target_mismatch',
+    };
+    const lymphocytes = {
+      biomarker_id: 'lymph-1',
+      biomarker: 'Lymphocytes %',
+      original_biomarker_name: 'Lymphocytes %',
+      original_value: '30.6',
+      original_unit: '%',
+      resolution_status: 'unit_target_mismatch',
+    };
+    const errors = {
+      'eos-1':
+        "Unit '%' differs from system default '%'. No conversion mapping found.",
+      'lymph-1': 'Unit does not match clinic default',
+    };
+
+    expect(extractedUnitMatchesSelectedCatalog(eosinophils, { catalog })).toBe(
+      true,
+    );
+    expect(
+      categorizeReviewRow(eosinophils, errors, new Set(), 0, { catalog })
+        .category,
+    ).toBe('ready');
+    expect(
+      categorizeReviewRow(lymphocytes, errors, new Set(), 1, { catalog })
+        .category,
+    ).toBe('ready');
+  });
+
+  it('keeps a live unit clash in review even when error text is also present', () => {
+    const catalog = [
+      {
+        biomarker: 'Lymphocytes %',
+        biomarker_type: 'blood',
+        unit: '%',
+      },
+    ];
+    const row = {
+      biomarker_id: 'lymph-clash',
+      biomarker: 'Lymphocytes %',
+      original_biomarker_name: 'Lymphocytes (Absolute)',
+      original_value: '2050',
+      original_unit: 'cells/µL',
+      resolution_status: 'unit_target_mismatch',
+    };
+
+    expect(
+      categorizeReviewRow(
+        row,
+        {
+          'lymph-clash':
+            "Unit 'cells/µL' differs from system default '%'. No conversion mapping found.",
+        },
+        new Set(),
+        0,
+        { catalog },
+      ),
+    ).toEqual({
+      category: 'review',
+      reviewReason: 'unit_mismatch',
+    });
   });
 });
 

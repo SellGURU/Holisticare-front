@@ -857,25 +857,30 @@ export const categorizeReviewRow = (
   if (errorText) {
     const reviewReason =
       inferReviewReasonFromErrorText(errorText) || 'unmatched';
-    if (
-      trim(row?.biomarker) &&
-      (reviewReason === 'biomarker_not_found' ||
-        reviewReason === 'unmatched' ||
-        String(errorText).toLowerCase().includes('not recognized'))
-    ) {
-      return { category: 'ready' };
+    const ignoreStaleUnitError =
+      reviewReason === 'unit_mismatch' &&
+      extractedUnitMatchesSelectedCatalog(row, options);
+    if (!ignoreStaleUnitError) {
+      if (
+        trim(row?.biomarker) &&
+        (reviewReason === 'biomarker_not_found' ||
+          reviewReason === 'unmatched' ||
+          String(errorText).toLowerCase().includes('not recognized'))
+      ) {
+        return { category: 'ready' };
+      }
+      if (
+        !rowHasExtractedValue(row) &&
+        rowHasExtractedUnit(row) &&
+        reviewReason === 'value_mismatch'
+      ) {
+        return { category: 'review', reviewReason: 'missing_value' };
+      }
+      return {
+        category: 'review',
+        reviewReason,
+      };
     }
-    if (
-      !rowHasExtractedValue(row) &&
-      rowHasExtractedUnit(row) &&
-      reviewReason === 'value_mismatch'
-    ) {
-      return { category: 'review', reviewReason: 'missing_value' };
-    }
-    return {
-      category: 'review',
-      reviewReason,
-    };
   }
 
   if (
@@ -1621,6 +1626,17 @@ const clinicDefaultUnitForRow = (
   return '';
 };
 
+/** True when the extracted unit already matches the selected catalog card. */
+export function extractedUnitMatchesSelectedCatalog(
+  row: any,
+  options?: CategorizeReviewRowOptions,
+): boolean {
+  const extracted = trim(preferNonEmpty(row?.original_unit, row?.unit));
+  const clinicUnit = clinicDefaultUnitForRow(row, options);
+  if (!extracted || !clinicUnit) return false;
+  return isSafeUnitRelabel(extracted, clinicUnit);
+}
+
 /** Leftover backend flag is stale when the current extracted unit matches the selected catalog card. */
 export function isStaleUnitTargetMismatch(
   row: any,
@@ -1633,10 +1649,7 @@ export function isStaleUnitTargetMismatch(
   ) {
     return false;
   }
-  const extracted = trim(preferNonEmpty(row?.original_unit, row?.unit));
-  const clinicUnit = clinicDefaultUnitForRow(row, options);
-  if (!extracted || !clinicUnit) return false;
-  return isSafeUnitRelabel(extracted, clinicUnit);
+  return extractedUnitMatchesSelectedCatalog(row, options);
 }
 
 export const reviewProvenanceForSave = (
