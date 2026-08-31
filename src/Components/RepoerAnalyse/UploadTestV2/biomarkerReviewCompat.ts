@@ -1655,7 +1655,7 @@ export function isStaleUnitTargetMismatch(
 export const reviewProvenanceForSave = (
   row: Record<string, unknown>,
   options?: CategorizeReviewRowOptions,
-) => {
+): Record<string, unknown> => {
   const provenance = reviewProvenancePayloadFields(row);
   if (!isStaleUnitTargetMismatch(row, options)) {
     return provenance;

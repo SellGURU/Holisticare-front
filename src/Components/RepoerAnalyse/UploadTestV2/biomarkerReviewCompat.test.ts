@@ -1026,17 +1026,19 @@ describe('buildProcessLabReportPayload', () => {
       ],
     });
 
-    expect(payload.modified_biomarkers.biomarkers_list[0]).toMatchObject({
+    const savedRow = payload.modified_biomarkers.biomarkers_list[0] as Record<
+      string,
+      unknown
+    >;
+    expect(savedRow).toMatchObject({
       biomarker: 'Eosinophils %',
       original_unit: '%',
       system_biomarker_confirmed_by_user: true,
       resolution_source: 'manual_review',
     });
+    expect(savedRow.resolution_status).toBeUndefined();
     expect(
-      payload.modified_biomarkers.biomarkers_list[0].resolution_status,
-    ).toBeUndefined();
-    expect(
-      payload.modified_biomarkers.biomarkers_list[0].eligible_for_chart,
+      savedRow.eligible_for_chart,
     ).toBeUndefined();
   });
 });
