@@ -33,7 +33,6 @@ import {
   ensureUniqueBiomarkerIds,
   preserveBiomarkerIds,
   pinBiomarkerNameFields,
-  reviewProvenancePayloadFields,
 } from './biomarkerNameFields';
 import {
   buildBiomarkerRowsForValidation,
@@ -44,6 +43,9 @@ import {
   inferRowBiomarkerType,
   inferReviewReasonFromErrorText,
   isPhantomSuppressedRow,
+  isStaleUnitTargetMismatch,
+  clearedUnitTargetMismatchFields,
+  reviewProvenanceForSave,
   parseLabDateOfTest,
 } from './biomarkerReviewCompat';
 import BiomarkersApi from '../../../api/Biomarkers';
@@ -895,7 +897,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         list_of_genes: b['list_of_genes'],
         your_result: b['your_result'],
         validation_status: stringifyLabField(b.validation_status || 'ready'),
-        ...reviewProvenancePayloadFields(b),
+        ...reviewProvenanceForSave(b, { catalog: reviewCatalog }),
       };
     });
 
@@ -1330,14 +1332,23 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
   const buildContinueRows = () =>
     extractedBiomarkers.flatMap((row, index) => {
       if (isPhantomSuppressedRow(row)) return [];
+      const categorizeOptions = { catalog: reviewCatalog };
       const { category } = categorizeReviewRow(
         row,
         rowErrors,
         suppressedSet,
         index,
+        categorizeOptions,
       );
       if (category === 'excluded') return [];
-      return [{ ...row, validation_status: category }];
+      const next = { ...row, validation_status: category };
+      if (
+        category === 'ready' &&
+        isStaleUnitTargetMismatch(row, categorizeOptions)
+      ) {
+        Object.assign(next, clearedUnitTargetMismatchFields());
+      }
+      return [next];
     });
 
   const buildReadyRows = () =>
@@ -1438,6 +1449,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
         rowErrors,
         suppressedSet,
         index,
+        { catalog: reviewCatalog },
       );
       return category !== 'ready';
     }).length;

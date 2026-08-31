@@ -510,6 +510,7 @@ export const buildCategorizedRowsFromStepOneData = (
     validation?: any;
   },
   suppressedItems: SuppressedBiomarkerItem[] = [],
+  options?: CategorizeReviewRowOptions,
 ) => {
   const rows = Array.isArray(data.extracted_biomarkers)
     ? data.extracted_biomarkers
@@ -532,6 +533,7 @@ export const buildCategorizedRowsFromStepOneData = (
       rowErrors,
       suppressedSet,
       index,
+      options,
     );
     if (category === 'excluded') return [];
     return [{ ...row, validation_status: category }];
@@ -570,12 +572,14 @@ export const buildProcessLabReportPayload = ({
   labType,
   rows,
   dateOfTest,
+  catalog,
 }: {
   memberId: string | number;
   fileId: string;
   labType?: string;
   rows: any[];
   dateOfTest?: unknown;
+  catalog?: any[];
 }) => {
   const resolvedLabType = labType || 'more_info';
   const resolvedRows = buildBiomarkerRowsForValidation(
@@ -608,17 +612,7 @@ export const buildProcessLabReportPayload = ({
       validation_status: stringifyLabField(
         String(row.validation_status || '').trim() || 'ready',
       ),
-      ...(() => {
-        const provenance = reviewProvenancePayloadFields(row);
-        if (!isStaleUnitTargetMismatch(row)) {
-          return provenance;
-        }
-        const rest = { ...provenance };
-        delete rest.resolution_status;
-        delete rest.eligible_for_chart;
-        delete rest.eligible_for_scoring;
-        return rest;
-      })(),
+      ...reviewProvenanceForSave(row, catalog?.length ? { catalog } : undefined),
     };
   });
 
@@ -654,42 +648,11 @@ export type CategorizeReviewRowResult = {
 };
 
 export type CategorizeReviewRowOptions = {
+  catalog?: any[];
   clinicDefaultUnit?: string;
 };
 
-const extractedUnitIsPercent = (unit: string) => {
-  const normalized = trim(unit).toLowerCase();
-  return normalized === '%' || normalized === 'percent' || normalized === 'pct';
-};
-
-const selectedNameLooksLikePercentCard = (name: string) =>
-  /%|percent|percentage/i.test(trim(name));
-
-/** Quarantine left over after the reviewer picked a compatible catalog card/unit. */
-export function isStaleUnitTargetMismatch(
-  row: any,
-  clinicDefaultUnit?: string,
-): boolean {
-  if (
-    String(row?.resolution_status || '')
-      .trim()
-      .toLowerCase() !== 'unit_target_mismatch'
-  ) {
-    return false;
-  }
-  const extracted = trim(preferNonEmpty(row?.original_unit, row?.unit));
-  if (!extracted) return false;
-  const clinic = trim(clinicDefaultUnit);
-  if (clinic && extracted.toLowerCase() === clinic.toLowerCase()) {
-    return true;
-  }
-  return (
-    selectedNameLooksLikePercentCard(String(row?.biomarker || '')) &&
-    extractedUnitIsPercent(extracted)
-  );
-}
-
-/** Drop leftover percent/count quarantine once the selected card matches the extracted unit. */
+/** Drop leftover quarantine once the selected catalog card matches the extracted unit. */
 export const clearedUnitTargetMismatchFields = () =>
   ({
     resolution_status: null,
@@ -943,7 +906,7 @@ export const categorizeReviewRow = (
     String(row?.resolution_status || '')
       .trim()
       .toLowerCase() === 'unit_target_mismatch' &&
-    !isStaleUnitTargetMismatch(row, options?.clinicDefaultUnit)
+    !isStaleUnitTargetMismatch(row, options)
   ) {
     return { category: 'review', reviewReason: 'unit_mismatch' };
   }
@@ -984,6 +947,7 @@ export const mergeRowAfterStandardizeSuccess = (
   existingRow: Record<string, unknown>,
   standardizeData: Record<string, unknown>,
   overrides: Record<string, unknown> = {},
+  options?: CategorizeReviewRowOptions,
 ): Record<string, unknown> => {
   const skipStillApplies = standardizeResponseIndicatesSkip(standardizeData);
   const merged: Record<string, unknown> = {
@@ -992,7 +956,7 @@ export const mergeRowAfterStandardizeSuccess = (
     ...(skipStillApplies ? {} : clearedSkipMetadataAfterValidStandardize()),
     ...overrides,
   };
-  if (!skipStillApplies && isStaleUnitTargetMismatch(merged)) {
+  if (!skipStillApplies && isStaleUnitTargetMismatch(merged, options)) {
     return { ...merged, ...clearedUnitTargetMismatchFields() };
   }
   return merged;
@@ -1002,6 +966,7 @@ export const countReviewRowCategories = (
   rows: any[],
   rowErrors: Record<string, string>,
   suppressedSet: Set<string>,
+  options?: CategorizeReviewRowOptions,
 ) => {
   let ready = 0;
   let review = 0;
@@ -1012,6 +977,7 @@ export const countReviewRowCategories = (
       rowErrors,
       suppressedSet,
       index,
+      options,
     );
     if (category === 'ready') ready += 1;
     else if (category === 'review') review += 1;
@@ -1641,6 +1607,51 @@ export const pickCatalogEntryForRow = (catalog: any[], row: any) => {
   }
 
   return candidates.find((entry) => trim(entry.unit)) || candidates[0];
+};
+
+const clinicDefaultUnitForRow = (
+  row: any,
+  options?: CategorizeReviewRowOptions,
+) => {
+  const explicit = trim(options?.clinicDefaultUnit);
+  if (explicit) return explicit;
+  if (options?.catalog?.length) {
+    return trim(pickCatalogEntryForRow(options.catalog, row)?.unit);
+  }
+  return '';
+};
+
+/** Leftover backend flag is stale when the current extracted unit matches the selected catalog card. */
+export function isStaleUnitTargetMismatch(
+  row: any,
+  options?: CategorizeReviewRowOptions,
+): boolean {
+  if (
+    String(row?.resolution_status || '')
+      .trim()
+      .toLowerCase() !== 'unit_target_mismatch'
+  ) {
+    return false;
+  }
+  const extracted = trim(preferNonEmpty(row?.original_unit, row?.unit));
+  const clinicUnit = clinicDefaultUnitForRow(row, options);
+  if (!extracted || !clinicUnit) return false;
+  return isSafeUnitRelabel(extracted, clinicUnit);
+}
+
+export const reviewProvenanceForSave = (
+  row: Record<string, unknown>,
+  options?: CategorizeReviewRowOptions,
+) => {
+  const provenance = reviewProvenancePayloadFields(row);
+  if (!isStaleUnitTargetMismatch(row, options)) {
+    return provenance;
+  }
+  const rest = { ...provenance };
+  delete rest.resolution_status;
+  delete rest.eligible_for_chart;
+  delete rest.eligible_for_scoring;
+  return rest;
 };
 
 /** Resolve unit for standardize_biomarkers from row + catalog hints (UI only). */

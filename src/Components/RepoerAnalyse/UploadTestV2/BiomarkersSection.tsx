@@ -561,8 +561,9 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
         reviewBiomarkers,
         currentRowErrors,
         suppressedSet,
+        { catalog: effectiveCatalog },
       ),
-    [reviewBiomarkers, currentRowErrors, suppressedSet],
+    [reviewBiomarkers, currentRowErrors, suppressedSet, effectiveCatalog],
   );
 
   useEffect(() => {
@@ -584,9 +585,11 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
   const rowCategoryResults = useMemo(
     () =>
       reviewBiomarkers.map((row, index) =>
-        categorizeReviewRow(row, currentRowErrors, suppressedSet, index),
+        categorizeReviewRow(row, currentRowErrors, suppressedSet, index, {
+          catalog: effectiveCatalog,
+        }),
       ),
-    [reviewBiomarkers, currentRowErrors, suppressedSet],
+    [reviewBiomarkers, currentRowErrors, suppressedSet, effectiveCatalog],
   );
 
   const resolveExcludeDisplayName = (row: any) => {
@@ -1313,11 +1316,16 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
       updated = updated.map((b) =>
         b.biomarker_id === id
           ? pinBiomarkerNameFields(
-              mergeRowAfterStandardizeSuccess(b, result.data ?? {}, {
-                biomarker_id: id,
-                review_error_handled: hadExistingError,
-                unit_change_rejected: false,
-              }) as typeof b,
+              mergeRowAfterStandardizeSuccess(
+                b,
+                result.data ?? {},
+                {
+                  biomarker_id: id,
+                  review_error_handled: hadExistingError,
+                  unit_change_rejected: false,
+                },
+                { catalog: effectiveCatalog },
+              ) as typeof b,
               prior,
             )
           : b,
@@ -2017,6 +2025,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                             currentRowErrors,
                             suppressedSet,
                             originalIndex,
+                            { catalog: effectiveCatalog },
                           );
                         const excludedMetaEntry = buildSuppressionKeysForRow(b)
                           .map((key) => suppressedMeta[key])

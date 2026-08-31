@@ -408,7 +408,14 @@ describe('categorizeReviewRow restored_from_excluded', () => {
     });
   });
 
-  it('keeps percent/count mismatches in review instead of ready', () => {
+  it('keeps leftover mismatch in review when extracted unit still clashes with the selected card', () => {
+    const catalog = [
+      {
+        biomarker: 'Lymphocytes %',
+        biomarker_type: 'blood',
+        unit: '%',
+      },
+    ];
     const row = {
       biomarker: 'Lymphocytes %',
       original_biomarker_name: 'Lymphocytes (Absolute)',
@@ -420,13 +427,22 @@ describe('categorizeReviewRow restored_from_excluded', () => {
       eligible_for_chart: false,
     };
 
-    expect(categorizeReviewRow(row, {}, new Set(), 0)).toEqual({
+    expect(
+      categorizeReviewRow(row, {}, new Set(), 0, { catalog }),
+    ).toEqual({
       category: 'review',
       reviewReason: 'unit_mismatch',
     });
   });
 
-  it('clears leftover percent/count quarantine when extracted unit already matches the percent card', () => {
+  it('treats leftover mismatch as ready when extracted unit matches the selected catalog card', () => {
+    const catalog = [
+      {
+        biomarker: 'Eosinophils %',
+        biomarker_type: 'blood',
+        unit: '%',
+      },
+    ];
     const row = {
       biomarker: 'Eosinophils %',
       original_biomarker_name: 'Eosinophils',
@@ -437,12 +453,40 @@ describe('categorizeReviewRow restored_from_excluded', () => {
       eligible_for_chart: false,
     };
 
-    expect(categorizeReviewRow(row, {}, new Set(), 0)).toEqual({
+    expect(
+      categorizeReviewRow(row, {}, new Set(), 0, { catalog }),
+    ).toEqual({
       category: 'ready',
     });
   });
 
-  it('treats leftover quarantine as stale only when the extracted unit matches the percent card', () => {
+  it('treats leftover mismatch as ready for non-percent unit aliases', () => {
+    const catalog = [
+      { biomarker: 'Glucose', biomarker_type: 'blood', unit: 'mg/l' },
+    ];
+    const row = {
+      biomarker: 'Glucose',
+      original_biomarker_name: 'Glucose',
+      original_value: '90',
+      original_unit: 'mg/L',
+      resolution_status: 'unit_target_mismatch',
+    };
+
+    expect(
+      categorizeReviewRow(row, {}, new Set(), 0, { catalog }),
+    ).toEqual({
+      category: 'ready',
+    });
+  });
+
+  it('uses the selected catalog card unit, not the biomarker name, to decide leftover mismatch', () => {
+    const catalog = [
+      {
+        biomarker: 'Lymphocytes %',
+        biomarker_type: 'blood',
+        unit: '%',
+      },
+    ];
     const row = {
       biomarker: 'Lymphocytes %',
       original_biomarker_name: 'Lymphocytes',
@@ -451,12 +495,12 @@ describe('categorizeReviewRow restored_from_excluded', () => {
       resolution_status: 'unit_target_mismatch',
     };
 
-    expect(isStaleUnitTargetMismatch(row)).toBe(true);
+    expect(isStaleUnitTargetMismatch(row, { catalog })).toBe(true);
     expect(
-      isStaleUnitTargetMismatch({
-        ...row,
-        original_unit: 'cells/µL',
-      }),
+      isStaleUnitTargetMismatch(
+        { ...row, original_unit: 'cells/µL' },
+        { catalog },
+      ),
     ).toBe(false);
   });
 });
@@ -719,7 +763,14 @@ describe('mergeRowAfterStandardizeSuccess', () => {
     );
   });
 
-  it('drops leftover unit_target_mismatch after a valid percent standardize', () => {
+  it('drops leftover unit_target_mismatch after a valid standardize when catalog unit matches', () => {
+    const catalog = [
+      {
+        biomarker: 'Eosinophils %',
+        biomarker_type: 'blood',
+        unit: '%',
+      },
+    ];
     const merged = mergeRowAfterStandardizeSuccess(
       {
         biomarker: 'Eosinophils %',
@@ -736,11 +787,13 @@ describe('mergeRowAfterStandardizeSuccess', () => {
         original_value: '1.6',
         original_unit: '%',
       },
+      {},
+      { catalog },
     );
     expect(merged.resolution_status).toBeNull();
-    expect(categorizeReviewRow(merged, {}, new Set(), 0).category).toBe(
-      'ready',
-    );
+    expect(
+      categorizeReviewRow(merged, {}, new Set(), 0, { catalog }).category,
+    ).toBe('ready');
   });
 });
 
@@ -859,11 +912,18 @@ describe('buildProcessLabReportPayload', () => {
     expect(payload.modified_biomarkers.date_of_test).toBe(todayMs);
   });
 
-  it('does not re-send leftover percent/count quarantine on Continue', () => {
+  it('does not re-send leftover quarantine on Continue when catalog unit matches', () => {
     const payload = buildProcessLabReportPayload({
       memberId: 123,
       fileId: 'abc',
       labType: 'more_info',
+      catalog: [
+        {
+          biomarker: 'Eosinophils %',
+          biomarker_type: 'blood',
+          unit: '%',
+        },
+      ],
       rows: [
         {
           biomarker_id: 'eos-1',
