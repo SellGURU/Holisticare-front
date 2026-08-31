@@ -608,7 +608,17 @@ export const buildProcessLabReportPayload = ({
       validation_status: stringifyLabField(
         String(row.validation_status || '').trim() || 'ready',
       ),
-      ...reviewProvenancePayloadFields(row),
+      ...(() => {
+        const provenance = reviewProvenancePayloadFields(row);
+        if (!isStaleUnitTargetMismatch(row)) {
+          return provenance;
+        }
+        const rest = { ...provenance };
+        delete rest.resolution_status;
+        delete rest.eligible_for_chart;
+        delete rest.eligible_for_scoring;
+        return rest;
+      })(),
     };
   });
 
@@ -642,6 +652,53 @@ export type CategorizeReviewRowResult = {
   category: ReviewRowCategory;
   reviewReason?: ReviewReason;
 };
+
+export type CategorizeReviewRowOptions = {
+  clinicDefaultUnit?: string;
+};
+
+const extractedUnitIsPercent = (unit: string) => {
+  const normalized = trim(unit).toLowerCase();
+  return normalized === '%' || normalized === 'percent' || normalized === 'pct';
+};
+
+const selectedNameLooksLikePercentCard = (name: string) =>
+  /%|percent|percentage/i.test(trim(name));
+
+/** Quarantine left over after the reviewer picked a compatible catalog card/unit. */
+export function isStaleUnitTargetMismatch(
+  row: any,
+  clinicDefaultUnit?: string,
+): boolean {
+  if (
+    String(row?.resolution_status || '')
+      .trim()
+      .toLowerCase() !== 'unit_target_mismatch'
+  ) {
+    return false;
+  }
+  const extracted = trim(preferNonEmpty(row?.original_unit, row?.unit));
+  if (!extracted) return false;
+  const clinic = trim(clinicDefaultUnit);
+  if (clinic && extracted.toLowerCase() === clinic.toLowerCase()) {
+    return true;
+  }
+  return (
+    selectedNameLooksLikePercentCard(String(row?.biomarker || '')) &&
+    extractedUnitIsPercent(extracted)
+  );
+}
+
+/** Drop leftover percent/count quarantine once the selected card matches the extracted unit. */
+export const clearedUnitTargetMismatchFields = () =>
+  ({
+    resolution_status: null,
+    needs_review: false,
+    eligible_for_chart: null,
+    eligible_for_scoring: null,
+    source_unit: null,
+    target_catalog_unit: null,
+  }) as const;
 
 export type CategoryFilter =
   | 'default'
@@ -795,6 +852,7 @@ export const categorizeReviewRow = (
   rowErrors: Record<string, string>,
   suppressedSet: Set<string>,
   index: number,
+  options?: CategorizeReviewRowOptions,
 ): CategorizeReviewRowResult => {
   if (isPhantomSuppressedRow(row) || isRowSuppressed(row, suppressedSet)) {
     return { category: 'excluded' };
@@ -884,7 +942,8 @@ export const categorizeReviewRow = (
   if (
     String(row?.resolution_status || '')
       .trim()
-      .toLowerCase() === 'unit_target_mismatch'
+      .toLowerCase() === 'unit_target_mismatch' &&
+    !isStaleUnitTargetMismatch(row, options?.clinicDefaultUnit)
   ) {
     return { category: 'review', reviewReason: 'unit_mismatch' };
   }
@@ -927,12 +986,16 @@ export const mergeRowAfterStandardizeSuccess = (
   overrides: Record<string, unknown> = {},
 ): Record<string, unknown> => {
   const skipStillApplies = standardizeResponseIndicatesSkip(standardizeData);
-  return {
+  const merged: Record<string, unknown> = {
     ...existingRow,
     ...standardizeData,
     ...(skipStillApplies ? {} : clearedSkipMetadataAfterValidStandardize()),
     ...overrides,
   };
+  if (!skipStillApplies && isStaleUnitTargetMismatch(merged)) {
+    return { ...merged, ...clearedUnitTargetMismatchFields() };
+  }
+  return merged;
 };
 
 export const countReviewRowCategories = (

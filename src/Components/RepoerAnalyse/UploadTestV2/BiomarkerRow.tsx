@@ -22,6 +22,7 @@ import {
   isSafeUnitRelabel,
   mergeUnitOptionSources,
   parseUnitMismatchDetail,
+  clearedUnitTargetMismatchFields,
   type CategorizeReviewRowResult,
   type ReviewReason,
   isSystemBiomarkerValidForRow,
@@ -808,6 +809,13 @@ export default function BiomarkerRow({
                 const extractedUnit = String(
                   preferNonEmpty(biomarker.original_unit, biomarker.unit) || '',
                 ).trim();
+                if (
+                  catalogEntry?.unit &&
+                  extractedUnit &&
+                  isSafeUnitRelabel(extractedUnit, String(catalogEntry.unit))
+                ) {
+                  Object.assign(nextFields, clearedUnitTargetMismatchFields());
+                }
                 if (!extractedUnit && catalogEntry?.unit) {
                   nextFields.original_unit = catalogEntry.unit;
                 } else if (

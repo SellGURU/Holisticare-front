@@ -52,6 +52,7 @@ import {
   resolveUnitForStandardize,
   isSafeUnitRelabel,
   mergeRowAfterStandardizeSuccess,
+  clearedUnitTargetMismatchFields,
   type CategoryFilter,
   type SuppressedBiomarkerItem,
   mapBiomarkerRecognitionErrorMessage,
@@ -2063,6 +2064,7 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
                               ) {
                                 updateAndStandardize(b.biomarker_id, {
                                   original_unit: defaultUnit,
+                                  ...clearedUnitTargetMismatchFields(),
                                 });
                               }
                             }}

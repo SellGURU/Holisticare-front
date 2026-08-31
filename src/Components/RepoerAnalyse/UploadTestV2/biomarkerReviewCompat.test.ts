@@ -24,6 +24,7 @@ import {
   isValueValidForInputMode,
   resolveValueInputMode,
   isSafeUnitRelabel,
+  isStaleUnitTargetMismatch,
   mergeRowAfterStandardizeSuccess,
   mergeUnitOptionSources,
   parseUnitMismatchDetail,
@@ -424,6 +425,40 @@ describe('categorizeReviewRow restored_from_excluded', () => {
       reviewReason: 'unit_mismatch',
     });
   });
+
+  it('clears leftover percent/count quarantine when extracted unit already matches the percent card', () => {
+    const row = {
+      biomarker: 'Eosinophils %',
+      original_biomarker_name: 'Eosinophils',
+      original_value: '1.6',
+      original_unit: '%',
+      resolution_status: 'unit_target_mismatch',
+      validation_status: 'review',
+      eligible_for_chart: false,
+    };
+
+    expect(categorizeReviewRow(row, {}, new Set(), 0)).toEqual({
+      category: 'ready',
+    });
+  });
+
+  it('treats leftover quarantine as stale only when the extracted unit matches the percent card', () => {
+    const row = {
+      biomarker: 'Lymphocytes %',
+      original_biomarker_name: 'Lymphocytes',
+      original_value: '30.6',
+      original_unit: '%',
+      resolution_status: 'unit_target_mismatch',
+    };
+
+    expect(isStaleUnitTargetMismatch(row)).toBe(true);
+    expect(
+      isStaleUnitTargetMismatch({
+        ...row,
+        original_unit: 'cells/µL',
+      }),
+    ).toBe(false);
+  });
 });
 
 describe('filterSuppressedItemsForCurrentLab', () => {
@@ -683,6 +718,30 @@ describe('mergeRowAfterStandardizeSuccess', () => {
       'ready',
     );
   });
+
+  it('drops leftover unit_target_mismatch after a valid percent standardize', () => {
+    const merged = mergeRowAfterStandardizeSuccess(
+      {
+        biomarker: 'Eosinophils %',
+        original_biomarker_name: 'Eosinophils',
+        original_value: '1.6',
+        original_unit: '%',
+        resolution_status: 'unit_target_mismatch',
+        eligible_for_chart: false,
+      },
+      {
+        biomarker: 'Eosinophils %',
+        value: '1.6',
+        unit: '%',
+        original_value: '1.6',
+        original_unit: '%',
+      },
+    );
+    expect(merged.resolution_status).toBeNull();
+    expect(categorizeReviewRow(merged, {}, new Set(), 0).category).toBe(
+      'ready',
+    );
+  });
 });
 
 describe('categorizeReviewRow skip fallback', () => {
@@ -798,6 +857,44 @@ describe('buildProcessLabReportPayload', () => {
     });
 
     expect(payload.modified_biomarkers.date_of_test).toBe(todayMs);
+  });
+
+  it('does not re-send leftover percent/count quarantine on Continue', () => {
+    const payload = buildProcessLabReportPayload({
+      memberId: 123,
+      fileId: 'abc',
+      labType: 'more_info',
+      rows: [
+        {
+          biomarker_id: 'eos-1',
+          biomarker: 'Eosinophils %',
+          original_biomarker_name: 'Eosinophils',
+          original_value: '1.6',
+          original_unit: '%',
+          value: '1.6',
+          unit: '%',
+          validation_status: 'ready',
+          system_biomarker_confirmed_by_user: true,
+          resolution_source: 'manual_review',
+          resolution_status: 'unit_target_mismatch',
+          eligible_for_chart: false,
+          eligible_for_scoring: false,
+        },
+      ],
+    });
+
+    expect(payload.modified_biomarkers.biomarkers_list[0]).toMatchObject({
+      biomarker: 'Eosinophils %',
+      original_unit: '%',
+      system_biomarker_confirmed_by_user: true,
+      resolution_source: 'manual_review',
+    });
+    expect(
+      payload.modified_biomarkers.biomarkers_list[0].resolution_status,
+    ).toBeUndefined();
+    expect(
+      payload.modified_biomarkers.biomarkers_list[0].eligible_for_chart,
+    ).toBeUndefined();
   });
 });
 
