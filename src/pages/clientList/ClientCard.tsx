@@ -59,6 +59,15 @@ const ageFromDateOfBirth = (date: Date): number => {
   }
   return age;
 };
+
+const convertImageToDataUrl = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(reader.error);
+  });
+};
 interface ClientCardProps {
   client: any;
   indexItem: number;
@@ -218,6 +227,9 @@ const ClientCard: FC<ClientCardProps> = ({
     address: '',
   });
   const [editDateOfBirth, setEditDateOfBirth] = useState<Date | null>(null);
+  const [editPhoto, setEditPhoto] = useState('');
+  const [photoError, setPhotoError] = useState('');
+  const editPhotoInputRef = useRef<HTMLInputElement>(null);
 
   const applyEditDateOfBirth = (value: unknown) => {
     const parsed = parseDateOfBirth(value);
@@ -303,6 +315,11 @@ const ClientCard: FC<ClientCardProps> = ({
     setEditDateOfBirth(
       pickDateOfBirth(client.date_of_birth, client.dateOfBirth),
     );
+    setEditPhoto(String(client.picture || ''));
+    setPhotoError('');
+    if (editPhotoInputRef.current) {
+      editPhotoInputRef.current.value = '';
+    }
     setShowEditModal(true);
 
     Application.getClientInfo({ member_id: client.member_id })
@@ -374,6 +391,7 @@ const ClientCard: FC<ClientCardProps> = ({
       email: editForm.email.trim(),
       phone_number: editForm.phone_number.trim(),
       address: editForm.address.trim(),
+      picture: editPhoto,
     };
     if (editDateOfBirth) {
       payload.date_of_birth = formatDateOfBirth(editDateOfBirth);
@@ -389,6 +407,7 @@ const ClientCard: FC<ClientCardProps> = ({
           name:
             res?.data?.name || `${editForm.first_name} ${editForm.last_name}`,
           email: res?.data?.email || editForm.email.trim(),
+          picture: res?.data?.picture ?? editPhoto,
           ...(nextAge != null ? { age: nextAge } : {}),
           ...(editDateOfBirth
             ? { date_of_birth: formatDateOfBirth(editDateOfBirth) }
@@ -689,6 +708,7 @@ const ClientCard: FC<ClientCardProps> = ({
           if (!isSavingClientInfo) {
             setShowEditModal(false);
             setEditError('');
+            setPhotoError('');
           }
         }}
       >
@@ -697,6 +717,93 @@ const ClientCard: FC<ClientCardProps> = ({
             Edit Client Info
           </div>
           <div className="mt-4 grid grid-cols-1 gap-3">
+            <div>
+              <div className="text-xs font-medium mb-1">Photo</div>
+              <div className="flex items-center gap-3">
+                <div className="relative shrink-0">
+                  <img
+                    className="size-16 rounded-full object-cover border border-Gray-50"
+                    src={
+                      editPhoto ||
+                      `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        `${editForm.first_name} ${editForm.last_name}`.trim() ||
+                          client.name ||
+                          'Client',
+                      )}`
+                    }
+                    alt=""
+                    onError={(e: any) => {
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        client.name || 'Client',
+                      )}`;
+                    }}
+                  />
+                  {editPhoto ? (
+                    <button
+                      type="button"
+                      aria-label="Remove photo"
+                      onClick={() => {
+                        setEditPhoto('');
+                        setPhotoError('');
+                        if (editPhotoInputRef.current) {
+                          editPhotoInputRef.current.value = '';
+                        }
+                      }}
+                      className="absolute -top-1 -right-1 bg-white border border-Gray-50 rounded-full shadow-200"
+                    >
+                      <img src="/icons/close.svg" alt="" />
+                    </button>
+                  ) : null}
+                </div>
+                <div className="min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => editPhotoInputRef.current?.click()}
+                    className="text-xs font-medium text-Primary-DeepTeal"
+                  >
+                    {editPhoto ? 'Change photo' : 'Upload photo'}
+                  </button>
+                  <div className="text-[10px] text-Text-Secondary mt-1">
+                    PNG or JPG, up to 3 MB.
+                  </div>
+                </div>
+                <input
+                  ref={editPhotoInputRef}
+                  type="file"
+                  accept=".jpeg,.jpg,.png,image/jpeg,image/png"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const maxSizeInBytes = 3 * 1024 * 1024;
+                    const allowedTypes = [
+                      'image/jpeg',
+                      'image/jpg',
+                      'image/png',
+                    ];
+                    if (
+                      !allowedTypes.includes(file.type) ||
+                      file.size > maxSizeInBytes
+                    ) {
+                      setPhotoError(
+                        'File exceeds 3 MB or has an unsupported format.',
+                      );
+                      e.target.value = '';
+                      return;
+                    }
+                    setPhotoError('');
+                    convertImageToDataUrl(file)
+                      .then((url) => setEditPhoto(url))
+                      .catch(() =>
+                        setPhotoError('Could not read this image. Please try another photo.'),
+                      );
+                  }}
+                />
+              </div>
+              {photoError ? (
+                <div className="mt-1 text-[10px] text-[#FC5474]">{photoError}</div>
+              ) : null}
+            </div>
             <div>
               <div className="text-xs font-medium mb-1">First Name</div>
               <input
@@ -786,6 +893,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 if (!isSavingClientInfo) {
                   setShowEditModal(false);
                   setEditError('');
+                  setPhotoError('');
                 }
               }}
               className="text-sm font-medium cursor-pointer text-Text-Secondary"
@@ -1150,9 +1258,18 @@ const ClientCard: FC<ClientCardProps> = ({
           >
             <div
               // data-tooltip-id={`${client.member_id}-${client.name}`}
-              className="text-Text-Primary truncate max-w-[90px] sm:max-w-[100px] md:max-w-[150px] text-xs sm:text-[14px] font-medium text-nowrap mb-2 cursor-default"
+              className="text-Text-Primary text-xs sm:text-[14px] font-medium text-nowrap mb-2 cursor-default"
             >
-              <EllipsedTooltip text={client.name} />
+              <div className="flex items-center gap-1.5 min-w-0">
+                <div className="min-w-0 truncate max-w-[90px] sm:max-w-[100px] md:max-w-[130px]">
+                  <EllipsedTooltip text={client.name} />
+                </div>
+                {client.is_demo && (
+                  <span className="shrink-0 rounded-full bg-[#E8DEF8] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6750A4]">
+                    Demo
+                  </span>
+                )}
+              </div>
               {/* {client.name} */}
               {/* {client.name.length > 15 && (
                 <Tooltip

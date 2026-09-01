@@ -41,6 +41,7 @@ type ClientData = {
   weight: number;
   favorite?: boolean;
   archived?: boolean;
+  is_demo?: boolean;
   drift_analyzed?: boolean;
   assigned_to?: Array<string>;
   refresh_in_progress?: boolean;

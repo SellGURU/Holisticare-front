@@ -45,6 +45,11 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
                 <div className="max-w-[100px]">
                   <EllipsedTooltip text={row.original?.name || 'No Data'} />
                 </div>
+                {row.original?.is_demo && (
+                  <span className="shrink-0 rounded-full bg-[#E8DEF8] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#6750A4]">
+                    Demo
+                  </span>
+                )}
                 {/* <div className="truncate  max-w-[120px]">
                   <TooltipTextAuto maxWidth="120px">
                     {row.original?.name || 'No Data'}
