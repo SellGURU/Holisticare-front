@@ -60,6 +60,26 @@ class AdminApi {
     });
   }
 
+  static getClinicProfile(id: number) {
+    return axios.get(`${getBaseUrl()}/admin/clinics/${id}/profile`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static updateClinicProfile(
+    id: number,
+    data: {
+      name?: string;
+      logo?: string;
+      public_email?: string;
+      owner_login_email?: string;
+    },
+  ) {
+    return axios.patch(`${getBaseUrl()}/admin/clinics/${id}/profile`, data, {
+      headers: withAuthHeaders(),
+    });
+  }
+
   static grantTempClinicPassword(id: number) {
     return axios.post(
       `${getBaseUrl()}/admin/clinics/${id}/temp-password`,
