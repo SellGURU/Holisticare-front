@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 interface QuestionItemProps {
-  question: checkinType;
+  question: QuestionaryType;
   index?: number;
   onRemove: () => void;
   onEdit: () => void;

@@ -516,7 +516,9 @@ export const Questionary: React.FC<QuestionaryProps> = ({
       );
     }
   };
-  const visibleQuestions = fillableQuestions(questionsFormData?.questions);
+  const visibleQuestions = fillableQuestions<QuestionaryType>(
+    questionsFormData?.questions,
+  );
   const fillFormData = questionsFormData?.questions
     ? { ...questionsFormData, questions: visibleQuestions }
     : questionsFormData;

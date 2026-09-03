@@ -3,7 +3,6 @@ import {
   uniqueQueriesForDomains,
   shouldSkipRefetchForAppliedRevision,
   type DomainName,
-  type DomainOutcome,
   type OperationOutcomes,
   type ReportQueryName,
 } from './processingCompletion';

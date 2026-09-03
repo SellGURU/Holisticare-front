@@ -187,11 +187,6 @@ interface ReportAnalyseViewprops {
   setFirst_time_view?: (status: boolean) => void;
 }
 
-/** Wait for backend reprocessing to finish before hitting overview APIs. */
-const REPORT_REFRESH_DELAY_MS = 2000;
-/** Minimum gap between automatic report section refetches. */
-const REPORT_FETCH_COOLDOWN_MS = 5000;
-
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   memberID,
   isShare,
@@ -227,7 +222,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [overviewPollTimedOut, setOverviewPollTimedOut] = useState(false);
   const [lastCategoryRefetchRevision, setLastCategoryRefetchRevision] =
     useState<string | null>(null);
-  const [descriptionEpoch, setDescriptionEpoch] = useState(0);
+  const [descriptionEpoch] = useState(0);
   const descriptionPollLogCountRef = useRef(0);
   const hasFullOverviewRef = useRef(false);
   const wasOverviewProcessingRef = useRef(false);
@@ -881,10 +876,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     };
   }, [isHaveReport, location.pathname, location.search, navigate]);
 
-  const refreshReportDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const lastReportFetchAtRef = useRef(0);
   const labDeleteRefreshPendingRef = useRef(false);
 
   const clearReportSections = () => {
@@ -893,7 +884,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     setReferenceData(null);
     setConcerningResult([]);
     setConcerningResultIsLoaded(false);
-    lastReportFetchAtRef.current = 0;
     publish('overviewPollReset', {});
   };
 
@@ -1004,58 +994,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       clearTimeout(sourceRefreshFollowUpRef.current);
       sourceRefreshFollowUpRef.current = null;
     }
-  };
-
-  const scheduleReportDataFetch = () => {
-    const now = Date.now();
-    const elapsedSinceLastFetch = now - lastReportFetchAtRef.current;
-    const cooldownRemaining = Math.max(
-      0,
-      REPORT_FETCH_COOLDOWN_MS - elapsedSinceLastFetch,
-    );
-    const delayMs = Math.max(REPORT_REFRESH_DELAY_MS, cooldownRemaining);
-
-    if (refreshReportDebounceRef.current) {
-      clearTimeout(refreshReportDebounceRef.current);
-    }
-    refreshReportDebounceRef.current = setTimeout(() => {
-      lastReportFetchAtRef.current = Date.now();
-      fetchData({ force: true, silent: true });
-    }, delayMs);
-  };
-
-  const refreshReportSections = () => {
-    if (resolvedMemberID == null) return;
-    const gen = sourceRefreshGenRef.current;
-    invalidateHealthPlanCache(resolvedMemberID);
-    descriptionPollLogCountRef.current = 0;
-    setIsHaveReport(true);
-    closeUploadTestOverlay();
-    if (labDeleteRefreshPendingRef.current) {
-      clearReportSections();
-      labDeleteRefreshPendingRef.current = false;
-    }
-    getCached(
-      HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID),
-      () =>
-        Application.getPatientsInfo({
-          member_id: resolvedMemberID,
-        }).then((res) => res.data),
-      HEALTH_PLAN_TTL_MS,
-    )
-      .then((data) => {
-        if (gen !== sourceRefreshGenRef.current) return;
-        setUserInfoData(data);
-        setIsHaveReport(data.show_report || data.first_time_view);
-        setHasPartialReport(Boolean(data.has_partial_report));
-        setHasWearableData(data.has_wearable_data);
-        setQuestionnaires(data.questionnaires);
-        setDisableGenerate(data.has_minimum_data === false);
-      })
-      .catch((err) => {
-        console.error('Error refreshing patient info after progress:', err);
-      });
-    scheduleReportDataFetch();
   };
 
   const {
@@ -1192,7 +1130,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }
       if (
         shouldApplyCategoryResponse(data) ||
-        isDomainAuthoritative(data?.domain_outcomes?.client_summary?.state)
+        isDomainAuthoritative(
+          (data.domain_outcomes as OperationOutcomes | undefined)?.client_summary
+            ?.state,
+        )
       ) {
         setClientSummaryBoxs((prev: any) =>
           applyClientSummaryCategories(prev, data),
@@ -1246,14 +1187,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [labJobStatus]);
-
-  useEffect(() => {
-    return () => {
-      if (refreshReportDebounceRef.current) {
-        clearTimeout(refreshReportDebounceRef.current);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     const handleLabJobStarted = (event: CustomEvent) => {
