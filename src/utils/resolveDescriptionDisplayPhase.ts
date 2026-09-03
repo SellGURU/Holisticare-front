@@ -31,6 +31,12 @@ export function resolveDescriptionDisplayPhase(
   );
 
   if (!isActuallyReady) {
+    if (input.committedText) {
+      return {
+        phase: 'ready_unchanged',
+        nextCommittedText: input.committedText,
+      };
+    }
     if (input.isReprocessing) {
       return { phase: 'loading', nextCommittedText: null };
     }
@@ -39,12 +45,6 @@ export function resolveDescriptionDisplayPhase(
       return {
         phase: 'ready_unchanged',
         nextCommittedText: fallbackText,
-      };
-    }
-    if (input.committedText) {
-      return {
-        phase: 'ready_unchanged',
-        nextCommittedText: input.committedText,
       };
     }
     return { phase: 'loading', nextCommittedText: null };

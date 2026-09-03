@@ -36,6 +36,7 @@ Required:
 Optional:
 - "order"              (number)  Display order (1-based).
 - "options"            (string[]) Required when type is "checkbox" or "multiple_choice".
+- "option_scores"      (object)  Optional map of option label -> numeric score for formulas.
 - "unit"               (string)  e.g. "kg", "cm", "mg/dL".
 - "is_biomarker"       (boolean) If true, the answer itself becomes a biomarker.
 - "map_to_biomarker"   (string)  Canonical biomarker name when is_biomarker is true.
@@ -78,12 +79,12 @@ Fields per rule:
 
 ### Formula syntax (safe whitelist — NO eval)
 
-- Variables: question ids (e.g. q_weight, q_height). Non-numeric or missing responses cause the rule to skip silently.
-- Operators: + - * / // % ** and parentheses.
-- Comparisons: == != < <= > >= combined with "and" / "or".
-- Ternary: value_if_true if condition else value_if_false.
+- Variables: question ids (e.g. q_weight, q_smoke). Scored/numeric answers are numbers; Yes/No and choices without scores are labels like "Yes".
+- Operators: + - * / // % ** and parentheses (numbers only).
+- Comparisons: == != < <= > >= combined with "and" / "or". String equality is allowed.
+- Text output: if_(q_smoke == "Yes", "Smoker", "Non-smoker"). String literals max 128 chars.
 - Functions: sum(...), avg(...), min(...), max(...), round(x, n), abs(x), sqrt(x), if_(cond, a, b).
-- NOT allowed: attribute access, subscripts, lambdas, string literals, keyword arguments, imports, any name not in the variables dict.
+- NOT allowed: attribute access, subscripts, lambdas, f-strings, keyword arguments, imports.
 
 ### Full example
 
@@ -111,7 +112,8 @@ Fields per rule:
       "type": "multiple_choice",
       "required": true,
       "response": "",
-      "options": ["Not at all", "Several days", "More than half the days", "Nearly every day"]
+      "options": ["Not at all", "Several days", "More than half the days", "Nearly every day"],
+      "option_scores": { "Not at all": 0, "Several days": 1, "More than half the days": 2, "Nearly every day": 3 }
     }
   ],
   "scoring": [
@@ -123,6 +125,19 @@ Fields per rule:
       "unit": "kg/m^2",
       "formula": "q_weight / ((q_height / 100) ** 2)",
       "round": 2
+    },
+    {
+      "name": "GAD-7",
+      "is_biomarker": true,
+      "map_to_biomarker": "Anxiety Level",
+      "formula": "sum(q_gad_1)",
+      "round": 0
+    },
+    {
+      "name": "Smoking",
+      "is_biomarker": true,
+      "map_to_biomarker": "Smoking Status",
+      "formula": "if_(q_gad_1 == 'Several days', 'Mild', 'Other')"
     }
   ]
 }
@@ -177,6 +192,31 @@ const validateShape = (raw: any): ValidationResult => {
           );
         }
         seenIds.add(item.id);
+      }
+      if (item.option_scores !== undefined && item.option_scores !== null) {
+        if (
+          typeof item.option_scores !== 'object' ||
+          Array.isArray(item.option_scores)
+        ) {
+          throw new Error(
+            `Question #${index + 1} "option_scores" must be an object of label -> number.`,
+          );
+        }
+        const optionLabels = Array.isArray(item.options)
+          ? item.options.filter((opt: unknown) => typeof opt === 'string')
+          : [];
+        Object.entries(item.option_scores).forEach(([key, val]) => {
+          if (!optionLabels.includes(key)) {
+            throw new Error(
+              `Question #${index + 1} option_scores key "${key}" is not in options.`,
+            );
+          }
+          if (typeof val !== 'number' || !Number.isFinite(val)) {
+            throw new Error(
+              `Question #${index + 1} option_scores["${key}"] must be a number.`,
+            );
+          }
+        });
       }
       return item as QuestionaryType;
     },
@@ -439,6 +479,8 @@ const QuestionsJsonEditor: FC<QuestionsJsonEditorProps> = ({
           <div className="mt-1">
             BMI example:
             <code> q_weight / ((q_height / 100) ** 2)</code>
+            . Text example:
+            <code> if_(q_smoke == "Yes", "Smoker", "Non-smoker")</code>
           </div>
         </div>
       </div>

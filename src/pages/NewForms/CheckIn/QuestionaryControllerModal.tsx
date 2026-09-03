@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { BeatLoader } from 'react-spinners';
+import BiomarkersApi from '../../../api/Biomarkers';
 import FormsApi from '../../../api/Forms';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Checkbox from '../../../Components/checkbox';
@@ -13,6 +14,11 @@ import CalculationsEditor from './CalculationsEditor';
 import QuestionItem from './QuestionItem';
 import QuestionsJsonEditor from './QuestionsJsonEditor';
 import TimerPicker from './TimerPicker';
+import {
+  mapClinicCatalog,
+  uniqueQuestionId,
+  type FormCatalogItem,
+} from './questionFormula';
 
 const SCORING_SENTINEL_KEY = '__scoring__';
 
@@ -89,6 +95,17 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   const [autoAssign, setAutoAssign] = useState(false);
   const [genderRestriction, setGenderRestriction] = useState(false);
   const [gender, setGender] = useState('female');
+  const [catalog, setCatalog] = useState<Array<FormCatalogItem>>([]);
+  const [catalogLoading, setCatalogLoading] = useState(false);
+  useEffect(() => {
+    setCatalogLoading(true);
+    BiomarkersApi.getBiomarkersList({ include_all: true })
+      .then((res) => {
+        setCatalog(mapClinicCatalog(res.data));
+      })
+      .catch(() => setCatalog([]))
+      .finally(() => setCatalogLoading(false));
+  }, []);
   useEffect(() => {
     if (error && error == 'A form with the same title already exists.') {
       setTitleForm(templateData?.title || '');
@@ -173,6 +190,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             setGenderRestriction={setGenderRestriction}
             gender={gender}
             setGender={setGender}
+            catalog={catalog}
+            catalogLoading={catalogLoading}
           />
         );
       // case 'Reposition':
@@ -221,6 +240,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             setGenderRestriction={setGenderRestriction}
             gender={gender}
             setGender={setGender}
+            catalog={catalog}
+            catalogLoading={catalogLoading}
           />
         );
     }
@@ -514,6 +535,8 @@ interface AddQuestionaryProps {
   setGenderRestriction: (value: boolean) => void;
   gender: string;
   setGender: (value: string) => void;
+  catalog: Array<FormCatalogItem>;
+  catalogLoading: boolean;
 }
 
 const AddQuestionary: FC<AddQuestionaryProps> = ({
@@ -543,6 +566,8 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
   setGenderRestriction,
   gender,
   setGender,
+  catalog,
+  catalogLoading,
 }) => {
   const [questions, setQuestions] =
     useState<Array<QuestionaryType>>(upQuestions);
@@ -646,9 +671,22 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
                           }}
                           onCopy={() => {
                             setQuestions((pre) => {
+                              const taken = new Set(
+                                pre
+                                  .map((q) => q.id)
+                                  .filter(
+                                    (id): id is string => typeof id === 'string',
+                                  ),
+                              );
+                              const copy = {
+                                ...item,
+                                id: uniqueQuestionId(
+                                  item.id || item.question || 'q_item',
+                                  taken,
+                                ),
+                              };
                               const newItems = [...pre];
-                              newItems.splice(index + 1, 0, item);
-                              console.log(newItems);
+                              newItems.splice(index + 1, 0, copy);
                               return newItems;
                             });
                             const newIndex = index + 1;
@@ -702,6 +740,8 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
               onChange={onChangeScoring}
               questions={questions}
               onChangeQuestions={(next) => setQuestions(next)}
+              catalog={catalog}
+              catalogLoading={catalogLoading}
             />
           )}
           {viewMode === 'form' && questions.length == 0 && !addMore && (
@@ -758,6 +798,8 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
                 }}
                 questions={questions}
                 isQuestionary={isQuestionary}
+                catalog={catalog}
+                catalogLoading={catalogLoading}
               />
             </>
           )}

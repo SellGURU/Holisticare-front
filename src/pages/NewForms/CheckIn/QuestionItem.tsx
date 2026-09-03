@@ -29,10 +29,15 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
           copiedIndex ? 'border-Primary-DeepTeal' : 'border-Gray-50'
         }`}
       >
-        <div className="text-Text-Quadruple text-ellipsis overflow-hidden text-nowrap text-[10px] w-[40%]">
+        <div className="text-Text-Quadruple text-ellipsis overflow-hidden text-nowrap text-[10px] w-[40%] flex items-center gap-1">
           {index != undefined ? index + 1 + '.' : ''}
           {'  '}
-          {question.question}
+          <span className="truncate">{question.question}</span>
+          {'id' in question && question.id ? (
+            <code className="ml-1 shrink-0 rounded bg-[#E8F0F3] px-1 text-[9px] text-Primary-DeepTeal">
+              {question.id}
+            </code>
+          ) : null}
         </div>
         <div className="flex items-center justify-between w-full gap-4 md:w-[60%]">
           <div className="text-Orange text-[8px] flex items-center justify-center w-[30%]">
@@ -46,8 +51,16 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
             )}
             {question.required ? 'Required' : ''}
           </div>
-          <div className="text-Text-Quadruple text-[10px] md:w-[30%] flex items-center justify-center text-nowrap">
+          <div className="text-Text-Quadruple text-[10px] md:w-[30%] flex items-center justify-center text-nowrap gap-1">
             {question.type}
+            {'is_biomarker' in question &&
+            question.is_biomarker &&
+            'map_to_biomarker' in question &&
+            question.map_to_biomarker ? (
+              <span className="hidden max-w-[90px] truncate rounded-full bg-[#E8F0F3] px-1.5 py-[1px] text-[8px] text-Primary-DeepTeal md:inline">
+                {question.map_to_biomarker}
+              </span>
+            ) : null}
           </div>
           <div
             className={`flex items-center justify-end ${sureRemove ? 'md:w-[45%]' : 'md:w-[38%]'}`}

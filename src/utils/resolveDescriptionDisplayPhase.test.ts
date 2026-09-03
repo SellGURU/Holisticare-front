@@ -46,12 +46,13 @@ describe('resolveDescriptionDisplayPhase', () => {
     expect(result.nextCommittedText).toBe('B');
   });
 
-  it('holds committed text during processing when not ready', () => {
+  it('holds committed text during reprocessing until the new description is ready', () => {
     const result = resolveDescriptionDisplayPhase({
       descriptionReady: false,
       descriptionText: 'wrong interim',
       committedText: 'A',
       overviewProcessing: true,
+      isReprocessing: true,
     });
     expect(result.phase).toBe('ready_unchanged');
     expect(result.nextCommittedText).toBe('A');

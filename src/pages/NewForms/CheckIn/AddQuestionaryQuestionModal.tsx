@@ -1,8 +1,15 @@
 import { ChangeEvent, FC, useEffect, useState } from 'react';
 import CheckBoxSelection from './CheckBoxSelection';
+import FormCatalogBiomarkerPicker from './FormCatalogBiomarkerPicker';
 import MultiChoceSelection from './MultichoiceSelection';
 import Toggle from '../../../Components/RepoerAnalyse/Boxs/Toggle';
 import { SelectBoxField, TextField } from '../../../Components/UnitComponents';
+import {
+  fillSequentialScores,
+  pruneOptionScores,
+  resolveQuestionId,
+  type FormCatalogItem,
+} from './questionFormula';
 
 interface AddQuestionsModalProps {
   onCancel: () => void;
@@ -11,6 +18,8 @@ interface AddQuestionsModalProps {
   isQuestionary?: boolean;
   setQuestionStep: (value: number) => void;
   questions?: Array<QuestionaryType>;
+  catalog?: Array<FormCatalogItem>;
+  catalogLoading?: boolean;
 }
 
 const checkInTypes = [
@@ -88,6 +97,8 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
   isQuestionary,
   setQuestionStep,
   questions = [],
+  catalog = [],
+  catalogLoading = false,
 }) => {
   const [qustion, setQuestion] = useState(
     editQUestion ? editQUestion?.question : '',
@@ -132,8 +143,20 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
   const [action, setAction] = useState(
     editQUestion?.conditions?.[0]?.actions?.[0]?.type || '',
   );
-  const [advancedSettings, setAdvancedSettings] = useState(false);
-  const [biomarker] = useState(editQUestion?.is_biomarker || false);
+  const [advancedSettings, setAdvancedSettings] = useState(
+    Boolean(editQUestion?.is_biomarker),
+  );
+  const [questionId, setQuestionId] = useState(editQUestion?.id || '');
+  const [biomarker, setBiomarker] = useState(
+    editQUestion?.is_biomarker || false,
+  );
+  const [mapToBiomarker, setMapToBiomarker] = useState(
+    editQUestion?.map_to_biomarker || '',
+  );
+  const [unit, setUnit] = useState(editQUestion?.unit || '');
+  const [optionScores, setOptionScores] = useState<Record<string, number>>(
+    editQUestion?.option_scores || {},
+  );
   const [clientInsights, setClientInsights] = useState(
     editQUestion?.use_in_insight || editQUestion?.use_in_insights || false,
   );
@@ -175,14 +198,15 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
       const nonEmptyOptions = CheckBoxoptions.filter(
         (opt) => opt.trim() !== '',
       );
-      return nonEmptyOptions.length < 2;
+      if (nonEmptyOptions.length < 2) return true;
     }
     if (type === 'multiple_choice') {
       const nonEmptyOptions = multiChoiceOptions.filter(
         (opt) => opt.trim() !== '',
       );
-      return nonEmptyOptions.length < 2;
+      if (nonEmptyOptions.length < 2) return true;
     }
+    if (biomarker && !mapToBiomarker.trim()) return true;
     return false;
   };
   const toSnakeCase = (text: string) => text.toLowerCase().replace(/\s+/g, '_');
@@ -190,23 +214,36 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
   const submit = () => {
     setShowValidation(true);
     if (!isDisabled() && !hasValidationErrors()) {
+      const options =
+        type == 'checkbox'
+          ? CheckBoxoptions
+          : type == 'multiple_choice'
+            ? multiChoiceOptions
+            : undefined;
+      const prunedScores =
+        options && Object.keys(optionScores).length > 0
+          ? pruneOptionScores(options, optionScores)
+          : {};
       const resolvedQuestion: QuestionaryType = {
         order: editQUestion?.order || 0,
-        map_to_biomarker: editQUestion?.map_to_biomarker || '',
+        id: resolveQuestionId(
+          questionId,
+          qustion,
+          questions,
+          editQUestion?.order,
+        ),
+        map_to_biomarker: biomarker ? mapToBiomarker.trim() : '',
         hide: editQUestion?.hide || false,
         use_function_calculation:
           editQUestion?.use_function_calculation || false,
-        unit: editQUestion?.unit || '',
+        unit: biomarker ? unit : editQUestion?.unit || '',
         question: qustion,
         required: required,
         response: '',
         type: type,
-        options:
-          type == 'checkbox'
-            ? CheckBoxoptions
-            : type == 'multiple_choice'
-              ? multiChoiceOptions
-              : undefined,
+        options,
+        option_scores:
+          Object.keys(prunedScores).length > 0 ? prunedScores : undefined,
         is_biomarker: biomarker,
         use_in_insight: clientInsights,
         use_in_insights: clientInsights,
@@ -368,6 +405,9 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
               setCheckBoxOptions(values);
             }}
             showValidation={showValidation && type === 'checkbox'}
+            showScores={Boolean(isQuestionary)}
+            scores={optionScores}
+            onScoresChange={setOptionScores}
           ></CheckBoxSelection>
 
           <MultiChoceSelection
@@ -384,7 +424,21 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
               setMutiChoiceOptions(values);
             }}
             showValidation={showValidation && type === 'multiple_choice'}
+            showScores={Boolean(isQuestionary)}
+            scores={optionScores}
+            onScoresChange={setOptionScores}
           ></MultiChoceSelection>
+          {isQuestionary && type === 'multiple_choice' && (
+            <button
+              type="button"
+              onClick={() =>
+                setOptionScores(fillSequentialScores(multiChoiceOptions))
+              }
+              className="text-[11px] text-Primary-DeepTeal"
+            >
+              Fill formula scores 0, 1, 2, 3…
+            </button>
+          )}
         </div>
         {type == '' && showValidation && (
           <div className="text-Red text-[10px] mt-2">
@@ -504,12 +558,18 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             </div>
             {advancedSettings && (
               <div className="grid grid-cols-1 md:grid-cols-2 mt-2 flex-wrap">
-                {/* <AdvancedItems
+                <AdvancedItems
                   checked={biomarker}
-                  onChange={(e) => setBiomarker(e.target.checked)}
+                  onChange={(e) => {
+                    const next = e.target.checked;
+                    setBiomarker(next);
+                    if (!next) {
+                      setMapToBiomarker('');
+                    }
+                  }}
                   label="biomarker"
                   description="This question measures a biomarker."
-                /> */}
+                />
                 <AdvancedItems
                   checked={clientInsights}
                   onChange={(e) => setClientInsights(e.target.checked)}
@@ -540,6 +600,42 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
                   label="allergy"
                   description="Response used for Allergy."
                 />
+                <div className="col-span-1 md:col-span-2 mt-3 space-y-1">
+                  <div className="text-[11px] font-medium text-Text-Primary">
+                    Used in formulas (optional)
+                  </div>
+                  <input
+                    placeholder="e.g. q_weight — leave blank to auto-generate"
+                    className="w-full h-[32px] border border-Gray-50 bg-backgroundColor-Card rounded-xl text-xs font-light px-3"
+                    type="text"
+                    value={questionId}
+                    onChange={(e) => setQuestionId(e.target.value)}
+                  />
+                </div>
+                {biomarker && (
+                  <div className="col-span-1 md:col-span-2 mt-3 space-y-2">
+                    <div className="text-[11px] font-medium text-Text-Primary">
+                      Map to clinic biomarker
+                      <span className="text-red-500"> *</span>
+                    </div>
+                    <FormCatalogBiomarkerPicker
+                      items={catalog}
+                      value={mapToBiomarker}
+                      loading={catalogLoading}
+                      error={showValidation && !mapToBiomarker.trim()}
+                      onChange={(item) => {
+                        setMapToBiomarker(item?.name || '');
+                        if (item?.unit) setUnit(item.unit);
+                      }}
+                    />
+                    {showValidation && !mapToBiomarker.trim() && (
+                      <div className="text-[10px] text-Red">
+                        Select a catalog biomarker when this question maps to a
+                        biomarker.
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </>

@@ -8,7 +8,6 @@ import SpinnerLoader from '../SpinnerLoader';
 import { GitPullRequest, Merge, RefreshCcw } from 'lucide-react';
 import { SlideOutPanel } from '../SlideOutPanel';
 import Application from '../../api/app';
-import { invalidateHealthPlanCache } from '../../utils/cacheKeys';
 import { useParams } from 'react-router-dom';
 import { formatRelativeDate } from '../../utils/formatRelativeDate';
 import { isManualLabEntry } from '../../utils/manualEntry';
@@ -17,6 +16,12 @@ import {
   COMPILE_STARTED_EVENT,
   startCompileFromUi,
 } from '../../utils/compileFromNeedRefreshModal';
+import {
+  OVERVIEW_PROCESSING_CHANGED_EVENT,
+  isOverviewDataSettled,
+  resolveCompileButtonState,
+} from '../../utils/compileButtonState';
+import { visibilityPollMs } from '../../utils/visibilityPoll';
 // import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 // import Tooltip from '../../../'; // فرضی
 interface CompileButtonProps {
@@ -37,6 +42,7 @@ const CompileButton: FC<CompileButtonProps> = ({
   const [isCompiling, setIsCompiling] = useState(false);
   const [beRecompile, setBeRecompile] = useState(false);
   const [latestRefresh, setLatestRefresh] = useState<string | null>(null);
+  const [overviewProcessing, setOverviewProcessing] = useState(false);
   // const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   // const [completedIdes, setCompletedIdes] = useState<Array<string>>([]);
 
@@ -44,35 +50,34 @@ const CompileButton: FC<CompileButtonProps> = ({
   useEffect(() => {
     setLatestRefresh(userInfoData?.latest_refresh);
   }, [userInfoData]);
-  const state = useMemo(() => {
-    const isProgressing = progressData
-      .filter((el) => el.category != 'refresh')
-      .some((item) => item.process_status === false);
-    const isCompilingprogress = progressData
-      .filter((el) => el.category === 'refresh')
-      .some((item) => item.process_status === false);
-    if (isCompilingprogress || isCompiling) return 'COMPILING';
-    if (isLoading) return 'LOADING';
-    if (isProgressing) return 'PROGRESSING';
-    if (needCompile) return 'READY_TO_COMPILE';
-    if (isSyncing) return 'SYNCING';
-    if (beRecompile) return 'RECOMPILE';
-    if (progressData.length === 0) return 'IDLE';
-    return 'READY_TO_COMPILE';
-  }, [
-    progressData,
-    isSyncing,
-    isLoading,
-    needCompile,
-    isCompiling,
-    beRecompile,
-  ]);
+  const state = useMemo(
+    () =>
+      resolveCompileButtonState({
+        progressData,
+        isCompiling,
+        isLoading,
+        needCompile,
+        isSyncing,
+        beRecompile,
+        overviewProcessing,
+      }),
+    [
+      progressData,
+      isSyncing,
+      isLoading,
+      needCompile,
+      isCompiling,
+      beRecompile,
+      overviewProcessing,
+    ],
+  );
   const hasInFlightUpload = useMemo(
     () =>
+      overviewProcessing ||
       progressData
         .filter((el) => el.category !== 'refresh')
         .some((item) => item.process_status === false),
-    [progressData],
+    [progressData, overviewProcessing],
   );
   const resolveSectionName = (item: any) => {
     if (item.category === 'file') {
@@ -262,12 +267,16 @@ const CompileButton: FC<CompileButtonProps> = ({
     const handleCompileFailed = () => {
       setIsCompiling(false);
     };
+    const handleOverviewProcessingChanged = (data?: any) => {
+      setOverviewProcessing(Boolean(data?.detail?.processing));
+    };
 
     subscribe('openProgressModal', handleOpenProgressModal);
     subscribe('allProgressCompleted', handleAllProgressCompleted);
     subscribe('syncReport', handleSyncReport);
     subscribe(COMPILE_STARTED_EVENT, handleCompileStarted);
     subscribe(COMPILE_FAILED_EVENT, handleCompileFailed);
+    subscribe(OVERVIEW_PROCESSING_CHANGED_EVENT, handleOverviewProcessingChanged);
 
     return () => {
       unsubscribe('openProgressModal', handleOpenProgressModal);
@@ -275,6 +284,10 @@ const CompileButton: FC<CompileButtonProps> = ({
       unsubscribe('syncReport', handleSyncReport);
       unsubscribe(COMPILE_STARTED_EVENT, handleCompileStarted);
       unsubscribe(COMPILE_FAILED_EVENT, handleCompileFailed);
+      unsubscribe(
+        OVERVIEW_PROCESSING_CHANGED_EVENT,
+        handleOverviewProcessingChanged,
+      );
     };
   }, []);
 
@@ -285,7 +298,6 @@ const CompileButton: FC<CompileButtonProps> = ({
       Application.checkRefreshProgress(id as string)
         .then((res) => {
           if (res?.data?.status) {
-            invalidateHealthPlanCache(id);
             setIsCompiling(false);
             setNeedCompile(false);
             setshowProgressModal(false);
@@ -299,7 +311,7 @@ const CompileButton: FC<CompileButtonProps> = ({
             publish('healthPlanProcessingComplete', {
               member_id: Number(id),
             });
-            publish('syncReport', { fullReload: true });
+            publish('syncReport', { silent: true });
             checkRefrashData();
           }
         })
@@ -307,6 +319,41 @@ const CompileButton: FC<CompileButtonProps> = ({
     }, 5000);
     return () => clearInterval(interval);
   }, [isCompiling, id]);
+
+  // Overview poll can stop after domains are ready while the button still says
+  // Processing. Re-check the snapshot so the label cannot stay stuck.
+  useEffect(() => {
+    if (state !== 'PROGRESSING' || !id) return;
+    let cancelled = false;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const releaseIfIdle = () => {
+      Application.getOverviewProcessingSnapshot({ member_id: Number(id) })
+        .then((res) => {
+          if (cancelled) return;
+          if (!isOverviewDataSettled(res.data || {})) return;
+          publish(OVERVIEW_PROCESSING_CHANGED_EVENT, { processing: false });
+          publish('allProgressCompleted', {});
+        })
+        .catch(() => {});
+    };
+
+    const schedule = (ms: number) => {
+      timeoutId = setTimeout(() => {
+        releaseIfIdle();
+        if (!cancelled) {
+          schedule(visibilityPollMs(8000));
+        }
+      }, ms);
+    };
+
+    schedule(15000);
+
+    return () => {
+      cancelled = true;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [state, id]);
 
   /* ---------- UI config ---------- */
 
@@ -360,15 +407,13 @@ const CompileButton: FC<CompileButtonProps> = ({
           (item) => item.category === 'refresh',
         );
         if (hasRefresh && id) {
-          invalidateHealthPlanCache(id);
           publish('healthPlanProcessingComplete', {
             member_id: Number(id),
           });
         }
         checkRefrashData();
         publish('syncReport', {
-          fullReload: hasRefresh,
-          silent: !hasRefresh,
+          silent: true,
         });
       }
     }

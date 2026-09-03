@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { resolveDescriptionDisplayPhase } from '../utils/resolveDescriptionDisplayPhase';
 
 export function useCategoryDescriptionDisplay(params: {
@@ -12,32 +12,10 @@ export function useCategoryDescriptionDisplay(params: {
   descriptionEpoch?: number;
 }) {
   const [committedText, setCommittedText] = useState<string | null>(null);
-  const prevRevisionRef = useRef<string | null>(null);
-  const prevProcessingRef = useRef(false);
 
   useEffect(() => {
     setCommittedText(null);
-  }, [params.categoryKey, params.descriptionEpoch]);
-
-  useEffect(() => {
-    const rev = params.dataRevision ?? null;
-    if (
-      params.overviewProcessing &&
-      prevRevisionRef.current != null &&
-      rev != null &&
-      rev !== prevRevisionRef.current
-    ) {
-      setCommittedText(null);
-    }
-    prevRevisionRef.current = rev;
-  }, [params.dataRevision, params.overviewProcessing]);
-
-  useEffect(() => {
-    if (params.overviewProcessing && !prevProcessingRef.current) {
-      setCommittedText(null);
-    }
-    prevProcessingRef.current = params.overviewProcessing;
-  }, [params.overviewProcessing]);
+  }, [params.categoryKey]);
 
   const isReprocessing =
     params.overviewProcessing && params.descriptionPending === true;

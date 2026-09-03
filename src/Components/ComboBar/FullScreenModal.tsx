@@ -44,8 +44,16 @@ const FullScreenModal = () => {
 
         isProcessingRef.current = true;
 
-        // const receivedData = event.data.data;
-        publish('checkProgress', {});
+        const receivedData = event.data.data || {};
+        if (receivedData.isFill || receivedData.isUpdate) {
+          publish('questionnaireSaved', {
+            member_id: receivedData.member_id,
+            f_unique_id: receivedData.f_unique_id,
+            q_unique_id: receivedData.q_unique_id,
+            action: receivedData.isUpdate ? 'edited' : 'entered',
+          });
+        }
+        publish('checkProgress', { source: 'questionnaire' });
         setIsOpen(false);
         publish('reloadQuestionnaires', {});
         publish('reloadMainQuestionnaires', {});

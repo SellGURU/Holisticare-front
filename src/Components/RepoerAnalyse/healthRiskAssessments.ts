@@ -362,6 +362,18 @@ export function riskContributions(
   });
 }
 
+export function shouldHideHealthRisksSection({
+  hasVisibleData,
+  loading,
+  hasActiveType,
+}: {
+  hasVisibleData: boolean;
+  loading: boolean;
+  hasActiveType: boolean;
+}): boolean {
+  return !hasVisibleData && (loading || !hasActiveType);
+}
+
 export function useHealthRiskAssessments(
   memberId: number | null,
   enabled = true,
@@ -391,6 +403,7 @@ export function useHealthRiskAssessments(
       ) {
         return;
       }
+      if (detail.domain && detail.domain !== 'risk_assessments') return;
       setSnapshotTick((tick) => tick + 1);
     };
     const onCompileReload = (event?: Event) => {
@@ -399,12 +412,12 @@ export function useHealthRiskAssessments(
       if (detail.fullReload !== true) return;
       onScoringComplete(event);
     };
-    subscribe('healthPlanProcessingComplete', onScoringComplete);
-    subscribe('allProgressCompleted', onScoringComplete);
+    subscribe('processingDomainReady', onScoringComplete);
+    subscribe('labReportDeleted', onScoringComplete);
     subscribe('syncReport', onCompileReload);
     return () => {
-      unsubscribe('healthPlanProcessingComplete', onScoringComplete);
-      unsubscribe('allProgressCompleted', onScoringComplete);
+      unsubscribe('processingDomainReady', onScoringComplete);
+      unsubscribe('labReportDeleted', onScoringComplete);
       unsubscribe('syncReport', onCompileReload);
     };
   }, [enabled, memberId]);
@@ -430,8 +443,10 @@ export function useHealthRiskAssessments(
       })
       .catch(() => {
         if (!cancelled) {
-          setAssessments([]);
-          setActiveTypes([]);
+          if (!hasLoadedRef.current) {
+            setAssessments([]);
+            setActiveTypes([]);
+          }
           setError(true);
         }
       })

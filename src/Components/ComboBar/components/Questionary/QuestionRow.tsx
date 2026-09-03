@@ -111,13 +111,14 @@ const QuestionRow: FC<QuestionRowProps> = ({
     })
       .then(() => {
         onReload();
+        publish('questionnaireDeleted', { member_id });
+        publish('reloadMainQuestionnaires', {});
+        publish('reloadQuestionnaires', {});
+        publish('checkProgress', { source: 'questionnaire' });
       })
       .catch((err) => {
         console.error(err);
       });
-    setTimeout(() => {
-      publish('checkProgress', {});
-    }, 1000);
     // handleCloseSlideOutPanel();
   };
   // const resloveSyncTitle = () => {

@@ -5,6 +5,7 @@ type CacheEntry<T> = {
 
 const store = new Map<string, CacheEntry<unknown>>();
 const inFlight = new Map<string, Promise<unknown>>();
+let cacheGeneration = 0;
 
 const DEFAULT_TTL_MS = 5 * 60 * 1000;
 const HEALTHPLAN_PREFIX = 'portal:healthplan:';
@@ -72,8 +73,10 @@ const revalidateInBackground = <T>(
   key: string,
   fetcher: () => Promise<T>,
 ): void => {
+  const gen = cacheGeneration;
   void fetcher()
     .then((data) => {
+      if (cacheGeneration !== gen) return;
       writeStore(key, data);
     })
     .catch(() => {
@@ -90,13 +93,18 @@ const fetchAndStore = <T>(
     return pending;
   }
 
+  const gen = cacheGeneration;
   const promise = fetcher()
     .then((data) => {
-      writeStore(key, data);
+      if (cacheGeneration === gen) {
+        writeStore(key, data);
+      }
       return data;
     })
     .finally(() => {
-      inFlight.delete(key);
+      if (inFlight.get(key) === promise) {
+        inFlight.delete(key);
+      }
     });
 
   inFlight.set(key, promise);
@@ -132,6 +140,14 @@ export async function getCachedUntilInvalidated<T>(
   return fetchAndStore(key, fetcher);
 }
 
+export async function fetchFresh<T>(
+  key: string,
+  fetcher: () => Promise<T>,
+): Promise<T> {
+  removeCachedKey(key);
+  return fetchAndStore(key, fetcher);
+}
+
 export function hasCached(key: string): boolean {
   return store.has(key);
 }
@@ -145,7 +161,16 @@ export function listPageCacheKeys(): string[] {
   return [...store.keys()];
 }
 
+export function listInFlightCacheKeys(): string[] {
+  return [...inFlight.keys()];
+}
+
+export function bumpCacheGeneration(): void {
+  cacheGeneration += 1;
+}
+
 export function removeCachedKey(key: string): void {
+  cacheGeneration += 1;
   store.delete(key);
   inFlight.delete(key);
   if (key.startsWith(HEALTHPLAN_PREFIX)) {
@@ -154,6 +179,7 @@ export function removeCachedKey(key: string): void {
 }
 
 export function invalidate(keyPrefix?: string): void {
+  cacheGeneration += 1;
   if (!keyPrefix) {
     store.clear();
     inFlight.clear();
@@ -161,7 +187,7 @@ export function invalidate(keyPrefix?: string): void {
     return;
   }
 
-  for (const key of store.keys()) {
+  for (const key of new Set([...store.keys(), ...inFlight.keys()])) {
     if (key.startsWith(keyPrefix)) {
       store.delete(key);
       inFlight.delete(key);
@@ -171,6 +197,7 @@ export function invalidate(keyPrefix?: string): void {
 }
 
 export function __resetPageCacheForTests(): void {
+  cacheGeneration = 0;
   store.clear();
   inFlight.clear();
   if (canUseSessionStorage()) {

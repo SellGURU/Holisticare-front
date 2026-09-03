@@ -6,6 +6,9 @@ interface MultiChoceSelectionProps {
   onChange: (options: Array<string>) => void;
   values: Array<string>;
   showValidation?: boolean;
+  showScores?: boolean;
+  scores?: Record<string, number>;
+  onScoresChange?: (scores: Record<string, number>) => void;
 }
 
 const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
@@ -14,6 +17,9 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
   onChange,
   values,
   showValidation = false,
+  showScores = false,
+  scores = {},
+  onScoresChange,
 }) => {
   const [options, setOptions] = useState(values);
   const [error, setError] = useState(false);
@@ -23,14 +29,36 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
   };
 
   const handleChoiceOptionChange = (index: number, value: string) => {
+    const oldLabel = options[index];
     const newOptions = [...options];
     newOptions[index] = value;
     setOptions(newOptions);
+    if (onScoresChange && oldLabel && oldLabel !== value && oldLabel in scores) {
+      const next = { ...scores };
+      if (value.trim()) {
+        next[value] = next[oldLabel];
+      }
+      delete next[oldLabel];
+      onScoresChange(next);
+    }
+  };
+
+  const handleScoreChange = (label: string, raw: string) => {
+    if (!onScoresChange || !label.trim()) return;
+    const next = { ...scores };
+    if (raw === '') {
+      delete next[label];
+    } else {
+      const parsed = Number(raw);
+      if (Number.isFinite(parsed)) {
+        next[label] = parsed;
+      }
+    }
+    onScoresChange(next);
   };
 
   useEffect(() => {
     onChange(options);
-    // Check if there are at least 2 non-empty options
     const nonEmptyOptions = options.filter((opt) => opt.trim() !== '');
     setError(showValidation && nonEmptyOptions.length < 2);
   }, [options, showValidation]);
@@ -61,30 +89,43 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
           </div>
         </div>
         {isActive && (
-          <div className="flex items-start w-full mt-2 max-h-[150px] overflow-y-auto pr-2">
-            <div className="gap-1 grid grid-cols-1 md:grid-cols-2 w-full">
+          <div className="flex items-start w-full mt-2 max-h-[180px] overflow-y-auto pr-2">
+            <div className="gap-1 grid grid-cols-1 w-full">
               {options.map((option, index) => {
                 return (
                   <div
                     className="flex items-center justify-center gap-1"
                     key={index}
                   >
-                    {/* <div className="w-3 h-3 rounded-[8px] border border-Primary-DeepTeal"></div> */}
                     <input
                       placeholder={`Option ${index + 1}`}
                       value={option}
                       onChange={(e) =>
                         handleChoiceOptionChange(index, e.target.value)
                       }
-                      className={`bg-backgroundColor-Card border  rounded-2xl py-1 px-2 text-[8px] w-full`}
+                      className="bg-backgroundColor-Card border rounded-2xl py-1 px-2 text-[11px] w-full"
                     />
+                    {showScores ? (
+                      <input
+                        type="number"
+                        placeholder="Score"
+                        title="Formula score"
+                        value={
+                          option.trim() && option in scores
+                            ? String(scores[option])
+                            : ''
+                        }
+                        onChange={(e) =>
+                          handleScoreChange(option, e.target.value)
+                        }
+                        className="bg-backgroundColor-Card border rounded-2xl py-1 px-2 text-[11px] w-[64px] shrink-0"
+                      />
+                    ) : null}
                   </div>
                 );
               })}
               <div
-                className={`cursor-pointer
-                
-                 text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-start text-nowrap  ml-1 mt-1`}
+                className="cursor-pointer text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-start text-nowrap ml-1 mt-1"
                 onClick={addChoiceOption}
               >
                 <img

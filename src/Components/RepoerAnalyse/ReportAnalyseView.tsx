@@ -33,6 +33,10 @@ import resolveStatusArray from './resolveStatusArray';
 // import { useConstructor } from "@/help"
 import { decodeAccessUser } from '../../help';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
+import {
+  OVERVIEW_PROCESSING_CHANGED_EVENT,
+  resolveOverviewPageAndButtonProcessing,
+} from '../../utils/compileButtonState';
 import { visibilityPollMs } from '../../utils/visibilityPoll';
 // import { ButtonPrimary } from '../Button/ButtonPrimary';
 import Circleloader from '../CircleLoader';
@@ -63,8 +67,11 @@ import { useLabJobStatus } from '../../hooks/useLabJobStatus';
 import { useOverviewPoll } from '../../hooks/useOverviewPoll';
 import {
   applyClientSummaryCategories,
+  categoryCardsFromReferenceBiomarkers,
   shouldApplyCategoryResponse,
   shouldApplyReferenceResponse,
+  shouldShowClientSummaryEmptyIllustration,
+  shouldTreatEmptyFindingsAsAuthoritative,
 } from '../../utils/mergeCategoryCards';
 import {
   categoryNeedFocusAnalyzing,
@@ -81,9 +88,28 @@ import {
   HEALTH_PLAN_CACHE_KEYS,
   HEALTH_PLAN_TTL_MS,
   invalidateHealthPlanCache,
+  invalidateHealthPlanQueryKeys,
 } from '../../utils/cacheKeys';
-import { getCached, peekCached } from '../../utils/pageCache';
+import { getCached, peekCached, fetchFresh } from '../../utils/pageCache';
 import { normalizeTreatmentPlanCategories } from '../../utils/treatmentPlanShape';
+import {
+  PROCESSING_DOMAIN_READY_EVENT,
+  authoritativeDomains,
+  isDomainAuthoritative,
+  type DomainName,
+  type OperationOutcomes,
+  type ReportQueryName,
+} from '../../utils/processingCompletion';
+import {
+  markRevisionsApplied,
+  nextQueryToken,
+  planRefreshForTerminalDomains,
+  shouldApplyFetchResult,
+} from '../../utils/domainRefreshCoordinator';
+import {
+  shouldShowClientSummaryTextLoading,
+  shouldShowSectionSkeleton,
+} from '../../utils/reportSectionLoading';
 
 const canLoadOverviewSections = (info: {
   show_report?: boolean;
@@ -107,16 +133,21 @@ const applyOverviewProcessingMeta = (
 ) => {
   const awaitingReview = Boolean(data.awaiting_user_review);
   const isStale = Boolean(data.stale || data.processing_error);
+  const hasProcessingSignal =
+    isStale ||
+    awaitingReview ||
+    Object.prototype.hasOwnProperty.call(data, 'processing') ||
+    Object.prototype.hasOwnProperty.call(data, 'background_processing') ||
+    data.data_phase === 'complete' ||
+    data.data_phase === 'extracted_only';
 
-  if (isStale || awaitingReview) {
-    setters.setOverviewProcessing(false);
-  } else if (data.processing) {
-    setters.setOverviewProcessing(true);
-  } else if (
-    !data.processing &&
-    (data.data_phase === 'complete' || data.data_phase === 'extracted_only')
-  ) {
-    setters.setOverviewProcessing(false);
+  if (hasProcessingSignal) {
+    const { pageProcessing, buttonProcessing } =
+      resolveOverviewPageAndButtonProcessing(data);
+    setters.setOverviewProcessing(pageProcessing);
+    publish(OVERVIEW_PROCESSING_CHANGED_EVENT, {
+      processing: buttonProcessing,
+    });
   }
   if (typeof data.data_phase === 'string') {
     setters.setDataPhase(data.data_phase as OverviewDataPhase);
@@ -200,6 +231,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const descriptionPollLogCountRef = useRef(0);
   const hasFullOverviewRef = useRef(false);
   const wasOverviewProcessingRef = useRef(false);
+  const sourceRefreshGenRef = useRef(0);
+  const lastAppliedDomainRevisionRef = useRef<Record<string, string | null>>(
+    {},
+  );
+  const queryTokensRef = useRef<Partial<Record<ReportQueryName, number>>>({});
+  const pendingRevisionsRef = useRef<
+    Partial<Record<DomainName, string | null>>
+  >({});
+  const sourceRefreshFollowUpRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const [has_wearable_data, setHasWearableData] = useState(false);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   const [showUploadTest, setShowUploadTest] = useState(false);
@@ -245,6 +287,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
 
   const fetchPatentData = () => {
+    const gen = sourceRefreshGenRef.current;
     if (isShare) {
       Application.getPatientsInfoShare(
         {
@@ -253,6 +296,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         uniqKey,
       )
         .then((res) => {
+          if (gen !== sourceRefreshGenRef.current) return;
           setUserInfoData(res.data);
           setIsHaveReport(true);
           closeUploadTestOverlay();
@@ -276,6 +320,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         HEALTH_PLAN_TTL_MS,
       )
         .then((data) => {
+          if (gen !== sourceRefreshGenRef.current) return;
           if (setFirst_time_view) {
             setFirst_time_view?.(data.first_time_view);
           }
@@ -391,24 +436,33 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   };
 
-  const fetchReferenceData = (includeWearable = true) => {
+  const fetchReferenceData = (includeWearable = true, force = false) => {
     if (resolvedMemberID == null) return Promise.resolve();
+    const gen = sourceRefreshGenRef.current;
+    const token = force
+      ? nextQueryToken(queryTokensRef.current, 'outofrefs')
+      : queryTokensRef.current.outofrefs || 1;
     if (!includeWearable) {
       setReferenceLoading(true);
     }
-    return getCached(
-      HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(
-        resolvedMemberID,
-        includeWearable,
-      ),
-      () =>
-        Application.getClientSummaryOutofrefs({
-          member_id: resolvedMemberID,
-          include_wearable: includeWearable,
-        }).then((res) => res.data),
-      HEALTH_PLAN_TTL_MS,
-    )
+    const key = HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(
+      resolvedMemberID,
+      includeWearable,
+    );
+    const fetcher = () =>
+      Application.getClientSummaryOutofrefs({
+        member_id: resolvedMemberID,
+        include_wearable: includeWearable,
+      }).then((res) => res.data);
+    return (force ? fetchFresh(key, fetcher) : getCached(key, fetcher, HEALTH_PLAN_TTL_MS))
       .then((data) => {
+        if (gen !== sourceRefreshGenRef.current) return;
+        if (
+          force &&
+          !shouldApplyFetchResult(token, queryTokensRef.current.outofrefs || 0)
+        ) {
+          return;
+        }
         if (data?.lab_only && hasFullOverviewRef.current) {
           return;
         }
@@ -424,14 +478,23 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         const biomarkers = data.biomarkers || [];
         if (shouldApplyReferenceResponse(data)) {
           setReferenceData(data);
+          lastAppliedDomainRevisionRef.current = markRevisionsApplied(
+            lastAppliedDomainRevisionRef.current,
+            ['outofrefs'],
+            pendingRevisionsRef.current,
+          );
         }
-        if (biomarkers.length === 0) {
-          publish('DetailedAnalysisStatus', { isempty: true });
-        } else {
-          publish('DetailedAnalysisStatus', { isempty: false });
-        }
-        if (biomarkers.filter((el: any) => el.outofref == true).length == 0) {
-          publish('NeedsFocusBiomarkerStatus', { isempty: true });
+        if (shouldTreatEmptyFindingsAsAuthoritative(data)) {
+          if (biomarkers.length === 0) {
+            publish('DetailedAnalysisStatus', { isempty: true });
+          } else {
+            publish('DetailedAnalysisStatus', { isempty: false });
+          }
+          if (biomarkers.filter((el: any) => el.outofref == true).length == 0) {
+            publish('NeedsFocusBiomarkerStatus', { isempty: true });
+          } else {
+            publish('NeedsFocusBiomarkerStatus', { isempty: false });
+          }
         }
         clearUsedPositions();
         if (!data?.lab_only) {
@@ -446,24 +509,38 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
   };
 
-  const fetchClientSummaryCategories = (includeWearable = true) => {
+  const fetchClientSummaryCategories = (includeWearable = true, force = false) => {
     if (resolvedMemberID == null) return Promise.resolve();
+    const gen = sourceRefreshGenRef.current;
+    const token = force
+      ? nextQueryToken(queryTokensRef.current, 'categories')
+      : queryTokensRef.current.categories || 1;
+    if (force) {
+      nextQueryToken(queryTokensRef.current, 'clientSummary');
+    }
     if (!includeWearable) {
       setClientSummaryLoading(true);
     }
-    return getCached(
-      HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(
-        resolvedMemberID,
-        includeWearable,
-      ),
-      () =>
-        Application.getClientSummaryCategories({
-          member_id: resolvedMemberID,
-          include_wearable: includeWearable,
-        }).then((res) => res.data),
-      HEALTH_PLAN_TTL_MS,
-    )
+    const key = HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(
+      resolvedMemberID,
+      includeWearable,
+    );
+    const fetcher = () =>
+      Application.getClientSummaryCategories({
+        member_id: resolvedMemberID,
+        include_wearable: includeWearable,
+      }).then((res) => res.data);
+    return (force
+      ? fetchFresh(key, fetcher)
+      : getCached(key, fetcher, HEALTH_PLAN_TTL_MS))
       .then((data) => {
+        if (gen !== sourceRefreshGenRef.current) return;
+        if (
+          force &&
+          !shouldApplyFetchResult(token, queryTokensRef.current.categories || 0)
+        ) {
+          return;
+        }
         if (data?.lab_only && hasFullOverviewRef.current) {
           return;
         }
@@ -477,9 +554,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           setCategoriesPartial,
         });
         setISGenerateLoading(false);
-        if (shouldApplyCategoryResponse(data)) {
+        const appliedCategories = shouldApplyCategoryResponse(data);
+        const appliedSummary = isDomainAuthoritative(
+          data?.domain_outcomes?.client_summary?.state,
+        );
+        if (appliedCategories || appliedSummary) {
           setClientSummaryBoxs((prev: any) =>
             applyClientSummaryCategories(prev, data),
+          );
+          const appliedQueries: ReportQueryName[] = [];
+          if (appliedCategories) appliedQueries.push('categories');
+          if (appliedSummary) appliedQueries.push('clientSummary');
+          lastAppliedDomainRevisionRef.current = markRevisionsApplied(
+            lastAppliedDomainRevisionRef.current,
+            appliedQueries,
+            pendingRevisionsRef.current,
           );
         }
         if (!data?.lab_only) {
@@ -495,36 +584,53 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
   };
 
-  const fetchConcerningResults = (includeWearable = true) => {
+  const fetchConcerningResults = (includeWearable = true, force = false) => {
     if (resolvedMemberID == null) return Promise.resolve();
+    const gen = sourceRefreshGenRef.current;
+    const token = force
+      ? nextQueryToken(queryTokensRef.current, 'concerningResults')
+      : queryTokensRef.current.concerningResults || 1;
     if (!includeWearable) {
       setConcerningLoading(true);
     }
-    return getCached(
-      HEALTH_PLAN_CACHE_KEYS.concerningResults(
-        resolvedMemberID,
-        includeWearable,
-      ),
-      () =>
-        Application.getConceringResults({
-          member_id: resolvedMemberID,
-          include_wearable: includeWearable,
-        }).then((res) => res.data),
-      HEALTH_PLAN_TTL_MS,
-    )
+    const key = HEALTH_PLAN_CACHE_KEYS.concerningResults(
+      resolvedMemberID,
+      includeWearable,
+    );
+    const fetcher = () =>
+      Application.getConceringResults({
+        member_id: resolvedMemberID,
+        include_wearable: includeWearable,
+      }).then((res) => res.data);
+    return (force
+      ? fetchFresh(key, fetcher)
+      : getCached(key, fetcher, HEALTH_PLAN_TTL_MS))
       .then((data) => {
+        if (gen !== sourceRefreshGenRef.current) return;
+        if (
+          force &&
+          !shouldApplyFetchResult(
+            token,
+            queryTokensRef.current.concerningResults || 0,
+          )
+        ) {
+          return;
+        }
         if (data?.lab_only && hasFullOverviewRef.current) {
           return;
         }
         const table = data.table || [];
-        if (table.length > 0 || !overviewProcessing) {
+        const allowEmpty =
+          force || shouldTreatEmptyFindingsAsAuthoritative(data);
+        if (table.length > 0 || allowEmpty) {
           setConcerningResult(table);
           setConcerningResultIsLoaded(true);
-          if (table.length == 0) {
-            publish('ConcerningResultStatus', { isempty: true });
-          } else {
-            publish('ConcerningResultStatus', { isempty: false });
-          }
+          lastAppliedDomainRevisionRef.current = markRevisionsApplied(
+            lastAppliedDomainRevisionRef.current,
+            ['concerningResults'],
+            pendingRevisionsRef.current,
+          );
+          publish('ConcerningResultStatus', { isempty: table.length === 0 });
         }
         if (!data?.lab_only) {
           hasFullOverviewRef.current = true;
@@ -540,14 +646,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
   };
 
-  const fetchWearableOverview = () => {
-    fetchReferenceData(true);
-    fetchClientSummaryCategories(true);
-    fetchConcerningResults(true);
+  const fetchWearableOverview = (force = false) => {
+    fetchReferenceData(true, force);
+    fetchClientSummaryCategories(true, force);
+    fetchConcerningResults(true, force);
   };
 
-  const fetchData = () => {
-    if (resolvedMemberID != null) {
+  const fetchData = (options?: { force?: boolean; silent?: boolean }) => {
+    if (!options?.force && resolvedMemberID != null) {
       const cachedFull = peekCached(
         HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(resolvedMemberID, true),
       );
@@ -560,33 +666,71 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         return;
       }
     }
-    startSectionLoading();
-    // Lab-only paints Client Summary without waiting on wearable history.
-    // Wearable cards (Activity/Distance) merge in the background.
+    if (!options?.silent) {
+      const hasCachedOverview =
+        resolvedMemberID != null &&
+        Boolean(
+          peekCached(
+            HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(
+              resolvedMemberID,
+              true,
+            ),
+          ) ||
+            peekCached(
+              HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(
+                resolvedMemberID,
+                true,
+              ),
+            ),
+        );
+      if (!hasCachedOverview) {
+        startSectionLoading();
+      }
+    }
+    const force = Boolean(options?.force);
     void Promise.all([
-      fetchReferenceData(false),
-      fetchClientSummaryCategories(false),
-      fetchConcerningResults(false),
+      fetchReferenceData(false, force),
+      fetchClientSummaryCategories(false, force),
+      fetchConcerningResults(false, force),
     ]).finally(() => {
-      fetchWearableOverview();
+      fetchWearableOverview(force);
     });
-    getTreatmentPlanData();
+    getTreatmentPlanData(force);
   };
-  const getTreatmentPlanData = () => {
-    if (resolvedMemberID == null) return;
-    setTreatmentLoading(true);
-    getCached(
-      HEALTH_PLAN_CACHE_KEYS.overviewTreatmentPlan(resolvedMemberID),
-      () =>
-        Application.getOverviewtplan({
-          member_id: resolvedMemberID,
-        }).then((res) => res.data),
-      HEALTH_PLAN_TTL_MS,
-    )
+  const getTreatmentPlanData = (force = false) => {
+    if (resolvedMemberID == null) return Promise.resolve();
+    const gen = sourceRefreshGenRef.current;
+    const token = force
+      ? nextQueryToken(queryTokensRef.current, 'holisticPlan')
+      : queryTokensRef.current.holisticPlan || 1;
+    if (!force) {
+      setTreatmentLoading(true);
+    }
+    const key = HEALTH_PLAN_CACHE_KEYS.overviewTreatmentPlan(resolvedMemberID);
+    const fetcher = () =>
+      Application.getOverviewtplan({
+        member_id: resolvedMemberID,
+      }).then((res) => res.data);
+    return (force ? fetchFresh(key, fetcher) : getCached(key, fetcher, HEALTH_PLAN_TTL_MS))
       .then((data) => {
+        if (gen !== sourceRefreshGenRef.current) return;
+        if (
+          force &&
+          !shouldApplyFetchResult(
+            token,
+            queryTokensRef.current.holisticPlan || 0,
+          )
+        ) {
+          return;
+        }
         const planCategories = normalizeTreatmentPlanCategories(data);
         setTreatmentPlanData(planCategories);
         setTreatmentPlanLoaded(true);
+        lastAppliedDomainRevisionRef.current = markRevisionsApplied(
+          lastAppliedDomainRevisionRef.current,
+          ['holisticPlan'],
+          pendingRevisionsRef.current,
+        );
         if (planCategories.length == 0) {
           publish('HolisticPlanStatus', { isempty: true });
         } else {
@@ -720,8 +864,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       if (detail.silent === true) {
         return;
       }
-      if (resolvedMemberID) {
-        invalidateHealthPlanCache(resolvedMemberID);
+      if (detail.fullReload === true) {
+        fetchData({ force: true, silent: true });
+        return;
       }
       setCallSync(true);
       if (location.search) {
@@ -752,27 +897,113 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     publish('overviewPollReset', {});
   };
 
-  const handleLabReportDeleted = (detail?: {
-    member_id?: string;
-    file_id?: string;
-  }) => {
+  const refreshPatientInfo = () => {
+    if (resolvedMemberID == null || isShare) return;
+    const gen = sourceRefreshGenRef.current;
+    getCached(
+      HEALTH_PLAN_CACHE_KEYS.patientInfo(resolvedMemberID),
+      () =>
+        Application.getPatientsInfo({
+          member_id: resolvedMemberID,
+        }).then((res) => res.data),
+      HEALTH_PLAN_TTL_MS,
+    )
+      .then((data) => {
+        if (gen !== sourceRefreshGenRef.current) return;
+        setUserInfoData(data);
+        publish('userInfoData', data);
+        setIsHaveReport(data.show_report || data.first_time_view);
+        setHasPartialReport(Boolean(data.has_partial_report));
+        setHasWearableData(data.has_wearable_data);
+        setQuestionnaires(data.questionnaires);
+        setDisableGenerate(data.has_minimum_data === false);
+      })
+      .catch((err) => {
+        console.error('Error refreshing patient info after source change:', err);
+      });
+  };
+
+  const refreshQueriesForDomains = (
+    domains: DomainName[],
+    outcomes: OperationOutcomes,
+  ) => {
+    const plan = planRefreshForTerminalDomains(
+      domains,
+      outcomes,
+      lastAppliedDomainRevisionRef.current,
+    );
+    if (plan.queries.length === 0) return;
+    pendingRevisionsRef.current = {
+      ...pendingRevisionsRef.current,
+      ...plan.revisions,
+    };
+    if (resolvedMemberID) {
+      invalidateHealthPlanQueryKeys(resolvedMemberID, plan.queries);
+    }
+    const queries = plan.queries;
+    const needsReference =
+      queries.includes('outofrefs') ||
+      queries.includes('detailedAnalysis') ||
+      queries.includes('perBiomarkerNarratives');
+    const needsCategories =
+      queries.includes('categories') || queries.includes('clientSummary');
+    if (needsReference) {
+      void fetchReferenceData(true, true);
+    }
+    if (needsCategories) {
+      void fetchClientSummaryCategories(true, true);
+    }
+    if (queries.includes('concerningResults')) {
+      void fetchConcerningResults(true, true);
+    }
+    if (queries.includes('holisticPlan')) {
+      void getTreatmentPlanData(true);
+    }
+    if (queries.includes('healthRisks')) {
+      lastAppliedDomainRevisionRef.current = markRevisionsApplied(
+        lastAppliedDomainRevisionRef.current,
+        ['healthRisks'],
+        pendingRevisionsRef.current,
+      );
+      publish(PROCESSING_DOMAIN_READY_EVENT, {
+        member_id: resolvedMemberID,
+        domain: 'risk_assessments',
+      });
+    }
+  };
+
+  const refreshAfterSourceChange = (
+    detail?: {
+      member_id?: string | number;
+      file_id?: string;
+    },
+    options?: { clear?: boolean; followUp?: boolean },
+  ) => {
     if (
-      detail?.member_id &&
-      resolvedMemberID &&
-      detail.member_id !== String(resolvedMemberID)
+      detail?.member_id != null &&
+      resolvedMemberID != null &&
+      String(detail.member_id) !== String(resolvedMemberID)
     ) {
       return;
     }
+    sourceRefreshGenRef.current += 1;
+    lastAppliedDomainRevisionRef.current = {};
+    queryTokensRef.current = {};
+    pendingRevisionsRef.current = {};
+    hasFullOverviewRef.current = false;
+    publish(OVERVIEW_PROCESSING_CHANGED_EVENT, { processing: true });
     if (resolvedMemberID) {
       invalidateHealthPlanCache(resolvedMemberID);
     }
-    labDeleteRefreshPendingRef.current = true;
-    clearReportSections();
-    fetchData();
-    publish('healthPlanProcessingComplete', {
-      member_id: resolvedMemberID,
-      file_id: detail?.file_id,
-    });
+    if (options?.clear) {
+      labDeleteRefreshPendingRef.current = true;
+      clearReportSections();
+    }
+    refreshPatientInfo();
+    if (sourceRefreshFollowUpRef.current) {
+      clearTimeout(sourceRefreshFollowUpRef.current);
+      sourceRefreshFollowUpRef.current = null;
+    }
   };
 
   const scheduleReportDataFetch = () => {
@@ -789,15 +1020,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
     refreshReportDebounceRef.current = setTimeout(() => {
       lastReportFetchAtRef.current = Date.now();
-      startSectionLoading();
-      fetchData();
+      fetchData({ force: true, silent: true });
     }, delayMs);
   };
 
   const refreshReportSections = () => {
     if (resolvedMemberID == null) return;
+    const gen = sourceRefreshGenRef.current;
     invalidateHealthPlanCache(resolvedMemberID);
-    setDescriptionEpoch((e) => e + 1);
     descriptionPollLogCountRef.current = 0;
     setIsHaveReport(true);
     closeUploadTestOverlay();
@@ -814,6 +1044,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       HEALTH_PLAN_TTL_MS,
     )
       .then((data) => {
+        if (gen !== sourceRefreshGenRef.current) return;
         setUserInfoData(data);
         setIsHaveReport(data.show_report || data.first_time_view);
         setHasPartialReport(Boolean(data.has_partial_report));
@@ -842,9 +1073,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
       setDisableGenerate(false);
       setISGenerateLoading(false);
-      if (!showUploadTestRef.current) {
-        refreshReportSections();
-      }
     },
   });
 
@@ -852,9 +1080,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     memberId: resolvedMemberID ?? undefined,
     enabled: !isShare,
     onPollStart: () => {
+      sourceRefreshGenRef.current += 1;
+      lastAppliedDomainRevisionRef.current = {};
+      queryTokensRef.current = {};
+      pendingRevisionsRef.current = {};
       setISGenerateLoading(false);
-      setOverviewProcessing(true);
-      setDescriptionEpoch((e) => e + 1);
+      wasOverviewProcessingRef.current = true;
+      publish(OVERVIEW_PROCESSING_CHANGED_EVENT, { processing: true });
       descriptionPollLogCountRef.current = 0;
     },
     onSnapshot: (snapshot) => {
@@ -871,16 +1103,27 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       if (snapshot.data_revision) {
         setLastCategoryRefetchRevision(snapshot.data_revision);
       }
-      if (snapshot.processing) {
+      if (snapshot.processing || snapshot.background_processing) {
         wasOverviewProcessingRef.current = true;
       } else if (wasOverviewProcessingRef.current) {
         wasOverviewProcessingRef.current = false;
-        fetchWearableOverview();
+        publish('allProgressCompleted', {});
       }
     },
     onPollTimeout: () => {
       setOverviewPollTimedOut(true);
       setOverviewProcessing(false);
+      publish(OVERVIEW_PROCESSING_CHANGED_EVENT, { processing: false });
+      fetchData({ force: true, silent: true });
+    },
+    onUnresolved: () => {
+      setOverviewPollTimedOut(true);
+      setOverviewProcessing(false);
+      publish(OVERVIEW_PROCESSING_CHANGED_EVENT, { processing: false });
+      fetchData({ force: true, silent: true });
+    },
+    onDomainsTerminal: (domains, outcomes) => {
+      refreshQueriesForDomains(domains, outcomes);
     },
     onReferenceData: (data) => {
       if (data.lab_only && hasFullOverviewRef.current) {
@@ -898,13 +1141,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       const biomarkers = (data.biomarkers as any[]) || [];
       if (shouldApplyReferenceResponse(data)) {
         setReferenceData(data);
-        if (biomarkers.length === 0) {
-          publish('DetailedAnalysisStatus', { isempty: true });
-        } else {
-          publish('DetailedAnalysisStatus', { isempty: false });
-        }
-        if (biomarkers.filter((el: any) => el.outofref == true).length == 0) {
-          publish('NeedsFocusBiomarkerStatus', { isempty: true });
+        if (shouldTreatEmptyFindingsAsAuthoritative(data)) {
+          if (biomarkers.length === 0) {
+            publish('DetailedAnalysisStatus', { isempty: true });
+          } else {
+            publish('DetailedAnalysisStatus', { isempty: false });
+          }
+          if (
+            biomarkers.filter((el: any) => el.outofref == true).length == 0
+          ) {
+            publish('NeedsFocusBiomarkerStatus', { isempty: true });
+          } else {
+            publish('NeedsFocusBiomarkerStatus', { isempty: false });
+          }
         }
         clearUsedPositions();
       }
@@ -941,7 +1190,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           })),
         });
       }
-      if (shouldApplyCategoryResponse(data)) {
+      if (
+        shouldApplyCategoryResponse(data) ||
+        isDomainAuthoritative(data?.domain_outcomes?.client_summary?.state)
+      ) {
         setClientSummaryBoxs((prev: any) =>
           applyClientSummaryCategories(prev, data),
         );
@@ -954,7 +1206,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         return;
       }
       const table = (data.table as any[]) || [];
-      if (table.length > 0 || !data.processing) {
+      const allowEmpty = shouldTreatEmptyFindingsAsAuthoritative(data);
+      if (table.length > 0 || allowEmpty || !data.processing) {
         setConcerningResult(table);
         setConcerningResultIsLoaded(true);
         publish('ConcerningResultStatus', { isempty: table.length === 0 });
@@ -1010,7 +1263,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setActiveJobId(detail.job_id);
       }
       setISGenerateLoading(false);
-      setOverviewProcessing(true);
+      wasOverviewProcessingRef.current = true;
+      publish(OVERVIEW_PROCESSING_CHANGED_EVENT, { processing: true });
     };
     subscribe('labJobStarted', handleLabJobStarted as EventListener);
     return () => {
@@ -1020,38 +1274,72 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   useEffect(() => {
     const handleAllProgressCompleted = () => {
-      publish('healthPlanProcessingComplete', {
-        member_id: resolvedMemberID,
-      });
       setDisableGenerate(false);
-      if (!showUploadTestRef.current) {
-        refreshReportSections();
+    };
+    const handleSourceProcessingDone = (event?: CustomEvent) => {
+      const detail = event?.detail || {};
+      if (
+        detail.member_id != null &&
+        !progressEventMatchesMember(resolvedMemberID, detail)
+      ) {
+        return;
       }
+      fetchData({ force: true, silent: true });
     };
     subscribe('allProgressCompleted', handleAllProgressCompleted);
+    subscribe(
+      'questionnaireProcessingCompleted',
+      handleSourceProcessingDone as EventListener,
+    );
+    subscribe('completedProgress', handleSourceProcessingDone as EventListener);
     return () => {
       unsubscribe('allProgressCompleted', handleAllProgressCompleted);
+      unsubscribe(
+        'questionnaireProcessingCompleted',
+        handleSourceProcessingDone as EventListener,
+      );
+      unsubscribe(
+        'completedProgress',
+        handleSourceProcessingDone as EventListener,
+      );
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolvedMemberID]);
 
   useEffect(() => {
     if (isShare) return;
-    const handleDeleteSuccess = () => {
+    const handleDeleteSuccess = (event?: CustomEvent) => {
       labDeleteRefreshPendingRef.current = false;
-      handleLabReportDeleted();
+      refreshAfterSourceChange(event?.detail, { clear: false });
     };
     const handleLabReportDeletedEvent = (event: CustomEvent) => {
-      handleLabReportDeleted(event.detail);
+      const detail = event.detail || {};
+      refreshAfterSourceChange(detail, { clear: false });
+      publish('checkProgress', {
+        member_id: detail.member_id ?? resolvedMemberID,
+        file_id: detail.file_id,
+        type: 'file',
+        action_type: 'deleted',
+        process_status: false,
+      });
+      const outcomes = (detail.outcomes || {}) as OperationOutcomes;
+      const domains = authoritativeDomains(outcomes);
+      if (domains.length > 0) {
+        refreshQueriesForDomains(domains, outcomes);
+      }
     };
-    subscribe('DeleteSuccess', handleDeleteSuccess);
+    subscribe('DeleteSuccess', handleDeleteSuccess as EventListener);
     subscribe('labReportDeleted', handleLabReportDeletedEvent as EventListener);
     return () => {
-      unsubscribe('DeleteSuccess', handleDeleteSuccess);
+      unsubscribe('DeleteSuccess', handleDeleteSuccess as EventListener);
       unsubscribe(
         'labReportDeleted',
         handleLabReportDeletedEvent as EventListener,
       );
+      if (sourceRefreshFollowUpRef.current) {
+        clearTimeout(sourceRefreshFollowUpRef.current);
+        sourceRefreshFollowUpRef.current = null;
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isShare, resolvedMemberID]);
@@ -1093,6 +1381,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   ]);
   useEffect(() => {
     setOverviewProcessing(false);
+    publish(OVERVIEW_PROCESSING_CHANGED_EVENT, { processing: false });
     setDataPhase('complete');
     setScoringCompleteFlag(false);
     setBiomarkersScored(null);
@@ -1183,8 +1472,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setTreatmentPlanData(normalizeTreatmentPlanCategories(cachedPlan));
       setTreatmentPlanLoaded(true);
       setTreatmentLoading(false);
+    } else {
+      setTreatmentPlanData([]);
+      setTreatmentPlanLoaded(false);
     }
-    setLoading(true);
+    setLoading(!cachedCategories && !cachedReference);
     fetchPatentData();
     if (callSync) {
       setCallSync(false);
@@ -1262,7 +1554,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     [referenceData],
   );
   const hasReferenceBiomarkers = (referenceData?.biomarkers?.length ?? 0) > 0;
-  const hasCategoryCards = (ClientSummaryBoxs?.subcategories?.length ?? 0) > 0;
+  const displayedCategoryCards = useMemo(() => {
+    const fromSummary = ClientSummaryBoxs?.subcategories;
+    if (Array.isArray(fromSummary) && fromSummary.length > 0) {
+      return fromSummary;
+    }
+    return categoryCardsFromReferenceBiomarkers(referenceData?.biomarkers);
+  }, [ClientSummaryBoxs, referenceData]);
+  const hasCategoryCards = displayedCategoryCards.length > 0;
+  const hasSummaryText = Boolean(
+    String(ClientSummaryBoxs?.client_summary || '').trim(),
+  );
   const isOverviewLiveLoading =
     overviewProcessing ||
     labJobPolling ||
@@ -1341,43 +1643,48 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       descriptionFailed: reconciled.descriptionFailed,
     };
   };
-  const showNeedFocusSkeleton =
-    !hasReferenceBiomarkers &&
-    needFocusBiomarkers.length === 0 &&
-    (awaitingOverviewData ||
-      overviewProcessing ||
-      (clientSummaryLoading && referenceLoading));
+  const showNeedFocusSkeleton = shouldShowSectionSkeleton({
+    hasDisplayedData: hasReferenceBiomarkers || needFocusBiomarkers.length > 0,
+    isInitialRequest: referenceLoading,
+  });
   const showNeedFocusEmpty =
     hasReferenceBiomarkers &&
     !isOverviewLiveLoading &&
     !awaitingOverviewData &&
     needFocusBiomarkers.length === 0;
-  const showConcerningSkeleton = concerningLoading && !ConcerningResultIsLoaded;
-  const showClientSummarySkeleton =
-    awaitingOverviewData ||
-    (!clientSummaryReady &&
-      overviewProcessing &&
-      clientSummaryLoading &&
+  const showConcerningSkeleton = shouldShowSectionSkeleton({
+    hasDisplayedData: ConcerningResultIsLoaded,
+    isInitialRequest: concerningLoading,
+  });
+  const showClientSummarySkeleton = shouldShowSectionSkeleton({
+    hasDisplayedData: hasCategoryCards || hasReferenceBiomarkers,
+    isInitialRequest: clientSummaryLoading && ClientSummaryBoxs === null,
+  });
+  const showClientSummaryContentSkeleton = shouldShowSectionSkeleton({
+    hasDisplayedData: hasCategoryCards,
+    hasAuthoritativeEmpty:
+      ClientSummaryBoxs != null &&
       !hasCategoryCards &&
-      !hasReferenceBiomarkers);
-  const showClientSummaryContentSkeleton =
-    !hasCategoryCards &&
-    (clientSummaryLoading ||
-      ClientSummaryBoxs === null ||
-      (overviewProcessing && dataPhase !== 'complete'));
-  const showClientSummaryTextLoading =
-    overviewProcessing && !clientSummaryReady && dataPhase !== 'extracted_only';
-  const showDetailedAnalysisSkeleton =
-    awaitingOverviewData ||
-    (!isScoringComplete && overviewProcessing && !hasReferenceBiomarkers) ||
-    (detailedAnalysisLoading && !hasReferenceBiomarkers && !hasCategoryCards);
+      (ClientSummaryBoxs?.total_subcategory ?? 0) === 0 &&
+      !hasReferenceBiomarkers,
+    isInitialRequest:
+      (clientSummaryLoading && ClientSummaryBoxs === null) ||
+      (hasReferenceBiomarkers && !hasCategoryCards),
+  });
+  const showClientSummaryTextLoading = shouldShowClientSummaryTextLoading({
+    hasSummaryText,
+    isInitialRequest: clientSummaryLoading && !hasSummaryText,
+  });
+  const showDetailedAnalysisSkeleton = shouldShowSectionSkeleton({
+    hasDisplayedData: hasReferenceBiomarkers || hasCategoryCards,
+    isInitialRequest: detailedAnalysisLoading,
+  });
   const showOverviewCounts = hasCategoryCards || hasReferenceBiomarkers;
   const overviewBiomarkerTotals = useMemo(
     () => resolveOverviewBiomarkerTotals(referenceData, ClientSummaryBoxs),
     [referenceData, ClientSummaryBoxs],
   );
-  const isBodyFigureLoading =
-    !hasCategoryCards && showClientSummaryContentSkeleton;
+  const isBodyFigureLoading = showClientSummaryContentSkeleton;
   const resolveBioMarkers = () => {
     // const refData: Array<any> = [];
     // referenceData?.biomarkers.forEach((el: any) => {
@@ -1403,12 +1710,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return Array.isArray(ConcerningResult) ? ConcerningResult : [];
   };
 
-  const resolveCategories = () => {
-    if (ClientSummaryBoxs && Array.isArray(ClientSummaryBoxs.subcategories)) {
-      return ClientSummaryBoxs.subcategories;
-    }
-    return [];
-  };
+  const resolveCategories = () => displayedCategoryCards;
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const section = params.get('section');
@@ -1878,14 +2180,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
                       style={{ lineHeight: '24px' }}
                     >
-                      {showClientSummaryContentSkeleton ||
-                      showClientSummaryTextLoading ? (
-                        showClientSummaryTextLoading ? (
+                      {showClientSummaryTextLoading ? (
                           <ChartLoadingPlaceholder
                             variant="text"
                             label="Generating summary…"
                           />
-                        ) : (
+                        ) : showClientSummaryContentSkeleton ? (
                           <div className="animate-pulse space-y-2">
                             {Array.from({ length: 3 }).map((_, i) => (
                               <div
@@ -1898,8 +2198,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                               />
                             ))}
                           </div>
-                        )
-                      ) : (
+                        ) : (
                         <MarkdownText
                           text={ClientSummaryBoxs?.client_summary}
                         />
@@ -1923,8 +2222,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         })}
                       </div>
                     )}
-                    {resolveCategories().length == 0 &&
-                      !showClientSummaryContentSkeleton && (
+                    {shouldShowClientSummaryEmptyIllustration({
+                      categoryCount: resolveCategories().length,
+                      hasReferenceBiomarkers,
+                      showingSkeleton: showClientSummaryContentSkeleton,
+                    }) && (
                         <>
                           <div className="flex justify-center items-center w-full">
                             <div className="flex flex-col items-center justify-center">

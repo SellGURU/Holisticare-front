@@ -37,6 +37,7 @@ declare global {
     use_function_calculation?: boolean;
     unit?: string;
     is_allergy?: boolean;
+    option_scores?: Record<string, number>;
     conditions?: {
       priority?: number;
       logic?: string;

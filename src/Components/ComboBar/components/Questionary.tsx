@@ -20,6 +20,7 @@ import UploadCard from '../../../pages/CheckIn/components/UploadCard';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import { publish, subscribe, unsubscribe } from '../../../utils/event';
 import useIsDemo from '../../../hooks/useIsDemo';
+import { fillableQuestions } from '../../../pages/NewForms/CheckIn/questionFormula';
 // import DatePicker from '../../DatePicker';
 interface QuestionaryProps {
   isOpen?: boolean;
@@ -515,9 +516,13 @@ export const Questionary: React.FC<QuestionaryProps> = ({
       );
     }
   };
+  const visibleQuestions = fillableQuestions(questionsFormData?.questions);
+  const fillFormData = questionsFormData?.questions
+    ? { ...questionsFormData, questions: visibleQuestions }
+    : questionsFormData;
   const checkFormComplete = () => {
-    const datas = questionsFormData?.questions?.filter(
-      (el: any) => el?.required == true && el.response.length == 0,
+    const datas = visibleQuestions.filter(
+      (el: any) => el?.required == true && el.response?.length == 0,
     );
     return datas?.length == 0;
   };
@@ -691,6 +696,13 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                         respond: questionsFormData.questions,
                       })
                         .then(() => {
+                          publish('questionnaireSaved', {
+                            member_id: id,
+                            f_unique_id: questionsFormData.forms_unique_id,
+                            q_unique_id: questionsFormData.unique_id,
+                            action: 'entered',
+                          });
+                          publish('checkProgress', { source: 'questionnaire' });
                           setTimeout(() => {
                             setTryComplete(false);
                           }, 300);
@@ -784,30 +796,28 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                   style={{ textAlignLast: 'center', textAlign: 'center' }}
                   className="text-[12px]  text-Primary-DeepTeal font-medium text-justify"
                 >
-                  {(questionsFormData?.questions && (
+                  {(visibleQuestions.length > 0 && (
                     <TooltipTextAuto maxWidth="220px">
-                      {questionsFormData.questions[activeCard - 1]?.question}
+                      {visibleQuestions[activeCard - 1]?.question}
                     </TooltipTextAuto>
                   )) ||
                     'Question not available'}
                 </div>
               </div>
               <div
-                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[260px]  ${questionsFormData?.questions && questionsFormData.questions[activeCard - 1]?.type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[260px]  ${visibleQuestions[activeCard - 1]?.type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
               >
-                {questionsFormData?.questions &&
-                  questionsFormData.questions[activeCard - 1] &&
+                {visibleQuestions[activeCard - 1] &&
                   resolveForm(
-                    questionsFormData.questions[activeCard - 1]?.type,
-                    questionsFormData,
+                    visibleQuestions[activeCard - 1]?.type,
+                    fillFormData,
                     activeCard,
                   )}
               </div>
 
               <div
                 className={` ${
-                  questionsFormData?.questions &&
-                  questionsFormData.questions[activeCard - 1]?.required
+                  visibleQuestions[activeCard - 1]?.required
                     ? 'block'
                     : 'invisible'
                 } text-[10px] text-red-500 mt-1 mb-5`}
@@ -829,23 +839,20 @@ export const Questionary: React.FC<QuestionaryProps> = ({
                   alt=""
                 />
                 <div className="text-[10px] w-[40px] text-center text-Text-Secondary text-nowrap">
-                  {activeCard} /{questionsFormData?.questions?.length || 0}
+                  {activeCard} /{visibleQuestions.length || 0}
                 </div>
                 <img
                   className={`cursor-pointer rotate-180 ${
-                    (activeCard == questionsFormData?.questions?.length ||
+                    (activeCard == visibleQuestions.length ||
                       !isQuestionAnswered(
-                        questionsFormData?.questions[activeCard - 1],
+                        visibleQuestions[activeCard - 1],
                       )) &&
                     'opacity-40'
                   }`}
                   onClick={() => {
                     if (
-                      activeCard <
-                        (questionsFormData?.questions?.length || 0) &&
-                      isQuestionAnswered(
-                        questionsFormData?.questions[activeCard - 1],
-                      )
+                      activeCard < visibleQuestions.length &&
+                      isQuestionAnswered(visibleQuestions[activeCard - 1])
                     ) {
                       setActiveCard(activeCard + 1);
                     }

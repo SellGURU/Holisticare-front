@@ -70,6 +70,29 @@ describe('healthPlanCache', () => {
     expect(hasCached(HEALTH_PLAN_CACHE_KEYS.patientInfo('222'))).toBe(true);
   });
 
+  it('invalidateHealthPlanQueryKeys only drops mapped report queries', async () => {
+    const { invalidateHealthPlanQueryKeys } = await import('./cacheKeys');
+    await getCached(HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs('111'), () =>
+      Promise.resolve({ biomarkers: [1] }),
+    );
+    await getCached(HEALTH_PLAN_CACHE_KEYS.overviewTreatmentPlan('111'), () =>
+      Promise.resolve({ plan: true }),
+    );
+    await getCached(HEALTH_PLAN_CACHE_KEYS.patientInfo('111'), () =>
+      Promise.resolve({ id: 111 }),
+    );
+
+    invalidateHealthPlanQueryKeys('111', ['outofrefs']);
+
+    expect(hasCached(HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs('111'))).toBe(
+      false,
+    );
+    expect(hasCached(HEALTH_PLAN_CACHE_KEYS.overviewTreatmentPlan('111'))).toBe(
+      true,
+    );
+    expect(hasCached(HEALTH_PLAN_CACHE_KEYS.patientInfo('111'))).toBe(true);
+  });
+
   it('simulate compile invalidate: next getCached fetches fresh data', async () => {
     const fetcher = vi
       .fn()
@@ -99,6 +122,40 @@ describe('healthPlanCache', () => {
     ]);
     expect(fetcher).toHaveBeenCalledTimes(2);
     expect(neverResolves).not.toHaveBeenCalled();
+  });
+
+  it('drops in-flight health-plan fetches that have not written yet', async () => {
+    let resolveStale!: (value: { version: number }) => void;
+    const staleFetcher = vi.fn(
+      () =>
+        new Promise<{ version: number }>((res) => {
+          resolveStale = res;
+        }),
+    );
+
+    const stalePromise = getCached(
+      HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories('99', true),
+      staleFetcher,
+    );
+    expect(hasCached(HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories('99', true))).toBe(
+      false,
+    );
+
+    invalidateHealthPlanCache('99');
+
+    const freshFetcher = vi.fn().mockResolvedValue({ version: 2 });
+    const fresh = await getCached(
+      HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories('99', true),
+      freshFetcher,
+    );
+    expect(fresh).toEqual({ version: 2 });
+    expect(freshFetcher).toHaveBeenCalledTimes(1);
+
+    resolveStale({ version: 1 });
+    await expect(stalePromise).resolves.toEqual({ version: 1 });
+    expect(
+      peekCached(HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories('99', true)),
+    ).toEqual({ version: 2 });
   });
 
   it('delete-all-files path: invalidate then refetch, not peek of stale cards', async () => {

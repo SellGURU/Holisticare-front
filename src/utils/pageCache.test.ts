@@ -4,6 +4,7 @@ import {
   __hydrateHealthPlanCacheForTests,
   getCached,
   getCachedUntilInvalidated,
+  fetchFresh,
   hasCached,
   invalidate,
   peekCached,
@@ -88,6 +89,47 @@ describe('pageCache', () => {
     await getCached('portal:peek', fetcher);
     expect(peekCached<string[]>('portal:peek')).toEqual(['A']);
     expect(peekCached('portal:missing')).toBeUndefined();
+  });
+
+  it('does not write a stale in-flight response after invalidate', async () => {
+    let resolveStale!: (value: string) => void;
+    const staleFetcher = vi.fn(
+      () =>
+        new Promise<string>((res) => {
+          resolveStale = res;
+        }),
+    );
+
+    const stalePromise = getCached('portal:healthplan:stale-race', staleFetcher);
+    invalidate('portal:healthplan:');
+    expect(hasCached('portal:healthplan:stale-race')).toBe(false);
+
+    const freshFetcher = vi.fn().mockResolvedValue('fresh');
+    const fresh = await getCached(
+      'portal:healthplan:stale-race',
+      freshFetcher,
+    );
+    expect(fresh).toBe('fresh');
+    expect(peekCached('portal:healthplan:stale-race')).toBe('fresh');
+
+    resolveStale('stale');
+    await expect(stalePromise).resolves.toBe('stale');
+    expect(peekCached('portal:healthplan:stale-race')).toBe('fresh');
+  });
+
+  it('fetchFresh ignores stored data and returns a new fetch', async () => {
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce('stale')
+      .mockResolvedValueOnce('fresh');
+
+    await getCached('portal:healthplan:force', fetcher);
+    expect(peekCached('portal:healthplan:force')).toBe('stale');
+
+    const result = await fetchFresh('portal:healthplan:force', fetcher);
+    expect(result).toBe('fresh');
+    expect(peekCached('portal:healthplan:force')).toBe('fresh');
+    expect(fetcher).toHaveBeenCalledTimes(2);
   });
 
   it('removeCachedKey forces a fresh biomarkers list fetch after add', async () => {

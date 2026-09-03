@@ -32,6 +32,7 @@ import EmptyQuestion from './components/EmptyQuestion';
 import StepOneQuestion from './components/StepOneQuestion';
 import MainQuestionBox from './components/MainQuestionBox';
 import ResolveConditions from './resolveConditions';
+import { fillableQuestions } from '../../pages/NewForms/CheckIn/questionFormula';
 // import { publish } from '../../utils/event';
 
 // Define flexible interfaces to handle different API response structures
@@ -382,7 +383,9 @@ export function PublicSurveyForm({
     }
 
     console.log('Final processed questions:', questions);
-    setSortedQuestions(Array.isArray(questions) ? questions : []);
+    setSortedQuestions(
+      fillableQuestions(Array.isArray(questions) ? questions : []),
+    );
     // --- NEW: Initialize responses for all questions ---
     const initialResponses: Record<
       number,

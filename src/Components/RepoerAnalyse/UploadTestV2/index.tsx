@@ -52,6 +52,10 @@ import BiomarkersApi from '../../../api/Biomarkers';
 import { showError, showSuccess } from '../../GlobalToast';
 import { ReviewFinding } from './ReviewFindingsPanel';
 import {
+  parseLabDeleteResponse,
+  resolveLabFileDeleteId,
+} from '../../../utils/labFileDelete';
+import {
   buildSnapshotMeta,
   completeLabUnitRequest,
   computeSnapshotAgeVsOnChange,
@@ -640,32 +644,59 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const handleDeleteFile = (fileId?: string) => {
     if (isDemo) return;
-    skipExtractionProgressRef.current = false;
-    setReopeningExistingFile(false);
-    setExtractedBiomarkers([]);
-    setfileType('more_info');
-    setPolling(true);
-    setUploadedFile(null);
-    setRowErrors({});
-    setAddedRowErrors({});
-    setReviewSummary(null);
-    setUploadWarningMessage('');
-    setUploadPhase('uploading');
-    publish('RESET_MAPPING_ROWS', {});
-    setbiomarkerLoading(false);
-    setModifiedDateOfTest(new Date());
-    forceReRender((x) => x + 1);
+    const resolvedFileId = resolveLabFileDeleteId(
+      fileId ?? uploadedFile?.file_id,
+    );
+    if (!resolvedFileId) {
+      showError('Could not delete lab file', 'Missing file id.');
+      return;
+    }
     Application.deleteFileHistory({
-      file_id: fileId,
+      file_id: resolvedFileId,
       member_id: memberId,
-    }).catch(() => {});
+    })
+      .then((res) => {
+        skipExtractionProgressRef.current = false;
+        setReopeningExistingFile(false);
+        setExtractedBiomarkers([]);
+        setfileType('more_info');
+        setPolling(false);
+        setUploadedFile(null);
+        setRowErrors({});
+        setAddedRowErrors({});
+        setReviewSummary(null);
+        setUploadWarningMessage('');
+        setUploadPhase('uploading');
+        publish('RESET_MAPPING_ROWS', {});
+        setbiomarkerLoading(false);
+        setModifiedDateOfTest(new Date());
+        forceReRender((x) => x + 1);
+        const payload = parseLabDeleteResponse(res?.data);
+        publish('labReportDeleted', {
+          member_id: memberId,
+          file_id: payload.file_id || resolvedFileId,
+          operation_id: payload.operation_id,
+          outcomes: payload.outcomes,
+        });
+      })
+      .catch((err) => {
+        const detail = parseApiErrorDetail(err);
+        const message =
+          typeof detail === 'string' && !detail.trim().startsWith('{')
+            ? detail
+            : 'Please try again.';
+        showError('Could not delete lab file', message);
+      });
   };
   useEffect(() => {
-    subscribe('DELETE_FILE_TRIGGER', () => {
-      // alert('delete file trigger');
-      handleDeleteFile();
-    });
-  }, []);
+    const handleDeleteFileTrigger = (event?: { detail?: { file_id?: string } }) => {
+      handleDeleteFile(event?.detail?.file_id);
+    };
+    subscribe('DELETE_FILE_TRIGGER', handleDeleteFileTrigger);
+    return () => {
+      unsubscribe('DELETE_FILE_TRIGGER', handleDeleteFileTrigger);
+    };
+  }, [memberId, uploadedFile?.file_id]);
 
   const handleDownloadFile = () => {
     if (!uploadedFile?.file_id) return;

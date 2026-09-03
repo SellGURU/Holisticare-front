@@ -1,10 +1,20 @@
-import { FC, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import FormCatalogBiomarkerPicker from './FormCatalogBiomarkerPicker';
+import {
+  ID_REGEX,
+  formulaPartialQuestionId,
+  questionFormulaKind,
+  unknownFormulaIds,
+  type FormCatalogItem,
+} from './questionFormula';
 
 interface CalculationsEditorProps {
   scoring: Array<ScoringRuleType>;
   onChange: (next: Array<ScoringRuleType>) => void;
   questions: Array<QuestionaryType>;
   onChangeQuestions?: (next: Array<QuestionaryType>) => void;
+  catalog?: Array<FormCatalogItem>;
+  catalogLoading?: boolean;
 }
 
 const emptyRule: ScoringRuleType = {
@@ -16,7 +26,27 @@ const emptyRule: ScoringRuleType = {
   formula: '',
 };
 
-const ID_REGEX = /^[a-z_][a-z0-9_]*$/i;
+const KIND_LABEL: Record<ReturnType<typeof questionFormulaKind>, string> = {
+  numeric: 'numeric',
+  scored: 'scored',
+  yesno: 'yes/no',
+  text: 'text',
+};
+
+const NUMBER_CHIPS: Array<{ label: string; snippet: string; offset?: number }> = [
+  { label: '+', snippet: ' + ' },
+  { label: '−', snippet: ' - ' },
+  { label: '×', snippet: ' * ' },
+  { label: '÷', snippet: ' / ' },
+  { label: '( )', snippet: '()', offset: 1 },
+  { label: 'sum( )', snippet: 'sum()', offset: 1 },
+  { label: 'avg( )', snippet: 'avg()', offset: 1 },
+];
+
+const TEXT_CHIPS: Array<{ label: string; snippet: string; offset?: number }> = [
+  { label: 'if_( )', snippet: 'if_(, , )', offset: 5 },
+  { label: '== ""', snippet: ' == ""', offset: 1 },
+];
 
 const generateId = (
   question: QuestionaryType,
@@ -30,28 +60,21 @@ const generateId = (
   return `q${n}`;
 };
 
-const OPERATOR_CHIPS: Array<{ label: string; snippet: string }> = [
-  { label: '+', snippet: ' + ' },
-  { label: '−', snippet: ' - ' },
-  { label: '×', snippet: ' * ' },
-  { label: '÷', snippet: ' / ' },
-  { label: '( )', snippet: '()' },
-  { label: 'x²', snippet: ' ** 2' },
-  { label: 'sum( )', snippet: 'sum()' },
-  { label: 'avg( )', snippet: 'avg()' },
-  { label: 'if_( )', snippet: 'if_(, , )' },
-];
-
 const CalculationsEditor: FC<CalculationsEditorProps> = ({
   scoring,
   onChange,
   questions,
   onChangeQuestions,
+  catalog = [],
+  catalogLoading = false,
 }) => {
-  const [expanded, setExpanded] = useState<boolean>(scoring.length > 0);
   const [draft, setDraft] = useState<ScoringRuleType | null>(null);
   const [editIndex, setEditIndex] = useState<number>(-1);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [outputKind, setOutputKind] = useState<'number' | 'text'>('number');
+  const [questionQuery, setQuestionQuery] = useState('');
+  const [caret, setCaret] = useState(0);
+  const [suggestOpen, setSuggestOpen] = useState(false);
   const formulaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const takenIds = useMemo(() => {
@@ -63,6 +86,11 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
     });
     return set;
   }, [questions]);
+
+  const formulaUnknownIds = useMemo(() => {
+    if (!draft?.formula) return [];
+    return unknownFormulaIds(draft.formula, takenIds);
+  }, [draft?.formula, takenIds]);
 
   const ensureId = (questionIndex: number): string => {
     const q = questions[questionIndex];
@@ -94,19 +122,34 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
     const joiner = needsLeftSpace ? ' ' : '';
     const nextText = `${before}${joiner}${snippet}${after}`;
     setDraft((d) => (d ? { ...d, formula: nextText } : d));
-    const caret =
+    const nextCaret =
       before.length + joiner.length + snippet.length - cursorOffsetFromEnd;
     window.requestAnimationFrame(() => {
       if (formulaRef.current) {
         formulaRef.current.focus();
-        formulaRef.current.setSelectionRange(caret, caret);
+        formulaRef.current.setSelectionRange(nextCaret, nextCaret);
+        setCaret(nextCaret);
       }
     });
   };
 
   const insertQuestion = (questionIndex: number) => {
-    const id = ensureId(questionIndex);
-    insertSnippet(id);
+    insertSnippet(ensureId(questionIndex));
+  };
+
+  const insertIdAtCaret = (id: string, replaceFrom?: number) => {
+    const current = draft?.formula || '';
+    const at = formulaRef.current?.selectionStart ?? caret;
+    const start = replaceFrom ?? at;
+    const nextText = `${current.slice(0, start)}${id}${current.slice(at)}`;
+    setDraft((d) => (d ? { ...d, formula: nextText } : d));
+    const nextCaret = start + id.length;
+    setSuggestOpen(false);
+    window.requestAnimationFrame(() => {
+      formulaRef.current?.focus();
+      formulaRef.current?.setSelectionRange(nextCaret, nextCaret);
+      setCaret(nextCaret);
+    });
   };
 
   const toggleSelected = (questionIndex: number) => {
@@ -119,23 +162,27 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
     });
   };
 
-  const wrapSelectedWith = (fnName: 'sum' | 'avg' | 'min' | 'max') => {
+  const wrapSelectedWith = (fnName: 'sum' | 'avg') => {
     if (selectedIds.size === 0) return;
-    const snippet = `${fnName}(${Array.from(selectedIds).join(', ')})`;
-    insertSnippet(snippet);
+    insertSnippet(`${fnName}(${Array.from(selectedIds).join(', ')})`);
     setSelectedIds(new Set());
   };
 
-  const startAdd = () => {
-    setDraft({ ...emptyRule });
+  const startAdd = (preset?: Partial<ScoringRuleType>, kind: 'number' | 'text' = 'number') => {
+    setDraft({ ...emptyRule, ...preset });
     setEditIndex(-1);
     setSelectedIds(new Set());
+    setOutputKind(kind);
+    setQuestionQuery('');
   };
 
   const startEdit = (index: number) => {
-    setDraft({ ...scoring[index] });
+    const rule = scoring[index];
+    setDraft({ ...rule });
     setEditIndex(index);
     setSelectedIds(new Set());
+    setOutputKind(/["']/.test(rule.formula || '') ? 'text' : 'number');
+    setQuestionQuery('');
   };
 
   const cancelDraft = () => {
@@ -148,6 +195,7 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
     if (!draft) return;
     if (!draft.name.trim() || !draft.formula.trim()) return;
     if ((draft.is_biomarker ?? true) && !draft.map_to_biomarker?.trim()) return;
+    if (formulaUnknownIds.length > 0) return;
     const normalizedDraft = {
       ...draft,
       map_to_biomarker: draft.map_to_biomarker?.trim() || '',
@@ -164,364 +212,507 @@ const CalculationsEditor: FC<CalculationsEditorProps> = ({
     cancelDraft();
   };
 
-  const removeRule = (index: number) => {
-    const next = scoring.filter((_, i) => i !== index);
-    onChange(next);
+  const applyScoreTemplate = () => {
+    const ids =
+      selectedIds.size > 0
+        ? Array.from(selectedIds)
+        : questions
+            .map((q, index) =>
+              questionFormulaKind(q) === 'scored' ? ensureId(index) : '',
+            )
+            .filter(Boolean);
+    startAdd(
+      {
+        name: 'Total score',
+        formula: ids.length ? `sum(${ids.join(', ')})` : 'sum()',
+      },
+      'number',
+    );
   };
 
+  const applyNumberTemplate = () => {
+    const weight = questions.findIndex((q) =>
+      /weight/i.test(`${q.id || ''} ${q.question || ''}`),
+    );
+    const height = questions.findIndex((q) =>
+      /height/i.test(`${q.id || ''} ${q.question || ''}`),
+    );
+    const w = weight >= 0 ? ensureId(weight) : 'q_weight';
+    const h = height >= 0 ? ensureId(height) : 'q_height';
+    startAdd(
+      {
+        name: 'BMI',
+        formula: `${w} / ((${h} / 100) ** 2)`,
+        round: 2,
+      },
+      'number',
+    );
+  };
+
+  const applyTextTemplate = () => {
+    const yesNo = questions.findIndex((q) => questionFormulaKind(q) === 'yesno');
+    const id = yesNo >= 0 ? ensureId(yesNo) : 'q_smoke';
+    startAdd(
+      {
+        name: 'Mapped answer',
+        formula: `if_(${id} == "Yes", "Yes", "No")`,
+      },
+      'text',
+    );
+  };
+
+  const filteredQuestions = useMemo(() => {
+    const q = questionQuery.trim().toLowerCase();
+    return questions
+      .map((question, index) => ({ question, index }))
+      .filter(({ question }) => {
+        if (!q) return true;
+        return `${question.id || ''} ${question.question || ''} ${question.type || ''}`
+          .toLowerCase()
+          .includes(q);
+      });
+  }, [questions, questionQuery]);
+
+  const partial = formulaPartialQuestionId(draft?.formula || '', caret);
+  const suggestions = useMemo(() => {
+    if (!partial || !suggestOpen) return [];
+    const query = partial.query.toLowerCase();
+    return questions
+      .map((question, index) => ({
+        id: question.id && ID_REGEX.test(question.id) ? question.id : `q${question.order ?? index + 1}`,
+        question,
+        index,
+      }))
+      .filter((item) => item.id.toLowerCase().startsWith(query) || query === 'q')
+      .slice(0, 6);
+  }, [partial, questions, suggestOpen]);
+
+  useEffect(() => {
+    setSuggestOpen(Boolean(partial));
+  }, [partial]);
+
+  const chips = outputKind === 'text' ? TEXT_CHIPS : NUMBER_CHIPS;
+  const canSave =
+    !!draft &&
+    draft.name.trim() &&
+    draft.formula.trim() &&
+    formulaUnknownIds.length === 0 &&
+    (!(draft.is_biomarker ?? true) || !!draft.map_to_biomarker?.trim());
+
   return (
-    <div className="w-full mt-6">
-      <div
-        className="w-full flex items-center justify-between cursor-pointer"
-        onClick={() => setExpanded((v) => !v)}
-      >
-        <div className="text-xs text-Text-Primary font-medium">
-          Calculations (optional)
+    <div className="w-full mt-6 rounded-2xl border border-gray-200 bg-white p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-[13px] font-semibold text-gray-800">
+            Derived biomarkers
+          </div>
+          <p className="mt-0.5 text-[11px] text-gray-500">
+            The client never sees this. Values are calculated after submit from
+            earlier answers — a number or a text label.
+          </p>
         </div>
-        <div className="text-[11px] text-Primary-DeepTeal">
-          {expanded ? 'Hide' : `Show (${scoring.length})`}
-        </div>
+        {!draft ? (
+          <button
+            type="button"
+            onClick={() => startAdd()}
+            className="inline-flex h-8 shrink-0 items-center rounded-lg bg-[#10B981] px-2.5 text-[12px] font-medium text-white hover:bg-[#10B981]/85"
+          >
+            + Add
+          </button>
+        ) : null}
       </div>
 
-      {expanded && (
-        <div className="w-full mt-3 space-y-2">
-          {scoring.length === 0 && !draft && (
-            <div className="text-[11px] text-Text-Secondary">
-              Build a score from question responses. Example: sum 10 anxiety
-              questions to produce a GAD-7 total.
+      {scoring.length === 0 && !draft ? (
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <button
+            type="button"
+            onClick={applyScoreTemplate}
+            className="rounded-xl border border-gray-200 bg-[#FAFBFC] px-3 py-2 text-left hover:border-[#10B981]"
+          >
+            <div className="text-[12px] font-medium text-gray-800">
+              Total a score
             </div>
-          )}
+            <div className="mt-0.5 text-[10px] text-gray-500">
+              Sum Likert / scored questions
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={applyNumberTemplate}
+            className="rounded-xl border border-gray-200 bg-[#FAFBFC] px-3 py-2 text-left hover:border-[#10B981]"
+          >
+            <div className="text-[12px] font-medium text-gray-800">
+              Calculate a number
+            </div>
+            <div className="mt-0.5 text-[10px] text-gray-500">
+              e.g. BMI from height and weight
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={applyTextTemplate}
+            className="rounded-xl border border-gray-200 bg-[#FAFBFC] px-3 py-2 text-left hover:border-[#10B981]"
+          >
+            <div className="text-[12px] font-medium text-gray-800">
+              Map answers to text
+            </div>
+            <div className="mt-0.5 text-[10px] text-gray-500">
+              e.g. Yes → Smoker
+            </div>
+          </button>
+        </div>
+      ) : null}
 
-          {scoring.map((rule, index) => (
-            <div
-              key={`${rule.name}-${index}`}
-              className="rounded-xl border border-Gray-50 p-3"
-            >
-              <div className="flex items-center justify-between">
-                <div className="text-[12px] text-Text-Primary font-medium">
+      <div className="mt-3 space-y-2">
+        {scoring.map((rule, index) => (
+          <div
+            key={`${rule.name}-${index}`}
+            className="rounded-xl border border-gray-200 px-3 py-2"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="truncate text-[12px] font-medium text-gray-800">
                   {rule.name}
-                  {(rule.is_biomarker ?? true) && rule.map_to_biomarker && (
-                    <span className="text-Text-Secondary font-normal">
+                  {(rule.is_biomarker ?? true) && rule.map_to_biomarker ? (
+                    <span className="font-normal text-gray-500">
                       {' '}
                       → {rule.map_to_biomarker}
                     </span>
-                  )}
-                  {rule.use_in_insight && (
-                    <span className="ml-2 rounded-full bg-[#E8F0F3] px-2 py-[1px] text-[9px] font-normal text-Primary-DeepTeal">
-                      Insight
-                    </span>
-                  )}
+                  ) : null}
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => startEdit(index)}
-                    className="text-[11px] text-Primary-DeepTeal"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => removeRule(index)}
-                    className="text-[11px] text-red-500"
-                  >
-                    Remove
-                  </button>
+                <div className="mt-0.5 font-mono text-[11px] text-gray-500 break-all">
+                  {rule.formula}
                 </div>
               </div>
-              <div className="mt-1 text-[11px] text-Text-Secondary font-mono break-all">
-                {rule.formula}
-              </div>
-              {rule.unit && (
-                <div className="text-[10px] text-Text-Secondary mt-1">
-                  Unit: {rule.unit}
-                </div>
-              )}
-            </div>
-          ))}
-
-          {draft && (
-            <div className="rounded-xl border border-Primary-DeepTeal p-3 space-y-3">
-              <div className="grid grid-cols-2 gap-2">
-                <label className="flex flex-col gap-1">
-                  <span className="text-[10px] font-medium text-Text-Secondary">
-                    Calculation name
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="e.g. FSFI Total Score"
-                    value={draft.name}
-                    onChange={(e) =>
-                      setDraft({ ...draft, name: e.target.value })
-                    }
-                    className="rounded-md border border-Gray-50 px-2 py-1 text-[12px]"
-                  />
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="text-[10px] font-medium text-Text-Secondary">
-                    Biomarker name
-                    {(draft.is_biomarker ?? true) ? (
-                      <span className="text-red-500"> *</span>
-                    ) : null}
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="e.g. Female Sexual Function Index"
-                    value={draft.map_to_biomarker || ''}
-                    onChange={(e) =>
-                      setDraft({ ...draft, map_to_biomarker: e.target.value })
-                    }
-                    disabled={draft.is_biomarker === false}
-                    className="rounded-md border border-Gray-50 px-2 py-1 text-[12px] disabled:bg-gray-50 disabled:text-Text-Secondary"
-                  />
-                </label>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <label className="flex items-center gap-2 rounded-md border border-Gray-50 px-2 py-1 text-[11px] text-Text-Primary">
-                  <input
-                    type="checkbox"
-                    checked={draft.is_biomarker ?? true}
-                    onChange={(e) =>
-                      setDraft({ ...draft, is_biomarker: e.target.checked })
-                    }
-                    className="accent-Primary-DeepTeal"
-                  />
-                  Use calculated value as biomarker
-                </label>
-                <label className="flex items-center gap-2 rounded-md border border-Gray-50 px-2 py-1 text-[11px] text-Text-Primary">
-                  <input
-                    type="checkbox"
-                    checked={
-                      draft.use_in_insight ?? draft.use_in_insights ?? false
-                    }
-                    onChange={(e) =>
-                      setDraft({
-                        ...draft,
-                        use_in_insight: e.target.checked,
-                        use_in_insights: undefined,
-                      })
-                    }
-                    className="accent-Primary-DeepTeal"
-                  />
-                  Include calculated value in insights
-                </label>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  placeholder="Unit (optional, e.g. kg/m^2)"
-                  value={draft.unit || ''}
-                  onChange={(e) => setDraft({ ...draft, unit: e.target.value })}
-                  className="rounded-md border border-Gray-50 px-2 py-1 text-[12px]"
-                />
-                <input
-                  type="number"
-                  placeholder="Round digits (optional)"
-                  value={draft.round ?? ''}
-                  onChange={(e) =>
-                    setDraft({
-                      ...draft,
-                      round:
-                        e.target.value === ''
-                          ? undefined
-                          : Number(e.target.value),
-                    })
-                  }
-                  className="rounded-md border border-Gray-50 px-2 py-1 text-[12px]"
-                />
-              </div>
-
-              <div>
-                <div className="text-[11px] text-Text-Primary font-medium mb-1">
-                  Formula
-                </div>
-                <textarea
-                  ref={formulaRef}
-                  placeholder="Click questions below to insert them, then combine with operators."
-                  value={draft.formula}
-                  onChange={(e) =>
-                    setDraft({ ...draft, formula: e.target.value })
-                  }
-                  rows={3}
-                  className="w-full rounded-md border border-Gray-50 px-2 py-1 text-[12px] font-mono"
-                />
-                <div className="mt-1 flex flex-wrap gap-1">
-                  {OPERATOR_CHIPS.map((chip) => (
-                    <button
-                      key={chip.label}
-                      type="button"
-                      onClick={() => {
-                        if (chip.snippet === '()') {
-                          insertSnippet('()', 1);
-                        } else if (
-                          chip.snippet === 'sum()' ||
-                          chip.snippet === 'avg()'
-                        ) {
-                          insertSnippet(chip.snippet, 1);
-                        } else if (chip.snippet === 'if_(, , )') {
-                          insertSnippet('if_(, , )', 5);
-                        } else {
-                          insertSnippet(chip.snippet);
-                        }
-                      }}
-                      className="rounded-md bg-[#F3F6F8] border border-Gray-50 px-2 py-[2px] text-[11px] hover:border-Primary-DeepTeal"
-                    >
-                      {chip.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <div className="text-[11px] text-Text-Primary font-medium">
-                    Questions
-                  </div>
-                  <div className="text-[10px] text-Text-Secondary">
-                    Click a row to insert its id. Use checkboxes to aggregate.
-                  </div>
-                </div>
-                <div className="max-h-[220px] overflow-y-auto rounded-lg border border-Gray-50 bg-[#FAFBFC]">
-                  {questions.length === 0 && (
-                    <div className="p-3 text-[11px] text-Text-Secondary">
-                      Add at least one question above before building a formula.
-                    </div>
-                  )}
-                  {questions.map((q, index) => {
-                    const displayId =
-                      q.id && ID_REGEX.test(q.id)
-                        ? q.id
-                        : `q${q.order ?? index + 1} (auto)`;
-                    const isSelected =
-                      !!q.id && ID_REGEX.test(q.id) && selectedIds.has(q.id);
-                    return (
-                      <div
-                        key={`q-picker-${index}`}
-                        className="flex items-center gap-2 px-2 py-1 border-b border-Gray-50 last:border-b-0 hover:bg-white"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleSelected(index)}
-                          className="accent-Primary-DeepTeal"
-                          aria-label="Select question for aggregation"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => insertQuestion(index)}
-                          className="flex-1 min-w-0 flex items-center gap-2 text-left"
-                        >
-                          <code className="shrink-0 rounded bg-[#E8F0F3] px-1.5 py-[1px] text-[10px] text-Primary-DeepTeal">
-                            {displayId}
-                          </code>
-                          <span className="truncate text-[11px] text-Text-Primary">
-                            {q.question || '(untitled question)'}
-                          </span>
-                          {q.type && (
-                            <span className="shrink-0 text-[10px] text-Text-Secondary">
-                              · {q.type}
-                            </span>
-                          )}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => insertQuestion(index)}
-                          className="shrink-0 text-[10px] text-Primary-DeepTeal hover:underline"
-                        >
-                          + Insert
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {selectedIds.size > 0 && (
-                  <div className="mt-2 flex items-center gap-2 flex-wrap">
-                    <span className="text-[10px] text-Text-Secondary">
-                      With {selectedIds.size} selected:
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => wrapSelectedWith('sum')}
-                      className="rounded-md bg-Primary-DeepTeal text-white px-2 py-[2px] text-[11px]"
-                    >
-                      Sum
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => wrapSelectedWith('avg')}
-                      className="rounded-md bg-Primary-DeepTeal text-white px-2 py-[2px] text-[11px]"
-                    >
-                      Average
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => wrapSelectedWith('min')}
-                      className="rounded-md bg-Primary-DeepTeal text-white px-2 py-[2px] text-[11px]"
-                    >
-                      Min
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => wrapSelectedWith('max')}
-                      className="rounded-md bg-Primary-DeepTeal text-white px-2 py-[2px] text-[11px]"
-                    >
-                      Max
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedIds(new Set())}
-                      className="text-[10px] text-Disable"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-1">
+              <div className="flex shrink-0 items-center gap-2">
+                <span className="rounded-full bg-[#E8F0F3] px-2 py-[1px] text-[9px] text-Primary-DeepTeal">
+                  {/["']/.test(rule.formula || '') ? 'Text' : 'Number'}
+                </span>
                 <button
                   type="button"
-                  onClick={cancelDraft}
-                  className="text-[11px] text-Disable"
+                  onClick={() => startEdit(index)}
+                  className="text-[11px] text-Primary-DeepTeal"
                 >
-                  Cancel
+                  Edit
                 </button>
                 <button
                   type="button"
-                  onClick={saveDraft}
-                  disabled={
-                    !draft.name.trim() ||
-                    !draft.formula.trim() ||
-                    ((draft.is_biomarker ?? true) &&
-                      !draft.map_to_biomarker?.trim())
-                  }
-                  className={`text-[11px] ${
-                    !draft.name.trim() ||
-                    !draft.formula.trim() ||
-                    ((draft.is_biomarker ?? true) &&
-                      !draft.map_to_biomarker?.trim())
-                      ? 'text-Disable cursor-not-allowed'
-                      : 'text-Primary-DeepTeal'
+                  onClick={() => onChange(scoring.filter((_, i) => i !== index))}
+                  className="text-[11px] text-red-500"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {draft ? (
+        <div className="mt-3 space-y-3 rounded-xl border border-[#10B981]/40 p-3">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <label className="flex flex-col gap-1">
+              <span className="text-[11px] font-semibold text-gray-700">
+                Name
+              </span>
+              <input
+                type="text"
+                placeholder="e.g. Smoking status"
+                value={draft.name}
+                onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                className="h-9 rounded-lg border border-gray-200 px-2.5 text-[12px] outline-none focus:border-[#10B981]"
+              />
+            </label>
+            <div className="flex flex-col gap-1">
+              <span className="text-[11px] font-semibold text-gray-700">
+                Output
+              </span>
+              <div className="flex h-9 overflow-hidden rounded-lg border border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setOutputKind('number')}
+                  className={`flex-1 text-[12px] ${
+                    outputKind === 'number'
+                      ? 'bg-[#10B981] text-white'
+                      : 'bg-white text-gray-700'
                   }`}
                 >
-                  {editIndex >= 0 ? 'Update' : 'Add'}
+                  Number
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOutputKind('text')}
+                  className={`flex-1 text-[12px] ${
+                    outputKind === 'text'
+                      ? 'bg-[#10B981] text-white'
+                      : 'bg-white text-gray-700'
+                  }`}
+                >
+                  Text
                 </button>
               </div>
             </div>
-          )}
+          </div>
 
-          {!draft && (
+          <label className="flex flex-col gap-1">
+            <span className="text-[11px] font-semibold text-gray-700">
+              Clinic biomarker
+              {(draft.is_biomarker ?? true) ? (
+                <span className="text-red-500"> *</span>
+              ) : null}
+            </span>
+            {(draft.is_biomarker ?? true) ? (
+              <FormCatalogBiomarkerPicker
+                items={catalog}
+                value={draft.map_to_biomarker || ''}
+                loading={catalogLoading}
+                onChange={(item) =>
+                  setDraft({
+                    ...draft,
+                    map_to_biomarker: item?.name || '',
+                    unit: draft.unit || item?.unit || '',
+                  })
+                }
+              />
+            ) : (
+              <p className="text-[11px] text-gray-500">
+                Not stored as a biomarker.
+              </p>
+            )}
+          </label>
+
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <label className="flex items-center gap-2 rounded-lg border border-gray-200 px-2 py-1.5 text-[12px]">
+              <input
+                type="checkbox"
+                checked={draft.is_biomarker ?? true}
+                onChange={(e) =>
+                  setDraft({ ...draft, is_biomarker: e.target.checked })
+                }
+                className="accent-[#10B981]"
+              />
+              Save as biomarker
+            </label>
+            <label className="flex items-center gap-2 rounded-lg border border-gray-200 px-2 py-1.5 text-[12px]">
+              <input
+                type="checkbox"
+                checked={draft.use_in_insight ?? draft.use_in_insights ?? false}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    use_in_insight: e.target.checked,
+                    use_in_insights: undefined,
+                  })
+                }
+                className="accent-[#10B981]"
+              />
+              Include in insights
+            </label>
+          </div>
+
+          {outputKind === 'number' ? (
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                type="text"
+                placeholder="Unit (optional)"
+                value={draft.unit || ''}
+                onChange={(e) => setDraft({ ...draft, unit: e.target.value })}
+                className="h-9 rounded-lg border border-gray-200 px-2.5 text-[12px]"
+              />
+              <input
+                type="number"
+                placeholder="Round digits"
+                value={draft.round ?? ''}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    round:
+                      e.target.value === ''
+                        ? undefined
+                        : Number(e.target.value),
+                  })
+                }
+                className="h-9 rounded-lg border border-gray-200 px-2.5 text-[12px]"
+              />
+            </div>
+          ) : null}
+
+          <div className="relative">
+            <div className="mb-1 text-[11px] font-semibold text-gray-700">
+              Formula
+            </div>
+            <textarea
+              ref={formulaRef}
+              placeholder={
+                outputKind === 'text'
+                  ? 'if_(q_smoke == "Yes", "Smoker", "Non-smoker")'
+                  : 'Click questions below, or type q_ to insert an id.'
+              }
+              value={draft.formula}
+              onChange={(e) => {
+                setDraft({ ...draft, formula: e.target.value });
+                setCaret(e.target.selectionStart);
+              }}
+              onKeyUp={(e) => setCaret(e.currentTarget.selectionStart)}
+              onClick={(e) => setCaret(e.currentTarget.selectionStart)}
+              rows={4}
+              className="w-full rounded-lg border border-gray-200 px-2.5 py-2 font-mono text-[12px] outline-none focus:border-[#10B981]"
+            />
+            {suggestions.length > 0 ? (
+              <div className="absolute left-0 right-0 z-10 mt-1 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+                {suggestions.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      const qid = ensureId(item.index);
+                      insertIdAtCaret(qid, partial?.start);
+                    }}
+                    className="flex w-full items-center gap-2 px-2 py-1.5 text-left text-[12px] hover:bg-gray-50"
+                  >
+                    <code className="rounded bg-[#E8F0F3] px-1.5 text-[10px] text-Primary-DeepTeal">
+                      {item.id}
+                    </code>
+                    <span className="truncate text-gray-700">
+                      {item.question.question}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <div className="mt-1 flex flex-wrap gap-1">
+              {chips.map((chip) => (
+                <button
+                  key={chip.label}
+                  type="button"
+                  onClick={() => insertSnippet(chip.snippet, chip.offset || 0)}
+                  className="rounded-md border border-gray-200 bg-[#F3F6F8] px-2 py-[2px] text-[11px] hover:border-[#10B981]"
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+            {formulaUnknownIds.length > 0 ? (
+              <div className="mt-1 text-[10px] text-red-500">
+                Unknown variable
+                {formulaUnknownIds.length > 1 ? 's' : ''}:{' '}
+                {formulaUnknownIds.join(', ')}.
+              </div>
+            ) : null}
+          </div>
+
+          <div>
+            <div className="mb-1 flex items-center justify-between">
+              <div className="text-[11px] font-semibold text-gray-700">
+                Questions
+              </div>
+              <input
+                type="text"
+                value={questionQuery}
+                onChange={(e) => setQuestionQuery(e.target.value)}
+                placeholder="Search…"
+                className="h-7 w-[140px] rounded-md border border-gray-200 px-2 text-[11px]"
+              />
+            </div>
+            <div className="max-h-[180px] overflow-y-auto rounded-lg border border-gray-200 bg-[#FAFBFC]">
+              {filteredQuestions.length === 0 ? (
+                <div className="p-3 text-[11px] text-gray-500">
+                  Add questions above first.
+                </div>
+              ) : (
+                filteredQuestions.map(({ question: q, index }) => {
+                  const displayId =
+                    q.id && ID_REGEX.test(q.id)
+                      ? q.id
+                      : `q${q.order ?? index + 1} (auto)`;
+                  const isSelected =
+                    !!q.id && ID_REGEX.test(q.id) && selectedIds.has(q.id);
+                  const kind = questionFormulaKind(q);
+                  return (
+                    <div
+                      key={`q-picker-${index}`}
+                      className="flex items-center gap-2 border-b border-gray-100 px-2 py-1 last:border-b-0 hover:bg-white"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleSelected(index)}
+                        className="accent-[#10B981]"
+                        aria-label="Select question for aggregation"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => insertQuestion(index)}
+                        className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                      >
+                        <code className="shrink-0 rounded bg-[#E8F0F3] px-1.5 py-[1px] text-[10px] text-Primary-DeepTeal">
+                          {displayId}
+                        </code>
+                        <span className="truncate text-[11px] text-gray-800">
+                          {q.question || '(untitled)'}
+                        </span>
+                        <span className="shrink-0 text-[10px] text-gray-500">
+                          {KIND_LABEL[kind]}
+                        </span>
+                      </button>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            {selectedIds.size > 0 && outputKind === 'number' ? (
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span className="text-[10px] text-gray-500">
+                  With {selectedIds.size} selected:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => wrapSelectedWith('sum')}
+                  className="rounded-md bg-[#10B981] px-2 py-[2px] text-[11px] text-white"
+                >
+                  Sum
+                </button>
+                <button
+                  type="button"
+                  onClick={() => wrapSelectedWith('avg')}
+                  className="rounded-md bg-[#10B981] px-2 py-[2px] text-[11px] text-white"
+                >
+                  Average
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedIds(new Set())}
+                  className="text-[10px] text-gray-400"
+                >
+                  Clear
+                </button>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="flex items-center justify-end gap-3 pt-1">
             <button
               type="button"
-              onClick={startAdd}
-              className="flex items-center justify-center text-xs cursor-pointer text-Primary-DeepTeal font-medium border-2 border-dashed rounded-xl w-full h-[36px] bg-backgroundColor-Card border-Primary-DeepTeal"
+              onClick={cancelDraft}
+              className="text-[11px] text-gray-400"
             >
-              + Add Calculation
+              Cancel
             </button>
-          )}
+            <button
+              type="button"
+              onClick={saveDraft}
+              disabled={!canSave}
+              className={`text-[11px] ${
+                canSave
+                  ? 'font-medium text-[#10B981]'
+                  : 'cursor-not-allowed text-gray-300'
+              }`}
+            >
+              {editIndex >= 0 ? 'Update' : 'Add'}
+            </button>
+          </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

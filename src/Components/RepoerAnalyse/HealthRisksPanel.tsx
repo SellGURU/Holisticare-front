@@ -6,6 +6,7 @@ import {
   presentRisks,
   presentScores,
   RISKS_SCORES_AGE_SECTION,
+  shouldHideHealthRisksSection,
   shouldShowReportGroup,
   useHealthRiskAssessments,
   type HealthRiskAssessment,
@@ -39,7 +40,7 @@ function ModelGroup({
     <div className="mt-8 first:mt-4">
       <h3 className="TextStyle-Headline-5 text-Text-Primary">{title}</h3>
       <p className="mt-1 text-[12px] text-Text-Secondary">{blurb}</p>
-      {error ? (
+      {error && items.length === 0 ? (
         <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700">
           {title} could not be loaded.
         </p>
@@ -92,7 +93,16 @@ export default function HealthRisksPanel({
   }, [enabled, loading, activeTypes, hasActiveType]);
 
   if (!enabled) return null;
-  if (loading || !hasActiveType) return null;
+  const hasVisibleData = assessments.length > 0;
+  if (
+    shouldHideHealthRisksSection({
+      hasVisibleData,
+      loading,
+      hasActiveType,
+    })
+  ) {
+    return null;
+  }
 
   return (
     <section className="my-16" aria-labelledby="risks-scores-age-heading">

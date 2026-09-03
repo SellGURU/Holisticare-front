@@ -31,6 +31,7 @@ type ProgressData = ProgressItem[];
 
 const BURST_POLL_INTERVAL_MS = 5000;
 const BURST_POLL_MAX_MS = 180000;
+const EMPTY_PROGRESS_GRACE_MS = 60000;
 const ALL_PROGRESS_COMPLETED_DELAY_MS = 1500;
 
 const formatDateTime = (date: Date): string => {
@@ -68,6 +69,7 @@ const UnderProgressController = ({
   const burstPollStartedRef = useRef<number | null>(null);
   const overviewPollTriggeredRef = useRef(false);
   const hadInflightOperationsRef = useRef(false);
+  const awaitingEmptyProgressRef = useRef(false);
   const completedProgressKeysRef = useRef<Set<string>>(new Set());
   const allProgressCompletedTimeoutRef = useRef<ReturnType<
     typeof setTimeout
@@ -158,8 +160,14 @@ const UnderProgressController = ({
           {
             file_id: file.f_unique_id,
             type: file.action_type,
+            member_id: currentMemberIdRef.current,
           },
         );
+        publish('questionnaireProcessingCompleted', {
+          member_id: currentMemberIdRef.current,
+          file_id: file.f_unique_id,
+          type: file.action_type,
+        });
       }
     });
   };
@@ -219,6 +227,7 @@ const UnderProgressController = ({
     currentMemberIdRef.current = member_id;
     completedProgressKeysRef.current.clear();
     hadInflightOperationsRef.current = false;
+    awaitingEmptyProgressRef.current = false;
 
     const effectMemberId = member_id;
 
@@ -240,6 +249,7 @@ const UnderProgressController = ({
       startBurstPoll();
 
       if (data?.detail?.type === 'file') {
+        awaitingEmptyProgressRef.current = false;
         SetAllprogress((prev: any) => {
           const fileId = data.detail.file_id;
           const filesWithoutDuplicate = prev.files.filter(
@@ -251,6 +261,7 @@ const UnderProgressController = ({
           };
         });
       } else {
+        awaitingEmptyProgressRef.current = true;
         getProgress();
       }
     };
@@ -296,6 +307,7 @@ const UnderProgressController = ({
       allprogress.refresh.length > 0;
 
     if (inflight) {
+      awaitingEmptyProgressRef.current = false;
       hadInflightOperationsRef.current = true;
       if (!overviewPollTriggeredRef.current) {
         overviewPollTriggeredRef.current = true;
@@ -311,7 +323,13 @@ const UnderProgressController = ({
       overviewPollTriggeredRef.current = false;
     }
 
-    if (!inflight) {
+    const keepBurstForEmptyLog =
+      awaitingEmptyProgressRef.current &&
+      !hasTrackedOperations &&
+      burstPollStartedRef.current != null &&
+      Date.now() - burstPollStartedRef.current < EMPTY_PROGRESS_GRACE_MS;
+
+    if (!inflight && !keepBurstForEmptyLog) {
       stopBurstPoll();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

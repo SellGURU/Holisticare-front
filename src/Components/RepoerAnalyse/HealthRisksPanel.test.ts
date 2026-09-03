@@ -16,6 +16,7 @@ import {
   RISKS_SCORES_AGE_SECTION,
   riskContributions,
   scoreBarPercent,
+  shouldHideHealthRisksSection,
   shouldShowReportGroup,
 } from './healthRiskAssessments';
 
@@ -30,6 +31,23 @@ function incompleteCopy(missing: Array<{ token?: string }>) {
 }
 
 describe('HealthRisksPanel copy', () => {
+  it('keeps previous assessments visible while a snapshot is refetching', () => {
+    expect(
+      shouldHideHealthRisksSection({
+        hasVisibleData: true,
+        loading: true,
+        hasActiveType: true,
+      }),
+    ).toBe(false);
+    expect(
+      shouldHideHealthRisksSection({
+        hasVisibleData: false,
+        loading: true,
+        hasActiveType: false,
+      }),
+    ).toBe(true);
+  });
+
   it('does not call missing data no risk', () => {
     const text = incompleteCopy([{ token: 'LDL' }]);
     expect(text.toLowerCase()).toContain('not the same as low or no risk');

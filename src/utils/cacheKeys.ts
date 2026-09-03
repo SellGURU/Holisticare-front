@@ -1,4 +1,10 @@
-import { invalidate, listPageCacheKeys, removeCachedKey } from './pageCache';
+import {
+  bumpCacheGeneration,
+  invalidate,
+  listInFlightCacheKeys,
+  listPageCacheKeys,
+  removeCachedKey,
+} from './pageCache';
 
 export const HEALTH_PLAN_TTL_MS = 2 * 60 * 1000;
 
@@ -35,13 +41,51 @@ export const HEALTH_PLAN_CACHE_KEYS = {
 
 export function invalidateHealthPlanCache(memberId: string | number): void {
   const id = String(memberId);
-  for (const key of listPageCacheKeys()) {
-    if (
-      key.startsWith('portal:healthplan:') &&
-      (key.endsWith(`:${id}`) || key.includes(`:${id}:`))
-    ) {
+  const matchesMember = (key: string) =>
+    key.startsWith('portal:healthplan:') &&
+    (key.endsWith(`:${id}`) || key.includes(`:${id}:`));
+
+  bumpCacheGeneration();
+  for (const key of new Set([
+    ...listPageCacheKeys(),
+    ...listInFlightCacheKeys(),
+  ])) {
+    if (matchesMember(key)) {
       removeCachedKey(key);
     }
+  }
+}
+
+export function invalidateHealthPlanQueryKeys(
+  memberId: string | number,
+  queries: string[],
+): void {
+  const id = String(memberId);
+  const keys: string[] = [];
+  for (const query of queries) {
+    if (query === 'outofrefs' || query === 'detailedAnalysis') {
+      keys.push(
+        HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(id, true),
+        HEALTH_PLAN_CACHE_KEYS.clientSummaryOutofrefs(id, false),
+      );
+    } else if (query === 'categories' || query === 'clientSummary') {
+      keys.push(
+        HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(id, true),
+        HEALTH_PLAN_CACHE_KEYS.clientSummaryCategories(id, false),
+      );
+    } else if (query === 'concerningResults') {
+      keys.push(
+        HEALTH_PLAN_CACHE_KEYS.concerningResults(id, true),
+        HEALTH_PLAN_CACHE_KEYS.concerningResults(id, false),
+      );
+    } else if (query === 'holisticPlan') {
+      keys.push(HEALTH_PLAN_CACHE_KEYS.overviewTreatmentPlan(id));
+    } else if (query === 'healthRisks') {
+      keys.push(HEALTH_PLAN_CACHE_KEYS.healthRisks(id));
+    }
+  }
+  for (const key of new Set(keys)) {
+    removeCachedKey(key);
   }
 }
 

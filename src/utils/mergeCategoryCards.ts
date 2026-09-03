@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { isOverviewDataSettled } from './compileButtonState';
+import {
+  isDomainAuthoritative,
+  isDomainUnresolved,
+} from './processingCompletion';
+
 const categoryKey = (card: any): string =>
   String(card?.subcategory ?? '')
     .trim()
@@ -14,12 +20,15 @@ export const isAuthoritativeEmptyReference = (data: any): boolean =>
 
 export const shouldApplyCategoryResponse = (data: any): boolean => {
   if (!data) return false;
+  const categoryState = data?.domain_outcomes?.category_insights?.state;
   const subcategories = data.subcategories ?? [];
-  if (isAuthoritativeEmptyCategories(data)) return true;
+  // Scored rings/counts come from biomarkers, not the category LLM.
   if (subcategories.length > 0) return true;
-  if (!data.processing) return true;
+  if (isDomainUnresolved(categoryState)) return false;
+  if (isDomainAuthoritative(categoryState)) return true;
+  if (!isOverviewDataSettled(data)) return false;
+  if (isAuthoritativeEmptyCategories(data)) return true;
   if (data.data_phase === 'extracted_only') return true;
-  // Empty category cards during delete recompile — apply to clear stale UI.
   if (subcategories.length === 0) return true;
   return false;
 };
@@ -27,30 +36,73 @@ export const shouldApplyCategoryResponse = (data: any): boolean => {
 export const shouldApplyReferenceResponse = (data: any): boolean => {
   if (!data) return false;
   const biomarkers = data.biomarkers ?? [];
-  if (isAuthoritativeEmptyReference(data)) return true;
+  // Scored Need Focus / Detailed Analysis rows are independent of LLM.
   if (biomarkers.length > 0) return true;
-  if (!data.processing) return true;
+  const biomarkerState = data?.domain_outcomes?.biomarkers?.state;
+  if (isDomainUnresolved(biomarkerState)) return false;
+  if (isDomainAuthoritative(biomarkerState)) return true;
+  if (!isOverviewDataSettled(data)) return false;
+  if (isAuthoritativeEmptyReference(data)) return true;
   if (data.data_phase === 'extracted_only') return true;
   if (biomarkers.length === 0) return true;
   return false;
 };
 
+export const shouldTreatEmptyFindingsAsAuthoritative = (data: any): boolean => {
+  const biomarkerState = data?.domain_outcomes?.biomarkers?.state;
+  if (isDomainUnresolved(biomarkerState) || biomarkerState === undefined) {
+    if (biomarkerState === undefined) {
+      return isOverviewDataSettled(data);
+    }
+    return false;
+  }
+  return isDomainAuthoritative(biomarkerState);
+};
+
+/** False empty: header can already show reference totals while category cards have not landed. */
+export const shouldShowClientSummaryEmptyIllustration = ({
+  categoryCount,
+  hasReferenceBiomarkers,
+  showingSkeleton,
+}: {
+  categoryCount: number;
+  hasReferenceBiomarkers: boolean;
+  showingSkeleton: boolean;
+  categoriesUnresolved?: boolean;
+}): boolean => {
+  if (showingSkeleton) return false;
+  if (categoryCount > 0) return false;
+  if (hasReferenceBiomarkers) return false;
+  return true;
+};
+
 /** Replace or merge category poll/fetch payloads — never keep stale cards on empty/delete. */
 export const applyClientSummaryCategories = (prev: any, incoming: any): any => {
-  if (!shouldApplyCategoryResponse(incoming)) return prev;
+  const summaryState = incoming?.domain_outcomes?.client_summary?.state;
+  const cardsAuthoritative = shouldApplyCategoryResponse(incoming);
+  let next = prev;
 
-  const subcategories = incoming?.subcategories ?? [];
-  const isEmptyCategories = isAuthoritativeEmptyCategories(incoming);
-  if (incoming?.lab_only && prev && !isEmptyCategories) {
-    return mergeLabOnlyCategories(prev, incoming);
+  if (cardsAuthoritative) {
+    const subcategories = incoming?.subcategories ?? [];
+    const isEmptyCategories = isAuthoritativeEmptyCategories(incoming);
+    if (incoming?.lab_only && prev && !isEmptyCategories) {
+      next = mergeLabOnlyCategories(prev, incoming);
+    } else if (!prev || isEmptyCategories || subcategories.length === 0) {
+      next = incoming;
+    } else if (!incoming.processing) {
+      next = incoming;
+    } else {
+      next = mergeClientSummaryCategories(prev, incoming);
+    }
+    if (!isDomainAuthoritative(summaryState) && prev?.client_summary != null) {
+      next = { ...next, client_summary: prev.client_summary };
+    }
   }
-  if (!prev || isEmptyCategories || subcategories.length === 0) {
-    return incoming;
+
+  if (isDomainAuthoritative(summaryState) && incoming) {
+    return { ...(next || incoming), client_summary: incoming.client_summary };
   }
-  if (!incoming.processing) {
-    return incoming;
-  }
-  return mergeClientSummaryCategories(prev, incoming);
+  return next;
 };
 
 /** Lab-only follow-up must not drop wearable cards already on screen. */
@@ -210,4 +262,69 @@ export const mergeClientSummaryCategories = (prev: any, incoming: any): any => {
     total_subcategory: resolvedTotal,
     total_category: resolvedCategories,
   };
+};
+
+const REFERENCE_STATUS_BUCKET: Record<string, number> = {
+  Excellent: 0,
+  OptimalRange: 0,
+  Good: 1,
+  HealthyRange: 1,
+  Ok: 2,
+  BorderlineRange: 2,
+  'Needs Focus': 3,
+  DiseaseRange: 3,
+  CriticalRange: 4,
+};
+
+/** Build Client Summary cards from the same overview biomarkers used in the header. */
+export const categoryCardsFromReferenceBiomarkers = (
+  biomarkers: any[] | null | undefined,
+): any[] => {
+  const groups = new Map<
+    string,
+    {
+      subcategory: string;
+      count: number;
+      outOfRef: number;
+      buckets: number[];
+    }
+  >();
+  for (const entry of biomarkers || []) {
+    const subcategory = String(entry?.subcategory || '').trim();
+    if (!subcategory) continue;
+    const key = subcategory.toLowerCase();
+    let group = groups.get(key);
+    if (!group) {
+      group = {
+        subcategory,
+        count: 0,
+        outOfRef: 0,
+        buckets: [0, 0, 0, 0, 0],
+      };
+      groups.set(key, group);
+    }
+    group.count += 1;
+    if (entry?.outofref) group.outOfRef += 1;
+    const rawStatus = Array.isArray(entry?.status)
+      ? entry.status[0]
+      : entry?.status;
+    const bucket = REFERENCE_STATUS_BUCKET[String(rawStatus || '')];
+    if (bucket != null) group.buckets[bucket] += 1;
+    else if (entry?.outofref) group.buckets[3] += 1;
+  }
+  return [...groups.values()].map((group) => {
+    const total = group.count || 1;
+    return {
+      subcategory: group.subcategory,
+      num_of_biomarkers: group.count,
+      out_of_ref: group.outOfRef,
+      status: group.buckets.map((n) => Math.round((n / total) * 100)),
+      flags_source: 'scored',
+      values_ready: true,
+      flags_ready: true,
+      description_ready: false,
+      description_pending: true,
+      description: '',
+    };
+  });
 };
