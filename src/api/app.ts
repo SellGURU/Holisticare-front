@@ -1371,7 +1371,7 @@ class Application extends Api {
     return this.post(`/questionary_tracking/autosave`, data);
   };
   static getPublicConfig = () => {
-    return this.get(`/config/public`, {});
+    return this.get(`/config/public`, { noAuth: true });
   };
   static requestUploadUrl = (
     container_key: string,

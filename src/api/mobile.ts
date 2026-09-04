@@ -17,21 +17,23 @@ interface getExerciseFileProps {
   encoded_mi: string;
 }
 
+const publicFillConfig = { noAuth: true };
+
 class Mobile extends ApiMobile {
   static autoSaveQuestionary = (data: any) => {
-    return this.post('/tasks/autosave', data);
+    return this.post('/tasks/autosave', data, publicFillConfig);
   };
   static getQuestionaryEmpty = (data: getQuestionaryEmptyData) => {
-    return this.post('/tasks/show_empty_questionary', data);
+    return this.post('/tasks/show_empty_questionary', data, publicFillConfig);
   };
   static getCheckInEmpty = (data: getQuestionaryEmptyData) => {
-    return this.post('/tasks/show_checkin_questions', data);
+    return this.post('/tasks/show_checkin_questions', data, publicFillConfig);
   };
   static fillQuestionary = (data: any) => {
-    return this.post('/tasks/save_questionary_respond', data);
+    return this.post('/tasks/save_questionary_respond', data, publicFillConfig);
   };
   static fillCheckin = (data: any) => {
-    return this.post('/tasks/save_checkin_respond', data);
+    return this.post('/tasks/save_checkin_respond', data, publicFillConfig);
   };
   static getTasks = (data: getTasksProps) => {
     return this.post('/task_details', data);
