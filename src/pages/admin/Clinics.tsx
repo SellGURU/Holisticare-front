@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Copy, KeyRound, RefreshCw, Search, ShieldCheck, ShieldOff, Smartphone, X } from 'lucide-react';
+import { Copy, KeyRound, Pencil, RefreshCw, Search, ShieldCheck, ShieldOff, Smartphone, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
 import AdminShellLayout from './AdminShellLayout';
 import ClinicMobileUsersPanel from './ClinicMobileUsersPanel';
+import ClinicProfileModal from './ClinicProfileModal';
+import type { ClinicProfileData } from './clinicProfileForm';
 import {
   expiryMsFromRemaining,
   formatCountdown,
@@ -71,6 +73,7 @@ const Clinics = () => {
   const [copied, setCopied] = useState(false);
   const [nowTick, setNowTick] = useState(0);
   const [mobileClinic, setMobileClinic] = useState<ClinicRow | null>(null);
+  const [profileClinic, setProfileClinic] = useState<ClinicRow | null>(null);
 
   const handleAuthFailure = () => {
     removeAdminToken();
@@ -387,6 +390,15 @@ const Clinics = () => {
                         <button
                           type="button"
                           disabled={busy}
+                          onClick={() => setProfileClinic(clinic)}
+                          className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
+                        >
+                          <Pencil size={14} />
+                          Edit profile
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busy}
                           onClick={() => grantTempPassword(clinic)}
                           className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
                         >
@@ -479,6 +491,32 @@ const Clinics = () => {
             </div>
           </div>
         </div>
+      )}
+      {profileClinic && (
+        <ClinicProfileModal
+          clinicId={profileClinic.clinic_id}
+          clinicName={profileClinic.name}
+          fallbackEmail={profileClinic.primary_email}
+          onClose={() => setProfileClinic(null)}
+          onSaved={(saved: ClinicProfileData) => {
+            setClinics((current) =>
+              current.map((item) =>
+                item.clinic_id === saved.clinic_id
+                  ? {
+                      ...item,
+                      name: saved.name || item.name,
+                      primary_email:
+                        saved.public_email ||
+                        saved.owner_login_email ||
+                        item.primary_email,
+                    }
+                  : item,
+              ),
+            );
+            setProfileClinic(null);
+            loadClinics().catch(() => {});
+          }}
+        />
       )}
       {mobileClinic && (
         <ClinicMobileUsersPanel
