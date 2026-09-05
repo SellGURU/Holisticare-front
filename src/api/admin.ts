@@ -53,7 +53,11 @@ class AdminApi {
 
   static updateClinic(
     id: number,
-    data: { plan_type?: 'demo' | 'paying'; is_disabled?: boolean },
+    data: {
+      plan_type?: 'demo' | 'paying';
+      is_disabled?: boolean;
+      simplified_report_labels?: boolean;
+    },
   ) {
     return axios.patch(`${getBaseUrl()}/admin/clinics/${id}`, data, {
       headers: withAuthHeaders(),

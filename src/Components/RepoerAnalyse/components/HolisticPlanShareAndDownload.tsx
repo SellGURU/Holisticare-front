@@ -11,7 +11,13 @@ interface HolisticPlanShareAndDownloadProps {
   isHtmlReportExists: boolean;
   loadingHtmlReport: boolean;
   handleGetHtmlReport: (url?: string) => void;
-  htmlReportPollState?: 'building' | 'ready' | 'failed' | 'timed_out';
+  htmlReportPollState?:
+    | 'idle'
+    | 'pending'
+    | 'building'
+    | 'ready'
+    | 'failed'
+    | 'timed_out';
   onRetryHtmlReport?: () => void;
   activePlan?: any;
 }
@@ -20,7 +26,7 @@ const HolisticPlanShareAndDownload = ({
   isHtmlReportExists,
   loadingHtmlReport,
   handleGetHtmlReport,
-  htmlReportPollState = 'building',
+  htmlReportPollState = 'idle',
   onRetryHtmlReport,
   activePlan = null,
 }: HolisticPlanShareAndDownloadProps) => {
@@ -134,14 +140,13 @@ const HolisticPlanShareAndDownload = ({
   };
 
   const resolveDownloadButtonHadler = () => {
+    const isFailed =
+      activeTreatment?.state == 'On Going' &&
+      (htmlReportPollState === 'failed' || htmlReportPollState === 'timed_out');
     const isBuilding =
       activeTreatment?.state == 'On Going' &&
-      !isHtmlReportExists &&
-      htmlReportPollState === 'building';
-    const isReportUnavailable =
-      activeTreatment?.state == 'On Going' &&
-      !isHtmlReportExists &&
-      (htmlReportPollState === 'failed' || htmlReportPollState === 'timed_out');
+      !isFailed &&
+      (htmlReportPollState === 'building' || htmlReportPollState === 'pending');
 
     return (
       <>
@@ -158,7 +163,33 @@ const HolisticPlanShareAndDownload = ({
               }
             }}
           >
-            {isHtmlReportExists ||
+            {isFailed ? (
+              <div className="flex flex-col items-center gap-1 max-w-[220px] text-center">
+                {isHtmlReportExists ? (
+                  <div className="flex items-center gap-1">
+                    <img className="w-5 h-5" src="/icons/monitor.svg" alt="" />
+                    View Holistic Plan
+                  </div>
+                ) : null}
+                <div className="text-[10px] text-Text-Fivefold">
+                  {htmlReportPollState === 'timed_out'
+                    ? 'Report preparation is taking longer than expected.'
+                    : 'We could not prepare your report.'}
+                </div>
+                {onRetryHtmlReport && (
+                  <button
+                    type="button"
+                    className="text-[10px] font-medium text-Primary-DeepTeal underline"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onRetryHtmlReport();
+                    }}
+                  >
+                    Retry
+                  </button>
+                )}
+              </div>
+            ) : isHtmlReportExists ||
             loadingHtmlReport ||
             activeTreatment?.state != 'On Going' ? (
               <>
@@ -183,26 +214,6 @@ const HolisticPlanShareAndDownload = ({
                 <div className="text-[10px] text-Primary-DeepTeal">
                   Your report is currently being prepared.
                 </div>
-              </div>
-            ) : isReportUnavailable ? (
-              <div className="flex flex-col items-center gap-1 max-w-[220px] text-center">
-                <div className="text-[10px] text-Text-Fivefold">
-                  {htmlReportPollState === 'timed_out'
-                    ? 'Report preparation is taking longer than expected.'
-                    : 'We could not prepare your report.'}
-                </div>
-                {onRetryHtmlReport && (
-                  <button
-                    type="button"
-                    className="text-[10px] font-medium text-Primary-DeepTeal underline"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onRetryHtmlReport();
-                    }}
-                  >
-                    Retry
-                  </button>
-                )}
               </div>
             ) : null}
           </div>

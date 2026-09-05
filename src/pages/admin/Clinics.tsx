@@ -21,6 +21,7 @@ interface ClinicRow {
   created_date: string | null;
   plan_type: 'demo' | 'paying';
   is_disabled: boolean;
+  simplified_report_labels: boolean;
   plan_updated_at: string | null;
   plan_updated_by: string;
   user_count: number;
@@ -139,7 +140,11 @@ const Clinics = () => {
 
   const updateClinic = async (
     clinic: ClinicRow,
-    changes: { plan_type?: 'demo' | 'paying'; is_disabled?: boolean },
+    changes: {
+      plan_type?: 'demo' | 'paying';
+      is_disabled?: boolean;
+      simplified_report_labels?: boolean;
+    },
   ) => {
     if (
       changes.is_disabled === true &&
@@ -237,7 +242,7 @@ const Clinics = () => {
   return (
     <AdminShellLayout
       title="Clinics"
-      subtitle="Manage clinic access, plan type, and account status from one admin table."
+      subtitle="Manage clinic access, plan type, report labels, profile, and account status from one admin table."
       showGlobalFilters={false}
       actions={
         <button
@@ -284,6 +289,7 @@ const Clinics = () => {
                 <th className="px-3 py-3 font-medium">Users</th>
                 <th className="px-3 py-3 font-medium">Patients</th>
                 <th className="px-3 py-3 font-medium">Plan</th>
+                <th className="px-3 py-3 font-medium">Report labels</th>
                 <th className="px-3 py-3 font-medium">Status</th>
                 <th className="px-3 py-3 font-medium">Access</th>
                 <th className="px-3 py-3 font-medium">Updated</th>
@@ -328,6 +334,29 @@ const Clinics = () => {
                       >
                         <option value="demo">Demo</option>
                         <option value="paying">Paying</option>
+                      </select>
+                    </td>
+                    <td className="px-3 py-3">
+                      <select
+                        value={
+                          clinic.simplified_report_labels
+                            ? 'high_low'
+                            : 'legacy'
+                        }
+                        disabled={busy}
+                        aria-label={`Report label style for ${
+                          clinic.name || `clinic ${clinic.clinic_id}`
+                        }`}
+                        onChange={(event) =>
+                          updateClinic(clinic, {
+                            simplified_report_labels:
+                              event.target.value === 'high_low',
+                          })
+                        }
+                        className="min-w-[112px] rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary outline-none transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        <option value="legacy">Legacy</option>
+                        <option value="high_low">High / Low</option>
                       </select>
                     </td>
                     <td className="px-3 py-3">

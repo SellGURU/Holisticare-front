@@ -1833,44 +1833,86 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
   const [htmlReportPollState, setHtmlReportPollState] = useState<
-    'building' | 'ready' | 'failed' | 'timed_out'
-  >('building');
+    'idle' | 'pending' | 'building' | 'ready' | 'failed' | 'timed_out'
+  >('idle');
   const htmlReportPollAttemptRef = useRef(0);
+  const htmlReportTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const htmlReportMemberRef = useRef<number | null>(null);
+  const lastHtmlReportPlanKeyRef = useRef<string | number | null>(null);
   const HTML_REPORT_POLL_INTERVAL_MS = 3000;
   const HTML_REPORT_POLL_MAX_ATTEMPTS = 200; // ~10 minutes at 3s intervals
   const stopPolling = useRef(false);
-  useEffect(() => {
-    stopPolling.current = false; // reset on mount
-    return () => {
-      stopPolling.current = true; // stop polling when component unmounts
-    };
-  }, []);
+  const clearHtmlReportTimer = () => {
+    if (htmlReportTimerRef.current != null) {
+      clearTimeout(htmlReportTimerRef.current);
+      htmlReportTimerRef.current = null;
+    }
+  };
+  const scheduleHtmlReportPoll = (next: () => void) => {
+    clearHtmlReportTimer();
+    htmlReportTimerRef.current = setTimeout(
+      next,
+      visibilityPollMs(HTML_REPORT_POLL_INTERVAL_MS),
+    );
+  };
+  const pollHtmlReportRef = useRef<() => void>(() => undefined);
   const pollHtmlReport = () => {
-    if (stopPolling.current) return;
-    Application.checkHtmlReport(id?.toString() || '')
+    pollHtmlReportRef.current();
+  };
+  pollHtmlReportRef.current = () => {
+    const memberId = htmlReportMemberRef.current;
+    if (stopPolling.current || memberId == null) return;
+    Application.checkHtmlReport(memberId.toString())
       .then((res) => {
-        if (res.data.exists) {
-          setIsHtmlReportExists(true);
-          setHtmlReportPollState('ready');
+        if (stopPolling.current || htmlReportMemberRef.current !== memberId) {
+          return;
+        }
+        const payload = res?.data || {};
+        const exists = Boolean(payload.exists);
+        const status = payload.status as string | undefined;
+        if (status === 'failed') {
+          setIsHtmlReportExists(exists);
+          setHtmlReportPollState('failed');
           htmlReportPollAttemptRef.current = 0;
-        } else {
+          return;
+        }
+        if (status === 'building' || status === 'pending') {
           htmlReportPollAttemptRef.current += 1;
           if (
             htmlReportPollAttemptRef.current >= HTML_REPORT_POLL_MAX_ATTEMPTS
           ) {
-            setIsHtmlReportExists(false);
+            setIsHtmlReportExists(exists);
             setHtmlReportPollState('timed_out');
             return;
           }
-          setIsHtmlReportExists(false);
-          setHtmlReportPollState('building');
-          setTimeout(
-            pollHtmlReport,
-            visibilityPollMs(HTML_REPORT_POLL_INTERVAL_MS),
+          setIsHtmlReportExists(exists);
+          setHtmlReportPollState(
+            status === 'pending' ? 'pending' : 'building',
           );
+          scheduleHtmlReportPoll(pollHtmlReport);
+          return;
         }
+        if (exists || status === 'ready') {
+          setIsHtmlReportExists(true);
+          setHtmlReportPollState('ready');
+          htmlReportPollAttemptRef.current = 0;
+          return;
+        }
+        // Legacy `{exists}` fallback: keep polling until exists or timeout.
+        htmlReportPollAttemptRef.current += 1;
+        if (htmlReportPollAttemptRef.current >= HTML_REPORT_POLL_MAX_ATTEMPTS) {
+          setIsHtmlReportExists(false);
+          setHtmlReportPollState('timed_out');
+          return;
+        }
+        setIsHtmlReportExists(false);
+        setHtmlReportPollState('building');
+        scheduleHtmlReportPoll(pollHtmlReport);
       })
       .catch(() => {
+        if (stopPolling.current || htmlReportMemberRef.current !== memberId) {
+          return;
+        }
         htmlReportPollAttemptRef.current += 1;
         if (htmlReportPollAttemptRef.current >= HTML_REPORT_POLL_MAX_ATTEMPTS) {
           setIsHtmlReportExists(false);
@@ -1879,32 +1921,43 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         }
         setIsHtmlReportExists(false);
         setHtmlReportPollState('building');
-        setTimeout(
-          pollHtmlReport,
-          visibilityPollMs(HTML_REPORT_POLL_INTERVAL_MS),
-        );
+        scheduleHtmlReportPoll(pollHtmlReport);
       });
   };
   const retryHtmlReportBuild = () => {
+    const memberId = htmlReportMemberRef.current;
+    if (memberId == null) return;
     htmlReportPollAttemptRef.current = 0;
     setIsHtmlReportExists(false);
     setHtmlReportPollState('building');
-    Application.createReportBackground(
-      resolvedMemberID?.toString() || id?.toString() || '',
-    )
+    Application.createReportBackground(memberId.toString())
       .catch(() => {
-        setHtmlReportPollState('failed');
+        if (htmlReportMemberRef.current === memberId) {
+          setHtmlReportPollState('failed');
+        }
       })
       .finally(() => {
-        pollHtmlReport();
+        if (htmlReportMemberRef.current === memberId) {
+          pollHtmlReport();
+        }
       });
   };
   useEffect(() => {
+    htmlReportMemberRef.current = resolvedMemberID ?? null;
+    lastHtmlReportPlanKeyRef.current = null;
+    stopPolling.current = false;
+    htmlReportPollAttemptRef.current = 0;
+    setIsHtmlReportExists(false);
+    setHtmlReportPollState('idle');
+    clearHtmlReportTimer();
+    return () => {
+      stopPolling.current = true;
+      clearHtmlReportTimer();
+    };
+  }, [resolvedMemberID]);
+  useEffect(() => {
     const handleRecheckHtmlReport = () => {
-      htmlReportPollAttemptRef.current = 0;
-      setIsHtmlReportExists(false);
-      setHtmlReportPollState('building');
-      pollHtmlReport();
+      retryHtmlReportBuild();
     };
 
     subscribe('reckecHtmlReport', handleRecheckHtmlReport);
@@ -1912,7 +1965,31 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return () => {
       unsubscribe('reckecHtmlReport', handleRecheckHtmlReport);
     };
-  }, []);
+  }, [resolvedMemberID]);
+  useEffect(() => {
+    const planKey =
+      activeHolisticPlan?.treatment_plan_id ??
+      activeHolisticPlan?.t_plan_id ??
+      null;
+    if (lastHtmlReportPlanKeyRef.current == null) {
+      lastHtmlReportPlanKeyRef.current = planKey;
+      return;
+    }
+    if (lastHtmlReportPlanKeyRef.current === planKey) {
+      return;
+    }
+    lastHtmlReportPlanKeyRef.current = planKey;
+    htmlReportPollAttemptRef.current = 0;
+    setIsHtmlReportExists(false);
+    setHtmlReportPollState('idle');
+    clearHtmlReportTimer();
+    if (planKey != null) {
+      pollHtmlReport();
+    }
+  }, [
+    activeHolisticPlan?.treatment_plan_id,
+    activeHolisticPlan?.t_plan_id,
+  ]);
 
   const [loadingHtmlReport] = useState(false);
 
