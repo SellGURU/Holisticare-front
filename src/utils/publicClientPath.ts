@@ -2,7 +2,6 @@ const PUBLIC_CLIENT_PREFIXES = [
   '/questionary',
   '/checkin',
   '/tasks',
-  '/surveys',
   '/share',
 ] as const;
 
@@ -38,6 +37,18 @@ export function shouldIgnorePortalAuthFailure(location: string): boolean {
   const path = normalizeLocationPath(location);
   if (isPublicClientPath(path)) return true;
   return PORTAL_AUTH_PAGE_MARKERS.some((marker) => path.includes(marker));
+}
+
+export type PublicFillLeaveMode = 'iframe' | 'stay';
+
+/** Public fill stays on the thank-you page, including Flutter WebView. */
+export function resolvePublicFillLeaveMode(win: {
+  flutter_inappwebview?: unknown;
+  parent?: unknown;
+  opener?: unknown;
+}): PublicFillLeaveMode {
+  if (win.parent && win.parent !== win) return 'iframe';
+  return 'stay';
 }
 
 export function isPortalTokenErrorMessage(message: unknown): boolean {

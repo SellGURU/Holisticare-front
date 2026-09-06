@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   isPortalTokenErrorMessage,
   isPublicClientPath,
+  resolvePublicFillLeaveMode,
   shouldIgnorePortalAuthFailure,
 } from './publicClientPath';
 
@@ -22,7 +23,6 @@ describe('isPublicClientPath', () => {
   it('treats sibling public fill routes as public', () => {
     expect(isPublicClientPath('/checkin/enc/id')).toBe(true);
     expect(isPublicClientPath('/tasks/enc/id')).toBe(true);
-    expect(isPublicClientPath('/surveys/m/q/f/fill')).toBe(true);
     expect(isPublicClientPath('/share/12/name')).toBe(true);
   });
 
@@ -30,6 +30,7 @@ describe('isPublicClientPath', () => {
     expect(isPublicClientPath('/')).toBe(false);
     expect(isPublicClientPath('/report')).toBe(false);
     expect(isPublicClientPath('/login')).toBe(false);
+    expect(isPublicClientPath('/surveys/m/q/f/fill')).toBe(false);
   });
 });
 
@@ -48,6 +49,29 @@ describe('shouldIgnorePortalAuthFailure', () => {
   it('still forces portal login on authenticated app routes', () => {
     expect(shouldIgnorePortalAuthFailure('/')).toBe(false);
     expect(shouldIgnorePortalAuthFailure('/report')).toBe(false);
+    expect(shouldIgnorePortalAuthFailure('/surveys/m/q/f/fill')).toBe(false);
+  });
+});
+
+describe('resolvePublicFillLeaveMode', () => {
+  it('stays on a standalone public tab', () => {
+    const standalone: { parent?: unknown; opener?: unknown } = {
+      opener: null,
+    };
+    standalone.parent = standalone;
+    expect(resolvePublicFillLeaveMode(standalone)).toBe('stay');
+  });
+
+  it('notifies an iframe embed but keeps Flutter WebView on the page', () => {
+    expect(
+      resolvePublicFillLeaveMode({ parent: {}, opener: null }),
+    ).toBe('iframe');
+    const mobileWebView: {
+      flutter_inappwebview?: unknown;
+      parent?: unknown;
+    } = { flutter_inappwebview: {} };
+    mobileWebView.parent = mobileWebView;
+    expect(resolvePublicFillLeaveMode(mobileWebView)).toBe('stay');
   });
 });
 

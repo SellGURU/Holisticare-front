@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import Mobile from '../../api/mobile';
 import Circleloader from '../../Components/CircleLoader';
 import { PublicSurveyForm } from '../../Components/survey/public-survey-form';
+import { resolvePublicFillLeaveMode } from '../../utils/publicClientPath';
 // import mokQuestionary from './mokQuestionary.json';
 interface FormViewProps {
   mode?: 'questionary' | 'checkin';
@@ -13,8 +14,16 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id, 'f-id': fId } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [data, setData] = useState<any>(null);
+
+  const leaveFillSurface = () => {
+    if (resolvePublicFillLeaveMode(window) === 'iframe') {
+      window.parent.postMessage({ type: 'QUESTIONARY_SUBMITTED' }, '*');
+    }
+    window.flutter_inappwebview?.callHandler('questionarySubmitted');
+  };
   useEffect(() => {
     setIsLaoding(true);
     setLoadError(null);
@@ -90,28 +99,23 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
 
     apiCall(mode === 'questionary' ? dataQuestionary : dataCheckin)
       .then(() => {
-        // On successful submission, update state and then close the window
+        setSubmitted(true);
         setTimeout(() => {
-          if (window.flutter_inappwebview) {
-            window.flutter_inappwebview.callHandler('closeWebView');
-          } else {
-            console.warn(
-              'Flutter WebView bridge not available, attempting to close window.',
-            );
-            window.close();
-            window.parent.postMessage({ type: 'QUESTIONARY_SUBMITTED' }, '*');
-          }
-        }, 1500); // Wait for 1.5 seconds to give the user time to see the success message
+          leaveFillSurface();
+        }, 1500);
       })
       .catch((error) => {
-        // Handle submission error, but still might want to close for a clean slate
         console.error('Error submitting form:', error);
-        if (window.flutter_inappwebview) {
-          window.flutter_inappwebview.callHandler('closeWebView');
-        } else {
-          window.close();
-          window.parent.postMessage({ type: 'QUESTIONARY_SUBMITTED' }, '*');
-        }
+        const detail =
+          error?.response?.data?.detail ||
+          error?.detail ||
+          error?.message ||
+          'Could not submit this questionnaire. Please try again.';
+        setLoadError(
+          typeof detail === 'string'
+            ? detail
+            : 'Could not submit this questionnaire. Please try again.',
+        );
       })
       .finally(() => {
         setIsLaoding(false);
@@ -140,12 +144,14 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
         className="w-full py-3 px-4 h-svh pb-[150px] overflow-y-scroll"
         ref={scrollRef}
       >
-        {isComplete ? (
+        {submitted || isComplete ? (
           <div className="py-4">
             <div className="text-[12px] text-Text-Secondary text-center">
-              {mode == 'questionary'
-                ? 'This Questionary is already answered.'
-                : 'This Checkin is already answered.'}
+              {submitted
+                ? 'Thank you. Your answers were submitted.'
+                : mode == 'questionary'
+                  ? 'This Questionary is already answered.'
+                  : 'This Checkin is already answered.'}
             </div>
           </div>
         ) : (
