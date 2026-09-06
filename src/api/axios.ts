@@ -14,27 +14,6 @@ import {
 
 const logger = ActivityLogger.getInstance();
 
-const isPublicQuestionnairePage = () => {
-  const href = window.location.href;
-  return (
-    href.includes('/questionary') ||
-    href.includes('/checkin') ||
-    href.includes('/tasks')
-  );
-};
-
-const shouldSkipPortalLoginRedirect = () => {
-  const href = window.location.href;
-  return (
-    isPublicQuestionnairePage() ||
-    href.includes('/login') ||
-    href.includes('/register') ||
-    href.includes('/share') ||
-    href.includes('/forgetPassword') ||
-    href.includes('/html-previewer')
-  );
-};
-
 const MAINTENANCE_FAILURE_THRESHOLD = 2;
 const MAINTENANCE_FAILURE_WINDOW_MS = 10000;
 
@@ -180,10 +159,7 @@ axios.interceptors.response.use(
       }
     }
 
-    if (
-      !shouldSkipPortalLoginRedirect() &&
-      (response.status === 401 || detail === 'Invalid token.')
-    ) {
+    if (response.status === 401 || detail === 'Invalid token.') {
       portalSessionExpired();
     }
 
@@ -231,9 +207,13 @@ axios.interceptors.response.use(
     }
 
     if (
-      !shouldSkipPortalLoginRedirect() &&
-      (error.response?.status === 401 ||
-        error.response?.data?.detail === 'Invalid token.')
+      (error.response?.status === 401 &&
+        !window.location.href.includes('/login') &&
+        !window.location.href.includes('/register') &&
+        !window.location.href.includes('/share') &&
+        !window.location.href.includes('/forgetPassword') &&
+        !window.location.href.includes('/html-previewer')) ||
+      error.response?.data?.detail === 'Invalid token.'
     ) {
       portalSessionExpired();
     }

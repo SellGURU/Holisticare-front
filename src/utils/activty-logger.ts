@@ -294,7 +294,7 @@ export default class ActivityLogger {
 
     // Use Log.saveLog (axios-based) for normal operation
     // Since axios may not work reliably during unload, we also try fetch with keepalive as fallback
-    if (this.canSendPortalSessionLog()) {
+    if (getTokenFromLocalStorage() != null) {
       Log.saveLog(data).catch(() => {});
     }
 
@@ -411,22 +411,11 @@ export default class ActivityLogger {
     this.saveToLocalStorage();
   }
 
-  private canSendPortalSessionLog(): boolean {
-    if (getTokenFromLocalStorage() == null) return false;
-    if (typeof window === 'undefined') return true;
-    const path = window.location.pathname || '';
-    return (
-      !path.startsWith('/questionary') &&
-      !path.startsWith('/checkin') &&
-      !path.startsWith('/tasks')
-    );
-  }
-
   /** Save persistent copy before unload */
   private saveSessionToStorage() {
     const data = this.buildSessionData();
     console.log(data);
-    if (this.canSendPortalSessionLog()) {
+    if (getTokenFromLocalStorage() != null) {
       Log.saveLog(data).catch(() => {});
     }
     localStorage.setItem('activity_log', JSON.stringify(data));
