@@ -3,6 +3,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import Log from '../api/Log';
 import { getTokenFromLocalStorage } from '../store/token';
+import { isPublicClientPath } from './publicClientPath';
 
 export default class ActivityLogger {
   private static instance: ActivityLogger;
@@ -294,7 +295,7 @@ export default class ActivityLogger {
 
     // Use Log.saveLog (axios-based) for normal operation
     // Since axios may not work reliably during unload, we also try fetch with keepalive as fallback
-    if (getTokenFromLocalStorage() != null) {
+    if (this.canSendPortalSessionLog()) {
       Log.saveLog(data).catch(() => {});
     }
 
@@ -411,11 +412,17 @@ export default class ActivityLogger {
     this.saveToLocalStorage();
   }
 
+  private canSendPortalSessionLog(): boolean {
+    if (getTokenFromLocalStorage() == null) return false;
+    if (typeof window === 'undefined') return true;
+    return !isPublicClientPath(window.location.pathname || window.location.href);
+  }
+
   /** Save persistent copy before unload */
   private saveSessionToStorage() {
     const data = this.buildSessionData();
     console.log(data);
-    if (getTokenFromLocalStorage() != null) {
+    if (this.canSendPortalSessionLog()) {
       Log.saveLog(data).catch(() => {});
     }
     localStorage.setItem('activity_log', JSON.stringify(data));
