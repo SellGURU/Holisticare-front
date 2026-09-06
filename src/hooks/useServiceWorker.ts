@@ -1,7 +1,22 @@
 import { useEffect } from 'react';
 
+const isPublicFillPath = () => {
+  const path = window.location.pathname || '';
+  return (
+    path.startsWith('/questionary') ||
+    path.startsWith('/checkin') ||
+    path.startsWith('/tasks')
+  );
+};
+
 export function useServiceWorker() {
   useEffect(() => {
+    // Public fill links must not reload or fight the cache; that freezes
+    // the in-app browser used by the mobile questionnaire.
+    if (isPublicFillPath()) {
+      return;
+    }
+
     // Handle service worker updates
     if ('serviceWorker' in navigator) {
       let refreshing = false;

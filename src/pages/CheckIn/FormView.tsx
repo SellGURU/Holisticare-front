@@ -127,6 +127,53 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   };
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const root = document.getElementById('root');
+    const viewport = document.querySelector('meta[name="viewport"]');
+    const prev = {
+      htmlOverflow: html.style.overflow,
+      htmlHeight: html.style.height,
+      bodyOverflow: body.style.overflow,
+      bodyHeight: body.style.height,
+      rootOverflow: root?.style.overflow ?? '',
+      rootHeight: root?.style.height ?? '',
+      viewport: viewport?.getAttribute('content') ?? '',
+    };
+
+    html.style.overflow = 'auto';
+    html.style.height = 'auto';
+    body.style.overflow = 'auto';
+    body.style.height = 'auto';
+    body.style.background = '#ffffff';
+    if (root) {
+      root.style.overflow = 'auto';
+      root.style.height = 'auto';
+      root.style.minHeight = '100%';
+    }
+    viewport?.setAttribute(
+      'content',
+      'width=device-width, initial-scale=1.0, viewport-fit=cover',
+    );
+
+    return () => {
+      html.style.overflow = prev.htmlOverflow;
+      html.style.height = prev.htmlHeight;
+      body.style.overflow = prev.bodyOverflow;
+      body.style.height = prev.bodyHeight;
+      body.style.background = '';
+      if (root) {
+        root.style.overflow = prev.rootOverflow;
+        root.style.height = prev.rootHeight;
+        root.style.minHeight = '';
+      }
+      if (viewport && prev.viewport) {
+        viewport.setAttribute('content', prev.viewport);
+      }
+    };
+  }, []);
+
   // const scrollUp = () => {
   //   scrollRef.current?.scrollBy({ top: -100, behavior: 'smooth' });
   // };
@@ -137,7 +184,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   return (
     <>
       <div
-        className="w-full py-3 px-4 h-svh pb-[150px] overflow-y-scroll"
+        className="w-full px-4 min-h-[100dvh] overflow-y-auto overscroll-y-contain pt-[max(12px,env(safe-area-inset-top))] pb-[max(150px,env(safe-area-inset-bottom))]"
         ref={scrollRef}
       >
         {isComplete ? (
