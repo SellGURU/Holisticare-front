@@ -11,10 +11,6 @@ import {
   isCanceledRequest,
   isServerHttpError,
 } from '../utils/networkStatus';
-import {
-  isPortalTokenErrorMessage,
-  shouldIgnorePortalAuthFailure,
-} from '../utils/publicClientPath';
 
 const logger = ActivityLogger.getInstance();
 
@@ -151,15 +147,11 @@ axios.interceptors.response.use(
       typeof detail === 'string' &&
       detail.toLowerCase().includes('successfully');
 
-    const ignorePortalAuth = shouldIgnorePortalAuthFailure(
-      window.location.pathname || window.location.href,
-    );
-
     if (detail && response.status !== 206) {
       if (isSuccessDetail) {
         showSuccess(detail);
       } else if (
-        !isPortalTokenErrorMessage(detail) &&
+        detail !== 'Invalid token.' &&
         detail !== 'Not Found' &&
         response.data.notif !== true
       ) {
@@ -167,10 +159,7 @@ axios.interceptors.response.use(
       }
     }
 
-    if (
-      !ignorePortalAuth &&
-      (response.status === 401 || isPortalTokenErrorMessage(detail))
-    ) {
+    if (response.status === 401 || detail === 'Invalid token.') {
       portalSessionExpired();
     }
 
@@ -217,16 +206,14 @@ axios.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    const ignorePortalAuth = shouldIgnorePortalAuthFailure(
-      window.location.pathname || window.location.href,
-    );
-    const tokenError = isPortalTokenErrorMessage(
-      error.response?.data?.detail ?? backendMessage,
-    );
-
     if (
-      !ignorePortalAuth &&
-      (error.response?.status === 401 || tokenError)
+      (error.response?.status === 401 &&
+        !window.location.href.includes('/login') &&
+        !window.location.href.includes('/register') &&
+        !window.location.href.includes('/share') &&
+        !window.location.href.includes('/forgetPassword') &&
+        !window.location.href.includes('/html-previewer')) ||
+      error.response?.data?.detail === 'Invalid token.'
     ) {
       portalSessionExpired();
     }
@@ -264,7 +251,6 @@ axios.interceptors.response.use(
     if (
       backendMessage &&
       error.response?.status !== 406 &&
-      !tokenError &&
       !String(backendMessage).toLowerCase().includes('google')
     ) {
       if (String(backendMessage).toLowerCase().includes('successfully')) {
