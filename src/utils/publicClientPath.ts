@@ -2,7 +2,6 @@ const PUBLIC_CLIENT_PREFIXES = [
   '/questionary',
   '/checkin',
   '/tasks',
-  '/surveys',
   '/share',
 ] as const;
 
