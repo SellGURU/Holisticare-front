@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   isPortalTokenErrorMessage,
   isPublicClientPath,
-  resolvePublicFillLeaveMode,
   shouldIgnorePortalAuthFailure,
 } from './publicClientPath';
 
@@ -50,28 +49,6 @@ describe('shouldIgnorePortalAuthFailure', () => {
     expect(shouldIgnorePortalAuthFailure('/')).toBe(false);
     expect(shouldIgnorePortalAuthFailure('/report')).toBe(false);
     expect(shouldIgnorePortalAuthFailure('/surveys/m/q/f/fill')).toBe(false);
-  });
-});
-
-describe('resolvePublicFillLeaveMode', () => {
-  it('stays on a standalone public tab', () => {
-    const standalone: { parent?: unknown; opener?: unknown } = {
-      opener: null,
-    };
-    standalone.parent = standalone;
-    expect(resolvePublicFillLeaveMode(standalone)).toBe('stay');
-  });
-
-  it('notifies an iframe embed but keeps Flutter WebView on the page', () => {
-    expect(
-      resolvePublicFillLeaveMode({ parent: {}, opener: null }),
-    ).toBe('iframe');
-    const mobileWebView: {
-      flutter_inappwebview?: unknown;
-      parent?: unknown;
-    } = { flutter_inappwebview: {} };
-    mobileWebView.parent = mobileWebView;
-    expect(resolvePublicFillLeaveMode(mobileWebView)).toBe('stay');
   });
 });
 

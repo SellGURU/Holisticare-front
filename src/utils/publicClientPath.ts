@@ -39,18 +39,6 @@ export function shouldIgnorePortalAuthFailure(location: string): boolean {
   return PORTAL_AUTH_PAGE_MARKERS.some((marker) => path.includes(marker));
 }
 
-export type PublicFillLeaveMode = 'iframe' | 'stay';
-
-/** Public fill stays on the thank-you page, including Flutter WebView. */
-export function resolvePublicFillLeaveMode(win: {
-  flutter_inappwebview?: unknown;
-  parent?: unknown;
-  opener?: unknown;
-}): PublicFillLeaveMode {
-  if (win.parent && win.parent !== win) return 'iframe';
-  return 'stay';
-}
-
 export function isPortalTokenErrorMessage(message: unknown): boolean {
   const text = String(
     typeof message === 'object' && message != null && 'detail' in message
