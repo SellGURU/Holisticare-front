@@ -229,6 +229,19 @@ export const buildBiomarkerIdentityMeta = (
   originalBiomarkerIndex: biomarkerIndex,
 });
 
+export const buildUpdateChartBoundsRequest = (
+  values: any,
+  meta: BiomarkerIdentityMeta,
+) => ({
+  updated_biomarker: values,
+  original_biomarker_name: meta.originalBiomarkerName,
+  original_biomarker_uid: meta.biomarkerUid,
+  original_biomarker_type: meta.originalBiomarkerType,
+  original_unit: meta.originalUnit,
+  original_benchmark_area: meta.originalBenchmarkArea,
+  original_biomarker_index: meta.originalBiomarkerIndex,
+});
+
 export const replaceBiomarkerByIdentity = (
   biomarkers: any[],
   meta: BiomarkerIdentityMeta,

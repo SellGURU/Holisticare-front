@@ -11,6 +11,7 @@ import {
   applySavedBiomarkerUpdate,
   BiomarkerIdentityMeta,
   buildBiomarkerIdentityMeta,
+  buildUpdateChartBoundsRequest,
   filterUnitMappingsForBiomarker,
   findBiomarkerMapping,
   findOrphanMappingsForCard,
@@ -186,14 +187,7 @@ const BiomarkerRow = ({
 
   const onsave = (values: any, meta: BiomarkerIdentityMeta) => {
     setLoading(true);
-    BiomarkersApi.saveBiomarkersList({
-      updated_biomarker: values,
-      original_biomarker_name: meta.originalBiomarkerName,
-      original_biomarker_uid: meta.biomarkerUid,
-      original_biomarker_type: meta.originalBiomarkerType,
-      original_unit: meta.originalUnit,
-      original_benchmark_area: meta.originalBenchmarkArea,
-    })
+    BiomarkersApi.saveBiomarkersList(buildUpdateChartBoundsRequest(values, meta))
       .then((response) => {
         const payload = response?.data || {};
         const savedBiomarker = payload.updated_biomarker || values;

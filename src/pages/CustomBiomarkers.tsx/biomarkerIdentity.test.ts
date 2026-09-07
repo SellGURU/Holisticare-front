@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildBiomarkerIdentityMeta,
+  buildUpdateChartBoundsRequest,
   dedupeCatalogBiomarkersList,
   findCatalogNameTypeDuplicate,
   findOrphanMappingsForCard,
@@ -237,5 +239,33 @@ describe('findOrphanMappingsForCard', () => {
     expect(findOrphanMappingsForCard(mappings, catalog[0], catalog)).toHaveLength(
       0,
     );
+  });
+});
+
+describe('buildUpdateChartBoundsRequest', () => {
+  it('sends original_biomarker_index with the save identity', () => {
+    const values = {
+      Biomarker: 'HDL CHOLESTEROL',
+      unit: 'mg/dL',
+      biomarker_uid: '0e4bab8b-8cd2-4c30-bc76-3f506c985c12',
+    };
+    const meta = buildBiomarkerIdentityMeta(
+      {
+        ...values,
+        biomarker_type: 'blood',
+        'Benchmark areas': 'Lipids',
+      },
+      7,
+    );
+
+    expect(buildUpdateChartBoundsRequest(values, meta)).toEqual({
+      updated_biomarker: values,
+      original_biomarker_name: 'HDL CHOLESTEROL',
+      original_biomarker_uid: '0e4bab8b-8cd2-4c30-bc76-3f506c985c12',
+      original_biomarker_type: 'blood',
+      original_unit: 'mg/dL',
+      original_benchmark_area: 'Lipids',
+      original_biomarker_index: 7,
+    });
   });
 });
