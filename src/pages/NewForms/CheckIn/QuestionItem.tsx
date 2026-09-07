@@ -43,7 +43,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
           <div className="text-Orange text-[8px] flex items-center justify-center w-[30%]">
             {question.required ? (
               <img
-                src="./icons/danger-new.svg"
+                src="/icons/danger-new.svg"
                 className="w-[12px] h-[12px] mr-1"
               />
             ) : (
@@ -88,19 +88,19 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
               ) : (
                 <>
                   {/* <img
-                    src="./icons/copy-blue.svg"
+                    src="/icons/copy-blue.svg"
                     alt=""
                     className="w-[16px] h-[16px] cursor-pointer"
                     onClick={() => onCopy()}
                   /> */}
                   <img
-                    src="./icons/edit-blue.svg"
+                    src="/icons/edit-blue.svg"
                     alt=""
                     className="w-[16px] h-[16px] ml-2 cursor-pointer"
                     onClick={() => onEdit()}
                   />
                   <img
-                    src="./icons/trash-blue.svg"
+                    src="/icons/trash-blue.svg"
                     alt=""
                     className="w-[16px] h-[16px] ml-2 cursor-pointer"
                     onClick={() => setSureRemove(true)}
@@ -110,7 +110,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
             </>
             <>
               <img
-                src="./icons/arrow-circle-down.svg"
+                src="/icons/arrow-circle-down.svg"
                 alt=""
                 className={`w-[16px] h-[16px] cursor-pointer ml-6 ${index === length - 1 && 'opacity-50'}`}
                 onClick={() => {
@@ -120,7 +120,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
                 }}
               />
               <img
-                src="./icons/arrow-circle-up.svg"
+                src="/icons/arrow-circle-up.svg"
                 alt=""
                 className={`w-[16px] h-[16px] ml-2 cursor-pointer ${index === 0 && 'opacity-50'}`}
                 onClick={() => {

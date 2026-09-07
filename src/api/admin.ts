@@ -307,6 +307,122 @@ class AdminApi {
   // ROOK CSV Comparison Tool (diagnostic, read-only)
   // ==========================================================================
 
+  // ==========================================================================
+  // Questionnaire management
+  // ==========================================================================
+
+  static listQuestionnaireTemplates() {
+    return axios.get(`${getBaseUrl()}/admin/questionnaires/templates`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static getQuestionnaireTemplate(id: number) {
+    return axios.get(`${getBaseUrl()}/admin/questionnaires/templates/${id}`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static createQuestionnaireTemplate(data: {
+    title: string;
+    description?: string;
+    questions: any[];
+  }) {
+    return axios.post(`${getBaseUrl()}/admin/questionnaires/templates`, data, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static updateQuestionnaireTemplate(
+    id: number,
+    data: { title: string; description?: string; questions: any[] },
+  ) {
+    return axios.put(
+      `${getBaseUrl()}/admin/questionnaires/templates/${id}`,
+      data,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static deleteQuestionnaireTemplate(id: number) {
+    return axios.delete(
+      `${getBaseUrl()}/admin/questionnaires/templates/${id}`,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static copyTemplateToClinic(templateId: number, clinicId: number) {
+    return axios.post(
+      `${getBaseUrl()}/admin/questionnaires/templates/${templateId}/copy-to-clinic`,
+      { clinic_id: clinicId },
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static listClinicQuestionnaires(clinicId: number) {
+    return axios.get(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/questionnaires`,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static getClinicQuestionnaire(clinicId: number, uniqueId: string) {
+    return axios.get(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/questionnaires/${uniqueId}`,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static createClinicQuestionnaire(clinicId: number, data: any) {
+    return axios.post(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/questionnaires`,
+      data,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static updateClinicQuestionnaire(
+    clinicId: number,
+    uniqueId: string,
+    data: any,
+  ) {
+    return axios.put(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/questionnaires/${uniqueId}`,
+      data,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static deleteClinicQuestionnaire(clinicId: number, uniqueId: string) {
+    return axios.delete(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/questionnaires/${uniqueId}`,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static duplicateClinicQuestionnaire(clinicId: number, uniqueId: string) {
+    return axios.post(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/questionnaires/${uniqueId}/duplicate`,
+      {},
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static copyQuestionnaireToClinic(
+    targetClinicId: number,
+    source: {
+      source_clinic_id?: number;
+      unique_id?: string;
+      template_id?: number;
+    },
+  ) {
+    return axios.post(
+      `${getBaseUrl()}/admin/clinics/${targetClinicId}/questionnaires/copy-from`,
+      source,
+      { headers: withAuthHeaders() },
+    );
+  }
+
   static compareRookCsv(formData: FormData) {
     return axios.post(`${getBaseUrl()}/admin/compare-rook-csv`, formData, {
       headers: {

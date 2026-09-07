@@ -10,6 +10,7 @@ interface TableRowProps {
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
   onDuplicate: (id: string) => void;
+  onCopy?: (id: string) => void;
   // onReposition: (id: string) => void;
   index: number;
 }
@@ -20,6 +21,7 @@ const TableRow: FC<TableRowProps> = ({
   onEdit,
   onPreview,
   onDuplicate,
+  onCopy,
   // onReposition,
   index,
 }) => {
@@ -40,7 +42,7 @@ const TableRow: FC<TableRowProps> = ({
 
   const handleOpenModal = (e: React.MouseEvent<HTMLImageElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const modalHeight = 158;
+    const modalHeight = onCopy ? 198 : 158;
     const windowHeight = window.innerHeight;
     const scrollY = window.scrollY || window.pageYOffset;
 
@@ -153,6 +155,18 @@ const TableRow: FC<TableRowProps> = ({
             <img src="/icons/copy.svg" className="w-4" alt="" />
             Duplicate
           </div>
+          {onCopy ? (
+            <div
+              className="flex items-center border-b border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 cursor-pointer"
+              onClick={() => {
+                setShowModal(false);
+                onCopy(row.original.id);
+              }}
+            >
+              <img src="/icons/copy.svg" className="w-4" alt="" />
+              Copy to clinic
+            </div>
+          ) : null}
           {sureRemove ? (
             <div className="flex items-center justify-start gap-1">
               <div className="text-Text-Primary text-xs">Sure?</div>

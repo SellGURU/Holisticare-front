@@ -58,6 +58,8 @@ interface QuestionaryControllerModalProps {
   error: string;
   isQuestionary?: boolean;
   textErrorMessage: string;
+  fetchForm?: (id: string) => Promise<{ data: any }>;
+  fetchCatalog?: () => Promise<{ data: any }>;
 }
 
 const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
@@ -69,6 +71,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   error,
   isQuestionary,
   textErrorMessage,
+  fetchForm,
+  fetchCatalog,
 }) => {
   const [isError, setIsError] = useState(false);
   const [step, setStep] = useState(0);
@@ -99,13 +103,17 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   const [catalogLoading, setCatalogLoading] = useState(false);
   useEffect(() => {
     setCatalogLoading(true);
-    BiomarkersApi.getBiomarkersList({ include_all: true })
+    const loadCatalog = fetchCatalog
+      ? fetchCatalog()
+      : BiomarkersApi.getBiomarkersList({ include_all: true });
+    loadCatalog
       .then((res) => {
-        setCatalog(mapClinicCatalog(res.data));
+        const raw = res.data?.configs?.more_info ?? res.data;
+        setCatalog(mapClinicCatalog(raw));
       })
       .catch(() => setCatalog([]))
       .finally(() => setCatalogLoading(false));
-  }, []);
+  }, [fetchCatalog]);
   useEffect(() => {
     if (error && error == 'A form with the same title already exists.') {
       setTitleForm(templateData?.title || '');
@@ -302,7 +310,10 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   useEffect(() => {
     if (editId != '' && editId) {
       setLoading(true);
-      FormsApi.showQuestinary(editId)
+      const loadForm = fetchForm
+        ? fetchForm(editId)
+        : FormsApi.showQuestinary(editId);
+      loadForm
         .then((res) => {
           const loaded = splitScoringFromQuestions(res.data.questions || []);
           setQuestions(loaded.questions);
@@ -747,7 +758,7 @@ const AddQuestionary: FC<AddQuestionaryProps> = ({
           {viewMode === 'form' && questions.length == 0 && !addMore && (
             <>
               <img
-                src="./icons/document-text-rectangle.svg"
+                src="/icons/document-text-rectangle.svg"
                 alt="document-text-rectangle"
               />
               <div className="text-Text-Primary text-xs">

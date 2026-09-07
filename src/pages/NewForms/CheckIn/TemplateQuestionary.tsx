@@ -102,7 +102,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                 }}
               >
                 <div className="flex flex-col justify-center items-center w-[193px] h-[140px] border-dashed border-2 border-[#005F73] rounded-[8px]">
-                  <img src={'./icons/EmptyStateForm.svg'} alt="" />
+                  <img src="/icons/EmptyStateForm.svg" alt="" />
                   <div className="text-[#005F73] text-xs font-medium">
                     {' '}
                     Create Your Form

@@ -61,6 +61,7 @@ import LlmCallLog from '../pages/admin/LlmCallLog.tsx';
 import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
 import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
 import RookCsvComparison from '../pages/admin/RookCsvComparison.tsx';
+import QuestionnaireManagement from '../pages/admin/QuestionnaireManagement.tsx';
 import RouteErrorFallback from './RouteErrorFallback';
 
 const router = createBrowserRouter([
@@ -252,6 +253,12 @@ const router = createBrowserRouter([
   {
     path: '/admin/clinics',
     element: <AdminProtectedRoute Component={Clinics}></AdminProtectedRoute>,
+  },
+  {
+    path: '/admin/questionnaires',
+    element: (
+      <AdminProtectedRoute Component={QuestionnaireManagement}></AdminProtectedRoute>
+    ),
   },
   {
     path: '/admin/llm-prompts',

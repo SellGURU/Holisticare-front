@@ -418,7 +418,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
           {questions.length == 0 && !addMore && (
             <>
               <img
-                src="./icons/document-text-rectangle.svg"
+                src="/icons/document-text-rectangle.svg"
                 alt="document-text-rectangle"
               />
               <div className="text-Text-Primary text-xs">

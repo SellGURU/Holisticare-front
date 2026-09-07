@@ -9,12 +9,14 @@ interface CheckInPreviewProps {
   id: string;
   onClose: () => void;
   isQuestionary?: boolean;
+  fetchForm?: (id: string) => Promise<{ data: any }>;
 }
 
 const CheckInPreview: React.FC<CheckInPreviewProps> = ({
   id,
   onClose,
   isQuestionary,
+  fetchForm,
 }) => {
   console.log(onClose);
 
@@ -25,14 +27,18 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
     const fetchData = async () => {
       try {
         let res;
-        if (isQuestionary) {
+        if (fetchForm) {
+          res = await fetchForm(id);
+        } else if (isQuestionary) {
           res = await FormsApi.showQuestinary(id);
         } else {
           res = await FormsApi.showCheckIn(id);
         }
         setData({
           title: res.data.title,
-          questions: res.data.questions.filter((el: any) => el.hide != true),
+          questions: (res.data.questions || []).filter(
+            (el: any) => el && el.hide != true && !('__scoring__' in el),
+          ),
           time: res.data.time,
           share_with_client: res.data.share_with_client,
         });
@@ -45,7 +51,7 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
     };
 
     fetchData();
-  }, [id, isQuestionary]);
+  }, [id, isQuestionary, fetchForm]);
   console.log(data);
 
   return (

@@ -7,6 +7,7 @@ import {
   Building2,
   ChevronRight,
   Database,
+  ClipboardList,
   FileCog,
   FileDiff,
   FolderKanban,
@@ -52,6 +53,7 @@ const navigationSections = [
       { to: '/admin/config', label: 'Config Publishing', icon: FileCog },
       { to: '/admin/json-uploading', label: 'JSON Uploading', icon: FileCog },
       { to: '/admin/clinics', label: 'Clinics', icon: Building2 },
+      { to: '/admin/questionnaires', label: 'Questionnaires', icon: ClipboardList },
       { to: '/admin/llm-prompts', label: 'LLM Prompts', icon: Brain },
       { to: '/admin/llm-calls', label: 'LLM Calls', icon: Activity },
       {
