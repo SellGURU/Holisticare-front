@@ -57,3 +57,14 @@ export const validateNoteAttachmentFile = (
 
 export const noteAttachmentFileType = (fileName: string): string =>
   fileExtension(fileName);
+
+export const isNoteExtractionInFlight = (
+  status: string | null | undefined,
+): boolean => status === 'pending' || status === 'processing';
+
+export const hasInFlightNoteExtraction = (
+  notes: Array<{ attachment_extraction_status?: string | null }>,
+): boolean =>
+  notes.some((note) =>
+    isNoteExtractionInFlight(note.attachment_extraction_status),
+  );

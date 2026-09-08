@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import {
   MAX_NOTE_ATTACHMENT_BYTES,
+  hasInFlightNoteExtraction,
+  isNoteExtractionInFlight,
   noteAttachmentFileType,
   validateNoteAttachmentFile,
 } from './expertNoteAttachment';
@@ -73,5 +75,41 @@ describe('noteAttachmentFileType', () => {
   it('lowercases the whole name when there is no dot present', () => {
     // Matches labReportStepOne.ts's fileExtension behavior for parity.
     expect(noteAttachmentFileType('README')).toBe('readme');
+  });
+});
+
+describe('isNoteExtractionInFlight', () => {
+  it('treats pending and processing as in flight', () => {
+    expect(isNoteExtractionInFlight('pending')).toBe(true);
+    expect(isNoteExtractionInFlight('processing')).toBe(true);
+  });
+
+  it('treats terminal and empty statuses as finished', () => {
+    expect(isNoteExtractionInFlight('done')).toBe(false);
+    expect(isNoteExtractionInFlight('failed')).toBe(false);
+    expect(isNoteExtractionInFlight('skipped')).toBe(false);
+    expect(isNoteExtractionInFlight(null)).toBe(false);
+    expect(isNoteExtractionInFlight(undefined)).toBe(false);
+  });
+});
+
+describe('hasInFlightNoteExtraction', () => {
+  it('is true when any note is still extracting', () => {
+    expect(
+      hasInFlightNoteExtraction([
+        { attachment_extraction_status: 'done' },
+        { attachment_extraction_status: 'pending' },
+      ]),
+    ).toBe(true);
+  });
+
+  it('is false when every note is finished or has no attachment', () => {
+    expect(
+      hasInFlightNoteExtraction([
+        { attachment_extraction_status: 'done' },
+        { attachment_extraction_status: 'failed' },
+        { attachment_extraction_status: null },
+      ]),
+    ).toBe(false);
   });
 });

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
@@ -7,10 +7,15 @@ import Accordion from '../../Accordion';
 import Circleloader from '../../CircleLoader';
 import useIsDemo from '../../../hooks/useIsDemo';
 import { uploadBlobToAzure } from '../../../services/uploadBlobService';
+import { createVisibilityPollScheduler } from '../../../utils/visibilityPollScheduler';
 import {
+  hasInFlightNoteExtraction,
+  isNoteExtractionInFlight,
   noteAttachmentFileType,
   validateNoteAttachmentFile,
 } from '../../../utils/expertNoteAttachment';
+
+const NOTE_EXTRACTION_POLL_MS = 5000;
 
 export const Notes = () => {
   const isDemo = useIsDemo();
@@ -30,8 +35,11 @@ export const Notes = () => {
   // A note is either written text OR an attached file - never both, never
   // neither. See doc/EXPERT_NOTE_FILE_ATTACHMENT_PLAN.md.
   const [noteMode, setNoteMode] = useState<'text' | 'file'>('text');
-  const getNotes = (Id: any) => {
-    setLoading(true);
+  const getNotes = useCallback((Id: any, options?: { silent?: boolean }) => {
+    const silent = options?.silent === true;
+    if (!silent) {
+      setLoading(true);
+    }
     Application.getNotes({ member_id: Id })
       .then((res) => {
         if (res.data) {
@@ -44,12 +52,36 @@ export const Notes = () => {
         console.error(err);
       })
       .finally(() => {
-        setLoading(false);
+        if (!silent) {
+          setLoading(false);
+        }
       });
-  };
+  }, []);
   useEffect(() => {
     getNotes(id);
-  }, [id]);
+  }, [id, getNotes]);
+  const hasInFlightExtraction = hasInFlightNoteExtraction(data || []);
+  useEffect(() => {
+    if (!id || !hasInFlightExtraction) {
+      return;
+    }
+    const scheduler = createVisibilityPollScheduler(
+      NOTE_EXTRACTION_POLL_MS,
+      () =>
+        Application.getNotes({ member_id: id })
+          .then((res) => {
+            if (res.data) {
+              setData(res.data);
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          }),
+      { immediate: false },
+    );
+    scheduler.start();
+    return () => scheduler.stop();
+  }, [id, hasInFlightExtraction]);
   const handleNoteDelete = (noteId: string) => {
     if (isDemo) return;
     setLoading(true);
@@ -156,7 +188,9 @@ export const Notes = () => {
       return;
     }
     setIsSavingNote(true);
-    setLoading(true);
+    if (noteMode !== 'file') {
+      setLoading(true);
+    }
     try {
       let attachment:
         | { blob_url: string; file_name: string; file_type: string }
@@ -187,7 +221,7 @@ export const Notes = () => {
       setUploadProgress(null);
       setAttachmentError(null);
       setNoteMode('text');
-      getNotes(id);
+      getNotes(id, { silent: Boolean(attachment) });
     } catch (error) {
       console.error('Error adding note:', error);
       setAttachmentError('Failed to save note. Please try again.');
@@ -365,7 +399,9 @@ export const Notes = () => {
                 <div className=" w-[60px] md:w-[100px] font-medium text-xs">
                   {isSavingNote
                     ? attachedFile
-                      ? 'Uploading...'
+                      ? uploadProgress !== null && uploadProgress < 100
+                        ? 'Uploading...'
+                        : 'Reading file...'
                       : 'Saving...'
                     : 'Save Note'}
                 </div>
@@ -384,9 +420,17 @@ export const Notes = () => {
           <>
             <div className="w-full ">
               {data?.map((el: any, index: number) => {
+                const extractionInFlight = isNoteExtractionInFlight(
+                  el.attachment_extraction_status,
+                );
                 return (
-                  <div className="my-2 w-full" key={index}>
-                    <Accordion time={el.time} title={formatDate(el.date)}>
+                  <div className="my-2 w-full" key={el.unique_id || index}>
+                    <Accordion
+                      time={el.time}
+                      title={formatDate(el.date)}
+                      defaultOpen={extractionInFlight}
+                      processing={extractionInFlight}
+                    >
                       {editIndex === index ? (
                         <textarea
                           className="text-[12px] w-full min-h-[80px] resize-y outline-none"
@@ -424,6 +468,17 @@ export const Notes = () => {
                                   (text not extracted)
                                 </span>
                               )}
+                            </div>
+                          )}
+                          {extractionInFlight && (
+                            <div className="mt-2 rounded-xl border border-Primary-DeepTeal/15 bg-[#F6FAFB] p-3">
+                              <div className="text-[11px] font-medium text-Primary-DeepTeal">
+                                Reading file…
+                              </div>
+                              <div className="mt-1 text-[10px] text-Text-Quadruple leading-5">
+                                You can continue working while this file is
+                                processed.
+                              </div>
                             </div>
                           )}
                         </>

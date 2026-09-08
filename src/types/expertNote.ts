@@ -12,6 +12,7 @@ export interface NoteAttachmentInput {
 
 export type NoteAttachmentExtractionStatus =
   | 'pending'
+  | 'processing'
   | 'done'
   | 'failed'
   | 'skipped'

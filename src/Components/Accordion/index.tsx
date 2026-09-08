@@ -6,10 +6,18 @@ interface AccordionProps {
   children?: React.ReactNode;
 
   time?: string;
+  defaultOpen?: boolean;
+  processing?: boolean;
 }
 
-const Accordion: React.FC<AccordionProps> = ({ title, children, time }) => {
-  const [isActive, setIsActive] = useState(false);
+const Accordion: React.FC<AccordionProps> = ({
+  title,
+  children,
+  time,
+  defaultOpen = false,
+  processing = false,
+}) => {
+  const [isActive, setIsActive] = useState(defaultOpen);
   const handleClick = () => {
     if (isActive) {
       setHeight(contentRef.current?.scrollHeight || 0);
@@ -50,7 +58,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, time }) => {
           isActive ? 'rounded-t-xl ' : 'rounded-xl'
         } `}
       >
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 min-w-0">
           <h2 className={`text-Text-Primary font-medium text-[10px]`}>
             {title}{' '}
             {time && (
@@ -59,6 +67,24 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, time }) => {
               </span>
             )}{' '}
           </h2>
+          {processing && (
+            <div className="flex items-center gap-1 shrink-0 ml-1">
+              <div
+                style={{
+                  background:
+                    'linear-gradient(to right, rgba(0,95,115,0.4), rgba(108,194,74,0.4))',
+                }}
+                className="flex size-4 rounded-full items-center justify-center gap-[2px]"
+              >
+                <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot1"></div>
+                <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot2"></div>
+                <div className="size-[2px] rounded-full bg-Primary-DeepTeal animate-dot3"></div>
+              </div>
+              <span className="font-medium text-[10px] text-Primary-DeepTeal">
+                Reading file…
+              </span>
+            </div>
+          )}
           {/* <span className={`${theme}-graphicinfo-btn-number ${!number && "hidden"}`}>
                     ({number})
                 </span> */}
