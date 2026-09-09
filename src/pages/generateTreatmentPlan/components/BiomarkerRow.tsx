@@ -253,7 +253,8 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                 value.Category == 'Activity' ||
                 value.Category == 'Lifestyle' ||
                 value.Category == 'Supplement') &&
-                value?.label && (
+                value?.label &&
+                value.label !== '-' && (
                   <>
                     <div
                       className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
@@ -263,7 +264,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                         className={`size-[8px] select-none rounded-full`}
                         style={{ backgroundColor: color }}
                       ></div>
-                      {value?.label || '-'}
+                      {value.label}
                     </div>
                     {/* {!editAble && (
                     <>

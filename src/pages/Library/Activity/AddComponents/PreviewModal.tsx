@@ -34,6 +34,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
     title: '',
     score: 0,
     instruction: '',
+    recommendation: '',
     Parent_Title: '',
   });
   const getYouTubeEmbedUrl = (url: string) => {
@@ -116,6 +117,7 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
             title: res.data.Title,
             score: res.data.Base_Score,
             instruction: res.data.Instruction,
+            recommendation: res.data.Recommendation || '',
             Parent_Title: res.data.Parent_Title,
           });
         })
@@ -204,9 +206,17 @@ const PreviewExerciseModal: FC<ViewExerciseModalProps> = ({
             <div
               className={`text-xs text-[#888888] text-justify text-wrap break-words max-w-[375px] ${isActivty ? '' : 'md:ml-5 ml-0'}`}
             >
-              {isActivty ? data.instruction : exercise.Instruction}
+              {isActivty ? data.instruction || '-' : exercise.Instruction}
             </div>
           </div>
+          {isActivty && (
+            <div className="flex flex-col md:flex-row w-full items-start md:gap-[50px] gap-1">
+              <div className="text-xs font-medium">Recommendation</div>
+              <div className="text-xs text-[#888888] text-justify text-wrap break-words max-w-[375px]">
+                {data.recommendation || '-'}
+              </div>
+            </div>
+          )}
           <div
             className={`flex flex-col md:flex-row w-full items-start ${isActivty ? 'md:gap-24 gap-1' : 'md:gap-3 gap-1'}`}
           >

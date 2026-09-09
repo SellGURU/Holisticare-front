@@ -6,12 +6,15 @@ import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import ExerciseModal from './AddComponents/ExcersieModal';
 import { ExerciseRow } from './AddComponents/ExerciseRow';
 import useIsDemo from '../../../hooks/useIsDemo';
+import SortableTh from '../../../Components/LibraryThreePages/components/SortableTh';
 interface ExerciseHandlerProps {
   data: Array<any>;
   onAdd: () => void;
   showAdd: boolean;
   setShowAdd: React.Dispatch<React.SetStateAction<boolean>>;
   ExcercisesListLength: number;
+  sortId: string;
+  onChangeSort: (sortId: string) => void;
 }
 const Exercise: React.FC<ExerciseHandlerProps> = ({
   data,
@@ -19,6 +22,8 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   showAdd,
   setShowAdd,
   ExcercisesListLength,
+  sortId,
+  onChangeSort,
 }) => {
   const isDemo = useIsDemo();
   const [loadingCall, setLoadingCall] = useState(false);
@@ -162,27 +167,54 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
               <table className="w-full min-w-[882px]">
                 <thead className="w-full">
                   <tr className="text-left text-xs bg-[#F4F4F4] text-Text-Primary border-Gray-50 w-full ">
-                    <th className="py-3 pl-4 w-[160px] rounded-tl-2xl text-nowrap">
-                      Subject
-                    </th>
-                    <th className="py-3 w-[300px] text-center text-nowrap">
-                      Instruction
-                    </th>
-                    <th className="py-3 w-[100px] text-center pl-2 text-nowrap">
-                      File
-                    </th>
-                    <th className="py-3 w-[66px] text-center pl-3 text-nowrap">
-                      Priority Weight
-                    </th>
-                    {/* <th className="py-3 w-[250px] text-center text-nowrap">
-                      Clinical Guidance
-                    </th> */}
-                    <th className="py-3 w-[100px] text-center pl-3 text-nowrap">
-                      Added on
-                    </th>
-                    <th className="py-3 w-[80px] text-center pl-3 rounded-tr-2xl text-nowrap">
-                      Action
-                    </th>
+                    <SortableTh
+                      label="Subject"
+                      column="title"
+                      sortId={sortId}
+                      onChangeSort={onChangeSort}
+                      className="py-3 pl-4 w-[160px] rounded-tl-2xl text-nowrap"
+                      innerClassName="justify-start"
+                    />
+                    <SortableTh
+                      label="Instruction"
+                      column="instruction"
+                      sortId={sortId}
+                      onChangeSort={onChangeSort}
+                      className="py-3 w-[300px] text-center text-nowrap"
+                      innerClassName="justify-center"
+                    />
+                    <SortableTh
+                      label="File"
+                      column={null}
+                      sortId={sortId}
+                      onChangeSort={onChangeSort}
+                      className="py-3 w-[100px] text-center pl-2 text-nowrap"
+                      innerClassName="justify-center"
+                    />
+                    <SortableTh
+                      label="Priority Weight"
+                      column="priority"
+                      sortId={sortId}
+                      onChangeSort={onChangeSort}
+                      className="py-3 w-[66px] text-center pl-3 text-nowrap"
+                      innerClassName="justify-center"
+                    />
+                    <SortableTh
+                      label="Added on"
+                      column="added"
+                      sortId={sortId}
+                      onChangeSort={onChangeSort}
+                      className="py-3 w-[100px] text-center pl-3 text-nowrap"
+                      innerClassName="justify-center"
+                    />
+                    <SortableTh
+                      label="Action"
+                      column={null}
+                      sortId={sortId}
+                      onChangeSort={onChangeSort}
+                      className="py-3 w-[80px] text-center pl-3 rounded-tr-2xl text-nowrap"
+                      innerClassName="justify-center"
+                    />
                   </tr>
                 </thead>
                 <tbody className="border border-t-0 border-[#E9F0F2]">

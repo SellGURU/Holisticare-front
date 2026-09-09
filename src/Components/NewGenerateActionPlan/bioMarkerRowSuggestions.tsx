@@ -6,6 +6,7 @@ import BasedOnModal from './components/BasedOnModal';
 import ChoosingDaysWeek from './components/ChoosingDaysWeek';
 import ConflictsModal from './components/ConflictsModal';
 import FilePreviewModal from './components/FilePreviewModal';
+import ActionTaskDetailFields from './components/ActionTaskDetailFields';
 import MonthShows from './components/MonthShows';
 import { resolveCategoryIcon } from '../../help';
 import {
@@ -207,7 +208,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </div>
                 {value.Title}
                 <div className="flex mt-2 lg:mt-0">
-                  {value?.label && (
+                  {value?.label && value.label !== '-' && (
                     <div
                       className={`select-none mt-4 xs:mt-0 rounded-full px-2 flex items-center gap-1 text-[8px] text-Text-Primary ml-3`}
                       style={{ backgroundColor: bgColor }}
@@ -437,175 +438,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </div>
                   </div>
                 )}
-                {value.Category === 'Supplement' && (
-                  <div className="flex flex-col gap-1 ml-2 mb-1.5">
-                    <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
-                      <img
-                        src="/icons/ruler-new.svg"
-                        alt=""
-                        className="ml-[-2px]"
-                      />
-                      Dosage
-                    </div>
-                    <div className="text-[#666666] text-xs leading-5">
-                      {value?.Dose}
-                    </div>
-                  </div>
-                )}
-                {value.Category === 'Lifestyle' && (
-                  <div className="flex flex-col gap-1 ml-2 mb-1.5">
-                    <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
-                      <img
-                        src="/icons/ruler-new.svg"
-                        alt=""
-                        className="ml-[-2px]"
-                      />
-                      Value
-                    </div>
-                    <div className="text-[#666666] text-xs leading-5">
-                      {value?.Value} {value?.Unit}
-                    </div>
-                  </div>
-                )}
-                {value.Category === 'Diet' && (
-                  <div className="flex flex-col gap-1 ml-2 mb-1.5">
-                    <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
-                      <img
-                        src="/icons/ruler-new.svg"
-                        alt=""
-                        className="ml-[-2px]"
-                      />
-                      Macros
-                    </div>
-                    <div className="flex justify-start items-center gap-4">
-                      <div className="text-[#666666] text-xs leading-5">
-                        Carb: {value?.['Total Macros']?.Carbs} gr
-                      </div>
-                      <div className="text-[#666666] text-xs leading-5">
-                        Protein: {value?.['Total Macros']?.Protein} gr
-                      </div>
-                      <div className="text-[#666666] text-xs leading-5">
-                        Fat: {value?.['Total Macros']?.Fats} gr
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {value.Category === 'Activity' && (
-                  <div className="flex flex-col gap-1 ml-2 mb-1.5">
-                    <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
-                      <img
-                        src="/icons/directbox-default.svg"
-                        alt=""
-                        className="ml-[-2px]"
-                      />
-                      Files:
-                    </div>
-                    <div
-                      onClick={() => {
-                        if (hasAnyExerciseFiles(value.Sections)) {
-                          setShowFilePreviewModal(true);
-                        }
-                      }}
-                      className={`flex cursor-pointer text-xs ${
-                        !hasAnyExerciseFiles(value.Sections)
-                          ? 'text-[#666666]'
-                          : 'text-[#4C88FF] underline'
-                      }`}
-                    >
-                      {hasAnyExerciseFiles(value.Sections)
-                        ? 'Youtube Link / Video / Image'
-                        : 'No Link / Video / Image'}
-                    </div>
-                  </div>
-                )}
-                {value.Category === 'Medical Peptide Therapy' && (
-                  <div className="flex flex-col gap-1 ml-2 mb-1.5">
-                    <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
-                      <img
-                        src="/icons/ruler-new.svg"
-                        alt=""
-                        className="ml-[-2px]"
-                      />
-                      Schedule
-                    </div>
-                    <div className="text-[#666666] text-xs leading-5">
-                      {(() => {
-                        if (
-                          value?.Dose_Schedules &&
-                          Array.isArray(value.Dose_Schedules) &&
-                          value.Dose_Schedules.length > 0
-                        ) {
-                          return value.Dose_Schedules.map(
-                            (schedule: any, idx: number) => {
-                              const formatFreq = () => {
-                                if (!schedule.Frequency_Type) return '';
-                                const type = schedule.Frequency_Type;
-                                const days = schedule.Frequency_Days || [];
-                                if (type === 'daily') return 'Daily';
-                                if (type === 'weekly') {
-                                  if (days.length === 0) return 'Weekly';
-                                  const dayNames = [
-                                    'Sun',
-                                    'Mon',
-                                    'Tue',
-                                    'Wed',
-                                    'Thu',
-                                    'Fri',
-                                    'Sat',
-                                  ];
-                                  return `Weekly: ${days.map((d: number) => dayNames[d % 7]).join(', ')}`;
-                                }
-                                if (type === 'monthly') {
-                                  if (days.length === 0) return 'Monthly';
-                                  return `Monthly: Days ${days.join(', ')}`;
-                                }
-                                return type;
-                              };
-                              return (
-                                <div
-                                  key={idx}
-                                  className={idx > 0 ? 'mt-1' : ''}
-                                >
-                                  {schedule.Title && (
-                                    <span className="font-medium">
-                                      {schedule.Title}:{' '}
-                                    </span>
-                                  )}
-                                  {schedule.Dose || '-'}
-                                  {schedule.Frequency_Type && (
-                                    <span className="text-gray-500">
-                                      {' '}
-                                      • {formatFreq()}
-                                    </span>
-                                  )}
-                                </div>
-                              );
-                            },
-                          );
-                        }
-                        return value?.Dose || '-';
-                      })()}
-                    </div>
-                    {(value?.fda_status || value?.FDA_Status) && (
-                      <div className="text-orange-500 text-xs font-semibold">
-                        FDA: {value?.FDA_Status || value?.fda_status}
-                      </div>
-                    )}
-                  </div>
-                )}
-                <div className="flex flex-col gap-1 ml-2">
-                  <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs text-nowrap">
-                    <img
-                      src="/icons/note-blue.svg"
-                      alt=""
-                      className="ml-[-2px]"
-                    />
-                    Instruction
-                  </div>
-                  <div className="text-[#666666] text-xs leading-5 text-wrap">
-                    {value?.Instruction}
-                  </div>
-                </div>
+                <ActionTaskDetailFields
+                  value={value}
+                  hasExerciseFiles={hasAnyExerciseFiles(activitySections)}
+                  onOpenFiles={() => setShowFilePreviewModal(true)}
+                />
                 <div className="flex justify-start items-center ml-2">
                   {/* {value.Category === 'Diet' ||
                   value.Category === 'Activity' ||
@@ -960,9 +797,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 Description: editedData.Description ?? '',
                 // Base_Score: editedData.Base_Score ?? '',
                 Instruction: editedData.Instruction ?? '',
+                Recommendation: editedData.Recommendation ?? '',
                 Times: editedData.Times ?? [],
                 Dose: editedData.Dose ?? null,
                 Value: editedData.Value ?? null,
+                Unit: editedData.Unit ?? '',
                 'Total Macros': editedData['Total Macros'] ?? null,
                 'Client Notes': editedData['Client Notes'] ?? [],
                 Score: editedData.Score ?? 0,

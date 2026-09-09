@@ -66,11 +66,11 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
           data-tooltip-id={`tooltip-activity-${index}`}
         >
           <div className="text-ellipsis select-none">
-            {exercise.Instruction.length > 47
+            {exercise.Instruction?.length > 47
               ? exercise.Instruction.substring(0, 47) + '...'
-              : exercise.Instruction}
+              : exercise.Instruction || '-'}
           </div>
-          {exercise.Instruction.length > 47 && (
+          {exercise.Instruction?.length > 47 && (
             <Tooltip
               id={`tooltip-activity-${index}`}
               place="top"
@@ -81,6 +81,31 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
               }}
             >
               {exercise.Instruction}
+            </Tooltip>
+          )}
+        </td>
+        <td
+          className="py-3 text-xs text-[#888888] w-[300px] text-center"
+          data-tooltip-id={`tooltip-activity-recommendation-${index}`}
+        >
+          <div className="text-ellipsis select-none">
+            {exercise.Recommendation
+              ? exercise.Recommendation.length > 47
+                ? exercise.Recommendation.substring(0, 47) + '...'
+                : exercise.Recommendation
+              : '-'}
+          </div>
+          {exercise.Recommendation?.length > 47 && (
+            <Tooltip
+              id={`tooltip-activity-recommendation-${index}`}
+              place="top"
+              className="!bg-white !max-w-[300px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              style={{
+                zIndex: 9999,
+                pointerEvents: 'none',
+              }}
+            >
+              {exercise.Recommendation}
             </Tooltip>
           )}
         </td>

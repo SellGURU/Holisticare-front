@@ -5,6 +5,7 @@ import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import SvgIcon from '../../../utils/svgIcon';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import useIsDemo from '../../../hooks/useIsDemo';
+import { getLibrarySortOptions } from '../../../utils/libraryTableSort';
 
 interface HeaderLibraryTreePagesProps {
   pageType: string;
@@ -28,20 +29,7 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
   const isDemo = useIsDemo();
   const [isSortOpen, setIsSortOpen] = useState(false);
 
-  const sortOptions = [
-    { id: 'title_asc', label: 'Title (A → Z)' },
-    { id: 'title_desc', label: 'Title (Z → A)' },
-    ...(pageType === 'Other'
-      ? [
-          { id: 'type_asc', label: 'Type (A → Z)' },
-          { id: 'type_desc', label: 'Type (Z → A)' },
-        ]
-      : []),
-    { id: 'priority_asc', label: 'Priority Weight (Low → High)' },
-    { id: 'priority_desc', label: 'Priority Weight (High → Low)' },
-    { id: 'added_desc', label: 'Added on (Newest first)' },
-    { id: 'added_asc', label: 'Added on (Oldest first)' },
-  ];
+  const sortOptions = getLibrarySortOptions(pageType);
   const btnRef = useRef(null);
   const modalRef = useRef(null);
   useModalAutoClose({

@@ -21,6 +21,7 @@ type ValidationField =
   | 'YouTube Link'
   | 'Parent_Title'
   | 'Based on'
+  | 'Recommendation'
   | 'Intervnetion_content'
   | 'KeyBenefits'
   | 'FoodsToEat'
@@ -60,6 +61,8 @@ class ValidationForms {
         return this.validateYouTubeLink(value);
       case 'Parent_Title':
         return this.validateParentTitle(value);
+      case 'Recommendation':
+        return this.validationRecommendation(value);
       case 'Based on':
         return this.validateBasedOn(value);
       case 'Intervnetion_content':
@@ -102,6 +105,8 @@ class ValidationForms {
         return this.validationYouTubeLinkText(value);
       case 'Parent_Title':
         return this.validationParentTitleText(value);
+      case 'Recommendation':
+        return this.validationRecommendationText(value);
       case 'Based on':
         return this.validationBasedOnText(value);
       case 'Intervnetion_content':
@@ -122,103 +127,104 @@ class ValidationForms {
   }
 
   private static validationInstructions(value: string) {
-    if (value.length == 0) {
-      return false;
+    if (!value) {
+      return true;
     } else if (value.length > 400) {
       return false;
     }
     return true;
   }
   private static validationInstructionsText(value: string) {
-    if (value.length == 0) {
-      return 'This field is required.';
+    if (!value) {
+      return '';
     } else if (value.length > 400) {
       return 'You can enter up to 400 characters.';
     }
     return '';
   }
-  private static validationDose(value: string) {
-    if (value.length == 0) {
+  private static validationRecommendation(value: string) {
+    if (!value || value.trim().length == 0) {
+      return true;
+    } else if (value.length > 1000) {
       return false;
     }
-    //  else if (value.length > 0) {
-    //   const doseRegex = DoseValidationMetric(value);
-    //   if (doseRegex) {
-    //     return true;
-    //   }
-    //   return false;
-    // }
+    return true;
+  }
+  private static validationRecommendationText(value: string) {
+    if (!value || value.trim().length == 0) {
+      return '';
+    } else if (value.length > 1000) {
+      return 'You can enter up to 1000 characters.';
+    }
+    return '';
+  }
+  private static validationDose(value: string) {
+    if (!value || value.length == 0) {
+      return true;
+    }
     return true;
   }
   private static validationDoseText(value: string) {
-    if (value.length == 0) {
-      return 'This field is required.';
+    if (!value || value.length == 0) {
+      return '';
     }
-    //  else if (value.length > 0) {
-    //   const doseRegex = DoseValidationMetric(value);
-    //   if (!doseRegex) {
-    //     return DoseFormatInfoText;
-    //   }
-    //   return '';
-    // }
     return '';
   }
   private static validationValue(value: string) {
-    if (value.length == 0) {
-      return false;
+    if (!value || value.length == 0) {
+      return true;
     } else if (value.length > LengthValidation) {
       return false;
     }
     return true;
   }
   private static validationValueText(value: string) {
-    if (value.length == 0) {
-      return 'This field is required.';
+    if (!value || value.length == 0) {
+      return '';
     } else if (value.length > LengthValidation) {
       return ValueFormatInfoText;
     }
     return '';
   }
   private static validationMacros(value: any) {
+    const carbs = value?.Carbs ?? '';
+    const protein = value?.Protein ?? '';
+    const fats = value?.Fats ?? '';
+    if (carbs.length == 0 && protein.length == 0 && fats.length == 0) {
+      return true;
+    }
     if (
-      value.Carbs.length == 0 ||
-      value.Protein.length == 0 ||
-      value.Fats.length == 0
-    ) {
-      return false;
-    } else if (
-      value.Carbs.length > LengthValidation ||
-      value.Protein.length > LengthValidation ||
-      value.Fats.length > LengthValidation
+      carbs.length > LengthValidation ||
+      protein.length > LengthValidation ||
+      fats.length > LengthValidation
     ) {
       return false;
     }
     return true;
   }
   private static validationMacrosSeparately(value: any) {
-    if (value.length == 0) {
-      return false;
+    if (!value || value.length == 0) {
+      return true;
     } else if (value.length > LengthValidation) {
       return false;
     }
     return true;
   }
   private static validationMacrosText(value: any) {
-    if (
-      value.Carbs.length == 0 ||
-      value.Protein.length == 0 ||
-      value.Fats.length == 0
-    ) {
-      return 'These fields are required.';
+    const carbs = value?.Carbs ?? '';
+    const protein = value?.Protein ?? '';
+    const fats = value?.Fats ?? '';
+    if (carbs.length == 0 && protein.length == 0 && fats.length == 0) {
+      return '';
     } else if (
-      value.Carbs.length > LengthValidation ||
-      value.Protein.length > LengthValidation ||
-      value.Fats.length > LengthValidation
+      carbs.length > LengthValidation ||
+      protein.length > LengthValidation ||
+      fats.length > LengthValidation
     ) {
       const NameValue =
-        value.Carbs.length > LengthValidation
+        carbs.length > LengthValidation
           ? 'Carbs'
-          : value.Protein.length > LengthValidation
+          : protein.length > LengthValidation
             ? 'Protein'
             : 'Fats';
       return `${NameValue} ${MacrosFormatInfoText}`;
@@ -262,15 +268,9 @@ class ValidationForms {
     return '';
   }
   private static validationScoreText(value: string) {
-    if (value.length == 0 || Number(value) == 0) {
-      return 'This field is required.';
-    }
     return '';
   }
-  private static validateScore(value: string) {
-    if (value.length == 0 || Number(value) == 0) {
-      return false;
-    }
+  private static validateScore(_value: string) {
     return true;
   }
   private static validationYouTubeLinkText(value: string) {
@@ -290,13 +290,13 @@ class ValidationForms {
     return true;
   }
   private static validateParentTitle(value: string) {
-    if (value.length == 0) {
+    if (!value || value.trim().length == 0) {
       return false;
     }
     return true;
   }
   private static validationParentTitleText(value: string) {
-    if (value.length == 0) {
+    if (!value || value.trim().length == 0) {
       return 'This field is required.';
     }
     return '';

@@ -218,7 +218,9 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
               {(value.Category == 'Diet' ||
                 value.Category == 'Activity' ||
                 value.Category == 'Lifestyle' ||
-                value.Category == 'Supplement') && (
+                value.Category == 'Supplement') &&
+                value?.label &&
+                value.label !== '-' && (
                 <>
                   <div
                     className={`select-none rounded-full h-[20px] md:h-auto px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
@@ -228,7 +230,7 @@ const BioMarkerRowOldSuggestions: FC<BioMarkerRowOldSuggestionsProps> = ({
                       className={`size-[8px] select-none rounded-full`}
                       style={{ backgroundColor: color }}
                     ></div>
-                    {value?.label || '-'}
+                    {value.label}
                   </div>
                   <div className="flex flex-wrap items-center gap-1 relative">
                     {selectedIssues.map((issue: string, index: number) => (

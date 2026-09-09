@@ -18,6 +18,7 @@ interface InformationStepProps {
     // description: string;
     score: number;
     instruction: string;
+    recommendation: string;
     type: string;
     terms: Array<string>;
     condition: Array<string>;
@@ -37,6 +38,7 @@ interface InformationStepProps {
       // | 'description'
       | 'score'
       | 'instruction'
+      | 'recommendation'
       | 'terms'
       | 'condition'
       | 'muscle'
@@ -193,6 +195,31 @@ const InformationStep: FC<InformationStepProps> = ({
                 ? ValidationForms.ValidationText(
                     'Instruction',
                     addData.instruction,
+                  )
+                : ''
+            }
+            margin="mt-0"
+          />
+          <TextAreaField
+            label="Recommendation"
+            placeholder="Enter recommendation (e.g., Start with 20 minutes, 3 days per week)"
+            value={addData.recommendation}
+            onChange={(e) => {
+              updateAddData('recommendation', e.target.value);
+            }}
+            isValid={
+              showValidation
+                ? ValidationForms.IsvalidField(
+                    'Recommendation',
+                    addData.recommendation,
+                  )
+                : true
+            }
+            validationText={
+              showValidation
+                ? ValidationForms.ValidationText(
+                    'Recommendation',
+                    addData.recommendation,
                   )
                 : ''
             }

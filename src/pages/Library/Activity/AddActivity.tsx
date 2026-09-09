@@ -76,6 +76,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           // Description: addData.description,
           Base_Score: addData.score,
           Instruction: addData.instruction,
+          Recommendation: addData.recommendation,
           Ai_note: addData.clinical_guidance,
           Sections: rsolveSectionListforSendToApi(),
           Activity_Filters: {
@@ -112,6 +113,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           // Description: addData.description,
           Base_Score: addData.score,
           Instruction: addData.instruction,
+          Recommendation: addData.recommendation,
           Ai_note: addData.clinical_guidance,
           Sections: rsolveSectionListforSendToApi(),
           Activity_Filters: {
@@ -158,6 +160,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
             // description: res.data.Description,
             score: res.data.Base_Score,
             instruction: res.data.Instruction,
+            recommendation: res.data.Recommendation || '',
             type:
               res.data.Activity_Filters.Type.length > 0
                 ? res.data.Activity_Filters.Type[0]
@@ -214,6 +217,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     // description: '',
     score: 0,
     instruction: '',
+    recommendation: '',
     type: '',
     terms: [],
     condition: [],
@@ -247,11 +251,9 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   useEffect(() => {
     setIsFormValid(
       addData.title.trim() !== '' &&
-        addData.instruction.trim() !== '' &&
-        addData.score > 0 &&
-        (addData?.Parent_Title?.trim() !== '' || editid !== null),
+        (editid ? true : addData.Parent_Title.trim() !== ''),
     );
-  }, [addData.title, addData.instruction, addData.score, addData.Parent_Title]);
+  }, [addData.title, addData.Parent_Title, editid]);
 
   // Check if exercise step is valid whenever sectionList changes
   useEffect(() => {

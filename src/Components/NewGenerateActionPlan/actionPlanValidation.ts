@@ -105,12 +105,6 @@ const getRequiredFieldsForTask = (task: any): string[] => {
     );
     if (task?.Category === 'Activity') {
       fields.push('Sections');
-    } else if (task?.Category === 'Lifestyle') {
-      fields.push('Value', 'Unit');
-    } else if (task?.Category === 'Supplement') {
-      fields.push('Dose');
-    } else if (task?.Category === 'Diet') {
-      fields.push('Total Macros');
     }
   } else if (task?.Task_Type === 'Checkin') {
     fields.push('Questions_Count', 'Check_in_id');

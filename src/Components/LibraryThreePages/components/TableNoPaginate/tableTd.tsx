@@ -40,6 +40,27 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     },
   },
   {
+    accessorKey: 'Recommendation',
+    header: 'Recommendation',
+    enableSorting: false,
+    cell: ({ row }) => {
+      return (
+        <>
+          <div
+            className="overflow-hidden select-none text-xs text-Text-Quadruple cursor-default"
+            style={{
+              textWrap: 'nowrap',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            <EllipsedTooltip text={row.original?.Recommendation || '-'} />
+          </div>
+        </>
+      );
+    },
+  },
+  {
     accessorKey:
       pageType === 'Supplement'
         ? 'Dose'
@@ -70,7 +91,13 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
             ) : pageType === 'Lifestyle' ? (
               <div className="flex items-center justify-center">
                 <EllipsedTooltip
-                  text={row.original?.Value + ' ' + (row.original?.Unit || '')}
+                  text={
+                    row.original?.Value == null || row.original?.Value === ''
+                      ? '-'
+                      : row.original?.Value +
+                        ' ' +
+                        (row.original?.Unit || '')
+                  }
                 />
               </div>
             ) : pageType === 'Peptide' ? (

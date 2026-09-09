@@ -20,11 +20,11 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
 }) => {
   const renderNutrient = (
     label: string,
-    value: number | undefined,
+    value: number | string | undefined | null,
     iconSrc: string,
   ) => {
-    if (value === undefined) {
-      return null; // or handle it with a default value
+    if (value === undefined || value === null || value === '') {
+      return null;
     }
 
     const valueStr = value.toString(); // Convert number to string
@@ -119,7 +119,17 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 <div
                   className={`text-xs text-Text-Secondary text-justify leading-5 ${selectedRow?.Category === 'Diet' ? '' : 'md:ml-9 ml-0'} `}
                 >
-                  {selectedRow?.Instruction}
+                  {selectedRow?.Instruction || '-'}
+                </div>
+              </div>
+              <div
+                className={`flex flex-col md:flex-row ${selectedRow?.Category === 'Diet' ? 'md:gap-[50px] gap-1' : 'md:gap-8 gap-1'}`}
+              >
+                <div className="font-medium text-Text-Primary text-xs">
+                  Recommendation
+                </div>
+                <div className="text-xs text-Text-Secondary text-justify leading-5">
+                  {selectedRow?.Recommendation || '-'}
                 </div>
               </div>
               {pageType === 'Supplement' || pageType === 'Lifestyle' ? (
@@ -161,17 +171,17 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                   <div className="flex items-center flex-grow-[1] justify-between pr-2 flex-wrap gap-2">
                     {renderNutrient(
                       'Carbs',
-                      selectedRow?.['Total Macros']?.Carbs ?? 0,
+                      selectedRow?.['Total Macros']?.Carbs,
                       '/icons/carbs-preview.svg',
                     )}
                     {renderNutrient(
                       'Proteins',
-                      selectedRow?.['Total Macros']?.Protein ?? 0,
+                      selectedRow?.['Total Macros']?.Protein,
                       '/icons/proteins-preview.svg',
                     )}
                     {renderNutrient(
                       'Fats',
-                      selectedRow?.['Total Macros']?.Fats ?? 0,
+                      selectedRow?.['Total Macros']?.Fats,
                       '/icons/fats-preview.svg',
                     )}
                     {/* <div className="flex items-center gap-1">

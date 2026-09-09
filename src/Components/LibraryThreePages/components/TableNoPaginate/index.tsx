@@ -7,13 +7,16 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { FC, useEffect, useState } from 'react';
-import { FaSort } from 'react-icons/fa';
 import { columns } from './tableTd';
+import SortableTh from '../SortableTh';
+import { sortColumnFromHeader } from '../../../../utils/libraryTableSort';
 import useIsDemo from '../../../../hooks/useIsDemo';
 
 interface TableProps {
   tableData: Array<any>;
   pageType: string;
+  sortId: string;
+  onChangeSort: (sortId: string) => void;
   onDelete: (id: string) => void;
   onEdit: (row: any) => void;
   onPreview: (row: any) => void;
@@ -32,6 +35,8 @@ const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
 const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   tableData,
   pageType,
+  sortId,
+  onChangeSort,
   onDelete,
   onEdit,
   onPreview,
@@ -103,40 +108,29 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                   className="text-nowrap text-Text-Primary"
                 >
                   {headerGroup.headers.map((header, index) => (
-                    <th
+                    <SortableTh
                       key={header.id}
-                      className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer w-[100px] md:w-[unset]`}
-                    >
-                      <div
-                        className={`flex items-center  ${index == 0 ? 'justify-start ' : 'justify-center '} `}
-                      >
-                        <div
-                          className="flex items-center justify-center text-nowrap"
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                          {header.column.getCanSort() &&
-                            header.column.getIsSorted() === false && (
-                              <FaSort className="cursor-pointer" />
-                            )}
-                          {header.column.getIsSorted() === 'asc' && ' 🔼'}
-                          {header.column.getIsSorted() === 'desc' && ' 🔽'}
-                        </div>
-                      </div>
-                    </th>
+                      label={flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                      column={sortColumnFromHeader(
+                        header.column.columnDef.header,
+                      )}
+                      sortId={sortId}
+                      onChangeSort={onChangeSort}
+                      innerClassName={
+                        index == 0 ? 'justify-start' : 'justify-center'
+                      }
+                    />
                   ))}
-                  <th
-                    className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer w-[100px] md:w-[unset]`}
-                  >
-                    <div className={`flex items-center justify-center`}>
-                      <div className="flex items-center justify-center text-nowrap">
-                        Action
-                      </div>
-                    </div>
-                  </th>
+                  <SortableTh
+                    label="Action"
+                    column={null}
+                    sortId={sortId}
+                    onChangeSort={onChangeSort}
+                    innerClassName="justify-center"
+                  />
                 </tr>
               ))}
             </thead>

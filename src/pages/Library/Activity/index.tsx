@@ -10,6 +10,11 @@ import SvgIcon from '../../../utils/svgIcon';
 import ActivityHandler from './ActivityHandler';
 import Exercise from './Exercise';
 import useIsDemo from '../../../hooks/useIsDemo';
+import {
+  LIBRARY_SORT_LABELS,
+  getLibrarySortOptions,
+  sortLibraryRows,
+} from '../../../utils/libraryTableSort';
 
 const Activity = () => {
   const isDemo = useIsDemo();
@@ -59,106 +64,19 @@ const Activity = () => {
     }
   }, [active]);
 
-  const sortOptions = [
-    { id: 'title_asc', label: 'Title (A → Z)' },
-    { id: 'title_desc', label: 'Title (Z → A)' },
-    // { id: 'dose_asc', label: 'Dose (Low → High)' },
-    // { id: 'dose_desc', label: 'Dose (High → Low)' },
-    { id: 'priority_asc', label: 'Priority Weight (Low → High)' },
-    { id: 'priority_desc', label: 'Priority Weight (High → Low)' },
-    { id: 'added_desc', label: 'Added on (Newest first)' },
-    { id: 'added_asc', label: 'Added on (Oldest first)' },
-  ];
-
-  const getNum = (v: unknown): number => {
-    if (typeof v === 'number') return v;
-    if (typeof v === 'string') {
-      const n = Number(v.replace(/[^0-9.-]/g, ''));
-      return Number.isFinite(n) ? n : 0;
-    }
-    return 0;
-  };
-
-  const getDate = (v: unknown): number => {
-    const d = new Date(v as string);
-    return d.getTime() || 0;
-  };
-
-  // Filter + sort data
+  const sortOptions = getLibrarySortOptions(active);
   const filteredAndSortedData = useMemo(() => {
     const base = active === 'Exercise' ? ExcercisesList : dataList;
-
-    // filter first
-    const result = base.filter((item) =>
+    const filtered = base.filter((item) =>
       item.Title?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-    const getAddedDate = (item: any) =>
-      getDate(
-        item['Added on'] ??
-          item['Added On'] ??
-          item.AddedOn ??
-          item.CreatedAt ??
-          item.Created,
-      );
-
-    // then sort
-    switch (sortId) {
-      case 'title_asc':
-        result.sort((a, b) => (a.Title || '').localeCompare(b.Title || ''));
-        break;
-      case 'title_desc':
-        result.sort((a, b) => (b.Title || '').localeCompare(a.Title || ''));
-        break;
-      case 'dose_asc':
-        result.sort(
-          (a, b) => getNum(a.Dose ?? a.Dosage) - getNum(b.Dose ?? b.Dosage),
-        );
-        break;
-      case 'dose_desc':
-        result.sort(
-          (a, b) => getNum(b.Dose ?? b.Dosage) - getNum(a.Dose ?? a.Dosage),
-        );
-        break;
-      case 'priority_asc':
-        result.sort(
-          (a, b) =>
-            getNum(a.Base_Score ?? a.PriorityWeight ?? a.Priority ?? a.Weight) -
-            getNum(b.Base_Score ?? b.PriorityWeight ?? b.Priority ?? b.Weight),
-        );
-        break;
-
-      case 'priority_desc':
-        result.sort(
-          (a, b) =>
-            getNum(b.Base_Score ?? b.PriorityWeight ?? b.Priority ?? b.Weight) -
-            getNum(a.Base_Score ?? a.PriorityWeight ?? a.Priority ?? a.Weight),
-        );
-        break;
-      case 'added_desc':
-        result.sort((a, b) => getAddedDate(b) - getAddedDate(a));
-        break;
-
-      case 'added_asc':
-        result.sort((a, b) => getAddedDate(a) - getAddedDate(b));
-        break;
-    }
-
-    return result;
+    return sortLibraryRows(filtered, sortId);
   }, [active, ExcercisesList, dataList, searchQuery, sortId]);
   const allData = useMemo(() => {
     return active === 'Exercise' ? ExcercisesList : dataList;
   }, [active, ExcercisesList, dataList]);
-  const sortLabelMap: Record<string, string> = {
-    title_asc: 'Title (A → Z)',
-    title_desc: 'Title (Z → A)',
-    dose_asc: 'Dose (Low → High)',
-    dose_desc: 'Dose (High → Low)',
-    priority_asc: 'Priority Weight (Low → High)',
-    priority_desc: 'Priority Weight (High → Low)',
-    added_desc: 'Added on (Newest first)',
-    added_asc: 'Added on (Oldest first)',
-  };
-  const currentSortLabel = sortLabelMap[sortId] ?? sortLabelMap['title_asc'];
+  const currentSortLabel =
+    LIBRARY_SORT_LABELS[sortId] ?? LIBRARY_SORT_LABELS.title_asc;
   const btnRef = useRef(null);
   const modalRef = useRef(null);
   useModalAutoClose({
@@ -192,6 +110,7 @@ const Activity = () => {
             <Toggle
               active={active}
               setActive={(data) => {
+                setSortId('title_asc');
                 setActive(data as 'Exercise' | 'Activity');
               }}
               value={['Activity', 'Exercise']}
@@ -341,6 +260,8 @@ const Activity = () => {
               onDelete={() => getActivityList()}
               data={filteredAndSortedData}
               dataListLength={dataList.length}
+              sortId={sortId}
+              onChangeSort={(id: string) => setSortId(id ?? 'title_asc')}
             />
           ) : (
             <Exercise
@@ -349,6 +270,8 @@ const Activity = () => {
               showAdd={showAdd}
               setShowAdd={setShowAdd}
               ExcercisesListLength={ExcercisesList.length}
+              sortId={sortId}
+              onChangeSort={(id: string) => setSortId(id ?? 'title_asc')}
             />
           )}
         </div>

@@ -134,6 +134,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }));
   };
   const [instructions, setInstructions] = useState(defalts?.Instruction || '');
+  const [recommendation, setRecommendation] = useState(
+    defalts?.Recommendation || '',
+  );
   const [selectedTimes] = useState<string[]>(defalts ? defalts.Times : []);
   const [selectedLocations, setSelectedLocations] = useState<string[]>(
     defalts ? defalts?.Activity_Location : [],
@@ -293,6 +296,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Title: title,
       // 'Practitioner Comments': practitionerComments,
       Instruction: instructions,
+      Recommendation: recommendation,
       Activity_Location: selectedLocations,
       // Times: selectedTimes,
       'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
@@ -404,27 +408,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setShowValidation(true);
 
     // Basic required field validations
-    if (!selectedGroup || !title || !instructions) {
-      return;
-    }
-
-    // Category specific validations
-    if (
-      selectedGroup === 'Supplement' &&
-      !ValidationForms.IsvalidField('Dose', dose)
-    ) {
-      return;
-    }
-    if (
-      selectedGroup === 'Lifestyle' &&
-      !ValidationForms.IsvalidField('Value', value)
-    ) {
-      return;
-    }
-    if (
-      selectedGroup === 'Diet' &&
-      !ValidationForms.IsvalidField('Macros', totalMacros)
-    ) {
+    if (!selectedGroup || !title) {
       return;
     }
 
@@ -449,6 +433,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Category: selectedGroup,
         Title: title,
         Instruction: instructions,
+        Recommendation: recommendation,
         Dose: dose,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
@@ -465,7 +450,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Category: selectedGroup,
         Title: title,
         Instruction: instructions,
-        Value: Number(value),
+        Recommendation: recommendation,
+        Value: value === '' ? null : Number(value),
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType === 'weekly'
@@ -478,15 +464,24 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Unit: unit,
       });
     } else if (selectedGroup === 'Diet') {
-      const numberMacros = {
-        Fats: Number(totalMacros.Fats),
-        Protein: Number(totalMacros.Protein),
-        Carbs: Number(totalMacros.Carbs),
-      };
+      const parseMacro = (macroValue: string) =>
+        macroValue === '' || macroValue == null ? null : Number(macroValue);
+      const fats = parseMacro(totalMacros.Fats);
+      const protein = parseMacro(totalMacros.Protein);
+      const carbs = parseMacro(totalMacros.Carbs);
+      const numberMacros =
+        fats == null && protein == null && carbs == null
+          ? null
+          : {
+              Fats: fats,
+              Protein: protein,
+              Carbs: carbs,
+            };
       onSubmit({
         Category: selectedGroup,
         Title: title,
         Instruction: instructions,
+        Recommendation: recommendation,
         'Total Macros': numberMacros,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
@@ -512,6 +507,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Category: selectedGroup,
         Title: title,
         Instruction: instructions,
+        Recommendation: recommendation,
         Dose_Schedules: schedulesToSubmit,
         fda_status: fdaStatus,
         FDA_Status: fdaStatus,
@@ -530,6 +526,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Category: selectedGroup,
         Title: title,
         Instruction: instructions,
+        Recommendation: recommendation,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType === 'weekly'
@@ -642,34 +639,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   };
 
   const isNextDisabled = () => {
-    if (!selectedGroup || !title || !frequencyType || !instructions) {
+    if (!selectedGroup || !title || !frequencyType) {
       return true;
     }
     if (frequencyType === 'weekly' && selectedDays.length === 0) {
       return true;
     }
     if (frequencyType === 'monthly' && selectedDaysMonth.length === 0) {
-      return true;
-    }
-    if (
-      selectedGroup === 'Supplement' &&
-      !ValidationForms.IsvalidField('Dose', dose)
-    ) {
-      return true;
-    }
-    if (
-      selectedGroup === 'Lifestyle' &&
-      !ValidationForms.IsvalidField('Value', value)
-    ) {
-      return true;
-    }
-    // if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
-    //   return true;
-    // }
-    if (
-      selectedGroup === 'Diet' &&
-      !ValidationForms.IsvalidField('Macros', totalMacros)
-    ) {
       return true;
     }
     if (selectedGroup === 'Activity' && step === 1) {
@@ -735,27 +711,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
     if (!title) {
       newErrors.title = 'This field is required.';
-    }
-
-    if (!instructions) {
-      newErrors.instruction = 'This field is required.';
-    }
-
-    if (selectedGroup === 'Supplement') {
-      newErrors.dose = dose ? '' : 'This field is required.';
-    }
-
-    if (selectedGroup === 'Lifestyle' && !value) {
-      newErrors.value = 'This field is required.';
-    }
-
-    if (
-      selectedGroup === 'Diet' &&
-      (totalMacros.Carbs === '' ||
-        totalMacros.Protein === '' ||
-        totalMacros.Fats === '')
-    ) {
-      newErrors.macros = 'All macro values are required.';
     }
 
     if (!selectedGroup) {
@@ -934,6 +889,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         )
                       : ''
                   }
+                  margin="mb-4"
+                />
+                <TextAreaField
+                  label="Recommendation"
+                  placeholder="Write the action's recommendation..."
+                  value={recommendation}
+                  onChange={(e) => setRecommendation(e.target.value)}
                   margin="mb-4"
                 />
                 {selectedGroup === 'Supplement' && (

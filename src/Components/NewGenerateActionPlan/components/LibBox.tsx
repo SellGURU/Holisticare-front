@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import ConflictsModal from './ConflictsModal';
 import EllipsedTooltip from '../../LibraryThreePages/components/TableNoPaginate/ElipsedTooltip';
+import ActionTaskDetailFields from './ActionTaskDetailFields';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface LibBoxProps {
@@ -19,29 +20,6 @@ const LibBox: FC<LibBoxProps> = ({
   handleShowConflictsModal,
   index,
 }) => {
-  const [valueData, setValueData] = useState('');
-  useEffect(() => {
-    switch (data.Category) {
-      case 'Diet':
-        setValueData('Macros');
-        break;
-      case 'Supplement':
-        setValueData('Dose');
-        break;
-      case 'Lifestyle':
-        setValueData('Value');
-        break;
-      case 'Activity':
-        setValueData('File');
-        break;
-      case 'Medical Peptide Therapy':
-        setValueData('Dose_Schedules');
-        break;
-      case 'Other':
-        setValueData('Type');
-        break;
-    }
-  }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
   const [showConflicts, setShowConflicts] = useState(false);
   const [color, setColor] = useState<string>('');
@@ -108,16 +86,18 @@ const LibBox: FC<LibBoxProps> = ({
             className={`${showMore ? '' : 'ml-'} mt-2 flex  items-center flex-wrap gap-2 justify-between`}
           >
             <div className={`flex  items-center gap-1`}>
-              <div
-                className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary text-nowrap`}
-                style={{ backgroundColor: bgColor }}
-              >
+              {data?.label && data.label !== '-' && (
                 <div
-                  className={`size-[8px] select-none rounded-full`}
-                  style={{ backgroundColor: color }}
-                ></div>
-                {data?.label || '-'}
-              </div>
+                  className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary text-nowrap`}
+                  style={{ backgroundColor: bgColor }}
+                >
+                  <div
+                    className={`size-[8px] select-none rounded-full`}
+                    style={{ backgroundColor: color }}
+                  ></div>
+                  {data.label}
+                </div>
+              )}
               {data.holisticare_recommendation && (
                 <div
                   className={`select-none rounded-full px-2 py-[2px] h-[14px] text-nowrap flex items-center gap-1 text-[8px] text-Text-Primary `}
@@ -224,105 +204,7 @@ const LibBox: FC<LibBoxProps> = ({
         )}
         {showMore && (
           <div className="mt-2">
-            <div className="flex justify-start mt-1 items-start">
-              <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap">
-                • Instruction:
-              </div>
-              <div className="text-[10px] text-Text-Primary text-justify ml-1">
-                {data.Instruction}
-              </div>
-            </div>
-            <div className="flex justify-start mt-1 items-start">
-              <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap">
-                • {valueData}:
-              </div>
-              <div className="text-[10px] text-Text-Primary text-justify ml-1">
-                {valueData === 'Macros' ? (
-                  <div className="flex justify-start items-center gap-4 ml-3.5">
-                    <div className="flex justify-start items-center">
-                      Carbs: {data['Total Macros']?.Carbs}
-                      <div className="text-Text-Quadruple">gr</div>
-                    </div>
-                    <div className="flex justify-start items-center">
-                      Protein: {data['Total Macros']?.Protein}
-                      <div className="text-Text-Quadruple">gr</div>
-                    </div>
-                    <div className="flex justify-start items-center">
-                      Fat: {data['Total Macros']?.Fats}
-                      <div className="text-Text-Quadruple">gr</div>
-                    </div>
-                  </div>
-                ) : valueData === 'Dose_Schedules' ? (
-                  <div className="flex flex-col ml-3.5">
-                    <div className="text-Text-Primary text-xs">
-                      {(() => {
-                        if (
-                          data['Dose_Schedules'] &&
-                          Array.isArray(data['Dose_Schedules']) &&
-                          data['Dose_Schedules'].length > 0
-                        ) {
-                          return data['Dose_Schedules'].map(
-                            (schedule: any, idx: number) => {
-                              const formatFreq = () => {
-                                if (!schedule.Frequency_Type) return '';
-                                const type = schedule.Frequency_Type;
-                                const days = schedule.Frequency_Days || [];
-                                if (type === 'daily') return 'Daily';
-                                if (type === 'weekly') {
-                                  if (days.length === 0) return 'Weekly';
-                                  const dayNames = [
-                                    'Sun',
-                                    'Mon',
-                                    'Tue',
-                                    'Wed',
-                                    'Thu',
-                                    'Fri',
-                                    'Sat',
-                                  ];
-                                  return `Weekly: ${days.map((d: number) => dayNames[d % 7]).join(', ')}`;
-                                }
-                                if (type === 'monthly') {
-                                  if (days.length === 0) return 'Monthly';
-                                  return `Monthly: Days ${days.join(', ')}`;
-                                }
-                                return type;
-                              };
-                              return (
-                                <div
-                                  key={idx}
-                                  className={idx > 0 ? 'mt-1' : ''}
-                                >
-                                  {schedule.Title && (
-                                    <span className="font-medium">
-                                      {schedule.Title}:{' '}
-                                    </span>
-                                  )}
-                                  {schedule.Dose || '-'}
-                                  {schedule.Frequency_Type && (
-                                    <span className="text-gray-500">
-                                      {' '}
-                                      • {formatFreq()}
-                                    </span>
-                                  )}
-                                </div>
-                              );
-                            },
-                          );
-                        }
-                        return data['Dose'] || '-';
-                      })()}
-                    </div>
-                    {(data['fda_status'] || data['FDA_Status']) && (
-                      <div className="text-orange-500 text-[9px] font-semibold mt-1">
-                        FDA: {data['FDA_Status'] || data['fda_status']}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  data[valueData]
-                )}
-              </div>
-            </div>
+            <ActionTaskDetailFields value={data} />
           </div>
         )}
       </div>

@@ -575,6 +575,7 @@ const Stadio: FC<StadioProps> = ({
             'Based on': '',
             // 'Practitioner Comments': addData['Practitioner Comments'] || [],
             Instruction: addData.Instruction || '',
+            Recommendation: addData.Recommendation || '',
             Times: addData.Times || [],
             Value: Number(addData.Value) || null,
             Dose: addData.Dose || null,

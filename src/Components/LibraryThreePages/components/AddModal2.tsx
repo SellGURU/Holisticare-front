@@ -60,6 +60,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     score: 0,
     dose: '',
     instruction: '',
+    recommendation: '',
     macros: {
       Fats: '',
       Protein: '',
@@ -82,6 +83,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       title: '',
       score: 0,
       instruction: '',
+      recommendation: '',
       clinical_guidance: '',
       value: '',
       macros: {
@@ -148,67 +150,29 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   }, [pageType, isOpen]);
 
   const validateSupplementForm = () => {
-    if (
-      ValidationForms.IsvalidField('Title', formData.title) &&
-      ValidationForms.IsvalidField('Instruction', formData.instruction) &&
-      ValidationForms.IsvalidField('Dose', formData.dose) &&
-      ValidationForms.IsvalidField('Score', formData.score)
-    ) {
-      return true;
-    }
-    return false;
+    return ValidationForms.IsvalidField('Title', formData.title);
   };
   const validateLifestyleForm = () => {
-    if (
-      ValidationForms.IsvalidField('Title', formData.title) &&
-      ValidationForms.IsvalidField('Instruction', formData.instruction) &&
-      ValidationForms.IsvalidField('Value', formData.value) &&
-      ValidationForms.IsvalidField('Score', formData.score)
-    ) {
-      return true;
-    }
-    return false;
+    return ValidationForms.IsvalidField('Title', formData.title);
   };
   const validatePeptideForm = () => {
-    if (
-      ValidationForms.IsvalidField('Title', formData.title) &&
-      ValidationForms.IsvalidField('Instruction', formData.instruction) &&
-      ValidationForms.IsvalidField('Score', formData.score)
-    ) {
-      return true;
-    }
-    return false;
+    return ValidationForms.IsvalidField('Title', formData.title);
   };
   const validateOtherForm = () => {
-    if (
+    return (
       ValidationForms.IsvalidField('Title', formData.title) &&
-      ValidationForms.IsvalidField('Instruction', formData.instruction) &&
-      ValidationForms.IsvalidField('Score', formData.score) &&
       ValidationForms.IsvalidField('Type', formData.Type_Id)
-    ) {
-      return true;
-    }
-    return false;
+    );
   };
   const validateDietForm = () => {
-    if (
-      ValidationForms.IsvalidField('Title', formData.title) &&
-      ValidationForms.IsvalidField('Instruction', formData.instruction) &&
-      ValidationForms.IsvalidField('Macros', formData.macros) &&
-      ValidationForms.IsvalidField('Score', formData.score)
-      // ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title)
-    ) {
-      if (mode === 'add') {
-        if (
-          ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title)
-        ) {
-          return true;
-        }
-        return false;
-      }
-      return true;
+    const valid = ValidationForms.IsvalidField('Title', formData.title);
+    if (mode === 'edit') {
+      return valid;
     }
-    return false;
+    return (
+      valid &&
+      ValidationForms.IsvalidField('Parent_Title', formData.Parent_Title)
+    );
   };
   const validateFields = () => {
     if (validateSupplementForm() && pageType === 'Supplement') {
@@ -233,6 +197,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       title: editData?.Title || '',
       score: editData?.Base_Score || 0,
       instruction: editData?.Instruction || '',
+      recommendation: editData?.Recommendation || '',
       clinical_guidance: editData?.Ai_note || '',
       dose: editData?.Dose || '',
       value: editData?.Value || '',
@@ -320,8 +285,9 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       const data: any = {
         Title: formData.title,
         Instruction: formData.instruction,
-        Base_Score: formData.score,
-        Dose: formData.dose,
+        Recommendation: formData.recommendation,
+        Base_Score: formData.score || 5,
+        Dose: formData.dose || null,
         Ai_note: formData.clinical_guidance,
       };
       onSubmit(data);
@@ -330,26 +296,35 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     if (pageType === 'Lifestyle') {
       const data: any = {
         Title: formData.title,
-        // Description: addData.description,
         Instruction: formData.instruction,
-        Base_Score: formData.score,
-        Value: Number(formData.value),
-        Unit: formData.unit,
+        Recommendation: formData.recommendation,
+        Base_Score: formData.score || 5,
+        Value: formData.value === '' ? null : Number(formData.value),
+        Unit: formData.unit || null,
         Ai_note: formData.clinical_guidance,
       };
       onSubmit(data);
       return;
     }
     if (pageType === 'Diet') {
+      const parseMacro = (value: string) =>
+        value === '' || value == null ? null : Number(value);
+      const fats = parseMacro(formData.macros.Fats);
+      const protein = parseMacro(formData.macros.Protein);
+      const carbs = parseMacro(formData.macros.Carbs);
       const data: any = {
         Title: formData.title,
         Instruction: formData.instruction,
-        Base_Score: formData.score,
-        Total_Macros: {
-          Fats: Number(formData.macros.Fats),
-          Protein: Number(formData.macros.Protein),
-          Carbs: Number(formData.macros.Carbs),
-        },
+        Recommendation: formData.recommendation,
+        Base_Score: formData.score || 5,
+        Total_Macros:
+          fats == null && protein == null && carbs == null
+            ? null
+            : {
+                Fats: fats,
+                Protein: protein,
+                Carbs: carbs,
+              },
         Ai_note: formData.clinical_guidance,
         Parent_Id:
           dietLibrary.find(
@@ -363,7 +338,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       const data: any = {
         Title: formData.title,
         Instruction: formData.instruction,
-        Base_Score: formData.score,
+        Recommendation: formData.recommendation,
+        Base_Score: formData.score || 5,
         Ai_note: formData.clinical_guidance,
         Fda_status: formData.fda_status || null,
       };
@@ -374,7 +350,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       const data: any = {
         Title: formData.title,
         Instruction: formData.instruction,
-        Base_Score: formData.score,
+        Recommendation: formData.recommendation,
+        Base_Score: formData.score || 5,
         Ai_note: formData.clinical_guidance,
         Type_Id: formData.Type_Id,
       };
@@ -514,6 +491,31 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       ? ValidationForms.ValidationText(
                           'Instruction',
                           formData.instruction,
+                        )
+                      : ''
+                  }
+                />
+
+                <TextAreaField
+                  label="Recommendation"
+                  placeholder="Enter recommendation (e.g., Limit carbs to under 100g daily)"
+                  value={formData.recommendation}
+                  onChange={(e) => {
+                    updateAddData('recommendation', e.target.value);
+                  }}
+                  isValid={
+                    showValidation
+                      ? ValidationForms.IsvalidField(
+                          'Recommendation',
+                          formData.recommendation,
+                        )
+                      : true
+                  }
+                  validationText={
+                    showValidation
+                      ? ValidationForms.ValidationText(
+                          'Recommendation',
+                          formData.recommendation,
                         )
                       : ''
                   }
@@ -761,7 +763,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   const data: any = {
                     Title: formData.title,
                     Instruction: formData.instruction,
-                    Base_Score: formData.score,
+                    Recommendation: formData.recommendation,
+                    Base_Score: formData.score || 5,
                     Ai_note: formData.clinical_guidance,
                     Fda_status: formData.fda_status || null,
                     Schedule_Ids: scheduleIds,
