@@ -267,7 +267,7 @@ class ValidationForms {
     }
     return '';
   }
-  private static validationScoreText(value: string) {
+  private static validationScoreText(_value: string) {
     return '';
   }
   private static validateScore(_value: string) {
