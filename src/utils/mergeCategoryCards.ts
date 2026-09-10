@@ -76,6 +76,19 @@ export const shouldShowClientSummaryEmptyIllustration = ({
   return true;
 };
 
+/** Show the Need Focus empty graphic when scoring is done and nothing is out of range. */
+export const shouldShowNeedFocusEmptyIllustration = ({
+  needFocusCount = 0,
+  isLoading,
+}: {
+  hasReferenceBiomarkers?: boolean;
+  needFocusCount?: number;
+  isLoading: boolean;
+}): boolean => {
+  if (isLoading) return false;
+  return needFocusCount === 0;
+};
+
 /** Replace or merge category poll/fetch payloads — never keep stale cards on empty/delete. */
 export const applyClientSummaryCategories = (prev: any, incoming: any): any => {
   const summaryState = incoming?.domain_outcomes?.client_summary?.state;
@@ -274,6 +287,36 @@ const REFERENCE_STATUS_BUCKET: Record<string, number> = {
   'Needs Focus': 3,
   DiseaseRange: 3,
   CriticalRange: 4,
+};
+
+/** Keep only categories that still have visible overview biomarkers. */
+export const filterCategoryCardsToVisibleBiomarkers = (
+  cards: any[],
+  biomarkers: any[] | null | undefined,
+): any[] => {
+  const visible = categoryCardsFromReferenceBiomarkers(biomarkers);
+  if (!visible.length) return [];
+  const leftover = new Map(
+    visible.map((card) => [
+      String(card.subcategory).trim().toLowerCase(),
+      card,
+    ]),
+  );
+  const kept: any[] = [];
+  for (const card of cards || []) {
+    const key = String(card?.subcategory || '').trim().toLowerCase();
+    const stats = leftover.get(key);
+    if (!stats) continue;
+    kept.push({
+      ...card,
+      num_of_biomarkers: stats.num_of_biomarkers,
+      out_of_ref: stats.out_of_ref,
+      status: stats.status,
+    });
+    leftover.delete(key);
+  }
+  leftover.forEach((stats) => kept.push(stats));
+  return kept;
 };
 
 /** Build Client Summary cards from the same overview biomarkers used in the header. */

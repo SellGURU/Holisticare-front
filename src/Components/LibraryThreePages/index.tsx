@@ -9,10 +9,11 @@ import PreviewModalLibraryTreePages from './components/PreviewModal';
 import ManageOtherTypesModal from './components/ManageOtherTypesModal';
 import Circleloader from '../CircleLoader';
 import useIsDemo from '../../hooks/useIsDemo';
+import { sortLibraryRows } from '../../utils/libraryTableSort';
 import {
-  LIBRARY_SORT_LABELS,
-  sortLibraryRows,
-} from '../../utils/libraryTableSort';
+  EnabledFilter,
+  matchesEnabledFilter,
+} from '../../utils/catalogEnabled';
 
 interface LibraryThreePagesProps {
   pageType: string;
@@ -25,6 +26,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortId, setSortId] = useState<string>('title_asc');
+  const [enabledFilter, setEnabledFilter] = useState<EnabledFilter>('All');
   const [isTypeEmpty, setIsTypeEmpty] = useState(true);
   const getOtherTypes = () => {
     Application.getOtherTypeList()
@@ -359,13 +361,43 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         });
     }
   };
+  const getLibraryRowId = (row: any) => {
+    if (pageType === 'Supplement') return String(row.Sup_Id);
+    if (pageType === 'Lifestyle') return String(row.Life_Id);
+    if (pageType === 'Peptide') return String(row.Peptide_Id);
+    if (pageType === 'Other') return String(row.O_Id);
+    return String(row.Diet_Id);
+  };
+  const handleToggleEnabled = (row: any, next: boolean) => {
+    if (isDemo) return;
+    const id = getLibraryRowId(row);
+    const prev = tableData;
+    setTableData((current) =>
+      current.map((item) =>
+        getLibraryRowId(item) === id ? { ...item, is_enabled: next } : item,
+      ),
+    );
+    const request =
+      pageType === 'Supplement'
+        ? Application.setSupplementEnabled(id, next)
+        : pageType === 'Lifestyle'
+          ? Application.setLifestyleEnabled(id, next)
+          : pageType === 'Peptide'
+            ? Application.setPeptideEnabled(id, next)
+            : pageType === 'Other'
+              ? Application.setOtherEnabled(id, next)
+              : Application.setDietEnabled(id, next);
+    request.catch((err) => {
+      console.error(err);
+      setTableData(prev);
+    });
+  };
   const filteredData = tableData.filter((item) =>
-    item.Title.toLowerCase().includes(searchQuery.toLowerCase()),
+    item.Title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    matchesEnabledFilter(item, enabledFilter),
   );
 
   const sortedData = sortLibraryRows(filteredData, sortId);
-  const currentSortLabel =
-    LIBRARY_SORT_LABELS[sortId] ?? LIBRARY_SORT_LABELS.title_asc;
   return (
     <>
       {loading && (
@@ -378,8 +410,10 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         tableDataLength={tableData.length}
         handleChangeSearch={handleChangeSearch}
         handleOpenModal={handleOpenModal}
-        currentSortLabel={currentSortLabel}
-        onChangeSort={(id: string) => setSortId(id ?? 'title_asc')}
+        sortId={sortId}
+        onChangeSort={(id: string) => setSortId(id || 'title_asc')}
+        enabledFilter={enabledFilter}
+        onChangeEnabledFilter={setEnabledFilter}
         onManageTypes={
           pageType === 'Other'
             ? () => {
@@ -485,6 +519,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
                 setSelectedRow(row);
                 handlePreviewOpenModal();
               }}
+              onToggleEnabled={handleToggleEnabled}
             />
           ) : (
             <div className="w-full h-full h-sm:h-[500px] flex flex-col justify-center items-center text-base font-medium text-Text-Primary ">

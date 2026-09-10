@@ -133,9 +133,9 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
         </div>
         {isOpen && (
           <>
-            {descriptionPhase === 'loading' ? (
+            {descriptionPhase === 'loading' && refrences.length > 0 ? (
               <DescriptionSkeleton />
-            ) : displayedDescription ? (
+            ) : displayedDescription && refrences.length > 0 ? (
               <>
                 <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
                   Description
@@ -151,9 +151,10 @@ const NewDetailedAcordin: React.FC<NewDetailedAcordinProps> = ({
                   <div className=" flex justify-center w-full items-center">
                     <div className="flex flex-col justify-center items-center">
                       <img src="/icons/EmptyState-biomarkerbox.svg" alt="" />
-                      <div className="TextStyle-Body-3 mt-[-10px] text-center text-Text-Primary">
-                        This biomarker is currently hidden due to changes in its
-                        mapping.
+                      <div className="TextStyle-Body-3 mt-[-10px] text-center text-Text-Primary max-w-[280px]">
+                        No biomarkers are visible in this category.
+                        Disabled catalog items are hidden here, and leftover
+                        notes are not shown.
                       </div>
                     </div>
                   </div>

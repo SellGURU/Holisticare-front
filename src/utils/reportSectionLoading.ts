@@ -17,9 +17,12 @@ export function shouldShowSectionSkeleton({
 export function shouldShowClientSummaryTextLoading({
   hasSummaryText,
   isInitialRequest,
+  summaryPending = false,
 }: {
   hasSummaryText: boolean;
   isInitialRequest: boolean;
+  summaryPending?: boolean;
 }): boolean {
-  return !hasSummaryText && isInitialRequest;
+  if (hasSummaryText) return false;
+  return Boolean(isInitialRequest || summaryPending);
 }

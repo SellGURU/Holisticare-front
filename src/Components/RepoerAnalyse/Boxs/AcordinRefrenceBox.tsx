@@ -85,6 +85,13 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
               {!showHistoricalChart && (
                 <div className=" my-3 flex w-full justify-between items-center text-[10px] text-Text-Primary">
                   Current Value
+                  {biomarker?.values?.[0] != null &&
+                  biomarker.values[0] !== '' ? (
+                    <span className="ml-2 text-Primary-DeepTeal">
+                      {biomarker.values[0]}
+                      {biomarker.unit ? ` ${biomarker.unit}` : ''}
+                    </span>
+                  ) : null}
                 </div>
               )}
               {showHistoricalChart ? (
@@ -101,6 +108,8 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
                         dataStatus={biomarker.status}
                         dataPoints={[...biomarker.values]}
                         labels={[...biomarker.date]}
+                        valueType={biomarker?.value_type}
+                        valueKind={biomarker?.value_kind}
                       ></HistoricalChart>
                     )}
                   </div>
@@ -120,6 +129,9 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
                           unit={biomarker.unit}
                           values={biomarker.values}
                           data={biomarker.chart_bounds}
+                          valueType={biomarker.value_type}
+                          valueKind={biomarker.value_kind}
+                          matchedBoundIndex={biomarker.matched_bound_index}
                         ></StatusBarChartV3>
                       ))}
                   </div>

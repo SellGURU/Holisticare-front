@@ -12,14 +12,22 @@ import TemplateQuestinary from './TemplateQuestionary';
 import QuestionaryControllerModal from './QuestionaryControllerModal';
 import Circleloader from '../../../Components/CircleLoader';
 import { formatApiErrorMessage } from '../../../utils/jsonErrorDetails';
+import EnabledStatusSelect from '../../../Components/EnabledStatusSelect';
+import {
+  EnabledFilter,
+  matchesEnabledFilter,
+} from '../../../utils/catalogEnabled';
+import useIsDemo from '../../../hooks/useIsDemo';
 interface CheckInFormProps {
   isQuestionary?: boolean;
   search?: string;
 }
 
 const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
+  const isDemo = useIsDemo();
   const [loading, setLoading] = useState(true);
   const [checkInList, setCheckInList] = useState<Array<CheckInDataRowType>>([]);
+  const [enabledFilter, setEnabledFilter] = useState<EnabledFilter>('All');
   const [showaddModal, setShowAddModal] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [editFormId, setEditFormId] = useState('');
@@ -208,6 +216,11 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         });
     }
   };
+  const visibleForms = checkInList.filter(
+    (el) =>
+      el.title.toLowerCase().includes(search?.toLowerCase() || '') &&
+      matchesEnabledFilter(el, enabledFilter),
+  );
   return (
     <>
       {loading && (
@@ -218,42 +231,35 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
       {checkInList.length > 0 ? (
         <>
           <div className="flex flex-col w-full mt-4">
-            {checkInList.filter((el) =>
-              el.title.toLowerCase().includes(search?.toLowerCase() || ''),
-            ).length ? (
-              <div className="w-full flex items-center justify-between mb-3">
-                <div className="text-Text-Primary font-medium text-sm">
-                  {isQuestionary ? 'Questionnaire Forms' : 'Check-in Forms'}
-                </div>
+            <div className="w-full flex items-center justify-between mb-3">
+              <div className="text-Text-Primary font-medium text-sm">
+                {isQuestionary ? 'Questionnaire Forms' : 'Check-in Forms'}
+              </div>
+              <div className="flex items-center gap-2">
+                <EnabledStatusSelect
+                  value={enabledFilter}
+                  onChange={setEnabledFilter}
+                />
                 <ButtonSecondary
-                  ClassName="rounded-[20px] w-[152px]"
+                  ClassName="rounded-[20px] w-auto min-w-0 px-3 h-8"
                   onClick={() => {
                     if (isQuestionary) {
                       setShowTemplates(true);
                     } else {
                       setShowAddModal(true);
                     }
-                    // setCheckInList([]);
-                    // setMainTitle('');
-                    // setEditModeModal(false);
-                    // setShowModal(true);
-                    // setRepositionModeModal(false);
                   }}
                 >
                   <SvgIcon src="/icons/firstline.svg" color="#FFF" />
                   Create New
                 </ButtonSecondary>
               </div>
-            ) : (
-              ''
-            )}
+            </div>
             {duplicateError ? (
               <div className="mb-2 text-xs text-red-500">{duplicateError}</div>
             ) : null}
             <TableForm
-              classData={checkInList.filter((el) =>
-                el.title.toLowerCase().includes(search?.toLowerCase() || ''),
-              )}
+              classData={visibleForms}
               onDelete={(id) => {
                 if (isQuestionary) {
                   FormsApi.deleteQuestionary(id)
@@ -286,6 +292,22 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
                 setEditFormId(id);
               }}
               onDuplicate={onDuplicate}
+              onToggleEnabled={(id, next) => {
+                if (isDemo) return;
+                const prev = checkInList;
+                setCheckInList((current) =>
+                  current.map((item) =>
+                    item.id === id ? { ...item, is_enabled: next } : item,
+                  ),
+                );
+                const request = isQuestionary
+                  ? FormsApi.setQuestionaryEnabled(id, next)
+                  : FormsApi.setCheckinEnabled(id, next);
+                request.catch((err) => {
+                  console.error(err);
+                  setCheckInList(prev);
+                });
+              }}
               // onReposition={(id) => {
               //   setShowReposition(true);
               //   setEditFormId(id);

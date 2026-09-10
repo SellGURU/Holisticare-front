@@ -9,7 +9,8 @@ let cacheGeneration = 0;
 
 const DEFAULT_TTL_MS = 5 * 60 * 1000;
 const HEALTHPLAN_PREFIX = 'portal:healthplan:';
-export const HEALTHPLAN_PAGE_CACHE_STORAGE_KEY = 'hc_healthplan_page_cache_v1';
+export const HEALTHPLAN_PAGE_CACHE_STORAGE_KEY = 'hc_healthplan_page_cache_v2';
+const HEALTHPLAN_PAGE_CACHE_LEGACY_KEYS = ['hc_healthplan_page_cache_v1'];
 
 const canUseSessionStorage = (): boolean => {
   try {
@@ -39,6 +40,13 @@ const persistHealthPlanCache = (): void => {
 
 const hydrateHealthPlanCache = (): void => {
   if (!canUseSessionStorage()) return;
+  for (const legacyKey of HEALTHPLAN_PAGE_CACHE_LEGACY_KEYS) {
+    try {
+      sessionStorage.removeItem(legacyKey);
+    } catch {
+      // ignore
+    }
+  }
   try {
     const raw = sessionStorage.getItem(HEALTHPLAN_PAGE_CACHE_STORAGE_KEY);
     if (!raw) return;

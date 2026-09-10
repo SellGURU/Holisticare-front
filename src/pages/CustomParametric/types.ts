@@ -14,6 +14,7 @@ export interface ClinicBiomarkerOption {
   benchmark_area?: string;
   has_parametric?: boolean;
   selectable?: boolean;
+  is_enabled?: boolean;
 }
 
 export interface RiskDomainViewModel {

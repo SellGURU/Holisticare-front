@@ -36,6 +36,7 @@ function mapCatalogItem(item: any): ClinicBiomarkerOption | null {
     name,
     unit: item?.unit || '',
     benchmark_area: item?.['Benchmark areas'] || item?.benchmark_area || '',
+    is_enabled: item?.is_enabled !== false,
   };
 }
 
@@ -77,7 +78,13 @@ export default function ParametricEditorModal({
           .map(mapCatalogItem)
           .filter(Boolean) as ClinicBiomarkerOption[];
         mapped.sort((a, b) => a.name.localeCompare(b.name));
-        setCatalog(mapped);
+        setCatalog(
+          mapped.filter(
+            (item) =>
+              item.is_enabled !== false ||
+              item.biomarker_uid === (domain?.catalogBiomarkerUid || ''),
+          ),
+        );
       })
       .catch(() => setCatalog([]))
       .finally(() => setLoadingCatalog(false));

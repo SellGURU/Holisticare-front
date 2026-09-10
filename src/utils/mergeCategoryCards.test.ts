@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest';
 import {
   applyClientSummaryCategories,
   categoryCardsFromReferenceBiomarkers,
+  filterCategoryCardsToVisibleBiomarkers,
   mergeLabOnlyCategories,
   shouldApplyCategoryResponse,
   shouldApplyReferenceResponse,
   shouldShowClientSummaryEmptyIllustration,
+  shouldShowNeedFocusEmptyIllustration,
   shouldTreatEmptyFindingsAsAuthoritative,
 } from './mergeCategoryCards';
 
@@ -273,5 +275,69 @@ describe('reference apply rules', () => {
         showingSkeleton: false,
       }),
     ).toBe(true);
+  });
+});
+
+describe('need focus empty illustration', () => {
+  it('shows empty when scoring is done and nothing needs focus', () => {
+    expect(
+      shouldShowNeedFocusEmptyIllustration({
+        hasReferenceBiomarkers: true,
+        needFocusCount: 0,
+        isLoading: false,
+      }),
+    ).toBe(true);
+    expect(
+      shouldShowNeedFocusEmptyIllustration({
+        hasReferenceBiomarkers: false,
+        needFocusCount: 0,
+        isLoading: false,
+      }),
+    ).toBe(true);
+  });
+
+  it('does not show empty while overview is still loading', () => {
+    expect(
+      shouldShowNeedFocusEmptyIllustration({
+        hasReferenceBiomarkers: false,
+        needFocusCount: 0,
+        isLoading: true,
+      }),
+    ).toBe(false);
+  });
+
+  it('does not show empty when need-focus rows exist', () => {
+    expect(
+      shouldShowNeedFocusEmptyIllustration({
+        hasReferenceBiomarkers: true,
+        needFocusCount: 2,
+        isLoading: false,
+      }),
+    ).toBe(false);
+  });
+});
+
+describe('filterCategoryCardsToVisibleBiomarkers', () => {
+  it('drops leftover categories whose biomarkers are no longer visible', () => {
+    const cards = [
+      {
+        subcategory: 'Activity',
+        description: 'Activity Start Time is borderline.',
+        num_of_biomarkers: 1,
+        out_of_ref: 1,
+      },
+      {
+        subcategory: 'Blood',
+        description: 'Glucose looks good.',
+        num_of_biomarkers: 2,
+        out_of_ref: 0,
+      },
+    ];
+    const kept = filterCategoryCardsToVisibleBiomarkers(cards, [
+      { subcategory: 'Blood', name: 'Glucose', outofref: false, status: ['HealthyRange'] },
+    ]);
+    expect(kept.map((card) => card.subcategory)).toEqual(['Blood']);
+    expect(kept[0].num_of_biomarkers).toBe(1);
+    expect(kept[0].description).toBe('Glucose looks good.');
   });
 });

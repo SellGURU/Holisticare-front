@@ -18,6 +18,7 @@ interface TableProps {
   onPreview: (id: string) => void;
   onDuplicate: (id: string) => void;
   onCopy?: (id: string) => void;
+  onToggleEnabled?: (id: string, next: boolean) => void;
   // onReposition: (id: string) => void;
 }
 
@@ -39,6 +40,7 @@ const TableForm: FC<TableProps> = ({
   onPreview,
   onDuplicate,
   onCopy,
+  onToggleEnabled,
   // onReposition,
 }) => {
   const [data, setData] = useState(classData);
@@ -57,110 +59,99 @@ const TableForm: FC<TableProps> = ({
 
   return (
     <>
-      {classData.length ? (
-        <div className="flex items-center justify-center relative">
-          <div className="w-full mt-4">
-            <div
-              className={`flex flex-col justify-between overflow-x-auto bg-white rounded-[16px] text-Text-Primary mt-[-12px] border border-Boarder shadow-200`}
-              style={{
-                scrollbarWidth: 'thin',
-                scrollbarColor: '#E9EDF5 #E9EDF5',
-              }}
+      <div className="flex items-center justify-center relative">
+        <div className="w-full mt-4">
+          <div
+            className={`flex flex-col justify-between overflow-x-auto bg-white rounded-[16px] text-Text-Primary mt-[-12px] border border-Boarder shadow-200`}
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#E9EDF5 #E9EDF5',
+            }}
+          >
+            <table
+              className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
             >
-              {table.getRowModel().rows.length > 0 ? (
-                <table
-                  className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
-                >
-                  <thead className="text-xs text-Text-Primary bg-backgroundColor-Main">
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <tr
-                        key={headerGroup.id}
-                        className="text-nowrap text-Text-Primary"
+              <thead className="text-xs text-Text-Primary bg-backgroundColor-Main">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr
+                    key={headerGroup.id}
+                    className="text-nowrap text-Text-Primary"
+                  >
+                    {headerGroup.headers.map((header, index) => (
+                      <th
+                        key={header.id}
+                        className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-[12px] last:rounded-tr-[12px] ${
+                          flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          ) === 'Title'
+                            ? 'w-[300px]'
+                            : 'w-[250px]'
+                        }`}
                       >
-                        {headerGroup.headers.map((header, index) => (
-                          <th
-                            key={header.id}
-                            className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-[12px] last:rounded-tr-[12px] ${
-                              flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              ) === 'Title'
-                                ? 'w-[300px]'
-                                : 'w-[250px]'
-                            }`}
-                          >
-                            <div
-                              className={`flex items-center  ${index == 0 ? 'justify-start ' : 'justify-center '} `}
-                            >
-                              <div
-                                className="flex items-center justify-center"
-                                onClick={header.column.getToggleSortingHandler()}
-                              >
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext(),
-                                )}
-                                {header.column.getCanSort() &&
-                                  header.column.getIsSorted() === false && (
-                                    <FaSort className="cursor-pointer" />
-                                  )}
-                                {header.column.getIsSorted() === 'asc' && ' 🔼'}
-                                {header.column.getIsSorted() === 'desc' &&
-                                  ' 🔽'}
-                              </div>
-                            </div>
-                          </th>
-                        ))}
-                        <th
-                          className={`px-3 pt-4 pb-3.5 text-xs font-medium first:rounded-tl-[12px] last:rounded-tr-[12px] w-[200px]`}
+                        <div
+                          className={`flex items-center  ${index == 0 ? 'justify-start ' : 'justify-center '} `}
                         >
-                          <div className={`flex items-center justify-center`}>
-                            <div className="flex items-center justify-center">
-                              Action
-                            </div>
+                          <div
+                            className="flex items-center justify-center"
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                            {header.column.getCanSort() &&
+                              header.column.getIsSorted() === false && (
+                                <FaSort className="cursor-pointer" />
+                              )}
+                            {header.column.getIsSorted() === 'asc' && ' 🔼'}
+                            {header.column.getIsSorted() === 'desc' && ' 🔽'}
                           </div>
-                        </th>
-                      </tr>
+                        </div>
+                      </th>
                     ))}
-                  </thead>
-                  <tbody>
-                    {table.getRowModel().rows.map((row, index) => (
-                      <TableRow
-                        key={row.id}
-                        row={row}
-                        onDelete={onDelete}
-                        onEdit={onEdit}
-                        onPreview={onPreview}
-                        onDuplicate={onDuplicate}
-                        onCopy={onCopy}
-                        // onReposition={onReposition}
-                        index={index}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center flex-col">
-                  <p className="text-[#ffffffa4] mt-[8px] text-[16px]">
-                    No Result to Show
-                  </p>
-                </div>
-              )}
-            </div>
+                    <th
+                      className={`px-3 pt-4 pb-3.5 text-xs font-medium first:rounded-tl-[12px] last:rounded-tr-[12px] w-[200px]`}
+                    >
+                      <div className={`flex items-center justify-center`}>
+                        <div className="flex items-center justify-center">
+                          Action
+                        </div>
+                      </div>
+                    </th>
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.length > 0 ? (
+                  table.getRowModel().rows.map((row, index) => (
+                    <TableRow
+                      key={row.id}
+                      row={row}
+                      onDelete={onDelete}
+                      onEdit={onEdit}
+                      onPreview={onPreview}
+                      onDuplicate={onDuplicate}
+                      onCopy={onCopy}
+                      onToggleEnabled={onToggleEnabled}
+                      index={index}
+                    />
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={table.getAllColumns().length + 1}
+                      className="px-3 py-10 text-center text-sm text-Text-Secondary"
+                    >
+                      No results found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
-      ) : (
-        <div className="w-full h-full flex items-center justify-center flex-col mt-28">
-          <img
-            src="/icons/empty-messages-coach.svg"
-            alt=""
-            className="w-60 h-60"
-          />
-          <p className="text-Text-Primary text-base font-medium -mt-12">
-            No results found.
-          </p>
-        </div>
-      )}
+      </div>
     </>
   );
 };

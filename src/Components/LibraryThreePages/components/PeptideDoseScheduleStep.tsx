@@ -56,7 +56,9 @@ const PeptideDoseScheduleStep: React.FC<PeptideDoseScheduleStepProps> = ({
     setLoadingCheckins(true);
     Application.getCheckinFormsList()
       .then((res) => {
-        const checkins = res.data || [];
+        const checkins = (res.data || []).filter(
+          (checkin: any) => checkin.is_enabled !== false,
+        );
         setAllCheckins(checkins);
         setFilteredCheckins(checkins);
       })

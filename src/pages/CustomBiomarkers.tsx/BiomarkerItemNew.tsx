@@ -19,6 +19,9 @@ import {
   removeBiomarkerByIdentity,
 } from './biomarkerIdentity';
 import { removeCachedKey } from '../../utils/pageCache';
+import { isCatalogEnabled } from '../../utils/catalogEnabled';
+import EnabledSwitch from '../../Components/EnabledSwitch';
+import useIsDemo from '../../hooks/useIsDemo';
 
 const invalidateBiomarkersListCache = () => {
   removeCachedKey('portal:biomarkers:list');
@@ -89,6 +92,7 @@ const BiomarkerRow = ({
   onOpenChart,
   onOpenMappings,
 }: BiomarkerRowProps) => {
+  const isDemo = useIsDemo();
   const [activeEdit, setActiveEdit] = useState(false);
   const [activeDelete, setActiveDelete] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -101,6 +105,7 @@ const BiomarkerRow = ({
 
   const biomarkerName = data?.Biomarker || '';
   const canDelete = isCustomBiomarker(data);
+  const enabled = isCatalogEnabled(data);
   const relevantUnitMappings = useMemo(
     () => filterUnitMappingsForBiomarker(unitMappings, data, biomarkers),
     [unitMappings, data, biomarkers],
@@ -216,14 +221,57 @@ const BiomarkerRow = ({
       });
   };
 
+  const onToggleEnabled = (next: boolean) => {
+    if (isDemo) return;
+    const meta = buildBiomarkerIdentityMeta(data, biomarkerIndex);
+    const previous = biomarkers;
+    changeBiomarkersValue(
+      biomarkers.map((item, index) =>
+        index === biomarkerIndex ? { ...item, is_enabled: next } : item,
+      ),
+    );
+    BiomarkersApi.setBiomarkerEnabled({
+      is_enabled: next,
+      original_biomarker_uid: meta.biomarkerUid || undefined,
+      original_biomarker_index: meta.originalBiomarkerIndex,
+      original_biomarker_name: meta.originalBiomarkerName,
+      original_biomarker_type: meta.originalBiomarkerType,
+      original_unit: meta.originalUnit,
+      original_benchmark_area: meta.originalBenchmarkArea,
+    })
+      .then(() => {
+        invalidateBiomarkersListCache();
+      })
+      .catch((error) => {
+        changeBiomarkersValue(previous);
+        showError(
+          error?.response?.data?.detail ||
+            error?.detail ||
+            error?.message ||
+            'Unable to update biomarker status.',
+        );
+      });
+  };
+
   return (
     <>
-      <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_156px] items-center gap-3 border-b border-Gray-50 px-3 py-2 text-[11px] transition-colors hover:bg-[#F8FAFA]">
+      <div
+        className={`grid min-w-[1080px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_80px_92px_176px] items-center gap-3 border-b border-Gray-50 px-3 py-2 text-[11px] transition-colors hover:bg-[#F8FAFA] ${
+          enabled ? '' : 'opacity-60'
+        }`}
+      >
         <div className="text-Text-Secondary">{rowIndex + 1}</div>
 
         <div className="min-w-0">
-          <div className="truncate font-semibold text-Text-Primary">
-            {highlightText(biomarkerName, searchTerm)}
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="truncate font-semibold text-Text-Primary">
+              {highlightText(biomarkerName, searchTerm)}
+            </div>
+            {enabled ? null : (
+              <span className="shrink-0 rounded-full bg-[#F4F7F7] px-1.5 py-0.5 text-[9px] font-medium text-Text-Secondary">
+                Disabled
+              </span>
+            )}
           </div>
           {data?.Definition ? (
             <div className="mt-0.5 truncate text-[10px] leading-4 text-Text-Secondary">
@@ -253,6 +301,21 @@ const BiomarkerRow = ({
 
         <div className="truncate font-mono text-[10px] text-Text-Secondary">
           {data?.unit || '-'}
+        </div>
+
+        <div className="flex items-center">
+          <EnabledSwitch
+            enabled={enabled}
+            disabled={isDemo}
+            title={
+              isDemo
+                ? 'Demo plan - upgrade to enable'
+                : enabled
+                  ? 'Disable for new use'
+                  : 'Enable for new use'
+            }
+            onChange={onToggleEnabled}
+          />
         </div>
 
         <div>

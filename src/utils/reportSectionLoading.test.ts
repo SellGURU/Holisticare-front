@@ -54,6 +54,23 @@ describe('report section loading contract', () => {
     ).toBe(true);
   });
 
+  it('shows a text skeleton while cards are visible but the narrative is still pending', () => {
+    expect(
+      shouldShowClientSummaryTextLoading({
+        hasSummaryText: false,
+        isInitialRequest: false,
+        summaryPending: true,
+      }),
+    ).toBe(true);
+    expect(
+      shouldShowClientSummaryTextLoading({
+        hasSummaryText: false,
+        isInitialRequest: false,
+        summaryPending: false,
+      }),
+    ).toBe(false);
+  });
+
   it('does not skeleton existing Need Focus, Detailed Analysis, or Holistic Plan during processing', () => {
     const processingRefresh = { isInitialRequest: false, hasDisplayedData: true };
     expect(shouldShowSectionSkeleton(processingRefresh)).toBe(false);

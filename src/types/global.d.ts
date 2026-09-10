@@ -91,6 +91,8 @@ declare global {
     questions: number;
     created_on: string;
     created_by: string;
+    id?: string;
+    is_enabled?: boolean;
   };
   type FileUpload = {
     file: File;

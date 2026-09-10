@@ -130,6 +130,12 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
             className={`text-Text-Primary font-medium text-[10px] md:text-xs flex w-full justify-between items-center ${isCheced && 'invisible'}`}
           >
             Current Value
+            {data?.values?.[0] != null && data.values[0] !== '' ? (
+              <span className="ml-2 text-Primary-DeepTeal">
+                {data.values[0]}
+                {data.unit ? ` ${data.unit}` : ''}
+              </span>
+            ) : null}
             {data?.source && !isPreviewSource(data.source) && (
               <SourceTag source={data.source} />
             )}
@@ -168,6 +174,8 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
                   dataPoints={[...data.values]}
                   dataStatus={[...data.status]}
                   labels={[...data.date]}
+                  valueType={data.value_type}
+                  valueKind={data.value_kind}
                 ></HistoricalChart>
               )}
             </div>

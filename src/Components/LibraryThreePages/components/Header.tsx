@@ -1,19 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useRef, useState } from 'react';
+import { FC } from 'react';
 import SearchBox from '../../SearchBox';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
-import SvgIcon from '../../../utils/svgIcon';
-import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import useIsDemo from '../../../hooks/useIsDemo';
-import { getLibrarySortOptions } from '../../../utils/libraryTableSort';
+import type { EnabledFilter } from '../../../utils/catalogEnabled';
+import EnabledStatusSelect from '../../EnabledStatusSelect';
+import LibrarySortSelect from '../../LibrarySortSelect';
 
 interface HeaderLibraryTreePagesProps {
   pageType: string;
   tableDataLength: number;
   handleChangeSearch: (event: any) => void;
   handleOpenModal: () => void;
-  currentSortLabel: string;
+  sortId: string;
   onChangeSort: (sortId: string) => void;
+  enabledFilter: EnabledFilter;
+  onChangeEnabledFilter: (filter: EnabledFilter) => void;
   onManageTypes?: () => void;
 }
 
@@ -22,23 +24,13 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
   tableDataLength,
   handleChangeSearch,
   handleOpenModal,
-  currentSortLabel,
+  sortId,
   onChangeSort,
+  enabledFilter,
+  onChangeEnabledFilter,
   onManageTypes,
 }) => {
   const isDemo = useIsDemo();
-  const [isSortOpen, setIsSortOpen] = useState(false);
-
-  const sortOptions = getLibrarySortOptions(pageType);
-  const btnRef = useRef(null);
-  const modalRef = useRef(null);
-  useModalAutoClose({
-    buttonRefrence: btnRef,
-    refrence: modalRef,
-    close: () => {
-      setIsSortOpen(false);
-    },
-  });
 
   return (
     <>
@@ -47,74 +39,29 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
           {pageType}
         </div>
       ) : (
-        <div className="w-full flex items-center justify-between flex-wrap gap-3 md:gap-5">
+        <div className="w-full flex items-center justify-between flex-wrap gap-2">
           <div className="text-Text-Primary font-medium text-base">
             {pageType}
           </div>
-          <div className="flex items-center gap-3 md:gap-5 flex-wrap relative">
+          <div className="flex items-center gap-2 flex-wrap">
             <SearchBox
-              ClassName="rounded-2xl !min-w-full !h-8 md:!min-w-[283px] !py-[0px] !px-3 !shadow-[unset]"
+              ClassName="rounded-xl !h-8 !min-w-[200px] md:!min-w-[240px] !py-[0px] !px-3 !shadow-[unset]"
               placeHolder={`Search ${pageType === 'Supplement' ? 'supplements' : pageType === 'Lifestyle' ? 'lifestyles' : pageType === 'Peptide' ? 'peptides' : pageType === 'Other' ? 'other' : 'diets'}...`}
               onSearch={handleChangeSearch}
             />
-
-            <div className="flex items-center gap-2 w-full md:w-fit">
-              <div className="flex gap-1 items-center text-nowrap text-xs text-Primary-DeepTeal">
-                <img src="/icons/sort.svg" alt="" />
-                Sort by:
-              </div>
-              <div
-                ref={btnRef}
-                className="relative w-full md:w-fit pl-2 md:pl-0"
-              >
-                <button
-                  type="button"
-                  onClick={() => setIsSortOpen((v) => !v)}
-                  className={`h-8  rounded-[20px] border w-full md:min-w-[183px]  border-[#E2F1F8] px-[12px] py-[10px] bg-white text-xs text-Text-Primary text-nowrap flex items-center justify-between gap-2 shadow-100 ${isSortOpen ? 'rounded-b-none' : ''}`}
-                >
-                  {currentSortLabel}
-                  <div
-                    className={` transition-transform ${isSortOpen ? 'rotate-180' : ''}`}
-                  >
-                    <SvgIcon
-                      color="#005F73"
-                      width="16px"
-                      height="16px"
-                      src="/icons/arrow-down.svg"
-                    />
-                  </div>
-                </button>
-
-                {isSortOpen && (
-                  <div
-                    ref={modalRef}
-                    className={`absolute w-[97%] md:w-full top-8 z-20  right-0  bg-white rounded-[20px] px-2 py-3   shadow-md  ${isSortOpen ? 'rounded-t-none' : ''}`}
-                  >
-                    <div className="flex flex-col gap-4">
-                      {sortOptions.map((opt) => (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          onClick={() => {
-                            onChangeSort(opt.id);
-                            setIsSortOpen(false);
-                          }}
-                          className="w-full text-left text-[#888888] text-[10px]   flex items-center gap-2"
-                        >
-                          <span
-                            className={`inline-block w-4 h-4 rounded-full  border-Primary-DeepTeal ${currentSortLabel === opt.label ? 'border-[3.5px]' : 'border-[.5px]'}`}
-                          ></span>
-                          <span>{opt.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <EnabledStatusSelect
+              value={enabledFilter}
+              onChange={onChangeEnabledFilter}
+            />
+            <LibrarySortSelect
+              pageType={pageType}
+              value={sortId}
+              onChange={onChangeSort}
+            />
             {onManageTypes && (
               <ButtonSecondary
-                ClassName="w-full md:w-[180px] h-[32px] rounded-[20px] shadow-Btn"
+                size="small"
+                ClassName="h-8 w-auto min-w-0 rounded-[20px] shadow-Btn"
                 disabled={isDemo}
                 title={
                   isDemo
@@ -130,7 +77,8 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
               </ButtonSecondary>
             )}
             <ButtonSecondary
-              ClassName="w-full md:w-[180px] h-[32px] rounded-[20px] shadow-Btn"
+              size="small"
+              ClassName="h-8 w-auto min-w-0 rounded-[20px] shadow-Btn"
               disabled={isDemo}
               title={
                 isDemo

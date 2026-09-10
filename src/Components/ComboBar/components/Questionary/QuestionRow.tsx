@@ -104,9 +104,19 @@ const QuestionRow: FC<QuestionRowProps> = ({
     );
   };
   const handleDelete = () => {
+    const qUniqueId = el.unique_id || el.q_unique_id || '';
+    const fUniqueId = el.forms_unique_id || el.f_unique_id || '';
+    if (!qUniqueId || !fUniqueId || !member_id) {
+      console.error('Cannot delete questionnaire: missing id', {
+        qUniqueId,
+        fUniqueId,
+        member_id,
+      });
+      return;
+    }
     Application.deleteQuestionary({
-      f_unique_id: el.forms_unique_id,
-      q_unique_id: el.unique_id,
+      f_unique_id: fUniqueId,
+      q_unique_id: qUniqueId,
       member_id: member_id,
     })
       .then(() => {

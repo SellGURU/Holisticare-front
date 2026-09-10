@@ -6,10 +6,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
 import {
   HEALTH_PLAN_CACHE_KEYS,
-  HEALTH_PLAN_TTL_MS,
   invalidateHealthPlanCache,
 } from '../../utils/cacheKeys';
-import { getCached } from '../../utils/pageCache';
+import { fetchFresh } from '../../utils/pageCache';
 import { AppContext } from '../../store/app';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { SlideOutPanel } from '../SlideOutPanel';
@@ -62,7 +61,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
 }) => {
   const isDemo = useIsDemo();
   const resolveStatusColor = (status: string) => {
-    switch (status) {
+    switch (status === 'Published' ? 'On Going' : status) {
       case 'Completed':
         return '#55DD4A';
       case 'On Going':
@@ -77,6 +76,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         return '#000000'; // Fallback color
     }
   };
+  const displayPlanState = (status: string) =>
+    status === 'Published' ? 'On Going' : status;
   const resolveCanGenerateNew = () => {
     if (isDemo) return false;
     if (disableGenerate) return false;
@@ -146,11 +147,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   };
   useEffect(() => {
     if (!isShare && id) {
-      getCached(
+      fetchFresh(
         HEALTH_PLAN_CACHE_KEYS.treatmentPlanList(id),
         () =>
           Application.showHistory({ member_id: id }).then((res) => res.data),
-        HEALTH_PLAN_TTL_MS,
       )
         .then((data) => {
           const plans = Array.isArray(data) ? data : [];
@@ -213,14 +213,13 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   }, []);
   useEffect(() => {
     if (activeTreatment != '' && !isShare && id) {
-      getCached(
+      fetchFresh(
         HEALTH_PLAN_CACHE_KEYS.treatmentPlanDetail(id, activeTreatment),
         () =>
           Application.getTreatmentPlanDetail({
             treatment_id: activeTreatment,
             member_id: id,
           }).then((res) => res.data),
-        HEALTH_PLAN_TTL_MS,
       )
         .then((data) => {
           setTreatmentPlanData(normalizeTreatmentPlanCategories(data.details));
@@ -301,6 +300,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     for (let i = cardData.length - 1; i >= 0; i--) {
       if (
         cardData[i].state === 'On Going' ||
+        cardData[i].state === 'Published' ||
         cardData[i].state === 'Completed' ||
         cardData[i].state === 'Paused'
       ) {
@@ -576,7 +576,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             }}
                             className={`w-2 h-2 rounded-full `}
                           ></div>
-                          {card.state}
+                          {displayPlanState(card.state)}
                         </div>
                       </div>
                       {showModalIndex === index && (

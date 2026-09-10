@@ -18,6 +18,10 @@ import AddModal from './AddModal';
 import ChartModal from './ChartModal';
 import MappingsModal from './MappingsModal';
 import useIsDemo from '../../hooks/useIsDemo';
+import {
+  EnabledFilter,
+  matchesEnabledFilter,
+} from '../../utils/catalogEnabled';
 
 import { prepareBiomarkerForApi } from './biomarkerFormUtils';
 import DefaultData from './default.json';
@@ -78,6 +82,7 @@ const CustomBiomarkers = () => {
   const [searchInput, setSearchInput] = useState('');
   const [panelFilter, setPanelFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
+  const [enabledFilter, setEnabledFilter] = useState<EnabledFilter>('All');
   const [sortKey, setSortKey] = useState<SortKey>('Biomarker');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [activeAdd, setActiveAdd] = useState(false);
@@ -320,6 +325,7 @@ const CustomBiomarkers = () => {
         if (panelFilter && item?.['Benchmark areas'] !== panelFilter)
           return false;
         if (typeFilter && item?.biomarker_type !== typeFilter) return false;
+        if (!matchesEnabledFilter(item, enabledFilter)) return false;
         return true;
       })
       .sort((a, b) => {
@@ -345,6 +351,7 @@ const CustomBiomarkers = () => {
     normalizedSearchValue,
     panelFilter,
     typeFilter,
+    enabledFilter,
     sortKey,
     sortDirection,
   ]);
@@ -382,6 +389,7 @@ const CustomBiomarkers = () => {
     setSearchInput('');
     setPanelFilter('');
     setTypeFilter('');
+    setEnabledFilter('All');
   };
 
   const onsave = (values: any) => {
@@ -468,7 +476,20 @@ const CustomBiomarkers = () => {
                 ))}
               </select>
 
-              {(searchInput || panelFilter || typeFilter) && (
+              <select
+                value={enabledFilter}
+                onChange={(event) =>
+                  setEnabledFilter(event.target.value as EnabledFilter)
+                }
+                className="h-9 min-w-[128px] rounded-xl border border-Gray-50 bg-white px-3 text-[11px] text-Text-Primary outline-none focus:border-Primary-DeepTeal"
+                aria-label="Filter by status"
+              >
+                <option value="All">All statuses</option>
+                <option value="Enabled">Enabled</option>
+                <option value="Disabled">Disabled</option>
+              </select>
+
+              {(searchInput || panelFilter || typeFilter || enabledFilter !== 'All') && (
                 <button
                   type="button"
                   onClick={clearFilters}
@@ -500,12 +521,13 @@ const CustomBiomarkers = () => {
         <div className="min-h-full w-full px-2 pt-[150px] pb-8 md:px-6">
           <div className="overflow-hidden rounded-2xl border border-Gray-50 bg-white shadow-100">
             <div className="overflow-x-auto">
-              <div className="grid min-w-[1000px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_92px_156px] gap-3 border-b border-Gray-50 bg-gray-50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-Text-Secondary">
+              <div className="grid min-w-[1080px] grid-cols-[48px_minmax(300px,1.5fr)_minmax(220px,1fr)_110px_90px_80px_92px_176px] gap-3 border-b border-Gray-50 bg-gray-50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-Text-Secondary">
                 <span>#</span>
                 <span>{renderSortLabel('Biomarker', 'Biomarker')}</span>
                 <span>{renderSortLabel('Panel', 'Benchmark areas')}</span>
                 <span>{renderSortLabel('Type', 'biomarker_type')}</span>
                 <span>{renderSortLabel('Unit', 'unit')}</span>
+                <span>Status</span>
                 <span>Mappings</span>
                 <span className="text-right">Actions</span>
               </div>

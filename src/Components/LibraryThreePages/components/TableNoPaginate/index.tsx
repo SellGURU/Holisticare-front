@@ -11,6 +11,8 @@ import { columns } from './tableTd';
 import SortableTh from '../SortableTh';
 import { sortColumnFromHeader } from '../../../../utils/libraryTableSort';
 import useIsDemo from '../../../../hooks/useIsDemo';
+import EnabledSwitch from '../../../EnabledSwitch';
+import { isCatalogEnabled } from '../../../../utils/catalogEnabled';
 
 interface TableProps {
   tableData: Array<any>;
@@ -20,6 +22,7 @@ interface TableProps {
   onDelete: (id: string) => void;
   onEdit: (row: any) => void;
   onPreview: (row: any) => void;
+  onToggleEnabled: (row: any, next: boolean) => void;
 }
 // Custom filter function to handle nested fields
 const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
@@ -40,6 +43,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   onDelete,
   onEdit,
   onPreview,
+  onToggleEnabled,
 }) => {
   const isDemo = useIsDemo();
   const [data, setData] = useState(tableData);
@@ -145,7 +149,9 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                 };
                 return (
                   <tr
-                    className={`text-Text-Primary space-y-7 ${index % 2 === 1 ? 'bg-backgroundColor-Main' : 'bg-white'}`}
+                    className={`text-Text-Primary space-y-7 ${index % 2 === 1 ? 'bg-backgroundColor-Main' : 'bg-white'} ${
+                      isCatalogEnabled(row.original) ? '' : 'opacity-60'
+                    }`}
                     key={getRowKey()}
                   >
                     {row.getVisibleCells().map((cell) => (
@@ -196,7 +202,12 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                           />
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center w-ful gap-2 w-[80px]">
+                        <div className="flex items-center justify-center w-ful gap-2 w-[110px]">
+                          <EnabledSwitch
+                            enabled={isCatalogEnabled(row.original)}
+                            disabled={isDemo}
+                            onChange={(next) => onToggleEnabled(row.original, next)}
+                          />
                           <img
                             onClick={() => handlePreview(row.original)}
                             className="cursor-pointer"

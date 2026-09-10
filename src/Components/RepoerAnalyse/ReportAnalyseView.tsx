@@ -68,9 +68,11 @@ import { useOverviewPoll } from '../../hooks/useOverviewPoll';
 import {
   applyClientSummaryCategories,
   categoryCardsFromReferenceBiomarkers,
+  filterCategoryCardsToVisibleBiomarkers,
   shouldApplyCategoryResponse,
   shouldApplyReferenceResponse,
   shouldShowClientSummaryEmptyIllustration,
+  shouldShowNeedFocusEmptyIllustration,
   shouldTreatEmptyFindingsAsAuthoritative,
 } from '../../utils/mergeCategoryCards';
 import {
@@ -706,7 +708,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       Application.getOverviewtplan({
         member_id: resolvedMemberID,
       }).then((res) => res.data);
-    return (force ? fetchFresh(key, fetcher) : getCached(key, fetcher, HEALTH_PLAN_TTL_MS))
+    return fetchFresh(key, fetcher)
       .then((data) => {
         if (gen !== sourceRefreshGenRef.current) return;
         if (
@@ -1489,20 +1491,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const hasReferenceBiomarkers = (referenceData?.biomarkers?.length ?? 0) > 0;
   const displayedCategoryCards = useMemo(() => {
     const fromSummary = ClientSummaryBoxs?.subcategories;
-    if (Array.isArray(fromSummary) && fromSummary.length > 0) {
-      return fromSummary;
+    const raw =
+      Array.isArray(fromSummary) && fromSummary.length > 0
+        ? fromSummary
+        : categoryCardsFromReferenceBiomarkers(referenceData?.biomarkers);
+    const biomarkers = referenceData?.biomarkers;
+    if (!Array.isArray(biomarkers) || referenceLoading) {
+      return raw;
     }
-    return categoryCardsFromReferenceBiomarkers(referenceData?.biomarkers);
-  }, [ClientSummaryBoxs, referenceData]);
+    return filterCategoryCardsToVisibleBiomarkers(raw, biomarkers);
+  }, [ClientSummaryBoxs, referenceData, referenceLoading]);
   const hasCategoryCards = displayedCategoryCards.length > 0;
   const hasSummaryText = Boolean(
     String(ClientSummaryBoxs?.client_summary || '').trim(),
   );
-  const isOverviewLiveLoading =
-    overviewProcessing ||
-    labJobPolling ||
-    referenceLoading ||
-    clientSummaryLoading;
   const awaitingOverviewData =
     overviewProcessing &&
     !hasReferenceBiomarkers &&
@@ -1580,11 +1582,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     hasDisplayedData: hasReferenceBiomarkers || needFocusBiomarkers.length > 0,
     isInitialRequest: referenceLoading,
   });
-  const showNeedFocusEmpty =
-    hasReferenceBiomarkers &&
-    !isOverviewLiveLoading &&
-    !awaitingOverviewData &&
-    needFocusBiomarkers.length === 0;
+  const showNeedFocusEmpty = shouldShowNeedFocusEmptyIllustration({
+    hasReferenceBiomarkers,
+    needFocusCount: needFocusBiomarkers.length,
+    isLoading: referenceLoading || awaitingOverviewData || showNeedFocusSkeleton,
+  });
   const showConcerningSkeleton = shouldShowSectionSkeleton({
     hasDisplayedData: ConcerningResultIsLoaded,
     isInitialRequest: concerningLoading,
@@ -1604,9 +1606,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       (clientSummaryLoading && ClientSummaryBoxs === null) ||
       (hasReferenceBiomarkers && !hasCategoryCards),
   });
+  const clientSummaryDomainState = String(
+    ClientSummaryBoxs?.domain_outcomes?.client_summary?.state || '',
+  );
+  const summaryPending =
+    !overviewPollTimedOut &&
+    !clientSummaryReady &&
+    (hasCategoryCards ||
+      overviewProcessing ||
+      clientSummaryLoading ||
+      clientSummaryDomainState === 'pending');
   const showClientSummaryTextLoading = shouldShowClientSummaryTextLoading({
     hasSummaryText,
     isInitialRequest: clientSummaryLoading && !hasSummaryText,
+    summaryPending,
   });
   const showDetailedAnalysisSkeleton = shouldShowSectionSkeleton({
     hasDisplayedData: hasReferenceBiomarkers || hasCategoryCards,
@@ -2260,7 +2273,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           {accessManager.filter((el) => el.name == 'Need Focus Biomarker')[0]
             .checked == true && (
             <>
-              <div className=" my-[200px] xl:min-h-[700px] text-light-primary-text dark:text-primary-text ">
+              <div className={`text-light-primary-text dark:text-primary-text ${needFocusBiomarkers.length > 0 ? 'my-[200px] xl:min-h-[700px]' : 'my-10'}`}>
                 <div>
                   <div
                     id="Need Focus Biomarker"

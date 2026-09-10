@@ -70,6 +70,20 @@ class FormsApi extends Api {
       unique_id: id,
     });
   };
+
+  static setQuestionaryEnabled = (id: string, is_enabled: boolean) => {
+    return this.post('/forms/questionary/set_enabled', {
+      unique_id: id,
+      is_enabled,
+    });
+  };
+
+  static setCheckinEnabled = (id: string, is_enabled: boolean) => {
+    return this.post('/forms/check_in/set_enabled', {
+      unique_id: id,
+      is_enabled,
+    });
+  };
 }
 
 export default FormsApi;

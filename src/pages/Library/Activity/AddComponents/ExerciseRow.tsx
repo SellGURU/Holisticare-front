@@ -4,17 +4,21 @@ import { Tooltip } from 'react-tooltip';
 import PreviewExerciseModal from './PreviewModal';
 import Application from '../../../../api/app';
 import useIsDemo from '../../../../hooks/useIsDemo';
+import EnabledSwitch from '../../../../Components/EnabledSwitch';
+import { isCatalogEnabled } from '../../../../utils/catalogEnabled';
 interface ExerciseRowProps {
   exercise: any;
   index: number;
   onDelete: () => void;
   onEdit: () => void;
+  onToggleEnabled: (next: boolean) => void;
 }
 export const ExerciseRow: React.FC<ExerciseRowProps> = ({
   exercise,
   index,
   onDelete,
   onEdit,
+  onToggleEnabled,
 }) => {
   const isDemo = useIsDemo();
   const [ConfirmDelete, setConfirmDelete] = useState(false);
@@ -82,7 +86,9 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
       />
       <tr
         key={index}
-        className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-sm text-Text-Primary border-b`}
+        className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-sm text-Text-Primary border-b ${
+          isCatalogEnabled(exercise) ? '' : 'opacity-60'
+        }`}
       >
         <td
           className="pl-4 py-3 text-xs w-[160px] text-Text-Primary select-none"
@@ -176,7 +182,12 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
         <td className="py-3 text-xs text-[#888888] w-[100px] text-center">
           {formatDate(exercise['Added on'])}
         </td>
-        <td className="py-3 w-[80px] mx-auto text-center flex items-center justify-end  gap-2">
+        <td className="py-3 w-[110px] mx-auto text-center flex items-center justify-end  gap-2">
+          <EnabledSwitch
+            enabled={isCatalogEnabled(exercise)}
+            disabled={isDemo}
+            onChange={onToggleEnabled}
+          />
           {ConfirmDelete ? (
             <div className="flex items-center gap-1 text-xs text-Text-Primary">
               Sure?

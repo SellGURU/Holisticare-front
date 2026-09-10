@@ -44,7 +44,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   };
   return (
     <div
-      className={`flex flex-col relative ${wfull ? 'min-w-full' : 'min-w-[181px]'}  text-xs font-medium`}
+      className={`flex flex-col relative ${wfull ? 'min-w-0 w-full' : 'min-w-[181px]'}  text-xs font-medium`}
     >
       {label && <label className="mb-1">{label}</label>}
 
@@ -53,10 +53,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         onClick={() => {
           setShowSelect(!showSelect);
         }}
-        className={`w-full ${wfull ? 'md:w-full' : 'md:w-[181px]'}  cursor-pointer h-[28px] flex justify-between items-center px-3 bg-[#FDFDFD] ${showSelect && options.length > 0 ? (showTop ? 'rounded-t-none' : 'rounded-b-none') : ''} rounded-[16px] border border-[#E9EDF5]`}
+        className={`w-full ${wfull ? '' : 'md:w-[181px]'} min-w-0 cursor-pointer h-[28px] flex justify-between items-center gap-1 px-3 bg-[#FDFDFD] ${showSelect && options.length > 0 ? (showTop ? 'rounded-t-none' : 'rounded-b-none') : ''} rounded-[16px] border border-[#E9EDF5]`}
       >
         {selectedOption && selectedOption != '' ? (
-          <div className="text-[12px] text-[#383838] max-w-[140px] truncate">
+          <div className="text-[12px] text-[#383838] min-w-0 flex-1 truncate">
             {Array.isArray(selectedOption)
               ? selectedOption.join(', ')
               : selectedOption}
@@ -77,7 +77,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       {showSelect && options.length > 0 && (
         <div
           ref={selectRef}
-          className={`w-[181px] ${wfull ? 'md:w-full' : 'md:w-[181px]'} max-h-[380px] overflow-auto z-20 absolute bg-white border border-[#E9EDF5] ${
+          className={`${wfull ? 'w-full' : 'w-[181px] md:w-[181px]'} max-h-[380px] overflow-auto z-20 absolute bg-white border border-[#E9EDF5] ${
             showTop
               ? 'bottom-[28px] rounded-b-none'
               : 'top-[28px] rounded-t-none shadow-200'

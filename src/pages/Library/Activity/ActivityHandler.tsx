@@ -16,6 +16,7 @@ interface ActivityHandlerProps {
   dataListLength: number;
   sortId: string;
   onChangeSort: (sortId: string) => void;
+  onToggleEnabled: (row: any, next: boolean) => void;
 }
 
 const ActivityHandler: FC<ActivityHandlerProps> = ({
@@ -26,6 +27,7 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
   dataListLength,
   sortId,
   onChangeSort,
+  onToggleEnabled,
 }) => {
   const isDemo = useIsDemo();
   const [showAdd, setShowAdd] = useState(isShowAddActivity);
@@ -188,6 +190,7 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
                     setShowAdd(true);
                     setEditid(exercise.Act_Id);
                   }}
+                  onToggleEnabled={(next) => onToggleEnabled(exercise, next)}
                 />
               ))}
             </tbody>

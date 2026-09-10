@@ -3,6 +3,9 @@ import { Row } from '@tanstack/react-table';
 import { FC, useRef, useState } from 'react';
 import { flexRender } from '@tanstack/react-table';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import EnabledSwitch from '../../../Components/EnabledSwitch';
+import { isCatalogEnabled } from '../../../utils/catalogEnabled';
+import useIsDemo from '../../../hooks/useIsDemo';
 
 interface TableRowProps {
   row: Row<any>;
@@ -11,6 +14,7 @@ interface TableRowProps {
   onPreview: (id: string) => void;
   onDuplicate: (id: string) => void;
   onCopy?: (id: string) => void;
+  onToggleEnabled?: (id: string, next: boolean) => void;
   // onReposition: (id: string) => void;
   index: number;
 }
@@ -22,9 +26,11 @@ const TableRow: FC<TableRowProps> = ({
   onPreview,
   onDuplicate,
   onCopy,
+  onToggleEnabled,
   // onReposition,
   index,
 }) => {
+  const isDemo = useIsDemo();
   const [showModal, setShowModal] = useState(false);
   const [sureRemove, setSureRemove] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
@@ -86,7 +92,9 @@ const TableRow: FC<TableRowProps> = ({
   return (
     <>
       <tr
-        className={`${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-Text-Primary relative space-y-7`}
+        className={`${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-Text-Primary relative space-y-7 ${
+          isCatalogEnabled(row.original) ? '' : 'opacity-60'
+        }`}
         key={row.id}
       >
         {row.getVisibleCells().map((cell) => (
@@ -98,7 +106,14 @@ const TableRow: FC<TableRowProps> = ({
           </td>
         ))}
         <td className="px-3 py-3 text-center text-nowrap text-xs">
-          <div className="flex justify-center w-full">
+          <div className="flex justify-center w-full items-center gap-2">
+            {onToggleEnabled ? (
+              <EnabledSwitch
+                enabled={isCatalogEnabled(row.original)}
+                disabled={isDemo}
+                onChange={(next) => onToggleEnabled(row.original.id, next)}
+              />
+            ) : null}
             <img
               onClick={handleOpenModal}
               src="/icons/more-blue.svg"

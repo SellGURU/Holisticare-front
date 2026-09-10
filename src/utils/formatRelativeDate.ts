@@ -10,12 +10,12 @@ function parseAsUTC(dateStr: string): Date {
 }
 
 /**
- * Formats a date string (UTC/Greenwich) as relative time.
- * Compares UTC to UTC so timezone offset does not affect "x min/hours ago".
+ * Formats a date string (UTC/Greenwich) as relative time in the viewer's locale.
+ * Elapsed minutes/hours use the real clock; "yesterday" uses the local calendar day.
  * - just now (< 1 min)
  * - x min ago (< 1 hour)
- * - x hours ago (same UTC day, < 24h)
- * - yesterday (previous UTC day)
+ * - x hours ago (same local day, < 24h)
+ * - yesterday (previous local day)
  * - formatted date (older)
  */
 export function formatRelativeDate(dateStr: string | null | undefined): string {
@@ -28,22 +28,21 @@ export function formatRelativeDate(dateStr: string | null | undefined): string {
   const diffMin = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
 
-  const todayStartUTC = Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate(),
-  );
-  const dateStartUTC = Date.UTC(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-  );
-  const yesterdayStartUTC = todayStartUTC - 86400000;
+  const todayStart = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  ).getTime();
+  const dateStart = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  ).getTime();
+  const yesterdayStart = todayStart - 86400000;
 
   if (diffSec < 60) return 'just now';
   if (diffMin < 60) return `${diffMin} min ago`;
-  if (dateStartUTC === todayStartUTC && diffHours < 24)
-    return `${diffHours} hours ago`;
-  if (dateStartUTC === yesterdayStartUTC) return 'yesterday';
+  if (dateStart === todayStart && diffHours < 24) return `${diffHours} hours ago`;
+  if (dateStart === yesterdayStart) return 'yesterday';
   return format(date, 'd MMM yyyy');
 }

@@ -21,6 +21,8 @@ interface HistoricalChartProps {
   sources: string[];
   unit: string;
   chartId: string;
+  valueType?: string;
+  valueKind?: string;
 }
 
 const CHART_PLOT_HEIGHT = 70;
@@ -35,6 +37,8 @@ const HistoricalChart = ({
   sources,
   unit,
   chartId,
+  valueType,
+  valueKind: valueKindProp,
 }: HistoricalChartProps) => {
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(10);
   const [page, setPage] = useState(0);
@@ -69,8 +73,8 @@ const HistoricalChart = ({
   );
 
   const valueKind = useMemo(
-    () => inferValueKind(bounds, sortedDataPoints[0]),
-    [bounds, sortedDataPoints],
+    () => inferValueKind(bounds, sortedDataPoints[0], valueType, valueKindProp),
+    [bounds, sortedDataPoints, valueType, valueKindProp],
   );
 
   const boundsAsc = useMemo(

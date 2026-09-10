@@ -278,15 +278,15 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         </div>
       )}
       <div
-        className={`bg-white ${step === 0 ? 'w-[90vw] md:w-[800px]' : 'w-[90vw] md:w-[884px]'} p-4 rounded-[16px] h-full`}
+        className={`bg-white w-[min(880px,calc(100vw-40px))] max-h-[min(90vh,840px)] p-4 sm:p-5 rounded-[16px] flex flex-col overflow-hidden`}
       >
-        <div className="flex w-full  justify-start">
+        <div className="flex w-full justify-start shrink-0">
           <div className="text-[14px] font-medium text-Text-Primary">
             {editid ? 'Edit Activity' : 'Add Activity'}
           </div>
         </div>
-        <div className="w-full h-[1px] bg-Boarder my-3"></div>
-        <div className="md:min-h-[300px]">
+        <div className="w-full h-[1px] bg-Boarder my-3 shrink-0"></div>
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1">
           {step === 0 ? (
             <InformationStep
               showValidation={showValidation}
@@ -312,7 +312,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           )}
         </div>
         <div
-          className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} items-center mb-1 mt-4`}
+          className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} items-center mb-0 mt-4 shrink-0`}
         >
           {step !== 0 && (
             <div

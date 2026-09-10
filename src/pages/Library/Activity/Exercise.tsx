@@ -15,6 +15,7 @@ interface ExerciseHandlerProps {
   ExcercisesListLength: number;
   sortId: string;
   onChangeSort: (sortId: string) => void;
+  onToggleEnabled: (row: any, next: boolean) => void;
 }
 const Exercise: React.FC<ExerciseHandlerProps> = ({
   data,
@@ -24,6 +25,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   ExcercisesListLength,
   sortId,
   onChangeSort,
+  onToggleEnabled,
 }) => {
   const isDemo = useIsDemo();
   const [loadingCall, setLoadingCall] = useState(false);
@@ -231,6 +233,9 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
                         setShowEditModal(true);
                         setExerciseId(exercise.Exercise_Id);
                       }}
+                      onToggleEnabled={(next) =>
+                        onToggleEnabled(exercise, next)
+                      }
                     />
                   ))}
                 </tbody>

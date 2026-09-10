@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Application from '../../../api/app';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Circleloader from '../../../Components/CircleLoader';
 import SearchBox from '../../../Components/SearchBox';
 import Toggle from '../../../Components/Toggle';
-import useModalAutoClose from '../../../hooks/UseModalAutoClose';
-import SvgIcon from '../../../utils/svgIcon';
+import EnabledStatusSelect from '../../../Components/EnabledStatusSelect';
+import LibrarySortSelect from '../../../Components/LibrarySortSelect';
 import ActivityHandler from './ActivityHandler';
 import Exercise from './Exercise';
 import useIsDemo from '../../../hooks/useIsDemo';
+import { sortLibraryRows } from '../../../utils/libraryTableSort';
 import {
-  LIBRARY_SORT_LABELS,
-  getLibrarySortOptions,
-  sortLibraryRows,
-} from '../../../utils/libraryTableSort';
+  EnabledFilter,
+  matchesEnabledFilter,
+} from '../../../utils/catalogEnabled';
 
 const Activity = () => {
   const isDemo = useIsDemo();
@@ -26,7 +26,7 @@ const Activity = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [showAddActivity, setShowAddActivity] = useState(false);
   const [sortId, setSortId] = useState<string>('title_asc');
-  const [isSortOpen, setIsSortOpen] = useState(false);
+  const [enabledFilter, setEnabledFilter] = useState<EnabledFilter>('All');
 
   const getExercisesList = () => {
     setLoading(true);
@@ -64,28 +64,18 @@ const Activity = () => {
     }
   }, [active]);
 
-  const sortOptions = getLibrarySortOptions(active);
   const filteredAndSortedData = useMemo(() => {
     const base = active === 'Exercise' ? ExcercisesList : dataList;
-    const filtered = base.filter((item) =>
-      item.Title?.toLowerCase().includes(searchQuery.toLowerCase()),
+    const filtered = base.filter(
+      (item) =>
+        item.Title?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        matchesEnabledFilter(item, enabledFilter),
     );
     return sortLibraryRows(filtered, sortId);
-  }, [active, ExcercisesList, dataList, searchQuery, sortId]);
+  }, [active, ExcercisesList, dataList, searchQuery, sortId, enabledFilter]);
   const allData = useMemo(() => {
     return active === 'Exercise' ? ExcercisesList : dataList;
   }, [active, ExcercisesList, dataList]);
-  const currentSortLabel =
-    LIBRARY_SORT_LABELS[sortId] ?? LIBRARY_SORT_LABELS.title_asc;
-  const btnRef = useRef(null);
-  const modalRef = useRef(null);
-  useModalAutoClose({
-    buttonRefrence: btnRef,
-    refrence: modalRef,
-    close: () => {
-      setIsSortOpen(false);
-    },
-  });
   const [isMobilePage, setIsMobilePage] = useState(window.innerWidth < 982);
   useEffect(() => {
     const handleResize = () => {
@@ -106,108 +96,42 @@ const Activity = () => {
 
       <div>
         <div className="w-full bg-bg-color px-6 pt-8">
-          <div className="w-full flex justify-center ">
+          <div className="w-full flex justify-center">
             <Toggle
               active={active}
               setActive={(data) => {
                 setSortId('title_asc');
+                setEnabledFilter('All');
+                setSearchQuery('');
                 setActive(data as 'Exercise' | 'Activity');
               }}
               value={['Activity', 'Exercise']}
             />
           </div>
 
-          <div
-            className={`w-full flex justify-between mt-3 ${isMobilePage ? 'flex-col gap-3' : 'flex-row gap-0 items-center'}`}
-          >
-            <div className="text-Text-Primary font-medium opacity-[87%]">
-              {active}
-            </div>
-            <div
-              className={`flex ${isMobilePage ? 'flex-col gap-3' : 'flex-row gap-2 items-center'}`}
-            >
+          <div className="w-full flex flex-wrap items-center justify-between gap-2 mt-4">
+            <div className="text-Text-Primary font-medium">{active}</div>
+            <div className="flex flex-wrap items-center gap-2">
               {allData.length > 0 && (
-                <SearchBox
-                  ClassName="rounded-xl h-6 !py-[0px] !px-3 !shadow-[unset]"
-                  placeHolder={`Search in ${active.toLowerCase()}...`}
-                  onSearch={(query) => setSearchQuery(query)}
-                />
+                <>
+                  <SearchBox
+                    ClassName="rounded-xl !h-8 !min-w-[200px] md:!min-w-[240px] !py-[0px] !px-3 !shadow-[unset]"
+                    placeHolder={`Search ${active.toLowerCase()}...`}
+                    value={searchQuery}
+                    onSearch={(query) => setSearchQuery(query)}
+                  />
+                  <EnabledStatusSelect
+                    value={enabledFilter}
+                    onChange={setEnabledFilter}
+                  />
+                  <LibrarySortSelect
+                    pageType={active}
+                    value={sortId}
+                    onChange={(id) => setSortId(id || 'title_asc')}
+                  />
+                </>
               )}
-
-              {/* Sort dropdown */}
-              <div
-                className={`flex items-center gap-6 w-full ${
-                  isMobilePage ? 'w-full' : 'w-fit'
-                }`}
-              >
-                <div className="flex gap-1 items-center text-nowrap text-xs text-Primary-DeepTeal">
-                  <img src="/icons/sort.svg" alt="" />
-                  Sort by:
-                </div>
-                <div
-                  ref={btnRef}
-                  className={`relative w-full ${
-                    isMobilePage ? 'w-full pl-2' : 'w-fit pl-0'
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setIsSortOpen((v) => !v)}
-                    className={`h-8 rounded-[20px] border w-full ${
-                      isMobilePage ? 'w-full' : 'min-w-[183px]'
-                    } border-[#E2F1F8] px-[12px] py-[10px] bg-white text-xs text-Text-Primary text-nowrap flex items-center justify-between gap-2 shadow-100 ${
-                      isSortOpen ? 'rounded-b-none' : ''
-                    }`}
-                  >
-                    {currentSortLabel}
-                    <div
-                      className={` transition-transform ${isSortOpen ? 'rotate-180' : ''}`}
-                    >
-                      <SvgIcon
-                        color="#005F73"
-                        width="16px"
-                        height="16px"
-                        src="/icons/arrow-down.svg"
-                      />
-                    </div>
-                  </button>
-
-                  {isSortOpen && (
-                    <div
-                      ref={modalRef}
-                      className={`absolute ${isMobilePage ? 'w-[97%]' : 'w-full'} top-8 z-20 right-0 bg-white rounded-[20px] px-2 py-3 shadow-md ${
-                        isSortOpen ? 'rounded-t-none' : ''
-                      }`}
-                    >
-                      <div className="flex flex-col gap-4">
-                        {sortOptions.map((opt) => (
-                          <button
-                            key={opt.id}
-                            type="button"
-                            onClick={() => {
-                              setSortId(opt.id ?? 'title_asc');
-                              setIsSortOpen(false);
-                            }}
-                            className="w-full text-left text-[#888888] text-[10px] flex items-center gap-2"
-                          >
-                            <span
-                              className={`inline-block w-4 h-4 rounded-full border-Primary-DeepTeal ${
-                                currentSortLabel === opt.label
-                                  ? 'border-[3.5px]'
-                                  : 'border-[.5px]'
-                              }`}
-                            ></span>
-                            <span>{opt.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Add buttons */}
-              {active === 'Exercise' && (
+              {active === 'Exercise' ? (
                 <ButtonSecondary
                   disabled={isDemo}
                   title={
@@ -219,15 +143,13 @@ const Activity = () => {
                     if (isDemo) return;
                     setShowAdd(true);
                   }}
-                  ClassName={`rounded-full w-full text-nowrap ${
-                    isMobilePage ? 'w-full' : 'w-[180px]'
-                  }`}
+                  size="small"
+                  ClassName="h-8 w-auto min-w-0 rounded-full text-nowrap"
                 >
                   <img src="./icons/add-square.svg" alt="" />
                   Add Exercise
                 </ButtonSecondary>
-              )}
-              {active === 'Activity' && (
+              ) : (
                 <ButtonSecondary
                   disabled={isDemo}
                   title={
@@ -239,9 +161,8 @@ const Activity = () => {
                     if (isDemo) return;
                     setShowAddActivity(true);
                   }}
-                  ClassName={`rounded-full w-full text-nowrap ${
-                    isMobilePage ? 'w-full' : 'w-[180px]'
-                  }`}
+                  size="small"
+                  ClassName="h-8 w-auto min-w-0 rounded-full text-nowrap"
                 >
                   <img src="./icons/add-square.svg" alt="" />
                   Add Activity
@@ -251,7 +172,6 @@ const Activity = () => {
           </div>
         </div>
 
-        {/* Data rendering */}
         <div className={`px-6 ${isMobilePage ? 'mb-20' : 'mb-14'}`}>
           {active === 'Activity' ? (
             <ActivityHandler
@@ -262,6 +182,20 @@ const Activity = () => {
               dataListLength={dataList.length}
               sortId={sortId}
               onChangeSort={(id: string) => setSortId(id ?? 'title_asc')}
+              onToggleEnabled={(row, next) => {
+                if (isDemo) return;
+                const id = String(row.Act_Id);
+                setDataList((current) =>
+                  current.map((item) =>
+                    String(item.Act_Id) === id
+                      ? { ...item, is_enabled: next }
+                      : item,
+                  ),
+                );
+                Application.setActivityEnabled(id, next).catch(() => {
+                  getActivityList();
+                });
+              }}
             />
           ) : (
             <Exercise
@@ -272,6 +206,20 @@ const Activity = () => {
               ExcercisesListLength={ExcercisesList.length}
               sortId={sortId}
               onChangeSort={(id: string) => setSortId(id ?? 'title_asc')}
+              onToggleEnabled={(row, next) => {
+                if (isDemo) return;
+                const id = String(row.Exercise_Id);
+                setExcercisesList((current) =>
+                  current.map((item) =>
+                    String(item.Exercise_Id) === id
+                      ? { ...item, is_enabled: next }
+                      : item,
+                  ),
+                );
+                Application.setExerciseEnabled(id, next).catch(() => {
+                  getExercisesList();
+                });
+              }}
             />
           )}
         </div>

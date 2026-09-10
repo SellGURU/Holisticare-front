@@ -32,6 +32,7 @@ export const PORTAL_USER_SESSION_STORAGE_KEYS = [
   'isHtmlReportExists',
   'google_oauth_token',
   'hc_healthplan_page_cache_v1',
+  'hc_healthplan_page_cache_v2',
 ] as const;
 
 export const PORTAL_USER_SESSION_STORAGE_PREFIXES = ['lab_job_id_'] as const;

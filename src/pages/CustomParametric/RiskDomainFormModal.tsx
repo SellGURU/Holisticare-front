@@ -175,18 +175,19 @@ export default function RiskDomainFormModal({
             ? res.data.chart_bounds
             : [];
         const mapped = rows
-          .map((item: { biomarker_uid?: string; Biomarker?: string; name?: string; unit?: string; ['Benchmark areas']?: string; benchmark_area?: string }) => {
+          .map((item: { biomarker_uid?: string; Biomarker?: string; name?: string; unit?: string; ['Benchmark areas']?: string; benchmark_area?: string; is_enabled?: boolean }) => {
             const name = String(item?.Biomarker || item?.name || '').trim();
             if (!name) return null;
             return {
               name,
               unit: item?.unit || '',
               benchmark_area: item?.['Benchmark areas'] || item?.benchmark_area || '',
+              is_enabled: item?.is_enabled !== false,
             } as ClinicBiomarkerOption;
           })
           .filter(Boolean) as ClinicBiomarkerOption[];
         mapped.sort((a, b) => a.name.localeCompare(b.name));
-        setCatalog(mapped);
+        setCatalog(mapped.filter((item) => item.is_enabled !== false));
       })
       .catch(() => setCatalog([]));
   }, [open, domain, mode, modelKind]);

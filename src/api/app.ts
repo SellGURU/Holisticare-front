@@ -842,6 +842,9 @@ class Application extends Api {
   static getSupplementList = () => {
     return this.post('/supplement_library/supplements_list', {});
   };
+  static setSupplementEnabled = (Sup_Id: string, is_enabled: boolean) => {
+    return this.post('/supplement_library/set_enabled', { Sup_Id, is_enabled });
+  };
   // Other Library APIs (Type-based, like Supplement but with Type instead of Dose)
   static getOtherTypeList = () => {
     return this.post('/other_library/types_list', {});
@@ -857,6 +860,9 @@ class Application extends Api {
   };
   static getOtherList = () => {
     return this.post('/other_library/list', {});
+  };
+  static setOtherEnabled = (O_Id: string, is_enabled: boolean) => {
+    return this.post('/other_library/set_enabled', { O_Id, is_enabled });
   };
   static addOther = (data: any) => {
     return this.post('/other_library/add', data);
@@ -884,6 +890,9 @@ class Application extends Api {
   };
   static getPeptideList = () => {
     return this.post('/peptide_library/peptides_list', {});
+  };
+  static setPeptideEnabled = (Peptide_Id: string, is_enabled: boolean) => {
+    return this.post('/peptide_library/set_enabled', { Peptide_Id, is_enabled });
   };
   static showPeptideDetails = (id: string) => {
     return this.post('/peptide_library/show_peptide_details', {
@@ -935,6 +944,9 @@ class Application extends Api {
   static getLifestyleList = () => {
     return this.post('/lifestyle_library/lifestyles_list', {});
   };
+  static setLifestyleEnabled = (Life_Id: string, is_enabled: boolean) => {
+    return this.post('/lifestyle_library/set_enabled', { Life_Id, is_enabled });
+  };
   static addDiet = (data: any) => {
     return this.post('/diet_library/add_diet', data);
   };
@@ -948,6 +960,9 @@ class Application extends Api {
   };
   static getDietList = () => {
     return this.post('/diet_library/diets_list', {});
+  };
+  static setDietEnabled = (Diet_Id: string, is_enabled: boolean) => {
+    return this.post('/diet_library/set_enabled', { Diet_Id, is_enabled });
   };
   static getShowBrandInfo = () => {
     return this.post('/custom_branding/show_brand_info', {});
@@ -1001,6 +1016,15 @@ class Application extends Api {
   };
   static activityList = () => {
     return this.post('/activity_library/activities_list');
+  };
+  static setActivityEnabled = (Act_Id: string, is_enabled: boolean) => {
+    return this.post('/activity_library/set_enabled', { Act_Id, is_enabled });
+  };
+  static setExerciseEnabled = (Exercise_Id: string, is_enabled: boolean) => {
+    return this.post('/activity_library/set_exercise_enabled', {
+      Exercise_Id,
+      is_enabled,
+    });
   };
   static checkSelectedTaskConflict = (data: any) => {
     return this.post('/action_plan/check_selected_task_conflict', data);

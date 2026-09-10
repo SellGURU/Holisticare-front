@@ -44,6 +44,7 @@ export type FormCatalogItem = {
   name: string;
   unit?: string;
   value_type?: string;
+  is_enabled?: boolean;
 };
 
 export function toQuestionId(text: string): string {
@@ -170,7 +171,20 @@ export function mapClinicCatalog(raw: unknown): Array<FormCatalogItem> {
       : [];
   const mapped: Array<FormCatalogItem> = [];
   const seen = new Set<string>();
-  rows.forEach((item) => {
+  const ordered = [...rows].sort((left, right) => {
+    const leftDisabled =
+      left && typeof left === 'object' && (left as { is_enabled?: unknown }).is_enabled === false
+        ? 1
+        : 0;
+    const rightDisabled =
+      right &&
+      typeof right === 'object' &&
+      (right as { is_enabled?: unknown }).is_enabled === false
+        ? 1
+        : 0;
+    return leftDisabled - rightDisabled;
+  });
+  ordered.forEach((item) => {
     if (!item || typeof item !== 'object') return;
     const record = item as {
       Biomarker?: unknown;
@@ -179,6 +193,7 @@ export function mapClinicCatalog(raw: unknown): Array<FormCatalogItem> {
       value_type?: unknown;
       type?: unknown;
       data_type?: unknown;
+      is_enabled?: unknown;
     };
     const name = String(record.Biomarker || record.name || '').trim();
     if (!name || seen.has(name)) return;
@@ -190,6 +205,7 @@ export function mapClinicCatalog(raw: unknown): Array<FormCatalogItem> {
       name,
       unit: typeof record.unit === 'string' ? record.unit : '',
       value_type: valueType || undefined,
+      is_enabled: record.is_enabled !== false,
     });
   });
   mapped.sort((a, b) => a.name.localeCompare(b.name));

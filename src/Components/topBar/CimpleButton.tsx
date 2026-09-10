@@ -22,6 +22,8 @@ import {
   resolveCompileButtonState,
 } from '../../utils/compileButtonState';
 import { visibilityPollMs } from '../../utils/visibilityPoll';
+import { HEALTH_PLAN_CACHE_KEYS } from '../../utils/cacheKeys';
+import { removeCachedKey } from '../../utils/pageCache';
 // import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 // import Tooltip from '../../../'; // فرضی
 interface CompileButtonProps {
@@ -214,6 +216,13 @@ const CompileButton: FC<CompileButtonProps> = ({
     return label || null;
   };
 
+  const markCompileFinished = () => {
+    setLatestRefresh(new Date().toISOString());
+    if (id) {
+      removeCachedKey(HEALTH_PLAN_CACHE_KEYS.patientInfo(id));
+    }
+  };
+
   useEffect(() => {
     checkRefrashData();
   }, []);
@@ -301,6 +310,7 @@ const CompileButton: FC<CompileButtonProps> = ({
             setIsCompiling(false);
             setNeedCompile(false);
             setshowProgressModal(false);
+            markCompileFinished();
             setProgressData((prev) =>
               prev.map((item) =>
                 item.category === 'refresh'
@@ -407,6 +417,7 @@ const CompileButton: FC<CompileButtonProps> = ({
           (item) => item.category === 'refresh',
         );
         if (hasRefresh && id) {
+          markCompileFinished();
           publish('healthPlanProcessingComplete', {
             member_id: Number(id),
           });

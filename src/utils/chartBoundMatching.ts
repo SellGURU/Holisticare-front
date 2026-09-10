@@ -33,7 +33,7 @@ export const inferValueKind = (
     return valueKind;
   }
   const typeText = String(valueType || '').toLowerCase();
-  if (['string', 'text', 'qualitative', 'categorical'].includes(typeText)) {
+  if (['string', 'text', 'qualitative', 'categorical', 'datetime', 'date', 'time'].includes(typeText)) {
     return 'qualitative';
   }
   if (value != null && !isNumericLike(value)) return 'qualitative';
@@ -300,13 +300,12 @@ export const resolveGlobalStatusPin = (
   const statusIndex = sortedBounds.findIndex(
     (bound) => bound.status === status[0],
   );
-  if (statusIndex < 0) return null;
-
-  const fallbackBound = sortedBounds[statusIndex];
+  const fallbackIndex = statusIndex >= 0 ? statusIndex : 0;
+  const fallbackBound = sortedBounds[fallbackIndex];
   return {
     show: true,
     leftPercent: resolveGlobalPinPercent(
-      statusIndex,
+      fallbackIndex,
       values[0],
       fallbackBound,
       sortedBounds,
@@ -314,7 +313,7 @@ export const resolveGlobalStatusPin = (
       preferredIndex,
     ),
     mode: 'unique',
-    segmentIndex: statusIndex,
+    segmentIndex: fallbackIndex,
   };
 };
 
@@ -425,7 +424,9 @@ export const findHistoricalBandLayoutEntry = (
   return (
     layout.find(
       (entry) => entry.bound.status?.toLowerCase() === status?.toLowerCase(),
-    ) ?? null
+    ) ??
+    layout[0] ??
+    null
   );
 };
 
@@ -451,4 +452,64 @@ export const getHistoricalPointY = (
     valueKind,
   );
   return entry.top + ((100 - pinPercent) / 100) * entry.height;
+};
+
+export type HistoricalChartAvailability =
+  | { canPlot: true }
+  | { canPlot: false; reason: string };
+
+const looksLikeTimestamp = (value: unknown, valueType?: string, unit?: string) => {
+  const typeText = String(valueType || unit || '').toLowerCase();
+  if (['datetime', 'date', 'time', 'timestamp'].includes(typeText)) return true;
+  const text = String(value ?? '').toLowerCase();
+  return text.includes('datetime') || text.includes('timestamp');
+};
+
+/** Historical trend needs a series. Timestamps and single readings stay as the current value. */
+export const getHistoricalChartAvailability = (active: {
+  values?: unknown[];
+  value_type?: string;
+  value_kind?: string;
+  chart_bounds?: unknown;
+  unit?: string;
+} | null | undefined): HistoricalChartAvailability => {
+  const values = Array.isArray(active?.values) ? active.values : [];
+  if (!values.length) {
+    return {
+      canPlot: false,
+      reason: 'No historical readings are stored for this biomarker yet.',
+    };
+  }
+  if (looksLikeTimestamp(values[0], active?.value_type, active?.unit)) {
+    return {
+      canPlot: false,
+      reason:
+        'This result is a timestamp, so a trend line is not available. The current reading is shown above.',
+    };
+  }
+  const bounds = (Array.isArray(active?.chart_bounds)
+    ? active.chart_bounds
+    : []) as ChartBound[];
+  const kind = inferValueKind(
+    bounds,
+    values[0],
+    active?.value_type,
+    active?.value_kind,
+  );
+  const numericCount = values.filter((value) => isNumericLike(value)).length;
+  if (kind === 'numeric' && numericCount < 2) {
+    return {
+      canPlot: false,
+      reason:
+        'Only one numeric reading is available, so there is not enough history to draw a trend.',
+    };
+  }
+  if (kind !== 'numeric' && values.length < 2) {
+    return {
+      canPlot: false,
+      reason:
+        'Only one reading is available, so there is not enough history to draw a trend.',
+    };
+  }
+  return { canPlot: true };
 };

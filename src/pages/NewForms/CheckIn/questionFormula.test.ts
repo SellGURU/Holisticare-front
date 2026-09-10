@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   fillableQuestions,
+  mapClinicCatalog,
   pruneOptionScores,
   resolveQuestionId,
   toQuestionId,
@@ -72,5 +73,27 @@ describe('pruneOptionScores', () => {
         Gone: 9,
       }),
     ).toEqual({ 'Not at all': 0, 'Several days': 1 });
+  });
+});
+
+describe('mapClinicCatalog', () => {
+  it('keeps disabled items so existing mappings can stay selected', () => {
+    const mapped = mapClinicCatalog([
+      { Biomarker: 'Hidden', unit: 'mg', is_enabled: false },
+      { Biomarker: 'Live', unit: 'mg', is_enabled: true },
+      { Biomarker: 'Legacy', unit: 'mg' },
+    ]);
+    expect(mapped.map((item) => item.name)).toEqual(['Hidden', 'Legacy', 'Live']);
+    expect(mapped.find((item) => item.name === 'Hidden')?.is_enabled).toBe(false);
+    expect(mapped.find((item) => item.name === 'Legacy')?.is_enabled).toBe(true);
+  });
+
+  it('prefers the enabled duplicate when names collide', () => {
+    const mapped = mapClinicCatalog([
+      { Biomarker: 'CRP', unit: 'mg', is_enabled: false },
+      { Biomarker: 'CRP', unit: 'mg/L', is_enabled: true },
+    ]);
+    expect(mapped).toHaveLength(1);
+    expect(mapped[0]).toMatchObject({ name: 'CRP', unit: 'mg/L', is_enabled: true });
   });
 });

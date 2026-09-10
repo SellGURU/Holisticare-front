@@ -6,6 +6,7 @@ import {
   findHistoricalBandLayoutEntry,
   findMatchingChartBoundIndex,
   getHistoricalPointY,
+  getHistoricalChartAvailability,
   resolveGlobalStatusPin,
   resolveStatusMarkerMode,
   sortChartBounds,
@@ -158,6 +159,18 @@ describe('resolveGlobalStatusPin', () => {
     expect(pin?.mode).toBe('unique');
   });
 
+  it('still shows the reading when status is missing from catalog bands', () => {
+    const pin = resolveGlobalStatusPin(
+      ['BorderlineRange'],
+      ['209'],
+      [{ low: 'Normal', high: 'Normal', status: 'HealthyRange', label: 'Normal' }],
+      'qualitative',
+    );
+    expect(pin).not.toBeNull();
+    expect(pin?.show).toBe(true);
+    expect(pin?.segmentIndex).toBe(0);
+  });
+
   it('findMatchingChartBoundIndex honors preferred index for backend matched_bound_index', () => {
     expect(findMatchingChartBoundIndex('830', glutathioneBounds, 2)).toBe(2);
   });
@@ -253,5 +266,51 @@ describe('historical chart layout', () => {
     expect(
       formatHistoricalBoundLabel({ low: 18, high: 25, status: 'Healthy' }),
     ).toBe('18-25');
+  });
+});
+
+describe('getHistoricalChartAvailability', () => {
+  it('treats a datetime unit as a timestamp even when the value is numeric', () => {
+    const result = getHistoricalChartAvailability({
+      values: [209],
+      unit: 'datetime',
+      chart_bounds: [{ low: null, high: null, status: 'BorderlineRange' }],
+    });
+    expect(result.canPlot).toBe(false);
+    if (!result.canPlot) {
+      expect(result.reason).toMatch(/timestamp/i);
+    }
+  });
+
+  it('explains why a timestamp cannot draw a trend', () => {
+    const result = getHistoricalChartAvailability({
+      values: ['209 datetime'],
+      value_type: 'datetime',
+      chart_bounds: [{ low: null, high: null, status: 'HealthyRange', label: 'Normal' }],
+    });
+    expect(result.canPlot).toBe(false);
+    if (!result.canPlot) {
+      expect(result.reason).toMatch(/timestamp/i);
+    }
+  });
+
+  it('explains a single numeric reading', () => {
+    const result = getHistoricalChartAvailability({
+      values: [12],
+      chart_bounds: [{ low: 10, high: 20, status: 'HealthyRange' }],
+    });
+    expect(result.canPlot).toBe(false);
+    if (!result.canPlot) {
+      expect(result.reason).toMatch(/one numeric reading/i);
+    }
+  });
+
+  it('plots a numeric series', () => {
+    expect(
+      getHistoricalChartAvailability({
+        values: [12, 14],
+        chart_bounds: [{ low: 10, high: 20, status: 'HealthyRange' }],
+      }).canPlot,
+    ).toBe(true);
   });
 });

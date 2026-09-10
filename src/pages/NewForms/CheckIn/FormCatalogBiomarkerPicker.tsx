@@ -24,7 +24,14 @@ const FormCatalogBiomarkerPicker: FC<FormCatalogBiomarkerPickerProps> = ({
   const [query, setQuery] = useState('');
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const selected = items.find((item) => item.name === value);
+  const selectableItems = useMemo(
+    () =>
+      items.filter(
+        (item) => item.is_enabled !== false || item.name === value,
+      ),
+    [items, value],
+  );
+  const selected = selectableItems.find((item) => item.name === value);
 
   useEffect(() => {
     const onDoc = (event: MouseEvent) => {
@@ -38,8 +45,8 @@ const FormCatalogBiomarkerPicker: FC<FormCatalogBiomarkerPickerProps> = ({
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return items.slice(0, 40);
-    return items
+    if (!q) return selectableItems.slice(0, 40);
+    return selectableItems
       .filter((item) => {
         const hay = [item.name, item.unit, item.value_type]
           .filter(Boolean)
@@ -48,7 +55,7 @@ const FormCatalogBiomarkerPicker: FC<FormCatalogBiomarkerPickerProps> = ({
         return hay.includes(q);
       })
       .slice(0, 40);
-  }, [items, query]);
+  }, [selectableItems, query]);
 
   const typeLabel = (item?: FormCatalogItem) => {
     const kind = String(item?.value_type || '').toLowerCase();

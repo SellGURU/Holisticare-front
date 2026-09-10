@@ -96,15 +96,12 @@ const InformationStep: FC<InformationStepProps> = ({
 
   return (
     <>
-      <div
-        className="w-full flex flex-col md:flex-row gap-4 mt-6 relative overflow-y-auto md:overflow-hidden h-[80vh] md:h-[unset] pr-2 md:pr-0"
-        style={{ scrollbarWidth: 'thin', scrollbarColor: '#E9EDF5 #E9EDF5' }}
-      >
-        <div className="flex flex-col gap-4">
+      <div className="w-full flex flex-col lg:flex-row gap-4 lg:gap-6 mt-2">
+        <div className="flex flex-col gap-4 flex-1 min-w-0 w-full">
           <TextField
             label="Title"
             placeholder="Write the activity's title..."
-            margin="md:!w-[360px]"
+            margin="mt-0"
             value={addData.title}
             onChange={(e) => {
               updateAddData('title', e.target.value);
@@ -147,7 +144,7 @@ const InformationStep: FC<InformationStepProps> = ({
                 : ''
             }
             placeholder={AssociatedInterventionInfoTextActivity}
-            margin="mb-0"
+            margin="mb-0 w-full"
           />
 
           {/* <div className="flex flex-col w-full gap-2">
@@ -257,17 +254,19 @@ const InformationStep: FC<InformationStepProps> = ({
             margin="mt-0"
           />
         </div>
-        <div className="bg-[#E9EDF5] h-[2px] md:h-[492px] w-full md:w-px"></div>
-        <div className="flex flex-col gap-4">
+        <div className="bg-[#E9EDF5] h-px w-full lg:h-auto lg:w-px lg:self-stretch shrink-0"></div>
+        <div className="flex flex-col gap-4 flex-1 min-w-0 w-full">
           <div className="text-xs font-medium">Filters</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-x-3 w-full min-w-0 [&>*]:min-w-0">
             <CustomSelect
+              wfull
               placeHolder="Type"
               options={TypesOptions}
               selectedOption={addData.type}
               onOptionSelect={(option: string) => updateAddData('type', option)}
             />
             <CustomSelect
+              wfull
               placeHolder="Terms"
               options={TermsOptions}
               isMulti
@@ -275,16 +274,17 @@ const InformationStep: FC<InformationStepProps> = ({
               onOptionSelect={(option: any) => updateAddData('terms', option)}
             />
             <CustomSelect
+              wfull
               placeHolder="Condition"
               isMulti
               options={ConditionsOptions}
               selectedOption={addData.condition}
               onOptionSelect={(option: any) => {
                 updateAddData('condition', option);
-                // console.log(option)
               }}
             />
             <CustomSelect
+              wfull
               placeHolder="Muscle"
               options={MuscleOptions}
               isMulti
@@ -292,6 +292,7 @@ const InformationStep: FC<InformationStepProps> = ({
               onOptionSelect={(option: any) => updateAddData('muscle', option)}
             />
             <CustomSelect
+              wfull
               placeHolder="Equipment"
               options={EquipmentOptions}
               isMulti
@@ -301,6 +302,7 @@ const InformationStep: FC<InformationStepProps> = ({
               }
             />
             <CustomSelect
+              wfull
               placeHolder="Level"
               options={LevelOptions}
               selectedOption={addData.level}
@@ -309,10 +311,11 @@ const InformationStep: FC<InformationStepProps> = ({
           </div>
           <div className="flex flex-col text-xs gap-3 mt-2">
             Activity Location
-            <div className="flex flex-wrap gap-6">
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
               {locationBoxs.map((el) => {
                 return (
                   <Checkbox
+                    key={el}
                     checked={addData.location.includes(el)}
                     onChange={() => handleCheckboxChange(el)}
                     label={el}

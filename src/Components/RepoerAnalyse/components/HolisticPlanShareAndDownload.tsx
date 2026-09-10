@@ -98,7 +98,34 @@ const HolisticPlanShareAndDownload = ({
       </>
     );
   };
+  const isOnGoingPlan = activeTreatment?.state == 'On Going';
+  const isReportFailed =
+    isOnGoingPlan &&
+    (htmlReportPollState === 'failed' || htmlReportPollState === 'timed_out');
+  const isReportPreparing =
+    isOnGoingPlan &&
+    !isHtmlReportExists &&
+    !isReportFailed &&
+    (loadingHtmlReport ||
+      htmlReportPollState === 'idle' ||
+      htmlReportPollState === 'pending' ||
+      htmlReportPollState === 'building');
+
   const resolveisNotSharedButtonUi = () => {
+    if (isReportPreparing) {
+      return (
+        <div
+          className="rounded-[20px] flex items-center justify-center min-w-[168px] h-[32px] px-3 border border-Primary-DeepTeal/30 bg-backgroundColor-Main"
+          aria-busy="true"
+          aria-live="polite"
+        >
+          <div className="flex items-center justify-center gap-1.5 text-Primary-DeepTeal text-xs font-medium">
+            <SpinnerLoader color="#005F73" />
+            Preparing share…
+          </div>
+        </div>
+      );
+    }
     const disabled = !isHtmlReportExists;
     return (
       <>
@@ -116,7 +143,6 @@ const HolisticPlanShareAndDownload = ({
                     ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
                     `}
             onClick={() => {
-              console.log(activeTreatment);
               publish('openShareModalHolisticPlan', {
                 treatmentId: activeTreatment.t_plan_id,
               });
@@ -134,19 +160,14 @@ const HolisticPlanShareAndDownload = ({
     if (isShared) {
       return resolveisSharedButtonUi();
     }
-    return activeTreatment?.state == 'On Going'
+    return isOnGoingPlan
       ? resolveisNotSharedButtonUi()
       : resolveisNotSharedUi();
   };
 
   const resolveDownloadButtonHadler = () => {
-    const isFailed =
-      activeTreatment?.state == 'On Going' &&
-      (htmlReportPollState === 'failed' || htmlReportPollState === 'timed_out');
-    const isBuilding =
-      activeTreatment?.state == 'On Going' &&
-      !isFailed &&
-      (htmlReportPollState === 'building' || htmlReportPollState === 'pending');
+    const isFailed = isReportFailed;
+    const isBuilding = isReportPreparing;
 
     return (
       <>
@@ -189,9 +210,14 @@ const HolisticPlanShareAndDownload = ({
                   </button>
                 )}
               </div>
-            ) : isHtmlReportExists ||
-            loadingHtmlReport ||
-            activeTreatment?.state != 'On Going' ? (
+            ) : isBuilding ? (
+              <div className="flex flex-col items-center gap-1">
+                <SpinnerLoader color="#005F73"></SpinnerLoader>
+                <div className="text-[10px] text-Primary-DeepTeal">
+                  Your report is currently being prepared.
+                </div>
+              </div>
+            ) : isHtmlReportExists || activeTreatment?.state != 'On Going' ? (
               <>
                 {activeTreatment?.state != 'On Going' ? (
                   <>
@@ -208,13 +234,6 @@ const HolisticPlanShareAndDownload = ({
                   </>
                 )}
               </>
-            ) : isBuilding ? (
-              <div className="flex flex-col items-center gap-1">
-                <SpinnerLoader color="#005F73"></SpinnerLoader>
-                <div className="text-[10px] text-Primary-DeepTeal">
-                  Your report is currently being prepared.
-                </div>
-              </div>
             ) : null}
           </div>
         </div>
@@ -223,8 +242,22 @@ const HolisticPlanShareAndDownload = ({
   };
 
   const resolvePublicShareButtonHandler = () => {
-    const disabled =
-      !isHtmlReportExists && activeTreatment?.state == 'On Going';
+    if (isReportPreparing) {
+      return (
+        <div
+          className="flex flex-col items-center gap-1"
+          aria-busy="true"
+          aria-live="polite"
+        >
+          <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1.5">
+            <SpinnerLoader color="#005F73" />
+            Public Link
+          </div>
+          <div className="text-[10px] text-Text-Fivefold">Preparing report…</div>
+        </div>
+      );
+    }
+    const disabled = !isHtmlReportExists && isOnGoingPlan;
     return (
       <div className="flex flex-col items-center gap-1">
         <button
@@ -242,7 +275,7 @@ const HolisticPlanShareAndDownload = ({
           <img src="/icons/link-2.svg" alt="" className="w-5 h-5" />
           Public Link
         </button>
-        {!isHtmlReportExists && activeTreatment?.state == 'On Going' && (
+        {disabled && (
           <div className="text-[10px] text-Text-Fivefold">
             Available after report is ready
           </div>
