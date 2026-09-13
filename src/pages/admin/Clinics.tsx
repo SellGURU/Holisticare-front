@@ -33,6 +33,36 @@ interface ClinicRow {
   tempExpiresAtMs?: number | null;
 }
 
+type DemoClinicStatus =
+  | 'fresh'
+  | 'stale'
+  | 'missing'
+  | 'source_template'
+  | 'source_clinic';
+
+interface DemoClinicSummary {
+  status: DemoClinicStatus;
+  can_replace: boolean;
+  member_id: number | null;
+  email: string | null;
+}
+
+const DEMO_STATUS_LABEL: Record<DemoClinicStatus, string> = {
+  fresh: 'Fresh',
+  stale: 'Stale',
+  missing: 'Missing',
+  source_template: 'Template',
+  source_clinic: 'Source',
+};
+
+const DEMO_STATUS_CLASS: Record<DemoClinicStatus, string> = {
+  fresh: 'bg-emerald-50 text-emerald-700',
+  stale: 'bg-amber-50 text-amber-700',
+  missing: 'bg-slate-100 text-slate-600',
+  source_template: 'bg-teal-50 text-teal-700',
+  source_clinic: 'bg-slate-100 text-slate-600',
+};
+
 interface TempPasswordGrant {
   clinic_id: number;
   clinic_name: string;
@@ -74,16 +104,39 @@ const Clinics = () => {
   const [nowTick, setNowTick] = useState(0);
   const [mobileClinic, setMobileClinic] = useState<ClinicRow | null>(null);
   const [profileClinic, setProfileClinic] = useState<ClinicRow | null>(null);
+  const [demoByClinic, setDemoByClinic] = useState<Record<number, DemoClinicSummary>>(
+    {},
+  );
 
   const handleAuthFailure = () => {
     removeAdminToken();
     navigate('/admin/login');
   };
 
+  const loadDemoStatus = async () => {
+    try {
+      const res = await AdminApi.getDemoStatus();
+      const next: Record<number, DemoClinicSummary> = {};
+      for (const row of res.data?.clinics || []) {
+        next[row.clinic_id] = {
+          status: row.status,
+          can_replace: Boolean(row.can_replace),
+          member_id: row.member_id ?? null,
+          email: row.email ?? null,
+        };
+      }
+      setDemoByClinic(next);
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        handleAuthFailure();
+      }
+    }
+  };
+
   const loadClinics = async () => {
     setLoadingList(true);
     try {
-      const res = await AdminApi.listClinics();
+      const [res] = await Promise.all([AdminApi.listClinics(), loadDemoStatus()]);
       const nowMs = Date.now();
       setClinics(
         (res.data?.clinics || []).map((clinic: ClinicRow) =>
@@ -223,6 +276,32 @@ const Clinics = () => {
     }
   };
 
+  const resetClinicDemo = async (clinic: ClinicRow) => {
+    const demo = demoByClinic[clinic.clinic_id];
+    if (!demo?.can_replace) return;
+    if (
+      !window.confirm(
+        `Replace the demo patient in ${clinic.name || `clinic #${clinic.clinic_id}`} with a fresh template copy?`,
+      )
+    ) {
+      return;
+    }
+    setUpdatingId(clinic.clinic_id);
+    try {
+      const res = await AdminApi.replaceClinicDemo(clinic.clinic_id);
+      if (res.data?.action === 'skip') {
+        toast.info(res.data?.reason || 'Clinic already has a fresh snapshot.');
+      } else {
+        toast.success('Demo patient reset.');
+      }
+      await loadDemoStatus();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.detail || 'Failed to reset demo patient.');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   const copyTempPassword = async () => {
     if (!tempGrant?.temporary_password) return;
     try {
@@ -288,6 +367,7 @@ const Clinics = () => {
             <thead className="bg-[#F8FAFB] text-Text-Secondary">
               <tr>
                 <th className="px-3 py-3 font-medium">Clinic</th>
+                <th className="px-3 py-3 font-medium">Demo</th>
                 <th className="px-3 py-3 font-medium">Created</th>
                 <th className="px-3 py-3 font-medium">Users</th>
                 <th className="px-3 py-3 font-medium">Patients</th>
@@ -304,6 +384,7 @@ const Clinics = () => {
                 const activeSeconds = remainingSecondsFromMs(
                   clinic.tempExpiresAtMs,
                 );
+                const demo = demoByClinic[clinic.clinic_id];
                 return (
                   <tr key={clinic.clinic_id} className="align-top">
                     <td className="px-3 py-3">
@@ -314,6 +395,24 @@ const Clinics = () => {
                         {clinic.primary_email || 'No admin email'} · ID{' '}
                         {clinic.clinic_id}
                       </div>
+                    </td>
+                    <td className="px-3 py-3">
+                      {demo ? (
+                        <div>
+                          <span
+                            className={`inline-flex rounded-full px-2.5 py-1 text-[11px] ${DEMO_STATUS_CLASS[demo.status]}`}
+                          >
+                            {DEMO_STATUS_LABEL[demo.status]}
+                          </span>
+                          {demo.member_id ? (
+                            <div className="mt-1 text-[11px] text-Text-Secondary">
+                              {demo.member_id}
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <span className="text-Text-Secondary">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-3 text-Text-Secondary">
                       {formatDate(clinic.created_date)}
@@ -416,6 +515,17 @@ const Clinics = () => {
                           <Smartphone size={14} />
                           Mobile users
                         </button>
+                        {demo?.can_replace ? (
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => resetClinicDemo(clinic)}
+                            className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
+                          >
+                            <RefreshCw size={14} />
+                            Reset demo
+                          </button>
+                        ) : null}
                       </div>
                     </td>
                     <td className="px-3 py-3 text-Text-Secondary">

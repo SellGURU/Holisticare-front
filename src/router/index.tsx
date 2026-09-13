@@ -56,6 +56,7 @@ import SessionInsights from '../pages/admin/SessionInsights.tsx';
 import DataExplorer from '../pages/admin/DataExplorer.tsx';
 import AdminConfig from '../pages/admin/AdminConfig.tsx';
 import Clinics from '../pages/admin/Clinics.tsx';
+import AdminDemoPatient from '../pages/admin/AdminDemoPatient.tsx';
 import LlmPromptCatalog from '../pages/admin/LlmPromptCatalog.tsx';
 import LlmCallLog from '../pages/admin/LlmCallLog.tsx';
 import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
@@ -253,6 +254,12 @@ const router = createBrowserRouter([
   {
     path: '/admin/clinics',
     element: <AdminProtectedRoute Component={Clinics}></AdminProtectedRoute>,
+  },
+  {
+    path: '/admin/demo-patient',
+    element: (
+      <AdminProtectedRoute Component={AdminDemoPatient}></AdminProtectedRoute>
+    ),
   },
   {
     path: '/admin/questionnaires',

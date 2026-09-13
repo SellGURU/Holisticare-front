@@ -423,6 +423,42 @@ class AdminApi {
     );
   }
 
+  static getDemoStatus() {
+    return axios.get(`${getBaseUrl()}/admin/demo/status`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static replaceClinicDemo(clinicId: number) {
+    return axios.post(
+      `${getBaseUrl()}/admin/demo/clinics/${clinicId}/replace`,
+      {},
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static replaceAllDemos(force = true) {
+    return axios.post(
+      `${getBaseUrl()}/admin/demo/replace-all`,
+      { force },
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static getDemoJob(jobId: string) {
+    return axios.get(`${getBaseUrl()}/admin/demo/jobs/${jobId}`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static refreshDemoTemplate() {
+    return axios.post(
+      `${getBaseUrl()}/admin/demo/refresh-template`,
+      { confirm: 'REFRESH' },
+      { headers: withAuthHeaders() },
+    );
+  }
+
   static compareRookCsv(formData: FormData) {
     return axios.post(`${getBaseUrl()}/admin/compare-rook-csv`, formData, {
       headers: {
