@@ -50,40 +50,6 @@ export default class ActivityLogger {
 
   /** Chrome account lookup removed — it sent email/name into analytics. */
 
-  /** Get system/platform information */
-  private getSystemInfo(): string {
-    const ua = navigator.userAgent;
-
-    // Try to get platform from userAgentData (modern browsers)
-    const platform = (navigator as any).userAgentData?.platform;
-    if (platform) {
-      return platform.toLowerCase().replace(/\s+/g, '-');
-    }
-
-    // Fallback to parsing userAgent
-    const osMatch = ua.match(
-      /(Windows NT|Macintosh|Linux|Android|iOS|iPhone|iPad)/i,
-    );
-    if (osMatch) {
-      let os = osMatch[0].toLowerCase();
-      // Normalize Windows versions
-      if (os.includes('windows')) {
-        const winVersion = ua.match(/Windows NT (\d+\.\d+)/);
-        if (winVersion) {
-          const version = parseFloat(winVersion[1]);
-          if (version >= 10) os = 'windows-10';
-          else if (version >= 6.3) os = 'windows-8.1';
-          else if (version >= 6.2) os = 'windows-8';
-          else if (version >= 6.1) os = 'windows-7';
-          else os = 'windows';
-        }
-      }
-      return os.replace(/\s+/g, '-');
-    }
-
-    return 'unknown-platform';
-  }
-
   public static getInstance(): ActivityLogger {
     if (!ActivityLogger.instance) {
       ActivityLogger.instance = new ActivityLogger();
