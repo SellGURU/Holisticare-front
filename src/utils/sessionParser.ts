@@ -233,6 +233,205 @@ export const summariseEventsByDay = (events: ParsedEvent[]) => {
   );
 };
 
+/** Autosave chunks are 2 minutes; treat nearby chunks as one clinic visit. */
+export const VISIT_MERGE_GAP_MS = 3 * 60 * 1000;
+
+export interface ClinicVisit {
+  userId: string;
+  startedAt: string;
+  endedAt: string;
+  loggedOutAt: string | null;
+  logoutReason: string | null;
+  durationMs: number;
+  sessionCount: number;
+  eventCount: number;
+}
+
+export interface LatestAuthMoments {
+  lastLoginAt: string | null;
+  lastLogoutAt: string | null;
+  lastLogoutReason: string | null;
+  lastVisit: ClinicVisit | null;
+  appearsActive: boolean;
+}
+
+const toTimestamp = (value?: string | null) => {
+  if (!value) return null;
+  const s = String(value).trim();
+  const normalized =
+    s.endsWith('Z') || /[+-]\d{2}:?\d{2}$/.test(s)
+      ? s
+      : `${s.replace(' ', 'T')}Z`;
+  const ms = new Date(normalized).getTime();
+  return Number.isNaN(ms) ? null : ms;
+};
+
+const eventLogoutReason = (event: ParsedEvent) => {
+  const reason = event.raw?.props?.reason;
+  return typeof reason === 'string' && reason.trim() ? reason.trim() : null;
+};
+
+const sessionLogout = (session: ParsedSession) => {
+  const logoutEvents = session.events.filter(
+    (event) => event.eventName === 'session_end',
+  );
+  if (logoutEvents.length === 0) {
+    return { loggedOutAt: null as string | null, logoutReason: null as string | null };
+  }
+
+  const latest = logoutEvents[logoutEvents.length - 1];
+  return {
+    loggedOutAt: latest.createdAt || session.endedAt || null,
+    logoutReason: eventLogoutReason(latest),
+  };
+};
+
+export const getSessionAuthTimes = (session: ParsedSession) => {
+  const logout = sessionLogout(session);
+  return {
+    loginAt: session.startedAt || null,
+    logoutAt: logout.loggedOutAt,
+    logoutReason: logout.logoutReason,
+  };
+};
+
+export const mergeClinicVisits = (
+  sessions: ParsedSession[] = [],
+): ClinicVisit[] => {
+  const byUser = new Map<string, ParsedSession[]>();
+
+  sessions.forEach((session) => {
+    const key = session.userId || 'Unknown user';
+    const current = byUser.get(key) || [];
+    current.push(session);
+    byUser.set(key, current);
+  });
+
+  const visits: ClinicVisit[] = [];
+
+  byUser.forEach((userSessions, userId) => {
+    const sorted = [...userSessions].sort((first, second) => {
+      const firstMs = toTimestamp(first.startedAt) ?? 0;
+      const secondMs = toTimestamp(second.startedAt) ?? 0;
+      return firstMs - secondMs;
+    });
+
+    let current: ClinicVisit | null = null;
+
+    sorted.forEach((session) => {
+      const startMs = toTimestamp(session.startedAt);
+      const endMs = toTimestamp(session.endedAt) ?? startMs;
+      const logout = sessionLogout(session);
+
+      if (
+        !current ||
+        startMs == null ||
+        toTimestamp(current.endedAt) == null ||
+        startMs - (toTimestamp(current.endedAt) || 0) > VISIT_MERGE_GAP_MS
+      ) {
+        if (current) {
+          visits.push(current);
+        }
+
+        current = {
+          userId,
+          startedAt: session.startedAt,
+          endedAt: session.endedAt || session.startedAt,
+          loggedOutAt: logout.loggedOutAt,
+          logoutReason: logout.logoutReason,
+          durationMs: Math.max((endMs ?? 0) - (startMs ?? 0), 0),
+          sessionCount: 1,
+          eventCount: session.eventCount,
+        };
+        return;
+      }
+
+      current.endedAt = session.endedAt || current.endedAt;
+      current.sessionCount += 1;
+      current.eventCount += session.eventCount;
+      current.durationMs = Math.max(
+        (toTimestamp(current.endedAt) || 0) -
+          (toTimestamp(current.startedAt) || 0),
+        0,
+      );
+
+      if (logout.loggedOutAt) {
+        current.loggedOutAt = logout.loggedOutAt;
+        current.logoutReason = logout.logoutReason;
+      } else {
+        current.loggedOutAt = null;
+        current.logoutReason = null;
+      }
+    });
+
+    if (current) {
+      visits.push(current);
+    }
+  });
+
+  return visits.sort((first, second) => {
+    const firstMs = toTimestamp(first.startedAt) ?? 0;
+    const secondMs = toTimestamp(second.startedAt) ?? 0;
+    return secondMs - firstMs;
+  });
+};
+
+export const getLatestAuthMoments = (
+  sessions: ParsedSession[] = [],
+): LatestAuthMoments => {
+  const visits = mergeClinicVisits(sessions);
+  const lastVisit = visits[0] || null;
+  const lastLogoutVisit =
+    visits.find((visit) => Boolean(visit.loggedOutAt)) || null;
+  const lastLoginAt = lastVisit?.startedAt || null;
+  const lastLogoutAt = lastLogoutVisit?.loggedOutAt || null;
+  const loginMs = toTimestamp(lastLoginAt);
+  const logoutMs = toTimestamp(lastLogoutAt);
+
+  return {
+    lastLoginAt,
+    lastLogoutAt,
+    lastLogoutReason: lastLogoutVisit?.logoutReason || null,
+    lastVisit,
+    appearsActive: Boolean(
+      lastLoginAt && (logoutMs == null || (loginMs != null && loginMs > logoutMs)),
+    ),
+  };
+};
+
+export const formatVisitDuration = (durationMs: number) => {
+  if (!durationMs || durationMs < 1000) {
+    return 'under 1s';
+  }
+
+  const totalSeconds = Math.round(durationMs / 1000);
+  if (totalSeconds < 60) {
+    return `${totalSeconds}s`;
+  }
+
+  const totalMinutes = Math.round(durationMs / 60000);
+  if (totalMinutes < 60) {
+    return `${totalMinutes} min`;
+  }
+
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return minutes ? `${hours}h ${minutes}m` : `${hours}h`;
+};
+
+export const logoutReasonLabel = (reason: string | null | undefined) => {
+  switch (reason) {
+    case 'tab_close':
+      return 'Browser tab closed';
+    case 'page_hide':
+      return 'Left the portal';
+    case 'manual_destroy':
+      return 'Session ended';
+    default:
+      return reason ? reason.replace(/_/g, ' ') : 'Logout recorded';
+  }
+};
+
 export const filterSessions = (
   sessions: ParsedSession[],
   filters: {

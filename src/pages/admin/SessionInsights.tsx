@@ -20,7 +20,12 @@ import {
   useAdminAnalyticsLoading,
   useAdminContext,
 } from '../../store/adminContext';
+import {
+  formatPreciseDateTime,
+  formatRelativeDate,
+} from '../../utils/formatRelativeDate';
 import AdminAnalyticsLoadingNotice from './AdminAnalyticsLoadingNotice';
+import AdminLastActivityPanel from './AdminLastActivityPanel';
 import AdminShellLayout from './AdminShellLayout';
 import { buildAnalyticsPayload, formatCompactNumber } from './adminShared';
 import { copyText } from '../../utils/clipboard';
@@ -28,7 +33,11 @@ import {
   aggregateElements,
   aggregateRoutes,
   filterSessions,
+  formatVisitDuration,
   getDropOffRoutes,
+  getLatestAuthMoments,
+  getSessionAuthTimes,
+  logoutReasonLabel,
   parseSessions,
 } from '../../utils/sessionParser';
 
@@ -100,7 +109,7 @@ const buildAllBackendErrorsClipboardText = (entries: BackendErrorEntry[]) =>
 
 const SessionInsights = () => {
   const navigate = useNavigate();
-  const { selectedClinicEmail, startDate, endDate } = useAdminContext();
+  const { selectedClinicEmail, startDate, endDate, clinics } = useAdminContext();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [analytics, setAnalytics] = useState<any>(null);
@@ -186,6 +195,16 @@ const SessionInsights = () => {
     () => parseSessions(analytics?.sessions || []),
     [analytics?.sessions],
   );
+  const authMoments = useMemo(
+    () => getLatestAuthMoments(parsedSessions),
+    [parsedSessions],
+  );
+  const selectedClinic = clinics.find(
+    (clinic) => clinic.clinic_email === selectedClinicEmail,
+  );
+  const clinicScopeLabel = selectedClinic
+    ? `${selectedClinic.clinic_name} (${selectedClinic.clinic_email})`
+    : 'all clinics';
 
   const routeOptions = useMemo(() => {
     const routes = new Set<string>();
@@ -444,6 +463,8 @@ const SessionInsights = () => {
                 <option value="error">Errors</option>
                 <option value="api_error">API errors</option>
                 <option value="form_submit">Form submit</option>
+                <option value="session_start">Login / session start</option>
+                <option value="session_end">Logout / session end</option>
               </select>
             </div>
 
@@ -497,6 +518,11 @@ const SessionInsights = () => {
             </div>
           ))}
         </div>
+
+        <AdminLastActivityPanel
+          moments={authMoments}
+          scopeLabel={clinicScopeLabel}
+        />
 
         <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -847,14 +873,15 @@ const SessionInsights = () => {
             Session Timeline
           </div>
           <div className="mt-1 text-[11px] text-Text-Secondary">
-            Expand any session to see the event sequence support needs during
-            triage.
+            Expand any session to see the event sequence. Login and logout times
+            use the captured session start/end, with seconds.
           </div>
 
           <div className="mt-4 space-y-3">
             {visibleSessions.length > 0 ? (
               visibleSessions.map((session) => {
                 const isExpanded = expandedSessionId === session.sessionId;
+                const sessionAuth = getSessionAuthTimes(session);
                 return (
                   <div
                     key={session.sessionId}
@@ -875,10 +902,30 @@ const SessionInsights = () => {
                         <div className="truncate text-[12px] font-medium text-Text-Primary">
                           {session.userId}
                         </div>
+                        <div className="mt-2 grid gap-1 text-[11px] text-Text-Secondary sm:grid-cols-2">
+                          <div>
+                            <span className="font-medium text-Text-Primary">
+                              Login:
+                            </span>{' '}
+                            {sessionAuth.loginAt
+                              ? `${formatRelativeDate(sessionAuth.loginAt)} · ${formatPreciseDateTime(sessionAuth.loginAt)}`
+                              : 'Not recorded'}
+                          </div>
+                          <div>
+                            <span className="font-medium text-Text-Primary">
+                              Logout:
+                            </span>{' '}
+                            {sessionAuth.logoutAt
+                              ? `${formatRelativeDate(sessionAuth.logoutAt)} · ${formatPreciseDateTime(sessionAuth.logoutAt)}`
+                              : 'No logout recorded'}
+                          </div>
+                        </div>
                         <div className="mt-1 text-[11px] text-Text-Secondary">
-                          {session.eventCount} events,{' '}
-                          {Math.round(session.totalActiveTimeMs / 60000)} min
-                          active, session ID: {session.sessionId}
+                          {session.eventCount} events ·{' '}
+                          {formatVisitDuration(session.totalActiveTimeMs)} active
+                          {sessionAuth.logoutReason
+                            ? ` · ${logoutReasonLabel(sessionAuth.logoutReason)}`
+                            : ''}
                         </div>
                       </div>
                       {isExpanded ? (
@@ -907,7 +954,9 @@ const SessionInsights = () => {
                                     {event.eventName}
                                   </span>
                                   <span className="text-[11px] text-Text-Secondary">
-                                    {event.createdAt || 'Unknown time'}
+                                    {event.createdAt
+                                      ? `${formatRelativeDate(event.createdAt)} · ${formatPreciseDateTime(event.createdAt)}`
+                                      : 'Unknown time'}
                                   </span>
                                 </div>
                                 <div className="truncate text-[11px] text-Text-Secondary">

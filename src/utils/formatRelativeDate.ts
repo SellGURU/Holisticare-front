@@ -46,3 +46,13 @@ export function formatRelativeDate(dateStr: string | null | undefined): string {
   if (dateStart === yesterdayStart) return 'yesterday';
   return format(date, 'd MMM yyyy');
 }
+
+/** Exact local datetime with seconds, for support login/logout timestamps. */
+export function formatPreciseDateTime(
+  dateStr: string | null | undefined,
+): string {
+  if (!dateStr) return '';
+  const date = parseAsUTC(dateStr);
+  if (Number.isNaN(date.getTime())) return '';
+  return format(date, 'd MMM yyyy, HH:mm:ss');
+}

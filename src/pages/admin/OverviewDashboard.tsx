@@ -26,6 +26,7 @@ import {
   useAdminContext,
 } from '../../store/adminContext';
 import AdminAnalyticsLoadingNotice from './AdminAnalyticsLoadingNotice';
+import AdminLastActivityPanel from './AdminLastActivityPanel';
 import AdminShellLayout from './AdminShellLayout';
 import {
   buildAnalyticsPayload,
@@ -39,6 +40,7 @@ import {
 import {
   aggregateRoutes,
   flattenEvents,
+  getLatestAuthMoments,
   parseSessions,
   summariseEventsByDay,
 } from '../../utils/sessionParser';
@@ -61,7 +63,7 @@ const toneClasses: Record<string, string> = {
 
 const OverviewDashboard = () => {
   const navigate = useNavigate();
-  const { selectedClinicEmail, startDate, endDate } = useAdminContext();
+  const { selectedClinicEmail, startDate, endDate, clinics } = useAdminContext();
   const [loadingCurrent, setLoadingCurrent] = useState(true);
   const [loadingPrevious, setLoadingPrevious] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -167,6 +169,16 @@ const OverviewDashboard = () => {
     () => parseSessions(analytics?.sessions || []),
     [analytics?.sessions],
   );
+  const authMoments = useMemo(
+    () => getLatestAuthMoments(parsedSessions),
+    [parsedSessions],
+  );
+  const selectedClinic = clinics.find(
+    (clinic) => clinic.clinic_email === selectedClinicEmail,
+  );
+  const clinicScopeLabel = selectedClinic
+    ? `${selectedClinic.clinic_name} (${selectedClinic.clinic_email})`
+    : 'all clinics';
   const allEvents = useMemo(
     () => flattenEvents(parsedSessions),
     [parsedSessions],
@@ -358,7 +370,7 @@ const OverviewDashboard = () => {
   return (
     <AdminShellLayout
       title="Overview Dashboard"
-      subtitle="A support-friendly summary of clinic performance, recent activity, and operational signals."
+      subtitle="A support-friendly summary of clinic performance, last login/logout, recent activity, and operational signals."
       actions={
         <>
           <button
@@ -388,6 +400,10 @@ const OverviewDashboard = () => {
         {analyticsBusy && (
           <AdminAnalyticsLoadingNotice detail="Loading overview metrics and session activity for your filters." />
         )}
+        <AdminLastActivityPanel
+          moments={authMoments}
+          scopeLabel={clinicScopeLabel}
+        />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {summaryCards.map((card) => {
             const currentValue = analytics?.[card.key] ?? 0;

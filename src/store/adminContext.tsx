@@ -16,6 +16,8 @@ const ADMIN_FILTERS_VERSION = '2';
 export const defaultAdminStartDate = () =>
   format(subDays(new Date(), 6), 'yyyy-MM-dd');
 export const defaultAdminEndDate = () => format(new Date(), 'yyyy-MM-dd');
+export const adminRangeStartDate = (daysInclusive: number) =>
+  format(subDays(new Date(), Math.max(daysInclusive, 1) - 1), 'yyyy-MM-dd');
 
 const ensureAdminFilterDefaults = () => {
   if (typeof window === 'undefined') {
@@ -106,10 +108,41 @@ const AdminContextProvider = ({ children }: { children: ReactNode }) => {
     setLoadingClinics(true);
     try {
       const res = await AdminApi.getClinics();
-      const nextClinics = Array.isArray(res.data) ? res.data : [];
-      setClinics(nextClinics);
-      if (nextClinics.length > 0 && !selectedClinicEmail) {
-        const firstEmail = nextClinics[0].clinic_email;
+      const payload = res.data;
+      const nextClinics = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload?.clinics)
+          ? payload.clinics
+          : [];
+      const normalizedClinics = nextClinics.map(
+        (clinic: Record<string, unknown>) => {
+          const email = String(
+            clinic.clinic_email ||
+              clinic.primary_email ||
+              clinic.email ||
+              '',
+          ).trim();
+          const name = String(
+            clinic.clinic_name || clinic.name || email || '',
+          ).trim();
+          return {
+            clinic_email: email,
+            clinic_name: name,
+          };
+        },
+      );
+      setClinics(normalizedClinics);
+      const storedClinic =
+        typeof window === 'undefined'
+          ? selectedClinicEmail
+          : localStorage.getItem('adminSelectedClinicEmail');
+      if (
+        normalizedClinics.length > 0 &&
+        storedClinic == null &&
+        !selectedClinicEmail &&
+        normalizedClinics[0].clinic_email
+      ) {
+        const firstEmail = normalizedClinics[0].clinic_email;
         setSelectedClinicEmailState(firstEmail);
         persist('adminSelectedClinicEmail', firstEmail);
       }
@@ -117,14 +150,6 @@ const AdminContextProvider = ({ children }: { children: ReactNode }) => {
       setLoadingClinics(false);
     }
   }, [selectedClinicEmail]);
-
-  useEffect(() => {
-    if (clinics.length > 0 && !selectedClinicEmail) {
-      const firstEmail = clinics[0].clinic_email;
-      setSelectedClinicEmailState(firstEmail);
-      persist('adminSelectedClinicEmail', firstEmail);
-    }
-  }, [clinics, selectedClinicEmail]);
 
   const value = useMemo(
     () => ({

@@ -18,11 +18,13 @@ import {
   X,
 } from 'lucide-react';
 import {
+  adminRangeStartDate,
   defaultAdminEndDate,
   defaultAdminStartDate,
   useAdminContext,
 } from '../../store/adminContext';
 import AdminAnalyticsLoadingNotice from './AdminAnalyticsLoadingNotice';
+import AdminClinicSearchSelect from './AdminClinicSearchSelect';
 
 interface AdminShellLayoutProps {
   title: string;
@@ -201,29 +203,18 @@ const AdminShellLayout = ({
           </div>
 
           {showGlobalFilters && (
-            <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
+            <div className="relative z-50 rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
               <div className="flex flex-col gap-4 xl:flex-row xl:items-end">
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-[1.4]">
                   <label className="mb-1 block text-[11px] text-Text-Secondary">
                     Clinic scope
                   </label>
-                  <select
+                  <AdminClinicSearchSelect
+                    clinics={clinics}
                     value={selectedClinicEmail}
-                    onChange={(event) =>
-                      setSelectedClinicEmail(event.target.value)
-                    }
-                    className="w-full rounded-2xl border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] outline-none"
-                  >
-                    <option value="">All clinics</option>
-                    {clinics.map((clinic) => (
-                      <option
-                        key={clinic.clinic_email}
-                        value={clinic.clinic_email}
-                      >
-                        {clinic.clinic_name} ({clinic.clinic_email})
-                      </option>
-                    ))}
-                  </select>
+                    onChange={setSelectedClinicEmail}
+                    loading={loadingClinics}
+                  />
                 </div>
 
                 <div className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-2">
@@ -251,26 +242,48 @@ const AdminShellLayout = ({
                   </div>
                 </div>
 
-                <div className="flex shrink-0 flex-col gap-2">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setDateRange(
-                        defaultAdminStartDate(),
-                        defaultAdminEndDate(),
-                      )
-                    }
-                    className="rounded-2xl border border-Gray-50 bg-[#F8FAFB] px-4 py-2 text-[12px] text-Text-Primary hover:bg-Gray-15"
-                  >
-                    Last 7 days
-                  </button>
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  {[
+                    {
+                      label: 'Today',
+                      start: defaultAdminEndDate(),
+                      end: defaultAdminEndDate(),
+                    },
+                    {
+                      label: 'Last 7 days',
+                      start: defaultAdminStartDate(),
+                      end: defaultAdminEndDate(),
+                    },
+                    {
+                      label: 'Last 30 days',
+                      start: adminRangeStartDate(30),
+                      end: defaultAdminEndDate(),
+                    },
+                  ].map((preset) => {
+                    const active =
+                      startDate === preset.start && endDate === preset.end;
+                    return (
+                      <button
+                        key={preset.label}
+                        type="button"
+                        onClick={() => setDateRange(preset.start, preset.end)}
+                        className={`rounded-2xl border px-3 py-2 text-[12px] ${
+                          active
+                            ? 'border-Primary-DeepTeal bg-Primary-DeepTeal text-white'
+                            : 'border-Gray-50 bg-[#F8FAFB] text-Text-Primary hover:bg-Gray-15'
+                        }`}
+                      >
+                        {preset.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
               <div className="mt-3 text-[11px] text-Text-Secondary">
                 {loadingClinics
                   ? 'Refreshing clinic list…'
-                  : 'Default: last 7 days and one clinic (faster load). Use All clinics or a wider range when you need full reports.'}
+                  : 'Type an email or clinic name to jump to that clinic. Default is last 7 days for a faster load.'}
               </div>
 
               {analyticsLoading && (
