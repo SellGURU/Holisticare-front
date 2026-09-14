@@ -196,10 +196,8 @@ axios.interceptors.response.use(
       endpoint: config.url || 'unknown',
       method: config.method?.toUpperCase() || 'GET',
       status: error.response?.status || 0,
-      message: backendMessage || error.message || 'Unknown network error',
       durationMs: duration,
       route: window.location.pathname,
-      payload: config.data,
     });
 
     if (isBrowserOffline() && isAxiosNetworkError(error)) {

@@ -1,3 +1,4 @@
+import './utils/silenceConsole';
 import { createRoot } from 'react-dom/client';
 import { initGlobalErrorHandler } from './globalErrorHandler.ts';
 import '@fontsource/inter/400.css';

@@ -21,6 +21,10 @@ export const shouldShowChartLoading = (biomarker: unknown): boolean => {
   return true;
 };
 
+/** Value arrived but the clinic catalog has no range bars for this biomarker. */
+export const shouldShowChartEmpty = (biomarker: unknown): boolean =>
+  hasBiomarkerValue(biomarker) && !isBiomarkerChartReady(biomarker);
+
 export const isPreviewSource = (source?: string | null): boolean =>
   source === 'preview' || source === 'preview_evaluated';
 
@@ -114,6 +118,32 @@ const ChartLoadingPlaceholder = ({
     return <DescriptionSkeleton className={className} />;
   }
   return <StatusBarChartSkeleton className={className} />;
+};
+
+type ChartEmptyPlaceholderProps = {
+  className?: string;
+  variant?: 'status-bar' | 'historical';
+};
+
+export const ChartEmptyPlaceholder = ({
+  className = '',
+  variant = 'status-bar',
+}: ChartEmptyPlaceholderProps) => {
+  const message =
+    variant === 'historical'
+      ? 'A trend chart is not available for this biomarker.'
+      : 'No reference range is configured for this biomarker, so the status chart cannot be drawn.';
+  return (
+    <div
+      className={`flex w-full min-h-[48px] items-center justify-center px-4 ${className}`}
+      role="status"
+      aria-label="Chart unavailable"
+    >
+      <p className="text-center text-[10px] leading-4 text-Text-Secondary max-w-[360px]">
+        {message}
+      </p>
+    </div>
+  );
 };
 
 export default ChartLoadingPlaceholder;

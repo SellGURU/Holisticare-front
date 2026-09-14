@@ -18,7 +18,9 @@ import MarkdownText from '../../markdownText';
 import DescriptionSkeleton from '../DescriptionSkeleton';
 import { useCategoryDescriptionDisplay } from '../../../hooks/useCategoryDescriptionDisplay';
 import ChartLoadingPlaceholder, {
+  ChartEmptyPlaceholder,
   isPreviewSource,
+  shouldShowChartEmpty,
   shouldShowChartLoading,
 } from '../ChartLoadingPlaceholder';
 import CategoryStats from './CategoryStats';
@@ -197,6 +199,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   }, [selectGroup, sortedReferences]);
 
   const showChartLoading = shouldShowChartLoading(active);
+  const showChartEmpty = shouldShowChartEmpty(active);
   const showNeedFocusAnalyzing =
     needFocusAnalyzing ?? (isProcessing || !isScoringComplete);
   const showRingLoading = resolveShowRingLoading(
@@ -473,6 +476,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                                 variant="status-bar"
                                 className="pt-2"
                               />
+                            ) : showChartEmpty ? (
+                              <ChartEmptyPlaceholder
+                                variant="status-bar"
+                                className="pt-2"
+                              />
                             ) : (
                               <StatusBarChartV3
                                 status={active.status}
@@ -527,6 +535,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                           {active &&
                             (showChartLoading ? (
                               <ChartLoadingPlaceholder variant="historical" />
+                            ) : showChartEmpty ? (
+                              <ChartEmptyPlaceholder variant="historical" />
                             ) : (
                               <HistoricalChart
                                 chartId={data.subcategory}

@@ -10,6 +10,9 @@ const PORTAL_AUTH_PAGE_MARKERS = [
   '/register',
   '/forgetPassword',
   '/html-previewer',
+  '/privacy',
+  '/terms',
+  '/legal/',
 ] as const;
 
 export function normalizeLocationPath(location: string): string {

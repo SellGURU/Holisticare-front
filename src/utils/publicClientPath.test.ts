@@ -43,6 +43,11 @@ describe('shouldIgnorePortalAuthFailure', () => {
     expect(shouldIgnorePortalAuthFailure('/register')).toBe(true);
     expect(shouldIgnorePortalAuthFailure('/forgetPassword')).toBe(true);
     expect(shouldIgnorePortalAuthFailure('/html-previewer/1')).toBe(true);
+    expect(shouldIgnorePortalAuthFailure('/privacy')).toBe(true);
+    expect(shouldIgnorePortalAuthFailure('/terms')).toBe(true);
+    expect(shouldIgnorePortalAuthFailure('/legal/providers-privacy-policy')).toBe(
+      true,
+    );
   });
 
   it('still forces portal login on authenticated app routes', () => {

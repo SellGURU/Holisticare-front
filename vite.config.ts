@@ -9,7 +9,7 @@ const buildId =
   (process.env as any).VERCEL_DEPLOYMENT_ID ||
   Date.now().toString();
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   server: {
     host: '0.0.0.0',
     proxy: {
@@ -65,4 +65,7 @@ export default defineConfig({
       },
     }),
   ],
-});
+  esbuild: {
+    drop: mode === 'production' ? ['console', 'debugger'] : [],
+  },
+}));

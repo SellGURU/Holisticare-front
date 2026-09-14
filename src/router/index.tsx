@@ -64,6 +64,7 @@ import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
 import RookCsvComparison from '../pages/admin/RookCsvComparison.tsx';
 import QuestionnaireManagement from '../pages/admin/QuestionnaireManagement.tsx';
 import RouteErrorFallback from './RouteErrorFallback';
+import LegalDocument from '../pages/legal/LegalDocument';
 
 const router = createBrowserRouter([
   {
@@ -300,6 +301,22 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <SignUp></SignUp>,
+  },
+  {
+    path: '/privacy',
+    element: <LegalDocument kind="privacy" audience="provider" />,
+  },
+  {
+    path: '/terms',
+    element: <LegalDocument kind="terms" audience="provider" />,
+  },
+  {
+    path: '/legal/providers-privacy-policy',
+    element: <LegalDocument kind="privacy" audience="provider" />,
+  },
+  {
+    path: '/legal/providers-terms-of-service',
+    element: <LegalDocument kind="terms" audience="provider" />,
   },
   {
     path: '/staff/register',

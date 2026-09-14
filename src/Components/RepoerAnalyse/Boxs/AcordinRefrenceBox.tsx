@@ -4,7 +4,9 @@ import Toggle from './Toggle';
 import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
 import HistoricalChart from '../HistoricalChart';
 import ChartLoadingPlaceholder, {
+  ChartEmptyPlaceholder,
   isPreviewSource,
+  shouldShowChartEmpty,
   shouldShowChartLoading,
 } from '../ChartLoadingPlaceholder';
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -20,6 +22,7 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
   const [showMoreInfo, setShowMoreInfo] = useState(false);
   const [showHistoricalChart, setShowHistoricalChart] = useState(false);
   const showChartLoading = shouldShowChartLoading(biomarker);
+  const showChartEmpty = shouldShowChartEmpty(biomarker);
   return (
     <>
       <div
@@ -99,6 +102,8 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
                   <div className="mt-5">
                     {showChartLoading ? (
                       <ChartLoadingPlaceholder variant="historical" />
+                    ) : showChartEmpty ? (
+                      <ChartEmptyPlaceholder variant="historical" />
                     ) : (
                       <HistoricalChart
                         unit={biomarker?.unit}
@@ -120,6 +125,11 @@ const AcordinRefrenceBox: React.FC<AcordinRefrenceBoxProps> = ({
                     {biomarker &&
                       (showChartLoading ? (
                         <ChartLoadingPlaceholder
+                          variant="status-bar"
+                          className="pt-2"
+                        />
+                      ) : showChartEmpty ? (
+                        <ChartEmptyPlaceholder
                           variant="status-bar"
                           className="pt-2"
                         />

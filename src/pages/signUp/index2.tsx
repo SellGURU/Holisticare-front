@@ -11,6 +11,10 @@ import { useApp } from '../../hooks';
 import YoupValidation from '../../validation';
 import AuthWithGoogle from '../../Components/AuthWithGoogle';
 import { Tooltip } from 'react-tooltip';
+import {
+  PROVIDER_PRIVACY_PATH,
+  PROVIDER_TERMS_PATH,
+} from '../../constants/legalUrls';
 
 const validationSchema = yup.object({
   email: YoupValidation('email'),
@@ -252,7 +256,9 @@ const SignUp = () => {
               className="text-Primary-DeepTeal cursor-pointer hover:underline hover:opacity-90"
               onClick={() => {
                 window.open(
-                  'https://holisticare.io/legal/providers-privacy-policy/',
+                  PROVIDER_PRIVACY_PATH,
+                  '_blank',
+                  'noopener,noreferrer',
                 );
               }}
             >
@@ -263,7 +269,9 @@ const SignUp = () => {
               className="text-Primary-DeepTeal  cursor-pointer hover:underline hover:opacity-90"
               onClick={() => {
                 window.open(
-                  'https://holisticare.io/legal/providers-terms-of-service/',
+                  PROVIDER_TERMS_PATH,
+                  '_blank',
+                  'noopener,noreferrer',
                 );
               }}
             >

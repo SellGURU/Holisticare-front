@@ -25,6 +25,10 @@ import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIco
 import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 // import { AppContext } from '../../store/app';
 import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
+import {
+  ChartEmptyPlaceholder,
+  shouldShowChartEmpty,
+} from '../../Components/RepoerAnalyse/ChartLoadingPlaceholder';
 import { CoverageCard } from '../../Components/coverageCard';
 import { SourceTag } from '../../Components/source-badge';
 import useIsDemo from '../../hooks/useIsDemo';
@@ -1187,12 +1191,16 @@ const NewGenerateHolisticPlan = () => {
                                             <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                               Last Value
                                             </div>
-                                            <StatusBarChartV3
-                                              values={activeEl.values}
-                                              unit={activeEl.unit}
-                                              status={activeEl.status}
-                                              data={activeEl.chart_bounds}
-                                            ></StatusBarChartV3>
+                                            {shouldShowChartEmpty(activeEl) ? (
+                                              <ChartEmptyPlaceholder variant="status-bar" />
+                                            ) : (
+                                              <StatusBarChartV3
+                                                values={activeEl.values}
+                                                unit={activeEl.unit}
+                                                status={activeEl.status}
+                                                data={activeEl.chart_bounds}
+                                              ></StatusBarChartV3>
+                                            )}
                                             {/* <StatusBarChartV2
                                                     data={resol.chart_bounds}
                                                     mapingData={Object.fromEntries(

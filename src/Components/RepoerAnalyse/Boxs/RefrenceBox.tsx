@@ -14,7 +14,9 @@ import HistoricalChart from '../HistoricalChart';
 import StatusBarChartv3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
 import { SourceTag } from '../../source-badge';
 import ChartLoadingPlaceholder, {
+  ChartEmptyPlaceholder,
   isPreviewSource,
+  shouldShowChartEmpty,
   shouldShowChartLoading,
 } from '../ChartLoadingPlaceholder';
 interface RefrenceBoxProps {
@@ -33,6 +35,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
 
   const isChartDataEmpty = false;
   const showChartLoading = shouldShowChartLoading(data);
+  const showChartEmpty = shouldShowChartEmpty(data);
 
   return (
     <>
@@ -165,6 +168,11 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
                   variant="historical"
                   className="h-[80px]"
                 />
+              ) : showChartEmpty ? (
+                <ChartEmptyPlaceholder
+                  variant="historical"
+                  className="h-[80px]"
+                />
               ) : (
                 <HistoricalChart
                   unit={data?.unit}
@@ -185,6 +193,11 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
             <div className="mt-14">
               {showChartLoading ? (
                 <ChartLoadingPlaceholder
+                  variant="status-bar"
+                  className="pt-2"
+                />
+              ) : showChartEmpty ? (
+                <ChartEmptyPlaceholder
                   variant="status-bar"
                   className="pt-2"
                 />
