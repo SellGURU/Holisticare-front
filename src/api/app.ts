@@ -594,9 +594,13 @@ class Application extends Api {
   };
 
   static SendVerification = ({ email }: { email: string }) => {
-    const response = this.post('/auth/forget_password/send_verification', {
-      email: email,
-    });
+    const response = this.post(
+      '/auth/forget_password/send_verification',
+      {
+        email: email,
+      },
+      { noAuth: true },
+    );
     return response;
   };
   static varifyCode = ({
@@ -606,10 +610,14 @@ class Application extends Api {
     email: string;
     reset_code: string;
   }) => {
-    const response = this.post('/auth/forget_password/verify_reset_code', {
-      email: email,
-      reset_code: reset_code,
-    });
+    const response = this.post(
+      '/auth/forget_password/verify_reset_code',
+      {
+        email: email,
+        reset_code: reset_code,
+      },
+      { noAuth: true },
+    );
     return response;
   };
 
@@ -620,10 +628,14 @@ class Application extends Api {
     email: string;
     password: string;
   }) => {
-    const response = this.post('/auth/forget_password/reset_password', {
-      email: email,
-      password: password,
-    });
+    const response = this.post(
+      '/auth/forget_password/reset_password',
+      {
+        email: email,
+        password: password,
+      },
+      { noAuth: true },
+    );
     return response;
   };
   static deleteClinic = (data: any) => {
@@ -632,9 +644,13 @@ class Application extends Api {
   };
 
   static LoginWithGooglge = (data: any) => {
-    const response = this.post('/auth/google_login', {
-      google_json: data,
-    });
+    const response = this.post(
+      '/auth/google_login',
+      {
+        google_json: data,
+      },
+      { noAuth: true },
+    );
     return response;
   };
   static dashboardTasks = () => {

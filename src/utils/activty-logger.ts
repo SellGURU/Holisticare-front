@@ -3,12 +3,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import Log from '../api/Log';
 import { getTokenFromLocalStorage } from '../store/token';
-import { isPublicClientPath } from './publicClientPath';
 import {
   isIdentifyingBrowserId,
   stripQuery,
   surrogateKey,
 } from './activityIdentity';
+import { isPublicClientPath, shouldIgnorePortalAuthFailure } from './publicClientPath';
 
 export default class ActivityLogger {
   private static instance: ActivityLogger;
@@ -249,7 +249,9 @@ export default class ActivityLogger {
   private canSendPortalSessionLog(): boolean {
     if (getTokenFromLocalStorage() == null) return false;
     if (typeof window === 'undefined') return true;
-    return !isPublicClientPath(window.location.pathname || window.location.href);
+    const location = window.location.pathname || window.location.href;
+    if (isPublicClientPath(location)) return false;
+    return !shouldIgnorePortalAuthFailure(location);
   }
 
   /** Save persistent copy before unload */

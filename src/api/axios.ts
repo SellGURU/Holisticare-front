@@ -4,6 +4,7 @@ import ActivityLogger from '../utils/activty-logger';
 import { toast } from 'react-toastify';
 import { showError, showSuccess, showWarning } from '../Components/GlobalToast';
 import Auth from './auth';
+import { getTokenFromLocalStorage } from '../store/token';
 import { portalSessionExpired } from '../utils/portalSessionExpired';
 import {
   isAxiosNetworkError,
@@ -12,9 +13,43 @@ import {
   isServerHttpError,
 } from '../utils/networkStatus';
 import {
+  extractBearerToken,
+  isMobileOnlyAuthFailure,
+  isNonSessionAuthRequest,
   isPortalTokenErrorMessage,
+  isStalePortalAuthFailure,
   shouldIgnorePortalAuthFailure,
 } from '../utils/publicClientPath';
+
+const maybeExpirePortalSession = (
+  config: any,
+  tokenError: boolean,
+  status?: number,
+  detail?: unknown,
+) => {
+  if (
+    shouldIgnorePortalAuthFailure(
+      window.location.pathname || window.location.href,
+    )
+  ) {
+    return;
+  }
+  if (isNonSessionAuthRequest(config?.url)) {
+    return;
+  }
+  if (isMobileOnlyAuthFailure(detail)) {
+    return;
+  }
+  const sentToken = extractBearerToken(config?.headers);
+  if (
+    isStalePortalAuthFailure(sentToken, getTokenFromLocalStorage())
+  ) {
+    return;
+  }
+  if (status === 401 || tokenError) {
+    portalSessionExpired();
+  }
+};
 
 const logger = ActivityLogger.getInstance();
 
@@ -171,7 +206,12 @@ axios.interceptors.response.use(
       !ignorePortalAuth &&
       (response.status === 401 || isPortalTokenErrorMessage(detail))
     ) {
-      portalSessionExpired();
+      maybeExpirePortalSession(
+        response.config,
+        isPortalTokenErrorMessage(detail),
+        response.status,
+        detail,
+      );
     }
 
     if (detail && response.status !== 206 && !isSuccessDetail) {
@@ -226,7 +266,12 @@ axios.interceptors.response.use(
       !ignorePortalAuth &&
       (error.response?.status === 401 || tokenError)
     ) {
-      portalSessionExpired();
+      maybeExpirePortalSession(
+        config,
+        tokenError,
+        error.response?.status,
+        error.response?.data?.detail ?? backendMessage,
+      );
     }
 
     if (error.code === 'ERR_NETWORK') {

@@ -132,24 +132,31 @@ const AdminContextProvider = ({ children }: { children: ReactNode }) => {
         },
       );
       setClinics(normalizedClinics);
-      const storedClinic =
-        typeof window === 'undefined'
-          ? selectedClinicEmail
-          : localStorage.getItem('adminSelectedClinicEmail');
-      if (
-        normalizedClinics.length > 0 &&
-        storedClinic == null &&
-        !selectedClinicEmail &&
-        normalizedClinics[0].clinic_email
-      ) {
-        const firstEmail = normalizedClinics[0].clinic_email;
-        setSelectedClinicEmailState(firstEmail);
-        persist('adminSelectedClinicEmail', firstEmail);
-      }
+      setSelectedClinicEmailState((current) => {
+        const storedClinic =
+          typeof window === 'undefined'
+            ? current
+            : localStorage.getItem('adminSelectedClinicEmail');
+        if (
+          normalizedClinics.length > 0 &&
+          storedClinic == null &&
+          !current &&
+          normalizedClinics[0].clinic_email
+        ) {
+          const firstEmail = normalizedClinics[0].clinic_email;
+          persist('adminSelectedClinicEmail', firstEmail);
+          return firstEmail;
+        }
+        return current;
+      });
     } finally {
       setLoadingClinics(false);
     }
-  }, [selectedClinicEmail]);
+  }, []);
+
+  useEffect(() => {
+    refreshClinics().catch(() => {});
+  }, [refreshClinics]);
 
   const value = useMemo(
     () => ({

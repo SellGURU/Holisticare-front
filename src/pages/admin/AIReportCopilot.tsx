@@ -102,8 +102,6 @@ const AIReportCopilot = () => {
   const navigate = useNavigate();
   const {
     clinics,
-    loadingClinics,
-    refreshClinics,
     selectedClinicEmail,
     startDate,
     endDate,
@@ -114,12 +112,6 @@ const AIReportCopilot = () => {
   const [composer, setComposer] = useState<ReportComposerState>(() =>
     defaultComposerState(selectedClinicEmail),
   );
-
-  useEffect(() => {
-    if (!clinics.length && !loadingClinics) {
-      refreshClinics().catch(() => {});
-    }
-  }, [clinics.length, loadingClinics, refreshClinics]);
 
   useEffect(() => {
     setSavedReports(readSavedReports());

@@ -72,8 +72,6 @@ const ClinicWorkspace = () => {
   const navigate = useNavigate();
   const {
     clinics,
-    loadingClinics,
-    refreshClinics,
     selectedClinicEmail,
     startDate,
     endDate,
@@ -102,12 +100,6 @@ const ClinicWorkspace = () => {
   const [newTagType, setNewTagType] = useState<AdminTagType>('workflow');
 
   useAdminAnalyticsLoading(loading || refreshing);
-
-  useEffect(() => {
-    if (!clinics.length && !loadingClinics) {
-      refreshClinics().catch(() => {});
-    }
-  }, [clinics.length, loadingClinics, refreshClinics]);
 
   const handleAuthFailure = () => {
     removeAdminToken();

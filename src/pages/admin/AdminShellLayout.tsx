@@ -88,15 +88,8 @@ const AdminShellLayout = ({
     setStartDate,
     setEndDate,
     setDateRange,
-    refreshClinics,
     analyticsLoading,
   } = useAdminContext();
-
-  useEffect(() => {
-    if (clinics.length === 0 && !loadingClinics) {
-      refreshClinics().catch(() => {});
-    }
-  }, [clinics.length, loadingClinics, refreshClinics]);
 
   useEffect(() => {
     setMenuOpen(false);

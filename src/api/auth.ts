@@ -28,6 +28,7 @@ class Auth extends Api {
     data.append('password', password);
 
     return this.post('/auth/token', data, {
+      noAuth: true,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -58,6 +59,7 @@ class Auth extends Api {
     };
 
     return this.post('/auth/', data, {
+      noAuth: true,
       headers: {
         'Content-Type': 'application/json',
       },

@@ -13,7 +13,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
     setData(classData);
   }, [classData]);
   const grouped = data?.reduce((acc: any, item) => {
-    const key = item.category.toLowerCase();
+    const key = String(item?.category || 'other').toLowerCase();
     if (!acc[key]) acc[key] = [];
     acc[key].push(item);
     return acc;

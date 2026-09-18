@@ -12,10 +12,11 @@ class Api {
       // toast.loading('pending ...')
     }
     const { noAuth, ...axiosConfig } = config || {};
-    const headers = noAuth
+    const token = getTokenFromLocalStorage();
+    const headers = noAuth || !token
       ? config?.headers || { 'Content-Type': 'application/json' }
       : {
-          Authorization: 'Bearer ' + getTokenFromLocalStorage(),
+          Authorization: 'Bearer ' + token,
           'Content-Type':
             config?.headers?.['Content-Type'] || 'application/json',
         };
@@ -35,10 +36,11 @@ class Api {
 
   protected static get(url: string, config?: any) {
     const { noAuth, holisticareHealthCheck, ...axiosConfig } = config || {};
-    const headers = noAuth
+    const token = getTokenFromLocalStorage();
+    const headers = noAuth || !token
       ? config?.headers || {}
       : {
-          Authorization: 'Bearer ' + getTokenFromLocalStorage(),
+          Authorization: 'Bearer ' + token,
           'Content-Type':
             config?.headers?.['Content-Type'] || 'application/json',
         };
