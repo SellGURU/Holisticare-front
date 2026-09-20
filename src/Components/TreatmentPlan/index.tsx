@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
 import { useNavigate, useParams } from 'react-router-dom';
@@ -20,6 +20,7 @@ import { clientNeedsCompile } from '../../utils/compileFromNeedRefreshModal';
 import {
   normalizePlanItemData,
   normalizeTreatmentPlanCategories,
+  pickLatestGeneratedHolisticPlan,
 } from '../../utils/treatmentPlanShape';
 
 type CardData = {
@@ -164,16 +165,6 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           }
           setCardData(plans);
           setPrintActionPlan(plans);
-          if (plans.length > 0) {
-            const latestPlan = plans[plans.length - 1];
-            setActiveTreatmnet(latestPlan.t_plan_id);
-            emitActivePlan(latestPlan);
-            setIsShareModalSuccess(latestPlan.shared_report_with_client);
-            setDateShare(latestPlan.shared_report_with_client_date);
-          } else {
-            setActiveTreatmnet('');
-            emitActivePlan(null);
-          }
           setTimeout(() => {
             const container: any = document.getElementById('scrollContainer');
             if (container) {
@@ -186,6 +177,27 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         });
     }
   }, [id, isShare]);
+  useLayoutEffect(() => {
+    if (isShare) return;
+    const selected = cardData.find(
+      (plan) => String(plan.t_plan_id) === String(activeTreatment),
+    );
+    const plan = selected ?? pickLatestGeneratedHolisticPlan(cardData);
+    if (!plan) {
+      if (cardData.length === 0) return;
+      if (activeTreatment) {
+        setActiveTreatmnet('');
+      }
+      emitActivePlan(null);
+      return;
+    }
+    if (String(activeTreatment) !== String(plan.t_plan_id)) {
+      setActiveTreatmnet(plan.t_plan_id);
+      setIsShareModalSuccess(plan.shared_report_with_client);
+      setDateShare(plan.shared_report_with_client_date);
+    }
+    emitActivePlan(plan);
+  }, [cardData, activeTreatment, isShare]);
   useEffect(() => {
     subscribe('shareModalHolisticPlanSuccess', (data: any) => {
       setCardData((prev: any) => {

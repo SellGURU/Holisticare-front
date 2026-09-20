@@ -93,7 +93,10 @@ import {
   invalidateHealthPlanQueryKeys,
 } from '../../utils/cacheKeys';
 import { getCached, peekCached, fetchFresh } from '../../utils/pageCache';
-import { normalizeTreatmentPlanCategories } from '../../utils/treatmentPlanShape';
+import {
+  normalizeTreatmentPlanCategories,
+  pickLatestGeneratedHolisticPlan,
+} from '../../utils/treatmentPlanShape';
 import {
   PROCESSING_DOMAIN_READY_EVENT,
   authoritativeDomains,
@@ -1323,7 +1326,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     setBiomarkersTotal(null);
     setClientSummaryReady(false);
     setCategoriesPartial([]);
-    setActiveHolisticPlan(null);
     hasFullOverviewRef.current = false;
     wasOverviewProcessingRef.current = false;
 
@@ -1476,6 +1478,24 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [referenceData, setReferenceData] = useState<any>(null);
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([]);
   const [activeHolisticPlan, setActiveHolisticPlan] = useState<any>(null);
+  const lastHolisticPlanMemberRef = useRef(resolvedMemberID);
+  useEffect(() => {
+    if (lastHolisticPlanMemberRef.current === resolvedMemberID) return;
+    lastHolisticPlanMemberRef.current = resolvedMemberID;
+    setActiveHolisticPlan(null);
+  }, [resolvedMemberID]);
+  useEffect(() => {
+    const handleActivePlanChange = (event: any) => {
+      const plan = event?.detail?.data;
+      if (plan) {
+        setActiveHolisticPlan(plan);
+      }
+    };
+    subscribe('holisticPlanactiveChange', handleActivePlanChange);
+    return () => {
+      unsubscribe('holisticPlanactiveChange', handleActivePlanChange);
+    };
+  }, []);
 
   const [ActionPlanPrint, setActionPlanPrint] = useState(null);
   const [HelthPrint, setHelthPlanPrint] = useState(null);
@@ -1846,7 +1866,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const [isHtmlReportExists, setIsHtmlReportExists] = useState(false);
   const [htmlReportPollState, setHtmlReportPollState] = useState<
-    'idle' | 'pending' | 'building' | 'ready' | 'failed' | 'timed_out'
+    | 'idle'
+    | 'checking'
+    | 'pending'
+    | 'building'
+    | 'ready'
+    | 'failed'
+    | 'timed_out'
   >('idle');
   const htmlReportPollAttemptRef = useRef(0);
   const htmlReportTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1911,16 +1937,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
           htmlReportPollAttemptRef.current = 0;
           return;
         }
-        // Legacy `{exists}` fallback: keep polling until exists or timeout.
-        htmlReportPollAttemptRef.current += 1;
-        if (htmlReportPollAttemptRef.current >= HTML_REPORT_POLL_MAX_ATTEMPTS) {
-          setIsHtmlReportExists(false);
-          setHtmlReportPollState('timed_out');
-          return;
-        }
         setIsHtmlReportExists(false);
-        setHtmlReportPollState('building');
-        scheduleHtmlReportPoll(pollHtmlReport);
+        setHtmlReportPollState('idle');
+        htmlReportPollAttemptRef.current = 0;
       })
       .catch(() => {
         if (stopPolling.current || htmlReportMemberRef.current !== memberId) {
@@ -1984,20 +2003,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       activeHolisticPlan?.treatment_plan_id ??
       activeHolisticPlan?.t_plan_id ??
       null;
-    if (lastHtmlReportPlanKeyRef.current == null) {
-      lastHtmlReportPlanKeyRef.current = planKey;
-      return;
-    }
     if (lastHtmlReportPlanKeyRef.current === planKey) {
       return;
     }
     lastHtmlReportPlanKeyRef.current = planKey;
     htmlReportPollAttemptRef.current = 0;
     setIsHtmlReportExists(false);
-    setHtmlReportPollState('idle');
     clearHtmlReportTimer();
     if (planKey != null) {
+      // Until the first check answers, the report status is unknown.
+      setHtmlReportPollState('checking');
       pollHtmlReport();
+    } else {
+      setHtmlReportPollState('idle');
     }
   }, [
     activeHolisticPlan?.treatment_plan_id,
@@ -2510,7 +2528,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 >
                   Holistic Plan
                 </div>
-                {TreatMentPlanData?.length > 0 && isHaveReport && !isShare ? (
+                {TreatMentPlanData?.length > 0 &&
+                isHaveReport &&
+                !isShare &&
+                pickLatestGeneratedHolisticPlan(
+                  activeHolisticPlan ? [activeHolisticPlan] : [],
+                ) ? (
                   // <HolisticShare
                   //   isHtmlReportExists={isHtmlReportExists}
                   //   isShareModalSuccess={isShareModalSuccess}

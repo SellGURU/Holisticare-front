@@ -20,3 +20,27 @@ export const normalizeTreatmentPlanCategories = (
     };
   });
 };
+
+export const normalizeHolisticPlanState = (state: unknown): string => {
+  const raw = String(state ?? '').trim();
+  if (raw.toLowerCase() === 'published') return 'On Going';
+  return raw;
+};
+
+/** Last generated plan in an ASC-by-date list (skips Draft and Upcoming). */
+export const pickLatestGeneratedHolisticPlan = <
+  T extends { state?: unknown },
+>(
+  plans: T[] | null | undefined,
+): T | null => {
+  if (!Array.isArray(plans) || plans.length === 0) return null;
+  for (let index = plans.length - 1; index >= 0; index -= 1) {
+    const plan = plans[index];
+    const state = normalizeHolisticPlanState(plan?.state);
+    const lowered = state.toLowerCase();
+    if (state && lowered !== 'draft' && lowered !== 'upcoming') {
+      return plan;
+    }
+  }
+  return null;
+};

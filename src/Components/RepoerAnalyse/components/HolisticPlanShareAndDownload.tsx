@@ -6,6 +6,7 @@ import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import SpinnerLoader from '../../SpinnerLoader';
 import SvgIcon from '../../../utils/svgIcon';
 import { PublicShareModal } from '../PublicShareModal';
+import { normalizeHolisticPlanState } from '../../../utils/treatmentPlanShape';
 
 interface HolisticPlanShareAndDownloadProps {
   isHtmlReportExists: boolean;
@@ -13,6 +14,7 @@ interface HolisticPlanShareAndDownloadProps {
   handleGetHtmlReport: (url?: string) => void;
   htmlReportPollState?:
     | 'idle'
+    | 'checking'
     | 'pending'
     | 'building'
     | 'ready'
@@ -98,7 +100,8 @@ const HolisticPlanShareAndDownload = ({
       </>
     );
   };
-  const isOnGoingPlan = activeTreatment?.state == 'On Going';
+  const isOnGoingPlan =
+    normalizeHolisticPlanState(activeTreatment?.state) === 'On Going';
   const isReportFailed =
     isOnGoingPlan &&
     (htmlReportPollState === 'failed' || htmlReportPollState === 'timed_out');
@@ -107,7 +110,7 @@ const HolisticPlanShareAndDownload = ({
     !isHtmlReportExists &&
     !isReportFailed &&
     (loadingHtmlReport ||
-      htmlReportPollState === 'idle' ||
+      htmlReportPollState === 'checking' ||
       htmlReportPollState === 'pending' ||
       htmlReportPollState === 'building');
 
@@ -175,7 +178,7 @@ const HolisticPlanShareAndDownload = ({
           <div
             className="text-Primary-DeepTeal text-xs font-medium cursor-pointer flex items-center gap-1"
             onClick={() => {
-              if (isHtmlReportExists || activeTreatment?.state != 'On Going') {
+              if (isHtmlReportExists) {
                 if (activeTreatment?.state != 'On Going') {
                   handleGetHtmlReport(activeTreatment?.readonly_html_url);
                 } else {
@@ -217,7 +220,7 @@ const HolisticPlanShareAndDownload = ({
                   Your report is currently being prepared.
                 </div>
               </div>
-            ) : isHtmlReportExists || activeTreatment?.state != 'On Going' ? (
+            ) : isHtmlReportExists ? (
               <>
                 {activeTreatment?.state != 'On Going' ? (
                   <>
@@ -257,7 +260,7 @@ const HolisticPlanShareAndDownload = ({
         </div>
       );
     }
-    const disabled = !isHtmlReportExists && isOnGoingPlan;
+    const disabled = !isHtmlReportExists;
     return (
       <div className="flex flex-col items-center gap-1">
         <button
@@ -289,7 +292,9 @@ const HolisticPlanShareAndDownload = ({
       <div
         className={`flex ${activeTreatment?.shared_report_with_client ? 'items-start' : 'items-center'}  gap-6`}
       >
-        {activeTreatment && activeTreatment.state != 'Draft' && (
+        {activeTreatment &&
+          normalizeHolisticPlanState(activeTreatment.state).toLowerCase() !==
+            'draft' && (
           <>
             {resolveShareButtonHadler()}
             {resolvePublicShareButtonHandler()}
