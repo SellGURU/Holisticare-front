@@ -213,90 +213,70 @@ const router = createBrowserRouter([
     element: <AdminLogin></AdminLogin>,
   },
   {
-    path: '/admin/overview',
-    element: (
-      <AdminProtectedRoute Component={OverviewDashboard}></AdminProtectedRoute>
-    ),
-  },
-  {
-    path: '/admin/marketing',
-    element: <Navigate to="/admin/overview" replace />,
-  },
-  {
-    path: '/admin/sessions',
-    element: (
-      <AdminProtectedRoute Component={SessionInsights}></AdminProtectedRoute>
-    ),
-  },
-  {
-    path: '/admin/explorer',
-    element: (
-      <AdminProtectedRoute Component={DataExplorer}></AdminProtectedRoute>
-    ),
-  },
-  {
-    path: '/admin/workspace',
-    element: (
-      <AdminProtectedRoute Component={ClinicWorkspace}></AdminProtectedRoute>
-    ),
-  },
-  {
-    path: '/admin/reports',
-    element: (
-      <AdminProtectedRoute Component={AIReportCopilot}></AdminProtectedRoute>
-    ),
-  },
-  {
-    path: '/admin/config',
-    element: (
-      <AdminProtectedRoute Component={AdminConfig}></AdminProtectedRoute>
-    ),
-  },
-  {
-    path: '/admin/clinics',
-    element: <AdminProtectedRoute Component={Clinics}></AdminProtectedRoute>,
-  },
-  {
-    path: '/admin/demo-patient',
-    element: (
-      <AdminProtectedRoute Component={AdminDemoPatient}></AdminProtectedRoute>
-    ),
-  },
-  {
-    path: '/admin/questionnaires',
-    element: (
-      <AdminProtectedRoute Component={QuestionnaireManagement}></AdminProtectedRoute>
-    ),
-  },
-  {
-    path: '/admin/llm-prompts',
-    element: (
-      <AdminProtectedRoute Component={LlmPromptCatalog}></AdminProtectedRoute>
-    ),
-  },
-  {
-    path: '/admin/llm-calls',
-    element: <AdminProtectedRoute Component={LlmCallLog}></AdminProtectedRoute>,
-  },
-  {
     path: '/admin',
-    element: <Navigate to="/admin/overview" replace />,
-  },
-  {
-    path: '/admin/',
-    element: <Navigate to="/admin/overview" replace />,
-  },
-  {
-    path: '/admin/json-uploading',
-    element: (
-      <AdminProtectedRoute Component={AdminJsonUploading}></AdminProtectedRoute>
-    ),
-  },
-  {
-    path: '/admin/rook-csv-comparison',
-    element: (
-      <AdminProtectedRoute Component={RookCsvComparison}></AdminProtectedRoute>
-    ),
+    element: <AdminProtectedRoute />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="overview" replace />,
+      },
+      {
+        path: 'overview',
+        element: <OverviewDashboard />,
+      },
+      {
+        path: 'marketing',
+        element: <Navigate to="/admin/overview" replace />,
+      },
+      {
+        path: 'sessions',
+        element: <SessionInsights />,
+      },
+      {
+        path: 'explorer',
+        element: <DataExplorer />,
+      },
+      {
+        path: 'workspace',
+        element: <ClinicWorkspace />,
+      },
+      {
+        path: 'reports',
+        element: <AIReportCopilot />,
+      },
+      {
+        path: 'config',
+        element: <AdminConfig />,
+      },
+      {
+        path: 'clinics',
+        element: <Clinics />,
+      },
+      {
+        path: 'demo-patient',
+        element: <AdminDemoPatient />,
+      },
+      {
+        path: 'questionnaires',
+        element: <QuestionnaireManagement />,
+      },
+      {
+        path: 'llm-prompts',
+        element: <LlmPromptCatalog />,
+      },
+      {
+        path: 'llm-calls',
+        element: <LlmCallLog />,
+      },
+      {
+        path: 'json-uploading',
+        element: <AdminJsonUploading />,
+      },
+      {
+        path: 'rook-csv-comparison',
+        element: <RookCsvComparison />,
+      },
+    ],
   },
   {
     path: '/register',

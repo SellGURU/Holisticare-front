@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { format, subDays } from 'date-fns';
 import AdminApi from '../api/admin';
+import { getAdminToken } from './adminToken';
 
 /** Bump when default filter semantics change (one-time localStorage refresh). */
 const ADMIN_FILTERS_VERSION = '2';
@@ -105,6 +106,10 @@ const AdminContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const refreshClinics = useCallback(async () => {
+    if (!getAdminToken()) {
+      setClinics([]);
+      return;
+    }
     setLoadingClinics(true);
     try {
       const res = await AdminApi.getClinics();
