@@ -4,6 +4,7 @@ export const PRESERVED_LOCAL_STORAGE_KEYS = [
   'theme-base',
   'showTutorialAgain',
   'browser_unique_id',
+  'hc_storage_schema_version',
 ] as const;
 
 export const PORTAL_USER_LOCAL_STORAGE_KEYS = [

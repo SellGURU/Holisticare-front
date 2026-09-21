@@ -2,6 +2,7 @@
 import { createContext, PropsWithChildren, useState } from 'react';
 import PackageManager from '../model/Packages/PackageManager';
 import { clearPortalSession } from '../utils/clearPortalSession';
+import { readJson, writeJson } from '../utils/safeStorage';
 
 interface AppContextProp {
   permisions: any;
@@ -68,7 +69,7 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
   const [treatmentId, setTreatmentId] = useState<string | null>(null);
 
   const [permisions, setPermisions] = useState(
-    JSON.parse(localStorage.getItem('permisins') || '{}'),
+    readJson<Record<string, unknown>>('permisins', {}),
   );
   const [patientsList, setPatientsList] = useState<any[]>([]);
   const [accountRole, setAccountRole] = useState(
@@ -97,10 +98,11 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     isLoggedId: !!token,
 
     login: (token: string, permisins?: any, email?: string, role?: string) => {
+      const safePermisions = permisins ?? {};
       setToken(token);
-      setPermisions(permisins);
+      setPermisions(safePermisions);
       setAccountRole(role || '');
-      localStorage.setItem('permisins', JSON.stringify(permisins));
+      writeJson('permisins', safePermisions);
       localStorage.setItem('token', token);
       localStorage.setItem('email', email || '');
       localStorage.setItem('accountRole', role || '');

@@ -5,6 +5,7 @@ import { InputChat } from './inputChat.tsx';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import Application from '../../api/app.ts';
 import { motion, AnimatePresence } from 'framer-motion';
+import { readJson } from '../../utils/safeStorage';
 type Message = {
   timestamp: number;
   entrytime: string;
@@ -33,6 +34,10 @@ export const PopUpChat = ({
   const [input, setInput] = useState('');
   // const [conversationId, setConversationId] = useState<number>(1);
   const [conversationIdData, setConversationIdData] = useState<number>(0);
+  const brandInfo = readJson<{ selectedImage?: string; name?: string }>(
+    'brandInfoData',
+    {},
+  );
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -141,12 +146,8 @@ export const PopUpChat = ({
                           time={MessageDatum.timestamp}
                           msg={MessageDatum.request}
                           info={{
-                            picture: JSON.parse(
-                              localStorage.getItem('brandInfoData') as string,
-                            )?.selectedImage,
-                            name: JSON.parse(
-                              localStorage.getItem('brandInfoData') as string,
-                            )?.name,
+                            picture: brandInfo.selectedImage,
+                            name: brandInfo.name,
                           }}
                         />
                       )}

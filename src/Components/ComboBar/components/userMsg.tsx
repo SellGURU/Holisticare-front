@@ -1,5 +1,6 @@
 import { MoonLoader } from 'react-spinners';
 import SvgIcon from '../../../utils/svgIcon';
+import { readJson } from '../../../utils/safeStorage';
 
 export const UserMsg = ({
   msg,
@@ -56,7 +57,7 @@ export const UserMsg = ({
         <img
           className="rounded-full w-[30px] min-w-[30px] min-h-[30px] border border-gray-50  h-[30px]"
           src={
-            JSON.parse(localStorage.getItem('brandInfoData') as string)
+            readJson<{ selectedImage?: string }>('brandInfoData', {})
               ?.selectedImage || `https://ui-avatars.com/api/?name=${name}`
           }
           alt=""

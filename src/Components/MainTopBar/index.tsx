@@ -12,6 +12,7 @@ import NotificationApi from '../../api/Notification';
 import { useApp } from '../../hooks';
 import { useVisibilityAwarePoll } from '../../hooks/useVisibilityAwarePoll';
 import { fetchBrandInfo } from '../../utils/brandInfoCache';
+import { readJson } from '../../utils/safeStorage';
 const MainTopBar = () => {
   const navigate = useNavigate();
   const { accountRole, setAccountRole } = useApp();
@@ -59,13 +60,11 @@ const MainTopBar = () => {
     },
   });
   const [customTheme, setCustomTheme] = useState(
-    localStorage.getItem('brandInfoData')
-      ? JSON.parse(localStorage.getItem('brandInfoData') || '{}')
-      : {
-          selectedImage: null as string | null,
-          name: '',
-          headLine: '',
-        },
+    readJson('brandInfoData', {
+      selectedImage: null as string | null,
+      name: '',
+      headLine: '',
+    }),
   );
 
   const getShowBrandInfo = useCallback(() => {

@@ -52,6 +52,7 @@ describe('clearPortalSession', () => {
     localStorage.setItem('theme-base', 'dark');
     localStorage.setItem('showTutorialAgain', 'false');
     localStorage.setItem('browser_unique_id', 'device-1');
+    localStorage.setItem('hc_storage_schema_version', '1');
 
     clearPortalSession();
 
@@ -60,6 +61,7 @@ describe('clearPortalSession', () => {
     expect(localStorage.getItem('theme-base')).toBe('dark');
     expect(localStorage.getItem('showTutorialAgain')).toBe('false');
     expect(localStorage.getItem('browser_unique_id')).toBe('device-1');
+    expect(localStorage.getItem('hc_storage_schema_version')).toBe('1');
   });
 
   it('removes exact and prefix-based keys including upload session keys', () => {

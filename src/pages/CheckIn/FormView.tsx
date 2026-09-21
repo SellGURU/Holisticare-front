@@ -9,8 +9,20 @@ interface FormViewProps {
   mode?: 'questionary' | 'checkin';
 }
 
+const decodePathParam = (value: string | undefined) => {
+  if (!value) return '';
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+};
+
 const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id, 'f-id': fId } = useParams();
+  const encodedMi = decodePathParam(encode);
+  const uniqueId = decodePathParam(id);
+  const formUniqueId = decodePathParam(fId);
   const [isLoading, setIsLaoding] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -55,36 +67,36 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
 
     if (mode == 'questionary') {
       Mobile.getQuestionaryEmpty({
-        encoded_mi: encode as string,
-        unique_id: id as string,
-        f_unique_id: fId as string,
+        encoded_mi: encodedMi,
+        unique_id: uniqueId,
+        f_unique_id: formUniqueId,
       })
         .then(handleLoaded)
         .catch(handleLoadError);
     } else {
       Mobile.getCheckInEmpty({
-        encoded_mi: encode as string,
-        unique_id: id as string,
+        encoded_mi: encodedMi,
+        unique_id: uniqueId,
       })
         .then(handleLoaded)
         .catch(handleLoadError);
     }
-  }, [encode, fId, id, mode]);
+  }, [encodedMi, formUniqueId, uniqueId, mode]);
   const submit = (e: any) => {
     // setIsLaoding(true);
     const apiCall =
       mode === 'questionary' ? Mobile.fillQuestionary : Mobile.fillCheckin;
 
     const dataQuestionary = {
-      encoded_mi: encode,
-      unique_id: id,
+      encoded_mi: encodedMi,
+      unique_id: uniqueId,
       respond: e,
-      f_unique_id: fId || '',
+      f_unique_id: formUniqueId,
     };
 
     const dataCheckin = {
-      encoded_mi: encode,
-      unique_id: id,
+      encoded_mi: encodedMi,
+      unique_id: uniqueId,
       respond: e,
     };
 
@@ -119,10 +131,10 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   };
   const autoSave = (e: any) => {
     Mobile.autoSaveQuestionary({
-      encoded_mi: encode,
-      unique_id: id,
+      encoded_mi: encodedMi,
+      unique_id: uniqueId,
       respond: e,
-      f_unique_id: fId || '',
+      f_unique_id: formUniqueId,
     }).catch(() => {});
   };
   const scrollRef = useRef<HTMLDivElement | null>(null);

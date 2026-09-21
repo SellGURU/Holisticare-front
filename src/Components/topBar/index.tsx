@@ -6,6 +6,7 @@ import { BeatLoader } from 'react-spinners';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { publish, subscribe, unsubscribe } from '../../utils/event';
 import { fetchBrandInfo } from '../../utils/brandInfoCache';
+import { readJson } from '../../utils/safeStorage';
 // import { ButtonPrimary } from '../Button/ButtonPrimary';
 import LogOutModal from '../LogOutModal';
 import { SlideOutPanel } from '../SlideOutPanel';
@@ -168,13 +169,11 @@ export const TopBar: FC<TopBarProps> = ({
   const [isReportAvailable, setIsReportAvailable] = useState(true);
   const [showReport, setShowReport] = useState(false);
   const [customTheme, setCustomTheme] = useState(
-    localStorage.getItem('brandInfoData')
-      ? JSON.parse(localStorage.getItem('brandInfoData') || '{}')
-      : {
-          selectedImage: null as string | null,
-          name: '',
-          headLine: '',
-        },
+    readJson('brandInfoData', {
+      selectedImage: null as string | null,
+      name: '',
+      headLine: '',
+    }),
   );
   const [hasReportInRoute, setHasReportInRoute] = useState(false);
   const [hasShareInRoute, setHasShareInRoute] = useState(false);

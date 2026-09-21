@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { FATAL_APP_ERROR_EVENT } from '../../utils/networkStatus';
+import { clearPortalSession } from '../../utils/clearPortalSession';
 
 interface AppErrorBoundaryProps {
   children: ReactNode;
@@ -73,6 +74,16 @@ class AppErrorBoundary extends Component<
                 }}
               >
                 Go home
+              </button>
+              <button
+                type="button"
+                className="rounded-xl border border-Gray-50 px-4 py-2 text-sm text-Text-Primary"
+                onClick={() => {
+                  clearPortalSession();
+                  window.location.href = '/login';
+                }}
+              >
+                Reset session and sign in again
               </button>
             </div>
           </div>

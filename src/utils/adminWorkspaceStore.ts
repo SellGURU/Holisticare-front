@@ -5,41 +5,15 @@ import type {
   ClinicWorkspaceRecord,
   FollowUpState,
 } from '../types/admin.ts';
+import { readJson, writeJson } from './safeStorage';
 
 const WORKSPACE_STORAGE_KEY = 'adminClinicWorkspaceRecords';
 const REPORT_STORAGE_KEY = 'adminGeneratedReports';
-
-const isBrowser = typeof window !== 'undefined';
 
 const createId = () =>
   typeof crypto !== 'undefined' && 'randomUUID' in crypto
     ? crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
-const readJson = <T>(key: string, fallback: T): T => {
-  if (!isBrowser) {
-    return fallback;
-  }
-
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) {
-      return fallback;
-    }
-
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
-  }
-};
-
-const writeJson = <T>(key: string, value: T) => {
-  if (!isBrowser) {
-    return;
-  }
-
-  localStorage.setItem(key, JSON.stringify(value));
-};
 
 const readWorkspaceRecords = () =>
   readJson<Record<string, ClinicWorkspaceRecord>>(WORKSPACE_STORAGE_KEY, {});
