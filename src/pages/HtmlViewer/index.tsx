@@ -6,10 +6,15 @@ import { getTokenFromLocalStorage } from '../../store/token';
 import { showSuccess } from '../../Components/GlobalToast';
 import HtmlPreviewer from '../../Components/HtmlPreviewer';
 import { rewriteHolisticPlanResourceLinks } from '../../utils/patientResourceLinks';
-import { sanitizeWellnessReportDisclaimer } from '../../utils/reportDisclaimerSanitize';
+import {
+  sanitizeWellnessReportDisclaimer,
+  wrapHeroTitleWithBrand,
+} from '../../utils/reportDisclaimerSanitize';
 
 const prepareReportHtmlForDisplay = (raw: string, publicView: boolean) => {
-  const cleaned = sanitizeWellnessReportDisclaimer(raw);
+  const cleaned = wrapHeroTitleWithBrand(
+    sanitizeWellnessReportDisclaimer(raw),
+  );
   return publicView ? rewriteHolisticPlanResourceLinks(cleaned) : cleaned;
 };
 
