@@ -1,5 +1,11 @@
 export type RiskDomainSource = 'Pre-defined' | 'Custom';
 
+export type IntelligenceDomainType =
+  | 'RISK'
+  | 'SCORING'
+  | 'AGING'
+  | 'PARAMETRIC_BIOMARKER';
+
 export interface RiskResultCategory {
   min?: number;
   max?: number;

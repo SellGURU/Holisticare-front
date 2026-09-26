@@ -2,10 +2,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
-import BiomarkersApi from '../../api/Biomarkers';
-import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
 import { invalidate } from '../../utils/pageCache';
 import CatalogBiomarkerPicker from './CatalogBiomarkerPicker';
+import {
+  getDefaultIntelligenceApi,
+  type IntelligenceApi,
+} from './intelligenceApi';
 import FormulaCodeEditor from './FormulaCodeEditor';
 import { formulaHasUnknownBiomarkers } from './formulaBiomarker';
 import IntelligenceModal, { apiErrorMessage } from './IntelligenceModal';
@@ -23,30 +25,20 @@ interface ParametricEditorModalProps {
   open: boolean;
   domain: RiskDomainViewModel | null;
   attachedUids: string[];
+  api?: IntelligenceApi;
   onClose: () => void;
   onSaved: () => void;
-}
-
-function mapCatalogItem(item: any): ClinicBiomarkerOption | null {
-  const uid = String(item?.biomarker_uid || '').trim();
-  const name = String(item?.Biomarker || item?.name || '').trim();
-  if (!uid || !name) return null;
-  return {
-    biomarker_uid: uid,
-    name,
-    unit: item?.unit || '',
-    benchmark_area: item?.['Benchmark areas'] || item?.benchmark_area || '',
-    is_enabled: item?.is_enabled !== false,
-  };
 }
 
 export default function ParametricEditorModal({
   open,
   domain,
   attachedUids,
+  api,
   onClose,
   onSaved,
 }: ParametricEditorModalProps) {
+  const intelligenceApi = api || getDefaultIntelligenceApi();
   const isEdit = Boolean(domain);
   const [catalog, setCatalog] = useState<ClinicBiomarkerOption[]>([]);
   const [loadingCatalog, setLoadingCatalog] = useState(false);
@@ -67,17 +59,9 @@ export default function ParametricEditorModal({
     setFormulaCode(domain?.formulaCode || DEFAULT_FORMULA);
     setIsEnabled(domain?.isEnabled ?? true);
     setLoadingCatalog(true);
-    BiomarkersApi.getBiomarkersList({ include_all: true })
-      .then((res) => {
-        const rows = Array.isArray(res.data)
-          ? res.data
-          : Array.isArray(res.data?.chart_bounds)
-            ? res.data.chart_bounds
-            : [];
-        const mapped = rows
-          .map(mapCatalogItem)
-          .filter(Boolean) as ClinicBiomarkerOption[];
-        mapped.sort((a, b) => a.name.localeCompare(b.name));
+    intelligenceApi
+      .listCatalogBiomarkers()
+      .then((mapped) => {
         setCatalog(
           mapped.filter(
             (item) =>
@@ -88,7 +72,7 @@ export default function ParametricEditorModal({
       })
       .catch(() => setCatalog([]))
       .finally(() => setLoadingCatalog(false));
-  }, [open, domain]);
+  }, [open, domain, intelligenceApi]);
 
   const attachedSet = useMemo(() => new Set(attachedUids), [attachedUids]);
 
@@ -115,7 +99,7 @@ export default function ParametricEditorModal({
     if (!formulaCode.trim()) return;
     setValidating(true);
     setValidation(null);
-    HealthRiskArchitectureApi.validateFormula(formulaCode, {
+    intelligenceApi.validateFormula(formulaCode, {
       domain_type: 'PARAMETRIC_BIOMARKER',
       catalog_biomarker_uid: uid || undefined,
     })
@@ -144,8 +128,8 @@ export default function ParametricEditorModal({
     };
     const request =
       isEdit && domain?.id
-        ? HealthRiskArchitectureApi.updateDomain(domain.id, body)
-        : HealthRiskArchitectureApi.createDomain(body);
+        ? intelligenceApi.updateDomain(domain.id, body)
+        : intelligenceApi.createDomain(body);
 
     request
       .then(() => {

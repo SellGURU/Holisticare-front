@@ -13,6 +13,7 @@ import {
   FolderKanban,
   LayoutDashboard,
   Menu,
+  Network,
   Sparkles,
   UserRound,
   X,
@@ -58,6 +59,7 @@ const navigationSections = [
       { to: '/admin/clinics', label: 'Clinics', icon: Building2 },
       { to: '/admin/demo-patient', label: 'Demo Patient', icon: UserRound },
       { to: '/admin/questionnaires', label: 'Questionnaires', icon: ClipboardList },
+      { to: '/admin/intelligence-models', label: 'Intelligence Models', icon: Network },
       { to: '/admin/llm-prompts', label: 'LLM Prompts', icon: Brain },
       { to: '/admin/llm-calls', label: 'LLM Calls', icon: Activity },
       {

@@ -63,6 +63,7 @@ import ClinicWorkspace from '../pages/admin/ClinicWorkspace.tsx';
 import AIReportCopilot from '../pages/admin/AIReportCopilot.tsx';
 import RookCsvComparison from '../pages/admin/RookCsvComparison.tsx';
 import QuestionnaireManagement from '../pages/admin/QuestionnaireManagement.tsx';
+import AdminIntelligenceModels from '../pages/admin/AdminIntelligenceModels.tsx';
 import RouteErrorFallback from './RouteErrorFallback';
 import LegalDocument from '../pages/legal/LegalDocument';
 
@@ -259,6 +260,10 @@ const router = createBrowserRouter([
       {
         path: 'questionnaires',
         element: <QuestionnaireManagement />,
+      },
+      {
+        path: 'intelligence-models',
+        element: <AdminIntelligenceModels />,
       },
       {
         path: 'llm-prompts',

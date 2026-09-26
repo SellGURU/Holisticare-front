@@ -7,9 +7,11 @@ import {
   XCircle,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import BiomarkersApi from '../../api/Biomarkers';
-import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
 import FormulaCodeEditor from './FormulaCodeEditor';
+import {
+  getDefaultIntelligenceApi,
+  type IntelligenceApi,
+} from './intelligenceApi';
 import { formulaHasUnknownBiomarkers } from './formulaBiomarker';
 import IntelligenceModal, { apiErrorMessage } from './IntelligenceModal';
 import {
@@ -123,6 +125,7 @@ interface RiskDomainFormModalProps {
   mode: RiskDomainFormMode;
   domain?: RiskDomainViewModel | null;
   modelKind?: 'RISK' | 'SCORING' | 'AGING';
+  api?: IntelligenceApi;
   onClose: () => void;
   onSaved: () => void;
 }
@@ -132,9 +135,11 @@ export default function RiskDomainFormModal({
   mode,
   domain,
   modelKind = 'RISK',
+  api,
   onClose,
   onSaved,
 }: RiskDomainFormModalProps) {
+  const intelligenceApi = api || getDefaultIntelligenceApi();
   const isScore = modelKind === 'SCORING';
   const isAge = modelKind === 'AGING';
   const kindLabel = isAge ? 'age clock' : isScore ? 'score' : 'risk';
@@ -167,30 +172,13 @@ export default function RiskDomainFormModal({
     } else {
       setForm(emptyFormForKind(modelKind));
     }
-    BiomarkersApi.getBiomarkersList({ include_all: true })
-      .then((res) => {
-        const rows = Array.isArray(res.data)
-          ? res.data
-          : Array.isArray(res.data?.chart_bounds)
-            ? res.data.chart_bounds
-            : [];
-        const mapped = rows
-          .map((item: { biomarker_uid?: string; Biomarker?: string; name?: string; unit?: string; ['Benchmark areas']?: string; benchmark_area?: string; is_enabled?: boolean }) => {
-            const name = String(item?.Biomarker || item?.name || '').trim();
-            if (!name) return null;
-            return {
-              name,
-              unit: item?.unit || '',
-              benchmark_area: item?.['Benchmark areas'] || item?.benchmark_area || '',
-              is_enabled: item?.is_enabled !== false,
-            } as ClinicBiomarkerOption;
-          })
-          .filter(Boolean) as ClinicBiomarkerOption[];
-        mapped.sort((a, b) => a.name.localeCompare(b.name));
-        setCatalog(mapped.filter((item) => item.is_enabled !== false));
-      })
+    intelligenceApi
+      .listCatalogBiomarkers()
+      .then((rows) =>
+        setCatalog(rows.filter((item) => item.is_enabled !== false)),
+      )
       .catch(() => setCatalog([]));
-  }, [open, domain, mode, modelKind]);
+  }, [open, domain, mode, modelKind, intelligenceApi]);
 
   function patch<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -229,7 +217,7 @@ export default function RiskDomainFormModal({
     if (!form.formulaCode.trim()) return;
     setValidating(true);
     setValidation(null);
-    HealthRiskArchitectureApi.validateFormula(form.formulaCode, {
+    intelligenceApi.validateFormula(form.formulaCode, {
       domain_type: form.domainType,
     })
       .then((res) => setValidation(res.data || null))
@@ -275,8 +263,8 @@ export default function RiskDomainFormModal({
     };
     const request =
       isEdit && domain?.id
-        ? HealthRiskArchitectureApi.updateDomain(domain.id, payload)
-        : HealthRiskArchitectureApi.createDomain(payload);
+        ? intelligenceApi.updateDomain(domain.id, payload)
+        : intelligenceApi.createDomain(payload);
 
     request
       .then(() => {

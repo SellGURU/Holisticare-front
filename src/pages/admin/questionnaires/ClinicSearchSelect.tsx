@@ -10,19 +10,29 @@ interface ClinicSearchSelectProps {
   disabled?: boolean;
 }
 
-const clinicLabel = (clinic: AdminClinicOption) =>
-  `${clinic.name || `Clinic #${clinic.clinic_id}`} (${clinic.clinic_id})`;
+const normalize = (value?: string | number | null) =>
+  String(value || '')
+    .toLowerCase()
+    .trim();
 
-const clinicMatches = (clinic: AdminClinicOption, term: string) => {
+export const clinicLabel = (clinic: AdminClinicOption) => {
+  const name = clinic.name || `Clinic #${clinic.clinic_id}`;
+  return clinic.primary_email ? `${name}  ·  ${clinic.primary_email}` : name;
+};
+
+export const clinicMatches = (clinic: AdminClinicOption, query: string) => {
+  const tokens = normalize(query).split(/\s+/).filter(Boolean);
+  if (tokens.length === 0) return true;
+  const email = clinic.primary_email || '';
   const haystack = [
     clinic.name,
-    String(clinic.clinic_id),
-    clinic.primary_email,
+    clinic.clinic_id,
+    email,
+    email.split('@')[0],
   ]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase();
-  return haystack.includes(term);
+    .map(normalize)
+    .join(' ');
+  return tokens.every((token) => haystack.includes(token));
 };
 
 const ClinicSearchSelect = ({
@@ -56,9 +66,8 @@ const ClinicSearchSelect = ({
   }, []);
 
   const filtered = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    if (!term) return clinics;
-    return clinics.filter((clinic) => clinicMatches(clinic, term));
+    if (!query.trim()) return clinics;
+    return clinics.filter((clinic) => clinicMatches(clinic, query));
   }, [clinics, query]);
 
   return (
@@ -72,8 +81,11 @@ const ClinicSearchSelect = ({
         <input
           ref={inputRef}
           disabled={disabled}
+          aria-label="Search clinic by name or email"
           value={open ? query : selected ? clinicLabel(selected) : ''}
           placeholder={placeholder}
+          autoComplete="off"
+          spellCheck={false}
           onFocus={() => {
             setOpen(true);
             setQuery('');
@@ -107,7 +119,7 @@ const ClinicSearchSelect = ({
         <div className="absolute z-30 mt-1 max-h-64 w-full overflow-y-auto rounded-2xl border border-Gray-50 bg-white p-1 shadow-100">
           {filtered.length === 0 ? (
             <div className="px-3 py-2 text-[12px] text-Text-Secondary">
-              No clinics match “{query}”.
+              No clinics match “{query}”. Try the clinic name or owner email.
             </div>
           ) : (
             filtered.map((clinic) => {

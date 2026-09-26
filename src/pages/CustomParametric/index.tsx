@@ -2,22 +2,15 @@ import { Check } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   MODEL_CATEGORIES,
-  type ModelCategoryKey,
+  resolveModelCategory,
 } from './modelCategories';
 import ParametricDomainsPanel from './ParametricDomainsPanel';
 import RiskDomainsPanel from './RiskDomainsPanel';
 
-const TAB_TO_KEY: Record<string, ModelCategoryKey> = {
-  risk: 'risk',
-  aging: 'age',
-  scoring: 'health',
-  biomarkers: 'parametric',
-};
-
 const CustomParametric = () => {
   const { tab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
-  const selected: ModelCategoryKey = TAB_TO_KEY[tab || 'risk'] || 'risk';
+  const selected = resolveModelCategory(tab);
 
   return (
     <div

@@ -1,16 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loader2, Network, Plus, Search } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
-import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
 import DeleteDomainModal from './DeleteDomainModal';
+import {
+  getDefaultIntelligenceApi,
+  type IntelligenceApi,
+} from './intelligenceApi';
 import ParametricEditorModal from './ParametricEditorModal';
 import RiskDomainCard from './RiskDomainCard';
 import ViewDomainModal from './ViewDomainModal';
 import { mapHealthRiskDomain, type RiskDomainViewModel } from './types';
 
-export default function ParametricDomainsPanel() {
+export default function ParametricDomainsPanel({
+  api,
+}: {
+  api?: IntelligenceApi;
+} = {}) {
+  const intelligenceApi = api || getDefaultIntelligenceApi();
   const [rawDomains, setRawDomains] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -31,17 +39,17 @@ export default function ParametricDomainsPanel() {
     [rawDomains],
   );
 
-  const fetchDomains = () => {
+  const fetchDomains = useCallback(() => {
     setLoading(true);
-    HealthRiskArchitectureApi.getDomains('PARAMETRIC_BIOMARKER')
+    intelligenceApi.listDomains('PARAMETRIC_BIOMARKER')
       .then((res) => setRawDomains(Array.isArray(res.data) ? res.data : []))
       .catch(() => setRawDomains([]))
       .finally(() => setLoading(false));
-  };
+  }, [intelligenceApi]);
 
   useEffect(() => {
     fetchDomains();
-  }, []);
+  }, [fetchDomains]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -128,7 +136,7 @@ export default function ParametricDomainsPanel() {
                 hideDuplicate
                 onToggleActive={(item, next) => {
                   setTogglingId(item.id);
-                  HealthRiskArchitectureApi.updateDomain(item.id, {
+                  intelligenceApi.updateDomain(item.id, {
                     is_enabled: next,
                     catalog_biomarker_uid:
                       item.catalogBiomarkerUid || undefined,
@@ -161,6 +169,7 @@ export default function ParametricDomainsPanel() {
         attachedUids={domains
           .map((item) => item.catalogBiomarkerUid)
           .filter((item): item is string => Boolean(item))}
+        api={intelligenceApi}
         onClose={() => {
           setFormOpen(false);
           setActiveDomain(null);
@@ -173,6 +182,7 @@ export default function ParametricDomainsPanel() {
       />
       <DeleteDomainModal
         domain={deleteDomain}
+        api={intelligenceApi}
         onClose={() => setDeleteDomain(null)}
         onDeleted={fetchDomains}
       />

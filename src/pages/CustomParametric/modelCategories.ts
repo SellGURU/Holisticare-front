@@ -1,5 +1,16 @@
 export type ModelCategoryKey = 'risk' | 'age' | 'health' | 'parametric';
 
+export const TAB_TO_CATEGORY: Record<string, ModelCategoryKey> = {
+  risk: 'risk',
+  aging: 'age',
+  scoring: 'health',
+  biomarkers: 'parametric',
+};
+
+export function resolveModelCategory(tab?: string | null): ModelCategoryKey {
+  return TAB_TO_CATEGORY[tab || 'risk'] || 'risk';
+}
+
 export const MODEL_CATEGORIES: Array<{
   key: ModelCategoryKey;
   tab: string;

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { BookOpen, Loader2, Network, Plus, Search } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
-import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
 import DeleteDomainModal from './DeleteDomainModal';
 import FormulaLibraryModal from './FormulaLibraryModal';
 import RiskDomainCard from './RiskDomainCard';
@@ -12,6 +11,10 @@ import RiskDomainFormModal, {
 } from './RiskDomainFormModal';
 import ViewDomainModal from './ViewDomainModal';
 import { apiErrorMessage } from './IntelligenceModal';
+import {
+  getDefaultIntelligenceApi,
+  type IntelligenceApi,
+} from './intelligenceApi';
 import { v2PrimaryBtnClass } from './intelligenceUi';
 import { mapHealthRiskDomain, type RiskDomainViewModel } from './types';
 
@@ -40,9 +43,12 @@ const KIND_COPY: Record<
 
 export default function RiskDomainsPanel({
   modelKind = 'RISK',
+  api,
 }: {
   modelKind?: ModelKind;
+  api?: IntelligenceApi;
 }) {
+  const intelligenceApi = api || getDefaultIntelligenceApi();
   const copy = KIND_COPY[modelKind];
   const noun = copy.noun;
   const nounTitle = copy.nounTitle;
@@ -70,21 +76,21 @@ export default function RiskDomainsPanel({
     [rawDomains],
   );
 
-  const fetchDomains = () => {
+  const fetchDomains = useCallback(() => {
     setLoading(true);
     setLoadError(false);
-    HealthRiskArchitectureApi.getDomains(modelKind)
+    intelligenceApi.listDomains(modelKind)
       .then((res) => setRawDomains(Array.isArray(res.data) ? res.data : []))
       .catch(() => {
         setRawDomains([]);
         setLoadError(true);
       })
       .finally(() => setLoading(false));
-  };
+  }, [intelligenceApi, modelKind]);
 
   useEffect(() => {
     fetchDomains();
-  }, [modelKind]);
+  }, [fetchDomains]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -119,7 +125,7 @@ export default function RiskDomainsPanel({
 
   const handleToggleActive = (domain: RiskDomainViewModel, next: boolean) => {
     setTogglingId(domain.id);
-    HealthRiskArchitectureApi.updateDomain(domain.id, {
+    intelligenceApi.updateDomain(domain.id, {
       is_enabled: next,
       domain_type: modelKind,
     })
@@ -253,6 +259,7 @@ export default function RiskDomainsPanel({
         mode={formMode}
         domain={activeDomain}
         modelKind={modelKind}
+        api={intelligenceApi}
         onClose={() => {
           setFormOpen(false);
           setActiveDomain(null);
@@ -265,12 +272,14 @@ export default function RiskDomainsPanel({
       />
       <DeleteDomainModal
         domain={deleteDomain}
+        api={intelligenceApi}
         onClose={() => setDeleteDomain(null)}
         onDeleted={fetchDomains}
       />
       <FormulaLibraryModal
         open={libraryOpen}
         initialKind={modelKind}
+        api={intelligenceApi}
         onClose={() => setLibraryOpen(false)}
         onImported={fetchDomains}
       />

@@ -7,7 +7,11 @@ import { removeAdminToken } from '../../store/adminToken';
 import AdminShellLayout from './AdminShellLayout';
 import ClinicQuestionnairesTab from './questionnaires/ClinicQuestionnairesTab';
 import DefaultTemplatesTab from './questionnaires/DefaultTemplatesTab';
-import type { AdminClinicOption, QuestionnaireTemplateRow } from './questionnaires/types';
+import {
+  normalizeAdminClinicOption,
+  type AdminClinicOption,
+  type QuestionnaireTemplateRow,
+} from './questionnaires/types';
 
 type TabId = 'templates' | 'clinics';
 
@@ -41,7 +45,11 @@ const QuestionnaireManagement = () => {
 
   const loadClinics = async () => {
     const res = await AdminApi.listClinics();
-    setClinics(res.data?.clinics || []);
+    setClinics(
+      (res.data?.clinics || []).map((clinic: Record<string, unknown>) =>
+        normalizeAdminClinicOption(clinic),
+      ),
+    );
   };
 
   useEffect(() => {

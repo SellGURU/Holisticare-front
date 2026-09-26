@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
 import IntelligenceModal, { apiErrorMessage } from './IntelligenceModal';
+import {
+  getDefaultIntelligenceApi,
+  type IntelligenceApi,
+} from './intelligenceApi';
 import {
   v2DangerBtnClass,
   v2OutlineBtnClass,
@@ -11,21 +14,32 @@ import type { RiskDomainViewModel } from './types';
 
 interface DeleteDomainModalProps {
   domain: RiskDomainViewModel | null;
+  api?: IntelligenceApi;
   onClose: () => void;
   onDeleted: () => void;
 }
 
 export default function DeleteDomainModal({
   domain,
+  api,
   onClose,
   onDeleted,
 }: DeleteDomainModalProps) {
+  const intelligenceApi = api || getDefaultIntelligenceApi();
   const [pending, setPending] = useState(false);
 
   const handleDelete = () => {
     if (!domain?.id) return;
     setPending(true);
-    HealthRiskArchitectureApi.deleteDomain(domain.id)
+    intelligenceApi.deleteDomain(
+      domain.id,
+      domain.domainType as
+        | 'RISK'
+        | 'SCORING'
+        | 'AGING'
+        | 'PARAMETRIC_BIOMARKER'
+        | undefined,
+    )
       .then(() => {
         toast.success('Domain deleted');
         onDeleted();

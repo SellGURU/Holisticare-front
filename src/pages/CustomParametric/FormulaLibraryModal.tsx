@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BookOpen, Loader2, Plus, Search } from 'lucide-react';
 import { toast } from 'react-toastify';
-import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
 import IntelligenceModal, { apiErrorMessage } from './IntelligenceModal';
+import {
+  getDefaultIntelligenceApi,
+  type IntelligenceApi,
+} from './intelligenceApi';
 import {
   splitLibraryByDomainType,
   type FormulaLibraryTemplate,
@@ -25,12 +28,15 @@ export default function FormulaLibraryModal({
   onClose,
   initialKind,
   onImported,
+  api,
 }: {
   open: boolean;
   onClose: () => void;
   initialKind?: LibraryTab;
   onImported?: (domainType: LibraryDomainType) => void;
+  api?: IntelligenceApi;
 }) {
+  const intelligenceApi = api || getDefaultIntelligenceApi();
   const [tab, setTab] = useState<LibraryTab>(initialKind || 'RISK');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,7 +48,7 @@ export default function FormulaLibraryModal({
     setTab(initialKind || 'RISK');
     setSearch('');
     setLoading(true);
-    HealthRiskArchitectureApi.getFormulaLibrary()
+    intelligenceApi.getFormulaLibrary()
       .then((res) => {
         const rows = res.data?.templates;
         setTemplates(Array.isArray(rows) ? rows : []);
@@ -52,7 +58,7 @@ export default function FormulaLibraryModal({
         toast.error(apiErrorMessage(err, 'Could not load formula library'));
       })
       .finally(() => setLoading(false));
-  }, [open, initialKind]);
+  }, [open, initialKind, intelligenceApi]);
 
   const split = useMemo(() => splitLibraryByDomainType(templates), [templates]);
   const active =
@@ -78,7 +84,7 @@ export default function FormulaLibraryModal({
   const importTemplate = (item: FormulaLibraryTemplate) => {
     if (!item.catalog_ok || item.already_imported) return;
     setImportingId(item.id);
-    HealthRiskArchitectureApi.importFormulaLibrary(item.id)
+    intelligenceApi.importFormulaLibrary(item.id)
       .then((res) => {
         const imported = Number(res.data?.imported || 0);
         if (imported > 0) {

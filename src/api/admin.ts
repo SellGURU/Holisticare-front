@@ -459,6 +459,95 @@ class AdminApi {
     );
   }
 
+  // ==========================================================================
+  // Intelligence Model (clinic-scoped)
+  // ==========================================================================
+
+  static listIntelligenceDomains(clinicId: number, domainType?: string) {
+    return axios.get(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/intelligence/domains`,
+      {
+        headers: withAuthHeaders(),
+        params: domainType ? { domain_type: domainType } : undefined,
+      },
+    );
+  }
+
+  static createIntelligenceDomain(clinicId: number, data: any) {
+    return axios.post(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/intelligence/domains`,
+      data,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static updateIntelligenceDomain(
+    clinicId: number,
+    domainId: string,
+    data: any,
+  ) {
+    return axios.put(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/intelligence/domains/${domainId}`,
+      data,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static deleteIntelligenceDomain(
+    clinicId: number,
+    domainId: string,
+    domainType?: string,
+  ) {
+    return axios.delete(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/intelligence/domains/${domainId}`,
+      {
+        headers: withAuthHeaders(),
+        params: domainType ? { domain_type: domainType } : undefined,
+      },
+    );
+  }
+
+  static validateIntelligenceFormula(
+    clinicId: number,
+    data: {
+      formula_code: string;
+      domain_type?: string;
+      catalog_biomarker_uid?: string;
+    },
+  ) {
+    return axios.post(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/intelligence/validate`,
+      data,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static getIntelligenceClinicOptions(clinicId: number) {
+    return axios.get(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/intelligence/clinic-options`,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static getIntelligenceLibrary(clinicId: number) {
+    return axios.get(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/intelligence/library`,
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static importIntelligenceLibrary(
+    clinicId: number,
+    templateId: string,
+    isEnabled = true,
+  ) {
+    return axios.post(
+      `${getBaseUrl()}/admin/clinics/${clinicId}/intelligence/library/import`,
+      { template_id: templateId, is_enabled: isEnabled },
+      { headers: withAuthHeaders() },
+    );
+  }
+
   static compareRookCsv(formData: FormData) {
     return axios.post(`${getBaseUrl()}/admin/compare-rook-csv`, formData, {
       headers: {
