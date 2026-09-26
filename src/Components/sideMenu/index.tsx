@@ -74,9 +74,6 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     if (name === 'Knowledge Graph' && permissions.ai_knowledge === false) {
       return true;
     }
-    if (name === 'Package' && permissions.packages === false) {
-      return true;
-    }
     if (
       name === 'Staff' &&
       (String(accountRole || '').toLowerCase() === 'staff' ||

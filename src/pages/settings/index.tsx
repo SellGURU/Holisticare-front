@@ -26,6 +26,7 @@ const Setting: React.FC = () => {
       { title: 'Clinic Profile', isActive: isAdmin },
       { title: 'Clinic Preferences', isActive: true },
       { title: 'Change Password', isActive: loginWithGoogle === false },
+      { title: 'Package', isActive: true },
       { title: 'Show Tutorial', isActive: true },
     ];
     return items.filter((item) => item.isActive);
@@ -78,7 +79,9 @@ const Setting: React.FC = () => {
         return <ChangePassword />;
       case 'Show Tutorial':
         return <ShowTutorial />;
+      case 'Package':
       case 'Packages':
+      case 'Subscription':
         return <PackagePage />;
       default:
         return <div></div>;
