@@ -3,13 +3,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
 import PublicReport from '../../api/publicReport';
 import { getTokenFromLocalStorage } from '../../store/token';
-import { showSuccess } from '../../Components/GlobalToast';
+import { showError, showSuccess } from '../../Components/GlobalToast';
 import HtmlPreviewer from '../../Components/HtmlPreviewer';
 import { rewriteHolisticPlanResourceLinks } from '../../utils/patientResourceLinks';
 import {
   sanitizeWellnessReportDisclaimer,
   wrapHeroTitleWithBrand,
 } from '../../utils/reportDisclaimerSanitize';
+import {
+  downloadPdfBlob,
+  pdfBlobFromResponseData,
+  readBlobErrorDetail,
+  shouldShowHtmlReportDownload,
+} from '../../utils/htmlReportDownload';
 
 const prepareReportHtmlForDisplay = (raw: string, publicView: boolean) => {
   const cleaned = wrapHeroTitleWithBrand(
@@ -24,6 +30,7 @@ const HtmlViewer = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isPublicView, setIsPublicView] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
   const navigate = useNavigate();
 
   const handleGetHtmlReport = (reportId: string) => {
@@ -86,6 +93,38 @@ const HtmlViewer = () => {
     }
   };
 
+  const handleDownloadHtmlReport = async () => {
+    if (!shouldShowHtmlReportDownload(isPublicView) || !id || downloading) {
+      return;
+    }
+    setDownloading(true);
+    try {
+      let blob: Blob | null = null;
+      try {
+        const res = await Application.getHtmlReportPdf(id);
+        blob = await pdfBlobFromResponseData(res.data);
+      } catch (primaryErr) {
+        const fallback = await Application.getPdfReport(id);
+        const pdfUrl = fallback?.data?.pdf_url;
+        if (!pdfUrl || typeof pdfUrl !== 'string') {
+          throw primaryErr;
+        }
+        const file = await fetch(pdfUrl);
+        if (!file.ok) {
+          throw primaryErr;
+        }
+        blob = await pdfBlobFromResponseData(await file.blob());
+      }
+      downloadPdfBlob(blob);
+    } catch (err) {
+      console.error('Error downloading HTML report PDF:', err);
+      const detail = await readBlobErrorDetail(err);
+      showError('Download failed', detail || 'Could not download the report.');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -112,6 +151,12 @@ const HtmlViewer = () => {
       html={html}
       editable={!isPublicView}
       onSave={handleUpdateHtmlReport}
+      onDownload={
+        shouldShowHtmlReportDownload(isPublicView)
+          ? handleDownloadHtmlReport
+          : undefined
+      }
+      downloading={downloading}
     />
   );
 };

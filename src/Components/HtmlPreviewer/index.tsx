@@ -2,9 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import StyleModal, { ElementStyles } from './StyleModal';
 import { useNavigate, useBlocker } from 'react-router-dom';
-import { RotateCcw } from 'lucide-react';
+import { Download, Edit, RotateCcw } from 'lucide-react';
 import ConfirmModal from '../confitmModal';
-import { Edit } from 'lucide-react';
 
 type Props = {
   html: string;
@@ -13,6 +12,8 @@ type Props = {
   className?: string;
   onChange?: (html: string) => void;
   onSave: (html: string) => void;
+  onDownload?: () => void;
+  downloading?: boolean;
 };
 
 export default function HtmlEditor({
@@ -22,6 +23,8 @@ export default function HtmlEditor({
   className = '',
   onChange,
   onSave,
+  onDownload,
+  downloading = false,
 }: Props) {
   const navigate = useNavigate();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -1127,6 +1130,16 @@ export default function HtmlEditor({
               Back
             </ButtonSecondary>
             <div className="flex gap-2">
+              {onDownload && (
+                <ButtonSecondary
+                  onClick={onDownload}
+                  disabled={downloading}
+                  ClassName="!bg-Primary-DeepTeal !text-white hover:!bg-[#014955] disabled:!bg-[#999999] disabled:!text-white"
+                >
+                  <Download size={16} />
+                  {downloading ? 'Downloading…' : 'Download'}
+                </ButtonSecondary>
+              )}
               <ButtonSecondary
                 onClick={() => {
                   toggleEditMode(false);

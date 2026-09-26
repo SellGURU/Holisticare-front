@@ -1278,6 +1278,26 @@ class Application extends Api {
   static getHtmlReport = (member_id: string) => {
     return this.post(`/get_html_report`, { member_id: member_id });
   };
+  static getHtmlReportPdf = (member_id: string | number) => {
+    return this.post(
+      `/get_html_report_pdf`,
+      { member_id: Number(member_id) },
+      {
+        responseType: 'blob',
+        noPending: true,
+        timeout: 120000,
+        headers: {
+          Accept: 'application/pdf',
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+  };
+  static getPdfReport = (member_id: string | number) => {
+    return this.post(`/get_pdf_report`, { member_id: Number(member_id) }, {
+      noPending: true,
+    });
+  };
   static getPublicShareState = (payload: { member_id: string | number }) => {
     return this.post('/patients/public_share_state', payload);
   };

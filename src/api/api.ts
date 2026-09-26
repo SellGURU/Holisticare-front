@@ -14,11 +14,14 @@ class Api {
     const { noAuth, ...axiosConfig } = config || {};
     const token = getTokenFromLocalStorage();
     const headers = noAuth || !token
-      ? config?.headers || { 'Content-Type': 'application/json' }
+      ? {
+          'Content-Type': 'application/json',
+          ...(config?.headers || {}),
+        }
       : {
           Authorization: 'Bearer ' + token,
-          'Content-Type':
-            config?.headers?.['Content-Type'] || 'application/json',
+          'Content-Type': 'application/json',
+          ...(config?.headers || {}),
         };
     const response = axios.post(this.base_url + url, data, {
       ...axiosConfig,
