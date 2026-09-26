@@ -187,10 +187,12 @@ const PackagePage = () => {
         <div>
           <div className="text-base font-medium text-Text-Primary">Package</div>
           <p className="mt-1 text-[12px] text-Text-Secondary">
-            Current clinic plan, remaining period, and payment history.
+            {paid
+              ? 'Current clinic plan, remaining period, and payment history.'
+              : 'Choose Plus or Pro to subscribe. Demo stays free until you buy.'}
           </p>
         </div>
-        {status?.can_manage && status.has_customer ? (
+        {paid && status?.can_manage && status.has_customer ? (
           <ButtonPrimary
             onClick={() => {
               openPortal().catch(() => {});
@@ -208,6 +210,148 @@ const PackagePage = () => {
         </div>
       ) : (
         <div className="space-y-5 pb-4">
+          {showCatalog && groupedCatalog.length === 0 ? (
+            <div className="rounded-[20px] bg-backgroundColor-Card p-5 text-[12px] text-Text-Secondary">
+              No Plus or Pro prices are configured yet.
+            </div>
+          ) : null}
+
+          {showCatalog && groupedCatalog.length > 0 ? (
+            <div>
+              <div className="mb-3 text-sm font-medium text-Text-Primary">
+                Choose a plan
+              </div>
+              <div
+                className="flex justify-start overflow-x-auto overflow-y-hidden pb-6"
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#005F73 #E9F0F2',
+                }}
+              >
+                <motion.div
+                  className="flex w-max snap-x snap-mandatory gap-4"
+                  variants={cardListMotion}
+                  initial="hidden"
+                  animate="show"
+                >
+                  {groupedCatalog.map(([name, options]) => {
+                    const copy = PLAN_COPY[name] || {
+                      blurb: 'Clinic subscription plan.',
+                      includesLabel: 'Included',
+                      includes: [],
+                    };
+                    const isDemo = name === 'Demo';
+                    const option = selectedOption(name, options);
+                    const current = isDemo && !paid;
+                    const amount = isDemo
+                      ? 'Free'
+                      : formatPriceAmount(option?.unit_amount, option?.currency);
+                    const showToggle = !isDemo && options.length > 1;
+                    return (
+                      <motion.div
+                        key={name}
+                        variants={cardMotion}
+                        className="w-[280px] shrink-0 snap-start"
+                      >
+                        <motion.div
+                          className={`relative flex h-full flex-col rounded-[24px] border-2 bg-white p-5 transition-shadow duration-200 hover:shadow-md ${
+                            current
+                              ? 'border-Primary-DeepTeal'
+                              : copy.recommended
+                                ? 'border-[#8CB6BE]'
+                                : 'border-Gray-50'
+                          }`}
+                        >
+                          {current ? (
+                            <span className="absolute right-4 top-4 rounded-full bg-Primary-EmeraldGreen px-2.5 py-0.5 text-[10px] font-semibold text-white">
+                              Active
+                            </span>
+                          ) : copy.recommended ? (
+                            <span className="absolute right-4 top-4 rounded-full bg-Primary-DeepTeal px-2.5 py-0.5 text-[10px] font-medium text-white">
+                              Recommended
+                            </span>
+                          ) : null}
+                          <div className="pr-16 text-xl font-semibold text-Text-Primary">
+                            {name}
+                          </div>
+                          <p className="mt-1 text-[12px] leading-5 text-Text-Secondary">
+                            {copy.blurb}
+                          </p>
+                          <div className="mt-4 flex items-end gap-1">
+                            <span className="text-[32px] font-semibold leading-none text-Text-Primary">
+                              {amount || '—'}
+                            </span>
+                            {isDemo ? null : (
+                              <span className="pb-1 text-[12px] text-Text-Secondary">
+                                / {intervalLabel(option?.interval).toLowerCase() || 'month'}
+                              </span>
+                            )}
+                          </div>
+                          {showToggle ? (
+                            <div className="mt-4 inline-flex w-fit rounded-full bg-[#F4F4F4] p-1">
+                              {options.map((item) => {
+                                const active = item.price_id === option?.price_id;
+                                return (
+                                  <button
+                                    key={item.price_id}
+                                    type="button"
+                                    className={`rounded-full px-3 py-1 text-[11px] ${
+                                      active
+                                        ? 'bg-white text-Primary-DeepTeal shadow-sm'
+                                        : 'text-Text-Secondary'
+                                    }`}
+                                    onClick={() => {
+                                      setIntervalByPlan((prev) => ({
+                                        ...prev,
+                                        [name]: item.interval,
+                                      }));
+                                    }}
+                                  >
+                                    {intervalLabel(item.interval)}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          ) : null}
+                          <div className="mt-6">
+                            {isDemo ? (
+                              <div
+                                className={`flex h-[34px] items-center justify-center rounded-3xl text-[12px] font-medium ${
+                                  current
+                                    ? 'bg-Primary-DeepTeal text-white'
+                                    : 'border border-Gray-50 text-Text-Secondary'
+                                }`}
+                              >
+                                {current ? 'Active now' : 'Included with Demo'}
+                              </div>
+                            ) : (
+                              <ButtonPrimary
+                                ClassName="w-full"
+                                onClick={() => {
+                                  startCheckout(option?.price_id || '').catch(() => {});
+                                }}
+                                disabled={
+                                  !status?.can_manage ||
+                                  !option?.price_id ||
+                                  actingPrice === option.price_id
+                                }
+                              >
+                                {actingPrice === option?.price_id
+                                  ? 'Redirecting...'
+                                  : `Subscribe to ${name}`}
+                              </ButtonPrimary>
+                            )}
+                          </div>
+                        </motion.div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              </div>
+            </div>
+          ) : null}
+
+          {paid ? (
           <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.9fr)]">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -394,146 +538,6 @@ const PackagePage = () => {
               )}
             </div>
           </div>
-
-          {showCatalog && groupedCatalog.length === 0 ? (
-            <div className="rounded-[20px] bg-backgroundColor-Card p-5 text-[12px] text-Text-Secondary">
-              No Plus or Pro prices are configured yet.
-            </div>
-          ) : null}
-
-          {showCatalog && groupedCatalog.length > 0 ? (
-            <div>
-              <div className="mb-3 text-sm font-medium text-Text-Primary">
-                Choose a plan
-              </div>
-              <div
-                className="flex justify-start overflow-x-auto overflow-y-hidden pb-6"
-                style={{
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: '#005F73 #E9F0F2',
-                }}
-              >
-                <motion.div
-                  className="flex w-max snap-x snap-mandatory gap-4"
-                  variants={cardListMotion}
-                  initial="hidden"
-                  animate="show"
-                >
-                  {groupedCatalog.map(([name, options]) => {
-                    const copy = PLAN_COPY[name] || {
-                      blurb: 'Clinic subscription plan.',
-                      includesLabel: 'Included',
-                      includes: [],
-                    };
-                    const isDemo = name === 'Demo';
-                    const option = selectedOption(name, options);
-                    const current = isDemo && !paid;
-                    const amount = isDemo
-                      ? 'Free'
-                      : formatPriceAmount(option?.unit_amount, option?.currency);
-                    const showToggle = !isDemo && options.length > 1;
-                    return (
-                      <motion.div
-                        key={name}
-                        variants={cardMotion}
-                        className="w-[280px] shrink-0 snap-start"
-                      >
-                        <motion.div
-                          className={`relative flex h-full flex-col rounded-[24px] border-2 bg-white p-5 transition-shadow duration-200 hover:shadow-md ${
-                            current
-                              ? 'border-Primary-DeepTeal'
-                              : copy.recommended
-                                ? 'border-[#8CB6BE]'
-                                : 'border-Gray-50'
-                          }`}
-                        >
-                          {current ? (
-                            <span className="absolute right-4 top-4 rounded-full bg-Primary-EmeraldGreen px-2.5 py-0.5 text-[10px] font-semibold text-white">
-                              Active
-                            </span>
-                          ) : copy.recommended ? (
-                            <span className="absolute right-4 top-4 rounded-full bg-Primary-DeepTeal px-2.5 py-0.5 text-[10px] font-medium text-white">
-                              Recommended
-                            </span>
-                          ) : null}
-                          <div className="pr-16 text-xl font-semibold text-Text-Primary">
-                            {name}
-                          </div>
-                          <p className="mt-1 text-[12px] leading-5 text-Text-Secondary">
-                            {copy.blurb}
-                          </p>
-                          <div className="mt-4 flex items-end gap-1">
-                            <span className="text-[32px] font-semibold leading-none text-Text-Primary">
-                              {amount || '—'}
-                            </span>
-                            {isDemo ? null : (
-                              <span className="pb-1 text-[12px] text-Text-Secondary">
-                                / {intervalLabel(option?.interval).toLowerCase() || 'month'}
-                              </span>
-                            )}
-                          </div>
-                          {showToggle ? (
-                            <div className="mt-4 inline-flex w-fit rounded-full bg-[#F4F4F4] p-1">
-                              {options.map((item) => {
-                                const active = item.price_id === option?.price_id;
-                                return (
-                                  <button
-                                    key={item.price_id}
-                                    type="button"
-                                    className={`rounded-full px-3 py-1 text-[11px] ${
-                                      active
-                                        ? 'bg-white text-Primary-DeepTeal shadow-sm'
-                                        : 'text-Text-Secondary'
-                                    }`}
-                                    onClick={() => {
-                                      setIntervalByPlan((prev) => ({
-                                        ...prev,
-                                        [name]: item.interval,
-                                      }));
-                                    }}
-                                  >
-                                    {intervalLabel(item.interval)}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          ) : null}
-                          <div className="mt-6">
-                            {isDemo ? (
-                              <div
-                                className={`flex h-[34px] items-center justify-center rounded-3xl text-[12px] font-medium ${
-                                  current
-                                    ? 'bg-Primary-DeepTeal text-white'
-                                    : 'border border-Gray-50 text-Text-Secondary'
-                                }`}
-                              >
-                                {current ? 'Active now' : 'Included with Demo'}
-                              </div>
-                            ) : (
-                              <ButtonPrimary
-                                ClassName="w-full"
-                                onClick={() => {
-                                  startCheckout(option?.price_id || '').catch(() => {});
-                                }}
-                                disabled={
-                                  !status?.can_manage ||
-                                  !option?.price_id ||
-                                  actingPrice === option.price_id
-                                }
-                              >
-                                {actingPrice === option?.price_id
-                                  ? 'Redirecting...'
-                                  : `Subscribe to ${name}`}
-                              </ButtonPrimary>
-                            )}
-                          </div>
-                        </motion.div>
-                      </motion.div>
-                    );
-                  })}
-                </motion.div>
-              </div>
-            </div>
           ) : null}
         </div>
       )}
