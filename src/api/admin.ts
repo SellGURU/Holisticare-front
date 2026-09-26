@@ -548,6 +548,37 @@ class AdminApi {
     );
   }
 
+  static listPayments(params?: {
+    limit?: number;
+    offset?: number;
+    status?: string;
+    customer?: string;
+    currency?: string;
+    date_from?: string;
+    date_to?: string;
+  }) {
+    return axios.get(`${getBaseUrl()}/admin/payments`, {
+      headers: withAuthHeaders(),
+      params,
+    });
+  }
+
+  static getPayment(id: string) {
+    return axios.get(`${getBaseUrl()}/admin/payments/${encodeURIComponent(id)}`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static syncPayments() {
+    return axios.post(
+      `${getBaseUrl()}/admin/payments/sync`,
+      {},
+      {
+        headers: withAuthHeaders(),
+      },
+    );
+  }
+
   static compareRookCsv(formData: FormData) {
     return axios.post(`${getBaseUrl()}/admin/compare-rook-csv`, formData, {
       headers: {
