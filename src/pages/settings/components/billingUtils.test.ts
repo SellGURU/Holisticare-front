@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   billingPageSubtitle,
   billingPeriodDays,
+  billingRecoveryAction,
   cardExpiryLabel,
   cardLabel,
   collectionNotice,
@@ -13,6 +14,11 @@ import {
   formatPriceAmount,
   invoiceAmountValue,
   invoiceRowCaption,
+  isPausedSubscription,
+  isPastDueSubscription,
+  isPlanCardActive,
+  isTrialingSubscription,
+  pastDueNotice,
   paymentRowCaption,
   periodEndCaption,
   periodProgressCaption,
@@ -27,8 +33,12 @@ import {
   paymentStatusLabel,
   planChangeKind,
   refundStatusLabel,
+  shouldRetryCheckoutRefresh,
+  showLifecycleControls,
   subscriptionPeriodSummary,
   subscriptionStatusLabel,
+  terminalAccessNotice,
+  trialEndCaption,
 } from './billingUtils';
 
 describe('billingUtils', () => {
@@ -161,5 +171,128 @@ describe('billingUtils', () => {
       ])?.id,
     ).toBe('pm_2');
     expect(defaultPaymentMethod([])).toBeNull();
+  });
+
+  it('maps the subscription lifecycle matrix for UI state', () => {
+    const plusId = 'price_plus';
+    const fixtures: Array<{
+      status: string;
+      paused?: boolean;
+      cancelAtEnd?: boolean;
+      paid: boolean;
+      demoActive: boolean;
+      plusActive: boolean;
+      showLifecycle: boolean;
+      recovery: 'portal' | 'checkout' | null;
+    }> = [
+      {
+        status: 'active',
+        paid: true,
+        demoActive: false,
+        plusActive: true,
+        showLifecycle: true,
+        recovery: null,
+      },
+      {
+        status: 'trialing',
+        paid: true,
+        demoActive: false,
+        plusActive: true,
+        showLifecycle: true,
+        recovery: null,
+      },
+      {
+        status: 'past_due',
+        paid: true,
+        demoActive: false,
+        plusActive: true,
+        showLifecycle: true,
+        recovery: 'portal',
+      },
+      {
+        status: 'paused',
+        paused: true,
+        paid: false,
+        demoActive: true,
+        plusActive: false,
+        showLifecycle: true,
+        recovery: null,
+      },
+      {
+        status: 'unpaid',
+        paid: false,
+        demoActive: true,
+        plusActive: false,
+        showLifecycle: false,
+        recovery: 'portal',
+      },
+      {
+        status: 'incomplete',
+        paid: false,
+        demoActive: true,
+        plusActive: false,
+        showLifecycle: false,
+        recovery: 'portal',
+      },
+      {
+        status: 'incomplete_expired',
+        paid: false,
+        demoActive: true,
+        plusActive: false,
+        showLifecycle: false,
+        recovery: 'checkout',
+      },
+      {
+        status: 'canceled',
+        paid: false,
+        demoActive: true,
+        plusActive: false,
+        showLifecycle: false,
+        recovery: 'checkout',
+      },
+      {
+        status: 'active',
+        cancelAtEnd: true,
+        paid: true,
+        demoActive: false,
+        plusActive: true,
+        showLifecycle: true,
+        recovery: null,
+      },
+    ];
+
+    for (const fixture of fixtures) {
+      const status = {
+        is_paid: fixture.paid,
+        stripe_price_id: plusId,
+        has_subscription: true,
+        subscription_status: fixture.status,
+        collection_paused: fixture.paused,
+        cancel_at_period_end: fixture.cancelAtEnd,
+      };
+      expect(hasPaidSubscription(fixture.status)).toBe(fixture.paid);
+      expect(showLifecycleControls(true, fixture.paid, Boolean(fixture.paused))).toBe(
+        fixture.showLifecycle,
+      );
+      expect(isPlanCardActive('Demo', undefined, status)).toBe(fixture.demoActive);
+      expect(isPlanCardActive('Plus', plusId, status)).toBe(fixture.plusActive);
+      expect(billingRecoveryAction(fixture.status)).toBe(fixture.recovery);
+    }
+
+    expect(isPausedSubscription('active', true)).toBe(true);
+    expect(isPastDueSubscription('past_due')).toBe(true);
+    expect(isTrialingSubscription('trialing')).toBe(true);
+    expect(pastDueNotice('past_due')).toContain('grace period');
+    expect(trialEndCaption('2026-04-01T00:00:00.000Z')).toContain('Trial ends');
+    expect(terminalAccessNotice('canceled')).toContain('canceled');
+    expect(terminalAccessNotice('unpaid')).toContain('unpaid');
+    expect(shouldRetryCheckoutRefresh({ is_paid: false, subscription_status: 'incomplete' })).toBe(
+      true,
+    );
+    expect(shouldRetryCheckoutRefresh({ is_paid: true, subscription_status: 'active' })).toBe(
+      false,
+    );
+    expect(showLifecycleControls(true, false, true)).toBe(true);
+    expect(showLifecycleControls(true, false, false)).toBe(false);
   });
 });

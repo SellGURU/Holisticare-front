@@ -43,6 +43,7 @@ describe('BillingApi', () => {
   });
 
   it('posts lifecycle and setup mutations', async () => {
+    await BillingApi.refresh();
     await BillingApi.upgrade('price_pro');
     await BillingApi.downgrade('price_plus');
     await BillingApi.cancel(true);
@@ -51,6 +52,7 @@ describe('BillingApi', () => {
     await BillingApi.resumeCollection();
     await BillingApi.createSetupIntent();
     const urls = axiosMock.post.mock.calls.map((call: unknown[]) => call[0]);
+    expect(urls).toContain('http://backend.test/billing/refresh');
     expect(urls).toContain('http://backend.test/billing/subscription/upgrade');
     expect(urls).toContain('http://backend.test/billing/subscription/downgrade');
     expect(urls).toContain('http://backend.test/billing/subscription/cancel');

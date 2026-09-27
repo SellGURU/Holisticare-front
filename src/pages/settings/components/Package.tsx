@@ -15,9 +15,11 @@ import type {
 const AddPaymentMethod = lazy(() => import('./AddPaymentMethod'));
 import {
   AVAILABLE_PLANS_ID,
+  CHECKOUT_REFRESH_RETRY_MS,
   PLAN_COPY,
   billingErrorMessage,
   billingPageSubtitle,
+  billingRecoveryAction,
   cardExpiryLabel,
   cardLabel,
   collectionNotice,
@@ -33,6 +35,11 @@ import {
   intervalLabel,
   invoiceAmountValue,
   invoiceStatusLabel,
+  isPausedSubscription,
+  isPastDueSubscription,
+  isPlanCardActive,
+  isTrialingSubscription,
+  pastDueNotice,
   paymentRowCaption,
   paymentStatusLabel,
   periodEndCaption,
@@ -43,7 +50,11 @@ import {
   planPriceCaption,
   refundStatusLabel,
   remainingPeriodProgress,
+  shouldRetryCheckoutRefresh,
+  showLifecycleControls,
   subscriptionStatusLabel,
+  terminalAccessNotice,
+  trialEndCaption,
 } from './billingUtils';
 
 const cardListMotion = {
@@ -96,15 +107,17 @@ const PackagePage = () => {
   const [methods, setMethods] = useState<BillingPaymentMethod[]>([]);
   const [actingAction, setActingAction] = useState('');
 
-  const loadStatus = async () => {
-    setLoading(true);
+  const loadStatus = async (quiet = false) => {
+    if (!quiet) setLoading(true);
     try {
       const res = await BillingApi.getStatus();
       setStatus(res.data);
+      return res.data as ClinicBillingStatus;
     } catch (err) {
       toast.error(billingErrorMessage(err, 'Failed to load billing status.'));
+      return null;
     } finally {
-      setLoading(false);
+      if (!quiet) setLoading(false);
     }
   };
 
@@ -170,7 +183,34 @@ const PackagePage = () => {
     const checkout = searchParams.get('checkout');
     if (!checkout) return;
     if (checkout === 'success') {
-      loadStatus().catch(() => {});
+      const refreshAfterCheckout = async () => {
+        try {
+          await BillingApi.refresh();
+        } catch {
+          // The webhook remains the source of truth. Still reload status if
+          // reconciliation is unavailable or the event already arrived.
+        }
+        let next = await loadStatus();
+        if (shouldRetryCheckoutRefresh(next)) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, CHECKOUT_REFRESH_RETRY_MS),
+          );
+          try {
+            await BillingApi.refresh();
+          } catch {
+            // Retry once for webhook lag, then show whatever status we have.
+          }
+          next = await loadStatus(true);
+        }
+        if (next?.has_customer) {
+          await Promise.all([
+            loadPayments(0, false),
+            loadInvoices(),
+            loadMethods(),
+          ]);
+        }
+      };
+      refreshAfterCheckout().catch(() => {});
     } else if (checkout === 'cancel') {
       toast.info('Checkout canceled.');
     }
@@ -194,7 +234,16 @@ const PackagePage = () => {
   const currentCatalogItem = (status?.catalog || []).find(
     (item) => item.price_id === status?.stripe_price_id,
   );
-  const paused = Boolean(status?.collection_paused);
+  const paused = isPausedSubscription(
+    status?.subscription_status,
+    status?.collection_paused,
+  );
+  const pastDue = isPastDueSubscription(status?.subscription_status);
+  const trialing = isTrialingSubscription(status?.subscription_status);
+  const recoveryAction = billingRecoveryAction(status?.subscription_status);
+  const recoveryNotice = pastDue
+    ? pastDueNotice(status?.subscription_status)
+    : terminalAccessNotice(status?.subscription_status);
   const daysLeft =
     status?.days_remaining ?? daysUntilPeriodEnd(status?.current_period_end);
   const progress = remainingPeriodProgress(daysLeft, status?.interval);
@@ -209,7 +258,11 @@ const PackagePage = () => {
     status?.current_period_end,
   );
   const showPeriodCard = paid || daysLeft != null;
-  const showLifecycleCard = Boolean(status?.can_manage && paid);
+  const showLifecycleCard = showLifecycleControls(
+    status?.can_manage,
+    paid,
+    paused,
+  );
 
   const selectedOption = (name: string, options: BillingPlanOption[]) => {
     const preferred = intervalByPlan[name];
@@ -368,26 +421,76 @@ const PackagePage = () => {
                     : 'Starter access for trying the clinic portal.'}
                 </div>
                 <div className="mt-1 text-[12px] text-Text-Secondary">
-                  {paid
-                    ? periodEndCaption(
+                  {trialing
+                    ? trialEndCaption(
+                        status?.trial_end,
                         status?.current_period_end,
-                        status?.cancel_at_period_end,
                       )
-                    : currentPlanLabel(
-                        status?.plan_name,
-                        status?.interval,
-                        status?.plan_type,
-                      )}
+                    : paid
+                      ? periodEndCaption(
+                          status?.current_period_end,
+                          status?.cancel_at_period_end,
+                        )
+                      : currentPlanLabel(
+                          status?.plan_name,
+                          status?.interval,
+                          status?.plan_type,
+                        )}
                 </div>
               </div>
               <button
                 type="button"
                 className={`${ghostButton} shrink-0`}
-                onClick={scrollToPlans}
+                onClick={(event) => {
+                  stopEvent(event);
+                  if (recoveryAction === 'portal') {
+                    openPortal().catch(() => {});
+                    return;
+                  }
+                  scrollToPlans(event);
+                }}
               >
-                {paid ? 'Adjust plan' : 'Choose a plan'}
+                {recoveryAction === 'portal'
+                  ? openingPortal
+                    ? 'Opening...'
+                    : 'Update card'
+                  : paid
+                    ? 'Adjust plan'
+                    : 'Choose a plan'}
               </button>
             </div>
+            {recoveryNotice ? (
+              <div
+                className={`mt-4 rounded-[14px] px-3 py-3 text-[12px] ${
+                  pastDue
+                    ? 'bg-[#FFF6E8] text-Text-Primary'
+                    : 'bg-Gray-15 text-Text-Secondary'
+                }`}
+              >
+                <div>{recoveryNotice}</div>
+                {status?.can_manage ? (
+                  <button
+                    type="button"
+                    className={`${linkButton} mt-2`}
+                    disabled={openingPortal}
+                    onClick={(event) => {
+                      stopEvent(event);
+                      if (recoveryAction === 'portal') {
+                        openPortal().catch(() => {});
+                        return;
+                      }
+                      scrollToPlans(event);
+                    }}
+                  >
+                    {recoveryAction === 'portal'
+                      ? openingPortal
+                        ? 'Opening...'
+                        : 'Manage billing'
+                      : 'Choose a plan'}
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
             <div className="mt-5 grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
               <div className="rounded-[14px] bg-Gray-15 px-3 py-3">
                 <div className="text-[10px] text-Text-Secondary">Price</div>
@@ -648,9 +751,11 @@ const PackagePage = () => {
                     };
                     const isDemo = name === 'Demo';
                     const option = selectedOption(name, options);
-                    const current =
-                      (isDemo && !paid) ||
-                      option?.price_id === status?.stripe_price_id;
+                    const current = isPlanCardActive(
+                      name,
+                      option?.price_id,
+                      status,
+                    );
                     const amount = isDemo
                       ? 'Free'
                       : formatPriceAmount(option?.unit_amount, option?.currency);
@@ -948,8 +1053,9 @@ const PackagePage = () => {
                 Cancel or pause
               </div>
               <p className="mt-1 max-w-2xl text-[12px] text-Text-Secondary">
-                Pause collection or cancel at period end. Access stays available until the
-                current period closes.
+                {paused
+                  ? 'Collection is paused and the clinic is on Demo until you resume.'
+                  : 'Pause collection or cancel at period end. Access stays available until the current period closes.'}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {status?.cancel_at_period_end ? (

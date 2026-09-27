@@ -133,6 +133,111 @@ export const hasPaidSubscription = (
   return normalized === 'active' || normalized === 'trialing' || normalized === 'past_due';
 };
 
+export const isPausedSubscription = (
+  status?: string | null,
+  collectionPaused?: boolean,
+): boolean => {
+  return Boolean(collectionPaused) || (status || '').toLowerCase() === 'paused';
+};
+
+export const isPastDueSubscription = (status?: string | null): boolean => {
+  return (status || '').toLowerCase() === 'past_due';
+};
+
+export const isTrialingSubscription = (status?: string | null): boolean => {
+  return (status || '').toLowerCase() === 'trialing';
+};
+
+export const showLifecycleControls = (
+  canManage: boolean | undefined,
+  paid: boolean,
+  paused: boolean,
+): boolean => {
+  return Boolean(canManage && (paid || paused));
+};
+
+export const isPlanCardActive = (
+  planName: string,
+  optionPriceId: string | undefined,
+  status: {
+    is_paid?: boolean;
+    stripe_price_id?: string | null;
+    has_subscription?: boolean;
+    subscription_status?: string | null;
+  } | null,
+): boolean => {
+  const paid = status?.is_paid ?? hasPaidSubscription(status?.subscription_status);
+  if (planName === 'Demo') {
+    return !paid;
+  }
+  return Boolean(
+    paid &&
+      optionPriceId &&
+      optionPriceId === status?.stripe_price_id &&
+      status?.has_subscription,
+  );
+};
+
+export const pastDueNotice = (status?: string | null): string => {
+  if ((status || '').toLowerCase() === 'past_due') {
+    return 'Payment failed. Update your card to keep access after the grace period.';
+  }
+  return '';
+};
+
+export const trialEndCaption = (
+  trialEnd?: string | null,
+  fallbackPeriodEnd?: string | null,
+): string => {
+  const date = formatPeriodEnd(trialEnd || fallbackPeriodEnd);
+  if (date === '—') return '';
+  return `Trial ends ${date}`;
+};
+
+export type BillingRecoveryAction = 'portal' | 'checkout' | null;
+
+export const billingRecoveryAction = (
+  status?: string | null,
+): BillingRecoveryAction => {
+  switch ((status || '').toLowerCase()) {
+    case 'past_due':
+    case 'unpaid':
+    case 'incomplete':
+      return 'portal';
+    case 'canceled':
+    case 'cancelled':
+    case 'incomplete_expired':
+      return 'checkout';
+    default:
+      return null;
+  }
+};
+
+export const terminalAccessNotice = (status?: string | null): string => {
+  switch ((status || '').toLowerCase()) {
+    case 'unpaid':
+      return 'This subscription is unpaid. Update billing to restore paid access.';
+    case 'incomplete':
+      return 'Checkout is incomplete. Finish payment or update the card to activate this plan.';
+    case 'incomplete_expired':
+      return 'The previous checkout expired. Choose a plan to subscribe again.';
+    case 'canceled':
+    case 'cancelled':
+      return 'This subscription is canceled. Choose a plan to subscribe again.';
+    default:
+      return '';
+  }
+};
+
+export const shouldRetryCheckoutRefresh = (
+  status: { is_paid?: boolean; subscription_status?: string | null } | null,
+): boolean => {
+  if (!status) return true;
+  return !(status.is_paid ?? hasPaidSubscription(status.subscription_status));
+};
+
+export const CHECKOUT_REFRESH_RETRY_MS = 800;
+
 export const groupCatalog = (catalog: BillingPlanOption[]) => {
   const groups = new Map<string, BillingPlanOption[]>();
   for (const item of catalog) {

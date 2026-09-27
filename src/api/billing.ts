@@ -5,6 +5,10 @@ class BillingApi extends Api {
     return this.get('/billing/status');
   }
 
+  static refresh() {
+    return this.post('/billing/refresh', {}, { noPending: true });
+  }
+
   static getConfig() {
     return this.get('/billing/config');
   }
