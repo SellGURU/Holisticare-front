@@ -48,7 +48,7 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|icons/|sw\\.js$|registerSW\\.js$|manifest\\.webmanifest$).*)",
       "destination": "/index.html"
     }
   ]
