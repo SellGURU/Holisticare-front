@@ -53,8 +53,11 @@ const SetupForm = ({
       <div className="flex gap-2">
         <ButtonPrimary
           ClassName="flex-1"
+          type="button"
           disabled={saving || !stripe}
-          onClick={() => {
+          onClick={(event) => {
+            event?.preventDefault();
+            event?.stopPropagation();
             submit().catch(() => {});
           }}
         >

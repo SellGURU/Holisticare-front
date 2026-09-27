@@ -195,7 +195,7 @@ const PackagePage = () => {
         toast.error('Stripe did not return a checkout URL.');
         return;
       }
-      window.location.assign(url);
+      window.location.href = url;
     } catch (err) {
       toast.error(billingErrorMessage(err, 'Failed to start checkout.'));
     } finally {
@@ -213,7 +213,7 @@ const PackagePage = () => {
         toast.error('Stripe did not return a billing portal URL.');
         return;
       }
-      window.location.assign(url);
+      window.location.href = url;
     } catch (err) {
       toast.error(billingErrorMessage(err, 'Failed to open billing portal.'));
     } finally {
@@ -277,7 +277,10 @@ const PackagePage = () => {
         </div>
         {status?.can_manage && status.has_customer ? (
           <ButtonPrimary
-            onClick={() => {
+            type="button"
+            onClick={(event) => {
+              event?.preventDefault();
+              event?.stopPropagation();
               openPortal().catch(() => {});
             }}
             disabled={openingPortal || loading}
@@ -669,7 +672,10 @@ const PackagePage = () => {
                             ) : (
                               <ButtonPrimary
                                 ClassName="w-full"
-                                onClick={() => {
+                                type="button"
+                                onClick={(event) => {
+                                  event?.preventDefault();
+                                  event?.stopPropagation();
                                   changePlan(option).catch(() => {});
                                 }}
                                 disabled={
