@@ -1,4 +1,11 @@
-import type { BillingPlanOption } from '../../../types/clinicBilling';
+import type {
+  BillingInvoice,
+  BillingPaymentMethod,
+  BillingPlanOption,
+  ClinicPayment,
+} from '../../../types/clinicBilling';
+
+export const AVAILABLE_PLANS_ID = 'available-plans';
 
 export const subscriptionStatusLabel = (
   status: string | null | undefined,
@@ -270,4 +277,140 @@ export const billingErrorMessage = (err: unknown, fallback: string): string => {
     ?.response?.data?.detail;
   if (typeof detail === 'string' && detail.trim()) return detail;
   return fallback;
+};
+
+export const billingPageSubtitle = (paid: boolean): string => {
+  return paid
+    ? 'Review your current plan, payment method, invoices, and remaining billing period.'
+    : 'Choose Plus or Pro to subscribe. Demo stays free until you buy.';
+};
+
+export const planDisplayName = (
+  planName: string | null | undefined,
+  planType: string | null | undefined,
+): string => {
+  if (planName) return planName;
+  if ((planType || '').toLowerCase() === 'demo') return 'Demo';
+  return 'No paid plan';
+};
+
+export const planPriceCaption = (
+  unitAmount: number | null | undefined,
+  currency: string | null | undefined,
+  interval: string | null | undefined,
+): string => {
+  const price = formatPriceAmount(unitAmount, currency);
+  const period = intervalLabel(interval);
+  if (!price) return period || '—';
+  return period ? `${price} / ${period.toLowerCase()}` : price;
+};
+
+export const periodEndCaption = (
+  periodEnd: string | null | undefined,
+  cancelAtPeriodEnd?: boolean,
+): string => {
+  const date = formatPeriodEnd(periodEnd);
+  if (date === '—') return '—';
+  return cancelAtPeriodEnd ? `Access ends ${date}` : `Renews ${date}`;
+};
+
+export const daysRemainingLabel = (
+  daysLeft: number | null | undefined,
+): string => {
+  if (daysLeft == null) {
+    return 'Period dates appear after Stripe confirms billing.';
+  }
+  if (daysLeft === 0) return 'Ends today';
+  if (daysLeft === 1) return '1 day left';
+  return `${daysLeft} days left`;
+};
+
+export const periodProgressCaption = (
+  progress: number,
+  interval: string | null | undefined,
+): string => {
+  return `${progress}% of ${billingPeriodDays(interval)}-day period remaining`;
+};
+
+export const estimatePeriodStart = (
+  periodEnd: string | null | undefined,
+  interval: string | null | undefined,
+): string | null => {
+  if (!periodEnd) return null;
+  const end = new Date(periodEnd);
+  if (Number.isNaN(end.getTime())) return null;
+  const start = new Date(end.getTime());
+  start.setDate(start.getDate() - billingPeriodDays(interval));
+  return start.toISOString();
+};
+
+export const formatPeriodRange = (
+  periodEnd: string | null | undefined,
+  interval: string | null | undefined,
+): string => {
+  const startIso = estimatePeriodStart(periodEnd, interval);
+  const endLabel = formatPeriodEnd(periodEnd);
+  if (!startIso) return endLabel;
+  return `${formatPeriodEnd(startIso)} – ${endLabel}`;
+};
+
+export const cardExpiryLabel = (
+  expMonth?: number | null,
+  expYear?: number | null,
+): string => {
+  if (!expMonth || !expYear) return 'Card';
+  return `Expires ${expMonth}/${expYear}`;
+};
+
+export const defaultPaymentMethod = (
+  methods: BillingPaymentMethod[],
+): BillingPaymentMethod | null => {
+  if (!methods.length) return null;
+  return methods.find((item) => item.is_default) || methods[0];
+};
+
+export const paymentRowCaption = (
+  payment: Pick<ClinicPayment, 'stripe_created_at' | 'payment_method'>,
+): string => {
+  const date = formatPeriodEnd(payment.stripe_created_at);
+  return payment.payment_method ? `${date} · ${payment.payment_method}` : date;
+};
+
+export const invoiceRowCaption = (
+  invoice: Pick<BillingInvoice, 'number' | 'created'>,
+): string => {
+  return `${invoice.number || 'Invoice'} · ${formatPeriodEnd(invoice.created)}`;
+};
+
+export const invoiceAmountValue = (
+  invoice: Pick<BillingInvoice, 'amount_paid' | 'amount_due'>,
+): number => {
+  return invoice.amount_paid || invoice.amount_due;
+};
+
+export const collectionNotice = (
+  paused: boolean,
+  cancelAtPeriodEnd: boolean,
+  periodEnd?: string | null,
+): string => {
+  if (paused) {
+    return 'Billing is paused. Invoices will not be created until you resume collection.';
+  }
+  if (cancelAtPeriodEnd) {
+    return `This plan is scheduled to cancel. Access continues until ${formatPeriodEnd(periodEnd)}.`;
+  }
+  return '';
+};
+
+export const planActionLabel = (
+  paid: boolean,
+  current: boolean,
+  loading: boolean,
+  name: string,
+  kind: 'upgrade' | 'downgrade' | 'same',
+): string => {
+  if (loading) return paid ? 'Updating...' : 'Redirecting...';
+  if (current) return 'Current plan';
+  if (!paid) return `Subscribe to ${name}`;
+  return kind === 'upgrade' ? `Upgrade to ${name}` : `Switch to ${name}`;
 };

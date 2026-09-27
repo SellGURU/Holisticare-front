@@ -1,10 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import {
+  billingPageSubtitle,
   billingPeriodDays,
+  cardExpiryLabel,
   cardLabel,
+  collectionNotice,
   currentPlanLabel,
+  daysRemainingLabel,
   daysUntilPeriodEnd,
+  defaultPaymentMethod,
+  formatPeriodRange,
   formatPriceAmount,
+  invoiceAmountValue,
+  invoiceRowCaption,
+  paymentRowCaption,
+  periodEndCaption,
+  periodProgressCaption,
+  planActionLabel,
+  planDisplayName,
+  planPriceCaption,
   remainingPeriodProgress,
   groupCatalog,
   hasPaidSubscription,
@@ -94,5 +108,58 @@ describe('billingUtils', () => {
     expect(paymentStatusLabel('refunded')).toBe('Refunded');
     expect(refundStatusLabel('partial')).toBe('Partially refunded');
     expect(refundStatusLabel('none')).toBe('');
+  });
+
+  it('builds billing page labels and period summaries', () => {
+    expect(billingPageSubtitle(true)).toContain('remaining billing period');
+    expect(billingPageSubtitle(false)).toContain('Demo stays free');
+    expect(planDisplayName('Pro', 'paying')).toBe('Pro');
+    expect(planDisplayName(null, 'demo')).toBe('Demo');
+    expect(planPriceCaption(16000, 'usd', 'month')).toContain('/ monthly');
+    expect(periodEndCaption('2026-03-15T00:00:00.000Z', false)).toContain('Renews');
+    expect(periodEndCaption('2026-03-15T00:00:00.000Z', true)).toContain('Access ends');
+    expect(daysRemainingLabel(12)).toBe('12 days left');
+    expect(daysRemainingLabel(1)).toBe('1 day left');
+    expect(daysRemainingLabel(0)).toBe('Ends today');
+    expect(daysRemainingLabel(null)).toContain('after Stripe');
+    expect(periodProgressCaption(40, 'month')).toBe('40% of 30-day period remaining');
+    expect(formatPeriodRange('2026-03-31T00:00:00.000Z', 'month')).toContain('2026');
+    expect(cardExpiryLabel(12, 2027)).toBe('Expires 12/2027');
+    expect(cardExpiryLabel(null, null)).toBe('Card');
+    expect(collectionNotice(true, false, null)).toContain('paused');
+    expect(collectionNotice(false, true, '2026-03-15T00:00:00.000Z')).toContain(
+      'scheduled to cancel',
+    );
+    expect(collectionNotice(false, false, null)).toBe('');
+  });
+
+  it('labels plan actions, invoices, and default cards', () => {
+    expect(planActionLabel(false, false, false, 'Plus', 'same')).toBe(
+      'Subscribe to Plus',
+    );
+    expect(planActionLabel(true, false, false, 'Pro', 'upgrade')).toBe(
+      'Upgrade to Pro',
+    );
+    expect(planActionLabel(true, true, false, 'Pro', 'same')).toBe('Current plan');
+    expect(planActionLabel(true, false, true, 'Plus', 'downgrade')).toBe(
+      'Updating...',
+    );
+    expect(
+      invoiceRowCaption({ number: 'INV-22', created: '2026-03-15T00:00:00.000Z' }),
+    ).toContain('INV-22');
+    expect(invoiceAmountValue({ amount_paid: 0, amount_due: 16000 })).toBe(16000);
+    expect(
+      paymentRowCaption({
+        stripe_created_at: '2026-03-15T00:00:00.000Z',
+        payment_method: 'visa',
+      }),
+    ).toContain('visa');
+    expect(
+      defaultPaymentMethod([
+        { id: 'pm_1', is_default: false },
+        { id: 'pm_2', is_default: true },
+      ])?.id,
+    ).toBe('pm_2');
+    expect(defaultPaymentMethod([])).toBeNull();
   });
 });
