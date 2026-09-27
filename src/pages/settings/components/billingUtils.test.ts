@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   billingPeriodDays,
+  cardLabel,
   currentPlanLabel,
   daysUntilPeriodEnd,
   formatPriceAmount,
@@ -8,7 +9,9 @@ import {
   groupCatalog,
   hasPaidSubscription,
   intervalLabel,
+  invoiceStatusLabel,
   paymentStatusLabel,
+  planChangeKind,
   refundStatusLabel,
   subscriptionPeriodSummary,
   subscriptionStatusLabel,
@@ -20,6 +23,30 @@ describe('billingUtils', () => {
     expect(subscriptionStatusLabel('past_due')).toBe('Past due');
     expect(subscriptionStatusLabel('canceled')).toBe('Canceled');
     expect(subscriptionStatusLabel(null)).toBe('No subscription');
+    expect(subscriptionStatusLabel('paused')).toBe('Paused');
+  });
+
+  it('classifies upgrade vs downgrade and labels invoices/cards', () => {
+    const plus = {
+      env_key: 'STRIPE_PRICE_PLUS_MONTHLY',
+      price_id: 'price_plus',
+      name: 'Plus',
+      interval: 'month',
+      unit_amount: 16000,
+    };
+    const pro = {
+      env_key: 'STRIPE_PRICE_PRO_MONTHLY',
+      price_id: 'price_pro',
+      name: 'Pro',
+      interval: 'month',
+      unit_amount: 29900,
+    };
+    expect(planChangeKind(plus, pro)).toBe('upgrade');
+    expect(planChangeKind(pro, plus)).toBe('downgrade');
+    expect(planChangeKind(plus, plus)).toBe('same');
+    expect(invoiceStatusLabel('paid')).toBe('Paid');
+    expect(invoiceStatusLabel('open')).toBe('Open');
+    expect(cardLabel('visa', '4242')).toContain('4242');
   });
 
   it('builds the current plan label', () => {

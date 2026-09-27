@@ -25,7 +25,66 @@ export interface ClinicBillingStatus {
   current_period_end: string | null;
   days_remaining: number | null;
   cancel_at_period_end: boolean;
+  collection_paused?: boolean;
+  trial_end?: string | null;
   catalog: BillingPlanOption[];
+}
+
+export interface BillingConfig {
+  publishable_key: string;
+  configured: boolean;
+}
+
+export interface BillingSubscription {
+  stripe_subscription_id: string | null;
+  stripe_price_id: string | null;
+  subscription_status: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  collection_paused: boolean;
+  plan_type: string | null;
+  proration_behavior?: string | null;
+}
+
+export interface BillingPaymentMethod {
+  id: string;
+  brand?: string | null;
+  last4?: string | null;
+  exp_month?: number | null;
+  exp_year?: number | null;
+  is_default: boolean;
+}
+
+export interface BillingPaymentMethodList {
+  items: BillingPaymentMethod[];
+  default_payment_method_id: string | null;
+}
+
+export interface BillingSetupIntent {
+  id?: string | null;
+  client_secret: string;
+}
+
+export interface BillingInvoice {
+  id?: string | null;
+  number?: string | null;
+  status?: string | null;
+  amount_due: number;
+  amount_paid: number;
+  amount_remaining: number;
+  currency: string;
+  created?: string | null;
+  period_start?: string | null;
+  period_end?: string | null;
+  hosted_invoice_url?: string | null;
+  invoice_pdf?: string | null;
+  description?: string | null;
+  subscription_id?: string | null;
+}
+
+export interface BillingInvoiceList {
+  items: BillingInvoice[];
+  has_more: boolean;
 }
 
 export interface ClinicPayment {

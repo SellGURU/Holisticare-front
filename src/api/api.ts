@@ -37,6 +37,40 @@ class Api {
     return response;
   }
 
+  protected static patch(url: string, data?: any, config?: any) {
+    const { noAuth, ...axiosConfig } = config || {};
+    const token = getTokenFromLocalStorage();
+    const headers = noAuth || !token
+      ? {
+          'Content-Type': 'application/json',
+          ...(config?.headers || {}),
+        }
+      : {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+          ...(config?.headers || {}),
+        };
+    return axios.patch(this.base_url + url, data, {
+      ...axiosConfig,
+      headers,
+    });
+  }
+
+  protected static delete(url: string, config?: any) {
+    const { noAuth, ...axiosConfig } = config || {};
+    const token = getTokenFromLocalStorage();
+    const headers = noAuth || !token
+      ? config?.headers || {}
+      : {
+          Authorization: 'Bearer ' + token,
+          ...(config?.headers || {}),
+        };
+    return axios.delete(this.base_url + url, {
+      ...axiosConfig,
+      headers,
+    });
+  }
+
   protected static get(url: string, config?: any) {
     const { noAuth, holisticareHealthCheck, ...axiosConfig } = config || {};
     const token = getTokenFromLocalStorage();

@@ -19,6 +19,8 @@ export const subscriptionStatusLabel = (
       return 'Incomplete';
     case 'incomplete_expired':
       return 'Expired';
+    case 'paused':
+      return 'Paused';
     default:
       return status ? status : 'No subscription';
   }
@@ -221,6 +223,46 @@ export const refundStatusLabel = (status: string | null | undefined): string => 
     default:
       return '';
   }
+};
+
+export const catalogRank = (item: BillingPlanOption): number => {
+  const nameRank = item.name === 'Pro' ? 2 : item.name === 'Plus' ? 1 : 0;
+  const intervalRank = item.interval === 'year' ? 2 : 1;
+  if (item.unit_amount != null) return item.unit_amount;
+  return nameRank * 100000 + intervalRank;
+};
+
+export const planChangeKind = (
+  current: BillingPlanOption | null | undefined,
+  next: BillingPlanOption | null | undefined,
+): 'upgrade' | 'downgrade' | 'same' => {
+  if (!current || !next || current.price_id === next.price_id) return 'same';
+  return catalogRank(next) > catalogRank(current) ? 'upgrade' : 'downgrade';
+};
+
+export const invoiceStatusLabel = (status: string | null | undefined): string => {
+  switch ((status || '').toLowerCase()) {
+    case 'paid':
+      return 'Paid';
+    case 'open':
+      return 'Open';
+    case 'draft':
+      return 'Draft';
+    case 'void':
+      return 'Void';
+    case 'uncollectible':
+      return 'Uncollectible';
+    default:
+      return status ? status : 'Upcoming';
+  }
+};
+
+export const cardLabel = (
+  brand?: string | null,
+  last4?: string | null,
+): string => {
+  const nice = brand ? brand.charAt(0).toUpperCase() + brand.slice(1) : 'Card';
+  return last4 ? `${nice} •••• ${last4}` : nice;
 };
 
 export const billingErrorMessage = (err: unknown, fallback: string): string => {

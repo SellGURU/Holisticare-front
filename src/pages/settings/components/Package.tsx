@@ -1,18 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import BillingApi from '../../../api/billing';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 import type {
+  BillingInvoice,
+  BillingPaymentMethod,
   BillingPlanOption,
   ClinicBillingStatus,
   ClinicPayment,
 } from '../../../types/clinicBilling';
+
+const AddPaymentMethod = lazy(() => import('./AddPaymentMethod'));
 import {
   PLAN_COPY,
   billingErrorMessage,
   billingPeriodDays,
+  cardLabel,
   currentPlanLabel,
   formatPeriodEnd,
   formatPriceAmount,
@@ -20,7 +25,9 @@ import {
   groupCatalog,
   hasPaidSubscription,
   intervalLabel,
+  invoiceStatusLabel,
   paymentStatusLabel,
+  planChangeKind,
   refundStatusLabel,
   remainingPeriodProgress,
   subscriptionStatusLabel,
@@ -55,6 +62,10 @@ const PackagePage = () => {
   const [paymentsHasMore, setPaymentsHasMore] = useState(false);
   const [paymentsLoading, setPaymentsLoading] = useState(false);
   const [paymentsError, setPaymentsError] = useState('');
+  const [invoices, setInvoices] = useState<BillingInvoice[]>([]);
+  const [upcoming, setUpcoming] = useState<BillingInvoice | null>(null);
+  const [methods, setMethods] = useState<BillingPaymentMethod[]>([]);
+  const [actingAction, setActingAction] = useState('');
 
   const loadStatus = async () => {
     setLoading(true);
@@ -88,13 +99,41 @@ const PackagePage = () => {
     loadStatus().catch(() => {});
   }, []);
 
+  const loadInvoices = async () => {
+    try {
+      const [listRes, upcomingRes] = await Promise.all([
+        BillingApi.listInvoices(20),
+        BillingApi.upcomingInvoice(),
+      ]);
+      setInvoices(listRes.data?.items || []);
+      setUpcoming(listRes.data ? upcomingRes.data || null : null);
+    } catch {
+      setInvoices([]);
+      setUpcoming(null);
+    }
+  };
+
+  const loadMethods = async () => {
+    try {
+      const res = await BillingApi.listPaymentMethods();
+      setMethods(res.data?.items || []);
+    } catch {
+      setMethods([]);
+    }
+  };
+
   useEffect(() => {
     if (status?.has_customer) {
       loadPayments(0, false).catch(() => {});
+      loadInvoices().catch(() => {});
+      loadMethods().catch(() => {});
     } else {
       setPayments([]);
       setPaymentsTotal(0);
       setPaymentsHasMore(false);
+      setInvoices([]);
+      setUpcoming(null);
+      setMethods([]);
     }
   }, [status?.has_customer, status?.stripe_customer_id]);
 
@@ -122,7 +161,11 @@ const PackagePage = () => {
   const paid =
     status?.is_paid ?? hasPaidSubscription(status?.subscription_status);
   const showHistory = Boolean(status?.has_customer);
-  const showCatalog = !paid;
+  const showCatalog = true;
+  const currentCatalogItem = (status?.catalog || []).find(
+    (item) => item.price_id === status?.stripe_price_id,
+  );
+  const paused = Boolean(status?.collection_paused);
   const daysLeft =
     status?.days_remaining ?? daysUntilPeriodEnd(status?.current_period_end);
   const periodDays = billingPeriodDays(status?.interval);
@@ -176,6 +219,46 @@ const PackagePage = () => {
     } finally {
       setOpeningPortal(false);
     }
+  };
+
+  const runAction = async (
+    key: string,
+    work: () => Promise<unknown>,
+    success: string,
+    confirmText?: string,
+  ) => {
+    if (!status?.can_manage) return;
+    if (confirmText && !window.confirm(confirmText)) return;
+    setActingAction(key);
+    try {
+      await work();
+      toast.success(success);
+      await loadStatus();
+    } catch (err) {
+      toast.error(billingErrorMessage(err, 'Billing request failed.'));
+    } finally {
+      setActingAction('');
+    }
+  };
+
+  const changePlan = async (option?: BillingPlanOption) => {
+    if (!option?.price_id || !status?.can_manage) return;
+    if (paid) {
+      const kind = planChangeKind(currentCatalogItem, option);
+      if (kind === 'same') return;
+      const label = kind === 'upgrade' ? 'Upgrade' : 'Downgrade';
+      await runAction(
+        option.price_id,
+        () =>
+          kind === 'upgrade'
+            ? BillingApi.upgrade(option.price_id)
+            : BillingApi.downgrade(option.price_id),
+        `${label} started.`,
+        `${label} to ${option.name} ${intervalLabel(option.interval)}?`,
+      );
+      return;
+    }
+    await startCheckout(option.price_id);
   };
 
   return (
@@ -316,6 +399,77 @@ const PackagePage = () => {
                 </div>
               </div>
 
+              {status?.can_manage && paid ? (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {status.cancel_at_period_end ? (
+                    <button
+                      type="button"
+                      className="rounded-3xl bg-Primary-DeepTeal px-4 py-2 text-[12px] text-white disabled:opacity-60"
+                      disabled={Boolean(actingAction)}
+                      onClick={() => {
+                        runAction(
+                          'resume',
+                          () => BillingApi.resume(),
+                          'Scheduled cancellation was removed.',
+                        ).catch(() => {});
+                      }}
+                    >
+                      {actingAction === 'resume' ? 'Resuming...' : 'Resume plan'}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="rounded-3xl border border-Gray-50 px-4 py-2 text-[12px] text-Text-Primary disabled:opacity-60"
+                      disabled={Boolean(actingAction)}
+                      onClick={() => {
+                        runAction(
+                          'cancel',
+                          () => BillingApi.cancel(true),
+                          'Cancellation scheduled for period end.',
+                          'Cancel this plan at the end of the current period?',
+                        ).catch(() => {});
+                      }}
+                    >
+                      {actingAction === 'cancel' ? 'Canceling...' : 'Cancel at period end'}
+                    </button>
+                  )}
+                  {paused ? (
+                    <button
+                      type="button"
+                      className="rounded-3xl border border-Gray-50 px-4 py-2 text-[12px] text-Text-Primary disabled:opacity-60"
+                      disabled={Boolean(actingAction)}
+                      onClick={() => {
+                        runAction(
+                          'resume-collection',
+                          () => BillingApi.resumeCollection(),
+                          'Billing collection resumed.',
+                        ).catch(() => {});
+                      }}
+                    >
+                      {actingAction === 'resume-collection'
+                        ? 'Resuming...'
+                        : 'Resume collection'}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="rounded-3xl border border-Gray-50 px-4 py-2 text-[12px] text-Text-Primary disabled:opacity-60"
+                      disabled={Boolean(actingAction)}
+                      onClick={() => {
+                        runAction(
+                          'pause',
+                          () => BillingApi.pause(),
+                          'Subscription paused.',
+                          'Pause billing? Invoices will stop until you resume.',
+                        ).catch(() => {});
+                      }}
+                    >
+                      {actingAction === 'pause' ? 'Pausing...' : 'Pause billing'}
+                    </button>
+                  )}
+                </div>
+              ) : null}
+
               {!status?.can_manage ? (
                 <div className="mt-4 text-[11px] text-Text-Secondary">
                   Only clinic admins can subscribe or manage billing.
@@ -405,7 +559,7 @@ const PackagePage = () => {
           {showCatalog && groupedCatalog.length > 0 ? (
             <div>
               <div className="mb-3 text-sm font-medium text-Text-Primary">
-                Choose a plan
+                {paid ? 'Change plan' : 'Choose a plan'}
               </div>
               <div
                 className="flex justify-start overflow-x-auto overflow-y-hidden pb-6"
@@ -428,7 +582,9 @@ const PackagePage = () => {
                     };
                     const isDemo = name === 'Demo';
                     const option = selectedOption(name, options);
-                    const current = isDemo && !paid;
+                    const current =
+                      (isDemo && !paid) ||
+                      option?.price_id === status?.stripe_price_id;
                     const amount = isDemo
                       ? 'Free'
                       : formatPriceAmount(option?.unit_amount, option?.currency);
@@ -514,17 +670,29 @@ const PackagePage = () => {
                               <ButtonPrimary
                                 ClassName="w-full"
                                 onClick={() => {
-                                  startCheckout(option?.price_id || '').catch(() => {});
+                                  changePlan(option).catch(() => {});
                                 }}
                                 disabled={
                                   !status?.can_manage ||
                                   !option?.price_id ||
-                                  actingPrice === option.price_id
+                                  current ||
+                                  actingPrice === option.price_id ||
+                                  actingAction === option.price_id
                                 }
                               >
-                                {actingPrice === option?.price_id
-                                  ? 'Redirecting...'
-                                  : `Subscribe to ${name}`}
+                                {actingPrice === option?.price_id ||
+                                actingAction === option?.price_id
+                                  ? paid
+                                    ? 'Updating...'
+                                    : 'Redirecting...'
+                                  : current
+                                    ? 'Current plan'
+                                    : paid
+                                      ? planChangeKind(currentCatalogItem, option) ===
+                                        'upgrade'
+                                        ? `Upgrade to ${name}`
+                                        : `Switch to ${name}`
+                                      : `Subscribe to ${name}`}
                               </ButtonPrimary>
                             )}
                           </div>
@@ -533,6 +701,165 @@ const PackagePage = () => {
                     );
                   })}
                 </motion.div>
+              </div>
+            </div>
+          ) : null}
+
+          {showHistory ? (
+            <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+              <div className="rounded-[24px] border border-Gray-50 bg-white p-5">
+                <div className="mb-1 text-sm font-medium text-Text-Primary">
+                  Invoices
+                </div>
+                <div className="mb-4 text-[11px] text-Text-Secondary">
+                  Stripe invoices for this clinic, including the next charge.
+                </div>
+                {upcoming ? (
+                  <div className="mb-3 rounded-[16px] bg-[#F3FAF8] px-4 py-3">
+                    <div className="text-[11px] text-Primary-DeepTeal">
+                      Upcoming
+                    </div>
+                    <div className="mt-1 flex items-center justify-between gap-3">
+                      <div className="text-[13px] font-medium text-Text-Primary">
+                        {formatPriceAmount(upcoming.amount_due, upcoming.currency)}
+                      </div>
+                      <div className="text-[11px] text-Text-Secondary">
+                        {formatPeriodEnd(upcoming.period_end || upcoming.created)}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+                {invoices.length === 0 ? (
+                  <div className="rounded-[18px] bg-[#F6FAF9] px-4 py-6 text-center text-[12px] text-Text-Secondary">
+                    No invoices yet.
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {invoices.map((invoice) => (
+                      <div
+                        key={invoice.id || invoice.number || invoice.created}
+                        className="flex items-center justify-between gap-3 rounded-[16px] bg-[#F6FAF9] px-4 py-3"
+                      >
+                        <div>
+                          <div className="text-[13px] font-medium text-Text-Primary">
+                            {formatPriceAmount(
+                              invoice.amount_paid || invoice.amount_due,
+                              invoice.currency,
+                            )}
+                          </div>
+                          <div className="text-[11px] text-Text-Secondary">
+                            {invoice.number || 'Invoice'} ·{' '}
+                            {formatPeriodEnd(invoice.created)}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[11px] font-medium text-Primary-DeepTeal">
+                            {invoiceStatusLabel(invoice.status)}
+                          </div>
+                          {invoice.hosted_invoice_url ? (
+                            <a
+                              href={invoice.hosted_invoice_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-[10px] text-Text-Secondary underline"
+                            >
+                              View
+                            </a>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="rounded-[24px] border border-Gray-50 bg-white p-5">
+                <div className="mb-1 text-sm font-medium text-Text-Primary">
+                  Payment methods
+                </div>
+                <div className="mb-4 text-[11px] text-Text-Secondary">
+                  Cards on the clinic Stripe customer. Portal remains available as a fallback.
+                </div>
+                {methods.length === 0 ? (
+                  <div className="mb-3 rounded-[18px] bg-[#F6FAF9] px-4 py-6 text-center text-[12px] text-Text-Secondary">
+                    No cards saved yet.
+                  </div>
+                ) : (
+                  <div className="mb-3 space-y-2">
+                    {methods.map((method) => (
+                      <div
+                        key={method.id}
+                        className="flex items-center justify-between gap-3 rounded-[16px] bg-[#F6FAF9] px-4 py-3"
+                      >
+                        <div>
+                          <div className="text-[13px] font-medium text-Text-Primary">
+                            {cardLabel(method.brand, method.last4)}
+                          </div>
+                          <div className="text-[11px] text-Text-Secondary">
+                            {method.exp_month && method.exp_year
+                              ? `Expires ${method.exp_month}/${method.exp_year}`
+                              : 'Card'}
+                            {method.is_default ? ' · Default' : ''}
+                          </div>
+                        </div>
+                        {status?.can_manage ? (
+                          <div className="flex gap-2">
+                            {!method.is_default ? (
+                              <button
+                                type="button"
+                                className="text-[11px] text-Primary-DeepTeal"
+                                disabled={actingAction === `default-${method.id}`}
+                                onClick={() => {
+                                  runAction(
+                                    `default-${method.id}`,
+                                    () =>
+                                      BillingApi.setDefaultPaymentMethod(method.id),
+                                    'Default card updated.',
+                                  )
+                                    .then(() => loadMethods())
+                                    .catch(() => {});
+                                }}
+                              >
+                                Default
+                              </button>
+                            ) : null}
+                            <button
+                              type="button"
+                              className="text-[11px] text-red-500"
+                              disabled={actingAction === `delete-${method.id}`}
+                              onClick={() => {
+                                runAction(
+                                  `delete-${method.id}`,
+                                  () => BillingApi.deletePaymentMethod(method.id),
+                                  'Card removed.',
+                                  'Remove this card?',
+                                )
+                                  .then(() => loadMethods())
+                                  .catch(() => {});
+                              }}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <Suspense
+                  fallback={
+                    <div className="text-[12px] text-Text-Secondary">
+                      Loading card form...
+                    </div>
+                  }
+                >
+                  <AddPaymentMethod
+                    canManage={Boolean(status?.can_manage)}
+                    onAdded={() => {
+                      loadMethods().catch(() => {});
+                    }}
+                  />
+                </Suspense>
               </div>
             </div>
           ) : null}
