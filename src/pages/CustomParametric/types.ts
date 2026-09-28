@@ -38,6 +38,7 @@ export interface RiskDomainViewModel {
   biomarkers: string[];
   profileDeps: string[];
   contextDeps: string[];
+  questionnaireDeps: string[];
   resultCategories: RiskResultCategory[];
   timeHorizon: string | null;
   assignedGroups: string[];
@@ -66,6 +67,22 @@ export function asStringArray(value: unknown): string[] {
   return [];
 }
 
+export interface QuestionnaireFormulaOption {
+  token: string;
+  form_unique_id?: string;
+  question_id?: string;
+  form_title?: string;
+  question_label?: string;
+  value_type?: string;
+  stale?: boolean;
+}
+
+export interface IntelligenceFormulaOptions {
+  multiSourceEnabled: boolean;
+  profile: Array<{ token: string; label?: string; unit?: string }>;
+  questionnaires: QuestionnaireFormulaOption[];
+}
+
 export function mapHealthRiskDomain(raw: any): RiskDomainViewModel {
   const biomarkers = asStringArray(raw.biomarker_dependencies);
   return {
@@ -83,6 +100,7 @@ export function mapHealthRiskDomain(raw: any): RiskDomainViewModel {
     biomarkers,
     profileDeps: asStringArray(raw.profile_dependencies),
     contextDeps: asStringArray(raw.context_dependencies),
+    questionnaireDeps: asStringArray(raw.questionnaire_dependencies),
     resultCategories: Array.isArray(raw.result_categories)
       ? raw.result_categories
       : [],

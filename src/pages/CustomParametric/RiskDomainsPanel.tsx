@@ -99,7 +99,8 @@ export default function RiskDomainsPanel({
       (domain) =>
         domain.displayName.toLowerCase().includes(q) ||
         domain.name.toLowerCase().includes(q) ||
-        domain.biomarkers.some((b) => b.toLowerCase().includes(q)),
+        domain.biomarkers.some((b) => b.toLowerCase().includes(q)) ||
+        domain.questionnaireDeps.some((b) => b.toLowerCase().includes(q)),
     );
   }, [domains, search]);
 

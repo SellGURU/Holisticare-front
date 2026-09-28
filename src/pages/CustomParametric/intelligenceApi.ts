@@ -2,7 +2,11 @@
 import AdminApi from '../../api/admin';
 import BiomarkersApi from '../../api/Biomarkers';
 import HealthRiskArchitectureApi from '../../api/HealthRiskArchitecture';
-import type { ClinicBiomarkerOption, IntelligenceDomainType } from './types';
+import type {
+  ClinicBiomarkerOption,
+  IntelligenceDomainType,
+  IntelligenceFormulaOptions,
+} from './types';
 
 export type IntelligenceResponse<T = any> = { data: T };
 
@@ -31,6 +35,43 @@ export interface IntelligenceApi {
     is_enabled?: boolean,
   ): Promise<IntelligenceResponse>;
   listCatalogBiomarkers(): Promise<ClinicBiomarkerOption[]>;
+  listFormulaOptions?(): Promise<IntelligenceFormulaOptions>;
+}
+
+function unwrapFormulaPayload(raw: any): any {
+  if (!raw || typeof raw !== 'object') return {};
+  if (raw.formula_options || Array.isArray(raw.questionnaires)) return raw;
+  if (raw.data && typeof raw.data === 'object') {
+    return unwrapFormulaPayload(raw.data);
+  }
+  return raw;
+}
+
+export function mapFormulaOptions(raw: any): IntelligenceFormulaOptions {
+  const root = unwrapFormulaPayload(raw);
+  const options = root?.formula_options || root || {};
+  const capability = root?.capability || options.capability || {};
+  const questionnaires = Array.isArray(options.questionnaires)
+    ? options.questionnaires
+    : [];
+  const profile = Array.isArray(options.profile) ? options.profile : [];
+  return {
+    multiSourceEnabled: capability.multi_source_formulas === true,
+    profile: profile.map((item: any) => ({
+      token: String(item?.token || 'age'),
+      label: item?.label || 'Age',
+      unit: item?.unit || 'years',
+    })),
+    questionnaires: questionnaires.map((item: any) => ({
+      token: String(item?.token || ''),
+      form_unique_id: item?.form_unique_id,
+      question_id: item?.question_id,
+      form_title: item?.form_title || '',
+      question_label: item?.question_label || item?.token || '',
+      value_type: item?.value_type || 'string',
+      stale: Boolean(item?.stale),
+    })).filter((item: { token: string }) => item.token),
+  };
 }
 
 export function mapCatalogRows(rows: any[]): ClinicBiomarkerOption[] {
@@ -77,6 +118,10 @@ export function clinicIntelligenceApi(): IntelligenceApi {
     importFormulaLibrary: (template_id, is_enabled = true) =>
       HealthRiskArchitectureApi.importFormulaLibrary(template_id, is_enabled),
     listCatalogBiomarkers: listClinicCatalogBiomarkers,
+    listFormulaOptions: async () => {
+      const res = await HealthRiskArchitectureApi.getClinicOptions();
+      return mapFormulaOptions(res.data);
+    },
   };
 }
 
@@ -104,6 +149,10 @@ export function adminIntelligenceApi(clinicId: number): IntelligenceApi {
       return mapCatalogRows(
         Array.isArray(res.data?.biomarkers) ? res.data.biomarkers : [],
       );
+    },
+    listFormulaOptions: async () => {
+      const res = await AdminApi.getIntelligenceClinicOptions(clinicId);
+      return mapFormulaOptions(res.data);
     },
   };
 }

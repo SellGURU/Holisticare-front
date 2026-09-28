@@ -39,8 +39,13 @@ export default function RiskDomainCard({
   hideDuplicate,
 }: RiskDomainCardProps) {
   const Icon = HEALTH_RISK_ICONS[domain.iconKey] ?? HEALTH_RISK_DEFAULT_ICON;
-  const visibleBiomarkers = domain.biomarkers.slice(0, 5);
-  const extraBiomarkers = domain.biomarkers.length - visibleBiomarkers.length;
+  const formulaInputs = [
+    ...domain.biomarkers,
+    ...domain.questionnaireDeps.map((token) => `Questionnaire.${token}`),
+    ...domain.profileDeps.map((token) => `Profile.${token}`),
+  ];
+  const visibleBiomarkers = formulaInputs.slice(0, 5);
+  const extraBiomarkers = formulaInputs.length - visibleBiomarkers.length;
 
   return (
     <div
@@ -114,10 +119,10 @@ export default function RiskDomainCard({
           </p>
         ) : null}
 
-        {domain.biomarkers.length > 0 ? (
+        {formulaInputs.length > 0 ? (
           <div className="mb-3.5">
             <p className="mb-1.5 text-[10px] font-semibold tracking-wide text-gray-400">
-              FORMULA INPUTS ({domain.biomarkers.length})
+              FORMULA INPUTS ({formulaInputs.length})
             </p>
             <div className="flex flex-wrap gap-1.5">
               {visibleBiomarkers.map((bm) => (

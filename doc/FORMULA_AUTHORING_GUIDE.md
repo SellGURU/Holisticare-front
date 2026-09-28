@@ -15,17 +15,18 @@
 | اگر می‌خواهید… | کجا بنویسید | ورودی فرمول | خروجی کجا می‌رود |
 |---|---|---|---|
 | از **جواب سؤال‌های یک فرم** عدد یا متن بسازید | ادیتور کویسشنری → **Derived biomarkers** | `id` سؤال، مثلاً `q_weight` | Biomarker روی Report و/یا Insight |
-| از **آزمایش‌های کاتالوگ** ریسک بسازید | Intelligence Model → **Risk Assessments** | `Biomarker.LDL_Cholesterol`، `Profile.age` | کارت Risks روی گزارش |
-| از آزمایش‌ها نمرهٔ سلامت بسازید (بالاتر بهتر) | Intelligence Model → **Health Scores** | همان | کارت Health Scores |
+| از **آزمایش‌های کاتالوگ** و در صورت نیاز **پاسخ خام پرسشنامه** ریسک بسازید | Intelligence Model → **Risk Assessments** | `Biomarker.LDL_Cholesterol`، `Profile.age`، `Questionnaire.<token>` | کارت Risks روی گزارش |
+| از آزمایش‌ها و پرسشنامه نمرهٔ سلامت بسازید (بالاتر بهتر) | Intelligence Model → **Health Scores** | همان | کارت Health Scores |
 | سن زیستی به سال بسازید | Intelligence Model → **Age Clocks** | همان + معمولاً `Profile.age` | کارت Age |
 | یک بیومارکر موجود را از روی چند آزمایش حساب کنید (مثل BMI) | Intelligence Model → **Parametric Biomarkers** | همان | مقدار معمولی در پرونده؛ **نه** داخل Risks |
 
 قانون طلایی:
 
 - کویسشنری = `q_weight` / `smoking`
-- Intelligence Model = `Biomarker.Weight` / `Profile.age`
+- Intelligence Model = `Biomarker.Weight` / `Profile.age` / `Questionnaire.<token>`
+- `Questionnaire.<token>` فقط در Risk / Health Score / Age Clock است و به `questionary_unique_id` + `question.id` وصل است، نه به عنوان فرم. Parametric همچنان فقط biomarker است.
 
-`Biomarker.Weight` داخل فرمول کویسشنری کار نمی‌کند. `q_weight` داخل Intelligence Model کار نمی‌کند.
+`Biomarker.Weight` داخل فرمول کویسشنری کار نمی‌کند. `q_weight` خام داخل Intelligence Model کار نمی‌کند؛ همان سؤال را از picker پرسشنامه با توکن پایدار انتخاب کنید.
 
 ---
 
@@ -405,14 +406,17 @@ q_sleep_problem
 
 ### متغیرها
 
-فقط این دو خانواده:
+خانواده‌های پشتیبانی‌شده:
 
 ```text
 Biomarker.Catalog_Name
 Profile.age
+Questionnaire.q_smoke__a1b2c3d4e5f6
 ```
 
 - `Profile.age` سن بیمار به سال است. فیلد پروفایل دیگری (`gender` و غیره) **نیست**.
+- `Questionnaire.<token>` پاسخ خام آخرین فرم submit‌شده همان کلینیک/بیمار است. توکن از picker می‌آید و با rename عنوان خراب نمی‌شود.
+- اگر capability کلینیک خاموش باشد ادیتور فقط biomarker نشان می‌دهد.
 - `Biomarker.Name.value` و `Context.` پشتیبانی نمی‌شوند. فقط `Biomarker.Name`.
 - اسم را از پیشنهاد ادیتور بردارید. تایپ `Biomarker.` تکمیل خودکار باز می‌کند.
 - فاصله و علائم اسم کاتالوگ در توکن می‌شوند `_`. مثال: `LDL Cholesterol` → `Biomarker.LDL_Cholesterol`

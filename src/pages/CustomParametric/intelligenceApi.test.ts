@@ -4,7 +4,9 @@ import {
   adminIntelligenceApi,
   clinicIntelligenceApi,
   mapCatalogRows,
+  mapFormulaOptions,
 } from './intelligenceApi';
+import { mapHealthRiskDomain } from './types';
 
 vi.mock('../../api/admin', () => ({
   default: {
@@ -28,6 +30,7 @@ vi.mock('../../api/HealthRiskArchitecture', () => ({
     validateFormula: vi.fn(),
     getFormulaLibrary: vi.fn(),
     importFormulaLibrary: vi.fn(),
+    getClinicOptions: vi.fn(),
   },
 }));
 
@@ -36,6 +39,27 @@ vi.mock('../../api/Biomarkers', () => ({
     getBiomarkersList: vi.fn(),
   },
 }));
+
+describe('mapHealthRiskDomain', () => {
+  it('maps questionnaire dependencies additively', () => {
+    const row = mapHealthRiskDomain({
+      id: '1',
+      name: 'Mixed',
+      display_name: 'Mixed Score',
+      domain_type: 'SCORING',
+      output_type: 'NUMERIC',
+      formula_code: 'Biomarker.LDL + Questionnaire.q_smoke__form1',
+      biomarker_dependencies: ['LDL'],
+      questionnaire_dependencies: ['q_smoke__form1'],
+      profile_dependencies: ['age'],
+      result_categories: [],
+      is_enabled: true,
+    });
+    expect(row.biomarkers).toEqual(['LDL']);
+    expect(row.questionnaireDeps).toEqual(['q_smoke__form1']);
+    expect(row.profileDeps).toEqual(['age']);
+  });
+});
 
 describe('mapCatalogRows', () => {
   it('maps clinic catalog rows and skips nameless items', () => {
@@ -104,10 +128,49 @@ describe('adminIntelligenceApi', () => {
   });
 });
 
+describe('mapFormulaOptions', () => {
+  it('defaults to biomarker-only when capability is missing', () => {
+    const options = mapFormulaOptions({ biomarkers: [{ name: 'LDL' }] });
+    expect(options.multiSourceEnabled).toBe(false);
+    expect(options.questionnaires).toEqual([]);
+  });
+
+  it('maps questionnaire registry rows', () => {
+    const options = mapFormulaOptions({
+      capability: { multi_source_formulas: true },
+      formula_options: {
+        questionnaires: [
+          {
+            token: 'q_smoke__form1',
+            form_title: 'Intake',
+            question_label: 'Smoking',
+            value_type: 'string',
+          },
+        ],
+      },
+    });
+    expect(options.multiSourceEnabled).toBe(true);
+    expect(options.questionnaires[0].token).toBe('q_smoke__form1');
+  });
+
+  it('unwraps nested axios data.formula_options', () => {
+    const options = mapFormulaOptions({
+      data: {
+        capability: { multi_source_formulas: true },
+        formula_options: {
+          questionnaires: [{ token: 'q_drink__form2', question_label: 'Drink?' }],
+        },
+      },
+    });
+    expect(options.questionnaires[0].token).toBe('q_drink__form2');
+  });
+});
+
 describe('clinicIntelligenceApi', () => {
   it('exposes the clinic-session contract', () => {
     const api = clinicIntelligenceApi();
     expect(typeof api.listDomains).toBe('function');
     expect(typeof api.listCatalogBiomarkers).toBe('function');
+    expect(typeof api.listFormulaOptions).toBe('function');
   });
 });

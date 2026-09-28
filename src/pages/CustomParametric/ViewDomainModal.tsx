@@ -64,6 +64,24 @@ export default function ViewDomainModal({
             </div>
           ) : null}
 
+          {domain.questionnaireDeps.length > 0 ? (
+            <div>
+              <p className="mb-1 text-[10px] font-semibold tracking-wide text-gray-400">
+                QUESTIONNAIRE DEPENDENCIES
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {domain.questionnaireDeps.map((token) => (
+                  <span
+                    key={token}
+                    className="rounded-full border border-indigo-100 bg-indigo-50 px-2 py-0.5 text-[10px] text-indigo-700"
+                  >
+                    Questionnaire.{token}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
           {domain.resultCategories.length > 0 ? (
             <div>
               <p className="mb-1 text-[10px] font-semibold tracking-wide text-gray-400">

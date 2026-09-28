@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   CheckCircle2,
   Pencil,
@@ -13,6 +13,10 @@ import {
   type IntelligenceApi,
 } from './intelligenceApi';
 import { formulaHasUnknownBiomarkers } from './formulaBiomarker';
+import {
+  formulaHasQuestionnaireRefs,
+  formulaHasUnknownReferences,
+} from './formulaTokens';
 import IntelligenceModal, { apiErrorMessage } from './IntelligenceModal';
 import {
   v2FieldClass,
@@ -26,7 +30,12 @@ import {
   HEALTH_RISK_ICON_KEYS,
   HEALTH_RISK_ICONS,
 } from './healthRiskIcons';
-import type { ClinicBiomarkerOption, RiskDomainViewModel, RiskResultCategory } from './types';
+import type {
+  ClinicBiomarkerOption,
+  IntelligenceFormulaOptions,
+  RiskDomainViewModel,
+  RiskResultCategory,
+} from './types';
 
 interface FormState {
   name: string;
@@ -153,8 +162,38 @@ export default function RiskDomainFormModal({
     error_message?: string;
     biomarker_dependencies?: string[];
     biomarkers_not_in_clinic?: string[];
+    questionnaire_dependencies?: string[];
+    questionnaires_not_in_clinic?: string[];
+    stale_questionnaires?: string[];
+    unsupported_questionnaires?: string[];
   } | null>(null);
   const [catalog, setCatalog] = useState<ClinicBiomarkerOption[]>([]);
+  const [formulaOptions, setFormulaOptions] =
+    useState<IntelligenceFormulaOptions | null>(null);
+  const [optionsLoading, setOptionsLoading] = useState(false);
+
+  const loadFormulaOptions = useCallback(() => {
+    if (!intelligenceApi.listFormulaOptions) {
+      setFormulaOptions({
+        multiSourceEnabled: true,
+        profile: [{ token: 'age', label: 'Age', unit: 'years' }],
+        questionnaires: [],
+      });
+      return;
+    }
+    setOptionsLoading(true);
+    intelligenceApi
+      .listFormulaOptions()
+      .then((options) => setFormulaOptions(options))
+      .catch(() =>
+        setFormulaOptions({
+          multiSourceEnabled: true,
+          profile: [{ token: 'age', label: 'Age', unit: 'years' }],
+          questionnaires: [],
+        }),
+      )
+      .finally(() => setOptionsLoading(false));
+  }, [intelligenceApi]);
 
   useEffect(() => {
     if (!open) return;
@@ -178,7 +217,8 @@ export default function RiskDomainFormModal({
         setCatalog(rows.filter((item) => item.is_enabled !== false)),
       )
       .catch(() => setCatalog([]));
-  }, [open, domain, mode, modelKind, intelligenceApi]);
+    loadFormulaOptions();
+  }, [open, domain, mode, modelKind, intelligenceApi, loadFormulaOptions]);
 
   function patch<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -230,20 +270,7 @@ export default function RiskDomainFormModal({
       .finally(() => setValidating(false));
   }
 
-  function handleSubmit() {
-    if (!form.name.trim() || !form.formulaCode.trim()) return;
-    if (
-      !form.resultCategories.some(
-        (band) =>
-          band.label?.trim() &&
-          Number.isFinite(Number(band.min)) &&
-          Number.isFinite(Number(band.max)),
-      )
-    ) {
-      toast.error('Add at least one severity band with a label.');
-      return;
-    }
-    setSaving(true);
+  function persistDomain() {
     const payload = {
       name: form.name.trim(),
       display_name: form.displayName.trim() || undefined,
@@ -276,6 +303,43 @@ export default function RiskDomainFormModal({
       .finally(() => setSaving(false));
   }
 
+  function handleSubmit() {
+    if (!form.name.trim() || !form.formulaCode.trim()) return;
+    if (
+      !form.resultCategories.some(
+        (band) =>
+          band.label?.trim() &&
+          Number.isFinite(Number(band.min)) &&
+          Number.isFinite(Number(band.max)),
+      )
+    ) {
+      toast.error('Add at least one severity band with a label.');
+      return;
+    }
+    if (formulaHasQuestionnaireRefs(form.formulaCode)) {
+      setSaving(true);
+      intelligenceApi
+        .validateFormula(form.formulaCode, { domain_type: form.domainType })
+        .then((res) => {
+          const next = res.data || null;
+          setValidation(next);
+          if (!next?.syntax_valid) {
+            toast.error(next?.error_message || 'Validate the formula before saving.');
+            setSaving(false);
+            return;
+          }
+          persistDomain();
+        })
+        .catch((err) => {
+          toast.error(apiErrorMessage(err, 'Validation failed'));
+          setSaving(false);
+        });
+      return;
+    }
+    setSaving(true);
+    persistDomain();
+  }
+
   const title = isEdit
     ? `Edit ${kindLabel} domain`
     : mode === 'duplicate'
@@ -289,17 +353,27 @@ export default function RiskDomainFormModal({
       Number.isFinite(Number(band.min)) &&
       Number.isFinite(Number(band.max)),
   );
-  const formulaInvalid = formulaHasUnknownBiomarkers(
-    form.formulaCode,
-    catalog.map((item) => item.name),
-  );
+  const formulaInvalid = formulaOptions?.multiSourceEnabled
+    ? formulaHasUnknownReferences(
+        form.formulaCode,
+        catalog.map((item) => item.name),
+        {
+          multiSourceEnabled: true,
+          profile: formulaOptions.profile,
+          questionnaires: formulaOptions.questionnaires,
+        },
+      )
+    : formulaHasUnknownBiomarkers(
+        form.formulaCode,
+        catalog.map((item) => item.name),
+      ) || formulaHasQuestionnaireRefs(form.formulaCode);
 
   return (
     <IntelligenceModal
       isOpen={open}
       onClose={onClose}
       title={title}
-      description="Formulas can reference Biomarker.<Name>.value, Profile.<field>, and Context.<field>."
+      description="Search a question, biomarker, or profile field and click to insert it. You do not need to type Questionnaire. tokens."
       widthClass="w-[min(1080px,calc(100vw-2rem))]"
       footer={
         <div className="flex w-full flex-wrap items-center justify-between gap-2">
@@ -544,15 +618,23 @@ export default function RiskDomainFormModal({
                 setValidation(null);
               }}
               catalog={catalog}
+              showInsertPanel
+              optionsLoading={optionsLoading}
+              onInsertOpen={() => {
+                if ((formulaOptions?.questionnaires || []).length === 0) {
+                  loadFormulaOptions();
+                }
+              }}
+              formulaOptions={{
+                multiSourceEnabled: formulaOptions?.multiSourceEnabled !== false,
+                profile: formulaOptions?.profile || [
+                  { token: 'age', label: 'Age', unit: 'years' },
+                ],
+                questionnaires: formulaOptions?.questionnaires || [],
+              }}
               rows={5}
-              textareaClassName="min-h-[140px] max-h-[220px] resize-y"
-              placeholder={
-                isAge
-                  ? 'round(phenoage(Biomarker.Albumin * 0.0665, Biomarker.Creatinine, Biomarker.Glucose / 18, max(Biomarker.C_Reactive_Protein_high_sensitivity / 10, 0.001), Biomarker.Lymphocytes, Biomarker.Mean_Corpuscular_Volume, Biomarker.Red_Cell_Distribution_Width, Biomarker.Alkaline_Phosphatase, Biomarker.White_Blood_Cells / 1000, Profile.age), 2)'
-                  : isScore
-                    ? 'round((1 - status_weight(Biomarker.Hb_A1c, 5.2, 6.5)) * 100, 2)'
-                    : 'round(status_weight(Biomarker.LDL_Cholesterol, 100, 130) * 0.30 + status_weight(Biomarker.Triglycerides, 150, 200) * 0.20, 2)'
-              }
+              textareaClassName="min-h-[120px] max-h-[200px] resize-y"
+              placeholder="Write one expression, or insert a field"
             />
             {validation ? (
               <div
@@ -583,6 +665,24 @@ export default function RiskDomainFormModal({
                   <p className="mt-1 text-amber-700">
                     Not configured in this clinic's biomarker panel:{' '}
                     {validation.biomarkers_not_in_clinic.join(', ')}
+                  </p>
+                ) : null}
+                {validation.questionnaire_dependencies?.length ? (
+                  <p className="mt-1">
+                    Questionnaire:{' '}
+                    {validation.questionnaire_dependencies.join(', ')}
+                  </p>
+                ) : null}
+                {validation.questionnaires_not_in_clinic?.length ||
+                validation.stale_questionnaires?.length ||
+                validation.unsupported_questionnaires?.length ? (
+                  <p className="mt-1 text-amber-700">
+                    Questionnaire issues:{' '}
+                    {[
+                      ...(validation.questionnaires_not_in_clinic || []),
+                      ...(validation.stale_questionnaires || []),
+                      ...(validation.unsupported_questionnaires || []),
+                    ].join(', ')}
                   </p>
                 ) : null}
               </div>
