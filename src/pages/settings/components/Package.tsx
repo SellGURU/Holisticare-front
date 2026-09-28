@@ -222,7 +222,11 @@ const PackagePage = () => {
   const groupedCatalog = useMemo(() => {
     const plans = groupCatalog(status?.catalog || []);
     if (!plans.length) return plans;
-    return [['Demo', [] as BillingPlanOption[]], ...plans] as Array<
+    return [
+      ['Demo', [] as BillingPlanOption[]],
+      ...plans,
+      ['Scale', [] as BillingPlanOption[]],
+    ] as Array<
       [string, BillingPlanOption[]]
     >;
   }, [status?.catalog]);
@@ -418,7 +422,7 @@ const PackagePage = () => {
                         status?.currency,
                         status?.interval,
                       )
-                    : 'Starter access for trying the clinic portal.'}
+                    : 'Free demo access for trying the clinic portal.'}
                 </div>
                 <div className="mt-1 text-[12px] text-Text-Secondary">
                   {trialing
@@ -716,18 +720,19 @@ const PackagePage = () => {
 
           {showCatalog && groupedCatalog.length === 0 ? (
             <div className={`${sectionCard} text-[12px] text-Text-Secondary`}>
-              No Plus or Pro prices are configured yet.
+              No Starter or Growth prices are configured yet.
             </div>
           ) : null}
 
           {showCatalog && groupedCatalog.length > 0 ? (
             <section id={AVAILABLE_PLANS_ID} className="scroll-mt-20">
               <div className="mb-3">
-                <div className="text-sm font-medium text-Text-Primary">
+                <div className="text-base font-semibold text-Text-Primary">
                   {paid ? 'Change plan' : 'Choose a plan'}
                 </div>
-                <div className="mt-1 text-[11px] text-Text-Secondary">
-                  Switch Plus or Pro monthly and yearly prices without leaving this page.
+                <div className="mt-1 max-w-3xl text-[13px] leading-5 text-Text-Secondary">
+                  Starter supports up to 35 active clients, Growth supports up to
+                  100, and Scale is tailored for clinics with 250+ clients.
                 </div>
               </div>
               <div
@@ -750,6 +755,7 @@ const PackagePage = () => {
                       includes: [],
                     };
                     const isDemo = name === 'Demo';
+                    const isCustom = Boolean(copy.customPricing);
                     const option = selectedOption(name, options);
                     const current = isPlanCardActive(
                       name,
@@ -758,7 +764,9 @@ const PackagePage = () => {
                     );
                     const amount = isDemo
                       ? 'Free'
-                      : formatPriceAmount(option?.unit_amount, option?.currency);
+                      : isCustom
+                        ? 'Custom'
+                        : formatPriceAmount(option?.unit_amount, option?.currency);
                     const showToggle = !isDemo && options.length > 1;
                     const acting =
                       actingPrice === option?.price_id ||
@@ -779,27 +787,32 @@ const PackagePage = () => {
                           }`}
                         >
                           {current ? (
-                            <span className="absolute right-4 top-4 rounded-full bg-Primary-EmeraldGreen px-2.5 py-0.5 text-[10px] font-semibold text-white">
+                            <span className="absolute right-4 top-4 rounded-full bg-Primary-EmeraldGreen px-2.5 py-1 text-[11px] font-semibold leading-none text-white">
                               Active
                             </span>
                           ) : copy.recommended ? (
-                            <span className="absolute right-4 top-4 rounded-full bg-Primary-DeepTeal px-2.5 py-0.5 text-[10px] font-medium text-white">
+                            <span className="absolute right-4 top-4 rounded-full bg-Primary-DeepTeal px-2.5 py-1 text-[11px] font-medium leading-none text-white">
                               Recommended
                             </span>
                           ) : null}
-                          <div className="pr-16 text-xl font-semibold text-Text-Primary">
+                          <div className="pr-16 text-[22px] font-semibold leading-tight text-Text-Primary">
                             {name}
                           </div>
-                          <p className="mt-1 text-[12px] leading-5 text-Text-Secondary">
+                          <p className="mt-2 min-h-10 text-[13px] leading-5 text-Text-Secondary">
                             {copy.blurb}
                           </p>
                           <div className="mt-4 flex items-end gap-1">
-                            <span className="text-[32px] font-semibold leading-none text-Text-Primary">
+                            <span className="text-[34px] font-semibold leading-none tracking-[-0.02em] text-Text-Primary">
                               {amount || '—'}
                             </span>
                             {isDemo ? null : (
-                              <span className="pb-1 text-[12px] text-Text-Secondary">
-                                / {intervalLabel(option?.interval).toLowerCase() || 'month'}
+                              <span className="pb-1 text-[13px] text-Text-Secondary">
+                                {isCustom
+                                  ? 'pricing'
+                                  : `/ ${
+                                      intervalLabel(option?.interval).toLowerCase() ||
+                                      'month'
+                                    }`}
                               </span>
                             )}
                           </div>
@@ -830,10 +843,31 @@ const PackagePage = () => {
                               })}
                             </div>
                           ) : null}
+                          <div className="mt-5 flex-1">
+                            <div className="text-[11px] font-semibold uppercase tracking-[0.06em] text-Text-Triarty">
+                              {copy.includesLabel}
+                            </div>
+                            <ul className="mt-3 space-y-2.5 text-[13px] leading-5 text-Text-Secondary">
+                              {copy.includes.map((item) => (
+                                <li key={item} className="flex gap-2">
+                                  <span
+                                    aria-hidden="true"
+                                    className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-Primary-DeepTeal"
+                                  />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                            {copy.footer ? (
+                              <div className="mt-5 text-[13px] font-semibold text-Text-Primary">
+                                {copy.footer}
+                              </div>
+                            ) : null}
+                          </div>
                           <div className="mt-6">
                             {isDemo ? (
                               <div
-                                className={`flex h-[34px] items-center justify-center rounded-3xl text-[12px] font-medium ${
+                                className={`flex h-10 items-center justify-center rounded-3xl text-[13px] font-medium ${
                                   current
                                     ? 'bg-Primary-DeepTeal text-white'
                                     : 'border border-Gray-50 text-Text-Secondary'
@@ -841,9 +875,16 @@ const PackagePage = () => {
                               >
                                 {current ? 'Active now' : 'Included with Demo'}
                               </div>
+                            ) : isCustom ? (
+                              <a
+                                href="mailto:support@holisticare.com?subject=HolistiCare%20Scale%20Plan"
+                                className="flex h-10 w-full items-center justify-center rounded-3xl bg-Primary-DeepTeal px-4 text-[13px] font-medium text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Primary-DeepTeal"
+                              >
+                                Contact us for Scale
+                              </a>
                             ) : (
                               <ButtonPrimary
-                                ClassName="w-full"
+                                ClassName="w-full !py-2 !text-[13px]"
                                 type="button"
                                 onClick={(event) => {
                                   stopEvent(event);
@@ -871,6 +912,9 @@ const PackagePage = () => {
                     );
                   })}
                 </motion.div>
+              </div>
+              <div className="mt-4 rounded-[14px] bg-[#F3FAF8] px-4 py-3 text-center text-[13px] font-medium leading-5 text-Primary-DeepTeal">
+                Choose annual billing and receive 15% off the total yearly price.
               </div>
             </section>
           ) : null}

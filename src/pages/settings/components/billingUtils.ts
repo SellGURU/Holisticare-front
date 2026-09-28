@@ -61,7 +61,8 @@ export const currentPlanLabel = (
 ): string => {
   if (planName) {
     const period = intervalLabel(interval);
-    return period ? `${planName} · ${period}` : planName;
+    const name = normalizedPlanName(planName);
+    return period ? `${name} · ${period}` : name;
   }
   if ((planType || '').toLowerCase() === 'demo') return 'Demo';
   return 'No paid plan';
@@ -124,7 +125,15 @@ export const subscriptionPeriodSummary = (
   return `${days} days until renewal · ${endLabel}`;
 };
 
-const PLAN_ORDER = ['Plus', 'Pro'];
+const PLAN_ORDER = ['Starter', 'Growth', 'Scale'];
+
+export const normalizedPlanName = (
+  name: string | null | undefined,
+): string => {
+  if (name === 'Plus') return 'Starter';
+  if (name === 'Pro') return 'Growth';
+  return name || '';
+};
 
 export const hasPaidSubscription = (
   status: string | null | undefined,
@@ -241,9 +250,10 @@ export const CHECKOUT_REFRESH_RETRY_MS = 800;
 export const groupCatalog = (catalog: BillingPlanOption[]) => {
   const groups = new Map<string, BillingPlanOption[]>();
   for (const item of catalog) {
-    const current = groups.get(item.name) || [];
-    current.push(item);
-    groups.set(item.name, current);
+    const name = normalizedPlanName(item.name);
+    const current = groups.get(name) || [];
+    current.push({ ...item, name });
+    groups.set(name, current);
   }
   return Array.from(groups.entries()).sort((left, right) => {
     const leftIndex = PLAN_ORDER.indexOf(left[0]);
@@ -259,11 +269,13 @@ export type PlanCopy = {
   extrasLabel?: string;
   extras?: string[];
   recommended?: boolean;
+  customPricing?: boolean;
+  footer?: string;
 };
 
 export const PLAN_COPY: Record<string, PlanCopy> = {
   Demo: {
-    blurb: 'Starter access for trying the clinic portal.',
+    blurb: 'Free demo access for trying the clinic portal.',
     includesLabel: 'Included in Demo',
     includes: [
       'Nutrition tracker',
@@ -274,40 +286,34 @@ export const PLAN_COPY: Record<string, PlanCopy> = {
       'Workout builder and vault',
     ],
   },
-  Plus: {
-    blurb: 'For growing clinics that need branding and automation.',
-    includesLabel: 'Everything in Demo, plus',
+  Starter: {
+    blurb: 'Ideal for smaller practices.',
+    includesLabel: 'Plan capacity',
     includes: [
-      'Custom clinic branding',
-      'Payments and packages',
-      'Autoflow automations',
-      'Meal AI',
-      'Workout AI',
+      'Up to 35 active clients',
+      '£5 per additional client beyond 35',
     ],
-    extrasLabel: 'Not in Demo',
-    extras: [
-      'Your own brand on client-facing pages',
-      'Clinic billing and packages',
-      'AI meal and workout generation',
-    ],
+    footer: 'Cancel anytime',
   },
-  Pro: {
-    blurb: 'For teams that need the full HolistiCare platform.',
-    includesLabel: 'Everything in Plus, plus',
+  Growth: {
+    blurb: 'Perfect for expanding your reach.',
+    includesLabel: 'Plan capacity',
     includes: [
-      'Group chats and polls',
-      'Team members and roles',
-      'Community forums',
-      'Broadcast messages',
-      'Zapier integration',
-    ],
-    extrasLabel: 'Not in Plus',
-    extras: [
-      'Multi-staff collaboration',
-      'Community and broadcasts',
-      'Zapier and team workflows',
+      'Up to 100 active clients',
+      '£4 per additional client beyond 100',
     ],
     recommended: true,
+    footer: 'Cancel anytime',
+  },
+  Scale: {
+    blurb: 'Enterprise-level solution with custom options.',
+    includesLabel: 'Built for larger clinics',
+    includes: [
+      '250+ active clients',
+      'Custom pricing based on client volume and integration needs',
+    ],
+    customPricing: true,
+    footer: 'Cancel anytime',
   },
 };
 
@@ -338,7 +344,8 @@ export const refundStatusLabel = (status: string | null | undefined): string => 
 };
 
 export const catalogRank = (item: BillingPlanOption): number => {
-  const nameRank = item.name === 'Pro' ? 2 : item.name === 'Plus' ? 1 : 0;
+  const name = normalizedPlanName(item.name);
+  const nameRank = name === 'Growth' ? 2 : name === 'Starter' ? 1 : 0;
   const intervalRank = item.interval === 'year' ? 2 : 1;
   if (item.unit_amount != null) return item.unit_amount;
   return nameRank * 100000 + intervalRank;
@@ -387,14 +394,14 @@ export const billingErrorMessage = (err: unknown, fallback: string): string => {
 export const billingPageSubtitle = (paid: boolean): string => {
   return paid
     ? 'Review your current plan, payment method, invoices, and remaining billing period.'
-    : 'Choose Plus or Pro to subscribe. Demo stays free until you buy.';
+    : 'Choose Starter or Growth to subscribe, or contact us for Scale. Demo stays free until you buy.';
 };
 
 export const planDisplayName = (
   planName: string | null | undefined,
   planType: string | null | undefined,
 ): string => {
-  if (planName) return planName;
+  if (planName) return normalizedPlanName(planName);
   if ((planType || '').toLowerCase() === 'demo') return 'Demo';
   return 'No paid plan';
 };

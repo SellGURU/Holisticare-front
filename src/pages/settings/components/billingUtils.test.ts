@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  PLAN_COPY,
   billingPageSubtitle,
   billingPeriodDays,
   billingRecoveryAction,
@@ -30,6 +31,7 @@ import {
   hasPaidSubscription,
   intervalLabel,
   invoiceStatusLabel,
+  normalizedPlanName,
   paymentStatusLabel,
   planChangeKind,
   refundStatusLabel,
@@ -54,16 +56,16 @@ describe('billingUtils', () => {
     const plus = {
       env_key: 'STRIPE_PRICE_PLUS_MONTHLY',
       price_id: 'price_plus',
-      name: 'Plus',
+      name: 'Starter',
       interval: 'month',
-      unit_amount: 16000,
+      unit_amount: 29900,
     };
     const pro = {
       env_key: 'STRIPE_PRICE_PRO_MONTHLY',
       price_id: 'price_pro',
-      name: 'Pro',
+      name: 'Growth',
       interval: 'month',
-      unit_amount: 29900,
+      unit_amount: 69900,
     };
     expect(planChangeKind(plus, pro)).toBe('upgrade');
     expect(planChangeKind(pro, plus)).toBe('downgrade');
@@ -74,7 +76,7 @@ describe('billingUtils', () => {
   });
 
   it('builds the current plan label', () => {
-    expect(currentPlanLabel('Pro', 'month', 'paying')).toBe('Pro · Monthly');
+    expect(currentPlanLabel('Growth', 'month', 'paying')).toBe('Growth · Monthly');
     expect(currentPlanLabel(null, null, 'demo')).toBe('Demo');
     expect(currentPlanLabel(null, null, 'paying')).toBe('No paid plan');
   });
@@ -84,26 +86,26 @@ describe('billingUtils', () => {
       {
         env_key: 'STRIPE_PRICE_PLUS_MONTHLY',
         price_id: 'price_plus_m',
-        name: 'Plus',
+        name: 'Starter',
         interval: 'month',
       },
       {
         env_key: 'STRIPE_PRICE_PLUS_YEARLY',
         price_id: 'price_plus_y',
-        name: 'Plus',
+        name: 'Starter',
         interval: 'year',
       },
       {
         env_key: 'STRIPE_PRICE_PRO_MONTHLY',
         price_id: 'price_pro_m',
-        name: 'Pro',
+        name: 'Growth',
         interval: 'month',
       },
     ]);
-    expect(groups.map(([name]) => name)).toEqual(['Plus', 'Pro']);
+    expect(groups.map(([name]) => name)).toEqual(['Starter', 'Growth']);
     expect(groups[0][1]).toHaveLength(2);
     expect(intervalLabel('year')).toBe('Yearly');
-    expect(formatPriceAmount(16000, 'gbp')).toContain('160');
+    expect(formatPriceAmount(29900, 'gbp')).toContain('299');
     expect(hasPaidSubscription('active')).toBe(true);
     expect(hasPaidSubscription(null)).toBe(false);
     const future = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString();
@@ -120,12 +122,44 @@ describe('billingUtils', () => {
     expect(refundStatusLabel('none')).toBe('');
   });
 
+  it('maps legacy plan names and provides complete pricing copy', () => {
+    const groups = groupCatalog([
+      {
+        env_key: 'STRIPE_PRICE_PLUS_MONTHLY',
+        price_id: 'price_starter',
+        name: 'Plus',
+        interval: 'month',
+      },
+      {
+        env_key: 'STRIPE_PRICE_PRO_MONTHLY',
+        price_id: 'price_growth',
+        name: 'Pro',
+        interval: 'month',
+      },
+    ]);
+    expect(groups.map(([name]) => name)).toEqual(['Starter', 'Growth']);
+    expect(normalizedPlanName('Plus')).toBe('Starter');
+    expect(normalizedPlanName('Pro')).toBe('Growth');
+    expect(currentPlanLabel('Pro', 'month', 'paying')).toBe(
+      'Growth · Monthly',
+    );
+    expect(PLAN_COPY.Demo.blurb).toContain('Free demo');
+    expect(PLAN_COPY.Starter.includes).toContain('Up to 35 active clients');
+    expect(PLAN_COPY.Starter.includes).toContain(
+      '£5 per additional client beyond 35',
+    );
+    expect(PLAN_COPY.Growth.includes).toContain('Up to 100 active clients');
+    expect(PLAN_COPY.Growth.includes).toContain(
+      '£4 per additional client beyond 100',
+    );
+  });
+
   it('builds billing page labels and period summaries', () => {
     expect(billingPageSubtitle(true)).toContain('remaining billing period');
     expect(billingPageSubtitle(false)).toContain('Demo stays free');
-    expect(planDisplayName('Pro', 'paying')).toBe('Pro');
+    expect(planDisplayName('Growth', 'paying')).toBe('Growth');
     expect(planDisplayName(null, 'demo')).toBe('Demo');
-    expect(planPriceCaption(16000, 'usd', 'month')).toContain('/ monthly');
+    expect(planPriceCaption(29900, 'gbp', 'month')).toContain('/ monthly');
     expect(periodEndCaption('2026-03-15T00:00:00.000Z', false)).toContain('Renews');
     expect(periodEndCaption('2026-03-15T00:00:00.000Z', true)).toContain('Access ends');
     expect(daysRemainingLabel(12)).toBe('12 days left');
@@ -144,14 +178,14 @@ describe('billingUtils', () => {
   });
 
   it('labels plan actions, invoices, and default cards', () => {
-    expect(planActionLabel(false, false, false, 'Plus', 'same')).toBe(
-      'Subscribe to Plus',
+    expect(planActionLabel(false, false, false, 'Starter', 'same')).toBe(
+      'Subscribe to Starter',
     );
-    expect(planActionLabel(true, false, false, 'Pro', 'upgrade')).toBe(
-      'Upgrade to Pro',
+    expect(planActionLabel(true, false, false, 'Growth', 'upgrade')).toBe(
+      'Upgrade to Growth',
     );
-    expect(planActionLabel(true, true, false, 'Pro', 'same')).toBe('Current plan');
-    expect(planActionLabel(true, false, true, 'Plus', 'downgrade')).toBe(
+    expect(planActionLabel(true, true, false, 'Growth', 'same')).toBe('Current plan');
+    expect(planActionLabel(true, false, true, 'Starter', 'downgrade')).toBe(
       'Updating...',
     );
     expect(
@@ -275,7 +309,7 @@ describe('billingUtils', () => {
         fixture.showLifecycle,
       );
       expect(isPlanCardActive('Demo', undefined, status)).toBe(fixture.demoActive);
-      expect(isPlanCardActive('Plus', plusId, status)).toBe(fixture.plusActive);
+      expect(isPlanCardActive('Starter', plusId, status)).toBe(fixture.plusActive);
       expect(billingRecoveryAction(fixture.status)).toBe(fixture.recovery);
     }
 
