@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import {
+  formatLabCalendarDateIso,
+  parseLabDateOfTest,
+} from '../../../utils/labCalendarDate';
 import { resolveExactBiomarkerName, reviewProvenancePayloadFields } from './biomarkerNameFields';
+
+export { parseLabDateOfTest };
 
 const trim = (value: unknown) => String(value ?? '').trim();
 
@@ -56,48 +62,7 @@ const stringifyLabField = (value: unknown) => {
   return String(value);
 };
 
-const localDateAtMidnight = (date: Date) =>
-  new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-const todayLocalDate = () => localDateAtMidnight(new Date());
-
-export const parseLabDateOfTest = (dateOfTest?: unknown): Date => {
-  if (dateOfTest instanceof Date) {
-    return Number.isNaN(dateOfTest.getTime())
-      ? todayLocalDate()
-      : localDateAtMidnight(dateOfTest);
-  }
-
-  if (dateOfTest === null || dateOfTest === undefined) {
-    return todayLocalDate();
-  }
-
-  const raw = String(dateOfTest).trim();
-  if (!raw) {
-    return todayLocalDate();
-  }
-
-  if (/^\d+$/.test(raw)) {
-    const parsed = new Date(Number(raw));
-    return Number.isNaN(parsed.getTime())
-      ? todayLocalDate()
-      : localDateAtMidnight(parsed);
-  }
-
-  const parsed = new Date(raw);
-  return Number.isNaN(parsed.getTime())
-    ? todayLocalDate()
-    : localDateAtMidnight(parsed);
-};
-
-const formatDateOfTestTimestamp = (dateOfTest?: unknown) => {
-  const date = parseLabDateOfTest(dateOfTest);
-  return Date.UTC(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-  ).toString();
-};
+const formatDateOfTestTimestamp = formatLabCalendarDateIso;
 
 const thresholdValueIsNumeric = (value: unknown) => {
   if (value === null || value === undefined) return false;

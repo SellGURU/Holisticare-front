@@ -397,13 +397,52 @@ export const billingPageSubtitle = (paid: boolean): string => {
     : 'Choose Starter or Growth to subscribe, or contact us for Scale. Demo stays free until you buy.';
 };
 
+const LEGACY_PLAN_PRICES: Record<
+  string,
+  { name: string; interval: string; unitAmount: number; currency: string }
+> = {
+  price_1U9OMQFNpKM23rZyOdlgTR8L: {
+    name: 'Starter',
+    interval: 'month',
+    unitAmount: 16000,
+    currency: 'gbp',
+  },
+  price_1U1383FNpKM23rZyWzx0h2LA: {
+    name: 'Growth',
+    interval: 'month',
+    unitAmount: 29900,
+    currency: 'gbp',
+  },
+};
+
 export const planDisplayName = (
   planName: string | null | undefined,
   planType: string | null | undefined,
+  subscriptionStatus?: string | null,
 ): string => {
   if (planName) return normalizedPlanName(planName);
+  if (hasPaidSubscription(subscriptionStatus)) return 'Paid plan';
   if ((planType || '').toLowerCase() === 'demo') return 'Demo';
   return 'No paid plan';
+};
+
+export const resolveCurrentPlan = (status: {
+  plan_name?: string | null;
+  plan_type?: string | null;
+  subscription_status?: string | null;
+  stripe_price_id?: string | null;
+  interval?: string | null;
+  unit_amount?: number | null;
+  currency?: string | null;
+} | null) => {
+  const legacy = LEGACY_PLAN_PRICES[status?.stripe_price_id || ''];
+  const name = status?.plan_name || legacy?.name;
+  return {
+    name: planDisplayName(name, status?.plan_type, status?.subscription_status),
+    interval: status?.interval || legacy?.interval || null,
+    unitAmount: status?.unit_amount ?? legacy?.unitAmount ?? null,
+    currency: status?.currency || legacy?.currency || null,
+  };
 };
 
 export const planPriceCaption = (

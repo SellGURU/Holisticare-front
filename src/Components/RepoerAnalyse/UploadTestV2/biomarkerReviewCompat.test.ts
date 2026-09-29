@@ -951,12 +951,19 @@ describe('missing_value merged into Need review', () => {
 });
 
 describe('parseLabDateOfTest', () => {
-  it('parses UTC ms timestamp strings from the API', () => {
+  it('parses UTC ms timestamp strings as that UTC calendar day', () => {
     const ms = Date.UTC(2024, 1, 11).toString();
     const parsed = parseLabDateOfTest(ms);
     expect(parsed.getFullYear()).toBe(2024);
     expect(parsed.getMonth()).toBe(1);
     expect(parsed.getDate()).toBe(11);
+  });
+
+  it('parses YYYY-MM-DD as a local calendar day', () => {
+    const parsed = parseLabDateOfTest('2026-09-29');
+    expect(parsed.getFullYear()).toBe(2026);
+    expect(parsed.getMonth()).toBe(8);
+    expect(parsed.getDate()).toBe(29);
   });
 
   it('defaults missing or invalid values to today', () => {
@@ -971,11 +978,8 @@ describe('parseLabDateOfTest', () => {
 
 describe('buildProcessLabReportPayload', () => {
   it('defaults date_of_test to today when OCR date is missing', () => {
-    const todayMs = Date.UTC(
-      new Date().getFullYear(),
-      new Date().getMonth(),
-      new Date().getDate(),
-    ).toString();
+    const today = new Date();
+    const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
     const payload = buildProcessLabReportPayload({
       memberId: 123,
@@ -992,7 +996,7 @@ describe('buildProcessLabReportPayload', () => {
       ],
     });
 
-    expect(payload.modified_biomarkers.date_of_test).toBe(todayMs);
+    expect(payload.modified_biomarkers.date_of_test).toBe(todayIso);
   });
 
   it('does not re-send leftover quarantine on Continue when catalog unit matches', () => {

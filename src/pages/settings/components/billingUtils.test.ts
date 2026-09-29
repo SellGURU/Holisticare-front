@@ -25,6 +25,7 @@ import {
   periodProgressCaption,
   planActionLabel,
   planDisplayName,
+  resolveCurrentPlan,
   planPriceCaption,
   remainingPeriodProgress,
   groupCatalog,
@@ -159,6 +160,20 @@ describe('billingUtils', () => {
     expect(billingPageSubtitle(false)).toContain('Demo stays free');
     expect(planDisplayName('Growth', 'paying')).toBe('Growth');
     expect(planDisplayName(null, 'demo')).toBe('Demo');
+    expect(planDisplayName(null, 'paying', 'trialing')).toBe('Paid plan');
+    expect(
+      resolveCurrentPlan({
+        plan_name: null,
+        plan_type: 'paying',
+        subscription_status: 'trialing',
+        stripe_price_id: 'price_1U1383FNpKM23rZyWzx0h2LA',
+      }),
+    ).toMatchObject({
+      name: 'Growth',
+      interval: 'month',
+      unitAmount: 29900,
+      currency: 'gbp',
+    });
     expect(planPriceCaption(29900, 'gbp', 'month')).toContain('/ monthly');
     expect(periodEndCaption('2026-03-15T00:00:00.000Z', false)).toContain('Renews');
     expect(periodEndCaption('2026-03-15T00:00:00.000Z', true)).toContain('Access ends');

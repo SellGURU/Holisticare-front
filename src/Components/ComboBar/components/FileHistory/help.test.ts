@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { sortLabFilesByTestDateDesc } from './help';
+import { formatDate, sortLabFilesByTestDateDesc } from './help';
 
 describe('sortLabFilesByTestDateDesc', () => {
   it('orders by test date descending', () => {
@@ -24,5 +24,11 @@ describe('sortLabFilesByTestDateDesc', () => {
       'new',
       'old',
     ]);
+  });
+});
+
+describe('formatDate', () => {
+  it('formats YYYY-MM-DD without timezone shift', () => {
+    expect(formatDate('2026-09-29')).toBe('29 Sep 2026');
   });
 });

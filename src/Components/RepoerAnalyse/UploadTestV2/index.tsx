@@ -48,6 +48,7 @@ import {
   reviewProvenanceForSave,
   parseLabDateOfTest,
 } from './biomarkerReviewCompat';
+import { formatLabCalendarDateIso } from '../../../utils/labCalendarDate';
 import BiomarkersApi from '../../../api/Biomarkers';
 import { showError, showSuccess } from '../../GlobalToast';
 import { ReviewFinding } from './ReviewFindingsPanel';
@@ -865,11 +866,7 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     // ✅ For ultrasound reports, call API with empty lists
     if (effectiveLabType === 'ultrasound') {
       const modifiedTimestamp = modifiedDateOfTest
-        ? Date.UTC(
-            modifiedDateOfTest.getFullYear(),
-            modifiedDateOfTest.getMonth(),
-            modifiedDateOfTest.getDate(),
-          ).toString()
+        ? formatLabCalendarDateIso(modifiedDateOfTest)
         : null;
 
       const ultrasoundResult = await Application.SaveLabReport({
@@ -893,18 +890,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
     }
 
     const modifiedTimestamp = modifiedDateOfTest
-      ? Date.UTC(
-          modifiedDateOfTest.getFullYear(),
-          modifiedDateOfTest.getMonth(),
-          modifiedDateOfTest.getDate(),
-        ).toString()
+      ? formatLabCalendarDateIso(modifiedDateOfTest)
       : null;
     const addedTimestamp = addedDateOfTest
-      ? Date.UTC(
-          addedDateOfTest.getFullYear(),
-          addedDateOfTest.getMonth(),
-          addedDateOfTest.getDate(),
-        ).toString()
+      ? formatLabCalendarDateIso(addedDateOfTest)
       : null;
 
     // Map over all extractedBiomarkers to create the required API structure
@@ -1401,18 +1390,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
   const buildLabValidationPayload = () => {
     const modifiedTimestamp = modifiedDateOfTest
-      ? Date.UTC(
-          modifiedDateOfTest.getFullYear(),
-          modifiedDateOfTest.getMonth(),
-          modifiedDateOfTest.getDate(),
-        ).toString()
+      ? formatLabCalendarDateIso(modifiedDateOfTest)
       : '';
     const addedTimestamp = addedDateOfTest
-      ? Date.UTC(
-          addedDateOfTest.getFullYear(),
-          addedDateOfTest.getMonth(),
-          addedDateOfTest.getDate(),
-        ).toString()
+      ? formatLabCalendarDateIso(addedDateOfTest)
       : '';
 
     return {
@@ -2238,18 +2219,10 @@ export const UploadTestV2: React.FC<UploadTestProps> = ({
 
     setBtnLoading(true);
     const modifiedTimestamp = modifiedDateOfTest
-      ? Date.UTC(
-          modifiedDateOfTest.getFullYear(),
-          modifiedDateOfTest.getMonth(),
-          modifiedDateOfTest.getDate(),
-        ).toString()
+      ? formatLabCalendarDateIso(modifiedDateOfTest)
       : '';
     const addedTimestamp = addedDateOfTest
-      ? Date.UTC(
-          addedDateOfTest.getFullYear(),
-          addedDateOfTest.getMonth(),
-          addedDateOfTest.getDate(),
-        ).toString()
+      ? formatLabCalendarDateIso(addedDateOfTest)
       : '';
 
     Application.validateBiomarkers({

@@ -46,8 +46,8 @@ import {
   periodProgressCaption,
   planActionLabel,
   planChangeKind,
-  planDisplayName,
   planPriceCaption,
+  resolveCurrentPlan,
   refundStatusLabel,
   remainingPeriodProgress,
   shouldRetryCheckoutRefresh,
@@ -250,10 +250,11 @@ const PackagePage = () => {
     : terminalAccessNotice(status?.subscription_status);
   const daysLeft =
     status?.days_remaining ?? daysUntilPeriodEnd(status?.current_period_end);
-  const progress = remainingPeriodProgress(daysLeft, status?.interval);
+  const currentPlan = resolveCurrentPlan(status);
+  const progress = remainingPeriodProgress(daysLeft, currentPlan.interval);
   const priceLabel =
-    status?.unit_amount != null
-      ? formatPriceAmount(status.unit_amount, status.currency)
+    currentPlan.unitAmount != null
+      ? formatPriceAmount(currentPlan.unitAmount, currentPlan.currency)
       : '—';
   const defaultCard = defaultPaymentMethod(methods);
   const periodNotice = collectionNotice(
@@ -409,7 +410,7 @@ const PackagePage = () => {
                 </div>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <h2 className="text-[20px] font-semibold leading-tight text-Text-Primary sm:text-[22px]">
-                    {planDisplayName(status?.plan_name, status?.plan_type)}
+                    {currentPlan.name}
                   </h2>
                   <span className="rounded-full bg-Primary-DeepTeal px-2.5 py-0.5 text-[11px] font-medium text-white">
                     {subscriptionStatusLabel(status?.subscription_status)}
@@ -418,9 +419,9 @@ const PackagePage = () => {
                 <div className="mt-1 text-[13px] text-Text-Secondary">
                   {paid
                     ? planPriceCaption(
-                        status?.unit_amount,
-                        status?.currency,
-                        status?.interval,
+                        currentPlan.unitAmount,
+                        currentPlan.currency,
+                        currentPlan.interval,
                       )
                     : 'Free demo access for trying the clinic portal.'}
                 </div>
@@ -436,8 +437,8 @@ const PackagePage = () => {
                           status?.cancel_at_period_end,
                         )
                       : currentPlanLabel(
-                          status?.plan_name,
-                          status?.interval,
+                          currentPlan.name,
+                          currentPlan.interval,
                           status?.plan_type,
                         )}
                 </div>
@@ -505,7 +506,7 @@ const PackagePage = () => {
               <div className="rounded-[14px] bg-Gray-15 px-3 py-3">
                 <div className="text-[10px] text-Text-Secondary">Billing</div>
                 <div className="mt-1 text-[13px] font-medium text-Text-Primary">
-                  {intervalLabel(status?.interval) || '—'}
+                  {intervalLabel(currentPlan.interval) || '—'}
                 </div>
               </div>
               <div className="rounded-[14px] bg-Gray-15 px-3 py-3">
@@ -541,11 +542,11 @@ const PackagePage = () => {
                     {daysRemainingLabel(daysLeft)}
                   </div>
                   <div className="mt-2 text-[12px] text-Text-Secondary">
-                    {formatPeriodRange(status?.current_period_end, status?.interval)}
+                    {formatPeriodRange(status?.current_period_end, currentPlan.interval)}
                   </div>
                 </div>
                 <div className="text-[12px] text-Text-Secondary">
-                  {periodProgressCaption(progress, status?.interval)}
+                  {periodProgressCaption(progress, currentPlan.interval)}
                 </div>
               </div>
               <div className="mt-3 h-3 overflow-hidden rounded-full bg-[#E4EEF0]">

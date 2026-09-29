@@ -19,6 +19,7 @@ import type {
   BiomarkerSuggestion,
 } from '../../searchableSelect/SearchSelectWithSuggestions';
 import useIsDemo from '../../../hooks/useIsDemo';
+import { formatLabCalendarDate } from '../../../utils/labCalendarDate';
 import {
   pinBiomarkerNameFields,
   resolveExactBiomarkerName,
@@ -438,18 +439,8 @@ const BiomarkersSection: React.FC<BiomarkersSectionProps> = ({
     });
   };
 
-  const formatExcludedDate = (iso?: string | null) => {
-    if (!iso) return '';
-    try {
-      return new Date(iso).toLocaleDateString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      });
-    } catch {
-      return iso;
-    }
-  };
+  const formatExcludedDate = (iso?: string | null) =>
+    formatLabCalendarDate(iso);
 
   const sessionFileId = uploadedFile?.file_id;
 

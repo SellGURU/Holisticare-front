@@ -18,6 +18,7 @@ import {
   showWarning,
 } from '../../../Components/GlobalToast';
 import { TextField } from '../../../Components/UnitComponents';
+import { formatLabCalendarDateIso } from '../../../utils/labCalendarDate';
 
 interface FHIRBrowserProps {
   server: FHIRServer;
@@ -261,10 +262,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
     setBtnLoading(true);
 
     try {
-      // Format date for FHIR validate endpoint
-      const formattedDate = dateOfTest
-        ? dateOfTest.toISOString().split('T')[0]
-        : new Date().toISOString().split('T')[0];
+      const formattedDate = formatLabCalendarDateIso(dateOfTest ?? new Date());
 
       // Map biomarkers for validation
       const mappedBiomarkers = biomarkers.map((b) => ({
@@ -338,18 +336,7 @@ const FHIRBrowser: React.FC<FHIRBrowserProps> = ({ server, onBack }) => {
     setBtnLoading(true);
 
     try {
-      // Format date timestamp like index.tsx
-      const addedTimestamp = dateOfTest
-        ? Date.UTC(
-            dateOfTest.getFullYear(),
-            dateOfTest.getMonth(),
-            dateOfTest.getDate(),
-          ).toString()
-        : Date.UTC(
-            new Date().getFullYear(),
-            new Date().getMonth(),
-            new Date().getDate(),
-          ).toString();
+      const addedTimestamp = formatLabCalendarDateIso(dateOfTest ?? new Date());
 
       // Map biomarkers for added_biomarkers structure - only allowed keys: biomarker, value, unit
       const mappedBiomarkers = biomarkers.map((b) => ({
