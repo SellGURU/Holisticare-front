@@ -45,7 +45,16 @@ type SendMessage = {
   message_text: string;
   replied_conv_id?: number;
   images: string[];
+  chatting_with?: string;
 };
+
+function sortMessagesChronologically(items: Message[]): Message[] {
+  return [...items].sort((left, right) => {
+    const timeDelta = Number(left.timestamp || 0) - Number(right.timestamp || 0);
+    if (timeDelta !== 0) return timeDelta;
+    return Number(left.conversation_id || 0) - Number(right.conversation_id || 0);
+  });
+}
 interface MessagesChatBoxProps {
   onBack: () => void;
   onMessageSent?: (memberId: number) => void;
@@ -104,7 +113,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       ),
     )
       .then((data) => {
-        const ordered = [...data].reverse();
+        const ordered = sortMessagesChronologically(Array.isArray(data) ? data : []);
         setMessages(ordered);
         setAllMessages(ordered);
       })
@@ -122,7 +131,9 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
       }).then((res) => res.data),
     )
       .then((data) => {
-        setAiMessages(data);
+        setAiMessages(
+          sortMessagesChronologically(Array.isArray(data) ? data : []),
+        );
       })
       .catch(() => {})
       .finally(() => {
@@ -178,15 +189,20 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
   const [, setSelectedBenchMarks] = useState<Array<string>>([]);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
+      const receiverId = Number(memberId);
+      if (!Number.isFinite(receiverId)) {
+        return;
+      }
       const lastConversationId =
         messages.length > 0
           ? messages[messages.length - 1].conversation_id
           : undefined;
       const newMessage: SendMessage = {
         message_text: input,
-        receiver_id: memberId,
+        receiver_id: receiverId,
         images: Images,
         conversation_id: lastConversationId,
+        chatting_with: 'client',
       };
       setMessages([
         ...messages,
@@ -470,17 +486,19 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
             ) : (
               ''
             )}
-            <div id="userChat" className="p-4 h-full space-y-4 overflow-auto ">
-              {!aiMode && (
-                <>
+            <div
+              id="userChat"
+              className="flex h-full flex-col overflow-auto p-4"
+            >
+              {!aiMode && (searchedMessages ?? messages).length > 0 && (
+                <div className="mt-auto flex flex-col space-y-4">
                   {(searchedMessages ?? messages).map(
                     (message, index: number) => (
-                      <Fragment key={index}>
+                      <Fragment
+                        key={`${message.conversation_id}-${message.timestamp}-${index}`}
+                      >
                         {message.sender_type === 'patient' ? (
                           <>
-                            {index == messages.length - 1 && (
-                              <div ref={messagesEndRef}></div>
-                            )}
                             <div className="flex justify-start items-start gap-1">
                               <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
                                 <img
@@ -619,26 +637,23 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                                 />
                               </div>
                             </div>
-                            {index == messages.length - 1 && (
-                              <div ref={messagesEndRef}></div>
-                            )}
                           </>
                         )}
                       </Fragment>
                     ),
                   )}
-                </>
+                  <div ref={!aiMode ? messagesEndRef : undefined} />
+                </div>
               )}
-              {aiMode && (
-                <>
+              {aiMode && (searchedAiMessages ?? aiMessages).length > 0 && (
+                <div className="mt-auto flex flex-col space-y-4">
                   {(searchedAiMessages ?? aiMessages).map(
                     (message, index: number) => (
-                      <Fragment key={index}>
+                      <Fragment
+                        key={`${message.conversation_id}-${message.timestamp}-${index}`}
+                      >
                         {message.sender_type === 'patient' ? (
                           <>
-                            {index == aiMessages.length - 1 && (
-                              <div ref={messagesEndRef}></div>
-                            )}
                             <div className="flex justify-start items-start gap-1">
                               <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
                                 <img
@@ -772,15 +787,13 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                                 <img src="/icons/ai-pic-messages.svg" alt="" />
                               </div>
                             </div>
-                            {index == messages.length - 1 && (
-                              <div ref={messagesEndRef}></div>
-                            )}
                           </>
                         )}
                       </Fragment>
                     ),
                   )}
-                </>
+                  <div ref={aiMode ? messagesEndRef : undefined} />
+                </div>
               )}
               {selectMessages == null ? (
                 <div className="flex flex-col items-center justify-center w-full h-full text-base select-none text-Text-Primary font-medium g">

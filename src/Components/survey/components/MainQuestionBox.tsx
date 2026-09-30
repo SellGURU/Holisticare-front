@@ -48,10 +48,7 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
 }) => {
   return (
     <>
-      <Card
-        style={{ height: window.innerHeight - 180 + 'px' }}
-        className="bg-white shadow-xl   border-0 flex flex-col relative"
-      >
+      <Card className="relative flex min-h-[24rem] flex-1 flex-col border-0 bg-white shadow-xl md:min-h-[28rem]">
         <CardHeader>
           <div
             className={`px-3 py-1 text-xs md:text-sm rounded-full items-center flex  font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
@@ -99,10 +96,7 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
             </CardDescription>
           )}
         </CardHeader>
-        <CardContent
-          className="space-y-6   pb-20 overflow-y-scroll"
-          style={{ height: window.innerHeight - 400 + 'px' }}
-        >
+        <CardContent className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pb-24">
           {renderQuestion(
             currentQuestion,
             getOriginalIndexForVisibleIndex(currentStep - 1),
@@ -130,7 +124,7 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full bg-white">
+        <CardFooter className="flex shrink-0 justify-between border-t border-gray-100 bg-white px-4 py-3">
           <Button
             className={`${currentStep > 1 ? 'visible' : 'invisible'}`}
             type="button"

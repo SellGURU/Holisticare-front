@@ -12,6 +12,7 @@ type SendMessage = {
   receiver_id: number;
   message_text: string;
   replied_conv_id?: number;
+  chatting_with?: string;
 };
 type Message = {
   date: string;
@@ -28,6 +29,14 @@ type Message = {
   name: string;
 };
 
+function sortMessagesChronologically(items: Message[]): Message[] {
+  return [...items].sort((left, right) => {
+    const timeDelta = Number(left.timestamp || 0) - Number(right.timestamp || 0);
+    if (timeDelta !== 0) return timeDelta;
+    return Number(left.conversation_id || 0) - Number(right.conversation_id || 0);
+  });
+}
+
 export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
   const [messageData, setMessageData] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -41,7 +50,11 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
       chatting_with: 'client',
     })
       .then((res) => {
-        setMessageData(res.data.messages.reverse());
+        setMessageData(
+          sortMessagesChronologically(
+            Array.isArray(res.data.messages) ? res.data.messages : [],
+          ),
+        );
       })
       .catch((err) => {
         console.error('Error getting list chats:', err);
@@ -63,8 +76,9 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
           : undefined;
       const newMessage: SendMessage = {
         message_text: input,
-        receiver_id: memberId,
+        receiver_id: Number(memberId),
         conversation_id: lastConversationId,
+        chatting_with: 'client',
       };
       setMessageData([
         ...messageData,

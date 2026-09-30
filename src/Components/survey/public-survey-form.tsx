@@ -713,6 +713,8 @@ export function PublicSurveyForm({
 
       if (isClient) {
         onSubmitClient?.(respond);
+        setCurrentStep(sortedQuestions.length + 2);
+        setSubmitting(false);
       } else {
         if (action === 'fill') {
           await Application.SaveQuestionary({
@@ -1379,7 +1381,7 @@ export function PublicSurveyForm({
   }
 
   return (
-    <div className="container max-w-4xl mx-auto px-1 xl:px-4 py-10">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-4xl flex-1 flex-col px-1 py-4 md:px-4 md:py-8 xl:px-4">
       <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-8">
         <div
           className={`h-2 rounded-full transition-all duration-500 bg-gradient-to-r ${gradientClass}`}
@@ -1414,16 +1416,13 @@ export function PublicSurveyForm({
       )}
       {currentStep == sortedQuestions.length + 1 && isNeedConfirm && (
         <>
-          <Card
-            style={{ height: window.innerHeight - 200 + 'px' }}
-            className="bg-white shadow-xl  border-0 flex flex-col relative"
-          >
+          <Card className="relative flex min-h-[24rem] flex-1 flex-col border-0 bg-white shadow-xl">
             <CardHeader>
               <CardTitle className="text-base 2xl:text-2xl text-justify font-bold">
                 {survey.consent_text || ''}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6 h-[60%] relative  pb-20 overflow-auto">
+            <CardContent className="relative min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pb-24">
               {showConfirmError && (
                 <div className="flex items-center space-x-2 text-red-500 text-sm absolute z-30 bottom-10 mt-2">
                   <AlertCircle className="h-4 w-4" />
@@ -1434,7 +1433,7 @@ export function PublicSurveyForm({
                 </div>
               )}
             </CardContent>
-            <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full bg-white">
+            <CardFooter className="flex shrink-0 justify-between border-t border-gray-100 bg-white px-4 py-3">
               <Button
                 className={`${currentStep > 1 ? 'visible' : 'invisible'}`}
                 type="button"
@@ -1476,6 +1475,32 @@ export function PublicSurveyForm({
               We appreciate your time and feedback. Your responses will help us
               improve our services.
             </p>
+            {isClient ? (
+              <Button
+                type="button"
+                onClick={() => {
+                  const payload = { type: 'QUESTIONARY_SUBMITTED' };
+                  try {
+                    window.parent?.postMessage(payload, '*');
+                  } catch {
+                    // ignore
+                  }
+                  try {
+                    window.opener?.postMessage(payload, '*');
+                  } catch {
+                    // ignore
+                  }
+                  try {
+                    window.close();
+                  } catch {
+                    // ignore
+                  }
+                }}
+                className="rounded-full bg-emerald-600 px-6 text-white hover:bg-emerald-700"
+              >
+                Return to app
+              </Button>
+            ) : null}
           </CardContent>
         </Card>
       )}

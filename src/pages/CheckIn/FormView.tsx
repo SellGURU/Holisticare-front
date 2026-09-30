@@ -18,6 +18,25 @@ const decodePathParam = (value: string | undefined) => {
   }
 };
 
+const notifyQuestionnaireFinished = () => {
+  const payload = { type: 'QUESTIONARY_SUBMITTED' };
+  try {
+    window.parent?.postMessage(payload, '*');
+  } catch {
+    // ignore cross-window parent
+  }
+  try {
+    window.opener?.postMessage(payload, '*');
+  } catch {
+    // ignore missing opener
+  }
+  try {
+    window.close();
+  } catch {
+    // Safari View Controller / iframe cannot always close themselves
+  }
+};
+
 const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id, 'f-id': fId } = useParams();
   const encodedMi = decodePathParam(encode);
@@ -82,6 +101,15 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
         .catch(handleLoadError);
     }
   }, [encodedMi, formUniqueId, uniqueId, mode]);
+
+  useEffect(() => {
+    if (!isComplete) return;
+    const timer = window.setTimeout(() => {
+      notifyQuestionnaireFinished();
+    }, 1500);
+    return () => window.clearTimeout(timer);
+  }, [isComplete]);
+
   const submit = (e: any) => {
     // setIsLaoding(true);
     const apiCall =
@@ -102,27 +130,20 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
 
     apiCall(mode === 'questionary' ? dataQuestionary : dataCheckin)
       .then(() => {
-        // On successful submission, update state and then close the window
         setTimeout(() => {
           if (window.flutter_inappwebview) {
             window.flutter_inappwebview.callHandler('closeWebView');
           } else {
-            console.warn(
-              'Flutter WebView bridge not available, attempting to close window.',
-            );
-            window.close();
-            window.parent.postMessage({ type: 'QUESTIONARY_SUBMITTED' }, '*');
+            notifyQuestionnaireFinished();
           }
-        }, 1500); // Wait for 1.5 seconds to give the user time to see the success message
+        }, 1500);
       })
       .catch((error) => {
-        // Handle submission error, but still might want to close for a clean slate
         console.error('Error submitting form:', error);
         if (window.flutter_inappwebview) {
           window.flutter_inappwebview.callHandler('closeWebView');
         } else {
-          window.close();
-          window.parent.postMessage({ type: 'QUESTIONARY_SUBMITTED' }, '*');
+          notifyQuestionnaireFinished();
         }
       })
       .finally(() => {
@@ -149,16 +170,30 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   return (
     <>
       <div
-        className="w-full py-3 px-4 h-svh pb-[150px] overflow-y-scroll"
-        ref={scrollRef}
+        className="flex h-dvh w-full flex-col overflow-hidden bg-gray-50"
+        style={{
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        }}
       >
+        <div
+          className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-3 md:px-4"
+          ref={scrollRef}
+        >
         {isComplete ? (
-          <div className="py-4">
-            <div className="text-[12px] text-Text-Secondary text-center">
+          <div className="flex min-h-full flex-col items-center justify-center px-4 py-10 text-center">
+            <div className="text-sm text-Text-Secondary">
               {mode == 'questionary'
-                ? 'This Questionary is already answered.'
-                : 'This Checkin is already answered.'}
+                ? 'This questionnaire is already answered.'
+                : 'This check-in is already answered.'}
             </div>
+            <button
+              type="button"
+              onClick={notifyQuestionnaireFinished}
+              className="mt-6 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white"
+            >
+              Return to app
+            </button>
           </div>
         ) : (
           <>
@@ -191,6 +226,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
             )}
           </>
         )}
+        </div>
       </div>
 
       {/* <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
