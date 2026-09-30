@@ -9,6 +9,7 @@ import {
 } from '../../ui/card';
 import SvgIcon from '../../../utils/svgIcon';
 import { AlertCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Button } from '../../ui/button';
 import { getQuestionText } from '../help';
 
@@ -46,10 +47,28 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
   renderQuestion,
   getOriginalIndexForVisibleIndex,
 }) => {
+  const [cardHeight, setCardHeight] = useState(() =>
+    typeof window === 'undefined'
+      ? 640
+      : Math.max(window.innerHeight - 180, 320),
+  );
+
+  useEffect(() => {
+    const updateHeight = () => {
+      setCardHeight(Math.max(window.innerHeight - 180, 320));
+    };
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
+
   return (
     <>
-      <Card className="relative flex min-h-[24rem] flex-1 flex-col border-0 bg-white shadow-xl md:min-h-[28rem]">
-        <CardHeader>
+      <Card
+        style={{ height: cardHeight }}
+        className="relative flex min-h-0 flex-col overflow-hidden border-0 bg-white shadow-xl"
+      >
+        <CardHeader className="shrink-0">
           <div
             className={`px-3 py-1 text-xs md:text-sm rounded-full items-center flex  font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
           >
@@ -96,7 +115,7 @@ const MainQuestionBox: React.FC<MainQuestionBoxProps> = ({
             </CardDescription>
           )}
         </CardHeader>
-        <CardContent className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pb-24">
+        <CardContent className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pb-6">
           {renderQuestion(
             currentQuestion,
             getOriginalIndexForVisibleIndex(currentStep - 1),

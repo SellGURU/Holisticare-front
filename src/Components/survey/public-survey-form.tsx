@@ -1381,8 +1381,8 @@ export function PublicSurveyForm({
   }
 
   return (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-4xl flex-1 flex-col px-1 py-4 md:px-4 md:py-8 xl:px-4">
-      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-8">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-4xl flex-1 flex-col px-1 py-3 md:px-4">
+      <div className="mb-4 h-2 w-full shrink-0 overflow-hidden rounded-full bg-gray-200">
         <div
           className={`h-2 rounded-full transition-all duration-500 bg-gradient-to-r ${gradientClass}`}
           style={{ width: `${calculateProgress()}%` }}
@@ -1416,13 +1416,13 @@ export function PublicSurveyForm({
       )}
       {currentStep == sortedQuestions.length + 1 && isNeedConfirm && (
         <>
-          <Card className="relative flex min-h-[24rem] flex-1 flex-col border-0 bg-white shadow-xl">
+          <Card className="relative flex h-[calc(100dvh-11.25rem)] min-h-0 flex-col overflow-hidden border-0 bg-white shadow-xl">
             <CardHeader>
               <CardTitle className="text-base 2xl:text-2xl text-justify font-bold">
                 {survey.consent_text || ''}
               </CardTitle>
             </CardHeader>
-            <CardContent className="relative min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pb-24">
+            <CardContent className="relative min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain pb-6">
               {showConfirmError && (
                 <div className="flex items-center space-x-2 text-red-500 text-sm absolute z-30 bottom-10 mt-2">
                   <AlertCircle className="h-4 w-4" />
