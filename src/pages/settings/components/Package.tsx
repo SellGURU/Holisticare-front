@@ -13,6 +13,7 @@ import type {
 } from '../../../types/clinicBilling';
 
 const AddPaymentMethod = lazy(() => import('./AddPaymentMethod'));
+import { scrollWithinParent } from '../../../utils/scrollWithinParent';
 import {
   AVAILABLE_PLANS_ID,
   CHECKOUT_REFRESH_RETRY_MS,
@@ -280,9 +281,8 @@ const PackagePage = () => {
 
   const scrollToPlans = (event?: { preventDefault?: () => void; stopPropagation?: () => void }) => {
     stopEvent(event);
-    document
-      .getElementById(AVAILABLE_PLANS_ID)
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const section = document.getElementById(AVAILABLE_PLANS_ID);
+    if (section) scrollWithinParent(section, { behavior: 'smooth' });
   };
 
   const startCheckout = async (priceId: string) => {

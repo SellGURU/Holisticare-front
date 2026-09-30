@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import Sidebar from './components/SideBar';
 import SearchBox from '../../Components/SearchBox';
 import { Zappier } from './components/Zappier';
-import PackagePage from './components/Package';
 import { ClinicPreferences } from './components/ClinicPreferences';
 import { ClinicProfile } from './components/ClinicProfile';
 import { ChangePassword } from '../../Components/changePassword';
@@ -26,7 +25,6 @@ const Setting: React.FC = () => {
       { title: 'Clinic Profile', isActive: isAdmin },
       { title: 'Clinic Preferences', isActive: true },
       { title: 'Change Password', isActive: loginWithGoogle === false },
-      { title: 'Package', isActive: true },
       { title: 'Show Tutorial', isActive: true },
     ];
     return items.filter((item) => item.isActive);
@@ -79,10 +77,6 @@ const Setting: React.FC = () => {
         return <ChangePassword />;
       case 'Show Tutorial':
         return <ShowTutorial />;
-      case 'Package':
-      case 'Packages':
-      case 'Subscription':
-        return <PackagePage />;
       default:
         return <div></div>;
     }

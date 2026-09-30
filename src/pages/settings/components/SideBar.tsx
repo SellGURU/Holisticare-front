@@ -55,10 +55,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           isActive: false,
         },
         {
-          title: 'Package',
-          isActive: true,
-        },
-        {
           title: 'Show Tutorial',
           isActive: true,
         },
@@ -74,15 +70,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   useEffect(() => {
     const section = searchParams.get('section');
     if (section) {
-      const normalized =
-        section === 'subscription' || section === 'packages'
-          ? 'package'
-          : section;
       const menuItem = Object.values(menuItems)
         .flat()
         .find(
           (item) =>
-            item.title.replace(/\s+/g, '-').toLowerCase() === normalized,
+            item.title.replace(/\s+/g, '-').toLowerCase() === section,
         );
       if (menuItem?.isActive) {
         setActiveMenu(menuItem.title);

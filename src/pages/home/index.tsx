@@ -41,7 +41,7 @@ const Home = () => {
   //   },
   // });
   return (
-    <div className="h-screen p-2 xs:px-3 sm:p-5 md:p-0">
+    <div className="flex h-screen flex-col overflow-hidden p-2 xs:px-3 sm:p-5 md:p-0">
       {/* <div className="w-full flex md:hidden justify-between items-center border-b border-white  py-2">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -107,7 +107,9 @@ const Home = () => {
         <MainTopBar></MainTopBar>
       </div> */}
       <RouteTracker />
-      <MainTopBar></MainTopBar>
+      <div className="shrink-0">
+        <MainTopBar></MainTopBar>
+      </div>
       <div
         ref={sideMenuRef}
         className={`
@@ -121,7 +123,7 @@ const Home = () => {
         <SideMenu onClose={() => isMobileView && setIsMobileMenuOpen(false)} />
       </div>
 
-      <div className="w-full md:pl-[170px] pt-0 pb-2 bg-bg-color h-[100vh]  overflow-y-scroll hidden-scrollbar">
+      <div className="min-h-0 w-full flex-1 md:pl-[170px] pt-0 pb-2 bg-bg-color overflow-y-auto hidden-scrollbar">
         <Outlet></Outlet>
       </div>
     </div>
