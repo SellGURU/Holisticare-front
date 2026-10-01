@@ -73,6 +73,7 @@ export function isMobileOnlyAuthFailure(message: unknown): boolean {
 const NON_SESSION_AUTH_URL_MARKERS = [
   '/auth/token',
   '/auth/google_login',
+  '/auth/signup',
   '/auth/',
   '/marketing/session',
 ] as const;

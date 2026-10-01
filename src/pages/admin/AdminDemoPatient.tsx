@@ -6,7 +6,15 @@ import { toast } from 'react-toastify';
 import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
+import type {
+  GlobalDemoCandidate,
+  GlobalDemoClientItem,
+  GlobalDemoJobAccepted,
+} from '../../types/admin';
 import AdminShellLayout from './AdminShellLayout';
+import GlobalDemoClientList from './globalDemo/GlobalDemoClientList';
+import GlobalDemoClientSelect from './globalDemo/GlobalDemoClientSelect';
+import { jobIsActive as globalJobIsActive } from './globalDemo/globalDemoUtils';
 
 type DemoStatus = 'fresh' | 'stale' | 'missing' | 'source_template' | 'source_clinic';
 
@@ -99,6 +107,19 @@ const AdminDemoPatient = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | DemoStatus>('all');
   const [payload, setPayload] = useState<DemoStatusPayload | null>(null);
   const [job, setJob] = useState<DemoJob | null>(null);
+  const [globalClients, setGlobalClients] = useState<GlobalDemoClientItem[]>([]);
+  const [globalCandidates, setGlobalCandidates] = useState<GlobalDemoCandidate[]>(
+    [],
+  );
+  const [selectedCandidate, setSelectedCandidate] =
+    useState<GlobalDemoCandidate | null>(null);
+  const [candidateQuery, setCandidateQuery] = useState('');
+  const [candidateLoading, setCandidateLoading] = useState(false);
+  const [candidateError, setCandidateError] = useState<string | null>(null);
+  const [settingGlobal, setSettingGlobal] = useState(false);
+  const [removingGlobalId, setRemovingGlobalId] = useState<string | null>(null);
+  const [retryingGlobalId, setRetryingGlobalId] = useState<string | null>(null);
+  const [polledGlobalJobId, setPolledGlobalJobId] = useState<string | null>(null);
 
   const handleAuthFailure = () => {
     removeAdminToken();
@@ -109,6 +130,21 @@ const AdminDemoPatient = () => {
     setPayload(data);
     if (data.active_job) {
       setJob(data.active_job);
+    }
+  };
+
+  const loadGlobalClients = async () => {
+    try {
+      const res = await AdminApi.listGlobalDemoClients();
+      setGlobalClients((res.data?.clients || []) as GlobalDemoClientItem[]);
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        handleAuthFailure();
+      } else {
+        toast.error(
+          err?.response?.data?.detail || 'Failed to load global demo clients.',
+        );
+      }
     }
   };
 
@@ -134,6 +170,7 @@ const AdminDemoPatient = () => {
       try {
         await AdminApi.checkAuth();
         await loadStatus();
+        await loadGlobalClients();
       } catch {
         handleAuthFailure();
       } finally {
@@ -168,6 +205,119 @@ const AdminDemoPatient = () => {
     return () => window.clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [job?.job_id, job?.status]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(async () => {
+      setCandidateLoading(true);
+      setCandidateError(null);
+      try {
+        const res = await AdminApi.searchGlobalDemoCandidates(candidateQuery, 20);
+        setGlobalCandidates((res.data?.candidates || []) as GlobalDemoCandidate[]);
+      } catch (err: any) {
+        if (err?.response?.status === 401) {
+          handleAuthFailure();
+        } else {
+          setCandidateError(
+            err?.response?.data?.detail || 'Failed to search clients.',
+          );
+        }
+      } finally {
+        setCandidateLoading(false);
+      }
+    }, 300);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [candidateQuery]);
+
+  useEffect(() => {
+    if (!polledGlobalJobId) return undefined;
+    const timer = window.setInterval(async () => {
+      try {
+        const res = await AdminApi.getDemoJob(polledGlobalJobId);
+        const next = res.data as { status?: string; last_error?: string };
+        if (!globalJobIsActive(next)) {
+          setPolledGlobalJobId(null);
+          await loadGlobalClients();
+          if (next.status === 'succeeded') {
+            toast.success('Global demo job finished.');
+          } else if (next.status === 'failed') {
+            toast.error(next.last_error || 'Global demo job failed.');
+          }
+        }
+      } catch (err: any) {
+        if (err?.response?.status === 401) {
+          handleAuthFailure();
+        }
+      }
+    }, 3000);
+    return () => window.clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [polledGlobalJobId]);
+
+  const acceptGlobalJob = (data: GlobalDemoJobAccepted) => {
+    if (data.job_id) {
+      setPolledGlobalJobId(data.job_id);
+    }
+  };
+
+  const setSelectedAsGlobal = async () => {
+    if (!selectedCandidate) return;
+    setSettingGlobal(true);
+    try {
+      const res = await AdminApi.setGlobalDemoClient(selectedCandidate.patient_id);
+      acceptGlobalJob(res.data as GlobalDemoJobAccepted);
+      toast.success(
+        res.data?.reused
+          ? 'This client is already a global demo. Retrying remaining clinics.'
+          : 'Sanitized snapshot queued for every clinic.',
+      );
+      setSelectedCandidate(null);
+      setCandidateQuery('');
+      await loadGlobalClients();
+    } catch (err: any) {
+      if (err?.response?.status === 401) handleAuthFailure();
+      else toast.error(err?.response?.data?.detail || 'Failed to set global demo.');
+    } finally {
+      setSettingGlobal(false);
+    }
+  };
+
+  const retryGlobalClient = async (client: GlobalDemoClientItem) => {
+    setRetryingGlobalId(client.source_patient_id);
+    try {
+      const res = await AdminApi.setGlobalDemoClient(client.source_patient_id);
+      acceptGlobalJob(res.data as GlobalDemoJobAccepted);
+      toast.success('Retry queued for remaining clinics.');
+      await loadGlobalClients();
+    } catch (err: any) {
+      if (err?.response?.status === 401) handleAuthFailure();
+      else toast.error(err?.response?.data?.detail || 'Failed to retry global demo.');
+    } finally {
+      setRetryingGlobalId(null);
+    }
+  };
+
+  const removeGlobalClient = async (client: GlobalDemoClientItem) => {
+    if (
+      !window.confirm(
+        `Remove ${client.display_name} as a global demo? Its generated copies will be archived in every clinic. Existing unrelated demo clients stay in place.`,
+      )
+    ) {
+      return;
+    }
+    setRemovingGlobalId(client.source_patient_id);
+    try {
+      const res = await AdminApi.removeGlobalDemoClient(client.source_patient_id);
+      acceptGlobalJob(res.data as GlobalDemoJobAccepted);
+      toast.success('Archive job queued for generated copies.');
+      await loadGlobalClients();
+    } catch (err: any) {
+      if (err?.response?.status === 401) handleAuthFailure();
+      else toast.error(err?.response?.data?.detail || 'Failed to remove global demo.');
+    } finally {
+      setRemovingGlobalId(null);
+    }
+  };
 
   const clinics = payload?.clinics || [];
   const totals = payload?.totals;
@@ -385,6 +535,48 @@ const AdminDemoPatient = () => {
             </div>
           )}
         </div>
+
+        <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">
+            <div className="text-lg font-semibold text-Text-Primary">
+              Global demo clients
+            </div>
+            <div className="mt-1 text-[12px] text-Text-Secondary">
+              Select any existing client. A sanitized snapshot is copied to every
+              clinic without replacing the frozen Alexander demo.
+            </div>
+            <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-end">
+              <div className="flex-1">
+                <GlobalDemoClientSelect
+                  candidates={globalCandidates}
+                  value={selectedCandidate}
+                  query={candidateQuery}
+                  loading={candidateLoading}
+                  error={candidateError}
+                  onQueryChange={setCandidateQuery}
+                  onSelect={setSelectedCandidate}
+                />
+              </div>
+              <button
+                type="button"
+                disabled={!selectedCandidate || settingGlobal}
+                onClick={setSelectedAsGlobal}
+                className="rounded-full bg-Primary-DeepTeal px-4 py-2 text-[12px] text-white disabled:opacity-50"
+              >
+                {settingGlobal
+                  ? 'Setting…'
+                  : 'Set as Global Demo for All Clinics'}
+              </button>
+            </div>
+            <div className="mt-4">
+              <GlobalDemoClientList
+                clients={globalClients}
+                removingId={removingGlobalId}
+                retryingId={retryingGlobalId}
+                onRemove={removeGlobalClient}
+                onRetry={retryGlobalClient}
+              />
+            </div>
+          </div>
 
         {job && (
           <div className="rounded-[20px] border border-Gray-50 bg-white p-4 shadow-100">

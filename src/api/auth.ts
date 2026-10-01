@@ -58,7 +58,7 @@ class Auth extends Api {
       // clinic_membership_id: ""
     };
 
-    return this.post('/auth/', data, {
+    return this.post('/auth/signup', data, {
       noAuth: true,
       headers: {
         'Content-Type': 'application/json',

@@ -92,6 +92,9 @@ describe('stale in-flight auth failures', () => {
       isNonSessionAuthRequest('http://127.0.0.1:3800/auth/token'),
     ).toBe(true);
     expect(
+      isNonSessionAuthRequest('http://127.0.0.1:3800/auth/signup'),
+    ).toBe(true);
+    expect(
       isNonSessionAuthRequest('http://127.0.0.1:3800/marketing/session'),
     ).toBe(true);
     expect(isNonSessionAuthRequest('http://127.0.0.1:3800/patients')).toBe(

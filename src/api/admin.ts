@@ -459,6 +459,34 @@ class AdminApi {
     );
   }
 
+  static searchGlobalDemoCandidates(search = '', limit = 20) {
+    return axios.get(`${getBaseUrl()}/admin/global_demo_candidates`, {
+      headers: withAuthHeaders(),
+      params: { search, limit },
+    });
+  }
+
+  static listGlobalDemoClients() {
+    return axios.get(`${getBaseUrl()}/admin/global_demo_clients`, {
+      headers: withAuthHeaders(),
+    });
+  }
+
+  static setGlobalDemoClient(patientId: string) {
+    return axios.post(
+      `${getBaseUrl()}/admin/set_global_demo_client`,
+      { patient_id: String(patientId) },
+      { headers: withAuthHeaders() },
+    );
+  }
+
+  static removeGlobalDemoClient(patientId: string) {
+    return axios.delete(
+      `${getBaseUrl()}/admin/global_demo_clients/${encodeURIComponent(patientId)}`,
+      { headers: withAuthHeaders() },
+    );
+  }
+
   // ==========================================================================
   // Intelligence Model (clinic-scoped)
   // ==========================================================================

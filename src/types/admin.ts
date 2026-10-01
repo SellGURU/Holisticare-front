@@ -1,3 +1,61 @@
+export interface GlobalDemoProgress {
+  total: number;
+  copied: number;
+  skipped: number;
+  failed: number;
+  archived: number;
+}
+
+export interface GlobalDemoFailedClinic {
+  clinic_id: number;
+  error?: string | null;
+}
+
+export interface GlobalDemoJob {
+  job_id: string;
+  status: string;
+  copied?: number;
+  skipped?: number;
+  failed?: number;
+  total?: number;
+  current_clinic_id?: number | null;
+  last_error?: string | null;
+}
+
+export interface GlobalDemoCandidate {
+  patient_id: string;
+  patient_id_masked: string;
+  member_id_masked: string;
+  clinic_id: number;
+  clinic_name: string;
+  display_name: string;
+  already_global: boolean;
+}
+
+export interface GlobalDemoClientItem {
+  global_demo_id: string;
+  source_patient_id: string;
+  source_patient_id_masked: string;
+  source_member_id_masked: string;
+  source_clinic_id: number;
+  source_clinic_name?: string | null;
+  display_name: string;
+  status: string;
+  revision: number;
+  job_id?: string | null;
+  last_error?: string | null;
+  progress: GlobalDemoProgress;
+  failed_clinics: GlobalDemoFailedClinic[];
+  job?: GlobalDemoJob | null;
+}
+
+export interface GlobalDemoJobAccepted {
+  global_demo_id: string;
+  job_id: string;
+  status: string;
+  reused?: boolean;
+}
+
 export type NotePeriodType = 'one_off' | 'daily' | 'weekly' | 'monthly';
 export type NoteVisibility = 'internal' | 'leadership';
 export type FollowUpState =
