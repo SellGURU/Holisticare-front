@@ -11,6 +11,7 @@ import type {
   GlobalDemoClientItem,
   GlobalDemoJobAccepted,
 } from '../../types/admin';
+import AdminActionButton from './AdminActionButton';
 import AdminShellLayout from './AdminShellLayout';
 import GlobalDemoClientList from './globalDemo/GlobalDemoClientList';
 import GlobalDemoClientSelect from './globalDemo/GlobalDemoClientSelect';
@@ -643,23 +644,35 @@ const AdminDemoPatient = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-Gray-50 text-left text-[12px]">
+          <div className="overflow-x-auto rounded-2xl border border-Gray-50">
+            <table className="w-full min-w-[880px] divide-y divide-Gray-50 text-left text-[12px]">
               <thead className="bg-[#F8FAFB] text-Text-Secondary">
                 <tr>
-                  <th className="px-3 py-3 font-medium">Clinic</th>
-                  <th className="px-3 py-3 font-medium">Demo</th>
-                  <th className="px-3 py-3 font-medium">Member / email</th>
-                  <th className="px-3 py-3 font-medium">Plans</th>
-                  <th className="px-3 py-3 font-medium">HTML</th>
-                  <th className="px-3 py-3 font-medium">Actions</th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">Clinic</th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">Demo</th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">
+                    Member / email
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">Plans</th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">HTML</th>
+                  <th className="whitespace-nowrap px-3 py-3 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-Gray-50">
+                {filteredClinics.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-3 py-8 text-center text-[12px] text-Text-Secondary"
+                    >
+                      No clinics match this filter.
+                    </td>
+                  </tr>
+                ) : null}
                 {filteredClinics.map((clinic) => {
                   const busy = replacingId === clinic.clinic_id;
                   return (
-                    <tr key={clinic.clinic_id}>
+                    <tr key={clinic.clinic_id} className="hover:bg-[#F8FAFB]/70">
                       <td className="px-3 py-3">
                         <div className="font-medium text-Text-Primary">
                           {clinic.clinic_name || `Clinic #${clinic.clinic_id}`}
@@ -687,16 +700,17 @@ const AdminDemoPatient = () => {
                       <td className="px-3 py-3 text-Text-Primary">{clinic.html}</td>
                       <td className="px-3 py-3">
                         {clinic.can_replace ? (
-                          <button
-                            type="button"
-                            disabled={busy || jobIsActive(job)}
-                            onClick={() => resetClinic(clinic)}
-                            className="rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary disabled:opacity-50"
-                          >
-                            {busy ? 'Resetting…' : 'Reset this clinic'}
-                          </button>
+                          <div className="min-w-[148px]">
+                            <AdminActionButton
+                              icon={RefreshCw}
+                              label={busy ? 'Resetting…' : 'Reset clinic'}
+                              disabled={busy || jobIsActive(job)}
+                              title="Replace this clinic's demo patient"
+                              onClick={() => resetClinic(clinic)}
+                            />
+                          </div>
                         ) : (
-                          <span className="text-[11px] text-Text-Secondary">
+                          <span className="whitespace-nowrap text-[11px] text-Text-Secondary">
                             Holds the template
                           </span>
                         )}

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Circleloader from '../../Components/CircleLoader';
 import AdminApi from '../../api/admin';
 import { removeAdminToken } from '../../store/adminToken';
+import AdminActionButton from './AdminActionButton';
 import AdminShellLayout from './AdminShellLayout';
 import ClinicMobileUsersPanel from './ClinicMobileUsersPanel';
 import ClinicProfileModal from './ClinicProfileModal';
@@ -362,23 +363,33 @@ const Clinics = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-Gray-50 text-left text-[12px]">
+        <div className="overflow-x-auto rounded-2xl border border-Gray-50">
+          <table className="w-full min-w-[1180px] divide-y divide-Gray-50 text-left text-[12px]">
             <thead className="bg-[#F8FAFB] text-Text-Secondary">
               <tr>
-                <th className="px-3 py-3 font-medium">Clinic</th>
-                <th className="px-3 py-3 font-medium">Demo</th>
-                <th className="px-3 py-3 font-medium">Created</th>
-                <th className="px-3 py-3 font-medium">Users</th>
-                <th className="px-3 py-3 font-medium">Patients</th>
-                <th className="px-3 py-3 font-medium">Plan</th>
-                <th className="px-3 py-3 font-medium">Report labels</th>
-                <th className="px-3 py-3 font-medium">Status</th>
-                <th className="px-3 py-3 font-medium">Access</th>
-                <th className="px-3 py-3 font-medium">Updated</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">Clinic</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">Demo</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">Created</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">Users</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">Patients</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">Plan</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">Report labels</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">Status</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">Actions</th>
+                <th className="whitespace-nowrap px-3 py-3 font-medium">Updated</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-Gray-50">
+              {filteredClinics.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={10}
+                    className="px-3 py-8 text-center text-[12px] text-Text-Secondary"
+                  >
+                    No clinics match this search.
+                  </td>
+                </tr>
+              ) : null}
               {filteredClinics.map((clinic) => {
                 const busy = updatingId === clinic.clinic_id;
                 const activeSeconds = remainingSecondsFromMs(
@@ -386,7 +397,7 @@ const Clinics = () => {
                 );
                 const demo = demoByClinic[clinic.clinic_id];
                 return (
-                  <tr key={clinic.clinic_id} className="align-top">
+                  <tr key={clinic.clinic_id} className="align-top hover:bg-[#F8FAFB]/70">
                     <td className="px-3 py-3">
                       <div className="font-medium text-Text-Primary">
                         {clinic.name || `Clinic #${clinic.clinic_id}`}
@@ -432,7 +443,7 @@ const Clinics = () => {
                             plan_type: event.target.value as 'demo' | 'paying',
                           })
                         }
-                        className="rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] outline-none"
+                        className="min-w-[108px] rounded-xl border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] outline-none"
                       >
                         <option value="demo">Demo</option>
                         <option value="paying">Paying</option>
@@ -455,7 +466,7 @@ const Clinics = () => {
                               event.target.value === 'high_low',
                           })
                         }
-                        className="min-w-[112px] rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary outline-none transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="min-w-[112px] rounded-xl border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary outline-none transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <option value="legacy">Legacy</option>
                         <option value="high_low">High / Low</option>
@@ -470,7 +481,7 @@ const Clinics = () => {
                             is_disabled: !clinic.is_disabled,
                           })
                         }
-                        className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-[12px] ${
+                        className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-[12px] ${
                           clinic.is_disabled
                             ? 'bg-red-50 text-red-700'
                             : 'bg-emerald-50 text-emerald-700'
@@ -485,46 +496,40 @@ const Clinics = () => {
                       </button>
                     </td>
                     <td className="px-3 py-3">
-                      <div className="flex flex-col items-start gap-2">
-                        <button
-                          type="button"
+                      <div className="flex min-w-[168px] flex-col gap-1.5">
+                        <AdminActionButton
+                          icon={Pencil}
+                          label="Edit profile"
                           disabled={busy}
+                          title="Edit clinic profile"
                           onClick={() => setProfileClinic(clinic)}
-                          className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
-                        >
-                          <Pencil size={14} />
-                          Edit profile
-                        </button>
-                        <button
-                          type="button"
+                        />
+                        <AdminActionButton
+                          icon={KeyRound}
+                          label={
+                            activeSeconds > 0
+                              ? `Password ${formatCountdown(activeSeconds)}`
+                              : 'Portal password'
+                          }
                           disabled={busy}
+                          title="Set a 60-second temporary portal password"
                           onClick={() => grantTempPassword(clinic)}
-                          className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
-                        >
-                          <KeyRound size={14} />
-                          {activeSeconds > 0
-                            ? `Portal ${formatCountdown(activeSeconds)}`
-                            : 'Portal password'}
-                        </button>
-                        <button
-                          type="button"
+                        />
+                        <AdminActionButton
+                          icon={Smartphone}
+                          label="Mobile users"
                           disabled={busy}
+                          title="Manage mobile users"
                           onClick={() => setMobileClinic(clinic)}
-                          className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
-                        >
-                          <Smartphone size={14} />
-                          Mobile users
-                        </button>
+                        />
                         {demo?.can_replace ? (
-                          <button
-                            type="button"
+                          <AdminActionButton
+                            icon={RefreshCw}
+                            label="Reset demo"
                             disabled={busy}
+                            title="Replace this clinic's demo patient"
                             onClick={() => resetClinicDemo(clinic)}
-                            className="inline-flex items-center gap-2 rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-[12px] text-Text-Primary"
-                          >
-                            <RefreshCw size={14} />
-                            Reset demo
-                          </button>
+                          />
                         ) : null}
                       </div>
                     </td>

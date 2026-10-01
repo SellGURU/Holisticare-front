@@ -1,4 +1,5 @@
 import type { GlobalDemoClientItem } from '../../../types/admin';
+import AdminActionButton from '../AdminActionButton';
 import {
   globalDemoStatusClass,
   globalDemoStatusLabel,
@@ -87,29 +88,28 @@ const GlobalDemoClientList = ({
                   ) : null}
                 </td>
                 <td className="px-2 py-3">
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex min-w-[168px] flex-col gap-1.5">
                     {client.status === 'failed' && (
-                      <button
-                        type="button"
+                      <AdminActionButton
                         disabled={busy}
+                        label={
+                          retryingId === client.source_patient_id
+                            ? 'Retrying…'
+                            : 'Retry failed'
+                        }
                         onClick={() => onRetry(client)}
-                        className="rounded-full border border-Gray-50 bg-[#F8FAFB] px-3 py-2 text-Text-Primary disabled:opacity-50"
-                      >
-                        {retryingId === client.source_patient_id
-                          ? 'Retrying…'
-                          : 'Retry failed clinics'}
-                      </button>
+                      />
                     )}
-                    <button
-                      type="button"
+                    <AdminActionButton
+                      variant="warning"
                       disabled={busy || client.status === 'removing'}
+                      label={
+                        removingId === client.source_patient_id
+                          ? 'Archiving…'
+                          : 'Remove'
+                      }
                       onClick={() => onRemove(client)}
-                      className="rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-amber-800 disabled:opacity-50"
-                    >
-                      {removingId === client.source_patient_id
-                        ? 'Archiving…'
-                        : 'Remove'}
-                    </button>
+                    />
                   </div>
                 </td>
               </tr>
