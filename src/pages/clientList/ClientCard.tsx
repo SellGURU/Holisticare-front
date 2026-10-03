@@ -3,7 +3,10 @@ import { isModifiedNavigationEvent } from '../../utils/navigation';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import { FC, useEffect, useRef, useState } from 'react';
 import Application from '../../api/app.ts';
-import { invalidatePatientLists } from '../../utils/cacheKeys';
+import {
+  invalidateHealthPlanCache,
+  invalidatePatientLists,
+} from '../../utils/cacheKeys';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary.tsx';
@@ -66,6 +69,33 @@ const convertImageToDataUrl = (file: File): Promise<string> => {
     reader.readAsDataURL(file);
     reader.onload = () => resolve(String(reader.result || ''));
     reader.onerror = () => reject(reader.error);
+  });
+};
+
+const compressImageToDataUrl = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const maxEdge = 512;
+      const scale = Math.min(1, maxEdge / Math.max(image.width, image.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(image.width * scale));
+      canvas.height = Math.max(1, Math.round(image.height * scale));
+      const context = canvas.getContext('2d');
+      if (!context) {
+        convertImageToDataUrl(file).then(resolve).catch(reject);
+        return;
+      }
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      convertImageToDataUrl(file).then(resolve).catch(reject);
+    };
+    image.src = objectUrl;
   });
 };
 interface ClientCardProps {
@@ -413,6 +443,8 @@ const ClientCard: FC<ClientCardProps> = ({
             ? { date_of_birth: formatDateOfBirth(editDateOfBirth) }
             : {}),
         });
+        invalidateHealthPlanCache(client.member_id);
+        invalidatePatientLists();
         setShowEditModal(false);
       })
       .catch((err) => {
@@ -792,7 +824,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       return;
                     }
                     setPhotoError('');
-                    convertImageToDataUrl(file)
+                    compressImageToDataUrl(file)
                       .then((url) => setEditPhoto(url))
                       .catch(() =>
                         setPhotoError('Could not read this image. Please try another photo.'),

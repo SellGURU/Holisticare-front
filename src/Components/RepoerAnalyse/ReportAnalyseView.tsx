@@ -2167,14 +2167,27 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     >
                       {' '}
                       <div className="flex justify-start items-center">
-                        {userInfoData?.picture && (
-                          <div className="size-6 border border-Primary-DeepTeal flex items-center justify-center mr-1  rounded-full">
+                        {userInfoData?.name && (
+                          <div className="size-6 border border-Primary-DeepTeal flex items-center justify-center mr-1 overflow-hidden rounded-full">
                             <img
-                              className="rounded-full"
+                              className="h-full w-full rounded-full object-cover"
                               onError={(e: any) => {
-                                e.target.src = `https://ui-avatars.com/api/?name=${userInfoData?.name}`; // Set fallback image
+                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                  userInfoData?.name || 'Client',
+                                )}`;
                               }}
-                              src={userInfoData?.picture}
+                              src={
+                                String(userInfoData?.picture || '').startsWith(
+                                  'data:image/',
+                                ) ||
+                                String(userInfoData?.picture || '').startsWith(
+                                  'http',
+                                )
+                                  ? userInfoData.picture
+                                  : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                      userInfoData?.name || 'Client',
+                                    )}`
+                              }
                               alt=""
                             />
                           </div>

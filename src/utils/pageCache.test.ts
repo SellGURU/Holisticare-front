@@ -196,4 +196,36 @@ describe('pageCache', () => {
       peekCached('portal:healthplan:client-summary-categories:99'),
     ).toEqual({ subcategories: [{ subcategory: 'Gut' }] });
   });
+
+  it('strips patient-info pictures from sessionStorage persist', async () => {
+    const memory: Record<string, string> = {};
+    const session = {
+      getItem: (key: string) => memory[key] ?? null,
+      setItem: (key: string, value: string) => {
+        memory[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete memory[key];
+      },
+    };
+    vi.stubGlobal('sessionStorage', session);
+
+    await getCached('portal:healthplan:patient-info:99', () =>
+      Promise.resolve({
+        name: 'Elena M',
+        picture: 'data:image/jpeg;base64,AAA',
+      }),
+    );
+
+    expect(peekCached('portal:healthplan:patient-info:99')).toEqual({
+      name: 'Elena M',
+      picture: 'data:image/jpeg;base64,AAA',
+    });
+
+    const dumped = JSON.parse(memory[HEALTHPLAN_PAGE_CACHE_STORAGE_KEY]);
+    expect(dumped['portal:healthplan:patient-info:99'].data).toEqual({
+      name: 'Elena M',
+      picture: '',
+    });
+  });
 });

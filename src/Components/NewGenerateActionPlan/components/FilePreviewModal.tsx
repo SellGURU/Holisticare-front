@@ -53,13 +53,17 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
       // Get all video links from sections
       const allVideoLinks = sections.flatMap((section: Section) => {
         return section.Exercises.flatMap((exercise: Exercise) => {
-          return exercise.Files.filter(
-            (file: File) =>
-              (file.Type === 'link' ||
-                file.Type === 'Video' ||
-                file.Type?.split('/')[0] === 'image') &&
-              (file.Content.url || file.Content.file_id),
-          ).map((file: File) => ({
+          return exercise.Files.filter((file: File) => {
+            const kind = (file.Type || '').toLowerCase();
+            const isMedia =
+              kind === 'link' ||
+              kind === 'video' ||
+              kind.startsWith('video') ||
+              kind.startsWith('image');
+            return (
+              isMedia && (file.Content.url || file.Content.file_id)
+            );
+          }).map((file: File) => ({
             url: file.Content.url,
             file_id: file.Content.file_id,
             title: file.Title || 'Video',
@@ -239,7 +243,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
                           className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
                         >
                           <img
-                            src={src.url}
+                            src={src.url || src.base64}
                             alt={`Slide ${i}`}
                             className="w-full h-full object-cover"
                           />
@@ -277,7 +281,11 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
                               onClick={() => handleVideoClick(video)}
                               className="text-xs text-Primary-DeepTeal hover:underline"
                             >
-                              Download Video
+                              {(video.type || '')
+                                .toLowerCase()
+                                .startsWith('image')
+                                ? 'Download Image'
+                                : 'Download Video'}
                             </button>
                           )}
                         </div>
@@ -310,6 +318,22 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
                             allowFullScreen
                           />
                         )
+                      ) : (video.type || '')
+                          .toLowerCase()
+                          .startsWith('image') && video.base64 ? (
+                        <img
+                          src={video.base64}
+                          alt={video.title || 'Exercise image'}
+                          className="rounded-xl h-[150px] w-full border border-Gray-50 object-cover"
+                        />
+                      ) : video.base64 ? (
+                        <video
+                          className="rounded-xl h-[150px] w-full border border-Gray-50"
+                          controls
+                          src={video.base64}
+                        >
+                          Your browser does not support the video tag.
+                        </video>
                       ) : (
                         <div className="rounded-xl h-[150px] w-full border border-Gray-50 flex flex-col items-center justify-center p-4">
                           <img
@@ -318,7 +342,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
                             alt="Video"
                           />
                           <div className="text-xs text-Text-Secondary text-center">
-                            Click "Download" to save this video to your device
+                            Click "Download" to save this file to your device
                           </div>
                         </div>
                       )}

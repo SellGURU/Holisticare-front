@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Application from '../../api/app.ts';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
-import { publish, subscribe } from '../../utils/event.ts';
+import { publish, subscribe, unsubscribe } from '../../utils/event.ts';
 import { PopUpChat } from '../popupChat';
 import { SlideOutPanel } from '../SlideOutPanel';
 
@@ -96,21 +96,57 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     picture: '',
   });
 
+  const isUsablePicture = (value?: string | null) => {
+    const picture = String(value || '').trim();
+    return (
+      picture.startsWith('data:image/') ||
+      picture.startsWith('https://') ||
+      picture.startsWith('http://')
+    );
+  };
+
   useEffect(() => {
     if (!id) return;
-    // RP-F01: same cache key as report page + ReportAnalyseView
+    const applyPatientInfo = (data: any) => {
+      if (!data) return;
+      setPatientInfo((prev) => {
+        const nextPicture = isUsablePicture(data.picture)
+          ? data.picture
+          : isUsablePicture(prev.picture)
+            ? prev.picture
+            : data.picture || prev.picture || '';
+        return {
+          name: data.name ?? prev.name,
+          email: data.email ?? prev.email,
+          picture: nextPicture,
+        };
+      });
+    };
+    const loadPatientInfo = () =>
+      Application.getPatientsInfo({ member_id: id }).then((res) => res.data);
+
     getCached(
       HEALTH_PLAN_CACHE_KEYS.patientInfo(id),
-      () =>
-        Application.getPatientsInfo({ member_id: id }).then((res) => res.data),
+      loadPatientInfo,
       HEALTH_PLAN_TTL_MS,
     )
       .then((data) => {
-        setPatientInfo(data);
+        applyPatientInfo(data);
+        if (!isUsablePicture(data?.picture)) {
+          return loadPatientInfo().then(applyPatientInfo);
+        }
       })
       .catch(() => {
         console.error('Error getting patient info');
       });
+
+    const handleUserInfoData = (event: any) => {
+      applyPatientInfo(event?.detail ?? event);
+    };
+    subscribe('userInfoData', handleUserInfoData);
+    return () => {
+      unsubscribe('userInfoData', handleUserInfoData);
+    };
   }, [id]);
   // useConstructor(() => {
   //   // setIsLoading(true);
@@ -298,16 +334,18 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
           >
             <img
               src={
-                patientInfo.picture != ''
+                isUsablePicture(patientInfo.picture)
                   ? patientInfo.picture
-                  : `https://ui-avatars.com/api/?name=${patientInfo.name}`
+                  : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      patientInfo.name || 'Client',
+                    )}`
               }
               onError={(e: any) => {
-                e.target.src = `https://ui-avatars.com/api/?name=${patientInfo.name}`; // Set fallback image
+                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  patientInfo.name || 'Client',
+                )}`;
               }}
-              className={
-                ' hidden md:block border-whiteavatar w-full h-full rounded-full'
-              }
+              className="hidden h-full w-full rounded-full object-cover md:block"
             />
           </li>
           <li

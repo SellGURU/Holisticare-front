@@ -24,9 +24,15 @@ const persistHealthPlanCache = (): void => {
   if (!canUseSessionStorage()) return;
   const payload: Record<string, CacheEntry<unknown>> = {};
   for (const [key, entry] of store) {
-    if (key.startsWith(HEALTHPLAN_PREFIX)) {
-      payload[key] = entry;
+    if (!key.startsWith(HEALTHPLAN_PREFIX)) continue;
+    if (key.includes(':patient-info:') && entry?.data && typeof entry.data === 'object') {
+      payload[key] = {
+        ...entry,
+        data: { ...(entry.data as Record<string, unknown>), picture: '' },
+      };
+      continue;
     }
+    payload[key] = entry;
   }
   try {
     sessionStorage.setItem(
